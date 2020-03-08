@@ -190,6 +190,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [Pure]
         Boolean Exists();
 
+        [NotNull]
         Folder ContainingingFolder();
 
         /// <summary>
@@ -285,7 +286,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="verb">     "runas" is elevated</param>
         /// <param name="useShell"></param>
         /// <returns></returns>
-        Task<Process> Launch( [CanBeNull] String arguments = null, String verb = "runas", Boolean useShell = false );
+        Task<Process> Launch( [CanBeNull] String? arguments = null, String verb = "runas", Boolean useShell = false );
 
         /// <summary>Attempt to return an object Deserialized from this JSON text file.</summary>
         /// <typeparam name="T"></typeparam>
@@ -1047,7 +1048,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <param name="text"></param>
         [NotNull]
-        public IDocument AppendText( [CanBeNull] String text ) {
+        public IDocument AppendText( [CanBeNull] String? text ) {
             var folder = this.ContainingingFolder();
 
             if ( !folder.Exists() ) {
@@ -1128,7 +1129,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         [Pure]
-        public Task<Process> Launch( [CanBeNull] String arguments = null, [CanBeNull] String verb = "runas", Boolean useShell = false ) {
+        public Task<Process> Launch( [CanBeNull] String? arguments = null, [CanBeNull] String? verb = "runas", Boolean useShell = false ) {
             try {
                 var info = new ProcessStartInfo( this.FullPath ) {
                     Arguments = arguments ?? String.Empty,
@@ -1190,7 +1191,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             try {
-                destination.ContainingingFolder()?.Create();
+                destination.ContainingingFolder().Create();
 
                 if ( await destination.SameContent( this ).ConfigureAwait( false ) ) {
                     this.Delete();
@@ -1410,7 +1411,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         private Folder _containingFolder;
 
         [CanBeNull]
-        public Byte[] Buffer { get; set; }
+        public Byte[]? Buffer { get; set; }
 
         public Boolean IsBufferLoaded { get; [Pure] private set; }
 
@@ -1430,7 +1431,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Computer thisComputer { get; } = new Computer();
 
         [NotNull]
-        public static String InvalidFileNameCharacters { get; } = new String( ( Char[] ) Path.GetInvalidFileNameChars() );
+        public static String InvalidFileNameCharacters { get; } = new String( ( Char[] )Path.GetInvalidFileNameChars() );
 
         [NotNull]
         public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new Lazy<Regex>( () =>
@@ -2001,7 +2002,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [DebuggerStepThrough]
         [NotNull]
         [Pure]
-        public static String CleanFileName( [NotNull] String filename, [CanBeNull] String replacement = null ) {
+        public static String CleanFileName( [NotNull] String filename, [CanBeNull] String? replacement = null ) {
             var file = RegexForInvalidFileNameCharacters.Value.Replace( Path.GetFileName( filename ), replacement ?? String.Empty ).Trimmed();
 
             return file ?? throw new InvalidOperationException( $"Invalid file name {filename.DoubleQuote()}." );

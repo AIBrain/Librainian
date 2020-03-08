@@ -48,7 +48,7 @@ namespace Librainian.Extensions {
         private const String FileSizeFormat = "fs";
 
         [NotNull]
-        private static String DefaultFormat( [CanBeNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
+        private static String DefaultFormat( [CanBeNull] String? format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             var formattableArg = arg as IFormattable;
 
             return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
@@ -57,11 +57,11 @@ namespace Librainian.Extensions {
         [NotNull]
         public String Format( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( arg == null ) {
-                throw new ArgumentNullException( paramName: nameof( arg ) );
+                throw new ArgumentNullException( nameof( arg ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: format ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( format ) );
+            if ( String.IsNullOrWhiteSpace( format ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
             }
 
             if ( !format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) ) {

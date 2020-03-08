@@ -45,11 +45,6 @@ namespace Librainian.Extensions {
     using JetBrains.Annotations;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class MmfExt2 {

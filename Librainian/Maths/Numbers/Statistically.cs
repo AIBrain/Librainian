@@ -52,7 +52,7 @@ namespace Librainian.Maths.Numbers {
     [JsonObject]
     public class Statistically {
 
-        public static readonly Statistically Zero = new Statistically( ups: 0, downs: 0 );
+        public static readonly Statistically Zero = new Statistically( 0, 0 );
 
         public static Statistically Undecided = new Statistically( 0.5, 0.5 );
 
@@ -72,11 +72,11 @@ namespace Librainian.Maths.Numbers {
         public Double Ups { get; private set; }
 
         //public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
-        public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( statistically: this, newUps: ups, newDowns: downs );
+        public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( this, ups, downs );
 
         [NotNull]
         public static Statistically Combine( [NotNull] Statistically value1, [NotNull] Statistically value2 ) =>
-            new Statistically( ups: value1.Ups + value2.Ups, downs: value1.Downs + value2.Downs );
+            new Statistically( value1.Ups + value2.Ups, value1.Downs + value2.Downs );
 
         public static void Reset( [NotNull] Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
             statistically.Ups = 0d;
@@ -92,7 +92,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         [NotNull]
-        public Statistically Clone() => new Statistically( ups: this.Ups, downs: this.Downs );
+        public Statistically Clone() => new Statistically( this.Ups, this.Downs );
 
         public void DecrementDowns( Double byAmount = 1d ) {
             this.Downs -= byAmount;

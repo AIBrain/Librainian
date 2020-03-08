@@ -110,7 +110,7 @@ namespace Librainian.Controls {
         /// <returns>The maximum value</returns>
         private Int64 GetMaxim( [NotNull] IEnumerable<Int64> vals ) {
             if ( vals == null ) {
-                throw new ArgumentNullException( paramName: nameof( vals ) );
+                throw new ArgumentNullException( nameof( vals ) );
             }
 
             if ( this._myIsDrawing ) {
@@ -154,9 +154,9 @@ namespace Librainian.Controls {
             //We draw the indexes for 0 and for the length of the array being plotted
             e.Graphics.DrawString( "0", this.MyFont, displayBrush, new PointF( this._myOffset, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
 
-            e.Graphics.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this.MyFont, brush: displayBrush,
-                point: new PointF( this._myOffset + this._myValues.Length * this._myXUnit - e.Graphics.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width,
-                    this.Height - this.MyFont.Height ), format: StringFormat.GenericDefault );
+            e.Graphics.DrawString( ( this._myValues.Length - 1 ).ToString(), this.MyFont, displayBrush,
+                new PointF( this._myOffset + this._myValues.Length * this._myXUnit - e.Graphics.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width,
+                    this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
 
             //We draw a rectangle surrounding the control.
             using var blackBrush = new SolidBrush( Color.Black );

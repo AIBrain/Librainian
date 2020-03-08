@@ -50,12 +50,12 @@ namespace Librainian.OperatingSystem.FileSystem {
 
     public static class PathInternal {
 
-        [DllImport( dllName: "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
+        [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
         private static extern UInt32 GetLongPathNameW( this String lpszShortPath, StringBuilder lpszLongPath, UInt32 cchBuffer );
 
         [Pure]
         [NotNull]
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static String EnsureExtendedPrefix( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
@@ -63,8 +63,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return path;
             }
 
-            if ( path.StartsWith( value: Constants.UncPathPrefix, comparisonType: StringComparison.OrdinalIgnoreCase ) ) {
-                return path.Insert( startIndex: 2, value: @"?\UNC\" );
+            if ( path.StartsWith( Constants.UncPathPrefix, StringComparison.OrdinalIgnoreCase ) ) {
+                return path.Insert( 2, @"?\UNC\" );
             }
 
             return $"{Constants.ExtendedPathPrefix}{path}";
@@ -74,35 +74,35 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static String GetLongPathName( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
-            var stringBuffer = new StringBuilder( capacity: Constants.MaxPathLength );
-            path.GetLongPathNameW( lpszLongPath: stringBuffer, cchBuffer: ( UInt32 )stringBuffer.Capacity );
+            var stringBuffer = new StringBuilder( Constants.MaxPathLength );
+            path.GetLongPathNameW( stringBuffer, ( UInt32 )stringBuffer.Capacity );
 
             return stringBuffer.ToString();
         }
 
         [Pure]
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsDevice( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
-            if ( Document.IsExtended( path: path ) ) {
+            if ( Document.IsExtended( path ) ) {
                 return true;
             }
 
-            if ( path.Length >= 4 && path[ index: 0 ].IsDirectorySeparator() && path[ index: 1 ].IsDirectorySeparator() &&
-                 ( path[ index: 2 ] == '.' || path[ index: 2 ] == '?' ) ) {
-                return path[ index: 3 ].IsDirectorySeparator();
+            if ( path.Length >= 4 && path[ 0 ].IsDirectorySeparator() && path[ 1 ].IsDirectorySeparator() &&
+                 ( path[ 2 ] == '.' || path[ 2 ] == '?' ) ) {
+                return path[ 3 ].IsDirectorySeparator();
             }
 
             return default;
         }
 
         [Pure]
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsDirectorySeparator( this Char c ) => c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
 
         [Pure]
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsPartiallyQualified( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
@@ -110,16 +110,16 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return true;
             }
 
-            if ( path[ index: 0 ].IsDirectorySeparator() ) {
-                if ( path[ index: 1 ] != '?' ) {
-                    return !path[ index: 1 ].IsDirectorySeparator();
+            if ( path[ 0 ].IsDirectorySeparator() ) {
+                if ( path[ 1 ] != '?' ) {
+                    return !path[ 1 ].IsDirectorySeparator();
                 }
 
                 return default;
             }
 
-            if ( path.Length >= 3 && path[ index: 1 ] == Path.VolumeSeparatorChar && path[ index: 2 ].IsDirectorySeparator() ) {
-                return !path[ index: 0 ].IsValidDriveChar();
+            if ( path.Length >= 3 && path[ 1 ] == Path.VolumeSeparatorChar && path[ 2 ].IsDirectorySeparator() ) {
+                return !path[ 0 ].IsValidDriveChar();
             }
 
             return true;
@@ -131,7 +131,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [DebuggerStepThrough]
         [Pure]
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean IsValidDriveChar( this Char value ) => value >= 'A' && value <= 'Z' || value >= 'a' && value <= 'z';
 
         /// <summary>Returns the trimmed <paramref name="path" /> or throws <see cref="ArgumentException" /> if null, empty, or whitespace.</summary>
@@ -142,14 +142,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static String TrimAndThrowIfBlank( [NotNull] this String path ) {
 
-            if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             path = path.Trimmed();
 
-            if ( String.IsNullOrEmpty( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrEmpty( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             return path;

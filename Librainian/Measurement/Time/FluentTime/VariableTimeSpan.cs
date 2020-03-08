@@ -78,8 +78,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
         public static Boolean operator ==( VariableTimeSpan one, VariableTimeSpan other ) => one.Equals( other );
 
-        public VariableTimeSpan AddTo( VariableTimeSpan other ) =>
-            new VariableTimeSpan( this._years + other._years, this._months + other._months, this._timeSpan + other._timeSpan );
+        public VariableTimeSpan AddTo( VariableTimeSpan other ) => new VariableTimeSpan( this._years + other._years, this._months + other._months, this._timeSpan + other._timeSpan );
 
         public VariableTimeSpan AddTo( TimeSpan timeSpan ) => new VariableTimeSpan( this._years, this._months, this._timeSpan + timeSpan );
 

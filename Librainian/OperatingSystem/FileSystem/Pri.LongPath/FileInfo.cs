@@ -19,7 +19,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
                 var fileAttributeData = this.data;
 
-                return fileAttributeData != null && ( this.state == State.Initialized && ( fileAttributeData.fileAttributes & FileAttributes.Directory ) != FileAttributes.Directory );
+                return this.state == State.Initialized && ( fileAttributeData.fileAttributes & FileAttributes.Directory ) != FileAttributes.Directory;
             }
         }
 
@@ -44,15 +44,15 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         public override String Name { get; }
 
         [NotNull]
-        public System.IO.FileInfo SysFileInfo => new System.IO.FileInfo( this.FullPath );
-
-        [NotNull]
         public override System.IO.FileSystemInfo SystemInfo => this.SysFileInfo;
 
         [NotNull]
         public DirectoryInfo Directory => new DirectoryInfo( this.DirectoryName );
 
-        public FileInfo( [NotNull] String fileName ) : base(fileName.GetFullPath()) => this.Name = this.FullPath.GetFileName();
+        [NotNull]
+        public System.IO.FileInfo SysFileInfo => new System.IO.FileInfo( this.FullPath );
+
+        public FileInfo( [NotNull] String fileName ) : base( fileName.GetFullPath() ) => this.Name = this.FullPath.GetFileName();
 
         private Int64 GetFileLength() {
             if ( this.state == State.Uninitialized ) {
@@ -67,7 +67,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 Common.ThrowIOError( this.errorCode, this.FullPath );
             }
 
-            return ( ( Int64 )this.data.fileSizeHigh << 32 ) | ( this.data.fileSizeLow & 0xFFFFFFFFL );
+            return ( Int64 )this.data.fileSizeHigh << 32 | this.data.fileSizeLow & 0xFFFFFFFFL;
         }
 
         [NotNull]

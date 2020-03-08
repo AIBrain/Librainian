@@ -61,15 +61,15 @@ namespace Librainian.Exceptions {
         /// <param name="context">The <see cref="StreamingContext" /> instance that contains contextual information about the source or destination.</param>
         /// <remarks>This constructor overload is provided in order to adhere to custom exception design best practice guidelines.</remarks>
         protected NotInitializedException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) =>
-            $"{nameof( NotInitializedException )} serialization exception.".Log( breakinto: true );
+            $"{nameof( NotInitializedException )} serialization exception.".Log( true );
 
-        public NotInitializedException( [CanBeNull] String message ) : base( message ) => message.Log();
+        public NotInitializedException( [CanBeNull] String? message ) : base( message ) => message.Log();
 
-        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName ) : this( message ) => this.Parameter = paramName;
+        public NotInitializedException( [CanBeNull] String? message, [CanBeNull] String? paramName ) : this( message ) => this.Parameter = paramName;
 
-        public NotInitializedException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) => message.Log();
+        public NotInitializedException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) => message.Log();
 
-        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName, [CanBeNull] Exception inner ) : this( message, inner ) =>
+        public NotInitializedException( [CanBeNull] String? message, [CanBeNull] String? paramName, [CanBeNull] Exception inner ) : this( message, inner ) =>
             this.Parameter = paramName;
     }
 }

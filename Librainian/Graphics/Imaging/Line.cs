@@ -127,7 +127,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
             if ( pixels is null ) {
-                throw new ArgumentNullException( paramName: nameof( pixels ) );
+                throw new ArgumentNullException( nameof( pixels ) );
             }
 
             this.Pixels = pixels.ToArray();

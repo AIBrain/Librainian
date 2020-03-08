@@ -55,8 +55,8 @@ namespace Librainian.Extensions {
 
         [NotNull]
         public static Expression<Func<TTt, Boolean>> Or<TTt>( [NotNull] this Expression<Func<TTt, Single>> expr1, [NotNull] Expression<Func<TTt, Single>> expr2 ) =>
-            Expression.Lambda<Func<TTt, Boolean>>( body: Expression.GreaterThanOrEqual( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ),
-                parameters: expr1.Parameters );
+            Expression.Lambda<Func<TTt, Boolean>>( Expression.GreaterThanOrEqual( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ),
+                expr1.Parameters );
 
         [NotNull]
         public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;

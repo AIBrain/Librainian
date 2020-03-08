@@ -51,13 +51,13 @@ namespace Librainian.Measurement.Length {
     public struct PlanckLengths : IComparable<PlanckLengths> {
 
         /// <summary>One <see cref="PlanckLengths" />.</summary>
-        public static readonly PlanckLengths One = new PlanckLengths( planckLengths: 1 );
+        public static readonly PlanckLengths One = new PlanckLengths( 1 );
 
         /// <summary>One <see cref="PlanckLengths" />.</summary>
-        public static readonly PlanckLengths Two = new PlanckLengths( planckLengths: 2 );
+        public static readonly PlanckLengths Two = new PlanckLengths( 2 );
 
         /// <summary>Zero <see cref="PlanckLengths" />.</summary>
-        public static readonly PlanckLengths Zero = new PlanckLengths( planckLengths: 0 );
+        public static readonly PlanckLengths Zero = new PlanckLengths( 0 );
 
         [JsonProperty]
         public BigInteger Value { get; }

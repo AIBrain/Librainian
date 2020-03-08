@@ -74,7 +74,7 @@ namespace Librainian.Extensions {
         /// <param name="assemblies">     </param>
         /// <returns></returns>
         [NotNull]
-        public static Func<T, TResult> CreateEvalMethod<T, TResult>( [CanBeNull] String code, [CanBeNull] String[] usingStatements = null,
+        public static Func<T, TResult> CreateEvalMethod<T, TResult>( [CanBeNull] String? code, [CanBeNull] String[] usingStatements = null,
             [CanBeNull] String[] assemblies = null ) {
             var returnType = typeof( TResult );
             var inputType = typeof( T );

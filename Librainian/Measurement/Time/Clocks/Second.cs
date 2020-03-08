@@ -48,7 +48,7 @@ namespace Librainian.Measurement.Time.Clocks {
     /// <summary>A simple struct for a <see cref="Second" />.</summary>
     [JsonObject]
     [Immutable]
-    public sealed class Second : IClockPart {
+    public class Second : IClockPart {
 
         public const SByte MaxValue = 59;
 

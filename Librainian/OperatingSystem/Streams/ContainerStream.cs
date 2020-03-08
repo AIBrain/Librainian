@@ -50,6 +50,12 @@ namespace Librainian.OperatingSystem.Streams {
 
         protected Stream Stream { get; }
 
+        public override Int64 Position {
+            get => this.Stream.Position;
+
+            set => this.Stream.Position = value;
+        }
+
         public override Boolean CanRead => this.Stream.CanRead;
 
         public override Boolean CanSeek => this.Stream.CanSeek;
@@ -57,12 +63,6 @@ namespace Librainian.OperatingSystem.Streams {
         public override Boolean CanWrite => this.Stream.CanWrite;
 
         public override Int64 Length => this.Stream.Length;
-
-        public override Int64 Position {
-            get => this.Stream.Position;
-
-            set => this.Stream.Position = value;
-        }
 
         protected ContainerStream( [NotNull] Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
 

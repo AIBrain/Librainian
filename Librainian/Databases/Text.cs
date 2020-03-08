@@ -54,7 +54,7 @@ namespace Librainian.Databases {
 
         private String Path { get; }
 
-        public Text( [CanBeNull] String path, Boolean hasHeaders, Char delimiter ) {
+        public Text( [CanBeNull] String? path, Boolean hasHeaders, Char delimiter ) {
             this.Path = path;
             this.Delimiter = delimiter;
 
@@ -68,7 +68,7 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public String[] GetColumnsList( [CanBeNull] String worksheet ) {
+        public String[] GetColumnsList( [CanBeNull] String? worksheet ) {
             String[] columns = { };
 
             try {
@@ -109,7 +109,7 @@ namespace Librainian.Databases {
 
         [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [NotNull]
-        public DataTable GetWorksheet( [CanBeNull] String worksheet ) {
+        public DataTable GetWorksheet( [CanBeNull] String? worksheet ) {
             using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                 using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
                     var ws = new DataTable( worksheet );

@@ -61,7 +61,7 @@ namespace Librainian.Maths.Numbers {
         private UInt64 _votesYes;
 
         /// <summary>No vote for either.</summary>
-        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
+        public static readonly VotallyI Zero = new VotallyI( 0, 0 );
 
         public UInt64 No {
             get => Thread.VolatileRead( ref this._votesNo );
@@ -147,7 +147,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         [NotNull]
-        public VotallyI Clone() => new VotallyI( votesYes: this.Yes, votesNo: this.No );
+        public VotallyI Clone() => new VotallyI( this.Yes, this.No );
 
         public UInt64 HalfOfVotes() => this.Votes / 2;
 

@@ -48,8 +48,8 @@ namespace Librainian.Databases.MMF {
 
         protected SerializerException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
-        public SerializerException( [CanBeNull] String message ) : base( message ) { }
+        public SerializerException( [CanBeNull] String? message ) : base( message ) { }
 
-        public SerializerException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+        public SerializerException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

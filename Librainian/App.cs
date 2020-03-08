@@ -81,7 +81,7 @@ namespace Librainian {
                 Parser.Default?.ParseArguments<TOpts>( arguments ).WithParsed( runParsedOptions ).WithNotParsed( HandleErrors );
             }
             catch ( Exception exception ) {
-                exception.Log( breakinto: true );
+                exception.Log( true );
             }
 
             static void HandleErrors( IEnumerable<Error> errors ) {
@@ -111,8 +111,8 @@ namespace Librainian {
         }
 
         private static void RunInternalCommon() {
-            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( breakinto: true );
-            Application.ThreadException += ( sender, e ) => e?.Exception?.Log( breakinto: true );
+            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( true );
+            Application.ThreadException += ( sender, e ) => e?.Exception?.Log( true );
 
             ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
             ProfileOptimization.StartProfile( Application.ExecutablePath );
@@ -123,7 +123,7 @@ namespace Librainian {
             Application.EnableVisualStyles();
 
             try {
-                Application.SetCompatibleTextRenderingDefault( defaultValue: false );
+                Application.SetCompatibleTextRenderingDefault( false );
             }
             catch ( InvalidOperationException exception ) {
                 exception.Log();
@@ -187,7 +187,6 @@ namespace Librainian {
             form.SizeChanged += ( sender, args ) => form.SaveSize();
 
             Application.Run( form );
-
         }
     }
 }

@@ -52,7 +52,7 @@ namespace Librainian.Collections.Trees {
         public TreeNodeList( [NotNull] TreeNode<T> parent ) => this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
 
         [NotNull]
-        public TreeNode<T> Add( [CanBeNull] T value ) => this.Add( node: new TreeNode<T>( value ) );
+        public TreeNode<T> Add( [CanBeNull] T value ) => this.Add( new TreeNode<T>( value ) );
 
         [NotNull]
         public new TreeNode<T> Add( [NotNull] TreeNode<T> node ) {

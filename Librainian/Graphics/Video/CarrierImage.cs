@@ -47,13 +47,8 @@ namespace Librainian.Graphics.Video {
         //count of frames in the video stream, or 0
         public readonly Int32 AviCountFrames;
 
-        public Int64[] AviMessageBytesToHide;
-
         //width * height
         public readonly Int64 CountPixels;
-
-        //how many bytes will be hidden in this image - this field is set by CryptUtility.HideOrExtract()
-        public Int64 MessageBytesToHide;
 
         //file name to save the new image
         public readonly String ResultFileName;
@@ -65,13 +60,18 @@ namespace Librainian.Graphics.Video {
         //produce colorful (false) or grayscale noise (true) for this picture
         public readonly Boolean UseGrayscale;
 
+        public Int64[] AviMessageBytesToHide;
+
+        //how many bytes will be hidden in this image - this field is set by CryptUtility.HideOrExtract()
+        public Int64 MessageBytesToHide;
+
         public CarrierImage( [NotNull] String sourceFileName, [NotNull] String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
-            if ( String.IsNullOrWhiteSpace( value: sourceFileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( sourceFileName ) );
+            if ( String.IsNullOrWhiteSpace( sourceFileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sourceFileName ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: resultFileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( resultFileName ) );
+            if ( String.IsNullOrWhiteSpace( resultFileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( resultFileName ) );
             }
 
             this.SourceFileName = sourceFileName;

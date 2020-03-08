@@ -70,7 +70,7 @@ namespace Librainian.Logging {
         /// <param name="message"></param>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static String Break<T>( [CanBeNull] this T s, [CanBeNull] String message = null ) {
+        public static String Break<T>( [CanBeNull] this T s, [CanBeNull] String? message = null ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 message.Debug();
             }
@@ -81,7 +81,7 @@ namespace Librainian.Logging {
         }
 
         [DebuggerStepThrough]
-        public static void BreakIfFalse( this Boolean condition, [CanBeNull] String message = null ) {
+        public static void BreakIfFalse( this Boolean condition, [CanBeNull] String? message = null ) {
             if ( !condition ) {
                 Break( message );
             }
@@ -206,10 +206,10 @@ namespace Librainian.Logging {
         [NotNull]
         public static Exception Log( [CanBeNull] this Exception exception, Boolean breakinto = false ) {
             if ( exception is null ) {
-                $"Null {nameof( Exception )}".Log( breakinto: true );
+                $"Null {nameof( Exception )}".Log( true );
             }
 
-            exception.ToStringDemystified().Log( breakinto: breakinto );
+            exception.ToStringDemystified().Log( breakinto );
 
             return exception ?? new NullReferenceException( $"Null {nameof( Exception )}" );
         }
@@ -223,7 +223,7 @@ namespace Librainian.Logging {
                 }
             }
             else {
-                message.ToString().Log( breakinto: breakinto );
+                message.ToString().Log( breakinto );
             }
 
             return message;
@@ -300,14 +300,14 @@ namespace Librainian.Logging {
             }
 
             LogManager.Configuration?.AddTarget( target );
-            LogManager.Configuration?.AddRule( minLevel: minLogLevel, maxLevel: maxLogLevel, target: target, loggerNamePattern: "*" );
+            LogManager.Configuration?.AddRule( minLogLevel, maxLogLevel, target, "*" );
 
             return LogManager.Configuration?.AllTargets?.Contains( target ) == true;
         }
 
         [DebuggerStepThrough]
         [CanBeNull]
-        public static Target ToTarget( [CanBeNull] this RichTextBox rtb ) {
+        public static Target? ToTarget( [CanBeNull] this RichTextBox rtb ) {
             if ( rtb is null ) {
 
                 //throw new ArgumentNullException(nameof( rtb ),"The paramter 'rtb' was null." );
@@ -339,7 +339,7 @@ namespace Librainian.Logging {
                     WithHeader = false,
                     Delimiter = CsvColumnDelimiterMode.Tab,
                     Columns = {
-                        new CsvColumn( "Time", layout: "${longdate}" ), new CsvColumn( "Message", layout: "${message}" )
+                        new CsvColumn( "Time", "${longdate}" ), new CsvColumn( "Message", "${message}" )
                     }
                 },
                 ControlName = controlName,

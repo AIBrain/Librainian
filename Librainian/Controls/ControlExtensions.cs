@@ -93,8 +93,8 @@ namespace Librainian.Controls {
                 throw new ArgumentNullException( nameof( box ) );
             }
 
-            if ( String.IsNullOrEmpty( value: text ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( text ) );
+            if ( String.IsNullOrEmpty( text ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( text ) );
             }
 
             if ( args != null ) {
@@ -583,7 +583,7 @@ namespace Librainian.Controls {
             control.InvokeAction( control.Refresh );
         }
 
-        public static Boolean RemoveTags( [NotNull] this WebBrowser browser, [CanBeNull] String tagName, Int32 keepAtMost = 50 ) {
+        public static Boolean RemoveTags( [NotNull] this WebBrowser browser, [CanBeNull] String? tagName, Int32 keepAtMost = 50 ) {
             if ( browser is null ) {
                 throw new ArgumentNullException( nameof( browser ) );
             }
@@ -622,7 +622,7 @@ namespace Librainian.Controls {
 
             void Action() {
                 control.ResetCursor();
-                control.Invalidate( invalidateChildren: false );
+                control.Invalidate( false );
             }
 
             control.InvokeAction( Action );
@@ -634,7 +634,7 @@ namespace Librainian.Controls {
         /// <param name="value">  </param>
         /// <param name="maximum"></param>
         /// <see cref="Values" />
-        public static void Set( [NotNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum: minimum, value, maximum: maximum );
+        public static void Set( [NotNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum, value, maximum );
 
         /// <summary>Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.</summary>
         /// <param name="control"></param>
@@ -726,7 +726,7 @@ namespace Librainian.Controls {
         /// <param name="control"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Text( [CanBeNull] this Control control ) {
+        public static String? Text( [CanBeNull] this Control control ) {
             if ( control is null ) {
                 return default;
             }
@@ -737,7 +737,7 @@ namespace Librainian.Controls {
         /// <summary>Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.</summary>
         /// <param name="toolStripItem"></param>
         /// <param name="value">        </param>
-        public static void Text( [NotNull] this ToolStripItem toolStripItem, [CanBeNull] String value ) {
+        public static void Text( [NotNull] this ToolStripItem toolStripItem, [CanBeNull] String? value ) {
             if ( toolStripItem is null ) {
                 throw new ArgumentNullException( nameof( toolStripItem ) );
             }
@@ -758,7 +758,7 @@ namespace Librainian.Controls {
         /// <remarks></remarks>
         /// <param name="control"></param>
         /// <param name="value">  </param>
-        public static void Text( [CanBeNull] this Control control, [CanBeNull] String value ) =>
+        public static void Text( [CanBeNull] this Control control, [CanBeNull] String? value ) =>
             control?.InvokeAction( () => {
                 if ( !control.IsDisposed ) {
                     control.Text = value;

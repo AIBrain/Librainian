@@ -70,7 +70,7 @@ namespace Librainian.Maths {
         public const Double MinValue = 0D;
 
         /// <summary>~25 to 75% probability.</summary>
-        private static PairOfDoubles Undecided { get; } = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
+        private static PairOfDoubles Undecided { get; } = new PairOfDoubles( Combine( MinValue, HalfValue ), Combine( HalfValue, MaxValue ) );
 
         public static Fuzzy Empty { get; }
 
@@ -116,7 +116,7 @@ namespace Librainian.Maths {
         }
 
         [CanBeNull]
-        public static Fuzzy Parse( [CanBeNull] String value ) {
+        public static Fuzzy Parse( [CanBeNull] String? value ) {
             if ( String.IsNullOrWhiteSpace( value ) ) {
                 throw new ArgumentNullException( nameof( value ) );
             }
@@ -128,7 +128,7 @@ namespace Librainian.Maths {
             return default;
         }
 
-        public static Boolean TryParse( [CanBeNull] String value, [CanBeNull] out Fuzzy result ) {
+        public static Boolean TryParse( [CanBeNull] String? value, [CanBeNull] out Fuzzy result ) {
             if ( String.IsNullOrWhiteSpace( value ) ) {
                 throw new ArgumentNullException( nameof( value ) );
             }

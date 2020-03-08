@@ -54,7 +54,7 @@ namespace Librainian.Collections.Queues {
         [JsonProperty]
         [NotNull]
         private ConcurrentDictionary<Single, TValue> Dictionary { get; } =
-                    new ConcurrentDictionary<Single, TValue>( concurrencyLevel: Environment.ProcessorCount, capacity: 1 );
+                    new ConcurrentDictionary<Single, TValue>( Environment.ProcessorCount, 1 );
 
         /// <summary>Inject the specified priority.</summary>
         /// <param name="item">    </param>
@@ -75,7 +75,7 @@ namespace Librainian.Collections.Queues {
         //}
         [CanBeNull]
         public TValue PullNext() {
-            var highest = this.Dictionary.OrderByDescending(  pair => pair.Key ).FirstOrDefault();
+            var highest = this.Dictionary.OrderByDescending( pair => pair.Key ).FirstOrDefault();
 
             return highest.Value;
         }
@@ -91,8 +91,8 @@ namespace Librainian.Collections.Queues {
                 return;
             }
 
-            var max = this.Dictionary.Max( selector: pair => pair.Key );
-            var min = this.Dictionary.Min( selector: pair => pair.Key );
+            var max = this.Dictionary.Max( pair => pair.Key );
+            var min = this.Dictionary.Min( pair => pair.Key );
             var maxMinusMin = max - min;
 
             if ( Math.Abs( maxMinusMin ) < Single.Epsilon ) {
@@ -108,7 +108,7 @@ namespace Librainian.Collections.Queues {
                 }
 
                 this.Dictionary.TryRemove( key, out var value );
-                this.Add( item: value, priority: newPriority );
+                this.Add( value, newPriority );
             }
         }
 

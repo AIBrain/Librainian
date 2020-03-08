@@ -48,7 +48,6 @@ namespace Librainian.Measurement.Time {
 
         PlanckTimes ToPlanckTimes();
 
-        [NotNull]
         Seconds ToSeconds();
 
         [NotNull]

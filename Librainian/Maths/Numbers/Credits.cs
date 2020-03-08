@@ -61,7 +61,7 @@ namespace Librainian.Maths.Numbers {
         private UInt64 _lifetimeCredits;
 
         /// <summary>No credits.</summary>
-        public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
+        public static readonly Credits Zero = new Credits( 0, 0 );
 
         public UInt64 CurrentCredits {
             get => Thread.VolatileRead( ref this._currentCredits );

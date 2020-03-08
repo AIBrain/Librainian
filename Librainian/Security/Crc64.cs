@@ -61,7 +61,7 @@ namespace Librainian.Security {
         public override Int32 HashSize => 64;
 
         public CRC64( UInt64 polynomial, UInt64 seed = DefaultSeed ) {
-            this._table = InitializeTable( polynomial: polynomial );
+            this._table = InitializeTable( polynomial );
             this._seed = this._hash = seed;
         }
 
@@ -71,7 +71,7 @@ namespace Librainian.Security {
                 return Crc64Iso.Table;
             }
 
-            var createTable = CreateTable( polynomial: polynomial );
+            var createTable = CreateTable( polynomial );
 
             if ( polynomial == Crc64Iso.Iso3309Polynomial ) {
                 Crc64Iso.Table = createTable;
@@ -85,7 +85,7 @@ namespace Librainian.Security {
             var result = BitConverter.GetBytes( value );
 
             if ( BitConverter.IsLittleEndian ) {
-                Array.Reverse( array: result );
+                Array.Reverse( result );
             }
 
             return result;
@@ -96,7 +96,7 @@ namespace Librainian.Security {
 
             for ( var i = start; i < size; i++ ) {
                 unchecked {
-                    crc = ( crc >> 8 ) ^ table[ ( buffer[ index: i ] ^ crc ) & 0xff ];
+                    crc = ( crc >> 8 ) ^ table[ ( buffer[ i ] ^ crc ) & 0xff ];
                 }
             }
 
@@ -126,7 +126,7 @@ namespace Librainian.Security {
         }
 
         protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) =>
-            this._hash = CalculateHash( seed: this._hash, table: this._table, buffer: buffer, start: start, size: length );
+            this._hash = CalculateHash( this._hash, this._table, buffer, start, length );
 
         [NotNull]
         protected override Byte[] HashFinal() {

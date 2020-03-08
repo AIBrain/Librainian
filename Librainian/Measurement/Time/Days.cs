@@ -48,11 +48,9 @@ namespace Librainian.Measurement.Time {
     using Parsing;
     using Rationals;
 
-    // return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
-
     [JsonObject]
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    public class Days : IComparable<Days>, IQuantityOfTime, IEquatable<Days> {
+    public struct Days : IComparable<Days>, IQuantityOfTime, IEquatable<Days> {
 
         /// <summary>365</summary>
         public const UInt16 InOneCommonYear = 365;
@@ -86,37 +84,11 @@ namespace Librainian.Measurement.Time {
 
         public Days( BigInteger value ) => this.Value = value;
 
-        [CanBeNull]
-        public static Days Combine( [NotNull] Days left, [NotNull] Days right ) {
-            if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
+        public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 
-            if ( right == null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
-            }
+        public static Days Combine( Days left, Rational days ) => new Days( left.Value + days );
 
-            return Combine( left, right.Value );
-        }
-
-        
-        [NotNull]
-        public static Days Combine( [NotNull] Days left, Rational days ) {
-            if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            return new Days( left.Value + days );
-        }
-
-        [NotNull]
-        public static Days Combine( [NotNull] Days left, BigInteger days ) {
-            if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
-            }
-
-            return new Days( left.Value + days );
-        }
+        public static Days Combine( Days left, BigInteger days ) => new Days( left.Value + days );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -124,92 +96,44 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Days left, [CanBeNull] Days right ) {
-            if ( ReferenceEquals(left, right) ) {
-                return true;
-            }
-
-            if ( left is null || right is null) {
-                return false;
-            }
-
-            return left.Value == right.Value;
-        }
+        public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
 
         /// <summary>Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.</summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        [CanBeNull]
-        public static implicit operator Hours( [NotNull] Days days ) {
-            if ( days == null ) {
-                throw new ArgumentNullException( paramName: nameof( days ) );
-            }
-
-            return days.ToHours();
-        }
+        public static implicit operator Hours( Days days ) => days.ToHours();
 
         [NotNull]
-        public static implicit operator SpanOfTime( [NotNull] Days days ) {
-            if ( days == null ) {
-                throw new ArgumentNullException( paramName: nameof( days ) );
-            }
+        public static implicit operator SpanOfTime( Days days ) => new SpanOfTime( days );
 
-            return new SpanOfTime( days: days );
-        }
-
-        public static implicit operator TimeSpan( [NotNull] Days days ) {
-            if ( days == null ) {
-                throw new ArgumentNullException( paramName: nameof( days ) );
-            }
-
-            return TimeSpan.FromDays( ( Double ) days.Value );
-        }
+        public static implicit operator TimeSpan( Days days ) => TimeSpan.FromDays( ( Double )days.Value );
 
         /// <summary>Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.</summary>
         /// <param name="days"></param>
         /// <returns></returns>
-        [CanBeNull]
-        public static implicit operator Weeks( [NotNull] Days days ) {
-            if ( days == null ) {
-                throw new ArgumentNullException( paramName: nameof( days ) );
-            }
+        public static implicit operator Weeks( Days days ) => days.ToWeeks();
 
-            return days.ToWeeks();
-        }
+        public static Days operator -( Days days ) => new Days( days.Value * -1 );
 
-        [NotNull]
-        public static Days operator -( [NotNull] Days days ) {
-            if ( days == null ) {
-                throw new ArgumentNullException( paramName: nameof( days ) );
-            }
+        public static Days operator -( Days left, Days right ) => Combine( left, -right );
 
-            return new Days( days.Value * -1 );
-        }
+        public static Days operator -( Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
 
-        [CanBeNull]
-        public static Days operator -( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine(  left,  -right );
+        public static Boolean operator !=( Days left, Days right ) => !Equals( left, right );
 
-        [NotNull]
-        public static Days operator -( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )( -days ) );
+        public static Days operator +( Days left, Days right ) => Combine( left, right );
 
-        public static Boolean operator !=( [CanBeNull] Days left, [CanBeNull] Days right ) => !Equals( left, right );
+        public static Days operator +( Days left, Decimal days ) => Combine( left, ( Rational )days );
 
-        [CanBeNull]
-        public static Days operator +( [CanBeNull] Days left, [CanBeNull] Days right ) => Combine( left, right );
-
-        [NotNull]
-        public static Days operator +( [CanBeNull] Days left, Decimal days ) => Combine( left, ( Rational )days );
-
-        [NotNull]
-        public static Days operator +( [CanBeNull] Days left, BigInteger days ) => Combine( left, days );
+        public static Days operator +( Days left, BigInteger days ) => Combine( left, days );
 
         public static Boolean operator <( Days left, Days right ) => left.Value < right.Value;
 
-        public static Boolean operator <( [CanBeNull] Days left, [CanBeNull] Hours right ) => left < ( Days )right;
+        public static Boolean operator <( Days left, Hours right ) => left < ( Days )right;
 
-        public static Boolean operator ==( [CanBeNull] Days left, [CanBeNull] Days right ) => Equals( left, right );
+        public static Boolean operator ==( Days left, Days right ) => Equals( left, right );
 
-        public static Boolean operator >( [CanBeNull] Days left, [CanBeNull] Hours right ) => left > ( Days )right;
+        public static Boolean operator >( Days left, Hours right ) => left > ( Days )right;
 
         public static Boolean operator >( Days left, Days right ) => left.Value > right.Value;
 
@@ -250,21 +174,18 @@ namespace Librainian.Measurement.Time {
                 case Days other: return this.CompareTo( other );
                 default: throw new ArgumentException( $"Object must be of type {nameof( Days )}" );
             }
-
         }
 
         public Boolean Equals( Days other ) => Equals( this, other );
 
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Days );
+        public override Boolean Equals( Object obj ) => Equals( this, obj is Days days ? days : default );
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Hours ToHours() => new Hours( this.Value * Hours.InOneDay );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneDay * this.Value );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( ( Rational )TimeSpan.FromDays( ( Double )this.Value ).TotalSeconds );
 
         public override String ToString() {
@@ -281,7 +202,6 @@ namespace Librainian.Measurement.Time {
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-        [NotNull]
         public Weeks ToWeeks() => new Weeks( this.Value / InOneWeek );
     }
 }

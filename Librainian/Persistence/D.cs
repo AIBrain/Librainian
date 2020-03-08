@@ -74,37 +74,9 @@ namespace Librainian.Persistence {
 
         public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
-        public D( [NotNull] String key, [CanBeNull] String value ) {
+        public D( [NotNull] String key, [CanBeNull] String? value ) {
             this.K = key ?? throw new ArgumentNullException( nameof( key ) );
             this.V = value;
-        }
-
-        public override Int32 GetHashCode() => this.K.GetHashCode();
-
-        public override String ToString() {
-            var keypart = String.Empty;
-
-            if ( this.K.Length > 42 ) {
-                var left = Strings.Left( this.K, 20 );
-                var right = Strings.Right( this.K, 20 );
-
-                keypart = $"{left}..{right}";
-            }
-
-            if ( this.V is null ) {
-                return $"{keypart}=";
-            }
-
-            var valuepart = String.Empty;
-
-            if ( this.V.Length > 42 ) {
-                var left = Strings.Left( this.V, 20 );
-                var right = Strings.Right( this.V, 20 );
-
-                valuepart = $"{left}..{right}";
-            }
-
-            return $"{keypart}={valuepart}";
         }
 
         /// <summary>
@@ -142,7 +114,35 @@ namespace Librainian.Persistence {
 
         public override Boolean Equals( Object obj ) => Equals( this, obj as D );
 
+        public override Int32 GetHashCode() => this.K.GetHashCode();
+
         public Int32 GetHashCode( D d ) => d.K.GetHashCode();
+
+        public override String ToString() {
+            var keypart = String.Empty;
+
+            if ( this.K.Length > 42 ) {
+                var left = Strings.Left( this.K, 20 );
+                var right = Strings.Right( this.K, 20 );
+
+                keypart = $"{left}..{right}";
+            }
+
+            if ( this.V is null ) {
+                return $"{keypart}=";
+            }
+
+            var valuepart = String.Empty;
+
+            if ( this.V.Length > 42 ) {
+                var left = Strings.Left( this.V, 20 );
+                var right = Strings.Right( this.V, 20 );
+
+                valuepart = $"{left}..{right}";
+            }
+
+            return $"{keypart}={valuepart}";
+        }
 
         Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
     }

@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public class Attoseconds : IQuantityOfTime {
+    public struct Attoseconds : IQuantityOfTime {
 
         /// <summary>1000</summary>
         /// <see cref="Femtoseconds" />
@@ -136,27 +136,9 @@ namespace Librainian.Measurement.Time {
 
         public Attoseconds( BigInteger value ) => this.Value = value;
 
-        [NotNull]
-        public static Attoseconds Combine( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( left.Value + right.Value );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return new Attoseconds( left.Value + right.Value );
-        }
-
-        [NotNull]
-        public static Attoseconds Combine( [NotNull] Attoseconds left, Decimal attoseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return new Attoseconds( left.Value + ( Rational )attoseconds );
-        }
+        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( left.Value + ( Rational )attoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -164,111 +146,30 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Attoseconds left, [CanBeNull] Attoseconds right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
+        public static Boolean Equals( Attoseconds left, Attoseconds right ) => left.Value == right.Value;
 
-            if ( left is null || right is null ) {
-                return default;
-            }
-
-            return left.Value == right.Value;
-        }
+        public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
 
         [NotNull]
-        public static implicit operator Femtoseconds( [NotNull] Attoseconds attoseconds ) {
-            if ( attoseconds is null ) {
-                throw new ArgumentNullException( nameof( attoseconds ) );
-            }
+        public static implicit operator SpanOfTime( Attoseconds attoseconds ) => new SpanOfTime( attoseconds.ToPlanckTimes().Value );
 
-            return attoseconds.ToFemtoseconds();
-        }
+        public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
 
-        [NotNull]
-        public static implicit operator SpanOfTime( [NotNull] Attoseconds attoseconds ) {
-            if ( attoseconds is null ) {
-                throw new ArgumentNullException( nameof( attoseconds ) );
-            }
+        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left, -attoseconds );
 
-            return new SpanOfTime( planckTimes: attoseconds.ToPlanckTimes().Value );
-        }
+        public static Boolean operator !=( Attoseconds left, Attoseconds right ) => !Equals( left, right );
 
-        [CanBeNull]
-        public static implicit operator Zeptoseconds( [NotNull] Attoseconds attoseconds ) {
-            if ( attoseconds is null ) {
-                throw new ArgumentNullException( nameof( attoseconds ) );
-            }
+        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) => Combine( left, right );
 
-            return attoseconds.ToZeptoseconds();
-        }
+        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) => Combine( left, attoseconds );
 
-        [NotNull]
-        public static Attoseconds operator -( [NotNull] Attoseconds left, Decimal attoseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator <( Attoseconds left, Attoseconds right ) => left.Value < right.Value;
 
-            return Combine( left, -attoseconds );
-        }
+        public static Boolean operator ==( Attoseconds left, Attoseconds right ) => Equals( left, right );
 
-        public static Boolean operator !=( [CanBeNull] Attoseconds left, [CanBeNull] Attoseconds right ) => !Equals( left, right );
+        public static Boolean operator >( Attoseconds left, Attoseconds right ) => left.Value > right.Value;
 
-        [NotNull]
-        public static Attoseconds operator +( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return Combine( left, right );
-        }
-
-        [NotNull]
-        public static Attoseconds operator +( [NotNull] Attoseconds left, Decimal attoseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return Combine( left, attoseconds );
-        }
-
-        public static Boolean operator <( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value < right.Value;
-        }
-
-        public static Boolean operator ==( [CanBeNull] Attoseconds left, [CanBeNull] Attoseconds right ) => Equals( left, right );
-
-        public static Boolean operator >( [NotNull] Attoseconds left, [NotNull] Attoseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value > right.Value;
-        }
-
-        public Int32 CompareTo( [NotNull] Attoseconds other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
+        public Int32 CompareTo( Attoseconds other ) => this.Value.CompareTo( other.Value );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -313,13 +214,11 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>Convert to a larger unit.</summary>
         /// <returns></returns>
-        [NotNull]
         public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneAttosecond * this.Value );
 
-        [NotNull]
-        public Seconds ToSeconds() => throw new NotImplementedException();
+        public Seconds ToSeconds() => this.ToZeptoseconds().ToSeconds();
 
         public override String ToString() {
             if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
@@ -337,7 +236,6 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>Convert to a smaller unit.</summary>
         /// <returns></returns>
-        [NotNull]
         public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
     }
 }

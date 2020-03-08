@@ -55,7 +55,7 @@ namespace Librainian.Threading {
         private Task<IDisposable> _releaser { get; }
 
         [NotNull]
-        private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( initialCount: 1 );
+        private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( 1 );
 
         public AsyncLock() => this._releaser = Task.FromResult( new Releaser( this ) as IDisposable );
 

@@ -106,7 +106,7 @@ namespace Librainian.Controls {
             SetConsoleIcon( icon.Handle );
         }
 
-        public static void SetText( [CanBeNull] String text ) {
+        public static void SetText( [CanBeNull] String? text ) {
             var handle = GetConsoleWindow();
 
             SetWindowText( handle, text );

@@ -123,7 +123,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Address( [NotNull] Byte[] data, Byte version = Pubkey ) {
             if ( data == null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
             RIPEMD160 ripemd160 = new RIPEMD160Managed();
@@ -155,7 +155,7 @@ namespace Librainian.Measurement.Currency.BTC {
             this._type = version;
         }
 
-        public Address( [CanBeNull] String address ) => this._address = address;
+        public Address( [CanBeNull] String? address ) => this._address = address;
 
         private void CalcBase58() {
             if ( this._pubKeyHash != null ) {

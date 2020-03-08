@@ -98,7 +98,7 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] MailMessage message, [CanBeNull] Object userToken ) {
             if ( message == null ) {
-                throw new ArgumentNullException( paramName: nameof( message ) );
+                throw new ArgumentNullException( nameof( message ) );
             }
 
             return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
@@ -113,14 +113,14 @@ namespace Librainian.Internet {
         /// <param name="userToken">A user-defined object stored in the resulting Task.</param>
         /// <returns>A Task that represents the asynchronous send.</returns>
         [CanBeNull]
-        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] String from, [NotNull] String recipients, [CanBeNull] String subject,
-            [CanBeNull] String body, [CanBeNull] Object userToken ) {
-            if ( String.IsNullOrWhiteSpace( value: from ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( from ) );
+        public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] String from, [NotNull] String recipients, [CanBeNull] String? subject,
+            [CanBeNull] String? body, [CanBeNull] Object userToken ) {
+            if ( String.IsNullOrWhiteSpace( from ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( from ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: recipients ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( recipients ) );
+            if ( String.IsNullOrWhiteSpace( recipients ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( recipients ) );
             }
 
             return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );

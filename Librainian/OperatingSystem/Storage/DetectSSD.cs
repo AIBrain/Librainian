@@ -45,7 +45,7 @@ namespace Librainian.OperatingSystem.Storage {
     public static class DetectSSD {
 
         private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
-            ( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
+            deviceType << 16 | access << 14 | function << 2 | method;
 
         /// <summary>Returns true if the disk/drive has seek penalty.</summary>
         /// <param name="diskNumber"></param>
@@ -56,10 +56,10 @@ namespace Librainian.OperatingSystem.Storage {
             var hDrive = NativeMethods.CreateFileW( sDrive, 0, // No access to drive
                 NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
-            if ( hDrive?.IsInvalid != false ) {
+            if ( hDrive.IsInvalid ) {
 
                 //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-                return null;
+                return default;
             }
 
             var ioctlStorageQueryProperty =
@@ -113,10 +113,10 @@ namespace Librainian.OperatingSystem.Storage {
             var hDrive = NativeMethods.CreateFileW( sDrive, NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE, // Administrative privilege is required
                 NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
-            if ( hDrive?.IsInvalid != false ) {
+            if ( hDrive.IsInvalid ) {
 
                 //Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-                return null;
+                return default;
             }
 
             var ioctlAtaPassThrough = CTL_CODE( NativeMethods.IOCTL_SCSI_BASE, 0x040b, NativeMethods.METHOD_BUFFERED,

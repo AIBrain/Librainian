@@ -65,7 +65,7 @@ namespace Librainian.Internet {
             this.DownloadedStrings = new BufferBlock<Tuple<Uri, String>>();
         }
 
-        private static void StartDownloadingString( [CanBeNull] String address ) {
+        private static void StartDownloadingString( [CanBeNull] String? address ) {
             if ( Uri.TryCreate( address, UriKind.Absolute, out var uri ) ) {
                 var webclient = WebClients.Value;
                 var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );

@@ -42,13 +42,13 @@ namespace Librainian.Converters {
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct UInt64ToDouble {
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public readonly Double valueDouble;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public readonly UInt64 valueUInt64;
     }
 }

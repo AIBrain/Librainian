@@ -11,12 +11,6 @@
     using JetBrains.Annotations;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPath.Path;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using FileInfo = Pri.LongPath.FileInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using Directory = Pri.LongPath.Directory;
-    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public static class Common {
@@ -185,13 +179,13 @@
 
             name = name.ThrowIfBlank();
 
-            if ( !Enum.IsDefined( enumType: typeof( ResourceType ), type ) ) {
-                throw new InvalidEnumArgumentException( argumentName: nameof( type ), invalidValue: ( Int32 )type, enumClass: typeof( ResourceType ) );
+            if ( !Enum.IsDefined( typeof( ResourceType ), type ) ) {
+                throw new InvalidEnumArgumentException( nameof( type ), ( Int32 )type, typeof( ResourceType ) );
             }
 
-            if ( !Enum.IsDefined( enumType: typeof( SecurityInfos ), securityInformation ) ) {
-                throw new InvalidEnumArgumentException( argumentName: nameof( securityInformation ), invalidValue: ( Int32 )securityInformation,
-                    enumClass: typeof( SecurityInfos ) );
+            if ( !Enum.IsDefined( typeof( SecurityInfos ), securityInformation ) ) {
+                throw new InvalidEnumArgumentException( nameof( securityInformation ), ( Int32 )securityInformation,
+                    typeof( SecurityInfos ) );
             }
 
             Int32 errorCode;
@@ -300,7 +294,7 @@
         [Pure]
         public static String ThrowIfBlank( this String path ) {
             if ( String.IsNullOrWhiteSpace( path = path?.Trim() ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             return path;
@@ -339,8 +333,8 @@
         }
 
         public static void ThrowIOError( Int32 errorCode, [NotNull] String maybeFullPath ) {
-            if ( String.IsNullOrWhiteSpace( value: maybeFullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( maybeFullPath ) );
+            if ( String.IsNullOrWhiteSpace( maybeFullPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( maybeFullPath ) );
             }
 
             // This doesn't have to be perfect, but is a perf optimization.

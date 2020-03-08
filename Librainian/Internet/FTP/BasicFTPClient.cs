@@ -61,7 +61,7 @@ namespace Librainian.Internet.FTP {
             this.Host = "";
         }
 
-        public BasicFtpClient( [CanBeNull] String theUser, [CanBeNull] String thePassword, [CanBeNull] String theHost ) {
+        public BasicFtpClient( [CanBeNull] String? theUser, [CanBeNull] String? thePassword, [CanBeNull] String? theHost ) {
             this.Username = theUser;
             this.Password = thePassword;
             this.Host = theHost;
@@ -69,15 +69,15 @@ namespace Librainian.Internet.FTP {
         }
 
         [NotNull]
-        private Uri BuildServerUri( [CanBeNull] String path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
+        private Uri BuildServerUri( [CanBeNull] String? path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
 
         /// <summary>This method downloads the given file name from the FTP Server and returns a byte array containing its contents. Throws a WebException on encountering a network error.</summary>
         [CanBeNull]
-        public Byte[] DownloadData( [CanBeNull] String path ) {
+        public Byte[]? DownloadData( [CanBeNull] String? path ) {
 
             // Get the object used to communicate with the Server.
             var request = new WebClient {
-                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
+                Credentials = new NetworkCredential( this.Username, this.Password )
             };
 
             // Logon to the Server using username + password
@@ -85,7 +85,7 @@ namespace Librainian.Internet.FTP {
         }
 
         /// <summary>This method downloads the FTP file specified by "ftppath" and saves it to "destfile". Throws a WebException on encountering a network error.</summary>
-        public void DownloadFile( [CanBeNull] String ftppath, [NotNull] String destfile ) {
+        public void DownloadFile( [CanBeNull] String? ftppath, [NotNull] String destfile ) {
 
             // Download the data
             var data = this.DownloadData( ftppath );
@@ -105,11 +105,11 @@ namespace Librainian.Internet.FTP {
         /// <param name="data">A byte[] containing the data to upload</param>
         /// <returns>The Server response in a byte[]</returns>
         [CanBeNull]
-        public Byte[] UploadData( [CanBeNull] String path, [NotNull] Byte[] data ) {
+        public Byte[] UploadData( [CanBeNull] String? path, [NotNull] Byte[] data ) {
 
             // Get the object used to communicate with the Server.
             var request = new WebClient {
-                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
+                Credentials = new NetworkCredential( this.Username, this.Password )
             };
 
             // Logon to the Server using username + password
@@ -121,7 +121,7 @@ namespace Librainian.Internet.FTP {
         /// <param name="srcfile">File on the local harddisk to upload</param>
         /// <returns>The Server response in a byte[]</returns>
         [CanBeNull]
-        public Byte[] UploadFile( [CanBeNull] String ftppath, [NotNull] String srcfile ) {
+        public Byte[] UploadFile( [CanBeNull] String? ftppath, [NotNull] String srcfile ) {
 
             // Read the data from disk
             var fs = new FileStream( srcfile, FileMode.Open );

@@ -76,7 +76,7 @@ namespace Librainian.Threading {
                 // This is the Finalize method If this object is in the generation we want (or
                 // higher), notify the delegates that a GC just completed
                 if ( GC.GetGeneration( this ) >= this._mGeneration ) {
-                    var temp = Interlocked.CompareExchange( location1: ref _sGcDone, value: null, comparand: null );
+                    var temp = Interlocked.CompareExchange( ref _sGcDone, null, null );
                     temp?.Invoke( this._mGeneration );
                 }
 

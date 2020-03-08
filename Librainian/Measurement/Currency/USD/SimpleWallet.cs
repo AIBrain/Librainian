@@ -80,8 +80,7 @@ namespace Librainian.Measurement.Currency.USD {
 
                 this._balance = value;
                 this._access.ExitWriteLock();
-                var onAnyUpdate = this.OnAnyUpdate;
-                onAnyUpdate?.Invoke( value );
+                this.OnAnyUpdate?.Invoke( value );
             }
         }
 
@@ -89,17 +88,23 @@ namespace Librainian.Measurement.Currency.USD {
         [NotNull]
         public String Formatted => this.ToString();
 
+        [CanBeNull]
         public Label LabelToFlashOnChanges { get; set; }
 
-        public Action<Decimal> OnAfterDeposit { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnAfterDeposit { get; set; }
 
-        public Action<Decimal> OnAfterWithdraw { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnAfterWithdraw { get; set; }
 
-        public Action<Decimal> OnAnyUpdate { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnAnyUpdate { get; set; }
 
-        public Action<Decimal> OnBeforeDeposit { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnBeforeDeposit { get; set; }
 
-        public Action<Decimal> OnBeforeWithdraw { get; set; }
+        [CanBeNull]
+        public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
         /// <summary>
         ///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
@@ -114,7 +119,7 @@ namespace Librainian.Measurement.Currency.USD {
             using ( this._access ) { }
         }
 
-        public override String ToString() => this.Balance.ToString( "C" );
+        public override String ToString() => $"{this.Balance:C}";
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>
@@ -129,14 +134,13 @@ namespace Librainian.Measurement.Currency.USD {
             }
 
             try {
-                var onBeforeDeposit = this.OnBeforeDeposit;
-                onBeforeDeposit?.Invoke( amount );
+                this.OnBeforeDeposit?.Invoke( amount );
                 this.Balance += amount;
 
                 return true;
             }
             finally {
-                this.OnAfterDeposit( amount );
+                this.OnAfterDeposit?.Invoke( amount );
             }
         }
 

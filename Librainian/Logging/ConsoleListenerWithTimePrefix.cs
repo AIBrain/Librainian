@@ -48,7 +48,7 @@ namespace Librainian.Logging {
         /// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
         public override Boolean IsThreadSafe => true;
 
-        public ConsoleListenerWithTimePrefix() : base( useErrorStream: true ) { }
+        public ConsoleListenerWithTimePrefix() : base( true ) { }
 
         //TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
         /// <summary>Emits an error message and a detailed error message to the listener you create when you implement the <see cref="TraceListener" /> class.</summary>

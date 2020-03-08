@@ -96,7 +96,7 @@ namespace Librainian.Measurement.Time {
 
         public UniversalDateTime( BigInteger planckTimesSinceBigBang ) {
             this.Value = planckTimesSinceBigBang;
-            var span = new SpanOfTime( planckTimes: this.Value );
+            var span = new SpanOfTime( this.Value );
 
             //TODO
             this.Date = new Date( span );
@@ -126,7 +126,7 @@ namespace Librainian.Measurement.Time {
         public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
             var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
             var plancksSinceThen = sinceThen.CalcTotalPlanckTimes();
-            var span = new SpanOfTime( planckTimes: PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
+            var span = new SpanOfTime( PlancksUpToMinDateTime.Value + plancksSinceThen.Value );
 
             return span;
         }

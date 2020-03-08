@@ -210,21 +210,21 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return default;
             }
 
-            using ( var stream = new FileStream( path: document.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
-                bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
+            using ( var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+                MathConstants.Sizes.OneGigaByte, FileOptions.SequentialScan ) ) {
 
                 if ( !stream.CanRead ) {
-                    throw new NotSupportedException( message: $"Cannot read from file stream on {document.FullPath}" );
+                    throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
                 }
 
                 var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
 
-                using var buffered = new BufferedStream( stream: stream );
+                using var buffered = new BufferedStream( stream );
 
                 var bytesRead = 0;
 
                 do {
-                    var readTask = buffered.ReadAsync( buffer, offset: 0, count: buffer.Length );
+                    var readTask = buffered.ReadAsync( buffer, 0, buffer.Length );
 
                     if ( readTask != null ) {
                         bytesRead = await readTask.ConfigureAwait( false );

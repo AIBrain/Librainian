@@ -59,14 +59,12 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
+    using DirectoryInfo = Librainian.OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
+    using FileSystemInfo = Librainian.OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = Librainian.OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileInfo = Librainian.OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-    using FileSystemInfo = Librainian.OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = Librainian.OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = Librainian.OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     public interface IFolder : IEquatable<IFolder> {
@@ -86,7 +84,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="randomize">    </param>
         /// <returns></returns>
         [NotNull]
-        IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String searchPattern = "*", Boolean randomize = false );
+        IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String? searchPattern = "*", Boolean randomize = false );
 
         /// <summary>Return a list of all <see cref="IFolder" /> matching the <paramref name="searchPattern" />.</summary>
         /// <param name="token"></param>
@@ -94,7 +92,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="randomize">Return the folders in random order.</param>
         /// <returns></returns>
         [NotNull]
-        Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String searchPattern = "*", Boolean randomize = true );
+        Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String? searchPattern = "*", Boolean randomize = true );
 
         /// <summary>Returns a copy of the folder instance.</summary>
         /// <returns></returns>
@@ -143,7 +141,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         Disk GetDrive();
 
         [NotNull]
-        IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
+        IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
 
         Int32 GetHashCode();
 
@@ -183,7 +181,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>String of invalid characters in a path or filename.</summary>
         [NotNull]
-        private static readonly String InvalidPathCharacters = new String( ( Char[] ) Path.GetInvalidPathChars() );
+        private static readonly String InvalidPathCharacters = new String( ( Char[] )Path.GetInvalidPathChars() );
 
         [NotNull]
         public static readonly Regex RegexForInvalidPathCharacters = new Regex( $"[{Regex.Escape( InvalidPathCharacters )}]", RegexOptions.Compiled );
@@ -225,14 +223,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         public Folder( String fullPath ) {
-            if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fullPath ) );
+            if ( String.IsNullOrWhiteSpace( fullPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
             }
 
             fullPath = CleanPath( fullPath ); //replace any invalid path chars with a separator
 
-            if ( String.IsNullOrWhiteSpace( value: fullPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fullPath ) );
+            if ( String.IsNullOrWhiteSpace( fullPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
             }
 
             if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out _ ) ) {
@@ -259,7 +257,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String applicationName, [NotNull] String subFolder ) : this(
+        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String? applicationName, [NotNull] String subFolder ) : this(
             Path.Combine( Environment.GetFolderPath( specialFolder ), applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
 
         /// <summary>
@@ -274,7 +272,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [DebuggerStepThrough]
-        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String companyName, [CanBeNull] String applicationName, [NotNull] params String[] subFolders ) :
+        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String? companyName, [CanBeNull] String? applicationName, [NotNull] params String[] subFolders ) :
             this( Path.Combine( Environment.GetFolderPath( specialFolder ),
                 companyName ?? Application.CompanyName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.CompanyName}." ),
                 applicationName ?? Application.ProductName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.ProductName}." ),
@@ -318,7 +316,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [DebuggerStepThrough]
         [NotNull]
-        public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String replacement = null ) {
+        public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String? replacement = null ) {
             if ( fullpath is null ) {
                 throw new ArgumentNullException( nameof( fullpath ) );
             }
@@ -394,7 +392,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullPath}\"" );
         }
 
-        public static Boolean TryParse( [CanBeNull] String path, [CanBeNull] out IFolder folder ) {
+        public static Boolean TryParse( [CanBeNull] String? path, [CanBeNull] out IFolder folder ) {
             folder = null;
 
             try {
@@ -436,7 +434,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="randomize">    </param>
         /// <returns></returns>
         [ItemNotNull]
-        public IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String searchPattern = "*", Boolean randomize = false ) {
+        public IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String? searchPattern = "*", Boolean randomize = false ) {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
@@ -460,7 +458,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         [ItemNotNull]
-        public Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String searchPattern = "*", Boolean randomize = true ) =>
+        public Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String? searchPattern = "*", Boolean randomize = true ) =>
             Task.Run( () => {
                 var folders = new List<Folder>();
 
@@ -582,7 +580,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [ItemNotNull]
         [NotNull]
-        public IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories ) {
+        public IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern, SearchOption searchOption = SearchOption.AllDirectories ) {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
@@ -599,7 +597,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public Boolean HavePermission( FileIOPermissionAccess access ) {
             try {
-                var bob = new FileIOPermission( access: access, this.FullPath );
+                var bob = new FileIOPermission( access, this.FullPath );
                 bob.Demand();
 
                 return true;
@@ -619,7 +617,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public Boolean IsEmpty() => !this.GetFolders( "*.*" ).Any() && !this.GetDocuments( "*.*" ).Any();
 
         public void OpenWithExplorer() {
-            using var _ = Windows.OpenWithExplorer( value: this.FullPath );
+            using var _ = Windows.OpenWithExplorer( this.FullPath );
         }
 
         public void Refresh() => this.Info.Refresh();

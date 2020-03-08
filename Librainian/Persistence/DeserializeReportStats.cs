@@ -50,11 +50,14 @@ namespace Librainian.Persistence {
 
     public sealed class DeserializeReportStats : ABetterClassDispose {
 
-        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( trackAllValues: true );
+        [NotNull]
+        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( true );
 
-        private Action<DeserializeReportStats> Handler { get; }
+        [CanBeNull]
+        private Action<DeserializeReportStats>? Handler { get; }
 
-        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( trackAllValues: true );
+        [NotNull]
+        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( true );
 
         public Boolean Enabled { get; set; }
 
@@ -62,11 +65,11 @@ namespace Librainian.Persistence {
 
         public Int64 Total { get; set; }
 
-        public DeserializeReportStats( [CanBeNull] Action<DeserializeReportStats> handler, TimeSpan? timing = null ) {
-            this.Gains.Values.Clear();
+        public DeserializeReportStats( [CanBeNull] Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) {
+            this.Gains.Values?.Clear();
             this.Gains.Value = 0;
 
-            this.Losses.Values.Clear();
+            this.Losses.Values?.Clear();
             this.Losses.Value = 0;
 
             this.Total = 0;
@@ -82,14 +85,12 @@ namespace Librainian.Persistence {
 
             var handler = this.Handler;
 
-            if ( handler is null ) {
-                return;
-            }
+            if ( !( handler is null ) ) {
+                handler( this );
 
-            handler( this );
-
-            if ( this.Enabled ) {
-                await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
+                if ( this.Enabled ) {
+                    await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
+                }
             }
         }
 
@@ -103,9 +104,9 @@ namespace Librainian.Persistence {
             this.Losses.Dispose();
         }
 
-        public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
+        public Int64 GetGains() => this.Gains.Values?.Sum( arg => arg ) ?? default;
 
-        public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
+        public Int64 GetLoss() => this.Losses.Values?.Sum( arg => arg ) ?? default;
 
         [NotNull]
         public Task StartReporting() {

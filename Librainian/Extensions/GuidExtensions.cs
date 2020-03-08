@@ -54,9 +54,9 @@ namespace Librainian.Extensions {
 
         public static readonly Regex InGuidFormat =
             new Regex(
-                pattern: "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
+                "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
                          "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$",
-                options: RegexOptions.Compiled );
+                RegexOptions.Compiled );
 
         /// <summary>
         ///     <see cref="Converters.ConverterExtensions.ToPath" />
@@ -110,7 +110,7 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( nameof( s ) );
             }
 
-            var match = InGuidFormat.Match( input: s );
+            var match = InGuidFormat.Match( s );
 
             return match.Success;
         }
@@ -131,7 +131,7 @@ namespace Librainian.Extensions {
                 }
             }
 
-            return new Guid( b: destByte );
+            return new Guid( destByte );
         }
 
         /// <summary>Untested.</summary>
@@ -140,11 +140,11 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Guid Next( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger( bytes: bytes );
+            var uBigInteger = new UBigInteger( bytes );
             uBigInteger += amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize( array: ref array, newSize: 16 );
-            var next = new Guid( b: array );
+            Array.Resize( ref array, 16 );
+            var next = new Guid( array );
 
             return next;
         }
@@ -155,11 +155,11 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Guid Previous( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger( bytes: bytes );
+            var uBigInteger = new UBigInteger( bytes );
             uBigInteger -= amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize( array: ref array, newSize: 16 );
-            var next = new Guid( b: array );
+            Array.Resize( ref array, 16 );
+            var next = new Guid( array );
 
             return next;
         }

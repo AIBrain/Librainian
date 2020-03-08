@@ -67,7 +67,7 @@ namespace Librainian.Measurement.Currency.BTC {
             }
 
             foreach ( var pair in coins ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>() ) {
-                coinWallet.Deposit( coin: pair.Key, quantity: pair.Value );
+                coinWallet.Deposit( pair.Key, pair.Value );
             }
         }
 

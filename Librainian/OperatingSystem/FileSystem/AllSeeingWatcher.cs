@@ -49,12 +49,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Utilities;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPath.Path;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using FileInfo = Pri.LongPath.FileInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using Directory = Pri.LongPath.Directory;
-    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     /// <summary></summary>
@@ -65,16 +59,16 @@ namespace Librainian.OperatingSystem.FileSystem {
         private ConcurrentList<FileSystemWatcher> FileWatchers { get; } = new ConcurrentList<FileSystemWatcher>();
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Changed { get; } =
-            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( Environment.ProcessorCount, 512 );
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Created { get; } =
-            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( Environment.ProcessorCount, 512 );
 
         public ConcurrentDictionary<DateTime, FileSystemEventArgs> Deleted { get; } =
-            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, FileSystemEventArgs>( Environment.ProcessorCount, 512 );
 
         public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } =
-            new ConcurrentDictionary<DateTime, RenamedEventArgs>( concurrencyLevel: Environment.ProcessorCount, capacity: 512 );
+            new ConcurrentDictionary<DateTime, RenamedEventArgs>( Environment.ProcessorCount, 512 );
 
         private void OnChanged( [CanBeNull] Object sender, [CanBeNull] FileSystemEventArgs args ) => this.Changed[ DateTime.UtcNow ] = args;
 

@@ -337,7 +337,7 @@ namespace Librainian.Logging {
         /// <param name="message"> </param>
         /// <param name="category"></param>
         [DebuggerStepThrough]
-        public static void Write( this String message, [CanBeNull] String category = null ) => ConsoleListener.Write( message, category );
+        public static void Write( this String message, [CanBeNull] String? category = null ) => ConsoleListener.Write( message, category );
 
         /// <summary>
         ///     <para>Write the <paramref name="message" /> out to the <see cref="ConsoleListener" />.</para>
@@ -345,7 +345,7 @@ namespace Librainian.Logging {
         /// <param name="message"> </param>
         /// <param name="category"></param>
         [DebuggerStepThrough]
-        public static void WriteLine( this String message, [CanBeNull] String category = null ) => ConsoleListener.WriteLine( message, category );
+        public static void WriteLine( this String message, [CanBeNull] String? category = null ) => ConsoleListener.WriteLine( message, category );
     }
 }
 */

@@ -247,9 +247,9 @@ namespace Librainian.Threading {
 
             foreach ( var task in inputs ) {
                 task.ContinueWith( completed => {
-                    var nextBox = boxes[ index: Interlocked.Increment( location: ref currentIndex ) ];
-                    completed.PropagateResult( completionSource: nextBox );
-                }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
+                    var nextBox = boxes[ Interlocked.Increment( ref currentIndex ) ];
+                    completed.PropagateResult( nextBox );
+                }, TaskContinuationOptions.ExecuteSynchronously );
             }
 
             return boxes.Select( box => box.Task );
@@ -286,13 +286,13 @@ namespace Librainian.Threading {
                     throw new ArgumentNullException( nameof( completed ) );
                 }
 
-                var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
-                bucket.TrySetResult( result: completed );
+                var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
+                bucket.TrySetResult( completed );
             }
 
             foreach ( var inputTask in inputTasks ) {
-                inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None,
-                    continuationOptions: TaskContinuationOptions.ExecuteSynchronously, scheduler: TaskScheduler.Default );
+                inputTask.ContinueWith( Continuation, CancellationToken.None,
+                    TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
             }
 
             return results;
@@ -350,13 +350,13 @@ namespace Librainian.Threading {
                 case TaskStatus.Faulted:
 
                     if ( completedTask.Exception != null ) {
-                        completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
+                        completionSource.TrySetException( completedTask.Exception.InnerExceptions );
                     }
 
                     break;
 
                 case TaskStatus.RanToCompletion:
-                    completionSource.TrySetResult( result: completedTask.Result );
+                    completionSource.TrySetResult( completedTask.Result );
 
                     break;
 
@@ -401,7 +401,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( job ) );
             }
 
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
+            await Task.Delay( delay ).ConfigureAwait( false );
             await Task.Run( job ).ConfigureAwait( false );
         }
 
@@ -418,7 +418,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( job ) );
             }
 
-            await Task.Delay( delay: delay, cancellationToken: token ).ConfigureAwait( false );
+            await Task.Delay( delay, token ).ConfigureAwait( false );
             await new Task( job, token, TaskCreationOptions.PreferFairness | TaskCreationOptions.RunContinuationsAsynchronously ).ConfigureAwait( false );
         }
 
@@ -434,7 +434,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( job ) );
             }
 
-            await Task.Delay( delay: delay ).ConfigureAwait( false );
+            await Task.Delay( delay ).ConfigureAwait( false );
             await Task.Run( job ).ConfigureAwait( false );
         }
 
@@ -471,7 +471,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( job ) );
             }
 
-            await Task.Delay( delay: delay, cancellationToken: token ).ConfigureAwait( false );
+            await Task.Delay( delay, token ).ConfigureAwait( false );
             await Task.Run( job, token ).ConfigureAwait( false );
         }
 
@@ -492,7 +492,7 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( job ) );
             }
 
-            await Task.Delay( delay: delay.ToTimeSpan(), cancellationToken: token ).ConfigureAwait( false );
+            await Task.Delay( delay.ToTimeSpan(), token ).ConfigureAwait( false );
             await Task.Run( job, token ).ConfigureAwait( false );
         }
 

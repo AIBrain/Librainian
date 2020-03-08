@@ -69,12 +69,13 @@ namespace Librainian.Persistence {
     using OperatingSystem.Streams;
     using Parsing;
     using Threading;
-
-    // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
     using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
     using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
     using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
+    // ReSharper disable RedundantUsingDirective
+    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class PersistenceExtensions {
@@ -138,8 +139,8 @@ namespace Librainian.Persistence {
         //}
         [NotNull]
         public static readonly ThreadLocal<NetDataContractSerializer> Serializers = new ThreadLocal<NetDataContractSerializer>(
-            () => new NetDataContractSerializer( context: StreamingContexts.Value, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false,
-                assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null ), true );
+            () => new NetDataContractSerializer( StreamingContexts.Value, Int32.MaxValue, false,
+                FormatterAssemblyStyle.Simple, null ), true );
 
         public static readonly ThreadLocal<StreamingContext> StreamingContexts =
             new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
@@ -181,7 +182,7 @@ namespace Librainian.Persistence {
         /// <exception cref="FormatException"></exception>
         /// <exception cref="System.Xml.XmlException"></exception>
         [CanBeNull]
-        public static TType Deserialize<TType>( [CanBeNull] this String storedAsString ) {
+        public static TType Deserialize<TType>( [CanBeNull] this String? storedAsString ) {
             try {
                 return storedAsString.FromJSON<TType>();
             }
@@ -202,7 +203,7 @@ namespace Librainian.Persistence {
 
                 cs.ProgressChanged += feedback;
 
-                using ( var bs = new BufferedStream( stream: cs, bufferSize: 16384 ) ) {
+                using ( var bs = new BufferedStream( cs, 16384 ) ) {
                     var formatter = new NetDataContractSerializer();
 
                     return formatter.Deserialize( bs ) as TSource;
@@ -211,7 +212,7 @@ namespace Librainian.Persistence {
         }
 
         public static Boolean DeserializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary, [CanBeNull] Folder folder,
-            [CanBeNull] String calledWhat, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
+            [CanBeNull] String? calledWhat, [CanBeNull] String? extension = ".xml" ) where TKey : IComparable<TKey> {
             try {
 
                 //Report.Enter();
@@ -300,7 +301,7 @@ namespace Librainian.Persistence {
         public static Boolean EnableIsolatedStorageCompression() {
             using ( var isf = IsolatedStorageFile.GetMachineStoreForDomain() ) {
                 var myType = isf.GetType();
-                var myFields = myType.GetFields( bindingAttr: BindingFlags.Instance | BindingFlags.NonPublic );
+                var myFields = myType.GetFields( BindingFlags.Instance | BindingFlags.NonPublic );
 
                 var myField = myFields.FirstOrDefault( f => f.Name.Like( "m_RootDir" ) );
 
@@ -343,17 +344,17 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean FileCanBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
             if ( isf is null ) {
-                throw new ArgumentNullException( paramName: nameof( isf ) );
+                throw new ArgumentNullException( nameof( isf ) );
             }
 
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             try {
-                using ( var stream = isf.OpenFile( document.FileName, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read ) ) {
+                using ( var stream = isf.OpenFile( document.FileName, FileMode.Open, FileAccess.Read, FileShare.Read ) ) {
                     try {
-                        return stream.Seek( offset: 0, origin: SeekOrigin.End ) > 0;
+                        return stream.Seek( 0, SeekOrigin.End ) > 0;
                     }
                     catch ( ArgumentException exception ) {
                         exception.Log();
@@ -384,11 +385,11 @@ namespace Librainian.Persistence {
 
         public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
             if ( isf is null ) {
-                throw new ArgumentNullException( paramName: nameof( isf ) );
+                throw new ArgumentNullException( nameof( isf ) );
             }
 
             if ( document is null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return !isf.FileCanBeRead( document );
@@ -408,7 +409,7 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [CanBeNull]
         [Obsolete( "Use something else. I don't care anymore." )]
-        public static T Load<T>( [CanBeNull] String fileName ) where T : class, new() {
+        public static T Load<T>( [CanBeNull] String? fileName ) where T : class, new() {
             try {
                 if ( String.IsNullOrEmpty( fileName ) ) {
                     return new T();
@@ -467,19 +468,19 @@ namespace Librainian.Persistence {
 
                             if ( isf.FileCanBeRead( document ) ) {
                                 try {
-                                    var isfs = new IsolatedStorageFileStream( document.FullPath, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                                    var isfs = new IsolatedStorageFileStream( document.FullPath, FileMode.Open, FileAccess.Read, isf );
                                     var ext = document.Extension();
-                                    var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", ignoreCase: true, culture: null );
+                                    var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", true, null );
 
                                     TSource result;
 
                                     if ( useCompression ) {
-                                        using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                            result = Deserialize<TSource>( stream: decompress, feedback: feedback );
+                                        using ( var decompress = new GZipStream( isfs, CompressionMode.Decompress, true ) ) {
+                                            result = Deserialize<TSource>( decompress, feedback );
                                         }
                                     }
                                     else {
-                                        result = Deserialize<TSource>( stream: isfs, feedback: feedback );
+                                        result = Deserialize<TSource>( isfs, feedback );
                                     }
 
                                     onLoad?.Invoke( result );
@@ -540,16 +541,16 @@ namespace Librainian.Persistence {
 
                         if ( isf.FileCanBeRead( document ) ) {
                             try {
-                                var isfs = new IsolatedStorageFileStream( document.FullPath, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                                var isfs = new IsolatedStorageFileStream( document.FullPath, FileMode.Open, FileAccess.Read, isf );
                                 var ext = document.Extension();
-                                var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", ignoreCase: true, culture: null );
+                                var useCompression = !String.IsNullOrWhiteSpace( ext ) && ext.EndsWith( "Z", true, null );
 
                                 if ( !useCompression ) {
-                                    return Deserialize<TSource>( stream: isfs, feedback: feedback );
+                                    return Deserialize<TSource>( isfs, feedback );
                                 }
 
-                                using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                    return Deserialize<TSource>( stream: decompress, feedback: feedback );
+                                using ( var decompress = new GZipStream( isfs, CompressionMode.Decompress, true ) ) {
+                                    return Deserialize<TSource>( decompress, feedback );
                                 }
                             }
                             catch ( InvalidOperationException exception ) {
@@ -580,7 +581,7 @@ namespace Librainian.Persistence {
         /// <param name="fileName" />
         /// <returns></returns>
         [Obsolete( "Use JSON serializers" )]
-        public static Boolean LoadValue<T>( out T obj, [CanBeNull] String fileName ) where T : struct {
+        public static Boolean LoadValue<T>( out T obj, [CanBeNull] String? fileName ) where T : struct {
             obj = default;
 
             try {
@@ -630,21 +631,21 @@ namespace Librainian.Persistence {
                     }
 
                     try {
-                        var isfs = new IsolatedStorageFileStream( fileName, mode: FileMode.Open, access: FileAccess.Read, isf: isf );
+                        var isfs = new IsolatedStorageFileStream( fileName, FileMode.Open, FileAccess.Read, isf );
 
                         //var serializer = new DataContractSerializer( typeof ( T ) );
                         var serializer = new NetDataContractSerializer();
 
                         var ext = Path.GetExtension( fileName );
-                        var useCompression = ext.EndsWith( "Z", ignoreCase: true, culture: null );
+                        var useCompression = ext.EndsWith( "Z", true, null );
 
                         if ( useCompression ) {
-                            using ( var decompress = new GZipStream( stream: isfs, mode: CompressionMode.Decompress, leaveOpen: true ) ) {
-                                obj = ( T )serializer.ReadObject( stream: decompress );
+                            using ( var decompress = new GZipStream( isfs, CompressionMode.Decompress, true ) ) {
+                                obj = ( T )serializer.ReadObject( decompress );
                             }
                         }
                         else {
-                            obj = ( T )serializer.ReadObject( stream: isfs );
+                            obj = ( T )serializer.ReadObject( isfs );
                         }
 
                         return !Equals( obj, default );
@@ -695,7 +696,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 
-            return collection.Saver( fileName: fileName );
+            return collection.Saver( fileName );
         }
 
         /// <summary>
@@ -715,7 +716,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( fileName ) );
             }
 
-            return collection.Saver( fileName: fileName );
+            return collection.Saver( fileName );
         }
 
         //[Obsolete( "Use JSON methods" )]
@@ -767,14 +768,14 @@ namespace Librainian.Persistence {
 
                             var context = new StreamingContext( StreamingContextStates.All );
 
-                            var serializer = new NetDataContractSerializer( context: context, maxItemsInObjectGraph: Int32.MaxValue, ignoreExtensionDataObject: false,
-                                assemblyFormat: FormatterAssemblyStyle.Simple, surrogateSelector: null /*surrogateSelector*/ );
+                            var serializer = new NetDataContractSerializer( context, Int32.MaxValue, false,
+                                FormatterAssemblyStyle.Simple, null /*surrogateSelector*/ );
 
                             var extension = Path.GetExtension( fileName );
-                            var useCompression = !String.IsNullOrWhiteSpace( extension ) && extension.EndsWith( "Z", ignoreCase: true, culture: null );
+                            var useCompression = !String.IsNullOrWhiteSpace( extension ) && extension.EndsWith( "Z", true, null );
 
                             if ( useCompression ) {
-                                using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
+                                using ( var compress = new GZipStream( isfs, CompressionMode.Compress, true ) ) {
                                     serializer.Serialize( compress, objectToSerialize );
                                 }
                             }
@@ -869,10 +870,10 @@ namespace Librainian.Persistence {
                             var serializer = new NetDataContractSerializer();
 
                             var ext = Path.GetExtension( fileName );
-                            var useCompression = ext.EndsWith( "Z", ignoreCase: true, culture: null );
+                            var useCompression = ext.EndsWith( "Z", true, null );
 
                             if ( useCompression ) {
-                                using ( var compress = new GZipStream( isfs, CompressionMode.Compress, leaveOpen: true ) ) {
+                                using ( var compress = new GZipStream( isfs, CompressionMode.Compress, true ) ) {
                                     serializer.WriteObject( compress, obj );
                                 }
                             }
@@ -965,7 +966,7 @@ namespace Librainian.Persistence {
         /// <param name="extension"> </param>
         /// <returns></returns>
         public static Boolean SerializeDictionary<TKey, TValue>( [CanBeNull] this ConcurrentDictionary<TKey, TValue> dictionary, [CanBeNull] Folder folder,
-            [CanBeNull] String calledWhat, [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String extension = ".xml" ) where TKey : IComparable<TKey> {
+            [CanBeNull] String? calledWhat, [CanBeNull] IProgress<Single> progress = null, [CanBeNull] String? extension = ".xml" ) where TKey : IComparable<TKey> {
             if ( null == dictionary ) {
                 return default;
             }
@@ -1056,9 +1057,9 @@ namespace Librainian.Persistence {
         /// <param name="self"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Byte[] Serializer<T>( [NotNull] this T self ) {
+        public static Byte[]? Serializer<T>( [NotNull] this T self ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException( nameof( self ) );
             }
 
             try {
@@ -1119,12 +1120,12 @@ namespace Librainian.Persistence {
         /// <param name="value"></param>
         /// <returns></returns>
         public static Boolean Settings( [NotNull] String key, [NotNull] String value ) {
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: value ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( value ) );
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( value ) );
             }
 
             return Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
@@ -1135,14 +1136,14 @@ namespace Librainian.Persistence {
         /// <param name="key">          </param>
         /// <param name="value">        </param>
         /// <returns></returns>
-        public static Boolean Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key, [CanBeNull] String value ) {
-            if ( !Enum.IsDefined( enumType: typeof( Environment.SpecialFolder ), value: specialFolder ) ) {
-                throw new InvalidEnumArgumentException( argumentName: nameof( specialFolder ), invalidValue: ( Int32 )specialFolder,
-                    enumClass: typeof( Environment.SpecialFolder ) );
+        public static Boolean Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key, [CanBeNull] String? value ) {
+            if ( !Enum.IsDefined( typeof( Environment.SpecialFolder ), specialFolder ) ) {
+                throw new InvalidEnumArgumentException( nameof( specialFolder ), ( Int32 )specialFolder,
+                    typeof( Environment.SpecialFolder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -1172,7 +1173,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Settings( [NotNull] String key ) {
+        public static String? Settings( [NotNull] String key ) {
             if ( key is null ) {
                 throw new ArgumentNullException( nameof( key ) );
             }
@@ -1185,7 +1186,7 @@ namespace Librainian.Persistence {
         /// <param name="key">          </param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key ) {
+        public static String? Settings( this Environment.SpecialFolder specialFolder, [NotNull] String key ) {
             if ( key is null ) {
                 throw new ArgumentNullException( nameof( key ) );
             }
@@ -1208,7 +1209,7 @@ namespace Librainian.Persistence {
         /// <param name="formatting"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
+        public static String? ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
 
         /*
 
@@ -1291,14 +1292,16 @@ namespace Librainian.Persistence {
             return true;
         }
 
-        private class MyContractResolver : DefaultContractResolver {
+        internal class MyContractResolver : DefaultContractResolver {
 
             [NotNull]
             protected override IList<JsonProperty> CreateProperties( [CanBeNull] Type type, MemberSerialization memberSerialization ) {
                 var list = base.CreateProperties( type, memberSerialization );
 
                 foreach ( var prop in list ) {
-                    prop.Ignored = false; // Don't ignore any property
+                    if ( prop != null ) {
+                        prop.Ignored = false; // Don't ignore any property
+                    }
                 }
 
                 return list;

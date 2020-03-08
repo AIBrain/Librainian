@@ -41,9 +41,11 @@ namespace Librainian.Extensions {
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using JetBrains.Annotations;
 
+    [SuppressMessage( "ReSharper", "PossibleMultipleEnumeration" )]
     public static class Combiner {
 
         [ItemCanBeNull]
@@ -127,6 +129,7 @@ namespace Librainian.Extensions {
                 item
             } );
 
+        [ItemCanBeNull]
         public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> groupAs, [NotNull] IEnumerable<IEnumerable<T>> groupBs ) {
             var found = false;
 
@@ -136,6 +139,7 @@ namespace Librainian.Extensions {
                 found = true;
 
                 foreach ( var groupB in bs ) {
+
                     yield return groupA.Append( groupB );
                 }
             }
@@ -160,6 +164,7 @@ namespace Librainian.Extensions {
             }
 
             if ( !found ) {
+
                 yield return a;
             }
         }
@@ -224,10 +229,6 @@ namespace Librainian.Extensions {
 
                 for ( var j = 0; j < count; j++ ) {
                     var source = powerSet[ j ];
-
-                    if ( source is null ) {
-                        continue;
-                    }
 
                     var sourceLength = source.Length;
 

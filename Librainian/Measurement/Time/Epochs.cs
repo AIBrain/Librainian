@@ -48,9 +48,9 @@ namespace Librainian.Measurement.Time {
         public static readonly WhenRange Before1PlanckTime = new WhenRange( UniversalDateTime.TheBeginning, UniversalDateTime.One );
 
         /// <summary>1927</summary>
-        public static readonly DateTime BigBangModelFormulated = new DateTime( year: 1927, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc );
+        public static readonly DateTime BigBangModelFormulated = new DateTime( 1927, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 
         /// <summary>January 1st, 1970, zero seconds.</summary>
-        public static readonly DateTime Unix = new DateTime( year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc );
+        public static readonly DateTime Unix = new DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
     }
 }

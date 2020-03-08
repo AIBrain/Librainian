@@ -65,9 +65,9 @@ namespace Librainian.Graphics.DDD {
         /// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
         public static readonly UInt64 Maximum = ( UInt64 )Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
-        public static readonly CoordinateU64 MaxValue = new CoordinateU64( x: UInt64.MaxValue, y: UInt64.MaxValue, z: UInt64.MaxValue );
+        public static readonly CoordinateU64 MaxValue = new CoordinateU64( UInt64.MaxValue, UInt64.MaxValue, UInt64.MaxValue );
 
-        public static readonly CoordinateU64 MinValue = new CoordinateU64( x: Minimum, y: Minimum, z: Minimum );
+        public static readonly CoordinateU64 MinValue = new CoordinateU64( Minimum, Minimum, Minimum );
 
         /// <summary>Maximum - Minimum</summary>
         public static readonly UInt64 Range = Maximum - Minimum;
@@ -89,9 +89,9 @@ namespace Librainian.Graphics.DDD {
         ///// </summary>
         //public Coordinate() : this( x: Randem.NextFloat(), y: Randem.NextFloat(), z: Randem.NextFloat() ) { }
 
-        public CoordinateU64( UInt64Range x ) : this( x: x.Min.Next( x.Max ), y: Minimum.Next( Maximum ), z: Minimum.Next( Maximum ) ) { }
+        public CoordinateU64( UInt64Range x ) : this( x.Min.Next( x.Max ), Minimum.Next( Maximum ), Minimum.Next( Maximum ) ) { }
 
-        public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Min.Next( x.Max ), y: y.Min.Next( y.Max ), z: z.Min.Next( z.Max ) ) { }
+        public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Min.Next( x.Max ), y.Min.Next( y.Max ), z.Min.Next( z.Max ) ) { }
 
         /// <summary></summary>
         /// <param name="x"></param>
@@ -119,7 +119,7 @@ namespace Librainian.Graphics.DDD {
         /// <returns></returns>
         public static Boolean Equals( CoordinateU64 left, CoordinateU64 right ) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
 
-        public static implicit operator Point( CoordinateU64 coordinate ) => new Point( x: ( Int32 )coordinate.X, y: ( Int32 )coordinate.Y );
+        public static implicit operator Point( CoordinateU64 coordinate ) => new Point( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
 
         public static implicit operator PointF( CoordinateU64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
 
@@ -135,9 +135,9 @@ namespace Librainian.Graphics.DDD {
 
         public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-        public static Boolean operator !=( CoordinateU64 left, CoordinateU64 right ) => !Equals( left: left, right: right );
+        public static Boolean operator !=( CoordinateU64 left, CoordinateU64 right ) => !Equals( left, right );
 
-        public static Boolean operator ==( CoordinateU64 left, CoordinateU64 right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( CoordinateU64 left, CoordinateU64 right ) => Equals( left, right );
 
         /// <summary>Compares the current <see cref="CoordinateU64" /> with another <see cref="CoordinateU64" />.</summary>
         /// <returns>

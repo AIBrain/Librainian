@@ -57,7 +57,7 @@ namespace Librainian.Collections.Sets {
         /// <summary>Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}" />.</summary>
         [JsonProperty]
         [NotNull]
-        private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( concurrencyLevel: Environment.ProcessorCount, capacity: 7 );
+        private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( Environment.ProcessorCount, 7 );
 
         /// <summary>Gets a value indicating whether the <see cref="ICollection" /> is read-only.</summary>
         /// <returns>true if the <see cref="ICollection" /> is read-only; otherwise, false.</returns>
@@ -71,9 +71,9 @@ namespace Librainian.Collections.Sets {
 
         public ConcurrentSet() { }
 
-        public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( other: items );
+        public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( items );
 
-        public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( other: items );
+        public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( items );
 
         /// <summary>Adds an element to the current set and returns a value to indicate if the element was successfully added.</summary>
         /// <returns>true if the element is added to the set; false if the element is already in the set.</returns>
@@ -91,7 +91,7 @@ namespace Librainian.Collections.Sets {
         //         return true;
         //     }
         //}
-        public Boolean Contains( T item ) => !(item is null) && this.Dictionary.ContainsKey( item );
+        public Boolean Contains( T item ) => !( item is null ) && this.Dictionary.ContainsKey( item );
 
         /// <summary>Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular <see cref="Array" /> index.</summary>
         /// <param name="array">
@@ -106,7 +106,7 @@ namespace Librainian.Collections.Sets {
         /// <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.-or-Type T cannot be cast automatically to the type of the destination
         /// <paramref name="array" />.
         /// </exception>
-        public void CopyTo( T[] array, Int32 arrayIndex ) => this.Dictionary.Keys.CopyTo( array: array, arrayIndex: arrayIndex );
+        public void CopyTo( T[] array, Int32 arrayIndex ) => this.Dictionary.Keys.CopyTo( array, arrayIndex );
 
         /// <summary>Removes all elements in the specified collection from the current set.</summary>
         /// <param name="other">The collection of items to remove from the set.</param>
@@ -133,7 +133,7 @@ namespace Librainian.Collections.Sets {
         public Boolean IsProperSubsetOf( IEnumerable<T> other ) {
             var others = other as IList<T> ?? other.ToArray();
 
-            return this.Count != others.Count && this.IsSubsetOf( other: others );
+            return this.Count != others.Count && this.IsSubsetOf( others );
         }
 
         /// <summary>Determines whether the current set is a correct superset of a specified collection.</summary>
@@ -143,7 +143,7 @@ namespace Librainian.Collections.Sets {
         public Boolean IsProperSupersetOf( IEnumerable<T> other ) {
             var list = other as IList<T> ?? other.ToArray();
 
-            return this.Count != list.Count && this.IsSupersetOf( other: list );
+            return this.Count != list.Count && this.IsSupersetOf( list );
         }
 
         /// <summary>Determines whether a set is a subset of a specified collection.</summary>
@@ -175,7 +175,7 @@ namespace Librainian.Collections.Sets {
         /// </returns>
         /// <param name="item">The object to remove from the <see cref="ICollection" />.</param>
         /// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
-        public Boolean Remove( T item ) => !(item is null) && this.TryRemove( item );
+        public Boolean Remove( T item ) => !( item is null ) && this.TryRemove( item );
 
         /// <summary>Determines whether the current set and the specified collection contain the same elements.</summary>
         /// <returns>true if the current set is equal to <paramref name="other" />; otherwise, false.</returns>
@@ -229,7 +229,7 @@ namespace Librainian.Collections.Sets {
         /// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
         /// <exception cref="ArgumentException"></exception>
         void ICollection<T>.Add( T item ) {
-            if ( !(item is null) && !this.Add( item ) ) {
+            if ( !( item is null ) && !this.Add( item ) ) {
                 throw new ArgumentException( "Item already exists in set." );
             }
         }

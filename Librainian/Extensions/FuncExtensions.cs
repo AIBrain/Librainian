@@ -54,15 +54,15 @@ namespace Librainian.Extensions {
         public static TResult ApplyMemoized<TSource, TResult, TParam>( [NotNull] this TSource source, [NotNull] Func<TSource, TParam, TResult> selector,
             [NotNull] TParam param ) {
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException( nameof( source ) );
             }
 
             if ( selector == null ) {
-                throw new ArgumentNullException( paramName: nameof( selector ) );
+                throw new ArgumentNullException( nameof( selector ) );
             }
 
             if ( param is null ) {
-                throw new ArgumentNullException( paramName: nameof( param ) );
+                throw new ArgumentNullException( nameof( param ) );
             }
 
             return selector.AsWeakMemoized( source )( param );
@@ -71,11 +71,11 @@ namespace Librainian.Extensions {
         [NotNull]
         public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( [NotNull] this Func<TSource, TParam, TResult> selector, [NotNull] TSource source ) {
             if ( selector == null ) {
-                throw new ArgumentNullException( paramName: nameof( selector ) );
+                throw new ArgumentNullException( nameof( selector ) );
             }
 
             if ( source is null ) {
-                throw new ArgumentNullException( paramName: nameof( source ) );
+                throw new ArgumentNullException( nameof( source ) );
             }
 
             return param => {

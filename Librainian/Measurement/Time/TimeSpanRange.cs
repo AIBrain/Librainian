@@ -80,19 +80,29 @@ namespace Librainian.Measurement.Time {
         }
 
         [NotNull]
-        public IEnumerable<Days> AllDays() => this.Min.TotalDays.To( this.Max.TotalDays, 1 ).Select( second => Days.One );
+        public IEnumerable<Days> AllDays() {
+            return this.Min.TotalDays.To( this.Max.TotalDays, 1 ).Select( second => Days.One );
+        }
 
         [NotNull]
-        public IEnumerable<Hours> AllHours() => this.Min.TotalHours.To( this.Max.TotalHours, 1 ).Select( second => Hours.One );
+        public IEnumerable<Hours> AllHours() {
+            return this.Min.TotalHours.To( this.Max.TotalHours, 1 ).Select( second => Hours.One );
+        }
 
         [NotNull]
-        public IEnumerable<Milliseconds> AllMilliseconds() => this.Min.TotalMilliseconds.To( this.Max.TotalMilliseconds, 1 ).Select( millsecond => Milliseconds.One );
+        public IEnumerable<Milliseconds> AllMilliseconds() {
+            return this.Min.TotalMilliseconds.To( this.Max.TotalMilliseconds, 1 ).Select( millsecond => Milliseconds.One );
+        }
 
         [NotNull]
-        public IEnumerable<Minutes> AllMinutes() => this.Min.TotalMinutes.To( this.Max.TotalMinutes, 1 ).Select( minutes => Minutes.One );
+        public IEnumerable<Minutes> AllMinutes() {
+            return this.Min.TotalMinutes.To( this.Max.TotalMinutes, 1 ).Select( minutes => Minutes.One );
+        }
 
         [NotNull]
-        public IEnumerable<Seconds> AllSeconds() => this.Min.TotalSeconds.To( this.Max.TotalSeconds, 1 ).Select( second => Seconds.One );
+        public IEnumerable<Seconds> AllSeconds() {
+            return this.Min.TotalSeconds.To( this.Max.TotalSeconds, 1 ).Select( second => Seconds.One );
+        }
 
         /// <summary>Check if the specified range is inside this range</summary>
         /// <param name="range">Range to check</param>

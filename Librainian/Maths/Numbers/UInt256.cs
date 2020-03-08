@@ -244,14 +244,14 @@ namespace Librainian.Maths.Numbers {
 
         public static UInt256 operator >>( UInt256 value, Int32 shift ) => new UInt256( value.ToBigInteger() >> shift );
 
-        public static UInt256 Parse( [CanBeNull] String value ) => new UInt256( BigInteger.Parse( "0" + value ).ToByteArray() );
+        public static UInt256 Parse( [CanBeNull] String? value ) => new UInt256( BigInteger.Parse( "0" + value ).ToByteArray() );
 
-        public static UInt256 Parse( [CanBeNull] String value, [CanBeNull] IFormatProvider provider ) =>
+        public static UInt256 Parse( [CanBeNull] String? value, [CanBeNull] IFormatProvider provider ) =>
             new UInt256( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
 
-        public static UInt256 Parse( [CanBeNull] String value, NumberStyles style ) => new UInt256( BigInteger.Parse( "0" + value, style ).ToByteArray() );
+        public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style ) => new UInt256( BigInteger.Parse( "0" + value, style ).ToByteArray() );
 
-        public static UInt256 Parse( [CanBeNull] String value, NumberStyles style, [CanBeNull] IFormatProvider provider ) =>
+        public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style, [CanBeNull] IFormatProvider provider ) =>
             new UInt256( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
 
         public static UInt256 Pow( UInt256 value, Int32 exponent ) => new UInt256( BigInteger.Pow( value.ToBigInteger(), exponent ) );

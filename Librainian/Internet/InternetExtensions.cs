@@ -145,7 +145,7 @@ namespace Librainian.Internet {
         [ItemCanBeNull]
         public static async Task<String> GetWebPageAsync( [NotNull] this Uri url ) {
             if ( url is null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
             try {
@@ -160,9 +160,7 @@ namespace Librainian.Internet {
                 if ( dataStream != null ) {
                     using var reader = new StreamReader( dataStream );
 
-                    var responseFromServer = await reader.ReadToEndAsync().ConfigureAwait( false );
-
-                    return responseFromServer;
+                    return await reader.ReadToEndAsync().ConfigureAwait( false );
                 }
             }
             catch {
@@ -190,11 +188,11 @@ namespace Librainian.Internet {
 
         public static IEnumerable<UriLinkItem> ParseLinks( [NotNull] Uri baseUri, [NotNull] String webpage ) {
             if ( baseUri == null ) {
-                throw new ArgumentNullException( paramName: nameof( baseUri ) );
+                throw new ArgumentNullException( nameof( baseUri ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: webpage ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( webpage ) );
+            if ( String.IsNullOrWhiteSpace( webpage ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( webpage ) );
             }
 
             foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
@@ -204,7 +202,7 @@ namespace Librainian.Internet {
 
                 var i = new UriLinkItem {
                     Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
-                    Href = new Uri( baseUri: baseUri, relativeUri: m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
+                    Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
                 };
 
                 yield return i;

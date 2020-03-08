@@ -52,7 +52,7 @@ namespace Librainian.Databases {
 
         private String Path { get; }
 
-        public Excel( [CanBeNull] String path, Boolean hasHeaders, Boolean hasMixedData ) {
+        public Excel( [CanBeNull] String? path, Boolean hasHeaders, Boolean hasMixedData ) {
             this.Path = path;
 
             var strBuilder = new OleDbConnectionStringBuilder {
@@ -65,7 +65,7 @@ namespace Librainian.Databases {
         }
 
         [NotNull]
-        public String[] GetColumnsList( [CanBeNull] String worksheet ) {
+        public String[] GetColumnsList( [CanBeNull] String? worksheet ) {
             var columns = Array.Empty<String>();
 
             try {
@@ -103,7 +103,6 @@ namespace Librainian.Databases {
                 adaptor.Fill( workplace );
 
                 return workplace;
-
             }
             catch ( OleDbException exception ) {
                 exception.Log();
@@ -113,7 +112,7 @@ namespace Librainian.Databases {
         }
 
         [CanBeNull]
-        public DataTable GetWorksheet( [CanBeNull] String worksheet ) {
+        public DataTable GetWorksheet( [CanBeNull] String? worksheet ) {
             try {
                 using var connection = new OleDbConnection( this.ConnectionString );
 
@@ -127,7 +126,6 @@ namespace Librainian.Databases {
                 adaptor.Fill( ws );
 
                 return ws;
-
             }
             catch ( OleDbException exception ) {
                 exception.Log();

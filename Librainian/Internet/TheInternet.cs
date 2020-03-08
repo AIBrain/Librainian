@@ -124,8 +124,8 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( nameof( locationClues ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: filename ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( filename ) );
+            if ( String.IsNullOrWhiteSpace( filename ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filename ) );
             }
 
             foreach ( var locationClue in locationClues ) {

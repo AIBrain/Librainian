@@ -52,8 +52,8 @@ namespace Librainian.Linguistics {
         public String FullPath { get; }
 
         public Person( [NotNull] String fullName ) {
-            if ( String.IsNullOrWhiteSpace( value: fullName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullName ) );
+            if ( String.IsNullOrWhiteSpace( fullName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullName ) );
             }
 
             this.FullPath = fullName;

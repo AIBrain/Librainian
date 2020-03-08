@@ -127,7 +127,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public override String Format( [NotNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( format == null ) {
-                throw new ArgumentNullException( paramName: nameof( format ) );
+                throw new ArgumentNullException( nameof( format ) );
             }
 
             Int64 bytes;

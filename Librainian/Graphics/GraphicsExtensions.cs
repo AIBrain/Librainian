@@ -116,7 +116,7 @@ namespace Librainian.Graphics {
         [NotNull]
         public static Task<Erg> TryConvertToERG( [NotNull] this Document document, CancellationToken token ) {
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return Task.Run( () => {
@@ -132,11 +132,11 @@ namespace Librainian.Graphics {
         [NotNull]
         public static Task<Boolean> TrySave( [NotNull] this Erg erg, [NotNull] Document document, CancellationToken token ) {
             if ( erg == null ) {
-                throw new ArgumentNullException( paramName: nameof( erg ) );
+                throw new ArgumentNullException( nameof( erg ) );
             }
 
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return Task.Run( () => {
@@ -151,11 +151,11 @@ namespace Librainian.Graphics {
         [NotNull]
         public static Task<Boolean> TrySave( [NotNull] this Efv efv, [NotNull] Document document, CancellationToken token ) {
             if ( efv == null ) {
-                throw new ArgumentNullException( paramName: nameof( efv ) );
+                throw new ArgumentNullException( nameof( efv ) );
             }
 
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             return Task.Run( () => {

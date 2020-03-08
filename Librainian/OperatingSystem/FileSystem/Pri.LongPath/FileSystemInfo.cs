@@ -14,12 +14,10 @@
 
         protected Int32 errorCode;
 
-        [NotNull]
-        public String FullPath;
-
         protected State state;
 
-        protected FileSystemInfo( [NotNull] String fullPath ) => this.FullPath = fullPath.ThrowIfBlank();
+        [NotNull]
+        public String FullPath;
 
         // Summary:
         //     Gets or sets the attributes for the current file or directory.
@@ -105,7 +103,7 @@
                     Common.ThrowIOError( this.errorCode, this.FullPath );
                 }
 
-                var fileTime = ( ( Int64 )this.data.ftCreationTime.dwHighDateTime << 32 ) | ( this.data.ftCreationTime.dwLowDateTime & 0xffffffff );
+                var fileTime = ( Int64 )this.data.ftCreationTime.dwHighDateTime << 32 | this.data.ftCreationTime.dwLowDateTime & 0xffffffff;
 
                 return DateTime.FromFileTimeUtc( fileTime );
             }
@@ -144,7 +142,7 @@
                     Common.ThrowIOError( this.errorCode, this.FullPath );
                 }
 
-                var fileTime = ( ( Int64 )this.data.ftLastAccessTime.dwHighDateTime << 32 ) | ( this.data.ftLastAccessTime.dwLowDateTime & 0xffffffff );
+                var fileTime = ( Int64 )this.data.ftLastAccessTime.dwHighDateTime << 32 | this.data.ftLastAccessTime.dwLowDateTime & 0xffffffff;
 
                 return DateTime.FromFileTimeUtc( fileTime );
             }
@@ -178,7 +176,7 @@
                     ThrowLastWriteTimeUtcIOError( this.errorCode, this.FullPath );
                 }
 
-                var fileTime = ( ( Int64 )this.data.ftLastWriteTime.dwHighDateTime << 32 ) | ( this.data.ftLastWriteTime.dwLowDateTime & 0xffffffff );
+                var fileTime = ( Int64 )this.data.ftLastWriteTime.dwHighDateTime << 32 | this.data.ftLastWriteTime.dwLowDateTime & 0xffffffff;
 
                 return DateTime.FromFileTimeUtc( fileTime );
             }
@@ -199,6 +197,8 @@
         public abstract String Name { get; }
 
         public abstract System.IO.FileSystemInfo SystemInfo { get; }
+
+        protected FileSystemInfo( [NotNull] String fullPath ) => this.FullPath = fullPath.ThrowIfBlank();
 
         protected enum State {
 
@@ -279,15 +279,9 @@
 
                 var normalizedPathWithSearchPattern = this.FullPath.NormalizeLongPath();
 
-                using ( var handle = Directory.BeginFind( normalizedPathWithSearchPattern, out var findData ) ) {
-                    if ( handle == null ) {
-                        this.state = State.Error;
-                        this.errorCode = Marshal.GetLastWin32Error();
-                    }
-                    else {
-                        this.data = new FileAttributeData( findData );
-                        this.state = State.Initialized;
-                    }
+                using ( var _ = Directory.BeginFind( normalizedPathWithSearchPattern, out var findData ) ) {
+                    this.data = new FileAttributeData( findData );
+                    this.state = State.Initialized;
                 }
             }
             catch ( DirectoryNotFoundException ) {

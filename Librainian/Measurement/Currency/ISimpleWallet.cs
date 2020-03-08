@@ -48,22 +48,22 @@ namespace Librainian.Measurement.Currency {
         Decimal Balance { get; }
 
         [CanBeNull]
-        Label LabelToFlashOnChanges { get; set; }
+        Label? LabelToFlashOnChanges { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnAfterDeposit { get; set; }
+        Action<Decimal>? OnAfterDeposit { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnAfterWithdraw { get; set; }
+        Action<Decimal>? OnAfterWithdraw { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnAnyUpdate { get; set; }
+        Action<Decimal>? OnAnyUpdate { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnBeforeDeposit { get; set; }
+        Action<Decimal>? OnBeforeDeposit { get; set; }
 
         [CanBeNull]
-        Action<Decimal> OnBeforeWithdraw { get; set; }
+        Action<Decimal>? OnBeforeWithdraw { get; set; }
 
         /// <summary>Add any (+-)amount directly to the balance.</summary>
         /// <param name="amount"></param>
@@ -77,11 +77,11 @@ namespace Librainian.Measurement.Currency {
         /// <returns></returns>
         Boolean TryDeposit( Decimal amount );
 
-        Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet );
+        Boolean TryTransfer( Decimal amount, [NotNull] ref SimpleWallet intoWallet );
 
         Boolean TryUpdateBalance( Decimal amount );
 
-        void TryUpdateBalance( SimpleWallet simpleWallet );
+        void TryUpdateBalance( [NotNull] SimpleWallet simpleWallet );
 
         Boolean TryWithdraw( Decimal amount );
 

@@ -55,7 +55,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             [JsonProperty]
             [CanBeNull]
-            public String Data { get; }
+            public String? Data { get; }
 
             public Boolean IsEmpty => !this.SubFolders.Any();
 
@@ -66,9 +66,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             [NotNull]
             public List<Node> SubFolders { get; } = new List<Node>();
 
-            public Node( [CanBeNull] String data ) => this.Data = data;
+            public Node( [CanBeNull] String? data ) => this.Data = data;
 
-            public Node( [CanBeNull] String data, [CanBeNull] Node parent ) {
+            public Node( [CanBeNull] String? data, [CanBeNull] Node parent ) {
                 this.Data = data;
                 this.Parent = parent;
             }

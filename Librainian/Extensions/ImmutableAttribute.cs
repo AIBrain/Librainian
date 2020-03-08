@@ -161,7 +161,7 @@ namespace Librainian.Extensions {
             }
 
             if ( whiteList == null ) {
-                throw new ArgumentNullException( paramName: nameof( whiteList ) );
+                throw new ArgumentNullException( nameof( whiteList ) );
             }
 
             var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;

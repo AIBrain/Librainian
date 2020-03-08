@@ -52,8 +52,8 @@ namespace Librainian.Exceptions {
         /// <summary>Disallow no message.</summary>
         private NotEnoughMemoryException() { }
 
-        public NotEnoughMemoryException( [CanBeNull] String message ) : base( message ) { }
+        public NotEnoughMemoryException( [CanBeNull] String? message ) : base( message ) { }
 
-        public NotEnoughMemoryException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) { }
+        public NotEnoughMemoryException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) { }
     }
 }

@@ -78,15 +78,17 @@ namespace Librainian.Persistence.InIFiles {
         public const String PairSeparator = "=";
 
         [JsonProperty]
-        public String Key { get; }
+        [CanBeNull]
+        public String? Key { get; }
 
         [JsonProperty]
         public LineTipe LineType { get; }
 
         [JsonProperty]
-        public String Value { get; set; }
+        [CanBeNull]
+        public String? Value { get; set; }
 
-        public IniLine( [CanBeNull] String key = default, [CanBeNull] String value = default ) {
+        public IniLine( [CanBeNull] String? key = default, [CanBeNull] String? value = default ) {
 
             this.Key = key;
             this.Value = value;

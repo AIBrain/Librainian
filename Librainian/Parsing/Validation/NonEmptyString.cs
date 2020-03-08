@@ -51,6 +51,6 @@ namespace Librainian.Parsing.Validation {
         public NonEmptyString( String value ) : base( value, s => !String.IsNullOrWhiteSpace( s ) ) { }
 
         [NotNull]
-        public static explicit operator NonEmptyString( [CanBeNull] String str ) => new NonEmptyString( str );
+        public static explicit operator NonEmptyString( [CanBeNull] String? str ) => new NonEmptyString( str );
     }
 }

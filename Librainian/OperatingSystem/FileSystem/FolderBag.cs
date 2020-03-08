@@ -63,7 +63,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         [JsonProperty]
         public List<Node> Roots { get; } = new List<Node>();
 
-        public Boolean Add( [CanBeNull] String folderpath ) {
+        public Boolean Add( [CanBeNull] String? folderpath ) {
             if ( null == folderpath ) {
                 return default;
             }

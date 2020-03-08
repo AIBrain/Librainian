@@ -60,16 +60,16 @@ namespace Librainian.Extensions {
 
         public DerivedSerializableExceptionWithAdditionalCustomProperty() { }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message ) : base( message ) { }
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String? message ) : base( message ) { }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message, [CanBeNull] Exception innerException ) :
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String? message, [CanBeNull] Exception innerException ) :
             base( message, innerException ) { }
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message, [CanBeNull] String username, [CanBeNull] String resourceName,
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String? message, [CanBeNull] String? username, [CanBeNull] String? resourceName,
             [CanBeNull] IList<String> validationErrors ) : base( message, resourceName, validationErrors ) =>
             this.Username = username;
 
-        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String message, [CanBeNull] String username, [CanBeNull] String resourceName,
+        public DerivedSerializableExceptionWithAdditionalCustomProperty( [CanBeNull] String? message, [CanBeNull] String? username, [CanBeNull] String? resourceName,
             [CanBeNull] IList<String> validationErrors, [CanBeNull] Exception innerException ) : base( message, resourceName, validationErrors, innerException ) =>
             this.Username = username;
 

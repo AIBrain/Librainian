@@ -99,11 +99,11 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             foreach ( var pair in bankNotes ?? Enumerable.Empty<KeyValuePair<IBankNote, UInt64>>() ) {
-                wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
+                wallet.Deposit( pair.Key, pair.Value );
             }
 
             foreach ( var pair in coins ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>() ) {
-                wallet.Deposit( denomination: pair.Key, quantity: pair.Value );
+                wallet.Deposit( pair.Key, pair.Value );
             }
         }
 

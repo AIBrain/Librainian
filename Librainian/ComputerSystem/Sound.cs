@@ -44,7 +44,7 @@ namespace Librainian.ComputerSystem {
 
     public class Sound {
 
-        public static void Beep( Int32 frequency, TimeSpan duration ) => Console.Beep( frequency: frequency, duration: ( Int32 )duration.TotalMilliseconds );
+        public static void Beep( Int32 frequency, TimeSpan duration ) => Console.Beep( frequency, ( Int32 )duration.TotalMilliseconds );
 
         public void High() => Beep( 14917, TimeExtensions.GetDateTimePrecision() );
 

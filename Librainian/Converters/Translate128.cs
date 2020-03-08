@@ -44,26 +44,26 @@ namespace Librainian.Converters {
     using Maths;
 
     /// <summary>Struct for easily converting <see cref="Guid" /> to <see cref="FourBytes" />, <see cref="EightBytes" />, and <see cref="Translate64" />.</summary>
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct Translate128 {
 
-        [field: FieldOffset( offset: 0 )]
+        [field: FieldOffset( 0 )]
         public Translate64 Lower { get; set; }
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Guid Guid;
 
         /// <summary>Just the first four bytes.</summary>
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public FourBytes FourBytes;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public EightBytes EightBytesLow;
 
-        [FieldOffset( offset: sizeof( UInt64 ) )]
+        [FieldOffset( sizeof( UInt64 ) )]
         public Translate64 Higher;
 
-        [FieldOffset( offset: sizeof( UInt64 ) )]
+        [FieldOffset( sizeof( UInt64 ) )]
         public EightBytes EightBytesHigh;
 
         public Translate128( Guid guid ) {

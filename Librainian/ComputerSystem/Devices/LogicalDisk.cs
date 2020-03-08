@@ -58,15 +58,15 @@ namespace Librainian.ComputerSystem.Devices {
         public String VolumeName { get; set; }
 
         [ItemNotNull]
-        public static IEnumerable<LogicalDisk> GetLogicalDisks( [CanBeNull] String machineName ) {
+        public static IEnumerable<LogicalDisk> GetLogicalDisks( [CanBeNull] String? machineName ) {
             foreach ( var o in WMIExtensions.QueryWMI( machineName, "cimv2", "SELECT * FROM Win32_LogicalDisk" ) ) {
 
                 yield return new LogicalDisk {
                     DriveLetter = o[ "Name" ]?.ToString(),
-                    FreeSpace = Convert.ToUInt64( o[ nameof(FreeSpace) ] ),
+                    FreeSpace = Convert.ToUInt64( o[ nameof( FreeSpace ) ] ),
                     TotalSpace = Convert.ToUInt64( o[ "Size" ] ),
-                    VolumeName = o[ nameof(VolumeName) ]?.ToString(),
-                    DriveType = ( DriveType )Convert.ToByte( o[ nameof(DriveType) ] )
+                    VolumeName = o[ nameof( VolumeName ) ]?.ToString(),
+                    DriveType = ( DriveType )Convert.ToByte( o[ nameof( DriveType ) ] )
                 };
             }
         }

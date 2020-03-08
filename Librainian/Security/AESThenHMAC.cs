@@ -70,7 +70,7 @@ namespace Librainian.Security {
         [NotNull]
         public static Byte[] NewKey() {
             var key = new Byte[ KeyBitSize / 8 ];
-            Randem.RNG.Value.GetBytes( data: key );
+            Randem.RNG.Value.GetBytes( key );
 
             return key;
         }
@@ -82,7 +82,7 @@ namespace Librainian.Security {
         /// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
         /// <returns>Decrypted Message</returns>
         [CanBeNull]
-        public static Byte[] SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+        public static Byte[]? SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 
             //Basic Usage Error Checks
             if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
@@ -101,7 +101,7 @@ namespace Librainian.Security {
                 var sentTag = new Byte[ hmac.HashSize / 8 ];
 
                 //Calculate Tag
-                var calcTag = hmac.ComputeHash( buffer: encryptedMessage, offset: 0, count: encryptedMessage.Length - sentTag.Length );
+                var calcTag = hmac.ComputeHash( encryptedMessage, 0, encryptedMessage.Length - sentTag.Length );
                 const Int32 ivLength = BlockBitSize / 8;
 
                 //if message length is to small just return null
@@ -110,7 +110,7 @@ namespace Librainian.Security {
                 }
 
                 //Grab Sent Tag
-                Array.Copy( sourceArray: encryptedMessage, sourceIndex: encryptedMessage.Length - sentTag.Length, destinationArray: sentTag, destinationIndex: 0,
+                Array.Copy( encryptedMessage, encryptedMessage.Length - sentTag.Length, sentTag, 0,
                     sentTag.Length );
 
                 //Compare Tag with constant time comparison
@@ -134,17 +134,17 @@ namespace Librainian.Security {
 
                     //Grab IV from message
                     var iv = new Byte[ ivLength ];
-                    Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: iv, destinationIndex: 0, iv.Length );
+                    Array.Copy( encryptedMessage, nonSecretPayloadLength, iv, 0, iv.Length );
 
-                    using ( var decrypter = aes.CreateDecryptor( cryptKey, iv: iv ) ) {
+                    using ( var decrypter = aes.CreateDecryptor( cryptKey, iv ) ) {
                         var plainTextStream = new MemoryStream();
-                        var decrypterStream = new CryptoStream( stream: plainTextStream, transform: decrypter, mode: CryptoStreamMode.Write );
+                        var decrypterStream = new CryptoStream( plainTextStream, decrypter, CryptoStreamMode.Write );
 
-                        using ( var binaryWriter = new BinaryWriter( output: decrypterStream ) ) {
+                        using ( var binaryWriter = new BinaryWriter( decrypterStream ) ) {
 
                             //Decrypt Cipher Text from Message
-                            binaryWriter.Write( buffer: encryptedMessage, index: nonSecretPayloadLength + iv.Length,
-                                count: encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
+                            binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length,
+                                encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
                         }
 
                         //Return Plain Text
@@ -162,15 +162,15 @@ namespace Librainian.Security {
         /// <returns>Decrypted Message</returns>
         /// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         [CanBeNull]
-        public static String SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+        public static String? SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
-            var cipherText = Convert.FromBase64String( s: encryptedMessage );
-            var plainText = SimpleDecrypt( encryptedMessage: cipherText, cryptKey: cryptKey, authKey: authKey, nonSecretPayloadLength: nonSecretPayloadLength );
+            var cipherText = Convert.FromBase64String( encryptedMessage );
+            var plainText = SimpleDecrypt( cipherText, cryptKey, authKey, nonSecretPayloadLength );
 
-            return plainText is null ? null : Encoding.UTF8.GetString( bytes: plainText );
+            return plainText is null ? null : Encoding.UTF8.GetString( plainText );
         }
 
         /// <summary>Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys derived from a password (PBKDF2).</summary>
@@ -181,23 +181,23 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         /// <remarks>Significantly less secure than using random binary keys.</remarks>
         [CanBeNull]
-        public static String SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+        public static String? SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
-            if ( String.IsNullOrEmpty( value: password ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( password ) );
+            if ( String.IsNullOrEmpty( password ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( password ) );
             }
 
             if ( !nonSecretPayloadLength.Any() ) {
                 throw new ArgumentOutOfRangeException( nameof( nonSecretPayloadLength ) );
             }
 
-            var cipherText = Convert.FromBase64String( s: encryptedMessage );
-            var plainText = SimpleDecryptWithPassword( encryptedMessage: cipherText, password: password, nonSecretPayloadLength: nonSecretPayloadLength );
+            var cipherText = Convert.FromBase64String( encryptedMessage );
+            var plainText = SimpleDecryptWithPassword( cipherText, password, nonSecretPayloadLength );
 
-            return plainText is null ? null : Encoding.UTF8.GetString( bytes: plainText );
+            return plainText is null ? null : Encoding.UTF8.GetString( plainText );
         }
 
         /// <summary>Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys derived from a password (PBKDF2).</summary>
@@ -208,7 +208,7 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">Must have a password of minimum length;password</exception>
         /// <remarks>Significantly less secure than using random binary keys.</remarks>
         [CanBeNull]
-        public static Byte[] SimpleDecryptWithPassword( [NotNull] Byte[] encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+        public static Byte[]? SimpleDecryptWithPassword( [NotNull] Byte[] encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
 
             //User Error Checks
             if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
@@ -223,26 +223,26 @@ namespace Librainian.Security {
             var authSalt = new Byte[ SaltBitSize / 8 ];
 
             //Grab Salt from Non-Secret Payload
-            Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength, destinationArray: cryptSalt, destinationIndex: 0, cryptSalt.Length );
+            Array.Copy( encryptedMessage, nonSecretPayloadLength, cryptSalt, 0, cryptSalt.Length );
 
-            Array.Copy( sourceArray: encryptedMessage, sourceIndex: nonSecretPayloadLength + cryptSalt.Length, destinationArray: authSalt, destinationIndex: 0,
+            Array.Copy( encryptedMessage, nonSecretPayloadLength + cryptSalt.Length, authSalt, 0,
                 authSalt.Length );
 
             Byte[] cryptKey;
             Byte[] authKey;
 
             //Generate crypt key
-            using ( var generator = new Rfc2898DeriveBytes( password: password, salt: cryptSalt, iterations: Iterations ) ) {
-                cryptKey = generator.GetBytes( cb: KeyBitSize / 8 );
+            using ( var generator = new Rfc2898DeriveBytes( password, cryptSalt, Iterations ) ) {
+                cryptKey = generator.GetBytes( KeyBitSize / 8 );
             }
 
             //Generate auth key
-            using ( var generator = new Rfc2898DeriveBytes( password: password, salt: authSalt, iterations: Iterations ) ) {
-                authKey = generator.GetBytes( cb: KeyBitSize / 8 );
+            using ( var generator = new Rfc2898DeriveBytes( password, authSalt, Iterations ) ) {
+                authKey = generator.GetBytes( KeyBitSize / 8 );
             }
 
-            return SimpleDecrypt( encryptedMessage: encryptedMessage, cryptKey: cryptKey, authKey: authKey,
-                nonSecretPayloadLength: cryptSalt.Length + authSalt.Length + nonSecretPayloadLength );
+            return SimpleDecrypt( encryptedMessage, cryptKey, authKey,
+                cryptSalt.Length + authSalt.Length + nonSecretPayloadLength );
         }
 
         /// <summary>Simple Encryption(AES) then Authentication (HMAC) for a UTF8 Message.</summary>
@@ -285,11 +285,11 @@ namespace Librainian.Security {
                 aes.GenerateIV();
                 iv = aes.IV;
 
-                using ( var encrypter = aes.CreateEncryptor( cryptKey, iv: iv ) ) {
+                using ( var encrypter = aes.CreateEncryptor( cryptKey, iv ) ) {
                     var cipherStream = new MemoryStream();
 
-                    using ( var binaryWriter = new BinaryWriter( output: new CryptoStream( stream: cipherStream, transform: encrypter, mode: CryptoStreamMode.Write ) ) ) {
-                        binaryWriter.Write( buffer: secretMessage );
+                    using ( var binaryWriter = new BinaryWriter( new CryptoStream( cipherStream, encrypter, CryptoStreamMode.Write ) ) ) {
+                        binaryWriter.Write( secretMessage );
                     }
 
                     cipherText = cipherStream.ToArray();
@@ -300,23 +300,23 @@ namespace Librainian.Security {
             using ( var hmac = new HMACSHA256( authKey ) ) {
                 var encryptedStream = new MemoryStream();
 
-                using ( var binaryWriter = new BinaryWriter( output: encryptedStream ) ) {
+                using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
 
                     //Prepend non-secret payload if any
-                    binaryWriter.Write( buffer: nonSecretPayload );
+                    binaryWriter.Write( nonSecretPayload );
 
                     //Prepend IV
-                    binaryWriter.Write( buffer: iv );
+                    binaryWriter.Write( iv );
 
                     //Write Ciphertext
-                    binaryWriter.Write( buffer: cipherText );
+                    binaryWriter.Write( cipherText );
                     binaryWriter.Flush(); //why?
 
                     //Authenticate all data
-                    var tag = hmac.ComputeHash( buffer: encryptedStream.ToArray() );
+                    var tag = hmac.ComputeHash( encryptedStream.ToArray() );
 
                     //Postpend tag
-                    binaryWriter.Write( buffer: tag );
+                    binaryWriter.Write( tag );
                 }
 
                 return encryptedStream.ToArray();
@@ -332,15 +332,15 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">Secret Message Required!;secretMessage</exception>
         /// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
         [NotNull]
-        public static String SimpleEncrypt( [NotNull] String secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, [CanBeNull] Byte[] nonSecretPayload = null ) {
+        public static String SimpleEncrypt( [NotNull] String secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, [CanBeNull] Byte[]? nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
-            var plainText = Encoding.UTF8.GetBytes( s: secretMessage );
+            var plainText = Encoding.UTF8.GetBytes( secretMessage );
             var cipherText = plainText.SimpleEncrypt( cryptKey, authKey, nonSecretPayload );
 
-            return Convert.ToBase64String( inArray: cipherText );
+            return Convert.ToBase64String( cipherText );
         }
 
         /// <summary>Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password (PBKDF2).</summary>
@@ -351,15 +351,15 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">password</exception>
         /// <remarks>Significantly less secure than using random binary keys. Adds additional non secret payload for key generation parameters.</remarks>
         [NotNull]
-        public static String SimpleEncryptWithPassword( [NotNull] String secretMessage, [NotNull] String password, [CanBeNull] Byte[] nonSecretPayload = null ) {
+        public static String SimpleEncryptWithPassword( [NotNull] String secretMessage, [NotNull] String password, [CanBeNull] Byte[]? nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
-            var plainText = Encoding.UTF8.GetBytes( s: secretMessage );
-            var cipherText = SimpleEncryptWithPassword( secretMessage: plainText, password: password, nonSecretPayload: nonSecretPayload );
+            var plainText = Encoding.UTF8.GetBytes( secretMessage );
+            var cipherText = SimpleEncryptWithPassword( plainText, password, nonSecretPayload );
 
-            return Convert.ToBase64String( inArray: cipherText );
+            return Convert.ToBase64String( cipherText );
         }
 
         /// <summary>Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password (PBKDF2)</summary>
@@ -387,34 +387,34 @@ namespace Librainian.Security {
 
             var payload = new Byte[ saltier + nonSecretPayload.Length ];
 
-            Array.Copy( sourceArray: nonSecretPayload, destinationArray: payload, nonSecretPayload.Length );
+            Array.Copy( nonSecretPayload, payload, nonSecretPayload.Length );
             var payloadIndex = nonSecretPayload.Length;
 
             Byte[] cryptKey;
             Byte[] authKey;
 
             //Use Random Salt to prevent pre-generated weak password attacks.
-            using ( var generator = new Rfc2898DeriveBytes( password: password, saltSize: saltsize, iterations: Iterations ) ) {
+            using ( var generator = new Rfc2898DeriveBytes( password, saltsize, Iterations ) ) {
                 var salt = generator.Salt;
 
                 //Generate Keys
-                cryptKey = generator.GetBytes( cb: KeyBitSize / 8 );
+                cryptKey = generator.GetBytes( KeyBitSize / 8 );
 
                 //Create Non Secret Payload
-                Array.Copy( sourceArray: salt, sourceIndex: 0, destinationArray: payload, destinationIndex: payloadIndex, salt.Length );
+                Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
                 payloadIndex += salt.Length;
             }
 
             //Deriving separate key, might be less efficient than using HKDF,
             //but now compatible with RNEncryptor which had a very similar wireformat and requires less code than HKDF.
-            using ( var generator = new Rfc2898DeriveBytes( password: password, saltSize: saltsize, iterations: Iterations ) ) {
+            using ( var generator = new Rfc2898DeriveBytes( password, saltsize, Iterations ) ) {
                 var salt = generator.Salt;
 
                 //Generate Keys
-                authKey = generator.GetBytes( cb: KeyBitSize / 8 );
+                authKey = generator.GetBytes( KeyBitSize / 8 );
 
                 //Create Rest of Non Secret Payload
-                Array.Copy( sourceArray: salt, sourceIndex: 0, destinationArray: payload, destinationIndex: payloadIndex, salt.Length );
+                Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
             }
 
             return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );

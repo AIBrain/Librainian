@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Time {
 
         public const Int64 TicksPerMillisecond = 10000;
 
-        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
+        public TimeSpan Elapsed => new TimeSpan( this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -94,7 +94,9 @@ namespace Librainian.Measurement.Time {
             private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
 
-        public StopWatch() => this.Reset();
+        public StopWatch() {
+            this.Reset();
+        }
 
         private Int64 GetElapsedTicks() {
             if ( this.IsRunning ) {
@@ -138,7 +140,9 @@ namespace Librainian.Measurement.Time {
         /// <param name="other">An object to compare with this instance. </param>
         public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
 
-        public void Pause() => throw new NotImplementedException();
+        public void Pause() {
+            throw new NotImplementedException();
+        }
 
         /// <summary>Stops the stopwatch and resets all the values to default.</summary>
         public void Reset() {

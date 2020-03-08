@@ -60,15 +60,19 @@ namespace Librainian.Extensions {
         // Initialize() method before we can be given out as a service to others
         private static Int32 _iCounter;
 
-        private HashSet<RegistryKey> _allKeys;
+        [CanBeNull]
+        private HashSet<RegistryKey>? _allKeys;
 
-        private PopulateProgressEventArgs _eventArgStatus;
+        [CanBeNull]
+        private PopulateProgressEventArgs? _eventArgStatus;
 
         private Boolean _isInitialized;
 
-        private PopulateProgressDelegateError _populateError;
+        [CanBeNull]
+        private PopulateProgressDelegateError? _populateError;
 
-        private PopulateProgressDelegate _populateEventOk;
+        [CanBeNull]
+        private PopulateProgressDelegate? _populateEventOk;
 
         public static Int64 Count {
             get {
@@ -76,7 +80,11 @@ namespace Librainian.Extensions {
                     throw new InvalidOperationException( "Please initialize the backing store first" );
                 }
 
-                return Instance._allKeys.Count;
+                if ( Instance._allKeys != null ) {
+                    return Instance._allKeys.Count;
+                }
+
+                return 0;
             }
         }
 
@@ -116,11 +124,11 @@ namespace Librainian.Extensions {
 
         private static IEnumerable<RegistryKey> GetAllSubkeys( [NotNull] RegistryKey startkeyIn, [NotNull] String nodeKey ) {
             if ( startkeyIn == null ) {
-                throw new ArgumentNullException( paramName: nameof( startkeyIn ) );
+                throw new ArgumentNullException( nameof( startkeyIn ) );
             }
 
             if ( nodeKey == null ) {
-                throw new ArgumentNullException( paramName: nameof( nodeKey ) );
+                throw new ArgumentNullException( nameof( nodeKey ) );
             }
 
             Instance.InvokePopulateProgress();
@@ -140,7 +148,7 @@ namespace Librainian.Extensions {
 
         private static void Initialize( [NotNull] RegistryKey registryStartKey ) {
             if ( registryStartKey == null ) {
-                throw new ArgumentNullException( paramName: nameof( registryStartKey ) );
+                throw new ArgumentNullException( nameof( registryStartKey ) );
             }
 
             if ( Instance._isInitialized ) {
@@ -158,11 +166,11 @@ namespace Librainian.Extensions {
 
         private static Boolean TryOpenSubKey( [NotNull] RegistryKey startFrom, [NotNull] String name, [CanBeNull] out RegistryKey itemOut ) {
             if ( startFrom == null ) {
-                throw new ArgumentNullException( paramName: nameof( startFrom ) );
+                throw new ArgumentNullException( nameof( startFrom ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             var bIsOk = false;

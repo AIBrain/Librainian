@@ -105,11 +105,11 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( nameof( max ) );
             }
 
-            if ( self.CompareTo( other: min ) < 0 ) {
+            if ( self.CompareTo( min ) < 0 ) {
                 return min;
             }
 
-            return self.CompareTo( other: max ) > 0 ? max : self;
+            return self.CompareTo( max ) > 0 ? max : self;
         }
 
         [ItemCanBeNull]
@@ -144,10 +144,10 @@ namespace Librainian.Extensions {
         public static String OnlyDigits( [CanBeNull] this String input ) => String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsDigit ).ToArray() );
 
         [CanBeNull]
-        public static String OnlyLetters( [CanBeNull] String input ) => String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsLetter ).ToArray() );
+        public static String OnlyLetters( [CanBeNull] String? input ) => String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsLetter ).ToArray() );
 
         [CanBeNull]
-        public static String OnlyLettersAndNumbers( [CanBeNull] String input ) =>
+        public static String OnlyLettersAndNumbers( [CanBeNull] String? input ) =>
             String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ).ToArray() );
 
         /// <summary>Swap <paramref name="left" /> with <paramref name="right" />.</summary>

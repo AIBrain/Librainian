@@ -29,59 +29,87 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         private static readonly LocalDataStoreSlot tlsSlot = Thread.AllocateDataSlot();
 
-        public override void DisposeManaged() {
-            using ( this.tlsContents ) { }
-        }
-
         [NotNull]
         private readonly Thread currentThread = Thread.CurrentThread;
 
         private readonly LUID luid;
+
         private Boolean initialState;
 
         private Boolean stateWasChanged;
+
         private TlsContents tlsContents;
 
         public const String AssignPrimaryToken = "SeAssignPrimaryTokenPrivilege";
+
         public const String Audit = "SeAuditPrivilege";
+
         public const String Backup = "SeBackupPrivilege";
+
         public const String ChangeNotify = "SeChangeNotifyPrivilege";
+
         public const String CreateGlobal = "SeCreateGlobalPrivilege";
+
         public const String CreatePageFile = "SeCreatePagefilePrivilege";
+
         public const String CreatePermanent = "SeCreatePermanentPrivilege";
+
         public const String CreateToken = "SeCreateTokenPrivilege";
+
         public const String Debug = "SeDebugPrivilege";
+
         public const String EnableDelegation = "SeEnableDelegationPrivilege";
+
         public const String Impersonate = "SeImpersonatePrivilege";
+
         public const String IncreaseBasePriority = "SeIncreaseBasePriorityPrivilege";
+
         public const String IncreaseQuota = "SeIncreaseQuotaPrivilege";
+
         public const String LoadDriver = "SeLoadDriverPrivilege";
+
         public const String LockMemory = "SeLockMemoryPrivilege";
+
         public const String MachineAccount = "SeMachineAccountPrivilege";
+
         public const String ManageVolume = "SeManageVolumePrivilege";
+
         public const String ProfileSingleProcess = "SeProfileSingleProcessPrivilege";
+
         public const String RemoteShutdown = "SeRemoteShutdownPrivilege";
+
         public const String ReserveProcessor = "SeReserveProcessorPrivilege";
+
         public const String Restore = "SeRestorePrivilege";
+
         public const String Security = "SeSecurityPrivilege";
+
         public const String Shutdown = "SeShutdownPrivilege";
+
         public const String SyncAgent = "SeSyncAgentPrivilege";
+
         public const String SystemEnvironment = "SeSystemEnvironmentPrivilege";
+
         public const String SystemProfile = "SeSystemProfilePrivilege";
+
         public const String SystemTime = "SeSystemtimePrivilege";
+
         public const String TakeOwnership = "SeTakeOwnershipPrivilege";
+
         public const String TrustedComputingBase = "SeTcbPrivilege";
+
         public const String TrustedCredentialManagerAccess = "SeTrustedCredManAccessPrivilege";
+
         public const String Undock = "SeUndockPrivilege";
+
         public const String UnsolicitedInput = "SeUnsolicitedInputPrivilege";
+
+        public Boolean NeedToRevert { get; private set; }
 
         //
         // This routine is a wrapper around a hashtable containing mappings
         // of privilege names to luids
         //
-
-        public Boolean NeedToRevert { get; private set; }
-
         public Privilege( [NotNull] String privilegeName ) {
             if ( privilegeName == null ) {
                 throw new ArgumentNullException( nameof( privilegeName ) );
@@ -282,6 +310,10 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             if ( error != 0 ) {
                 throw new Win32Exception( error );
             }
+        }
+
+        public override void DisposeManaged() {
+            using ( this.tlsContents ) { }
         }
 
         [ReliabilityContract( Consistency.WillNotCorruptState, Cer.MayFail )]
@@ -503,7 +535,5 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             public void IncrementReferenceCount() => this.ReferenceCountValue++;
         }
-
-
     }
 }

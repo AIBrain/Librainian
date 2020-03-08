@@ -53,6 +53,6 @@ namespace Librainian.Collections {
 
         /// <summary>This type is experimental and that usually means untested.</summary>
         /// <param name="message"></param>
-        public ExperimentalAttribute( [CanBeNull] String message ) => this.Message = message;
+        public ExperimentalAttribute( [CanBeNull] String? message ) => this.Message = message;
     }
 }

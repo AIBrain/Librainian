@@ -46,7 +46,7 @@ namespace Librainian.Databases {
     public class SqlServer {
 
         [CanBeNull]
-        public SqlConnectionStringBuilder ConnectionStringBuilder { get; set; }
+        public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }
 
         public Status Status { get; set; }
 
@@ -54,6 +54,6 @@ namespace Librainian.Databases {
         public DateTime? UTCDateTime { get; set; }
 
         [CanBeNull]
-        public String Version { get; set; }
+        public String? Version { get; set; }
     }
 }

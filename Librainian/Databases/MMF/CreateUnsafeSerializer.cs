@@ -62,7 +62,7 @@ namespace Librainian.Databases.MMF {
 
         private Type Type { get; } = typeof( T );
 
-        private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String typeFullName ) {
+        private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
             sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
             sb.Append( "{" );
 
@@ -160,7 +160,7 @@ namespace Librainian.Databases.MMF {
             }
         }
 
-        private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String typeFullName ) {
+        private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
             sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
             sb.Append( "{" );
             sb.Append( $"byte[] buffer = new byte[{this._size}];" );

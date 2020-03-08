@@ -90,7 +90,7 @@ namespace Librainian.Maths.Numbers {
         /// <param name="initialValue"></param>
         public PotentialF( Single initialValue ) => this.Value = initialValue;
 
-        public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min: min, max: max ) ) { }
+        public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min, max ) ) { }
 
         public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
 

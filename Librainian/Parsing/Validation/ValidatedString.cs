@@ -77,18 +77,18 @@ namespace Librainian.Parsing.Validation {
             comparisonType == StringComparison.Ordinal ? String.CompareOrdinal( left, right.Value ) : String.Compare( left.Value, right.Value, comparisonType );
 
         public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length ) =>
-            String.Compare( left.Value, leftIndex, right.Value ?? throw new InvalidOperationException(), rightIndex, length );
+            String.Compare( left.Value, leftIndex, right.Value, rightIndex, length );
 
         [SecuritySafeCritical]
         public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length,
             StringComparison comparisonType ) =>
-            String.Compare( left.Value, leftIndex, right.Value ?? throw new InvalidOperationException(), rightIndex, length, comparisonType );
+            String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, comparisonType );
 
         public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, [NotNull] IValidatedString right ) => String.CompareOrdinal( strA.Value, right.Value );
 
         [SecuritySafeCritical]
         public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, Int32 indexA, [NotNull] IValidatedString strB, Int32 indexB, Int32 length ) =>
-            String.CompareOrdinal( strA.Value, indexA, strB.Value ?? throw new InvalidOperationException(), indexB, length );
+            String.CompareOrdinal( strA.Value, indexA, strB.Value, indexB, length );
 
         /// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
         /// <param name="left"></param>
@@ -119,7 +119,7 @@ namespace Librainian.Parsing.Validation {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] String left, [CanBeNull] IValidatedString right ) {
+        public static Boolean Equals( [CanBeNull] String? left, [CanBeNull] IValidatedString right ) {
             if ( left is null && right is null ) {
                 return true;
             }
@@ -143,7 +143,7 @@ namespace Librainian.Parsing.Validation {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] IValidatedString left, [CanBeNull] String right ) {
+        public static Boolean Equals( [CanBeNull] IValidatedString left, [CanBeNull] String? right ) {
 
             if ( left is null || right is null ) {
                 return default;
@@ -167,7 +167,7 @@ namespace Librainian.Parsing.Validation {
 
         public static Boolean operator ==( [CanBeNull] ValidatedString left, [CanBeNull] IValidatedString right ) => Equals( left, right?.Value );
 
-        public Int32 CompareTo( [CanBeNull] String other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
+        public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
 
         public Int32 CompareTo( [NotNull] IValidatedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal );
 

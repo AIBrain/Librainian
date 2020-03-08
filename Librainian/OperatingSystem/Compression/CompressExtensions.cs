@@ -201,9 +201,9 @@ namespace Librainian.OperatingSystem.Compression {
                 encoding = Encoding.Unicode;
             }
 
-            using ( var incoming = new MemoryStream( buffer: encoding.GetBytes( text ), writable: false ) ) {
+            using ( var incoming = new MemoryStream( encoding.GetBytes( text ), false ) ) {
                 using ( var streamOut = new MemoryStream() ) {
-                    using ( var destination = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Fastest ) ) {
+                    using ( var destination = new GZipStream( streamOut, CompressionLevel.Fastest ) ) {
                         incoming.CopyTo( destination );
                     }
 

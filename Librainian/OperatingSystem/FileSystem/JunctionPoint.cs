@@ -171,7 +171,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        private static String InternalGetTarget( [NotNull] SafeHandle handle ) {
+        private static String? InternalGetTarget( [NotNull] SafeHandle handle ) {
             var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -209,7 +209,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [NotNull]
-        private static SafeFileHandle OpenReparsePoint( [CanBeNull] String reparsePoint, FileAccess accessMode ) {
+        private static SafeFileHandle OpenReparsePoint( [CanBeNull] String? reparsePoint, FileAccess accessMode ) {
             var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open,
                 FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
 
@@ -283,7 +283,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Deletes a junction point at the specified source directory along with the directory itself. Does nothing if the junction point does not exist.</summary>
         /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
-        public static void Delete( [CanBeNull] String junctionPoint ) {
+        public static void Delete( [CanBeNull] String? junctionPoint ) {
             if ( !Directory.Exists( junctionPoint ) ) {
                 if ( File.Exists( junctionPoint ) ) {
                     throw new IOException( "Path is not a junction point." );
@@ -329,7 +329,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="path">The junction point path</param>
         /// <returns>True if the specified path represents a junction point</returns>
         /// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
-        public static Boolean Exists( [CanBeNull] String path ) {
+        public static Boolean Exists( [CanBeNull] String? path ) {
             if ( !Directory.Exists( path ) ) {
                 return default;
             }
@@ -347,7 +347,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns>The target of the junction point</returns>
         /// <exception cref="IOException">Thrown when the specified path does not exist, is invalid, is not a junction point, or some other error occurs</exception>
         [NotNull]
-        public static String GetTarget( [CanBeNull] String junctionPoint ) {
+        public static String GetTarget( [CanBeNull] String? junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, FileAccess.Read ) ) {
                 var target = InternalGetTarget( handle );
 

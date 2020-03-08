@@ -49,8 +49,12 @@ namespace Librainian.Measurement.Time.FluentTime {
 
         public static DateTime Today => _overrideNow?.Date ?? DateTime.Today;
 
-        internal static void Reset() => _overrideNow = null;
+        internal static void Reset() {
+            _overrideNow = null;
+        }
 
-        internal static void SetNow( DateTime now ) => _overrideNow = now;
+        internal static void SetNow( DateTime now ) {
+            _overrideNow = now;
+        }
     }
 }

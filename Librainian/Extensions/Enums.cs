@@ -99,7 +99,7 @@ namespace Librainian.Extensions {
 
         public static Boolean IsDefined( T value ) => Names.Keys.Contains( value );
 
-        public static Boolean IsDefined( [CanBeNull] String value ) => SensitiveNames.Keys.Contains( value );
+        public static Boolean IsDefined( [CanBeNull] String? value ) => SensitiveNames.Keys.Contains( value );
 
         public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
 
@@ -123,7 +123,7 @@ namespace Librainian.Extensions {
             return parsed;
         }
 
-        public static T? ParseOrNull( [CanBeNull] String value ) {
+        public static T? ParseOrNull( [CanBeNull] String? value ) {
             if ( String.IsNullOrEmpty( value ) ) {
                 return null;
             }
@@ -135,7 +135,7 @@ namespace Librainian.Extensions {
             return null;
         }
 
-        public static T? ParseOrNull( [CanBeNull] String value, Boolean ignoreCase ) {
+        public static T? ParseOrNull( [CanBeNull] String? value, Boolean ignoreCase ) {
             if ( !ignoreCase ) {
                 return ParseOrNull( value );
             }

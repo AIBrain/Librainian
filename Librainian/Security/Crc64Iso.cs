@@ -52,18 +52,18 @@ namespace Librainian.Security {
         internal static UInt64[] Table;
         public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
-        public Crc64Iso() : base( polynomial: Iso3309Polynomial ) { }
+        public Crc64Iso() : base( Iso3309Polynomial ) { }
 
-        public Crc64Iso( UInt64 seed ) : base( polynomial: Iso3309Polynomial, seed: seed ) { }
+        public Crc64Iso( UInt64 seed ) : base( Iso3309Polynomial, seed ) { }
 
-        public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
+        public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
         public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
             if ( Table is null ) {
-                Table = CreateTable( polynomial: Iso3309Polynomial );
+                Table = CreateTable( Iso3309Polynomial );
             }
 
-            return CalculateHash( seed: seed, table: Table, buffer: buffer, start: 0, size: buffer.Length );
+            return CalculateHash( seed, Table, buffer, 0, buffer.Length );
         }
     }
 }

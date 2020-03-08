@@ -54,8 +54,8 @@ namespace Librainian.Measurement.Time.Clocks {
         private volatile Boolean _isPaused;
 
         /// <summary></summary>
-        [NotNull]
-        private Timer Timer { get; } = new Timer( interval: ( Double )Milliseconds.One.Value ) {
+        [CanBeNull]
+        private Timer Timer { get; } = new Timer( ( Double )Milliseconds.One.Value ) {
             AutoReset = false
         };
 
@@ -84,22 +84,30 @@ namespace Librainian.Measurement.Time.Clocks {
         [JsonProperty]
         public Month Month { get; private set; }
 
-        public Action<DateAndTime> OnDay { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnDay { get; set; }
 
-        public Action<DateAndTime> OnHour { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnHour { get; set; }
 
-        public Action<DateAndTime> OnMillisecond { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnMillisecond { get; set; }
 
-        public Action<DateAndTime> OnMinute { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnMinute { get; set; }
 
-        public Action<DateAndTime> OnMonth { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnMonth { get; set; }
 
-        public Action<DateAndTime> OnSecond { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnSecond { get; set; }
 
-        public Action<DateAndTime> OnYear { get; set; }
+        [CanBeNull]
+        public Action<DateAndTime>? OnYear { get; set; }
 
         /// <summary></summary>
         [JsonProperty]
+        [CanBeNull]
         public Second Second { get; private set; }
 
         [JsonProperty]
@@ -299,7 +307,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 var right = amount.Value;
 
                 while ( right > Rational.Zero ) {
-                    this.TickTock( fireEvents: false );
+                    this.TickTock( false );
                     right--;
                 }
 

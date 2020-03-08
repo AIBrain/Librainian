@@ -78,7 +78,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => !(item is null) ).Select( item => ( T )item.Clone() ).ToList();
+            list.Where( item => !( item is null ) ).Select( item => ( T )item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {
@@ -129,7 +129,7 @@ namespace Librainian.Extensions {
                 var destFields = destination.GetType().GetAllFields();
 
                 foreach ( var field in sourceFields.Where( destFields.Contains ) ) {
-                    CopyField( source: source, destination: destination, field: field );
+                    CopyField( source, destination, field );
                 }
 
                 return true;
@@ -150,7 +150,7 @@ namespace Librainian.Extensions {
                 var destProps = destination.GetType().GetAllProperties().Where( prop => prop.CanWrite );
 
                 foreach ( var prop in sourceProps.Where( destProps.Contains ) ) {
-                    CopyProperty( source: source, destination: destination, prop: prop );
+                    CopyProperty( source, destination, prop );
                 }
 
                 return true;
@@ -211,7 +211,7 @@ namespace Librainian.Extensions {
             //copy all settable fields
             // then
             //copy all settable properties (going on the assumption that properties should be modifiying their private fields).
-            return CopyFields( source: source, destination: destination ) && CopyProperties( source: source, destination: destination );
+            return CopyFields( source, destination ) && CopyProperties( source, destination );
         }
 
         /// <summary>Enumerate all fields of the <paramref name="type" /></summary>

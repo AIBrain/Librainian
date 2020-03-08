@@ -51,10 +51,10 @@ namespace Librainian.Exceptions {
 
         private InvalidFormatException() { }
 
-        public InvalidFormatException( [CanBeNull] String message ) : base( message ) { }
+        public InvalidFormatException( [CanBeNull] String? message ) : base( message ) { }
 
-        public InvalidFormatException( [CanBeNull] String message, [CanBeNull] String paramName ) : base( message ) => this.Parameter = paramName;
+        public InvalidFormatException( [CanBeNull] String? message, [CanBeNull] String? paramName ) : base( message ) => this.Parameter = paramName;
 
-        public InvalidFormatException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) { }
+        public InvalidFormatException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) { }
     }
 }

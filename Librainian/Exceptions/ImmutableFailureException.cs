@@ -52,9 +52,9 @@ namespace Librainian.Exceptions {
 
         public ImmutableFailureException() { }
 
-        public ImmutableFailureException( [CanBeNull] String message ) : base( message ) { }
+        public ImmutableFailureException( [CanBeNull] String? message ) : base( message ) { }
 
-        public ImmutableFailureException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+        public ImmutableFailureException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
 
         public ImmutableFailureException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
             if ( serializationInfo is null ) {
@@ -62,8 +62,8 @@ namespace Librainian.Exceptions {
             }
         }
 
-        public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) => this.Type = type;
+        public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) => this.Type = type;
 
-        public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String message ) : base( message ) => this.Type = type;
+        public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message ) : base( message ) => this.Type = type;
     }
 }

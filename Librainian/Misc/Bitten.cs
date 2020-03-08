@@ -142,8 +142,8 @@ namespace Librainian.Misc {
         }
 
         public static Bitten Parse( [NotNull] String input ) {
-            if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( input ) );
+            if ( String.IsNullOrWhiteSpace( input ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
             }
 
             return Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
@@ -219,7 +219,7 @@ namespace Librainian.Misc {
             // ReSharper disable once RedundantAssignment
             offset = HexsToChars( guidChars, offset, this._j, this._k );
 
-            return new String( guidChars, startIndex: 0, strLength );
+            return new String( guidChars, 0, strLength );
         }
 
         public override Boolean Equals( Object obj ) {

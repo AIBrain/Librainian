@@ -99,7 +99,7 @@ namespace Librainian.Measurement.Time {
             return dt;
         }
 
-        private static DateTime ParseFormattedDate( [CanBeNull] String input, [CanBeNull] CultureInfo culture ) {
+        private static DateTime ParseFormattedDate( [CanBeNull] String? input, [CanBeNull] CultureInfo culture ) {
             var formats = new[] {
                 "u", "s", "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd HH:mm:ssZ", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:sszzzzzz",
                 "M/d/yyyy h:mm:ss tt" // default format for invariant culture
@@ -153,8 +153,7 @@ namespace Librainian.Measurement.Time {
         /// <param name="second">      The second to set time to.</param>
         /// <param name="milliseconds">The milliseconds to set time to.</param>
         /// <returns><see cref="DateTime" /> with hour and minutes and seconds set to given values.</returns>
-        public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) =>
-            current.SetTime( hour, minute, second, milliseconds );
+        public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) => current.SetTime( hour, minute, second, milliseconds );
 
         public static DateTime Average( [NotNull] this IEnumerable<DateTime> dates ) {
             if ( dates is null ) {
@@ -169,8 +168,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Returns the Start of the given <paramref name="date" />.</summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static DateTime BeginningOfDay( this DateTime date ) =>
-            new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 0, minute: 0, second: 0, millisecond: 0, kind: date.Kind );
+        public static DateTime BeginningOfDay( this DateTime date ) => new DateTime( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
 
         /// <summary>Example: Console.WriteLine( 3.Days().FromNow() );</summary>
         /// <param name="days"></param>
@@ -208,8 +206,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static DateTime EndOfDay( this DateTime date ) =>
-            new DateTime( year: date.Year, month: date.Month, day: date.Day, hour: 23, minute: 59, second: 59, millisecond: 999, kind: date.Kind );
+        public static DateTime EndOfDay( this DateTime date ) => new DateTime( date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind );
 
         /// <summary>Return a quick estimation of the time remaining [on a download for example].</summary>
         /// <param name="timeElapsed">Time elapsed so far.</param>
@@ -239,7 +236,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>given <see cref="DateTime" /> with the day part set to the first day in that month.</returns>
         public static DateTime FirstDayOfMonth( this DateTime current ) => current.SetDay( 1 );
 
-        public static DateTime FirstDayOfTheMonth( this DateTime date ) => new DateTime( year: date.Year, month: date.Month, day: 1 );
+        public static DateTime FirstDayOfTheMonth( this DateTime date ) => new DateTime( date.Year, date.Month, 1 );
 
         /// <summary>Returns a DateTime adjusted to the beginning of the week.</summary>
         /// <param name="dateTime">The DateTime to adjust</param>
@@ -282,7 +279,6 @@ namespace Librainian.Measurement.Time {
         /// <summary>Return how many years old the person is in <see cref="Years" />.</summary>
         /// <param name="dateOfBirth"></param>
         /// <returns></returns>
-        [NotNull]
         public static Years GetAge( this DateTime dateOfBirth ) {
             var today = DateTime.Today;
 
@@ -372,8 +368,7 @@ namespace Librainian.Measurement.Time {
         /// <returns>given <see cref="DateTime" /> with the day part set to the last day in that month.</returns>
         public static DateTime LastDayOfMonth( this DateTime current ) => current.SetDay( DateTime.DaysInMonth( current.Year, current.Month ) );
 
-        public static DateTime LastDayOfTheMonth( this DateTime date ) =>
-            new DateTime( year: date.Year, month: date.Month, day: DateTime.DaysInMonth( year: date.Year, month: date.Month ) );
+        public static DateTime LastDayOfTheMonth( this DateTime date ) => new DateTime( date.Year, date.Month, DateTime.DaysInMonth( date.Year, date.Month ) );
 
         /// <summary>Returns the last day of the week keeping the time component intact. Eg, 2011-12-24T06:40:20.005 =&gt; 2011-12-25T06:40:20.005</summary>
         /// <param name="current">The DateTime to adjust</param>
@@ -418,7 +413,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Example: Console.WriteLine( 3.Milliseconds().FromNow() );</summary>
         /// <param name="milliseconds"></param>
         /// <returns></returns>
-        public static TimeSpan Milliseconds( [CanBeNull] this Milliseconds milliseconds ) => milliseconds;
+        public static TimeSpan Milliseconds( this Milliseconds milliseconds ) => milliseconds;
 
         /// <summary>Example: Console.WriteLine( 3.Minutes().FromNow() );</summary>
         /// <param name="minutes"></param>
@@ -500,16 +495,15 @@ namespace Librainian.Measurement.Time {
         /// <summary>Converts the specified ISO 8601 representation of a date and time to its DateTime equivalent.</summary>
         /// <param name="value">The ISO 8601 string representation to parse.</param>
         /// <returns>The DateTime equivalent.</returns>
-        public static DateTime ParseIso8601( [CanBeNull] String value ) =>
-            DateTime.ParseExact( value, Iso8601Format, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
+        public static DateTime ParseIso8601( [CanBeNull] String? value ) => DateTime.ParseExact( value, Iso8601Format, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
 
         /// <summary>Parses most common JSON date formats</summary>
         /// <param name="input">  JSON value to parse</param>
         /// <param name="culture"></param>
         /// <returns>DateTime</returns>
         public static DateTime ParseJsonDate( [NotNull] this String input, [CanBeNull] CultureInfo culture ) {
-            if ( String.IsNullOrWhiteSpace( value: input ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( input ) );
+            if ( String.IsNullOrWhiteSpace( input ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
             }
 
             input = input.Replace( "\n", "" );
@@ -652,20 +646,16 @@ namespace Librainian.Measurement.Time {
         public static TimeSpan Seconds( this Double seconds ) => TimeSpan.FromSeconds( seconds );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year part.</summary>
-        public static DateTime SetDate( this DateTime value, Int32 year ) =>
-            new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDate( this DateTime value, Int32 year ) => new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year and Month part.</summary>
-        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month ) =>
-            new DateTime( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month ) => new DateTime( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year, Month and Day part.</summary>
-        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month, Int32 day ) =>
-            new DateTime( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month, Int32 day ) => new DateTime( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Day part.</summary>
-        public static DateTime SetDay( this DateTime value, Int32 day ) =>
-            new DateTime( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDay( this DateTime value, Int32 day ) => new DateTime( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Hour part.</summary>
         public static DateTime SetHour( this DateTime originalDate, Int32 hour ) =>
@@ -683,8 +673,7 @@ namespace Librainian.Measurement.Time {
                 originalDate.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Month part.</summary>
-        public static DateTime SetMonth( this DateTime value, Int32 month ) =>
-            new DateTime( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetMonth( this DateTime value, Int32 month ) => new DateTime( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Second part.</summary>
         public static DateTime SetSecond( this DateTime originalDate, Int32 second ) =>
@@ -697,20 +686,16 @@ namespace Librainian.Measurement.Time {
                 originalDate.Kind );
 
         /// <summary>Returns the original <see cref="DateTime" /> with Hour and Minute parts changed to supplied hour and minute parameters.</summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) =>
-            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>Returns the original <see cref="DateTime" /> with Hour, Minute and Second parts changed to supplied hour, minute and second parameters.</summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) =>
-            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>Returns the original <see cref="DateTime" /> with Hour, Minute, Second and Millisecond parts changed to supplied hour, minute, second and millisecond parameters.</summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) =>
-            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year part.</summary>
-        public static DateTime SetYear( this DateTime value, Int32 year ) =>
-            new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetYear( this DateTime value, Int32 year ) => new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".</summary>
         /// <param name="timeSpan"></param>
@@ -935,7 +920,7 @@ namespace Librainian.Measurement.Time {
         public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {
             try {
                 if ( date.Year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
-                    dateTime = new DateTime( year: ( Int32 )date.Year.Value, month: date.Month.Value, day: date.Day.Value );
+                    dateTime = new DateTime( ( Int32 )date.Year.Value, date.Month.Value, date.Day.Value );
 
                     return true;
                 }

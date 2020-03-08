@@ -1,19 +1,15 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
@@ -35,7 +31,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Images.cs" was last formatted by Protiguous on 2020/03/06 at 5:22 PM.
 
 namespace Librainian.Graphics {
 
@@ -988,7 +984,7 @@ namespace Librainian.Graphics {
                     return default;
                 }
 
-                using ( var image = Image.FromFile( filename: info.FullPath, useEmbeddedColorManagement: false ) ) {
+                using ( var image = Image.FromFile( info.FullPath, false ) ) {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
 
@@ -1181,68 +1177,66 @@ namespace Librainian.Graphics {
 
                 var justName = Path.GetFileNameWithoutExtension( info.FullPath );
 
-                if ( justName != null ) {
-                    var mostlyDigits = new StringBuilder( justName.Length );
+                var mostlyDigits = new StringBuilder( justName.Length );
 
-                    foreach ( var c in justName ) {
-                        if ( Char.IsDigit( c ) ) {
-                            mostlyDigits.Append( c );
-                        }
-                        else {
-                            mostlyDigits.Append( Symbols.Singlespace );
-                        }
+                foreach ( var c in justName ) {
+                    if ( Char.IsDigit( c ) ) {
+                        mostlyDigits.Append( c );
                     }
-
-                    var digits = mostlyDigits.ToString().Trim();
-
-                    var patternsYmd = new[] {
-                        "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd"
-                    };
-
-                    DateTime bestGuess;
-
-                    foreach ( var pattern in patternsYmd ) {
-                        if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                            switch ( pattern ) {
-                                case "yyyyMMdd HHmmss" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
-                                case "yyyyMMdd" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
-                            }
-
-                            bestGuesses.Add( bestGuess );
-                        }
+                    else {
+                        mostlyDigits.Append( Symbols.Singlespace );
                     }
+                }
 
-                    var patternsDmy = new[] {
-                        "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy"
-                    };
+                var digits = mostlyDigits.ToString().Trim();
 
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach ( var pattern in patternsDmy ) {
-                        if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
-                            bestGuesses.Add( bestGuess );
+                var patternsYmd = new[] {
+                    "yyyyMMdd HHmmss", "yyyy MM dd HHmmss", "yyyy MM dd HH mm ss", "yyyy dd MM", "MMddyy HHmmss", "yyyyMMdd", "yyyy MM dd", "yyyyMMdd"
+                };
+
+                DateTime bestGuess;
+
+                foreach ( var pattern in patternsYmd ) {
+                    if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                        switch ( pattern ) {
+                            case "yyyyMMdd HHmmss" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
+                            case "yyyyMMdd" when bestGuess.Between( oldestDate, youngestDate ): return bestGuess;
                         }
+
+                        bestGuesses.Add( bestGuess );
                     }
+                }
 
-                    // per http://stackoverflow.com/q/51224/956364
-                    const String pattern1 =
-                        @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
+                var patternsDmy = new[] {
+                    "ddMMyyyy HHmmss", "dd MM yyyy HHmmss", "dd MM yyyy HH mm ss", "dd MM yyyy", "ddMMyy HHmmss", "ddMMyy"
+                };
 
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
-                        if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                            bestGuesses.Add( bestGuess );
-                        }
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach ( var pattern in patternsDmy ) {
+                    if ( DateTime.TryParseExact( digits.Sub( pattern.Length ), pattern, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out bestGuess ) ) {
+                        bestGuesses.Add( bestGuess );
                     }
+                }
 
-                    //per http://stackoverflow.com/a/669758/956364
-                    const String pattern2 =
-                        @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
+                // per http://stackoverflow.com/q/51224/956364
+                const String pattern1 =
+                    @"^((((0[13578])|([13578])|(1[02]))[\/](([1-9])|([0-2][0-9])|(3[01])))|(((0[469])|([469])|(11))[\/](([1-9])|([0-2][0-9])|(30)))|((2|02)[\/](([1-9])|([0-2][0-9]))))[\/]\d{4}$|^\d{4}$";
 
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, matchTimeout: Seconds.Five ) ) {
-                        if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
-                            bestGuesses.Add( bestGuess );
-                        }
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach ( var reg in Regex.Matches( justName, pattern1, RegexOptions.IgnorePatternWhitespace, Seconds.Five ) ) {
+                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                        bestGuesses.Add( bestGuess );
+                    }
+                }
+
+                //per http://stackoverflow.com/a/669758/956364
+                const String pattern2 =
+                    @"^(?:(?:(?:0?[13578]|1[02])(\/|-|\.)31)\1|(?:(?:0?[1,3-9]|1[0-2])(\/|-|\.)(?:29|30)\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:0?2(\/|-|\.)29\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:(?:0?[1-9])|(?:1[0-2]))(\/|-|\.)(?:0?[1-9]|1\d|2[0-8])\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
+
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach ( var reg in Regex.Matches( justName, pattern2, RegexOptions.IgnorePatternWhitespace, Seconds.Five ) ) {
+                    if ( DateTime.TryParse( reg.ToString(), out bestGuess ) ) {
+                        bestGuesses.Add( bestGuess );
                     }
                 }
 
@@ -1448,12 +1442,12 @@ namespace Librainian.Graphics {
             var destWidth = ( Int32 )( sourceWidth * nPercent );
             var destHeight = ( Int32 )( sourceHeight * nPercent );
 
-            using ( var bitmap = new Bitmap( width: destWidth, height: destHeight ) ) {
-                using ( var g = Graphics.FromImage( image: bitmap ) ) {
+            using ( var bitmap = new Bitmap( destWidth, destHeight ) ) {
+                using ( var g = Graphics.FromImage( bitmap ) ) {
                     g.SmoothingMode = SmoothingMode.HighQuality;
                     g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                    g.DrawImage( image: imgToResize, x: 0, y: 0, width: destWidth, height: destHeight );
+                    g.DrawImage( imgToResize, 0, 0, destWidth, destHeight );
                 }
 
                 return bitmap;

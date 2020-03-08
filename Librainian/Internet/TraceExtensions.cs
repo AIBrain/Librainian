@@ -79,9 +79,9 @@ namespace Librainian.Internet {
             do {
                 replyTime.Start();
 
-                pingReply = ping.Send( address: address, timeout: timeout, buffer: new Byte[] {
+                pingReply = ping.Send( address, timeout, new Byte[] {
                     0
-                }, options: pingOptions );
+                }, pingOptions );
 
                 replyTime.Stop();
 

@@ -63,13 +63,13 @@ namespace Librainian.Maths {
         private Int64 _successes;
 
         /// <summary>One failure.</summary>
-        public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
+        public static readonly Versus Failured = new Versus( 0, 1 );
 
         /// <summary>One success.</summary>
-        public static readonly Versus Successed = new Versus( successes: 1, failures: 0 );
+        public static readonly Versus Successed = new Versus( 1, 0 );
 
         /// <summary>None for either.</summary>
-        public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
+        public static readonly Versus Zero = new Versus( 0, 0 );
 
         public Int64 Failures {
             get => Thread.VolatileRead( ref this._failures );
@@ -91,7 +91,7 @@ namespace Librainian.Maths {
         }
 
         [NotNull]
-        public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
+        public Versus Clone() => new Versus( this.Successes, this.Failures );
 
         /// <summary>
         ///     <para>Increments the <see cref="Failures" /> count by <paramref name="amount" />.</para>

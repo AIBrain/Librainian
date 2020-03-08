@@ -58,7 +58,7 @@
         }
 
         [NotNull]
-        public static String ChangeExtension( [NotNull] this String filename, [CanBeNull] String extension ) =>
+        public static String ChangeExtension( [NotNull] this String filename, [CanBeNull] String? extension ) =>
             System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
 
         [NotNull]
@@ -137,35 +137,35 @@
         [NotNull]
         public static String Combine( [NotNull] [ItemNotNull] params String[] paths ) {
             if ( paths == null ) {
-                throw new ArgumentNullException( paramName: nameof( paths ) );
+                throw new ArgumentNullException( nameof( paths ) );
             }
 
             switch ( paths.Length ) {
                 case 0: return String.Empty;
                 case 1: {
-                    var z = paths[ 0 ];
+                        var z = paths[ 0 ];
 
-                    if ( z == null ) {
-                        throw new ArgumentException( message: "Value cannot be null or whitespace." );
+                        if ( z == null ) {
+                            throw new ArgumentException( "Value cannot be null or whitespace." );
+                        }
+
+                        return z.CheckInvalidPathChars().ThrowIfBlank();
                     }
-
-                    return z.CheckInvalidPathChars().ThrowIfBlank();
-                }
                 default: {
-                    var z = paths[ 0 ];
+                        var z = paths[ 0 ];
 
-                    if ( z == null ) {
-                        throw new ArgumentException( message: "Value cannot be null or whitespace." );
+                        if ( z == null ) {
+                            throw new ArgumentException( "Value cannot be null or whitespace." );
+                        }
+
+                        var path = z.CheckInvalidPathChars().ThrowIfBlank();
+
+                        for ( var i = 1; i < paths.Length; ++i ) {
+                            path = path.Combine( paths[ i ] );
+                        }
+
+                        return path;
                     }
-
-                    var path = z.CheckInvalidPathChars().ThrowIfBlank();
-
-                    for ( var i = 1; i < paths.Length; ++i ) {
-                        path = path.Combine( paths[ i ] );
-                    }
-
-                    return path;
-                }
             }
         }
 
@@ -325,13 +325,13 @@
             }
 
             var buffer = new StringBuilder( path.Length + 1 ); // Add 1 for NULL
-            var length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), ( UInt32 ) buffer.Capacity, buffer, IntPtr.Zero );
+            var length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), ( UInt32 )buffer.Capacity, buffer, IntPtr.Zero );
 
             if ( length > buffer.Capacity ) {
 
                 // Resulting path longer than our buffer, so increase it
 
-                buffer.Capacity = ( Int32 ) length;
+                buffer.Capacity = ( Int32 )length;
                 length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), length, buffer, IntPtr.Zero );
             }
 
@@ -375,7 +375,7 @@
         }
 
         public static Boolean TryNormalizeLongPath( [NotNull] this String path, [CanBeNull] out String result ) {
-            if ( !String.IsNullOrWhiteSpace( value: path ) ) {
+            if ( !String.IsNullOrWhiteSpace( path ) ) {
                 try {
                     result = path.NormalizeLongPath();
 
@@ -389,7 +389,5 @@
 
             return false;
         }
-
     }
-
 }

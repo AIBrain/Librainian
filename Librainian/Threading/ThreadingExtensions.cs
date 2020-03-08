@@ -241,7 +241,7 @@ namespace Librainian.Threading {
         }
 
         public static Int32 GetMaximumActiveWorkerThreads() {
-            ThreadPool.GetMaxThreads( workerThreads: out _, completionPortThreads: out var maxPortThreads );
+            ThreadPool.GetMaxThreads( out _, out var maxPortThreads );
 
             return maxPortThreads;
         }
@@ -387,7 +387,7 @@ namespace Librainian.Threading {
         /// <param name="description"></param>
         /// <param name="inParallel"> </param>
         /// <returns></returns>
-        public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
+        public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String? description = null,
             Boolean inParallel = true ) {
             if ( actions is null ) {
                 throw new ArgumentNullException( nameof( actions ) );
@@ -416,7 +416,7 @@ namespace Librainian.Threading {
         /// <param name="description"></param>
         /// <param name="inParallel"> </param>
         /// <returns></returns>
-        public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
+        public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String? description = null,
             Boolean inParallel = true ) {
             if ( functions is null ) {
                 throw new ArgumentNullException( nameof( functions ) );

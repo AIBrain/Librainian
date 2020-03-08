@@ -280,7 +280,7 @@ namespace Librainian.Maths {
         /// <param name="maxvalue"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
         public static Boolean Probability( this Int32 probability, Int32 maxvalue ) {
-            var chance = 0.Next( maxValue: maxvalue );
+            var chance = 0.Next( maxvalue );
 
             return probability >= chance;
         }
@@ -289,7 +289,7 @@ namespace Librainian.Maths {
         /// <param name="probability"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
         public static Boolean Probability( this Double probability ) {
-            var chance = Randem.NextDouble( min: 0.0d, max: 1.0d );
+            var chance = Randem.NextDouble( 0.0d, 1.0d );
 
             return probability >= chance;
         }
@@ -298,7 +298,7 @@ namespace Librainian.Maths {
         /// <param name="probability"></param>
         /// <remarks>the higher the value of P, the more often this function should return true.</remarks>
         public static Boolean Probability( this Single probability ) {
-            var chance = Randem.NextSingle( min: 0.0f, max: 1.0f );
+            var chance = Randem.NextSingle( 0.0f, 1.0f );
 
             return probability >= chance;
 

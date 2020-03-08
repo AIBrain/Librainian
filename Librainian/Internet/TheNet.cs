@@ -1,19 +1,15 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TheNet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "TheNet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
@@ -35,7 +31,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TheNet.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "Librainian", File: "TheNet.cs" was last formatted by Protiguous on 2020/03/06 at 7:02 PM.
 
 namespace Librainian.Internet {
 
@@ -59,19 +55,11 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( nameof( uri ) );
             }
 
-            if ( timeout is null ) {
-                timeout = Seconds.Seven;
-            }
+            var grab = GetWebPageAsync( uri, timeout );
 
-            var grab = GetWebPageAsync( uri, timeout.Value );
+            var response = await grab.ConfigureAwait( false );
 
-            if ( grab != null ) {
-                var response = await grab.ConfigureAwait( false );
-
-                return JsonConvert.DeserializeObject<T>( response );
-            }
-
-            return default;
+            return JsonConvert.DeserializeObject<T>( response );
         }
 
         /// <summary>Convert network bytes to a string</summary>
@@ -80,13 +68,13 @@ namespace Librainian.Internet {
         public static String FromNetworkBytes( [NotNull] this IEnumerable<Byte> data ) {
             var listData = data as IList<Byte> ?? data.ToList();
 
-            var len = IPAddress.NetworkToHostOrder( network: BitConverter.ToInt16( listData.Take( count: 2 ).ToArray(), startIndex: 0 ) );
+            var len = IPAddress.NetworkToHostOrder( BitConverter.ToInt16( listData.Take( 2 ).ToArray(), 0 ) );
 
             if ( listData.Count < 2 + len ) {
                 throw new ArgumentException( "Too few bytes in packet" );
             }
 
-            return Encoding.UTF8.GetString( bytes: listData.Skip( count: 2 ).Take( count: len ).ToArray() );
+            return Encoding.UTF8.GetString( listData.Skip( 2 ).Take( len ).ToArray() );
         }
 
         /// <summary>Return the machine's hostname</summary>
@@ -115,18 +103,14 @@ namespace Librainian.Internet {
         }
 
         [CanBeNull]
-        public static async Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
+        public static Task<String> GetWebPageAsync( [NotNull] this String url, TimeSpan timeout ) {
             if ( String.IsNullOrWhiteSpace( url ) ) {
                 throw new ArgumentException( "Value cannot be null or whitespace.", nameof( url ) );
             }
 
             try {
-                if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) ) {
-                    var task = uri.GetWebPageAsync( timeout );
-
-                    if ( task != null ) {
-                        return await task.ConfigureAwait( false );
-                    }
+                if ( Uri.TryCreate( url, UriKind.Absolute, out var uri ) && uri != null ) {
+                    return uri.GetWebPageAsync( timeout );
                 }
 
                 throw new Exception( $"Unable to parse the url:{url}." );
@@ -138,8 +122,8 @@ namespace Librainian.Internet {
             return default;
         }
 
-        [CanBeNull]
-        public static Task<String> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan timeout ) {
+        [NotNull]
+        public static Task<String?> GetWebPageAsync( [NotNull] this Uri uri, TimeSpan? timeout = null ) {
             if ( uri is null ) {
                 throw new ArgumentNullException( nameof( uri ) );
             }
@@ -150,9 +134,9 @@ namespace Librainian.Internet {
                     CachePolicy = new RequestCachePolicy( RequestCacheLevel.NoCacheNoStore )
                 };
 
-                client.SetTimeout( timeout );
+                client.SetTimeout( timeout.GetValueOrDefault( Seconds.Ten ) );
 
-                return client.DownloadStringTaskAsync( uri );
+                return client.DownloadStringTaskAsync( uri ) ?? throw new InvalidOperationException();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -168,11 +152,11 @@ namespace Librainian.Internet {
                 throw new ArgumentException( "Value cannot be null or empty.", nameof( data ) );
             }
 
-            var bytes = Encoding.UTF8.GetBytes( s: data );
+            var bytes = Encoding.UTF8.GetBytes( data );
 
-            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( host: ( Int16 )bytes.Length );
+            var hostToNetworkOrder = IPAddress.HostToNetworkOrder( ( Int16 )bytes.Length );
 
-            return BitConverter.GetBytes( hostToNetworkOrder ).Concat( second: bytes );
+            return BitConverter.GetBytes( hostToNetworkOrder ).Concat( bytes );
         }
     }
 }

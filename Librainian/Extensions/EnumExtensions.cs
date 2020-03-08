@@ -73,7 +73,7 @@ namespace Librainian.Extensions {
         /// <param name="element"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static String Description( [NotNull] this Enum element ) {
+        public static String? Description( [NotNull] this Enum element ) {
             var type = element.GetType();
 
             var memberInfo = type.GetMember( element.ToString() );
@@ -138,15 +138,14 @@ namespace Librainian.Extensions {
         }
 
         [CanBeNull]
-        public static String GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
+        public static String? GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
             if ( !( e is Enum ) ) {
                 return default;
             }
 
             var type = e.GetType();
-            var values = Enum.GetValues( type );
 
-            foreach ( Int32 val in values ) {
+            foreach ( Int32 val in Enum.GetValues( type ) ) {
                 if ( val != e.ToInt32( CultureInfo.InvariantCulture ) ) {
                     continue;
                 }

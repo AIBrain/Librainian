@@ -78,8 +78,8 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( App ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             var value = App.GetValue( key );
@@ -102,8 +102,8 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( App ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {

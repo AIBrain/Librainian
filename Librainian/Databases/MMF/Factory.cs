@@ -190,7 +190,7 @@ namespace Librainian.Databases.MMF {
         }
 
         [CanBeNull]
-        public ISerializeDeserialize<T> GetSerializer( [CanBeNull] String name ) =>
+        public ISerializeDeserialize<T> GetSerializer( [CanBeNull] String? name ) =>
             ( from pair in DictionaryCache where pair.Value.GetType().AssemblyQualifiedName == name select pair.Value ).FirstOrDefault();
 
         [NotNull]

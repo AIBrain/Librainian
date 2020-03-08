@@ -770,7 +770,7 @@ namespace Librainian.Maths {
         [NotNull]
         public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
             if ( !step.HasValue ) {
-                step = ToInternalDateTimes( fromm: from, to: to );
+                step = ToInternalDateTimes( from, to );
             }
 
             if ( from > to ) {

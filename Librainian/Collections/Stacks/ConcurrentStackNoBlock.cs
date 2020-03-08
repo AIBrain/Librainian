@@ -51,7 +51,7 @@ namespace Librainian.Collections.Stacks {
 
         private volatile Node _head;
 
-        public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
+        public ConcurrentNoBlockStackL() => this._head = new Node( default, this._head );
 
         [CanBeNull]
         public T Pop() {
@@ -63,7 +63,7 @@ namespace Librainian.Collections.Stacks {
                 if ( ret.Next is null ) {
                     throw new IndexOutOfRangeException( "Stack is empty" );
                 }
-            } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+            } while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
 
             return ret.Item;
         }
@@ -78,7 +78,7 @@ namespace Librainian.Collections.Stacks {
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
-            } while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
+            } while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
         }
 
         internal sealed class Node {
@@ -105,11 +105,11 @@ namespace Librainian.Collections.Stacks {
 
         public Int32 Count { get; private set; }
 
-        public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
+        public ConcurrentStackNoBlock() => this._head = new Node( default, this._head );
 
-        public void Add( [CanBeNull] T item ) => this.Push( item: item );
+        public void Add( [CanBeNull] T item ) => this.Push( item );
 
-        public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: CPU.AllCPUExceptOne, body: this.Push );
+        public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( items, CPU.AllCPUExceptOne, this.Push );
 
         public void Add( [NotNull] ParallelQuery<T> items ) => items.ForAll( this.Push );
 
@@ -129,7 +129,7 @@ namespace Librainian.Collections.Stacks {
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
-            } while ( Interlocked.CompareExchange( location1: ref this._head, nodeNew, comparand: tmp ) != tmp );
+            } while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
 
             ++this.Count;
         }
@@ -147,7 +147,7 @@ namespace Librainian.Collections.Stacks {
                     //throw new IndexOutOfRangeException( "Stack is empty" );
                     return default;
                 }
-            } while ( Interlocked.CompareExchange( location1: ref this._head, ret.Next, comparand: ret ) != ret );
+            } while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
 
             --this.Count;
             result = ret.Item;
@@ -160,14 +160,14 @@ namespace Librainian.Collections.Stacks {
         /// <param name="itemTwo"></param>
         /// <returns></returns>
         public Boolean TryPopPop( [CanBeNull] out T itemOne, [CanBeNull] out T itemTwo ) {
-            if ( !this.TryPop( result: out itemOne ) ) {
+            if ( !this.TryPop( out itemOne ) ) {
                 itemTwo = default;
 
                 return default;
             }
 
-            if ( !this.TryPop( result: out itemTwo ) ) {
-                this.Push( item: itemOne );
+            if ( !this.TryPop( out itemTwo ) ) {
+                this.Push( itemOne );
 
                 return default;
             }

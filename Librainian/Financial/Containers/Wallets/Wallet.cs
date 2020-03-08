@@ -108,13 +108,13 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <summary>Create an empty wallet with a new random id.</summary>
         /// <returns></returns>
         [NotNull]
-        public static Wallet Create() => new Wallet( id: Guid.NewGuid() );
+        public static Wallet Create() => new Wallet( Guid.NewGuid() );
 
         /// <summary>Create an empty wallet with the given <paramref name="id" />.</summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [NotNull]
-        public static Wallet Create( Guid id ) => new Wallet( id: id );
+        public static Wallet Create( Guid id ) => new Wallet( id );
 
         //private ActionBlock<TransactionMessage> Messages {get;}
         public void ClearBankNotes() {

@@ -45,8 +45,8 @@ namespace Librainian.Exceptions {
     [Serializable]
     public class StreamWriteException : StreamException {
 
-        public StreamWriteException( [CanBeNull] String message ) : base( message ) { }
+        public StreamWriteException( [CanBeNull] String? message ) : base( message ) { }
 
-        public StreamWriteException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+        public StreamWriteException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

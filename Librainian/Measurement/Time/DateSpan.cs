@@ -291,11 +291,9 @@ namespace Librainian.Measurement.Time {
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
         /// <returns></returns>
-        public static Int64 GetDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate = false ) =>
-            CalculateDifference( interval, start, end, excludeEndDate );
+        public static Int64 GetDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate = false ) => CalculateDifference( interval, start, end, excludeEndDate );
 
-        public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) =>
-            CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
+        public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) => CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
 
         public static Int64 GetDifferenceInDays( DateTime start, DateSpan span, Boolean excludeEndDate = true ) {
             var sum = 0;

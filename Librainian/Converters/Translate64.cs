@@ -46,25 +46,25 @@ namespace Librainian.Converters {
     /// Struct for combining two <see cref="Int32" /> (or <see cref="UInt32" />) to and from a <see cref="UInt64" /> (or <see cref="Int64" />) as easily as possible. Fast? No idea
     /// yet..
     /// </summary>
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct Translate64 {
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public UInt64 UnsignedValue;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Int64 SignedValue;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Int32 SignedLow;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public readonly UInt32 UnsignedLow;
 
-        [FieldOffset( offset: sizeof( UInt32 ) )]
+        [FieldOffset( sizeof( UInt32 ) )]
         public readonly UInt32 UnsignedHigh;
 
-        [FieldOffset( offset: sizeof( Int32 ) )]
+        [FieldOffset( sizeof( Int32 ) )]
         public Int32 SignedHigh;
 
         public Translate64( Int32 signedHigh, Int32 signedLow ) {

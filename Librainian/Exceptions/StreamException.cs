@@ -60,8 +60,8 @@ namespace Librainian.Exceptions {
             }
         }
 
-        public StreamException( [CanBeNull] String message ) : base( message ) { }
+        public StreamException( [CanBeNull] String? message ) : base( message ) { }
 
-        public StreamException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+        public StreamException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

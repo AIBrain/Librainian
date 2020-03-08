@@ -49,24 +49,28 @@ namespace Librainian.Persistence {
     /// <summary>Store and retrieve values from the registry.</summary>
     public static class Settings {
 
+        [CanBeNull]
         public static Boolean? GetBoolean( TrimmedString location, TrimmedString key ) {
             var result = GetObject( location, key );
 
             return result is null ? ( Boolean? )null : Convert.ToBoolean( result );
         }
 
+        [CanBeNull]
         public static Byte? GetByte( TrimmedString location, TrimmedString key ) {
             var result = GetObject( location, key );
 
             return result is null ? ( Byte? )null : Convert.ToByte( result );
         }
 
+        [CanBeNull]
         public static Int32? GetInt32( TrimmedString location, TrimmedString key ) {
             var result = GetObject( location, key );
 
             return result is null ? ( Int32? )null : Convert.ToInt32( result );
         }
 
+        [CanBeNull]
         public static Int64? GetInt64( TrimmedString location, TrimmedString key ) {
             var result = GetObject( location, key );
 
@@ -80,7 +84,7 @@ namespace Librainian.Persistence {
         /// <param name="key">     </param>
         /// <returns></returns>
         [CanBeNull]
-        public static Object GetObject( TrimmedString location, TrimmedString key ) => AppRegistry.Get( location, key );
+        public static Object? GetObject( TrimmedString location, TrimmedString key ) => AppRegistry.Get( location, key );
 
         /// <summary>
         ///     <para>Gets the value of the current user's software's company's application's folder's key's subkey.</para>
@@ -90,10 +94,10 @@ namespace Librainian.Persistence {
         /// <param name="subkey"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Object GetObject( TrimmedString location, TrimmedString key, TrimmedString subkey ) => AppRegistry.Get( location, key, subkey );
+        public static Object? GetObject( TrimmedString location, TrimmedString key, TrimmedString subkey ) => AppRegistry.Get( location, key, subkey );
 
         [CanBeNull]
-        public static String GetString( TrimmedString location, TrimmedString key ) => Convert.ToString( GetObject( location, key ) ).NullIf( String.Empty );
+        public static String? GetString( TrimmedString location, TrimmedString key ) => Convert.ToString( GetObject( location, key ) ).NullIf( String.Empty );
 
         /// <summary>
         ///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>
@@ -101,14 +105,14 @@ namespace Librainian.Persistence {
         /// <param name="folder"></param>
         /// <param name="key">   </param>
         /// <param name="value"> </param>
-        public static void Set( TrimmedString folder, TrimmedString key, [CanBeNull] Object value ) {
+        public static void Set( TrimmedString folder, TrimmedString key, [CanBeNull] Object? value ) {
             try {
                 if ( folder.IsEmpty() ) {
-                    throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( folder ) );
+                    throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
                 }
 
                 if ( key.IsEmpty() ) {
-                    throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+                    throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
                 }
 
                 if ( value is null ) {
@@ -161,7 +165,7 @@ namespace Librainian.Persistence {
                         }
 
                     default: {
-                            $"Registry: unknown type {value}.".Log( breakinto: true );
+                            $"Registry: unknown type {value}.".Log( true );
                             AppRegistry.Set( folder, key, value, RegistryValueKind.Unknown );
 
                             break;

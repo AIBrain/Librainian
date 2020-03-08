@@ -61,7 +61,7 @@ namespace Librainian.Parsing {
         /// <param name="arg">An object to format.</param>
         /// <returns>The string representation of the value of <paramref name="arg" />, formatted as specified by <paramref name="format" />.</returns>
         [NotNull]
-        protected String HandleOtherFormats( [CanBeNull] String format, [CanBeNull] Object arg ) =>
+        protected String HandleOtherFormats( [CanBeNull] String? format, [CanBeNull] Object arg ) =>
             ( arg as IFormattable )?.ToString( format, this.Culture ) ?? arg?.ToString() ?? String.Empty;
 
         /// <summary>Gets a default instance of a composite formatter.</summary>

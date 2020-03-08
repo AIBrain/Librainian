@@ -50,7 +50,7 @@ namespace Librainian.Internet.Servers {
 
         public String Value;
 
-        public Cookie( [CanBeNull] String name, [CanBeNull] String value, TimeSpan expire ) {
+        public Cookie( [CanBeNull] String? name, [CanBeNull] String? value, TimeSpan expire ) {
             this.Name = name;
             this.Value = value;
             this.Expire = expire;

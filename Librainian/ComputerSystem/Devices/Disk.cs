@@ -37,7 +37,6 @@
 //
 // Project: "Librainian", "Disk.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
 
-
 namespace Librainian.ComputerSystem.Devices {
 
     using System;
@@ -50,11 +49,6 @@ namespace Librainian.ComputerSystem.Devices {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>
@@ -101,7 +95,7 @@ namespace Librainian.ComputerSystem.Devices {
         public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
 
         [NotNull]
-        public IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern = "*" ) {
+        public IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern = "*" ) {
             var root = new Folder( this.Info.RootDirectory.FullName );
 
             return root.GetFolders( searchPattern );

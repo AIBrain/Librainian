@@ -51,12 +51,6 @@ namespace Librainian.OperatingSystem.FileSystem {
     using Utilities;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = Pri.LongPath.Path;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using FileInfo = Pri.LongPath.FileInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using Directory = Pri.LongPath.Directory;
-    using File = Pri.LongPath.File;
     // ReSharper restore RedundantUsingDirective
 
     public class FindEveryDocument : ABetterClassDispose {
@@ -102,7 +96,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 Int64 counter = 0;
 
                 this.DrivesFound = new ActionBlock<Disk>( disk => {
-                    var root = new Folder( disk.Info.RootDirectory.FullName);
+                    var root = new Folder( disk.Info.RootDirectory.FullName );
 
                     Parallel.ForEach( root.BetterGetFolders().AsParallel(), folder => {
                         if ( this.CancellationTokenSource.IsCancellationRequested ) {

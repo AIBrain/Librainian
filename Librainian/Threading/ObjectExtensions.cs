@@ -132,8 +132,8 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( instance ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: fieldName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fieldName ) );
+            if ( String.IsNullOrWhiteSpace( fieldName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fieldName ) );
             }
 
             var type = instance.GetType();

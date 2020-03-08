@@ -68,14 +68,14 @@ namespace Librainian.Threading {
         /// <param name="throwMessage">           </param>
         /// <returns></returns>
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, [CanBeNull] String throwMessage = "" ) =>
-            this.RequestCancel( throwIfAlreadyRequested: throwIfAlreadyRequested, throwMessage: throwMessage );
+        public Boolean Cancel( Boolean throwIfAlreadyRequested = false, [CanBeNull] String? throwMessage = "" ) =>
+            this.RequestCancel( throwIfAlreadyRequested, throwMessage );
 
-        public override void DisposeManaged() => this.RequestCancel( throwIfAlreadyRequested: false );
+        public override void DisposeManaged() => this.RequestCancel( false );
 
         /// <summary></summary>
         /// <returns></returns>
-        public Int64 GetCancelsRequestedCounter() => Interlocked.Read( location: ref this._cancelRequests );
+        public Int64 GetCancelsRequestedCounter() => Interlocked.Read( ref this._cancelRequests );
 
         /// <summary></summary>
         public Boolean HaveAnyCancellationsBeenRequested() => this.GetCancelsRequestedCounter().Any();
@@ -85,17 +85,17 @@ namespace Librainian.Threading {
         /// <param name="throwMessage">           </param>
         /// <returns></returns>
         /// <exception cref="TaskCanceledException">Thrown if a cancellation has already been requested.</exception>
-        public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, [CanBeNull] String throwMessage = "" ) {
+        public Boolean RequestCancel( Boolean throwIfAlreadyRequested = false, [CanBeNull] String? throwMessage = "" ) {
             if ( throwIfAlreadyRequested && this.HaveAnyCancellationsBeenRequested() ) {
                 throw new TaskCanceledException( throwMessage );
             }
 
-            Interlocked.Increment( location: ref this._cancelRequests );
+            Interlocked.Increment( ref this._cancelRequests );
 
             return true;
         }
 
         /// <summary>Resets all requests back to starting values.</summary>
-        public void Reset() => Interlocked.Add( location1: ref this._cancelRequests, -Interlocked.Read( location: ref this._cancelRequests ) );
+        public void Reset() => Interlocked.Add( ref this._cancelRequests, -Interlocked.Read( ref this._cancelRequests ) );
     }
 }

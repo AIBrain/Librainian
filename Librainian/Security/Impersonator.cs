@@ -1,19 +1,15 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Impersonator.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Impersonator.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
@@ -35,7 +31,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Impersonator.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "Librainian", File: "Impersonator.cs" was last formatted by Protiguous on 2020/03/06 at 5:15 PM.
 
 namespace Librainian.Security {
 
@@ -51,31 +47,33 @@ namespace Librainian.Security {
     public class Impersonator : ABetterClassDispose {
 
         private const Int32 Logon32LogonInteractive = 2;
+
         private const Int32 Logon32ProviderDefault = 0;
+
+        [CanBeNull]
         private WindowsImpersonationContext _impersonationContext;
 
-        public Impersonator( [CanBeNull] String userName, [CanBeNull] String domainName, [CanBeNull] String password ) =>
-            this.ImpersonateValidUser( userName: userName, domain: domainName, password: password );
+        public Impersonator( [CanBeNull] String? userName, [CanBeNull] String? domainName, [CanBeNull] String? password ) =>
+            this.ImpersonateValidUser( userName, domainName, password );
 
-        private void ImpersonateValidUser( [CanBeNull] String userName, [CanBeNull] String domain, [CanBeNull] String password ) {
+        private void ImpersonateValidUser( [CanBeNull] String? userName, [CanBeNull] String? domain, [CanBeNull] String? password ) {
             var token = IntPtr.Zero;
             var tokenDuplicate = IntPtr.Zero;
 
             try {
                 if ( !NativeMethods.RevertToSelf() ) {
-                    throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                    throw new Win32Exception( Marshal.GetLastWin32Error() );
                 }
                 else {
-                    if ( NativeMethods.LogonUser( lpszUserName: userName, lpszDomain: domain, lpszPassword: password, dwLogonType: Logon32LogonInteractive,
-                             dwLogonProvider: Logon32ProviderDefault, phToken: ref token ) == 0 ) {
-                        throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                    if ( NativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
+                        throw new Win32Exception( Marshal.GetLastWin32Error() );
                     }
                     else {
-                        if ( NativeMethods.DuplicateToken( hToken: token, impersonationLevel: 2, hNewToken: ref tokenDuplicate ) == 0 ) {
-                            throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                        if ( NativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
+                            throw new Win32Exception( Marshal.GetLastWin32Error() );
                         }
                         else {
-                            var tempWindowsIdentity = new WindowsIdentity( userToken: tokenDuplicate );
+                            var tempWindowsIdentity = new WindowsIdentity( tokenDuplicate );
                             this._impersonationContext = tempWindowsIdentity.Impersonate();
                         }
                     }
@@ -92,6 +90,6 @@ namespace Librainian.Security {
             }
         }
 
-        public override void DisposeManaged() => this._impersonationContext?.Undo();
+        public override void DisposeManaged() => this._impersonationContext.Undo();
     }
 }

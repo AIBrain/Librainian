@@ -96,18 +96,18 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="preload"> </param>
-        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( filename ), preload: preload ) { }
+        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( new Document( filename ), preload ) { }
 
         protected virtual void Dispose( Boolean releaseManaged ) {
             if ( releaseManaged ) {
-                this.Save().Wait( timeout: Minutes.One );
+                this.Save().Wait( Minutes.One );
             }
 
             GC.SuppressFinalize( this );
         }
 
         public void Dispose() {
-            this.Dispose( releaseManaged: true );
+            this.Dispose( true );
             GC.SuppressFinalize( this );
         }
 
@@ -121,12 +121,12 @@ namespace Librainian.Persistence {
             IDictionary<TKey, TValue> me = new Dictionary<TKey, TValue>( this.Count );
 
             foreach ( var pair in this ) {
-                if ( !(pair.Key is null) ) {
+                if ( !( pair.Key is null ) ) {
                     me[ pair.Key ] = pair.Value;
                 }
             }
 
-            return me.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
+            return me.TrySave( document, true, Formatting.Indented );
         }
 
         public Boolean Load( CancellationToken token = default ) {
@@ -146,7 +146,7 @@ namespace Librainian.Persistence {
                 var dictionary = document.LoadJSON<ConcurrentDictionary<TKey, TValue>>();
 
                 if ( dictionary != null ) {
-                    var result = Parallel.ForEach( source: dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: new ParallelOptions {
+                    var result = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: new ParallelOptions {
                         CancellationToken = token
                     } );
 
@@ -182,7 +182,7 @@ namespace Librainian.Persistence {
                 token = this.MainCTS.Token;
             }
 
-            return Task.Run( this.Flush, cancellationToken: token );
+            return Task.Run( this.Flush, token );
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
@@ -190,6 +190,6 @@ namespace Librainian.Persistence {
         public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( [CanBeNull] TKey key ) => !(key is null) && this.TryRemove( key, out _ );
+        public Boolean TryRemove( [CanBeNull] TKey key ) => !( key is null ) && this.TryRemove( key, out _ );
     }
 }

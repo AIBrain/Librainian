@@ -34,9 +34,9 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
         }
 
-        public static void AppendAllText( [NotNull] String path, [CanBeNull] String contents ) => AppendAllText( path.ThrowIfBlank(), contents, Encoding.UTF8 );
+        public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents ) => AppendAllText( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
-        public static void AppendAllText( [NotNull] String path, [CanBeNull] String contents, [NotNull] Encoding encoding ) {
+        public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents, [NotNull] Encoding encoding ) {
 
             const Boolean append = true;
 
@@ -314,6 +314,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         public static DateTime GetCreationTimeUtc( [NotNull] this String path ) => new FileInfo( path ).CreationTimeUtc;
 
         [NotNull]
+
         //[SuppressMessage( "Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "handle is stored by caller" )]
         public static SafeFileHandle GetFileHandle( [NotNull] String normalizedPath, FileMode mode, FileAccess access, FileShare share, FileOptions options ) {
 
@@ -327,7 +328,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var handle = NativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 )share, IntPtr.Zero, ( UInt32 )mode, ( UInt32 )options, IntPtr.Zero );
 
-            if ( handle?.IsInvalid != false ) {
+            if ( handle.IsInvalid ) {
                 var ex = Common.GetExceptionFromLastWin32Error();
                 Debug.WriteLine( $"error {ex.Message} with {normalizedPath}{Environment.NewLine}{ex.StackTrace}" );
                 Debug.WriteLine( $"{mode} {access} {share} {options}" );
@@ -818,7 +819,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         public static void WriteAllLines( [NotNull] String path, [NotNull] String[] contents ) {
 
             if ( contents == null ) {
-                throw new ArgumentNullException( paramName: nameof( contents ) );
+                throw new ArgumentNullException( nameof( contents ) );
             }
 
             WriteAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );

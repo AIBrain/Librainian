@@ -96,7 +96,7 @@ namespace Librainian.OperatingSystem.Compression {
 
                 for ( var j = 0; j < 8; j++ ) {
                     if ( ( c & 1 ) != 0 ) {
-                        c = 3988292384 ^ ( c >> 1 );
+                        c = 3988292384 ^ c >> 1;
                     }
                     else {
                         c >>= 1;
@@ -118,7 +118,7 @@ namespace Librainian.OperatingSystem.Compression {
         }
 
         private static UInt32 DateTimeToDosTime( DateTime dt ) =>
-            ( UInt32 )( ( dt.Second / 2 ) | ( dt.Minute << 5 ) | ( dt.Hour << 11 ) | ( dt.Day << 16 ) | ( dt.Month << 21 ) | ( ( dt.Year - 1980 ) << 25 ) );
+            ( UInt32 )( dt.Second / 2 | dt.Minute << 5 | dt.Hour << 11 | dt.Day << 16 | dt.Month << 21 | dt.Year - 1980 << 25 );
 
         private static DateTime DosTimeToDateTime( UInt32 dt ) =>
             new DateTime( ( Int32 )( dt >> 25 ) + 1980, ( Int32 )( dt >> 21 ) & 15, ( Int32 )( dt >> 16 ) & 31, ( Int32 )( dt >> 11 ) & 31, ( Int32 )( dt >> 5 ) & 63,
@@ -220,7 +220,7 @@ namespace Librainian.OperatingSystem.Compression {
                     outStream.Write( buffer, 0, bytesRead );
 
                     for ( UInt32 i = 0; i < bytesRead; i++ ) {
-                        zfe.Crc32 = CrcTable[ ( zfe.Crc32 ^ buffer[ i ] ) & 0xFF ] ^ ( zfe.Crc32 >> 8 );
+                        zfe.Crc32 = CrcTable[ ( zfe.Crc32 ^ buffer[ i ] ) & 0xFF ] ^ zfe.Crc32 >> 8;
                     }
                 }
             } while ( bytesRead == buffer.Length );
@@ -335,7 +335,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="comment"> General comment for Zip file</param>
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
-        public static ZipStorer Create( [NotNull] String filename, [CanBeNull] String comment ) {
+        public static ZipStorer Create( [NotNull] String filename, [CanBeNull] String? comment ) {
             Stream stream = new FileStream( filename, FileMode.Create, FileAccess.ReadWrite );
 
             var zip = Create( stream, comment );
@@ -350,7 +350,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="comment"></param>
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
-        public static ZipStorer Create( [CanBeNull] Stream stream, [CanBeNull] String comment ) {
+        public static ZipStorer Create( [CanBeNull] Stream stream, [CanBeNull] String? comment ) {
             var zip = new ZipStorer {
                 _comment = comment,
                 _zipFileStream = stream,
@@ -455,7 +455,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="pathname">     Full path of file to add to Zip storage</param>
         /// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
         /// <param name="comment">      Comment for stored file</param>
-        public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String comment ) {
+        public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String? comment ) {
             if ( this._access == FileAccess.Read ) {
                 throw new InvalidOperationException( "Writing is not allowed" );
             }
@@ -471,7 +471,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="source">       Stream object containing the data to store in Zip</param>
         /// <param name="modTime">      Modification time of the data to store</param>
         /// <param name="comment">      Comment for stored file</param>
-        public void AddStream( Compression method, [NotNull] String filenameInZip, [NotNull] Stream source, DateTime modTime, [CanBeNull] String comment ) {
+        public void AddStream( Compression method, [NotNull] String filenameInZip, [NotNull] Stream source, DateTime modTime, [CanBeNull] String? comment ) {
             if ( this._access == FileAccess.Read ) {
                 throw new InvalidOperationException( "Writing is not allowed" );
             }

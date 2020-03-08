@@ -188,7 +188,7 @@ namespace Librainian.Utilities {
         /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
         /// <param name="hint"></param>
         [Conditional( "DEBUG" )]
-        public void SetDisposeHint( [CanBeNull] String hint ) => this.DisposeHint = hint;
+        public void SetDisposeHint( [CanBeNull] String? hint ) => this.DisposeHint = hint;
         */
     }
 }

@@ -52,20 +52,26 @@ namespace Librainian.ComputerSystem.Devices {
 
         private DeviceCapabilities _capabilities = DeviceCapabilities.Unknown;
 
-        private String _class;
+        [CanBeNull]
+        private String? _class;
 
-        private String _classGuid;
+        [CanBeNull]
+        private String? _classGuid;
 
-        private String _description;
+        [CanBeNull]
+        private String? _description;
 
-        private String _friendlyName;
+        [CanBeNull]
+        private String? _friendlyName;
 
-        private Device _parent;
+        [CanBeNull]
+        private Device? _parent;
 
         private NativeMethods.SP_DEVINFO_DATA DeviceInfoData { get; }
 
         /// <summary>Gets the device's class instance.</summary>
         [Browsable( false )]
+        [NotNull]
         public DeviceClass DeviceClass { get; }
 
         public Int32? DiskNumber { get; }
@@ -74,9 +80,10 @@ namespace Librainian.ComputerSystem.Devices {
         public Int32 Index { get; }
 
         /// <summary>Gets the device's path.</summary>
-        public String Path { get; }
+        [CanBeNull]
+        public String? Path { get; }
 
-        public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index, Int32? diskNumber = null ) {
+        public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String? path, Int32 index, Int32? diskNumber = null ) {
             this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
             this.Path = path; // may be null
             this.DeviceInfoData = deviceInfoData;
@@ -102,8 +109,8 @@ namespace Librainian.ComputerSystem.Devices {
         public String Eject( Boolean allowUI ) {
             foreach ( var device in this.GetRemovableDevices() ) {
                 if ( allowUI ) {
-                    NativeMethods.CM_Request_Device_Eject_NoUi( dnDevInst: device.GetInstanceHandle(), pVetoType: IntPtr.Zero, pszVetoName: null, ulNameLength: 0,
-                        ulFlags: 0 );
+                    NativeMethods.CM_Request_Device_Eject_NoUi( device.GetInstanceHandle(), IntPtr.Zero, null, 0,
+                        0 );
 
                     // don't handle errors, there should be a UI for this
                 }
@@ -154,16 +161,18 @@ namespace Librainian.ComputerSystem.Devices {
         public UInt32 GetInstanceHandle() => this.DeviceInfoData.devInst;
 
         /// <summary>Gets this device's list of removable devices. Removable devices are parent devices that can be removed.</summary>
+        [ItemNotNull]
         public virtual IEnumerable<Device> GetRemovableDevices() {
             if ( ( this.GetCapabilities() & DeviceCapabilities.Removable ) != 0 ) {
                 yield return this;
             }
             else {
-                if ( this.Parent() is null ) {
+                var parent = this.Parent();
+                if ( parent is null ) {
                     yield break;
                 }
 
-                foreach ( var device in this.Parent().GetRemovableDevices() ) {
+                foreach ( var device in parent.GetRemovableDevices() ) {
                     yield return device;
                 }
             }
@@ -175,12 +184,12 @@ namespace Librainian.ComputerSystem.Devices {
                 return true;
             }
 
-            return this.Parent()?.IsUsb() == true && this.Parent().IsUsb();
+            return this.Parent()?.IsUsb() == true;
         }
 
         /// <summary>Gets the device's parent device or null if this device has not parent.</summary>
         [CanBeNull]
-        public Device Parent() {
+        public Device? Parent() {
             if ( this._parent != null ) {
                 return this._parent;
             }

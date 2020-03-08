@@ -48,6 +48,9 @@ namespace Librainian.Extensions {
     using Microsoft.CSharp;
     using Persistence;
 
+    /// <summary>
+    /// TODO this engine may need revisted.
+    /// </summary>
     public class CodeEngine {
 
         [CanBeNull]
@@ -88,7 +91,8 @@ namespace Librainian.Extensions {
             }
         }
 
-        public String SourcePath { get; }
+        [CanBeNull]
+        public String? SourcePath { get; }
 
         public CodeEngine( [NotNull] String sourcePath, [CanBeNull] Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
 
@@ -161,7 +165,7 @@ namespace Coding
 
         public static Boolean Test( [CanBeNull] Action<String> output ) {
             try {
-                var test = new CodeEngine( id: Guid.Empty, sourcePath: Path.GetTempPath(), output: output );
+                var test = new CodeEngine( Guid.Empty, Path.GetTempPath(), output );
                 test.Run();
 
                 return true;

@@ -83,7 +83,7 @@ namespace Librainian.Persistence {
         public ICollection<TKey> Keys => this.Dictionary.Keys;
 
         /// <summary>This deserializes the list of values.. I have a feeling this cannot be very fast.</summary>
-        public ICollection<TValue> Values => ( ICollection<TValue> )this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() );
+        public ICollection<TValue> Values => ( ICollection<TValue> )this.Dictionary.Values.Select( value => value.FromCompressedBase64().FromJSON<TValue>() );
 
         /// <summary></summary>
         /// <param name="key"></param>
@@ -122,18 +122,18 @@ namespace Librainian.Persistence {
         private PersistTable() => throw new NotImplementedException();
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder: specialFolder,
-            applicationName: null, subFolder: tableName ) ) { }
+        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
+            null, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this( folder: new Folder( specialFolder,
+        public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
             subFolder, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( fullpath: Path.Combine( path1: folder.FullPath, path2: tableName ) ) { }
+        public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( fullpath: Path.Combine( folder.FullPath, subFolder,
+        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, subFolder,
             tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
@@ -151,7 +151,7 @@ namespace Librainian.Persistence {
                     DefragmentSequentialBTrees = true
                 };
 
-                this.Dictionary = new PersistentDictionary<TKey, String>( directory: this.Folder.FullPath, customConfig: customConfig );
+                this.Dictionary = new PersistentDictionary<TKey, String>( this.Folder.FullPath, customConfig );
 
                 if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
                     throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
@@ -163,7 +163,7 @@ namespace Librainian.Persistence {
         }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] String fullpath ) : this( folder: new Folder( fullPath: fullpath ) ) { }
+        public PersistTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
 
         /// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
         /// <returns></returns>
@@ -171,8 +171,8 @@ namespace Librainian.Persistence {
             try {
                 using var document = this.Folder.TryGetTempDocument();
 
-                var text = Randem.NextString( 64, lowers: true, uppers: true, numbers: true, symbols: true );
-                document.AppendText( text: text );
+                var text = Randem.NextString( 64, true, true, true, true );
+                document.AppendText( text );
 
                 await document.TryDeleting( Seconds.Ten, CancellationToken.None ).ConfigureAwait( false );
 
@@ -224,17 +224,16 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [NotNull]
         public IEnumerable<KeyValuePair<TKey, TValue>> Items() =>
-            this.Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
+            this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
 
         public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
         public Boolean Remove( KeyValuePair<TKey, TValue> item ) {
-            
-                var value = item.Value.ToJSON()?.ToCompressedBase64();
-                var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
-                return this.Dictionary.Remove( asItem );
-            
+            var value = item.Value.ToJSON()?.ToCompressedBase64();
+            var asItem = new KeyValuePair<TKey, String>( item.Key, value );
+
+            return this.Dictionary.Remove( asItem );
         }
 
         /// <summary>Returns a string that represents the current object.</summary>

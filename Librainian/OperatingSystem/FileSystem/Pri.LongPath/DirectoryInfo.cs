@@ -26,7 +26,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     this.Refresh();
                 }
 
-                return this.state == State.Initialized && this.data?.fileAttributes.HasFlag( FileAttributes.Directory ) == true;
+                return this.state == State.Initialized && this.data.fileAttributes.HasFlag( FileAttributes.Directory );
             }
         }
 
@@ -60,7 +60,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         public override System.IO.FileSystemInfo SystemInfo => this.SysDirectoryInfo;
 
-        public DirectoryInfo( [NotNull] String path ) : base(path.ThrowIfBlank().GetFullPath()) => this.Name = path.Length != 2 || path[ 1 ] != ':' ? GetDirName( this.FullPath ) : ".";
+        public DirectoryInfo( [NotNull] String path ) : base( path.ThrowIfBlank().GetFullPath() ) => this.Name = path.Length != 2 || path[ 1 ] != ':' ? GetDirName( this.FullPath ) : ".";
 
         [NotNull]
         public static String GetDirName( [NotNull] String fullPath ) {

@@ -85,8 +85,8 @@ namespace Librainian.Controls {
         }
 
         public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
-            if ( String.IsNullOrWhiteSpace( value: messageFormat ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( messageFormat ) );
+            if ( String.IsNullOrWhiteSpace( messageFormat ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( messageFormat ) );
             }
 
             this.Box = listBox ?? throw new ArgumentNullException( nameof( listBox ) );
@@ -274,17 +274,17 @@ namespace Librainian.Controls {
             }
         }
 
-        public void Log( [CanBeNull] String message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
+        public void Log( [CanBeNull] String? message ) => this.WriteEvent( new LogEvent( LoggingLevel.Critical, message ) );
 
-        public void LogLine( [CanBeNull] String message ) => this.LogLine( LoggingLevel.Debug, message );
+        public void LogLine( [CanBeNull] String? message ) => this.LogLine( LoggingLevel.Debug, message );
 
-        public void LogLine( [CanBeNull] String format, [NotNull] params Object[] args ) =>
+        public void LogLine( [CanBeNull] String? format, [NotNull] params Object[] args ) =>
             this.LogLine( LoggingLevel.Debug, format is null ? null : String.Format( format, args ) );
 
-        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String format, [NotNull] params Object[] args ) =>
+        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String? format, [NotNull] params Object[] args ) =>
             this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
-        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
+        public void LogLine( LoggingLevel loggingLevel, [CanBeNull] String? message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
         private class LogEvent {
 
@@ -292,9 +292,10 @@ namespace Librainian.Controls {
 
             public LoggingLevel LoggingLevel { get; }
 
-            public String Message { get; }
+            [CanBeNull]
+            public String? Message { get; }
 
-            public LogEvent( LoggingLevel loggingLevel, [CanBeNull] String message ) {
+            public LogEvent( LoggingLevel loggingLevel, [CanBeNull] String? message ) {
                 this.EventTime = DateTime.Now;
                 this.LoggingLevel = loggingLevel;
                 this.Message = message;

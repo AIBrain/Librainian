@@ -58,8 +58,8 @@ namespace Librainian.Parsing.Markov {
         private MkModel() => throw new NotImplementedException();
 
         public MkModel( [NotNull] String name ) {
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             this.Name = name;
@@ -94,7 +94,7 @@ namespace Librainian.Parsing.Markov {
         /// <param name="word"></param>
         /// <returns></returns>
         [NotNull]
-        public IEnumerable<String> Nexts( [CanBeNull] String word ) {
+        public IEnumerable<String> Nexts( [CanBeNull] String? word ) {
             if ( !( word is null ) && this._markovChains.ContainsKey( word ) ) {
                 return this._markovChains[ word ];
             }
@@ -102,7 +102,7 @@ namespace Librainian.Parsing.Markov {
             return Enumerable.Empty<String>().ToList();
         }
 
-        public void Train( [CanBeNull] String corpus, Int32 level = 3 ) {
+        public void Train( [CanBeNull] String? corpus, Int32 level = 3 ) {
             var words = corpus.ToWords();
 
             Parallel.For( 0, words.Length, ( i, state ) => this._markovChains.TryAdd( words[ i ], words.Skip( i + 1 ).Take( level ).ToList() ) );

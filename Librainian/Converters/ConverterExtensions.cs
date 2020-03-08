@@ -60,13 +60,11 @@ namespace Librainian.Converters {
     using OperatingSystem.FileSystem;
     using Parsing;
     using Security;
+    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class ConverterExtensions {
@@ -227,26 +225,26 @@ namespace Librainian.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return null;
                 case String s: {
-                    s = s.Trimmed();
+                        s = s.Trimmed();
 
-                    if ( s is null ) {
-                        return default;
+                        if ( s is null ) {
+                            return default;
+                        }
+
+                        if ( s.In( ParsingConstants.TrueStrings ) ) {
+                            return true;
+                        }
+
+                        if ( s.In( ParsingConstants.FalseStrings ) ) {
+                            return default;
+                        }
+
+                        if ( Boolean.TryParse( s, out var result ) ) {
+                            return result;
+                        }
+
+                        break;
                     }
-
-                    if ( s.In( ParsingConstants.TrueStrings ) ) {
-                        return true;
-                    }
-
-                    if ( s.In( ParsingConstants.FalseStrings ) ) {
-                        return default;
-                    }
-
-                    if ( Boolean.TryParse( s, out var result ) ) {
-                        return result;
-                    }
-
-                    break;
-                }
             }
 
             var t = value.ToString();
@@ -329,8 +327,8 @@ namespace Librainian.Converters {
             //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
-            return new DateTime( year: BitConverter.ToInt32( bytes, startIndex: 0 ), month: bytes[ 13 ], day: bytes[ 9 ], hour: bytes[ 10 ], minute: bytes[ 11 ],
-                second: bytes[ 12 ], millisecond: BitConverter.ToUInt16( bytes, startIndex: 6 ), kind: ( DateTimeKind )bytes[ 15 ] );
+            return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ],
+                bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ), ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -404,7 +402,7 @@ namespace Librainian.Converters {
         [NotNull]
         [DebuggerStepThrough]
         [Pure]
-        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( fullPath: guid.ToPath( reversed: reversed ) );
+        public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( guid.ToPath( reversed ) );
 
         [DebuggerStepThrough]
         [Pure]
@@ -423,9 +421,9 @@ namespace Librainian.Converters {
         [Pure]
         public static Guid ToGuid( [NotNull] this String word ) {
             var hashedBytes = word.Sha256();
-            Array.Resize( array: ref hashedBytes, newSize: 16 );
+            Array.Resize( ref hashedBytes, 16 );
 
-            return new Guid( b: hashedBytes );
+            return new Guid( hashedBytes );
         }
 
         /// <summary>Converts a datetime to a guid. Returns Guid.Empty if any error occurs.</summary>
@@ -437,17 +435,17 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( a: ( UInt32 )dateTime.Year //0,1,2,3
-                        , b: ( UInt16 )dateTime.DayOfYear //4,5
-                        , c: ( UInt16 )dateTime.Millisecond //6,7
-                        , d: ( Byte )dateTime.DayOfWeek //8
-                        , e: ( Byte )dateTime.Day //9
-                        , f: ( Byte )dateTime.Hour //10
-                        , g: ( Byte )dateTime.Minute //11
-                        , h: ( Byte )dateTime.Second //12
-                        , i: ( Byte )dateTime.Month //13
-                        , j: Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , k: ( Byte )dateTime.Kind ); //15
+                    var guid = new Guid( ( UInt32 )dateTime.Year //0,1,2,3
+                        , ( UInt16 )dateTime.DayOfYear //4,5
+                        , ( UInt16 )dateTime.Millisecond //6,7
+                        , ( Byte )dateTime.DayOfWeek //8
+                        , ( Byte )dateTime.Day //9
+                        , ( Byte )dateTime.Hour //10
+                        , ( Byte )dateTime.Minute //11
+                        , ( Byte )dateTime.Second //12
+                        , ( Byte )dateTime.Month //13
+                        , Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
+                        , ( Byte )dateTime.Kind ); //15
 
                     return guid;
                 }
@@ -466,11 +464,11 @@ namespace Librainian.Converters {
         /// <returns></returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high: high, low: low ).guid;
+        public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high, low ).guid;
 
         [DebuggerStepThrough]
         [Pure]
-        public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( high: values.high, low: values.low ).guid;
+        public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( values.high, values.low ).guid;
 
         /// <summary>Returns the value converted to an <see cref="Int32" /> or null.</summary>
         /// <param name="value"></param>
@@ -578,11 +576,11 @@ namespace Librainian.Converters {
         [Pure]
         public static Decimal? ToMoneyOrNull( [NotNull] this SqlDataReader bob, [NotNull] String columnName ) {
             if ( bob == null ) {
-                throw new ArgumentNullException( paramName: nameof( bob ) );
+                throw new ArgumentNullException( nameof( bob ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: columnName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( columnName ) );
+            if ( String.IsNullOrWhiteSpace( columnName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( columnName ) );
             }
 
             try {
@@ -656,11 +654,12 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [CanBeNull]
         [Pure]
-        public static String ToStringOrNull<T>( [CanBeNull] this T self ) {
+        public static String? ToStringOrNull<T>( [CanBeNull] this T self ) {
             switch ( self ) {
                 case null:
                 case DBNull _:
                     return default;
+
                 case String s: return s.Trimmed();
                 case Control control: return control.Text().Trimmed();
                 default: return Equals( self, DBNull.Value ) ? default : self.ToString().Trimmed();
@@ -682,7 +681,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static UBigInteger ToUBigInteger( this Guid guid ) {
-            var bigInteger = new UBigInteger( bytes: guid.ToByteArray() );
+            var bigInteger = new UBigInteger( guid.ToByteArray() );
 
             return bigInteger;
         }

@@ -69,8 +69,8 @@ namespace Librainian.Parsing {
         /// <param name="formatProvider">An object that supplies format information about the current instance.</param>
         /// <returns>The string representation of the value of <paramref name="arg" />, formatted as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</returns>
         [CanBeNull]
-        public override String Format( [CanBeNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
-            return this._formatters.Select( formatter => formatter.Format( format, arg, formatProvider ) ).FirstOrDefault( result => result != null );
+        public override String Format( [CanBeNull] String? format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
+            return this._formatters.Select( formatter => formatter?.Format( format, arg, formatProvider ) ).FirstOrDefault( result => result != null );
         }
     }
 }

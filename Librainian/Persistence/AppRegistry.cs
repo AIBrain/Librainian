@@ -110,14 +110,14 @@ namespace Librainian.Persistence {
         /// <param name="key">   </param>
         /// <returns></returns>
         [CanBeNull]
-        public static Object Get( [NotNull] String folder, [NotNull] String key ) {
+        public static Object? Get( [NotNull] String folder, [NotNull] String key ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -140,17 +140,17 @@ namespace Librainian.Persistence {
         /// <param name="subkey"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Object Get( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+        public static Object? Get( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
@@ -175,12 +175,12 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Boolean? GetBoolean( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -205,16 +205,16 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static Boolean? GetBoolean( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
@@ -239,12 +239,12 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Byte? GetByte( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -268,16 +268,16 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Byte? GetByte( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
@@ -302,12 +302,12 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int32? GetInt32( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -331,16 +331,16 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int32? GetInt32( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
@@ -365,12 +365,12 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int64? GetInt64( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -396,16 +396,16 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int64? GetInt64( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
@@ -432,13 +432,13 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         [DebuggerStepThrough]
-        public static String GetString( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+        public static String? GetString( [NotNull] String folder, [NotNull] String key ) {
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
@@ -461,17 +461,17 @@ namespace Librainian.Persistence {
         /// <param name="subkey"></param>
         [Pure]
         [CanBeNull]
-        public static String GetString( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+        public static String? GetString( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
@@ -496,14 +496,14 @@ namespace Librainian.Persistence {
         /// <param name="value"> </param>
         /// <param name="kind">  </param>
         /// <returns></returns>
-        public static Boolean Set( [NotNull] String folder, [NotNull] String key, [CanBeNull] Object value, RegistryValueKind kind ) {
+        public static Boolean Set( [NotNull] String folder, [NotNull] String key, [CanBeNull] Object? value, RegistryValueKind kind ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             using var regFolder = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree );
@@ -542,16 +542,16 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean Set<T>( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey, [CanBeNull] T value, RegistryValueKind kind ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             using var registryKey = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree );
@@ -591,7 +591,7 @@ namespace Librainian.Persistence {
         /// <param name="folder"></param>
         /// <param name="key">   </param>
         /// <param name="value"> </param>
-        public static void Set( [NotNull] String folder, [NotNull] String key, [CanBeNull] String value ) => Set( folder, key, value, RegistryValueKind.String );
+        public static void Set( [NotNull] String folder, [NotNull] String key, [CanBeNull] String? value ) => Set( folder, key, value, RegistryValueKind.String );
 
         /// <summary>
         ///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>

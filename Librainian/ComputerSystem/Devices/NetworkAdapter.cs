@@ -64,7 +64,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// <summary>The NetEnabled status of the NetworkAdapter</summary>
         public Int32 NetEnabled { get; }
 
-        public NetworkAdapter( Int32 deviceId, [CanBeNull] String name, Int32 netEnabled, Int32 netConnectionStatus ) {
+        public NetworkAdapter( Int32 deviceId, [CanBeNull] String? name, Int32 netEnabled, Int32 netConnectionStatus ) {
             this.DeviceId = deviceId;
             this.Name = name;
             this.NetEnabled = netEnabled;
@@ -144,8 +144,8 @@ namespace Librainian.ComputerSystem.Devices {
         /// <summary>Enable Or Disable The NetworkAdapter</summary>
         /// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
         public Int32 EnableOrDisableNetworkAdapter( [NotNull] String strOperation ) {
-            if ( String.IsNullOrWhiteSpace( value: strOperation ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( strOperation ) );
+            if ( String.IsNullOrWhiteSpace( strOperation ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( strOperation ) );
             }
 
             strOperation = strOperation.Trim();

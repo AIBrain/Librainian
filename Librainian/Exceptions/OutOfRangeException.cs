@@ -51,13 +51,13 @@ namespace Librainian.Exceptions {
         /// <summary>Disallow no message.</summary>
         private OutOfRangeException() { }
 
-        public OutOfRangeException( [CanBeNull] String message ) : base( message ) {
+        public OutOfRangeException( [CanBeNull] String? message ) : base( message ) {
             if ( message.IsNullOrEmpty() ) {
                 throw new NotAllowed( "A message must be provided." );
             }
         }
 
-        public OutOfRangeException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) {
+        public OutOfRangeException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) {
             if ( message.IsNullOrEmpty() ) {
                 throw new NotAllowed( "A message must be provided." );
             }

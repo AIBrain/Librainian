@@ -53,7 +53,7 @@ namespace Librainian.Collections.Queues {
 
         public BlockingQueue() {
             this.LockObj = new Object();
-            this.Head = this.Tail = new Node<T>( item: default, next: null );
+            this.Head = this.Tail = new Node<T>( default, null );
         }
 
         [CanBeNull]
@@ -71,7 +71,7 @@ namespace Librainian.Collections.Queues {
         }
 
         public void Enqueue( [CanBeNull] T item ) {
-            var newNode = new Node<T>( item: item, next: null );
+            var newNode = new Node<T>( item, null );
 
             lock ( this.LockObj ) {
                 this.Tail.Next = newNode;

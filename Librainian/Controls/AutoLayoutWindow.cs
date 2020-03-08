@@ -52,7 +52,7 @@ namespace Librainian.Controls {
 
         public AutoLayoutWindow() => this.InitializeComponent();
 
-        public Boolean Add( [CanBeNull] String message ) {
+        public Boolean Add( [CanBeNull] String? message ) {
             try {
                 this.Messages.Enqueue( message );
 

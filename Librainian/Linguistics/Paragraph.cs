@@ -70,7 +70,7 @@ namespace Librainian.Linguistics {
 
         /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
         /// <param name="paragraph"></param>
-        public Paragraph( [CanBeNull] String paragraph ) : this( paragraph.ToSentences() ) { }
+        public Paragraph( [CanBeNull] String? paragraph ) : this( paragraph.ToSentences() ) { }
 
         /// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
         /// <param name="sentences"></param>

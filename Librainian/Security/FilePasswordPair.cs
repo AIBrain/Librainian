@@ -48,7 +48,7 @@ namespace Librainian.Security {
 
         public String Password { get; }
 
-        public FilePasswordPair( [CanBeNull] String fileName, [CanBeNull] String password ) {
+        public FilePasswordPair( [CanBeNull] String? fileName, [CanBeNull] String? password ) {
             this.FileName = fileName;
             this.Password = password;
         }

@@ -80,7 +80,7 @@ namespace ExtremeConfigAwait {
     /// <summary>From https://github.com/negativeeddy/blog-examples/blob/master/ConfigureAwaitBehavior/ExtremeConfigAwaitLibrary/AwaitableExtensions.cs</summary>
     public static class AwaitableExtensions {
 
-        private static void PrintContext( [CallerMemberName] [CanBeNull] String callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+        private static void PrintContext( [CallerMemberName] [CanBeNull] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
             var ctx = SynchronizationContext.Current;
 
             if ( ctx != null ) {
@@ -93,7 +93,7 @@ namespace ExtremeConfigAwait {
             }
         }
 
-        public static ConfiguredTaskAwaitable PrintContext( this ConfiguredTaskAwaitable t, [CallerMemberName] [CanBeNull] String callerName = null,
+        public static ConfiguredTaskAwaitable PrintContext( this ConfiguredTaskAwaitable t, [CallerMemberName] [CanBeNull] String? callerName = null,
             [CallerLineNumber] Int32 line = 0 ) {
             PrintContext( callerName, line );
 
@@ -101,7 +101,7 @@ namespace ExtremeConfigAwait {
         }
 
         [CanBeNull]
-        public static Task PrintContext( [CanBeNull] this Task t, [CallerMemberName] [CanBeNull] String callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+        public static Task PrintContext( [CanBeNull] this Task t, [CallerMemberName] [CanBeNull] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
             PrintContext( callerName, line );
 
             return t;

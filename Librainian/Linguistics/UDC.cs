@@ -51,16 +51,16 @@ namespace Librainian.Linguistics {
     /// </example>
     public class UDC {
 
-        [CanBeNull]
+        [NotNull]
         public static UDC Unknown { get; } = new UDC( String.Empty );
 
-        [CanBeNull]
+        [NotNull]
         public String Notation { get; }
 
-        public UDC( [NotNull] String notation ) => this.Notation = notation.Trimmed();
+        public UDC( [NotNull] String notation ) => this.Notation = notation.Trimmed() ?? throw new InvalidOperationException( $"Invalid {nameof( this.Notation )}." );
 
         /// <summary>Serves as the default hash function. </summary>
         /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() => this.Notation?.GetHashCode() ?? 0;
+        public override Int32 GetHashCode() => this.Notation.GetHashCode();
     }
 }

@@ -54,7 +54,7 @@ namespace Librainian.Collections.Queues {
 
         private ConcurrentQueue<T> Queue { get; } = new ConcurrentQueue<T>();
 
-        private AutoResetEvent WorkEvent { get; } = new AutoResetEvent( initialState: false );
+        private AutoResetEvent WorkEvent { get; } = new AutoResetEvent( false );
 
         /// <summary>Adds the item to the queue.</summary>
         /// <param name="item">The item to be added.</param>
@@ -66,7 +66,7 @@ namespace Librainian.Collections.Queues {
             }
 
             // queue the item
-            this.Queue.Enqueue( item: item );
+            this.Queue.Enqueue( item );
 
             // notify the consuming enumerable
             this.WorkEvent.Set();
@@ -95,7 +95,7 @@ namespace Librainian.Collections.Queues {
             do {
 
                 // dequeue and yield as many items as are available
-                while ( this.Queue.TryDequeue( result: out var value ) ) {
+                while ( this.Queue.TryDequeue( out var value ) ) {
                     yield return value;
                 }
 

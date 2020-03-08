@@ -73,14 +73,14 @@ namespace Librainian.Collections.Lists {
 
         [CanBeNull]
         Object IList.this[ Int32 index ] {
-            get => this.GetValueForIndex( arg: index );
+            get => this.GetValueForIndex( index );
 
             set => throw new NotSupportedException();
         }
 
         [CanBeNull]
         T IList<T>.this[ Int32 index ] {
-            get => this.GetValueForIndex( arg: index );
+            get => this.GetValueForIndex( index );
 
             set => throw new NotSupportedException();
         }
@@ -110,7 +110,7 @@ namespace Librainian.Collections.Lists {
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() {
             for ( var i = 0; i < this._count; i++ ) {
-                yield return this.GetValueForIndex( arg: i );
+                yield return this.GetValueForIndex( i );
             }
         }
 

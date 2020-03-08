@@ -67,6 +67,7 @@ namespace Librainian.Measurement.Currency.BTC {
         [NotNull]
         private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new ConcurrentDictionary<ICoin, UInt64>();
 
+        [CanBeNull]
         private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
 
         /// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
@@ -78,9 +79,11 @@ namespace Librainian.Measurement.Currency.BTC {
 
         public Guid ID { get; }
 
-        public Action<KeyValuePair<ICoin, UInt64>> OnDeposit { get; set; }
+        [CanBeNull]
+        public Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
 
-        public Action<KeyValuePair<ICoin, UInt64>> OnWithdraw { get; set; }
+        [CanBeNull]
+        public Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
 
         [JsonProperty]
         [NotNull]
@@ -121,7 +124,7 @@ namespace Librainian.Measurement.Currency.BTC {
                 id = Guid.NewGuid();
             }
 
-            return new CoinWallet( id: id.Value );
+            return new CoinWallet( id.Value );
         }
 
         public Boolean Contains( ICoin coin ) {

@@ -69,7 +69,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
         /// <summary></summary>
         [CanBeNull]
-        private Timer _timer;
+        private Timer? _timer;
 
         /// <summary></summary>
         [JsonProperty]
@@ -88,19 +88,19 @@ namespace Librainian.Measurement.Time.Clocks {
 
         [CanBeNull]
         [JsonProperty]
-        public Action<Hour> OnHourTick { get; set; }
+        public Action<Hour>? OnHourTick { get; set; }
 
         [CanBeNull]
         [JsonProperty]
-        public Action OnMillisecondTick { get; set; }
+        public Action? OnMillisecondTick { get; set; }
 
         [CanBeNull]
         [JsonProperty]
-        public Action OnMinuteTick { get; set; }
+        public Action? OnMinuteTick { get; set; }
 
         [CanBeNull]
         [JsonProperty]
-        public Action OnSecondTick { get; set; }
+        public Action? OnSecondTick { get; set; }
 
         /// <summary></summary>
         [JsonProperty]
@@ -205,7 +205,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Milliseconds:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double )Milliseconds.One.Value ) {
+                    this._timer = new Timer( ( Double )Milliseconds.One.Value ) {
                         AutoReset = true
                     };
 
@@ -216,7 +216,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Seconds:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double )Seconds.One.Value ) {
+                    this._timer = new Timer( ( Double )Seconds.One.Value ) {
                         AutoReset = true
                     };
 
@@ -227,7 +227,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Minutes:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double )Minutes.One.Value ) {
+                    this._timer = new Timer( ( Double )Minutes.One.Value ) {
                         AutoReset = true
                     };
 
@@ -238,7 +238,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Hours:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double )Hours.One.Value ) {
+                    this._timer = new Timer( ( Double )Hours.One.Value ) {
                         AutoReset = true
                     };
 
@@ -256,7 +256,7 @@ namespace Librainian.Measurement.Time.Clocks {
             try {
                 this._timer?.Stop(); //stop the timer so the seconds don't tick while we get the values.
 
-                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
+                return new Time( this.Hour.Value, this.Minute.Value, this.Second.Value );
             }
             finally {
                 this._timer?.Start();

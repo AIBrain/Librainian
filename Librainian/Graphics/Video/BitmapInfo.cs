@@ -69,8 +69,8 @@ namespace Librainian.Graphics.Video {
         }
 
         public void LoadBitmap( [NotNull] String fileName ) {
-            if ( String.IsNullOrWhiteSpace( value: fileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( fileName ) );
+            if ( String.IsNullOrWhiteSpace( fileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
             }
 
             this.Bitmap = new Bitmap( fileName );

@@ -50,12 +50,8 @@ namespace Librainian.Threading {
     using Utilities;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-    using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
     using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".
@@ -84,7 +80,7 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: id.ToString( "D" ) );
+                this.Semaphore = new Semaphore( 1, 1, id.ToString( "D" ) );
                 this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
@@ -105,7 +101,7 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.FullPath.GetMD5Hash() );
+                this.Semaphore = new Semaphore( 1, 1, name.FullPath.GetMD5Hash() );
                 this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
@@ -116,8 +112,8 @@ namespace Librainian.Threading {
         /// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
         /// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] String name, TimeSpan? timeout = null ) {
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             try {
@@ -126,7 +122,7 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.GetMD5Hash() );
+                this.Semaphore = new Semaphore( 1, 1, name.GetMD5Hash() );
                 this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
@@ -134,7 +130,7 @@ namespace Librainian.Threading {
             }
         }
 
-        public SingleAccess( [NotNull] IDocument document, TimeSpan? timeout = null ) : this( name: document.FullPath, timeout: timeout ) { }
+        public SingleAccess( [NotNull] IDocument document, TimeSpan? timeout = null ) : this( document.FullPath, timeout ) { }
 
         /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
@@ -174,7 +170,7 @@ namespace Librainian.Threading {
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] T self, TimeSpan? timeout = null ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException( nameof( self ) );
             }
 
             try {
@@ -184,7 +180,7 @@ namespace Librainian.Threading {
 
                 this.Snagged = false;
                 var hex = self.Serializer()?.ToHexString();
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: hex ); //what happens on a null?
+                this.Semaphore = new Semaphore( 1, 1, hex ); //what happens on a null?
                 this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {

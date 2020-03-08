@@ -44,6 +44,7 @@ namespace Librainian.OperatingSystem.FileSystem {
     using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
+    using Parsing;
 
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
@@ -54,19 +55,19 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [JsonProperty]
         [CanBeNull]
-        public Document DestinationDocument { get; set; }
+        public Document? DestinationDocument { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public String DestinationDocumentCRC64 { get; set; }
+        public String? DestinationDocumentCRC64 { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public Document SourceDocument { get; set; }
+        public Document? SourceDocument { get; set; }
 
         [JsonProperty]
         [CanBeNull]
-        public String SourceDocumentCRC64 { get; set; }
+        public String? SourceDocumentCRC64 { get; set; }
 
         [JsonProperty]
         public DateTime TimeStarted { get; set; }
@@ -103,6 +104,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         public override String ToString() =>
-            $"{this.SourceDocument.FileName} copied to {this.DestinationDocument?.ContainingingFolder().FullPath} @ {this.MegabytesPerSecond()}MB/s";
+            $"{this.SourceDocument?.FileName ?? Symbols.Null} copied to {this.DestinationDocument?.ContainingingFolder().FullPath ?? Symbols.Null} @ {this.MegabytesPerSecond()}MB/s";
     }
 }

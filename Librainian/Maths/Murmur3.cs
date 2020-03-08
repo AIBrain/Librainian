@@ -74,7 +74,7 @@ namespace Librainian.Maths {
 
         private static UInt64 MixKey1( UInt64 k1 ) {
             k1 *= C1;
-            k1 = k1.RotateLeft( bits: 31 );
+            k1 = k1.RotateLeft( 31 );
             k1 *= C2;
 
             return k1;
@@ -82,22 +82,22 @@ namespace Librainian.Maths {
 
         private static UInt64 MixKey2( UInt64 k2 ) {
             k2 *= C2;
-            k2 = k2.RotateLeft( bits: 33 );
+            k2 = k2.RotateLeft( 33 );
             k2 *= C1;
 
             return k2;
         }
 
         private void MixBody( UInt64 k1, UInt64 k2 ) {
-            this._h1 ^= MixKey1( k1: k1 );
+            this._h1 ^= MixKey1( k1 );
 
-            this._h1 = this._h1.RotateLeft( bits: 27 );
+            this._h1 = this._h1.RotateLeft( 27 );
             this._h1 += this._h2;
             this._h1 = this._h1 * 5 + 0x52dce729;
 
-            this._h2 ^= MixKey2( k2: k2 );
+            this._h2 ^= MixKey2( k2 );
 
-            this._h2 = this._h2.RotateLeft( bits: 31 );
+            this._h2 = this._h2.RotateLeft( 31 );
             this._h2 += this._h1;
             this._h2 = this._h2 * 5 + 0x38495ab5;
         }
@@ -111,21 +111,21 @@ namespace Librainian.Maths {
 
             // read 128 bits, 16 bytes, 2 longs in eacy cycle
             while ( remaining >= ReadSize ) {
-                var k1 = bb.ToUInt64( pos: pos );
+                var k1 = bb.ToUInt64( pos );
                 pos += 8;
 
-                var k2 = bb.ToUInt64( pos: pos );
+                var k2 = bb.ToUInt64( pos );
                 pos += 8;
 
                 this._length += ReadSize;
                 remaining -= ReadSize;
 
-                this.MixBody( k1: k1, k2: k2 );
+                this.MixBody( k1, k2 );
             }
 
             // if the input MOD 16 != 0
             if ( remaining > 0 ) {
-                this.ProcessBytesRemaining( bb: bb, remaining: remaining, pos: pos );
+                this.ProcessBytesRemaining( bb, remaining, pos );
             }
         }
 
@@ -165,7 +165,7 @@ namespace Librainian.Maths {
                     goto case 8;
 
                 case 8:
-                    k1 ^= bb.ToUInt64( pos: pos );
+                    k1 ^= bb.ToUInt64( pos );
 
                     break;
 
@@ -201,13 +201,13 @@ namespace Librainian.Maths {
                 default: throw new InvalidOperationException( "Something went wrong with remaining bytes calculation." );
             }
 
-            this._h1 ^= MixKey1( k1: k1 );
-            this._h2 ^= MixKey2( k2: k2 );
+            this._h1 ^= MixKey1( k1 );
+            this._h2 ^= MixKey2( k2 );
         }
 
         [NotNull]
         public Byte[] ComputeHash( [NotNull] Byte[] bb ) {
-            this.ProcessBytes( bb: bb );
+            this.ProcessBytes( bb );
 
             return this.GetHash();
         }
@@ -220,8 +220,8 @@ namespace Librainian.Maths {
             this._h1 += this._h2;
             this._h2 += this._h1;
 
-            this._h1 = MixFinal( k: this._h1 );
-            this._h2 = MixFinal( k: this._h2 );
+            this._h1 = MixFinal( this._h1 );
+            this._h2 = MixFinal( this._h2 );
 
             this._h1 += this._h2;
             this._h2 += this._h1;

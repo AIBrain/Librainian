@@ -53,13 +53,13 @@ namespace Librainian.OperatingSystem.FileSystem {
     using JetBrains.Annotations;
     using Parsing;
     using Threading;
+    using Directory = Pri.LongPath.Directory;
+    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+    using File = Pri.LongPath.File;
 
     // ReSharper disable RedundantUsingDirective
     using Path = Pri.LongPath.Path;
-    using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-    using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-    using Directory = Pri.LongPath.Directory;
-    using File = Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class FolderExtensions {
@@ -231,8 +231,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<String> SplitPath( [NotNull] String path ) {
-            if ( String.IsNullOrWhiteSpace( value: path ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
             return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );
@@ -259,7 +259,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         public static Boolean? TryDeleting( [NotNull] this Folder folder, TimeSpan tryFor ) {
             if ( folder == null ) {
-                throw new ArgumentNullException( paramName: nameof( folder ) );
+                throw new ArgumentNullException( nameof( folder ) );
             }
 
             var stopwatch = Stopwatch.StartNew();

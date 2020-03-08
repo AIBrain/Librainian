@@ -48,7 +48,7 @@ namespace Librainian.Extensions {
     public static class XMLExtensions {
 
         [ItemNotNull]
-        private static IEnumerable<XElement> SimpleStreamAxis( [NotNull] String inputUrl, [CanBeNull] String elementName ) {
+        private static IEnumerable<XElement> SimpleStreamAxis( [NotNull] String inputUrl, [CanBeNull] String? elementName ) {
             using ( var reader = XmlReader.Create( inputUrl ) ) {
                 reader.MoveToContent();
 

@@ -39,10 +39,13 @@
 
 namespace Librainian.Collections.Trees {
 
+    using JetBrains.Annotations;
+
     internal class SingleLinkNode<T> {
 
         public T Item;
 
-        public SingleLinkNode<T> Next;
+        [CanBeNull]
+        public SingleLinkNode<T>? Next;
     }
 }

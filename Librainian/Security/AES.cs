@@ -49,30 +49,30 @@ namespace Librainian.Security {
 
         private IntPtr _keyHandle;
 
-        [DllImport( dllName: "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern UInt32 BCryptCloseAlgorithmProvider( [In] IntPtr phAlgorithm, [In] Int32 dwFlags );
 
-        [DllImport( dllName: "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern UInt32 BCryptDecrypt( [In] [Out] IntPtr hKey, [In] Byte[] pbInput, [In] Int32 cbInput, [In] IntPtr pPaddingInfo, [In] Byte[] pbIV,
             [In] Int32 cbIV, [Out] Byte[] pbOutput, [In] Int32 cbOutput, [In] [Out] ref Int32 pcbResult, [In] Int32 dwFlags );
 
-        [DllImport( dllName: "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern UInt32 BCryptEncrypt( [In] [Out] IntPtr hKey, [In] Byte[] pbInput, [In] Int32 cbInput, [In] IntPtr pPaddingInfo, [In] Byte[] pbIV,
             [In] Int32 cbIV, [Out] Byte[] pbOutput, [In] Int32 cbOutput, [In] [Out] ref Int32 pcbResult, [In] Int32 dwFlags );
 
-        [DllImport( dllName: "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern UInt32 BCryptGenerateSymmetricKey( [In] IntPtr hAlgorithm, [In] [Out] ref IntPtr phKey, [Out] Byte[] pbKeyObject, [In] Int32 cbKeyObject,
             [In] Byte[] pbSecret, [In] Int32 cbSecret, [In] Int32 dwFlags );
 
-        [DllImport( dllName: "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern UInt32 BCryptGetProperty( [In] IntPtr hObject, [In] String pszProperty, [Out] Byte[] pbOutput, [In] Int32 cbOutput,
             [In] [Out] ref Int32 pcbResult, [In] Int32 dwFlags );
 
-        [DllImport( dllName: "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+        [DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
         public static extern UInt32 BCryptOpenAlgorithmProvider( [In] [Out] ref IntPtr phAlgorithm, [In] String pszAlgId, [In] String pszImplementation, [In] Int32 dwFlags );
 
         public UInt32 Close() {
-            var status = BCryptCloseAlgorithmProvider( phAlgorithm: this._algHandle, dwFlags: 0 );
+            var status = BCryptCloseAlgorithmProvider( this._algHandle, 0 );
 
             return status;
         }
@@ -88,15 +88,15 @@ namespace Librainian.Security {
             var pcbPlainText = 0;
 
             //Get Plain Text Byte Count
-            BCryptDecrypt( hKey: this._keyHandle, pbInput: pbCipherText, cbInput: pcbCipherText, pPaddingInfo: IntPtr.Zero, pbIV: pbIV2, cbIV: pbIV2.Length, pbOutput: null,
-                cbOutput: 0, pcbResult: ref pcbPlainText, dwFlags: 0 );
+            BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, null,
+                0, ref pcbPlainText, 0 );
 
             //Allocate Plain Text Buffer
             var pbPlainText = new Byte[ pcbPlainText ];
 
             //Decrypt The Data
-            var status = BCryptDecrypt( hKey: this._keyHandle, pbInput: pbCipherText, cbInput: pcbCipherText, pPaddingInfo: IntPtr.Zero, pbIV: pbIV2, cbIV: pbIV2.Length,
-                pbOutput: pbPlainText, cbOutput: pbPlainText.Length, pcbResult: ref pcbPlainText, dwFlags: 0 );
+            var status = BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length,
+                pbPlainText, pbPlainText.Length, ref pcbPlainText, 0 );
 
             return status;
         }
@@ -117,15 +117,15 @@ namespace Librainian.Security {
             var pcbCipherText = 0;
 
             //Get Cipher Text Byte Count
-            BCryptEncrypt( hKey: this._keyHandle, pbInput: pbData, cbInput: pbData.Length, pPaddingInfo: IntPtr.Zero, pbIV: pbIV, cbIV: pbIV.Length, pbOutput: null,
-                cbOutput: 0, pcbResult: ref pcbCipherText, dwFlags: 0 );
+            BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, null,
+                0, ref pcbCipherText, 0 );
 
             //Allocate Cipher Text Buffer
             var pbCipherText = new Byte[ pcbCipherText ];
 
             //Encrypt The Data
-            var status = BCryptEncrypt( hKey: this._keyHandle, pbInput: pbData, cbInput: pbData.Length, pPaddingInfo: IntPtr.Zero, pbIV: pbIV, cbIV: pbIV.Length,
-                pbOutput: pbCipherText, cbOutput: pcbCipherText, pcbResult: ref pcbCipherText, dwFlags: 0 );
+            var status = BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length,
+                pbCipherText, pcbCipherText, ref pcbCipherText, 0 );
 
             return status;
         }
@@ -138,7 +138,7 @@ namespace Librainian.Security {
             this._algHandle = IntPtr.Zero;
 
             //Initialize Status
-            BCryptOpenAlgorithmProvider( phAlgorithm: ref this._algHandle, pszAlgId: "AES", pszImplementation: "Microsoft Primitive Provider", dwFlags: 0 );
+            BCryptOpenAlgorithmProvider( ref this._algHandle, "AES", "Microsoft Primitive Provider", 0 );
 
             //Allocate DWORD for ObjectLength
             var pbObjectLength = new Byte[ 4 ];
@@ -147,8 +147,8 @@ namespace Librainian.Security {
             var pcbObjectLength = 0;
 
             //Get Algorithm Properties(BCRYPT_OBJECT_LENGTH)
-            BCryptGetProperty( hObject: this._algHandle, pszProperty: "ObjectLength", pbOutput: pbObjectLength, cbOutput: pbObjectLength.Length,
-                pcbResult: ref pcbObjectLength, dwFlags: 0 );
+            BCryptGetProperty( this._algHandle, "ObjectLength", pbObjectLength, pbObjectLength.Length,
+                ref pcbObjectLength, 0 );
 
             //Initialize KeyHandle
             this._keyHandle = IntPtr.Zero;
@@ -165,8 +165,8 @@ namespace Librainian.Security {
             var pbKeyObject = new Byte[ keyObjectSize ];
 
             //Generate Symmetric Key Object
-            var status = BCryptGenerateSymmetricKey( hAlgorithm: this._algHandle, phKey: ref this._keyHandle, pbKeyObject: pbKeyObject, cbKeyObject: keyObjectSize,
-                pbSecret: pbKey, cbSecret: pbKey.Length, dwFlags: 0 );
+            var status = BCryptGenerateSymmetricKey( this._algHandle, ref this._keyHandle, pbKeyObject, keyObjectSize,
+                pbKey, pbKey.Length, 0 );
 
             return status;
         }

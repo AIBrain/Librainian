@@ -49,16 +49,16 @@ namespace Librainian.OperatingSystem.WMI {
 
         [NotNull]
         public static String Identifier( [NotNull] String wmiClass, [NotNull] String wmiProperty, [NotNull] String wmiMustBeTrue ) {
-            if ( String.IsNullOrWhiteSpace( value: wmiClass ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( wmiClass ) );
+            if ( String.IsNullOrWhiteSpace( wmiClass ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiClass ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: wmiProperty ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( wmiProperty ) );
+            if ( String.IsNullOrWhiteSpace( wmiProperty ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiProperty ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: wmiMustBeTrue ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( wmiMustBeTrue ) );
+            if ( String.IsNullOrWhiteSpace( wmiMustBeTrue ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiMustBeTrue ) );
             }
 
             using ( var managementClass = new ManagementClass( wmiClass ) ) {
@@ -84,12 +84,12 @@ namespace Librainian.OperatingSystem.WMI {
 
         [NotNull]
         public static String Identifier( [NotNull] String wmiClass, [NotNull] String wmiProperty ) {
-            if ( String.IsNullOrWhiteSpace( value: wmiClass ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( wmiClass ) );
+            if ( String.IsNullOrWhiteSpace( wmiClass ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiClass ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: wmiProperty ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( wmiProperty ) );
+            if ( String.IsNullOrWhiteSpace( wmiProperty ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiProperty ) );
             }
 
             using ( var managementClass = new ManagementClass( wmiClass ) ) {
@@ -112,13 +112,13 @@ namespace Librainian.OperatingSystem.WMI {
         }
 
         [NotNull]
-        public static ManagementObjectCollection QueryWMI( [CanBeNull] String machineName, [NotNull] String scope, [NotNull] String query ) {
-            if ( String.IsNullOrWhiteSpace( value: query ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
+        public static ManagementObjectCollection QueryWMI( [CanBeNull] String? machineName, [NotNull] String scope, [NotNull] String query ) {
+            if ( String.IsNullOrWhiteSpace( query ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: scope ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( scope ) );
+            if ( String.IsNullOrWhiteSpace( scope ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( scope ) );
             }
 
             var conn = new ConnectionOptions();
@@ -136,8 +136,8 @@ namespace Librainian.OperatingSystem.WMI {
 
         [NotNull]
         public static ManagementObjectCollection WmiQuery( [NotNull] String query ) {
-            if ( String.IsNullOrWhiteSpace( value: query ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( query ) );
+            if ( String.IsNullOrWhiteSpace( query ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
             }
 
             var oQuery = new ObjectQuery( query );

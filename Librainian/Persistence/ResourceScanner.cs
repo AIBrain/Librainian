@@ -51,7 +51,7 @@ namespace Librainian.Persistence {
         private TaskCompletionSource<Status> CompletionSource { get; } = new TaskCompletionSource<Status>( TaskCreationOptions.RunContinuationsAsynchronously );
 
         [CanBeNull]
-        private Task DiscoveryTask { get; }
+        private Task? DiscoveryTask { get; }
 
         [NotNull]
         private TimeTracker TimeTracker { get; } = new TimeTracker();
@@ -63,7 +63,7 @@ namespace Librainian.Persistence {
 
         /// <summary>await on this after creation.</summary>
         [CanBeNull]
-        public Task<Status> Completion => this.CompletionSource.Task;
+        public Task<Status>? Completion => this.CompletionSource.Task;
 
         /// <summary>Starts scanning the resource via <paramref name="discovery" /> function parameter.</summary>
         /// <param name="discovery">The function to run in a task.</param>
@@ -87,7 +87,7 @@ namespace Librainian.Persistence {
                 this.TimeTracker.Finished = DateTime.UtcNow;
 
                 return code;
-            } ).Then( code => this.CompletionSource.TrySetResult( code ) );
+            } ).Then( code => this.CompletionSource?.TrySetResult( code ) );
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Librainian.Persistence {
 
         public Boolean IsWaiting() => this.Waiting;
 
-        public void RequestStop() => this.CancellationSource.Cancel( throwOnFirstException: false );
+        public void RequestStop() => this.CancellationSource.Cancel( false );
 
         /// <summary>Blocks while waiting for the <see cref="DiscoveryTask" /> to finish.</summary>
         public void Wait() {
@@ -125,7 +125,12 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public async Task WaitAsync() {
             this.Waiting = true;
-            await this.Completion.ConfigureAwait( false );
+
+            var completion = this.Completion;
+
+            if ( completion != null ) {
+                await completion.ConfigureAwait( false );
+            }
         }
     }
 }

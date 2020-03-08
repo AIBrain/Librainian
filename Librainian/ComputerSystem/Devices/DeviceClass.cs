@@ -78,7 +78,7 @@ namespace Librainian.ComputerSystem.Devices {
         protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
 
         [NotNull]
-        protected virtual Device CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index,
+        protected virtual Device CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String? path, Int32 index,
             Int32 disknum = -1 ) =>
             new Device( deviceClass, deviceInfoData, path, index, disknum );
 
@@ -103,7 +103,7 @@ namespace Librainian.ComputerSystem.Devices {
         [NotNull]
         internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [NotNull] String defaultValue ) {
             if ( defaultValue == null ) {
-                throw new ArgumentNullException( paramName: nameof( defaultValue ) );
+                throw new ArgumentNullException( nameof( defaultValue ) );
             }
 
             const Int32 propertyBufferSize = 1024;

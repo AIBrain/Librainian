@@ -78,17 +78,17 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static readonly Unique Empty = new Unique();
 
-        /// <summary>Just an easier to use mnemonic.</summary>
-        [NotNull]
-        [JsonIgnore]
-        public String AbsolutePath => this.U.AbsolutePath;
-
         /// <summary>The location/directory/path/file/name/whatever.ext
         /// <para>Has been filtered through Uri.AbsoluteUri already.</para>
         /// </summary>
         [NotNull]
         [JsonIgnore]
         public Uri U => this.u;
+
+        /// <summary>Just an easier to use mnemonic.</summary>
+        [NotNull]
+        [JsonIgnore]
+        public String AbsolutePath => this.U.AbsolutePath;
 
         /// <summary>What effect will this have down the road?</summary>
         private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
@@ -133,7 +133,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Boolean TryCreate( TrimmedString location, [NotNull] out Unique unique ) {
             if ( !location.IsEmpty() ) {
                 try {
-                    unique = new Unique( location: location );
+                    unique = new Unique( location );
 
                     return true;
                 }
@@ -159,7 +159,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             if ( uri.IsAbsoluteUri ) {
-                unique = new Unique( location: uri.AbsoluteUri );
+                unique = new Unique( uri.AbsoluteUri );
 
                 return true;
             }
@@ -189,7 +189,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 yield return ( Byte )a;
             }
-
         }
 
         /// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
@@ -225,7 +224,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                     ( Byte ) a, ( Byte ) b
                 }, 0 );
             }
-
         }
 
         /// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
@@ -281,7 +279,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                     ( Byte ) a, ( Byte ) b, ( Byte ) c, ( Byte ) d
                 }, 0 );
             }
-
         }
 
         public Boolean Equals( Unique other ) => Equals( this, other );
@@ -321,7 +318,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                 catch ( WebException exception ) {
                     exception.Log();
                 }
-
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -331,7 +327,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public DirectoryInfo ToDirectoryInfo() {
+        public DirectoryInfo? ToDirectoryInfo() {
             try {
                 if ( this.U.IsFile ) {
                     return new DirectoryInfo( this.AbsolutePath );
@@ -345,7 +341,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [CanBeNull]
-        public FileInfo ToFileInfo() {
+        public FileInfo? ToFileInfo() {
             try {
                 if ( this.U.IsFile ) {
                     return new FileInfo( this.AbsolutePath );

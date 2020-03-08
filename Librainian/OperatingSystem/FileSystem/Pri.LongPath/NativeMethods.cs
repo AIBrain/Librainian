@@ -419,12 +419,12 @@
         /// <param name="progress"></param>
         /// <param name="isCancelled">I beleive this becomes 1 if the file copy was cancelled, and 0 otherwise.</param>
         public static void XCopy( [NotNull]  this String oldFile, [NotNull] String newFile, [CanBeNull] CopyProgressRoutine progress, ref Int32 isCancelled ) {
-            if ( String.IsNullOrWhiteSpace( value: oldFile ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( oldFile ) );
+            if ( String.IsNullOrWhiteSpace( oldFile ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( oldFile ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: newFile ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( newFile ) );
+            if ( String.IsNullOrWhiteSpace( newFile ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( newFile ) );
             }
 
             if ( progress == default ) {

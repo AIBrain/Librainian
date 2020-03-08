@@ -92,8 +92,8 @@ namespace Librainian.Collections {
                 throw new ArgumentNullException( nameof( commonName ) );
             }
 
-            this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
-            this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
+            this.Ints = new PersistTable<UInt64, String>( new Folder( commonName, nameof( this.Ints ) ), true );
+            this.Words = new PersistTable<String, UInt64>( new Folder( commonName, nameof( this.Words ) ), true );
         }
 
         public void Clear() {
@@ -104,7 +104,7 @@ namespace Librainian.Collections {
         /// <summary>Returns true if the word is contained in the collections.</summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public Boolean Contains( [CanBeNull] String word ) {
+        public Boolean Contains( [CanBeNull] String? word ) {
             if ( String.IsNullOrEmpty( word ) ) {
                 return default;
             }

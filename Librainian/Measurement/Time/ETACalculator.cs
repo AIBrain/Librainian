@@ -87,7 +87,9 @@ namespace Librainian.Measurement.Time {
             }
         }
 
-        public EtaCalculator() => this.Reset( Seconds.One );
+        public EtaCalculator() {
+            this.Reset( Seconds.One );
+        }
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         public override void DisposeManaged() {
@@ -108,11 +110,12 @@ namespace Librainian.Measurement.Time {
         /// <summary>Get the internal data points we have so far.</summary>
         /// <returns></returns>
         [NotNull]
-        public IEnumerable<TimeProgression> GetDataPoints() =>
-            this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
+        public IEnumerable<TimeProgression> GetDataPoints() {
+            return this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
                 MillisecondsPassed = pair.Key.TotalMilliseconds,
                 Progress = pair.Value
             } );
+        }
 
         public void Reset( TimeSpan samplingPeriod ) {
             using ( this._timer ) {

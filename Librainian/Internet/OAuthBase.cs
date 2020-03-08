@@ -204,23 +204,23 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
         [NotNull]
-        public String GenerateSignature( [NotNull] Uri url, [NotNull] String consumerKey, [NotNull] String consumerSecret, [CanBeNull] String token,
-            [CanBeNull] String tokenSecret, [NotNull] String httpMethod, [CanBeNull] String timeStamp, [CanBeNull] String nonce, [CanBeNull] out String normalizedUrl,
+        public String GenerateSignature( [NotNull] Uri url, [NotNull] String consumerKey, [NotNull] String consumerSecret, [CanBeNull] String? token,
+            [CanBeNull] String? tokenSecret, [NotNull] String httpMethod, [CanBeNull] String? timeStamp, [CanBeNull] String? nonce, [CanBeNull] out String normalizedUrl,
             [CanBeNull] out String normalizedRequestParameters ) {
             if ( url == null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerSecret ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerSecret ) );
+            if ( String.IsNullOrEmpty( consumerSecret ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerSecret ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: httpMethod ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrWhiteSpace( httpMethod ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( httpMethod ) );
             }
 
             return this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl,
@@ -241,23 +241,23 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>A base64 string of the hash value</returns>
         [NotNull]
-        public String GenerateSignature( [NotNull] Uri url, [NotNull] String consumerKey, [NotNull] String consumerSecret, [CanBeNull] String token,
-            [CanBeNull] String tokenSecret, [NotNull] String httpMethod, [CanBeNull] String timeStamp, [CanBeNull] String nonce, SignatureTypes signatureType,
+        public String GenerateSignature( [NotNull] Uri url, [NotNull] String consumerKey, [NotNull] String consumerSecret, [CanBeNull] String? token,
+            [CanBeNull] String? tokenSecret, [NotNull] String httpMethod, [CanBeNull] String? timeStamp, [CanBeNull] String? nonce, SignatureTypes signatureType,
             [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) {
             if ( url == null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerSecret ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerSecret ) );
+            if ( String.IsNullOrEmpty( consumerSecret ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerSecret ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: httpMethod ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrWhiteSpace( httpMethod ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( httpMethod ) );
             }
 
             normalizedUrl = null;
@@ -295,8 +295,8 @@ namespace Librainian.Internet {
         /// <param name="normalizedRequestParameters"></param>
         /// <returns>The signature base</returns>
         [NotNull]
-        public String GenerateSignatureBase( [NotNull] Uri url, [NotNull] String consumerKey, String token, [CanBeNull] String tokenSecret, [NotNull] String httpMethod,
-            [CanBeNull] String timeStamp, [CanBeNull] String nonce, [NotNull] String signatureType, [NotNull] out String normalizedUrl,
+        public String GenerateSignatureBase( [NotNull] Uri url, [NotNull] String consumerKey, String token, [CanBeNull] String? tokenSecret, [NotNull] String httpMethod,
+            [CanBeNull] String? timeStamp, [CanBeNull] String? nonce, [NotNull] String signatureType, [NotNull] out String normalizedUrl,
             [NotNull] out String normalizedRequestParameters ) {
             if ( token is null ) {
                 token = String.Empty;
@@ -374,7 +374,7 @@ namespace Librainian.Internet {
 
             public String Value { get; }
 
-            public QueryParameter( [CanBeNull] String name, [CanBeNull] String value ) {
+            public QueryParameter( [CanBeNull] String? name, [CanBeNull] String? value ) {
                 this.Name = name;
                 this.Value = value;
             }

@@ -84,13 +84,13 @@ namespace Librainian.Internet.Servers {
         /// <summary>Adds a cookie with the specified name and value. The cookie is set to expire immediately at the end of the browsing session.</summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
-        public void Add( [CanBeNull] String name, [CanBeNull] String value ) => this.Add( name, value, TimeSpan.Zero );
+        public void Add( [CanBeNull] String? name, [CanBeNull] String? value ) => this.Add( name, value, TimeSpan.Zero );
 
         /// <summary>Adds a cookie with the specified name, value, and lifespan.</summary>
         /// <param name="name">The cookie's name.</param>
         /// <param name="value">The cookie's value.</param>
         /// <param name="expireTime">The amount of time before the cookie should expire.</param>
-        public void Add( String name, [CanBeNull] String value, TimeSpan expireTime ) {
+        public void Add( String name, [CanBeNull] String? value, TimeSpan expireTime ) {
             if ( name is null ) {
                 return;
             }
@@ -103,7 +103,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
         [CanBeNull]
-        public Cookie Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
+        public Cookie? Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
         /// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
         /// <param name="name">The name of the cookie.</param>

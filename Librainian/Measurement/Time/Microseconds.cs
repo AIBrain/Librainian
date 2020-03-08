@@ -1,19 +1,15 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Microseconds.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Microseconds.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
@@ -35,7 +31,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Microseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "Microseconds.cs" was last formatted by Protiguous on 2020/03/07 at 3:20 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -43,7 +39,6 @@ namespace Librainian.Measurement.Time {
     using System.Diagnostics;
     using System.Numerics;
     using Extensions;
-    using JetBrains.Annotations;
     using Maths;
     using Newtonsoft.Json;
     using Parsing;
@@ -52,108 +47,69 @@ namespace Librainian.Measurement.Time {
     [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
-    public class Microseconds : IComparable<Microseconds>, IQuantityOfTime {
+    public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
 
         /// <summary>1000</summary>
         public const UInt16 InOneMillisecond = 1000;
 
         /// <summary>Ten <see cref="Microseconds" /> s.</summary>
-        [NotNull]
         public static Microseconds Fifteen { get; } = new Microseconds( 15 );
 
         /// <summary>Five <see cref="Microseconds" /> s.</summary>
-        [NotNull]
         public static Microseconds Five { get; } = new Microseconds( 5 );
 
         /// <summary>Five Hundred <see cref="Microseconds" /> s.</summary>
-        [NotNull]
         public static Microseconds FiveHundred { get; } = new Microseconds( 500 );
 
         /// <summary>One <see cref="Microseconds" />.</summary>
-        [NotNull]
         public static Microseconds One { get; } = new Microseconds( 1 );
 
         /// <summary>One Thousand Nine <see cref="Microseconds" /> (Prime).</summary>
-        [NotNull]
         public static Microseconds OneThousandNine { get; } = new Microseconds( 1009 );
 
         /// <summary>Sixteen <see cref="Microseconds" />.</summary>
-        [NotNull]
         public static Microseconds Sixteen { get; } = new Microseconds( 16 );
 
         /// <summary>Ten <see cref="Microseconds" /> s.</summary>
-        [NotNull]
         public static Microseconds Ten { get; } = new Microseconds( 10 );
 
         /// <summary>Three <see cref="Microseconds" /> s.</summary>
-        [NotNull]
         public static Microseconds Three { get; } = new Microseconds( 3 );
 
         /// <summary>Three Three Three <see cref="Microseconds" />.</summary>
-        [NotNull]
         public static Microseconds ThreeHundredThirtyThree { get; } = new Microseconds( 333 );
 
         /// <summary>Two <see cref="Microseconds" /> s.</summary>
-        [NotNull]
         public static Microseconds Two { get; } = new Microseconds( 2 );
 
         /// <summary>Two Hundred <see cref="Microseconds" />.</summary>
-        [NotNull]
         public static Microseconds TwoHundred { get; } = new Microseconds( 200 );
 
         /// <summary>Two Hundred Eleven <see cref="Microseconds" /> (Prime).</summary>
-        [NotNull]
         public static Microseconds TwoHundredEleven { get; } = new Microseconds( 211 );
 
         /// <summary>Two Thousand Three <see cref="Microseconds" /> (Prime).</summary>
-        [NotNull]
         public static Microseconds TwoThousandThree { get; } = new Microseconds( 2003 );
 
         /// <summary>Zero <see cref="Microseconds" />.</summary>
-        [NotNull]
         public static Microseconds Zero { get; } = new Microseconds( 0 );
 
         [JsonProperty]
         public Rational Value { get; }
 
-        public Microseconds( Decimal value ) => this.Value = ( Rational )value;
+        public Microseconds( Decimal value ) : this( ( Rational )value ) { }
 
         public Microseconds( Rational value ) => this.Value = value;
 
-        public Microseconds( Int64 value ) => this.Value = value;
+        public Microseconds( Int64 value ) : this( ( Rational )value ) { }
 
-        public Microseconds( BigInteger value ) => this.Value = value;
+        public Microseconds( BigInteger value ) : this( ( Rational )value ) { }
 
-        [NotNull]
-        public static Microseconds Combine( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Microseconds Combine( Microseconds left, Rational microseconds ) => new Microseconds( left.Value + microseconds );
 
-            return Combine( left, right.Value );
-        }
-
-        [NotNull]
-        public static Microseconds Combine( [NotNull] Microseconds left, Rational microseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return new Microseconds( left.Value + microseconds );
-        }
-
-        [NotNull]
-        public static Microseconds Combine( [NotNull] Microseconds left, BigInteger microseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return new Microseconds( left.Value + microseconds );
-        }
+        public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new Microseconds( left.Value + microseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -161,203 +117,52 @@ namespace Librainian.Measurement.Time {
         /// <param name="left"> </param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Microseconds left, [CanBeNull] Microseconds right ) {
-            if ( left is null && right is null ) {
-                return true;
-            }
+        public static Boolean Equals( Microseconds left, Microseconds right ) => left.Value == right.Value;
 
-            if ( left is null || right is null ) {
-                return default;
-            }
+        public static implicit operator Milliseconds( Microseconds microseconds ) => microseconds.ToMilliseconds();
 
-            return left.Value == right.Value;
-        }
+        public static implicit operator Nanoseconds( Microseconds microseconds ) => microseconds.ToNanoseconds();
 
-        [CanBeNull]
-        public static implicit operator Milliseconds( [NotNull] Microseconds microseconds ) {
-            if ( microseconds is null ) {
-                throw new ArgumentNullException( nameof( microseconds ) );
-            }
+        public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
 
-            return microseconds.ToMilliseconds();
-        }
+        public static Microseconds operator -( Microseconds milliseconds ) => new Microseconds( milliseconds.Value * -1 );
 
-        [CanBeNull]
-        public static implicit operator Nanoseconds( [NotNull] Microseconds microseconds ) {
-            if ( microseconds is null ) {
-                throw new ArgumentNullException( nameof( microseconds ) );
-            }
+        public static Microseconds operator -( Microseconds left, Microseconds right ) => Combine( left, -right );
 
-            return microseconds.ToNanoseconds();
-        }
-
-        public static implicit operator TimeSpan( [NotNull] Microseconds microseconds ) {
-            if ( microseconds is null ) {
-                throw new ArgumentNullException( nameof( microseconds ) );
-            }
-
-            return TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
-        }
-
-        [NotNull]
-        public static Microseconds operator -( [NotNull] Microseconds milliseconds ) {
-            if ( milliseconds is null ) {
-                throw new ArgumentNullException( nameof( milliseconds ) );
-            }
-
-            return new Microseconds( milliseconds.Value * -1 );
-        }
-
-        [NotNull]
-        public static Microseconds operator -( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return Combine( left, -right );
-        }
-
-        [NotNull]
         public static Microseconds operator -( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational )( -microseconds ) );
 
-        public static Boolean operator !=( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator !=( Microseconds left, Microseconds right ) => !Equals( left, right );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Microseconds operator +( Microseconds left, Microseconds right ) => Combine( left, right );
 
-            return !Equals( left, right );
-        }
+        public static Microseconds operator +( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational )microseconds );
 
-        [NotNull]
-        public static Microseconds operator +( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Microseconds operator +( Microseconds left, BigInteger microseconds ) => Combine( left, microseconds );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
+        public static Boolean operator <( Microseconds left, Microseconds right ) => left.Value < right.Value;
 
-            return Combine( left, right );
-        }
+        public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds )left < right;
 
-        [NotNull]
-        public static Microseconds operator +( [NotNull] Microseconds left, Decimal microseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator ==( Microseconds left, Microseconds right ) => Equals( left, right );
 
-            return Combine( left, ( Rational )microseconds );
-        }
+        public static Boolean operator >( Microseconds left, Microseconds right ) => left.Value > right.Value;
 
-        [NotNull]
-        public static Microseconds operator +( [NotNull] Microseconds left, BigInteger microseconds ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public static Boolean operator >( Microseconds left, Milliseconds right ) => left.Value > right.Value;
 
-            return Combine( left, microseconds );
-        }
+        public Int32 CompareTo( Microseconds other ) => this.Value.CompareTo( other.Value );
 
-        public static Boolean operator <( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
+        public Boolean Equals( Microseconds other ) => Equals( this, other );
 
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value < right.Value;
-        }
-
-        public static Boolean operator <( [NotNull] Microseconds left, [CanBeNull] Milliseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            return ( Milliseconds )left < right;
-        }
-
-        public static Boolean operator ==( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return Equals( left, right );
-        }
-
-        public static Boolean operator >( [NotNull] Microseconds left, [NotNull] Microseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value > right.Value;
-        }
-
-        public static Boolean operator >( [NotNull] Microseconds left, [NotNull] Milliseconds right ) {
-            if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
-            }
-
-            if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
-            }
-
-            return left.Value > right.Value;
-        }
-
-        public Int32 CompareTo( [NotNull] Microseconds other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public Boolean Equals( [NotNull] Microseconds other ) {
-            if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return Equals( this, other );
-        }
-
-        public override Boolean Equals( Object obj ) {
-            if ( obj is null ) {
-                return default;
-            }
-
-            return obj is Microseconds microseconds && this.Equals( microseconds );
-        }
+        public override Boolean Equals( Object obj ) => obj is Microseconds microseconds && Equals( this, microseconds );
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        [NotNull]
         public Milliseconds ToMilliseconds() => new Milliseconds( this.Value / InOneMillisecond );
 
-        [NotNull]
         public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
 
         public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMicrosecond * this.Value );
 
-        [NotNull]
         public Seconds ToSeconds() => new Seconds( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
 
         public override String ToString() {
@@ -372,6 +177,6 @@ namespace Librainian.Measurement.Time {
             return $"{dec} {dec.PluralOf( "µs" )}";
         }
 
-        public TimeSpan ToTimeSpan() => this.ToSeconds();
+        public TimeSpan ToTimeSpan() => this;
     }
 }

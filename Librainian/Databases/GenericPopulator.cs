@@ -52,7 +52,7 @@ namespace Librainian.Databases {
         [CanBeNull]
         public static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
             if ( reader == null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException( nameof( reader ) );
             }
 
             var readerColumns = new List<String>();

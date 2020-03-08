@@ -91,12 +91,12 @@ namespace Librainian.Parsing {
             }
         }
 
-        public ContinuousSentence( [CanBeNull] String startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
+        public ContinuousSentence( [CanBeNull] String? startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
         /// <summary>Append the <paramref name="text" /> to the current sentence buffer.</summary>
         /// <returns></returns>
         [NotNull]
-        public ContinuousSentence Add( [CanBeNull] String text ) {
+        public ContinuousSentence Add( [CanBeNull] String? text ) {
             if ( text is null ) {
                 text = String.Empty;
             }

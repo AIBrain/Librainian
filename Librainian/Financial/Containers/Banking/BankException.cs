@@ -50,10 +50,10 @@ namespace Librainian.Financial.Containers.Banking {
 
         protected BankException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
-        public BankException( [CanBeNull] String message ) : base( message ) { }
+        public BankException( [CanBeNull] String? message ) : base( message ) { }
 
         public BankException() { }
 
-        public BankException( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+        public BankException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
     }
 }

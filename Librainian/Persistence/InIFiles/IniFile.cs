@@ -69,7 +69,7 @@ namespace Librainian.Persistence.InIFiles {
         public IEnumerable<String> Sections => this.Data.Keys;
 
         [CanBeNull]
-        public IniSection this[ [CanBeNull] String section ] {
+        public IniSection this[ [CanBeNull] String? section ] {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
@@ -106,7 +106,7 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         [CanBeNull]
-        public String this[ [CanBeNull] String section, [CanBeNull] String key ] {
+        public String this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
@@ -149,8 +149,8 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         public IniFile( [NotNull] String data ) {
-            if ( String.IsNullOrWhiteSpace( value: data ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( data ) );
+            if ( String.IsNullOrWhiteSpace( data ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( data ) );
             }
 
             //cheat: write out to temp file, read in, then delete temp file
@@ -176,9 +176,9 @@ namespace Librainian.Persistence.InIFiles {
         private static String Encode( [NotNull] String section ) => $"{SectionBegin}{section.TrimStart()}{SectionEnd}";
 
         [CanBeNull]
-        private IniSection EnsureDataSection( [NotNull] String section ) {
-            if ( String.IsNullOrEmpty( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( section ) );
+        private IniSection? EnsureDataSection( [NotNull] String section ) {
+            if ( String.IsNullOrEmpty( section ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( section ) );
             }
 
             lock ( this.Data ) {
@@ -191,12 +191,12 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         private Boolean FindComment( [NotNull] String line, [NotNull] String section, ref Int32 counter ) {
-            if ( String.IsNullOrWhiteSpace( value: line ) ) {
+            if ( String.IsNullOrWhiteSpace( line ) ) {
                 return default;
             }
 
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( section ) );
+            if ( String.IsNullOrWhiteSpace( section ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( section ) );
             }
 
             if ( line.StartsWith( IniLine.CommentHeader ) && this.Add( section, new KeyValuePair<String, String>( line, default ) ) ) {
@@ -213,8 +213,8 @@ namespace Librainian.Persistence.InIFiles {
                 throw new ArgumentNullException( nameof( line ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( section ) );
+            if ( String.IsNullOrWhiteSpace( section ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( section ) );
             }
 
             if ( line.Contains( IniLine.PairSeparator ) ) {
@@ -236,8 +236,8 @@ namespace Librainian.Persistence.InIFiles {
         private Boolean FindSection( [NotNull] String line, [CanBeNull] out String section ) {
             line = line.Trimmed();
 
-            if ( String.IsNullOrWhiteSpace( value: line ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( line ) );
+            if ( String.IsNullOrWhiteSpace( line ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( line ) );
             }
 
             if ( line.StartsWith( SectionBegin ) && line.EndsWith( SectionEnd ) ) {
@@ -262,7 +262,7 @@ namespace Librainian.Persistence.InIFiles {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
-            if ( !this.Data.TryGetValue( section, out var dict ) ) {
+            if ( !this.Data.TryGetValue( section, out var dict ) || dict is null ) {
                 return default; //section not found
             }
 
@@ -270,8 +270,10 @@ namespace Librainian.Persistence.InIFiles {
                 using ( var writer = File.AppendText( document.FullPath ) ) {
                     writer.WriteLine( Encode( section ) );
 
-                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        writer.WriteLine( Encode( pair ) );
+                    foreach ( var pair in dict.OrderBy( pair => pair?.Key ) ) {
+                        if ( pair != null ) {
+                            writer.WriteLine( Encode( pair ) );
+                        }
                     }
 
                     writer.WriteLine( String.Empty );
@@ -317,24 +319,24 @@ namespace Librainian.Persistence.InIFiles {
             return default;
         }
 
-        public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String value ) {
+        public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String? value ) {
             section = section.Trimmed();
 
             if ( String.IsNullOrEmpty( section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( section ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( section ) );
             }
 
             key = key.Trimmed();
 
             if ( String.IsNullOrEmpty( key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             var retries = 10;
             TryAgain:
 
             try {
-                var dataSection = this.EnsureDataSection( section: section );
+                var dataSection = this.EnsureDataSection( section );
 
                 if ( dataSection != default ) {
                     var found = dataSection.FirstOrDefault( line => line?.Key.Like( key ) == true );
@@ -365,11 +367,11 @@ namespace Librainian.Persistence.InIFiles {
 
         public Boolean Add( String section, KeyValuePair<String, String> kvp ) {
             if ( String.IsNullOrEmpty( section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( section ) );
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( section ) );
             }
 
             if ( String.IsNullOrEmpty( kvp.Key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( section ) );
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( section ) );
             }
 
             return this.Add( section, kvp.Key, kvp.Value );
@@ -429,18 +431,18 @@ namespace Librainian.Persistence.InIFiles {
 
             foreach ( var line in lines.Select( s => s?.Trimmed() ).Where( line => !line.IsNullOrEmpty() ) ) {
 
-                if ( this.FindSection( line: line, section: out var section ) ) {
+                if ( this.FindSection( line, out var section ) ) {
                     if ( section != default ) {
                         continue;
                     }
                 }
 
-                if ( section != null && this.FindComment( line: line, section: section, counter: ref counter ) ) {
+                if ( section != null && this.FindComment( line, section, ref counter ) ) {
                     continue;
                 }
 
                 if ( section != null ) {
-                    counter = this.FindKVLine( line: line, section: section, counter: counter );
+                    counter = this.FindKVLine( line, section, counter );
                 }
             }
 
@@ -536,12 +538,12 @@ namespace Librainian.Persistence.InIFiles {
         [DebuggerStepThrough]
         public Boolean TryRemove( [NotNull] String section, [NotNull] String key ) {
 
-            if ( String.IsNullOrWhiteSpace( value: section ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( section ) );
+            if ( String.IsNullOrWhiteSpace( section ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( section ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             if ( !this.Data.ContainsKey( section ) ) {

@@ -140,8 +140,8 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( action ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             Error.Trap( () => this.Jobs.TryAdd( name, action ) );

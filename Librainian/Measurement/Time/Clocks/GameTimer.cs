@@ -187,7 +187,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>Total time passed since timer was started.</summary>
         /// <returns></returns>
         [NotNull]
-        public SpanOfTime TotalElapsed() => new SpanOfTime( milliseconds: new Milliseconds( this.Counter / this.UpdateRate.TotalMilliseconds ) );
+        public SpanOfTime TotalElapsed() => new SpanOfTime( new Milliseconds( this.Counter / this.UpdateRate.TotalMilliseconds ) );
 
         [JsonObject]
         public struct ReportBack {

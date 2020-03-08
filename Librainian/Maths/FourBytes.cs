@@ -43,7 +43,7 @@ namespace Librainian.Maths {
     using System.Runtime.InteropServices;
 
     /// <summary>4 byte struct.</summary>
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct FourBytes {
 
         [FieldOffset( 0 )]

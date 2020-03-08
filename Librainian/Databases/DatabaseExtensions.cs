@@ -1,19 +1,15 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
 // Donations are accepted (for now) via
 //     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
@@ -35,7 +31,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DatabaseExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "DatabaseExtensions.cs" was last formatted by Protiguous on 2020/03/06 at 6:35 PM.
 
 namespace Librainian.Databases {
 
@@ -63,12 +59,13 @@ namespace Librainian.Databases {
 
     public static class DatabaseExtensions {
 
+        [NotNull]
         private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
-        [CanBeNull]
-        private static T CreateItemFromRow<T>( [CanBeNull] DataRow row, [NotNull] IEnumerable<PropertyInfo> properties ) {
+        [NotNull]
+        private static T CreateItemFromRow<T>( [NotNull] DataRow row, [NotNull] [ItemNotNull] IEnumerable<PropertyInfo> properties ) {
             if ( row is null ) {
-                return default;
+                throw new ArgumentNullException( paramName: nameof( row ) );
             }
 
             if ( properties is null ) {
@@ -76,13 +73,13 @@ namespace Librainian.Databases {
             }
 
             //T item = new T();
-            //var item = Activator.CreateInstance<T>(); //TODO use the faster creation function
+            //var item = Activator.CreateInstance<T>(); //TODO use the faster creation function below?
             //var t = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
 
-            var item = ( T )FormatterServices.GetUninitializedObject( typeof( T ) );
+            var item = ( T )FormatterServices.GetUninitializedObject( typeof( T ) ) ?? throw new InvalidOperationException( "Something bad happened." );
 
             foreach ( var property in properties ) {
-                property?.SetValue( item, row[ property.Name ], null );
+                property.SetValue( item, row[ property.Name ], null );
             }
 
             return item;
@@ -177,8 +174,8 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( builderToTest ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: command ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( command ) );
+            if ( String.IsNullOrWhiteSpace( command ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
             }
 
             try {
@@ -200,8 +197,8 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( builderToTest ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: command ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( command ) );
+            if ( String.IsNullOrWhiteSpace( command ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
             }
 
             try {
@@ -270,15 +267,9 @@ namespace Librainian.Databases {
         /// <returns></returns>
         [ItemNotNull]
         public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
-            const String query = "select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = \'instanceID\'";
+            const String query = @"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = 'instanceID'";
 
-            var wmiNameSpaces = GetCorrectWmiNameSpaces();
-
-            if ( wmiNameSpaces is null ) {
-                yield break;
-            }
-
-            foreach ( var correctNamespace in wmiNameSpaces ) {
+            foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
 
                 using var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
 
@@ -291,16 +282,17 @@ namespace Librainian.Databases {
                     yield break;
                 }
 
-                foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine?[ "ServiceName" ]?.ToString() )
-                    .Where( serviceName => !String.IsNullOrWhiteSpace( serviceName ) ) ) {
+                foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine?[ "ServiceName" ]?.ToString() ) ) {
 
-                    yield return new SqlServerInstance {
-                        InstanceName = GetInstanceNameFromServiceName( serviceName ),
-                        ServiceName = serviceName,
-                        Version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ),
-                        Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" ),
-                        MachineName = Environment.MachineName
-                    };
+                    if ( !String.IsNullOrWhiteSpace( serviceName ) ) {
+                        yield return new SqlServerInstance {
+                            InstanceName = GetInstanceNameFromServiceName( serviceName ),
+                            ServiceName = serviceName,
+                            Version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ),
+                            Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" ),
+                            MachineName = Environment.MachineName
+                        };
+                    }
                 }
             }
         }
@@ -312,8 +304,8 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( file ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             if ( file.TryGetValue( key, out var connection ) ) {
@@ -332,6 +324,7 @@ namespace Librainian.Databases {
         /// <summary>Method returns the correct SQL namespace to use to detect SQL Server instances.</summary>
         /// <returns>namespace to use to detect SQL Server instances</returns>
         [ItemNotNull]
+        [NotNull]
         public static IEnumerable<String> GetCorrectWmiNameSpaces() {
             const String root = "root\\Microsoft\\sqlserver";
             var namespaces = new List<String>();
@@ -355,7 +348,7 @@ namespace Librainian.Databases {
         /// <param name="serviceName"></param>
         /// <returns></returns>
         [NotNull]
-        public static String GetInstanceNameFromServiceName( [CanBeNull] String serviceName ) {
+        public static String GetInstanceNameFromServiceName( [CanBeNull] String? serviceName ) {
             if ( String.IsNullOrEmpty( serviceName ) ) {
                 return String.Empty;
             }
@@ -372,7 +365,7 @@ namespace Librainian.Databases {
             var type = typeof( T );
 
             if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) {
-                TypeDictionary.Add( type, type.GetProperties().ToList() );
+                TypeDictionary.Add( type, type.GetProperties() );
             }
 
             return TypeDictionary[ type ];
@@ -436,7 +429,7 @@ namespace Librainian.Databases {
                 }
 
                 return DatabaseServer.FindUsableServers( Seconds.Thirty, credentials ).Where( server => {
-                    if ( server?.Status.IsGood() != true ) {
+                    if ( server.Status.IsGood() ) {
                         return default;
                     }
 
@@ -463,8 +456,8 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( reader ) );
             }
 
-            if ( String.IsNullOrEmpty( value: columnName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", nameof( columnName ) );
+            if ( String.IsNullOrEmpty( columnName ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( columnName ) );
             }
 
             var dictionary = reader.GetDict();
@@ -500,12 +493,12 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( file ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: connectionString ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", nameof( connectionString ) );
+            if ( String.IsNullOrWhiteSpace( connectionString ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
             }
 
             file[ key ] = connectionString;
@@ -646,7 +639,7 @@ namespace Librainian.Databases {
                     icolType = icolType.GetGenericArguments()[ 0 ];
                 }
 
-                table.Columns.Add( column: new DataColumn( columnName: getProperty.Name, dataType: icolType ) );
+                table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
             }
 
             foreach ( var record in list.Where( record => !( record is null ) ) ) {
@@ -656,7 +649,7 @@ namespace Librainian.Databases {
                     dr[ p.Name ] = p.GetValue( record, default ) ?? DBNull.Value;
                 }
 
-                table.Rows.Add( row: dr );
+                table.Rows.Add( dr );
             }
 
             return table;
@@ -704,21 +697,21 @@ namespace Librainian.Databases {
 
             var properties = GetPropertiesForType<T>();
 
-            if ( properties is null ) {
-                return Enumerable.Empty<T>();
+            foreach ( var row in table.Rows.Cast<DataRow>() ) {
+                if ( row != null ) {
+                    yield return CreateItemFromRow<T>( row, properties );
+                }
             }
-
-            return from Object row in table.Rows select CreateItemFromRow<T>( row as DataRow, properties );
         }
 
         [NotNull]
-        public static SqlParameter ToSqlParameter<TValue>( [CanBeNull] this TValue value, [CanBeNull] String parameterName ) =>
+        public static SqlParameter ToSqlParameter<TValue>( [CanBeNull] this TValue value, [CanBeNull] String? parameterName ) =>
             new SqlParameter( parameterName, value ) {
                 Value = value
             };
 
         [NotNull]
-        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String parameterName, Int32 size ) =>
+        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String? parameterName, Int32 size ) =>
             new SqlParameter( parameterName, sqlDbType, size );
 
         /*
@@ -828,7 +821,7 @@ namespace Librainian.Databases {
         /// <param name="token"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static SqlServer TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
+        public static SqlServer? TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
 
             if ( test == default ) {
                 throw new ArgumentNullException( nameof( test ) );
@@ -853,7 +846,7 @@ namespace Librainian.Databases {
                 }
 
                 var serverDateTime = getdate.Value; //should already be utc.
-                var now = DateTime.UtcNow; //get this computer's utc
+                var now = DateTime.UtcNow;          //get this computer's utc
 
                 if ( serverDateTime.Date == now.Date ) {
                     ( $"Opened a connection to {test.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +

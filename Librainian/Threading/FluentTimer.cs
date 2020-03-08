@@ -88,7 +88,7 @@ namespace Librainian.Threading {
                 mills = 1;
             }
 
-            var timer = new Timer( interval: mills ) {
+            var timer = new Timer( mills ) {
                 AutoReset = false
             };
 

@@ -42,7 +42,7 @@ namespace Librainian.Converters {
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct TranslateDecimalGuid {
 
         [FieldOffset( 0 )]

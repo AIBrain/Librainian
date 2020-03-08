@@ -70,7 +70,7 @@ namespace Librainian.Security {
             Int32 c2;
             Int32 c3;
 
-            var password = new StringBuilder( capacity: requiredLength );
+            var password = new StringBuilder( requiredLength );
             var weightedRandom = ( Int64 )( Randem.NextDouble() * GpwData.Sigma );
             Int64 sum = 0;
 
@@ -79,15 +79,15 @@ namespace Librainian.Security {
             for ( c1 = 0; c1 < 26 && !finished; c1++ ) {
                 for ( c2 = 0; c2 < 26 && !finished; c2++ ) {
                     for ( c3 = 0; c3 < 26 && !finished; c3++ ) {
-                        sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
+                        sum += GpwData.Get( c1, c2, c3 );
 
                         if ( sum <= weightedRandom ) {
                             continue;
                         }
 
-                        password.Append( EnglishAlphabetLowercase[ index: c1 ] );
-                        password.Append( EnglishAlphabetLowercase[ index: c2 ] );
-                        password.Append( EnglishAlphabetLowercase[ index: c3 ] );
+                        password.Append( EnglishAlphabetLowercase[ c1 ] );
+                        password.Append( EnglishAlphabetLowercase[ c2 ] );
+                        password.Append( EnglishAlphabetLowercase[ c3 ] );
                         finished = true;
                     }
                 }
@@ -97,13 +97,13 @@ namespace Librainian.Security {
             var nchar = 3;
 
             while ( nchar < requiredLength ) {
-                c1 = EnglishAlphabetLowercase.IndexOf( password[ index: nchar - 2 ] );
-                c2 = EnglishAlphabetLowercase.IndexOf( password[ index: nchar - 1 ] );
+                c1 = EnglishAlphabetLowercase.IndexOf( password[ nchar - 2 ] );
+                c2 = EnglishAlphabetLowercase.IndexOf( password[ nchar - 1 ] );
 
                 sum = 0;
 
                 for ( c3 = 0; c3 < 26; c3++ ) {
-                    sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
+                    sum += GpwData.Get( c1, c2, c3 );
                 }
 
                 if ( sum == 0 ) {
@@ -115,13 +115,13 @@ namespace Librainian.Security {
                 sum = 0;
 
                 for ( c3 = 0; c3 < 26; c3++ ) {
-                    sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
+                    sum += GpwData.Get( c1, c2, c3 );
 
                     if ( sum <= weightedRandom ) {
                         continue;
                     }
 
-                    password.Append( EnglishAlphabetLowercase[ index: c3 ] );
+                    password.Append( EnglishAlphabetLowercase[ c3 ] );
 
                     break;
                 }
@@ -144,12 +144,12 @@ namespace Librainian.Security {
 
             while ( passwordLength < minLength ) {
                 var length = ( maxWordLength - minWordLength + 1 ).Next() + minWordLength;
-                var word = Generate( requiredLength: length );
+                var word = Generate( length );
                 passwordLength += word.Length;
-                words.Add( item: word );
+                words.Add( word );
             }
 
-            return String.Join( separator: " ", words.ToArray() );
+            return String.Join( " ", words.ToArray() );
         }
     }
 }

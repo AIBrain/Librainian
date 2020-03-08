@@ -62,7 +62,7 @@ namespace Librainian.Persistence {
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static Boolean TryGet( [CanBeNull] String key, [CanBeNull] out String value ) {
+        public static Boolean TryGet( [CanBeNull] String? key, [CanBeNull] out String value ) {
             value = null;
 
             return default;
