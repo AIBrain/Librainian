@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "EvalProvider.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "EvalProvider.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "EvalProvider.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// 
+// Project: "Librainian", File: "EvalProvider.cs" was last formatted by Protiguous on 2020/03/16 at 4:41 PM.
 
 namespace Librainian.Extensions {
 
@@ -57,7 +51,7 @@ namespace Librainian.Extensions {
             var result = new StringBuilder();
 
             foreach ( var usingStatement in usingStatements ) {
-                result.AppendLine( $"using {usingStatement};" );
+                result.AppendLine( value: $"using {usingStatement};" );
             }
 
             return result.ToString();
@@ -79,7 +73,7 @@ namespace Librainian.Extensions {
             var returnType = typeof( TResult );
             var inputType = typeof( T );
 
-            var includeUsings = new HashSet<String>( new[] {
+            var includeUsings = new HashSet<String>( collection: new[] {
                 "System"
             } ) {
                 returnType.Namespace, inputType.Namespace
@@ -87,25 +81,25 @@ namespace Librainian.Extensions {
 
             if ( usingStatements != null ) {
                 foreach ( var usingStatement in usingStatements ) {
-                    includeUsings.Add( usingStatement );
+                    includeUsings.Add( item: usingStatement );
                 }
             }
 
             using ( var compiler = new CSharpCodeProvider() ) {
-                var includeAssemblies = new HashSet<String>( new[] {
+                var includeAssemblies = new HashSet<String>( collection: new[] {
                     "system.dll"
                 } );
 
                 if ( assemblies != null ) {
                     foreach ( var assembly in assemblies ) {
-                        includeAssemblies.Add( assembly );
+                        includeAssemblies.Add( item: assembly );
                     }
                 }
 
-                var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );
+                var name = "F" + Guid.NewGuid().ToString().Replace( oldValue: "-", newValue: String.Empty );
 
                 var source = $@"
-{GetUsing( includeUsings )}
+{GetUsing( usingStatements: includeUsings )}
 namespace {name}
 {{
 	public static class EvalClass
@@ -117,17 +111,19 @@ namespace {name}
 	}}
 }}";
 
-                var parameters = new CompilerParameters( includeAssemblies.ToArray() ) {
+                var parameters = new CompilerParameters( assemblyNames: includeAssemblies.ToArray() ) {
                     GenerateInMemory = true
                 };
 
-                var compilerResult = compiler.CompileAssemblyFromSource( parameters, source );
+                var compilerResult = compiler.CompileAssemblyFromSource( options: parameters, source );
                 var compiledAssembly = compilerResult.CompiledAssembly;
-                var type = compiledAssembly.GetType( $"{name}.EvalClass" );
-                var method = type.GetMethod( "Eval" );
+                var type = compiledAssembly.GetType( name: $"{name}.EvalClass" );
+                var method = type.GetMethod( name: "Eval" );
 
-                return ( Func<T, TResult> )Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
+                return ( Func<T, TResult> ) Delegate.CreateDelegate( type: typeof( Func<T, TResult> ), method: method ?? throw new InvalidOperationException() );
             }
         }
+
     }
+
 }

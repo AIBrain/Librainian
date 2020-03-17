@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Book.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Book.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Book.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "Librainian", File: "Book.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
 namespace Librainian.Linguistics {
 
@@ -53,7 +47,7 @@ namespace Librainian.Linguistics {
     /// </summary>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public class Book : IEquatable<Book>, IEnumerable<(Int32, Page)> {
 
@@ -71,17 +65,17 @@ namespace Librainian.Linguistics {
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
             if ( pages is null ) {
-                throw new ArgumentNullException( nameof( pages ) );
+                throw new ArgumentNullException( paramName: nameof( pages ) );
             }
 
             var pageNumber = 0;
 
-            foreach ( var page in pages.Where( page => page != null ) ) {
-                this.Pages[ pageNumber++ ] = page;
+            foreach ( var page in pages.Where( predicate: page => page != null ) ) {
+                this.Pages[ key: pageNumber++ ] = page;
             }
 
             if ( null != authors ) {
-                this.Authors.AddRange( authors.Where( author => null != author ) );
+                this.Authors.AddRange( range: authors.Where( predicate: author => null != author ) );
             }
         }
 
@@ -90,7 +84,7 @@ namespace Librainian.Linguistics {
         /// <param name="right"> </param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Book left, [CanBeNull] Book right ) {
-            if ( ReferenceEquals( left, right ) ) {
+            if ( ReferenceEquals( objA: left, objB: right ) ) {
                 return true;
             }
 
@@ -98,15 +92,15 @@ namespace Librainian.Linguistics {
                 return default;
             }
 
-            return left.SequenceEqual( right ); //no authors?? No authors.
+            return left.SequenceEqual( second: right ); //no authors?? No authors.
         }
 
-        public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
+        public Boolean Equals( [CanBeNull] Book other ) => Equals( left: this, right: other );
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Book );
+        public override Boolean Equals( Object obj ) => Equals( left: this, right: obj as Book );
 
         [NotNull]
         public IEnumerable<Author> GetAuthors() => this.Authors;
@@ -120,7 +114,7 @@ namespace Librainian.Linguistics {
         public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
         [NotNull]
-        public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( pair => (pair.Key, pair.Value) );
+        public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( selector: pair => (pair.Key, pair.Value) );
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>

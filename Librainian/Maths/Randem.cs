@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Randem.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Randem.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Randem.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "Randem.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -87,8 +81,7 @@ namespace Librainian.Maths {
         ///     <para>More cryptographically strong than <see cref="Random" />.</para>
         /// </summary>
         [NotNull]
-        public static ThreadLocal<RandomNumberGenerator> RNG { get; } =
-            new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider(), true );
+        public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider(), true );
 
         /// <summary>A thread-local (threadsafe) <see cref="Random" />.</summary>
         [NotNull]
@@ -502,8 +495,7 @@ namespace Librainian.Maths {
 
             var buffer = new Byte[ numberOfDigits ];
 
-            RNG.Value.GetBytes(
-                buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
+            RNG.Value.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
 
             return new BigInteger( buffer );
         }
@@ -590,8 +582,7 @@ namespace Librainian.Maths {
         /// <param name="highEnd"></param>
         /// <returns></returns>
         public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) =>
-            Color.FromArgb( alpha, Next( lowEnd, highEnd ), Next( lowEnd, highEnd ),
-                Next( lowEnd, highEnd ) );
+            Color.FromArgb( alpha, Next( lowEnd, highEnd ), Next( lowEnd, highEnd ), Next( lowEnd, highEnd ) );
 
         public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) => value + new Milliseconds( timeSpan.TotalMilliseconds * Instance().NextDouble() );
 
@@ -632,7 +623,7 @@ namespace Librainian.Maths {
             var max = Math.Max( minValue, maxValue );
             var range = max - min;
 
-            return min + NextDecimal() * range;
+            return min + ( NextDecimal() * range );
         }
 
         public static Decimal NextDecimal( [NotNull] this DecimalRange decimalRange ) => decimalRange.Min.NextDecimal( decimalRange.Max );
@@ -689,7 +680,7 @@ namespace Librainian.Maths {
         /// </summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Double NextDouble( this DoubleRange range ) => range.Min + Instance().NextDouble() * range.Length;
+        public static Double NextDouble( this DoubleRange range ) => range.Min + ( Instance().NextDouble() * range.Length );
 
         public static Double NextDouble( this PairOfDoubles variance ) => NextDouble( variance.Low, variance.High );
 
@@ -709,7 +700,7 @@ namespace Librainian.Maths {
             Double result;
 
             if ( !Double.IsInfinity( range ) ) {
-                result = min + Instance().NextDouble() * range;
+                result = min + ( Instance().NextDouble() * range );
 
                 //result.Should().BeInRange( minimumValue: min, maximumValue: max );
 
@@ -748,13 +739,13 @@ namespace Librainian.Maths {
         /// <summary>Returns a random <see cref="Single" /> between <paramref name="range.Min" /> and <paramref name="range.Max" />.</summary>
         /// <param name="range"></param>
         /// <returns></returns>
-        public static Single NextFloat( this SingleRange range ) => ( Single )( range.Min + Instance().NextDouble() * range.Length );
+        public static Single NextFloat( this SingleRange range ) => ( Single )( range.Min + ( Instance().NextDouble() * range.Length ) );
 
         /// <summary>Returns a random float between <paramref name="min" /> and <paramref name="max" />.</summary>
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextFloat( Single min = 0, Single max = 1 ) => ( Single )( min + Instance().NextDouble() * ( max - min ) );
+        public static Single NextFloat( Single min = 0, Single max = 1 ) => ( Single )( min + ( Instance().NextDouble() * ( max - min ) ) );
 
         public static Guid NextGuid() => Guid.NewGuid();
 
@@ -771,7 +762,7 @@ namespace Librainian.Maths {
 
         /// <summary>Return a random number somewhere in the full range of 0 to <see cref="Int16" />.</summary>
         /// <returns></returns>
-        public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 )( min + Instance().NextDouble() * ( max - min ) );
+        public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 )( min + ( Instance().NextDouble() * ( max - min ) ) );
 
         /// <summary>Return a random number somewhere in the full range of <see cref="Int32" />.</summary>
         /// <returns></returns>
@@ -793,7 +784,7 @@ namespace Librainian.Maths {
         /// <param name="min"></param>
         /// <param name="max"></param>
         /// <returns></returns>
-        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single )( min + Instance().NextDouble() * ( max - min ) );
+        public static Single NextSingle( Single min = 0, Single max = 1 ) => ( Single )( min + ( Instance().NextDouble() * ( max - min ) ) );
 
         public static Single NextSingle( this SingleRange singleRange ) => NextSingle( singleRange.Min, singleRange.Max );
 
@@ -933,9 +924,9 @@ namespace Librainian.Maths {
             var buffer = ( bound << 16 ).ToByteArray(); // << 16 adds two bytes, which decrease the chance of a retry later on
 
             //Compute where the last partial fragment starts, in order to retry if we end up in it
-            var generatedValueBound = BigInteger.One << ( buffer.Length * 8 - 1 ); //-1 accounts for the sign bit
+            var generatedValueBound = BigInteger.One << ( ( buffer.Length * 8 ) - 1 ); //-1 accounts for the sign bit
             Contract.Assert( generatedValueBound >= bound );
-            var validityBound = generatedValueBound - generatedValueBound % bound;
+            var validityBound = generatedValueBound - ( generatedValueBound % bound );
             Contract.Assert( validityBound >= bound );
 
             while ( true ) {

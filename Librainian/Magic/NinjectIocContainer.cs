@@ -11,9 +11,7 @@
 //
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -31,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", File: "NinjectIocContainer.cs" was last formatted by Protiguous on 2020/02/09 at 1:54 PM.
+// Project: "Librainian", File: "NinjectIocContainer.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
 namespace Librainian.Magic {
 
@@ -53,7 +51,7 @@ namespace Librainian.Magic {
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             try {
                 "Loading IoC kernel...".Log();
-                this.Kernel = new StandardKernel( modules );
+                this.Kernel = new StandardKernel( modules: modules );
             }
             finally {
                 "Loading IoC kernel done.".Log();
@@ -73,30 +71,30 @@ namespace Librainian.Magic {
         public T Get<T>() {
             var tryGet = this.Kernel.TryGet<T>();
 
-            if ( Equals( default, tryGet ) ) {
+            if ( Equals( objA: default, objB: tryGet ) ) {
                 tryGet = this.Kernel.TryGet<T>(); //HACK why would it work at the second time?
 
-                if ( Equals( default, tryGet ) ) {
-                    throw new NullReferenceException( "Unable to TryGet() class " + typeof( T ).FullName );
+                if ( Equals( objA: default, objB: tryGet ) ) {
+                    throw new NullReferenceException( message: "Unable to TryGet() class " + typeof( T ).FullName );
                 }
             }
 
             return tryGet;
         }
 
-        public void Inject<T>( [CanBeNull] T item ) => this.Kernel.Inject( item );
+        public void Inject<T>( [CanBeNull] T item ) => this.Kernel.Inject( instance: item );
 
         /// <summary>Warning!</summary>
         public void ResetKernel() {
 
             foreach ( var module in this.Kernel.GetModules() ) {
-                this.Kernel.Unload( module.Name );
+                this.Kernel.Unload( name: module.Name );
             }
 
             this.Kernel.Components.Get<ICache>().Clear();
 
             "Ninject is loading assemblies...".Log();
-            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+            this.Kernel.Load( assemblies: AppDomain.CurrentDomain.GetAssemblies() );
             $"loaded {this.Kernel.GetModules().Count()} assemblies.".Log();
             $"{this.Kernel.GetModules().ToStrings()}".Log();
         }

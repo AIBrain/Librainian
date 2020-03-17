@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Minus1to1TS.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Minus1to1TS.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Minus1to1TS.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "Minus1to1TS.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -50,7 +44,7 @@ namespace Librainian.Maths.Numbers {
 
         private const Double NaNValue = 2D;
 
-        private static readonly Random Rand = new Random( ( Int32 )DateTime.UtcNow.Ticks );
+        private static readonly Random Rand = new Random( Seed: ( Int32 )DateTime.UtcNow.Ticks );
 
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
@@ -61,7 +55,7 @@ namespace Librainian.Maths.Numbers {
         public const Double MinValue = -1D;
 
         public Double Value {
-            get => Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
+            get => Interlocked.CompareExchange( location1: ref this._value, value: this._value, comparand: NaNValue );
 
             set {
                 if ( value > MaxValue ) {
@@ -71,7 +65,7 @@ namespace Librainian.Maths.Numbers {
                     value = MinValue;
                 }
 
-                Interlocked.CompareExchange( ref this._value, value, this._value );
+                Interlocked.CompareExchange( location1: ref this._value, value: value, comparand: this._value );
             }
         }
 
@@ -85,9 +79,9 @@ namespace Librainian.Maths.Numbers {
         public static implicit operator Double( [NotNull] Minus1To1Ts special ) => special.Value;
 
         [NotNull]
-        public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value );
+        public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value: value );
 
-        public Object Clone() => new Minus1To1Ts( this.Value );
+        public Object Clone() => new Minus1To1Ts( value: this.Value );
 
         public override String ToString() => $"{this.Value:R}";
     }

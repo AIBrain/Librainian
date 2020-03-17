@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Locks.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Locks.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Locks.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "Librainian", File: "Locks.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
 
 namespace Librainian.Extensions {
 
@@ -50,21 +44,21 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
         [NotNull]
-        public static IDisposable Read( [NotNull] this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
+        public static IDisposable Read( [NotNull] this ReaderWriterLockSlim obj ) => new ReadLockToken( slimLock: obj );
 
         /// <summary>put an upgradeable ( will-read / may-write ) lock on the access object.</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
         [NotNull]
-        public static IDisposable Upgrade( [NotNull] this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
+        public static IDisposable Upgrade( [NotNull] this ReaderWriterLockSlim obj ) => new UpgradeLockToken( slimLock: obj );
 
         /// <summary>put a Write ( will-write ) lock on the access object.</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
         [NotNull]
-        public static IDisposable Write( [NotNull] this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
+        public static IDisposable Write( [NotNull] this ReaderWriterLockSlim obj ) => new WriteLockToken( slimLock: obj );
 
         private sealed class ReadLockToken : IDisposable {
 
@@ -166,10 +160,10 @@ namespace Librainian.Extensions {
             }
 
             public void Dispose() {
-                this.Dispose( true );
+                this.Dispose( freeManagedObjectsAlso: true );
 
                 // ReSharper disable GCSuppressFinalizeForTypeWithoutDestructor
-                GC.SuppressFinalize( this );
+                GC.SuppressFinalize( obj: this );
 
                 // ReSharper restore GCSuppressFinalizeForTypeWithoutDestructor
             }

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "BufferExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "BufferExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BufferExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "BufferExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -58,13 +52,14 @@ namespace Librainian.OperatingSystem.FileSystem {
         private const Byte SizeLow = 0;
 
         /// <summary>Just some common buffer sizes we might use.</summary>
-        private static readonly HashSet<Int32> BufferSizes = new HashSet<Int32>( SizeLow.To( SizeHigh ).Select( b => ( Int32 )Math.Pow( 2, b ) ) );
+        private static readonly HashSet<Int32> BufferSizes =
+            new HashSet<Int32>( collection: SizeLow.To( end: SizeHigh ).Select( selector: b => ( Int32 )Math.Pow( x: 2, y: b ) ) );
 
         public const Int32 DefaultBufferSize = 4096;
 
         public static Int32 OptimalBufferSize( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
+                throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
             var size = document.Size();
@@ -93,9 +88,10 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 var ram = ( Int64 )new Computer().GetAvailableMemeory();
 
-                foreach ( var ul in BufferSizes.Where( value => value <= fileSize && value <= ram ).OrderByDescending( value => value ).Select( value => value ) ) {
+                foreach ( var ul in BufferSizes.Where( predicate: value => value <= fileSize && value <= ram ).OrderByDescending( keySelector: value => value )
+                                               .Select( selector: value => value ) ) {
                     try {
-                        using ( new MemoryFailPoint( ul / MathConstants.Sizes.OneMegaByte ) ) {
+                        using ( new MemoryFailPoint( sizeInMegabytes: ul / MathConstants.Sizes.OneMegaByte ) ) {
                             return ul;
                         }
                     }

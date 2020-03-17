@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Line.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Line.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Line.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Line.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -50,14 +44,14 @@ namespace Librainian.Graphics.Imaging {
 
     /// <summary>A horizontal line of <see cref="Pixel" />.</summary>
     [JsonObject]
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout( layoutKind: LayoutKind.Sequential )]
     public class Line : IEquatable<Line>, IEnumerable<Pixel>, IEqualityComparer<Line> {
 
         public IEnumerator<Pixel> GetEnumerator() => this.Pixels.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        Boolean IEqualityComparer<Line>.Equals( Line x, Line y ) => Equals( x, y );
+        Boolean IEqualityComparer<Line>.Equals( Line x, Line y ) => Equals( left: x, right: y );
 
         /// <summary>Returns a hash code for the specified object.</summary>
         /// <returns>A hash code for the specified object.</returns>
@@ -68,12 +62,12 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals( Line other ) => Equals( this, other );
+        public Boolean Equals( Line other ) => Equals( left: this, right: other );
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Line );
+        public override Boolean Equals( Object obj ) => Equals( left: this, right: obj as Line );
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
@@ -85,13 +79,13 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static Boolean operator ==( [CanBeNull] Line left, [CanBeNull] Line right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Line left, [CanBeNull] Line right ) => Equals( left: left, right: right );
 
         /// <summary>Returns a value that indicates whether two <see cref="Line" /> objects have different values.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static Boolean operator !=( [CanBeNull] Line left, [CanBeNull] Line right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Line left, [CanBeNull] Line right ) => !Equals( left: left, right: right );
 
         /// <summary>How many pixels should be in this line?</summary>
         [JsonProperty]
@@ -127,7 +121,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="pixels"></param>
         public Line( [NotNull] Pixel[] pixels ) {
             if ( pixels is null ) {
-                throw new ArgumentNullException( nameof( pixels ) );
+                throw new ArgumentNullException( paramName: nameof( pixels ) );
             }
 
             this.Pixels = pixels.ToArray();
@@ -140,7 +134,7 @@ namespace Librainian.Graphics.Imaging {
         /// <remarks>Should include the <see cref="Count" /> to prevent buffer overflows.</remarks>
         public async Task<UInt64> Checksum() {
             if ( this._checksum is null ) {
-                this._checksum = await this.CalculateChecksumAsync().ConfigureAwait( false );
+                this._checksum = await this.CalculateChecksumAsync().ConfigureAwait( continueOnCapturedContext: false );
             }
 
             var checksum = this._checksum;
@@ -154,7 +148,7 @@ namespace Librainian.Graphics.Imaging {
 
         [NotNull]
         private Task<UInt64> CalculateChecksumAsync() {
-            return Task.Run( () => {
+            return Task.Run( function: () => {
                 var checksum = ( UInt64 )0;
 
                 foreach ( var pixel in this.Pixels ) {
@@ -172,7 +166,7 @@ namespace Librainian.Graphics.Imaging {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Line left, [CanBeNull] Line right ) {
-            if ( ReferenceEquals( left, right ) ) {
+            if ( ReferenceEquals( objA: left, objB: right ) ) {
                 return true;
             }
 
@@ -184,7 +178,7 @@ namespace Librainian.Graphics.Imaging {
                 return default; //TODO ugh... .Result
             }
 
-            return left.Pixels.SequenceEqual( right.Pixels );
+            return left.Pixels.SequenceEqual( second: right.Pixels );
         }
     }
 }

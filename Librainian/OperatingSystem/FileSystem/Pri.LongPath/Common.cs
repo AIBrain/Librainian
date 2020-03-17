@@ -1,4 +1,37 @@
-﻿namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+//
+// This source code contained in "Common.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+//
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", File: "Common.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
+
+namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
     using System;
     using System.ComponentModel;
@@ -61,7 +94,7 @@
             return false;
         }
 
-        public static FileAttributes GetAttributes( [NotNull]  this String path ) {
+        public static FileAttributes GetAttributes( [NotNull] this String path ) {
             var normalizedPath = path.NormalizeLongPath();
 
             var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
@@ -73,7 +106,7 @@
             return fileAttributes;
         }
 
-        public static FileAttributes GetAttributes( [NotNull]  this String path, out Int32 errorCode ) {
+        public static FileAttributes GetAttributes( [NotNull] this String path, out Int32 errorCode ) {
             path = path.ThrowIfBlank();
 
             var normalizedPath = path.NormalizeLongPath();
@@ -115,7 +148,7 @@
             }
         }
 
-        public static FileAttributes GetFileAttributes( [NotNull]  this String path ) {
+        public static FileAttributes GetFileAttributes( [NotNull] this String path ) {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
@@ -128,32 +161,30 @@
             return fileAttributes;
         }
 
-        public static Boolean IsPathDots( [NotNull]  this String path ) {
+        public static Boolean IsPathDots( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
             return path == "." || path == "..";
         }
 
-        public static Boolean IsPathUnc( [NotNull]  this String path ) {
+        public static Boolean IsPathUnc( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
-            if ( path.StartsWith( LongPath.Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
+            if ( path.StartsWith( Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
                 return true;
             }
 
             return Uri.TryCreate( path.ThrowIfBlank(), UriKind.Absolute, out var uri ) && uri.IsUnc;
         }
 
-        /// <summary>
-        ///     Capture the <see cref="Uri" /> from <paramref name="path" />
-        /// </summary>
+        /// <summary>Capture the <see cref="Uri" /> from <paramref name="path" /></summary>
         /// <param name="path"></param>
         /// <param name="uri"></param>
         /// <returns></returns>
-        public static Boolean IsPathUnc( [NotNull]  this String path, [CanBeNull] out Uri uri ) {
+        public static Boolean IsPathUnc( [NotNull] this String path, [CanBeNull] out Uri uri ) {
             path = path.ThrowIfBlank();
 
-            if ( path.StartsWith( LongPath.Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
+            if ( path.StartsWith( Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
                 uri = null;
 
                 return true;
@@ -166,7 +197,7 @@
         public static String NormalizeSearchPattern( [CanBeNull] [NotNull] this String searchPattern ) =>
             String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
 
-        public static void SetAttributes( [NotNull]  this String path, FileAttributes fileAttributes ) {
+        public static void SetAttributes( [NotNull] this String path, FileAttributes fileAttributes ) {
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
             if ( !NativeMethods.SetFileAttributes( normalizedPath, fileAttributes ) ) {
@@ -174,8 +205,8 @@
             }
         }
 
-        public static Int32 SetSecurityInfo( ResourceType type, [NotNull] String name, SecurityInfos securityInformation,
-            [CanBeNull] SecurityIdentifier owner, [CanBeNull] SecurityIdentifier group, [CanBeNull] GenericAcl sacl, [CanBeNull] GenericAcl dacl ) {
+        public static Int32 SetSecurityInfo( ResourceType type, [NotNull] String name, SecurityInfos securityInformation, [CanBeNull] SecurityIdentifier owner,
+            [CanBeNull] SecurityIdentifier group, [CanBeNull] GenericAcl sacl, [CanBeNull] GenericAcl dacl ) {
 
             name = name.ThrowIfBlank();
 
@@ -184,8 +215,7 @@
             }
 
             if ( !Enum.IsDefined( typeof( SecurityInfos ), securityInformation ) ) {
-                throw new InvalidEnumArgumentException( nameof( securityInformation ), ( Int32 )securityInformation,
-                    typeof( SecurityInfos ) );
+                throw new InvalidEnumArgumentException( nameof( securityInformation ), ( Int32 )securityInformation, typeof( SecurityInfos ) );
             }
 
             Int32 errorCode;
@@ -250,11 +280,9 @@
                 switch ( errorCode ) {
                     case NativeMethods.ERROR_NOT_ALL_ASSIGNED:
                     case NativeMethods.ERROR_PRIVILEGE_NOT_HELD:
-
                         throw new PrivilegeNotHeldException( Privilege.Security );
                     case NativeMethods.ERROR_ACCESS_DENIED:
                     case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
-
                         throw new UnauthorizedAccessException();
                 }
 
@@ -284,9 +312,7 @@
             return errorCode;
         }
 
-        /// <summary>
-        /// Returns the trimmed string or throws <see cref="ArgumentNullException"/> if null, whitespace, or empty.
-        /// </summary>
+        /// <summary>Returns the trimmed string or throws <see cref="ArgumentNullException" /> if null, whitespace, or empty.</summary>
         /// <param name="path"></param>
         /// <exception cref="ArgumentNullException">Gets thrown if the <paramref name="path" /> is null, whitespace, or empty.</exception>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -315,18 +341,15 @@
                 switch ( errorCode ) {
                     case NativeMethods.ERROR_NOT_ALL_ASSIGNED:
                     case NativeMethods.ERROR_PRIVILEGE_NOT_HELD:
-
                         throw new PrivilegeNotHeldException( "SeSecurityPrivilege" );
                     case NativeMethods.ERROR_ACCESS_DENIED:
                     case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
                     case NativeMethods.ERROR_LOGON_FAILURE:
-
                         throw new UnauthorizedAccessException();
                     case NativeMethods.ERROR_NOT_ENOUGH_MEMORY: throw new OutOfMemoryException();
                     case NativeMethods.ERROR_BAD_NETPATH:
                     case NativeMethods.ERROR_NETNAME_DELETED:
                     default:
-
                         throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
                 }
             }
@@ -428,7 +451,8 @@
             return securityInfos;
         }
 
-        public static Int32 TryGetDirectoryAttributes( [NotNull]  this String normalizedPath, out FileAttributes attributes ) => TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
+        public static Int32 TryGetDirectoryAttributes( [NotNull] this String normalizedPath, out FileAttributes attributes ) =>
+            TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
 
         public static Int32 TryGetFileAttributes( [NotNull] String normalizedPath, out FileAttributes attributes ) {
 

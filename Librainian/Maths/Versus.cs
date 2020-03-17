@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Versus.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Versus.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Versus.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "Versus.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -51,7 +45,7 @@ namespace Librainian.Maths {
     ///     <para>Keep count of Success or Failure counts (threadsafe).</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     public class Versus {
 
         /// <summary>ONLY used in the getter and setter.</summary>
@@ -63,24 +57,24 @@ namespace Librainian.Maths {
         private Int64 _successes;
 
         /// <summary>One failure.</summary>
-        public static readonly Versus Failured = new Versus( 0, 1 );
+        public static readonly Versus Failured = new Versus( successes: 0, failures: 1 );
 
         /// <summary>One success.</summary>
-        public static readonly Versus Successed = new Versus( 1, 0 );
+        public static readonly Versus Successed = new Versus( successes: 1, failures: 0 );
 
         /// <summary>None for either.</summary>
-        public static readonly Versus Zero = new Versus( 0, 0 );
+        public static readonly Versus Zero = new Versus( successes: 0, failures: 0 );
 
         public Int64 Failures {
-            get => Thread.VolatileRead( ref this._failures );
+            get => Thread.VolatileRead( address: ref this._failures );
 
-            private set => Thread.VolatileWrite( ref this._failures, value );
+            private set => Thread.VolatileWrite( address: ref this._failures, value: value );
         }
 
         public Int64 Successes {
-            get => Thread.VolatileRead( ref this._successes );
+            get => Thread.VolatileRead( address: ref this._successes );
 
-            private set => Thread.VolatileWrite( ref this._successes, value );
+            private set => Thread.VolatileWrite( address: ref this._successes, value: value );
         }
 
         public Int64 Total => this.Successes + this.Failures;
@@ -91,7 +85,7 @@ namespace Librainian.Maths {
         }
 
         [NotNull]
-        public Versus Clone() => new Versus( this.Successes, this.Failures );
+        public Versus Clone() => new Versus( successes: this.Successes, failures: this.Failures );
 
         /// <summary>
         ///     <para>Increments the <see cref="Failures" /> count by <paramref name="amount" />.</para>
@@ -102,8 +96,8 @@ namespace Librainian.Maths {
             try {
                 var total = this.Total;
 
-                if ( !total.Near( 0 ) ) {
-                    var result = new Rational( this.Failures, total );
+                if ( !total.Near( target: 0 ) ) {
+                    var result = new Rational( numerator: this.Failures, denominator: total );
 
                     return ( Single )result;
                 }
@@ -124,11 +118,11 @@ namespace Librainian.Maths {
             try {
                 var total = this.Total;
 
-                if ( total.Near( 0 ) ) {
+                if ( total.Near( target: 0 ) ) {
                     return 0;
                 }
 
-                var chance = new Rational( this.Successes, total );
+                var chance = new Rational( numerator: this.Successes, denominator: total );
 
                 return ( Single )chance;
             }

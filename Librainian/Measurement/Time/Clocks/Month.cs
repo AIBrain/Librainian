@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Month.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Month.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Month.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "Month.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -53,17 +47,18 @@ namespace Librainian.Measurement.Time.Clocks {
         public const SByte MinValue = 1;
 
         /// <summary>12</summary>
-        public static Month Maximum { get; } = new Month( MaxValue );
+        public static Month Maximum { get; } = new Month( value: MaxValue );
 
         /// <summary>1</summary>
-        public static Month Minimum { get; } = new Month( MinValue );
+        public static Month Minimum { get; } = new Month( value: MinValue );
 
         [JsonProperty]
         public SByte Value { get; }
 
         public Month( SByte value ) {
             if ( value < MinValue || value > MaxValue ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+                throw new ArgumentOutOfRangeException( paramName: nameof( value ),
+                    message: $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
             }
 
             this.Value = value;
@@ -74,9 +69,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public static explicit operator Byte( Month value ) => ( Byte )value.Value;
 
-        public static implicit operator Month( SByte value ) => new Month( value );
+        public static implicit operator Month( SByte value ) => new Month( value: value );
 
-        public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Month other ) => this.Value.CompareTo( value: other.Value );
 
         /// <summary>Provide the next <see cref="Month" />.</summary>
         /// <param name="tocked"></param>

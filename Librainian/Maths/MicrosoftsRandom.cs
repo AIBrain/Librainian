@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MicrosoftsRandom.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "MicrosoftsRandom.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MicrosoftsRandom.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "MicrosoftsRandom.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -63,9 +57,9 @@ namespace Librainian.Maths {
         [ThreadStatic]
         private static Int32[] SeedArray;
 
-        private MicrosoftsRandom() : this( Middle ) { }
+        private MicrosoftsRandom() : this( seed: Middle ) { }
 
-        public MicrosoftsRandom( Int32 seed ) => Seed( seed );
+        public MicrosoftsRandom( Int32 seed ) => Seed( seed: seed );
 
         private static Int32 InternalSample() {
             unchecked {
@@ -143,7 +137,7 @@ namespace Librainian.Maths {
 
         public virtual Int32 Next( Int32 maxValue ) {
             if ( maxValue < 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( maxValue ) );
+                throw new ArgumentOutOfRangeException( paramName: nameof( maxValue ) );
             }
 
             return ( Int32 )( this.Sample() * maxValue );
@@ -157,7 +151,7 @@ namespace Librainian.Maths {
 
         public virtual void NextBytes( [NotNull] Byte[] buffer ) {
             if ( buffer is null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
 
             for ( var i = 0; i < buffer.Length; i++ ) {

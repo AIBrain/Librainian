@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FolderBag.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "FolderBag.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FolderBag.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "FolderBag.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -68,7 +62,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return default;
             }
 
-            this.FoundAnotherFolder( new Folder( folderpath ) );
+            this.FoundAnotherFolder( folder: new Folder( fullPath: folderpath ) );
 
             return true;
         }
@@ -81,7 +75,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             foreach ( var folderpath in folderpaths ) {
-                this.FoundAnotherFolder( new Folder( folderpath ) );
+                this.FoundAnotherFolder( folder: new Folder( fullPath: folderpath ) );
                 counter++;
             }
 
@@ -90,7 +84,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public void FoundAnotherFolder( [NotNull] IFolder folder ) {
             if ( folder is null ) {
-                throw new ArgumentNullException( nameof( folder ) );
+                throw new ArgumentNullException( paramName: nameof( folder ) );
             }
 
             var pathParts = folder.Info.SplitPath().ToList();
@@ -99,11 +93,11 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return;
             }
 
-            var currentNode = new Node( pathParts[ 0 ] );
+            var currentNode = new Node( data: pathParts[ index: 0 ] );
 
-            var existingNode = this.Roots.Find( node => Node.Equals( node, currentNode ) ); // look for an existing root node
+            var existingNode = this.Roots.Find( match: node => Node.Equals( left: node, right: currentNode ) ); // look for an existing root node
 
-            if ( !Node.Equals( existingNode, default ) ) {
+            if ( !Node.Equals( left: existingNode, right: default ) ) {
 
                 // use existing node
                 currentNode = existingNode;
@@ -111,19 +105,19 @@ namespace Librainian.OperatingSystem.FileSystem {
             else {
 
                 // didn't find one, add it
-                this.Roots.Add( currentNode );
+                this.Roots.Add( item: currentNode );
             }
 
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
-            foreach ( var pathPart in pathParts.Skip( 1 ) ) {
-                var nextNode = new Node( pathPart, currentNode );
-                existingNode = currentNode.SubFolders.Find( node => Node.Equals( node, nextNode ) );
+            foreach ( var pathPart in pathParts.Skip( count: 1 ) ) {
+                var nextNode = new Node( data: pathPart, parent: currentNode );
+                existingNode = currentNode.SubFolders.Find( match: node => Node.Equals( left: node, right: nextNode ) );
 
-                if ( !Node.Equals( existingNode, default ) ) {
+                if ( !Node.Equals( left: existingNode, right: default ) ) {
                     nextNode = existingNode; // already there? don't need to add it.
                 }
                 else {
-                    currentNode.SubFolders.Add( nextNode ); // didn't find one, add it
+                    currentNode.SubFolders.Add( item: nextNode ); // didn't find one, add it
                 }
 
                 currentNode = nextNode;
@@ -133,7 +127,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             //if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
 
-            this.Endings.Add( currentNode );
+            this.Endings.Add( item: currentNode );
         }
 
         /// <summary>Returns an enumerator that iterates through the collection.</summary>
@@ -149,9 +143,9 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 //this.Roots.Should().Contain( node );
-                path = String.Concat( node.Data, path );
+                path = String.Concat( str0: node.Data, str1: path );
 
-                yield return new Folder( path );
+                yield return new Folder( fullPath: path );
             }
         }
 

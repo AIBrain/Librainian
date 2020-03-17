@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "HumanCalculator.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "HumanCalculator.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HumanCalculator.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "HumanCalculator.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -84,7 +78,7 @@ namespace Librainian.Maths {
             var total = BigInteger.Zero;
 
             if ( terms != null ) {
-                foreach ( var local in terms.Select( term => term.ToString() ) ) {
+                foreach ( var local in terms.Select( selector: term => term.ToString() ) ) {
                     var term = local;
 
                     // total
@@ -96,21 +90,21 @@ namespace Librainian.Maths {
                     var result = String.Empty;
 
                     if ( s.Length < term.Length ) {
-                        s = s.PadLeft( term.Length, '0' );
+                        s = s.PadLeft( totalWidth: term.Length, paddingChar: '0' );
                     }
                     else if ( term.Length < s.Length ) {
-                        term = term.PadLeft( s.Length, '0' );
+                        term = term.PadLeft( totalWidth: s.Length, paddingChar: '0' );
                     }
 
                     while ( term.Any() ) {
-                        var l = Byte.Parse( s.Last().ToString() );
-                        s = s.Substring( 0, s.Length - 1 );
+                        var l = Byte.Parse( s: s.Last().ToString() );
+                        s = s.Substring( startIndex: 0, length: s.Length - 1 );
 
-                        var m = Byte.Parse( term.Last().ToString() );
-                        term = term.Substring( 0, term.Length - 1 );
+                        var m = Byte.Parse( s: term.Last().ToString() );
+                        term = term.Substring( startIndex: 0, length: term.Length - 1 );
 
                         var t = ( l + m ).ToString();
-                        var c = Byte.Parse( t.Last().ToString() );
+                        var c = Byte.Parse( s: t.Last().ToString() );
 
                         if ( 2 == t.Length ) {
                             result = "1" + c;
@@ -120,7 +114,7 @@ namespace Librainian.Maths {
                         }
                     }
 
-                    total += BigInteger.Parse( result );
+                    total += BigInteger.Parse( value: result );
                 }
             }
 
@@ -133,15 +127,15 @@ namespace Librainian.Maths {
 
         public static BigInteger Operate( Operation operation, [CanBeNull] params BigInteger[] terms ) {
             switch ( operation ) {
-                case Operation.Addition: return Add( terms );
+                case Operation.Addition: return Add( terms: terms );
 
-                case Operation.Subtraction: return Subtract( terms );
+                case Operation.Subtraction: return Subtract( terms: terms );
 
-                case Operation.Multiplication: return Multiply( terms );
+                case Operation.Multiplication: return Multiply( terms: terms );
 
-                case Operation.Division: return Divide( terms );
+                case Operation.Division: return Divide( terms: terms );
 
-                default: throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" );
+                default: throw new ArgumentOutOfRangeException( paramName: nameof( operation ), actualValue: operation, message: $"Unknown operation {operation}" );
             }
         }
 

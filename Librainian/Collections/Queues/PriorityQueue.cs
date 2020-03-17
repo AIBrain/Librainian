@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PriorityQueue.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "PriorityQueue.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PriorityQueue.cs" was last formatted by Protiguous on 2020/01/31 at 12:23 AM.
+// Project: "Librainian", File: "PriorityQueue.cs" was last formatted by Protiguous on 2020/03/16 at 2:53 PM.
 
 namespace Librainian.Collections.Queues {
 
@@ -54,7 +48,7 @@ namespace Librainian.Collections.Queues {
         [JsonProperty]
         [NotNull]
         private ConcurrentDictionary<Single, TValue> Dictionary { get; } =
-                    new ConcurrentDictionary<Single, TValue>( Environment.ProcessorCount, 1 );
+                    new ConcurrentDictionary<Single, TValue>( concurrencyLevel: Environment.ProcessorCount, capacity: 1 );
 
         /// <summary>Inject the specified priority.</summary>
         /// <param name="item">    </param>
@@ -64,7 +58,7 @@ namespace Librainian.Collections.Queues {
             //while ( this.Dictionary.ContainsKey( priority ) ) {
             //    priority += Constants.EpsilonSingle;
             //}
-            this.Dictionary[ priority ] = item;
+            this.Dictionary[ key: priority ] = item;
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
@@ -75,7 +69,7 @@ namespace Librainian.Collections.Queues {
         //}
         [CanBeNull]
         public TValue PullNext() {
-            var highest = this.Dictionary.OrderByDescending( pair => pair.Key ).FirstOrDefault();
+            var highest = this.Dictionary.OrderByDescending( keySelector: pair => pair.Key ).FirstOrDefault();
 
             return highest.Value;
         }
@@ -91,11 +85,11 @@ namespace Librainian.Collections.Queues {
                 return;
             }
 
-            var max = this.Dictionary.Max( pair => pair.Key );
-            var min = this.Dictionary.Min( pair => pair.Key );
+            var max = this.Dictionary.Max( selector: pair => pair.Key );
+            var min = this.Dictionary.Min( selector: pair => pair.Key );
             var maxMinusMin = max - min;
 
-            if ( Math.Abs( maxMinusMin ) < Single.Epsilon ) {
+            if ( Math.Abs( value: maxMinusMin ) < Single.Epsilon ) {
                 return;
             }
 
@@ -103,12 +97,12 @@ namespace Librainian.Collections.Queues {
             foreach ( var key in this.Dictionary.Keys ) {
                 var newPriority = ( key - min ) / maxMinusMin;
 
-                if ( Math.Abs( key - newPriority ) < Single.Epsilon ) {
+                if ( Math.Abs( value: key - newPriority ) < Single.Epsilon ) {
                     continue;
                 }
 
-                this.Dictionary.TryRemove( key, out var value );
-                this.Add( value, newPriority );
+                this.Dictionary.TryRemove( key: key, value: out var value );
+                this.Add( item: value, priority: newPriority );
             }
         }
 

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConsoleWindow.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ConsoleWindow.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConsoleWindow.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "ConsoleWindow.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
 
 namespace Librainian.Controls {
 
@@ -57,59 +51,59 @@ namespace Librainian.Controls {
 
         private const Int32 SW_SHOW = 5;
 
-        [DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = false )]
+        [DllImport( dllName: "kernel32.dll", SetLastError = true, ExactSpelling = false )]
         private static extern Boolean AllocConsole();
 
-        [DllImport( "kernel32.dll", ExactSpelling = false )]
+        [DllImport( dllName: "kernel32.dll", ExactSpelling = false )]
         private static extern Boolean AttachConsole( Int32 dwProcessId );
 
-        [DllImport( "user32.dll", ExactSpelling = false )]
+        [DllImport( dllName: "user32.dll", ExactSpelling = false )]
         private static extern Boolean EnableMenuItem( IntPtr hMenu, UInt32 uIDEnableItem, UInt32 uEnable );
 
-        [DllImport( "kernel32.dll", ExactSpelling = false )]
+        [DllImport( dllName: "kernel32.dll", ExactSpelling = false )]
         private static extern IntPtr GetConsoleWindow();
 
-        [DllImport( "user32.dll", ExactSpelling = false )]
+        [DllImport( dllName: "user32.dll", ExactSpelling = false )]
         private static extern IntPtr GetSystemMenu( IntPtr hWnd, Boolean bRevert );
 
-        [DllImport( "kernel32.dll", SetLastError = true, ExactSpelling = false )]
+        [DllImport( dllName: "kernel32.dll", SetLastError = true, ExactSpelling = false )]
         private static extern Boolean SetConsoleIcon( IntPtr hIcon );
 
-        [DllImport( "user32.dll", SetLastError = true, CharSet = CharSet.Auto, ExactSpelling = false )]
+        [DllImport( dllName: "user32.dll", SetLastError = true, CharSet = CharSet.Auto, ExactSpelling = false )]
         private static extern Boolean SetWindowText( IntPtr hwnd, String lpString );
 
-        [DllImport( "user32.dll", ExactSpelling = false )]
+        [DllImport( dllName: "user32.dll", ExactSpelling = false )]
         private static extern Boolean ShowWindow( IntPtr hWnd, Int32 nCmdShow );
 
         /// <summary>redirect console output to parent process; must be called before any calls to Console.WriteLine()</summary>
-        public static void AttachConsoleWindow() => AttachConsole( ATTACH_PARENT_PROCESS );
+        public static void AttachConsoleWindow() => AttachConsole( dwProcessId: ATTACH_PARENT_PROCESS );
 
         public static void DisableCloseButton() {
             var handle = GetConsoleWindow();
 
-            var hmenu = GetSystemMenu( handle, false );
+            var hmenu = GetSystemMenu( hWnd: handle, bRevert: false );
 
-            EnableMenuItem( hmenu, SC_CLOSE, MF_GRAYED );
+            EnableMenuItem( hMenu: hmenu, uIDEnableItem: SC_CLOSE, uEnable: MF_GRAYED );
         }
 
         public static void HideWindow() {
             var handle = GetConsoleWindow();
 
-            ShowWindow( handle, SW_HIDE );
+            ShowWindow( hWnd: handle, nCmdShow: SW_HIDE );
         }
 
         public static void SetIcon( [NotNull] this Icon icon ) {
             if ( icon is null ) {
-                throw new ArgumentNullException( nameof( icon ) );
+                throw new ArgumentNullException( paramName: nameof( icon ) );
             }
 
-            SetConsoleIcon( icon.Handle );
+            SetConsoleIcon( hIcon: icon.Handle );
         }
 
         public static void SetText( [CanBeNull] String? text ) {
             var handle = GetConsoleWindow();
 
-            SetWindowText( handle, text );
+            SetWindowText( hwnd: handle, lpString: text );
         }
 
         public static void ShowWindow() {
@@ -119,7 +113,7 @@ namespace Librainian.Controls {
                 AllocConsole();
             }
             else {
-                ShowWindow( handle, SW_SHOW );
+                ShowWindow( hWnd: handle, nCmdShow: SW_SHOW );
             }
         }
     }

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FuzzyNonTS.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "FuzzyNonTS.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FuzzyNonTS.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "FuzzyNonTS.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -55,11 +49,11 @@ namespace Librainian.Maths {
 
         public const Double MinValue = 0D;
 
-        public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
+        public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( value: new FuzzyNonTs( value: 0.5D ) - new FuzzyNonTs( value: 0.5D ) / 2 );
 
-        public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
+        public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( value: new FuzzyNonTs( value: 0.5D ) + new FuzzyNonTs( value: 0.5D ) / 2 );
 
-        public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
+        public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( value: 0.5D );
 
         public Double Value {
             get => this._value;
@@ -80,16 +74,16 @@ namespace Librainian.Maths {
 
         public FuzzyNonTs( Double value ) => this.Value = value;
 
-        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
+        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh: lmh );
 
         [NotNull]
-        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( value: ( value1 + value2 ) / 2D );
 
         [NotNull]
-        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( value: ( value1 + value2 ) / 2D );
 
         [NotNull]
-        public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( value: ( value1 + value2 ) / 2D );
 
         public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
@@ -99,10 +93,10 @@ namespace Librainian.Maths {
 
         public static Boolean IsTruer( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value >= Truer.Value;
 
-        public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
+        public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special: special ) && !IsFalser( special: special );
 
         [NotNull]
-        public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( Double.Parse( value ) );
+        public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( value: Double.Parse( s: value ) );
 
         public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 

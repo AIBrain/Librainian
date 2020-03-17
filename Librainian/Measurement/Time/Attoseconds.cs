@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Attoseconds.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Attoseconds.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Attoseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "Attoseconds.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -49,7 +43,7 @@ namespace Librainian.Measurement.Time {
     using Parsing;
     using Rationals;
 
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Attoseconds : IQuantityOfTime {
@@ -59,71 +53,71 @@ namespace Librainian.Measurement.Time {
         public const UInt16 InOneFemtosecond = 1000;
 
         /// <summary>Ten <see cref="Attoseconds" /> s.</summary>
-        public static Attoseconds Fifteen { get; } = new Attoseconds( 15 );
+        public static Attoseconds Fifteen { get; } = new Attoseconds( value: 15 );
 
         /// <summary>Five <see cref="Attoseconds" /> s.</summary>
-        public static Attoseconds Five { get; } = new Attoseconds( 5 );
+        public static Attoseconds Five { get; } = new Attoseconds( value: 5 );
 
         /// <summary>Five Hundred <see cref="Attoseconds" /> s.</summary>
-        public static Attoseconds FiveHundred { get; } = new Attoseconds( 500 );
+        public static Attoseconds FiveHundred { get; } = new Attoseconds( value: 500 );
 
         /// <summary>111. 1 Hertz <see cref="Attoseconds" />.</summary>
-        public static Attoseconds Hertz111 { get; } = new Attoseconds( 9 );
+        public static Attoseconds Hertz111 { get; } = new Attoseconds( value: 9 );
 
         /// <summary>One <see cref="Attoseconds" />.</summary>
         /// <remarks>the time it takes for light to travel the length of three hydrogen atoms</remarks>
-        public static Attoseconds One { get; } = new Attoseconds( 1 );
+        public static Attoseconds One { get; } = new Attoseconds( value: 1 );
 
         /// <summary><see cref="OneHundred" /><see cref="Attoseconds" />.</summary>
         /// <remarks>fastest ever view of molecular motion</remarks>
-        public static Attoseconds OneHundred { get; } = new Attoseconds( 100 );
+        public static Attoseconds OneHundred { get; } = new Attoseconds( value: 100 );
 
         /// <summary>One Thousand Nine <see cref="Attoseconds" /> (Prime).</summary>
-        public static Attoseconds OneThousandNine { get; } = new Attoseconds( 1009 );
+        public static Attoseconds OneThousandNine { get; } = new Attoseconds( value: 1009 );
 
         /// <summary>Sixteen <see cref="Attoseconds" />.</summary>
-        public static Attoseconds Sixteen { get; } = new Attoseconds( 16 );
+        public static Attoseconds Sixteen { get; } = new Attoseconds( value: 16 );
 
         /// <summary><see cref="SixtySeven" /><see cref="Attoseconds" />.</summary>
         /// <remarks>the shortest pulses of laser light yet created</remarks>
-        public static Attoseconds SixtySeven { get; } = new Attoseconds( 67 );
+        public static Attoseconds SixtySeven { get; } = new Attoseconds( value: 67 );
 
         /// <summary>Ten <see cref="Attoseconds" /> s.</summary>
-        public static Attoseconds Ten { get; } = new Attoseconds( 10 );
+        public static Attoseconds Ten { get; } = new Attoseconds( value: 10 );
 
         /// <summary>Three <see cref="Attoseconds" /> s.</summary>
-        public static Attoseconds Three { get; } = new Attoseconds( 3 );
+        public static Attoseconds Three { get; } = new Attoseconds( value: 3 );
 
         /// <summary>Three Three Three <see cref="Attoseconds" />.</summary>
-        public static Attoseconds ThreeHundredThirtyThree { get; } = new Attoseconds( 333 );
+        public static Attoseconds ThreeHundredThirtyThree { get; } = new Attoseconds( value: 333 );
 
         /// <summary><see cref="ThreeHundredTwenty" /><see cref="Attoseconds" />.</summary>
         /// <remarks>estimated time it takes electrons to transfer between atoms</remarks>
-        public static Attoseconds ThreeHundredTwenty { get; } = new Attoseconds( 320 );
+        public static Attoseconds ThreeHundredTwenty { get; } = new Attoseconds( value: 320 );
 
         /// <summary><see cref="Twelve" /><see cref="Attoseconds" />.</summary>
         /// <remarks>record for shortest time interval measured as of 12 May 2010</remarks>
-        public static Attoseconds Twelve { get; } = new Attoseconds( 12 );
+        public static Attoseconds Twelve { get; } = new Attoseconds( value: 12 );
 
         /// <summary><see cref="TwentyFour" /><see cref="Attoseconds" />.</summary>
         /// <remarks>the atomic unit of time</remarks>
-        public static Attoseconds TwentyFour { get; } = new Attoseconds( 24 );
+        public static Attoseconds TwentyFour { get; } = new Attoseconds( value: 24 );
 
         /// <summary>Two <see cref="Attoseconds" /> s.</summary>
-        public static Attoseconds Two { get; } = new Attoseconds( 2 );
+        public static Attoseconds Two { get; } = new Attoseconds( value: 2 );
 
         /// <summary><see cref="TwoHundred" /><see cref="Attoseconds" />.</summary>
         /// <remarks>(approximately) – half-life of beryllium-8, maximum time available for the triple-alpha process for the synthesis of carbon and heavier elements in stars</remarks>
-        public static Attoseconds TwoHundred { get; } = new Attoseconds( 200 );
+        public static Attoseconds TwoHundred { get; } = new Attoseconds( value: 200 );
 
         /// <summary>Two Hundred Eleven <see cref="Attoseconds" /> (Prime).</summary>
-        public static Attoseconds TwoHundredEleven { get; } = new Attoseconds( 211 );
+        public static Attoseconds TwoHundredEleven { get; } = new Attoseconds( value: 211 );
 
         /// <summary>Two Thousand Three <see cref="Attoseconds" /> (Prime).</summary>
-        public static Attoseconds TwoThousandThree { get; } = new Attoseconds( 2003 );
+        public static Attoseconds TwoThousandThree { get; } = new Attoseconds( value: 2003 );
 
         /// <summary>Zero <see cref="Attoseconds" />.</summary>
-        public static Attoseconds Zero { get; } = new Attoseconds( 0 );
+        public static Attoseconds Zero { get; } = new Attoseconds( value: 0 );
 
         [JsonProperty]
         public Rational Value { get; }
@@ -136,9 +130,9 @@ namespace Librainian.Measurement.Time {
 
         public Attoseconds( BigInteger value ) => this.Value = value;
 
-        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( left.Value + right.Value );
+        public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new Attoseconds( value: left.Value + right.Value );
 
-        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( left.Value + ( Rational )attoseconds );
+        public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new Attoseconds( value: left.Value + ( Rational )attoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -151,25 +145,25 @@ namespace Librainian.Measurement.Time {
         public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
 
         [NotNull]
-        public static implicit operator SpanOfTime( Attoseconds attoseconds ) => new SpanOfTime( attoseconds.ToPlanckTimes().Value );
+        public static implicit operator SpanOfTime( Attoseconds attoseconds ) => new SpanOfTime( planckTimes: attoseconds.ToPlanckTimes().Value );
 
         public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
 
-        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left, -attoseconds );
+        public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left: left, attoseconds: -attoseconds );
 
-        public static Boolean operator !=( Attoseconds left, Attoseconds right ) => !Equals( left, right );
+        public static Boolean operator !=( Attoseconds left, Attoseconds right ) => !Equals( left: left, right: right );
 
-        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) => Combine( left, right );
+        public static Attoseconds operator +( Attoseconds left, Attoseconds right ) => Combine( left: left, right: right );
 
-        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) => Combine( left, attoseconds );
+        public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) => Combine( left: left, attoseconds: attoseconds );
 
         public static Boolean operator <( Attoseconds left, Attoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Attoseconds left, Attoseconds right ) => Equals( left, right );
+        public static Boolean operator ==( Attoseconds left, Attoseconds right ) => Equals( left: left, right: right );
 
         public static Boolean operator >( Attoseconds left, Attoseconds right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( Attoseconds other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Attoseconds other ) => this.Value.CompareTo( other: other.Value );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -183,10 +177,10 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( nameof( other ) );
+                throw new ArgumentNullException( paramName: nameof( other ) );
             }
 
-            return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
+            return this.ToPlanckTimes().Value.CompareTo( other: other.ToPlanckTimes().Value );
         }
 
         /// <summary>
@@ -205,18 +199,18 @@ namespace Librainian.Measurement.Time {
                 return 1;
             }
 
-            return obj is Attoseconds other ? this.CompareTo( other ) : throw new ArgumentException( $"Object must be of type {nameof( Attoseconds )}" );
+            return obj is Attoseconds other ? this.CompareTo( other: other ) : throw new ArgumentException( message: $"Object must be of type {nameof( Attoseconds )}" );
         }
 
-        public override Boolean Equals( [CanBeNull] Object obj ) => obj is Attoseconds attoseconds && Equals( this, attoseconds );
+        public override Boolean Equals( [CanBeNull] Object obj ) => obj is Attoseconds attoseconds && Equals( left: this, right: attoseconds );
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         /// <summary>Convert to a larger unit.</summary>
         /// <returns></returns>
-        public Femtoseconds ToFemtoseconds() => new Femtoseconds( this.Value / InOneFemtosecond );
+        public Femtoseconds ToFemtoseconds() => new Femtoseconds( value: this.Value / InOneFemtosecond );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneAttosecond * this.Value );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( value: ( Rational )PlanckTimes.InOneAttosecond * this.Value );
 
         public Seconds ToSeconds() => this.ToZeptoseconds().ToSeconds();
 
@@ -224,18 +218,18 @@ namespace Librainian.Measurement.Time {
             if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.WholePart;
 
-                return $"{whole} {whole.PluralOf( "as" )}";
+                return $"{whole} {whole.PluralOf( singular: "as" )}";
             }
 
             var dec = ( Decimal )this.Value;
 
-            return $"{dec} {dec.PluralOf( "as" )}";
+            return $"{dec} {dec.PluralOf( singular: "as" )}";
         }
 
-        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.ToSeconds().Value );
+        public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( value: ( Double )this.ToSeconds().Value );
 
         /// <summary>Convert to a smaller unit.</summary>
         /// <returns></returns>
-        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value * Zeptoseconds.InOneAttosecond );
+        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( value: this.Value * Zeptoseconds.InOneAttosecond );
     }
 }

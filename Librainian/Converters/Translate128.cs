@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Translate128.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Translate128.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Translate128.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Translate128.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Converters {
 
@@ -44,26 +38,26 @@ namespace Librainian.Converters {
     using Maths;
 
     /// <summary>Struct for easily converting <see cref="Guid" /> to <see cref="FourBytes" />, <see cref="EightBytes" />, and <see cref="Translate64" />.</summary>
-    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
     public struct Translate128 {
 
-        [field: FieldOffset( 0 )]
+        [field: FieldOffset( offset: 0 )]
         public Translate64 Lower { get; set; }
 
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public Guid Guid;
 
         /// <summary>Just the first four bytes.</summary>
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public FourBytes FourBytes;
 
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public EightBytes EightBytesLow;
 
-        [FieldOffset( sizeof( UInt64 ) )]
+        [FieldOffset( offset: sizeof( UInt64 ) )]
         public Translate64 Higher;
 
-        [FieldOffset( sizeof( UInt64 ) )]
+        [FieldOffset( offset: sizeof( UInt64 ) )]
         public EightBytes EightBytesHigh;
 
         public Translate128( Guid guid ) {
@@ -75,12 +69,12 @@ namespace Librainian.Converters {
             this.Guid = guid;
         }
 
-        public Translate128( Translate64 lower, Translate64 higher ) : this( Guid.Empty ) {
+        public Translate128( Translate64 lower, Translate64 higher ) : this( guid: Guid.Empty ) {
             this.Lower = lower;
             this.Higher = higher;
         }
 
-        public Translate128( EightBytes lower, EightBytes higher ) : this( Guid.Empty ) {
+        public Translate128( EightBytes lower, EightBytes higher ) : this( guid: Guid.Empty ) {
             this.EightBytesLow = lower;
             this.EightBytesHigh = higher;
         }

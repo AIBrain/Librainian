@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Volatiles.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Volatiles.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Volatiles.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// 
+// Project: "Librainian", File: "Volatiles.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
 
 namespace Librainian.Threading {
 
@@ -65,8 +59,7 @@ namespace Librainian.Threading {
         /// <param name="newValue"> The new value</param>
         /// <param name="comparand">The comparand (expected value)</param>
         /// <returns></returns>
-        public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) =>
-            Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+        public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
         /// <summary>Atomically increment the current value and return the new value</summary>
         /// <returns>The decremented value.</returns>
@@ -138,6 +131,7 @@ namespace Librainian.Threading {
         /// <summary>Write without applying any fence</summary>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( Int32 newValue ) => this._value = newValue;
+
     }
 
     /// <summary>A long value that may be updated atomically</summary>
@@ -158,8 +152,7 @@ namespace Librainian.Threading {
         /// <param name="newValue"> The new value</param>
         /// <param name="comparand">The comparand (expected value)</param>
         /// <returns></returns>
-        public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) =>
-            Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+        public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
         /// <summary>Atomically increment the current value and return the new value</summary>
         /// <returns>The decremented value.</returns>
@@ -230,6 +223,7 @@ namespace Librainian.Threading {
         /// <summary>Write without applying any fence</summary>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( Int64 newValue ) => this._value = newValue;
+
     }
 
     /// <summary>A boolean value that may be updated atomically and is guaranteed to live on its own cache line (to prevent false sharing)</summary>
@@ -338,6 +332,7 @@ namespace Librainian.Threading {
         }
 
         private static Int32 ToInt( Boolean value ) => value ? True : False;
+
     }
 
     /// <summary>An integer value that may be updated atomically and is guaranteed to live on its own cache line (to prevent false sharing)</summary>
@@ -405,8 +400,7 @@ namespace Librainian.Threading {
         /// <param name="newValue"> The new value</param>
         /// <param name="comparand">The comparand (expected value)</param>
         /// <returns></returns>
-        public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) =>
-            Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+        public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
         /// <summary>Atomically set the value to the given updated value</summary>
         /// <param name="newValue">The new value</param>
@@ -433,6 +427,7 @@ namespace Librainian.Threading {
 
             return value.ToString();
         }
+
     }
 
     /// <summary>A long value that may be updated atomically and is guaranteed to live on its own cache line (to prevent false sharing)</summary>
@@ -499,8 +494,7 @@ namespace Librainian.Threading {
         /// <param name="newValue"> The new value</param>
         /// <param name="comparand">The comparand (expected value)</param>
         /// <returns></returns>
-        public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) =>
-            Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
+        public Boolean AtomicCompareExchange( Int64 newValue, Int64 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
         /// <summary>Atomically set the value to the given updated value</summary>
         /// <param name="newValue">The new value</param>
@@ -527,6 +521,7 @@ namespace Librainian.Threading {
 
             return value.ToString();
         }
+
     }
 
     /// <summary>A reference that may be updated atomically</summary>
@@ -612,6 +607,7 @@ namespace Librainian.Threading {
         /// <summary>Write without applying any fence</summary>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( [CanBeNull] T newValue ) => this._value = newValue;
+
     }
 
     /// <summary>A small toolkit of classes that support lock-free thread-safe programming on single variables and arrays</summary>
@@ -620,20 +616,21 @@ namespace Librainian.Threading {
 
         /// <summary>Size of a cache line in bytes</summary>
         public const Int32 CacheLineSize = 64;
+
     }
 
     /// <summary>A <see cref="Boolean" /> array that may be updated atomically</summary>
     public class BooleanArray {
-
-        private const Int32 False = 0;
-
-        private const Int32 True = 1;
 
         [NotNull]
         private Int32[] _array { get; }
 
         /// <summary>Length of the array</summary>
         public Int32 Length => this._array.Length;
+
+        private const Int32 False = 0;
+
+        private const Int32 True = 1;
 
         /// <summary>Create a new <see cref="BooleanArray" /> of a given length</summary>
         /// <param name="length">Length of the array</param>
@@ -738,6 +735,7 @@ namespace Librainian.Threading {
         /// <param name="index">   The index.</param>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( Int32 index, Boolean newValue ) => this._array[ index ] = ToInt( newValue );
+
     }
 
     /// <summary>An <see cref="Int32" /> array that may be updated atomically</summary>
@@ -857,6 +855,7 @@ namespace Librainian.Threading {
         /// <param name="index">   The index.</param>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( Int32 index, Int32 newValue ) => this._array[ index ] = newValue;
+
     }
 
     /// <summary>A <see cref="Int64" /> array that may be updated atomically</summary>
@@ -976,6 +975,7 @@ namespace Librainian.Threading {
         /// <param name="index">   The index.</param>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( Int32 index, Int64 newValue ) => this._array[ index ] = newValue;
+
     }
 
     /// <summary>A reference array that may be updated atomically</summary>
@@ -1081,5 +1081,7 @@ namespace Librainian.Threading {
         /// <param name="index">   The index.</param>
         /// <param name="newValue">The new value</param>
         public void WriteUnfenced( Int32 index, [CanBeNull] T newValue ) => this._array[ index ] = newValue;
+
     }
+
 }

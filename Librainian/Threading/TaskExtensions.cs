@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "TaskExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "TaskExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// 
+// Project: "Librainian", File: "TaskExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
 
 namespace Librainian.Threading {
 
@@ -291,8 +285,7 @@ namespace Librainian.Threading {
             }
 
             foreach ( var inputTask in inputTasks ) {
-                inputTask.ContinueWith( Continuation, CancellationToken.None,
-                    TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
+                inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
             }
 
             return results;
@@ -381,7 +374,7 @@ namespace Librainian.Threading {
                 tcs.TrySetCanceled();
             }
             else if ( task.IsFaulted ) {
-                var ex = ( Exception )task.Exception ?? new InvalidOperationException( "Faulted Task" );
+                var ex = ( Exception ) task.Exception ?? new InvalidOperationException( "Faulted Task" );
                 tcs.TrySetException( ex );
             }
             else {
@@ -543,7 +536,7 @@ namespace Librainian.Threading {
 
             var tcs = new TaskCompletionSource<T2>( TaskCreationOptions.RunContinuationsAsynchronously ); //Tasks.FactorySooner.CreationOptions
 
-            first.ContinueWith( obj => {
+            first.ContinueWith( continuationAction: obj => {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
                         tcs.TrySetException( first.Exception.InnerExceptions );
@@ -579,7 +572,7 @@ namespace Librainian.Threading {
                         tcs.TrySetException( exc );
                     }
                 }
-            }, TaskContinuationOptions.ExecuteSynchronously );
+            }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
 
             return tcs.Task;
         }
@@ -631,7 +624,7 @@ namespace Librainian.Threading {
 
             var tcs = new TaskCompletionSource<Object>( TaskCreationOptions.RunContinuationsAsynchronously ); //Tasks.FactorySooner.CreationOptions
 
-            first.ContinueWith( obj => {
+            first.ContinueWith( continuationAction: obj => {
                 if ( first.IsFaulted ) {
                     if ( first.Exception != null ) {
                         tcs.TrySetException( first.Exception.InnerExceptions );
@@ -648,7 +641,7 @@ namespace Librainian.Threading {
                             tcs.TrySetCanceled();
                         }
                         else {
-                            t.ContinueWith( obj1 => {
+                            t.ContinueWith( continuationAction: obj1 => {
                                 if ( t.IsFaulted ) {
                                     if ( t.Exception != null ) {
                                         tcs.TrySetException( t.Exception.InnerExceptions );
@@ -660,14 +653,14 @@ namespace Librainian.Threading {
                                 else {
                                     tcs.TrySetResult( null );
                                 }
-                            }, TaskContinuationOptions.ExecuteSynchronously );
+                            }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
                         }
                     }
                     catch ( Exception exc ) {
-                        tcs.TrySetException( exc );
+                        tcs.TrySetException( exception: exc );
                     }
                 }
-            }, TaskContinuationOptions.ExecuteSynchronously );
+            }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
 
             return tcs.Task;
         }
@@ -761,7 +754,7 @@ namespace Librainian.Threading {
                 }
             }
 
-            first.ContinueWith( ContinuationFunction, TaskContinuationOptions.ExecuteSynchronously );
+            first.ContinueWith( continuationAction: ContinuationFunction, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
 
             return tcs.Task;
         }
@@ -874,11 +867,11 @@ namespace Librainian.Threading {
             }
 
             try {
-                return FluentTimer.Start( afterDelay.Create( () => {
+                return afterDelay.Create( () => {
                     if ( condition() ) {
                         action();
                     }
-                } ).Once() );
+                } ).Once().Begin();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -931,9 +924,9 @@ namespace Librainian.Threading {
             }
 
             var delay = Task.Delay( timeout, token );
-            var winning = await Task.WhenAny( task, delay ).ConfigureAwait( false );
+            var winning = await Task.WhenAny( task, delay ).ConfigureAwait( continueOnCapturedContext: false );
 
-            return winning == task ? task : Task.FromException( new OperationCanceledException( "cancelled" ) );
+            return winning == task ? task : Task.FromException( exception: new OperationCanceledException( message: "cancelled" ) );
         }
 
         /// <summary>await the <paramref name="task" /> with a <see cref="CancellationToken" />.</summary>
@@ -954,7 +947,7 @@ namespace Librainian.Threading {
             var delay = Task.Delay( TimeSpan.MaxValue, token );
             var winning = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
-            return winning == task ? task : Task.FromException( new OperationCanceledException( "cancelled" ) );
+            return winning == task ? task : Task.FromException( exception: new OperationCanceledException( message: "cancelled" ) );
         }
 
         /// <summary>await the <paramref name="task" /> with a <paramref name="timeout" />.</summary>
@@ -965,18 +958,18 @@ namespace Librainian.Threading {
         [ItemNotNull]
         public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
             if ( task is null ) {
-                throw new ArgumentNullException( nameof( task ) );
+                throw new ArgumentNullException( paramName: nameof( task ) );
             }
 
             if ( task.IsDone() ) {
                 return task;
             }
 
-            var token = new CancellationTokenSource( timeout ).Token;
-            var delay = Task.Delay( timeout, token );
-            var winner = await Task.WhenAny( task, delay ).ConfigureAwait( false );
+            var token = new CancellationTokenSource( delay: timeout ).Token;
+            var delay = Task.Delay( delay: timeout, cancellationToken: token );
+            var winner = await Task.WhenAny( task, delay ).ConfigureAwait( continueOnCapturedContext: false );
 
-            return winner == task ? task : Task.FromException( new OperationCanceledException( "timeout" ) );
+            return winner == task ? task : Task.FromException( exception: new OperationCanceledException( message: "timeout" ) );
         }
 
         /// <summary>"you can even have a timeout using the following simple extension method"</summary>
@@ -988,11 +981,11 @@ namespace Librainian.Threading {
         /// <exception cref="ArgumentNullException"></exception>
         [ItemNotNull]
         public static async Task<Task> WithTimeout<T>( [NotNull] this Task<T> task, TimeSpan timeout ) {
-            if ( task == await Task.WhenAny( task, Task.Delay( timeout ) ).ConfigureAwait( false ) ) {
+            if ( task == await Task.WhenAny( task, Task.Delay( delay: timeout ) ).ConfigureAwait( continueOnCapturedContext: false ) ) {
                 return task;
             }
 
-            throw new OperationCanceledException( "timeout" );
+            throw new OperationCanceledException( message: "timeout" );
         }
 
         /// <summary>Wrap 3 methods into one.</summary>
@@ -1095,6 +1088,9 @@ namespace Librainian.Threading {
                     return await this._loader( cancelToken ).ConfigureAwait( false );
                 }
             }
+
         }
+
     }
+
 }

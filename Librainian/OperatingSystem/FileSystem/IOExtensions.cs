@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// Project: "Librainian", File: "IOExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -109,8 +103,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var encodedText = Encoding.Unicode.GetBytes( text );
                 var length = encodedText.Length;
 
-                using var sourceStream = new FileStream( fileInfo.FullPath, FileMode.Append, FileAccess.Write, FileShare.Write, length,
-                    true );
+                using var sourceStream = new FileStream( fileInfo.FullPath, FileMode.Append, FileAccess.Write, FileShare.Write, length, true );
 
                 var write = sourceStream.WriteAsync( encodedText, 0, length );
 
@@ -290,7 +283,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
         /// <returns></returns>
         [NotNull]
-        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [CanBeNull] this DirectoryInfo target, [CanBeNull] String? searchPattern = "*",
+        [ItemNotNull]
+        public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [CanBeNull] this DirectoryInfo? target, [CanBeNull] String? searchPattern = "*",
             SearchOption searchOption = SearchOption.AllDirectories ) {
             if ( target is null ) {
                 yield break;
@@ -337,13 +331,19 @@ namespace Librainian.OperatingSystem.FileSystem {
                     yield return subInfo;
 
                     switch ( searchOption ) {
-                        case SearchOption.AllDirectories:
+                        case SearchOption.AllDirectories: {
 
-                            foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
-                                yield return info;
+                                foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern, searchOption ) ) {
+                                    yield return info;
+                                }
+
+                                break;
                             }
+                        case SearchOption.TopDirectoryOnly: {
 
-                            break;
+                                yield break;
+                            }
+                        default: throw new ArgumentOutOfRangeException( nameof( searchOption ), searchOption, null );
                     }
                 } while ( NativeMethods.FindNextFile( hFindFile, out findData ) );
             }
@@ -579,8 +579,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                             }
 
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory,
-                                    SearchStyle.FoldersFirst ); //recurse
+                                folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, SearchStyle.FoldersFirst ); //recurse
                             }
 
                             try {
@@ -608,8 +607,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                                 } );
                             }
 
-                            folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory,
-                                searchStyle ); //recurse
+                            folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, searchStyle ); //recurse
                         } );
                     }
                     catch ( UnauthorizedAccessException ) { }
@@ -675,7 +673,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
 
             var losize = NativeMethods.GetCompressedFileSizeW( info.FullPath, out var hosize );
-            var size = hosize << 32 | losize;
+            var size = ( hosize << 32 ) | losize;
 
             return ( size + clusterSize - 1 ) / clusterSize * clusterSize;
         }
@@ -690,8 +688,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
         public static UInt64? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
-            var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullPath, out var sectorsPerCluster,
-                out var bytesPerSector, out _, out _ );
+            var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullPath, out var sectorsPerCluster, out var bytesPerSector, out _, out _ );
 
             if ( result == 0 ) {
                 throw new Win32Exception();
@@ -699,7 +696,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
             var losize = NativeMethods.GetCompressedFileSizeW( info.FullPath, out var sizeHigh );
-            var size = ( Int64 )sizeHigh << 32 | losize;
+            var size = ( ( Int64 )sizeHigh << 32 ) | losize;
 
             return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
         }
@@ -918,8 +915,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
-                $" /separate /select,\"{folder.FullPath}\" " );
+            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{folder.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -931,8 +927,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
-                $" /separate /select,\"{folder.FullPath}\" " );
+            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{folder.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -943,8 +938,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
-                $" /separate /select,\"{document.FullPath}\" " );
+            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{document.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -997,8 +991,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( File.Exists( filePath ) ) {
                 try {
-                    using ( var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value,
-                        true ) ) {
+                    using ( var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true ) ) {
                         var sb = new StringBuilder( bufferSize.Value );
                         var buffer = new Byte[ bufferSize.Value ];
                         Int32 numRead;
@@ -1090,7 +1083,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return default;
             }
 
-            var lba = left.AsBytes(); //.ToArray();
+            var lba = left.AsBytes();  //.ToArray();
             var rba = right.AsBytes(); //.ToArray();
 
             return lba.SequenceEqual( rba );

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DeserializeReportStats.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "DeserializeReportStats.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DeserializeReportStats.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "DeserializeReportStats.cs" was last formatted by Protiguous on 2020/03/16 at 3:01 PM.
 
 namespace Librainian.Persistence {
 
@@ -51,13 +45,13 @@ namespace Librainian.Persistence {
     public sealed class DeserializeReportStats : ABetterClassDispose {
 
         [NotNull]
-        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( true );
+        private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( trackAllValues: true );
 
         [CanBeNull]
         private Action<DeserializeReportStats>? Handler { get; }
 
         [NotNull]
-        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( true );
+        private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( trackAllValues: true );
 
         public Boolean Enabled { get; set; }
 
@@ -86,10 +80,11 @@ namespace Librainian.Persistence {
             var handler = this.Handler;
 
             if ( !( handler is null ) ) {
-                handler( this );
+                handler( obj: this );
 
                 if ( this.Enabled ) {
-                    await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
+                    await this.Timing.Then( job: () => this.ReportAsync().ConfigureAwait( continueOnCapturedContext: false ) )
+                              .ConfigureAwait( continueOnCapturedContext: false ); //TODO is this correct?
                 }
             }
         }
@@ -104,15 +99,15 @@ namespace Librainian.Persistence {
             this.Losses.Dispose();
         }
 
-        public Int64 GetGains() => this.Gains.Values?.Sum( arg => arg ) ?? default;
+        public Int64 GetGains() => this.Gains.Values?.Sum( selector: arg => arg ) ?? default;
 
-        public Int64 GetLoss() => this.Losses.Values?.Sum( arg => arg ) ?? default;
+        public Int64 GetLoss() => this.Losses.Values?.Sum( selector: arg => arg ) ?? default;
 
         [NotNull]
         public Task StartReporting() {
             this.Enabled = true;
 
-            return this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) );
+            return this.Timing.Then( job: () => this.ReportAsync().ConfigureAwait( continueOnCapturedContext: false ) );
         }
 
         public void StopReporting() => this.Enabled = false;

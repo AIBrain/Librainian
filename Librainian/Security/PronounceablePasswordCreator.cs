@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "PronounceablePasswordCreator.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "PronounceablePasswordCreator.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "PronounceablePasswordCreator.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// 
+// Project: "Librainian", File: "PronounceablePasswordCreator.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
 
 namespace Librainian.Security {
 
@@ -70,8 +64,8 @@ namespace Librainian.Security {
             Int32 c2;
             Int32 c3;
 
-            var password = new StringBuilder( requiredLength );
-            var weightedRandom = ( Int64 )( Randem.NextDouble() * GpwData.Sigma );
+            var password = new StringBuilder( capacity: requiredLength );
+            var weightedRandom = ( Int64 ) ( Randem.NextDouble() * GpwData.Sigma );
             Int64 sum = 0;
 
             var finished = false;
@@ -79,15 +73,15 @@ namespace Librainian.Security {
             for ( c1 = 0; c1 < 26 && !finished; c1++ ) {
                 for ( c2 = 0; c2 < 26 && !finished; c2++ ) {
                     for ( c3 = 0; c3 < 26 && !finished; c3++ ) {
-                        sum += GpwData.Get( c1, c2, c3 );
+                        sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
 
                         if ( sum <= weightedRandom ) {
                             continue;
                         }
 
-                        password.Append( EnglishAlphabetLowercase[ c1 ] );
-                        password.Append( EnglishAlphabetLowercase[ c2 ] );
-                        password.Append( EnglishAlphabetLowercase[ c3 ] );
+                        password.Append( value: EnglishAlphabetLowercase[ index: c1 ] );
+                        password.Append( value: EnglishAlphabetLowercase[ index: c2 ] );
+                        password.Append( value: EnglishAlphabetLowercase[ index: c3 ] );
                         finished = true;
                     }
                 }
@@ -97,31 +91,31 @@ namespace Librainian.Security {
             var nchar = 3;
 
             while ( nchar < requiredLength ) {
-                c1 = EnglishAlphabetLowercase.IndexOf( password[ nchar - 2 ] );
-                c2 = EnglishAlphabetLowercase.IndexOf( password[ nchar - 1 ] );
+                c1 = EnglishAlphabetLowercase.IndexOf( value: password[ index: nchar - 2 ] );
+                c2 = EnglishAlphabetLowercase.IndexOf( value: password[ index: nchar - 1 ] );
 
                 sum = 0;
 
                 for ( c3 = 0; c3 < 26; c3++ ) {
-                    sum += GpwData.Get( c1, c2, c3 );
+                    sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
                 }
 
                 if ( sum == 0 ) {
                     break;
                 }
 
-                weightedRandom = ( Int64 )( Randem.NextDouble() * sum );
+                weightedRandom = ( Int64 ) ( Randem.NextDouble() * sum );
 
                 sum = 0;
 
                 for ( c3 = 0; c3 < 26; c3++ ) {
-                    sum += GpwData.Get( c1, c2, c3 );
+                    sum += GpwData.Get( i1: c1, i2: c2, i3: c3 );
 
                     if ( sum <= weightedRandom ) {
                         continue;
                     }
 
-                    password.Append( EnglishAlphabetLowercase[ c3 ] );
+                    password.Append( value: EnglishAlphabetLowercase[ index: c3 ] );
 
                     break;
                 }
@@ -144,12 +138,14 @@ namespace Librainian.Security {
 
             while ( passwordLength < minLength ) {
                 var length = ( maxWordLength - minWordLength + 1 ).Next() + minWordLength;
-                var word = Generate( length );
+                var word = Generate( requiredLength: length );
                 passwordLength += word.Length;
-                words.Add( word );
+                words.Add( item: word );
             }
 
-            return String.Join( " ", words.ToArray() );
+            return String.Join( separator: " ", value: words.ToArray() );
         }
+
     }
+
 }

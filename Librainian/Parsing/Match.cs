@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Match.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Match.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Match.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Match.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Parsing {
 
@@ -49,7 +43,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public static Func<T, TResult> On<TCxt>( [NotNull] Func<OpenMatchContext<T, TResult>, TCxt> cond1, [NotNull] Func<TCxt, ClosedMatchContext> cond2 )
             where TCxt : MatchContext<T, TResult> {
-            var ctx = cond2( cond1( new ContextImpl() ) );
+            var ctx = cond2( arg: cond1( arg: new ContextImpl() ) );
 
             return ( ( ContextImpl )ctx ).Compile();
         }
@@ -57,7 +51,7 @@ namespace Librainian.Parsing {
         [NotNull]
         public static Func<T, TResult> On<TCtx1, TCtx2>( [NotNull] Func<OpenMatchContext<T, TResult>, TCtx1> cond1, [NotNull] Func<TCtx1, TCtx2> cond2,
             [NotNull] Func<TCtx2, ClosedMatchContext> cond3 ) where TCtx1 : MatchContext<T, TResult> where TCtx2 : MatchContext<T, TResult> {
-            var ctx = cond3( cond2( cond1( new ContextImpl() ) ) );
+            var ctx = cond3( arg: cond2( arg: cond1( arg: new ContextImpl() ) ) );
 
             return ( ( ContextImpl )ctx ).Compile();
         }
@@ -67,7 +61,7 @@ namespace Librainian.Parsing {
             [NotNull] Func<TCtx2, TCtx3> cond3, [NotNull] Func<TCtx3, ClosedMatchContext> cond4 ) where TCtx1 : MatchContext<T, TResult>
             where TCtx2 : MatchContext<T, TResult>
             where TCtx3 : MatchContext<T, TResult> {
-            var ctx = cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) );
+            var ctx = cond4( arg: cond3( arg: cond2( arg: cond1( arg: new ContextImpl() ) ) ) );
 
             return ( ( ContextImpl )ctx ).Compile();
         }
@@ -78,7 +72,7 @@ namespace Librainian.Parsing {
             where TCtx2 : MatchContext<T, TResult>
             where TCtx3 : MatchContext<T, TResult>
             where TCtx4 : MatchContext<T, TResult> {
-            var ctx = cond5( cond4( cond3( cond2( cond1( new ContextImpl() ) ) ) ) );
+            var ctx = cond5( arg: cond4( arg: cond3( arg: cond2( arg: cond1( arg: new ContextImpl() ) ) ) ) );
 
             return ( ( ContextImpl )ctx ).Compile();
         }
@@ -90,24 +84,26 @@ namespace Librainian.Parsing {
             public ContextImpl() => this._matches = Enumerable.Empty<MatchExpression>().ToList().AsReadOnly();
 
             public ContextImpl( [NotNull] ContextImpl baseContext, [CanBeNull] MatchExpression newExpr ) =>
-                this._matches = baseContext._matches.ConcatSingle( newExpr ).ToList().AsReadOnly();
+                this._matches = baseContext._matches.ConcatSingle( element: newExpr ).ToList().AsReadOnly();
 
             [NotNull]
-            public Func<T, TResult> Compile() => value => this._matches.First( expr => expr.Matches( value ) ).Evaluate( value );
+            public Func<T, TResult> Compile() => value => this._matches.First( predicate: expr => expr.Matches( value: value ) ).Evaluate( value: value );
 
             [NotNull]
             public override OpenMatchContext<T, TResult> Guard( [CanBeNull] Func<T, Boolean> failWhen, [CanBeNull] Func<T, TResult> failWith ) =>
-                new ContextImpl( this, new MatchExpression( failWhen, failWith ) );
+                new ContextImpl( baseContext: this, newExpr: new MatchExpression( isMatch: failWhen, getResult: failWith ) );
 
             [NotNull]
-            public override ClosedMatchContext Return( [CanBeNull] TResult result ) => new ContextImpl( this, new MatchExpression( t => true, t => result ) );
+            public override ClosedMatchContext Return( [CanBeNull] TResult result ) =>
+                new ContextImpl( baseContext: this, newExpr: new MatchExpression( isMatch: t => true, getResult: t => result ) );
 
             [NotNull]
             public override ClosedMatchContext Return( [CanBeNull] Func<T, TResult> resultProjection ) =>
-                new ContextImpl( this, new MatchExpression( t => true, resultProjection ) );
+                new ContextImpl( baseContext: this, newExpr: new MatchExpression( isMatch: t => true, getResult: resultProjection ) );
 
             [NotNull]
-            public override IntermediateMatchResultContext<T, TResult> When( [CanBeNull] Func<T, Boolean> condition ) => new IntermediateContextImpl( this, condition );
+            public override IntermediateMatchResultContext<T, TResult> When( [CanBeNull] Func<T, Boolean> condition ) =>
+                new IntermediateContextImpl( baseContext: this, condition: condition );
         }
 
         private sealed class IntermediateContextImpl : IntermediateMatchResultContext<T, TResult> {
@@ -123,11 +119,11 @@ namespace Librainian.Parsing {
 
             [NotNull]
             public override MatchContext<T, TResult> Return( [CanBeNull] TResult result ) =>
-                new ContextImpl( this._baseContext, new MatchExpression( this._condition, t => result ) );
+                new ContextImpl( baseContext: this._baseContext, newExpr: new MatchExpression( isMatch: this._condition, getResult: t => result ) );
 
             [NotNull]
             public override MatchContext<T, TResult> Return( [CanBeNull] Func<T, TResult> resultProjection ) =>
-                new ContextImpl( this._baseContext, new MatchExpression( this._condition, resultProjection ) );
+                new ContextImpl( baseContext: this._baseContext, newExpr: new MatchExpression( isMatch: this._condition, getResult: resultProjection ) );
         }
 
         private sealed class MatchExpression {
@@ -142,9 +138,9 @@ namespace Librainian.Parsing {
             }
 
             [CanBeNull]
-            public TResult Evaluate( [CanBeNull] T value ) => this._getResult( value );
+            public TResult Evaluate( [CanBeNull] T value ) => this._getResult( arg: value );
 
-            public Boolean Matches( [CanBeNull] T value ) => this._isMatch( value );
+            public Boolean Matches( [CanBeNull] T value ) => this._isMatch( arg: value );
         }
     }
 }

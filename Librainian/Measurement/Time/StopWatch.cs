@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "StopWatch.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "StopWatch.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "StopWatch.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "StopWatch.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -50,9 +44,9 @@ namespace Librainian.Measurement.Time {
     /// <para>Made my changes to it. Needs some unit tests.</para>
     /// </summary>
     /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    [Obsolete( "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
+    [Obsolete( message: "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
     public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
 
         [JsonProperty]
@@ -68,7 +62,7 @@ namespace Librainian.Measurement.Time {
 
         public const Int64 TicksPerMillisecond = 10000;
 
-        public TimeSpan Elapsed => new TimeSpan( this.GetElapsedTicks() );
+        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -77,9 +71,9 @@ namespace Librainian.Measurement.Time {
         public Int64 ElapsedTicks => this.GetElapsedTicks();
 
         public Int64 EndTimeStamp {
-            get => Interlocked.Read( ref this._endTimeStamp );
+            get => Interlocked.Read( location: ref this._endTimeStamp );
 
-            private set => Interlocked.Exchange( ref this._endTimeStamp, value );
+            private set => Interlocked.Exchange( location1: ref this._endTimeStamp, value: value );
         }
 
         public Boolean IsRunning {
@@ -89,9 +83,9 @@ namespace Librainian.Measurement.Time {
         }
 
         public Int64 StartTimeStamp {
-            get => Interlocked.Read( ref this._startTimeStamp );
+            get => Interlocked.Read( location: ref this._startTimeStamp );
 
-            private set => Interlocked.Exchange( ref this._startTimeStamp, value );
+            private set => Interlocked.Exchange( location1: ref this._startTimeStamp, value: value );
         }
 
         public StopWatch() {
@@ -106,7 +100,7 @@ namespace Librainian.Measurement.Time {
             return this.EndTimeStamp - this.StartTimeStamp;
         }
 
-        public static implicit operator TimeSpan( [NotNull] StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
+        public static implicit operator TimeSpan( [NotNull] StopWatch stopWatch ) => TimeSpan.FromMilliseconds( value: stopWatch.ElapsedMilliseconds );
 
         [NotNull]
         public static StopWatch StartNew() {
@@ -126,7 +120,7 @@ namespace Librainian.Measurement.Time {
         /// follows <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( [NotNull] StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
+        public Int32 CompareTo( [NotNull] StopWatch other ) => this.GetElapsedTicks().CompareTo( value: other.GetElapsedTicks() );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -138,7 +132,7 @@ namespace Librainian.Measurement.Time {
         /// follows <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
+        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( value: other );
 
         public void Pause() {
             throw new NotImplementedException();
@@ -181,6 +175,6 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => this.Elapsed.ToString( "g" );
+        public override String ToString() => this.Elapsed.ToString( format: "g" );
     }
 }

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SimpleWallet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "SimpleWallet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SimpleWallet.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "SimpleWallet.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Measurement.Currency.USD {
 
@@ -47,11 +41,11 @@ namespace Librainian.Measurement.Currency.USD {
     using Utilities;
 
     /// <summary>A simple, thread-safe,  Decimal-based wallet.</summary>
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
 
         [NotNull]
-        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
 
         private Decimal _balance;
 
@@ -60,8 +54,8 @@ namespace Librainian.Measurement.Currency.USD {
         public Decimal Balance {
             get {
                 try {
-                    if ( !this._access.TryEnterReadLock( this.Timeout ) ) {
-                        throw new TimeoutException( "Unable to get balance" );
+                    if ( !this._access.TryEnterReadLock( timeout: this.Timeout ) ) {
+                        throw new TimeoutException( message: "Unable to get balance" );
                     }
 
                     return this._balance;
@@ -74,13 +68,13 @@ namespace Librainian.Measurement.Currency.USD {
             }
 
             private set {
-                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    throw new TimeoutException( "Unable to set the balance" );
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
+                    throw new TimeoutException( message: "Unable to set the balance" );
                 }
 
                 this._balance = value;
                 this._access.ExitWriteLock();
-                this.OnAnyUpdate?.Invoke( value );
+                this.OnAnyUpdate?.Invoke( obj: value );
             }
         }
 
@@ -112,7 +106,7 @@ namespace Librainian.Measurement.Currency.USD {
         /// </summary>
         public TimeSpan Timeout { get; set; }
 
-        public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
+        public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( value: 1 );
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         public override void DisposeManaged() {
@@ -134,13 +128,13 @@ namespace Librainian.Measurement.Currency.USD {
             }
 
             try {
-                this.OnBeforeDeposit?.Invoke( amount );
+                this.OnBeforeDeposit?.Invoke( obj: amount );
                 this.Balance += amount;
 
                 return true;
             }
             finally {
-                this.OnAfterDeposit?.Invoke( amount );
+                this.OnAfterDeposit?.Invoke( obj: amount );
             }
         }
 
@@ -150,7 +144,7 @@ namespace Librainian.Measurement.Currency.USD {
 
         public Boolean TryUpdateBalance( Decimal amount ) {
             try {
-                if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) ) {
                     return default;
                 }
 
@@ -164,7 +158,7 @@ namespace Librainian.Measurement.Currency.USD {
                 }
 
                 var onAnyUpdate = this.OnAnyUpdate;
-                onAnyUpdate?.Invoke( amount );
+                onAnyUpdate?.Invoke( obj: amount );
             }
         }
 
@@ -175,9 +169,9 @@ namespace Librainian.Measurement.Currency.USD {
 
             try {
                 var onBeforeWithdraw = this.OnBeforeWithdraw;
-                onBeforeWithdraw?.Invoke( amount );
+                onBeforeWithdraw?.Invoke( obj: amount );
 
-                if ( !this._access.TryEnterWriteLock( this.Timeout ) || this._balance < amount ) {
+                if ( !this._access.TryEnterWriteLock( timeout: this.Timeout ) || this._balance < amount ) {
                     return default;
                 }
 
@@ -191,7 +185,7 @@ namespace Librainian.Measurement.Currency.USD {
                 }
 
                 var onAfterWithdraw = this.OnAfterWithdraw;
-                onAfterWithdraw?.Invoke( amount );
+                onAfterWithdraw?.Invoke( obj: amount );
             }
         }
 

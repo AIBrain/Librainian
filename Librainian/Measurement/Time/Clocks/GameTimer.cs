@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "GameTimer.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "GameTimer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GameTimer.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "GameTimer.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -96,9 +90,9 @@ namespace Librainian.Measurement.Time.Clocks {
         private TimeSpan UpdateRate { get; } = Fps.Sixty;
 
         public UInt64 Counter {
-            get => Thread.VolatileRead( ref this._counter );
+            get => Thread.VolatileRead( address: ref this._counter );
 
-            private set => Thread.VolatileWrite( ref this._counter, value );
+            private set => Thread.VolatileWrite( address: ref this._counter, value: value );
         }
 
         /// <summary>Time since last tick().</summary>
@@ -139,9 +133,9 @@ namespace Librainian.Measurement.Time.Clocks {
         }
 
         public GameTimer( [NotNull] IProgress<ReportBack> progress ) {
-            this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
+            this.Progress = progress ?? throw new ArgumentNullException( paramName: nameof( progress ), message: "Progress must not be null." );
 
-            this.Timer = new Timer( this.UpdateRate.TotalMilliseconds ) {
+            this.Timer = new Timer( interval: this.UpdateRate.TotalMilliseconds ) {
                 AutoReset = false
             };
 
@@ -150,7 +144,7 @@ namespace Librainian.Measurement.Time.Clocks {
                     this.Pause();
                     this.Counter++;
 
-                    this.Progress.Report( new ReportBack {
+                    this.Progress.Report( value: new ReportBack {
                         Counter = this.Counter,
                         Elapsed = this.Elapsed,
                         RunningSlow = this.IsRunningSlow()
@@ -187,7 +181,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <summary>Total time passed since timer was started.</summary>
         /// <returns></returns>
         [NotNull]
-        public SpanOfTime TotalElapsed() => new SpanOfTime( new Milliseconds( this.Counter / this.UpdateRate.TotalMilliseconds ) );
+        public SpanOfTime TotalElapsed() => new SpanOfTime( seconds: new Milliseconds( value: this.Counter / this.UpdateRate.TotalMilliseconds ) );
 
         [JsonObject]
         public struct ReportBack {

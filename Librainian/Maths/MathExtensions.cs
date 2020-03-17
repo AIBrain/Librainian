@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "MathExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "MathExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "MathExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -120,7 +114,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
-        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
+        public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + ( percentTax / 100.0m ) );
 
         /// <summary>Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.</summary>
         /// <param name="high"></param>
@@ -274,7 +268,7 @@ namespace Librainian.Maths {
                 var a = ( Int32 )( ( Int32 )d / Math.Pow( 10, i ) ) % 10;
 
                 for ( var j = 0; j < 4; j++ ) {
-                    input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
+                    input[ j + ( i * 4 ) ] = ( a & ( 1 << j ) ) != 0;
                 }
             }
 
@@ -327,8 +321,8 @@ namespace Librainian.Maths {
             x = Math.Abs( x );
 
             // A&S formula 7.1.26
-            var t = 1.0 / ( 1.0 + p * x );
-            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( -x * x );
+            var t = 1.0 / ( 1.0 + ( p * x ) );
+            var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( -x * x ) );
 
             return sign * y;
         }
@@ -383,8 +377,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [Pure]
-        public static Double ForceBounds( this Double thisDouble, Double minLimit, Double maxLimit ) =>
-            Math.Max( Math.Min( thisDouble, maxLimit ), minLimit );
+        public static Double ForceBounds( this Double thisDouble, Double minLimit, Double maxLimit ) => Math.Max( Math.Min( thisDouble, maxLimit ), minLimit );
 
         [DebuggerStepThrough]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -513,15 +506,18 @@ namespace Librainian.Maths {
         [NotNull]
         public static UInt16[] GetBitFields( UInt32 packedBits, [NotNull] Byte[] bitFields ) {
             const Int32 maxBits = 32;
-            var fields = bitFields.Length - 1; // number of fields to unpack
+            var fields = bitFields.Length - 1;     // number of fields to unpack
             var retArr = new UInt16[ fields + 1 ]; // init return array
-            var curPos = 0; // current field bit position (start)
+            var curPos = 0;                        // current field bit position (start)
 
             for ( var f = fields; f >= 0; f-- ) // loop from last
             {
-                var lastEnd = curPos; // position where last field ended
+                var lastEnd = curPos;     // position where last field ended
                 curPos += bitFields[ f ]; // we get where the current value starts
-                var leftShift = maxBits - curPos; // we figure how much left shift we gotta apply for the other numbers to overflow into oblivion
+
+                var leftShift = maxBits -
+                                curPos; // we figure how much left shift we gotta apply for the other numbers to overflow into oblivion
+
                 retArr[ f ] = ( UInt16 )( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
             }
 
@@ -691,7 +687,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( target - source ) * amount;
+        public static Single Lerp( this Single source, Single target, Single amount ) => source + ( ( target - source ) * amount );
 
         /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
@@ -700,7 +696,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( target - source ) * amount;
+        public static Double Lerp( this Double source, Double target, Single amount ) => source + ( ( target - source ) * amount );
 
         /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
@@ -709,7 +705,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( target - source ) * amount );
+        public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( ( target - source ) * amount ) );
 
         /// <summary>Linearly interpolates between two values.</summary>
         /// <param name="source">Source value.</param>
@@ -718,7 +714,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( target - source ) * amount );
+        public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( ( target - source ) * amount ) );
 
         [DebuggerStepThrough]
         [Pure]
@@ -734,7 +730,7 @@ namespace Librainian.Maths {
 
             var x = n + 1d;
 
-            return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
+            return ( ( x - 0.5 ) * Math.Log( x ) ) - x + ( 0.5 * Math.Log( 2 * Math.PI ) ) + ( 1.0 / ( 12.0 * x ) );
         }
 
         /// <summary>compute log(1+x) without losing precision for small values of x</summary>
@@ -755,7 +751,7 @@ namespace Librainian.Maths {
             }
 
             // Use Taylor approx. log(1 + x) = x - x^2/2 with error roughly x^3/3 since |x| < 10^-4, |x|^3 < 10^-12, relative error less than 10^-8
-            return ( -0.5 * x + 1.0 ) * x;
+            return ( ( -0.5 * x ) + 1.0 ) * x;
         }
 
         [DebuggerStepThrough]
@@ -862,7 +858,7 @@ namespace Librainian.Maths {
             var x = 0.1M;
 
             do {
-                deltaX = ( baseValue / x.Pow( n - 1 ) - x ) / n;
+                deltaX = ( ( baseValue / x.Pow( n - 1 ) ) - x ) / n;
                 x += deltaX;
             } while ( Math.Abs( deltaX ) > 0 );
 
@@ -903,7 +899,7 @@ namespace Librainian.Maths {
 
             for ( var f = 1; f < values.Length; f++ ) {
                 retVal <<= bitFields[ f ]; //we shift the previous value
-                retVal += values[ f ]; //and add our current value //on some processors | (pipe) will be faster here
+                retVal += values[ f ];     //and add our current value //on some processors | (pipe) will be faster here
             }
 
             return retVal;
@@ -927,10 +923,10 @@ namespace Librainian.Maths {
             x = Math.Abs( x ) / Math.Sqrt( 2.0 );
 
             // A&S formula 7.1.26
-            var t = 1.0 / ( 1.0 + p * x );
-            var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( -x * x );
+            var t = 1.0 / ( 1.0 + ( p * x ) );
+            var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( -x * x ) );
 
-            return 0.5 * ( 1.0 + sign * y );
+            return 0.5 * ( 1.0 + ( sign * y ) );
         }
 
         [DebuggerStepThrough]
@@ -1038,7 +1034,7 @@ namespace Librainian.Maths {
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Double SigmoidNeg1To1( this Double x ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( x ) );
+        public static Double SigmoidNeg1To1( this Double x ) => 1.0D - ( 2.0D / ( 1.0D + Math.Exp( x ) ) );
 
         public static Double Slope( [NotNull] this List<TimeProgression> data ) {
             if ( data is null ) {

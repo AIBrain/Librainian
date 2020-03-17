@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Date.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Date.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Date.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "Date.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -50,7 +44,7 @@ namespace Librainian.Measurement.Time {
     [JsonObject]
     public struct Date {
 
-        public static readonly Date Zero = new Date( Year.Zero, Month.MinValue, Day.MinValue );
+        public static readonly Date Zero = new Date( year: Year.Zero, month: Month.MinValue, day: Day.MinValue );
 
         /// <summary>
         ///     <para>The day of the month. (valid range is 1 to 31)</para>
@@ -71,9 +65,9 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         public Year Year { get; }
 
-        public static Date Now => new Date( DateTime.Now );
+        public static Date Now => new Date( dateTime: DateTime.Now );
 
-        public static Date UtcNow => new Date( DateTime.UtcNow );
+        public static Date UtcNow => new Date( dateTime: DateTime.UtcNow );
 
         public Date( BigInteger year, SByte month, SByte day ) {
             while ( day > Day.Maximum ) {
@@ -86,16 +80,16 @@ namespace Librainian.Measurement.Time {
                 }
             }
 
-            this.Day = new Day( day );
+            this.Day = new Day( value: day );
 
             while ( month > Month.MaxValue ) {
                 month -= Month.MaxValue;
                 year++;
             }
 
-            this.Month = new Month( month );
+            this.Month = new Month( value: month );
 
-            this.Year = new Year( year );
+            this.Year = new Year( value: year );
         }
 
         public Date( Year year, Month month, Day day ) {
@@ -104,17 +98,17 @@ namespace Librainian.Measurement.Time {
             this.Day = day;
         }
 
-        public Date( DateTime dateTime ) : this( dateTime.Year, ( SByte )dateTime.Month, ( SByte )dateTime.Day ) { }
+        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( SByte )dateTime.Month, day: ( SByte )dateTime.Day ) { }
 
         public Date( SpanOfTime spanOfTime ) {
-            this.Year = new Year( spanOfTime.GetWholeYears() );
+            this.Year = new Year( value: spanOfTime.GetWholeYears() );
 
-            this.Month = spanOfTime.Months.Value < Month.Minimum.Value ? new Month( Month.MinValue ) : new Month( ( SByte )spanOfTime.Months.Value );
+            this.Month = spanOfTime.Months.Value < Month.Minimum.Value ? new Month( value: Month.MinValue ) : new Month( value: ( SByte )spanOfTime.Months.Value );
 
-            this.Day = spanOfTime.Days.Value < Day.Minimum.Value ? new Day( Day.Minimum ) : new Day( ( SByte )spanOfTime.Days.Value );
+            this.Day = spanOfTime.Days.Value < Day.Minimum.Value ? new Day( value: Day.Minimum ) : new Day( value: ( SByte )spanOfTime.Days.Value );
         }
 
-        public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
+        public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date: date, dateTime: out var dateTime ) ? dateTime : default;
 
         public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
 
@@ -124,6 +118,6 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-        public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
+        public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( date: this, dateTime: out dateTime );
     }
 }

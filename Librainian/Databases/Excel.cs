@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Excel.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Excel.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Excel.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "Excel.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
 
 namespace Librainian.Databases {
 
@@ -60,7 +54,9 @@ namespace Librainian.Databases {
                 DataSource = this.Path
             };
 
-            strBuilder.Add( "Extended Properties", String.Format( "Excel 8.0;HDR={0}{1}Imex={2}{1}", hasHeaders ? "Yes" : "No", ';', hasMixedData ? "2" : "0" ) );
+            strBuilder.Add( keyword: "Extended Properties",
+                value: String.Format( format: "Excel 8.0;HDR={0}{1}Imex={2}{1}", arg0: hasHeaders ? "Yes" : "No", arg1: ';', arg2: hasMixedData ? "2" : "0" ) );
+
             this.ConnectionString = strBuilder.ToString();
         }
 
@@ -70,18 +66,18 @@ namespace Librainian.Databases {
 
             try {
 
-                using var connection = new OleDbConnection( this.ConnectionString );
+                using var connection = new OleDbConnection( connectionString: this.ConnectionString );
 
                 connection.Open();
 
-                var tableColumns = connection.GetSchema( "Columns", new[] {
+                var tableColumns = connection.GetSchema( collectionName: "Columns", restrictionValues: new[] {
                     null, null, worksheet + '$', null
                 } );
 
                 columns = new String[ tableColumns.Rows.Count ];
 
                 for ( var i = 0; i < columns.Length; i++ ) {
-                    columns[ i ] = ( String )tableColumns.Rows[ i ][ "COLUMN_NAME" ];
+                    columns[ i ] = ( String )tableColumns.Rows[ index: i ][ columnName: "COLUMN_NAME" ];
                 }
             }
             catch ( OleDbException exception ) {
@@ -94,13 +90,13 @@ namespace Librainian.Databases {
         [CanBeNull]
         public DataSet GetWorkplace() {
             try {
-                using var connection = new OleDbConnection( this.ConnectionString );
+                using var connection = new OleDbConnection( connectionString: this.ConnectionString );
 
-                using var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection );
+                using var adaptor = new OleDbDataAdapter( selectCommandText: "SELECT * FROM *", selectConnection: connection );
 
                 var workplace = new DataSet();
-                adaptor.FillSchema( workplace, SchemaType.Source );
-                adaptor.Fill( workplace );
+                adaptor.FillSchema( dataSet: workplace, schemaType: SchemaType.Source );
+                adaptor.Fill( dataSet: workplace );
 
                 return workplace;
             }
@@ -114,16 +110,16 @@ namespace Librainian.Databases {
         [CanBeNull]
         public DataTable GetWorksheet( [CanBeNull] String? worksheet ) {
             try {
-                using var connection = new OleDbConnection( this.ConnectionString );
+                using var connection = new OleDbConnection( connectionString: this.ConnectionString );
 
-                using var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) {
-                    SelectCommand = new OleDbCommand( worksheet )
+                using var adaptor = new OleDbDataAdapter( selectCommandText: $"SELECT * FROM [{worksheet}$]", selectConnection: connection ) {
+                    SelectCommand = new OleDbCommand( cmdText: worksheet )
                 };
 
-                using var ws = new DataTable( worksheet );
+                using var ws = new DataTable( tableName: worksheet );
 
-                adaptor.FillSchema( ws, SchemaType.Source );
-                adaptor.Fill( ws );
+                adaptor.FillSchema( dataTable: ws, schemaType: SchemaType.Source );
+                adaptor.Fill( dataTable: ws );
 
                 return ws;
             }
@@ -140,20 +136,20 @@ namespace Librainian.Databases {
 
             try {
 
-                using var connection = new OleDbConnection( this.ConnectionString );
+                using var connection = new OleDbConnection( connectionString: this.ConnectionString );
 
                 connection.Open();
-                var tableWorksheets = connection.GetSchema( "Tables" );
+                var tableWorksheets = connection.GetSchema( collectionName: "Tables" );
 
                 worksheets = new String[ tableWorksheets.Rows.Count ];
 
                 for ( var i = 0; i < worksheets.Length; i++ ) {
-                    worksheets[ i ] = ( String )tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
-                    worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
+                    worksheets[ i ] = ( String )tableWorksheets.Rows[ index: i ][ columnName: "TABLE_NAME" ];
+                    worksheets[ i ] = worksheets[ i ].Remove( startIndex: worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
 
                     // removes the trailing $ and other characters appended in the table name
-                    while ( worksheets[ i ].EndsWith( "$", StringComparison.OrdinalIgnoreCase ) ) {
-                        worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
+                    while ( worksheets[ i ].EndsWith( value: "$", comparisonType: StringComparison.OrdinalIgnoreCase ) ) {
+                        worksheets[ i ] = worksheets[ i ].Remove( startIndex: worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
                     }
                 }
             }

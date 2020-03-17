@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Weeks.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Weeks.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Weeks.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "Weeks.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -49,7 +43,7 @@ namespace Librainian.Measurement.Time {
     using Rationals;
 
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     public struct Weeks : IComparable<Weeks>, IQuantityOfTime {
 
         /// <summary>52</summary>
@@ -59,16 +53,16 @@ namespace Librainian.Measurement.Time {
         public const Decimal InOneMonth = 4.345m;
 
         /// <summary>One <see cref="Weeks" /> .</summary>
-        public static readonly Weeks One = new Weeks( 1 );
+        public static readonly Weeks One = new Weeks( value: 1 );
 
         /// <summary></summary>
-        public static readonly Weeks Ten = new Weeks( 10 );
+        public static readonly Weeks Ten = new Weeks( value: 10 );
 
         /// <summary></summary>
-        public static readonly Weeks Thousand = new Weeks( 1000 );
+        public static readonly Weeks Thousand = new Weeks( value: 1000 );
 
         /// <summary>Zero <see cref="Weeks" /></summary>
-        public static readonly Weeks Zero = new Weeks( 0 );
+        public static readonly Weeks Zero = new Weeks( value: 0 );
 
         [JsonProperty]
         public Rational Value { get; }
@@ -81,11 +75,11 @@ namespace Librainian.Measurement.Time {
 
         public Weeks( BigInteger value ) => this.Value = value;
 
-        public static Weeks Combine( Weeks left, Weeks right ) => new Weeks( left.Value + right.Value );
+        public static Weeks Combine( Weeks left, Weeks right ) => new Weeks( weeks: left.Value + right.Value );
 
-        public static Weeks Combine( Weeks left, Rational weeks ) => new Weeks( left.Value + weeks );
+        public static Weeks Combine( Weeks left, Rational weeks ) => new Weeks( weeks: left.Value + weeks );
 
-        public static Weeks Combine( Weeks left, BigInteger weeks ) => new Weeks( left.Value + weeks );
+        public static Weeks Combine( Weeks left, BigInteger weeks ) => new Weeks( weeks: left.Value + weeks );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -105,17 +99,17 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static implicit operator SpanOfTime( Weeks weeks ) => new SpanOfTime( weeks: weeks );
 
-        public static Weeks operator -( Weeks days ) => new Weeks( days.Value * -1 );
+        public static Weeks operator -( Weeks days ) => new Weeks( weeks: days.Value * -1 );
 
-        public static Weeks operator -( Weeks left, Weeks right ) => Combine( left, -right );
+        public static Weeks operator -( Weeks left, Weeks right ) => Combine( left: left, right: -right );
 
-        public static Boolean operator !=( Weeks left, Weeks right ) => !Equals( left, right );
+        public static Boolean operator !=( Weeks left, Weeks right ) => !Equals( left: left, right: right );
 
-        public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
+        public static Weeks operator +( Weeks left, Weeks right ) => Combine( left: left, right: right );
 
-        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left, ( Rational )weeks );
+        public static Weeks operator +( Weeks left, Decimal weeks ) => Combine( left: left, weeks: ( Rational )weeks );
 
-        public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
+        public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left: left, weeks: weeks );
 
         public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
 
@@ -123,7 +117,7 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
 
-        public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left, right );
+        public static Boolean operator ==( Weeks left, Weeks right ) => Equals( left: left, right: right );
 
         public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
 
@@ -131,38 +125,38 @@ namespace Librainian.Measurement.Time {
 
         public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( Weeks other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Weeks other ) => this.Value.CompareTo( other: other.Value );
 
-        public Boolean Equals( Weeks other ) => Equals( this, other );
+        public Boolean Equals( Weeks other ) => Equals( left: this, right: other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
                 return default;
             }
 
-            return obj is Weeks weeks && this.Equals( weeks );
+            return obj is Weeks weeks && this.Equals( other: weeks );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public Days ToDays() => new Days( this.Value * Days.InOneWeek );
+        public Days ToDays() => new Days( value: this.Value * Days.InOneWeek );
 
-        public Months ToMonths() => new Months( this.Value / ( Rational )InOneMonth );
+        public Months ToMonths() => new Months( value: this.Value / ( Rational )InOneMonth );
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneWeek );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( value: this.Value * ( Rational )PlanckTimes.InOneWeek );
 
-        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneWeek );
+        public Seconds ToSeconds() => new Seconds( value: this.Value * Seconds.InOneWeek );
 
         public override String ToString() {
             if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.WholePart;
 
-                return $"{whole} {whole.PluralOf( "week" )}";
+                return $"{whole} {whole.PluralOf( singular: "week" )}";
             }
 
             var dec = ( Decimal )this.Value;
 
-            return $"{dec} {dec.PluralOf( "week" )}";
+            return $"{dec} {dec.PluralOf( singular: "week" )}";
         }
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();

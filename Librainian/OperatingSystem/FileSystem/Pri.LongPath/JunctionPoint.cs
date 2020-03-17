@@ -1,4 +1,37 @@
-﻿namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+//
+// This source code contained in "JunctionPoint.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+//
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+//
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+//
+// Project: "Librainian", File: "JunctionPoint.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
+
+namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
     using System;
     using System.IO;
@@ -7,60 +40,37 @@
     using JetBrains.Annotations;
     using Microsoft.Win32.SafeHandles;
 
-    /// <summary>
-    ///     PRELIMINARY Provides access to NTFS junction points in .Net.
-    /// </summary>
+    /// <summary>PRELIMINARY Provides access to NTFS junction points in .Net.</summary>
     public static class JunctionPoint {
 
-        /// <summary>
-        ///     The data present in the reparse point buffer is invalid.
-        /// </summary>
+        /// <summary>The data present in the reparse point buffer is invalid.</summary>
         private const Int32 ERROR_INVALID_REPARSE_DATA = 4392;
 
-        /// <summary>
-        ///     The file or directory is not a reparse point.
-        /// </summary>
+        /// <summary>The file or directory is not a reparse point.</summary>
         private const Int32 ERROR_NOT_A_REPARSE_POINT = 4390;
 
-        /// <summary>
-        ///     The reparse point attribute cannot be set because it conflicts with an existing attribute.
-        /// </summary>
+        /// <summary>The reparse point attribute cannot be set because it conflicts with an existing attribute.</summary>
         private const Int32 ERROR_REPARSE_ATTRIBUTE_CONFLICT = 4391;
 
-        /// <summary>
-        ///     The tag present in the reparse point buffer is invalid.
-        /// </summary>
+        /// <summary>The tag present in the reparse point buffer is invalid.</summary>
         private const Int32 ERROR_REPARSE_TAG_INVALID = 4393;
 
-        /// <summary>
-        ///     There is a mismatch between the tag specified in the request and the tag present in the reparse point.
-        /// </summary>
+        /// <summary>There is a mismatch between the tag specified in the request and the tag present in the reparse point.</summary>
         private const Int32 ERROR_REPARSE_TAG_MISMATCH = 4394;
 
-        /// <summary>
-        ///     Command to delete the reparse point data base.
-        /// </summary>
+        /// <summary>Command to delete the reparse point data base.</summary>
         private const Int32 FSCTL_DELETE_REPARSE_POINT = 0x000900AC;
 
-        /// <summary>
-        ///     Command to get the reparse point data block.
-        /// </summary>
+        /// <summary>Command to get the reparse point data block.</summary>
         private const Int32 FSCTL_GET_REPARSE_POINT = 0x000900A8;
 
-        /// <summary>
-        ///     Command to set the reparse point data block.
-        /// </summary>
+        /// <summary>Command to set the reparse point data block.</summary>
         private const Int32 FSCTL_SET_REPARSE_POINT = 0x000900A4;
 
-        /// <summary>
-        ///     Reparse point tag used to identify mount points and junction points.
-        /// </summary>
+        /// <summary>Reparse point tag used to identify mount points and junction points.</summary>
         private const UInt32 IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003;
 
-        /// <summary>
-        ///     This prefix indicates to NTFS that the path is to be treated as a non-interpreted
-        ///     path in the virtual file system.
-        /// </summary>
+        /// <summary>This prefix indicates to NTFS that the path is to be treated as a non-interpreted path in the virtual file system.</summary>
         private const String NonInterpretedPathPrefix = @"\??\";
 
         private enum ECreationDisposition : UInt32 {
@@ -216,19 +226,12 @@
 
         private static void ThrowLastWin32Error( [NotNull] String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
 
-        /// <summary>
-        ///     Creates a junction point from the specified directory to the specified target directory.
-        /// </summary>
-        /// <remarks>
-        ///     Only works on NTFS.
-        /// </remarks>
+        /// <summary>Creates a junction point from the specified directory to the specified target directory.</summary>
+        /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
         /// <param name="targetDir">The target directory</param>
         /// <param name="overwrite">If true overwrites an existing reparse point or empty directory</param>
-        /// <exception cref="IOException">
-        ///     Thrown when the junction point could not be created or when
-        ///     an existing directory was found and <paramref name="overwrite" /> if false
-        /// </exception>
+        /// <exception cref="IOException">Thrown when the junction point could not be created or when an existing directory was found and <paramref name="overwrite" /> if false</exception>
         public static void Create( [NotNull] String junctionPoint, [NotNull] String targetDir, Boolean overwrite ) {
             targetDir = targetDir.GetFullPath();
 
@@ -279,13 +282,8 @@
             }
         }
 
-        /// <summary>
-        ///     Deletes a junction point at the specified source directory along with the directory itself.
-        ///     Does nothing if the junction point does not exist.
-        /// </summary>
-        /// <remarks>
-        ///     Only works on NTFS.
-        /// </remarks>
+        /// <summary>Deletes a junction point at the specified source directory along with the directory itself. Does nothing if the junction point does not exist.</summary>
+        /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
         public static void Delete( [NotNull] String junctionPoint ) {
             if ( !junctionPoint.Exists() ) {
@@ -328,17 +326,13 @@
             }
         }
 
-        /// <summary>
-        ///     Determines whether the specified path exists and refers to a junction point.
-        /// </summary>
+        /// <summary>Determines whether the specified path exists and refers to a junction point.</summary>
         /// <param name="path">The junction point path</param>
         /// <returns>True if the specified path represents a junction point</returns>
-        /// <exception cref="IOException">
-        ///     Thrown if the specified path is invalid
-        ///     or some other error occurs
-        /// </exception>
+        /// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
         public static Boolean Exists( [NotNull] String path ) {
             path = path.ThrowIfBlank();
+
             if ( !path.Exists() ) {
                 return false;
             }
@@ -350,18 +344,11 @@
             }
         }
 
-        /// <summary>
-        ///     Gets the target of the specified junction point.
-        /// </summary>
-        /// <remarks>
-        ///     Only works on NTFS.
-        /// </remarks>
+        /// <summary>Gets the target of the specified junction point.</summary>
+        /// <remarks>Only works on NTFS.</remarks>
         /// <param name="junctionPoint">The junction point path</param>
         /// <returns>The target of the junction point</returns>
-        /// <exception cref="IOException">
-        ///     Thrown when the specified path does not
-        ///     exist, is invalid, is not a junction point, or some other error occurs
-        /// </exception>
+        /// <exception cref="IOException">Thrown when the specified path does not exist, is invalid, is not a junction point, or some other error occurs</exception>
         [NotNull]
         public static String GetTarget( [NotNull] String junctionPoint ) {
             using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericRead ) ) {
@@ -378,52 +365,34 @@
         [StructLayout( LayoutKind.Sequential )]
         private struct REPARSE_DATA_BUFFER {
 
-            /// <summary>
-            ///     Reparse point tag. Must be a Microsoft reparse point tag.
-            /// </summary>
+            /// <summary>Reparse point tag. Must be a Microsoft reparse point tag.</summary>
             public UInt32 ReparseTag;
 
             /// <summary>
-            ///     Size, in bytes, of the data after the Reserved member. This can be calculated by:
-            ///     (4 * sizeof(ushort)) + SubstituteNameLength + PrintNameLength +
-            ///     (namesAreNullTerminated ? 2 * sizeof(char) : 0);
+            /// Size, in bytes, of the data after the Reserved member. This can be calculated by: (4 * sizeof(ushort)) + SubstituteNameLength + PrintNameLength + (namesAreNullTerminated
+            /// ? 2 * sizeof(char) : 0);
             /// </summary>
             public UInt16 ReparseDataLength;
 
-            /// <summary>
-            ///     Reserved; do not use.
-            /// </summary>
+            /// <summary>Reserved; do not use.</summary>
 
             // ReSharper disable once MemberCanBePrivate.Local
             // ReSharper disable once FieldCanBeMadeReadOnly.Local
             public UInt16 Reserved;
 
-            /// <summary>
-            ///     Offset, in bytes, of the substitute name string in the PathBuffer array.
-            /// </summary>
+            /// <summary>Offset, in bytes, of the substitute name string in the PathBuffer array.</summary>
             public UInt16 SubstituteNameOffset;
 
-            /// <summary>
-            ///     Length, in bytes, of the substitute name string. If this string is null-terminated,
-            ///     SubstituteNameLength does not include space for the null character.
-            /// </summary>
+            /// <summary>Length, in bytes, of the substitute name string. If this string is null-terminated, SubstituteNameLength does not include space for the null character.</summary>
             public UInt16 SubstituteNameLength;
 
-            /// <summary>
-            ///     Offset, in bytes, of the print name string in the PathBuffer array.
-            /// </summary>
+            /// <summary>Offset, in bytes, of the print name string in the PathBuffer array.</summary>
             public UInt16 PrintNameOffset;
 
-            /// <summary>
-            ///     Length, in bytes, of the print name string. If this string is null-terminated,
-            ///     PrintNameLength does not include space for the null character.
-            /// </summary>
+            /// <summary>Length, in bytes, of the print name string. If this string is null-terminated, PrintNameLength does not include space for the null character.</summary>
             public UInt16 PrintNameLength;
 
-            /// <summary>
-            ///     A buffer containing the unicode-encoded path string. The path string contains
-            ///     the substitute name string and print name string.
-            /// </summary>
+            /// <summary>A buffer containing the unicode-encoded path string. The path string contains the substitute name string and print name string.</summary>
             [MarshalAs( UnmanagedType.ByValArray, SizeConst = 0x3FF0 )]
             public Byte[] PathBuffer;
         }

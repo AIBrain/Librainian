@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "DocumentExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "DocumentExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "DocumentExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "DocumentExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -66,18 +60,18 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
             [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
-            using ( var reader = new StreamReader( source.FullPath ) ) {
-                using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
+            using ( var reader = new StreamReader( path: source.FullPath ) ) {
+                using ( var writer = new StreamWriter( path: destination.FullPath, append: false ) ) {
                     Int32 numRead;
 
-                    while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
-                        await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
+                    while ( ( numRead = await reader.ReadAsync( buffer: buffer, index: 0, count: buffer.Length ).ConfigureAwait( continueOnCapturedContext: false ) ).Any() ) {
+                        await writer.WriteAsync( buffer: buffer, index: 0, count: numRead ).ConfigureAwait( continueOnCapturedContext: false );
                         var bytesCopied = ( UInt64 )numRead;
 
                         var percent = bytesCopied / bytesToBeCopied;
 
-                        progress?.Report( percent );
-                        eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
+                        progress?.Report( value: percent );
+                        eta?.Report( value: begin.Elapsed.EstimateTimeRemaining( progress: percent ) );
                     }
                 }
             }
@@ -203,33 +197,33 @@ namespace Librainian.OperatingSystem.FileSystem {
         [NotNull]
         public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
             if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
+                throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
             if ( !document.Exists() ) {
                 return default;
             }
 
-            using ( var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
-                MathConstants.Sizes.OneGigaByte, FileOptions.SequentialScan ) ) {
+            using ( var stream = new FileStream( path: document.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read,
+                bufferSize: MathConstants.Sizes.OneGigaByte, options: FileOptions.SequentialScan ) ) {
 
                 if ( !stream.CanRead ) {
-                    throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
+                    throw new NotSupportedException( message: $"Cannot read from file stream on {document.FullPath}" );
                 }
 
                 var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
 
-                using var buffered = new BufferedStream( stream );
+                using var buffered = new BufferedStream( stream: stream );
 
                 var bytesRead = 0;
 
                 do {
-                    var readTask = buffered.ReadAsync( buffer, 0, buffer.Length );
+                    var readTask = buffered.ReadAsync( buffer: buffer, offset: 0, count: buffer.Length );
 
                     if ( readTask != null ) {
-                        bytesRead = await readTask.ConfigureAwait( false );
+                        bytesRead = await readTask.ConfigureAwait( continueOnCapturedContext: false );
 
-                        if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
+                        if ( !bytesRead.Any() || buffer.Any( predicate: b => b != number ) ) {
                             return default;
                         }
                     }
@@ -241,7 +235,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         public static void TryPlayFile( [NotNull] this Document document ) {
             if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
+                throw new ArgumentNullException( paramName: nameof( document ) );
             }
 
             try {

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "BigInt.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "BigInt.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BigInt.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "Librainian", File: "BigInt.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -52,12 +46,13 @@ namespace Librainian.Maths.Numbers {
 
         public List<Int32> Integer { get; }
 
-        public BigInt( [NotNull] String number ) => this.Integer = CalculateBigInteger( number );
+        public BigInt( [NotNull] String number ) => this.Integer = CalculateBigInteger( number: number );
 
         public BigInt( [CanBeNull] List<Int32> list ) => this.Integer = list;
 
         [NotNull]
-        private static List<Int32> CalculateBigInteger( [NotNull] String number ) => number.Reverse().Select( chararcter => Int32.Parse( chararcter.ToString() ) ).ToList();
+        private static List<Int32> CalculateBigInteger( [NotNull] String number ) =>
+            number.Reverse().Select( selector: chararcter => Int32.Parse( s: chararcter.ToString() ) ).ToList();
 
         private static Int32 NumberAdd( Int32 value1, Int32 value2, ref Int32 carryOver ) {
             var addResult = value1 + value2 + carryOver;
@@ -83,31 +78,31 @@ namespace Librainian.Maths.Numbers {
             var hasNext2 = true;
 
             while ( hasNext1 || hasNext2 ) {
-                var value = NumberAdd( enumerator1.Current, enumerator2.Current, ref carryOver );
-                result.Add( value );
+                var value = NumberAdd( value1: enumerator1.Current, value2: enumerator2.Current, carryOver: ref carryOver );
+                result.Add( item: value );
 
                 hasNext1 = enumerator1.MoveNext();
                 hasNext2 = enumerator2.MoveNext();
             }
 
             if ( carryOver != 0 ) {
-                result.Add( carryOver );
+                result.Add( item: carryOver );
             }
 
-            return new BigInt( result );
+            return new BigInt( list: result );
         }
 
         public override String ToString() {
             var sb = new StringBuilder();
 
             foreach ( var number in this.Integer ) {
-                sb.Append( number.ToString() );
+                sb.Append( value: number.ToString() );
             }
 
             var reverseString = sb.ToString().ToCharArray();
-            Array.Reverse( reverseString );
+            Array.Reverse( array: reverseString );
 
-            return new String( reverseString );
+            return new String( value: reverseString );
         }
     }
 }

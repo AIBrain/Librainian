@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TimeExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "TimeExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TimeExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "TimeExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -153,7 +147,8 @@ namespace Librainian.Measurement.Time {
         /// <param name="second">      The second to set time to.</param>
         /// <param name="milliseconds">The milliseconds to set time to.</param>
         /// <returns><see cref="DateTime" /> with hour and minutes and seconds set to given values.</returns>
-        public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) => current.SetTime( hour, minute, second, milliseconds );
+        public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) =>
+            current.SetTime( hour, minute, second, milliseconds );
 
         public static DateTime Average( [NotNull] this IEnumerable<DateTime> dates ) {
             if ( dates is null ) {
@@ -220,8 +215,8 @@ namespace Librainian.Measurement.Time {
                 progress = 1.0;
             }
 
-            var milliseconds = timeElapsed.TotalMilliseconds; // example: 5 seconds elapsed so far
-            var remainingTime = milliseconds / progress - milliseconds; // should be 15 seconds ( 20 - 5)
+            var milliseconds = timeElapsed.TotalMilliseconds;               // example: 5 seconds elapsed so far
+            var remainingTime = ( milliseconds / progress ) - milliseconds; // should be 15 seconds ( 20 - 5)
 
             return TimeSpan.FromMilliseconds( remainingTime );
         }
@@ -282,8 +277,8 @@ namespace Librainian.Measurement.Time {
         public static Years GetAge( this DateTime dateOfBirth ) {
             var today = DateTime.Today;
 
-            var a = ( today.Year * 100 + today.Month ) * 100 + today.Day;
-            var b = ( dateOfBirth.Year * 100 + dateOfBirth.Month ) * 100 + dateOfBirth.Day;
+            var a = ( ( ( today.Year * 100 ) + today.Month ) * 100 ) + today.Day;
+            var b = ( ( ( dateOfBirth.Year * 100 ) + dateOfBirth.Month ) * 100 ) + dateOfBirth.Day;
 
             return new Years( ( a - b ) / 10000 );
         }
@@ -300,7 +295,7 @@ namespace Librainian.Measurement.Time {
             return AverageDateTimePrecision.GetValueOrDefault( Measurement.Time.Milliseconds.One );
         }
 
-        public static Int32 GetQuarter( this DateTime date ) => ( date.Month - 1 ) / 3 + 1;
+        public static Int32 GetQuarter( this DateTime date ) => ( ( date.Month - 1 ) / 3 ) + 1;
 
         /// <summary>Accurate to within how many nanoseconds?</summary>
         /// <returns></returns>
@@ -495,7 +490,8 @@ namespace Librainian.Measurement.Time {
         /// <summary>Converts the specified ISO 8601 representation of a date and time to its DateTime equivalent.</summary>
         /// <param name="value">The ISO 8601 string representation to parse.</param>
         /// <returns>The DateTime equivalent.</returns>
-        public static DateTime ParseIso8601( [CanBeNull] String? value ) => DateTime.ParseExact( value, Iso8601Format, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
+        public static DateTime ParseIso8601( [CanBeNull] String? value ) =>
+            DateTime.ParseExact( value, Iso8601Format, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
 
         /// <summary>Parses most common JSON date formats</summary>
         /// <param name="input">  JSON value to parse</param>
@@ -646,16 +642,20 @@ namespace Librainian.Measurement.Time {
         public static TimeSpan Seconds( this Double seconds ) => TimeSpan.FromSeconds( seconds );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year part.</summary>
-        public static DateTime SetDate( this DateTime value, Int32 year ) => new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDate( this DateTime value, Int32 year ) =>
+            new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year and Month part.</summary>
-        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month ) => new DateTime( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month ) =>
+            new DateTime( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year, Month and Day part.</summary>
-        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month, Int32 day ) => new DateTime( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDate( this DateTime value, Int32 year, Int32 month, Int32 day ) =>
+            new DateTime( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Day part.</summary>
-        public static DateTime SetDay( this DateTime value, Int32 day ) => new DateTime( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetDay( this DateTime value, Int32 day ) =>
+            new DateTime( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Hour part.</summary>
         public static DateTime SetHour( this DateTime originalDate, Int32 hour ) =>
@@ -673,7 +673,8 @@ namespace Librainian.Measurement.Time {
                 originalDate.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Month part.</summary>
-        public static DateTime SetMonth( this DateTime value, Int32 month ) => new DateTime( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetMonth( this DateTime value, Int32 month ) =>
+            new DateTime( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Second part.</summary>
         public static DateTime SetSecond( this DateTime originalDate, Int32 second ) =>
@@ -686,16 +687,20 @@ namespace Librainian.Measurement.Time {
                 originalDate.Kind );
 
         /// <summary>Returns the original <see cref="DateTime" /> with Hour and Minute parts changed to supplied hour and minute parameters.</summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>Returns the original <see cref="DateTime" /> with Hour, Minute and Second parts changed to supplied hour, minute and second parameters.</summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
 
         /// <summary>Returns the original <see cref="DateTime" /> with Hour, Minute, Second and Millisecond parts changed to supplied hour, minute, second and millisecond parameters.</summary>
-        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) => new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
+        public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) =>
+            new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
 
         /// <summary>Returns <see cref="DateTime" /> with changed Year part.</summary>
-        public static DateTime SetYear( this DateTime value, Int32 year ) => new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+        public static DateTime SetYear( this DateTime value, Int32 year ) =>
+            new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
         /// <summary>Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".</summary>
         /// <param name="timeSpan"></param>

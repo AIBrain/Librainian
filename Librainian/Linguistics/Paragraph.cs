@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Paragraph.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Paragraph.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Paragraph.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "Librainian", File: "Paragraph.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
 namespace Librainian.Linguistics {
 
@@ -56,7 +50,7 @@ namespace Librainian.Linguistics {
     /// <see cref="Page"></see>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
 
@@ -70,13 +64,13 @@ namespace Librainian.Linguistics {
 
         /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
         /// <param name="paragraph"></param>
-        public Paragraph( [CanBeNull] String? paragraph ) : this( paragraph.ToSentences() ) { }
+        public Paragraph( [CanBeNull] String? paragraph ) : this( sentences: paragraph.ToSentences() ) { }
 
         /// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
         /// <param name="sentences"></param>
         public Paragraph( [CanBeNull] IEnumerable<Sentence> sentences ) {
             if ( sentences != null ) {
-                this.Sentences.AddRange( sentences.Where( sentence => sentence != null ) );
+                this.Sentences.AddRange( collection: sentences.Where( predicate: sentence => sentence != null ) );
             }
 
             this.Sentences.TrimExcess();
@@ -90,7 +84,7 @@ namespace Librainian.Linguistics {
                 return default;
             }
 
-            return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
+            return ReferenceEquals( objA: this, objB: other ) || this.Sentences.SequenceEqual( second: other.Sentences );
         }
 
         public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
@@ -103,7 +97,7 @@ namespace Librainian.Linguistics {
             var sb = new StringBuilder();
 
             foreach ( var sentence in this.Sentences ) {
-                sb.AppendLine( sentence.ToString() );
+                sb.AppendLine( value: sentence.ToString() );
             }
 
             return sb.ToString();

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "FlexibleMessageBox.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "FlexibleMessageBox.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "FlexibleMessageBox.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "FlexibleMessageBox.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
 
 namespace Librainian.Controls {
 
@@ -99,7 +93,7 @@ namespace Librainian.Controls {
      ************************************************************************************************************
     */
 
-    [SuppressMessage( "ReSharper", "InconsistentNaming" )]
+    [SuppressMessage( category: "ReSharper", checkId: "InconsistentNaming" )]
     public static class FlexibleMessageBox {
 
         /// <summary>Defines the font for all FlexibleMessageBox instances. Default is: SystemFonts.MessageBoxFont</summary>
@@ -121,21 +115,24 @@ namespace Librainian.Controls {
         /// <param name="text">The text.</param>
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] String? text ) =>
-            FlexibleMessageBoxForm.ShowDialog( null, text, String.Empty, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: null, text: text, caption: String.Empty, buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.None,
+                defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="owner">The owner.</param>
         /// <param name="text"> The text.</param>
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text ) =>
-            FlexibleMessageBoxForm.ShowDialog( owner, text, String.Empty, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: owner, text: text, caption: String.Empty, buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.None,
+                defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="text">   The text.</param>
         /// <param name="caption">The caption.</param>
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] String? text, [CanBeNull] String? caption ) =>
-            FlexibleMessageBoxForm.ShowDialog( null, text, caption, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: null, text: text, caption: caption, buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.None,
+                defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="owner">  The owner.</param>
@@ -143,7 +140,8 @@ namespace Librainian.Controls {
         /// <param name="caption">The caption.</param>
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption ) =>
-            FlexibleMessageBoxForm.ShowDialog( owner, text, caption, MessageBoxButtons.OK, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: owner, text: text, caption: caption, buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.None,
+                defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="text">   The text.</param>
@@ -151,7 +149,8 @@ namespace Librainian.Controls {
         /// <param name="buttons">The buttons.</param>
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons ) =>
-            FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: null, text: text, caption: caption, buttons: buttons, icon: MessageBoxIcon.None,
+                defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="owner">  The owner.</param>
@@ -160,7 +159,8 @@ namespace Librainian.Controls {
         /// <param name="buttons">The buttons.</param>
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons ) =>
-            FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, MessageBoxIcon.None, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: owner, text: text, caption: caption, buttons: buttons, icon: MessageBoxIcon.None,
+                defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="text">   The text.</param>
@@ -169,7 +169,7 @@ namespace Librainian.Controls {
         /// <param name="icon">   The icon.</param>
         /// <returns></returns>
         public static DialogResult Show( [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
-            FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
+            FlexibleMessageBoxForm.ShowDialog( owner: null, text: text, caption: caption, buttons: buttons, icon: icon, defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="owner">  The owner.</param>
@@ -178,9 +178,9 @@ namespace Librainian.Controls {
         /// <param name="buttons">The buttons.</param>
         /// <param name="icon">   The icon.</param>
         /// <returns>The dialog result.</returns>
-        public static DialogResult
-            Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
-            FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
+        public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons,
+            MessageBoxIcon icon ) =>
+            FlexibleMessageBoxForm.ShowDialog( owner: owner, text: text, caption: caption, buttons: buttons, icon: icon, defaultButton: MessageBoxDefaultButton.Button1 );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="text">         The text.</param>
@@ -191,7 +191,7 @@ namespace Librainian.Controls {
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons, MessageBoxIcon icon,
             MessageBoxDefaultButton defaultButton ) =>
-            FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, defaultButton );
+            FlexibleMessageBoxForm.ShowDialog( owner: null, text: text, caption: caption, buttons: buttons, icon: icon, defaultButton: defaultButton );
 
         /// <summary>Shows the specified message box.</summary>
         /// <param name="owner">        The owner.</param>
@@ -203,7 +203,7 @@ namespace Librainian.Controls {
         /// <returns>The dialog result.</returns>
         public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons, MessageBoxIcon icon,
             MessageBoxDefaultButton defaultButton ) =>
-            FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, defaultButton );
+            FlexibleMessageBoxForm.ShowDialog( owner: owner, text: text, caption: caption, buttons: buttons, icon: icon, defaultButton: defaultButton );
 
         /// <summary>The form to show the customized message box. It is defined as an internal class to keep the public interface of the FlexibleMessageBox clean.</summary>
         private class FlexibleMessageBoxForm : Form {
@@ -255,7 +255,7 @@ namespace Librainian.Controls {
                 this.InitializeComponent();
 
                 //Try to evaluate the language. If this fails, the fallback language English will be used
-                Enum.TryParse( CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, out TwoLetterISOLanguageID _ );
+                Enum.TryParse( value: CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, result: out TwoLetterISOLanguageID _ );
 
                 this.KeyPreview = true;
                 this.KeyUp += this.FlexibleMessageBoxForm_KeyUp;
@@ -297,7 +297,7 @@ namespace Librainian.Controls {
             /// <returns>The button text</returns>
             [CanBeNull]
             private static String GetButtonText( ButtonID buttonID ) {
-                var buttonTextArrayIndex = Convert.ToInt32( buttonID );
+                var buttonTextArrayIndex = Convert.ToInt32( value: buttonID );
 
                 return BUTTON_TEXTS_ENGLISH_EN[ buttonTextArrayIndex ];
             }
@@ -329,13 +329,13 @@ namespace Librainian.Controls {
             [CanBeNull]
             [ItemCanBeNull]
             private static IEnumerable<String?>? GetStringRows( [CanBeNull] String? message ) {
-                if ( String.IsNullOrEmpty( message ) ) {
+                if ( String.IsNullOrEmpty( value: message ) ) {
                     return null;
                 }
 
-                return message.Split( new[] {
+                return message.Split( separator: new[] {
                     '\n'
-                }, StringSplitOptions.None );
+                }, options: StringSplitOptions.None );
             }
 
             /// <summary>Handles the LinkClicked event of the richTextBoxMessage control.</summary>
@@ -344,7 +344,7 @@ namespace Librainian.Controls {
             private static void richTextBoxMessage_LinkClicked( [CanBeNull] Object sender, [NotNull] LinkClickedEventArgs e ) {
                 try {
                     Cursor.Current = Cursors.WaitCursor;
-                    Process.Start( e.LinkText );
+                    Process.Start( fileName: e.LinkText );
                 }
                 finally {
                     Cursor.Current = Cursors.Default;
@@ -363,15 +363,15 @@ namespace Librainian.Controls {
                         flexibleMessageBoxForm.visibleButtonsCount = 3;
 
                         flexibleMessageBoxForm._button1.Visible = true;
-                        flexibleMessageBoxForm._button1.Text = GetButtonText( ButtonID.ABORT );
+                        flexibleMessageBoxForm._button1.Text = GetButtonText( buttonID: ButtonID.ABORT );
                         flexibleMessageBoxForm._button1.DialogResult = DialogResult.Abort;
 
                         flexibleMessageBoxForm._button2.Visible = true;
-                        flexibleMessageBoxForm._button2.Text = GetButtonText( ButtonID.RETRY );
+                        flexibleMessageBoxForm._button2.Text = GetButtonText( buttonID: ButtonID.RETRY );
                         flexibleMessageBoxForm._button2.DialogResult = DialogResult.Retry;
 
                         flexibleMessageBoxForm._button3.Visible = true;
-                        flexibleMessageBoxForm._button3.Text = GetButtonText( ButtonID.IGNORE );
+                        flexibleMessageBoxForm._button3.Text = GetButtonText( buttonID: ButtonID.IGNORE );
                         flexibleMessageBoxForm._button3.DialogResult = DialogResult.Ignore;
 
                         flexibleMessageBoxForm.ControlBox = false;
@@ -382,11 +382,11 @@ namespace Librainian.Controls {
                         flexibleMessageBoxForm.visibleButtonsCount = 2;
 
                         flexibleMessageBoxForm._button2.Visible = true;
-                        flexibleMessageBoxForm._button2.Text = GetButtonText( ButtonID.OK );
+                        flexibleMessageBoxForm._button2.Text = GetButtonText( buttonID: ButtonID.OK );
                         flexibleMessageBoxForm._button2.DialogResult = DialogResult.OK;
 
                         flexibleMessageBoxForm._button3.Visible = true;
-                        flexibleMessageBoxForm._button3.Text = GetButtonText( ButtonID.CANCEL );
+                        flexibleMessageBoxForm._button3.Text = GetButtonText( buttonID: ButtonID.CANCEL );
                         flexibleMessageBoxForm._button3.DialogResult = DialogResult.Cancel;
 
                         flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
@@ -397,11 +397,11 @@ namespace Librainian.Controls {
                         flexibleMessageBoxForm.visibleButtonsCount = 2;
 
                         flexibleMessageBoxForm._button2.Visible = true;
-                        flexibleMessageBoxForm._button2.Text = GetButtonText( ButtonID.RETRY );
+                        flexibleMessageBoxForm._button2.Text = GetButtonText( buttonID: ButtonID.RETRY );
                         flexibleMessageBoxForm._button2.DialogResult = DialogResult.Retry;
 
                         flexibleMessageBoxForm._button3.Visible = true;
-                        flexibleMessageBoxForm._button3.Text = GetButtonText( ButtonID.CANCEL );
+                        flexibleMessageBoxForm._button3.Text = GetButtonText( buttonID: ButtonID.CANCEL );
                         flexibleMessageBoxForm._button3.DialogResult = DialogResult.Cancel;
 
                         flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
@@ -412,11 +412,11 @@ namespace Librainian.Controls {
                         flexibleMessageBoxForm.visibleButtonsCount = 2;
 
                         flexibleMessageBoxForm._button2.Visible = true;
-                        flexibleMessageBoxForm._button2.Text = GetButtonText( ButtonID.YES );
+                        flexibleMessageBoxForm._button2.Text = GetButtonText( buttonID: ButtonID.YES );
                         flexibleMessageBoxForm._button2.DialogResult = DialogResult.Yes;
 
                         flexibleMessageBoxForm._button3.Visible = true;
-                        flexibleMessageBoxForm._button3.Text = GetButtonText( ButtonID.NO );
+                        flexibleMessageBoxForm._button3.Text = GetButtonText( buttonID: ButtonID.NO );
                         flexibleMessageBoxForm._button3.DialogResult = DialogResult.No;
 
                         flexibleMessageBoxForm.ControlBox = false;
@@ -427,15 +427,15 @@ namespace Librainian.Controls {
                         flexibleMessageBoxForm.visibleButtonsCount = 3;
 
                         flexibleMessageBoxForm._button1.Visible = true;
-                        flexibleMessageBoxForm._button1.Text = GetButtonText( ButtonID.YES );
+                        flexibleMessageBoxForm._button1.Text = GetButtonText( buttonID: ButtonID.YES );
                         flexibleMessageBoxForm._button1.DialogResult = DialogResult.Yes;
 
                         flexibleMessageBoxForm._button2.Visible = true;
-                        flexibleMessageBoxForm._button2.Text = GetButtonText( ButtonID.NO );
+                        flexibleMessageBoxForm._button2.Text = GetButtonText( buttonID: ButtonID.NO );
                         flexibleMessageBoxForm._button2.DialogResult = DialogResult.No;
 
                         flexibleMessageBoxForm._button3.Visible = true;
-                        flexibleMessageBoxForm._button3.Text = GetButtonText( ButtonID.CANCEL );
+                        flexibleMessageBoxForm._button3.Text = GetButtonText( buttonID: ButtonID.CANCEL );
                         flexibleMessageBoxForm._button3.DialogResult = DialogResult.Cancel;
 
                         flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
@@ -446,7 +446,7 @@ namespace Librainian.Controls {
                     default:
                         flexibleMessageBoxForm.visibleButtonsCount = 1;
                         flexibleMessageBoxForm._button3.Visible = true;
-                        flexibleMessageBoxForm._button3.Text = GetButtonText( ButtonID.OK );
+                        flexibleMessageBoxForm._button3.Text = GetButtonText( buttonID: ButtonID.OK );
                         flexibleMessageBoxForm._button3.DialogResult = DialogResult.OK;
 
                         flexibleMessageBoxForm.CancelButton = flexibleMessageBoxForm._button3;
@@ -501,31 +501,32 @@ namespace Librainian.Controls {
             private static void SetDialogSizes( [NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, [CanBeNull] String? text, [CanBeNull] String? caption ) {
 
                 //First set the bounds for the maximum dialog size
-                flexibleMessageBoxForm.MaximumSize = new Size( Convert.ToInt32( SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor( MAX_WIDTH_FACTOR ) ),
-                    Convert.ToInt32( SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor( MAX_HEIGHT_FACTOR ) ) );
+                flexibleMessageBoxForm.MaximumSize =
+                    new Size( width: Convert.ToInt32( value: SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor( workingAreaFactor: MAX_WIDTH_FACTOR ) ),
+                        height: Convert.ToInt32( value: SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor( workingAreaFactor: MAX_HEIGHT_FACTOR ) ) );
 
                 //Get rows. Exit if there are no rows to render...
-                var stringRows = GetStringRows( text );
+                var stringRows = GetStringRows( message: text );
 
                 if ( stringRows is null ) {
                     return;
                 }
 
                 //Calculate whole text height
-                var textHeight = TextRenderer.MeasureText( text, FONT ).Height;
+                var textHeight = TextRenderer.MeasureText( text: text, font: FONT ).Height;
 
                 //Calculate width for longest text line
                 const Int32 SCROLLBAR_WIDTH_OFFSET = 15;
-                var longestTextRowWidth = stringRows.Max( textForRow => TextRenderer.MeasureText( textForRow, FONT ).Width );
-                var captionWidth = TextRenderer.MeasureText( caption, SystemFonts.CaptionFont ).Width;
-                var textWidth = Math.Max( longestTextRowWidth + SCROLLBAR_WIDTH_OFFSET, captionWidth );
+                var longestTextRowWidth = stringRows.Max( selector: textForRow => TextRenderer.MeasureText( text: textForRow, font: FONT ).Width );
+                var captionWidth = TextRenderer.MeasureText( text: caption, font: SystemFonts.CaptionFont ).Width;
+                var textWidth = Math.Max( val1: longestTextRowWidth + SCROLLBAR_WIDTH_OFFSET, val2: captionWidth );
 
                 //Calculate margins
                 var marginWidth = flexibleMessageBoxForm.Width - flexibleMessageBoxForm._richTextBoxMessage.Width;
                 var marginHeight = flexibleMessageBoxForm.Height - flexibleMessageBoxForm._richTextBoxMessage.Height;
 
                 //Set calculated dialog size (if the calculated values exceed the maximums, they were cut by windows forms automatically)
-                flexibleMessageBoxForm.Size = new Size( textWidth + marginWidth, textHeight + marginHeight );
+                flexibleMessageBoxForm.Size = new Size( width: textWidth + marginWidth, height: textHeight + marginHeight );
             }
 
             /// <summary>Set the dialogs start position when given. Otherwise center the dialog on the current screen.</summary>
@@ -535,7 +536,7 @@ namespace Librainian.Controls {
 
                 //If no owner given: Center on current screen
                 if ( owner is null ) {
-                    var screen = Screen.FromPoint( Cursor.Position );
+                    var screen = Screen.FromPoint( point: Cursor.Position );
 
                     if ( flexibleMessageBoxForm != null ) {
                         flexibleMessageBoxForm.StartPosition = FormStartPosition.Manual;
@@ -559,10 +560,10 @@ namespace Librainian.Controls {
                     //Build same clipboard text like the standard .Net MessageBox
                     var textForClipboard = STANDARD_MESSAGEBOX_SEPARATOR_LINES + this.Text + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES +
                                            this._richTextBoxMessage.Text + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES +
-                                           buttonsTextLine.Replace( "&", String.Empty ) + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES;
+                                           buttonsTextLine.Replace( oldValue: "&", newValue: String.Empty ) + Environment.NewLine + STANDARD_MESSAGEBOX_SEPARATOR_LINES;
 
                     //Set text in clipboard
-                    Clipboard.SetText( textForClipboard );
+                    Clipboard.SetText( text: textForClipboard );
                 }
             }
 
@@ -628,7 +629,7 @@ namespace Librainian.Controls {
                 this.components = new Container();
                 this._button1 = new Button();
                 this._richTextBoxMessage = new RichTextBox();
-                this._flexibleMessageBoxFormBindingSource = new BindingSource( this.components );
+                this._flexibleMessageBoxFormBindingSource = new BindingSource( container: this.components );
                 this._panel1 = new Panel();
                 this._pictureBoxForIcon = new PictureBox();
                 this._button2 = new Button();
@@ -642,10 +643,10 @@ namespace Librainian.Controls {
                 this._button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
                 this._button1.AutoSize = true;
                 this._button1.DialogResult = DialogResult.OK;
-                this._button1.Location = new Point( 11, 67 );
-                this._button1.MinimumSize = new Size( 0, 24 );
+                this._button1.Location = new Point( x: 11, y: 67 );
+                this._button1.MinimumSize = new Size( width: 0, height: 24 );
                 this._button1.Name = "_button1";
-                this._button1.Size = new Size( 75, 24 );
+                this._button1.Size = new Size( width: 75, height: 24 );
                 this._button1.TabIndex = 2;
                 this._button1.Text = "OK";
                 this._button1.UseVisualStyleBackColor = true;
@@ -656,16 +657,16 @@ namespace Librainian.Controls {
                 this._richTextBoxMessage.BackColor = Color.White;
                 this._richTextBoxMessage.BorderStyle = BorderStyle.None;
 
-                this._richTextBoxMessage.DataBindings.Add( new Binding( "Text", this._flexibleMessageBoxFormBindingSource, "MessageText", true,
-                    DataSourceUpdateMode.OnPropertyChanged ) );
+                this._richTextBoxMessage.DataBindings.Add( binding: new Binding( propertyName: "Text", dataSource: this._flexibleMessageBoxFormBindingSource,
+                    dataMember: "MessageText", formattingEnabled: true, dataSourceUpdateMode: DataSourceUpdateMode.OnPropertyChanged ) );
 
-                this._richTextBoxMessage.Font = new Font( "Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0 );
-                this._richTextBoxMessage.Location = new Point( 50, 26 );
-                this._richTextBoxMessage.Margin = new Padding( 0 );
+                this._richTextBoxMessage.Font = new Font( familyName: "Microsoft Sans Serif", emSize: 9F, style: FontStyle.Regular, unit: GraphicsUnit.Point, gdiCharSet: 0 );
+                this._richTextBoxMessage.Location = new Point( x: 50, y: 26 );
+                this._richTextBoxMessage.Margin = new Padding( all: 0 );
                 this._richTextBoxMessage.Name = "_richTextBoxMessage";
                 this._richTextBoxMessage.ReadOnly = true;
                 this._richTextBoxMessage.ScrollBars = RichTextBoxScrollBars.Vertical;
-                this._richTextBoxMessage.Size = new Size( 200, 20 );
+                this._richTextBoxMessage.Size = new Size( width: 200, height: 20 );
                 this._richTextBoxMessage.TabIndex = 0;
                 this._richTextBoxMessage.TabStop = false;
                 this._richTextBoxMessage.Text = "<Message>";
@@ -674,28 +675,28 @@ namespace Librainian.Controls {
                 // panel1
                 this._panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                 this._panel1.BackColor = Color.White;
-                this._panel1.Controls.Add( this._pictureBoxForIcon );
-                this._panel1.Controls.Add( this._richTextBoxMessage );
-                this._panel1.Location = new Point( -3, -4 );
+                this._panel1.Controls.Add( value: this._pictureBoxForIcon );
+                this._panel1.Controls.Add( value: this._richTextBoxMessage );
+                this._panel1.Location = new Point( x: -3, y: -4 );
                 this._panel1.Name = "_panel1";
-                this._panel1.Size = new Size( 268, 59 );
+                this._panel1.Size = new Size( width: 268, height: 59 );
                 this._panel1.TabIndex = 1;
 
                 // pictureBoxForIcon
                 this._pictureBoxForIcon.BackColor = Color.Transparent;
-                this._pictureBoxForIcon.Location = new Point( 15, 19 );
+                this._pictureBoxForIcon.Location = new Point( x: 15, y: 19 );
                 this._pictureBoxForIcon.Name = "_pictureBoxForIcon";
-                this._pictureBoxForIcon.Size = new Size( 32, 32 );
+                this._pictureBoxForIcon.Size = new Size( width: 32, height: 32 );
                 this._pictureBoxForIcon.TabIndex = 8;
                 this._pictureBoxForIcon.TabStop = false;
 
                 // button2
                 this._button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
                 this._button2.DialogResult = DialogResult.OK;
-                this._button2.Location = new Point( 92, 67 );
-                this._button2.MinimumSize = new Size( 0, 24 );
+                this._button2.Location = new Point( x: 92, y: 67 );
+                this._button2.MinimumSize = new Size( width: 0, height: 24 );
                 this._button2.Name = "_button2";
-                this._button2.Size = new Size( 75, 24 );
+                this._button2.Size = new Size( width: 75, height: 24 );
                 this._button2.TabIndex = 3;
                 this._button2.Text = "OK";
                 this._button2.UseVisualStyleBackColor = true;
@@ -705,27 +706,30 @@ namespace Librainian.Controls {
                 this._button3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
                 this._button3.AutoSize = true;
                 this._button3.DialogResult = DialogResult.OK;
-                this._button3.Location = new Point( 173, 67 );
-                this._button3.MinimumSize = new Size( 0, 24 );
+                this._button3.Location = new Point( x: 173, y: 67 );
+                this._button3.MinimumSize = new Size( width: 0, height: 24 );
                 this._button3.Name = "_button3";
-                this._button3.Size = new Size( 75, 24 );
+                this._button3.Size = new Size( width: 75, height: 24 );
                 this._button3.TabIndex = 0;
                 this._button3.Text = "OK";
                 this._button3.UseVisualStyleBackColor = true;
                 this._button3.Visible = false;
 
                 // FlexibleMessageBoxForm
-                this.AutoScaleDimensions = new SizeF( 6F, 13F );
+                this.AutoScaleDimensions = new SizeF( width: 6F, height: 13F );
                 this.AutoScaleMode = AutoScaleMode.Font;
-                this.ClientSize = new Size( 260, 102 );
-                this.Controls.Add( this._button3 );
-                this.Controls.Add( this._button2 );
-                this.Controls.Add( this._panel1 );
-                this.Controls.Add( this._button1 );
-                this.DataBindings.Add( new Binding( "Text", this._flexibleMessageBoxFormBindingSource, "CaptionText", true ) );
+                this.ClientSize = new Size( width: 260, height: 102 );
+                this.Controls.Add( value: this._button3 );
+                this.Controls.Add( value: this._button2 );
+                this.Controls.Add( value: this._panel1 );
+                this.Controls.Add( value: this._button1 );
+
+                this.DataBindings.Add( binding: new Binding( propertyName: "Text", dataSource: this._flexibleMessageBoxFormBindingSource, dataMember: "CaptionText",
+                    formattingEnabled: true ) );
+
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
-                this.MinimumSize = new Size( 276, 140 );
+                this.MinimumSize = new Size( width: 276, height: 140 );
                 this.Name = "FlexibleMessageBoxForm";
                 this.ShowIcon = false;
                 this.SizeGripStyle = SizeGripStyle.Show;
@@ -733,9 +737,9 @@ namespace Librainian.Controls {
                 this.Text = "<Caption>";
                 this.Shown += this.FlexibleMessageBoxForm_Shown;
                 ( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource )?.EndInit();
-                this._panel1.ResumeLayout( false );
+                this._panel1.ResumeLayout( performLayout: false );
                 ( ( ISupportInitialize )this._pictureBoxForIcon ).EndInit();
-                this.ResumeLayout( false );
+                this.ResumeLayout( performLayout: false );
                 this.PerformLayout();
             }
 
@@ -746,7 +750,7 @@ namespace Librainian.Controls {
                     this.components?.Dispose();
                 }
 
-                base.Dispose( disposing );
+                base.Dispose( disposing: disposing );
             }
 
             /// <summary>Shows the specified message box.</summary>
@@ -771,27 +775,27 @@ namespace Librainian.Controls {
                     flexibleMessageBoxForm._flexibleMessageBoxFormBindingSource.DataSource = flexibleMessageBoxForm;
 
                     //Set the buttons visibilities and texts. Also set a default button.
-                    SetDialogButtons( flexibleMessageBoxForm, buttons, defaultButton );
+                    SetDialogButtons( flexibleMessageBoxForm: flexibleMessageBoxForm, buttons: buttons, defaultButton: defaultButton );
 
                     //Set the dialogs icon. When no icon is used: Correct placement and width of rich text box.
-                    SetDialogIcon( flexibleMessageBoxForm, icon );
+                    SetDialogIcon( flexibleMessageBoxForm: flexibleMessageBoxForm, icon: icon );
 
                     //Set the font for all controls
                     flexibleMessageBoxForm.Font = FONT;
                     flexibleMessageBoxForm._richTextBoxMessage.Font = FONT;
 
                     //Calculate the dialogs start size (Try to auto-size width to show longest text row). Also set the maximum dialog size.
-                    SetDialogSizes( flexibleMessageBoxForm, text, caption );
+                    SetDialogSizes( flexibleMessageBoxForm: flexibleMessageBoxForm, text: text, caption: caption );
 
                     //Set the dialogs start position when given. Otherwise center the dialog on the current screen.
-                    SetDialogStartPosition( flexibleMessageBoxForm, owner );
+                    SetDialogStartPosition( flexibleMessageBoxForm: flexibleMessageBoxForm, owner: owner );
 
                     //Show the dialog
-                    return flexibleMessageBoxForm.ShowDialog( owner );
+                    return flexibleMessageBoxForm.ShowDialog( owner: owner );
                 } );
 
                 if ( owner is Control control && control.InvokeRequired ) {
-                    return ( DialogResult )control.Invoke( func );
+                    return ( DialogResult )control.Invoke( method: func );
                 }
 
                 return func();

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Matrix3X2.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Matrix3X2.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Matrix3X2.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Matrix3X2.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Graphics {
 
@@ -141,8 +135,8 @@ namespace Librainian.Graphics {
         /// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
         /// <param name="coefficients">The coefficients to initialise. The number of elements of the array should be equal to 6, else an exception will be thrown</param>
         public Matrix3X2( [NotNull] Double[] coefficients ) {
-            if ( coefficients.GetLength( 0 ) != 6 ) {
-                throw new Exception( "The number of coefficients passed in to the constructor must be 6" );
+            if ( coefficients.GetLength( dimension: 0 ) != 6 ) {
+                throw new Exception( message: "The number of coefficients passed in to the constructor must be 6" );
             }
 
             this._coeffs = coefficients;
@@ -158,7 +152,7 @@ namespace Librainian.Graphics {
         public Object Clone() {
             var coeffCopy = ( Double[] )this._coeffs.Clone();
 
-            return new Matrix3X2( coeffCopy );
+            return new Matrix3X2( coefficients: coeffCopy );
         }
 
         /*

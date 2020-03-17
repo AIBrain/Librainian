@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Cache.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Cache.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Cache.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Cache.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Persistence {
 
@@ -73,24 +67,24 @@ namespace Librainian.Persistence {
         [DebuggerStepThrough]
         public static String BuildKey<T>( [NotNull] params T[] things ) {
             if ( things is null ) {
-                throw new ArgumentNullException( nameof( things ) );
+                throw new ArgumentNullException( paramName: nameof( things ) );
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( things ) );
             }
 
-            var parts = things.Where( o => !( o is null ) ).Select( o => {
+            var parts = things.Where( predicate: o => !( o is null ) ).Select( selector: o => {
                 if ( o is IEnumerable<SqlParameter> parameters ) {
-                    var kvp = parameters.Where( parameter => parameter != default ).Select( parameter => new {
+                    var kvp = parameters.Where( predicate: parameter => parameter != default ).Select( selector: parameter => new {
                         parameter.ParameterName,
                         parameter.Value
                     } );
 
-                    return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
+                    return $"{kvp.ToStrings( separator: Symbols.TwoPipes )}".Trim();
                 }
 
-                var s = Convert.ToString( o ).Trim().NullIf( String.Empty );
+                var s = Convert.ToString( value: o ).Trim().NullIf( right: String.Empty );
 
                 if ( s != null ) {
                     return s;
@@ -99,7 +93,7 @@ namespace Librainian.Persistence {
                 return $"{Symbols.VerticalEllipsis}null{Symbols.VerticalEllipsis}";
             } );
 
-            return parts.ToStrings( Symbols.TwoPipes ).Trim();
+            return parts.ToStrings( separator: Symbols.TwoPipes ).Trim();
         }
 
         /// <summary>Build a key from combining 1 or more Objects.</summary>
@@ -108,54 +102,54 @@ namespace Librainian.Persistence {
         [DebuggerStepThrough]
         public static String BuildKey( [NotNull] params Object[] things ) {
             if ( things is null ) {
-                throw new ArgumentNullException( nameof( things ) ).Log( true );
+                throw new ArgumentNullException( paramName: nameof( things ) ).Log( breakinto: true );
             }
 
             if ( !things.Any() ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( things ) );
             }
 
-            var parts = things.Where( o => o != null ).Select( o => {
+            var parts = things.Where( predicate: o => o != null ).Select( selector: o => {
                 if ( o is IEnumerable<SqlParameter> collection ) {
-                    var kvp = collection.Select( parameter => new {
+                    var kvp = collection.Select( selector: parameter => new {
                         parameter.ParameterName,
                         parameter.Value,
                         parameter
                     } );
 
-                    return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
+                    return $"{kvp.ToStrings( separator: Symbols.TwoPipes )}".Trim();
                 }
 
                 return o.ToString();
             } );
 
-            return parts.ToStrings( Symbols.TwoPipes ).Trim();
+            return parts.ToStrings( separator: Symbols.TwoPipes ).Trim();
         }
 
         /// <summary>Remove <paramref name="key" /> from the cache.</summary>
         /// <param name="key"></param>
         public static void Forget( [NotNull] String key ) {
-            if ( String.IsNullOrEmpty( key ) ) {
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
+            if ( String.IsNullOrEmpty( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
             }
 
-            Memory.Remove( key );
+            Memory.Remove( key: key );
         }
 
         /// <summary>Remove <paramref name="keys" /> from the cache.</summary>
         /// <param name="keys"></param>
         public static void Forget( [NotNull] params Object[] keys ) {
             if ( keys is null ) {
-                throw new ArgumentNullException( nameof( keys ) );
+                throw new ArgumentNullException( paramName: nameof( keys ) );
             }
 
             if ( !keys.Any() ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( keys ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( keys ) );
             }
 
-            var key = BuildKey( keys );
+            var key = BuildKey( things: keys );
 
-            Memory.Remove( key );
+            Memory.Remove( key: key );
         }
 
         /// <summary>Remove <paramref name="keyBuilder" /> from the cache.</summary>
@@ -163,14 +157,14 @@ namespace Librainian.Persistence {
         /// <param name="keyBuilder"></param>
         public static void Forget<T>( [NotNull] params T[] keyBuilder ) {
             if ( keyBuilder is null ) {
-                throw new ArgumentNullException( nameof( keyBuilder ) );
+                throw new ArgumentNullException( paramName: nameof( keyBuilder ) );
             }
 
             if ( !keyBuilder.Any() ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( keyBuilder ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( keyBuilder ) );
             }
 
-            Memory.Remove( BuildKey( keyBuilder ) );
+            Memory.Remove( key: BuildKey( things: keyBuilder ) );
         }
 
         /// <summary>Attempt to pull <paramref name="key" /> from cache.</summary>
@@ -178,18 +172,18 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [CanBeNull]
         public static Object Recall( [NotNull] String key ) {
-            if ( String.IsNullOrEmpty( key ) ) {
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
+            if ( String.IsNullOrEmpty( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
             }
 
-            return Memory[ key ];
+            return Memory[ key: key ];
         }
 
         [CanBeNull]
-        public static Object Recall( [NotNull] params Object[] keys ) => Recall( BuildKey( keys ) );
+        public static Object Recall( [NotNull] params Object[] keys ) => Recall( key: BuildKey( things: keys ) );
 
         [CanBeNull]
-        public static Object Recall<T>( [NotNull] params T[] keys ) => Recall( BuildKey( keys ) );
+        public static Object Recall<T>( [NotNull] params T[] keys ) => Recall( key: BuildKey( things: keys ) );
 
         /// <summary>
         ///     <para>If <paramref name="policy" /> is not given, it will default to <see cref="Sliding.Minutes" /> (1 minute).</para>
@@ -201,17 +195,17 @@ namespace Librainian.Persistence {
         /// <param name="policy"></param>
         [CanBeNull]
         public static T Remember<T>( [NotNull] String key, [CanBeNull] T value, [CanBeNull] CacheItemPolicy policy = null ) {
-            if ( String.IsNullOrEmpty( key ) ) {
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
+            if ( String.IsNullOrEmpty( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
             }
 
             if ( value is null ) {
-                Forget( key );
+                Forget( key: key );
 
                 return default;
             }
 
-            Memory.Set( key, value, policy ?? Sliding.Minutes( 1 ) );
+            Memory.Set( key: key, value: value, policy: policy ?? Sliding.Minutes( minutes: 1 ) );
 
             return value;
         }
@@ -223,7 +217,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Hours( Double hours ) =>
                 new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddHours( hours )
+                    AbsoluteExpiration = DateTime.Now.AddHours( value: hours )
                 };
 
             /// <summary><paramref name="milliseconds" /> from now.</summary>
@@ -232,7 +226,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Milliseconds( Double milliseconds ) =>
                 new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddMilliseconds( milliseconds )
+                    AbsoluteExpiration = DateTime.Now.AddMilliseconds( value: milliseconds )
                 };
 
             /// <summary><paramref name="minutes" /> from now.</summary>
@@ -241,7 +235,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Minutes( Double minutes ) =>
                 new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddMinutes( minutes )
+                    AbsoluteExpiration = DateTime.Now.AddMinutes( value: minutes )
                 };
 
             /// <summary><paramref name="seconds" /> from now.</summary>
@@ -250,7 +244,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Seconds( Double seconds ) =>
                 new CacheItemPolicy {
-                    AbsoluteExpiration = DateTime.Now.AddSeconds( seconds )
+                    AbsoluteExpiration = DateTime.Now.AddSeconds( value: seconds )
                 };
         }
 
@@ -261,7 +255,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Hours( Double hours ) =>
                 new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromHours( hours )
+                    SlidingExpiration = TimeSpan.FromHours( value: hours )
                 };
 
             /// <summary><paramref name="milliseconds" /> from now.</summary>
@@ -270,7 +264,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Milliseconds( Double milliseconds ) =>
                 new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromMilliseconds( milliseconds )
+                    SlidingExpiration = TimeSpan.FromMilliseconds( value: milliseconds )
                 };
 
             /// <summary><paramref name="minutes" /> from now.</summary>
@@ -279,7 +273,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Minutes( Double minutes ) =>
                 new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromMinutes( minutes )
+                    SlidingExpiration = TimeSpan.FromMinutes( value: minutes )
                 };
 
             /// <summary><paramref name="seconds" /> from now.</summary>
@@ -288,7 +282,7 @@ namespace Librainian.Persistence {
             [NotNull]
             public static CacheItemPolicy Seconds( Double seconds ) =>
                 new CacheItemPolicy {
-                    SlidingExpiration = TimeSpan.FromSeconds( seconds )
+                    SlidingExpiration = TimeSpan.FromSeconds( value: seconds )
                 };
         }
     }

@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Pixel.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Pixel.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Pixel.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Pixel.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -57,7 +51,7 @@ namespace Librainian.Graphics.Imaging {
     /// </summary>
     [Immutable]
     [JsonObject]
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout( layoutKind: LayoutKind.Sequential )]
     public struct Pixel : IEquatable<Pixel> {
 
         [JsonProperty]
@@ -92,7 +86,7 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = blue;
             this.X = x;
             this.Y = y;
-            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = Hash( alpha: this.Alpha, red: this.Red, green: this.Green, blue: this.Blue, x: this.X, y: this.Y );
         }
 
         public Pixel( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) {
@@ -102,7 +96,7 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = blue;
             this.X = x;
             this.Y = y;
-            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = Hash( alpha: this.Alpha, red: this.Red, green: this.Green, blue: this.Blue, x: this.X, y: this.Y );
         }
 
         public Pixel( Color color, UInt32 x, UInt32 y ) {
@@ -112,12 +106,12 @@ namespace Librainian.Graphics.Imaging {
             this.Blue = color.B;
             this.X = x;
             this.Y = y;
-            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = Hash( alpha: this.Alpha, red: this.Red, green: this.Green, blue: this.Blue, x: this.X, y: this.Y );
         }
 
         //public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
 
-        public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
+        public static implicit operator Color( Pixel pixel ) => Color.FromArgb( alpha: pixel.Alpha, red: pixel.Red, green: pixel.Green, blue: pixel.Blue );
 
         [NotNull]
         public static explicit operator Byte[]( Pixel pixel ) =>
@@ -136,7 +130,7 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals( Pixel other ) => Equal( this, other );
+        public Boolean Equals( Pixel other ) => Equal( left: this, right: other );
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
@@ -148,143 +142,144 @@ namespace Librainian.Graphics.Imaging {
         [CanBeNull]
         public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
             if ( streamWriter is null ) {
-                throw new ArgumentNullException( nameof( streamWriter ) );
+                throw new ArgumentNullException( paramName: nameof( streamWriter ) );
             }
 
-            return streamWriter.WriteLineAsync( this.ToString() );
+            return streamWriter.WriteLineAsync( value: this.ToString() );
         }
 
         public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [CanBeNull] StreamWriter errors = null ) {
             if ( reader is null ) {
-                throw new ArgumentNullException( nameof( reader ) );
+                throw new ArgumentNullException( paramName: nameof( reader ) );
             }
 
-            var line = await reader.ReadLineAsync().ConfigureAwait( false ) ?? String.Empty;
+            var line = await reader.ReadLineAsync().ConfigureAwait( continueOnCapturedContext: false ) ?? String.Empty;
             line = line.Trim();
 
-            if ( String.IsNullOrWhiteSpace( line ) ) {
+            if ( String.IsNullOrWhiteSpace( value: line ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( "Blank input line" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: "Blank input line" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            var openParent = line.IndexOf( "(", StringComparison.OrdinalIgnoreCase );
+            var openParent = line.IndexOf( value: "(", comparisonType: StringComparison.OrdinalIgnoreCase );
 
             if ( openParent <= -1 ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to find a '(' in {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
+            if ( !Byte.TryParse( s: line.Substring( startIndex: 0, length: openParent ), result: out var checksum ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Checksum from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
+            var closeParent = line.IndexOf( value: ")", comparisonType: StringComparison.OrdinalIgnoreCase );
 
             if ( closeParent == -1 ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to find a ')' in {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] {
+            var argb = line.Substring( startIndex: openParent + 1, length: closeParent - openParent ).Split( separator: new[] {
                 ','
-            }, StringSplitOptions.RemoveEmptyEntries );
+            }, options: StringSplitOptions.RemoveEmptyEntries );
 
             if ( argb.Length != 4 ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Color from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !Byte.TryParse( argb[ 0 ], out var alpha ) ) {
+            if ( !Byte.TryParse( s: argb[ 0 ], result: out var alpha ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Alpha from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !Byte.TryParse( argb[ 1 ], out var red ) ) {
+            if ( !Byte.TryParse( s: argb[ 1 ], result: out var red ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Red from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !Byte.TryParse( argb[ 2 ], out var green ) ) {
+            if ( !Byte.TryParse( s: argb[ 2 ], result: out var green ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Green from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !Byte.TryParse( argb[ 3 ], out var blue ) ) {
+            if ( !Byte.TryParse( s: argb[ 3 ], result: out var blue ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Blue from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
+            var at = line.IndexOf( value: "@", comparisonType: StringComparison.OrdinalIgnoreCase );
 
             if ( at == -1 ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to find an '@' in {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            var xandy = line.Substring( at + 1 ).Split( new[] {
+            var xandy = line.Substring( startIndex: at + 1 ).Split( separator: new[] {
                 ','
-            }, StringSplitOptions.RemoveEmptyEntries );
+            }, options: StringSplitOptions.RemoveEmptyEntries );
 
             if ( xandy.Length != 2 ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse X & Y from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !UInt32.TryParse( xandy[ 0 ], out var x ) ) {
+            if ( !UInt32.TryParse( s: xandy[ 0 ], result: out var x ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse X from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            if ( !UInt32.TryParse( xandy[ 0 ], out var y ) ) {
+            if ( !UInt32.TryParse( s: xandy[ 0 ], result: out var y ) ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Unable to parse Y from {line}" ).ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 return null;
             }
 
-            var pixel = new Pixel( alpha, red, green, blue, x, y );
+            var pixel = new Pixel( alpha: alpha, red: red, green: green, blue: blue, x: x, y: y );
 
             if ( pixel.Checksum != checksum ) {
                 if ( errors != null ) {
-                    await errors.WriteLineAsync( $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" ).ConfigureAwait( false );
+                    await errors.WriteLineAsync( value: $"Warning checksums do not match! Expected {checksum}, but got {pixel.Checksum}" )
+                                .ConfigureAwait( continueOnCapturedContext: false );
                 }
             }
 
@@ -294,6 +289,6 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>Indicates whether this instance and a specified object are equal.</summary>
         /// <param name="obj">The object to compare with the current instance.</param>
         /// <returns><see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Pixel? ?? default );
+        public override Boolean Equals( Object obj ) => Equals( objA: this, objB: obj as Pixel? ?? default );
     }
 }

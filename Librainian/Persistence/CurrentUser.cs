@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CurrentUser.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "CurrentUser.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CurrentUser.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "CurrentUser.cs" was last formatted by Protiguous on 2020/03/16 at 3:01 PM.
 
 namespace Librainian.Persistence {
 
@@ -53,7 +47,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <value></value>
         [NotNull]
-        internal static RegistryKey App => Protiguous.CreateSubKey( Application.ProductName, true );
+        internal static RegistryKey App => Protiguous.CreateSubKey( subkey: Application.ProductName, writable: true );
 
         /// <summary>Current user.</summary>
         [NotNull]
@@ -61,11 +55,11 @@ namespace Librainian.Persistence {
 
         /// <summary>The <see cref="Protiguous" /> key under the <see cref="Software" /> key.</summary>
         [NotNull]
-        public static RegistryKey Protiguous => Software.CreateSubKey( nameof( Protiguous ), true );
+        public static RegistryKey Protiguous => Software.CreateSubKey( subkey: nameof( Protiguous ), writable: true );
 
         /// <summary>The <see cref="Software" /> key under the <see cref="HKCU" /> key.</summary>
         [NotNull]
-        public static RegistryKey Software => HKCU.CreateSubKey( nameof( Software ), true );
+        public static RegistryKey Software => HKCU.CreateSubKey( subkey: nameof( Software ), writable: true );
 
         /// <summary>By default, this retrieves the registry key under HKCU\Software\Protiguous\ProcessName.</summary>
         /// <typeparam name="T"></typeparam>
@@ -75,14 +69,14 @@ namespace Librainian.Persistence {
         public static T Get<T>( [NotNull] this String key ) {
 
             if ( App is null ) {
-                throw new ArgumentNullException( nameof( App ) );
+                throw new ArgumentNullException( paramName: nameof( App ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( key ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
             }
 
-            var value = App.GetValue( key );
+            var value = App.GetValue( name: key );
 
             if ( value is T result ) {
                 return result;
@@ -99,29 +93,29 @@ namespace Librainian.Persistence {
         public static Boolean Set<T>( [NotNull] this String key, [CanBeNull] T value ) {
 
             if ( App is null ) {
-                throw new ArgumentNullException( nameof( App ) );
+                throw new ArgumentNullException( paramName: nameof( App ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( key ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( value: key ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
             }
 
             try {
                 switch ( value ) {
                     case String[] _: {
-                            App.SetValue( key, value, RegistryValueKind.MultiString );
+                            App.SetValue( name: key, value: value, valueKind: RegistryValueKind.MultiString );
 
                             return true;
                         }
 
                     case String _:
-                        App.SetValue( key, value, RegistryValueKind.String );
+                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.String );
 
                         return true;
 
                     case UInt64 _:
                     case Int64 _:
-                        App.SetValue( key, value, RegistryValueKind.QWord );
+                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.QWord );
 
                         return true;
 
@@ -131,19 +125,19 @@ namespace Librainian.Persistence {
                     case Int16 _:
                     case SByte _:
                     case Byte _:
-                        App.SetValue( key, value, RegistryValueKind.DWord );
+                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.DWord );
 
                         return true;
 
                     case Byte[] _:
-                        App.SetValue( key, value, RegistryValueKind.Binary );
+                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.Binary );
 
                         return true;
 
                     default: {
 
                             // ReSharper disable once AssignNullToNotNullAttribute
-                            App.SetValue( key, value, RegistryValueKind.Unknown );
+                            App.SetValue( name: key, value: value, valueKind: RegistryValueKind.Unknown );
 
                             return true;
                         }

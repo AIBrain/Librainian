@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "GigaElectronVolts.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "GigaElectronVolts.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GigaElectronVolts.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "GigaElectronVolts.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Physics {
 
@@ -48,7 +42,7 @@ namespace Librainian.Measurement.Physics {
     /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
     /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
     /// <see cref="http://wikipedia.org/wiki/Giga-" />
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct GigaElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
@@ -65,10 +59,10 @@ namespace Librainian.Measurement.Physics {
         public const Decimal InOneTeraElectronVolt = 1E3m;
 
         /// <summary></summary>
-        public static readonly GigaElectronVolts One = new GigaElectronVolts( Decimal.One );
+        public static readonly GigaElectronVolts One = new GigaElectronVolts( units: Decimal.One );
 
         /// <summary></summary>
-        public static readonly GigaElectronVolts Zero = new GigaElectronVolts( Decimal.Zero );
+        public static readonly GigaElectronVolts Zero = new GigaElectronVolts( units: Decimal.Zero );
 
         /// <summary></summary>
         public Rational Value { get; }
@@ -79,40 +73,40 @@ namespace Librainian.Measurement.Physics {
 
         public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToGigaElectronVolts().Value;
 
-        public static GigaElectronVolts operator *( GigaElectronVolts left, Rational right ) => new GigaElectronVolts( left.Value * right );
+        public static GigaElectronVolts operator *( GigaElectronVolts left, Rational right ) => new GigaElectronVolts( units: left.Value * right );
 
-        public static GigaElectronVolts operator *( Rational left, GigaElectronVolts right ) => new GigaElectronVolts( left * right.Value );
+        public static GigaElectronVolts operator *( Rational left, GigaElectronVolts right ) => new GigaElectronVolts( units: left * right.Value );
 
-        public static GigaElectronVolts operator +( MegaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( left ) + right;
+        public static GigaElectronVolts operator +( MegaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( megaElectronVolts: left ) + right;
 
-        public static GigaElectronVolts operator +( GigaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( left.Value + right.Value );
+        public static GigaElectronVolts operator +( GigaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( units: left.Value + right.Value );
 
-        public static Boolean operator <( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( right.Value ) < 0;
+        public static Boolean operator <( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( other: right.Value ) < 0;
 
-        public static Boolean operator >( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( right.Value ) > 0;
+        public static Boolean operator >( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( other: right.Value ) > 0;
 
-        public Int32 CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
+        public Int32 CompareTo( ElectronVolts other ) => this.Value.CompareTo( other: other.ToGigaElectronVolts().Value );
 
-        public Int32 CompareTo( GigaElectronVolts other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( GigaElectronVolts other ) => this.Value.CompareTo( other: other.Value );
 
-        public Int32 CompareTo( MegaElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
+        public Int32 CompareTo( MegaElectronVolts other ) => this.Value.CompareTo( other: other.ToGigaElectronVolts().Value );
 
-        public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
+        public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other: other.ToGigaElectronVolts().Value );
 
-        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational )InOneElectronVolt );
+        public ElectronVolts ToElectronVolts() => new ElectronVolts( value: this.Value * ( Rational )InOneElectronVolt );
 
-        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational )InOneGigaElectronVolt );
+        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( units: this.Value * ( Rational )InOneGigaElectronVolt );
 
-        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational )InOneKiloElectronVolt );
+        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( aBigFraction: this.Value * ( Rational )InOneKiloElectronVolt );
 
-        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational )InOneMegaElectronVolt );
+        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( units: this.Value * ( Rational )InOneMegaElectronVolt );
 
-        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
+        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( units: this.Value * ( Rational )InOneMilliElectronVolt );
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} GeV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( units: this.Value * ( Rational )InOneTeraElectronVolt );
     }
 }

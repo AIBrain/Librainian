@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ValidatedString.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ValidatedString.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ValidatedString.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// Project: "Librainian", File: "ValidatedString.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
 
 namespace Librainian.Parsing.Validation {
 
@@ -49,7 +43,7 @@ namespace Librainian.Parsing.Validation {
 
     [Serializable]
     [JsonObject]
-    [JsonConverter( typeof( ValidatedStringJsonNetConverter ) )]
+    [JsonConverter( converterType: typeof( ValidatedStringJsonNetConverter ) )]
     public class ValidatedString : IValidatedString {
 
         /// <inheritdoc />
@@ -64,31 +58,33 @@ namespace Librainian.Parsing.Validation {
 
         public Int32 Length => this.Value.Length;
 
-        public Char this[ Int32 index ] => this.Value[ index ];
+        public Char this[ Int32 index ] => this.Value[ index: index ];
 
         public ValidatedString( [NotNull] String value, [NotNull] Func<String, Boolean> validationFunc ) {
-            this.Value = value ?? throw new ArgumentNullException( nameof( value ) );
-            this.ValidateFunc = validationFunc ?? throw new ArgumentNullException( nameof( validationFunc ) );
-            this.Validated = this.ValidateFunc( this.Value );
+            this.Value = value ?? throw new ArgumentNullException( paramName: nameof( value ) );
+            this.ValidateFunc = validationFunc ?? throw new ArgumentNullException( paramName: nameof( validationFunc ) );
+            this.Validated = this.ValidateFunc( arg: this.Value );
         }
 
         [SecuritySafeCritical]
         public static Int32 Compare( [NotNull] ValidatedString left, [NotNull] IValidatedString right, StringComparison comparisonType = StringComparison.Ordinal ) =>
-            comparisonType == StringComparison.Ordinal ? String.CompareOrdinal( left, right.Value ) : String.Compare( left.Value, right.Value, comparisonType );
+            comparisonType == StringComparison.Ordinal ?
+                String.CompareOrdinal( strA: left, strB: right.Value ) :
+                String.Compare( strA: left.Value, strB: right.Value, comparisonType: comparisonType );
 
         public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length ) =>
-            String.Compare( left.Value, leftIndex, right.Value, rightIndex, length );
+            String.Compare( strA: left.Value, indexA: leftIndex, strB: right.Value, indexB: rightIndex, length: length );
 
         [SecuritySafeCritical]
         public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length,
             StringComparison comparisonType ) =>
-            String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, comparisonType );
+            String.Compare( strA: left.Value, indexA: leftIndex, strB: right.Value, indexB: rightIndex, length: length, comparisonType: comparisonType );
 
-        public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, [NotNull] IValidatedString right ) => String.CompareOrdinal( strA.Value, right.Value );
+        public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, [NotNull] IValidatedString right ) => String.CompareOrdinal( strA: strA.Value, strB: right.Value );
 
         [SecuritySafeCritical]
         public static Int32 CompareOrdinal( [NotNull] ValidatedString strA, Int32 indexA, [NotNull] IValidatedString strB, Int32 indexB, Int32 length ) =>
-            String.CompareOrdinal( strA.Value, indexA, strB.Value, indexB, length );
+            String.CompareOrdinal( strA: strA.Value, indexA: indexA, strB: strB.Value, indexB: indexB, length: length );
 
         /// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
         /// <param name="left"></param>
@@ -96,7 +92,7 @@ namespace Librainian.Parsing.Validation {
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] IValidatedString left, [CanBeNull] IValidatedString right ) {
 
-            if ( ReferenceEquals( left, right ) ) {
+            if ( ReferenceEquals( objA: left, objB: right ) ) {
                 return true;
             }
 
@@ -112,7 +108,7 @@ namespace Librainian.Parsing.Validation {
                 return default;
             }
 
-            return left.SequenceEqual( right.Value );
+            return left.SequenceEqual( second: right.Value );
         }
 
         /// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
@@ -136,7 +132,7 @@ namespace Librainian.Parsing.Validation {
                 return default;
             }
 
-            return left.SequenceEqual( right.Value );
+            return left.SequenceEqual( second: right.Value );
         }
 
         /// <summary>Static comparison for <see cref="IValidatedString" /> and <see cref="String" />.</summary>
@@ -157,25 +153,25 @@ namespace Librainian.Parsing.Validation {
                 return default;
             }
 
-            return left.Value.SequenceEqual( right );
+            return left.Value.SequenceEqual( second: right );
         }
 
         [CanBeNull]
         public static implicit operator String( [CanBeNull] ValidatedString str ) => str?.Value;
 
-        public static Boolean operator !=( [CanBeNull] ValidatedString left, [CanBeNull] IValidatedString right ) => !Equals( left, right?.Value );
+        public static Boolean operator !=( [CanBeNull] ValidatedString left, [CanBeNull] IValidatedString right ) => !Equals( left: left, right: right?.Value );
 
-        public static Boolean operator ==( [CanBeNull] ValidatedString left, [CanBeNull] IValidatedString right ) => Equals( left, right?.Value );
+        public static Boolean operator ==( [CanBeNull] ValidatedString left, [CanBeNull] IValidatedString right ) => Equals( left: left, right: right?.Value );
 
-        public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
+        public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( strA: this.Value, strB: other, comparisonType: StringComparison.Ordinal );
 
-        public Int32 CompareTo( [NotNull] IValidatedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal );
+        public Int32 CompareTo( [NotNull] IValidatedString other ) => String.Compare( strA: this.Value, strB: other.Value, comparisonType: StringComparison.Ordinal );
 
-        public Boolean Equals( String other ) => Equals( this, other );
+        public Boolean Equals( String other ) => Equals( left: this, right: other );
 
-        public Boolean Equals( IValidatedString other ) => Equals( this.Value, other );
+        public Boolean Equals( IValidatedString other ) => Equals( left: this.Value, right: other );
 
-        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( this.Value, obj as IValidatedString );
+        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( left: this.Value, right: obj as IValidatedString );
 
         public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> )this.Value ).GetEnumerator();
 
@@ -183,7 +179,7 @@ namespace Librainian.Parsing.Validation {
 
         public override String ToString() => this.Value;
 
-        Int32 IComparable.CompareTo( [CanBeNull] Object obj ) => this.Value.CompareTo( obj );
+        Int32 IComparable.CompareTo( [CanBeNull] Object obj ) => this.Value.CompareTo( value: obj );
 
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Value ).GetEnumerator();
     }

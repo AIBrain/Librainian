@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Word.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Word.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Word.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "Librainian", File: "Word.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
 namespace Librainian.Linguistics {
 
@@ -52,7 +46,7 @@ namespace Librainian.Linguistics {
     /// <see cref="Sentence"></see>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public class Word : IEquatable<Word>, IEnumerable<Char>, IComparable<Word> {
 
@@ -65,17 +59,17 @@ namespace Librainian.Linguistics {
         private String value { get; }
 
         [NotNull]
-        public static Word Empty { get; } = new Word( String.Empty );
+        public static Word Empty { get; } = new Word( word: String.Empty );
 
         private Word() => this.value = Empty;
 
         public Word( [NotNull] String word ) {
             word = word.Trimmed();
-            this.value = String.IsNullOrEmpty( word ) ? String.Empty : word;
+            this.value = String.IsNullOrEmpty( value: word ) ? String.Empty : word;
         }
 
         public static Boolean Equals( [CanBeNull] Word left, [CanBeNull] Word right ) {
-            if ( ReferenceEquals( left, right ) ) {
+            if ( ReferenceEquals( objA: left, objB: right ) ) {
                 return true;
             }
 
@@ -83,15 +77,15 @@ namespace Librainian.Linguistics {
                 return default;
             }
 
-            return String.Equals( left.value, right.value, StringComparison.Ordinal );
+            return String.Equals( a: left.value, b: right.value, comparisonType: StringComparison.Ordinal );
         }
 
         [NotNull]
         public static implicit operator String( [NotNull] Word word ) => word.value;
 
-        public Int32 CompareTo( [NotNull] Word other ) => String.Compare( this.value, other.value, StringComparison.Ordinal );
+        public Int32 CompareTo( [NotNull] Word other ) => String.Compare( strA: this.value, strB: other.value, comparisonType: StringComparison.Ordinal );
 
-        public Boolean Equals( [CanBeNull] Word other ) => Equals( this, other );
+        public Boolean Equals( [CanBeNull] Word other ) => Equals( left: this, right: other );
 
         public IEnumerator<Char> GetEnumerator() => this.value.GetEnumerator();
 

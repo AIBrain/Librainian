@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "MersenneTwister.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "MersenneTwister.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "MersenneTwister.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// 
+// Project: "Librainian", File: "MersenneTwister.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
 
 namespace Librainian.Security {
 
@@ -44,21 +38,27 @@ namespace Librainian.Security {
     /// <summary>Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs</summary>
     internal class MersenneTwister : Random {
 
+        private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
+
+        private Int16 _mti;
+
         private const UInt32 LowerMask = 0x7fffffff;
+
         private const Int32 M = 397;
+
         private const UInt32 MatrixA = 0x9908b0df;
+
         private const Int32 N = 624;
+
         private const UInt32 TemperingMaskB = 0x9d2c5680;
+
         private const UInt32 TemperingMaskC = 0xefc60000;
+
         private const UInt32 UpperMask = 0x80000000;
 
         private static readonly UInt32[] Mag01 = {
             0x0, MatrixA
         };
-
-        private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
-
-        private Int16 _mti;
 
         public MersenneTwister( UInt32 seed ) {
             /* setting initial seeds to mt[N] using         */
@@ -119,7 +119,7 @@ namespace Librainian.Security {
 
         public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( maxValue > 1 ) {
-                return ( Int32 )( this.NextDouble() * maxValue );
+                return ( Int32 ) ( this.NextDouble() * maxValue );
             }
 
             if ( maxValue < 0 ) {
@@ -152,22 +152,22 @@ namespace Librainian.Security {
             var bufLen = buffer.Length;
 
             for ( var idx = 0; idx < bufLen; ++idx ) {
-                buffer[ idx ] = ( Byte )this.Next( 256 );
+                buffer[ idx ] = ( Byte ) this.Next( 256 );
             }
         }
 
-        public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )UInt32.MaxValue + 1 );
+        public override Double NextDouble() => ( Double ) this.GenerateUInt() / ( ( UInt64 ) UInt32.MaxValue + 1 );
 
         public virtual UInt32 NextUInt() => this.GenerateUInt();
 
-        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
+        public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 ) ( this.GenerateUInt() / ( ( Double ) UInt32.MaxValue / maxValue ) );
 
         public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
             if ( minValue >= maxValue ) {
                 throw new ArgumentOutOfRangeException();
             }
 
-            return ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / ( maxValue - minValue ) ) + minValue );
+            return ( UInt32 ) ( ( this.GenerateUInt() / ( ( Double ) UInt32.MaxValue / ( maxValue - minValue ) ) ) + minValue );
         }
 
         /* Period parameters */
@@ -177,5 +177,7 @@ namespace Librainian.Security {
         /* least significant r bits */
         /* Tempering parameters */
         /* initializing the array with a NONZERO seed */
+
     }
+
 }

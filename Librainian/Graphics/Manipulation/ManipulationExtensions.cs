@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ManipulationExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ManipulationExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ManipulationExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// 
+// Project: "Librainian", File: "ManipulationExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 4:45 PM.
 
 namespace Librainian.Graphics.Manipulation {
 
@@ -56,11 +50,12 @@ namespace Librainian.Graphics.Manipulation {
         /// <returns></returns>
         [NotNull]
         private static Bitmap Pixelate( [NotNull] this Bitmap image, Rectangle rectangle, Int32 pixelateSize ) {
-            var pixelated = new Bitmap( image.Width, image.Height );
+            var pixelated = new Bitmap( width: image.Width, height: image.Height );
 
             // make an exact copy of the bitmap provided
-            using ( var graphics = Graphics.FromImage( pixelated ) ) {
-                graphics.DrawImage( image, new Rectangle( 0, 0, image.Width, image.Height ), new Rectangle( 0, 0, image.Width, image.Height ), GraphicsUnit.Pixel );
+            using ( var graphics = Graphics.FromImage( image: pixelated ) ) {
+                graphics.DrawImage( image: image, destRect: new Rectangle( x: 0, y: 0, width: image.Width, height: image.Height ),
+                    srcRect: new Rectangle( x: 0, y: 0, width: image.Width, height: image.Height ), srcUnit: GraphicsUnit.Pixel );
             }
 
             // look at every pixel in the rectangle while making sure we're within the image bounds
@@ -79,12 +74,12 @@ namespace Librainian.Graphics.Manipulation {
                     }
 
                     // get the pixel color in the center of the soon to be pixelated area
-                    var pixel = pixelated.GetPixel( xx + offsetX, yy + offsetY );
+                    var pixel = pixelated.GetPixel( x: xx + offsetX, y: yy + offsetY );
 
                     // for each pixel in the pixelate size, set it to the center color
                     for ( var x = xx; x < xx + pixelateSize && x < image.Width; x++ ) {
                         for ( var y = yy; y < yy + pixelateSize && y < image.Height; y++ ) {
-                            pixelated.SetPixel( x, y, pixel );
+                            pixelated.SetPixel( x: x, y: y, color: pixel );
                         }
                     }
                 }
@@ -94,7 +89,8 @@ namespace Librainian.Graphics.Manipulation {
         }
 
         [CanBeNull]
-        public static Bitmap LoadAndResize( [NotNull] this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
+        public static Bitmap LoadAndResize( [NotNull] this String document, Single multiplier ) =>
+            LoadAndResize( document: new Document( fullPath: document ), multiplier: multiplier );
 
         [CanBeNull]
         public static Bitmap LoadAndResize( [CanBeNull] Document document, Single multiplier ) {
@@ -103,10 +99,10 @@ namespace Librainian.Graphics.Manipulation {
             }
 
             try {
-                var image = Image.FromFile( document.FullPath );
-                var newSize = new Size( ( Int32 )( image.Size.Width * multiplier ), ( Int32 )( image.Size.Height * multiplier ) );
+                var image = Image.FromFile( filename: document.FullPath );
+                var newSize = new Size( width: ( Int32 ) ( image.Size.Width * multiplier ), height: ( Int32 ) ( image.Size.Height * multiplier ) );
 
-                return new Bitmap( image, newSize );
+                return new Bitmap( original: image, newSize: newSize );
             }
             catch ( FileNotFoundException ) {
                 return null;
@@ -120,16 +116,16 @@ namespace Librainian.Graphics.Manipulation {
         public static Bitmap MakeGrayscale( [NotNull] this Bitmap original ) {
 
             //create a blank bitmap the same size as original
-            var newBitmap = new Bitmap( original.Width, original.Height );
+            var newBitmap = new Bitmap( width: original.Width, height: original.Height );
 
             //get a graphics object from the new image
-            using ( var g = Graphics.FromImage( newBitmap ) ) {
+            using ( var g = Graphics.FromImage( image: newBitmap ) ) {
 
                 //create some image attributes
                 var attributes = new ImageAttributes();
 
                 //create the grayscale ColorMatrix
-                var colorMatrix = new ColorMatrix( new[] {
+                var colorMatrix = new ColorMatrix( newColorMatrix: new[] {
                     new[] {
                         .3f, .3f, .3f, 0, 0
                     },
@@ -148,14 +144,17 @@ namespace Librainian.Graphics.Manipulation {
                 } );
 
                 //set the color matrix attribute
-                attributes.SetColorMatrix( colorMatrix );
+                attributes.SetColorMatrix( newColorMatrix: colorMatrix );
 
                 //draw the original image on the new image
                 //using the grayscale color matrix
-                g.DrawImage( original, new Rectangle( 0, 0, original.Width, original.Height ), 0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes );
+                g.DrawImage( image: original, destRect: new Rectangle( x: 0, y: 0, width: original.Width, height: original.Height ), srcX: 0, srcY: 0,
+                    srcWidth: original.Width, srcHeight: original.Height, srcUnit: GraphicsUnit.Pixel, imageAttr: attributes );
             }
 
             return newBitmap;
         }
+
     }
+
 }

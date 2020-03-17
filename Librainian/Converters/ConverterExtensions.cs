@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConverterExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Converters {
 
@@ -58,9 +52,9 @@ namespace Librainian.Converters {
     using Maths.Numbers;
     using Microsoft.Data.SqlClient;
     using OperatingSystem.FileSystem;
+    using OperatingSystem.FileSystem.Pri.LongPath;
     using Parsing;
     using Security;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
@@ -327,8 +321,8 @@ namespace Librainian.Converters {
             //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
-            return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ],
-                bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ), ( DateTimeKind )bytes[ 15 ] );
+            return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ], bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ),
+                ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -368,7 +362,7 @@ namespace Librainian.Converters {
 
             try {
                 var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty ).Replace( ")", String.Empty ).Replace( "(", "-" ).Replace( "..", "." )
-                    .Replace( " ", String.Empty ).Trimmed();
+                             .Replace( " ", String.Empty ).Trimmed();
 
                 if ( String.IsNullOrEmpty( s ) ) {
                     return null;
@@ -435,17 +429,17 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( ( UInt32 )dateTime.Year //0,1,2,3
-                        , ( UInt16 )dateTime.DayOfYear //4,5
-                        , ( UInt16 )dateTime.Millisecond //6,7
-                        , ( Byte )dateTime.DayOfWeek //8
-                        , ( Byte )dateTime.Day //9
-                        , ( Byte )dateTime.Hour //10
-                        , ( Byte )dateTime.Minute //11
-                        , ( Byte )dateTime.Second //12
-                        , ( Byte )dateTime.Month //13
+                    var guid = new Guid( ( UInt32 )dateTime.Year           //0,1,2,3
+                        , ( UInt16 )dateTime.DayOfYear                     //4,5
+                        , ( UInt16 )dateTime.Millisecond                   //6,7
+                        , ( Byte )dateTime.DayOfWeek                       //8
+                        , ( Byte )dateTime.Day                             //9
+                        , ( Byte )dateTime.Hour                            //10
+                        , ( Byte )dateTime.Minute                          //11
+                        , ( Byte )dateTime.Second                          //12
+                        , ( Byte )dateTime.Month                           //13
                         , Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , ( Byte )dateTime.Kind ); //15
+                        , ( Byte )dateTime.Kind );                         //15
 
                     return guid;
                 }
@@ -646,7 +640,7 @@ namespace Librainian.Converters {
         }
 
         /// <summary>Returns the trimmed <paramref name="self" /> ToString() or null.
-        /// <para>If <paramref name="self" /> is null, empty, or whitespace then return null, else return <paramref name="self"/>.ToString().</para>
+        /// <para>If <paramref name="self" /> is null, empty, or whitespace then return null, else return <paramref name="self" />.ToString().</para>
         /// </summary>
         /// <remarks>If the <paramref name="self" /> is a <see cref="Control" /> then the <see cref="Control.Text" /> will be returned.</remarks>
         /// <param name="self"></param>

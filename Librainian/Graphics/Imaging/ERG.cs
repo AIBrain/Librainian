@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ERG.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ERG.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ERG.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "ERG.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -95,7 +89,7 @@ namespace Librainian.Graphics.Imaging {
 
         [NotNull]
         public Task<UInt64> CalculateChecksumAsync() =>
-            Task.Run( () => {
+            Task.Run( function: () => {
                 unchecked {
                     return ( UInt64 )HashingExtensions.GetHashCodes( this.Pixels );
                 }
@@ -103,7 +97,8 @@ namespace Librainian.Graphics.Imaging {
 
         public async Task<Boolean> TryAdd( [CanBeNull] Document document, TimeSpan delay, CancellationToken cancellationToken ) {
             try {
-                return await this.TryAddAsync( new Bitmap( document.FullPath ), delay, cancellationToken ).ConfigureAwait( false );
+                return await this.TryAddAsync( bitmap: new Bitmap( filename: document.FullPath ), timeout: delay, cancellationToken: cancellationToken )
+                                 .ConfigureAwait( continueOnCapturedContext: false );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -119,7 +114,7 @@ namespace Librainian.Graphics.Imaging {
 
             var stopwatch = Stopwatch.StartNew();
 
-            return await Task.Run( () => {
+            return await Task.Run( function: () => {
                 var width = bitmap.Width;
 
                 if ( width < UInt32.MinValue ) {
@@ -132,9 +127,9 @@ namespace Librainian.Graphics.Imaging {
                     return default;
                 }
 
-                this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
+                this.PropertyIdList.UnionWith( other: bitmap.PropertyIdList );
 
-                this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem {
+                this.PropertyItems.UnionWith( other: bitmap.PropertyItems.Select( selector: item => new PropertyItem {
                     Id = item.Id,
                     Len = item.Len,
                     Type = item.Type,
@@ -144,11 +139,11 @@ namespace Librainian.Graphics.Imaging {
                 this.Width = ( UInt32 )bitmap.Width;
                 this.Height = ( UInt32 )bitmap.Height;
 
-                var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
+                var rect = new Rectangle( x: 0, y: 0, width: bitmap.Width, height: bitmap.Height );
 
-                var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
+                var data = bitmap.LockBits( rect: rect, flags: ImageLockMode.ReadOnly, format: bitmap.PixelFormat );
 
-                Parallel.For( 0, this.Height, y => {
+                Parallel.For( fromInclusive: 0, toExclusive: this.Height, body: y => {
                     if ( stopwatch.Elapsed > timeout ) {
                         return;
                     }
@@ -158,20 +153,20 @@ namespace Librainian.Graphics.Imaging {
                     }
 
                     for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
-                        var color = bitmap.GetPixel( ( Int32 )x, ( Int32 )y );
-                        var pixel = new Pixel( color, x, ( UInt32 )y );
-                        this.Pixels.TryAdd( pixel );
+                        var color = bitmap.GetPixel( x: ( Int32 )x, y: ( Int32 )y );
+                        var pixel = new Pixel( color: color, x: x, y: ( UInt32 )y );
+                        this.Pixels.TryAdd( item: pixel );
                     }
                 } );
 
-                bitmap.UnlockBits( data );
+                bitmap.UnlockBits( bitmapdata: data );
 
                 //TODO animated gif RE: image.FrameDimensionsList;
 
                 //image.Palette?
 
                 return false; //TODO add frame
-            }, cancellationToken ).ConfigureAwait( false );
+            }, cancellationToken: cancellationToken ).ConfigureAwait( continueOnCapturedContext: false );
         }
     }
 }

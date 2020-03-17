@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ImmutableAttribute.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ImmutableAttribute.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ImmutableAttribute.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// 
+// Project: "Librainian", File: "ImmutableAttribute.cs" was last formatted by Protiguous on 2020/03/16 at 4:41 PM.
 
 namespace Librainian.Extensions {
 
@@ -49,7 +43,7 @@ namespace Librainian.Extensions {
 
     /// <summary>Without further ado, here's the ImmutableAttribute itself. Now.. does it work?</summary>
     /// <see cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
-    [AttributeUsage( AttributeTargets.Class | AttributeTargets.Struct )]
+    [AttributeUsage( validOn: AttributeTargets.Class | AttributeTargets.Struct )]
     [JsonObject]
     [MeansImplicitUse]
     public sealed class ImmutableAttribute : Attribute {
@@ -58,7 +52,7 @@ namespace Librainian.Extensions {
 
         private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( nameof( type ) );
+                throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
             return type.TypeHasAttribute<ImmutableAttribute>();
@@ -66,7 +60,7 @@ namespace Librainian.Extensions {
 
         private static Boolean IsWhiteListed( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( nameof( type ) );
+                throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
             // Boolean, int, etc.
@@ -91,7 +85,7 @@ namespace Librainian.Extensions {
             }
 
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
-            var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
+            var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( element: type );
 
             return immutableAttribute?.OnFaith == true;
         }
@@ -106,49 +100,49 @@ namespace Librainian.Extensions {
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
             if ( type is null ) {
-                throw new ArgumentNullException( nameof( type ) );
+                throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
             if ( type.BaseType is null ) {
-                throw new ArgumentNullException( nameof( type ) );
+                throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
             if ( whiteList is null ) {
-                throw new ArgumentNullException( nameof( whiteList ) );
+                throw new ArgumentNullException( paramName: nameof( whiteList ) );
             }
 
             var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 
-            if ( enumerable.Contains( type ) ) {
+            if ( enumerable.Contains( item: type ) ) {
                 return;
             }
 
-            if ( IsWhiteListed( type ) ) {
+            if ( IsWhiteListed( type: type ) ) {
                 return;
             }
 
             try {
-                VerifyTypeIsImmutable( type.BaseType, enumerable );
+                VerifyTypeIsImmutable( type: type.BaseType, whiteList: enumerable );
             }
             catch ( ImmutableFailureException ex ) {
-                throw new MutableBaseException( type, ex );
+                throw new MutableBaseException( type: type, inner: ex );
             }
 
             foreach ( var fieldInfo in type.GetAllDeclaredInstanceFields() ) {
                 if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) {
-                    throw new WritableFieldException( fieldInfo );
+                    throw new WritableFieldException( fieldInfo: fieldInfo );
                 }
 
                 // if it's marked with [Immutable], that's good enough, as we can be sure that these tests will all be applied to this type
-                if ( IsMarkedImmutable( fieldInfo.FieldType ) ) {
+                if ( IsMarkedImmutable( type: fieldInfo.FieldType ) ) {
                     continue;
                 }
 
                 try {
-                    VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable );
+                    VerifyTypeIsImmutable( type: fieldInfo.FieldType, whiteList: enumerable );
                 }
                 catch ( ImmutableFailureException ex ) {
-                    throw new MutableFieldException( fieldInfo, ex );
+                    throw new MutableFieldException( fieldInfo: fieldInfo, inner: ex );
                 }
             }
         }
@@ -157,18 +151,20 @@ namespace Librainian.Extensions {
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [NotNull] params Type[] whiteList ) {
             if ( assemblies is null ) {
-                throw new ArgumentNullException( nameof( assemblies ) );
+                throw new ArgumentNullException( paramName: nameof( assemblies ) );
             }
 
             if ( whiteList == null ) {
-                throw new ArgumentNullException( nameof( whiteList ) );
+                throw new ArgumentNullException( paramName: nameof( whiteList ) );
             }
 
-            var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;
+            var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type: type ) select type;
 
             foreach ( var type in typesMarkedImmutable ) {
-                VerifyTypeIsImmutable( type, whiteList );
+                VerifyTypeIsImmutable( type: type, whiteList: whiteList );
             }
         }
+
     }
+
 }

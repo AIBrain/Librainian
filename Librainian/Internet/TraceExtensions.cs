@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TraceExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "TraceExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TraceExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "Librainian", File: "TraceExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
 
 namespace Librainian.Internet {
 
@@ -57,31 +51,31 @@ namespace Librainian.Internet {
         public IEnumerable<TracertEntry> Tracert( [NotNull] String ipAddress, Int32 maxHops, Int32 timeout ) {
 
             // Ensure that the argument address is valid.
-            if ( !IPAddress.TryParse( ipAddress, out var address ) ) {
-                throw new ArgumentException( $"{ipAddress} is not a valid IP address." );
+            if ( !IPAddress.TryParse( ipString: ipAddress, address: out var address ) ) {
+                throw new ArgumentException( message: $"{ipAddress} is not a valid IP address." );
             }
 
             // Max hops should be at least one or else there won't be any data to return.
             if ( maxHops < 1 ) {
-                throw new ArgumentException( "Max hops can't be lower than 1." );
+                throw new ArgumentException( message: "Max hops can't be lower than 1." );
             }
 
             // Ensure that the timeout is not set to 0 or a negative number.
             if ( timeout < 1 ) {
-                throw new ArgumentException( "Timeout value must be higher than 0." );
+                throw new ArgumentException( message: "Timeout value must be higher than 0." );
             }
 
             var ping = new Ping();
-            var pingOptions = new PingOptions( 1, true );
+            var pingOptions = new PingOptions( ttl: 1, dontFragment: true );
             var replyTime = new Stopwatch();
             PingReply pingReply;
 
             do {
                 replyTime.Start();
 
-                pingReply = ping.Send( address, timeout, new Byte[] {
+                pingReply = ping.Send( address: address, timeout: timeout, buffer: new Byte[] {
                     0
-                }, pingOptions );
+                }, options: pingOptions );
 
                 replyTime.Stop();
 
@@ -91,7 +85,7 @@ namespace Librainian.Internet {
                     try {
 
                         //hostname = Dns.GetHostByAddress( reply.Address ).HostName; // Retrieve the hostname for the replied address.
-                        hostname = Dns.GetHostEntry( pingReply.Address ).HostName;
+                        hostname = Dns.GetHostEntry( address: pingReply.Address ).HostName;
                     }
                     catch ( SocketException ) {
                         /* No host available for that address. */
@@ -133,7 +127,7 @@ namespace Librainian.Internet {
             public Int64 ReplyTime { get; set; }
 
             public override String ToString() =>
-                $"{this.HopID} | {( String.IsNullOrEmpty( this.Hostname ) ? this.Address : this.Hostname + "[" + this.Address + "]" )} | {( this.ReplyStatus == IPStatus.TimedOut ? "Request Timed Out." : this.ReplyTime + " ms" )}";
+                $"{this.HopID} | {( String.IsNullOrEmpty( value: this.Hostname ) ? this.Address : this.Hostname + "[" + this.Address + "]" )} | {( this.ReplyStatus == IPStatus.TimedOut ? "Request Timed Out." : this.ReplyTime + " ms" )}";
         }
     }
 }

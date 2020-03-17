@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// Project: "Librainian", File: "ParsingExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
 
 namespace Librainian.Parsing {
 
@@ -1147,7 +1141,7 @@ namespace Librainian.Parsing {
                 return String.Empty;
             }
 
-            var builder = new StringBuilder( self.Length * repetitions + separator.Length * ( repetitions - 1 ) );
+            var builder = new StringBuilder( ( self.Length * repetitions ) + ( separator.Length * ( repetitions - 1 ) ) );
 
             for ( var i = 0; i < repetitions; ++i ) {
                 if ( i > 0 ) {
@@ -1433,7 +1427,7 @@ namespace Librainian.Parsing {
             var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 )threshold );
 
             //TODO votes.ForB ???
-            similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
+            similarity.Add( threshold - ( actualDamerauLevenshteinDistance / threshold ) );
 
             if ( stopwatch.Elapsed > timeout ) {
 
@@ -1453,7 +1447,7 @@ namespace Librainian.Parsing {
             }
 
             return FullSoundex( s ).PadRight( length, '0' ) // soundex is no shorter than
-                .Substring( 0, length ); // and no longer than length
+                                   .Substring( 0, length ); // and no longer than length
         }
 
         /// <summary>Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1 per <paramref name="separator" />.</summary>
@@ -1760,7 +1754,7 @@ namespace Librainian.Parsing {
             }
 
             var results = RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trimmed() )
-                .Where( ts => !String.IsNullOrEmpty( ts ) && !ts.Equals( ".", StringComparison.Ordinal ) );
+                                                      .Where( ts => !String.IsNullOrEmpty( ts ) && !ts.Equals( ".", StringComparison.Ordinal ) );
 
             return results.Select( Sentence.Parse );
         }
@@ -1855,7 +1849,7 @@ namespace Librainian.Parsing {
         [Pure]
         public static String[] ToWords( [CanBeNull] this String? sentence ) =>
             RegexByWordBreak.Value.Split( $"{Symbols.Singlespace}{sentence}{Symbols.Singlespace}" ).ToStrings( Symbols.Singlespace )
-                .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+                            .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
         [CanBeNull]
         [Pure]

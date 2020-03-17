@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "LocalDB.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "LocalDB.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "LocalDB.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "LocalDB.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
 
 namespace Librainian.Databases {
 
@@ -76,16 +70,16 @@ namespace Librainian.Databases {
         public TimeSpan WriteTimeout { get; }
 
         public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
-            if ( String.IsNullOrWhiteSpace( databaseName ) ) {
-                throw new ArgumentNullException( nameof( databaseName ) );
+            if ( String.IsNullOrWhiteSpace( value: databaseName ) ) {
+                throw new ArgumentNullException( paramName: nameof( databaseName ) );
             }
 
             if ( databaseLocation is null ) {
-                databaseLocation = new Folder( Environment.SpecialFolder.LocalApplicationData, Application.ProductName );
+                databaseLocation = new Folder( specialFolder: Environment.SpecialFolder.LocalApplicationData, subFolder: Application.ProductName );
             }
 
-            this.ReadTimeout = timeoutForReads.GetValueOrDefault( Seconds.Thirty );
-            this.WriteTimeout = timeoutForWrites.GetValueOrDefault( this.ReadTimeout + Seconds.Thirty );
+            this.ReadTimeout = timeoutForReads.GetValueOrDefault( defaultValue: Seconds.Thirty );
+            this.WriteTimeout = timeoutForWrites.GetValueOrDefault( defaultValue: this.ReadTimeout + Seconds.Thirty );
 
             this.DatabaseName = databaseName;
 
@@ -93,21 +87,24 @@ namespace Librainian.Databases {
 
             if ( !this.DatabaseLocation.Exists() ) {
                 this.DatabaseLocation.Create();
-                this.DatabaseLocation.Info.SetCompression( false );
+                this.DatabaseLocation.Info.SetCompression( compressed: false );
             }
 
             "Building SQL connection string...".Info();
 
-            this.DatabaseMdf = new Document( this.DatabaseLocation, $"{this.DatabaseName}.mdf" );
-            this.DatabaseLog = new Document( this.DatabaseLocation, $"{this.DatabaseName}_log.ldf" ); //TODO does localdb even use a log file?
+            this.DatabaseMdf = new Document( folder: this.DatabaseLocation, filename: $"{this.DatabaseName}.mdf" );
+            this.DatabaseLog = new Document( folder: this.DatabaseLocation, filename: $"{this.DatabaseName}_log.ldf" ); //TODO does localdb even use a log file?
 
             this.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog=master;Integrated Security=True;";
 
             if ( this.DatabaseMdf.Exists() == false ) {
-                using ( var connection = new SqlConnection( this.ConnectionString ) ) {
+                using ( var connection = new SqlConnection( connectionString: this.ConnectionString ) ) {
                     connection.Open();
                     var command = connection.CreateCommand();
-                    command.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdf.FullPath );
+
+                    command.CommandText = String.Format( format: "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", arg0: this.DatabaseName,
+                        arg1: this.DatabaseMdf.FullPath );
+
                     command.ExecuteNonQuery();
                 }
             }
@@ -115,7 +112,7 @@ namespace Librainian.Databases {
             this.ConnectionString =
                 $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPath};";
 
-            this.Connection = new SqlConnection( this.ConnectionString );
+            this.Connection = new SqlConnection( connectionString: this.ConnectionString );
 
             this.Connection.Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info();
 
@@ -132,14 +129,14 @@ namespace Librainian.Databases {
         public async Task DetachDatabaseAsync() {
             try {
                 if ( this.Connection.State == ConnectionState.Closed ) {
-                    await this.Connection.OpenAsync().ConfigureAwait( false );
+                    await this.Connection.OpenAsync().ConfigureAwait( continueOnCapturedContext: false );
                 }
 
                 using var cmd = this.Connection.CreateCommand();
 
                 if ( cmd != null ) {
-                    cmd.CommandText = String.Format( "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", this.DatabaseName );
-                    await cmd.ExecuteNonQueryAsync().ConfigureAwait( false );
+                    cmd.CommandText = String.Format( format: "ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; exec sp_detach_db N'{0}'", arg0: this.DatabaseName );
+                    await cmd.ExecuteNonQueryAsync().ConfigureAwait( continueOnCapturedContext: false );
                 }
             }
             catch ( SqlException exception ) {
@@ -150,6 +147,6 @@ namespace Librainian.Databases {
             }
         }
 
-        public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );
+        public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( timeout: this.ReadTimeout + this.WriteTimeout );
     }
 }

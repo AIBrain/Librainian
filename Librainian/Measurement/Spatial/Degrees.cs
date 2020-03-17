@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Degrees.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Degrees.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Degrees.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "Degrees.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Measurement.Spatial {
 
@@ -47,7 +41,7 @@ namespace Librainian.Measurement.Spatial {
 
     /// <summary>A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.</summary>
     /// <see cref="http://wikipedia.org/wiki/Degree_(angle)" />
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     [Immutable]
     public struct Degrees : IComparable<Degrees> {
@@ -65,7 +59,7 @@ namespace Librainian.Measurement.Spatial {
         public const Single MinimumValue = Single.Epsilon;
 
         /// <summary>One <see cref="Degrees" />.</summary>
-        public static readonly Degrees One = new Degrees( 1 );
+        public static readonly Degrees One = new Degrees( value: 1 );
 
         public Single Value {
             get => this._value;
@@ -89,7 +83,7 @@ namespace Librainian.Measurement.Spatial {
         //    this.Value = degrees;
         //    return true;
         //}
-        public static Degrees Combine( Degrees left, Single degrees ) => new Degrees( left.Value + degrees );
+        public static Degrees Combine( Degrees left, Single degrees ) => new Degrees( value: left.Value + degrees );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -97,53 +91,53 @@ namespace Librainian.Measurement.Spatial {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
+        public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( value: left.Value - right.Value ) < Double.Epsilon;
 
         public static implicit operator Decimal( Degrees degrees ) => ( Decimal )degrees.Value;
 
         public static implicit operator Double( Degrees degrees ) => degrees.Value;
 
-        public static implicit operator Radians( Degrees degrees ) => ToRadians( degrees );
+        public static implicit operator Radians( Degrees degrees ) => ToRadians( degrees: degrees );
 
         public static implicit operator Single( Degrees degrees ) => degrees.Value;
 
-        public static Degrees operator -( Degrees degrees ) => new Degrees( degrees.Value * -1f );
+        public static Degrees operator -( Degrees degrees ) => new Degrees( value: degrees.Value * -1f );
 
-        public static Degrees operator -( Degrees left, Degrees right ) => Combine( left, -right.Value );
+        public static Degrees operator -( Degrees left, Degrees right ) => Combine( left: left, degrees: -right.Value );
 
-        public static Degrees operator -( Degrees left, Single degrees ) => Combine( left, -degrees );
+        public static Degrees operator -( Degrees left, Single degrees ) => Combine( left: left, degrees: -degrees );
 
-        public static Boolean operator !=( Degrees left, Degrees right ) => !Equals( left, right );
+        public static Boolean operator !=( Degrees left, Degrees right ) => !Equals( left: left, right: right );
 
-        public static Degrees operator +( Degrees left, Degrees right ) => Combine( left, right.Value );
+        public static Degrees operator +( Degrees left, Degrees right ) => Combine( left: left, degrees: right.Value );
 
-        public static Degrees operator +( Degrees left, Single degrees ) => Combine( left, degrees );
+        public static Degrees operator +( Degrees left, Single degrees ) => Combine( left: left, degrees: degrees );
 
         public static Boolean operator <( Degrees left, Degrees right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Degrees left, Degrees right ) => Equals( left, right );
+        public static Boolean operator ==( Degrees left, Degrees right ) => Equals( left: left, right: right );
 
         public static Boolean operator >( Degrees left, Degrees right ) => left.Value > right.Value;
 
-        public static Radians ToRadians( Degrees degrees ) => new Radians( degrees.Value * DegreesToRadiansFactor );
+        public static Radians ToRadians( Degrees degrees ) => new Radians( value: degrees.Value * DegreesToRadiansFactor );
 
-        public static Radians ToRadians( Single degrees ) => new Radians( degrees * DegreesToRadiansFactor );
+        public static Radians ToRadians( Single degrees ) => new Radians( value: degrees * DegreesToRadiansFactor );
 
-        public Int32 CompareTo( Degrees other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Degrees other ) => this.Value.CompareTo( value: other.Value );
 
-        public Boolean Equals( Degrees other ) => Equals( this, other );
+        public Boolean Equals( Degrees other ) => Equals( left: this, right: other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
                 return default;
             }
 
-            return obj is Degrees degrees && Equals( this, degrees );
+            return obj is Degrees degrees && Equals( left: this, right: degrees );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public Radians ToRadians() => ToRadians( this );
+        public Radians ToRadians() => ToRadians( degrees: this );
 
         [Pure]
         public override String ToString() => $"{this.Value} °";

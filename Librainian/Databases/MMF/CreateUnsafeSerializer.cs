@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CreateUnsafeSerializer.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "CreateUnsafeSerializer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "CreateUnsafeSerializer.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
 
 namespace Librainian.Databases.MMF {
 
@@ -63,15 +57,15 @@ namespace Librainian.Databases.MMF {
         private Type Type { get; } = typeof( T );
 
         private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
-            sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
-            sb.Append( "{" );
+            sb.Append( value: $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
+            sb.Append( value: "{" );
 
-            sb.Append( @"
+            sb.Append( value: @"
                 fixed (byte* srcPtr = &bytes[0])
                 {" );
 
-            sb.Append( $"return *({typeFullName}*)srcPtr;" );
-            sb.Append( "}}" );
+            sb.Append( value: $"return *({typeFullName}*)srcPtr;" );
+            sb.Append( value: "}}" );
         }
 
         private Boolean CanGetSize() {
@@ -93,30 +87,30 @@ namespace Librainian.Databases.MMF {
                 }
             };
 
-            CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
+            CodeDomProvider provider = new CSharpCodeProvider( providerOptions: providerOptions );
             var compilerParameters = this.GetCompilerParameters();
 
-            return provider.CompileAssemblyFromSource( compilerParameters, this.GenerateCode() );
+            return provider.CompileAssemblyFromSource( options: compilerParameters, this.GenerateCode() );
         }
 
         [NotNull]
         private String GenerateCode() {
-            var typeFullName = this.Type.FullName.Replace( '+', '.' );
+            var typeFullName = this.Type.FullName.Replace( oldChar: '+', newChar: '.' );
 
             var sb = new StringBuilder();
-            sb.AppendLine( "using System;" );
+            sb.AppendLine( value: "using System;" );
             sb.AppendLine();
 
             var interfaceType = typeof( ISerializeDeserialize<T> );
 
-            sb.Append( $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
-            sb.Append( "{" );
-            sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
+            sb.Append( value: $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
+            sb.Append( value: "{" );
+            sb.AppendFormat( format: "public Boolean CanSerializeType(){{return true;}}" );
 
-            this.ObjectToBytesCode( sb, typeFullName );
-            BytesToObjectCode( sb, typeFullName );
+            this.ObjectToBytesCode( sb: sb, typeFullName: typeFullName );
+            BytesToObjectCode( sb: sb, typeFullName: typeFullName );
 
-            sb.Append( "}" );
+            sb.Append( value: "}" );
 
             return sb.ToString();
         }
@@ -126,9 +120,9 @@ namespace Librainian.Databases.MMF {
             var length = this._size;
 
             do {
-                this.MovePointers( sb );
-                this.SetPointerLength( length );
-                sb.AppendFormat( @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", this._ptrType, this._addCount / this._ptrSize );
+                this.MovePointers( sb: sb );
+                this.SetPointerLength( length: length );
+                sb.AppendFormat( format: @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", arg0: this._ptrType, arg1: this._addCount / this._ptrSize );
                 length -= this._ptrSize;
                 this._addCount += this._ptrSize;
             } while ( length > 0 );
@@ -144,8 +138,8 @@ namespace Librainian.Databases.MMF {
                 CompilerOptions = "/optimize /unsafe"
             };
 
-            cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
-            cParameters.ReferencedAssemblies.Add( this.Type.Assembly.Location );
+            cParameters.ReferencedAssemblies.Add( value: Assembly.GetExecutingAssembly().Location );
+            cParameters.ReferencedAssemblies.Add( value: this.Type.Assembly.Location );
 
             return cParameters;
         }
@@ -154,28 +148,28 @@ namespace Librainian.Databases.MMF {
             var modifer = this._addCount / this._ptrSize;
 
             if ( modifer >= this._ptrSize ) {
-                sb.Append( $"dest += {this._addCount};" );
-                sb.Append( $"src += {this._addCount};" );
+                sb.Append( value: $"dest += {this._addCount};" );
+                sb.Append( value: $"src += {this._addCount};" );
                 this._addCount = 0;
             }
         }
 
         private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
-            sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
-            sb.Append( "{" );
-            sb.Append( $"byte[] buffer = new byte[{this._size}];" );
+            sb.Append( value: $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
+            sb.Append( value: "{" );
+            sb.Append( value: $"byte[] buffer = new byte[{this._size}];" );
 
-            sb.Append( @"
+            sb.Append( value: @"
                 fixed (byte* destPtr = &buffer[0])
                 {
                     " );
 
-            sb.Append( "byte* src = (byte*)&srcObject;" );
-            sb.Append( "byte* dest = destPtr;" );
+            sb.Append( value: "byte* src = (byte*)&srcObject;" );
+            sb.Append( value: "byte* dest = destPtr;" );
 
-            this.GenerateMethodBodyCode( sb );
+            this.GenerateMethodBodyCode( sb: sb );
 
-            sb.Append( @"}
+            sb.Append( value: @"}
                 return buffer;}" );
         }
 
@@ -204,7 +198,7 @@ namespace Librainian.Databases.MMF {
                 return null;
             }
 
-            var checker = new ValueTypeCheck( typeof( T ) );
+            var checker = new ValueTypeCheck( objectType: typeof( T ) );
 
             if ( !checker.OnlyValueTypes() ) {
                 return null;
@@ -213,10 +207,10 @@ namespace Librainian.Databases.MMF {
             var res = this.CompileCode();
 
             if ( res.Errors.Count > 0 ) {
-                throw new SerializerException( res.Errors[ 0 ].ErrorText );
+                throw new SerializerException( message: res.Errors[ index: 0 ].ErrorText );
             }
 
-            return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
+            return ( ISerializeDeserialize<T> )res.CompiledAssembly.CreateInstance( typeName: "UnsafeConverter" );
         }
     }
 }

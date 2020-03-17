@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Shufflings.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Shufflings.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Shufflings.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "Shufflings.cs" was last formatted by Protiguous on 2020/03/16 at 2:53 PM.
 
 namespace Librainian.Collections.Extensions {
 
@@ -60,7 +54,7 @@ namespace Librainian.Collections.Extensions {
         /// <param name="array">     </param>
         /// <param name="iterations"></param>
         /// <example>Deck.Shuffle( 7 );</example>
-        [Obsolete( "Broken and untested. Just an idea to learn with. Meant to work with large arrays. See also Shuffle<List>()" )]
+        [Obsolete( "Broken and untested. Just an idea to learn with. Meant to work with *large* arrays. See also Shuffle<List>()" )]
         public static void Shuffle<T>( [NotNull] this T[] array, Int32 iterations = 1 ) {
             if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
@@ -127,7 +121,7 @@ namespace Librainian.Collections.Extensions {
 
         /// <summary>Take a buffer and scramble.</summary>
         /// <param name="buffer"></param>
-        /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
+        /// <remarks>Isn't this just a standard Fisher-Yates shuffle??</remarks>
         public static void Shuffle<T>( [NotNull] this T[] buffer ) {
             if ( buffer is null ) {
                 throw new ArgumentNullException( nameof( buffer ) );
@@ -138,9 +132,9 @@ namespace Librainian.Collections.Extensions {
             for ( var i = length - 1; i >= 0; i-- ) {
                 var a = 0.Next( length );
                 var b = 0.Next( length );
-                var (v1, v2) = (buffer[ a ], buffer[ b ]);
-                buffer[ a ] = v2;
-                buffer[ b ] = v1;
+                var (x, y) = (buffer[ a ], buffer[ b ]);
+                buffer[ a ] = y;
+                buffer[ b ] = x;
             }
         }
 
@@ -157,9 +151,9 @@ namespace Librainian.Collections.Extensions {
             for ( var i = length - 1; i >= 0; i-- ) {
                 var a = 0.Next( length );
                 var b = 0.Next( length );
-                var (v1, v2) = (list[ a ], list[ b ]);
-                list[ a ] = v2;
-                list[ b ] = v1;
+                var (x, y) = (list[ a ], list[ b ]);
+                list[ a ] = y;
+                list[ b ] = x;
             }
         }
 
@@ -202,7 +196,7 @@ namespace Librainian.Collections.Extensions {
                         }
 
                     case ShufflingType.ByHarker: {
-                            ShuffleByHarker( list, iterations, forHowLong, token );
+                            list.ShuffleByHarker( iterations, forHowLong, token );
 
                             break;
                         }
@@ -214,7 +208,7 @@ namespace Librainian.Collections.Extensions {
                         }
 
                     case ShufflingType.BestChoice: {
-                            ShuffleByHarker( list, iterations, forHowLong, token );
+                            list.ShuffleByHarker( iterations, forHowLong, token );
 
                             break;
                         }
@@ -294,7 +288,7 @@ namespace Librainian.Collections.Extensions {
         /// <param name="iterations">At least 1 iterations to be done over the whole list.</param>
         /// <param name="forHowLong">Or for how long to run.</param>
         /// <param name="token">Or until cancelled.</param>
-        public static void ShuffleByHarker<T>( [NotNull] IList<T> list, UInt32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? token = null ) {
+        public static void ShuffleByHarker<T>( [NotNull] this IList<T> list, UInt32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? token = null ) {
             if ( list is null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }

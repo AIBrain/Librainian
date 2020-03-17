@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Bits.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Bits.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Bits.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "Bits.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
 
 namespace Librainian.Maths {
 
@@ -50,29 +44,29 @@ namespace Librainian.Maths {
 
         private static UInt64 ToUInt64( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return BitConverter.ToUInt64( Order( value ), startIndex );
+            return BitConverter.ToUInt64( value: Order( value: value ), startIndex: startIndex );
         }
 
         [NotNull]
-        public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this Int16 value ) => Order( value: BitConverter.GetBytes( value: value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this UInt16 value ) => Order( value: BitConverter.GetBytes( value: value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this Int32 value ) => Order( value: BitConverter.GetBytes( value: value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this UInt32 value ) => Order( value: BitConverter.GetBytes( value: value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this Int64 value ) => Order( value: BitConverter.GetBytes( value: value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
+        public static Byte[] GetBytes( this UInt64 value ) => Order( value: BitConverter.GetBytes( value: value ) );
 
         [NotNull]
         public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
@@ -80,7 +74,7 @@ namespace Librainian.Maths {
         [NotNull]
         public static Byte[] Order( [NotNull] this Byte[] value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
             return IsLittleEndian ? value : value.Reverse().ToArray();
@@ -88,43 +82,43 @@ namespace Librainian.Maths {
 
         public static Int32 ToInt32( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return BitConverter.ToInt32( Order( value ), startIndex );
+            return BitConverter.ToInt32( value: Order( value: value ), startIndex: startIndex );
         }
 
         [NotNull]
         public static String ToString( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return BitConverter.ToString( Order( value ), startIndex );
+            return BitConverter.ToString( value: Order( value: value ), startIndex: startIndex );
         }
 
         public static UInt16 ToUInt16( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return BitConverter.ToUInt16( Order( value ), startIndex );
+            return BitConverter.ToUInt16( value: Order( value: value ), startIndex: startIndex );
         }
 
         public static UInt256 ToUInt256( [NotNull] this Byte[] value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return new UInt256( value );
+            return new UInt256( value: value );
         }
 
         public static UInt32 ToUInt32( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return BitConverter.ToUInt32( Order( value ), startIndex );
+            return BitConverter.ToUInt32( value: Order( value: value ), startIndex: startIndex );
         }
     }
 }

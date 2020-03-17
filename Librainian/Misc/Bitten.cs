@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Bitten.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Bitten.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Bitten.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Bitten.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Misc {
 
@@ -47,10 +41,10 @@ namespace Librainian.Misc {
     using Newtonsoft.Json;
 
     /// <summary>Wow, this an old old idea that didn't work. Please don't use it in production! I just don't have the heart to delete it yet.</summary>
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout( layoutKind: LayoutKind.Sequential )]
     [JsonObject]
-    [ComVisible( true )]
-    [Obsolete( "untested" )]
+    [ComVisible( visibility: true )]
+    [Obsolete( message: "untested" )]
     public struct Bitten {
 
         public static readonly Bitten Empty;
@@ -73,14 +67,14 @@ namespace Librainian.Misc {
 
         /// Creates a new guid from an array of bytes.
         public Bitten( [NotNull] IList<Byte> b ) {
-            this._d = b[ 0 ];
-            this._e = b[ 1 ];
-            this._f = b[ 2 ];
-            this._g = b[ 3 ];
-            this._h = b[ 4 ];
-            this._i = b[ 5 ];
-            this._j = b[ 6 ];
-            this._k = b[ 7 ];
+            this._d = b[ index: 0 ];
+            this._e = b[ index: 1 ];
+            this._f = b[ index: 2 ];
+            this._g = b[ index: 3 ];
+            this._h = b[ index: 4 ];
+            this._i = b[ index: 5 ];
+            this._j = b[ index: 6 ];
+            this._k = b[ index: 7 ];
         }
 
         public Bitten( Byte d, Byte e, Byte f, Byte g, Byte h, Byte i, Byte j, Byte k ) {
@@ -135,18 +129,18 @@ namespace Librainian.Misc {
         // digit. (That is 8 hex digits, followed by 4, then 4, then 4, then 12) such as: "CA761232-ED42-11CE-BACD-00AA0057B223"
         public Bitten( [NotNull] String g ) {
             if ( g is null ) {
-                throw new ArgumentNullException( nameof( g ) );
+                throw new ArgumentNullException( paramName: nameof( g ) );
             }
 
-            this = Parse( g );
+            this = Parse( input: g );
         }
 
         public static Bitten Parse( [NotNull] String input ) {
-            if ( String.IsNullOrWhiteSpace( input ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
+            if ( String.IsNullOrWhiteSpace( value: input ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( input ) );
             }
 
-            return Guid.TryParse( input, out var result ) ? new Bitten( result.ToByteArray().Skip( 8 ).ToList() ) : Empty;
+            return Guid.TryParse( input: input, result: out var result ) ? new Bitten( b: result.ToByteArray().Skip( count: 8 ).ToList() ) : Empty;
         }
 
         // Returns an unsigned byte array containing the GUID.
@@ -181,21 +175,21 @@ namespace Librainian.Misc {
 
         private static Int32 HexsToChars( [NotNull] IList<Char> guidChars, Int32 offset, Int32 a, Int32 b, Boolean hex = false ) {
             if ( hex ) {
-                guidChars[ offset++ ] = '0';
-                guidChars[ offset++ ] = 'x';
+                guidChars[ index: offset++ ] = '0';
+                guidChars[ index: offset++ ] = 'x';
             }
 
-            guidChars[ offset++ ] = HexToChar( a >> 4 );
-            guidChars[ offset++ ] = HexToChar( a );
+            guidChars[ index: offset++ ] = HexToChar( a: a >> 4 );
+            guidChars[ index: offset++ ] = HexToChar( a: a );
 
             if ( hex ) {
-                guidChars[ offset++ ] = ',';
-                guidChars[ offset++ ] = '0';
-                guidChars[ offset++ ] = 'x';
+                guidChars[ index: offset++ ] = ',';
+                guidChars[ index: offset++ ] = '0';
+                guidChars[ index: offset++ ] = 'x';
             }
 
-            guidChars[ offset++ ] = HexToChar( b >> 4 );
-            guidChars[ offset++ ] = HexToChar( b );
+            guidChars[ index: offset++ ] = HexToChar( a: b >> 4 );
+            guidChars[ index: offset++ ] = HexToChar( a: b );
 
             return offset;
         }
@@ -207,19 +201,19 @@ namespace Librainian.Misc {
             var offset = 0;
 
             // [{|(]dddddddd[-]dddd[-]dddd[-]dddd[-]dddddddddddd[}|)]
-            offset = HexsToChars( guidChars, offset, this._d, this._e );
+            offset = HexsToChars( guidChars: guidChars, offset: offset, a: this._d, b: this._e );
 
             if ( true ) {
                 guidChars[ offset++ ] = '-';
             }
 
-            offset = HexsToChars( guidChars, offset, this._f, this._g );
-            offset = HexsToChars( guidChars, offset, this._h, this._i );
+            offset = HexsToChars( guidChars: guidChars, offset: offset, a: this._f, b: this._g );
+            offset = HexsToChars( guidChars: guidChars, offset: offset, a: this._h, b: this._i );
 
             // ReSharper disable once RedundantAssignment
-            offset = HexsToChars( guidChars, offset, this._j, this._k );
+            offset = HexsToChars( guidChars: guidChars, offset: offset, a: this._j, b: this._k );
 
-            return new String( guidChars, 0, strLength );
+            return new String( value: guidChars, startIndex: 0, length: strLength );
         }
 
         public override Boolean Equals( Object obj ) {
@@ -231,7 +225,7 @@ namespace Librainian.Misc {
                 return default;
             }
 
-            return this.Equals( ( Bitten )obj );
+            return this.Equals( g: ( Bitten )obj );
         }
 
         public override Int32 GetHashCode() {

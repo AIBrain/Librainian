@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SmtpClientExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "SmtpClientExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SmtpClientExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "Librainian", File: "SmtpClientExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
 
 namespace Librainian.Internet {
 
@@ -65,25 +59,26 @@ namespace Librainian.Internet {
             // Validate we're being used with a real smtpClient. The rest of the arg validation will
             // happen in the call to sendAsync.
             if ( smtpClient is null ) {
-                throw new ArgumentNullException( nameof( smtpClient ) );
+                throw new ArgumentNullException( paramName: nameof( smtpClient ) );
             }
 
             // Create a TaskCompletionSource to represent the operation
-            var tcs = new TaskCompletionSource<Object>( userToken, TaskCreationOptions.RunContinuationsAsynchronously );
+            var tcs = new TaskCompletionSource<Object>( state: userToken, creationOptions: TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Register a handler that will transfer completion results to the TCS Task
-            void Handler( Object sender, AsyncCompletedEventArgs e ) => tcs.HandleCompletion( e, () => null, () => smtpClient.SendCompleted -= Handler );
+            void Handler( Object sender, AsyncCompletedEventArgs e ) =>
+                tcs.HandleCompletion( e: e, getResult: () => null, unregisterHandler: () => smtpClient.SendCompleted -= Handler );
 
             smtpClient.SendCompleted += Handler;
 
             // Try to start the async operation. If starting it fails (due to parameter validation)
             // unregister the handler before allowing the exception to propagate.
             try {
-                sendAsync( tcs );
+                sendAsync( obj: tcs );
             }
             catch ( Exception exc ) {
                 smtpClient.SendCompleted -= Handler;
-                tcs.TrySetException( exc );
+                tcs.TrySetException( exception: exc );
             }
 
             // Return the task to represent the asynchronous operation
@@ -98,10 +93,10 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] MailMessage message, [CanBeNull] Object userToken ) {
             if ( message == null ) {
-                throw new ArgumentNullException( nameof( message ) );
+                throw new ArgumentNullException( paramName: nameof( message ) );
             }
 
-            return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( message, tcs ) );
+            return SendTaskCore( smtpClient: smtpClient, userToken: userToken, sendAsync: tcs => smtpClient.SendAsync( message: message, userToken: tcs ) );
         }
 
         /// <summary>Sends an e-mail message asynchronously.</summary>
@@ -115,15 +110,16 @@ namespace Librainian.Internet {
         [CanBeNull]
         public static Task SendTask( [NotNull] this SmtpClient smtpClient, [NotNull] String from, [NotNull] String recipients, [CanBeNull] String? subject,
             [CanBeNull] String? body, [CanBeNull] Object userToken ) {
-            if ( String.IsNullOrWhiteSpace( from ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( from ) );
+            if ( String.IsNullOrWhiteSpace( value: from ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( from ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( recipients ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( recipients ) );
+            if ( String.IsNullOrWhiteSpace( value: recipients ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( recipients ) );
             }
 
-            return SendTaskCore( smtpClient, userToken, tcs => smtpClient.SendAsync( from, recipients, subject, body, tcs ) );
+            return SendTaskCore( smtpClient: smtpClient, userToken: userToken,
+                sendAsync: tcs => smtpClient.SendAsync( @from: from, recipients: recipients, subject: subject, body: body, userToken: tcs ) );
         }
     }
 }

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Settings.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Settings.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Settings.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Settings.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
 
 namespace Librainian.Persistence {
 
@@ -51,30 +45,30 @@ namespace Librainian.Persistence {
 
         [CanBeNull]
         public static Boolean? GetBoolean( TrimmedString location, TrimmedString key ) {
-            var result = GetObject( location, key );
+            var result = GetObject( location: location, key: key );
 
-            return result is null ? ( Boolean? )null : Convert.ToBoolean( result );
+            return result is null ? ( Boolean? )null : Convert.ToBoolean( value: result );
         }
 
         [CanBeNull]
         public static Byte? GetByte( TrimmedString location, TrimmedString key ) {
-            var result = GetObject( location, key );
+            var result = GetObject( location: location, key: key );
 
-            return result is null ? ( Byte? )null : Convert.ToByte( result );
+            return result is null ? ( Byte? )null : Convert.ToByte( value: result );
         }
 
         [CanBeNull]
         public static Int32? GetInt32( TrimmedString location, TrimmedString key ) {
-            var result = GetObject( location, key );
+            var result = GetObject( location: location, key: key );
 
-            return result is null ? ( Int32? )null : Convert.ToInt32( result );
+            return result is null ? ( Int32? )null : Convert.ToInt32( value: result );
         }
 
         [CanBeNull]
         public static Int64? GetInt64( TrimmedString location, TrimmedString key ) {
-            var result = GetObject( location, key );
+            var result = GetObject( location: location, key: key );
 
-            return result is null ? ( Int64? )null : Convert.ToInt64( result );
+            return result is null ? ( Int64? )null : Convert.ToInt64( value: result );
         }
 
         /// <summary>
@@ -84,7 +78,7 @@ namespace Librainian.Persistence {
         /// <param name="key">     </param>
         /// <returns></returns>
         [CanBeNull]
-        public static Object? GetObject( TrimmedString location, TrimmedString key ) => AppRegistry.Get( location, key );
+        public static Object? GetObject( TrimmedString location, TrimmedString key ) => AppRegistry.Get( folder: location, key: key );
 
         /// <summary>
         ///     <para>Gets the value of the current user's software's company's application's folder's key's subkey.</para>
@@ -94,10 +88,11 @@ namespace Librainian.Persistence {
         /// <param name="subkey"></param>
         /// <returns></returns>
         [CanBeNull]
-        public static Object? GetObject( TrimmedString location, TrimmedString key, TrimmedString subkey ) => AppRegistry.Get( location, key, subkey );
+        public static Object? GetObject( TrimmedString location, TrimmedString key, TrimmedString subkey ) => AppRegistry.Get( folder: location, key: key, subkey: subkey );
 
         [CanBeNull]
-        public static String? GetString( TrimmedString location, TrimmedString key ) => Convert.ToString( GetObject( location, key ) ).NullIf( String.Empty );
+        public static String? GetString( TrimmedString location, TrimmedString key ) =>
+            Convert.ToString( value: GetObject( location: location, key: key ) ).NullIf( right: String.Empty );
 
         /// <summary>
         ///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>
@@ -108,65 +103,65 @@ namespace Librainian.Persistence {
         public static void Set( TrimmedString folder, TrimmedString key, [CanBeNull] Object? value ) {
             try {
                 if ( folder.IsEmpty() ) {
-                    throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
+                    throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
                 }
 
                 if ( key.IsEmpty() ) {
-                    throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+                    throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
                 }
 
                 if ( value is null ) {
-                    AppRegistry.Set( folder, key, null, RegistryValueKind.DWord );
+                    AppRegistry.Set<Int32?>( folder: folder, key: key, value: default, kind: RegistryValueKind.DWord );
 
                     return;
                 }
 
                 switch ( value ) {
                     case String s: {
-                            AppRegistry.Set( folder, key, s );
+                            AppRegistry.Set( folder: folder, key: key, value: s );
 
                             break;
                         }
 
                     case UInt64 u64: {
-                            AppRegistry.Set( folder, key, u64, RegistryValueKind.QWord );
+                            AppRegistry.Set( folder: folder, key: key, value: u64, kind: RegistryValueKind.QWord );
 
                             break;
                         }
 
                     case Int64 i64: {
-                            AppRegistry.Set( folder, key, i64, RegistryValueKind.QWord );
+                            AppRegistry.Set( folder: folder, key: key, value: i64, kind: RegistryValueKind.QWord );
 
                             break;
                         }
 
                     case UInt32 u32: {
-                            AppRegistry.Set( folder, key, u32, RegistryValueKind.DWord );
+                            AppRegistry.Set( folder: folder, key: key, value: u32, kind: RegistryValueKind.DWord );
 
                             break;
                         }
 
                     case Int32 i32: {
-                            AppRegistry.Set( folder, key, i32, RegistryValueKind.DWord );
+                            AppRegistry.Set( folder: folder, key: key, value: i32, kind: RegistryValueKind.DWord );
 
                             break;
                         }
 
                     case Boolean b: {
-                            AppRegistry.Set( folder, key, b ? 1 : 0, RegistryValueKind.DWord );
+                            AppRegistry.Set( folder: folder, key: key, value: b ? 1 : 0, kind: RegistryValueKind.DWord );
 
                             break;
                         }
 
                     case Enum e: {
-                            AppRegistry.Set( folder, key, e, RegistryValueKind.DWord );
+                            AppRegistry.Set( folder: folder, key: key, value: e, kind: RegistryValueKind.DWord );
 
                             break;
                         }
 
                     default: {
-                            $"Registry: unknown type {value}.".Log( true );
-                            AppRegistry.Set( folder, key, value, RegistryValueKind.Unknown );
+                            $"Registry: unknown type {value}.".Log( breakinto: true );
+                            AppRegistry.Set( folder: folder, key: key, value: value, kind: RegistryValueKind.Unknown );
 
                             break;
                         }

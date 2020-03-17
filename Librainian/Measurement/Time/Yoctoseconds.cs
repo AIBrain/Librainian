@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Yoctoseconds.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Yoctoseconds.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Yoctoseconds.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// Project: "Librainian", File: "Yoctoseconds.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -52,7 +46,7 @@ namespace Librainian.Measurement.Time {
     /// <summary></summary>
     /// <see cref="http://wikipedia.org/wiki/Yoctosecond" />
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct Yoctoseconds : IComparable<Yoctoseconds>, IQuantityOfTime {
 
@@ -60,33 +54,33 @@ namespace Librainian.Measurement.Time {
         public const UInt16 InOneZeptosecond = 1000;
 
         /// <summary><see cref="Five" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Five = new Yoctoseconds( 5 );
+        public static Yoctoseconds Five = new Yoctoseconds( value: 5 );
 
         /// <summary><see cref="One" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds One = new Yoctoseconds( 1 );
+        public static Yoctoseconds One = new Yoctoseconds( value: 1 );
 
         /// <summary><see cref="Seven" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Seven = new Yoctoseconds( 7 );
+        public static Yoctoseconds Seven = new Yoctoseconds( value: 7 );
 
         /// <summary><see cref="Ten" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Ten = new Yoctoseconds( 10 );
+        public static Yoctoseconds Ten = new Yoctoseconds( value: 10 );
 
         /// <summary><see cref="Thirteen" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Thirteen = new Yoctoseconds( 13 );
+        public static Yoctoseconds Thirteen = new Yoctoseconds( value: 13 );
 
         /// <summary><see cref="Thirty" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Thirty = new Yoctoseconds( 30 );
+        public static Yoctoseconds Thirty = new Yoctoseconds( value: 30 );
 
         /// <summary><see cref="Three" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Three = new Yoctoseconds( 3 );
+        public static Yoctoseconds Three = new Yoctoseconds( value: 3 );
 
         /// <summary><see cref="Two" /><see cref="Yoctoseconds" />.</summary>
-        public static Yoctoseconds Two = new Yoctoseconds( 2 );
+        public static Yoctoseconds Two = new Yoctoseconds( value: 2 );
 
         /// <summary></summary>
-        public static Yoctoseconds Zero = new Yoctoseconds( 0 );
+        public static Yoctoseconds Zero = new Yoctoseconds( value: 0 );
 
-        public static Rational InOneSecond { get; } = new BigInteger( 10E24 );
+        public static Rational InOneSecond { get; } = new BigInteger( value: 10E24 );
 
         [JsonProperty]
         public Rational Value { get; }
@@ -99,9 +93,9 @@ namespace Librainian.Measurement.Time {
 
         public Yoctoseconds( BigInteger value ) => this.Value = value;
 
-        public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
+        public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left: left, yoctoseconds: right.Value );
 
-        public static Yoctoseconds Combine( Yoctoseconds left, Rational yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
+        public static Yoctoseconds Combine( Yoctoseconds left, Rational yoctoseconds ) => new Yoctoseconds( value: left.Value + yoctoseconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -114,68 +108,68 @@ namespace Librainian.Measurement.Time {
         /// <summary>Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.</summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
-        public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
+        public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds: yoctoseconds );
 
         [NotNull]
-        public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( yoctoseconds );
+        public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( planckTimes: yoctoseconds );
 
         /// <summary>Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.</summary>
         /// <param name="yoctoseconds"></param>
         /// <returns></returns>
         public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
 
-        public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new Yoctoseconds( yoctoseconds.Value * -1 );
+        public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new Yoctoseconds( value: yoctoseconds.Value * -1 );
 
-        public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left, -right );
+        public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left: left, right: -right );
 
-        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
+        public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left: left, yoctoseconds: ( Rational )( -seconds ) );
 
-        public static Boolean operator !=( Yoctoseconds left, Yoctoseconds right ) => !Equals( left, right );
+        public static Boolean operator !=( Yoctoseconds left, Yoctoseconds right ) => !Equals( left: left, right: right );
 
-        public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
+        public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left: left, right: right );
 
-        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, ( Rational )yoctoseconds );
+        public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left: left, yoctoseconds: ( Rational )yoctoseconds );
 
         public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Yoctoseconds left, Yoctoseconds right ) => Equals( left, right );
+        public static Boolean operator ==( Yoctoseconds left, Yoctoseconds right ) => Equals( left: left, right: right );
 
         public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+        public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( value: yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-        public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other: other.Value );
 
-        public Boolean Equals( Yoctoseconds other ) => Equals( this, other );
+        public Boolean Equals( Yoctoseconds other ) => Equals( left: this, right: other );
 
         public override Boolean Equals( Object? obj ) {
             if ( obj is null ) {
                 return default;
             }
 
-            return obj is Yoctoseconds yoctoseconds && this.Equals( yoctoseconds );
+            return obj is Yoctoseconds yoctoseconds && this.Equals( other: yoctoseconds );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-        public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+        public PlanckTimes ToPlanckTimes() => new PlanckTimes( value: this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-        public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
+        public Seconds ToSeconds() => new Seconds( value: this.Value * InOneSecond );
 
         public override String ToString() {
             if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
                 var whole = this.Value.WholePart;
 
-                return $"{whole} {whole.PluralOf( "ys" )}";
+                return $"{whole} {whole.PluralOf( singular: "ys" )}";
             }
 
             var dec = ( Decimal )this.Value;
 
-            return $"{dec} {dec.PluralOf( "ys" )}";
+            return $"{dec} {dec.PluralOf( singular: "ys" )}";
         }
 
         public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value / InOneZeptosecond );
+        public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( value: this.Value / InOneZeptosecond );
     }
 }

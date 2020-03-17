@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CountDownWatch.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "CountDownWatch.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CountDownWatch.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "CountDownWatch.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -47,7 +41,7 @@ namespace Librainian.Measurement.Time {
     using Threading;
 
     /// <summary>The 'reverse' of the Stopwatch class. //TODO needs unit testing.</summary>
-    [JsonObject( MemberSerialization.Fields )]
+    [JsonObject( memberSerialization: MemberSerialization.Fields )]
     public class CountDownWatch {
 
         [NotNull]
@@ -72,11 +66,11 @@ namespace Librainian.Measurement.Time {
         /// <param name="liftoff">Action to invoke when countdown reaches zero.</param>
         public CountDownWatch( TimeSpan countdown, [CanBeNull] Action liftoff = null ) {
             if ( countdown < TimeSpan.Zero ) {
-                throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." );
+                throw new ArgumentOutOfRangeException( paramName: nameof( countdown ), message: "Must be a positive value." );
             }
 
             this.Countdown = countdown;
-            this.TargetTime = DateTime.UtcNow.Add( this.Countdown );
+            this.TargetTime = DateTime.UtcNow.Add( value: this.Countdown );
 
             this.Liftoff = () => {
                 try {
@@ -91,24 +85,24 @@ namespace Librainian.Measurement.Time {
 
         public TimeSpan Remaining() {
             if ( this.IsRunning ) {
-                return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted );
+                return this.Countdown.Subtract( ts: DateTime.UtcNow - this.WhenStarted );
             }
 
             if ( this.HasLaunched ) {
-                return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted );
+                return this.Countdown.Subtract( ts: this.WhenStopped - this.WhenStarted );
             }
 
-            throw new InvalidOperationException( "???" );
+            throw new InvalidOperationException( message: "???" );
         }
 
         public void Start() {
             this.WhenStarted = DateTime.UtcNow;
             this.IsRunning = true;
 
-            this.Timer = FluentTimer.Start( this.Countdown.Create( () => {
+            this.Timer = this.Countdown.Create( onTick: () => {
                 this.Stop();
                 this.Liftoff();
-            } ).Once() );
+            } ).Once().Begin();
         }
 
         public void Stop() {

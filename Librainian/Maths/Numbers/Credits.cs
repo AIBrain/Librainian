@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Credits.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Credits.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Credits.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "Librainian", File: "Credits.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -49,7 +43,7 @@ namespace Librainian.Maths.Numbers {
     ///     <para>Keep count of credits, current, and lifetime.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     public class Credits {
 
         /// <summary>ONLY used in the getter and setter.</summary>
@@ -61,18 +55,18 @@ namespace Librainian.Maths.Numbers {
         private UInt64 _lifetimeCredits;
 
         /// <summary>No credits.</summary>
-        public static readonly Credits Zero = new Credits( 0, 0 );
+        public static readonly Credits Zero = new Credits( currentCredits: 0, lifetimeCredits: 0 );
 
         public UInt64 CurrentCredits {
-            get => Thread.VolatileRead( ref this._currentCredits );
+            get => Thread.VolatileRead( address: ref this._currentCredits );
 
-            private set => Thread.VolatileWrite( ref this._currentCredits, value );
+            private set => Thread.VolatileWrite( address: ref this._currentCredits, value: value );
         }
 
         public UInt64 LifetimeCredits {
-            get => Thread.VolatileRead( ref this._lifetimeCredits );
+            get => Thread.VolatileRead( address: ref this._lifetimeCredits );
 
-            private set => Thread.VolatileWrite( ref this._lifetimeCredits, value );
+            private set => Thread.VolatileWrite( address: ref this._lifetimeCredits, value: value );
         }
 
         public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
@@ -83,14 +77,14 @@ namespace Librainian.Maths.Numbers {
         [NotNull]
         public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
+                throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
+                throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
-            return new Credits( left.CurrentCredits + right.CurrentCredits, left.LifetimeCredits + right.LifetimeCredits );
+            return new Credits( currentCredits: left.CurrentCredits + right.CurrentCredits, lifetimeCredits: left.LifetimeCredits + right.LifetimeCredits );
         }
 
         public void AddCredits( UInt64 credits = 1 ) {
@@ -99,7 +93,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         [NotNull]
-        public Credits Clone() => new Credits( this.CurrentCredits, this.LifetimeCredits );
+        public Credits Clone() => new Credits( currentCredits: this.CurrentCredits, lifetimeCredits: this.LifetimeCredits );
 
         public void SubtractCredits( UInt64 credits = 1 ) {
             var currentcredits = ( Int64 )this.CurrentCredits;

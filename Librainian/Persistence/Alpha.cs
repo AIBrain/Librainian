@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Alpha.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Alpha.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Alpha.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "Librainian", File: "Alpha.cs" was last formatted by Protiguous on 2020/03/16 at 3:01 PM.
 
 namespace Librainian.Persistence {
 
@@ -121,8 +115,9 @@ namespace Librainian.Persistence {
             public static PersistTable<String, String> Root { get; }
 
             /// <summary>Where the main indexes will be stored.</summary>
-            public static Folder RootPath { get; } = new Folder( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
-                Path.Combine( nameof( Storage ), nameof( Root ) ) ) );
+            public static Folder RootPath { get; } =
+                new Folder( fullPath: Path.Combine( path1: Environment.GetFolderPath( folder: Environment.SpecialFolder.CommonApplicationData ),
+                    path2: Path.Combine( path1: nameof( Storage ), path2: nameof( Root ) ) ) );
 
             static Storage() {
 
@@ -130,11 +125,11 @@ namespace Librainian.Persistence {
                     RootPath.Create();
 
                     if ( !RootPath.Exists() ) {
-                        throw new DirectoryNotFoundException( RootPath.FullPath );
+                        throw new DirectoryNotFoundException( message: RootPath.FullPath );
                     }
                 }
 
-                Root = new PersistTable<String, String>( RootPath );
+                Root = new PersistTable<String, String>( folder: RootPath );
             }
 
             private static Boolean DiscoverLocalResources() {
@@ -182,10 +177,10 @@ namespace Librainian.Persistence {
             [NotNull]
             public static String BuildKey<T>( [NotNull] params T[] keys ) {
                 if ( keys is null ) {
-                    throw new ArgumentNullException( nameof( keys ) );
+                    throw new ArgumentNullException( paramName: nameof( keys ) );
                 }
 
-                return keys.ToStrings( Symbols.TriplePipes );
+                return keys.ToStrings( separator: Symbols.TriplePipes );
             }
 
             public static TaskStatus? GetLocalDiscoveryStatus() => LocalDiscoveryTask?.Status;
@@ -200,9 +195,9 @@ namespace Librainian.Persistence {
             public static async Task Initialize( CancellationToken? localToken = null, CancellationToken? remoteToken = null ) {
                 try {
                     InitializeTimeTracker.Started = DateTime.UtcNow;
-                    LocalDiscoveryTask = Task.Run( DiscoverLocalResources, localToken ?? LocalDiscoveryCancellationToken );
-                    RemoteDiscoveryTask = Task.Run( DiscoverRemoteResources, remoteToken ?? RemoteDiscoveryCancellationToken );
-                    await Task.WhenAll( LocalDiscoveryTask, RemoteDiscoveryTask ).ConfigureAwait( false );
+                    LocalDiscoveryTask = Task.Run( function: DiscoverLocalResources, cancellationToken: localToken ?? LocalDiscoveryCancellationToken );
+                    RemoteDiscoveryTask = Task.Run( function: DiscoverRemoteResources, cancellationToken: remoteToken ?? RemoteDiscoveryCancellationToken );
+                    await Task.WhenAll( LocalDiscoveryTask, RemoteDiscoveryTask ).ConfigureAwait( continueOnCapturedContext: false );
                 }
                 catch ( Exception exception ) {
                     exception.Log();

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "StreamString.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "StreamString.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "StreamString.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// Project: "Librainian", File: "StreamString.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
 
 namespace Librainian.OperatingSystem.Streams {
 
@@ -62,22 +56,22 @@ namespace Librainian.OperatingSystem.Streams {
             var len = this.IOStream.ReadByte() * 256;
             len += this.IOStream.ReadByte();
             var inBuffer = new Byte[ len ];
-            this.IOStream.Read( inBuffer, 0, len );
+            this.IOStream.Read( buffer: inBuffer, offset: 0, count: len );
 
-            return this.StreamEncoding.GetString( inBuffer );
+            return this.StreamEncoding.GetString( bytes: inBuffer );
         }
 
         public Int32 WriteString( [NotNull] String outString ) {
-            var outBuffer = this.StreamEncoding.GetBytes( outString );
+            var outBuffer = this.StreamEncoding.GetBytes( s: outString );
             var len = outBuffer.Length;
 
             if ( len > UInt16.MaxValue ) {
                 len = UInt16.MaxValue;
             }
 
-            this.IOStream.WriteByte( ( Byte )( len / 256 ) );
-            this.IOStream.WriteByte( ( Byte )( len & 255 ) );
-            this.IOStream.Write( outBuffer, 0, len );
+            this.IOStream.WriteByte( value: ( Byte )( len / 256 ) );
+            this.IOStream.WriteByte( value: ( Byte )( len & 255 ) );
+            this.IOStream.Write( buffer: outBuffer, offset: 0, count: len );
             this.IOStream.Flush();
 
             return outBuffer.Length + 2;

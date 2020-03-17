@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "HistogramaDesenat.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "HistogramaDesenat.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "HistogramaDesenat.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "Librainian", File: "HistogramaDesenat.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
 
 namespace Librainian.Controls {
 
@@ -68,15 +62,15 @@ namespace Librainian.Controls {
 
         private Single _myYUnit;
 
-        [Category( "Histogram Options" )]
-        [Description( "The color used within the control" )]
+        [Category( category: "Histogram Options" )]
+        [Description( description: "The color used within the control" )]
         public Color DisplayColor { get; } = Color.Black;
 
         //this gives the vertical unit used to scale our values
         //this gives the horizontal unit used to scale our values
         //the offset, in pixels, from the control margins.
-        [Category( "Histogram Options" )]
-        [Description( "The distance from the margins for the histogram" )]
+        [Category( category: "Histogram Options" )]
+        [Description( description: "The distance from the margins for the histogram" )]
         public Int32 Offset {
             set {
                 if ( value > 0 ) {
@@ -87,7 +81,7 @@ namespace Librainian.Controls {
             get => this._myOffset;
         }
 
-        private Font MyFont { get; } = new Font( "Tahoma", 10 );
+        private Font MyFont { get; } = new Font( familyName: "Tahoma", emSize: 10 );
 
         public HistogramaDesenat() {
 
@@ -110,11 +104,11 @@ namespace Librainian.Controls {
         /// <returns>The maximum value</returns>
         private Int64 GetMaxim( [NotNull] IEnumerable<Int64> vals ) {
             if ( vals == null ) {
-                throw new ArgumentNullException( nameof( vals ) );
+                throw new ArgumentNullException( paramName: nameof( vals ) );
             }
 
             if ( this._myIsDrawing ) {
-                return vals.Concat( new Int64[] {
+                return vals.Concat( second: new Int64[] {
                     0
                 } ).Max();
             }
@@ -131,37 +125,40 @@ namespace Librainian.Controls {
                 return;
             }
 
-            using var displayBrush = new SolidBrush( this.DisplayColor );
-            using var myPen = new Pen( displayBrush, this._myXUnit );
+            using var displayBrush = new SolidBrush( color: this.DisplayColor );
+            using var myPen = new Pen( brush: displayBrush, width: this._myXUnit );
 
             for ( var i = 0; i < this._myValues.Length; i++ ) {
 
                 //We draw each line
-                e.Graphics.DrawLine( myPen, new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset ),
-                    new PointF( this._myOffset + i * this._myXUnit, this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
+                e.Graphics.DrawLine( pen: myPen, pt1: new PointF( x: this._myOffset + i * this._myXUnit, y: this.Height - this._myOffset ),
+                    pt2: new PointF( x: this._myOffset + i * this._myXUnit, y: this.Height - this._myOffset - this._myValues[ i ] * this._myYUnit ) );
 
                 //We plot the coresponding index for the maximum value.
                 if ( this._myValues[ i ] != this._myMaxValue ) {
                     continue;
                 }
 
-                var mySize = e.Graphics.MeasureString( i.ToString(), this.MyFont );
+                var mySize = e.Graphics.MeasureString( text: i.ToString(), font: this.MyFont );
 
-                e.Graphics.DrawString( i.ToString(), this.MyFont, displayBrush,
-                    new PointF( this._myOffset + i * this._myXUnit - mySize.Width / 2, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
+                e.Graphics.DrawString( s: i.ToString(), font: this.MyFont, brush: displayBrush,
+                    point: new PointF( x: this._myOffset + i * this._myXUnit - mySize.Width / 2, y: this.Height - this.MyFont.Height ),
+                    format: StringFormat.GenericDefault );
             }
 
             //We draw the indexes for 0 and for the length of the array being plotted
-            e.Graphics.DrawString( "0", this.MyFont, displayBrush, new PointF( this._myOffset, this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
+            e.Graphics.DrawString( s: "0", font: this.MyFont, brush: displayBrush, point: new PointF( x: this._myOffset, y: this.Height - this.MyFont.Height ),
+                format: StringFormat.GenericDefault );
 
-            e.Graphics.DrawString( ( this._myValues.Length - 1 ).ToString(), this.MyFont, displayBrush,
-                new PointF( this._myOffset + this._myValues.Length * this._myXUnit - e.Graphics.MeasureString( this._myValues.Length.ToString(), this.MyFont ).Width,
-                    this.Height - this.MyFont.Height ), StringFormat.GenericDefault );
+            e.Graphics.DrawString( s: ( this._myValues.Length - 1 ).ToString(), font: this.MyFont, brush: displayBrush,
+                point: new PointF(
+                    x: this._myOffset + this._myValues.Length * this._myXUnit - e.Graphics.MeasureString( text: this._myValues.Length.ToString(), font: this.MyFont ).Width,
+                    y: this.Height - this.MyFont.Height ), format: StringFormat.GenericDefault );
 
             //We draw a rectangle surrounding the control.
-            using var blackBrush = new SolidBrush( Color.Black );
-            using var blackPen = new Pen( blackBrush, 1 );
-            e.Graphics.DrawRectangle( blackPen, 0, 0, this.Width - 1, this.Height - 1 );
+            using var blackBrush = new SolidBrush( color: Color.Black );
+            using var blackPen = new Pen( brush: blackBrush, width: 1 );
+            e.Graphics.DrawRectangle( pen: blackPen, x: 0, y: 0, width: this.Width - 1, height: this.Height - 1 );
         }
 
         private void HistogramaDesenat_Resize( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
@@ -176,19 +173,19 @@ namespace Librainian.Controls {
         private void InitializeComponent() {
 
             // HistogramaDesenat
-            this.Font = new Font( "Tahoma", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0 );
+            this.Font = new Font( familyName: "Tahoma", emSize: 8.25F, style: FontStyle.Regular, unit: GraphicsUnit.Point, gdiCharSet: 0 );
             this.Name = "HistogramaDesenat";
-            this.Size = new Size( 208, 176 );
+            this.Size = new Size( width: 208, height: 176 );
         }
 
         /// <summary>We draw the histogram on the control</summary>
         /// <param name="values">The values being drawn</param>
         public void DrawHistogram( [NotNull] Int64[] values ) {
             this._myValues = new Int64[ values.Length ];
-            values.CopyTo( this._myValues, 0 );
+            values.CopyTo( array: this._myValues, index: 0 );
 
             this._myIsDrawing = true;
-            this._myMaxValue = this.GetMaxim( this._myValues );
+            this._myMaxValue = this.GetMaxim( vals: this._myValues );
 
             this.ComputeXyUnitValues();
         }

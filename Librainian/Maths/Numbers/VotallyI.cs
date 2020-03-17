@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "VotallyI.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "VotallyI.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "VotallyI.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// Project: "Librainian", File: "VotallyI.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -51,7 +45,7 @@ namespace Librainian.Maths.Numbers {
     ///     <para>threadsafe, keep integer count of Yes or No votes.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyI {
 
         /// <summary>ONLY used in the getter and setter.</summary>
@@ -61,20 +55,20 @@ namespace Librainian.Maths.Numbers {
         private UInt64 _votesYes;
 
         /// <summary>No vote for either.</summary>
-        public static readonly VotallyI Zero = new VotallyI( 0, 0 );
+        public static readonly VotallyI Zero = new VotallyI( votesYes: 0, votesNo: 0 );
 
         public UInt64 No {
-            get => Thread.VolatileRead( ref this._votesNo );
+            get => Thread.VolatileRead( address: ref this._votesNo );
 
-            private set => Thread.VolatileWrite( ref this._votesNo, value );
+            private set => Thread.VolatileWrite( address: ref this._votesNo, value: value );
         }
 
         public UInt64 Votes => this.Yes + this.No;
 
         public UInt64 Yes {
-            get => Thread.VolatileRead( ref this._votesYes );
+            get => Thread.VolatileRead( address: ref this._votesYes );
 
-            private set => Thread.VolatileWrite( ref this._votesYes, value );
+            private set => Thread.VolatileWrite( address: ref this._votesYes, value: value );
         }
 
         public VotallyI( UInt64 votesYes = 0, UInt64 votesNo = 0 ) {
@@ -85,16 +79,16 @@ namespace Librainian.Maths.Numbers {
         [NotNull]
         public static VotallyI Combine( [NotNull] VotallyI left, [NotNull] VotallyI right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( nameof( left ) );
+                throw new ArgumentNullException( paramName: nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
+                throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
             var result = left;
-            result.VoteYes( right.Yes );
-            result.VoteNo( right.No );
+            result.VoteYes( votes: right.Yes );
+            result.VoteNo( votes: right.No );
 
             return result;
         }
@@ -103,19 +97,19 @@ namespace Librainian.Maths.Numbers {
         /// <param name="right"></param>
         public void Add( [NotNull] VotallyI right ) {
             if ( right is null ) {
-                throw new ArgumentNullException( nameof( right ) );
+                throw new ArgumentNullException( paramName: nameof( right ) );
             }
 
-            this.VoteYes( right.Yes );
-            this.VoteNo( right.No );
+            this.VoteYes( votes: right.Yes );
+            this.VoteNo( votes: right.No );
         }
 
         public Double ChanceNo() {
             try {
                 var votes = this.Votes;
 
-                if ( !votes.Near( 0 ) ) {
-                    var result = new Rational( this.No, votes );
+                if ( !votes.Near( target: 0 ) ) {
+                    var result = new Rational( numerator: this.No, denominator: votes );
 
                     return ( Double )result;
                 }
@@ -131,11 +125,11 @@ namespace Librainian.Maths.Numbers {
             try {
                 var votes = this.Votes;
 
-                if ( votes.Near( 0 ) ) {
+                if ( votes.Near( target: 0 ) ) {
                     return 0;
                 }
 
-                var chance = new Rational( this.Yes, votes );
+                var chance = new Rational( numerator: this.Yes, denominator: votes );
 
                 return ( Double )chance;
             }
@@ -147,7 +141,7 @@ namespace Librainian.Maths.Numbers {
         }
 
         [NotNull]
-        public VotallyI Clone() => new VotallyI( this.Yes, this.No );
+        public VotallyI Clone() => new VotallyI( votesYes: this.Yes, votesNo: this.No );
 
         public UInt64 HalfOfVotes() => this.Votes / 2;
 
