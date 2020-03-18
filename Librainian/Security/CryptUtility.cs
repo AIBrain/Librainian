@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-// 
+//
 // This source code contained in "CryptUtility.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
+//
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,15 +20,15 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-// 
+//
 // Project: "Librainian", File: "CryptUtility.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
 
 namespace Librainian.Security {
@@ -52,7 +52,7 @@ namespace Librainian.Security {
         /// <param name="b">The byte value</param>
         /// <param name="position">The position of the bit</param>
         /// <returns>The value of the bit</returns>
-        private static Boolean GetBit( Byte b, Byte position ) => ( b & ( Byte ) ( 1 << position ) ) != 0;
+        private static Boolean GetBit( Byte b, Byte position ) => ( b & ( Byte )( 1 << position ) ) != 0;
 
         /// <summary>Return one component of a color</summary>
         /// <param name="pixelColor">The Color</param>
@@ -121,7 +121,7 @@ namespace Librainian.Security {
                     else {
 
                         //copy a byte into the result key
-                        resultKeyStream.WriteByte( value: ( Byte ) readByte );
+                        resultKeyStream.WriteByte( value: ( Byte )readByte );
                     }
                 }
             }
@@ -134,7 +134,7 @@ namespace Librainian.Security {
             //jump to reverse-read position and read from the end of the stream
             var keyPosition = keyStream.Position;
             keyStream.Seek( offset: -keyPosition, origin: SeekOrigin.End );
-            var reverseKeyByte = ( Byte ) keyStream.ReadByte();
+            var reverseKeyByte = ( Byte )keyStream.ReadByte();
 
             //jump back to normal read position
             keyStream.Seek( offset: keyPosition, origin: SeekOrigin.Begin );
@@ -200,10 +200,10 @@ namespace Librainian.Security {
                     currentByte = 0;
                 }
                 else {
-                    currentByte = ( Byte ) messageStream.ReadByte();
+                    currentByte = ( Byte )messageStream.ReadByte();
 
                     //To add a bit of confusion, xor the byte with a byte read from the keyStream
-                    currentByte = ( Byte ) ( currentByte ^ currentReverseKeyByte );
+                    currentByte = ( Byte )( currentByte ^ currentReverseKeyByte );
                 }
 
                 for ( Byte bitPosition = 0; bitPosition < 8; bitPosition++ ) {
@@ -249,7 +249,7 @@ namespace Librainian.Security {
                 }
 
                 if ( extract ) {
-                    currentByte = ( Byte ) ( currentByte ^ currentReverseKeyByte );
+                    currentByte = ( Byte )( currentByte ^ currentReverseKeyByte );
                     messageStream.WriteByte( value: currentByte );
                 }
 
@@ -350,7 +350,7 @@ namespace Librainian.Security {
                 if ( extract ) {
 
                     //Extract the hidden message-byte from the color
-                    var foundByte = ( Byte ) ( currentReverseKeyByte ^ GetColorComponent( pixelColor: pixelColor, colorComponent: currentColorComponent ) );
+                    var foundByte = ( Byte )( currentReverseKeyByte ^ GetColorComponent( pixelColor: pixelColor, colorComponent: currentColorComponent ) );
                     messageStream.WriteByte( value: foundByte );
 
                     //Rotate color components
@@ -435,7 +435,7 @@ namespace Librainian.Security {
                 messageStream = new MemoryStream( capacity: messageLength );
             }
             else {
-                messageLength = ( Int32 ) messageStream.Length;
+                messageLength = ( Int32 )messageStream.Length;
 
                 if ( messageStream.Length >= 0xFFFFFF ) {
                     throw new Exception( message: "The message is too long, only 16777215 bytes are allowed." );
@@ -446,8 +446,8 @@ namespace Librainian.Security {
             Int64 sumBytes = 0;
 
             for ( var n = 0; n < imageFiles.Length; n++ ) {
-                var pixels = imageFiles[ n ].CountPixels / ( Single ) countPixels;
-                imageFiles[ n ].SetCountBytesToHide( messageBytesToHide: ( Int64 ) Math.Ceiling( a: messageLength * pixels ) );
+                var pixels = imageFiles[ n ].CountPixels / ( Single )countPixels;
+                imageFiles[ n ].SetCountBytesToHide( messageBytesToHide: ( Int64 )Math.Ceiling( a: messageLength * pixels ) );
                 sumBytes += imageFiles[ n ].MessageBytesToHide;
             }
 
@@ -613,7 +613,7 @@ namespace Librainian.Security {
             }
 
             //Get the next pixel-count from the key, use "1" if it's 0
-            var currentKeyByte = ( Byte ) keyStream.ReadByte();
+            var currentKeyByte = ( Byte )keyStream.ReadByte();
             var currentStepWidth = currentKeyByte == 0 ? 1 : currentKeyByte;
 
             //Perform line breaks, if current step is wider than the image
@@ -716,13 +716,13 @@ namespace Librainian.Security {
         /// <param name="newBitValue">The new value of the bit in position [position]</param>
         /// <returns>The new byte value</returns>
         private static Byte SetBit( Byte b, Byte position, Boolean newBitValue ) {
-            var mask = ( Byte ) ( 1 << position );
+            var mask = ( Byte )( 1 << position );
 
             if ( newBitValue ) {
-                return ( Byte ) ( b | mask );
+                return ( Byte )( b | mask );
             }
 
-            return ( Byte ) ( b & ~mask );
+            return ( Byte )( b & ~mask );
         }
 
         /// <summary>Changees one component of a color</summary>
@@ -775,7 +775,7 @@ namespace Librainian.Security {
                 currentByte ^= key.Password[ index: passwordIndex ];
 
                 //add the result to the key stream
-                resultStream.WriteByte( value: ( Byte ) currentByte );
+                resultStream.WriteByte( value: ( Byte )currentByte );
 
                 //proceed to the next letter or repeat the password
                 passwordIndex++;
@@ -812,7 +812,5 @@ namespace Librainian.Security {
             // ReSharper disable once RedundantAssignment
             messageStream = null; //BUG why is this here?
         }
-
     }
-
 }

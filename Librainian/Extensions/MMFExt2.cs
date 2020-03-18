@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "MMFExt2.cs" was last formatted by Protiguous on 2020/03/16 at 4:41 PM.
+// Project: "Librainian", File: "MMFExt2.cs" was last formatted by Protiguous on 2020/03/16 at 9:36 PM.
 
 namespace Librainian.Extensions {
 

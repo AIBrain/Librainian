@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "StringAlpha.cs" was last formatted by Protiguous on 2020/03/16 at 5:09 PM.
+// Project: "Librainian", File: "StringAlpha.cs" was last formatted by Protiguous on 2020/03/16 at 10:00 PM.
 
 namespace Librainian.Parsing.Validation {
 

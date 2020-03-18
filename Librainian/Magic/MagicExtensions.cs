@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "MagicExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 4:50 PM.
+// Project: "Librainian", File: "MagicExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:44 PM.
 
 namespace Librainian.Magic {
 

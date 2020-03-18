@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "AssemblyInfo.cs" was last formatted by Protiguous on 2020/03/16 at 5:12 PM.
+// Project: "Librainian", File: "AssemblyInfo.cs" was last formatted by Protiguous on 2020/03/16 at 10:01 PM.
 
 using System.Reflection;
 using System.Resources;
