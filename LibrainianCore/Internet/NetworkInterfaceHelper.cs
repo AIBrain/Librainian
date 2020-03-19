@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "NetworkInterfaceHelper.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "NetworkInterfaceHelper.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "NetworkInterfaceHelper.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "NetworkInterfaceHelper.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Internet {
+namespace Librainian.Internet {
 
     using System;
     using System.Collections.Generic;
@@ -52,22 +46,22 @@ namespace LibrainianCore.Internet {
 
         public static IDictionary<String, NetworkInterface> NetworkInterfaces { get; }
 
-        static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
+        static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( keySelector: o => o.Id );
 
         [CanBeNull]
         public static NetworkInterface GetBestInterface( [NotNull] this IPAddress address ) {
             var byteArray1 = address.GetAddressBytes();
 
-            var ipaddr = BitConverter.ToUInt32( byteArray1, 0 );
-            var error = NativeMethods.GetBestInterface( ipaddr, out var interfaceIndex );
+            var ipaddr = BitConverter.ToUInt32( value: byteArray1, startIndex: 0 );
+            var error = NativeMethods.GetBestInterface( destAddr: ipaddr, bestIfIndex: out var interfaceIndex );
 
             if ( error != 0 ) {
-                throw new InvalidOperationException( $"Error while calling GetBestInterface(). Error={error}" );
+                throw new InvalidOperationException( message: $"Error while calling GetBestInterface(). Error={error}" );
             }
 
-            var indexedIpAdapterInfo = AdapterInfo.IndexedIpAdapterInfos[ interfaceIndex ];
+            var indexedIpAdapterInfo = AdapterInfo.IndexedIpAdapterInfos[ key: interfaceIndex ];
 
-            return NetworkInterfaces[ indexedIpAdapterInfo.AdapterName ];
+            return NetworkInterfaces[ key: indexedIpAdapterInfo.AdapterName ];
         }
     }
 }

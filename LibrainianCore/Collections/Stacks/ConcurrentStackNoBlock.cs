@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConcurrentStackNoBlock.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ConcurrentStackNoBlock.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConcurrentStackNoBlock.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "ConcurrentStackNoBlock.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Collections.Stacks {
+namespace Librainian.Collections.Stacks {
 
     using System;
     using System.Collections.Generic;
@@ -51,7 +45,7 @@ namespace LibrainianCore.Collections.Stacks {
 
         private volatile Node _head;
 
-        public ConcurrentNoBlockStackL() => this._head = new Node( default, this._head );
+        public ConcurrentNoBlockStackL() => this._head = new Node( item: default, next: this._head );
 
         [CanBeNull]
         public T Pop() {
@@ -61,9 +55,9 @@ namespace LibrainianCore.Collections.Stacks {
                 ret = this._head;
 
                 if ( ret.Next is null ) {
-                    throw new IndexOutOfRangeException( "Stack is empty" );
+                    throw new IndexOutOfRangeException( message: "Stack is empty" );
                 }
-            } while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: ret.Next, comparand: ret ) != ret );
 
             return ret.Item;
         }
@@ -78,7 +72,7 @@ namespace LibrainianCore.Collections.Stacks {
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
-            } while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: nodeNew, comparand: tmp ) != tmp );
         }
 
         internal sealed class Node {
@@ -105,18 +99,18 @@ namespace LibrainianCore.Collections.Stacks {
 
         public Int32 Count { get; private set; }
 
-        public ConcurrentStackNoBlock() => this._head = new Node( default, this._head );
+        public ConcurrentStackNoBlock() => this._head = new Node( item: default, next: this._head );
 
-        public void Add( [CanBeNull] T item ) => this.Push( item );
+        public void Add( [CanBeNull] T item ) => this.Push( item: item );
 
-        public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( items, CPU.AllCPUExceptOne, this.Push );
+        public void Add( [NotNull] IEnumerable<T> items ) => Parallel.ForEach( source: items, parallelOptions: CPU.AllCPUExceptOne, body: this.Push );
 
-        public void Add( [NotNull] ParallelQuery<T> items ) => items.ForAll( this.Push );
+        public void Add( [NotNull] ParallelQuery<T> items ) => items.ForAll( action: this.Push );
 
         public Int64 LongCount() => this.Count;
 
         public void Push( [CanBeNull] T item ) {
-            if ( Equals( default, item ) ) {
+            if ( Equals( objA: default, objB: item ) ) {
                 return;
             }
 
@@ -129,7 +123,7 @@ namespace LibrainianCore.Collections.Stacks {
             do {
                 tmp = this._head;
                 nodeNew.Next = tmp;
-            } while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: nodeNew, comparand: tmp ) != tmp );
 
             ++this.Count;
         }
@@ -147,12 +141,12 @@ namespace LibrainianCore.Collections.Stacks {
                     //throw new IndexOutOfRangeException( "Stack is empty" );
                     return default;
                 }
-            } while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+            } while ( Interlocked.CompareExchange( location1: ref this._head, value: ret.Next, comparand: ret ) != ret );
 
             --this.Count;
             result = ret.Item;
 
-            return !Equals( result, default );
+            return !Equals( objA: result, objB: default );
         }
 
         /// <summary>Attempt two <see cref="TryPop" /></summary>
@@ -160,14 +154,14 @@ namespace LibrainianCore.Collections.Stacks {
         /// <param name="itemTwo"></param>
         /// <returns></returns>
         public Boolean TryPopPop( [CanBeNull] out T itemOne, [CanBeNull] out T itemTwo ) {
-            if ( !this.TryPop( out itemOne ) ) {
+            if ( !this.TryPop( result: out itemOne ) ) {
                 itemTwo = default;
 
                 return default;
             }
 
-            if ( !this.TryPop( out itemTwo ) ) {
-                this.Push( itemOne );
+            if ( !this.TryPop( result: out itemTwo ) ) {
+                this.Push( item: itemOne );
 
                 return default;
             }

@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Types.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "Types.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using System.Collections;
@@ -56,11 +50,11 @@ namespace LibrainianCore.Extensions {
 
     public static class Types {
 
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
+
         public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
-
-        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
 
         private delegate Object ObjectActivator();
 
@@ -78,7 +72,7 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => !(item is null) ).Select( item => ( T ) item.Clone() ).ToList();
+            list.Where( item => !( item is null ) ).Select( item => ( T )item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {
@@ -255,7 +249,7 @@ namespace LibrainianCore.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
@@ -413,11 +407,11 @@ namespace LibrainianCore.Extensions {
 
                 ilGenerator.Emit( OpCodes.Ret );
 
-                activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
                 ObjectActivators.Add( type, activator );
             }
 
-            return ( T ) activator.Invoke();
+            return ( T )activator.Invoke();
         }
 
         [NotNull]
@@ -507,19 +501,19 @@ namespace LibrainianCore.Extensions {
                 if ( underlyingType == typeof( Guid ) ) {
                     switch ( value ) {
                         case String s: {
-                            value = new Guid( s );
+                                value = new Guid( s );
 
-                            break;
-                        }
+                                break;
+                            }
                         case Byte[] bytes: {
-                            value = new Guid( bytes );
+                                value = new Guid( bytes );
 
-                            break;
-                        }
+                                break;
+                            }
                     }
                 }
 
-                result = ( T ) Convert.ChangeType( value, underlyingType );
+                result = ( T )Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -600,7 +594,5 @@ namespace LibrainianCore.Extensions {
         //            }
         //    }
         //}
-
     }
-
 }

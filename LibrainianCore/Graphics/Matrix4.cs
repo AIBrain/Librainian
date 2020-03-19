@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Matrix4.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Matrix4.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Matrix4.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "Matrix4.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Graphics {
+namespace Librainian.Graphics {
 
     using System;
     using JetBrains.Annotations;
@@ -46,9 +40,9 @@ namespace LibrainianCore.Graphics {
 
         public static Matrix4 I = NewI();
 
-        public Matrix4() : base( 4, 4 ) { }
+        public Matrix4() : base( rows: 4, cols: 4 ) { }
 
-        public Matrix4( [NotNull] Single[,] matrix ) : base( matrix ) {
+        public Matrix4( [NotNull] Single[,] matrix ) : base( matrix: matrix ) {
             if ( this.Rows != 4 || this.Cols != 4 ) {
                 throw new ArgumentException();
             }
@@ -56,7 +50,7 @@ namespace LibrainianCore.Graphics {
 
         [NotNull]
         public static Matrix4 NewI() =>
-            new Matrix4( new[ , ] {
+            new Matrix4( matrix: new[ , ] {
                 {
                     1.0f, 0.0f, 0.0f, 0.0f
                 }, {
@@ -67,8 +61,6 @@ namespace LibrainianCore.Graphics {
                     0.0f, 0.0f, 0.0f, 1.0f
                 }
             } );
-
-        
 
         [NotNull]
         public static Matrix4 operator *( [NotNull] Matrix4 mat1, [NotNull] Matrix4 mat2 ) {
@@ -92,10 +84,10 @@ namespace LibrainianCore.Graphics {
             m3[ 3, 2 ] = m1[ 3, 0 ] * m2[ 0, 2 ] + m1[ 3, 1 ] * m2[ 1, 2 ] + m1[ 3, 2 ] * m2[ 2, 2 ] + m1[ 3, 3 ] * m2[ 3, 2 ];
             m3[ 3, 3 ] = m1[ 3, 0 ] * m2[ 0, 3 ] + m1[ 3, 1 ] * m2[ 1, 3 ] + m1[ 3, 2 ] * m2[ 2, 3 ] + m1[ 3, 3 ] * m2[ 3, 3 ];
 
-            return new Matrix4( m3 );
+            return new Matrix4( matrix: m3 );
         }
 
         [NotNull]
-        public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
+        public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new Matrix4( matrix: Multiply( matrix: m, scalar: scalar ) );
     }
 }

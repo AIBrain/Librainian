@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ETACalculator.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ETACalculator.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ETACalculator.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// 
+// Project: "LibrainianCore", File: "ETACalculator.cs" was last formatted by Protiguous on 2020/03/16 at 3:08 PM.
 
-namespace LibrainianCore.Measurement.Time {
+namespace Librainian.Measurement.Time {
 
     using System;
     using System.Collections.Concurrent;
@@ -80,14 +74,14 @@ namespace LibrainianCore.Measurement.Time {
                 }
 
                 if ( value < 0 || value > 1 ) {
-                    throw new ArgumentOutOfRangeException( nameof( this.Progress ), $"{value:R} is out of the range 0 to 1." );
+                    throw new ArgumentOutOfRangeException( paramName: nameof( this.Progress ), message: $"{value:R} is out of the range 0 to 1." );
                 }
 
                 this._progress = value;
             }
         }
 
-        public EtaCalculator() => this.Reset( Seconds.One );
+        public EtaCalculator() => this.Reset( samplingPeriod: Seconds.One );
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
         public override void DisposeManaged() {
@@ -109,9 +103,8 @@ namespace LibrainianCore.Measurement.Time {
         /// <returns></returns>
         [NotNull]
         public IEnumerable<TimeProgression> GetDataPoints() =>
-            this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
-                MillisecondsPassed = pair.Key.TotalMilliseconds,
-                Progress = pair.Value
+            this._datapoints.OrderBy( keySelector: pair => pair.Key ).Select( selector: pair => new TimeProgression {
+                MillisecondsPassed = pair.Key.TotalMilliseconds, Progress = pair.Value
             } );
 
         public void Reset( TimeSpan samplingPeriod ) {
@@ -129,8 +122,7 @@ namespace LibrainianCore.Measurement.Time {
 
             // ReSharper disable once UseObjectOrCollectionInitializer
             this._timer = new Timer {
-                Interval = samplingPeriod.TotalMilliseconds,
-                AutoReset = true
+                Interval = samplingPeriod.TotalMilliseconds, AutoReset = true
             };
 
             this._timer.Elapsed += ( sender, args ) => this.Update();
@@ -142,10 +134,12 @@ namespace LibrainianCore.Measurement.Time {
         /// </summary>
         public void Update() {
             if ( this.Progress >= 0 && this.Progress <= 1 && !this.Progress.IsNumber() ) {
-                this._datapoints.TryAdd( this._stopwatch.Elapsed, this.Progress );
+                this._datapoints.TryAdd( key: this._stopwatch.Elapsed, value: this.Progress );
             }
 
             //throw new ArgumentOutOfRangeException( "Progress", "The Progress is out of the range 0 to 1." );
         }
+
     }
+
 }

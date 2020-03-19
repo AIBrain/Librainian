@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Translate64.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Translate64.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,36 +29,36 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Translate64.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "Translate64.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Converters {
+namespace Librainian.Converters {
 
     using System;
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// Struct for combining two <see cref="Int32" /> (or <see cref="UInt32" />) to and from a <see cref="UInt64" /> (or <see cref="Int64" />) as easily as possible. Fast? No idea
+    /// Struct for combining two <see cref="int" /> (or <see cref="uint" />) to and from a <see cref="ulong" /> (or <see cref="long" />) as easily as possible. Fast? No idea
     /// yet..
     /// </summary>
-    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
     public struct Translate64 {
 
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public UInt64 UnsignedValue;
 
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public Int64 SignedValue;
 
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public Int32 SignedLow;
 
-        [FieldOffset( 0 )]
+        [FieldOffset( offset: 0 )]
         public readonly UInt32 UnsignedLow;
 
-        [FieldOffset( sizeof( UInt32 ) )]
+        [FieldOffset( offset: sizeof( UInt32 ) )]
         public readonly UInt32 UnsignedHigh;
 
-        [FieldOffset( sizeof( Int32 ) )]
+        [FieldOffset( offset: sizeof( Int32 ) )]
         public Int32 SignedHigh;
 
         public Translate64( Int32 signedHigh, Int32 signedLow ) {

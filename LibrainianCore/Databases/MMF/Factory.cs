@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Factory.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Factory.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Factory.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "Factory.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Databases.MMF {
+namespace Librainian.Databases.MMF {
 
     using System;
     using System.Collections.Generic;
@@ -55,7 +49,7 @@ namespace LibrainianCore.Databases.MMF {
 
         private static Int32 BenchMarkSerializer( [NotNull] ISerializeDeserialize<T> serDeser ) {
             if ( serDeser == null ) {
-                throw new ArgumentNullException( nameof( serDeser ) );
+                throw new ArgumentNullException( paramName: nameof( serDeser ) );
             }
 
             Object[] args = null;
@@ -69,13 +63,13 @@ namespace LibrainianCore.Databases.MMF {
             }
 
             try {
-                var classInstance = ( T )Activator.CreateInstance( typeof( T ), args );
+                var classInstance = ( T )Activator.CreateInstance( type: typeof( T ), args: args );
                 var sw = Stopwatch.StartNew();
                 var count = 0;
 
                 while ( sw.ElapsedMilliseconds < 500 ) {
-                    var bytes = serDeser.ObjectToBytes( classInstance );
-                    serDeser.BytesToObject( bytes );
+                    var bytes = serDeser.ObjectToBytes( data: classInstance );
+                    serDeser.BytesToObject( bytes: bytes );
                     count++;
                 }
 
@@ -95,21 +89,21 @@ namespace LibrainianCore.Databases.MMF {
             var benchmarkTimes = new SortedDictionary<Int32, ISerializeDeserialize<T>>();
 
             foreach ( var type in listOfSerializers ) {
-                var serializer = InstantiateSerializer( type );
+                var serializer = InstantiateSerializer( type: type );
 
                 if ( !serializer.CanSerializeType() ) {
                     continue;
                 }
 
-                var count = BenchMarkSerializer( serializer );
+                var count = BenchMarkSerializer( serDeser: serializer );
 
                 if ( count > 0 ) {
-                    benchmarkTimes.Add( count, serializer );
+                    benchmarkTimes.Add( key: count, value: serializer );
                 }
             }
 
             foreach ( var valuePair in benchmarkTimes ) {
-                Debug.WriteLine( $"{valuePair.Key} : {valuePair.Value.GetType()}" );
+                Debug.WriteLine( message: $"{valuePair.Key} : {valuePair.Value.GetType()}" );
             }
 
             return benchmarkTimes;
@@ -124,7 +118,8 @@ namespace LibrainianCore.Databases.MMF {
                 from genericType in assembly.GetTypes()
                 where genericType != default
                 where genericType != null
-                from interfaceType in genericType?.GetInterfaces().Where( iType => iType.Name == interfaceGenricType.Name && genericType?.IsGenericTypeDefinition == true )
+                from interfaceType in genericType
+                                      ?.GetInterfaces().Where( predicate: iType => iType.Name == interfaceGenricType.Name && genericType?.IsGenericTypeDefinition == true )
                 select genericType;
 
             return serializers; //.ToList();
@@ -137,7 +132,7 @@ namespace LibrainianCore.Databases.MMF {
             var serializers =
                 from assembly in AppDomain.CurrentDomain.GetAssemblies()
                 from implementedType in assembly.GetTypes()
-                from interfaceType in implementedType.GetInterfaces().Where( iType => iType == interfaceGenricType )
+                from interfaceType in implementedType.GetInterfaces().Where( predicate: iType => iType == interfaceGenricType )
                 select implementedType;
 
             return serializers; //.ToList();
@@ -147,7 +142,7 @@ namespace LibrainianCore.Databases.MMF {
         private static ISerializeDeserialize<T> InstantiateSerializer( [NotNull] Type type ) {
             var instType = type.IsGenericTypeDefinition ? type.MakeGenericType( typeof( T ) ) : type;
 
-            return ( ISerializeDeserialize<T> )Activator.CreateInstance( instType );
+            return ( ISerializeDeserialize<T> )Activator.CreateInstance( type: instType );
         }
 
         [CanBeNull]

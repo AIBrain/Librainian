@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "GeometryEx.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "GeometryEx.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GeometryEx.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "GeometryEx.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Graphics.DD {
+namespace Librainian.Graphics.DD {
 
     using System;
     using System.Drawing;
@@ -48,14 +42,14 @@ namespace LibrainianCore.Graphics.DD {
             switch ( polygon.Length ) {
                 case 0: return Intersection.None;
 
-                case 1: return IntersectionOf( polygon[ 0 ], line );
+                case 1: return IntersectionOf( point: polygon[ index: 0 ], line: line );
             }
 
             var tangent = false;
 
             for ( var index = 0; index < polygon.Length; index++ ) {
                 var index2 = ( index + 1 ) % polygon.Length;
-                var intersection = IntersectionOf( line, new Line( polygon[ index ], polygon[ index2 ] ) );
+                var intersection = IntersectionOf( line1: line, line2: new Line( p1: polygon[ index: index ], p2: polygon[ index: index2 ] ) );
 
                 switch ( intersection ) {
                     case Intersection.Intersection: return intersection;
@@ -67,17 +61,17 @@ namespace LibrainianCore.Graphics.DD {
                 }
             }
 
-            return tangent ? Intersection.Tangent : IntersectionOf( line.P1, polygon );
+            return tangent ? Intersection.Tangent : IntersectionOf( point: line.P1, polygon: polygon );
         }
 
         public static Intersection IntersectionOf( PointF point, Line line ) {
-            var bottomY = Math.Min( line.Y1, line.Y2 );
-            var topY = Math.Max( line.Y1, line.Y2 );
+            var bottomY = Math.Min( val1: line.Y1, val2: line.Y2 );
+            var topY = Math.Max( val1: line.Y1, val2: line.Y2 );
             var heightIsRight = point.Y >= bottomY && point.Y <= topY;
 
             //Vertical line, slope is divideByZero error!
-            if ( Math.Abs( line.X1 - line.X2 ) < Single.Epsilon ) {
-                if ( Math.Abs( point.X - line.X1 ) < Single.Epsilon && heightIsRight ) {
+            if ( Math.Abs( value: line.X1 - line.X2 ) < Single.Epsilon ) {
+                if ( Math.Abs( value: point.X - line.X1 ) < Single.Epsilon && heightIsRight ) {
                     return Intersection.Tangent;
                 }
 
@@ -85,7 +79,7 @@ namespace LibrainianCore.Graphics.DD {
             }
 
             var slope = ( line.X2 - line.X1 ) / ( line.Y2 - line.Y1 );
-            var onLine = Math.Abs( line.Y1 - point.Y - slope * ( line.X1 - point.X ) ) < Single.Epsilon;
+            var onLine = Math.Abs( value: line.Y1 - point.Y - slope * ( line.X1 - point.X ) ) < Single.Epsilon;
 
             return onLine && heightIsRight ? Intersection.Tangent : Intersection.None;
         }
@@ -93,18 +87,18 @@ namespace LibrainianCore.Graphics.DD {
         public static Intersection IntersectionOf( Line line1, Line line2 ) {
 
             // Fail if either line segment is zero-length.
-            if ( Math.Abs( line1.X1 - line1.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line1.Y2 ) < Single.Epsilon ||
-                 Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) {
+            if ( Math.Abs( value: line1.X1 - line1.X2 ) < Single.Epsilon && Math.Abs( value: line1.Y1 - line1.Y2 ) < Single.Epsilon ||
+                 Math.Abs( value: line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( value: line2.Y1 - line2.Y2 ) < Single.Epsilon ) {
                 return Intersection.None;
             }
 
-            if ( Math.Abs( line1.X1 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y1 - line2.Y1 ) < Single.Epsilon ||
-                 Math.Abs( line1.X2 - line2.X1 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y1 ) < Single.Epsilon ) {
+            if ( Math.Abs( value: line1.X1 - line2.X1 ) < Single.Epsilon && Math.Abs( value: line1.Y1 - line2.Y1 ) < Single.Epsilon ||
+                 Math.Abs( value: line1.X2 - line2.X1 ) < Single.Epsilon && Math.Abs( value: line1.Y2 - line2.Y1 ) < Single.Epsilon ) {
                 return Intersection.Intersection;
             }
 
-            if ( Math.Abs( line1.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line2.Y2 ) < Single.Epsilon ||
-                 Math.Abs( line1.X2 - line2.X2 ) < Single.Epsilon && Math.Abs( line1.Y2 - line2.Y2 ) < Single.Epsilon ) {
+            if ( Math.Abs( value: line1.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( value: line1.Y1 - line2.Y2 ) < Single.Epsilon ||
+                 Math.Abs( value: line1.X2 - line2.X2 ) < Single.Epsilon && Math.Abs( value: line1.Y2 - line2.Y2 ) < Single.Epsilon ) {
                 return Intersection.Intersection;
             }
 
@@ -117,7 +111,7 @@ namespace LibrainianCore.Graphics.DD {
             line2.Y2 -= line1.Y1;
 
             // Discover the length of segment A-B.
-            var distAb = Math.Sqrt( line1.X2 * line1.X2 + line1.Y2 * line1.Y2 );
+            var distAb = Math.Sqrt( d: line1.X2 * line1.X2 + line1.Y2 * line1.Y2 );
 
             // (2) Rotate the system so that point B is on the positive X axis.
             var theCos = line1.X2 / distAb;
@@ -152,38 +146,38 @@ namespace LibrainianCore.Graphics.DD {
 
                 case 1:
 
-                    if ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon && Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) {
+                    if ( Math.Abs( value: polygon[ index: 0 ].X - point.X ) < Single.Epsilon && Math.Abs( value: polygon[ index: 0 ].Y - point.Y ) < Single.Epsilon ) {
                         return Intersection.Tangent;
                     }
 
                     return Intersection.None;
 
-                case 2: return IntersectionOf( point, new Line( polygon[ 0 ], polygon[ 1 ] ) );
+                case 2: return IntersectionOf( point: point, line: new Line( p1: polygon[ index: 0 ], p2: polygon[ index: 1 ] ) );
             }
 
             var counter = 0;
             Int32 i;
             var n = polygon.Length;
-            var p1 = polygon[ 0 ];
+            var p1 = polygon[ index: 0 ];
 
             if ( point == p1 ) {
                 return Intersection.Tangent;
             }
 
             for ( i = 1; i <= n; i++ ) {
-                var p2 = polygon[ i % n ];
+                var p2 = polygon[ index: i % n ];
 
                 if ( point == p2 ) {
                     return Intersection.Tangent;
                 }
 
-                if ( point.Y > Math.Min( p1.Y, p2.Y ) ) {
-                    if ( point.Y <= Math.Max( p1.Y, p2.Y ) ) {
-                        if ( point.X <= Math.Max( p1.X, p2.X ) ) {
-                            if ( Math.Abs( p1.Y - p2.Y ) > Single.Epsilon ) {
+                if ( point.Y > Math.Min( val1: p1.Y, val2: p2.Y ) ) {
+                    if ( point.Y <= Math.Max( val1: p1.Y, val2: p2.Y ) ) {
+                        if ( point.X <= Math.Max( val1: p1.X, val2: p2.X ) ) {
+                            if ( Math.Abs( value: p1.Y - p2.Y ) > Single.Epsilon ) {
                                 Double xinters = ( point.Y - p1.Y ) * ( p2.X - p1.X ) / ( p2.Y - p1.Y ) + p1.X;
 
-                                if ( Math.Abs( p1.X - p2.X ) < Single.Epsilon || point.X <= xinters ) {
+                                if ( Math.Abs( value: p1.X - p2.X ) < Single.Epsilon || point.X <= xinters ) {
                                     counter++;
                                 }
                             }

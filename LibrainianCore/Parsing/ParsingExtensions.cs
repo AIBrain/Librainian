@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ParsingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// 
+// Project: "LibrainianCore", File: "ParsingExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:10 PM.
 
-namespace LibrainianCore.Parsing {
+namespace Librainian.Parsing {
 
     using System;
     using System.Collections.Concurrent;
@@ -129,8 +123,12 @@ namespace LibrainianCore.Parsing {
         private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new Lazy<Regex>( () => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ) );
 
         [NotNull]
+        [ItemNotNull]
+        public static readonly Lazy<Regex> RegexJustNumbers = new Lazy<Regex>( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
+
+        [NotNull]
         [Pure]
-        public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter );
+        public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter );
 
         /// <summary>Return <paramref name="self" />, up the <paramref name="maxlength" />.
         /// <para>Does not do any string trimming. Just truncate.</para>
@@ -205,8 +203,7 @@ namespace LibrainianCore.Parsing {
                 return Empty;
             }
 
-            return
-                $"{( self.StartsWith( "[", StringComparison.Ordinal ) ? Empty : "[" )}{self}{( self.EndsWith( "]", StringComparison.Ordinal ) ? Empty : "]" )}";
+            return $"{( self.StartsWith( "[", StringComparison.Ordinal ) ? Empty : "[" )}{self}{( self.EndsWith( "]", StringComparison.Ordinal ) ? Empty : "]" )}";
         }
 
         /// <summary>Trim the ToString() of the object; returning null if null, empty, or whitespace.</summary>
@@ -233,7 +230,6 @@ namespace LibrainianCore.Parsing {
 
                     break;
             }
-
 
             return result;
         }
@@ -402,7 +398,7 @@ namespace LibrainianCore.Parsing {
         /// <param name="character"></param>
         /// <returns></returns>
         [Pure]
-        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 )text.Count( c => c == character );
+        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 ) text.Count( c => c == character );
 
         /// <summary>
         /// Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each integer represents the code point of a character in the
@@ -671,7 +667,7 @@ namespace LibrainianCore.Parsing {
             }
 
             try {
-                return DefaultEncoding(encoding).GetString( from64 );
+                return DefaultEncoding( encoding ).GetString( from64 );
             }
             catch ( Exception ) {
                 if ( Equals( Encoding.Unicode, DefaultEncoding() ) ) {
@@ -822,10 +818,6 @@ namespace LibrainianCore.Parsing {
         [NotNull]
         [Pure]
         public static IEnumerable<String> JustDigits( [NotNull] this String sentence ) => RegexJustDigits.Value.Split( sentence );
-
-        [NotNull]
-        [ItemNotNull]
-        public static readonly Lazy<Regex> RegexJustNumbers = new Lazy<Regex>( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
         /// <summary>Example: String s = "123-123-1234".JustNumbers();</summary>
         /// <param name="s"></param>
@@ -1064,7 +1056,7 @@ namespace LibrainianCore.Parsing {
 
             var stringInfo = new StringInfo( s );
 
-            return ( UInt64 )stringInfo.LengthInTextElements;
+            return ( UInt64 ) stringInfo.LengthInTextElements;
         }
 
         [NotNull]
@@ -1217,9 +1209,8 @@ namespace LibrainianCore.Parsing {
         /// <param name="right"></param>
         /// <returns></returns>
         [Pure]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Boolean Is( [CanBeNull] this String left, [CanBeNull] String right ) =>
-            ( left ?? Empty ).Equals( right ?? Empty, StringComparison.Ordinal );
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        public static Boolean Is( [CanBeNull] this String left, [CanBeNull] String right ) => ( left ?? Empty ).Equals( right ?? Empty, StringComparison.Ordinal );
 
         /// <summary>Compute a Similarity between two strings. <br /> 1. 0 is a full, bit for bit match. <br /></summary>
         /// <param name="source">      </param>
@@ -1353,7 +1344,8 @@ namespace LibrainianCore.Parsing {
             }
 
             votes.ForB( compare.Length );
-            if ( ( tempcounter = ( Int32 )votes.ForA( compare.Count( c => source.Contains( c, StringComparison.Ordinal ) ) ) ).Any() ) {
+
+            if ( ( tempcounter = ( Int32 ) votes.ForA( compare.Count( c => source.Contains( c, StringComparison.Ordinal ) ) ) ).Any() ) {
                 matchReasons?.Add( $"{tempcounter} characters found in compare from source" );
             }
 
@@ -1382,7 +1374,7 @@ namespace LibrainianCore.Parsing {
             }
 
             Single threshold = Math.Max( source.Length, compare.Length );
-            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 )threshold );
+            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 ) threshold );
 
             //TODO votes.ForB ???
             similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
@@ -1405,7 +1397,7 @@ namespace LibrainianCore.Parsing {
             }
 
             return FullSoundex( s ).PadRight( length, '0' ) // soundex is no shorter than
-                .Substring( 0, length ); // and no longer than length
+                                   .Substring( 0, length ); // and no longer than length
         }
 
         /// <summary>Same as calling <see cref="String.Split(String[], StringSplitOptions)" /> with an array of size 1 per <paramref name="separator" />.</summary>
@@ -1444,8 +1436,7 @@ namespace LibrainianCore.Parsing {
             }
 
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-                index,
-                ch = s[ index ]
+                index, ch = s[ index ]
             } ).GroupBy( f => f.index / chunks ).Select( g => Join( "", g.Select( z => z.ch ) ) );
 
             return res;
@@ -1624,7 +1615,8 @@ namespace LibrainianCore.Parsing {
         /// <returns></returns>
         [NotNull]
         [Pure]
-        public static String ToBase64( [CanBeNull] this String text, [CanBeNull] Encoding encoding = null ) => Convert.ToBase64String( DefaultEncoding(encoding).GetBytes( text ?? Empty ) );
+        public static String ToBase64( [CanBeNull] this String text, [CanBeNull] Encoding encoding = null ) =>
+            Convert.ToBase64String( DefaultEncoding( encoding ).GetBytes( text ?? Empty ) );
 
         /// <summary>Date plus Time</summary>
         /// <param name="when"></param>
@@ -1691,9 +1683,7 @@ namespace LibrainianCore.Parsing {
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Replaces all CR, LF, and tabs with spaces. And then replaces all double spaces with a single space.
-        /// </summary>
+        /// <summary>Replaces all CR, LF, and tabs with spaces. And then replaces all double spaces with a single space.</summary>
         /// <param name="s"></param>
         /// <returns></returns>
         [NotNull]
@@ -1752,7 +1742,7 @@ namespace LibrainianCore.Parsing {
             }
 
             var results = RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s?.Replace( Environment.NewLine, Empty ).Trimmed() )
-                .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) );
+                                                      .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) );
 
             return results.Select( Sentence.Parse );
         }
@@ -1789,12 +1779,14 @@ namespace LibrainianCore.Parsing {
             }
 
             test = number / 1_000;
+
             if ( test > 0 ) {
                 words += test.ToVerbalWord() + " thousand ";
                 number %= 1000;
             }
 
             test = number / 100;
+
             if ( test > 0 ) {
                 words += test.ToVerbalWord() + " hundred ";
                 number %= 100;
@@ -1837,9 +1829,9 @@ namespace LibrainianCore.Parsing {
                 return "minus " + ToVerbalWord( Math.Abs( number ) );
             }
 
-            var intPortion = ( Int32 )number;
+            var intPortion = ( Int32 ) number;
             var fraction = ( number - intPortion ) * 100;
-            var decPortion = ( Int32 )fraction; //TODO eh?
+            var decPortion = ( Int32 ) fraction; //TODO eh?
 
             var words = intPortion.ToVerbalWord();
 
@@ -1858,7 +1850,7 @@ namespace LibrainianCore.Parsing {
         [Pure]
         public static String[] ToWords( [CanBeNull] this String sentence ) =>
             RegexByWordBreak.Value.Split( $"{ParsingConstants.Singlespace}{sentence}{ParsingConstants.Singlespace}" ).ToStrings( ParsingConstants.Singlespace )
-                .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+                            .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
         [CanBeNull]
         [Pure]
@@ -2015,7 +2007,7 @@ namespace LibrainianCore.Parsing {
                 return singular;
             }
 
-            return singular + "s";  //TODO find .NET Core plural nuget
+            return singular + "s"; //TODO find .NET Core plural nuget
         }
 
         [DebuggerStepThrough]
@@ -2030,7 +2022,7 @@ namespace LibrainianCore.Parsing {
                 return singular;
             }
 
-            return singular + "s";  //TODO find .NET Core plural nuget
+            return singular + "s"; //TODO find .NET Core plural nuget
         }
 
         [DebuggerStepThrough]
@@ -2045,7 +2037,9 @@ namespace LibrainianCore.Parsing {
                 return singular;
             }
 
-            return singular + "s";  //TODO find .NET Core plural nuget
+            return singular + "s"; //TODO find .NET Core plural nuget
         }
+
     }
+
 }

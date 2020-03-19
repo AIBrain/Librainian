@@ -11,9 +11,7 @@
 //
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -31,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "LibrainianCore", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/02/09 at 1:54 PM.
+// Project: "LibrainianCore", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Converters {
+namespace Librainian.Converters {
 
     using System;
     using System.Collections.Generic;
@@ -51,9 +49,9 @@ namespace LibrainianCore.Converters {
     using Maths;
     using Maths.Numbers;
     using OperatingSystem.FileSystem;
+    using OperatingSystem.FileSystem.Pri.LongPath;
     using Parsing;
     using Security;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
 
     // ReSharper disable RedundantUsingDirective
     using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
@@ -319,8 +317,8 @@ namespace LibrainianCore.Converters {
             //var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
-            return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ],
-                bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ), ( DateTimeKind )bytes[ 15 ] );
+            return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ], bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ),
+                ( DateTimeKind )bytes[ 15 ] );
         }
 
         [Pure]
@@ -359,11 +357,9 @@ namespace LibrainianCore.Converters {
             }
 
             try {
-                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty, StringComparison.Ordinal )
-                    .Replace( ")", String.Empty, StringComparison.Ordinal )
-                    .Replace( "(", "-", StringComparison.Ordinal )
-                    .Replace( "..", ".", StringComparison.Ordinal )
-                    .Replace( " ", String.Empty, StringComparison.Ordinal ).Trimmed();
+                var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty, StringComparison.Ordinal ).Replace( ")", String.Empty, StringComparison.Ordinal )
+                             .Replace( "(", "-", StringComparison.Ordinal ).Replace( "..", ".", StringComparison.Ordinal )
+                             .Replace( " ", String.Empty, StringComparison.Ordinal ).Trimmed();
 
                 if ( String.IsNullOrEmpty( s ) ) {
                     return null;
@@ -430,17 +426,17 @@ namespace LibrainianCore.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( ( UInt32 )dateTime.Year //0,1,2,3
-                        , ( UInt16 )dateTime.DayOfYear //4,5
-                        , ( UInt16 )dateTime.Millisecond //6,7
-                        , ( Byte )dateTime.DayOfWeek //8
-                        , ( Byte )dateTime.Day //9
-                        , ( Byte )dateTime.Hour //10
-                        , ( Byte )dateTime.Minute //11
-                        , ( Byte )dateTime.Second //12
-                        , ( Byte )dateTime.Month //13
+                    var guid = new Guid( ( UInt32 )dateTime.Year           //0,1,2,3
+                        , ( UInt16 )dateTime.DayOfYear                     //4,5
+                        , ( UInt16 )dateTime.Millisecond                   //6,7
+                        , ( Byte )dateTime.DayOfWeek                       //8
+                        , ( Byte )dateTime.Day                             //9
+                        , ( Byte )dateTime.Hour                            //10
+                        , ( Byte )dateTime.Minute                          //11
+                        , ( Byte )dateTime.Second                          //12
+                        , ( Byte )dateTime.Month                           //13
                         , Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , ( Byte )dateTime.Kind ); //15
+                        , ( Byte )dateTime.Kind );                         //15
 
                     return guid;
                 }

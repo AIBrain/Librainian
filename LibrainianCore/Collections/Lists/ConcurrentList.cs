@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConcurrentList.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ConcurrentList.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConcurrentList.cs" was last formatted by Protiguous on 2020/01/31 at 12:23 AM.
+// Project: "LibrainianCore", File: "ConcurrentList.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Collections.Lists {
+namespace Librainian.Collections.Lists {
 
     using System;
     using System.Collections;
@@ -172,8 +166,8 @@ namespace LibrainianCore.Collections.Lists {
         public ConcurrentList( [CanBeNull] IEnumerable<T> enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
 
             this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-            this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
-            this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
+            this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( value: 60 );
+            this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( value: 60 );
 
             if ( !( enumerable is null ) ) {
                 this.AddRange( enumerable );
@@ -191,7 +185,7 @@ namespace LibrainianCore.Collections.Lists {
 
         private void IfDisallowedModificationsThrow() {
             if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-                throw new InvalidOperationException( "List does not allow modifications." );
+                throw new InvalidOperationException( message: "List does not allow modifications." );
             }
         }
 
@@ -315,7 +309,7 @@ namespace LibrainianCore.Collections.Lists {
         ///     to the end of this <see cref="ConcurrentList{TType}" />.</para>
         /// </summary>
         /// <param name="item"></param>
-        public void Add( T item ) => this.Add( item, null );
+        public void Add( T item ) => this.Add( item, afterAdd: null );
 
         /// <summary>
         ///     <para>Add the
@@ -558,7 +552,7 @@ namespace LibrainianCore.Collections.Lists {
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean Remove( T item ) => this.Remove( item, default );
+        public Boolean Remove( T item ) => this.Remove( item, afterRemoval: default );
 
         /// <summary>
         ///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
@@ -591,7 +585,7 @@ namespace LibrainianCore.Collections.Lists {
             if ( index < 0 ) {
 
                 if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-                    throw new ArgumentOutOfRangeException( nameof( index ), index, "Value must be 0 or greater." );
+                    throw new ArgumentOutOfRangeException( nameof( index ), index, message: "Value must be 0 or greater." );
                 }
 
                 return;
@@ -623,7 +617,7 @@ namespace LibrainianCore.Collections.Lists {
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         [NotNull]
-        public override String ToString() => $"{this.Take( 30 ).ToStrings( this.Count > 30 ? "..." : String.Empty )}";
+        public override String ToString() => $"{this.Take( count: 30 ).ToStrings( this.Count > 30 ? "..." : String.Empty )}";
 
         /// <summary>The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.</summary>
         public void TrimExcess() =>

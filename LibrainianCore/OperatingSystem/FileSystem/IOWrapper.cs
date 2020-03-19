@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "IOWrapper.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// 
+// Project: "LibrainianCore", File: "IOWrapper.cs" was last formatted by Protiguous on 2020/03/16 at 3:09 PM.
 
-namespace LibrainianCore.OperatingSystem.FileSystem {
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections;
@@ -53,7 +47,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         /// <summary>Access flags.</summary>
         [Flags]
-        [SuppressMessage( "ReSharper", "InconsistentNaming" )]
+        [SuppressMessage( category: "ReSharper", checkId: "InconsistentNaming" )]
         public enum ACCESS_MASK : UInt32 {
 
             /// <summary>The right to delete the object.</summary>
@@ -118,7 +112,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>Enumerates the that may apply to files.</summary>
         /// <remarks>These flags may be passed to CreateFile.</remarks>
         [Flags]
-        [SuppressMessage( "ReSharper", "InconsistentNaming" )]
+        [SuppressMessage( category: "ReSharper", checkId: "InconsistentNaming" )]
         public enum FileAccess : UInt32 {
 
             /// <summary>Read access.</summary>
@@ -220,21 +214,23 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             var pAlloc = IntPtr.Zero;
 
             try {
-                hFile = OpenFile( path );
+                hFile = OpenFile( path: path );
 
                 const Int64 i64 = 0;
 
-                var handle = GCHandle.Alloc( i64, GCHandleType.Pinned );
+                var handle = GCHandle.Alloc( value: i64, type: GCHandleType.Pinned );
                 var p = handle.AddrOfPinnedObject();
 
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-                pAlloc = Marshal.AllocHGlobal( q );
+                pAlloc = Marshal.AllocHGlobal( cb: q );
                 var pDest = pAlloc;
-                var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
+
+                var fResult = NativeMethods.DeviceIoControl( hDevice: hFile, dwIoControlCode: FSConstants.FsctlGetRetrievalPointers, inBuffer: p,
+                    nInBufferSize: Marshal.SizeOf( structure: i64 ), outBuffer: pDest, nOutBufferSize: q, pBytesReturned: out var size, lpOverlapped: IntPtr.Zero );
 
                 if ( !fResult ) {
-                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                    throw new Exception( message: Marshal.GetLastWin32Error().ToString() );
                 }
 
                 handle.Free();
@@ -251,27 +247,27 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     } RETRIEVAL_POINTERS_BUFFER, *PRETRIEVAL_POINTERS_BUFFER;
                 */
 
-                var extentCount = ( Int32 ) Marshal.PtrToStructure( pDest, typeof( Int32 ) );
+                var extentCount = ( Int32 ) Marshal.PtrToStructure( ptr: pDest, structureType: typeof( Int32 ) );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 4 );
 
-                var startingVcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                var startingVcn = ( Int64 ) Marshal.PtrToStructure( ptr: pDest, structureType: typeof( Int64 ) );
 
-                Debug.Assert( startingVcn == 0 );
+                Debug.Assert( condition: startingVcn == 0 );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
 
                 // now pDest points at an array of pairs of Int64s.
 
-                var retVal = Array.CreateInstance( typeof( Int64 ), new[] {
+                var retVal = Array.CreateInstance( elementType: typeof( Int64 ), lengths: new[] {
                     extentCount, 2
                 } );
 
                 for ( var i = 0; i < extentCount; i++ ) {
                     for ( var j = 0; j < 2; j++ ) {
-                        var v = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                        var v = ( Int64 ) Marshal.PtrToStructure( ptr: pDest, structureType: typeof( Int64 ) );
 
-                        retVal.SetValue( v, new[] {
+                        retVal.SetValue( value: v, indices: new[] {
                             i, j
                         } );
 
@@ -287,7 +283,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 // ReSharper disable once RedundantAssignment
                 hFile = IntPtr.Zero;
 
-                Marshal.FreeHGlobal( pAlloc );
+                Marshal.FreeHGlobal( hglobal: pAlloc );
 
                 // ReSharper disable once RedundantAssignment
                 pAlloc = IntPtr.Zero;
@@ -299,19 +295,19 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns>a bitarray for each cluster</returns>
         [JetBrains.Annotations.NotNull]
         public static BitArray GetVolumeMap( [JetBrains.Annotations.NotNull] String deviceName ) {
-            if ( String.IsNullOrWhiteSpace( deviceName ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( deviceName ) );
+            if ( String.IsNullOrWhiteSpace( value: deviceName ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( deviceName ) );
             }
 
             var pAlloc = IntPtr.Zero;
             var hDevice = IntPtr.Zero;
 
             try {
-                hDevice = OpenVolume( deviceName );
+                hDevice = OpenVolume( deviceName: deviceName );
 
                 const Int64 i64 = 0;
 
-                var handle = GCHandle.Alloc( i64, GCHandleType.Pinned );
+                var handle = GCHandle.Alloc( value: i64, type: GCHandleType.Pinned );
                 var p = handle.AddrOfPinnedObject();
 
                 // alloc off more than enough for my machine 64 megs == 67108864 bytes == 536870912
@@ -319,13 +315,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 // == 2048 gig disk storage
                 const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
-                pAlloc = Marshal.AllocHGlobal( q );
+                pAlloc = Marshal.AllocHGlobal( cb: q );
                 var pDest = pAlloc;
 
-                var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
+                var result = NativeMethods.DeviceIoControl( hDevice: hDevice, dwIoControlCode: FSConstants.FsctlGetVolumeBitmap, inBuffer: p,
+                    nInBufferSize: Marshal.SizeOf( structure: i64 ), outBuffer: pDest, nOutBufferSize: q, pBytesReturned: out var size, lpOverlapped: IntPtr.Zero );
 
                 if ( !result ) {
-                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                    throw new Exception( message: Marshal.GetLastWin32Error().ToString() );
                 }
 
                 handle.Free();
@@ -339,12 +336,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                        BYTE Buffer[1];
                   } VOLUME_BITMAP_BUFFER, *PVOLUME_BITMAP_BUFFER;
                 */
-                var startingLcn = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                var startingLcn = ( Int64 ) Marshal.PtrToStructure( ptr: pDest, structureType: typeof( Int64 ) );
 
-                Debug.Assert( startingLcn == 0 );
+                Debug.Assert( condition: startingLcn == 0 );
 
                 pDest = ( IntPtr ) ( ( Int64 ) pDest + 8 );
-                var bitmapSize = ( Int64 ) Marshal.PtrToStructure( pDest, typeof( Int64 ) );
+                var bitmapSize = ( Int64 ) Marshal.PtrToStructure( ptr: pDest, structureType: typeof( Int64 ) );
 
                 var byteSize = ( Int32 ) ( bitmapSize / 8 );
                 byteSize++; // round up - even with no remainder
@@ -353,9 +350,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
                 var byteArr = new Byte[ byteSize ];
 
-                Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
+                Marshal.Copy( source: bitmapBegin, destination: byteArr, startIndex: 0, length: byteSize );
 
-                var retVal = new BitArray( byteArr ) {
+                var retVal = new BitArray( bytes: byteArr ) {
                     Length = ( Int32 ) bitmapSize
                 };
 
@@ -368,7 +365,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 // ReSharper disable once RedundantAssignment
                 hDevice = IntPtr.Zero;
 
-                Marshal.FreeHGlobal( pAlloc );
+                Marshal.FreeHGlobal( hglobal: pAlloc );
 
                 // ReSharper disable once RedundantAssignment
                 pAlloc = IntPtr.Zero;
@@ -386,23 +383,23 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             var hFile = IntPtr.Zero;
 
             try {
-                hVol = OpenVolume( deviceName );
+                hVol = OpenVolume( deviceName: deviceName );
 
-                hFile = OpenFile( path );
+                hFile = OpenFile( path: path );
 
                 var mfd = new MoveFileData {
                     HFile = hFile, StartingVcn = vcn, StartingLcn = lcn, ClusterCount = count
                 };
 
-                var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
+                var handle = GCHandle.Alloc( value: mfd, type: GCHandleType.Pinned );
                 var p = handle.AddrOfPinnedObject();
-                var bufSize = ( UInt32 ) Marshal.SizeOf( mfd );
+                var bufSize = ( UInt32 ) Marshal.SizeOf( structure: mfd );
 
-                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size,
-                    IntPtr.Zero );
+                var fResult = NativeMethods.DeviceIoControl( hDevice: hVol, dwIoControlCode: FSConstants.FsctlMoveFile, lpInBuffer: p, nInBufferSize: bufSize,
+                    lpOutBuffer: IntPtr.Zero, /* no output data from this FSCTL*/ nOutBufferSize: 0, lpBytesReturned: out var size, lpOverlapped: IntPtr.Zero );
 
                 if ( !fResult ) {
-                    throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                    throw new Exception( message: Marshal.GetLastWin32Error().ToString() );
                 }
 
                 handle.Free();
@@ -414,22 +411,24 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         }
 
         public static IntPtr OpenFile( [CanBeNull] String path ) {
-            var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
-                FileMode.Open, 0, IntPtr.Zero );
+            var hFile = NativeMethods.CreateFile( lpFileName: path, dwDesiredAccess: ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ),
+                dwShareMode: FileShare.ReadWrite, lpSecurityAttributes: IntPtr.Zero, dwCreationDisposition: FileMode.Open, dwFlagsAndAttributes: 0,
+                hTemplateFile: IntPtr.Zero );
 
             if ( hFile.IsInvalid ) {
-                throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                throw new Exception( message: Marshal.GetLastWin32Error().ToString() );
             }
 
             return hFile.DangerousGetHandle();
         }
 
         public static IntPtr OpenVolume( [CanBeNull] String deviceName ) {
-            var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
-                IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+            var hDevice = NativeMethods.CreateFile( lpFileName: @"\\.\" + deviceName,
+                dwDesiredAccess: ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), dwShareMode: FileShare.Write,
+                lpSecurityAttributes: IntPtr.Zero, dwCreationDisposition: FileMode.Open, dwFlagsAndAttributes: 0, hTemplateFile: IntPtr.Zero );
 
             if ( hDevice.IsInvalid ) {
-                throw new Exception( Marshal.GetLastWin32Error().ToString() );
+                throw new Exception( message: Marshal.GetLastWin32Error().ToString() );
             }
 
             return hDevice.DangerousGetHandle();

@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "AviWriter.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "AviWriter.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "AviWriter.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// 
+// Project: "LibrainianCore", File: "AviWriter.cs" was last formatted by Protiguous on 2020/03/16 at 10:16 PM.
 
-namespace LibrainianCore.Graphics.Video {
+namespace Librainian.Graphics.Video {
 
     using System;
     using System.Runtime.InteropServices;
@@ -47,11 +41,6 @@ namespace LibrainianCore.Graphics.Video {
 
     /// <summary>Create AVI files from bitmaps</summary>
     public class AviWriter : ABetterClassDispose {
-
-        private const UInt32 _fccHandler = 1668707181;
-
-        //"Microsoft Video 1" - Use CVID for default codec: (UInt32)Avi.mmioStringToFOURCC("CVID", 0);
-        private const UInt32 _fccType = Avi.StreamtypeVideo;
 
         private Int32 _aviFile;
 
@@ -68,6 +57,11 @@ namespace LibrainianCore.Graphics.Video {
 
         private Int32 _width;
 
+        private const UInt32 _fccHandler = 1668707181;
+
+        //"Microsoft Video 1" - Use CVID for default codec: (UInt32)Avi.mmioStringToFOURCC("CVID", 0);
+        private const UInt32 _fccType = Avi.StreamtypeVideo;
+
         /// <summary>Creates a new video stream in the AVI file</summary>
         private void CreateStream() {
             var strhdr = new Avi.Avistreaminfo {
@@ -75,7 +69,7 @@ namespace LibrainianCore.Graphics.Video {
                 fccHandler = _fccHandler,
                 dwScale = 1,
                 dwRate = this._frameRate,
-                dwSuggestedBufferSize = ( UInt32 )( this._height * this._stride ),
+                dwSuggestedBufferSize = ( UInt32 ) ( this._height * this._stride ),
                 dwQuality = 10000,
                 rcFrame = {
                     bottom = ( UInt32 ) this._height, right = ( UInt32 ) this._width
@@ -85,38 +79,38 @@ namespace LibrainianCore.Graphics.Video {
 
             //highest quality! Compression destroys the hidden message
 
-            var result = NativeMethods.AVIFileCreateStream( this._aviFile, out this._aviStream, ref strhdr );
+            var result = NativeMethods.AVIFileCreateStream( pfile: this._aviFile, ppavi: out this._aviStream, ptrStreaminfo: ref strhdr );
 
             if ( result != 0 ) {
-                throw new Exception( "Error in AVIFileCreateStream: " + result );
+                throw new Exception( message: "Error in AVIFileCreateStream: " + result );
             }
 
             //define the image format
 
             var bi = new Avi.Bitmapinfoheader();
-            bi.biSize = ( UInt32 )Marshal.SizeOf( bi );
+            bi.biSize = ( UInt32 ) Marshal.SizeOf( structure: bi );
             bi.biWidth = this._width;
             bi.biHeight = this._height;
             bi.biPlanes = 1;
             bi.biBitCount = 24;
-            bi.biSizeImage = ( UInt32 )( this._stride * this._height );
+            bi.biSizeImage = ( UInt32 ) ( this._stride * this._height );
 
-            result = NativeMethods.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
+            result = NativeMethods.AVIStreamSetFormat( aviStream: this._aviStream, lPos: 0, lpFormat: ref bi, cbFormat: Marshal.SizeOf( structure: bi ) );
 
             if ( result != 0 ) {
-                throw new Exception( "Error in AVIStreamSetFormat: " + result );
+                throw new Exception( message: "Error in AVIStreamSetFormat: " + result );
             }
         }
 
         /// <summary>Closes stream, file and AVI Library</summary>
         public void Close() {
             if ( this._aviStream != IntPtr.Zero ) {
-                NativeMethods.AVIStreamRelease( this._aviStream );
+                NativeMethods.AVIStreamRelease( aviStream: this._aviStream );
                 this._aviStream = IntPtr.Zero;
             }
 
             if ( this._aviFile != 0 ) {
-                NativeMethods.AVIFileRelease( this._aviFile );
+                NativeMethods.AVIFileRelease( pfile: this._aviFile );
                 this._aviFile = 0;
             }
 
@@ -134,11 +128,13 @@ namespace LibrainianCore.Graphics.Video {
 
             NativeMethods.AVIFileInit();
 
-            var hr = NativeMethods.AVIFileOpen( ref this._aviFile, fileName, 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, 0 );
+            var hr = NativeMethods.AVIFileOpen( ppfile: ref this._aviFile, szFile: fileName, uMode: 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, pclsidHandler: 0 );
 
             if ( hr != 0 ) {
-                throw new Exception( "Error in AVIFileOpen: " + hr );
+                throw new Exception( message: "Error in AVIFileOpen: " + hr );
             }
         }
+
     }
+
 }

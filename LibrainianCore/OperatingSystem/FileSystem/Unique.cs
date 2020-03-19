@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Unique.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Unique.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Unique.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// 
+// Project: "LibrainianCore", File: "Unique.cs" was last formatted by Protiguous on 2020/03/16 at 3:10 PM.
 
-namespace LibrainianCore.OperatingSystem.FileSystem {
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Generic;
@@ -68,14 +62,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
     [Serializable]
     public class Unique : IEquatable<Unique> {
 
-        private const Int32 EOFMarker = -1;
+        public Boolean Equals( Unique other ) => Equals( left: this, right: other );
 
         [NotNull]
         [JsonProperty]
         private readonly Uri u;
-
-        /// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
-        public static readonly Unique Empty = new Unique();
 
         /// <summary>The location/directory/path/file/name/whatever.ext
         /// <para>Has been filtered through Uri.AbsoluteUri already.</para>
@@ -89,8 +80,13 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [JsonIgnore]
         public String AbsolutePath => this.U.AbsolutePath;
 
+        private const Int32 EOFMarker = -1;
+
+        /// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
+        public static readonly Unique Empty = new Unique();
+
         /// <summary>What effect will this have down the road?</summary>
-        private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
+        private Unique() => Uri.TryCreate( uriString: String.Empty, uriKind: UriKind.RelativeOrAbsolute, result: out this.u );
 
         /// <summary></summary>
         /// <param name="location"></param>
@@ -98,14 +94,14 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>
         protected Unique( TrimmedString location ) {
             if ( location.IsEmpty() ) {
-                throw new ArgumentEmptyException( "Location cannot be null or whitespace." );
+                throw new ArgumentEmptyException( message: "Location cannot be null or whitespace." );
             }
 
-            if ( Uri.TryCreate( location, UriKind.Absolute, out var uri ) ) {
+            if ( Uri.TryCreate( uriString: location, uriKind: UriKind.Absolute, result: out var uri ) ) {
                 this.u = uri;
             }
             else {
-                throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
+                throw new UriFormatException( textString: $"Unable to parse the String `{location}` into a Uri" );
             }
         }
 
@@ -114,7 +110,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Unique left, [CanBeNull] Unique right ) {
-            if ( ReferenceEquals( left, right ) ) {
+            if ( ReferenceEquals( objA: left, objB: right ) ) {
                 return true;
             }
 
@@ -122,17 +118,17 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 return default;
             }
 
-            return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
+            return String.Equals( a: left.AbsolutePath, b: right.AbsolutePath, comparisonType: StringComparison.Ordinal );
         }
 
-        public static Boolean operator !=( [CanBeNull] Unique left, [CanBeNull] Unique right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] Unique left, [CanBeNull] Unique right ) => !Equals( left: left, right: right );
 
-        public static Boolean operator ==( [CanBeNull] Unique left, [CanBeNull] Unique right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] Unique left, [CanBeNull] Unique right ) => Equals( left: left, right: right );
 
         public static Boolean TryCreate( TrimmedString location, [NotNull] out Unique unique ) {
             if ( !location.IsEmpty() ) {
                 try {
-                    unique = new Unique( location );
+                    unique = new Unique( location: location );
 
                     return true;
                 }
@@ -158,7 +154,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             }
 
             if ( uri.IsAbsoluteUri ) {
-                unique = new Unique( uri.AbsoluteUri );
+                unique = new Unique( location: uri.AbsoluteUri );
 
                 return true;
             }
@@ -171,8 +167,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
         /// <returns></returns>
         public IEnumerable<Byte> AsBytes( CancellationToken token, TimeSpan timeout ) {
-            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                using ( var stream = client.OpenRead( this.U ) ) {
+            using ( var client = new WebClient().SetTimeoutAndCancel( timeout: timeout, token: token ) ) {
+                using ( var stream = client.OpenRead( address: this.U ) ) {
                     if ( stream?.CanRead != true ) {
                         yield break;
                     }
@@ -184,7 +180,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                             yield break;
                         }
 
-                        yield return ( Byte )a;
+                        yield return ( Byte ) a;
                     }
                 }
             }
@@ -194,8 +190,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         public IEnumerable<Int32> AsInt16( CancellationToken token, TimeSpan timeout ) {
 
-            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                using ( var stream = client.OpenRead( this.U ) ) {
+            using ( var client = new WebClient().SetTimeoutAndCancel( timeout: timeout, token: token ) ) {
+                using ( var stream = client.OpenRead( address: this.U ) ) {
                     if ( stream?.CanRead != true ) {
                         yield break;
                     }
@@ -210,16 +206,16 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         var b = stream.ReadByte();
 
                         if ( b == EOFMarker ) {
-                            yield return BitConverter.ToInt16( new[] {
+                            yield return BitConverter.ToInt16( value: new[] {
                                 ( Byte ) a
-                            }, 0 );
+                            }, startIndex: 0 );
 
                             yield break;
                         }
 
-                        yield return BitConverter.ToInt16( new[] {
+                        yield return BitConverter.ToInt16( value: new[] {
                             ( Byte ) a, ( Byte ) b
-                        }, 0 );
+                        }, startIndex: 0 );
                     }
                 }
             }
@@ -229,8 +225,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         public IEnumerable<Int32> AsInt32( CancellationToken token, TimeSpan timeout ) {
 
-            using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
-                using ( var stream = client.OpenRead( this.U ) ) {
+            using ( var client = new WebClient().SetTimeoutAndCancel( timeout: timeout, token: token ) ) {
+                using ( var stream = client.OpenRead( address: this.U ) ) {
                     if ( stream?.CanRead != true ) {
                         yield break;
                     }
@@ -245,9 +241,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         var b = stream.ReadByte();
 
                         if ( b == EOFMarker ) {
-                            yield return BitConverter.ToInt32( new[] {
+                            yield return BitConverter.ToInt32( value: new[] {
                                 ( Byte ) a
-                            }, 0 );
+                            }, startIndex: 0 );
 
                             yield break;
                         }
@@ -255,9 +251,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         var c = stream.ReadByte();
 
                         if ( c == EOFMarker ) {
-                            yield return BitConverter.ToInt32( new[] {
+                            yield return BitConverter.ToInt32( value: new[] {
                                 ( Byte ) a, ( Byte ) b
-                            }, 0 );
+                            }, startIndex: 0 );
 
                             yield break;
                         }
@@ -265,31 +261,29 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         var d = stream.ReadByte();
 
                         if ( d == EOFMarker ) {
-                            yield return BitConverter.ToInt32( new[] {
+                            yield return BitConverter.ToInt32( value: new[] {
                                 ( Byte ) a, ( Byte ) b, ( Byte ) c
-                            }, 0 );
+                            }, startIndex: 0 );
 
                             yield break;
                         }
 
-                        yield return BitConverter.ToInt32( new[] {
+                        yield return BitConverter.ToInt32( value: new[] {
                             ( Byte ) a, ( Byte ) b, ( Byte ) c, ( Byte ) d
-                        }, 0 );
+                        }, startIndex: 0 );
                     }
                 }
             }
         }
 
-        public Boolean Equals( Unique other ) => Equals( this, other );
-
-        public override Boolean Equals( Object? obj ) => Equals( this, obj as Unique );
+        public override Boolean Equals( Object? obj ) => Equals( left: this, right: obj as Unique );
 
         public override Int32 GetHashCode() => this.U.GetHashCode();
 
         /// <summary>Legacy name for a windows folder.</summary>
-        public Boolean IsDirectory() => this.ToDirectoryInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
+        public Boolean IsDirectory() => this.ToDirectoryInfo()?.Attributes.HasFlag( flag: FileAttributes.Directory ) ?? false;
 
-        public Boolean IsFile() => !this.ToFileInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
+        public Boolean IsFile() => !this.ToFileInfo()?.Attributes.HasFlag( flag: FileAttributes.Directory ) ?? false;
 
         /// <summary>Is this a windows folder (directory)?</summary>
         /// <returns></returns>
@@ -304,13 +298,13 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         public async Task<Int64> Length( CancellationToken token, TimeSpan timeout ) {
             try {
-                using ( var client = new WebClient().SetTimeoutAndCancel( timeout, token ) ) {
+                using ( var client = new WebClient().SetTimeoutAndCancel( timeout: timeout, token: token ) ) {
                     try {
-                        await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
+                        await client.OpenReadTaskAsync( address: this.U ).ConfigureAwait( continueOnCapturedContext: false );
 
-                        var header = client.ResponseHeaders[ "Content-Length" ];
+                        var header = client.ResponseHeaders[ name: "Content-Length" ];
 
-                        if ( Int64.TryParse( header, out var result ) ) {
+                        if ( Int64.TryParse( s: header, result: out var result ) ) {
                             return result;
                         }
                     }
@@ -330,7 +324,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public DirectoryInfo? ToDirectoryInfo() {
             try {
                 if ( this.U.IsFile ) {
-                    return new DirectoryInfo( this.AbsolutePath );
+                    return new DirectoryInfo( path: this.AbsolutePath );
                 }
             }
             catch ( Exception exception ) {
@@ -344,7 +338,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public FileInfo? ToFileInfo() {
             try {
                 if ( this.U.IsFile ) {
-                    return new FileInfo( this.AbsolutePath );
+                    return new FileInfo( fileName: this.AbsolutePath );
                 }
             }
             catch ( Exception exception ) {
@@ -358,5 +352,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns>A string that represents the current object.</returns>
         [NotNull]
         public override String ToString() => $"{this.AbsolutePath}";
+
     }
+
 }

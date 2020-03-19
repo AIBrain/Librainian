@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "CryptUtility.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "CryptUtility.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "CryptUtility.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// 
+// Project: "LibrainianCore", File: "CryptUtility.cs" was last formatted by Protiguous on 2020/03/16 at 3:11 PM.
 
-namespace LibrainianCore.Security {
+namespace Librainian.Security {
 
     using System;
     using System.Collections.Generic;
@@ -55,7 +49,7 @@ namespace LibrainianCore.Security {
         /// <param name="b">The byte value</param>
         /// <param name="position">The position of the bit</param>
         /// <returns>The value of the bit</returns>
-        private static Boolean GetBit( Byte b, Byte position ) => ( b & ( Byte )( 1 << position ) ) != 0;
+        private static Boolean GetBit( Byte b, Byte position ) => ( b & ( Byte ) ( 1 << position ) ) != 0;
 
         /// <summary>Return one component of a color</summary>
         /// <param name="pixelColor">The Color</param>
@@ -124,7 +118,7 @@ namespace LibrainianCore.Security {
                     else {
 
                         //copy a byte into the result key
-                        resultKeyStream.WriteByte( ( Byte )readByte );
+                        resultKeyStream.WriteByte( ( Byte ) readByte );
                     }
                 }
             }
@@ -137,7 +131,7 @@ namespace LibrainianCore.Security {
             //jump to reverse-read position and read from the end of the stream
             var keyPosition = keyStream.Position;
             keyStream.Seek( -keyPosition, SeekOrigin.End );
-            var reverseKeyByte = ( Byte )keyStream.ReadByte();
+            var reverseKeyByte = ( Byte ) keyStream.ReadByte();
 
             //jump back to normal read position
             keyStream.Seek( keyPosition, SeekOrigin.Begin );
@@ -151,13 +145,13 @@ namespace LibrainianCore.Security {
         /// <param name="newBitValue">The new value of the bit in position [position]</param>
         /// <returns>The new byte value</returns>
         private static Byte SetBit( Byte b, Byte position, Boolean newBitValue ) {
-            var mask = ( Byte )( 1 << position );
+            var mask = ( Byte ) ( 1 << position );
 
             if ( newBitValue ) {
-                return ( Byte )( b | mask );
+                return ( Byte ) ( b | mask );
             }
 
-            return ( Byte )( b & ~mask );
+            return ( Byte ) ( b & ~mask );
         }
 
         /// <summary>Changees one component of a color</summary>
@@ -210,7 +204,7 @@ namespace LibrainianCore.Security {
                 currentByte ^= key.Password[ passwordIndex ];
 
                 //add the result to the key stream
-                resultStream.WriteByte( ( Byte )currentByte );
+                resultStream.WriteByte( ( Byte ) currentByte );
 
                 //proceed to the next letter or repeat the password
                 passwordIndex++;
@@ -226,5 +220,7 @@ namespace LibrainianCore.Security {
 
             return resultStream;
         }
+
     }
+
 }

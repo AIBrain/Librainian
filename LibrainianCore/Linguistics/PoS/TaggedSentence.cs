@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TaggedSentence.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "TaggedSentence.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TaggedSentence.cs" was last formatted by Protiguous on 2020/01/31 at 12:31 AM.
+// Project: "LibrainianCore", File: "TaggedSentence.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Linguistics.PoS {
+namespace Librainian.Linguistics.PoS {
 
     using System;
     using System.Collections;
@@ -56,27 +50,27 @@ namespace LibrainianCore.Linguistics.PoS {
 
         public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
             if ( words is null ) {
-                throw new ArgumentNullException( nameof( words ) );
+                throw new ArgumentNullException( paramName: nameof( words ) );
             }
 
-            this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
+            this.Tokens.AddRange( collection: words.Where( predicate: word => null != word ).Select( selector: word => word ) );
         }
 
         [Pure]
         [NotNull]
-        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
+        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( separator: " " );
 
         /// <summary>Returns a value that indicates whether two <see cref="TaggedSentence" /> objects have different values.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static Boolean operator !=( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => !Equals( left, right );
+        public static Boolean operator !=( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => !Equals( objA: left, objB: right );
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="TaggedSentence" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static Boolean operator ==( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => Equals( left, right );
+        public static Boolean operator ==( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => Equals( objA: left, objB: right );
 
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
@@ -87,13 +81,13 @@ namespace LibrainianCore.Linguistics.PoS {
                 return default;
             }
 
-            return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
+            return ReferenceEquals( objA: this, objB: other ) || this.Tokens.SequenceEqual( second: other.Tokens );
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as TaggedSentence );
+        public override Boolean Equals( Object obj ) => Equals( objA: this, objB: obj as TaggedSentence );
 
         public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
 
@@ -103,7 +97,7 @@ namespace LibrainianCore.Linguistics.PoS {
 
         [Pure]
         [NotNull]
-        public override String ToString() => this.Tokens.ToStrings( " " );
+        public override String ToString() => this.Tokens.ToStrings( separator: " " );
 
         /// <summary>Returns an enumerator that iterates through a collection.</summary>
         /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>

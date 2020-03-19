@@ -11,9 +11,7 @@
 // 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 // 
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -31,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "LibrainianCore", File: "CompressExtensions.cs" was last formatted by Protiguous on 2020/02/27 at 11:30 AM.
+// Project: "LibrainianCore", File: "CompressExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:08 PM.
 
-namespace LibrainianCore.OperatingSystem.Compression {
+namespace Librainian.OperatingSystem.Compression {
 
     using System;
     using System.IO;

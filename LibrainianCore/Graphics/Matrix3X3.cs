@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Matrix3X3.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Matrix3X3.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Matrix3X3.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "Matrix3X3.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Graphics {
+namespace Librainian.Graphics {
 
     using System;
     using JetBrains.Annotations;
@@ -100,11 +94,11 @@ namespace LibrainianCore.Graphics {
 
         /// <summary>Gets a value indicating whether this matrix is affine. This will be true if the right column (M13, M23, M33) is 0 0 1</summary>
         /// <value><c>true</c> if this instance is affine; otherwise, <c>false</c>.</value>
-        public Boolean IsAffine => this._coeffs[ _M13 ].Near( 0 ) && this._coeffs[ _M23 ].Near( 0 ) && this._coeffs[ _M33 ].Near( 1 );
+        public Boolean IsAffine => this._coeffs[ _M13 ].Near( target: 0 ) && this._coeffs[ _M23 ].Near( target: 0 ) && this._coeffs[ _M33 ].Near( target: 1 );
 
         /// <summary>Gets a value indicating whether this matrix is singular. If it is singular, it cannot be inverted</summary>
         /// <value><c>true</c> if this instance is singular; otherwise, <c>false</c>.</value>
-        public Boolean IsSingular => this.Determinant.Near( 0 );
+        public Boolean IsSingular => this.Determinant.Near( target: 0 );
 
         /// <summary>Gets or sets the M11 coefficient</summary>
         /// <value>The M11</value>
@@ -201,8 +195,8 @@ namespace LibrainianCore.Graphics {
         /// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
         /// <param name="coefficients">The coefficients to initialise. The number of elements of the array should be equal to 9, else an exception will be thrown</param>
         public Matrix3X3( [NotNull] Double[] coefficients ) {
-            if ( coefficients.GetLength( 0 ) != 9 ) {
-                throw new Exception( "The number of coefficients passed in to the constructor must be 9" );
+            if ( coefficients.GetLength( dimension: 0 ) != 9 ) {
+                throw new Exception( message: "The number of coefficients passed in to the constructor must be 9" );
             }
 
             this._coeffs = coefficients;
@@ -228,7 +222,7 @@ namespace LibrainianCore.Graphics {
         public Object Clone() {
             var coeffCopy = ( Double[] )this._coeffs.Clone();
 
-            return new Matrix3X3( coeffCopy );
+            return new Matrix3X3( coefficients: coeffCopy );
         }
 
         /// <summary>Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception</summary>
@@ -279,16 +273,16 @@ namespace LibrainianCore.Graphics {
             var af = a * f;
 
             // Construct the matrix using these components
-            var tempMat = new Matrix3X3( ei - fh, ch - bi, bf - ce, fg - di, ai - cg, cd - af, dh - eg, bg - ah, ae - bd );
+            var tempMat = new Matrix3X3( m11: ei - fh, m12: ch - bi, m13: bf - ce, m21: fg - di, m22: ai - cg, m23: cd - af, m31: dh - eg, m32: bg - ah, m33: ae - bd );
 
             // Compute the determinant
 
-            if ( this.Determinant.Near( 0.0 ) ) {
-                throw new Exception( "Unable to invert the matrix as it is singular" );
+            if ( this.Determinant.Near( target: 0.0 ) ) {
+                throw new Exception( message: "Unable to invert the matrix as it is singular" );
             }
 
             // Scale the matrix by 1/determinant
-            tempMat.Scale( 1.0 / this.Determinant );
+            tempMat.Scale( scalar: 1.0 / this.Determinant );
 
             return tempMat;
         }

@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "CommonExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Common.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "CommonExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// 
+// Project: "LibrainianCore", File: "Common.cs" was last formatted by Protiguous on 2020/03/16 at 3:13 PM.
 
-namespace LibrainianCore {
+namespace Librainian {
 
     using System;
     using System.Collections.Generic;
@@ -60,18 +54,18 @@ namespace LibrainianCore {
         /// <example>5. Between(5, 5))</example>
         public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, [NotNull] T endInclusive ) where T : IComparable {
             if ( target is null ) {
-                throw new ArgumentNullException( nameof( target ) );
+                throw new ArgumentNullException( paramName: nameof( target ) );
             }
 
             if ( startInclusive is null ) {
-                throw new ArgumentNullException( nameof( startInclusive ) );
+                throw new ArgumentNullException( paramName: nameof( startInclusive ) );
             }
 
             if ( endInclusive is null ) {
-                throw new ArgumentNullException( nameof( endInclusive ) );
+                throw new ArgumentNullException( paramName: nameof( endInclusive ) );
             }
 
-            return target.CompareTo( startInclusive ) >= 0 && target.CompareTo( endInclusive ) <= 0;
+            return target.CompareTo( obj: startInclusive ) >= 0 && target.CompareTo( obj: endInclusive ) <= 0;
         }
 
         /// <summary>Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between <paramref name="min" /> and <paramref name="max" />.</summary>
@@ -82,22 +76,22 @@ namespace LibrainianCore {
         [NotNull]
         public static T Clamp<T>( [NotNull] this T self, [NotNull] T min, [NotNull] T max ) where T : IComparable<T> {
             if ( self is null ) {
-                throw new ArgumentNullException( nameof( self ) );
+                throw new ArgumentNullException( paramName: nameof( self ) );
             }
 
             if ( min is null ) {
-                throw new ArgumentNullException( nameof( min ) );
+                throw new ArgumentNullException( paramName: nameof( min ) );
             }
 
             if ( max is null ) {
-                throw new ArgumentNullException( nameof( max ) );
+                throw new ArgumentNullException( paramName: nameof( max ) );
             }
 
-            if ( self.CompareTo( min ) < 0 ) {
+            if ( self.CompareTo( other: min ) < 0 ) {
                 return min;
             }
 
-            return self.CompareTo( max ) > 0 ? max : self;
+            return self.CompareTo( other: max ) > 0 ? max : self;
         }
 
         [ItemCanBeNull]
@@ -110,9 +104,9 @@ namespace LibrainianCore {
         }
 
         /// <summary>Just a no-op for setting a breakpoint on.</summary>
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
-        [Conditional( "DEBUG" )]
+        [Conditional( conditionString: "DEBUG" )]
         public static void Nop<T>( [CanBeNull] this T obj ) { }
 
         /// <summary>
@@ -126,17 +120,19 @@ namespace LibrainianCore {
         /// <returns></returns>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static T NullIf<T>( [NotNull] this T left, [CanBeNull] T right ) => Comparer<T>.Default.Compare( left, right ) == 0 ? default : left;
+        public static T NullIf<T>( [NotNull] this T left, [CanBeNull] T right ) => Comparer<T>.Default.Compare( x: left, y: right ) == 0 ? default : left;
 
         [CanBeNull]
-        public static String OnlyDigits( [CanBeNull] this String input ) => String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsDigit ).ToArray() );
+        public static String OnlyDigits( [CanBeNull] this String input ) =>
+            String.IsNullOrWhiteSpace( value: input ) ? null : new String( value: input.Where( predicate: Char.IsDigit ).ToArray() );
 
         [CanBeNull]
-        public static String OnlyLetters( [CanBeNull] String input ) => String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsLetter ).ToArray() );
+        public static String OnlyLetters( [CanBeNull] String input ) =>
+            String.IsNullOrWhiteSpace( value: input ) ? null : new String( value: input.Where( predicate: Char.IsLetter ).ToArray() );
 
         [CanBeNull]
         public static String OnlyLettersAndNumbers( [CanBeNull] String input ) =>
-            String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ).ToArray() );
+            String.IsNullOrWhiteSpace( value: input ) ? null : new String( value: input.Where( predicate: c => Char.IsDigit( c: c ) || Char.IsLetter( c: c ) ).ToArray() );
 
         /// <summary>Swap <paramref name="left" /> with <paramref name="right" />.</summary>
         /// <typeparam name="T"></typeparam>
@@ -153,6 +149,8 @@ namespace LibrainianCore {
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static (T right, T left) Swap<T>( [CanBeNull] this T left, [CanBeNull] T right ) => (right, left);
+        public static (T right, T left) Swap<T>( [CanBeNull] this T left, [CanBeNull] T right ) => ( right, left );
+
     }
+
 }

@@ -1,4 +1,37 @@
-﻿namespace LibrainianCore.OperatingSystem.FileSystem.Pri.LongPath {
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Path.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+// 
+// Project: "LibrainianCore", File: "Path.cs" was last formatted by Protiguous on 2020/03/16 at 3:09 PM.
+
+namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
     using System;
     using System.Collections.Generic;
@@ -30,7 +63,7 @@
 
         public static readonly Char PathSeparator = System.IO.Path.PathSeparator;
 
-        private static Int32 GetUncRootLength( [NotNull]  this String path ) {
+        private static Int32 GetUncRootLength( [NotNull] this String path ) {
 
             var components = path.ThrowIfBlank().Split( new[] {
                 DirectorySeparatorChar
@@ -40,7 +73,7 @@
         }
 
         [NotNull]
-        public static String AddLongPathPrefix( [NotNull]  this String path ) {
+        public static String AddLongPathPrefix( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
             if ( path.StartsWith( LongPathPrefix ) ) {
@@ -58,10 +91,11 @@
         }
 
         [NotNull]
-        public static String ChangeExtension( [NotNull]  this String filename, [CanBeNull] String extension ) => System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
+        public static String ChangeExtension( [NotNull] this String filename, [CanBeNull] String extension ) =>
+            System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
 
         [NotNull]
-        public static String CheckAddLongPathPrefix( [NotNull]  this String path ) {
+        public static String CheckAddLongPathPrefix( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
             if ( path.StartsWith( LongPathPrefix ) ) {
@@ -103,7 +137,7 @@
         }
 
         [NotNull]
-        public static String Combine( [NotNull]  this String path1, [NotNull] String path2 ) {
+        public static String Combine( [NotNull] this String path1, [NotNull] String path2 ) {
 
             path1 = path1.CheckInvalidPathChars();
 
@@ -127,10 +161,11 @@
         }
 
         [NotNull]
-        public static String Combine( [NotNull]  this String path1, [NotNull] String path2, [NotNull] String path3 ) => Combine( path1, path2 ).Combine( path3 );
+        public static String Combine( [NotNull] this String path1, [NotNull] String path2, [NotNull] String path3 ) => Combine( path1, path2 ).Combine( path3 );
 
         [NotNull]
-        public static String Combine( [NotNull]  this String path1, [NotNull] String path2, [NotNull] String path3, [NotNull] String path4 ) => Combine( path1.Combine( path2 ), path3 ).Combine( path4 );
+        public static String Combine( [NotNull] this String path1, [NotNull] String path2, [NotNull] String path3, [NotNull] String path4 ) =>
+            Combine( path1.Combine( path2 ), path3 ).Combine( path4 );
 
         [NotNull]
         public static String Combine( [NotNull] [ItemNotNull] params String[] paths ) {
@@ -141,34 +176,34 @@
             switch ( paths.Length ) {
                 case 0: return String.Empty;
                 case 1: {
-                        var z = paths[ 0 ];
+                    var z = paths[ 0 ];
 
-                        if ( z == null ) {
-                            throw new ArgumentException( "Value cannot be null or whitespace." );
-                        }
-
-                        return z.CheckInvalidPathChars().ThrowIfBlank();
+                    if ( z == null ) {
+                        throw new ArgumentException( "Value cannot be null or whitespace." );
                     }
+
+                    return z.CheckInvalidPathChars().ThrowIfBlank();
+                }
                 default: {
-                        var z = paths[ 0 ];
+                    var z = paths[ 0 ];
 
-                        if ( z == null ) {
-                            throw new ArgumentException( "Value cannot be null or whitespace." );
-                        }
-
-                        var path = z.CheckInvalidPathChars().ThrowIfBlank();
-
-                        for ( var i = 1; i < paths.Length; ++i ) {
-                            path = path.Combine( paths[ i ] );
-                        }
-
-                        return path;
+                    if ( z == null ) {
+                        throw new ArgumentException( "Value cannot be null or whitespace." );
                     }
+
+                    var path = z.CheckInvalidPathChars().ThrowIfBlank();
+
+                    for ( var i = 1; i < paths.Length; ++i ) {
+                        path = path.Combine( paths[ i ] );
+                    }
+
+                    return path;
+                }
             }
         }
 
         [NotNull]
-        public static String GetDirectoryName( [NotNull]  this String path ) {
+        public static String GetDirectoryName( [NotNull] this String path ) {
             path = path.ThrowIfBlank().CheckInvalidPathChars();
 
             String basePath = null;
@@ -203,13 +238,13 @@
         }
 
         [CanBeNull]
-        public static String GetExtension( [NotNull]  this String path ) => System.IO.Path.GetExtension( path.ThrowIfBlank() );
+        public static String GetExtension( [NotNull] this String path ) => System.IO.Path.GetExtension( path.ThrowIfBlank() );
 
         [NotNull]
-        public static String GetFileName( [NotNull]  this String path ) => System.IO.Path.GetFileName( path.NormalizeLongPath() );
+        public static String GetFileName( [NotNull] this String path ) => System.IO.Path.GetFileName( path.NormalizeLongPath() );
 
         [CanBeNull]
-        public static String GetFileNameWithoutExtension( [NotNull]  this String path ) => System.IO.Path.GetFileNameWithoutExtension( path.ThrowIfBlank() );
+        public static String GetFileNameWithoutExtension( [NotNull] this String path ) => System.IO.Path.GetFileNameWithoutExtension( path.ThrowIfBlank() );
 
         [NotNull]
         public static String GetFullPath( [NotNull] this String path ) {
@@ -225,7 +260,7 @@
         public static IEnumerable<Char> GetInvalidPathChars() => InvalidPathChars;
 
         [NotNull]
-        public static String GetPathRoot( [NotNull]  this String path ) {
+        public static String GetPathRoot( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
             if ( !path.IsPathRooted() ) {
@@ -239,7 +274,7 @@
             return path.Substring( 0, path.GetRootLength() );
         }
 
-        /// <summary>Returns just the unique random file name (no path) with an optional <paramref name="extension"/>.
+        /// <summary>Returns just the unique random file name (no path) with an optional <paramref name="extension" />.
         /// <remarks>Does not create a file.</remarks>
         /// </summary>
         /// <param name="extension"></param>
@@ -252,7 +287,7 @@
             return $"{Guid.NewGuid():D}.{extension}";
         }
 
-        public static Int32 GetRootLength( [NotNull]  this String path ) {
+        public static Int32 GetRootLength( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
             if ( path.IsPathUnc() ) {
@@ -272,7 +307,8 @@
                     var num = 2;
 
                     while ( rootLength >= length ||
-                            ( ( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) && --num <= 0 ) ) {
+                            ( ( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) &&
+                              --num <= 0 ) ) {
                         ++rootLength;
                     }
                 }
@@ -297,10 +333,10 @@
         public static String GetTempPath() => System.IO.Path.GetTempPath().ThrowIfBlank();
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Boolean HasExtension( [NotNull]  this String path ) => System.IO.Path.HasExtension( path.ThrowIfBlank() );
+        public static Boolean HasExtension( [NotNull] this String path ) => System.IO.Path.HasExtension( path.ThrowIfBlank() );
 
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Boolean HasIllegalCharacters( [NotNull]  this String path ) => path.ThrowIfBlank().Any( InvalidPathChars.Contains );
+        public static Boolean HasIllegalCharacters( [NotNull] this String path ) => path.ThrowIfBlank().Any( InvalidPathChars.Contains );
 
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -308,14 +344,14 @@
 
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Boolean IsPathRooted( [NotNull]  this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
+        public static Boolean IsPathRooted( [NotNull] this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
 
         /// <summary>Normalizes path (can be longer than MAX_PATH) and adds \\?\ long path prefix</summary>
         /// <param name="path"></param>
         /// <param name="parameterName"></param>
         /// <returns></returns>
         [NotNull]
-        public static String NormalizeLongPath( [NotNull]  this String path, [NotNull] String parameterName = "path" ) {
+        public static String NormalizeLongPath( [NotNull] this String path, [NotNull] String parameterName = "path" ) {
             path = path.ThrowIfBlank();
 
             if ( path.IsPathUnc() ) {
@@ -323,13 +359,13 @@
             }
 
             var buffer = new StringBuilder( path.Length + 1 ); // Add 1 for NULL
-            var length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), ( UInt32 )buffer.Capacity, buffer, IntPtr.Zero );
+            var length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), ( UInt32 ) buffer.Capacity, buffer, IntPtr.Zero );
 
             if ( length > buffer.Capacity ) {
 
                 // Resulting path longer than our buffer, so increase it
 
-                buffer.Capacity = ( Int32 )length;
+                buffer.Capacity = ( Int32 ) length;
                 length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), length, buffer, IntPtr.Zero );
             }
 
@@ -359,7 +395,7 @@
         }
 
         [NotNull]
-        public static String RemoveLongPathPrefix( [NotNull]  this String normalizedPath ) {
+        public static String RemoveLongPathPrefix( [NotNull] this String normalizedPath ) {
 
             if ( String.IsNullOrWhiteSpace( normalizedPath ) || !normalizedPath.StartsWith( LongPathPrefix ) ) {
                 return normalizedPath;
@@ -372,7 +408,7 @@
             return normalizedPath.Substring( LongPathPrefix.Length );
         }
 
-        public static Boolean TryNormalizeLongPath( [NotNull]  this String path, [CanBeNull] out String result ) {
+        public static Boolean TryNormalizeLongPath( [NotNull] this String path, [CanBeNull] out String result ) {
             if ( !String.IsNullOrWhiteSpace( path ) ) {
                 try {
                     result = path.NormalizeLongPath();
@@ -387,5 +423,7 @@
 
             return false;
         }
+
     }
+
 }

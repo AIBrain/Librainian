@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ArbitraryDecimal.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ArbitraryDecimal.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ArbitraryDecimal.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// 
+// Project: "LibrainianCore", File: "ArbitraryDecimal.cs" was last formatted by Protiguous on 2020/03/16 at 3:06 PM.
 
-namespace LibrainianCore.Maths {
+namespace Librainian.Maths {
 
     using System;
     using System.Globalization;
@@ -54,11 +48,11 @@ namespace LibrainianCore.Maths {
 
         /// <summary>Constructs an arbitrary System.Decimal expansion from the given long. The long must not be negative.</summary>
         public ArbitraryDecimal( Int64 x ) {
-            var tmp = x.ToString( CultureInfo.CurrentCulture );
+            var tmp = x.ToString( provider: CultureInfo.CurrentCulture );
             this._digits = new Byte[ tmp.Length ];
 
             for ( var i = 0; i < tmp.Length; i++ ) {
-                this._digits[ i ] = ( Byte )( tmp[ i ] - '0' );
+                this._digits[ i ] = ( Byte ) ( tmp[ index: i ] - '0' );
             }
 
             this.Normalize();
@@ -70,15 +64,15 @@ namespace LibrainianCore.Maths {
 
             for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
                 var resultDigit = this._digits[ i ] * amount + result[ i + 1 ];
-                result[ i ] = ( Byte )( resultDigit / 10 );
-                result[ i + 1 ] = ( Byte )( resultDigit % 10 );
+                result[ i ] = ( Byte ) ( resultDigit / 10 );
+                result[ i + 1 ] = ( Byte ) ( resultDigit % 10 );
             }
 
             if ( result[ 0 ] != 0 ) {
                 this._digits = result;
             }
             else {
-                Buffer.BlockCopy( result, 1, this._digits, 0, this._digits.Length );
+                Buffer.BlockCopy( src: result, srcOffset: 1, dst: this._digits, dstOffset: 0, count: this._digits.Length );
             }
 
             this.Normalize();
@@ -128,30 +122,32 @@ namespace LibrainianCore.Maths {
             var digitString = new Char[ this._digits.Length ];
 
             for ( var i = 0; i < this._digits.Length; i++ ) {
-                digitString[ i ] = ( Char )( this._digits[ i ] + '0' );
+                digitString[ i ] = ( Char ) ( this._digits[ i ] + '0' );
             }
 
             // Simplest case - nothing after the System.Decimal point, and last real digit is
             // non-zero, eg value=35
             if ( this._decimalPoint == 0 ) {
-                return new String( digitString );
+                return new String( value: digitString );
             }
 
             // Fairly simple case - nothing after the System.Decimal point, but some 0s to add,
             // eg value=350
             if ( this._decimalPoint < 0 ) {
-                return $"{new String( digitString )}{new String( '0', -this._decimalPoint )}";
+                return $"{new String( value: digitString )}{new String( c: '0', count: -this._decimalPoint )}";
             }
 
             // Nothing before the System.Decimal point, eg 0.035
             if ( this._decimalPoint >= digitString.Length ) {
-                return $"0.{new String( '0', this._decimalPoint - digitString.Length )}{new String( digitString )}";
+                return $"0.{new String( c: '0', count: this._decimalPoint - digitString.Length )}{new String( value: digitString )}";
             }
 
             // Most complicated case - part of the String comes before the System.Decimal point,
             // part comes after it, eg 3.5
             return
-                $"{new String( digitString, 0, digitString.Length - this._decimalPoint )}.{new String( digitString, digitString.Length - this._decimalPoint, this._decimalPoint )}";
+                $"{new String( value: digitString, startIndex: 0, length: digitString.Length - this._decimalPoint )}.{new String( value: digitString, startIndex: digitString.Length - this._decimalPoint, length: this._decimalPoint )}";
         }
+
     }
+
 }

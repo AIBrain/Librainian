@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "CashDrawer.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "CashDrawer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "CashDrawer.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "CashDrawer.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Financial.Containers.Wallets {
+namespace Librainian.Financial.Containers.Wallets {
 
     using System;
     using System.Linq;
@@ -49,22 +43,22 @@ namespace LibrainianCore.Financial.Containers.Wallets {
 
         //TODO add in semaphore & readerwriterlockslim? or does Wallet already handle these?
 
-        public CashDrawer( Guid id ) : base( id ) { }
+        public CashDrawer( Guid id ) : base( id: id ) { }
 
         public Boolean Fund( [NotNull] params IBankNote[] bankNotes ) {
             if ( null == bankNotes ) {
-                throw new ArgumentNullException( nameof( bankNotes ) );
+                throw new ArgumentNullException( paramName: nameof( bankNotes ) );
             }
 
-            return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
+            return 0 == bankNotes.LongCount( predicate: bankNote => !this.Deposit( denomination: bankNote, quantity: 1 ) );
         }
 
         public Boolean Fund( [NotNull] params ICoin[] coins ) {
             if ( null == coins ) {
-                throw new ArgumentNullException( nameof( coins ) );
+                throw new ArgumentNullException( paramName: nameof( coins ) );
             }
 
-            return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
+            return 0 == coins.LongCount( predicate: coin => this.Deposit( coin: coin, quantity: 1 ) != 1 );
         }
 
         public Decimal RunningTotal() => this.Total();

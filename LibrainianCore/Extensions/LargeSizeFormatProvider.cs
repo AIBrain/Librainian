@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "LargeSizeFormatProvider.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "LargeSizeFormatProvider.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using JetBrains.Annotations;
@@ -51,55 +45,55 @@ namespace LibrainianCore.Extensions {
         private static String DefaultFormat( [CanBeNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             var formattableArg = arg as IFormattable;
 
-            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
+            return formattableArg?.ToString( format: format, formatProvider: formatProvider ) ?? arg.ToString();
         }
 
         [NotNull]
         public String Format( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( arg == null ) {
-                throw new ArgumentNullException( nameof( arg ) );
+                throw new ArgumentNullException( paramName: nameof( arg ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( format ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
+            if ( String.IsNullOrWhiteSpace( value: format ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( format ) );
             }
 
-            if ( format.StartsWith( FileSizeFormat ) != true ) {
-                return DefaultFormat( format, arg, formatProvider );
+            if ( format.StartsWith( value: FileSizeFormat ) != true ) {
+                return DefaultFormat( format: format, arg: arg, formatProvider: formatProvider );
             }
 
             if ( arg is String ) {
-                return DefaultFormat( format, arg, formatProvider );
+                return DefaultFormat( format: format, arg: arg, formatProvider: formatProvider );
             }
 
             Single size;
 
             try {
-                size = Convert.ToUInt64( arg );
+                size = Convert.ToUInt64( value: arg );
             }
             catch ( InvalidCastException ) {
-                return DefaultFormat( format, arg, formatProvider );
+                return DefaultFormat( format: format, arg: arg, formatProvider: formatProvider );
             }
 
             var suffix = "n/a";
 
-            if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
+            if ( size.Between( startInclusive: MathConstants.Sizes.OneTeraByte, endInclusive: UInt64.MaxValue ) ) {
                 size /= MathConstants.Sizes.OneTeraByte;
                 suffix = "trillion";
             }
-            else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
+            else if ( size.Between( startInclusive: MathConstants.Sizes.OneGigaByte, endInclusive: MathConstants.Sizes.OneTeraByte ) ) {
                 size /= MathConstants.Sizes.OneGigaByte;
                 suffix = "billion";
             }
-            else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
+            else if ( size.Between( startInclusive: MathConstants.Sizes.OneMegaByte, endInclusive: MathConstants.Sizes.OneGigaByte ) ) {
                 size /= MathConstants.Sizes.OneMegaByte;
                 suffix = "million";
             }
-            else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
+            else if ( size.Between( startInclusive: MathConstants.Sizes.OneKiloByte, endInclusive: MathConstants.Sizes.OneMegaByte ) ) {
                 size /= MathConstants.Sizes.OneKiloByte;
                 suffix = "thousand";
             }
-            else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
+            else if ( size.Between( startInclusive: UInt64.MinValue, endInclusive: MathConstants.Sizes.OneKiloByte ) ) {
                 suffix = "";
             }
 
@@ -108,7 +102,7 @@ namespace LibrainianCore.Extensions {
 
         public Object GetFormat( [NotNull] Type formatType ) {
             if ( formatType is null ) {
-                throw new ArgumentNullException( nameof( formatType ) );
+                throw new ArgumentNullException( paramName: nameof( formatType ) );
             }
 
             return formatType == typeof( ICustomFormatter ) ? this : null;

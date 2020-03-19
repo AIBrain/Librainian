@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ReflectionHelper.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ReflectionHelper.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ReflectionHelper.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "ReflectionHelper.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using System.Collections.Generic;
@@ -52,19 +46,19 @@ namespace LibrainianCore.Extensions {
         [NotNull]
         public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( [NotNull] this Assembly assembly ) {
             if ( assembly is null ) {
-                throw new ArgumentNullException( nameof( assembly ) );
+                throw new ArgumentNullException( paramName: nameof( assembly ) );
             }
 
-            return assembly.GetTypes().Where( type => type.IsSubclassOf( typeof( TBase ) ) );
+            return assembly.GetTypes().Where( predicate: type => type.IsSubclassOf( c: typeof( TBase ) ) );
         }
 
         [NotNull]
         public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( [NotNull] this Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( nameof( type ) );
+                throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
-            return type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
+            return type.GetFields( bindingAttr: BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
         }
 
         /// <summary>A typesafe wrapper for Attribute.GetCustomAttribute</summary>
@@ -72,30 +66,30 @@ namespace LibrainianCore.Extensions {
         [CanBeNull]
         public static TAttribute GetCustomAttribute<TAttribute>( [NotNull] this MemberInfo element ) where TAttribute : Attribute {
             if ( element is null ) {
-                throw new ArgumentNullException( nameof( element ) );
+                throw new ArgumentNullException( paramName: nameof( element ) );
             }
 
-            return Attribute.GetCustomAttribute( element, typeof( TAttribute ) ) as TAttribute;
+            return Attribute.GetCustomAttribute( element: element, attributeType: typeof( TAttribute ) ) as TAttribute;
         }
 
         /// <summary>All types across multiple assemblies</summary>
         [NotNull]
         public static IEnumerable<Type> GetTypes( [NotNull] this IEnumerable<Assembly> assemblies ) {
             if ( assemblies is null ) {
-                throw new ArgumentNullException( nameof( assemblies ) );
+                throw new ArgumentNullException( paramName: nameof( assemblies ) );
             }
 
-            return assemblies.SelectMany( assembly => assembly.GetTypes() );
+            return assemblies.SelectMany( selector: assembly => assembly.GetTypes() );
         }
 
         /// <summary>Check if the given type has the given attribute on it. Don't look at base classes.</summary>
         /// <owner>jayBaz</owner>
         public static Boolean TypeHasAttribute<TAttribute>( [NotNull] this Type type ) where TAttribute : Attribute {
             if ( type is null ) {
-                throw new ArgumentNullException( nameof( type ) );
+                throw new ArgumentNullException( paramName: nameof( type ) );
             }
 
-            return Attribute.IsDefined( type, typeof( TAttribute ) );
+            return Attribute.IsDefined( element: type, attributeType: typeof( TAttribute ) );
         }
     }
 }

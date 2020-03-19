@@ -11,9 +11,7 @@
 // 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 // 
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -31,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "LibrainianCore", File: "CompositeFormatter.cs" was last formatted by Protiguous on 2020/02/27 at 10:08 PM.
+// Project: "LibrainianCore", File: "CompositeFormatter.cs" was last formatted by Protiguous on 2020/03/16 at 3:10 PM.
 
-namespace LibrainianCore.Parsing {
+namespace Librainian.Parsing {
 
     using System;
     using System.Collections.Generic;
@@ -53,14 +51,14 @@ namespace LibrainianCore.Parsing {
         /// <summary>Initializes a new instance of the <see cref="CompositeFormatter" /> class.</summary>
         /// <param name="culture">The culture.</param>
         /// <param name="formatters">The formatters.</param>
-        public CompositeFormatter( [CanBeNull] CultureInfo culture = null, [NotNull] params Formatter[] formatters ) : base( culture ) =>
-            this._formatters = new List<Formatter>( formatters.Where( formatter => !( formatter is null ) ) );
+        public CompositeFormatter( [CanBeNull] CultureInfo culture = null, [NotNull] params Formatter[] formatters ) : base( culture: culture ) =>
+            this._formatters = new List<Formatter>( collection: formatters.Where( predicate: formatter => !( formatter is null ) ) );
 
         /// <summary>Adds the specified formatter.</summary>
         /// <param name="formatter">The formatter.</param>
         public void Add( [CanBeNull] Formatter formatter ) {
             if ( formatter != null ) {
-                this._formatters.Add( formatter );
+                this._formatters.Add( item: formatter );
             }
         }
 
@@ -71,7 +69,7 @@ namespace LibrainianCore.Parsing {
         /// <returns>The string representation of the value of <paramref name="arg" />, formatted as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</returns>
         [CanBeNull]
         public override String Format( [CanBeNull] String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider ) {
-            return this._formatters.Select( formatter => formatter.Format( format, arg, formatProvider ) ).FirstOrDefault();
+            return this._formatters.Select( selector: formatter => formatter.Format( format: format, arg: arg, formatProvider: formatProvider ) ).FirstOrDefault();
         }
 
     }

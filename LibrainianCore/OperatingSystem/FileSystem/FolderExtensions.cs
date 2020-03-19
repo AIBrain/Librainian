@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "FolderExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// 
+// Project: "LibrainianCore", File: "FolderExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:09 PM.
 
-namespace LibrainianCore.OperatingSystem.FileSystem {
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Concurrent;
@@ -108,39 +102,38 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
             [CanBeNull] IEnumerable<String> searchPatterns, Boolean overwriteDestinationDocuments = true, Boolean crc = true ) {
             if ( sourceFolder is null ) {
-                throw new ArgumentNullException( nameof( sourceFolder ) );
+                throw new ArgumentNullException( paramName: nameof( sourceFolder ) );
             }
 
             if ( destinationFolder is null ) {
-                throw new ArgumentNullException( nameof( destinationFolder ) );
+                throw new ArgumentNullException( paramName: nameof( destinationFolder ) );
             }
 
             var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
 
-            var sourceFiles = sourceFolder.GetDocuments( searchPatterns ?? new[] {
+            var sourceFiles = sourceFolder.GetDocuments( searchPatterns: searchPatterns ?? new[] {
                 "*.*"
             } );
 
-            Parallel.ForEach( sourceFiles.AsParallel(), CPU.AllCPUExceptOne, sourceDocument => {
+            Parallel.ForEach( source: sourceFiles.AsParallel(), parallelOptions: CPU.AllCPUExceptOne, body: sourceDocument => {
                 try {
                     var beginTime = DateTime.UtcNow;
 
                     var statistics = new DocumentCopyStatistics {
-                        TimeStarted = beginTime,
-                        SourceDocument = sourceDocument
+                        TimeStarted = beginTime, SourceDocument = sourceDocument
                     };
 
                     if ( crc ) {
                         statistics.SourceDocumentCRC64 = sourceDocument.CRC64Hex();
                     }
 
-                    var destinationDocument = new Document( destinationFolder, sourceDocument.FileName );
+                    var destinationDocument = new Document( folder: destinationFolder, filename: sourceDocument.FileName );
 
                     if ( overwriteDestinationDocuments && destinationDocument.Exists() ) {
                         destinationDocument.Delete();
                     }
 
-                    File.Copy( sourceDocument.FullPath, destinationDocument.FullPath );
+                    File.Copy( sourceFileName: sourceDocument.FullPath, destFileName: destinationDocument.FullPath );
 
                     if ( crc ) {
                         statistics.DestinationDocumentCRC64 = destinationDocument.CRC64Hex();
@@ -152,7 +145,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         return;
                     }
 
-                    statistics.BytesCopied = destinationDocument.Size().GetValueOrDefault( 0 );
+                    statistics.BytesCopied = destinationDocument.Size().GetValueOrDefault( defaultValue: 0 );
 
                     if ( crc ) {
                         statistics.BytesCopied *= 2;
@@ -160,7 +153,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
                     statistics.TimeTaken = endTime - beginTime;
                     statistics.DestinationDocument = destinationDocument;
-                    documentCopyStatistics.Add( statistics );
+                    documentCopyStatistics.Add( item: statistics );
                 }
                 catch ( Exception ) {
 
@@ -174,7 +167,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [ItemNotNull]
         public static IEnumerable<IFolder> FindFolder( [NotNull] this String folderName ) {
             if ( folderName is null ) {
-                throw new ArgumentNullException( nameof( folderName ) );
+                throw new ArgumentNullException( paramName: nameof( folderName ) );
             }
 
             //First check across all known drives.
@@ -182,8 +175,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             // ReSharper disable once LoopCanBePartlyConvertedToQuery
             foreach ( var drive in DriveInfo.GetDrives() ) {
-                var path = Path.Combine( drive.RootDirectory.FullName, folderName );
-                var asFolder = new Folder( path );
+                var path = Path.Combine( path1: drive.RootDirectory.FullName, path2: folderName );
+                var asFolder = new Folder( fullPath: path );
 
                 if ( asFolder.Exists() ) {
                     found = true;
@@ -203,9 +196,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
                 // ReSharper disable once LoopCanBePartlyConvertedToQuery
                 foreach ( var folder in folders ) {
-                    var parts = SplitPath( ( Folder )folder ); //TODO fix this cast
+                    var parts = SplitPath( info: ( Folder ) folder ); //TODO fix this cast
 
-                    if ( parts.Any( s => s.Like( folderName ) ) ) {
+                    if ( parts.Any( predicate: s => s.Like( right: folderName ) ) ) {
                         found = true;
 
                         yield return folder;
@@ -221,11 +214,11 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<String> SplitPath( [NotNull] String path ) {
-            if ( String.IsNullOrWhiteSpace( path ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
             }
 
-            return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );
+            return path.Split( separator: Folder.FolderSeparatorChar ).Where( predicate: s => !s.IsNullOrWhiteSpace() );
         }
 
         /// <summary><see cref="PathSplitter" />.</summary>
@@ -234,10 +227,10 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         [NotNull]
         public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
             if ( info is null ) {
-                throw new ArgumentNullException( nameof( info ) );
+                throw new ArgumentNullException( paramName: nameof( info ) );
             }
 
-            return SplitPath( info.FullPath );
+            return SplitPath( path: info.FullPath );
         }
 
         /// <summary>
@@ -249,7 +242,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         public static Boolean? TryDeleting( [NotNull] this Folder folder, TimeSpan tryFor ) {
             if ( folder == null ) {
-                throw new ArgumentNullException( nameof( folder ) );
+                throw new ArgumentNullException( paramName: nameof( folder ) );
             }
 
             var stopwatch = Stopwatch.StartNew();
@@ -260,9 +253,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     return true;
                 }
 
-                Directory.Delete( folder.FullPath );
+                Directory.Delete( path: folder.FullPath );
 
-                return !Directory.Exists( folder.FullPath );
+                return !Directory.Exists( path: folder.FullPath );
             }
             catch ( DirectoryNotFoundException ) { }
             catch ( PathTooLongException ) { }
@@ -283,5 +276,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             return null;
         }
+
     }
+
 }

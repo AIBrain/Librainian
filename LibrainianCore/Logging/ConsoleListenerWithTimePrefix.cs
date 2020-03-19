@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConsoleListenerWithTimePrefix.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ConsoleListenerWithTimePrefix.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConsoleListenerWithTimePrefix.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "ConsoleListenerWithTimePrefix.cs" was last formatted by Protiguous on 2020/03/16 at 3:06 PM.
 
-namespace LibrainianCore.Logging {
+namespace Librainian.Logging {
 
     using System;
     using System.Diagnostics;
@@ -48,14 +42,14 @@ namespace LibrainianCore.Logging {
         /// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
         public override Boolean IsThreadSafe => true;
 
-        public ConsoleListenerWithTimePrefix() : base( true ) { }
+        public ConsoleListenerWithTimePrefix() : base( useErrorStream: true ) { }
 
         //TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
         /// <summary>Emits an error message and a detailed error message to the listener you create when you implement the <see cref="TraceListener" /> class.</summary>
         /// <param name="message">      A message to emit.</param>
         /// <param name="detailMessage">A detailed message to emit.</param>
         public override void Fail( String message, String detailMessage ) {
-            base.Fail( message, detailMessage );
+            base.Fail( message: message, detailMessage: detailMessage );
             this.Flush();
         }
 
@@ -66,7 +60,7 @@ namespace LibrainianCore.Logging {
         /// </PermissionSet>
         [DebuggerStepThrough]
         public override void Write( String message ) {
-            Console.Write( message );
+            Console.Write( value: message );
             this.Flush();
         }
 
@@ -81,7 +75,7 @@ namespace LibrainianCore.Logging {
         /// </PermissionSet>
         [DebuggerStepThrough]
         public override void WriteLine( String message ) {
-            Console.WriteLine( message );
+            Console.WriteLine( value: message );
             this.Flush();
         }
 

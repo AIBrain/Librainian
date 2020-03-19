@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Images.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "Images.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Graphics {
+namespace Librainian.Graphics {
 
     using System;
     using System.Collections.Generic;
@@ -957,11 +951,12 @@ namespace LibrainianCore.Graphics {
         [NotNull]
         public static Matrix3X2 ComputeForwardTransform( [NotNull] IList<Point> baselineLocations, [NotNull] IList<Point> registerLocations ) {
             if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
-                throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
+                throw new Exception( message: "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
             }
 
             if ( baselineLocations.Count != registerLocations.Count ) {
-                throw new Exception( "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
+                throw new Exception(
+                    message: "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
             }
 
             // To compute Transform = ((X^T * X)^-1 * X^T)U = (X^T * X)^-1 (X^T * U)
@@ -978,33 +973,33 @@ namespace LibrainianCore.Graphics {
             for ( var i = 0; i < n; i++ ) {
 
                 // Compute sum of squares for X^T * X
-                a += xy[ i ].X * xy[ i ].X;
-                b += xy[ i ].X * xy[ i ].Y;
-                c += xy[ i ].X;
-                d += xy[ i ].X * xy[ i ].Y;
-                e += xy[ i ].Y * xy[ i ].Y;
-                f += xy[ i ].Y;
-                g += xy[ i ].X;
-                h += xy[ i ].Y;
+                a += xy[ index: i ].X * xy[ index: i ].X;
+                b += xy[ index: i ].X * xy[ index: i ].Y;
+                c += xy[ index: i ].X;
+                d += xy[ index: i ].X * xy[ index: i ].Y;
+                e += xy[ index: i ].Y * xy[ index: i ].Y;
+                f += xy[ index: i ].Y;
+                g += xy[ index: i ].X;
+                h += xy[ index: i ].Y;
 
                 // Compute sum of squares for X^T * U
-                p += xy[ i ].X * uv[ i ].X;
-                q += xy[ i ].X * uv[ i ].Y;
-                r += xy[ i ].Y * uv[ i ].X;
-                s += xy[ i ].Y * uv[ i ].Y;
-                t += uv[ i ].X;
-                u += uv[ i ].Y;
+                p += xy[ index: i ].X * uv[ index: i ].X;
+                q += xy[ index: i ].X * uv[ index: i ].Y;
+                r += xy[ index: i ].Y * uv[ index: i ].X;
+                s += xy[ index: i ].Y * uv[ index: i ].Y;
+                t += uv[ index: i ].X;
+                u += uv[ index: i ].Y;
             }
 
             // Create matrices from the coefficients
-            var uMat = new Matrix3X2( p, q, r, s, t, u );
-            var xMat = new Matrix3X3( a, b, c, d, e, f, g, h, n );
+            var uMat = new Matrix3X2( m11: p, m12: q, m21: r, m22: s, m31: t, m32: u );
+            var xMat = new Matrix3X3( m11: a, m12: b, m13: c, m21: d, m22: e, m23: f, m31: g, m32: h, m33: n );
 
             // Invert X
             var xInv = xMat.Inverse();
 
             // Perform the multiplication to get the transform
-            uMat.Multiply( xInv );
+            uMat.Multiply( left: xInv );
 
             // Matrix uMat now holds the image registration transform to go from the current result to baseline
             return uMat;
@@ -1016,21 +1011,22 @@ namespace LibrainianCore.Graphics {
                 return null;
             }
 
-            var value = Encoding.ASCII.GetString( item.Value );
+            var value = Encoding.ASCII.GetString( bytes: item.Value );
 
-            if ( value.EndsWith( "\0", StringComparison.Ordinal ) ) {
-                value = value.Replace( "\0", String.Empty );
+            if ( value.EndsWith( value: "\0", comparisonType: StringComparison.Ordinal ) ) {
+                value = value.Replace( oldValue: "\0", newValue: String.Empty );
             }
 
             if ( value == "0000:00:00 00:00:00" ) {
                 return null;
             }
 
-            if ( DateTime.TryParse( value, out var result ) ) {
+            if ( DateTime.TryParse( s: value, result: out var result ) ) {
                 return result;
             }
 
-            if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
+            if ( DateTime.TryParseExact( s: value, format: "yyyy:MM:dd HH:mm:ss", provider: CultureInfo.CurrentCulture, style: DateTimeStyles.AllowWhiteSpaces,
+                result: out result ) ) {
                 return result;
             }
 
@@ -1042,7 +1038,7 @@ namespace LibrainianCore.Graphics {
         /// <param name="byYears"> </param>
         /// <returns></returns>
         /// <remarks>Any time travelers in the house?</remarks>
-        public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) => dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
+        public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) => dateTime.Year <= DateTime.UtcNow.AddYears( value: byYears ).Year;
 
         /// <summary>Returns true if the date is 'recent' enough.</summary>
         /// <param name="dateTime"></param>

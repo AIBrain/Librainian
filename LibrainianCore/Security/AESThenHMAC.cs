@@ -1,20 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "AESThenHMAC.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -22,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "LibrainianCore", File: "AESThenHMAC.cs" was last formatted by Protiguous on 2020/02/02 at 3:35 PM.
+// 
+// Project: "LibrainianCore", File: "AESThenHMAC.cs" was last formatted by Protiguous on 2020/03/16 at 3:11 PM.
 
-namespace LibrainianCore.Security {
+namespace Librainian.Security {
 
     using System;
     using System.IO;
@@ -106,8 +104,7 @@ namespace LibrainianCore.Security {
                 }
 
                 //Grab Sent Tag
-                Array.Copy( encryptedMessage, encryptedMessage.Length - sentTag.Length, sentTag, 0,
-                    sentTag.Length );
+                Array.Copy( encryptedMessage, encryptedMessage.Length - sentTag.Length, sentTag, 0, sentTag.Length );
 
                 //Compare Tag with constant time comparison
                 var compare = 0;
@@ -122,10 +119,7 @@ namespace LibrainianCore.Security {
                 }
 
                 using ( var aes = new AesManaged {
-                    KeySize = KeyBitSize,
-                    BlockSize = BlockBitSize,
-                    Mode = CipherMode.CBC,
-                    Padding = PaddingMode.PKCS7
+                    KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
                 } ) {
 
                     //Grab IV from message
@@ -141,8 +135,7 @@ namespace LibrainianCore.Security {
                     using var binaryWriter = new BinaryWriter( decrypterStream );
 
                     //Decrypt Cipher Text from Message
-                    binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length,
-                        encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
+                    binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length, encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
 
                     //Return Plain Text
                     return plainTextStream.ToArray();
@@ -221,8 +214,7 @@ namespace LibrainianCore.Security {
             //Grab Salt from Non-Secret Payload
             Array.Copy( encryptedMessage, nonSecretPayloadLength, cryptSalt, 0, cryptSalt.Length );
 
-            Array.Copy( encryptedMessage, nonSecretPayloadLength + cryptSalt.Length, authSalt, 0,
-                authSalt.Length );
+            Array.Copy( encryptedMessage, nonSecretPayloadLength + cryptSalt.Length, authSalt, 0, authSalt.Length );
 
             Byte[] cryptKey;
             Byte[] authKey;
@@ -237,8 +229,7 @@ namespace LibrainianCore.Security {
                 authKey = generator.GetBytes( KeyBitSize / 8 );
             }
 
-            return SimpleDecrypt( encryptedMessage, cryptKey, authKey,
-                cryptSalt.Length + authSalt.Length + nonSecretPayloadLength );
+            return SimpleDecrypt( encryptedMessage, cryptKey, authKey, cryptSalt.Length + authSalt.Length + nonSecretPayloadLength );
         }
 
         /// <summary>Simple Encryption(AES) then Authentication (HMAC) for a UTF8 Message.</summary>
@@ -272,10 +263,7 @@ namespace LibrainianCore.Security {
             Byte[] cipherText;
 
             using var aes = new AesManaged {
-                KeySize = KeyBitSize,
-                BlockSize = BlockBitSize,
-                Mode = CipherMode.CBC,
-                Padding = PaddingMode.PKCS7
+                KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
             };
 
             aes.GenerateIV();
@@ -413,5 +401,7 @@ namespace LibrainianCore.Security {
 
             return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
         }
+
     }
+
 }

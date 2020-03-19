@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "NetworkConnection.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "NetworkConnection.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "NetworkConnection.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "NetworkConnection.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.ComputerSystem.Devices {
+namespace Librainian.ComputerSystem.Devices {
 
     using System;
     using System.ComponentModel;
@@ -143,18 +137,18 @@ namespace LibrainianCore.ComputerSystem.Devices {
         ALL = CONNECTABLE | CONTAINER | ATTACHED
     }
 
-    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+    [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Unicode )]
     public class NetResource {
 
         public ResourceDisplaytype DisplayType;
 
-        [MarshalAs( UnmanagedType.LPWStr )]
+        [MarshalAs( unmanagedType: UnmanagedType.LPWStr )]
         public String LocalName;
 
-        [MarshalAs( UnmanagedType.LPWStr )]
+        [MarshalAs( unmanagedType: UnmanagedType.LPWStr )]
         public String Provider;
 
-        [MarshalAs( UnmanagedType.LPWStr )]
+        [MarshalAs( unmanagedType: UnmanagedType.LPWStr )]
         public String RemoteName;
 
         public ResourceType ResourceType;
@@ -163,11 +157,11 @@ namespace LibrainianCore.ComputerSystem.Devices {
 
         public Int32 Usage;
 
-        [field: MarshalAs( UnmanagedType.LPWStr )]
+        [field: MarshalAs( unmanagedType: UnmanagedType.LPWStr )]
         public String Comment { get; set; }
     }
 
-    [StructLayout( LayoutKind.Sequential )]
+    [StructLayout( layoutKind: LayoutKind.Sequential )]
     public class NETRESOURCE {
 
         public ResourceDisplayType dwDisplayType = 0;
@@ -201,20 +195,20 @@ namespace LibrainianCore.ComputerSystem.Devices {
                 RemoteName = networkName
             };
 
-            var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
+            var userName = String.IsNullOrEmpty( value: credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
 
-            var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
+            var result = NativeMethods.WNetAddConnection2( netResource: ref netResource, password: credentials.Password, username: userName, flags: 0 );
 
             if ( result != 0 ) {
-                throw new Win32Exception( result, "Error connecting to remote share" );
+                throw new Win32Exception( error: result, message: "Error connecting to remote share" );
             }
         }
 
         ~NetworkConnection() {
-            this.Dispose( false );
+            this.Dispose( disposing: false );
         }
 
-        protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
+        protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( name: this.NetworkName, flags: 0, force: true );
 
         public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
             var counter = retries;
@@ -222,15 +216,15 @@ namespace LibrainianCore.ComputerSystem.Devices {
             while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
                 --counter;
                 $"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
-                Thread.Sleep( Seconds.One );
+                Thread.Sleep( timeout: Seconds.One );
             }
 
             return NetworkInterface.GetIsNetworkAvailable();
         }
 
         public void Dispose() {
-            this.Dispose( true );
-            GC.SuppressFinalize( this );
+            this.Dispose( disposing: true );
+            GC.SuppressFinalize( obj: this );
         }
     }
 }

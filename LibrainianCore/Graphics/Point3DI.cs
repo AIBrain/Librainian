@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Point3DI.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Point3DI.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Point3DI.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "Point3DI.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Graphics {
+namespace Librainian.Graphics {
 
     using System;
     using JetBrains.Annotations;
@@ -91,19 +85,19 @@ namespace LibrainianCore.Graphics {
         /// <param name="left"></param>
         /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( right );
+        public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( other: right );
 
         /// <summary>Determines whether the specified Point3D instances are unequal.</summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are unequal; false otherwise.</returns>
-        public static Boolean operator !=( Point3Di a, Point3Di b ) => !a.Equals( b );
+        public static Boolean operator !=( Point3Di a, Point3Di b ) => !a.Equals( other: b );
 
         /// <summary>Determines whether the specified Point3D instances are equal.</summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are equal; false otherwise.</returns>
-        public static Boolean operator ==( Point3Di a, Point3Di b ) => a.Equals( b );
+        public static Boolean operator ==( Point3Di a, Point3Di b ) => a.Equals( other: b );
 
         /// <summary>Determines whether this instance is very nearly equal to a specified Point3D structure.</summary>
         /// <remarks>
@@ -115,21 +109,21 @@ namespace LibrainianCore.Graphics {
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are approximately equal; false otherwise.</returns>
         public Boolean ApproximatelyEquals( Point3Di other ) =>
-            Math.Abs( this.X - other.X ) <= Tolerance && Math.Abs( this.Y - other.Y ) <= Tolerance && Math.Abs( this.Z - other.Z ) <= Tolerance;
+            Math.Abs( value: this.X - other.X ) <= Tolerance && Math.Abs( value: this.Y - other.Y ) <= Tolerance && Math.Abs( value: this.Z - other.Z ) <= Tolerance;
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>True if the object equals this instance; false otherwise.</returns>
-        public override Boolean Equals( Object obj ) => obj is Point3Di di && this.Equals( di );
+        public override Boolean Equals( Object obj ) => obj is Point3Di di && this.Equals( other: di );
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified Point3D structure.</summary>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are the same; false otherwise.</returns>
-        public Boolean Equals( Point3Di other ) => Equals( this, other );
+        public Boolean Equals( Point3Di other ) => Equals( left: this, right: other );
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer hash code.</returns>
-        public override Int32 GetHashCode() => ( this.X, this.Y, this.Z ).GetHashCode();
+        public override Int32 GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
         /// <summary>Returns a String representation of the point in [X,Y,Z] format.</summary>
         /// <returns>A String representing the point's XYZ coordinates.</returns>

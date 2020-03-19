@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ConcurrentSet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ConcurrentSet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ConcurrentSet.cs" was last formatted by Protiguous on 2020/01/31 at 12:23 AM.
+// Project: "LibrainianCore", File: "ConcurrentSet.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Collections.Sets {
+namespace Librainian.Collections.Sets {
 
     using System;
     using System.Collections;
@@ -90,7 +84,7 @@ namespace LibrainianCore.Collections.Sets {
         //         return true;
         //     }
         //}
-        public Boolean Contains( T item ) => !(item is null) && this.Dictionary.ContainsKey( item );
+        public Boolean Contains( T item ) => !( item is null ) && this.Dictionary.ContainsKey( item );
 
         /// <summary>Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular <see cref="Array" /> index.</summary>
         /// <param name="array">
@@ -101,8 +95,8 @@ namespace LibrainianCore.Collections.Sets {
         /// <exception cref="ArgumentNullException"><paramref name="array" /> is null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex" /> is less than 0.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="array" /> is multidimensional.-or-The number of elements in the source <see cref="ICollection" /> is greater than the available space from
-        /// <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.-or-Type T cannot be cast automatically to the type of the destination
+        /// <paramref name="array" /> is multidimensional.-or-The number of elements in the source <see cref="ICollection" /> is greater than the available
+        /// space from <paramref name="arrayIndex" /> to the end of the destination <paramref name="array" />.-or-Type T cannot be cast automatically to the type of the destination
         /// <paramref name="array" />.
         /// </exception>
         public void CopyTo( T[] array, Int32 arrayIndex ) => this.Dictionary.Keys.CopyTo( array, arrayIndex );
@@ -174,7 +168,7 @@ namespace LibrainianCore.Collections.Sets {
         /// </returns>
         /// <param name="item">The object to remove from the <see cref="ICollection" />.</param>
         /// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
-        public Boolean Remove( T item ) => !(item is null) && this.TryRemove( item );
+        public Boolean Remove( T item ) => !( item is null ) && this.TryRemove( item );
 
         /// <summary>Determines whether the current set and the specified collection contain the same elements.</summary>
         /// <returns>true if the current set is equal to <paramref name="other" />; otherwise, false.</returns>
@@ -228,7 +222,7 @@ namespace LibrainianCore.Collections.Sets {
         /// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
         /// <exception cref="ArgumentException"></exception>
         void ICollection<T>.Add( T item ) {
-            if ( !(item is null) && !this.Add( item ) ) {
+            if ( !( item is null ) && !this.Add( item ) ) {
                 throw new ArgumentException( "Item already exists in set." );
             }
         }

@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "NumberExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "NumberExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "NumberExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// 
+// Project: "LibrainianCore", File: "NumberExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:07 PM.
 
-namespace LibrainianCore.Maths {
+namespace Librainian.Maths {
 
     using System;
     using System.Collections.Generic;
@@ -112,7 +106,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this SByte number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -120,7 +114,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Byte number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -128,7 +122,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int16 number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -136,7 +130,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int32 number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -144,7 +138,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int64 number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -152,7 +146,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt16 number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -160,7 +154,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt32 number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -168,7 +162,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt64 number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -176,7 +170,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this UInt64? number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -184,7 +178,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Int64? number ) => number > 0;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -192,7 +186,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Decimal number ) => number > Decimal.Zero;
 
         /// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
@@ -200,7 +194,7 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         [Pure]
         [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean Any( this Double number ) => number > 0;
 
         /// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
@@ -267,7 +261,7 @@ namespace LibrainianCore.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( Int16 )( value - 1 );
+                value &= ( Int16 ) ( value - 1 );
             }
 
             return i;
@@ -281,7 +275,7 @@ namespace LibrainianCore.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( UInt16 )( value - 1 );
+                value &= ( UInt16 ) ( value - 1 );
             }
 
             return i;
@@ -295,7 +289,7 @@ namespace LibrainianCore.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( Byte )( value - 1 );
+                value &= ( Byte ) ( value - 1 );
             }
 
             return i;
@@ -309,7 +303,7 @@ namespace LibrainianCore.Maths {
             Int32 i;
 
             for ( i = 0; value != 0; i++ ) {
-                value &= ( SByte )( value - 1 );
+                value &= ( SByte ) ( value - 1 );
             }
 
             return i;
@@ -425,14 +419,14 @@ namespace LibrainianCore.Maths {
         /// <returns>True for even, False for odd.</returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
+        public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 ) ( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
         /// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         [DebuggerStepThrough]
         [Pure]
-        public static Byte ReverseBits( this Byte source ) => ( Byte )( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
+        public static Byte ReverseBits( this Byte source ) => ( Byte ) ( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
 
         /// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
         /// <param name="source">Source value to reverse</param>
@@ -445,29 +439,29 @@ namespace LibrainianCore.Maths {
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static UInt32 ReverseBits( this UInt32 source ) =>
-            ( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
+            ( UInt32 ) ( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
                          ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
 
         /// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static UInt16 ReverseBits( this UInt16 source ) {
-            source = ( UInt16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-            source = ( UInt16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-            source = ( UInt16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
+            source = ( UInt16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+            source = ( UInt16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+            source = ( UInt16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-            return ( UInt16 )( ( source >> 8 ) | ( source << 8 ) );
+            return ( UInt16 ) ( ( source >> 8 ) | ( source << 8 ) );
         }
 
         /// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
         /// <param name="source">Source value to reverse</param>
         /// <returns>Input value with reversed bits</returns>
         public static Int16 ReverseBits( this Int16 source ) {
-            source = ( Int16 )( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
-            source = ( Int16 )( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
-            source = ( Int16 )( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
+            source = ( Int16 ) ( ( ( source >> 1 ) & 0x5555 ) | ( ( source & 0x5555 ) << 1 ) );
+            source = ( Int16 ) ( ( ( source >> 2 ) & 0x3333 ) | ( ( source & 0x3333 ) << 2 ) );
+            source = ( Int16 ) ( ( ( source >> 4 ) & 0x0F0F ) | ( ( source & 0x0F0F ) << 4 ) );
 
-            return ( Int16 )( ( source >> 8 ) | ( source << 8 ) );
+            return ( Int16 ) ( ( source >> 8 ) | ( source << 8 ) );
         }
 
         [NotNull]
@@ -475,7 +469,7 @@ namespace LibrainianCore.Maths {
         [Pure]
         public static String SizeSuffix( this Int64 value, Int32 decimalPlaces = 1 ) {
             if ( value < 0 ) {
-                return "-" + SizeSuffix( -value );
+                return "-" + SizeSuffix( value: -value );
             }
 
             if ( value == 0 ) {
@@ -483,18 +477,18 @@ namespace LibrainianCore.Maths {
             }
 
             // mag is 0 for bytes, 1 for KB, 2, for MB.
-            var mag = ( Int32 )Math.Log( value, 1024 );
+            var mag = ( Int32 ) Math.Log( a: value, newBase: 1024 );
 
             // 1L << (mag * 10) == 2 ^ (10 * mag) [i.e. the number of bytes in the unit corresponding to mag]
-            var adjustedSize = ( Decimal )value / ( 1L << ( mag * 10 ) );
+            var adjustedSize = ( Decimal ) value / ( 1L << ( mag * 10 ) );
 
             // make adjustment when the value is large enough that it would round up to 1000 or more
-            if ( Math.Round( adjustedSize, decimalPlaces ) >= 1000 ) {
+            if ( Math.Round( d: adjustedSize, decimals: decimalPlaces ) >= 1000 ) {
                 mag += 1;
                 adjustedSize /= 1024;
             }
 
-            return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[ mag ] );
+            return String.Format( format: $"{{0:n{decimalPlaces}}} {{1}}", arg0: adjustedSize, arg1: SizeSuffixes[ mag ] );
         }
 
         public static IEnumerable<Int32> Through( this Int32 startValue, Int32 end ) {
@@ -549,16 +543,16 @@ namespace LibrainianCore.Maths {
         /// <returns></returns>
         public static IEnumerable<UInt64> To( this Int32 start, UInt64 end, UInt64 step = 1 ) {
             if ( start < 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
+                throw new ArgumentOutOfRangeException( paramName: nameof( start ), message: "'low' must be equal to or greater than zero." );
             }
 
             if ( step == 0UL ) {
                 step = 1UL;
             }
 
-            var reFrom = ( UInt64 )start;
+            var reFrom = ( UInt64 ) start;
 
-            if ( start <= ( Decimal )end ) {
+            if ( start <= ( Decimal ) end ) {
                 for ( var ul = reFrom; ul <= end; ul += step ) {
                     yield return ul;
 
@@ -587,7 +581,7 @@ namespace LibrainianCore.Maths {
         [NotNull]
         public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
             if ( start < 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
+                throw new ArgumentOutOfRangeException( paramName: nameof( start ), message: "'low' must be equal to or greater than zero." );
             }
 
             if ( step == 0 ) {
@@ -770,7 +764,7 @@ namespace LibrainianCore.Maths {
         [NotNull]
         public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
             if ( !step.HasValue ) {
-                step = ToInternalDateTimes( from, to );
+                step = ToInternalDateTimes( fromm: from, to: to );
             }
 
             if ( from > to ) {
@@ -827,28 +821,33 @@ namespace LibrainianCore.Maths {
         [NotNull]
         public static String ToHex( [NotNull] this IEnumerable<Byte> input ) {
             if ( input is null ) {
-                throw new ArgumentNullException( nameof( input ) );
+                throw new ArgumentNullException( paramName: nameof( input ) );
             }
 
             var result = new StringBuilder();
 
             foreach ( var b in input ) {
-                result.Append( $"{result}{b:X2}" );
+                result.Append( value: $"{result}{b:X2}" );
             }
 
             return result.ToString();
         }
 
         [CanBeNull]
-        public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "X2" ) );
+        public static String ToHex( this UInt32 value ) =>
+            BitConverter.GetBytes( value: value ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "X2" ) );
 
         [CanBeNull]
-        public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "X2" ) );
+        public static String ToHex( this UInt64 value ) =>
+            BitConverter.GetBytes( value: value ).Aggregate( seed: String.Empty, func: ( current, b ) => current + b.ToString( format: "X2" ) );
 
         [NotNull]
-        public static String ToHexNumberString( [NotNull] this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
+        public static String ToHexNumberString( [NotNull] this IEnumerable<Byte> value ) =>
+            Bits.ToString( value: value.Reverse().ToArray() ).Replace( oldValue: "-", newValue: "" ).ToLower();
 
         [NotNull]
         public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
+
     }
+
 }

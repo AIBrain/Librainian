@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "NotInitializedException.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "NotInitializedException.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "NotInitializedException.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "NotInitializedException.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Exceptions {
+namespace Librainian.Exceptions {
 
     using System;
     using System.Runtime.Serialization;
@@ -46,7 +40,7 @@ namespace LibrainianCore.Exceptions {
     using Newtonsoft.Json;
 
     /// <summary>Throw when the object has not been initialized.
-    /// <para><see cref="Logging.Log(String,Boolean)" /> gets called.</para>
+    /// <para><see cref="Logging.Log" /> gets called.</para>
     /// </summary>
     [Serializable]
     [JsonObject]
@@ -60,16 +54,16 @@ namespace LibrainianCore.Exceptions {
         /// <param name="info">The <see cref="SerializationInfo" /> instance that holds the serialized object data about the exception being thrown.</param>
         /// <param name="context">The <see cref="StreamingContext" /> instance that contains contextual information about the source or destination.</param>
         /// <remarks>This constructor overload is provided in order to adhere to custom exception design best practice guidelines.</remarks>
-        protected NotInitializedException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) =>
-            $"{nameof( NotInitializedException )} serialization exception.".Log( true );
+        protected NotInitializedException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info: info, context: context ) =>
+            $"{nameof( NotInitializedException )} serialization exception.".Log( breakinto: true );
 
-        public NotInitializedException( [CanBeNull] String message ) : base( message ) => message.Log();
+        public NotInitializedException( [CanBeNull] String message ) : base( message: message ) => message.Log();
 
-        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName ) : this( message ) => this.Parameter = paramName;
+        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName ) : this( message: message ) => this.Parameter = paramName;
 
-        public NotInitializedException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) => message.Log();
+        public NotInitializedException( [CanBeNull] String message, [CanBeNull] Exception inner ) : base( message: message, innerException: inner ) => message.Log();
 
-        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName, [CanBeNull] Exception inner ) : this( message, inner ) =>
+        public NotInitializedException( [CanBeNull] String message, [CanBeNull] String paramName, [CanBeNull] Exception inner ) : this( message: message, inner: inner ) =>
             this.Parameter = paramName;
     }
 }

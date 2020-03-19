@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "EFV.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "EFV.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "EFV.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "EFV.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Graphics.Moving {
+namespace Librainian.Graphics.Moving {
 
     using System;
     using System.Collections.Concurrent;
@@ -84,17 +78,17 @@ namespace LibrainianCore.Graphics.Moving {
         public Efv() => this.Checksum = UInt64.MaxValue;
 
         public Boolean Add( [NotNull] Pixelyx pixelyx ) {
-            var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
+            var rgbMatchesJustNotTimestamp = this.Pixels.Where( predicate: pair => Pixelyx.Equal( left: pair.Value, right: pixelyx ) );
 
             foreach ( var pair in rgbMatchesJustNotTimestamp ) {
-                if ( null == this.Dopples[ pixelyx.Timestamp ] ) {
-                    this.Dopples[ pixelyx.Timestamp ] = new List<UInt64>();
+                if ( null == this.Dopples[ key: pixelyx.Timestamp ] ) {
+                    this.Dopples[ key: pixelyx.Timestamp ] = new List<UInt64>();
                 }
 
-                this.Dopples[ pixelyx.Timestamp ].Add( pair.Value.Timestamp );
+                this.Dopples[ key: pixelyx.Timestamp ].Add( item: pair.Value.Timestamp );
             }
 
-            this.Pixels[ pixelyx.Timestamp ] = pixelyx;
+            this.Pixels[ key: pixelyx.Timestamp ] = pixelyx;
 
             return true;
         }
@@ -113,28 +107,28 @@ namespace LibrainianCore.Graphics.Moving {
 
         [NotNull]
         public Task<UInt64> CalculateChecksumAsync() =>
-            Task.Run( () => {
+            Task.Run( function: () => {
                 unchecked {
                     return ( UInt64 )this.Pixels.GetHashCode();
                 }
             } );
 
         [CanBeNull]
-        public Pixelyx Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
+        public Pixelyx Get( UInt64 index ) => this.Pixels.TryGetValue( key: index, value: out var pixelyx ) ? pixelyx : null;
 
         [CanBeNull]
         public Pixelyx Get( UInt16 x, UInt16 y ) {
             if ( x == 0 ) {
-                throw new ArgumentException( "x" );
+                throw new ArgumentException( message: "x" );
             }
 
             if ( y == 0 ) {
-                throw new ArgumentException( "y" );
+                throw new ArgumentException( message: "y" );
             }
 
             var index = ( UInt64 )( this.Height * y + x );
 
-            return this.Get( index );
+            return this.Get( index: index );
         }
     }
 }

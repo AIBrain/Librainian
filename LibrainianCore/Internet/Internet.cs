@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Internet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Internet.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "Internet.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Internet {
+namespace Librainian.Internet {
 
     using System;
     using System.Collections.Concurrent;
@@ -54,7 +48,8 @@ namespace LibrainianCore.Internet {
 
         private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new ConcurrentDictionary<Guid, IDownloader>();
 
-        internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new ThreadLocal<WebClientWithTimeout>( () => new WebClientWithTimeout(), true );
+        internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } =
+            new ThreadLocal<WebClientWithTimeout>( valueFactory: () => new WebClientWithTimeout(), trackAllValues: true );
 
         public interface IDownloader {
 
@@ -123,10 +118,11 @@ namespace LibrainianCore.Internet {
             /// <param name="autoStart">If true, the download will begin now.</param>
             /// <param name="credentials">Username and password, if needed otherwise null.</param>
             public FileDownloader( [NotNull] Uri source, [NotNull] Document destination, Boolean waitifBusy, TimeSpan timeout, CancellationToken token,
-                Boolean autoStart = true, [CanBeNull] ICredentials credentials = null ) : base( source, destination, waitifBusy, timeout, token, credentials ) {
+                Boolean autoStart = true, [CanBeNull] ICredentials credentials = null ) : base( source: source, destination: destination, waitIfBusy: waitifBusy,
+                timeout: timeout, token: token, credentials: credentials ) {
                 $"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
-                DownloadRequests[ this.Id ] = this;
+                DownloadRequests[ key: this.Id ] = this;
 
                 if ( autoStart ) {
                     this.Start();
@@ -146,13 +142,13 @@ namespace LibrainianCore.Internet {
                         exception.Log();
                     }
                     finally {
-                        DownloadRequests.TryRemove( this.Id, out _ );
+                        DownloadRequests.TryRemove( key: this.Id, value: out _ );
                     }
                 };
 
                 this.Client.Timeout = this.Timeout;
 
-                this.Task = this.Client.DownloadFileTaskAsync( this.Source, this.DestinationDocument.FullPath );
+                this.Task = this.Client.DownloadFileTaskAsync( address: this.Source, fileName: this.DestinationDocument.FullPath );
 
                 return base.Start();
             }
@@ -160,10 +156,10 @@ namespace LibrainianCore.Internet {
 
         public abstract class UnderlyingDownloader : IDownloader {
 
-            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
+            public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( level: HttpRequestCacheLevel.Default );
 
             /// <summary>-1 milliseconds</summary>
-            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
+            public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( value: -1 );
 
             [NotNull]
             public WebClientWithTimeout Client { get; }
@@ -177,7 +173,7 @@ namespace LibrainianCore.Internet {
             [NotNull]
             public Document DestinationDocument { get; set; }
 
-            public ManualResetEventSlim Downloaded { get; } = new ManualResetEventSlim( false );
+            public ManualResetEventSlim Downloaded { get; } = new ManualResetEventSlim( initialState: false );
 
             /// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
             public Stopwatch Elasped { get; set; }
@@ -223,16 +219,16 @@ namespace LibrainianCore.Internet {
 
                 if ( web.IsBusy ) {
                     if ( waitIfBusy ) {
-                        this.Wait( timeout, token );
+                        this.Wait( forHowLong: timeout, token: token );
                     }
                     else {
-                        throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
+                        throw new InvalidOperationException( message: $"WebClient is already being used. Unable to download \"{this.Source}\"." );
                     }
                 }
 
                 this.Client = web;
-                this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
-                this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
+                this.Source = source ?? throw new ArgumentNullException( paramName: nameof( source ) );
+                this.DestinationDocument = destination ?? throw new ArgumentNullException( paramName: nameof( destination ) );
                 this.Timeout = timeout;
                 this.Id = Guid.NewGuid();
                 this.Credentials = credentials;
@@ -255,7 +251,7 @@ namespace LibrainianCore.Internet {
 
             public (Status responseCode, Int64 fileLength) GetContentLength() {
 
-                if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
+                if ( WebRequest.Create( requestUri: this.Source ) is HttpWebRequest request ) {
                     request.Method = "HEAD";
 
                     using var response = request.GetResponse();
@@ -288,7 +284,7 @@ namespace LibrainianCore.Internet {
                         forHowLong = Forever;
                     }
 
-                    return this.Downloaded.Wait( forHowLong, token );
+                    return this.Downloaded.Wait( timeout: forHowLong, cancellationToken: token );
                 }
                 catch ( Exception exception ) {
                     switch ( exception ) {

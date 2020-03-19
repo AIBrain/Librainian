@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Feet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Feet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Feet.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// 
+// Project: "LibrainianCore", File: "Feet.cs" was last formatted by Protiguous on 2020/03/16 at 3:07 PM.
 
-namespace LibrainianCore.Measurement.Length {
+namespace Librainian.Measurement.Length {
 
     using System;
     using System.Diagnostics;
@@ -55,38 +49,38 @@ namespace LibrainianCore.Measurement.Length {
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
     [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
     public struct Feet : IComparable<Feet>, IQuantityOfDistance {
 
         /// <summary>60</summary>
         public const Byte InOneYard = 3;
 
         /// <summary><see cref="Five" /> .</summary>
-        public static readonly Feet Five = new Feet( 5 );
+        public static readonly Feet Five = new Feet( value: 5 );
 
         /// <summary><see cref="One" /> .</summary>
-        public static readonly Feet One = new Feet( 1 );
+        public static readonly Feet One = new Feet( value: 1 );
 
         /// <summary><see cref="Seven" /> .</summary>
-        public static readonly Feet Seven = new Feet( 7 );
+        public static readonly Feet Seven = new Feet( value: 7 );
 
         /// <summary><see cref="Ten" /> .</summary>
-        public static readonly Feet Ten = new Feet( 10 );
+        public static readonly Feet Ten = new Feet( value: 10 );
 
         /// <summary><see cref="Thirteen" /> .</summary>
-        public static readonly Feet Thirteen = new Feet( 13 );
+        public static readonly Feet Thirteen = new Feet( value: 13 );
 
         /// <summary><see cref="Thirty" /> .</summary>
-        public static readonly Feet Thirty = new Feet( 30 );
+        public static readonly Feet Thirty = new Feet( value: 30 );
 
         /// <summary><see cref="Three" /> .</summary>
-        public static readonly Feet Three = new Feet( 3 );
+        public static readonly Feet Three = new Feet( value: 3 );
 
         /// <summary><see cref="Two" /> .</summary>
-        public static readonly Feet Two = new Feet( 2 );
+        public static readonly Feet Two = new Feet( value: 2 );
 
         /// <summary></summary>
-        public static readonly Feet Zero = new Feet( 0 );
+        public static readonly Feet Zero = new Feet( value: 0 );
 
         [JsonProperty]
         public readonly Rational Value;
@@ -97,9 +91,9 @@ namespace LibrainianCore.Measurement.Length {
 
         public Feet( BigInteger value ) => this.Value = value;
 
-        public static Feet Combine( Feet left, Rational feet ) => new Feet( left.Value + feet );
+        public static Feet Combine( Feet left, Rational feet ) => new Feet( value: left.Value + feet );
 
-        public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( left.Value + seconds );
+        public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( value: left.Value + seconds );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -109,36 +103,36 @@ namespace LibrainianCore.Measurement.Length {
         /// <returns></returns>
         public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
 
-        public static Feet operator -( Feet feet ) => new Feet( feet.Value * -1 );
+        public static Feet operator -( Feet feet ) => new Feet( value: feet.Value * -1 );
 
-        public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
+        public static Feet operator -( Feet left, Feet right ) => Combine( left: left, feet: -right.Value );
 
-        public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
+        public static Feet operator -( Feet left, Decimal seconds ) => Combine( left: left, feet: ( Rational ) ( -seconds ) );
 
-        public static Boolean operator !=( Feet left, Feet right ) => !Equals( left, right );
+        public static Boolean operator !=( Feet left, Feet right ) => !Equals( left: left, right: right );
 
-        public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
+        public static Feet operator +( Feet left, Feet right ) => Combine( left: left, feet: right.Value );
 
-        public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational )seconds );
+        public static Feet operator +( Feet left, Decimal seconds ) => Combine( left: left, feet: ( Rational ) seconds );
 
-        public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
+        public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left: left, seconds: seconds );
 
         public static Boolean operator <( Feet left, Feet right ) => left.Value < right.Value;
 
-        public static Boolean operator ==( Feet left, Feet right ) => Equals( left, right );
+        public static Boolean operator ==( Feet left, Feet right ) => Equals( left: left, right: right );
 
         public static Boolean operator >( Feet left, Feet right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( Feet other ) => this.Value.CompareTo( other.Value );
+        public Int32 CompareTo( Feet other ) => this.Value.CompareTo( other: other.Value );
 
-        public Boolean Equals( Feet other ) => Equals( this, other );
+        public Boolean Equals( Feet other ) => Equals( left: this, right: other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
                 return default;
             }
 
-            return obj is Feet feet && this.Equals( feet );
+            return obj is Feet feet && this.Equals( other: feet );
         }
 
         [Pure]
@@ -147,6 +141,8 @@ namespace LibrainianCore.Measurement.Length {
         public Rational ToMeters() => throw new NotImplementedException();
 
         [NotNull]
-        public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
+        public override String ToString() => $"{this.Value} {this.Value.PluralOf( singular: "foot" )}";
+
     }
+
 }

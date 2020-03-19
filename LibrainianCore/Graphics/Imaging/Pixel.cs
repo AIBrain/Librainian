@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Pixel.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Pixel.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Pixel.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// 
+// Project: "LibrainianCore", File: "Pixel.cs" was last formatted by Protiguous on 2020/03/18 at 10:39 AM.
 
-namespace LibrainianCore.Graphics.Imaging {
+namespace Librainian.Graphics.Imaging {
 
     using System;
     using System.Drawing;
@@ -81,10 +75,6 @@ namespace LibrainianCore.Graphics.Imaging {
         [JsonProperty]
         public readonly Byte Blue;
 
-        public static Byte Hash( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) => ( Byte )(alpha, red, green, blue, x, y).GetHashCode();
-
-        public static Byte Hash( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) => ( Byte )(x, y, alpha, red, green, blue).GetHashCode();
-
         public Pixel( Byte alpha, Byte red, Byte green, Byte blue, UInt32 x, UInt32 y ) {
             this.Alpha = alpha;
             this.Red = red;
@@ -92,7 +82,7 @@ namespace LibrainianCore.Graphics.Imaging {
             this.Blue = blue;
             this.X = x;
             this.Y = y;
-            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = ( Byte ) ( alpha, red, green, blue, x, y ).GetHashCode();
         }
 
         public Pixel( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) {
@@ -102,7 +92,7 @@ namespace LibrainianCore.Graphics.Imaging {
             this.Blue = blue;
             this.X = x;
             this.Y = y;
-            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = ( Byte ) ( alpha, red, green, blue, x, y ).GetHashCode();
         }
 
         public Pixel( Color color, UInt32 x, UInt32 y ) {
@@ -112,7 +102,7 @@ namespace LibrainianCore.Graphics.Imaging {
             this.Blue = color.B;
             this.X = x;
             this.Y = y;
-            this.Checksum = Hash( this.Alpha, this.Red, this.Green, this.Blue, this.X, this.Y );
+            this.Checksum = ( Byte ) ( color.A, color.R, color.G, color.B, x, y ).GetHashCode();
         }
 
         //public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
@@ -130,8 +120,12 @@ namespace LibrainianCore.Graphics.Imaging {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equal( Pixel left, Pixel right ) =>
-            left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue &&
-            left.X == right.X && left.Y == right.Y;
+            ( left.Checksum == right.Checksum ) && ( left.Alpha == right.Alpha ) && ( left.Red == right.Red ) && ( left.Green == right.Green ) &&
+            ( left.Blue == right.Blue ) && ( left.X == right.X ) && ( left.Y == right.Y );
+
+        public static Boolean operator !=( Pixel left, Pixel right ) => !Equals( left, right );
+
+        public static Boolean operator ==( Pixel left, Pixel right ) => Equals( left, right );
 
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
@@ -155,7 +149,7 @@ namespace LibrainianCore.Graphics.Imaging {
             return streamWriter.WriteLineAsync( this.ToString() );
         }
 
-        public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [CanBeNull] StreamWriter errors = null ) {
+        public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [CanBeNull] StreamWriter? errors = null ) {
             if ( reader is null ) {
                 throw new ArgumentNullException( nameof( reader ) );
             }
@@ -295,6 +289,8 @@ namespace LibrainianCore.Graphics.Imaging {
         /// <summary>Indicates whether this instance and a specified object are equal.</summary>
         /// <param name="obj">The object to compare with the current instance.</param>
         /// <returns><see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( this, obj as Pixel? ?? default );
+        public override Boolean Equals( Object? obj ) => Equals( this, obj as Pixel? ?? default );
+
     }
+
 }

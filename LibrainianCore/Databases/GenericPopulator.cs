@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "GenericPopulator.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "GenericPopulator.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GenericPopulator.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "GenericPopulator.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Databases {
+namespace Librainian.Databases {
 
     using System;
     using System.Collections.Generic;
@@ -51,26 +45,26 @@ namespace LibrainianCore.Databases {
         [CanBeNull]
         public static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
             if ( reader == null ) {
-                throw new ArgumentNullException( nameof( reader ) );
+                throw new ArgumentNullException( paramName: nameof( reader ) );
             }
 
             var readerColumns = new List<String>();
 
             for ( var index = 0; index < reader.FieldCount; index++ ) {
-                readerColumns.Add( reader.GetName( index ) );
+                readerColumns.Add( item: reader.GetName( i: index ) );
             }
 
             // determine the information about the reader
-            var readerParam = Expression.Parameter( typeof( SqlDataReader ), "reader" );
-            var readerGetValue = typeof( SqlDataReader ).GetMethod( "GetValue" );
+            var readerParam = Expression.Parameter( type: typeof( SqlDataReader ), name: "reader" );
+            var readerGetValue = typeof( SqlDataReader ).GetMethod( name: "GetValue" );
 
             if ( readerGetValue is null ) {
                 return null;
             }
 
             // create a Constant expression of DBNull.Value to compare values to in reader
-            var dbNullValue = typeof( DBNull ).GetField( "Value" );
-            var dbNullExp = Expression.Field( Expression.Parameter( typeof( DBNull ), "System.DBNull" ), dbNullValue );
+            var dbNullValue = typeof( DBNull ).GetField( name: "Value" );
+            var dbNullExp = Expression.Field( expression: Expression.Parameter( type: typeof( DBNull ), name: "System.DBNull" ), field: dbNullValue );
 
             // loop through the properties and create MemberBinding expressions for each property
             var memberBindings = new List<MemberBinding>();
@@ -81,35 +75,35 @@ namespace LibrainianCore.Databases {
                 Object defaultValue = null;
 
                 if ( prop.PropertyType.IsValueType ) {
-                    defaultValue = Activator.CreateInstance( prop.PropertyType );
+                    defaultValue = Activator.CreateInstance( type: prop.PropertyType );
                 }
-                else if ( prop.PropertyType.Name.ToLower().Equals( "string" ) ) {
+                else if ( prop.PropertyType.Name.ToLower().Equals( value: "string" ) ) {
                     defaultValue = String.Empty;
                 }
 
-                if ( readerColumns.Contains( prop.Name ) ) {
+                if ( readerColumns.Contains( item: prop.Name ) ) {
 
                     // build the Call expression to retrieve the data value from the reader
-                    var indexExpression = Expression.Constant( reader.GetOrdinal( prop.Name ) );
-                    var getValueExp = Expression.Call( readerParam, readerGetValue, indexExpression );
+                    var indexExpression = Expression.Constant( value: reader.GetOrdinal( name: prop.Name ) );
+                    var getValueExp = Expression.Call( instance: readerParam, method: readerGetValue, indexExpression );
 
                     // create the conditional expression to make sure the reader value != DBNull.Value
-                    var testExp = Expression.NotEqual( dbNullExp, getValueExp );
-                    var ifTrue = Expression.Convert( getValueExp, prop.PropertyType );
-                    var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
+                    var testExp = Expression.NotEqual( left: dbNullExp, right: getValueExp );
+                    var ifTrue = Expression.Convert( expression: getValueExp, type: prop.PropertyType );
+                    var ifFalse = Expression.Convert( expression: Expression.Constant( value: defaultValue ), type: prop.PropertyType );
 
                     // create the actual Bind expression to bind the value from the reader to the property value
-                    var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
-                    MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
-                    memberBindings.Add( mb );
+                    var mi = typeof( T ).GetMember( name: prop.Name )[ 0 ];
+                    MemberBinding mb = Expression.Bind( member: mi, expression: Expression.Condition( test: testExp, ifTrue: ifTrue, ifFalse: ifFalse ) );
+                    memberBindings.Add( item: mb );
                 }
             }
 
             // create a MemberInit expression for the item with the member bindings
-            var newItem = Expression.New( typeof( T ) );
-            var memberInit = Expression.MemberInit( newItem, memberBindings );
+            var newItem = Expression.New( type: typeof( T ) );
+            var memberInit = Expression.MemberInit( newExpression: newItem, bindings: memberBindings );
 
-            var lambda = Expression.Lambda<Func<SqlDataReader, T>>( memberInit, readerParam );
+            var lambda = Expression.Lambda<Func<SqlDataReader, T>>( body: memberInit, readerParam );
             Delegate resDelegate = lambda.Compile();
 
             return ( Func<SqlDataReader, T> )resDelegate;
@@ -121,10 +115,10 @@ namespace LibrainianCore.Databases {
         [NotNull]
         public static List<T> CreateList<T>( [NotNull] SqlDataReader reader ) {
             var results = new List<T>();
-            var readRow = GenericPopulator<T>.GetReader( reader );
+            var readRow = GenericPopulator<T>.GetReader( reader: reader );
 
             while ( reader.Read() ) {
-                results.Add( readRow( reader ) );
+                results.Add( item: readRow( arg: reader ) );
             }
 
             return results;

@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TreeNode.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "TreeNode.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TreeNode.cs" was last formatted by Protiguous on 2020/01/31 at 12:24 AM.
+// Project: "LibrainianCore", File: "TreeNode.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
 
-namespace LibrainianCore.Collections.Trees {
+namespace Librainian.Collections.Trees {
 
     using System;
     using JetBrains.Annotations;
@@ -65,10 +59,10 @@ namespace LibrainianCore.Collections.Trees {
                     return;
                 }
 
-                this._parent?.Children.Remove( this );
+                this._parent?.Children.Remove( item: this );
 
-                if ( value?.Children.Contains( this ) == false ) {
-                    value.Children.Add( this );
+                if ( value?.Children.Contains( item: this ) == false ) {
+                    value.Children.Add( node: this );
                 }
 
                 this._parent = value;
@@ -107,13 +101,13 @@ namespace LibrainianCore.Collections.Trees {
         public TreeNode( [CanBeNull] T value ) {
             this.Value = value;
             this.Parent = null;
-            this.Children = new TreeNodeList<T>( this );
+            this.Children = new TreeNodeList<T>( parent: this );
         }
 
         public TreeNode( [CanBeNull] T value, [NotNull] TreeNode<T> parent ) {
             this.Value = value;
-            this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
-            this.Children = new TreeNodeList<T>( this );
+            this.Parent = parent ?? throw new ArgumentNullException( paramName: nameof( parent ) );
+            this.Children = new TreeNodeList<T>( parent: this );
         }
 
         /// <summary>Dispose any disposable members.</summary>

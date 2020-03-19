@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "HashingExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "HashingExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "HashingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// 
+// Project: "LibrainianCore", File: "HashingExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:06 PM.
 
-namespace LibrainianCore.Maths.Hashings {
+namespace Librainian.Maths.Hashings {
 
     using System;
     using System.Linq;
@@ -46,12 +40,8 @@ namespace LibrainianCore.Maths.Hashings {
     using OperatingSystem.FileSystem;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
     using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     public static class HashingExtensions {
@@ -188,13 +178,13 @@ namespace LibrainianCore.Maths.Hashings {
         /// <param name="objectB"></param>
         /// <returns></returns>
         [Obsolete]
-        public static Int32 GetHashCodes<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) => (objectA, objectB).GetHashCode();
+        public static Int32 GetHashCodes<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) => ( objectA, objectB ).GetHashCode();
 
-        public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA ) => ( UInt16 )objectA.GetHashCode();
+        public static UInt16 GetHashCodeUInt16<TLeft>( [NotNull] this TLeft objectA ) => ( UInt16 ) objectA.GetHashCode();
 
-        public static UInt32 GetHashCodeUInt32<TLeft>( [NotNull] this TLeft objectA ) => ( UInt32 )objectA.GetHashCode();
+        public static UInt32 GetHashCodeUInt32<TLeft>( [NotNull] this TLeft objectA ) => ( UInt32 ) objectA.GetHashCode();
 
-        public static UInt64 GetHashCodeUInt64<TLeft>( [NotNull] this TLeft objectA ) => ( UInt64 )objectA.GetHashCode();
+        public static UInt64 GetHashCodeUInt64<TLeft>( [NotNull] this TLeft objectA ) => ( UInt64 ) objectA.GetHashCode();
 
         /// <summary>Returns a combined <see cref="Object.GetHashCode" /> based on <paramref name="objectA" /> and <paramref name="objectB" />.</summary>
         /// <typeparam name="TLeft"></typeparam>
@@ -204,6 +194,8 @@ namespace LibrainianCore.Maths.Hashings {
         /// <returns></returns>
         [Pure]
         [Obsolete]
-        public static Int32 GetHashMerge<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) => (objectA, objectB).GetHashCode();
+        public static Int32 GetHashMerge<TLeft, TRight>( [CanBeNull] this TLeft objectA, [CanBeNull] TRight objectB ) => ( objectA, objectB ).GetHashCode();
+
     }
+
 }

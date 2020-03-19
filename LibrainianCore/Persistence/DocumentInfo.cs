@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "DocumentInfo.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "DocumentInfo.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// 
+// Project: "LibrainianCore", File: "DocumentInfo.cs" was last formatted by Protiguous on 2020/03/16 at 3:11 PM.
 
-namespace LibrainianCore.Persistence {
+namespace Librainian.Persistence {
 
     using System;
     using System.Diagnostics;
@@ -45,8 +39,8 @@ namespace LibrainianCore.Persistence {
     using System.Threading.Tasks;
     using JetBrains.Annotations;
     using Logging;
-    using OperatingSystem.FileSystem;
     using Newtonsoft.Json;
+    using OperatingSystem.FileSystem;
 
     /// <summary>
     ///     <para>Computes the various hashes of the given <see cref="AbsolutePath" />.</para>
@@ -55,6 +49,8 @@ namespace LibrainianCore.Persistence {
     [Serializable]
     [JsonObject]
     public class DocumentInfo : IEquatable<DocumentInfo> {
+
+        public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
 
         [JsonIgnore]
         private UInt64? _length;
@@ -192,8 +188,6 @@ namespace LibrainianCore.Persistence {
 
         public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
 
-        public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
-
         public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
 
         // ReSharper disable once NonReadonlyMemberInGetHashCode
@@ -273,10 +267,7 @@ namespace LibrainianCore.Persistence {
                     this.LastScanned = DateTime.UtcNow;
 
                     var copy = new DocumentInfo( document ) {
-                        LastScanned = this.LastScanned,
-                        CRC32 = this.CRC32,
-                        CRC64 = this.CRC64,
-                        AddHash = this.AddHash
+                        LastScanned = this.LastScanned, CRC32 = this.CRC32, CRC64 = this.CRC64, AddHash = this.AddHash
                     };
 
                     MasterDocumentTable.DocumentInfos[ this.AbsolutePath ] = copy;
@@ -289,5 +280,7 @@ namespace LibrainianCore.Persistence {
 
         [NotNull]
         public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
+
     }
+
 }

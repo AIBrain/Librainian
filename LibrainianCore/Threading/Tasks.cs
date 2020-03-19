@@ -1,24 +1,37 @@
-﻿// Copyright 2017 Rick@AIBrain.org.
-//
-// This notice must be kept visible in the source.
-//
-// This section of source code belongs to Rick@AIBrain.Org unless otherwise specified, or the
-// original license has been overwritten by the automatic formatting of this code. Any unmodified
-// sections of source code borrowed from other projects retain their original license and thanks
-// goes to the Authors.
-//
-// Donations and royalties can be paid via
-//  PayPal: Protiguous@Protiguous.com
-//  bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//  litecoin: LeUxdU2w3o6pLZGVys5xpDZvvo8DUrjBp9
-//
-// Usage of the source code or compiled binaries is AS-IS. I am not responsible for Anything You Do.
-//
-// Contact me by email if you have any questions or helpful criticism.
-//
-// "Librainian/Tasks.cs" was last cleaned by Rick on 2017/04/02 at 10:13 PM
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Tasks.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// =========================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+//    No warranties are expressed, implied, or given.
+//    We are NOT responsible for Anything You Do With Our Code.
+//    We are NOT responsible for Anything You Do With Our Executables.
+//    We are NOT responsible for Anything You Do With Your Computer.
+// =========================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
+// Our website can be found at "https://Protiguous.com/"
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// Feel free to browse any source code we make available.
+// 
+// Project: "LibrainianCore", File: "Tasks.cs" was last formatted by Protiguous on 2020/03/16 at 3:12 PM.
 
-namespace LibrainianCore.Threading {
+namespace Librainian.Threading {
 
     using System;
     using System.Collections.Generic;
@@ -32,9 +45,7 @@ namespace LibrainianCore.Threading {
     /// <summary>Execute an <see cref="Action" /> on a <see cref="Timer" />.</summary>
     public static class Tasks {
 
-        /// <summary>
-        ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
-        /// </summary>
+        /// <summary>http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="completedTask"></param>
         /// <param name="completionSource"></param>
@@ -42,43 +53,43 @@ namespace LibrainianCore.Threading {
             switch ( completedTask.Status ) {
                 case TaskStatus.Canceled:
                     completionSource.TrySetCanceled();
+
                     break;
 
                 case TaskStatus.Faulted:
                     if ( completedTask.Exception != null ) {
-                        completionSource.TrySetException( completedTask.Exception.InnerExceptions );
+                        completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
                     }
 
                     break;
 
                 case TaskStatus.RanToCompletion:
-                    completionSource.TrySetResult( completedTask.Result );
+                    completionSource.TrySetResult( result: completedTask.Result );
+
                     break;
 
-                default: throw new ArgumentException( "Task was not completed." );
+                default: throw new ArgumentException( message: "Task was not completed." );
             }
         }
 
-        /// <summary>
-        ///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
-        /// </summary>
+        /// <summary>http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
         /// <returns></returns>
         [NotNull]
         public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
             var inputs = source.ToList();
-            var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
+            var boxes = inputs.Select( selector: x => new TaskCompletionSource<T>() ).ToList();
             var currentIndex = -1;
 
             foreach ( var task in inputs ) {
-                task.ContinueWith( completed => {
-                    var nextBox = boxes[ Interlocked.Increment( ref currentIndex ) ];
-                    PropagateResult( completed, nextBox );
-                }, TaskContinuationOptions.ExecuteSynchronously );
+                task.ContinueWith( continuationAction: completed => {
+                    var nextBox = boxes[ index: Interlocked.Increment( location: ref currentIndex ) ];
+                    PropagateResult( completedTask: completed, completionSource: nextBox );
+                }, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
             }
 
-            return boxes.Select( box => box.Task );
+            return boxes.Select( selector: box => box.Task );
         }
 
         /// <summary></summary>
@@ -86,16 +97,14 @@ namespace LibrainianCore.Threading {
         /// <param name="tasks"></param>
         /// <returns></returns>
         /// <example>
-        ///     var tasks = new[] { Task.Delay(3000).ContinueWith(_ =&gt; 3),
-        ///     Task.Delay(1000).ContinueWith(_ =&gt; 1), Task.Delay(2000).ContinueWith(_ =&gt; 2),
-        ///     Task.Delay(5000).ContinueWith(_ =&gt; 5), Task.Delay(4000).ContinueWith(_ =&gt; 4), };
-        ///     foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int result = await t;
-        ///     Console.WriteLine("{0}: {1}", DateTime.Now, result); }
+        /// var tasks = new[] { Task.Delay(3000).ContinueWith(_ =&gt; 3), Task.Delay(1000).ContinueWith(_ =&gt; 1), Task.Delay(2000).ContinueWith(_ =&gt; 2),
+        /// Task.Delay(5000).ContinueWith(_ =&gt; 5), Task.Delay(4000).ContinueWith(_ =&gt; 4), }; foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int result = await t;
+        /// Console.WriteLine("{0}: {1}", DateTime.Now, result); }
         /// </example>
         [NotNull]
         public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
             if ( tasks == null ) {
-                throw new ArgumentNullException( nameof( tasks ) );
+                throw new ArgumentNullException( paramName: nameof( tasks ) );
             }
 
             var inputTasks = tasks.ToList();
@@ -112,12 +121,13 @@ namespace LibrainianCore.Threading {
             var nextTaskIndex = -1;
 
             void Continuation( Task<T> completed ) {
-                var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
-                bucket.TrySetResult( completed );
+                var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
+                bucket.TrySetResult( result: completed );
             }
 
             foreach ( var inputTask in inputTasks ) {
-                inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
+                inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None,
+                    continuationOptions: TaskContinuationOptions.ExecuteSynchronously, scheduler: TaskScheduler.Default );
             }
 
             return results;
@@ -137,23 +147,20 @@ namespace LibrainianCore.Threading {
         //}
 
         [NotNull]
-        public static Task Multitude( [CanBeNull] params Action[] actions ) => Task.Run( () => Parallel.Invoke( actions ) );
+        public static Task Multitude( [CanBeNull] params Action[] actions ) => Task.Run( action: () => Parallel.Invoke( actions: actions ) );
 
-        /// <summary>
-        ///     Do the <paramref name="job" /> with a dataflow after a
-        ///     <see cref="Timer" /> .
-        /// </summary>
+        /// <summary>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" /> .</summary>
         /// <param name="delay"></param>
         /// <param name="job"></param>
         /// <returns></returns>
         public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( nameof( job ) );
+                throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
-            await Task.Delay( delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).ConfigureAwait( continueOnCapturedContext: false );
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( action: job ).ConfigureAwait( continueOnCapturedContext: false );
         }
 
         /// <summary>
@@ -164,12 +171,12 @@ namespace LibrainianCore.Threading {
         /// <returns></returns>
         public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( nameof( job ) );
+                throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
-            await Task.Delay( delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).ConfigureAwait( continueOnCapturedContext: false );
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( action: job ).ConfigureAwait( continueOnCapturedContext: false );
         }
 
         /// <summary>
@@ -180,12 +187,12 @@ namespace LibrainianCore.Threading {
         /// <returns></returns>
         public static async Task Then( this Seconds delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( nameof( job ) );
+                throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
-            await Task.Delay( delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).ConfigureAwait( continueOnCapturedContext: false );
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( action: job ).ConfigureAwait( continueOnCapturedContext: false );
         }
 
         /// <summary>
@@ -196,12 +203,12 @@ namespace LibrainianCore.Threading {
         /// <returns></returns>
         public static async Task Then( this Minutes delay, [NotNull] Action job ) {
             if ( job == null ) {
-                throw new ArgumentNullException( nameof( job ) );
+                throw new ArgumentNullException( paramName: nameof( job ) );
             }
 
-            await Task.Delay( delay ).ConfigureAwait( false );
+            await Task.Delay( delay: delay ).ConfigureAwait( continueOnCapturedContext: false );
 
-            await Task.Run( job ).ConfigureAwait( false );
+            await Task.Run( action: job ).ConfigureAwait( continueOnCapturedContext: false );
         }
 
         /// <summary>Wrap 3 methods into one.</summary>
@@ -210,28 +217,29 @@ namespace LibrainianCore.Threading {
         /// <param name="post"></param>
         /// <returns></returns>
         [NotNull]
-        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
-            try {
-                pre?.Invoke();
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
+        public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
+            () => {
+                try {
+                    pre?.Invoke();
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
 
-            try {
-                action?.Invoke();
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
+                try {
+                    action?.Invoke();
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
 
-            try {
-                post?.Invoke();
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-        };
+                try {
+                    post?.Invoke();
+                }
+                catch ( Exception exception ) {
+                    exception.Log();
+                }
+            };
 
         ///// <summary>
         /////   This is untested.
@@ -418,5 +426,7 @@ namespace LibrainianCore.Threading {
         //        }
         //    } );
         //}
+
     }
+
 }

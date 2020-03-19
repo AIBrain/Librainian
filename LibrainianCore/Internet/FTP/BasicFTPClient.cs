@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "BasicFTPClient.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "BasicFTPClient.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "BasicFTPClient.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "BasicFTPClient.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Internet.FTP {
+namespace Librainian.Internet.FTP {
 
     using System;
     using System.IO;
@@ -69,7 +63,7 @@ namespace LibrainianCore.Internet.FTP {
         }
 
         [NotNull]
-        private Uri BuildServerUri( [CanBeNull] String path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
+        private Uri BuildServerUri( [CanBeNull] String path ) => new Uri( uriString: $"ftp://{this.Host}:{this.Port}/{path}" );
 
         /// <summary>This method downloads the given file name from the FTP Server and returns a byte array containing its contents. Throws a WebException on encountering a network error.</summary>
         [CanBeNull]
@@ -77,24 +71,24 @@ namespace LibrainianCore.Internet.FTP {
 
             // Get the object used to communicate with the Server.
             var request = new WebClient {
-                Credentials = new NetworkCredential( this.Username, this.Password )
+                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
             };
 
             // Logon to the Server using username + password
-            return request.DownloadData( this.BuildServerUri( path ) );
+            return request.DownloadData( address: this.BuildServerUri( path: path ) );
         }
 
         /// <summary>This method downloads the FTP file specified by "ftppath" and saves it to "destfile". Throws a WebException on encountering a network error.</summary>
         public void DownloadFile( [CanBeNull] String ftppath, [NotNull] String destfile ) {
 
             // Download the data
-            var data = this.DownloadData( ftppath );
+            var data = this.DownloadData( path: ftppath );
 
             // Save the data to disk
 
             if ( data != null ) {
-                using ( var fs = new FileStream( destfile, FileMode.Create ) ) {
-                    fs.Write( data, 0, data.Length );
+                using ( var fs = new FileStream( path: destfile, mode: FileMode.Create ) ) {
+                    fs.Write( array: data, offset: 0, count: data.Length );
                     fs.Close();
                 }
             }
@@ -109,11 +103,11 @@ namespace LibrainianCore.Internet.FTP {
 
             // Get the object used to communicate with the Server.
             var request = new WebClient {
-                Credentials = new NetworkCredential( this.Username, this.Password )
+                Credentials = new NetworkCredential( userName: this.Username, password: this.Password )
             };
 
             // Logon to the Server using username + password
-            return request.UploadData( this.BuildServerUri( path ), data );
+            return request.UploadData( address: this.BuildServerUri( path: path ), data: data );
         }
 
         /// <summary>Load a file from disk and upload it to the FTP Server</summary>
@@ -124,7 +118,7 @@ namespace LibrainianCore.Internet.FTP {
         public Byte[] UploadFile( [CanBeNull] String ftppath, [NotNull] String srcfile ) {
 
             // Read the data from disk
-            var fs = new FileStream( srcfile, FileMode.Open );
+            var fs = new FileStream( path: srcfile, mode: FileMode.Open );
             var fileData = new Byte[ fs.Length ];
 
             var numBytesToRead = ( Int32 )fs.Length;
@@ -133,7 +127,7 @@ namespace LibrainianCore.Internet.FTP {
             while ( numBytesToRead > 0 ) {
 
                 // Read may return anything from 0 to numBytesToRead.
-                var n = fs.Read( fileData, numBytesRead, numBytesToRead );
+                var n = fs.Read( array: fileData, offset: numBytesRead, count: numBytesToRead );
 
                 // Break when the end of the file is reached.
                 if ( n == 0 ) {
@@ -148,7 +142,7 @@ namespace LibrainianCore.Internet.FTP {
             fs.Close();
 
             // Upload the data from the buffer
-            return this.UploadData( ftppath, fileData );
+            return this.UploadData( path: ftppath, data: fileData );
         }
     }
 }

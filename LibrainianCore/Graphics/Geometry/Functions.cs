@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Functions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Functions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Functions.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "Functions.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Graphics.Geometry {
+namespace Librainian.Graphics.Geometry {
 
     using System;
     using System.Numerics;
@@ -105,7 +99,7 @@ namespace LibrainianCore.Graphics.Geometry {
 
             var denom = d2121 * d4343 - d4321 * d4321;
 
-            if ( Math.Abs( denom ) < Single.Epsilon ) {
+            if ( Math.Abs( value: denom ) < Single.Epsilon ) {
                 resultSegmentPoint1 = new Vector3();
                 resultSegmentPoint2 = new Vector3();
 
@@ -169,17 +163,17 @@ namespace LibrainianCore.Graphics.Geometry {
 
             var denom = d2121 * d4343 - d4321 * d4321;
 
-            if ( Math.Abs( denom ) < Single.Epsilon ) {
+            if ( Math.Abs( value: denom ) < Single.Epsilon ) {
                 return default;
             }
 
             var numer = d1343 * d4321 - d1321 * d4343;
 
             var mua = numer / denom;
-            resultSegmentPoint1 = new CoordinateF( p1.X + mua * p21.X, p1.Y + mua * p21.Y, p1.Z + mua * p21.Z );
+            resultSegmentPoint1 = new CoordinateF( x: p1.X + mua * p21.X, y: p1.Y + mua * p21.Y, z: p1.Z + mua * p21.Z );
 
             var mub = ( d1343 + d4321 * mua ) / d4343;
-            resultSegmentPoint2 = new CoordinateF( p3.X + mub * p43.X, p3.Y + mub * p43.Y, p3.Z + mub * p43.Z );
+            resultSegmentPoint2 = new CoordinateF( x: p3.X + mub * p43.X, y: p3.Y + mub * p43.Y, z: p3.Z + mub * p43.Z );
 
             return true;
         }

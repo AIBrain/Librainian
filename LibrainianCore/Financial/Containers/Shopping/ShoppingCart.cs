@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ShoppingCart.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ShoppingCart.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ShoppingCart.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "ShoppingCart.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Financial.Containers.Shopping {
+namespace Librainian.Financial.Containers.Shopping {
 
     using System;
     using System.Collections.Concurrent;
@@ -49,16 +43,14 @@ namespace LibrainianCore.Financial.Containers.Shopping {
     using Newtonsoft.Json;
     using Utilities;
 
-    /// <summary>
-    /// Just a concept class.
-    /// </summary>
+    /// <summary>Just a concept class.</summary>
     [JsonObject]
     public class ShoppingCart : ABetterClassDispose {
 
         [JsonProperty]
         private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>(); //TODO make this a dictionary of Item.Counts
 
-        public Boolean AddItem( [CanBeNull] ShoppingItem item ) => !(item is null) && this.Items.TryAdd( item );
+        public Boolean AddItem( [CanBeNull] ShoppingItem item ) => !( item is null ) && this.Items.TryAdd( item: item );
 
         public UInt32 AddItems( [CanBeNull] params ShoppingItem[] items ) {
 
@@ -66,7 +58,7 @@ namespace LibrainianCore.Financial.Containers.Shopping {
                 return 0;
             }
 
-            return (UInt32)items.Count( this.AddItem );
+            return ( UInt32 )items.Count( predicate: this.AddItem );
         }
 
         public UInt32 AddItems( [CanBeNull] ShoppingItem item, UInt32 quantity ) {
@@ -77,7 +69,7 @@ namespace LibrainianCore.Financial.Containers.Shopping {
             UInt32 added = 0;
 
             while ( quantity.Any() ) {
-                if ( this.Items.TryAdd( item ) ) {
+                if ( this.Items.TryAdd( item: item ) ) {
                     added++;
                 }
 
@@ -95,7 +87,7 @@ namespace LibrainianCore.Financial.Containers.Shopping {
         /// <summary>Removes the first <paramref name="item" /> from the list.</summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) => this.Items.Remove( item );
+        public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) => this.Items.Remove( item: item );
 
         [NotNull]
         public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
@@ -103,11 +95,11 @@ namespace LibrainianCore.Financial.Containers.Shopping {
 
             foreach ( var shoppingItem in this.Items ) {
                 if ( !( shoppingItem is null ) ) {
-                    if ( !items.ContainsKey( shoppingItem ) ) {
-                        items.TryAdd( shoppingItem, 0 );
+                    if ( !items.ContainsKey( key: shoppingItem ) ) {
+                        items.TryAdd( key: shoppingItem, value: 0 );
                     }
 
-                    items[ shoppingItem ]++;
+                    items[ key: shoppingItem ]++;
                 }
             }
 

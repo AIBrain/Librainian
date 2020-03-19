@@ -11,9 +11,7 @@
 // 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 // 
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -31,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "LibrainianCore", File: "BufferExtensions.cs" was last formatted by Protiguous on 2020/02/01 at 11:49 AM.
+// Project: "LibrainianCore", File: "BufferExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:09 PM.
 
-namespace LibrainianCore.OperatingSystem.FileSystem {
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Generic;
@@ -52,7 +50,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public const Int32 DefaultBufferSize = 4096;
 
         /// <summary>Just some common buffer sizes we might use.</summary>
-        private static readonly HashSet<Int32> BufferSizes = new HashSet<Int32>( SizeLow.To( SizeHigh ).Select( b => ( Int32 ) Math.Pow( 2, b ) ) );
+        private static readonly HashSet<Int32> BufferSizes =
+            new HashSet<Int32>( collection: SizeLow.To( end: SizeHigh ).Select( selector: b => ( Int32 ) Math.Pow( x: 2, y: b ) ) );
 
     }
 

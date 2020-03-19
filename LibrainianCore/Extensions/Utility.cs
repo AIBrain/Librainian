@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "Utility.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "Utility.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "Utility.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "Utility.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using System.IO;
@@ -49,7 +43,7 @@ namespace LibrainianCore.Extensions {
 
     public static class Utility {
 
-        private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+        private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new ReaderWriterLockSlim( recursionPolicy: LockRecursionPolicy.SupportsRecursion );
 
         public static DummyXMLResolver DummyXMLResolver { get; } = new DummyXMLResolver();
 
@@ -57,7 +51,7 @@ namespace LibrainianCore.Extensions {
         /// <param name="text">   </param>
         /// <param name="yOffset"></param>
         public static void AtEndOfLine( [CanBeNull] this String text, Int32 yOffset = 0 ) {
-            if ( String.IsNullOrEmpty( text ) ) {
+            if ( String.IsNullOrEmpty( value: text ) ) {
                 return;
             }
 
@@ -79,9 +73,9 @@ namespace LibrainianCore.Extensions {
                         yOffset--;
                     }
 
-                    Console.SetCursorPosition( Console.WindowWidth - ( text.Length + 2 ), yOffset );
-                    Console.Write( text );
-                    Console.SetCursorPosition( oldLeft, oldTop );
+                    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 2 ), top: yOffset );
+                    Console.Write( value: text );
+                    Console.SetCursorPosition( left: oldLeft, top: oldTop );
                     Console.CursorVisible = true;
                 }
                 catch ( ArgumentOutOfRangeException exception ) {
@@ -116,8 +110,8 @@ namespace LibrainianCore.Extensions {
         public static void Spin( [CanBeNull] String text ) {
             var oldTop = Console.CursorTop;
             var oldLeft = Console.CursorLeft;
-            Console.Write( text );
-            Console.SetCursorPosition( oldLeft, oldTop );
+            Console.Write( value: text );
+            Console.SetCursorPosition( left: oldLeft, top: oldTop );
         }
 
         //public static void TopRight( String text ) {
@@ -163,7 +157,7 @@ namespace LibrainianCore.Extensions {
         //}
 
         public static void TopRight( [CanBeNull] String text ) {
-            if ( String.IsNullOrEmpty( text ) ) {
+            if ( String.IsNullOrEmpty( value: text ) ) {
                 return;
             }
 
@@ -175,9 +169,9 @@ namespace LibrainianCore.Extensions {
                 try {
                     ConsoleOutputSynch.EnterWriteLock();
                     Console.CursorVisible = false;
-                    Console.SetCursorPosition( Console.WindowWidth - ( text.Length + 2 ), 0 );
-                    Console.Write( text );
-                    Console.SetCursorPosition( oldLeft, oldTop );
+                    Console.SetCursorPosition( left: Console.WindowWidth - ( text.Length + 2 ), top: 0 );
+                    Console.Write( value: text );
+                    Console.SetCursorPosition( left: oldLeft, top: oldTop );
                     Console.CursorVisible = true;
                 }
                 finally {
@@ -199,7 +193,7 @@ namespace LibrainianCore.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor; //TODO d.r.y.
                     Console.BackgroundColor = backColor; //TODO d.r.y.
-                    Console.Write( text );
+                    Console.Write( value: text );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
@@ -210,7 +204,7 @@ namespace LibrainianCore.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.Write( text ?? String.Empty, parms );
+                    Console.Write( format: text ?? String.Empty, arg: parms );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
@@ -227,7 +221,7 @@ namespace LibrainianCore.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.WriteLine( text );
+                    Console.WriteLine( value: text );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
@@ -238,13 +232,11 @@ namespace LibrainianCore.Extensions {
                     var oldBack = Console.BackgroundColor;
                     Console.ForegroundColor = foreColor;
                     Console.BackgroundColor = backColor;
-                    Console.WriteLine( text ?? String.Empty, parms );
+                    Console.WriteLine( format: text ?? String.Empty, arg: parms );
                     Console.BackgroundColor = oldBack;
                     Console.ForegroundColor = oldFore;
                 }
             }
         }
-
     }
-
 }

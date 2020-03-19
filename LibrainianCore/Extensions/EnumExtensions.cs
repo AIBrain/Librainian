@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "EnumExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "EnumExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "EnumExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "EnumExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using System.Collections.Generic;
@@ -63,8 +57,8 @@ namespace LibrainianCore.Extensions {
         /// </code>
         /// </example>
         public static Boolean Contains<T>( [CanBeNull] this Enum value, [CanBeNull] T request ) {
-            var valueAsInt = Convert.ToInt32( value );
-            var requestAsInt = Convert.ToInt32( request );
+            var valueAsInt = Convert.ToInt32( value: value );
+            var requestAsInt = Convert.ToInt32( value: request );
 
             return requestAsInt == ( valueAsInt & requestAsInt ); //TODO what??
         }
@@ -76,13 +70,13 @@ namespace LibrainianCore.Extensions {
         public static String Description( [NotNull] this Enum element ) {
             var type = element.GetType();
 
-            var memberInfo = type.GetMember( element.ToString() );
+            var memberInfo = type.GetMember( name: element.ToString() );
 
             if ( !memberInfo.Any() ) {
                 return null; //element.ToString();
             }
 
-            var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( DescriptionAttribute ), false );
+            var attributes = memberInfo[ 0 ].GetCustomAttributes( attributeType: typeof( DescriptionAttribute ), inherit: false );
 
             return attributes.Any() ? ( attributes[ 0 ] as DescriptionAttribute )?.Description : null; //element.ToString();
         }
@@ -103,9 +97,13 @@ namespace LibrainianCore.Extensions {
         /// </example>
         [NotNull]
         public static IEnumerable<T> GetAllSelectedItems<T>( [CanBeNull] this Enum value ) {
-            var valueAsInt = Convert.ToInt32( value );
+            var valueAsInt = Convert.ToInt32( value: value );
 
-            return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T )item;
+            return
+                from Object item in Enum.GetValues( enumType: typeof( T ) )
+                let itemAsInt = Convert.ToInt32( value: item )
+                where itemAsInt == ( valueAsInt & itemAsInt )
+                select ( T )item;
         }
 
         /// <summary>Gets all items for an enum value.</summary>
@@ -115,24 +113,24 @@ namespace LibrainianCore.Extensions {
         [NotNull]
         public static IEnumerable<T> GetAllValues<T>( [NotNull] this Enum value ) {
             if ( value is null ) {
-                throw new ArgumentNullException( nameof( value ) );
+                throw new ArgumentNullException( paramName: nameof( value ) );
             }
 
-            return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
+            return Enum.GetValues( enumType: value.GetType() ).Cast<Object>().Select( selector: item => ( T )item );
         }
 
         /// <summary>Gets all values for an enum type.</summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         [NotNull]
-        public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
+        public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( enumType: typeof( T ) ).Cast<T>();
 
         // This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
         [CanBeNull]
         public static T? GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
             var type = value.GetType();
-            var memberInfo = type.GetMember( value.ToString() );
-            var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( T ), false );
+            var memberInfo = type.GetMember( name: value.ToString() );
+            var attributes = memberInfo[ 0 ].GetCustomAttributes( attributeType: typeof( T ), inherit: false );
 
             return ( T )attributes[ 0 ];
         }
@@ -145,20 +143,21 @@ namespace LibrainianCore.Extensions {
 
             var type = e.GetType();
 
-            foreach ( Int32 val in Enum.GetValues( type ) ) {
-                if ( val != e.ToInt32( CultureInfo.InvariantCulture ) ) {
+            foreach ( Int32 val in Enum.GetValues( enumType: type ) ) {
+                if ( val != e.ToInt32( provider: CultureInfo.InvariantCulture ) ) {
                     continue;
                 }
 
-                var ename = type.GetEnumName( val );
+                var ename = type.GetEnumName( value: val );
 
                 if ( ename is null ) {
                     continue;
                 }
 
-                var memInfo = type.GetMember( ename );
+                var memInfo = type.GetMember( name: ename );
 
-                if ( memInfo[ 0 ].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
+                if ( memInfo[ 0 ].GetCustomAttributes( attributeType: typeof( DescriptionAttribute ), inherit: false ).FirstOrDefault() is DescriptionAttribute
+                    descriptionAttribute ) {
                     return descriptionAttribute.Description;
                 }
             }
@@ -167,6 +166,6 @@ namespace LibrainianCore.Extensions {
         }
 
         [NotNull]
-        public static IEnumerable<T> GetEnums<T>( [CanBeNull] this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
+        public static IEnumerable<T> GetEnums<T>( [CanBeNull] this T _ ) => Enum.GetValues( enumType: typeof( T ) ).Cast<T>();
     }
 }

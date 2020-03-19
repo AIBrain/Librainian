@@ -1,24 +1,18 @@
-// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "ConcurrentDictionaryFile.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "ConcurrentDictionaryFile.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// 
+// Project: "LibrainianCore", File: "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2020/03/16 at 3:11 PM.
 
-namespace LibrainianCore.Persistence {
+namespace Librainian.Persistence {
 
     using System;
     using System.Collections.Concurrent;
@@ -56,6 +50,11 @@ namespace LibrainianCore.Persistence {
     /// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
     [JsonObject]
     public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
+
+        public void Dispose() {
+            this.Dispose( releaseManaged: true );
+            GC.SuppressFinalize( obj: this );
+        }
 
         private volatile Boolean _isLoading;
 
@@ -79,7 +78,7 @@ namespace LibrainianCore.Persistence {
         /// <param name="document"></param>
         /// <param name="preload"> </param>
         public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
-            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+            this.Document = document ?? throw new ArgumentNullException( paramName: nameof( document ) );
 
             if ( !this.Document.ContainingingFolder().Exists() ) {
                 this.Document.ContainingingFolder().Create();
@@ -95,19 +94,14 @@ namespace LibrainianCore.Persistence {
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="preload"> </param>
-        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( new Document( filename ), preload ) { }
+        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( fullPath: filename ), preload: preload ) { }
 
         protected virtual void Dispose( Boolean releaseManaged ) {
             if ( releaseManaged ) {
-                this.Save().Wait( Minutes.One );
+                this.Save().Wait( timeout: Minutes.One );
             }
 
-            GC.SuppressFinalize( this );
-        }
-
-        public void Dispose() {
-            this.Dispose( true );
-            GC.SuppressFinalize( this );
+            GC.SuppressFinalize( obj: this );
         }
 
         public Boolean Flush() {
@@ -117,13 +111,13 @@ namespace LibrainianCore.Persistence {
                 document.ContainingingFolder().Create();
             }
 
-            IDictionary<TKey, TValue> me = new Dictionary<TKey, TValue>( this.Count );
+            IDictionary<TKey, TValue> me = new Dictionary<TKey, TValue>( capacity: this.Count );
 
             foreach ( var pair in this ) {
-                me[ pair.Key ] = pair.Value;
+                me[ key: pair.Key ] = pair.Value;
             }
 
-            return me.TrySave( document, true, Formatting.Indented );
+            return me.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
         }
 
         public Boolean Load( CancellationToken token = default ) {
@@ -143,9 +137,10 @@ namespace LibrainianCore.Persistence {
                 var dictionary = document.LoadJSON<ConcurrentDictionary<TKey, TValue>>();
 
                 if ( dictionary != null ) {
-                    var result = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: new ParallelOptions {
-                        CancellationToken = token
-                    } );
+                    var result = Parallel.ForEach( source: dictionary.Keys.AsParallel(), body: key => this[ key: key ] = dictionary[ key: key ],
+                        parallelOptions: new ParallelOptions {
+                            CancellationToken = token
+                        } );
 
                     return result.IsCompleted;
                 }
@@ -179,7 +174,7 @@ namespace LibrainianCore.Persistence {
                 token = this.MainCTS.Token;
             }
 
-            return Task.Run( this.Flush, token );
+            return Task.Run( function: this.Flush, cancellationToken: token );
         }
 
         /// <summary>Returns a string that represents the current object.</summary>
@@ -188,6 +183,8 @@ namespace LibrainianCore.Persistence {
         public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
         [DebuggerStepThrough]
-        public Boolean TryRemove( [CanBeNull] TKey key ) => this.TryRemove( key, out _ );
+        public Boolean TryRemove( [CanBeNull] TKey key ) => this.TryRemove( key: key, value: out _ );
+
     }
+
 }

@@ -11,9 +11,7 @@
 // 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 // 
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -31,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "LibrainianCore", File: "Formatter.cs" was last formatted by Protiguous on 2020/02/27 at 10:10 PM.
+// Project: "LibrainianCore", File: "Formatter.cs" was last formatted by Protiguous on 2020/03/16 at 3:10 PM.
 
-namespace LibrainianCore.Parsing {
+namespace Librainian.Parsing {
 
     using System;
     using System.Globalization;
@@ -73,13 +71,13 @@ namespace LibrainianCore.Parsing {
         /// <returns>The string representation of the value of <paramref name="arg" />, formatted as specified by <paramref name="format" />.</returns>
         [NotNull]
         protected String HandleOtherFormats( [CanBeNull] String format, [CanBeNull] Object? arg ) =>
-            ( arg as IFormattable )?.ToString( format, this.Culture ) ?? arg?.ToString() ?? String.Empty;
+            ( arg as IFormattable )?.ToString( format: format, formatProvider: this.Culture ) ?? arg?.ToString() ?? String.Empty;
 
         /// <summary>Gets a default instance of a composite formatter.</summary>
         /// <param name="culture">The culture.</param>
         /// <returns>A composite formatter.</returns>
         [NotNull]
-        public static Formatter Default( [CanBeNull] CultureInfo culture = null ) => new CompositeFormatter( culture );
+        public static Formatter Default( [CanBeNull] CultureInfo culture = null ) => new CompositeFormatter( culture: culture );
 
     }
 

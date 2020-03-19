@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "PingExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "PingExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "PingExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "PingExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Internet {
+namespace Librainian.Internet {
 
     using System;
     using System.Net;
@@ -63,39 +57,40 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         private static Task<PingReply> SendTaskCore( [NotNull] Ping ping, [NotNull] Object userToken, [NotNull] Action<TaskCompletionSource<PingReply>> sendAsync ) {
             if ( ping is null ) {
-                throw new ArgumentNullException( nameof( ping ) );
+                throw new ArgumentNullException( paramName: nameof( ping ) );
             }
 
             if ( userToken is null ) {
-                throw new ArgumentNullException( nameof( userToken ) );
+                throw new ArgumentNullException( paramName: nameof( userToken ) );
             }
 
             if ( sendAsync is null ) {
-                throw new ArgumentNullException( nameof( sendAsync ) );
+                throw new ArgumentNullException( paramName: nameof( sendAsync ) );
             }
 
             // Validate we're being used with a real smtpClient. The rest of the arg validation will
             // happen in the call to sendAsync.
             if ( ping is null ) {
-                throw new ArgumentNullException( nameof( ping ) );
+                throw new ArgumentNullException( paramName: nameof( ping ) );
             }
 
             // Create a TaskCompletionSource to represent the operation
-            var tcs = new TaskCompletionSource<PingReply>( userToken, TaskCreationOptions.RunContinuationsAsynchronously );
+            var tcs = new TaskCompletionSource<PingReply>( state: userToken, creationOptions: TaskCreationOptions.RunContinuationsAsynchronously );
 
             // Register a handler that will transfer completion results to the TCS Task
-            void Handler( Object sender, PingCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Reply, () => ping.PingCompleted -= Handler );
+            void Handler( Object sender, PingCompletedEventArgs e ) =>
+                tcs.HandleCompletion( e: e, getResult: () => e.Reply, unregisterHandler: () => ping.PingCompleted -= Handler );
 
             ping.PingCompleted += Handler;
 
             // Try to start the async operation. If starting it fails (due to parameter validation)
             // unregister the handler before allowing the exception to propagate.
             try {
-                sendAsync( tcs );
+                sendAsync( obj: tcs );
             }
             catch ( Exception exc ) {
                 ping.PingCompleted -= Handler;
-                tcs.TrySetException( exc );
+                tcs.TrySetException( exception: exc );
             }
 
             // Return the task to represent the asynchronous operation
@@ -111,18 +106,18 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, [NotNull] Object userToken ) {
             if ( ping == null ) {
-                throw new ArgumentNullException( nameof( ping ) );
+                throw new ArgumentNullException( paramName: nameof( ping ) );
             }
 
             if ( address == null ) {
-                throw new ArgumentNullException( nameof( address ) );
+                throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
             if ( userToken == null ) {
-                throw new ArgumentNullException( nameof( userToken ) );
+                throw new ArgumentNullException( paramName: nameof( userToken ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken, sendAsync: tcs => ping.SendAsync( address: address, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -136,11 +131,11 @@ namespace LibrainianCore.Internet {
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Object userToken ) {
-            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken, sendAsync: tcs => ping.SendAsync( hostNameOrAddress: hostNameOrAddress, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -153,10 +148,10 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, Object userToken ) {
             if ( address == null ) {
-                throw new ArgumentNullException( nameof( address ) );
+                throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken, sendAsync: tcs => ping.SendAsync( address: address, timeout: timeout, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -171,11 +166,12 @@ namespace LibrainianCore.Internet {
         /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, Object userToken ) {
-            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken,
+                sendAsync: tcs => ping.SendAsync( hostNameOrAddress: hostNameOrAddress, timeout: timeout, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -192,18 +188,18 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, Object userToken ) {
             if ( address == null ) {
-                throw new ArgumentNullException( nameof( address ) );
+                throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
             if ( buffer == null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken, sendAsync: tcs => ping.SendAsync( address: address, timeout: timeout, buffer: buffer, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -223,18 +219,19 @@ namespace LibrainianCore.Internet {
         [CanBeNull]
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer, Object userToken ) {
             if ( buffer == null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken,
+                sendAsync: tcs => ping.SendAsync( hostNameOrAddress: hostNameOrAddress, timeout: timeout, buffer: buffer, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -253,18 +250,19 @@ namespace LibrainianCore.Internet {
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, [CanBeNull] PingOptions options,
             Object userToken ) {
             if ( address == null ) {
-                throw new ArgumentNullException( nameof( address ) );
+                throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
             if ( buffer == null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken,
+                sendAsync: tcs => ping.SendAsync( address: address, timeout: timeout, buffer: buffer, options: options, userToken: tcs ) );
         }
 
         /// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
@@ -286,18 +284,19 @@ namespace LibrainianCore.Internet {
         public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer,
             [CanBeNull] PingOptions options, Object userToken ) {
             if ( buffer == null ) {
-                throw new ArgumentNullException( nameof( buffer ) );
+                throw new ArgumentNullException( paramName: nameof( buffer ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( hostNameOrAddress ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
+            if ( String.IsNullOrWhiteSpace( value: hostNameOrAddress ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( hostNameOrAddress ) );
             }
 
             if ( buffer.Length == 0 ) {
-                throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
+                throw new ArgumentException( message: "Value cannot be an empty collection.", paramName: nameof( buffer ) );
             }
 
-            return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
+            return SendTaskCore( ping: ping, userToken: userToken,
+                sendAsync: tcs => ping.SendAsync( hostNameOrAddress: hostNameOrAddress, timeout: timeout, buffer: buffer, options: options, userToken: tcs ) );
         }
     }
 }

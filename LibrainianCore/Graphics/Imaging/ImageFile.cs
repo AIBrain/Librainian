@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "ImageFile.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "ImageFile.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,22 +29,19 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "ImageFile.cs" was last formatted by Protiguous on 2020/01/31 at 12:29 AM.
+// Project: "LibrainianCore", File: "ImageFile.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Graphics.Imaging {
+namespace Librainian.Graphics.Imaging {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using JetBrains.Annotations;
+    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
 
     // ReSharper disable RedundantUsingDirective
-    using Path = OperatingSystem.FileSystem.Pri.LongPath.Path;
-    using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
     using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-    using FileSystemInfo = OperatingSystem.FileSystem.Pri.LongPath.FileSystemInfo;
-    using Directory = OperatingSystem.FileSystem.Pri.LongPath.Directory;
-    using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+
     // ReSharper restore RedundantUsingDirective
 
     /// <summary>Untested. Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/</summary>

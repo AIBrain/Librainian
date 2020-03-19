@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "TheInternet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "TheInternet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "TheInternet.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "TheInternet.cs" was last formatted by Protiguous on 2020/03/16 at 3:05 PM.
 
-namespace LibrainianCore.Internet {
+namespace Librainian.Internet {
 
     using System;
     using System.Collections.Generic;
@@ -66,14 +60,14 @@ namespace LibrainianCore.Internet {
         public static async Task<IDocument> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null,
             VolatileBoolean inProgress = default, [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
             if ( address is null ) {
-                throw new ArgumentNullException( nameof( address ) );
+                throw new ArgumentNullException( paramName: nameof( address ) );
             }
 
             try {
 
                 inProgress.Value = true;
 
-                reportProgress?.Report( ZeroToOne.MinValue );
+                reportProgress?.Report( value: ZeroToOne.MinValue );
 
                 var tempDocument = Document.GetTempDocument();
 
@@ -83,14 +77,14 @@ namespace LibrainianCore.Internet {
                 };
 
                 webclient.DownloadProgressChanged += ( sender, args ) => {
-                    var progress = args.BytesReceived / ( Double ) args.TotalBytesToReceive;
-                    reportProgress?.Report( progress );
+                    var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
+                    reportProgress?.Report( value: progress );
                 };
 
-                var timeoutTask = Task.Delay( timeOut );
-                var downloadTask = webclient.DownloadFileTaskAsync( address, tempDocument.FullPath );
+                var timeoutTask = Task.Delay( delay: timeOut );
+                var downloadTask = webclient.DownloadFileTaskAsync( address: address, fileName: tempDocument.FullPath );
 
-                var task = await Task.WhenAny( timeoutTask, downloadTask ).ConfigureAwait( false );
+                var task = await Task.WhenAny( timeoutTask, downloadTask ).ConfigureAwait( continueOnCapturedContext: false );
 
                 if ( task.Id == timeoutTask.Id ) {
                     webclient.CancelAsync();
@@ -100,7 +94,7 @@ namespace LibrainianCore.Internet {
             }
             catch ( WebException exception ) {
                 try {
-                    onWebException?.Invoke( address, exception.Status );
+                    onWebException?.Invoke( arg1: address, arg2: exception.Status );
                 }
                 catch ( Exception exception2 ) {
                     exception2.Log();
@@ -110,7 +104,7 @@ namespace LibrainianCore.Internet {
                 exception.Log();
             }
             finally {
-                reportProgress?.Report( ZeroToOne.MaxValue );
+                reportProgress?.Report( value: ZeroToOne.MaxValue );
 
                 //inProgress = false;
             }
@@ -121,24 +115,22 @@ namespace LibrainianCore.Internet {
         [ItemNotNull]
         public static IEnumerable<Document> FindFile( [NotNull] String filename, [NotNull] IEnumerable<String> locationClues ) {
             if ( locationClues is null ) {
-                throw new ArgumentNullException( nameof( locationClues ) );
+                throw new ArgumentNullException( paramName: nameof( locationClues ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( filename ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filename ) );
+            if ( String.IsNullOrWhiteSpace( value: filename ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( filename ) );
             }
 
             foreach ( var locationClue in locationClues ) {
-                if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) {
+                if ( !Uri.TryCreate( uriString: locationClue, uriKind: UriKind.Absolute, result: out var internetAddress ) ) {
                     continue;
                 }
 
                 //TODO this /totally/ is not finished yet.
 
-                yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
+                yield return new Document( fullPath: internetAddress.ToString() ); //should download file to a document in the user's temp folder.
             }
         }
-
     }
-
 }

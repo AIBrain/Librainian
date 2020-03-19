@@ -1,23 +1,17 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "GuidExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "GuidExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "GuidExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "GuidExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using System.Linq;
@@ -58,8 +52,9 @@ namespace LibrainianCore.Extensions {
 
         public static readonly Regex InGuidFormat =
             new Regex(
-                "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
-                "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$", RegexOptions.Compiled );
+                pattern: "^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
+                         "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$",
+                options: RegexOptions.Compiled );
 
         /// <summary>
         ///     <see cref="Converters.ConverterExtensions.ToPath" />
@@ -68,11 +63,11 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         public static Guid FromPath( [NotNull] this DirectoryInfo path ) {
             if ( path == null ) {
-                throw new ArgumentNullException( nameof( path ) );
+                throw new ArgumentNullException( paramName: nameof( path ) );
             }
 
             var s = path.ToPaths().ToList();
-            s.RemoveAll( s1 => s1.Any( c => !Char.IsDigit( c ) ) );
+            s.RemoveAll( match: s1 => s1.Any( predicate: c => !Char.IsDigit( c: c ) ) );
 
             if ( s.Count < 16 ) {
                 return Guid.Empty;
@@ -81,11 +76,11 @@ namespace LibrainianCore.Extensions {
             var b = new Byte[ s.Count ];
 
             for ( var i = 0; i < s.Count; i++ ) {
-                b[ i ] = Convert.ToByte( s[ i ] );
+                b[ i ] = Convert.ToByte( value: s[ index: i ] );
             }
 
             try {
-                var result = new Guid( b );
+                var result = new Guid( b: b );
 
                 return result;
             }
@@ -114,10 +109,10 @@ namespace LibrainianCore.Extensions {
         /// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
         public static Boolean IsGuid( [NotNull] this String s ) {
             if ( s is null ) {
-                throw new ArgumentNullException( nameof( s ) );
+                throw new ArgumentNullException( paramName: nameof( s ) );
             }
 
-            var match = InGuidFormat.Match( s );
+            var match = InGuidFormat.Match( input: s );
 
             return match.Success;
         }
@@ -134,11 +129,11 @@ namespace LibrainianCore.Extensions {
 
             for ( var i = 0; i < bytecount; i++ ) {
                 unchecked {
-                    destByte[ i ] = ( Byte ) ( lhsBytes[ i ] ^ rhsBytes[ i ] );
+                    destByte[ i ] = ( Byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
                 }
             }
 
-            return new Guid( destByte );
+            return new Guid( b: destByte );
         }
 
         /// <summary>Untested.</summary>
@@ -147,11 +142,11 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         public static Guid Next( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger( bytes );
+            var uBigInteger = new UBigInteger( bytes: bytes );
             uBigInteger += amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize( ref array, 16 );
-            var next = new Guid( array );
+            Array.Resize( array: ref array, newSize: 16 );
+            var next = new Guid( b: array );
 
             return next;
         }
@@ -162,15 +157,13 @@ namespace LibrainianCore.Extensions {
         /// <returns></returns>
         public static Guid Previous( this Guid guid, Int64 amount = 1 ) {
             var bytes = guid.ToByteArray();
-            var uBigInteger = new UBigInteger( bytes );
+            var uBigInteger = new UBigInteger( bytes: bytes );
             uBigInteger -= amount;
             var array = uBigInteger.ToByteArray();
-            Array.Resize( ref array, 16 );
-            var next = new Guid( array );
+            Array.Resize( array: ref array, newSize: 16 );
+            var next = new Guid( b: array );
 
             return next;
         }
-
     }
-
 }

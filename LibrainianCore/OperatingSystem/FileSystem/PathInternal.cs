@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "PathInternal.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "PathInternal.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "PathInternal.cs" was last formatted by Protiguous on 2020/01/31 at 12:27 AM.
+// 
+// Project: "LibrainianCore", File: "PathInternal.cs" was last formatted by Protiguous on 2020/03/16 at 3:10 PM.
 
-namespace LibrainianCore.OperatingSystem.FileSystem {
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Diagnostics;
@@ -50,12 +44,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
     public static class PathInternal {
 
-        [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
+        [DllImport( dllName: "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
         private static extern UInt32 GetLongPathNameW( this String lpszShortPath, StringBuilder lpszLongPath, UInt32 cchBuffer );
 
         [Pure]
         [NotNull]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static String EnsureExtendedPrefix( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
@@ -63,8 +57,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 return path;
             }
 
-            if ( path.StartsWith( Constants.UncPathPrefix, StringComparison.OrdinalIgnoreCase ) ) {
-                return path.Insert( 2, @"?\UNC\" );
+            if ( path.StartsWith( value: Constants.UncPathPrefix, comparisonType: StringComparison.OrdinalIgnoreCase ) ) {
+                return path.Insert( startIndex: 2, value: @"?\UNC\" );
             }
 
             return $"{Constants.ExtendedPathPrefix}{path}";
@@ -74,35 +68,35 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         public static String GetLongPathName( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
-            var stringBuffer = new StringBuilder( Constants.MaxPathLength );
-            path.GetLongPathNameW( stringBuffer, ( UInt32 )stringBuffer.Capacity );
+            var stringBuffer = new StringBuilder( capacity: Constants.MaxPathLength );
+            path.GetLongPathNameW( lpszLongPath: stringBuffer, cchBuffer: ( UInt32 ) stringBuffer.Capacity );
 
             return stringBuffer.ToString();
         }
 
         [Pure]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsDevice( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
-            if ( Document.IsExtended( path ) ) {
+            if ( Document.IsExtended( path: path ) ) {
                 return true;
             }
 
-            if ( path.Length >= 4 && path[ 0 ].IsDirectorySeparator() && path[ 1 ].IsDirectorySeparator() &&
-                 ( path[ 2 ] == '.' || path[ 2 ] == '?' ) ) {
-                return path[ 3 ].IsDirectorySeparator();
+            if ( path.Length >= 4 && path[ index: 0 ].IsDirectorySeparator() && path[ index: 1 ].IsDirectorySeparator() &&
+                 ( path[ index: 2 ] == '.' || path[ index: 2 ] == '?' ) ) {
+                return path[ index: 3 ].IsDirectorySeparator();
             }
 
             return default;
         }
 
         [Pure]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsDirectorySeparator( this Char c ) => c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
 
         [Pure]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsPartiallyQualified( [NotNull] this String path ) {
             path = path.TrimAndThrowIfBlank();
 
@@ -110,16 +104,16 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 return true;
             }
 
-            if ( path[ 0 ].IsDirectorySeparator() ) {
-                if ( path[ 1 ] != '?' ) {
-                    return !path[ 1 ].IsDirectorySeparator();
+            if ( path[ index: 0 ].IsDirectorySeparator() ) {
+                if ( path[ index: 1 ] != '?' ) {
+                    return !path[ index: 1 ].IsDirectorySeparator();
                 }
 
                 return default;
             }
 
-            if ( path.Length >= 3 && path[ 1 ] == Path.VolumeSeparatorChar && path[ 2 ].IsDirectorySeparator() ) {
-                return !path[ 0 ].IsValidDriveChar();
+            if ( path.Length >= 3 && path[ index: 1 ] == Path.VolumeSeparatorChar && path[ index: 2 ].IsDirectorySeparator() ) {
+                return !path[ index: 0 ].IsValidDriveChar();
             }
 
             return true;
@@ -131,7 +125,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
         [DebuggerStepThrough]
         [Pure]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static Boolean IsValidDriveChar( this Char value ) => value >= 'A' && value <= 'Z' || value >= 'a' && value <= 'z';
 
         /// <summary>Returns the trimmed <paramref name="path" /> or throws <see cref="ArgumentException" /> if null, empty, or whitespace.</summary>
@@ -139,17 +133,17 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
         [DebuggerStepThrough]
         [NotNull]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
         public static String TrimAndThrowIfBlank( [NotNull] this String path ) {
 
-            if ( String.IsNullOrWhiteSpace( path ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrWhiteSpace( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
             }
 
             path = path.Trimmed();
 
-            if ( String.IsNullOrEmpty( path ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+            if ( String.IsNullOrEmpty( value: path ) ) {
+                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( path ) );
             }
 
             return path;
@@ -167,7 +161,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             public const UInt32 MaxComponentLength = Byte.MaxValue;
 
-            public const UInt16 MaxPathLength = ( UInt16 )Int16.MaxValue;
+            public const UInt16 MaxPathLength = ( UInt16 ) Int16.MaxValue;
 
             public const String TwoBackslashes = @"\\";
 
@@ -176,6 +170,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             public const String UncExtendedPrefixToInsert = @"?\UNC\";
 
             public const String UncPathPrefix = @"\\";
+
         }
+
     }
+
 }

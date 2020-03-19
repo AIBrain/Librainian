@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Minus1to1TS.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "Minus1to1TS.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Minus1to1TS.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// 
+// Project: "LibrainianCore", File: "Minus1to1TS.cs" was last formatted by Protiguous on 2020/03/16 at 3:06 PM.
 
-namespace LibrainianCore.Maths.Numbers {
+namespace Librainian.Maths.Numbers {
 
     using System;
     using System.Threading;
@@ -48,17 +42,11 @@ namespace LibrainianCore.Maths.Numbers {
     [JsonObject]
     public class Minus1To1Ts : ICloneable {
 
-        private const Double NaNValue = 2D;
-
-        private static readonly Random Rand = new Random( ( Int32 )DateTime.UtcNow.Ticks );
+        public Object Clone() => new Minus1To1Ts( this.Value );
 
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private Double _value;
-
-        public const Double MaxValue = 1D;
-
-        public const Double MinValue = -1D;
 
         public Double Value {
             get => Interlocked.CompareExchange( ref this._value, this._value, NaNValue );
@@ -75,6 +63,14 @@ namespace LibrainianCore.Maths.Numbers {
             }
         }
 
+        private const Double NaNValue = 2D;
+
+        public const Double MaxValue = 1D;
+
+        public const Double MinValue = -1D;
+
+        private static readonly Random Rand = new Random( ( Int32 ) DateTime.UtcNow.Ticks );
+
         /// <summary>Initialize the value to a random value between -1 and 1.</summary>
         public Minus1To1Ts() => this.Value = Rand.NextDouble() - Rand.NextDouble();
 
@@ -87,9 +83,9 @@ namespace LibrainianCore.Maths.Numbers {
         [NotNull]
         public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value );
 
-        public Object Clone() => new Minus1To1Ts( this.Value );
-
         [NotNull]
         public override String ToString() => $"{this.Value:R}";
+
     }
+
 }

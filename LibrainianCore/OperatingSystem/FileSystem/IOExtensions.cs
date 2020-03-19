@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "IOExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,18 +20,18 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "IOExtensions.cs" was last formatted by Protiguous on 2020/01/31 at 12:28 AM.
+// 
+// Project: "LibrainianCore", File: "IOExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:09 PM.
 
-namespace LibrainianCore.OperatingSystem.FileSystem {
+namespace Librainian.OperatingSystem.FileSystem {
 
     using System;
     using System.Collections.Concurrent;
@@ -99,8 +93,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 var encodedText = DefaultEncoding().GetBytes( text );
                 var length = encodedText.Length;
 
-                await using var sourceStream = new FileStream( fileInfo.FullPath, FileMode.Append, FileAccess.Write, FileShare.Write, length,
-                    true );
+                await using var sourceStream = new FileStream( fileInfo.FullPath, FileMode.Append, FileAccess.Write, FileShare.Write, length, true );
 
                 await sourceStream.WriteAsync( encodedText, 0, length ).ConfigureAwait( false );
 
@@ -160,7 +153,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         yield break;
                     }
 
-                    yield return ( Byte )b;
+                    yield return ( Byte ) b;
                 } while ( true );
             }
         }
@@ -197,7 +190,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         yield break;
                     }
 
-                    yield return ( Byte )b;
+                    yield return ( Byte ) b;
                 } while ( true );
 
             }
@@ -236,12 +229,12 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                     var high = buffered.ReadByte();
 
                     if ( high == -1 ) {
-                        yield return ( ( Byte )low ).CombineBytes( 0 );
+                        yield return ( ( Byte ) low ).CombineBytes( 0 );
 
                         yield break;
                     }
 
-                    yield return ( ( Byte )low ).CombineBytes( ( Byte )high );
+                    yield return ( ( Byte ) low ).CombineBytes( ( Byte ) high );
                 }
             }
         }
@@ -402,8 +395,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <param name="requestWriteAccess"> </param>
         /// <returns></returns>
         [CanBeNull]
-        public static DirectoryInfo Ensure( [NotNull] this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null,
-            Boolean? requestWriteAccess = null ) {
+        public static DirectoryInfo Ensure( [NotNull] this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
 
             if ( directoryInfo is null ) {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
@@ -521,8 +513,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                             }
 
                             if ( searchStyle == SearchStyle.FoldersFirst ) {
-                                folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory,
-                                    SearchStyle.FoldersFirst ); //recurse
+                                folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, SearchStyle.FoldersFirst ); //recurse
                             }
 
                             try {
@@ -550,8 +541,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                                 } );
                             }
 
-                            folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory,
-                                searchStyle ); //recurse
+                            folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, searchStyle ); //recurse
                         } );
                     }
                     catch ( UnauthorizedAccessException ) { }
@@ -606,8 +596,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
         /// <returns></returns>
         /// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
         public static UInt64? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
-            var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullPath, out var sectorsPerCluster,
-                out var bytesPerSector, out _, out _ );
+            var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullPath, out var sectorsPerCluster, out var bytesPerSector, out _, out _ );
 
             if ( result == 0 ) {
                 throw new Win32Exception();
@@ -615,9 +604,9 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             var clusterSize = sectorsPerCluster * bytesPerSector;
             var losize = NativeMethods.GetCompressedFileSizeW( info.FullPath, out var sizeHigh );
-            var size = ( ( Int64 )sizeHigh << 32 ) | losize;
+            var size = ( ( Int64 ) sizeHigh << 32 ) | losize;
 
-            return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
+            return ( UInt64 ) ( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
         }
 
         [CanBeNull]
@@ -811,8 +800,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
-                $" /separate /select,\"{folder.FullPath}\" " );
+            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{folder.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -824,8 +812,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( folder ) );
             }
 
-            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
-                $" /separate /select,\"{folder.FullPath}\" " );
+            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{folder.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -836,8 +823,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}",
-                $" /separate /select,\"{document.FullPath}\" " );
+            var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{document.FullPath}\" " );
 
             return proc?.Responding == true;
         }
@@ -890,8 +876,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             if ( File.Exists( filePath ) ) {
                 try {
-                    await using ( var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value,
-                        true ) ) {
+                    await using ( var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true ) ) {
                         var sb = new StringBuilder( bufferSize.Value );
                         var buffer = new Byte[ bufferSize.Value ];
                         Int32 numRead;
@@ -980,7 +965,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 return default;
             }
 
-            var lba = left.AsBytes(); //.ToArray();
+            var lba = left.AsBytes();  //.ToArray();
             var rba = right.AsBytes(); //.ToArray();
 
             return lba.SequenceEqual( rba );
@@ -1062,7 +1047,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 }
             }
 
-            var rightLength = ( UInt64 )right.Length;
+            var rightLength = ( UInt64 ) right.Length;
 
             if ( !rightLength.Any() ) {
                 return default;
@@ -1099,7 +1084,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                 }
             }
 
-            var rightLength = ( UInt64 )left.Length;
+            var rightLength = ( UInt64 ) left.Length;
 
             if ( !rightLength.Any() ) {
                 return default;
@@ -1152,8 +1137,8 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
                         case DirectoryNotFoundException _:
                         case IOException _:
                         case SecurityException _: {
-                                return true;
-                            }
+                            return true;
+                        }
                     }
 
                     ex.Log();
@@ -1245,7 +1230,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
             try {
                 if ( File.Exists( filePath ) ) {
                     using ( var fileStream = File.Open( filePath, fileMode, fileAccess, fileShare ) ) {
-                        var length = ( Int32 )fileStream.Length;
+                        var length = ( Int32 ) fileStream.Length;
 
                         if ( length > 0 ) {
                             fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
@@ -1439,5 +1424,7 @@ namespace LibrainianCore.OperatingSystem.FileSystem {
 
             return new DirectoryInfo( path );
         }
+
     }
+
 }

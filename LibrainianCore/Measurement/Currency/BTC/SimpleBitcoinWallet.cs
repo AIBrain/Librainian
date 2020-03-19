@@ -1,24 +1,18 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "SimpleBitcoinWallet.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
-//
+﻿// Copyright © 2020 Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
+// 
+// This source code contained in "SimpleBitcoinWallet.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
+// 
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -26,22 +20,21 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "SimpleBitcoinWallet.cs" was last formatted by Protiguous on 2020/01/31 at 12:26 AM.
+// 
+// Project: "LibrainianCore", File: "SimpleBitcoinWallet.cs" was last formatted by Protiguous on 2020/03/16 at 3:07 PM.
 
-namespace LibrainianCore.Measurement.Currency.BTC {
+namespace Librainian.Measurement.Currency.BTC {
 
     using System;
     using System.Diagnostics;
-
     using System.Threading;
     using JetBrains.Annotations;
     using Maths;
@@ -56,6 +49,18 @@ namespace LibrainianCore.Measurement.Currency.BTC {
     [JsonObject]
     public class SimpleBitcoinWallet : ABetterClassDispose, IEquatable<SimpleBitcoinWallet>, IComparable<SimpleBitcoinWallet> {
 
+        public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
+            if ( otherWallet is null ) {
+                throw new ArgumentNullException( nameof( otherWallet ) );
+            }
+
+            return this.Balance.CompareTo( otherWallet.Balance );
+        }
+
+        /// <summary>Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.</summary>
+        /// <param name="otherWallet">Annother to compare with this wallet.</param>
+        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( this, otherWallet );
+
         [NonSerialized]
         [NotNull]
         private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
@@ -64,30 +69,6 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
         [JsonProperty]
         private Decimal _balance;
-
-        /// <summary>1</summary>
-        public const Decimal BTC = 1M;
-
-        /// <summary>0. 001</summary>
-        public const Decimal mBTC = 0.001M;
-
-        /// <summary>1000 mBTC are in 1 BTC</summary>
-        public const UInt16 mBTCInOneBTC = ( UInt16 )( BTC / mBTC );
-
-        /// <summary>0.00000001</summary>
-        public const Decimal Satoshi = 0.00000001M;
-
-        /// <summary>100,000,000 Satoshi are in 1 BTC</summary>
-        public const UInt64 SatoshiInOneBtc = ( UInt64 )( BTC / Satoshi );
-
-        /// <summary>0.0000001</summary>
-        public const Decimal TenSatoshi = 0.0000001M;
-
-        /// <summary>0. 000001</summary>
-        public const Decimal ΜBtc = 0.000001M;
-
-        /// <summary>1,000,000 μBTC are in 1 BTC</summary>
-        public const UInt64 ΜBtcInOneBtc = ( UInt64 )( BTC / ΜBtc );
 
         public Decimal Balance {
             get {
@@ -121,6 +102,30 @@ namespace LibrainianCore.Measurement.Currency.BTC {
         ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
         /// </summary>
         public TimeSpan Timeout { get; set; }
+
+        /// <summary>1</summary>
+        public const Decimal BTC = 1M;
+
+        /// <summary>0. 001</summary>
+        public const Decimal mBTC = 0.001M;
+
+        /// <summary>1000 mBTC are in 1 BTC</summary>
+        public const UInt16 mBTCInOneBTC = ( UInt16 ) ( BTC / mBTC );
+
+        /// <summary>0.00000001</summary>
+        public const Decimal Satoshi = 0.00000001M;
+
+        /// <summary>100,000,000 Satoshi are in 1 BTC</summary>
+        public const UInt64 SatoshiInOneBtc = ( UInt64 ) ( BTC / Satoshi );
+
+        /// <summary>0.0000001</summary>
+        public const Decimal TenSatoshi = 0.0000001M;
+
+        /// <summary>0. 000001</summary>
+        public const Decimal ΜBtc = 0.000001M;
+
+        /// <summary>1,000,000 μBTC are in 1 BTC</summary>
+        public const UInt64 ΜBtcInOneBtc = ( UInt64 ) ( BTC / ΜBtc );
 
         /// <summary>Initialize the wallet with the specified amount of satoshi.</summary>
         /// <param name="satoshi"></param>
@@ -158,22 +163,10 @@ namespace LibrainianCore.Measurement.Currency.BTC {
             return left.Balance == right.Balance;
         }
 
-        public Int32 CompareTo( [NotNull] SimpleBitcoinWallet otherWallet ) {
-            if ( otherWallet is null ) {
-                throw new ArgumentNullException( nameof( otherWallet ) );
-            }
-
-            return this.Balance.CompareTo( otherWallet.Balance );
-        }
-
         /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
             using ( this._access ) { }
         }
-
-        /// <summary>Indicates whether the current wallet is the same as the <paramref name="otherWallet" /> wallet.</summary>
-        /// <param name="otherWallet">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleBitcoinWallet otherWallet ) => Equals( this, otherWallet );
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
@@ -254,7 +247,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
                 this._balance -= amount;
 
-                intoWallet?.TryDeposit( amount );   //shouldn't this be outside of lock?
+                intoWallet?.TryDeposit( amount ); //shouldn't this be outside of lock?
 
                 return true;
             }
@@ -344,5 +337,7 @@ namespace LibrainianCore.Measurement.Currency.BTC {
 
             return this.TryWithdraw( wallet.Balance );
         }
+
     }
+
 }

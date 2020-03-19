@@ -1,23 +1,17 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright © 2020 Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
+// from our binaries, libraries, projects, or solutions.
 //
-// This source code contained in "SerializableExceptionWithCustomProperties.cs" belongs to Protiguous@Protiguous.com
-// unless otherwise specified or the original license has been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// This source code contained in "SerializableExceptionWithCustomProperties.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
+// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
 //
-// If you want to use any of our code in a commercial project, you must contact
-// Protiguous@Protiguous.com for permission and a quote.
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
 //
-// Donations are accepted (for now) via
-//     bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal: Protiguous@Protiguous.com
+// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -35,9 +29,9 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 //
-// Project: "Librainian", "SerializableExceptionWithCustomProperties.cs" was last formatted by Protiguous on 2020/01/31 at 12:25 AM.
+// Project: "LibrainianCore", File: "SerializableExceptionWithCustomProperties.cs" was last formatted by Protiguous on 2020/03/16 at 3:04 PM.
 
-namespace LibrainianCore.Extensions {
+namespace Librainian.Extensions {
 
     using System;
     using System.Collections.Generic;
@@ -58,45 +52,46 @@ namespace LibrainianCore.Extensions {
         /// <summary>Pulled from</summary>
         /// <param name="info">   </param>
         /// <param name="context"></param>
-        [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+        [SecurityPermission( action: SecurityAction.Demand, SerializationFormatter = true )]
 
         // Constructor should be protected for unsealed classes, private for sealed classes. (The Serializer invokes this constructor through reflection, so it can be private)
-        protected SerializableExceptionWithCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
-            this.ResourceName = info.GetString( "ResourceName" );
-            this.ValidationErrors = ( IList<String> )info.GetValue( "ValidationErrors", typeof( IList<String> ) );
+        protected SerializableExceptionWithCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info: info, context: context ) {
+            this.ResourceName = info.GetString( name: "ResourceName" );
+            this.ValidationErrors = ( IList<String> )info.GetValue( name: "ValidationErrors", type: typeof( IList<String> ) );
         }
 
         public SerializableExceptionWithCustomProperties() { }
 
-        public SerializableExceptionWithCustomProperties( [CanBeNull] String message ) : base( message ) { }
+        public SerializableExceptionWithCustomProperties( [CanBeNull] String message ) : base( message: message ) { }
 
-        public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+        public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] Exception innerException ) : base( message: message,
+            innerException: innerException ) { }
 
         public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] String resourceName, [CanBeNull] IList<String> validationErrors ) :
-            base( message ) {
+            base( message: message ) {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;
         }
 
         public SerializableExceptionWithCustomProperties( [CanBeNull] String message, [CanBeNull] String resourceName, [CanBeNull] IList<String> validationErrors,
-            [CanBeNull] Exception innerException ) : base( message, innerException ) {
+            [CanBeNull] Exception innerException ) : base( message: message, innerException: innerException ) {
             this.ResourceName = resourceName;
             this.ValidationErrors = validationErrors;
         }
 
-        [SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+        [SecurityPermission( action: SecurityAction.Demand, SerializationFormatter = true )]
         public override void GetObjectData( SerializationInfo info, StreamingContext context ) {
             if ( info is null ) {
-                throw new ArgumentNullException( nameof( info ) );
+                throw new ArgumentNullException( paramName: nameof( info ) );
             }
 
-            info.AddValue( "ResourceName", this.ResourceName );
+            info.AddValue( name: "ResourceName", value: this.ResourceName );
 
             // Note: if "List<T>" isn't serializable you may need to work out another method of adding your list, this is just for show...
-            info.AddValue( "ValidationErrors", this.ValidationErrors, typeof( IList<String> ) );
+            info.AddValue( name: "ValidationErrors", value: this.ValidationErrors, type: typeof( IList<String> ) );
 
             // MUST call through to the base class to let it save its own state
-            base.GetObjectData( info, context );
+            base.GetObjectData( info: info, context: context );
         }
     }
 }
