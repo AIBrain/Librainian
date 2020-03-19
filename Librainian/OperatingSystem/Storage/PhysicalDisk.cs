@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "PhysicalDisk.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "PhysicalDisk.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem.Storage {
 
@@ -52,18 +52,18 @@ namespace Librainian.OperatingSystem.Storage {
         }
 
         [NotNull]
-        [Obsolete( message: "not complete at all" )]
+        [Obsolete( "not complete at all" )]
         public static String GetSerialNumber( Int32 diskNumber ) {
 
             //TODO
-            var mosDisks = new ManagementObjectSearcher( queryString: "SELECT * FROM Win32_DiskDrive" );
+            var mosDisks = new ManagementObjectSearcher( "SELECT * FROM Win32_DiskDrive" );
 
             // Loop through each object (disk) retrieved by WMI
             foreach ( var o in mosDisks.Get() ) {
 
                 // Add the HDD to the list (use the Model field as the item's caption)
                 if ( o is ManagementObject moDisk ) {
-                    return moDisk[ propertyName: "Model" ].ToString();
+                    return moDisk[ "Model" ].ToString();
                 }
             }
 

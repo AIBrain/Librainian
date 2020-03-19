@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "DelegateExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 10:05 PM.
+// Project: "Librainian", File: "DelegateExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:31 AM.
 
 namespace Librainian.Utilities {
 
@@ -41,7 +41,7 @@ namespace Librainian.Utilities {
 
         [NotNull]
         public static Func<T, Boolean> Validate<T>( [CanBeNull] params Func<T, Boolean>[] validators ) =>
-            t => validators?.All( predicate: validator => validator?.Invoke( arg: t ) == true ) == true;
+            t => validators?.All( validator => validator?.Invoke( t ) == true ) == true;
 
     }
 

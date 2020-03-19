@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "DateSpan.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "DateSpan.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
+// 
+// Project: "Librainian", File: "DateSpan.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -96,7 +96,7 @@ namespace Librainian.Measurement.Time {
                         }
                         else if ( end.Hour == start.Hour ) {
                             if ( end.Minute >= start.Minute ) {
-                                if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+                                if ( ( end.Minute != start.Minute ) || ( end.Second >= start.Second ) ) { }
                                 else {
                                     this.Years--;
                                 }
@@ -115,8 +115,8 @@ namespace Librainian.Measurement.Time {
             {
                 this.Months = end.Month - start.Month;
 
-                if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) {
-                    this.Months = 12 - start.Month + end.Month;
+                if ( ( end.Month < start.Month ) || ( ( end.Month <= start.Month ) && ( this.Years > 1 ) ) ) {
+                    this.Months = ( 12 - start.Month ) + end.Month;
                 }
 
                 if ( this.Months <= 0 ) { }
@@ -129,7 +129,7 @@ namespace Librainian.Measurement.Time {
                     }
                     else if ( end.Hour == start.Hour ) {
                         if ( end.Minute >= start.Minute ) {
-                            if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+                            if ( ( end.Minute != start.Minute ) || ( end.Second >= start.Second ) ) { }
                             else {
                                 this.Months--;
                             }
@@ -145,7 +145,7 @@ namespace Librainian.Measurement.Time {
                 this.Days = end.Day - start.Day;
 
                 if ( end.Day < start.Day ) {
-                    this.Days = DateTime.DaysInMonth( year: start.Year, month: start.Month ) - start.Day + end.Day;
+                    this.Days = ( DateTime.DaysInMonth( year: start.Year, month: start.Month ) - start.Day ) + end.Day;
                 }
 
                 if ( this.Days > 0 ) {
@@ -154,7 +154,7 @@ namespace Librainian.Measurement.Time {
                     }
                     else if ( end.Hour == start.Hour ) {
                         if ( end.Minute >= start.Minute ) {
-                            if ( end.Minute == start.Minute && end.Second < start.Second ) {
+                            if ( ( end.Minute == start.Minute ) && ( end.Second < start.Second ) ) {
                                 this.Days--;
                             }
                         }
@@ -177,12 +177,12 @@ namespace Librainian.Measurement.Time {
                 this.Hours = end.Hour - start.Hour;
 
                 if ( end.Hour < start.Hour ) {
-                    this.Hours = 24 - start.Hour + end.Hour;
+                    this.Hours = ( 24 - start.Hour ) + end.Hour;
                 }
 
                 if ( this.Hours <= 0 ) { }
                 else if ( end.Minute >= start.Minute ) {
-                    if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
+                    if ( ( end.Minute != start.Minute ) || ( end.Second >= start.Second ) ) { }
                     else {
                         this.Hours--;
                     }
@@ -196,10 +196,10 @@ namespace Librainian.Measurement.Time {
                 this.Minutes = end.Minute - start.Minute;
 
                 if ( end.Minute < start.Minute ) {
-                    this.Minutes = 60 - start.Minute + end.Minute;
+                    this.Minutes = ( 60 - start.Minute ) + end.Minute;
                 }
 
-                if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
+                if ( ( this.Minutes <= 0 ) || ( end.Second >= start.Second ) ) { }
                 else {
                     this.Minutes--;
                 }
@@ -209,7 +209,7 @@ namespace Librainian.Measurement.Time {
                 this.Seconds = end.Second - start.Second;
 
                 if ( end.Second < start.Second ) {
-                    this.Seconds = 60 - start.Second + end.Second;
+                    this.Seconds = ( 60 - start.Second ) + end.Second;
                 }
             }
         }
@@ -324,5 +324,7 @@ namespace Librainian.Measurement.Time {
 
             return sum;
         }
+
     }
+
 }

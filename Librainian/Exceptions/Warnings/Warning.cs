@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Warning.cs" was last formatted by Protiguous on 2020/03/16 at 9:35 PM.
+// Project: "Librainian", File: "Warning.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Exceptions.Warnings {
 
@@ -50,9 +50,9 @@ namespace Librainian.Exceptions.Warnings {
 
         private Warning() => "".Break();
 
-        public Warning( TrimmedString message ) : base( message: message ) => message.Break();
+        public Warning( TrimmedString message ) : base( message ) => message.Break();
 
-        public Warning( TrimmedString message, [CanBeNull] Exception inner ) : base( message: message, innerException: inner ) => message.Break();
+        public Warning( TrimmedString message, [CanBeNull] Exception inner ) : base( message, inner ) => message.Break();
 
     }
 

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "MissingTextException.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "MissingTextException.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Exceptions {
 
@@ -46,14 +46,14 @@ namespace Librainian.Exceptions {
         private MissingTextException() { }
 
         public MissingTextException( String parameterName ) : base( paramName: parameterName, message: $"{parameterName} cannot be null, empty, or whitespace." ) =>
-            throw new ArgumentException( message: $"{parameterName} cannot be null, empty, or whitespace.", paramName: parameterName );
+            throw new ArgumentException( $"{parameterName} cannot be null, empty, or whitespace.", parameterName );
 
         public MissingTextException( String parameterName, String message ) : base( paramName: parameterName, message: message ) =>
-            throw new ArgumentException( message: $"{parameterName} cannot be null, empty, or whitespace.", paramName: parameterName );
+            throw new ArgumentException( $"{parameterName} cannot be null, empty, or whitespace.", parameterName );
 
         public MissingTextException( String parameterName, String message, Exception innerException ) : base( paramName: parameterName, message: message,
             innerException: innerException ) =>
-            throw new ArgumentException( message: $"{parameterName} cannot be null, empty, or whitespace.", paramName: parameterName, innerException: innerException );
+            throw new ArgumentException( $"{parameterName} cannot be null, empty, or whitespace.", parameterName, innerException );
 
     }
 

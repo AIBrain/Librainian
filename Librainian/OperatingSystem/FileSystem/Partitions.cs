@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Partitions.cs" was last formatted by Protiguous on 2020/03/16 at 9:55 PM.
+// Project: "Librainian", File: "Partitions.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -47,44 +47,44 @@ namespace Librainian.OperatingSystem.FileSystem {
         [ItemNotNull]
         public static IEnumerable<Win32DiskPartition> GetDiskPartitions() {
 
-            using ( var searcher = new ManagementObjectSearcher( queryString: "SELECT * FROM Win32_DiskPartition" ) ) {
+            using ( var searcher = new ManagementObjectSearcher( "SELECT * FROM Win32_DiskPartition" ) ) {
                 var collection = searcher.Get();
 
-                foreach ( var item in collection.OfType<ManagementObject>().Select( selector: obj => new Win32DiskPartition {
-                    Access = ( UInt16? ) obj[ propertyName: "Access" ],
-                    Availability = ( UInt16? ) obj[ propertyName: "Availability" ],
-                    BlockSize = ( UInt64? ) obj[ propertyName: "BlockSize" ],
-                    Bootable = ( Boolean? ) obj[ propertyName: "Bootable" ],
-                    BootPartition = ( Boolean? ) obj[ propertyName: "BootPartition" ],
-                    Caption = ( String ) obj[ propertyName: "Caption" ],
-                    ConfigManagerErrorCode = ( UInt32? ) obj[ propertyName: "ConfigManagerErrorCode" ],
-                    ConfigManagerUserConfig = ( Boolean? ) obj[ propertyName: "ConfigManagerUserConfig" ],
-                    CreationClassName = ( String ) obj[ propertyName: "CreationClassName" ],
-                    Description = ( String ) obj[ propertyName: "Description" ],
-                    DeviceID = ( String ) obj[ propertyName: "DeviceID" ],
-                    DiskIndex = ( UInt32? ) obj[ propertyName: "DiskIndex" ],
-                    ErrorCleared = ( Boolean? ) obj[ propertyName: "ErrorCleared" ],
-                    ErrorDescription = ( String ) obj[ propertyName: "ErrorDescription" ],
-                    ErrorMethodology = ( String ) obj[ propertyName: "ErrorMethodology" ],
-                    HiddenSectors = ( UInt32? ) obj[ propertyName: "HiddenSectors" ],
-                    Index = ( UInt32? ) obj[ propertyName: "Index" ],
-                    InstallDate = ( DateTime? ) obj[ propertyName: "InstallDate" ],
-                    LastErrorCode = ( UInt32? ) obj[ propertyName: "LastErrorCode" ],
-                    Name = ( String ) obj[ propertyName: "Name" ],
-                    NumberOfBlocks = ( UInt64? ) obj[ propertyName: "NumberOfBlocks" ],
-                    PNPDeviceID = ( String ) obj[ propertyName: "PNPDeviceID" ],
-                    PowerManagementCapabilities = ( UInt16[] ) obj[ propertyName: "PowerManagementCapabilities" ],
-                    PowerManagementSupported = ( Boolean? ) obj[ propertyName: "PowerManagementSupported" ],
-                    PrimaryPartition = ( Boolean? ) obj[ propertyName: "PrimaryPartition" ],
-                    Purpose = ( String ) obj[ propertyName: "Purpose" ],
-                    RewritePartition = ( Boolean? ) obj[ propertyName: "RewritePartition" ],
-                    Size = ( UInt64? ) obj[ propertyName: "Size" ],
-                    StartingOffset = ( UInt64? ) obj[ propertyName: "StartingOffset" ],
-                    Status = ( String ) obj[ propertyName: "Status" ],
-                    StatusInfo = ( UInt16? ) obj[ propertyName: "StatusInfo" ],
-                    SystemCreationClassName = ( String ) obj[ propertyName: "SystemCreationClassName" ],
-                    SystemName = ( String ) obj[ propertyName: "SystemName" ],
-                    Type = ( String ) obj[ propertyName: "Type" ]
+                foreach ( var item in collection.OfType<ManagementObject>().Select( obj => new Win32DiskPartition {
+                    Access = ( UInt16? ) obj[ "Access" ],
+                    Availability = ( UInt16? ) obj[ "Availability" ],
+                    BlockSize = ( UInt64? ) obj[ "BlockSize" ],
+                    Bootable = ( Boolean? ) obj[ "Bootable" ],
+                    BootPartition = ( Boolean? ) obj[ "BootPartition" ],
+                    Caption = ( String ) obj[ "Caption" ],
+                    ConfigManagerErrorCode = ( UInt32? ) obj[ "ConfigManagerErrorCode" ],
+                    ConfigManagerUserConfig = ( Boolean? ) obj[ "ConfigManagerUserConfig" ],
+                    CreationClassName = ( String ) obj[ "CreationClassName" ],
+                    Description = ( String ) obj[ "Description" ],
+                    DeviceID = ( String ) obj[ "DeviceID" ],
+                    DiskIndex = ( UInt32? ) obj[ "DiskIndex" ],
+                    ErrorCleared = ( Boolean? ) obj[ "ErrorCleared" ],
+                    ErrorDescription = ( String ) obj[ "ErrorDescription" ],
+                    ErrorMethodology = ( String ) obj[ "ErrorMethodology" ],
+                    HiddenSectors = ( UInt32? ) obj[ "HiddenSectors" ],
+                    Index = ( UInt32? ) obj[ "Index" ],
+                    InstallDate = ( DateTime? ) obj[ "InstallDate" ],
+                    LastErrorCode = ( UInt32? ) obj[ "LastErrorCode" ],
+                    Name = ( String ) obj[ "Name" ],
+                    NumberOfBlocks = ( UInt64? ) obj[ "NumberOfBlocks" ],
+                    PNPDeviceID = ( String ) obj[ "PNPDeviceID" ],
+                    PowerManagementCapabilities = ( UInt16[] ) obj[ "PowerManagementCapabilities" ],
+                    PowerManagementSupported = ( Boolean? ) obj[ "PowerManagementSupported" ],
+                    PrimaryPartition = ( Boolean? ) obj[ "PrimaryPartition" ],
+                    Purpose = ( String ) obj[ "Purpose" ],
+                    RewritePartition = ( Boolean? ) obj[ "RewritePartition" ],
+                    Size = ( UInt64? ) obj[ "Size" ],
+                    StartingOffset = ( UInt64? ) obj[ "StartingOffset" ],
+                    Status = ( String ) obj[ "Status" ],
+                    StatusInfo = ( UInt16? ) obj[ "StatusInfo" ],
+                    SystemCreationClassName = ( String ) obj[ "SystemCreationClassName" ],
+                    SystemName = ( String ) obj[ "SystemName" ],
+                    Type = ( String ) obj[ "Type" ]
                 } ) ) {
                     yield return item;
                 }

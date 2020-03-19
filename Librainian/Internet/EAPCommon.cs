@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "EAPCommon.cs" was last formatted by Protiguous on 2020/03/16 at 9:41 PM.
+// Project: "Librainian", File: "EAPCommon.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -43,19 +43,19 @@ namespace Librainian.Internet {
         public static void HandleCompletion<T>( [NotNull] this TaskCompletionSource<T> taskCompletionSource, [NotNull] AsyncCompletedEventArgs e, [NotNull] Func<T> getResult,
             [NotNull] Action unregisterHandler ) {
             if ( taskCompletionSource is null ) {
-                throw new ArgumentNullException( paramName: nameof( taskCompletionSource ) );
+                throw new ArgumentNullException( nameof( taskCompletionSource ) );
             }
 
             if ( e is null ) {
-                throw new ArgumentNullException( paramName: nameof( e ) );
+                throw new ArgumentNullException( nameof( e ) );
             }
 
             if ( getResult is null ) {
-                throw new ArgumentNullException( paramName: nameof( getResult ) );
+                throw new ArgumentNullException( nameof( getResult ) );
             }
 
             if ( unregisterHandler is null ) {
-                throw new ArgumentNullException( paramName: nameof( unregisterHandler ) );
+                throw new ArgumentNullException( nameof( unregisterHandler ) );
             }
 
             try {
@@ -64,10 +64,10 @@ namespace Librainian.Internet {
                         taskCompletionSource.TrySetCanceled();
                     }
                     else if ( e.Error != null ) {
-                        taskCompletionSource.TrySetException( exception: e.Error );
+                        taskCompletionSource.TrySetException( e.Error );
                     }
                     else {
-                        taskCompletionSource.TrySetResult( result: getResult() );
+                        taskCompletionSource.TrySetResult( getResult() );
                     }
                 }
             }

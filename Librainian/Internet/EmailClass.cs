@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "EmailClass.cs" was last formatted by Protiguous on 2020/03/16 at 9:41 PM.
+// Project: "Librainian", File: "EmailClass.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -44,14 +44,14 @@ namespace Librainian.Internet {
         public String Email { get; }
 
         public EmailClass( [NotNull] String email ) {
-            if ( String.IsNullOrWhiteSpace( value: email ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( email ) );
+            if ( String.IsNullOrWhiteSpace( email ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( email ) );
             }
 
             this.Email = email;
 
             if ( !this.Valid() ) {
-                throw new InvalidOperationException( message: $"Invalid email address given! ({email.DoubleQuote()})" );
+                throw new InvalidOperationException( $"Invalid email address given! ({email.DoubleQuote()})" );
             }
         }
 

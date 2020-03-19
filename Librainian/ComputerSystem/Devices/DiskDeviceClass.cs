@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "DiskDeviceClass.cs" was last formatted by Protiguous on 2020/03/16 at 9:31 PM.
+// Project: "Librainian", File: "DiskDeviceClass.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
@@ -40,7 +40,7 @@ namespace Librainian.ComputerSystem.Devices {
     public class DiskDeviceClass : DeviceClass {
 
         /// <summary>Initializes a new instance of the DiskDeviceClass class.</summary>
-        public DiskDeviceClass() : base( classGuid: new Guid( g: NativeMethods.GUID_DEVINTERFACE_DISK ) ) { }
+        public DiskDeviceClass() : base( new Guid( NativeMethods.GUID_DEVINTERFACE_DISK ) ) { }
 
     }
 

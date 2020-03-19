@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "SerializerException.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "SerializerException.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Databases.MMF {
 
@@ -40,11 +40,11 @@ namespace Librainian.Databases.MMF {
     [Serializable]
     public class SerializerException : Exception {
 
-        protected SerializerException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info: info, context: context ) { }
+        protected SerializerException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
-        public SerializerException( [CanBeNull] String? message ) : base( message: message ) { }
+        public SerializerException( [CanBeNull] String? message ) : base( message ) { }
 
-        public SerializerException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message: message, innerException: innerException ) { }
+        public SerializerException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
 
     }
 

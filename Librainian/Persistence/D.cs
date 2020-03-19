@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "D.cs" was last formatted by Protiguous on 2020/03/16 at 10:00 PM.
+// Project: "Librainian", File: "D.cs" was last formatted by Protiguous on 2020/03/18 at 10:29 AM.
 
 namespace Librainian.Persistence {
 
@@ -45,15 +45,15 @@ namespace Librainian.Persistence {
     ///     <para>[K] is not mutable, and can be an empty string, and contain whitespace.</para>
     ///     <para>[V] is mutable, and can be a null string.</para>
     /// </summary>
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Serializable]
-    [JsonObject( memberSerialization: MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore,
+    [JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore,
         ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
     public class D : IEqualityComparer<D> {
 
         public Int32 GetHashCode( D d ) => d.K.GetHashCode();
 
-        Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( left: x, right: y );
+        Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
 
         /// <summary>The key.</summary>
         [JsonProperty( IsReference = false, ItemIsReference = false )]
@@ -70,10 +70,10 @@ namespace Librainian.Persistence {
             this.V = null;
         }
 
-        public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( paramName: nameof( key ) );
+        public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
 
         public D( [NotNull] String key, [CanBeNull] String? value ) {
-            this.K = key ?? throw new ArgumentNullException( paramName: nameof( key ) );
+            this.K = key ?? throw new ArgumentNullException( nameof( key ) );
             this.V = value;
         }
 
@@ -87,7 +87,7 @@ namespace Librainian.Persistence {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] D left, [CanBeNull] D right ) {
-            if ( ReferenceEquals( objA: left, objB: right ) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
@@ -95,11 +95,11 @@ namespace Librainian.Persistence {
                 return default;
             }
 
-            if ( !left.K.Equals( value: right.K, comparisonType: StringComparison.Ordinal ) ) {
+            if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) {
                 return default;
             }
 
-            if ( ReferenceEquals( objA: left.V, objB: right.V ) ) {
+            if ( ReferenceEquals( left.V, right.V ) ) {
                 return true;
             }
 
@@ -107,10 +107,10 @@ namespace Librainian.Persistence {
                 return default;
             }
 
-            return left.V.Equals( value: right.V, comparisonType: StringComparison.Ordinal );
+            return left.V.Equals( right.V, StringComparison.Ordinal );
         }
 
-        public override Boolean Equals( Object obj ) => Equals( left: this, right: obj as D );
+        public override Boolean Equals( Object obj ) => Equals( this, obj as D );
 
         public override Int32 GetHashCode() => this.K.GetHashCode();
 
@@ -118,8 +118,8 @@ namespace Librainian.Persistence {
             var keypart = String.Empty;
 
             if ( this.K.Length > 42 ) {
-                var left = Strings.Left( str: this.K, Length: 20 );
-                var right = Strings.Right( str: this.K, Length: 20 );
+                var left = Strings.Left( this.K, 20 );
+                var right = Strings.Right( this.K, 20 );
 
                 keypart = $"{left}..{right}";
             }
@@ -131,8 +131,8 @@ namespace Librainian.Persistence {
             var valuepart = String.Empty;
 
             if ( this.V.Length > 42 ) {
-                var left = Strings.Left( str: this.V, Length: 20 );
-                var right = Strings.Right( str: this.V, Length: 20 );
+                var left = Strings.Left( this.V, 20 );
+                var right = Strings.Right( this.V, 20 );
 
                 valuepart = $"{left}..{right}";
             }

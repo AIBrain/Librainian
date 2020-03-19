@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "OAuthBase.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "OAuthBase.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
+// 
+// Project: "Librainian", File: "OAuthBase.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -42,6 +42,19 @@ namespace Librainian.Internet {
     using JetBrains.Annotations;
 
     public class OAuthBase {
+
+        /// <summary>Provides a predefined set of algorithms that are supported officially by the protocol</summary>
+        public enum SignatureTypes {
+
+            Hmacsha1,
+
+            Plaintext,
+
+            Rsasha1
+
+        }
+
+        protected readonly Random Random = new Random();
 
         protected const String Hmacsha1SignatureType = "HMAC-SHA1";
 
@@ -76,39 +89,27 @@ namespace Librainian.Internet {
 
         protected const String UnreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
-        protected readonly Random Random = new Random();
-
-        /// <summary>Provides a predefined set of algorithms that are supported officially by the protocol</summary>
-        public enum SignatureTypes {
-
-            Hmacsha1,
-
-            Plaintext,
-
-            Rsasha1
-        }
-
         /// <summary>Internal function to cut out all non oauth query string parameters (all parameters not begining with "oauth_")</summary>
         /// <param name="parameters">The query string part of the Url</param>
         /// <returns>A list of QueryParameter each containing the parameter name and value</returns>
         [NotNull]
         private static List<QueryParameter> GetQueryParameters( String parameters ) {
-            if ( parameters.StartsWith( value: "?" ) ) {
-                parameters = parameters.Remove( startIndex: 0, count: 1 );
+            if ( parameters.StartsWith( "?" ) ) {
+                parameters = parameters.Remove( 0, 1 );
             }
 
             var result = new List<QueryParameter>();
 
-            if ( !String.IsNullOrEmpty( value: parameters ) ) {
+            if ( !String.IsNullOrEmpty( parameters ) ) {
                 var p = parameters.Split( '&' );
 
-                foreach ( var s in p.Where( predicate: s => !String.IsNullOrEmpty( value: s ) && !s.StartsWith( value: OAuthParameterPrefix ) ) ) {
-                    if ( s.Contains( value: "=" ) ) {
+                foreach ( var s in p.Where( s => !String.IsNullOrEmpty( s ) && !s.StartsWith( OAuthParameterPrefix ) ) ) {
+                    if ( s.Contains( "=" ) ) {
                         var temp = s.Split( '=' );
-                        result.Add( item: new QueryParameter( name: temp[ 0 ], value: temp[ 1 ] ) );
+                        result.Add( new QueryParameter( temp[ 0 ], temp[ 1 ] ) );
                     }
                     else {
-                        result.Add( item: new QueryParameter( name: s, value: String.Empty ) );
+                        result.Add( new QueryParameter( s, String.Empty ) );
                     }
                 }
             }
@@ -126,17 +127,17 @@ namespace Librainian.Internet {
         [NotNull]
         private String ComputeHash( [NotNull] HashAlgorithm hashAlgorithm, [NotNull] String data ) {
             if ( hashAlgorithm is null ) {
-                throw new ArgumentNullException( paramName: nameof( hashAlgorithm ) );
+                throw new ArgumentNullException( nameof( hashAlgorithm ) );
             }
 
-            if ( String.IsNullOrEmpty( value: data ) ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+            if ( String.IsNullOrEmpty( data ) ) {
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            var dataBuffer = Encoding.ASCII.GetBytes( s: data );
-            var hashBytes = hashAlgorithm.ComputeHash( buffer: dataBuffer );
+            var dataBuffer = Encoding.ASCII.GetBytes( data );
+            var hashBytes = hashAlgorithm.ComputeHash( dataBuffer );
 
-            return Convert.ToBase64String( inArray: hashBytes );
+            return Convert.ToBase64String( hashBytes );
         }
 
         /// <summary>Normalizes the request parameters according to the spec</summary>
@@ -147,11 +148,11 @@ namespace Librainian.Internet {
             var sb = new StringBuilder();
 
             for ( var i = 0; i < parameters.Count; i++ ) {
-                var p = parameters[ index: i ];
-                sb.Append( value: $"{p.Name}={p.Value}" );
+                var p = parameters[ i ];
+                sb.Append( $"{p.Name}={p.Value}" );
 
-                if ( i < parameters.Count - 1 ) {
-                    sb.Append( value: "&" );
+                if ( i < ( parameters.Count - 1 ) ) {
+                    sb.Append( "&" );
                 }
             }
 
@@ -166,14 +167,14 @@ namespace Librainian.Internet {
         /// <returns>Returns a Url encoded string</returns>
         [NotNull]
         public static String UrlEncode( [NotNull] String value ) {
-            var result = new StringBuilder( capacity: value.Length * 3 );
+            var result = new StringBuilder( value.Length * 3 );
 
             foreach ( var symbol in value ) {
-                if ( UnreservedChars.IndexOf( value: symbol ) != -1 ) {
-                    result.Append( value: symbol );
+                if ( UnreservedChars.IndexOf( symbol ) != -1 ) {
+                    result.Append( symbol );
                 }
                 else {
-                    result.Append( value: $"{'%'}{( Int32 )symbol:X2}" );
+                    result.Append( $"{'%'}{( Int32 ) symbol:X2}" );
                 }
             }
 
@@ -183,7 +184,7 @@ namespace Librainian.Internet {
         /// <summary>Generate a nonce</summary>
         /// <returns></returns>
         [NotNull]
-        public virtual String GenerateNonce() => this.Random.Next( minValue: 123400, maxValue: 9999999 ).ToString();
+        public virtual String GenerateNonce() => this.Random.Next( 123400, 9999999 ).ToString();
 
         /// <summary>Generates a signature using the HMAC-SHA1 algorithm</summary>
         /// <param name="url">The full url that needs to be signed including its non OAuth url parameters</param>
@@ -202,24 +203,23 @@ namespace Librainian.Internet {
             [CanBeNull] String? tokenSecret, [NotNull] String httpMethod, [CanBeNull] String? timeStamp, [CanBeNull] String? nonce, [CanBeNull] out String normalizedUrl,
             [CanBeNull] out String normalizedRequestParameters ) {
             if ( url == null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerSecret ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerSecret ) );
+            if ( String.IsNullOrEmpty( consumerSecret ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerSecret ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: httpMethod ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrWhiteSpace( httpMethod ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( httpMethod ) );
             }
 
-            return this.GenerateSignature( url: url, consumerKey: consumerKey, consumerSecret: consumerSecret, token: token, tokenSecret: tokenSecret, httpMethod: httpMethod,
-                timeStamp: timeStamp, nonce: nonce, signatureType: SignatureTypes.Hmacsha1, normalizedUrl: out normalizedUrl,
-                normalizedRequestParameters: out normalizedRequestParameters );
+            return this.GenerateSignature( url, consumerKey, consumerSecret, token, tokenSecret, httpMethod, timeStamp, nonce, SignatureTypes.Hmacsha1, out normalizedUrl,
+                out normalizedRequestParameters );
         }
 
         /// <summary>Generates a signature using the specified signatureType</summary>
@@ -240,42 +240,40 @@ namespace Librainian.Internet {
             [CanBeNull] String? tokenSecret, [NotNull] String httpMethod, [CanBeNull] String? timeStamp, [CanBeNull] String? nonce, SignatureTypes signatureType,
             [CanBeNull] out String normalizedUrl, [CanBeNull] out String normalizedRequestParameters ) {
             if ( url == null ) {
-                throw new ArgumentNullException( paramName: nameof( url ) );
+                throw new ArgumentNullException( nameof( url ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: consumerSecret ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( consumerSecret ) );
+            if ( String.IsNullOrEmpty( consumerSecret ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( consumerSecret ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: httpMethod ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrWhiteSpace( httpMethod ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( httpMethod ) );
             }
 
             normalizedUrl = null;
             normalizedRequestParameters = null;
 
             switch ( signatureType ) {
-                case SignatureTypes.Plaintext: return HttpUtility.UrlEncode( str: $"{consumerSecret}&{tokenSecret}" );
+                case SignatureTypes.Plaintext: return HttpUtility.UrlEncode( $"{consumerSecret}&{tokenSecret}" );
 
                 case SignatureTypes.Hmacsha1:
 
-                    var signatureBase = this.GenerateSignatureBase( url: url, consumerKey: consumerKey, token: token, tokenSecret: tokenSecret, httpMethod: httpMethod,
-                        timeStamp: timeStamp, nonce: nonce, signatureType: Hmacsha1SignatureType, normalizedUrl: out normalizedUrl,
-                        normalizedRequestParameters: out normalizedRequestParameters );
+                    var signatureBase = this.GenerateSignatureBase( url, consumerKey, token, tokenSecret, httpMethod, timeStamp, nonce, Hmacsha1SignatureType,
+                        out normalizedUrl, out normalizedRequestParameters );
 
                     var hmacsha1 = new HMACSHA1 {
-                        Key = Encoding.ASCII.GetBytes(
-                            s: $"{UrlEncode( value: consumerSecret )}&{( String.IsNullOrEmpty( value: tokenSecret ) ? "" : UrlEncode( value: tokenSecret ) )}" )
+                        Key = Encoding.ASCII.GetBytes( $"{UrlEncode( consumerSecret )}&{( String.IsNullOrEmpty( tokenSecret ) ? "" : UrlEncode( tokenSecret ) )}" )
                     };
 
-                    return this.GenerateSignatureUsingHash( signatureBase: signatureBase, hash: hmacsha1 );
+                    return this.GenerateSignatureUsingHash( signatureBase, hmacsha1 );
 
                 case SignatureTypes.Rsasha1: throw new NotImplementedException();
-                default: throw new ArgumentException( message: "Unknown signature type", paramName: nameof( signatureType ) );
+                default: throw new ArgumentException( "Unknown signature type", nameof( signatureType ) );
             }
         }
 
@@ -304,44 +302,44 @@ namespace Librainian.Internet {
                 //tokenSecret = String.Empty;
             }
 
-            if ( String.IsNullOrEmpty( value: consumerKey ) ) {
-                throw new ArgumentNullException( paramName: nameof( consumerKey ) );
+            if ( String.IsNullOrEmpty( consumerKey ) ) {
+                throw new ArgumentNullException( nameof( consumerKey ) );
             }
 
-            if ( String.IsNullOrEmpty( value: httpMethod ) ) {
-                throw new ArgumentNullException( paramName: nameof( httpMethod ) );
+            if ( String.IsNullOrEmpty( httpMethod ) ) {
+                throw new ArgumentNullException( nameof( httpMethod ) );
             }
 
-            if ( String.IsNullOrEmpty( value: signatureType ) ) {
-                throw new ArgumentNullException( paramName: nameof( signatureType ) );
+            if ( String.IsNullOrEmpty( signatureType ) ) {
+                throw new ArgumentNullException( nameof( signatureType ) );
             }
 
-            var parameters = GetQueryParameters( parameters: url.Query );
-            parameters.Add( item: new QueryParameter( name: OAuthVersionKey, value: OAuthVersion ) );
-            parameters.Add( item: new QueryParameter( name: OAuthNonceKey, value: nonce ) );
-            parameters.Add( item: new QueryParameter( name: OAuthTimestampKey, value: timeStamp ) );
-            parameters.Add( item: new QueryParameter( name: OAuthSignatureMethodKey, value: signatureType ) );
-            parameters.Add( item: new QueryParameter( name: OAuthConsumerKeyKey, value: consumerKey ) );
+            var parameters = GetQueryParameters( url.Query );
+            parameters.Add( new QueryParameter( OAuthVersionKey, OAuthVersion ) );
+            parameters.Add( new QueryParameter( OAuthNonceKey, nonce ) );
+            parameters.Add( new QueryParameter( OAuthTimestampKey, timeStamp ) );
+            parameters.Add( new QueryParameter( OAuthSignatureMethodKey, signatureType ) );
+            parameters.Add( new QueryParameter( OAuthConsumerKeyKey, consumerKey ) );
 
-            if ( !String.IsNullOrEmpty( value: token ) ) {
-                parameters.Add( item: new QueryParameter( name: OAuthTokenKey, value: token ) );
+            if ( !String.IsNullOrEmpty( token ) ) {
+                parameters.Add( new QueryParameter( OAuthTokenKey, token ) );
             }
 
-            parameters.Sort( comparer: new QueryParameterComparer() );
+            parameters.Sort( new QueryParameterComparer() );
 
             normalizedUrl = $"{url.Scheme}://{url.Host}";
 
-            if ( !( url.Scheme == "http" && url.Port == 80 || url.Scheme == "https" && url.Port == 443 ) ) {
+            if ( !( ( ( url.Scheme == "http" ) && ( url.Port == 80 ) ) || ( ( url.Scheme == "https" ) && ( url.Port == 443 ) ) ) ) {
                 normalizedUrl += $":{url.Port}";
             }
 
             normalizedUrl += url.AbsolutePath;
-            normalizedRequestParameters = NormalizeRequestParameters( parameters: parameters );
+            normalizedRequestParameters = NormalizeRequestParameters( parameters );
 
             var signatureBase = new StringBuilder();
-            signatureBase.Append( value: $"{httpMethod.ToUpper()}&" );
-            signatureBase.Append( value: $"{UrlEncode( value: normalizedUrl )}&" );
-            signatureBase.Append( value: $"{UrlEncode( value: normalizedRequestParameters )}" );
+            signatureBase.Append( $"{httpMethod.ToUpper()}&" );
+            signatureBase.Append( $"{UrlEncode( normalizedUrl )}&" );
+            signatureBase.Append( $"{UrlEncode( normalizedRequestParameters )}" );
 
             return signatureBase.ToString();
         }
@@ -351,8 +349,7 @@ namespace Librainian.Internet {
         /// <param name="hash">The hash algorithm used to perform the hashing. If the hashing algorithm requires initialization or a key it should be set prior to calling this method</param>
         /// <returns>A base64 string of the hash value</returns>
         [NotNull]
-        public String GenerateSignatureUsingHash( [NotNull] String signatureBase, [NotNull] HashAlgorithm hash ) =>
-            this.ComputeHash( hashAlgorithm: hash, data: signatureBase );
+        public String GenerateSignatureUsingHash( [NotNull] String signatureBase, [NotNull] HashAlgorithm hash ) => this.ComputeHash( hash, signatureBase );
 
         /// <summary>Generate the timestamp for the signature</summary>
         /// <returns></returns>
@@ -360,9 +357,9 @@ namespace Librainian.Internet {
         public virtual String GenerateTimeStamp() {
 
             // Default implementation of UNIX time of the current UTC time
-            var ts = DateTime.UtcNow - new DateTime( year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, millisecond: 0 );
+            var ts = DateTime.UtcNow - new DateTime( 1970, 1, 1, 0, 0, 0, 0 );
 
-            return Convert.ToInt64( value: ts.TotalSeconds ).ToString();
+            return Convert.ToInt64( ts.TotalSeconds ).ToString();
         }
 
         /// <summary>Provides an internal structure to sort the query parameter</summary>
@@ -376,13 +373,17 @@ namespace Librainian.Internet {
                 this.Name = name;
                 this.Value = value;
             }
+
         }
 
         /// <summary>Comparer class used to perform the sorting of the query parameters</summary>
         protected class QueryParameterComparer : IComparer<QueryParameter> {
 
             public Int32 Compare( QueryParameter x, QueryParameter y ) =>
-                x?.Name == y?.Name ? String.CompareOrdinal( strA: x?.Value, strB: y?.Value ) : String.CompareOrdinal( strA: x?.Name, strB: y?.Name );
+                x?.Name == y?.Name ? String.CompareOrdinal( x?.Value, y?.Value ) : String.CompareOrdinal( x?.Name, y?.Name );
+
         }
+
     }
+
 }

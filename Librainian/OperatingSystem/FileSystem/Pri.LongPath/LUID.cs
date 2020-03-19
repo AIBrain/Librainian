@@ -29,14 +29,14 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "LUID.cs" was last formatted by Protiguous on 2020/03/16 at 9:56 PM.
+// Project: "Librainian", File: "LUID.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
     public struct LUID {
 
         public UInt32 LowPart;

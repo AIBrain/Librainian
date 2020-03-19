@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "AdapterInfo.cs" was last formatted by Protiguous on 2020/03/16 at 9:41 PM.
+// Project: "Librainian", File: "AdapterInfo.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -49,23 +49,23 @@ namespace Librainian.Internet {
 
         static AdapterInfo() {
             IpAdapterInfos = RetrieveAdapters();
-            IndexedIpAdapterInfos = IpAdapterInfos.ToDictionary( keySelector: o => ( UInt32 ) o.Index );
+            IndexedIpAdapterInfos = IpAdapterInfos.ToDictionary( o => ( UInt32 ) o.Index );
         }
 
         [NotNull]
         private static IEnumerable<IPHelperInvoke.IPAdapterInfo> RetrieveAdapters() {
-            Int64 structSize = Marshal.SizeOf( t: typeof( IPHelperInvoke.IPAdapterInfo ) );
-            var pArray = Marshal.AllocHGlobal( cb: new IntPtr( value: structSize ) );
+            Int64 structSize = Marshal.SizeOf( typeof( IPHelperInvoke.IPAdapterInfo ) );
+            var pArray = Marshal.AllocHGlobal( new IntPtr( structSize ) );
 
-            var ret = NativeMethods.GetAdaptersInfo( pAdapterInfo: pArray, pBufOutLen: ref structSize );
+            var ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
 
             var pEntry = pArray;
 
             if ( ret == IPHelperInvoke.ErrorBufferOverflow ) {
 
                 // Buffer was too small, reallocate the correct size for the buffer.
-                pArray = Marshal.ReAllocHGlobal( pv: pArray, cb: new IntPtr( value: structSize ) ); //BUG memory leak? or does realloc take into account?
-                ret = NativeMethods.GetAdaptersInfo( pAdapterInfo: pArray, pBufOutLen: ref structSize );
+                pArray = Marshal.ReAllocHGlobal( pArray, new IntPtr( structSize ) ); //BUG memory leak? or does realloc take into account?
+                ret = NativeMethods.GetAdaptersInfo( pArray, ref structSize );
             }
 
             var result = new List<IPHelperInvoke.IPAdapterInfo>();
@@ -74,16 +74,16 @@ namespace Librainian.Internet {
                 do {
 
                     // Retrieve the adapter info from the memory address
-                    var entry = ( IPHelperInvoke.IPAdapterInfo ) Marshal.PtrToStructure( ptr: pEntry, structureType: typeof( IPHelperInvoke.IPAdapterInfo ) );
+                    var entry = ( IPHelperInvoke.IPAdapterInfo ) Marshal.PtrToStructure( pEntry, typeof( IPHelperInvoke.IPAdapterInfo ) );
 
-                    result.Add( item: entry );
+                    result.Add( entry );
 
                     // Get next adapter (if any)
                     pEntry = entry.Next;
                 } while ( pEntry != IntPtr.Zero );
             }
 
-            Marshal.FreeHGlobal( hglobal: pArray );
+            Marshal.FreeHGlobal( pArray );
 
             return result;
         }

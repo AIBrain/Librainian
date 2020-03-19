@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "C5Random.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "C5Random.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
+// 
+// Project: "Librainian", File: "C5Random.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Security {
 
@@ -65,6 +65,9 @@ namespace Librainian.Security {
     /// </summary>
     public sealed class C5Random : Random, IDisposable {
 
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
+        public void Dispose() { }
+
         private readonly UInt32[] _q = new UInt32[ 16 ];
 
         private UInt32 _c = 362436;
@@ -82,7 +85,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( "Seed must be non-zero" );
             }
 
-            var j = ( UInt32 )( seed & 0xFFFFFFFF );
+            var j = ( UInt32 ) ( seed & 0xFFFFFFFF );
 
             for ( var i = 0; i < 16; i++ ) {
                 j ^= j << 13;
@@ -91,7 +94,7 @@ namespace Librainian.Security {
                 this._q[ i ] = j;
             }
 
-            this._q[ 15 ] = ( UInt32 )( seed ^ ( seed >> 32 ) );
+            this._q[ 15 ] = ( UInt32 ) ( seed ^ ( seed >> 32 ) );
         }
 
         /// <summary>Create a random number generator with a specified internal start state.</summary>
@@ -115,8 +118,8 @@ namespace Librainian.Security {
 
             this._i = ( this._i + 1 ) & 15;
             var t = ( a * this._q[ this._i ] ) + this._c;
-            this._c = ( UInt32 )( t >> 32 );
-            var x = ( UInt32 )( t + this._c );
+            this._c = ( UInt32 ) ( t >> 32 );
+            var x = ( UInt32 ) ( t + this._c );
 
             if ( x >= this._c ) {
                 return this._q[ this._i ] = r - x;
@@ -132,12 +135,9 @@ namespace Librainian.Security {
         /// <returns>The random Double</returns>
         protected override Double Sample() => this.NextDouble();
 
-        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-        public void Dispose() { }
-
         /// <summary>Get a new random System.Int32 value</summary>
         /// <returns>The random int</returns>
-        public override Int32 Next() => ( Int32 )this.Cmwc();
+        public override Int32 Next() => ( Int32 ) this.Cmwc();
 
         /// <summary>Get a random integer between two given bounds</summary>
         /// <exception cref="ArgumentException">If max is less than min</exception>
@@ -149,7 +149,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( "min must be less than or equal to max" );
             }
 
-            return min + ( Int32 )( this.Cmwc() / 4294967296.0 * ( max - min ) );
+            return min + ( Int32 ) ( ( this.Cmwc() / 4294967296.0 ) * ( max - min ) );
         }
 
         /// <summary>Get a random non-negative integer less than a given upper bound</summary>
@@ -161,7 +161,7 @@ namespace Librainian.Security {
                 throw new ArgumentException( "max must be non-negative" );
             }
 
-            return ( Int32 )( this.Cmwc() / 4294967296.0 * max );
+            return ( Int32 ) ( ( this.Cmwc() / 4294967296.0 ) * max );
         }
 
         /// <summary>Fill a array of byte with random bytes</summary>
@@ -172,12 +172,14 @@ namespace Librainian.Security {
             }
 
             for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
-                buffer[ i ] = ( Byte )this.Cmwc();
+                buffer[ i ] = ( Byte ) this.Cmwc();
             }
         }
 
         /// <summary>Get a new random System.Double value</summary>
         /// <returns>The random Double</returns>
         public override Double NextDouble() => this.Cmwc() / 4294967296.0;
+
     }
+
 }

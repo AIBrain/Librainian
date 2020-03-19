@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "DictionaryExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:35 PM.
+// Project: "Librainian", File: "DictionaryExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 
@@ -43,25 +43,25 @@ namespace Librainian.Extensions {
         public static void Add<TKey, TValue>( [NotNull] this IDictionary<TKey, TValue> dictionary, [NotNull] IEnumerable<KeyValuePair<TKey, TValue>> otherKvp,
             Boolean ignoreUpdates = false ) {
             if ( dictionary is null ) {
-                throw new ArgumentNullException( paramName: nameof( dictionary ) );
+                throw new ArgumentNullException( nameof( dictionary ) );
             }
 
             if ( otherKvp is null ) {
-                throw new ArgumentNullException( paramName: nameof( otherKvp ) );
+                throw new ArgumentNullException( nameof( otherKvp ) );
             }
 
             if ( ignoreUpdates ) {
-                foreach ( var pair in otherKvp.Where( predicate: pair => !dictionary.ContainsKey( key: pair.Key ) ) ) {
-                    dictionary.Add( key: pair.Key, value: pair.Value );
+                foreach ( var pair in otherKvp.Where( pair => !dictionary.ContainsKey( pair.Key ) ) ) {
+                    dictionary.Add( pair.Key, pair.Value );
                 }
             }
             else {
                 foreach ( var pair in otherKvp ) {
-                    if ( dictionary.ContainsKey( key: pair.Key ) ) {
-                        dictionary[ key: pair.Key ] = pair.Value;
+                    if ( dictionary.ContainsKey( pair.Key ) ) {
+                        dictionary[ pair.Key ] = pair.Value;
                     }
                     else {
-                        dictionary.Add( key: pair.Key, value: pair.Value );
+                        dictionary.Add( pair.Key, pair.Value );
                     }
                 }
             }

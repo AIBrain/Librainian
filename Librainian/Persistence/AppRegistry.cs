@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "AppRegistry.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "AppRegistry.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
+// 
+// Project: "Librainian", File: "AppRegistry.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Persistence {
 
@@ -63,38 +63,37 @@ namespace Librainian.Persistence {
 
         static AppRegistry() {
             if ( TheUser is null ) {
-                throw new ArgumentEmptyException( message: $"Registry folder {nameof( Registry.CurrentUser )} is null!" );
+                throw new ArgumentEmptyException( $"Registry folder {nameof( Registry.CurrentUser )} is null!" );
             }
 
-            Software = TheUser.CreateSubKey( subkey: nameof( Software ), writable: true ) ?? throw new InvalidOperationException();
+            Software = TheUser.CreateSubKey( nameof( Software ), true ) ?? throw new InvalidOperationException();
 
             if ( Software is null ) {
-                throw new ArgumentEmptyException( message: $"Application {nameof( AppRegistry )} folder {nameof( Software )} is null!" );
+                throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Software )} is null!" );
             }
 
             var compName = Application.CompanyName.Trimmed();
 
-            if ( String.IsNullOrEmpty( value: compName ) ) {
+            if ( String.IsNullOrEmpty( compName ) ) {
                 throw new InvalidOperationException();
             }
 
-            TheCompany = Software.CreateSubKey( subkey: compName.Replace( oldValue: "&", newValue: Symbols.Singlespace ).Trim(), writable: true ) ??
-                         throw new InvalidOperationException();
+            TheCompany = Software.CreateSubKey( compName.Replace( "&", Symbols.Singlespace ).Trim(), true ) ?? throw new InvalidOperationException();
 
             if ( TheCompany is null ) {
-                throw new ArgumentEmptyException( message: $"Application {nameof( AppRegistry )} folder {nameof( Application.CompanyName )} is null!" );
+                throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.CompanyName )} is null!" );
             }
 
             var product = Application.ProductName.Trimmed();
 
-            if ( String.IsNullOrEmpty( value: product ) ) {
+            if ( String.IsNullOrEmpty( product ) ) {
                 throw new InvalidOperationException();
             }
 
-            TheApplication = TheCompany.CreateSubKey( subkey: product, writable: true ) ?? throw new InvalidOperationException();
+            TheApplication = TheCompany.CreateSubKey( product, true ) ?? throw new InvalidOperationException();
 
             if ( TheApplication is null ) {
-                throw new ArgumentEmptyException( message: $"Application {nameof( AppRegistry )} folder {nameof( Application.ProductName )} is null!" );
+                throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.ProductName )} is null!" );
             }
         }
 
@@ -107,18 +106,18 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static Object? Get( [NotNull] String folder, [NotNull] String key ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return registryKey?.GetValue( name: key );
+                return registryKey?.GetValue( key );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -136,24 +135,24 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [CanBeNull]
         public static Object? Get( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                using var subKey = registryKey?.OpenSubKey( name: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return subKey?.GetValue( name: key );
+                return subKey?.GetValue( key );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -170,18 +169,18 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Boolean? GetBoolean( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return registryKey?.GetValue( name: key )?.ToBooleanOrNull();
+                return registryKey?.GetValue( key )?.ToBooleanOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -200,24 +199,24 @@ namespace Librainian.Persistence {
         [CanBeNull]
         public static Boolean? GetBoolean( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                using var subKey = registryKey?.OpenSubKey( name: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return subKey?.GetValue( name: key )?.ToBooleanOrNull();
+                return subKey?.GetValue( key )?.ToBooleanOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -234,18 +233,18 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Byte? GetByte( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return registryKey?.GetValue( name: key )?.ToByteOrNull();
+                return registryKey?.GetValue( key )?.ToByteOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -263,24 +262,24 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Byte? GetByte( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                using var subKey = registryKey?.OpenSubKey( name: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return subKey?.GetValue( name: key )?.ToByteOrNull();
+                return subKey?.GetValue( key )?.ToByteOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -297,18 +296,18 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int32? GetInt32( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return registryKey?.GetValue( name: key )?.ToIntOrNull();
+                return registryKey?.GetValue( key )?.ToIntOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -326,24 +325,24 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int32? GetInt32( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                using var subKey = registryKey?.OpenSubKey( name: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return subKey?.GetValue( name: key )?.ToIntOrNull();
+                return subKey?.GetValue( key )?.ToIntOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -360,18 +359,18 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int64? GetInt64( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                if ( Int64.TryParse( s: registryKey?.GetValue( name: key )?.ToString(), result: out var result ) ) {
+                if ( Int64.TryParse( registryKey?.GetValue( key )?.ToString(), out var result ) ) {
                     return result;
                 }
             }
@@ -391,24 +390,24 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static Int64? GetInt64( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                using var subKey = registryKey?.OpenSubKey( name: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
 
-                if ( Int64.TryParse( s: subKey?.GetValue( name: key )?.ToString(), result: out var result ) ) {
+                if ( Int64.TryParse( subKey?.GetValue( key )?.ToString(), out var result ) ) {
                     return result;
                 }
             }
@@ -428,18 +427,18 @@ namespace Librainian.Persistence {
         [CanBeNull]
         [DebuggerStepThrough]
         public static String? GetString( [NotNull] String folder, [NotNull] String key ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return registryKey?.GetValue( name: key )?.ToStringOrNull();
+                return registryKey?.GetValue( key )?.ToStringOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -457,24 +456,24 @@ namespace Librainian.Persistence {
         [Pure]
         [CanBeNull]
         public static String? GetString( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey ) {
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
             try {
-                using var registryKey = TheApplication.OpenSubKey( name: folder, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
 
-                using var subKey = registryKey?.OpenSubKey( name: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadSubTree );
+                using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
 
-                return subKey?.GetValue( name: key )?.ToStringOrNull();
+                return subKey?.GetValue( key )?.ToStringOrNull();
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -493,15 +492,15 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean Set<T>( [NotNull] String folder, [NotNull] String key, [CanBeNull] T value, RegistryValueKind kind ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            using var regFolder = TheApplication.CreateSubKey( subkey: folder, permissionCheck: RegistryKeyPermissionCheck.ReadWriteSubTree );
+            using var regFolder = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree );
 
             if ( regFolder is null ) {
                 $"Error creating subkey {folder}".Break();
@@ -511,10 +510,10 @@ namespace Librainian.Persistence {
 
             try {
                 if ( value is null ) {
-                    regFolder.DeleteValue( name: key, throwOnMissingValue: false );
+                    regFolder.DeleteValue( key, false );
                 }
                 else {
-                    regFolder.SetValue( name: key, value: value, valueKind: kind );
+                    regFolder.SetValue( key, value, kind );
                 }
 
                 return true;
@@ -537,25 +536,25 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         public static Boolean Set<T>( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey, [CanBeNull] T value, RegistryValueKind kind ) {
 
-            if ( String.IsNullOrWhiteSpace( value: folder ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( folder ) );
+            if ( String.IsNullOrWhiteSpace( folder ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: subkey ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( subkey ) );
+            if ( String.IsNullOrWhiteSpace( subkey ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( subkey ) );
             }
 
-            using var registryKey = TheApplication.CreateSubKey( subkey: folder, permissionCheck: RegistryKeyPermissionCheck.ReadWriteSubTree );
+            using var registryKey = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree );
 
             if ( registryKey is null ) {
                 return default;
             }
 
-            using var subKey = registryKey.CreateSubKey( subkey: subkey, permissionCheck: RegistryKeyPermissionCheck.ReadWriteSubTree );
+            using var subKey = registryKey.CreateSubKey( subkey, RegistryKeyPermissionCheck.ReadWriteSubTree );
 
             if ( subKey is null ) {
                 $"Error creating subkey {folder}".Break();
@@ -565,10 +564,10 @@ namespace Librainian.Persistence {
 
             try {
                 if ( value is null ) {
-                    subKey.DeleteValue( name: key );
+                    subKey.DeleteValue( key );
                 }
                 else {
-                    subKey.SetValue( name: key, value: value, valueKind: kind );
+                    subKey.SetValue( key, value, kind );
                 }
 
                 return true;
@@ -586,8 +585,7 @@ namespace Librainian.Persistence {
         /// <param name="folder"></param>
         /// <param name="key">   </param>
         /// <param name="value"> </param>
-        public static void Set( [NotNull] String folder, [NotNull] String key, [CanBeNull] String? value ) =>
-            Set( folder: folder, key: key, value: value, kind: RegistryValueKind.String );
+        public static void Set( [NotNull] String folder, [NotNull] String key, [CanBeNull] String? value ) => Set( folder, key, value, RegistryValueKind.String );
 
         /// <summary>
         ///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>
@@ -595,7 +593,7 @@ namespace Librainian.Persistence {
         /// <param name="folder"></param>
         /// <param name="key">   </param>
         /// <param name="value"> </param>
-        public static void Set( [NotNull] String folder, [NotNull] String key, Int32 value ) => Set( folder: folder, key: key, value: value, kind: RegistryValueKind.DWord );
+        public static void Set( [NotNull] String folder, [NotNull] String key, Int32 value ) => Set( folder, key, value, RegistryValueKind.DWord );
 
         /// <summary>
         ///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>
@@ -603,6 +601,8 @@ namespace Librainian.Persistence {
         /// <param name="folder"></param>
         /// <param name="key">   </param>
         /// <param name="value"> </param>
-        public static void Set( [NotNull] String folder, [NotNull] String key, Int64 value ) => Set( folder: folder, key: key, value: value, kind: RegistryValueKind.QWord );
+        public static void Set( [NotNull] String folder, [NotNull] String key, Int64 value ) => Set( folder, key, value, RegistryValueKind.QWord );
+
     }
+
 }

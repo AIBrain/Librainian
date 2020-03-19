@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ParsingExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "ParsingExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
+// 
+// Project: "Librainian", File: "ParsingExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Parsing {
 
@@ -129,7 +129,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         [Pure]
-        public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter );
+        public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter );
 
         /// <summary>Return <paramref name="self" />, up the <paramref name="maxlength" />.
         /// <para>Does not do any string trimming. Just truncate.</para>
@@ -156,7 +156,7 @@ namespace Librainian.Parsing {
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static String? Right( [CanBeNull] this String? self, Int32 count ) {
-            if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
+            if ( String.IsNullOrEmpty( self ) || ( count <= 0 ) ) {
                 return default;
             }
 
@@ -376,8 +376,8 @@ namespace Librainian.Parsing {
         [NotNull]
         [Pure]
         public static IDictionary<Char, UInt64> Count( [NotNull] this String text ) {
-            if ( String.IsNullOrEmpty( value: text ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( text ) );
+            if ( String.IsNullOrEmpty( text ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( text ) );
             }
 
             var dict = new ConcurrentDictionary<Char, UInt64>();
@@ -391,7 +391,7 @@ namespace Librainian.Parsing {
         /// <param name="character"></param>
         /// <returns></returns>
         [Pure]
-        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 )text.Count( c => c == character );
+        public static UInt32 Count( [NotNull] this String text, Char character ) => ( UInt32 ) text.Count( c => c == character );
 
         /// <summary>
         /// Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each integer represents the code point of a character in the
@@ -462,7 +462,7 @@ namespace Librainian.Parsing {
                     //Fastest execution for min value of 3 integers
                     var min = del > ins ? ins > sub ? sub : ins : del > sub ? sub : del;
 
-                    if ( i > 1 && j > 1 && source[ im2 ] == target[ jm1 ] && source[ im1 ] == target[ j - 2 ] ) {
+                    if ( ( i > 1 ) && ( j > 1 ) && ( source[ im2 ] == target[ jm1 ] ) && ( source[ im1 ] == target[ j - 2 ] ) ) {
                         min = Math.Min( min, dMinus2[ im2 ] + cost );
                     }
 
@@ -774,7 +774,8 @@ namespace Librainian.Parsing {
         /// <param name="c"></param>
         /// <returns></returns>
         [Pure]
-        public static Boolean IsDigit( this Char c ) => c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
+        public static Boolean IsDigit( this Char c ) =>
+            ( c == '0' ) || ( c == '1' ) || ( c == '2' ) || ( c == '3' ) || ( c == '4' ) || ( c == '5' ) || ( c == '6' ) || ( c == '7' ) || ( c == '8' ) || ( c == '9' );
 
         [Pure]
         public static Boolean IsJustNumbers( [CanBeNull] this String? text ) =>
@@ -1095,7 +1096,7 @@ namespace Librainian.Parsing {
 
             var stringInfo = new StringInfo( s );
 
-            return ( UInt64 )stringInfo.LengthInTextElements;
+            return ( UInt64 ) stringInfo.LengthInTextElements;
         }
 
         [NotNull]
@@ -1424,7 +1425,7 @@ namespace Librainian.Parsing {
             }
 
             Single threshold = Math.Max( source.Length, compare.Length );
-            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 )threshold );
+            var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 ) threshold );
 
             //TODO votes.ForB ???
             similarity.Add( threshold - ( actualDamerauLevenshteinDistance / threshold ) );
@@ -1486,8 +1487,7 @@ namespace Librainian.Parsing {
             }
 
             var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-                index,
-                ch = s[ index ]
+                index, ch = s[ index ]
             } ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
             return res;
@@ -1623,7 +1623,7 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( nameof( self ), "SubstringFromEnd called on a null string." );
             }
 
-            if ( endIndex < 0 || endIndex > self.Length ) {
+            if ( ( endIndex < 0 ) || ( endIndex > self.Length ) ) {
                 throw new ArgumentOutOfRangeException( nameof( endIndex ) );
             }
 
@@ -1643,7 +1643,7 @@ namespace Librainian.Parsing {
                 throw new ArgumentNullException( nameof( self ), "SubstringFromEnd called on a null string." );
             }
 
-            if ( endIndex < 0 || endIndex > self.Length ) {
+            if ( ( endIndex < 0 ) || ( endIndex > self.Length ) ) {
                 throw new ArgumentOutOfRangeException( nameof( endIndex ) );
             }
 
@@ -1688,7 +1688,7 @@ namespace Librainian.Parsing {
             var n = Math.Abs( number );
             var lt = n % 100;
 
-            return number + OrdinalSuffixes[ lt >= 11 && lt <= 13 ? 0 : n % 10 ];
+            return number + OrdinalSuffixes[ ( lt >= 11 ) && ( lt <= 13 ) ? 0 : n % 10 ];
         }
 
         /// <summary>Converts a String? to pascal case with the option to remove underscores</summary>
@@ -1776,17 +1776,17 @@ namespace Librainian.Parsing {
 
             var words = String.Empty;
 
-            if ( number / 1000000 > 0 ) {
+            if ( ( number / 1000000 ) > 0 ) {
                 words += ToVerbalWord( number / 1000000 ) + " million ";
                 number %= 1000000;
             }
 
-            if ( number / 1000 > 0 ) {
+            if ( ( number / 1000 ) > 0 ) {
                 words += ToVerbalWord( number / 1000 ) + " thousand ";
                 number %= 1000;
             }
 
-            if ( number / 100 > 0 ) {
+            if ( ( number / 100 ) > 0 ) {
                 words += ToVerbalWord( number / 100 ) + " hundred ";
                 number %= 100;
             }
@@ -1805,7 +1805,7 @@ namespace Librainian.Parsing {
             else {
                 words += ParsingConstants.TensMap[ number / 10 ];
 
-                if ( number % 10 > 0 ) {
+                if ( ( number % 10 ) > 0 ) {
                     words += "-" + ParsingConstants.UnitsMap[ number % 10 ];
                 }
             }
@@ -1828,9 +1828,9 @@ namespace Librainian.Parsing {
                 return "minus " + ToVerbalWord( Math.Abs( number ) );
             }
 
-            var intPortion = ( Int32 )number;
+            var intPortion = ( Int32 ) number;
             var fraction = ( number - intPortion ) * 100;
-            var decPortion = ( Int32 )fraction;
+            var decPortion = ( Int32 ) fraction;
 
             var words = ToVerbalWord( intPortion );
 
@@ -1993,5 +1993,7 @@ namespace Librainian.Parsing {
 
             return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ) + text.Substring( 1 );
         }
+
     }
+
 }

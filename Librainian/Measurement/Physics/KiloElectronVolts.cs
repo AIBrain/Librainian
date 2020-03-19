@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "KiloElectronVolts.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "KiloElectronVolts.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
+// 
+// Project: "Librainian", File: "KiloElectronVolts.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.Measurement.Physics {
 
@@ -77,7 +77,7 @@ namespace Librainian.Measurement.Physics {
 
         public readonly Rational Value;
 
-        public KiloElectronVolts( Decimal value ) : this() => this.Value = ( Rational )value;
+        public KiloElectronVolts( Decimal value ) : this() => this.Value = ( Rational ) value;
 
         public KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToKiloElectronVolts().Value;
 
@@ -95,9 +95,9 @@ namespace Librainian.Measurement.Physics {
 
         public static KiloElectronVolts operator *( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left.Value * right.Value );
 
-        public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( aBigFraction: left.Value * ( Rational )right );
+        public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( aBigFraction: left.Value * ( Rational ) right );
 
-        public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: ( Rational )left * right.Value );
+        public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: ( Rational ) left * right.Value );
 
         public static KiloElectronVolts operator *( Rational left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left * right.Value );
 
@@ -106,7 +106,7 @@ namespace Librainian.Measurement.Physics {
 
         public static KiloElectronVolts operator /( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left.Value / right.Value );
 
-        public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( aBigFraction: left.Value / ( Rational )right );
+        public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( aBigFraction: left.Value / ( Rational ) right );
 
         public static MegaElectronVolts operator +( KiloElectronVolts left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
@@ -128,20 +128,22 @@ namespace Librainian.Measurement.Physics {
 
         public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other: other.ToKiloElectronVolts().Value );
 
-        public ElectronVolts ToElectronVolts() => new ElectronVolts( value: this.Value * ( Rational )InOneElectronVolt );
+        public ElectronVolts ToElectronVolts() => new ElectronVolts( value: this.Value * ( Rational ) InOneElectronVolt );
 
-        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( units: this.Value * ( Rational )InOneGigaElectronVolt );
+        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( units: this.Value * ( Rational ) InOneGigaElectronVolt );
 
-        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( aBigFraction: this.Value * ( Rational )InOneKiloElectronVolt );
+        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( aBigFraction: this.Value * ( Rational ) InOneKiloElectronVolt );
 
-        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( units: this.Value * ( Rational )InOneMegaElectronVolt );
+        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( units: this.Value * ( Rational ) InOneMegaElectronVolt );
 
-        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( units: this.Value * ( Rational )InOneMilliElectronVolt );
+        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( units: this.Value * ( Rational ) InOneMilliElectronVolt );
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} eV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( units: this.Value * ( Rational )InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( units: this.Value * ( Rational ) InOneTeraElectronVolt );
+
     }
+
 }

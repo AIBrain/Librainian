@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ERG.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "ERG.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
+// 
+// Project: "Librainian", File: "ERG.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -59,11 +59,6 @@ namespace Librainian.Graphics.Imaging {
     [JsonObject]
     public class Erg {
 
-        public static readonly String Extension = ".erg";
-
-        /// <summary>Human readable file header.</summary>
-        public static readonly String Header = "ERG0.1";
-
         /// <summary>EXIF metadata</summary>
         [JsonProperty]
         public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
@@ -85,20 +80,24 @@ namespace Librainian.Graphics.Imaging {
 
         public UInt32 Width { get; private set; }
 
+        public static readonly String Extension = ".erg";
+
+        /// <summary>Human readable file header.</summary>
+        public static readonly String Header = "ERG0.1";
+
         public Erg() => this.Checksum = UInt64.MaxValue;
 
         [NotNull]
         public Task<UInt64> CalculateChecksumAsync() =>
-            Task.Run( function: () => {
+            Task.Run( () => {
                 unchecked {
-                    return ( UInt64 )HashingExtensions.GetHashCodes( this.Pixels );
+                    return ( UInt64 ) HashingExtensions.GetHashCodes( this.Pixels );
                 }
             } );
 
         public async Task<Boolean> TryAdd( [CanBeNull] Document document, TimeSpan delay, CancellationToken cancellationToken ) {
             try {
-                return await this.TryAddAsync( bitmap: new Bitmap( filename: document.FullPath ), timeout: delay, cancellationToken: cancellationToken )
-                                 .ConfigureAwait( continueOnCapturedContext: false );
+                return await this.TryAddAsync( new Bitmap( document.FullPath ), delay, cancellationToken ).ConfigureAwait( false );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -114,7 +113,7 @@ namespace Librainian.Graphics.Imaging {
 
             var stopwatch = Stopwatch.StartNew();
 
-            return await Task.Run( function: () => {
+            return await Task.Run( () => {
                 var width = bitmap.Width;
 
                 if ( width < UInt32.MinValue ) {
@@ -127,23 +126,20 @@ namespace Librainian.Graphics.Imaging {
                     return default;
                 }
 
-                this.PropertyIdList.UnionWith( other: bitmap.PropertyIdList );
+                this.PropertyIdList.UnionWith( bitmap.PropertyIdList );
 
-                this.PropertyItems.UnionWith( other: bitmap.PropertyItems.Select( selector: item => new PropertyItem {
-                    Id = item.Id,
-                    Len = item.Len,
-                    Type = item.Type,
-                    Value = item.Value
+                this.PropertyItems.UnionWith( bitmap.PropertyItems.Select( item => new PropertyItem {
+                    Id = item.Id, Len = item.Len, Type = item.Type, Value = item.Value
                 } ) );
 
-                this.Width = ( UInt32 )bitmap.Width;
-                this.Height = ( UInt32 )bitmap.Height;
+                this.Width = ( UInt32 ) bitmap.Width;
+                this.Height = ( UInt32 ) bitmap.Height;
 
-                var rect = new Rectangle( x: 0, y: 0, width: bitmap.Width, height: bitmap.Height );
+                var rect = new Rectangle( 0, 0, bitmap.Width, bitmap.Height );
 
-                var data = bitmap.LockBits( rect: rect, flags: ImageLockMode.ReadOnly, format: bitmap.PixelFormat );
+                var data = bitmap.LockBits( rect, ImageLockMode.ReadOnly, bitmap.PixelFormat );
 
-                Parallel.For( fromInclusive: 0, toExclusive: this.Height, body: y => {
+                Parallel.For( 0, this.Height, y => {
                     if ( stopwatch.Elapsed > timeout ) {
                         return;
                     }
@@ -153,20 +149,22 @@ namespace Librainian.Graphics.Imaging {
                     }
 
                     for ( UInt32 x = 0; x < bitmap.Width; x++ ) {
-                        var color = bitmap.GetPixel( x: ( Int32 )x, y: ( Int32 )y );
-                        var pixel = new Pixel( color: color, x: x, y: ( UInt32 )y );
-                        this.Pixels.TryAdd( item: pixel );
+                        var color = bitmap.GetPixel( ( Int32 ) x, ( Int32 ) y );
+                        var pixel = new Pixel( color, x, ( UInt32 ) y );
+                        this.Pixels.TryAdd( pixel );
                     }
                 } );
 
-                bitmap.UnlockBits( bitmapdata: data );
+                bitmap.UnlockBits( data );
 
                 //TODO animated gif RE: image.FrameDimensionsList;
 
                 //image.Palette?
 
                 return false; //TODO add frame
-            }, cancellationToken: cancellationToken ).ConfigureAwait( continueOnCapturedContext: false );
+            }, cancellationToken ).ConfigureAwait( false );
         }
+
     }
+
 }

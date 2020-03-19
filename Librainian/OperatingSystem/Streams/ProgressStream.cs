@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ProgressStream.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "ProgressStream.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
+// 
+// Project: "Librainian", File: "ProgressStream.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem.Streams {
 
@@ -44,32 +44,32 @@ namespace Librainian.OperatingSystem.Streams {
 
         private Int32 _lastProgress;
 
-        private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds( value: -1 );
+        private DateTime _lastProgressUpdate = DateTime.UtcNow.AddSeconds( -1 );
 
         public ProgressChangedEventHandler? ProgressChanged { get; set; }
 
-        public ProgressStream( [NotNull] Stream stream ) : base( stream: stream ) {
-            if ( stream.CanRead && stream.CanSeek && stream.Length > 0 ) {
+        public ProgressStream( [NotNull] Stream stream ) : base( stream ) {
+            if ( stream.CanRead && stream.CanSeek && ( stream.Length > 0 ) ) {
                 return;
             }
 
             stream.Break();
 
-            throw new ArgumentException( message: "stream" );
+            throw new ArgumentException( "stream" );
         }
 
         public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
-            var amountRead = this.Stream.Read( buffer: buffer, offset: offset, count: count );
+            var amountRead = this.Stream.Read( buffer, offset, count );
 
-            var newProgress = ( Int32 )( 1024.0 * ( this.Position / ( Double )this.Length ) );
+            var newProgress = ( Int32 ) ( 1024.0 * ( this.Position / ( Double ) this.Length ) );
 
-            if ( newProgress <= this._lastProgress || DateTime.UtcNow - this._lastProgressUpdate < Hertz.Sixty ) {
+            if ( ( newProgress <= this._lastProgress ) || ( ( DateTime.UtcNow - this._lastProgressUpdate ) < Hertz.Sixty ) ) {
                 return amountRead;
             }
 
             this._lastProgressUpdate = DateTime.UtcNow;
             this._lastProgress = newProgress;
-            this.ProgressChanged?.Invoke( sender: this, e: new ProgressChangedEventArgs( progressPercentage: this._lastProgress, userState: null ) );
+            this.ProgressChanged?.Invoke( this, new ProgressChangedEventArgs( this._lastProgress, null ) );
 
             return amountRead;
         }
@@ -82,7 +82,7 @@ namespace Librainian.OperatingSystem.Streams {
         /// <exception cref="NotSupportedException">The stream does not support seeking, such as if the stream is constructed from a pipe or console output.</exception>
         /// <exception cref="ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset: offset, origin: origin );
+        public override Int64 Seek( Int64 offset, SeekOrigin origin ) => this.Stream.Seek( offset, origin );
 
         /// <summary>When overridden in a derived class, sets the length of the current stream.</summary>
         /// <param name="value">The desired length of the current stream in bytes.</param>
@@ -90,7 +90,7 @@ namespace Librainian.OperatingSystem.Streams {
         /// <exception cref="NotSupportedException">The stream does not support both writing and seeking, such as if the stream is constructed from a pipe or console output.</exception>
         /// <exception cref="ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>2</filterpriority>
-        public override void SetLength( Int64 value ) => this.Stream.SetLength( value: value );
+        public override void SetLength( Int64 value ) => this.Stream.SetLength( value );
 
         /// <summary>When overridden in a derived class, writes a sequence of bytes to the current stream and advances the current position within this stream by the number of bytes written.</summary>
         /// <param name="buffer">An array of bytes. This method copies <paramref name="count" /> bytes from <paramref name="buffer" /> to the current stream.</param>
@@ -103,6 +103,8 @@ namespace Librainian.OperatingSystem.Streams {
         /// <exception cref="NotSupportedException">The stream does not support writing.</exception>
         /// <exception cref="ObjectDisposedException">Methods were called after the stream was closed.</exception>
         /// <filterpriority>1</filterpriority>
-        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer, offset, count );
+
     }
+
 }

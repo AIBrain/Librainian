@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Functions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Functions.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
+// 
+// Project: "Librainian", File: "Functions.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Graphics.Geometry {
 
@@ -58,6 +58,7 @@ namespace Librainian.Graphics.Geometry {
             BottomRight = 8,
 
             All = TopLeft | TopRight | BottomLeft | BottomRight
+
         }
 
         /// <summary>Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be found.</summary>
@@ -93,13 +94,13 @@ namespace Librainian.Graphics.Geometry {
                 return default;
             }
 
-            var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
-            var d4321 = p43.X * p21.X + p43.Y * p21.Y + p43.Z * p21.Z;
-            var d1321 = p13.X * p21.X + p13.Y * p21.Y + p13.Z * p21.Z;
-            var d4343 = p43.X * p43.X + p43.Y * p43.Y + p43.Z * p43.Z;
-            var d2121 = p21.X * p21.X + p21.Y * p21.Y + p21.Z * p21.Z;
+            var d1343 = ( p13.X * p43.X ) + ( p13.Y * p43.Y ) + ( p13.Z * p43.Z );
+            var d4321 = ( p43.X * p21.X ) + ( p43.Y * p21.Y ) + ( p43.Z * p21.Z );
+            var d1321 = ( p13.X * p21.X ) + ( p13.Y * p21.Y ) + ( p13.Z * p21.Z );
+            var d4343 = ( p43.X * p43.X ) + ( p43.Y * p43.Y ) + ( p43.Z * p43.Z );
+            var d2121 = ( p21.X * p21.X ) + ( p21.Y * p21.Y ) + ( p21.Z * p21.Z );
 
-            var denom = d2121 * d4343 - d4321 * d4321;
+            var denom = ( d2121 * d4343 ) - ( d4321 * d4321 );
 
             if ( Math.Abs( value: denom ) < Single.Epsilon ) {
                 resultSegmentPoint1 = new Vector3();
@@ -108,22 +109,18 @@ namespace Librainian.Graphics.Geometry {
                 return default;
             }
 
-            var numer = d1343 * d4321 - d1321 * d4343;
+            var numer = ( d1343 * d4321 ) - ( d1321 * d4343 );
 
             var mua = numer / denom;
 
             resultSegmentPoint1 = new Vector3 {
-                X = line1Point1.X + mua * p21.X,
-                Y = line1Point1.Y + mua * p21.Y,
-                Z = line1Point1.Z + mua * p21.Z
+                X = line1Point1.X + ( mua * p21.X ), Y = line1Point1.Y + ( mua * p21.Y ), Z = line1Point1.Z + ( mua * p21.Z )
             };
 
-            var mub = ( d1343 + d4321 * mua ) / d4343;
+            var mub = ( d1343 + ( d4321 * mua ) ) / d4343;
 
             resultSegmentPoint2 = new Vector3 {
-                X = line2Point1.X + mub * p43.X,
-                Y = line2Point1.Y + mub * p43.Y,
-                Z = line2Point1.Z + mub * p43.Z
+                X = line2Point1.X + ( mub * p43.X ), Y = line2Point1.Y + ( mub * p43.Y ), Z = line2Point1.Z + ( mub * p43.Z )
             };
 
             return true;
@@ -157,25 +154,25 @@ namespace Librainian.Graphics.Geometry {
                 return default;
             }
 
-            var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
-            var d4321 = p43.X * p21.X + p43.Y * p21.Y + p43.Z * p21.Z;
-            var d1321 = p13.X * p21.X + p13.Y * p21.Y + p13.Z * p21.Z;
-            var d4343 = p43.X * p43.X + p43.Y * p43.Y + p43.Z * p43.Z;
-            var d2121 = p21.X * p21.X + p21.Y * p21.Y + p21.Z * p21.Z;
+            var d1343 = ( p13.X * p43.X ) + ( p13.Y * p43.Y ) + ( p13.Z * p43.Z );
+            var d4321 = ( p43.X * p21.X ) + ( p43.Y * p21.Y ) + ( p43.Z * p21.Z );
+            var d1321 = ( p13.X * p21.X ) + ( p13.Y * p21.Y ) + ( p13.Z * p21.Z );
+            var d4343 = ( p43.X * p43.X ) + ( p43.Y * p43.Y ) + ( p43.Z * p43.Z );
+            var d2121 = ( p21.X * p21.X ) + ( p21.Y * p21.Y ) + ( p21.Z * p21.Z );
 
-            var denom = d2121 * d4343 - d4321 * d4321;
+            var denom = ( d2121 * d4343 ) - ( d4321 * d4321 );
 
             if ( Math.Abs( value: denom ) < Single.Epsilon ) {
                 return default;
             }
 
-            var numer = d1343 * d4321 - d1321 * d4343;
+            var numer = ( d1343 * d4321 ) - ( d1321 * d4343 );
 
             var mua = numer / denom;
-            resultSegmentPoint1 = new CoordinateF( x: p1.X + mua * p21.X, y: p1.Y + mua * p21.Y, z: p1.Z + mua * p21.Z );
+            resultSegmentPoint1 = new CoordinateF( x: p1.X + ( mua * p21.X ), y: p1.Y + ( mua * p21.Y ), z: p1.Z + ( mua * p21.Z ) );
 
-            var mub = ( d1343 + d4321 * mua ) / d4343;
-            resultSegmentPoint2 = new CoordinateF( x: p3.X + mub * p43.X, y: p3.Y + mub * p43.Y, z: p3.Z + mub * p43.Z );
+            var mub = ( d1343 + ( d4321 * mua ) ) / d4343;
+            resultSegmentPoint2 = new CoordinateF( x: p3.X + ( mub * p43.X ), y: p3.Y + ( mub * p43.Y ), z: p3.Z + ( mub * p43.Z ) );
 
             return true;
         }
@@ -237,21 +234,21 @@ namespace Librainian.Graphics.Geometry {
                 br = ( rectAngles & RectAngles.BottomRight ) != 0,
                 bl = ( rectAngles & RectAngles.BottomLeft ) != 0;
 
-            var pointP = tl ? new Point( x: x + horizontalDiameter / 2, y: y ) : new Point( x: x, y: y );
+            var pointP = tl ? new Point( x: x + ( horizontalDiameter / 2 ), y: y ) : new Point( x: x, y: y );
 
-            var pointQ = tr ? new Point( x: x + width - horizontalDiameter / 2 - 1, y: y ) : new Point( x: x + width - 1, y: y );
+            var pointQ = tr ? new Point( x: ( x + width ) - ( horizontalDiameter / 2 ) - 1, y: y ) : new Point( x: ( x + width ) - 1, y: y );
 
-            var pointR = tr ? new Point( x: x + width - 1, y: y + verticalDiameter / 2 ) : pointQ;
+            var pointR = tr ? new Point( x: ( x + width ) - 1, y: y + ( verticalDiameter / 2 ) ) : pointQ;
 
-            var pointS = br ? new Point( x: x + width - 1, y: y + height - verticalDiameter / 2 - 1 ) : new Point( x: x + width - 1, y: y + height - 1 );
+            var pointS = br ? new Point( x: ( x + width ) - 1, y: ( y + height ) - ( verticalDiameter / 2 ) - 1 ) : new Point( x: ( x + width ) - 1, y: ( y + height ) - 1 );
 
-            var pointT = br ? new Point( dw: x + width - horizontalDiameter / 2 - 1 ) : pointS;
+            var pointT = br ? new Point( dw: ( x + width ) - ( horizontalDiameter / 2 ) - 1 ) : pointS;
 
-            var pointU = bl ? new Point( x: x + horizontalDiameter / 2, y: y + height - 1 ) : new Point( x: x, y: y + height - 1 );
+            var pointU = bl ? new Point( x: x + ( horizontalDiameter / 2 ), y: ( y + height ) - 1 ) : new Point( x: x, y: ( y + height ) - 1 );
 
-            var pointV = bl ? new Point( x: x, y: y + height - verticalDiameter / 2 - 1 ) : pointU;
+            var pointV = bl ? new Point( x: x, y: ( y + height ) - ( verticalDiameter / 2 ) - 1 ) : pointU;
 
-            var pointW = tl ? new Point( x: x, y: y + verticalDiameter / 2 ) : pointP;
+            var pointW = tl ? new Point( x: x, y: y + ( verticalDiameter / 2 ) ) : pointP;
 
             using ( var gp = new GraphicsPath() ) {
 
@@ -260,7 +257,7 @@ namespace Librainian.Graphics.Geometry {
 
                 // b
                 if ( tr ) {
-                    gp.AddArc( x: x + width - horizontalDiameter - 1, y: y, width: horizontalDiameter, height: verticalDiameter, startAngle: 270, sweepAngle: 90 );
+                    gp.AddArc( x: ( x + width ) - horizontalDiameter - 1, y: y, width: horizontalDiameter, height: verticalDiameter, startAngle: 270, sweepAngle: 90 );
                 }
 
                 // c
@@ -268,8 +265,8 @@ namespace Librainian.Graphics.Geometry {
 
                 // d
                 if ( br ) {
-                    gp.AddArc( x: x + width - horizontalDiameter - 1, y: y + height - verticalDiameter - 1, width: horizontalDiameter, height: verticalDiameter, startAngle: 0,
-                        sweepAngle: 90 );
+                    gp.AddArc( x: ( x + width ) - horizontalDiameter - 1, y: ( y + height ) - verticalDiameter - 1, width: horizontalDiameter, height: verticalDiameter,
+                        startAngle: 0, sweepAngle: 90 );
                 }
 
                 // e
@@ -277,15 +274,15 @@ namespace Librainian.Graphics.Geometry {
 
                 // f
                 if ( bl ) {
-                    gp.AddArc( x: x, y: y + height - verticalDiameter - 1, width: horizontalDiameter, height: verticalDiameter, startAngle: 90, sweepAngle: 90 );
+                    gp.AddArc( x, ( y + height ) - verticalDiameter - 1, horizontalDiameter, verticalDiameter, 90, 90 );
                 }
 
                 // g
-                gp.AddLine( pt1: pointV, pt2: pointW );
+                gp.AddLine( pointV, pointW );
 
                 // h
                 if ( tl ) {
-                    gp.AddArc( x: x, y: y, width: horizontalDiameter, height: verticalDiameter, startAngle: 180, sweepAngle: 90 );
+                    gp.AddArc( x, y, horizontalDiameter, verticalDiameter, 180, 90 );
                 }
 
                 // end
@@ -293,13 +290,15 @@ namespace Librainian.Graphics.Geometry {
 
                 // draw
                 if ( b != null ) {
-                    g.FillPath( brush: b, path: gp );
+                    g.FillPath( b, gp );
                 }
 
                 if ( p != null ) {
-                    g.DrawPath( pen: p, path: gp );
+                    g.DrawPath( p, gp );
                 }
             }
         }
+
     }
+
 }

@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "InternetExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "InternetExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
+// 
+// Project: "Librainian", File: "InternetExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -57,8 +57,8 @@ namespace Librainian.Internet {
                 throw new ArgumentNullException( nameof( request ) );
             }
 
-            var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( asyncCallback, state ),
-                asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request ).ConfigureAwait( false );
+            var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest ) state ).BeginGetResponse( asyncCallback, state ),
+                asyncResult => ( ( HttpWebRequest ) asyncResult.AsyncState ).EndGetResponse( asyncResult ), request ).ConfigureAwait( false );
 
             using var stream = result.GetResponseStream();
 
@@ -117,7 +117,7 @@ namespace Librainian.Internet {
 
             var len = IPAddress.NetworkToHostOrder( BitConverter.ToInt16( listData.Take( 2 ).ToArray(), 0 ) );
 
-            if ( listData.Count < 2 + len ) {
+            if ( listData.Count < ( 2 + len ) ) {
                 throw new ArgumentException( "Too few bytes in packet" );
             }
 
@@ -171,8 +171,8 @@ namespace Librainian.Internet {
 
             var ips = ip.Split( '.' );
 
-            if ( ips.Length == 4 || ips.Length == 6 ) {
-                return Int32.Parse( ips[ 0 ] ) < 256 && ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 );
+            if ( ( ips.Length == 4 ) || ( ips.Length == 6 ) ) {
+                return ( Int32.Parse( ips[ 0 ] ) < 256 ) && ( ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 ) );
             }
 
             return default;
@@ -195,8 +195,7 @@ namespace Librainian.Internet {
                 var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
                 var i = new UriLinkItem {
-                    Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
-                    Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
+                    Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
                 };
 
                 yield return i;
@@ -208,9 +207,11 @@ namespace Librainian.Internet {
         public static IEnumerable<Byte> ToNetworkBytes( [NotNull] this String data ) {
             var bytes = Encoding.UTF8.GetBytes( data );
 
-            var len = IPAddress.HostToNetworkOrder( ( Int16 )bytes.Length );
+            var len = IPAddress.HostToNetworkOrder( ( Int16 ) bytes.Length );
 
             return BitConverter.GetBytes( len ).Concat( bytes );
         }
+
     }
+
 }

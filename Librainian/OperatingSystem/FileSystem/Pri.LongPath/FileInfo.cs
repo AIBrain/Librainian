@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "FileInfo.cs" was last formatted by Protiguous on 2020/03/16 at 9:56 PM.
+// Project: "Librainian", File: "FileInfo.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -52,7 +52,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
                 var fileAttributeData = this.data;
 
-                return this.state == State.Initialized && ( fileAttributeData.fileAttributes & FileAttributes.Directory ) != FileAttributes.Directory;
+                return ( this.state == State.Initialized ) && ( ( fileAttributeData.fileAttributes & FileAttributes.Directory ) != FileAttributes.Directory );
             }
         }
 
@@ -80,12 +80,12 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         public override System.IO.FileSystemInfo SystemInfo => this.SysFileInfo;
 
         [NotNull]
-        public DirectoryInfo Directory => new DirectoryInfo( path: this.DirectoryName );
+        public DirectoryInfo Directory => new DirectoryInfo( this.DirectoryName );
 
         [NotNull]
-        public System.IO.FileInfo SysFileInfo => new System.IO.FileInfo( fileName: this.FullPath );
+        public System.IO.FileInfo SysFileInfo => new System.IO.FileInfo( this.FullPath );
 
-        public FileInfo( [NotNull] String fileName ) : base( fullPath: fileName.GetFullPath() ) => this.Name = this.FullPath.GetFileName();
+        public FileInfo( [NotNull] String fileName ) : base( fileName.GetFullPath() ) => this.Name = this.FullPath.GetFileName();
 
         private Int64 GetFileLength() {
             if ( this.state == State.Uninitialized ) {
@@ -93,73 +93,69 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
 
             if ( this.data is null ) {
-                throw new IOException( message: $"Unable to obtain {nameof( FileAttributeData )} on {this.FullPath}." );
+                throw new IOException( $"Unable to obtain {nameof( FileAttributeData )} on {this.FullPath}." );
             }
 
             if ( this.state == State.Error ) {
-                Common.ThrowIOError( errorCode: this.errorCode, maybeFullPath: this.FullPath );
+                Common.ThrowIOError( this.errorCode, this.FullPath );
             }
 
             return ( ( Int64 ) this.data.fileSizeHigh << 32 ) | ( this.data.fileSizeLow & 0xFFFFFFFFL );
         }
 
         [NotNull]
-        public StreamWriter AppendText() => File.CreateStreamWriter( path: this.FullPath, append: true );
+        public StreamWriter AppendText() => File.CreateStreamWriter( this.FullPath, true );
 
         [NotNull]
-        public FileInfo CopyTo( [NotNull] String destFileName ) => this.CopyTo( destFileName: destFileName, overwrite: false );
+        public FileInfo CopyTo( [NotNull] String destFileName ) => this.CopyTo( destFileName, false );
 
         [NotNull]
         public FileInfo CopyTo( [NotNull] String destFileName, Boolean overwrite ) {
-            File.Copy( sourcePath: this.FullPath, destinationPath: destFileName, overwrite: overwrite );
+            File.Copy( this.FullPath, destFileName, overwrite );
 
-            return new FileInfo( fileName: destFileName );
+            return new FileInfo( destFileName );
         }
 
         [NotNull]
-        public FileStream Create() => File.Create( path: this.FullPath );
+        public FileStream Create() => File.Create( this.FullPath );
 
         [NotNull]
-        public StreamWriter CreateText() => File.CreateStreamWriter( path: this.FullPath, append: false );
+        public StreamWriter CreateText() => File.CreateStreamWriter( this.FullPath, false );
 
-        public void Decrypt() => File.Decrypt( path: this.FullPath );
+        public void Decrypt() => File.Decrypt( this.FullPath );
 
-        public override void Delete() => File.Delete( path: this.FullPath );
+        public override void Delete() => File.Delete( this.FullPath );
 
-        public void Encrypt() => File.Encrypt( path: this.FullPath );
+        public void Encrypt() => File.Encrypt( this.FullPath );
 
-        public void MoveTo( [NotNull] String destFileName ) => File.Move( sourcePath: this.FullPath, destinationPath: destFileName );
-
-        [NotNull]
-        public FileStream Open( FileMode mode ) => this.Open( mode: mode, access: FileAccess.ReadWrite, share: FileShare.None );
+        public void MoveTo( [NotNull] String destFileName ) => File.Move( this.FullPath, destFileName );
 
         [NotNull]
-        public FileStream Open( FileMode mode, FileAccess access ) => this.Open( mode: mode, access: access, share: FileShare.None );
+        public FileStream Open( FileMode mode ) => this.Open( mode, FileAccess.ReadWrite, FileShare.None );
 
         [NotNull]
-        public FileStream Open( FileMode mode, FileAccess access, FileShare share ) =>
-            File.Open( path: this.FullPath, mode: mode, access: access, share: share, bufferSize: 4096, options: FileOptions.SequentialScan );
+        public FileStream Open( FileMode mode, FileAccess access ) => this.Open( mode, access, FileShare.None );
 
         [NotNull]
-        public FileStream OpenRead() =>
-            File.Open( path: this.FullPath, mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: 4096, options: FileOptions.None );
+        public FileStream Open( FileMode mode, FileAccess access, FileShare share ) => File.Open( this.FullPath, mode, access, share, 4096, FileOptions.SequentialScan );
 
         [NotNull]
-        public StreamReader OpenText() => File.CreateStreamReader( path: this.FullPath, encoding: Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: 1024 );
+        public FileStream OpenRead() => File.Open( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None );
 
         [NotNull]
-        public FileStream OpenWrite() => File.Open( path: this.FullPath, mode: FileMode.OpenOrCreate, access: FileAccess.Write, share: FileShare.None );
+        public StreamReader OpenText() => File.CreateStreamReader( this.FullPath, Encoding.UTF8, true, 1024 );
 
         [NotNull]
-        public FileInfo Replace( [NotNull] String destinationFilename, [NotNull] String backupFilename ) =>
-            this.Replace( destinationFilename: destinationFilename, backupFilename: backupFilename, ignoreMetadataErrors: false );
+        public FileStream OpenWrite() => File.Open( this.FullPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None );
+
+        [NotNull]
+        public FileInfo Replace( [NotNull] String destinationFilename, [NotNull] String backupFilename ) => this.Replace( destinationFilename, backupFilename, false );
 
         [NotNull]
         public FileInfo Replace( [NotNull] String destinationFilename, [NotNull] String backupFilename, Boolean ignoreMetadataErrors ) {
-            File.Replace( sourceFileName: this.FullPath, destinationFileName: destinationFilename, destinationBackupFileName: backupFilename,
-                ignoreMetadataErrors: ignoreMetadataErrors );
+            File.Replace( this.FullPath, destinationFilename, backupFilename, ignoreMetadataErrors );
 
-            return new FileInfo( fileName: destinationFilename );
+            return new FileInfo( destinationFilename );
         }
 
         [NotNull]

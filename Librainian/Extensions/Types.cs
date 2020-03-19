@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Types.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Types.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
+// 
+// Project: "Librainian", File: "Types.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 
@@ -50,11 +50,11 @@ namespace Librainian.Extensions {
 
     public static class Types {
 
-        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
-
         public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
 
         public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
+
+        private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
 
         private delegate Object ObjectActivator();
 
@@ -72,7 +72,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [NotNull]
         public static IList<T> Clone<T>( [NotNull] this IEnumerable<T> list ) where T : ICloneable =>
-            list.Where( item => !( item is null ) ).Select( item => ( T )item.Clone() ).ToList();
+            list.Where( item => !( item is null ) ).Select( item => ( T ) item.Clone() ).ToList();
 
         public static void CopyField<TSource>( [NotNull] this TSource source, [NotNull] TSource destination, [NotNull] FieldInfo field, Boolean mergeDictionaries = true ) {
             if ( source is null ) {
@@ -249,7 +249,7 @@ namespace Librainian.Extensions {
 
             foreach ( var myType in list.Where( myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf( typeof( T ) ) ) ) {
                 if ( constructorArgs?.Any() == true ) {
-                    yield return ( T )Activator.CreateInstance( myType, constructorArgs );
+                    yield return ( T ) Activator.CreateInstance( myType, constructorArgs );
                 }
                 else {
                     var declaredCtor = myType.GetConstructors();
@@ -296,7 +296,7 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( nameof( t ) );
             }
 
-            return t.IsValueType || t.GetConstructor( Type.EmptyTypes ) != null;
+            return t.IsValueType || ( t.GetConstructor( Type.EmptyTypes ) != null );
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace Librainian.Extensions {
 
         public static Boolean IsNullable( [NotNull] this PropertyInfo p ) => p.PropertyType.IsNullable();
 
-        public static Boolean IsNullable( [NotNull] this Type t ) => !t.IsValueType || Nullable.GetUnderlyingType( t ) != null;
+        public static Boolean IsNullable( [NotNull] this Type t ) => !t.IsValueType || ( Nullable.GetUnderlyingType( t ) != null );
 
         /// <summary>Ascertains if the given type is a numeric type (e.g. <see cref="Int32" />).</summary>
         /// <returns>True if the type represents a numeric type, false if not.</returns>
@@ -325,9 +325,9 @@ namespace Librainian.Extensions {
                 throw new ArgumentNullException( nameof( self ), "IsNumeric called on a null Type." );
             }
 
-            return self == typeof( Double ) || self == typeof( Single ) || self == typeof( Int64 ) || self == typeof( Int16 ) || self == typeof( Byte ) ||
-                   self == typeof( SByte ) || self == typeof( UInt32 ) || self == typeof( UInt64 ) || self == typeof( UInt16 ) || self == typeof( Decimal ) ||
-                   self == typeof( Int32 );
+            return ( self == typeof( Double ) ) || ( self == typeof( Single ) ) || ( self == typeof( Int64 ) ) || ( self == typeof( Int16 ) ) || ( self == typeof( Byte ) ) ||
+                   ( self == typeof( SByte ) ) || ( self == typeof( UInt32 ) ) || ( self == typeof( UInt64 ) ) || ( self == typeof( UInt16 ) ) ||
+                   ( self == typeof( Decimal ) ) || ( self == typeof( Int32 ) );
         }
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         public static Boolean IsSubclassOfRawGeneric( this Type type, [CanBeNull] Type generic ) {
             while ( type != typeof( Object ) ) {
-                var cur = type != null && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                var cur = ( type != null ) && type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
                 if ( generic == cur ) {
                     return true;
@@ -407,11 +407,11 @@ namespace Librainian.Extensions {
 
                 ilGenerator.Emit( OpCodes.Ret );
 
-                activator = ( ObjectActivator )dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
+                activator = ( ObjectActivator ) dynamicMethod.CreateDelegate( typeof( ObjectActivator ) );
                 ObjectActivators.Add( type, activator );
             }
 
-            return ( T )activator.Invoke();
+            return ( T ) activator.Invoke();
         }
 
         [NotNull]
@@ -486,7 +486,7 @@ namespace Librainian.Extensions {
             var type = typeof( T );
 
             // If the type is nullable and the result should be null, set a null value.
-            if ( type.IsNullable() && ( value is null || value == DBNull.Value ) ) {
+            if ( type.IsNullable() && ( value is null || ( value == DBNull.Value ) ) ) {
                 result = default;
 
                 return true;
@@ -501,19 +501,19 @@ namespace Librainian.Extensions {
                 if ( underlyingType == typeof( Guid ) ) {
                     switch ( value ) {
                         case String s: {
-                                value = new Guid( s );
+                            value = new Guid( s );
 
-                                break;
-                            }
+                            break;
+                        }
                         case Byte[] bytes: {
-                                value = new Guid( bytes );
+                            value = new Guid( bytes );
 
-                                break;
-                            }
+                            break;
+                        }
                     }
                 }
 
-                result = ( T )Convert.ChangeType( value, underlyingType );
+                result = ( T ) Convert.ChangeType( value, underlyingType );
 
                 return true;
             }
@@ -594,5 +594,7 @@ namespace Librainian.Extensions {
         //            }
         //    }
         //}
+
     }
+
 }

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "NotAllowed.cs" was last formatted by Protiguous on 2020/03/16 at 9:35 PM.
+// Project: "Librainian", File: "NotAllowed.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Exceptions.Warnings {
 
@@ -41,9 +41,9 @@ namespace Librainian.Exceptions.Warnings {
     [Serializable]
     public class NotAllowed : Warning {
 
-        public NotAllowed( TrimmedString message ) : base( message: message ) { }
+        public NotAllowed( TrimmedString message ) : base( message ) { }
 
-        public NotAllowed( TrimmedString message, [CanBeNull] Exception inner ) : base( message: message, inner: inner ) { }
+        public NotAllowed( TrimmedString message, [CanBeNull] Exception inner ) : base( message, inner ) { }
 
     }
 

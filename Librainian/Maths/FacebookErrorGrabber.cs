@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "FacebookErrorGrabber.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "FacebookErrorGrabber.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
+// 
+// Project: "Librainian", File: "FacebookErrorGrabber.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Maths {
 
@@ -48,7 +48,7 @@ namespace Librainian.Maths {
         /// <returns></returns>
         [CanBeNull]
         public static Task<FaceBookRootObject> GetError() {
-            var uri = new Uri( uriString: "http://graph.facebook.com/microsoft" );
+            var uri = new Uri( "http://graph.facebook.com/microsoft" );
 
             return uri.DeserializeJson<FaceBookRootObject>();
         }
@@ -59,67 +59,71 @@ namespace Librainian.Maths {
         [ItemNotNull]
         public static async Task<Byte[]> NextDataAsync( Int32 fallbackByteCount = 16 ) {
 
-            var rootObject = await GetError().ConfigureAwait( continueOnCapturedContext: false );
+            var rootObject = await GetError().ConfigureAwait( false );
 
             var data = rootObject.Error.FbtraceID;
 
             if ( data != null ) {
-                var buffer = Encoding.UTF8.GetBytes( s: data );
+                var buffer = Encoding.UTF8.GetBytes( data );
 
                 //mix up the response a bit with our own rng.
                 foreach ( var _ in buffer ) {
-                    buffer.Swap( index1: Randem.NextByte(), index2: Randem.NextByte() );
+                    buffer.Swap( Randem.NextByte(), Randem.NextByte() );
                 }
 
                 return buffer;
             }
 
             if ( !fallbackByteCount.Any() ) {
-                throw new OutOfRangeException( message: $"{nameof( fallbackByteCount )} must be greater than 0." );
+                throw new OutOfRangeException( $"{nameof( fallbackByteCount )} must be greater than 0." );
             }
 
             var fallback = new Byte[ fallbackByteCount ];
-            Randem.NextBytes( buffer: ref fallback );
+            Randem.NextBytes( ref fallback );
 
             return fallback;
         }
 
         public static async Task<Int64> NxtInt32() {
-            var bytes = await NextDataAsync( fallbackByteCount: sizeof( Int32 ) ).ConfigureAwait( continueOnCapturedContext: false );
+            var bytes = await NextDataAsync( sizeof( Int32 ) ).ConfigureAwait( false );
 
-            return BitConverter.ToInt64( value: bytes, startIndex: 0 );
+            return BitConverter.ToInt64( bytes, 0 );
         }
 
         public static async Task<Int64> NxtInt64() {
-            var bytes = await NextDataAsync( fallbackByteCount: sizeof( Int64 ) ).ConfigureAwait( continueOnCapturedContext: false );
+            var bytes = await NextDataAsync( sizeof( Int64 ) ).ConfigureAwait( false );
 
-            return BitConverter.ToInt64( value: bytes, startIndex: 0 );
+            return BitConverter.ToInt64( bytes, 0 );
         }
 
         [JsonObject]
         public struct FaceBookError {
 
-            [JsonProperty( propertyName: "code" )]
+            [JsonProperty( "code" )]
             public Int32 Code { get; set; }
 
-            [JsonProperty( propertyName: "fbtrace_id" )]
+            [JsonProperty( "fbtrace_id" )]
             [CanBeNull]
             public String? FbtraceID { get; set; }
 
-            [JsonProperty( propertyName: "message" )]
+            [JsonProperty( "message" )]
             [CanBeNull]
             public String? Message { get; set; }
 
-            [JsonProperty( propertyName: "type" )]
+            [JsonProperty( "type" )]
             [CanBeNull]
             public String? Type { get; set; }
+
         }
 
         [JsonObject]
         public struct FaceBookRootObject {
 
-            [JsonProperty( propertyName: "error" )]
+            [JsonProperty( "error" )]
             public FaceBookError Error { get; }
+
         }
+
     }
+
 }

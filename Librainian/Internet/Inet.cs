@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Inet.cs" was last formatted by Protiguous on 2020/03/16 at 9:41 PM.
+// Project: "Librainian", File: "Inet.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -49,11 +49,11 @@ namespace Librainian.Internet {
 
             // Send the request to the Internet resource and wait for the response. ReSharper
             // disable once PossibleNullReferenceException
-            if ( !( WebRequest.Create( requestUriString: url ) is HttpWebRequest webReq ) ) {
+            if ( !( WebRequest.Create( url ) is HttpWebRequest webReq ) ) {
                 return content.ToArray();
             }
 
-            using ( var response = await webReq.GetResponseAsync().ConfigureAwait( continueOnCapturedContext: false ) )
+            using ( var response = await webReq.GetResponseAsync().ConfigureAwait( false ) )
 
                 // The previous statement abbreviates the following two statements.
 
@@ -65,7 +65,7 @@ namespace Librainian.Internet {
 
                     // Read the bytes in responseStream and copy them to content.
                     if ( responseStream != null ) {
-                        await responseStream.CopyToAsync( destination: content ).ConfigureAwait( continueOnCapturedContext: false );
+                        await responseStream.CopyToAsync( content ).ConfigureAwait( false );
                     }
 
                     // The previous statement abbreviates the following two statements.

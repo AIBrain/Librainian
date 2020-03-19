@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "StringHex.cs" was last formatted by Protiguous on 2020/03/16 at 10:00 PM.
+// Project: "Librainian", File: "StringHex.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing.Validation {
 
@@ -42,10 +42,10 @@ namespace Librainian.Parsing.Validation {
     [JsonObject]
     public class StringHex : RegexString {
 
-        public StringHex( String value ) : base( value: value, pattern: "^[0-9a-fA-F]*$" ) { }
+        public StringHex( String value ) : base( value, "^[0-9a-fA-F]*$" ) { }
 
         [NotNull]
-        public static explicit operator StringHex( [CanBeNull] String? str ) => new StringHex( value: str );
+        public static explicit operator StringHex( [CanBeNull] String? str ) => new StringHex( str );
 
     }
 

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ByteSizeFormatter.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "ByteSizeFormatter.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing {
 
@@ -56,7 +56,7 @@ namespace Librainian.Parsing {
         /// <exception cref="InvalidOperationException"></exception>
         public static Boolean TryParse( [NotNull] String input, out Int64 bytes ) {
             const String expr = @"^\s*(?<num>\d+(?:\.\d+)?)\s*(?<mod>[kKmMgGtTpPeEyY]?[bB])?\s*$";
-            var match = Regex.Match( input: input, pattern: expr );
+            var match = Regex.Match( input, expr );
             bytes = 0;
 
             if ( !match.Success ) {
@@ -65,7 +65,7 @@ namespace Librainian.Parsing {
 
             Int64 mult = 1;
 
-            switch ( match.Groups[ groupname: "mod" ].Value.ToUpper() ) {
+            switch ( match.Groups[ "mod" ].Value.ToUpper() ) {
                 case "B":
                 case "":
                     break;
@@ -76,39 +76,39 @@ namespace Librainian.Parsing {
                     break;
 
                 case "MB":
-                    mult = ( Int64 ) Math.Pow( x: 1024, y: 2 );
+                    mult = ( Int64 ) Math.Pow( 1024, 2 );
 
                     break;
 
                 case "GB":
-                    mult = ( Int64 ) Math.Pow( x: 1024, y: 3 );
+                    mult = ( Int64 ) Math.Pow( 1024, 3 );
 
                     break;
 
                 case "TB":
-                    mult = ( Int64 ) Math.Pow( x: 1024, y: 4 );
+                    mult = ( Int64 ) Math.Pow( 1024, 4 );
 
                     break;
 
                 case "PB":
-                    mult = ( Int64 ) Math.Pow( x: 1024, y: 5 );
+                    mult = ( Int64 ) Math.Pow( 1024, 5 );
 
                     break;
 
                 case "EB":
-                    mult = ( Int64 ) Math.Pow( x: 1024, y: 6 );
+                    mult = ( Int64 ) Math.Pow( 1024, 6 );
 
                     break;
 
                 case "YB":
-                    mult = ( Int64 ) Math.Pow( x: 1024, y: 7 );
+                    mult = ( Int64 ) Math.Pow( 1024, 7 );
 
                     break;
 
                 default: throw new InvalidOperationException();
             }
 
-            bytes = ( Int64 ) Math.Round( a: Single.Parse( s: match.Groups[ groupname: "num" ].Value ) * mult );
+            bytes = ( Int64 ) Math.Round( Single.Parse( match.Groups[ "num" ].Value ) * mult );
 
             return true;
         }
@@ -121,38 +121,38 @@ namespace Librainian.Parsing {
         [NotNull]
         public override String Format( [NotNull] String format, [CanBeNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( format == null ) {
-                throw new ArgumentNullException( paramName: nameof( format ) );
+                throw new ArgumentNullException( nameof( format ) );
             }
 
             Int64 bytes;
 
             try {
-                bytes = Convert.ToInt64( value: arg );
+                bytes = Convert.ToInt64( arg );
             }
             catch {
-                return this.HandleOtherFormats( format: format, arg: arg );
+                return this.HandleOtherFormats( format, arg );
             }
 
             if ( bytes == 0 ) {
                 return "0" + Suffixes[ 0 ];
             }
 
-            var m = Regex.Match( input: format, pattern: @"^[B|b](?<prec>\d+)?$" );
+            var m = Regex.Match( format, @"^[B|b](?<prec>\d+)?$" );
 
             if ( !m.Success ) {
-                return this.HandleOtherFormats( format: format, arg: arg );
+                return this.HandleOtherFormats( format, arg );
             }
 
-            var prec = m.Groups[ groupname: "prec" ].Success ? Byte.Parse( s: m.Groups[ groupname: "prec" ].Value ) : 0;
-            var place = Convert.ToInt32( value: Math.Floor( d: Math.Log( a: bytes, newBase: 1024 ) ) );
+            var prec = m.Groups[ "prec" ].Success ? Byte.Parse( m.Groups[ "prec" ].Value ) : 0;
+            var place = Convert.ToInt32( Math.Floor( Math.Log( bytes, 1024 ) ) );
 
             if ( place >= Suffixes.Length ) {
                 place = Suffixes.Length - 1;
             }
 
-            var num = Math.Round( value: bytes / Math.Pow( x: 1024, y: place ), digits: 1 );
+            var num = Math.Round( bytes / Math.Pow( 1024, place ), 1 );
 
-            return $"{num.ToString( format: "F" + prec )}{Suffixes[ place ]}";
+            return $"{num.ToString( "F" + prec )}{Suffixes[ place ]}";
         }
 
     }

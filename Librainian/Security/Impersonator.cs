@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Impersonator.cs" was last formatted by Protiguous on 2020/03/16 at 10:02 PM.
+// Project: "Librainian", File: "Impersonator.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Security {
 
@@ -52,7 +52,7 @@ namespace Librainian.Security {
         private const Int32 Logon32ProviderDefault = 0;
 
         public Impersonator( [CanBeNull] String? userName, [CanBeNull] String? domainName, [CanBeNull] String? password ) =>
-            this.ImpersonateValidUser( userName: userName, domain: domainName, password: password );
+            this.ImpersonateValidUser( userName, domainName, password );
 
         private void ImpersonateValidUser( [CanBeNull] String? userName, [CanBeNull] String? domain, [CanBeNull] String? password ) {
             var token = IntPtr.Zero;
@@ -60,19 +60,18 @@ namespace Librainian.Security {
 
             try {
                 if ( !NativeMethods.RevertToSelf() ) {
-                    throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                    throw new Win32Exception( Marshal.GetLastWin32Error() );
                 }
                 else {
-                    if ( NativeMethods.LogonUser( lpszUserName: userName, lpszDomain: domain, lpszPassword: password, dwLogonType: Logon32LogonInteractive,
-                        dwLogonProvider: Logon32ProviderDefault, phToken: ref token ) == 0 ) {
-                        throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                    if ( NativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
+                        throw new Win32Exception( Marshal.GetLastWin32Error() );
                     }
                     else {
-                        if ( NativeMethods.DuplicateToken( hToken: token, impersonationLevel: 2, hNewToken: ref tokenDuplicate ) == 0 ) {
-                            throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                        if ( NativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
+                            throw new Win32Exception( Marshal.GetLastWin32Error() );
                         }
                         else {
-                            var tempWindowsIdentity = new WindowsIdentity( userToken: tokenDuplicate );
+                            var tempWindowsIdentity = new WindowsIdentity( tokenDuplicate );
                             this._impersonationContext = tempWindowsIdentity.Impersonate();
                         }
                     }

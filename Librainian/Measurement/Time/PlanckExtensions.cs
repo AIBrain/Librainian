@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "PlanckExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:52 PM.
+// Project: "Librainian", File: "PlanckExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -45,8 +45,8 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
 
-            var integer = BigInteger.Divide( dividend: planckTimes, divisor: constant );
-            planckTimes -= BigInteger.Multiply( left: integer, right: constant );
+            var integer = BigInteger.Divide( planckTimes, constant );
+            planckTimes -= BigInteger.Multiply( integer, constant );
 
             return integer;
         }

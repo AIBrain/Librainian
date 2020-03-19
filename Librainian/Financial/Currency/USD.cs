@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "USD.cs" was last formatted by Protiguous on 2020/03/16 at 9:38 PM.
+// Project: "Librainian", File: "USD.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Financial.Currency {
 
@@ -48,11 +48,11 @@ namespace Librainian.Financial.Currency {
         /// <summary>Example new Money(123.4567).Dollars == 123.0000</summary>
         public Decimal Dollars => this.TotalBankNotes();
 
-        public USD( Decimal amount ) : base( id: Guid.NewGuid() ) {
-            this.Deposit( amount: amount, leftOver: out var leftOver );
+        public USD( Decimal amount ) : base( Guid.NewGuid() ) {
+            this.Deposit( amount, out var leftOver );
 
             if ( leftOver != Decimal.Zero ) {
-                throw new InvalidOperationException( message: $"{nameof( Wallet )} error. LeftOverAmount of {leftOver:C}".Break() );
+                throw new InvalidOperationException( $"{nameof( Wallet )} error. LeftOverAmount of {leftOver:C}".Break() );
             }
         }
 

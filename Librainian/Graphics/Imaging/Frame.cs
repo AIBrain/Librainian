@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Frame.cs" was last formatted by Protiguous on 2020/03/16 at 9:40 PM.
+// Project: "Librainian", File: "Frame.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -45,7 +45,7 @@ namespace Librainian.Graphics.Imaging {
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
         /// <param name="other">An object to compare with this object.</param>
-        public Boolean Equals( Frame other ) => Equals( left: this, right: other );
+        public Boolean Equals( Frame other ) => Equals( this, other );
 
         /// <summary>Checksum of the page (guard against corruption).</summary>
         /// <remarks>Should include the <see cref="LineCount" /> and <see cref="Delay" /> to prevent buffer overflows and timeouts.</remarks>
@@ -76,7 +76,7 @@ namespace Librainian.Graphics.Imaging {
         /// <returns></returns>
         [Pure]
         public static Boolean Equals( Frame left, Frame right ) {
-            if ( ReferenceEquals( objA: left, objB: right ) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
@@ -96,29 +96,29 @@ namespace Librainian.Graphics.Imaging {
                 return default;
             }
 
-            return left.Lines.SequenceEqual( second: right.Lines );
+            return left.Lines.SequenceEqual( right.Lines );
         }
 
         /// <summary>Returns a value that indicates whether two <see cref="T:Librainian.Graphics.Imaging.Frame" /> objects have different values.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static Boolean operator !=( [CanBeNull] Frame left, [CanBeNull] Frame right ) => !left.Equals( other: right );
+        public static Boolean operator !=( [CanBeNull] Frame left, [CanBeNull] Frame right ) => !left.Equals( right );
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="T:Librainian.Graphics.Imaging.Frame" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static Boolean operator ==( [CanBeNull] Frame left, [CanBeNull] Frame right ) => left.Equals( other: right );
+        public static Boolean operator ==( [CanBeNull] Frame left, [CanBeNull] Frame right ) => left.Equals( right );
 
         /// <summary>Indicates whether this instance and a specified object are equal.</summary>
         /// <param name="obj">The object to compare with the current instance.</param>
         /// <returns><see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( objA: this, objB: obj is Frame frame ? frame : default );
+        public override Boolean Equals( [CanBeNull] Object obj ) => Equals( this, objB: obj is Frame frame ? frame : default );
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-        [SuppressMessage( category: "ReSharper", checkId: "NonReadonlyMemberInGetHashCode" )]
+        [SuppressMessage( "ReSharper", "NonReadonlyMemberInGetHashCode" )]
         public override Int32 GetHashCode() {
             unchecked {
                 var hashCode = this.Checksum.GetHashCode();

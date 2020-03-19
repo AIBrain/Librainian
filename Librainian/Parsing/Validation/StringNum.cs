@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "StringNum.cs" was last formatted by Protiguous on 2020/03/16 at 10:00 PM.
+// Project: "Librainian", File: "StringNum.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing.Validation {
 
@@ -42,10 +42,10 @@ namespace Librainian.Parsing.Validation {
     [JsonObject]
     public class StringNum : RegexString {
 
-        public StringNum( String value ) : base( value: value, pattern: "^[0-9]*$" ) { }
+        public StringNum( String value ) : base( value, "^[0-9]*$" ) { }
 
         [NotNull]
-        public static explicit operator StringNum( [CanBeNull] String? str ) => new StringNum( value: str );
+        public static explicit operator StringNum( [CanBeNull] String? str ) => new StringNum( str );
 
     }
 

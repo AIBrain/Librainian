@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "DurationParser.cs" was last formatted by Protiguous on 2020/03/16 at 9:51 PM.
+// Project: "Librainian", File: "DurationParser.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -45,8 +45,8 @@ namespace Librainian.Measurement.Time {
     public static class DurationParser {
 
         [NotNull]
-        private static Regex Regex { get; } = new Regex( pattern: "(?<Value>[\\-0-9]+)\\s*(?<Unit>[a-z]+)",
-            options: RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant );
+        private static Regex Regex { get; } = new Regex( "(?<Value>[\\-0-9]+)\\s*(?<Unit>[a-z]+)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant );
 
         ///// <summary>Parses a duration of time from a string.</summary>
         ///// <param name="str">

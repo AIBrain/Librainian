@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "VotallyD.cs" was last formatted by Protiguous on 2020/03/16 at 9:46 PM.
+// Project: "Librainian", File: "VotallyD.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -43,7 +43,7 @@ namespace Librainian.Maths.Numbers {
     ///     <para>Keep track of votes for candidate A and candidate B.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public class VotallyD : ICloneable {
 
         Object ICloneable.Clone() => this.Clone();
@@ -57,22 +57,22 @@ namespace Librainian.Maths.Numbers {
         private Double _bVotes;
 
         public Double A {
-            get => Thread.VolatileRead( address: ref this._aVotes );
+            get => Thread.VolatileRead( ref this._aVotes );
 
-            private set => Thread.VolatileWrite( address: ref this._aVotes, value: value );
+            private set => Thread.VolatileWrite( ref this._aVotes, value );
         }
 
         public Double B {
-            get => Thread.VolatileRead( address: ref this._bVotes );
+            get => Thread.VolatileRead( ref this._bVotes );
 
-            private set => Thread.VolatileWrite( address: ref this._bVotes, value: value );
+            private set => Thread.VolatileWrite( ref this._bVotes, value );
         }
 
         public Double ChanceB {
             get {
                 var votes = this.Votes;
 
-                return votes.Near( target: 0 ) ? 0 : this.B / votes;
+                return votes.Near( 0 ) ? 0 : this.B / votes;
             }
         }
 
@@ -80,15 +80,15 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean IsBWinning => this.B > this.A;
 
-        public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
+        public Boolean IsLandslideA => this.IsAWinning && ( this.A > this.HalfOfVotes() );
 
-        public Boolean IsProtiguous => this.IsTied() && this.Votes > 1;
+        public Boolean IsProtiguous => this.IsTied() && ( this.Votes > 1 );
 
         /// <summary><see cref="A" /> + <see cref="B" /></summary>
         public Double Votes => this.A + this.B;
 
         /// <summary>No vote for either.</summary>
-        public static readonly VotallyD Zero = new VotallyD( votesForA: 0, votesForB: 0 );
+        public static readonly VotallyD Zero = new VotallyD( 0, 0 );
 
         public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
             this.A = votesForA;
@@ -98,16 +98,16 @@ namespace Librainian.Maths.Numbers {
         [NotNull]
         public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
             if ( left is null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right is null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             var result = left;
-            result.ForA( votes: right.A );
-            result.ForB( votes: right.B );
+            result.ForA( right.A );
+            result.ForB( right.B );
 
             return result;
         }
@@ -115,11 +115,11 @@ namespace Librainian.Maths.Numbers {
         public Double ChanceA() {
             var votes = this.Votes;
 
-            return votes.Near( target: 0 ) ? 0 : this.A / votes;
+            return votes.Near( 0 ) ? 0 : this.A / votes;
         }
 
         [NotNull]
-        public VotallyD Clone() => new VotallyD( votesForA: this.A, votesForB: this.B );
+        public VotallyD Clone() => new VotallyD( this.A, this.B );
 
         /// <summary>
         ///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
@@ -145,7 +145,7 @@ namespace Librainian.Maths.Numbers {
 
         public Double HalfOfVotes() => this.Votes / 2;
 
-        public Boolean IsTied() => this.A.Near( target: this.B );
+        public Boolean IsTied() => this.A.Near( this.B );
 
         public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 

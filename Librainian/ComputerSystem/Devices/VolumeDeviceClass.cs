@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "VolumeDeviceClass.cs" was last formatted by Protiguous on 2020/03/16 at 9:31 PM.
+// Project: "Librainian", File: "VolumeDeviceClass.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
@@ -47,24 +47,24 @@ namespace Librainian.ComputerSystem.Devices {
         protected internal SortedDictionary<String, String> LogicalDrives { get; } = new SortedDictionary<String, String>();
 
         /// <summary>Initializes a new instance of the VolumeDeviceClass class.</summary>
-        public VolumeDeviceClass() : base( classGuid: new Guid( g: NativeMethods.GUID_DEVINTERFACE_VOLUME ) ) {
-            var sb = new StringBuilder( capacity: 1024 );
+        public VolumeDeviceClass() : base( new Guid( NativeMethods.GUID_DEVINTERFACE_VOLUME ) ) {
+            var sb = new StringBuilder( 1024 );
 
             foreach ( var drive in Environment.GetLogicalDrives() ) {
                 sb.Clear();
 
-                if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( volumeName: drive, uniqueVolumeName: sb, uniqueNameBufferCapacity: ( UInt32 ) sb.Capacity ) ) {
+                if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( drive, sb, ( UInt32 ) sb.Capacity ) ) {
                     continue;
                 }
 
-                this.LogicalDrives[ key: sb.ToString() ] = drive.Replace( oldValue: @"\", newValue: "" );
+                this.LogicalDrives[ sb.ToString() ] = drive.Replace( @"\", "" );
 
                 //Debug.WriteLine( drive + " ==> " + sb );
             }
         }
 
         protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
-            new Volume( deviceClass: deviceClass, deviceInfoData: deviceInfoData, path: path, index: index );
+            new Volume( deviceClass, deviceInfoData, path, index );
 
     }
 

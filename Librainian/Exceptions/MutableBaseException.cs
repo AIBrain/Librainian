@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "MutableBaseException.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "MutableBaseException.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Exceptions {
 
@@ -42,23 +42,22 @@ namespace Librainian.Exceptions {
     [Serializable]
     public class MutableBaseException : ImmutableFailureException {
 
-        protected MutableBaseException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo: serializationInfo,
-            streamingContext: streamingContext ) { }
+        protected MutableBaseException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-        internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type: type, message: FormatMessage( type: type ), inner: inner ) {
+        internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type, FormatMessage( type ), inner ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             if ( inner is null ) {
-                throw new ArgumentNullException( paramName: nameof( inner ) );
+                throw new ArgumentNullException( nameof( inner ) );
             }
         }
 
         [NotNull]
         private static String FormatMessage( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             return $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";

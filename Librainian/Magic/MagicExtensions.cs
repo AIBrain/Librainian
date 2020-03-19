@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "MagicExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:44 PM.
+// Project: "Librainian", File: "MagicExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Magic {
 
@@ -98,7 +98,7 @@ namespace Librainian.Magic {
         /// <param name="action"></param>
         public static void Then( this Boolean b, [NotNull] Action action ) {
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException( nameof( action ) );
             }
 
             if ( b ) {

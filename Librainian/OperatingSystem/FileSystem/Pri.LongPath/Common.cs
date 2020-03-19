@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Common.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Common.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
+// 
+// Project: "Librainian", File: "Common.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -72,7 +72,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             return buffer.ToString();
         }
 
-        public static Boolean EndsWith( [CanBeNull] this String text, Char value ) => !String.IsNullOrEmpty( text ) && text[ text.Length - 1 ] == value;
+        public static Boolean EndsWith( [CanBeNull] this String text, Char value ) => !String.IsNullOrEmpty( text ) && ( text[ text.Length - 1 ] == value );
 
         public static Boolean Exists( [NotNull] this String path, out Boolean isDirectory ) {
             path = path.ThrowIfBlank();
@@ -81,7 +81,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 if ( !String.IsNullOrWhiteSpace( normalizedPath ) ) {
                     var errorCode = TryGetFileAttributes( normalizedPath, out var attributes );
 
-                    if ( errorCode == 0 && ( Int32 )attributes != NativeMethods.INVALID_FILE_ATTRIBUTES ) {
+                    if ( ( errorCode == 0 ) && ( ( Int32 ) attributes != NativeMethods.INVALID_FILE_ATTRIBUTES ) ) {
                         isDirectory = attributes.IsDirectory();
 
                         return true;
@@ -164,7 +164,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         public static Boolean IsPathDots( [NotNull] this String path ) {
             path = path.ThrowIfBlank();
 
-            return path == "." || path == "..";
+            return ( path == "." ) || ( path == ".." );
         }
 
         public static Boolean IsPathUnc( [NotNull] this String path ) {
@@ -195,7 +195,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         [NotNull]
         public static String NormalizeSearchPattern( [CanBeNull] [NotNull] this String searchPattern ) =>
-            String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
+            String.IsNullOrEmpty( searchPattern ) || ( searchPattern == "." ) ? "*" : searchPattern;
 
         public static void SetAttributes( [NotNull] this String path, FileAttributes fileAttributes ) {
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
@@ -211,11 +211,11 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             name = name.ThrowIfBlank();
 
             if ( !Enum.IsDefined( typeof( ResourceType ), type ) ) {
-                throw new InvalidEnumArgumentException( nameof( type ), ( Int32 )type, typeof( ResourceType ) );
+                throw new InvalidEnumArgumentException( nameof( type ), ( Int32 ) type, typeof( ResourceType ) );
             }
 
             if ( !Enum.IsDefined( typeof( SecurityInfos ), securityInformation ) ) {
-                throw new InvalidEnumArgumentException( nameof( securityInformation ), ( Int32 )securityInformation, typeof( SecurityInfos ) );
+                throw new InvalidEnumArgumentException( nameof( securityInformation ), ( Int32 ) securityInformation, typeof( SecurityInfos ) );
             }
 
             Int32 errorCode;
@@ -274,7 +274,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     }
                 }
 
-                errorCode = ( Int32 )NativeMethods.SetSecurityInfoByName( name, ( UInt32 )type, ( UInt32 )securityInformation, OwnerBinary, GroupBinary, DaclBinary,
+                errorCode = ( Int32 ) NativeMethods.SetSecurityInfoByName( name, ( UInt32 ) type, ( UInt32 ) securityInformation, OwnerBinary, GroupBinary, DaclBinary,
                     SaclBinary );
 
                 switch ( errorCode ) {
@@ -361,7 +361,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
 
             // This doesn't have to be perfect, but is a perf optimization.
-            var isInvalidPath = errorCode == NativeMethods.ERROR_INVALID_NAME || errorCode == NativeMethods.ERROR_BAD_PATHNAME;
+            var isInvalidPath = ( errorCode == NativeMethods.ERROR_INVALID_NAME ) || ( errorCode == NativeMethods.ERROR_BAD_PATHNAME );
             var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
             switch ( errorCode ) {
@@ -472,9 +472,11 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 NativeMethods.SetErrorMode( errorMode );
             }
 
-            attributes = ( FileAttributes )NativeMethods.INVALID_FILE_ATTRIBUTES;
+            attributes = ( FileAttributes ) NativeMethods.INVALID_FILE_ATTRIBUTES;
 
             return Marshal.GetLastWin32Error();
         }
+
     }
+
 }

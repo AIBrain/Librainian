@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "BooleanPredicateBuilder.cs" was last formatted by Protiguous on 2020/03/16 at 9:35 PM.
+// Project: "Librainian", File: "BooleanPredicateBuilder.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 
@@ -41,16 +41,14 @@ namespace Librainian.Extensions {
 
         [NotNull]
         public static Expression<Func<TTt, Boolean>> And<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
-            Expression.Lambda<Func<TTt, Boolean>>( body: Expression.AndAlso( left: expr1.Body, right: Expression.Invoke( expression: expr2, arguments: expr1.Parameters ) ),
-                parameters: expr1.Parameters );
+            Expression.Lambda<Func<TTt, Boolean>>( Expression.AndAlso( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
         [NotNull]
         public static Expression<Func<TTt, Boolean>> False<TTt>() => f => false;
 
         [NotNull]
         public static Expression<Func<TTt, Boolean>> Or<TTt>( [NotNull] this Expression<Func<TTt, Boolean>> expr1, [NotNull] Expression<Func<TTt, Boolean>> expr2 ) =>
-            Expression.Lambda<Func<TTt, Boolean>>( body: Expression.OrElse( left: expr1.Body, right: Expression.Invoke( expression: expr2, arguments: expr1.Parameters ) ),
-                parameters: expr1.Parameters );
+            Expression.Lambda<Func<TTt, Boolean>>( Expression.OrElse( expr1.Body, Expression.Invoke( expr2, expr1.Parameters ) ), expr1.Parameters );
 
         [NotNull]
         public static Expression<Func<TTt, Boolean>> True<TTt>() => f => true;

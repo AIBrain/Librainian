@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Directory.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Directory.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
+// 
+// Project: "Librainian", File: "Directory.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -52,7 +52,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             path = path.ThrowIfBlank();
             var length = path.Length;
 
-            if ( length >= 2 && path[ length - 1 ].IsDirectorySeparator() ) {
+            if ( ( length >= 2 ) && path[ length - 1 ].IsDirectorySeparator() ) {
                 --length;
             }
 
@@ -68,7 +68,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                         pathComponents.Add( subPath );
                     }
 
-                    while ( index > rootLength && path[ index ] != System.IO.Path.DirectorySeparatorChar && path[ index ] != System.IO.Path.AltDirectorySeparatorChar ) {
+                    while ( ( index > rootLength ) && ( path[ index ] != System.IO.Path.DirectorySeparatorChar ) &&
+                            ( path[ index ] != System.IO.Path.AltDirectorySeparatorChar ) ) {
                         --index;
                     }
                 }
@@ -89,7 +90,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 // To mimic Directory.CreateDirectory, we don't throw if the directory (not a file) already exists
                 var errorCode = Marshal.GetLastWin32Error();
 
-                if ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS || !path.Exists() ) {
+                if ( ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS ) || !path.Exists() ) {
                     throw Common.GetExceptionFromWin32Error( errorCode );
                 }
             }
@@ -227,7 +228,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var errorCode = Marshal.GetLastWin32Error();
 
-            if ( errorCode != NativeMethods.ERROR_FILE_NOT_FOUND && errorCode != NativeMethods.ERROR_PATH_NOT_FOUND && errorCode != NativeMethods.ERROR_NOT_READY ) {
+            if ( ( errorCode != NativeMethods.ERROR_FILE_NOT_FOUND ) && ( errorCode != NativeMethods.ERROR_PATH_NOT_FOUND ) &&
+                 ( errorCode != NativeMethods.ERROR_NOT_READY ) ) {
                 throw Common.GetExceptionFromWin32Error( errorCode );
             }
 
@@ -271,7 +273,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var length = fullPath.Length;
 
-            if ( length >= 2 && fullPath[ length - 1 ].IsDirectorySeparator() ) {
+            if ( ( length >= 2 ) && fullPath[ length - 1 ].IsDirectorySeparator() ) {
                 --length;
             }
 
@@ -287,7 +289,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                         pathComponents.Add( subPath.NormalizeLongPath() );
                     }
 
-                    while ( index > rootLength && fullPath[ index ].IsDirectorySeparator() ) {
+                    while ( ( index > rootLength ) && fullPath[ index ].IsDirectorySeparator() ) {
                         --index;
                     }
                 }
@@ -304,7 +306,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 // To mimic Directory.CreateDirectory, we don't throw if the directory (not a file) already exists
                 var errorCode = Marshal.GetLastWin32Error();
 
-                if ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS || !path.Exists() ) {
+                if ( ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS ) || !path.Exists() ) {
                     throw Common.GetExceptionFromWin32Error( errorCode );
                 }
             }
@@ -641,8 +643,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         [NotNull]
         public static SafeFileHandle GetDirectoryHandle( [NotNull] this String normalizedPath ) {
-            var handle = NativeMethods.CreateFile( normalizedPath, NativeMethods.EFileAccess.GenericWrite, ( UInt32 )( FileShare.Write | FileShare.Delete ), IntPtr.Zero,
-                ( Int32 )FileMode.Open, NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero );
+            var handle = NativeMethods.CreateFile( normalizedPath, NativeMethods.EFileAccess.GenericWrite, ( UInt32 ) ( FileShare.Write | FileShare.Delete ), IntPtr.Zero,
+                ( Int32 ) FileMode.Open, NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero );
 
             if ( !handle.IsInvalid ) {
                 return handle;
@@ -730,7 +732,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         public static void SetAttributes( [NotNull] String path, FileAttributes fileAttributes ) {
             if ( !Enum.IsDefined( typeof( FileAttributes ), fileAttributes ) ) {
-                throw new InvalidEnumArgumentException( nameof( fileAttributes ), ( Int32 )fileAttributes, typeof( FileAttributes ) );
+                throw new InvalidEnumArgumentException( nameof( fileAttributes ), ( Int32 ) fileAttributes, typeof( FileAttributes ) );
             }
 
             path.ThrowIfBlank().SetAttributes( fileAttributes );
@@ -828,5 +830,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 Common.ThrowIOError( errorCode, path );
             }
         }
+
     }
+
 }

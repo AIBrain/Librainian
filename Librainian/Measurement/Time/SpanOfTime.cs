@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "SpanOfTime.cs" was last formatted by Protiguous on 2020/03/16 at 9:52 PM.
+// Project: "Librainian", File: "SpanOfTime.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Measurement.Time {
 
@@ -51,22 +51,22 @@ namespace Librainian.Measurement.Time {
     ///     <para><see cref="SpanOfTime" /> represents the smallest <see cref="PlanckTimes" /> to an absurd huge(!) duration of time.</para>
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Units_of_time" />
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject( memberSerialization: MemberSerialization.Fields )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [JsonObject( MemberSerialization.Fields )]
     [Immutable]
     public class SpanOfTime : IEquatable<SpanOfTime>, IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
         public Int32 CompareTo( [NotNull] SpanOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException( nameof( other ) );
             }
 
-            return CompareTo( left: this, right: other );
+            return CompareTo( this, other );
         }
 
-        public Int32 CompareTo( TimeSpan other ) => CompareTo( left: this, right: new SpanOfTime( timeSpan: other ) );
+        public Int32 CompareTo( TimeSpan other ) => CompareTo( this, new SpanOfTime( other ) );
 
-        Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( obj: other );
+        Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
 
         /// <summary></summary>
         [JsonProperty]
@@ -141,61 +141,60 @@ namespace Librainian.Measurement.Time {
         /// <summary>
         ///     <para>1 of each measure of time</para>
         /// </summary>
-        public static SpanOfTime Identity = new SpanOfTime( planckTimes: 1, yoctoseconds: 1, zeptoseconds: 1, attoseconds: 1, femtoseconds: 1, picoseconds: 1, nanoseconds: 1,
-            microseconds: 1, milliseconds: 1, seconds: 1, minutes: 1, hours: 1, days: 1, weeks: 1, months: 1, years: 1 );
+        public static SpanOfTime Identity = new SpanOfTime( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
         /// <summary></summary>
-        public static SpanOfTime Zero = new SpanOfTime( planckTimes: 0 );
+        public static SpanOfTime Zero = new SpanOfTime( 0 );
 
         public SpanOfTime( BigInteger planckTimes ) {
 
-            this.Years = new Years( value: PlanckTimes.InOneYear.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Years = new Years( PlanckTimes.InOneYear.PullPlancks( ref planckTimes ) );
 
-            this.Months = new Months( value: PlanckTimes.InOneMonth.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Months = new Months( PlanckTimes.InOneMonth.PullPlancks( ref planckTimes ) );
 
             //this.Months.Value.Should().BeInRange( 0, Months.InOneCommonYear );
 
-            this.Weeks = new Weeks( value: PlanckTimes.InOneWeek.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Weeks = new Weeks( PlanckTimes.InOneWeek.PullPlancks( ref planckTimes ) );
 
             //this.Weeks.Value.Should().BeInRange( 0, Weeks.InOneCommonYear );
 
-            this.Days = new Days( value: PlanckTimes.InOneDay.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Days = new Days( PlanckTimes.InOneDay.PullPlancks( ref planckTimes ) );
 
             //this.Days.Value.Should().BeInRange( 0, Days.InOneCommonYear + 1 ); //leap year
 
-            this.Hours = new Hours( value: PlanckTimes.InOneHour.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Hours = new Hours( PlanckTimes.InOneHour.PullPlancks( ref planckTimes ) );
 
             //this.Hours.Value.Should().BeInRange( 0, Hours.InOneDay );
 
-            this.Minutes = new Minutes( value: PlanckTimes.InOneMinute.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Minutes = new Minutes( PlanckTimes.InOneMinute.PullPlancks( ref planckTimes ) );
 
             //this.Minutes.Value.Should().BeInRange( 0, Minutes.InOneHour );
 
-            this.Seconds = new Seconds( value: PlanckTimes.InOneSecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Seconds = new Seconds( PlanckTimes.InOneSecond.PullPlancks( ref planckTimes ) );
 
             //this.Seconds.Value.Should().BeInRange( 0, Seconds.InOneMinute );
 
-            this.Milliseconds = new Milliseconds( value: PlanckTimes.InOneMillisecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Milliseconds = new Milliseconds( PlanckTimes.InOneMillisecond.PullPlancks( ref planckTimes ) );
 
             //this.Milliseconds.Value.Should().BeInRange( 0, Milliseconds.InOneSecond );
 
-            this.Microseconds = new Microseconds( value: PlanckTimes.InOneMicrosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Microseconds = new Microseconds( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
 
             //this.Microseconds.Value.Should().BeInRange( 0, Microseconds.InOneMillisecond );
 
-            this.Nanoseconds = new Nanoseconds( value: PlanckTimes.InOneNanosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Nanoseconds = new Nanoseconds( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
 
-            this.Picoseconds = new Picoseconds( value: PlanckTimes.InOnePicosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Picoseconds = new Picoseconds( PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ) );
 
-            this.Femtoseconds = new Femtoseconds( value: PlanckTimes.InOneFemtosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Femtoseconds = new Femtoseconds( PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ) );
 
-            this.Attoseconds = new Attoseconds( value: PlanckTimes.InOneAttosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Attoseconds = new Attoseconds( PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ) );
 
-            this.Zeptoseconds = new Zeptoseconds( value: PlanckTimes.InOneZeptosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Zeptoseconds = new Zeptoseconds( PlanckTimes.InOneZeptosecond.PullPlancks( ref planckTimes ) );
 
-            this.Yoctoseconds = new Yoctoseconds( value: PlanckTimes.InOneYoctosecond.PullPlancks( planckTimes: ref planckTimes ) );
+            this.Yoctoseconds = new Yoctoseconds( PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ) );
 
-            this.PlanckTimes = new PlanckTimes( value: planckTimes );
+            this.PlanckTimes = new PlanckTimes( planckTimes );
         }
 
         /// <summary>
@@ -203,7 +202,7 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="timeSpan"></param>
         /// <param name="normalize"></param>
-        public SpanOfTime( TimeSpan timeSpan, Boolean normalize = true ) : this( seconds: new Milliseconds( value: timeSpan.Ticks / TimeSpan.TicksPerMillisecond ) ) { }
+        public SpanOfTime( TimeSpan timeSpan, Boolean normalize = true ) : this( new Milliseconds( timeSpan.Ticks / TimeSpan.TicksPerMillisecond ) ) { }
 
         /// <summary>
         ///     <para>Negative parameters passed to this constructor will interpret as zero instead of throwing an <see cref="ArgumentOutOfRangeException" />.</para>
@@ -228,10 +227,9 @@ namespace Librainian.Measurement.Time {
             [CanBeNull] Attoseconds? attoseconds = null, [CanBeNull] Femtoseconds? femtoseconds = null, [CanBeNull] Picoseconds? picoseconds = null,
             [CanBeNull] Nanoseconds? nanoseconds = null, [CanBeNull] Microseconds? microseconds = null, [CanBeNull] Milliseconds? milliseconds = null,
             [CanBeNull] Seconds? seconds = null, [CanBeNull] Minutes? minutes = null, [CanBeNull] Hours? hours = null, [CanBeNull] Days? days = null,
-            [CanBeNull] Weeks? weeks = null, [CanBeNull] Months? months = null, [CanBeNull] Years? years = null ) : this( planckTimes: planckTimes?.Value,
-            yoctoseconds: yoctoseconds?.Value, zeptoseconds: zeptoseconds?.Value, attoseconds: attoseconds?.Value, femtoseconds: femtoseconds?.Value,
-            picoseconds: picoseconds?.Value, nanoseconds: nanoseconds?.Value, microseconds: microseconds?.Value, milliseconds: milliseconds?.Value, seconds: seconds?.Value,
-            minutes: minutes?.Value, hours: hours?.Value, days: days?.Value, weeks: weeks?.Value, months: months?.Value, years: years?.Value ) { }
+            [CanBeNull] Weeks? weeks = null, [CanBeNull] Months? months = null, [CanBeNull] Years? years = null ) : this( planckTimes?.Value, yoctoseconds?.Value,
+            zeptoseconds?.Value, attoseconds?.Value, femtoseconds?.Value, picoseconds?.Value, nanoseconds?.Value, microseconds?.Value, milliseconds?.Value, seconds?.Value,
+            minutes?.Value, hours?.Value, days?.Value, weeks?.Value, months?.Value, years?.Value ) { }
 
         /// <summary></summary>
         /// <param name="planckTimes"></param>
@@ -259,26 +257,26 @@ namespace Librainian.Measurement.Time {
             this.PlanckTimes = PlanckTimes.Zero;
 
             if ( planckTimes.HasValue ) {
-                this.PlanckTimes += new PlanckTimes( value: planckTimes.Value );
+                this.PlanckTimes += new PlanckTimes( planckTimes.Value );
             }
 
-            this.PlanckTimes += new Yoctoseconds( value: yoctoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Zeptoseconds( value: zeptoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Attoseconds( value: attoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Femtoseconds( value: femtoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Picoseconds( value: picoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Nanoseconds( value: nanoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Microseconds( value: microseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Milliseconds( value: milliseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Seconds( value: seconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Minutes( value: minutes.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Hours( value: hours.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Days( value: days.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Weeks( weeks: weeks.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Months( value: months.IfLessThanZeroThenZero() ).ToPlanckTimes();
-            this.PlanckTimes += new Years( value: years.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Yoctoseconds( yoctoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Zeptoseconds( zeptoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Attoseconds( attoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Femtoseconds( femtoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Picoseconds( picoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Nanoseconds( nanoseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Microseconds( microseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Milliseconds( milliseconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Seconds( seconds.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Minutes( minutes.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Hours( hours.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Days( days.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Weeks( weeks.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Months( months.IfLessThanZeroThenZero() ).ToPlanckTimes();
+            this.PlanckTimes += new Years( years.IfLessThanZeroThenZero() ).ToPlanckTimes();
 
-            var spanOfTime = new SpanOfTime( planckTimes: this.PlanckTimes.Value ); //cheat?
+            var spanOfTime = new SpanOfTime( this.PlanckTimes.Value ); //cheat?
 
             this.PlanckTimes = spanOfTime.PlanckTimes;
             this.Yoctoseconds = spanOfTime.Yoctoseconds;
@@ -306,7 +304,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>TODO untested</summary>
         /// <param name="seconds"></param>
         public SpanOfTime( Rational seconds ) {
-            var span = new SpanOfTime( planckTimes: new Seconds( value: seconds ).ToPlanckTimes().Value );
+            var span = new SpanOfTime( new Seconds( seconds ).ToPlanckTimes().Value );
 
             this.PlanckTimes = span.PlanckTimes;
             this.Attoseconds = span.Attoseconds;
@@ -337,11 +335,11 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static SpanOfTime Combine( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right == null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             //TODO do some overflow handling with BigInteger math
@@ -382,17 +380,17 @@ namespace Librainian.Measurement.Time {
         /// <returns></returns>
         public static Int32 CompareTo( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right == null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
             var leftPlancks = left.CalcTotalPlanckTimes();
             var rightPlancks = right.CalcTotalPlanckTimes();
 
-            return leftPlancks.CompareTo( other: rightPlancks );
+            return leftPlancks.CompareTo( rightPlancks );
         }
 
         /// <summary>
@@ -409,14 +407,14 @@ namespace Librainian.Measurement.Time {
         /// <param name="span"></param>
         /// <returns></returns>
         [NotNull]
-        public static explicit operator SpanOfTime( TimeSpan span ) => new SpanOfTime( timeSpan: span );
+        public static explicit operator SpanOfTime( TimeSpan span ) => new SpanOfTime( span );
 
         /// <summary>Allow an automatic cast to <see cref="TimeSpan" />.</summary>
         /// <param name="spanOfTime"></param>
         /// <returns></returns>
         public static implicit operator TimeSpan( SpanOfTime spanOfTime ) =>
-            new TimeSpan( days: ( Int32 ) spanOfTime.Days.Value, hours: ( Int32 ) spanOfTime.Hours.Value, minutes: ( Int32 ) spanOfTime.Minutes.Value,
-                seconds: ( Int32 ) spanOfTime.Seconds.Value, milliseconds: ( Int32 ) spanOfTime.Milliseconds.Value );
+            new TimeSpan( ( Int32 ) spanOfTime.Days.Value, ( Int32 ) spanOfTime.Hours.Value, ( Int32 ) spanOfTime.Minutes.Value, ( Int32 ) spanOfTime.Seconds.Value,
+                ( Int32 ) spanOfTime.Milliseconds.Value );
 
         /// <summary>
         ///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
@@ -433,10 +431,10 @@ namespace Librainian.Measurement.Time {
 
             var result = leftPlancks.Value - rightPlancks.Value;
 
-            return result <= BigInteger.Zero ? Zero : new SpanOfTime( planckTimes: result );
+            return result <= BigInteger.Zero ? Zero : new SpanOfTime( result );
         }
 
-        public static Boolean operator !=( [CanBeNull] SpanOfTime t1, [CanBeNull] SpanOfTime t2 ) => !Equals( left: t1, right: t2 );
+        public static Boolean operator !=( [CanBeNull] SpanOfTime t1, [CanBeNull] SpanOfTime t2 ) => !Equals( t1, t2 );
 
         /// <summary>
         ///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
@@ -448,21 +446,21 @@ namespace Librainian.Measurement.Time {
         [NotNull]
         public static SpanOfTime operator +( [NotNull] SpanOfTime left, [NotNull] SpanOfTime right ) {
             if ( left == null ) {
-                throw new ArgumentNullException( paramName: nameof( left ) );
+                throw new ArgumentNullException( nameof( left ) );
             }
 
             if ( right == null ) {
-                throw new ArgumentNullException( paramName: nameof( right ) );
+                throw new ArgumentNullException( nameof( right ) );
             }
 
-            return Combine( left: left, right: right );
+            return Combine( left, right );
         }
 
         public static Boolean operator <( SpanOfTime left, SpanOfTime right ) => left.CalcTotalPlanckTimes() < right.CalcTotalPlanckTimes();
 
         public static Boolean operator <=( SpanOfTime left, SpanOfTime right ) => left.CalcTotalPlanckTimes() <= right.CalcTotalPlanckTimes();
 
-        public static Boolean operator ==( [CanBeNull] SpanOfTime left, [CanBeNull] SpanOfTime right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( [CanBeNull] SpanOfTime left, [CanBeNull] SpanOfTime right ) => Equals( left, right );
 
         public static Boolean operator >( SpanOfTime left, SpanOfTime right ) => left.CalcTotalPlanckTimes() > right.CalcTotalPlanckTimes();
 
@@ -484,43 +482,43 @@ namespace Librainian.Measurement.Time {
                     return Zero;
                 }
 
-                if ( TimeSpan.TryParse( s: text, result: out var result ) ) {
-                    return new SpanOfTime( timeSpan: result ); //cheat and use the existing TimeSpan parsing code...
+                if ( TimeSpan.TryParse( text, out var result ) ) {
+                    return new SpanOfTime( result ); //cheat and use the existing TimeSpan parsing code...
                 }
 
-                if ( text.TryGetDecimal( result: out var units ) ) {
-                    return new SpanOfTime( seconds: ( Rational ) units ); //assume seconds given
+                if ( text.TryGetDecimal( out var units ) ) {
+                    return new SpanOfTime( ( Rational ) units ); //assume seconds given
                 }
 
-                if ( text.EndsWith( value: "milliseconds", comparisonType: StringComparison.CurrentCultureIgnoreCase ) ) {
-                    text = text.Before( splitter: "milliseconds" );
+                if ( text.EndsWith( "milliseconds", StringComparison.CurrentCultureIgnoreCase ) ) {
+                    text = text.Before( "milliseconds" );
 
-                    if ( text.TryGetDecimal( result: out units ) ) {
-                        return new SpanOfTime( seconds: new Milliseconds( value: units ) );
+                    if ( text.TryGetDecimal( out units ) ) {
+                        return new SpanOfTime( new Milliseconds( units ) );
                     }
                 }
 
-                if ( text.EndsWith( value: "millisecond", comparisonType: StringComparison.CurrentCultureIgnoreCase ) ) {
-                    text = text.Before( splitter: "millisecond" );
+                if ( text.EndsWith( "millisecond", StringComparison.CurrentCultureIgnoreCase ) ) {
+                    text = text.Before( "millisecond" );
 
-                    if ( text.TryGetDecimal( result: out units ) ) {
-                        return new SpanOfTime( seconds: new Milliseconds( value: units ) );
+                    if ( text.TryGetDecimal( out units ) ) {
+                        return new SpanOfTime( new Milliseconds( units ) );
                     }
                 }
 
-                if ( text.EndsWith( value: "seconds", comparisonType: StringComparison.CurrentCultureIgnoreCase ) ) {
-                    text = text.Before( splitter: "seconds" );
+                if ( text.EndsWith( "seconds", StringComparison.CurrentCultureIgnoreCase ) ) {
+                    text = text.Before( "seconds" );
 
-                    if ( text.TryGetDecimal( result: out units ) ) {
-                        return new SpanOfTime( seconds: ( Rational ) units );
+                    if ( text.TryGetDecimal( out units ) ) {
+                        return new SpanOfTime( ( Rational ) units );
                     }
                 }
 
-                if ( text.EndsWith( value: "second", comparisonType: StringComparison.CurrentCultureIgnoreCase ) ) {
-                    text = text.Before( splitter: "second" );
+                if ( text.EndsWith( "second", StringComparison.CurrentCultureIgnoreCase ) ) {
+                    text = text.Before( "second" );
 
-                    if ( text.TryGetDecimal( result: out units ) ) {
-                        return new SpanOfTime( seconds: ( Rational ) units );
+                    if ( text.TryGetDecimal( out units ) ) {
+                        return new SpanOfTime( ( Rational ) units );
                     }
                 }
 
@@ -555,10 +553,10 @@ namespace Librainian.Measurement.Time {
                 return default;
             }
 
-            return obj is SpanOfTime span && Equals( left: this, right: span );
+            return obj is SpanOfTime span && Equals( this, span );
         }
 
-        public Boolean Equals( [CanBeNull] SpanOfTime obj ) => Equals( left: this, right: obj );
+        public Boolean Equals( [CanBeNull] SpanOfTime obj ) => Equals( this, obj );
 
         /// <summary>
         ///     <para>Return a <see cref="TimeSpan" />'s worth of <see cref="Milliseconds" />.</para>
@@ -592,79 +590,79 @@ namespace Librainian.Measurement.Time {
         ///     <para>Returns a <see cref="BigInteger" /> of all the whole (integer) years in this <see cref="SpanOfTime" />.</para>
         /// </summary>
         public BigInteger GetWholeYears() {
-            var span = new SpanOfTime( planckTimes: this.CalcTotalPlanckTimes() );
+            var span = new SpanOfTime( this.CalcTotalPlanckTimes() );
 
             return span.Years.Value.WholePart;
         }
 
         public override String ToString() {
-            var bob = new Queue<String>( capacity: 20 );
+            var bob = new Queue<String>( 20 );
 
             if ( this.Years.Value != 0 ) {
-                bob.Enqueue( item: this.Years.ToString() );
+                bob.Enqueue( this.Years.ToString() );
             }
 
             if ( this.Months.Value != 0 ) {
-                bob.Enqueue( item: this.Months.ToString() );
+                bob.Enqueue( this.Months.ToString() );
             }
 
             if ( this.Weeks.Value != 0 ) {
-                bob.Enqueue( item: this.Weeks.ToString() );
+                bob.Enqueue( this.Weeks.ToString() );
             }
 
             if ( this.Days.Value != 0 ) {
-                bob.Enqueue( item: this.Days.ToString() );
+                bob.Enqueue( this.Days.ToString() );
             }
 
             if ( this.Hours.Value != 0 ) {
-                bob.Enqueue( item: this.Hours.ToString() );
+                bob.Enqueue( this.Hours.ToString() );
             }
 
             if ( this.Minutes.Value != 0 ) {
-                bob.Enqueue( item: this.Minutes.ToString() );
+                bob.Enqueue( this.Minutes.ToString() );
             }
 
             if ( this.Seconds.Value != 0 ) {
-                bob.Enqueue( item: this.Seconds.ToString() );
+                bob.Enqueue( this.Seconds.ToString() );
             }
 
             if ( this.Milliseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Milliseconds.ToString() );
+                bob.Enqueue( this.Milliseconds.ToString() );
             }
 
             if ( this.Microseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Microseconds.ToString() );
+                bob.Enqueue( this.Microseconds.ToString() );
             }
 
             if ( this.Nanoseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Nanoseconds.ToString() );
+                bob.Enqueue( this.Nanoseconds.ToString() );
             }
 
             if ( this.Picoseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Picoseconds.ToString() );
+                bob.Enqueue( this.Picoseconds.ToString() );
             }
 
             if ( this.Femtoseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Femtoseconds.ToString() );
+                bob.Enqueue( this.Femtoseconds.ToString() );
             }
 
             if ( this.Attoseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Attoseconds.ToString() );
+                bob.Enqueue( this.Attoseconds.ToString() );
             }
 
             if ( this.Zeptoseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Zeptoseconds.ToString() );
+                bob.Enqueue( this.Zeptoseconds.ToString() );
             }
 
             if ( this.Yoctoseconds.Value != 0 ) {
-                bob.Enqueue( item: this.Yoctoseconds.ToString() );
+                bob.Enqueue( this.Yoctoseconds.ToString() );
             }
 
             if ( this.PlanckTimes.Value != BigInteger.Zero ) {
-                bob.Enqueue( item: this.PlanckTimes.ToString() );
+                bob.Enqueue( this.PlanckTimes.ToString() );
             }
 
-            return bob.ToStrings( separator: ", ", atTheEnd: ", and " );
+            return bob.ToStrings( ", ", ", and " );
         }
 
         /*

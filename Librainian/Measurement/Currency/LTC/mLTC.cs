@@ -29,14 +29,14 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "mLTC.cs" was last formatted by Protiguous on 2020/03/16 at 9:48 PM.
+// Project: "Librainian", File: "mLTC.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Measurement.Currency.LTC {
 
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + ",nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + ",nq}" )]
     public struct MLtc : ICoin {
 
         public Decimal FaceValue => 0.001M;

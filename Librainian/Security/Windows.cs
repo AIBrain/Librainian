@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Windows.cs" was last formatted by Protiguous on 2020/03/16 at 10:02 PM.
+// Project: "Librainian", File: "Windows.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Security {
 
@@ -45,9 +45,9 @@ namespace Librainian.Security {
         public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
             try {
                 using ( var windowsIdentity = WindowsIdentity.GetCurrent() ) {
-                    var windowsPrincipal = new WindowsPrincipal( ntIdentity: windowsIdentity );
+                    var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
 
-                    return windowsPrincipal.IsInRole( role: role );
+                    return windowsPrincipal.IsInRole( role );
                 }
             }
             catch ( SecurityException ) { }

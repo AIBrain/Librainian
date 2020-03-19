@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2020/03/16 at 9:36 PM.
+// Project: "Librainian", File: "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 
@@ -42,49 +42,49 @@ namespace Librainian.Extensions {
         [NotNull]
         public String Format( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             if ( arg == null ) {
-                throw new ArgumentNullException( paramName: nameof( arg ) );
+                throw new ArgumentNullException( nameof( arg ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: format ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( format ) );
+            if ( String.IsNullOrWhiteSpace( format ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
             }
 
-            if ( !format.StartsWith( value: FileSizeFormat, comparisonType: StringComparison.CurrentCultureIgnoreCase ) ) {
-                return DefaultFormat( format: format, arg: arg, formatProvider: formatProvider );
+            if ( !format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) ) {
+                return DefaultFormat( format, arg, formatProvider );
             }
 
             if ( arg is String ) {
-                return DefaultFormat( format: format, arg: arg, formatProvider: formatProvider );
+                return DefaultFormat( format, arg, formatProvider );
             }
 
             Single size;
 
             try {
-                size = Convert.ToUInt64( value: arg );
+                size = Convert.ToUInt64( arg );
             }
             catch ( InvalidCastException ) {
-                return DefaultFormat( format: format, arg: arg, formatProvider: formatProvider );
+                return DefaultFormat( format, arg, formatProvider );
             }
 
             var suffix = "n/a";
 
-            if ( size.Between( startInclusive: MathConstants.Sizes.OneTeraByte, endInclusive: UInt64.MaxValue ) ) {
+            if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
                 size /= MathConstants.Sizes.OneTeraByte;
                 suffix = "trillion";
             }
-            else if ( size.Between( startInclusive: MathConstants.Sizes.OneGigaByte, endInclusive: MathConstants.Sizes.OneTeraByte ) ) {
+            else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
                 size /= MathConstants.Sizes.OneGigaByte;
                 suffix = "billion";
             }
-            else if ( size.Between( startInclusive: MathConstants.Sizes.OneMegaByte, endInclusive: MathConstants.Sizes.OneGigaByte ) ) {
+            else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
                 size /= MathConstants.Sizes.OneMegaByte;
                 suffix = "million";
             }
-            else if ( size.Between( startInclusive: MathConstants.Sizes.OneKiloByte, endInclusive: MathConstants.Sizes.OneMegaByte ) ) {
+            else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
                 size /= MathConstants.Sizes.OneKiloByte;
                 suffix = "thousand";
             }
-            else if ( size.Between( startInclusive: UInt64.MinValue, endInclusive: MathConstants.Sizes.OneKiloByte ) ) {
+            else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
                 suffix = "";
             }
 
@@ -93,7 +93,7 @@ namespace Librainian.Extensions {
 
         public Object GetFormat( [NotNull] Type formatType ) {
             if ( formatType is null ) {
-                throw new ArgumentNullException( paramName: nameof( formatType ) );
+                throw new ArgumentNullException( nameof( formatType ) );
             }
 
             return formatType == typeof( ICustomFormatter ) ? this : null;
@@ -105,7 +105,7 @@ namespace Librainian.Extensions {
         private static String DefaultFormat( [CanBeNull] String? format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
             var formattableArg = arg as IFormattable;
 
-            return formattableArg?.ToString( format: format, formatProvider: formatProvider ) ?? arg.ToString();
+            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
         }
 
     }

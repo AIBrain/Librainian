@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Fuzzy.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Fuzzy.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
+// 
+// Project: "Librainian", File: "Fuzzy.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Maths {
 
@@ -45,27 +45,21 @@ namespace Librainian.Maths {
         Middle,
 
         High
+
     }
 
     /// <summary>A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked</summary>
     [JsonObject]
     public class Fuzzy : ICloneable {
 
+        public Object Clone() => new Fuzzy( this.Value );
+
         /// <summary>ONLY used in the getter and setter.</summary>
         [JsonProperty]
         private AtomicDouble _value;
 
-        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
-
-        /// <summary>1</summary>
-        public const Double MaxValue = 1D;
-
-        /// <summary>0</summary>
-        public const Double MinValue = 0D;
-
         /// <summary>~25 to 75% probability.</summary>
-        private static PairOfDoubles Undecided { get; } =
-            new PairOfDoubles( low: Combine( left: MinValue, right: HalfValue ), high: Combine( left: HalfValue, right: MaxValue ) );
+        private static PairOfDoubles Undecided { get; } = new PairOfDoubles( Combine( MinValue, HalfValue ), Combine( HalfValue, MaxValue ) );
 
         public static Fuzzy Empty { get; }
 
@@ -84,6 +78,14 @@ namespace Librainian.Maths {
             }
         }
 
+        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
+
+        /// <summary>1</summary>
+        public const Double MaxValue = 1D;
+
+        /// <summary>0</summary>
+        public const Double MinValue = 0D;
+
         /// <summary>If <paramref name="value" /> is null, then Initializes to a random number between 0 and 1.</summary>
         public Fuzzy( Double? value = null ) {
             if ( value.HasValue ) {
@@ -100,11 +102,11 @@ namespace Librainian.Maths {
         //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
         public static Double Combine( Double left, Double right ) {
             if ( !left.IsNumber() ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( left ) );
+                throw new ArgumentOutOfRangeException( nameof( left ) );
             }
 
             if ( !right.IsNumber() ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( right ) );
+                throw new ArgumentOutOfRangeException( nameof( right ) );
             }
 
             return ( left + right ) / 2D;
@@ -112,23 +114,23 @@ namespace Librainian.Maths {
 
         [CanBeNull]
         public static Fuzzy Parse( [CanBeNull] String? value ) {
-            if ( String.IsNullOrWhiteSpace( value: value ) ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            if ( Double.TryParse( s: value, result: out var result ) ) {
-                return new Fuzzy( value: result );
+            if ( Double.TryParse( value, out var result ) ) {
+                return new Fuzzy( result );
             }
 
             return default;
         }
 
         public static Boolean TryParse( [CanBeNull] String? value, [CanBeNull] out Fuzzy result ) {
-            if ( String.IsNullOrWhiteSpace( value: value ) ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+            if ( String.IsNullOrWhiteSpace( value ) ) {
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            result = Double.TryParse( s: value, result: out var d ) ? new Fuzzy( value: d ) : null;
+            result = Double.TryParse( value, out var d ) ? new Fuzzy( d ) : null;
 
             return result != null;
         }
@@ -136,8 +138,6 @@ namespace Librainian.Maths {
         public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
         public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
-
-        public Object Clone() => new Fuzzy( value: this.Value );
 
         //public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
         public Boolean IsFalseish() => this.Value < Undecided.Low;
@@ -160,16 +160,16 @@ namespace Librainian.Maths {
                         case LowMiddleHigh.Low:
 
                             do {
-                                this.Value = Randem.NextDouble( min: 0.0D, max: 0.25D );
-                            } while ( this.Value < MinValue || this.Value > 0.25D );
+                                this.Value = Randem.NextDouble( 0.0D, 0.25D );
+                            } while ( ( this.Value < MinValue ) || ( this.Value > 0.25D ) );
 
                             break;
 
                         case LowMiddleHigh.Middle:
 
                             do {
-                                this.Value = Randem.NextDouble( min: 0.25D, max: 0.75D );
-                            } while ( this.Value < 0.25D || this.Value > 0.75D );
+                                this.Value = Randem.NextDouble( 0.25D, 0.75D );
+                            } while ( ( this.Value < 0.25D ) || ( this.Value > 0.75D ) );
 
                             break;
 
@@ -177,7 +177,7 @@ namespace Librainian.Maths {
 
                             do {
                                 this.Value = Randem.NextDouble();
-                            } while ( this.Value < 0.75D || this.Value > MaxValue );
+                            } while ( ( this.Value < 0.75D ) || ( this.Value > MaxValue ) );
 
                             break;
 
@@ -192,5 +192,7 @@ namespace Librainian.Maths {
         }
 
         public override String ToString() => $"{this.Value:R}";
+
     }
+
 }

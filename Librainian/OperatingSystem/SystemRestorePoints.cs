@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "SystemRestorePoints.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "SystemRestorePoints.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -42,12 +42,12 @@ namespace Librainian.OperatingSystem {
         /// <param name="title"></param>
         /// <returns></returns>
         public static Boolean CreateRestorePoint( String title = null ) {
-            if ( String.IsNullOrWhiteSpace( value: title ) ) {
+            if ( String.IsNullOrWhiteSpace( title ) ) {
                 var now = DateTime.Now;
                 title = "Restore point at " + now.ToLongDateString() + " " + now.ToLongTimeString();
             }
 
-            dynamic restorePoint = Interaction.GetObject( PathName: "winmgmts:\\\\.\\root\\default:Systemrestore" );
+            dynamic restorePoint = Interaction.GetObject( "winmgmts:\\\\.\\root\\default:Systemrestore" );
 
             return restorePoint?.CreateRestorePoint( title, 0, 100 ) == 0;
         }

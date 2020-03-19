@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Images.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Images.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
+// 
+// Project: "Librainian", File: "Images.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Graphics {
 
@@ -962,6 +962,7 @@ namespace Librainian.Graphics {
             HalftoneScreen = 0x500F,
 
             HalftoneShape = 0x500D
+
         }
 
         /// <summary>if the image file contains a 'valid' date, use that.</summary>
@@ -986,7 +987,7 @@ namespace Librainian.Graphics {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeOriginal ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeOriginal ).GetProperteryAsDateTime();
 
-                        if ( asDateTime?.IsDateRecentEnough() == true && asDateTime.Value.IsDateNotTooNew() ) {
+                        if ( ( asDateTime?.IsDateRecentEnough() == true ) && asDateTime.Value.IsDateNotTooNew() ) {
                             {
                                 bestGuess = asDateTime.Value;
 
@@ -998,7 +999,7 @@ namespace Librainian.Graphics {
                     if ( image.PropertyIdList.Contains( PropertyList.DateTimeDigitized ) ) {
                         var asDateTime = image.GetPropertyItem( PropertyList.DateTimeDigitized ).GetProperteryAsDateTime();
 
-                        if ( asDateTime?.IsDateRecentEnough() == true && asDateTime.Value.IsDateNotTooNew() ) {
+                        if ( ( asDateTime?.IsDateRecentEnough() == true ) && asDateTime.Value.IsDateNotTooNew() ) {
                             {
                                 bestGuess = asDateTime.Value;
 
@@ -1046,7 +1047,7 @@ namespace Librainian.Graphics {
 
         [NotNull]
         public static Matrix3X2 ComputeForwardTransform( [NotNull] IList<Point> baselineLocations, [NotNull] IList<Point> registerLocations ) {
-            if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
+            if ( ( baselineLocations.Count < 3 ) || ( registerLocations.Count < 3 ) ) {
                 throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
             }
 
@@ -1388,11 +1389,11 @@ namespace Librainian.Graphics {
         /// <param name="fileB"></param>
         /// <returns></returns>
         public static async Task<Boolean> IsSameImage( [CanBeNull] this Document fileA, [CanBeNull] Document fileB ) {
-            if ( null == fileA || null == fileB ) {
+            if ( ( null == fileA ) || ( null == fileB ) ) {
                 return default;
             }
 
-            if ( fileA.Exists() == false || fileB.Exists() == false ) {
+            if ( ( fileA.Exists() == false ) || ( fileB.Exists() == false ) ) {
                 return default;
             }
 
@@ -1400,12 +1401,12 @@ namespace Librainian.Graphics {
                 var imageA = await Task.Run( () => Image.FromFile( fileA.FullPath ) ).ConfigureAwait( false );
                 var imageB = await Task.Run( () => Image.FromFile( fileB.FullPath ) ).ConfigureAwait( false );
 
-                if ( imageA.Width < imageB.Width && imageA.Height < imageB.Height ) {
+                if ( ( imageA.Width < imageB.Width ) && ( imageA.Height < imageB.Height ) ) {
 
                     // ReSharper disable once RedundantAssignment
                     imageA = ResizeImage( imageA, imageB.Size ); //resize because B is larger
                 }
-                else if ( imageA.Width > imageB.Width && imageA.Height > imageB.Height ) {
+                else if ( ( imageA.Width > imageB.Width ) && ( imageA.Height > imageB.Height ) ) {
 
                     // ReSharper disable once RedundantAssignment
                     imageB = ResizeImage( imageB, imageA.Size ); //resize because A is larger
@@ -1432,13 +1433,13 @@ namespace Librainian.Graphics {
             var sourceWidth = imgToResize.Width;
             var sourceHeight = imgToResize.Height;
 
-            var nPercentW = size.Width / ( Single )sourceWidth;
-            var nPercentH = size.Height / ( Single )sourceHeight;
+            var nPercentW = size.Width / ( Single ) sourceWidth;
+            var nPercentH = size.Height / ( Single ) sourceHeight;
 
             var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
 
-            var destWidth = ( Int32 )( sourceWidth * nPercent );
-            var destHeight = ( Int32 )( sourceHeight * nPercent );
+            var destWidth = ( Int32 ) ( sourceWidth * nPercent );
+            var destHeight = ( Int32 ) ( sourceHeight * nPercent );
 
             using ( var bitmap = new Bitmap( destWidth, destHeight ) ) {
                 using ( var g = Graphics.FromImage( bitmap ) ) {
@@ -1460,6 +1461,7 @@ namespace Librainian.Graphics {
             /// <see cref="http://wikipedia.org/wiki/TIFF" />
             [NotNull]
             public static String Tiff => ".tif";
+
         }
 
         internal static class PropertyList {
@@ -1469,6 +1471,9 @@ namespace Librainian.Graphics {
             public const Int32 DateTimeOriginal = 0x9003;
 
             public const Int32 PropertyTagDateTime = 0x132;
+
         }
+
     }
+
 }

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "SafeFindHandle.cs" was last formatted by Protiguous on 2020/03/16 at 9:57 PM.
+// Project: "Librainian", File: "SafeFindHandle.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -38,9 +38,9 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
     public sealed class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
-        public SafeFindHandle() : base( ownsHandle: true ) { }
+        public SafeFindHandle() : base( true ) { }
 
-        protected override Boolean ReleaseHandle() => NativeMethods.FindClose( hFindFile: this.handle );
+        protected override Boolean ReleaseHandle() => NativeMethods.FindClose( this.handle );
 
     }
 

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "PopulateProgressDelegateError.cs" was last formatted by Protiguous on 2020/03/16 at 9:37 PM.
+// Project: "Librainian", File: "PopulateProgressDelegateError.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 

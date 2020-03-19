@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Base58String.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "Base58String.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing {
 
@@ -47,7 +47,7 @@ namespace Librainian.Parsing {
         public static String FromByteArray( [NotNull] this Byte[] b ) {
             var sb = new StringBuilder();
 
-            var bi = new BigInteger( value: b.Reverse().Concat( second: new Byte[] {
+            var bi = new BigInteger( b.Reverse().Concat( new Byte[] {
                 0x00
             } ).ToArray() ); // concat adds sign byte
 
@@ -55,12 +55,12 @@ namespace Librainian.Parsing {
             while ( bi > 0 ) {
                 var mod = ( Int32 ) ( bi % 58 );
                 bi /= 58;
-                sb.Insert( index: 0, value: Base58Chars[ index: mod ] );
+                sb.Insert( 0, Base58Chars[ mod ] );
             }
 
             // Add 1s for leading 0x00 bytes
-            for ( var i = 0; i < b.Length && b[ i ] == 0x00; i++ ) {
-                sb.Insert( index: 0, value: '1' );
+            for ( var i = 0; ( i < b.Length ) && ( b[ i ] == 0x00 ); i++ ) {
+                sb.Insert( 0, '1' );
             }
 
             return sb.ToString();
@@ -71,7 +71,7 @@ namespace Librainian.Parsing {
             BigInteger bi = 0;
 
             // Decode base58
-            foreach ( var charVal in s.Select( selector: c => Base58Chars.IndexOf( value: c ) ).Where( predicate: charVal => charVal != -1 ) ) {
+            foreach ( var charVal in s.Select( c => Base58Chars.IndexOf( c ) ).Where( charVal => charVal != -1 ) ) {
                 bi *= 58;
                 bi += charVal;
             }
@@ -80,13 +80,13 @@ namespace Librainian.Parsing {
 
             // Remove 0x00 sign byte if present.
             if ( b[ b.Length - 1 ] == 0x00 ) {
-                b = b.Take( count: b.Length - 1 ).ToArray();
+                b = b.Take( b.Length - 1 ).ToArray();
             }
 
             // Add leading 0x00 bytes
-            var num0S = s.IndexOf( value: s.First( predicate: c => c != '1' ) );
+            var num0S = s.IndexOf( s.First( c => c != '1' ) );
 
-            return b.Concat( second: new Byte[ num0S ] ).Reverse().ToArray();
+            return b.Concat( new Byte[ num0S ] ).Reverse().ToArray();
         }
 
     }

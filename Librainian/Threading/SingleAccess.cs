@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "SingleAccess.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "SingleAccess.cs" was last formatted by Protiguous on 2020/03/16 at 3:02 PM.
+// 
+// Project: "Librainian", File: "SingleAccess.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Threading {
 
@@ -74,8 +74,8 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: id.ToString( format: "D" ) );
-                this.Snagged = this.Semaphore.WaitOne( timeout: timeout.Value );
+                this.Semaphore = new Semaphore( 1, 1, id.ToString( "D" ) );
+                this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -86,7 +86,7 @@ namespace Librainian.Threading {
         /// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] FileSystemInfo name, TimeSpan? timeout = null ) {
             if ( name is null ) {
-                throw new ArgumentNullException( paramName: nameof( name ) );
+                throw new ArgumentNullException( nameof( name ) );
             }
 
             try {
@@ -95,8 +95,8 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.FullPath.GetMD5Hash() );
-                this.Snagged = this.Semaphore.WaitOne( timeout: timeout.Value );
+                this.Semaphore = new Semaphore( 1, 1, name.FullPath.GetMD5Hash() );
+                this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -106,8 +106,8 @@ namespace Librainian.Threading {
         /// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
         /// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] String name, TimeSpan? timeout = null ) {
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             try {
@@ -116,15 +116,15 @@ namespace Librainian.Threading {
                 }
 
                 this.Snagged = false;
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: name.GetMD5Hash() );
-                this.Snagged = this.Semaphore.WaitOne( timeout: timeout.Value );
+                this.Semaphore = new Semaphore( 1, 1, name.GetMD5Hash() );
+                this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
                 exception.Log();
             }
         }
 
-        public SingleAccess( [NotNull] IDocument document, TimeSpan? timeout = null ) : this( name: document.FullPath, timeout: timeout ) { }
+        public SingleAccess( [NotNull] IDocument document, TimeSpan? timeout = null ) : this( document.FullPath, timeout ) { }
 
         /// <summary>Dispose any disposable members.</summary>
         public override void DisposeManaged() {
@@ -141,6 +141,7 @@ namespace Librainian.Threading {
                 }
             }
         }
+
     }
 
     /// <summary>Uses a named <see cref="Semaphore" /> to allow only 1 access to "self".
@@ -164,7 +165,7 @@ namespace Librainian.Threading {
         /// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
         public SingleAccess( [NotNull] T self, TimeSpan? timeout = null ) {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException( nameof( self ) );
             }
 
             try {
@@ -174,8 +175,8 @@ namespace Librainian.Threading {
 
                 this.Snagged = false;
                 var hex = self.Serializer()?.ToHexString();
-                this.Semaphore = new Semaphore( initialCount: 1, maximumCount: 1, name: hex ); //what happens on a null?
-                this.Snagged = this.Semaphore.WaitOne( timeout: timeout.Value );
+                this.Semaphore = new Semaphore( 1, 1, hex ); //what happens on a null?
+                this.Snagged = this.Semaphore.WaitOne( timeout.Value );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -197,5 +198,7 @@ namespace Librainian.Threading {
                 }
             }
         }
+
     }
+
 }

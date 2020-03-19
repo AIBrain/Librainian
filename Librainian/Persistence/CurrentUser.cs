@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "CurrentUser.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "CurrentUser.cs" was last formatted by Protiguous on 2020/03/16 at 3:01 PM.
+// 
+// Project: "Librainian", File: "CurrentUser.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Persistence {
 
@@ -47,7 +47,7 @@ namespace Librainian.Persistence {
         /// </summary>
         /// <value></value>
         [NotNull]
-        internal static RegistryKey App => Protiguous.CreateSubKey( subkey: Application.ProductName, writable: true );
+        internal static RegistryKey App => Protiguous.CreateSubKey( Application.ProductName, true );
 
         /// <summary>Current user.</summary>
         [NotNull]
@@ -55,11 +55,11 @@ namespace Librainian.Persistence {
 
         /// <summary>The <see cref="Protiguous" /> key under the <see cref="Software" /> key.</summary>
         [NotNull]
-        public static RegistryKey Protiguous => Software.CreateSubKey( subkey: nameof( Protiguous ), writable: true );
+        public static RegistryKey Protiguous => Software.CreateSubKey( nameof( Protiguous ), true );
 
         /// <summary>The <see cref="Software" /> key under the <see cref="HKCU" /> key.</summary>
         [NotNull]
-        public static RegistryKey Software => HKCU.CreateSubKey( subkey: nameof( Software ), writable: true );
+        public static RegistryKey Software => HKCU.CreateSubKey( nameof( Software ), true );
 
         /// <summary>By default, this retrieves the registry key under HKCU\Software\Protiguous\ProcessName.</summary>
         /// <typeparam name="T"></typeparam>
@@ -69,14 +69,14 @@ namespace Librainian.Persistence {
         public static T Get<T>( [NotNull] this String key ) {
 
             if ( App is null ) {
-                throw new ArgumentNullException( paramName: nameof( App ) );
+                throw new ArgumentNullException( nameof( App ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
-            var value = App.GetValue( name: key );
+            var value = App.GetValue( key );
 
             if ( value is T result ) {
                 return result;
@@ -93,29 +93,29 @@ namespace Librainian.Persistence {
         public static Boolean Set<T>( [NotNull] this String key, [CanBeNull] T value ) {
 
             if ( App is null ) {
-                throw new ArgumentNullException( paramName: nameof( App ) );
+                throw new ArgumentNullException( nameof( App ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( key ) );
+            if ( String.IsNullOrWhiteSpace( key ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
             }
 
             try {
                 switch ( value ) {
                     case String[] _: {
-                            App.SetValue( name: key, value: value, valueKind: RegistryValueKind.MultiString );
+                        App.SetValue( key, value, RegistryValueKind.MultiString );
 
-                            return true;
-                        }
+                        return true;
+                    }
 
                     case String _:
-                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.String );
+                        App.SetValue( key, value, RegistryValueKind.String );
 
                         return true;
 
                     case UInt64 _:
                     case Int64 _:
-                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.QWord );
+                        App.SetValue( key, value, RegistryValueKind.QWord );
 
                         return true;
 
@@ -125,22 +125,22 @@ namespace Librainian.Persistence {
                     case Int16 _:
                     case SByte _:
                     case Byte _:
-                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.DWord );
+                        App.SetValue( key, value, RegistryValueKind.DWord );
 
                         return true;
 
                     case Byte[] _:
-                        App.SetValue( name: key, value: value, valueKind: RegistryValueKind.Binary );
+                        App.SetValue( key, value, RegistryValueKind.Binary );
 
                         return true;
 
                     default: {
 
-                            // ReSharper disable once AssignNullToNotNullAttribute
-                            App.SetValue( name: key, value: value, valueKind: RegistryValueKind.Unknown );
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        App.SetValue( key, value, RegistryValueKind.Unknown );
 
-                            return true;
-                        }
+                        return true;
+                    }
                 }
             }
             catch ( Exception exception ) {
@@ -149,5 +149,7 @@ namespace Librainian.Persistence {
 
             return default;
         }
+
     }
+
 }

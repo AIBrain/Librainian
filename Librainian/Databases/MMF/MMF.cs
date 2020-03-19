@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "MMF.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "MMF.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Databases.MMF {
 
@@ -46,11 +46,10 @@ namespace Librainian.Databases.MMF {
         public String GetContent( [NotNull] MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
             String content;
 
-            using ( var memoryMappedViewStream =
-                memoryMappedFile.CreateViewStream( offset: beginningByteLocation, size: bytesToReadIn, access: MemoryMappedFileAccess.Read ) ) {
+            using ( var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read ) ) {
                 var contentArray = new Byte[ bytesToReadIn ];
-                memoryMappedViewStream.Read( buffer: contentArray, offset: 0, count: contentArray.Length );
-                content = Encoding.Unicode.GetString( bytes: contentArray );
+                memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );
+                content = Encoding.Unicode.GetString( contentArray );
             }
 
             return content;
@@ -61,7 +60,7 @@ namespace Librainian.Databases.MMF {
             const Int64 multiplier = UInt32.MaxValue;
             const Int64 biteSize = size32 * multiplier; //that's a 17.18 GB !!
 
-            using ( var _ = MemoryMappedFile.CreateOrOpen( mapName: "test.$$$", capacity: biteSize, access: MemoryMappedFileAccess.ReadWrite ) ) {
+            using ( var _ = MemoryMappedFile.CreateOrOpen( "test.$$$", biteSize, MemoryMappedFileAccess.ReadWrite ) ) {
 
                 //bob.CreateViewAccessor
             }

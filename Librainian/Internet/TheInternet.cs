@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "TheInternet.cs" was last formatted by Protiguous on 2020/03/16 at 9:42 PM.
+// Project: "Librainian", File: "TheInternet.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Internet {
 
@@ -60,14 +60,14 @@ namespace Librainian.Internet {
         public static async Task<IDocument> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne> reportProgress = null,
             VolatileBoolean inProgress = default, [CanBeNull] ICredentials credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus> onWebException = null ) {
             if ( address is null ) {
-                throw new ArgumentNullException( paramName: nameof( address ) );
+                throw new ArgumentNullException( nameof( address ) );
             }
 
             try {
 
                 inProgress.Value = true;
 
-                reportProgress?.Report( value: ZeroToOne.MinValue );
+                reportProgress?.Report( ZeroToOne.MinValue );
 
                 var tempDocument = Document.GetTempDocument();
 
@@ -78,13 +78,13 @@ namespace Librainian.Internet {
 
                 webclient.DownloadProgressChanged += ( sender, args ) => {
                     var progress = args.BytesReceived / ( Double ) args.TotalBytesToReceive;
-                    reportProgress?.Report( value: progress );
+                    reportProgress?.Report( progress );
                 };
 
-                var timeoutTask = Task.Delay( delay: timeOut );
-                var downloadTask = webclient.DownloadFileTaskAsync( address: address, fileName: tempDocument.FullPath );
+                var timeoutTask = Task.Delay( timeOut );
+                var downloadTask = webclient.DownloadFileTaskAsync( address, tempDocument.FullPath );
 
-                var task = await Task.WhenAny( timeoutTask, downloadTask ).ConfigureAwait( continueOnCapturedContext: false );
+                var task = await Task.WhenAny( timeoutTask, downloadTask ).ConfigureAwait( false );
 
                 if ( task.Id == timeoutTask.Id ) {
                     webclient.CancelAsync();
@@ -94,7 +94,7 @@ namespace Librainian.Internet {
             }
             catch ( WebException exception ) {
                 try {
-                    onWebException?.Invoke( arg1: address, arg2: exception.Status );
+                    onWebException?.Invoke( address, exception.Status );
                 }
                 catch ( Exception exception2 ) {
                     exception2.Log();
@@ -104,7 +104,7 @@ namespace Librainian.Internet {
                 exception.Log();
             }
             finally {
-                reportProgress?.Report( value: ZeroToOne.MaxValue );
+                reportProgress?.Report( ZeroToOne.MaxValue );
 
                 //inProgress = false;
             }
@@ -115,21 +115,21 @@ namespace Librainian.Internet {
         [ItemNotNull]
         public static IEnumerable<Document> FindFile( [NotNull] String filename, [NotNull] IEnumerable<String> locationClues ) {
             if ( locationClues is null ) {
-                throw new ArgumentNullException( paramName: nameof( locationClues ) );
+                throw new ArgumentNullException( nameof( locationClues ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: filename ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( filename ) );
+            if ( String.IsNullOrWhiteSpace( filename ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filename ) );
             }
 
             foreach ( var locationClue in locationClues ) {
-                if ( !Uri.TryCreate( uriString: locationClue, uriKind: UriKind.Absolute, result: out var internetAddress ) ) {
+                if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) {
                     continue;
                 }
 
                 //TODO this /totally/ is not finished yet.
 
-                yield return new Document( fullPath: internetAddress.ToString() ); //should download file to a document in the user's temp folder.
+                yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
             }
         }
 

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "OSExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "OSExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -46,7 +46,7 @@ namespace Librainian.OperatingSystem {
         /// <returns></returns>
         [CanBeNull]
         public static String CmdExecute( [CanBeNull] this String command ) {
-            using ( var process = Process.Start( startInfo: new ProcessStartInfo( fileName: "cmd.exe", arguments: $"/c {command}" ) {
+            using ( var process = Process.Start( new ProcessStartInfo( "cmd.exe", $"/c {command}" ) {
                 RedirectStandardOutput = true, UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true
             } ) ) {
                 using ( var standardOutput = process?.StandardOutput ) {
@@ -67,8 +67,8 @@ namespace Librainian.OperatingSystem {
 
                 var text = value.ToString();
 
-                if ( !String.IsNullOrEmpty( value: text ) ) {
-                    Clipboard.SetText( text: text, format: format );
+                if ( !String.IsNullOrEmpty( text ) ) {
+                    Clipboard.SetText( text, format );
                 }
             }
             catch ( Exception exception ) {

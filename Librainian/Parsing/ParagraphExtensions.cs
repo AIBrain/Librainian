@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ParagraphExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:59 PM.
+// Project: "Librainian", File: "ParagraphExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing {
 
@@ -47,7 +47,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public static String FakeLatinSentence( UInt16 wordCount ) {
-            var words = Sentence.Parse( sentence: FakeLatin.Split( ' ' ).OrderBy( keySelector: s => Randem.Next() ).Take( count: wordCount ).ToStrings( separator: " " ) );
+            var words = Sentence.Parse( FakeLatin.Split( ' ' ).OrderBy( s => Randem.Next() ).Take( wordCount ).ToStrings( " " ) );
             var sentence = words.ToString();
 
             return $"{sentence.Capitialize()?.TrimEnd()}.";

@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Murmur3.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Murmur3.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
+// 
+// Project: "Librainian", File: "Murmur3.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Maths {
 
@@ -40,8 +40,6 @@ namespace Librainian.Maths {
     /// <see cref="http://blog.teamleadnet.com/2012/08/murmurhash3-ultra-fast-hash-algorithm.html" />
     public class Murmur3 {
 
-        private const UInt64 C1 = 0x87c37b91114253d5L;
-        private const UInt64 C2 = 0x4cf5ad432745937fL;
         private readonly UInt32 _seed;
 
         private UInt64 _h1;
@@ -49,6 +47,11 @@ namespace Librainian.Maths {
         private UInt64 _h2;
 
         private UInt64 _length;
+
+        private const UInt64 C1 = 0x87c37b91114253d5L;
+
+        private const UInt64 C2 = 0x4cf5ad432745937fL;
+
         public const UInt64 ReadSize = 16;
 
         public Murmur3( UInt32 seed ) => this._seed = seed;
@@ -101,7 +104,7 @@ namespace Librainian.Maths {
             this._length = 0L;
 
             var pos = 0;
-            var remaining = ( UInt64 )bb.Length;
+            var remaining = ( UInt64 ) bb.Length;
 
             // read 128 bits, 16 bytes, 2 longs in eacy cycle
             while ( remaining >= ReadSize ) {
@@ -131,27 +134,27 @@ namespace Librainian.Maths {
             // little endian (x86) processing
             switch ( remaining ) {
                 case 15:
-                    k2 ^= ( UInt64 )bb[ pos + 14 ] << 48; // fall through
+                    k2 ^= ( UInt64 ) bb[ pos + 14 ] << 48; // fall through
                     goto case 14;
 
                 case 14:
-                    k2 ^= ( UInt64 )bb[ pos + 13 ] << 40; // fall through
+                    k2 ^= ( UInt64 ) bb[ pos + 13 ] << 40; // fall through
                     goto case 13;
 
                 case 13:
-                    k2 ^= ( UInt64 )bb[ pos + 12 ] << 32; // fall through
+                    k2 ^= ( UInt64 ) bb[ pos + 12 ] << 32; // fall through
                     goto case 12;
 
                 case 12:
-                    k2 ^= ( UInt64 )bb[ pos + 11 ] << 24; // fall through
+                    k2 ^= ( UInt64 ) bb[ pos + 11 ] << 24; // fall through
                     goto case 11;
 
                 case 11:
-                    k2 ^= ( UInt64 )bb[ pos + 10 ] << 16; // fall through
+                    k2 ^= ( UInt64 ) bb[ pos + 10 ] << 16; // fall through
                     goto case 10;
 
                 case 10:
-                    k2 ^= ( UInt64 )bb[ pos + 9 ] << 8; // fall through
+                    k2 ^= ( UInt64 ) bb[ pos + 9 ] << 8; // fall through
                     goto case 9;
 
                 case 9:
@@ -164,27 +167,27 @@ namespace Librainian.Maths {
                     break;
 
                 case 7:
-                    k1 ^= ( UInt64 )bb[ pos + 6 ] << 48; // fall through
+                    k1 ^= ( UInt64 ) bb[ pos + 6 ] << 48; // fall through
                     goto case 6;
 
                 case 6:
-                    k1 ^= ( UInt64 )bb[ pos + 5 ] << 40; // fall through
+                    k1 ^= ( UInt64 ) bb[ pos + 5 ] << 40; // fall through
                     goto case 5;
 
                 case 5:
-                    k1 ^= ( UInt64 )bb[ pos + 4 ] << 32; // fall through
+                    k1 ^= ( UInt64 ) bb[ pos + 4 ] << 32; // fall through
                     goto case 4;
 
                 case 4:
-                    k1 ^= ( UInt64 )bb[ pos + 3 ] << 24; // fall through
+                    k1 ^= ( UInt64 ) bb[ pos + 3 ] << 24; // fall through
                     goto case 3;
 
                 case 3:
-                    k1 ^= ( UInt64 )bb[ pos + 2 ] << 16; // fall through
+                    k1 ^= ( UInt64 ) bb[ pos + 2 ] << 16; // fall through
                     goto case 2;
 
                 case 2:
-                    k1 ^= ( UInt64 )bb[ pos + 1 ] << 8; // fall through
+                    k1 ^= ( UInt64 ) bb[ pos + 1 ] << 8; // fall through
                     goto case 1;
 
                 case 1:
@@ -227,5 +230,7 @@ namespace Librainian.Maths {
 
             return hash;
         }
+
     }
+
 }

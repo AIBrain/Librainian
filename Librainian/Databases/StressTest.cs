@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "StressTest.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "StressTest.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Databases {
 
@@ -66,11 +66,11 @@ namespace Librainian.Databases {
         /// <returns></returns>
         public static UInt64 PerformDatabaseCounting( [NotNull] IDatabase database, out TimeSpan forHowLong, Boolean multithread = false ) {
             if ( database is null ) {
-                throw new ArgumentNullException( paramName: nameof( database ) );
+                throw new ArgumentNullException( nameof( database ) );
             }
 
             if ( multithread ) {
-                throw new NotImplementedException( message: "yet" );
+                throw new NotImplementedException( "yet" );
             }
 
             forHowLong = Seconds.One;
@@ -78,7 +78,7 @@ namespace Librainian.Databases {
             var counter = 0UL;
 
             do {
-                counter = database.ExecuteScalar<UInt64>( query: $"select {counter} + cast(1 as bigint)  as [Result];", commandType: CommandType.Text );
+                counter = database.ExecuteScalar<UInt64>( $"select {counter} + cast(1 as bigint)  as [Result];", CommandType.Text );
 
                 if ( stopwatch.Elapsed >= forHowLong ) {
                     break;

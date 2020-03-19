@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ImagingExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:40 PM.
+// Project: "Librainian", File: "ImagingExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -41,17 +41,17 @@ namespace Librainian.Graphics.Imaging {
 
         public static Color GetAverageColor( [NotNull] this Bitmap bitmap ) {
             if ( bitmap is null ) {
-                throw new ArgumentNullException( paramName: nameof( bitmap ) );
+                throw new ArgumentNullException( nameof( bitmap ) );
             }
 
             var red = 0;
             var green = 0;
             var blue = 0;
 
-            using ( var faster = new Bitmap( original: bitmap ) ) {
+            using ( var faster = new Bitmap( bitmap ) ) {
                 for ( var x = 0; x < bitmap.Width; x++ ) {
                     for ( var y = 0; y < bitmap.Height; y++ ) {
-                        var pixel = faster.GetPixel( x: x, y: y );
+                        var pixel = faster.GetPixel( x, y );
                         red += pixel.R;
                         green += pixel.G;
                         blue += pixel.B;
@@ -65,7 +65,7 @@ namespace Librainian.Graphics.Imaging {
             green /= total;
             blue /= total;
 
-            return Color.FromArgb( red: red, green: green, blue: blue );
+            return Color.FromArgb( red, green, blue );
         }
 
     }

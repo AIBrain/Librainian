@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "DetectSSD.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "DetectSSD.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem.Storage {
 
@@ -47,9 +47,8 @@ namespace Librainian.OperatingSystem.Storage {
         public static Boolean? IncursSeekPenalty( this Byte diskNumber ) {
             var sDrive = @"\\.\PhysicalDrive" + diskNumber;
 
-            var hDrive = NativeMethods.CreateFileW( lpFileName: sDrive, dwDesiredAccess: 0, // No access to drive
-                dwShareMode: NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, lpSecurityAttributes: IntPtr.Zero,
-                dwCreationDisposition: NativeMethods.OPEN_EXISTING, dwFlagsAndAttributes: NativeMethods.FILE_ATTRIBUTE_NORMAL, hTemplateFile: IntPtr.Zero );
+            var hDrive = NativeMethods.CreateFileW( sDrive, 0, // No access to drive
+                NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
             if ( hDrive.IsInvalid ) {
 
@@ -57,8 +56,8 @@ namespace Librainian.OperatingSystem.Storage {
                 return default;
             }
 
-            var ioctlStorageQueryProperty = CTL_CODE( deviceType: NativeMethods.IOCTL_STORAGE_BASE, function: 0x500, method: NativeMethods.METHOD_BUFFERED,
-                access: NativeMethods.FILE_ANY_ACCESS ); // From winioctl.h
+            var ioctlStorageQueryProperty = CTL_CODE( NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED,
+                NativeMethods.FILE_ANY_ACCESS ); // From winioctl.h
 
             var querySeekPenalty = new NativeMethods.STORAGE_PROPERTY_QUERY {
                 PropertyId = NativeMethods.StorageDeviceSeekPenaltyProperty, QueryType = NativeMethods.PropertyStandardQuery
@@ -66,10 +65,8 @@ namespace Librainian.OperatingSystem.Storage {
 
             var querySeekPenaltyDesc = new NativeMethods.DEVICE_SEEK_PENALTY_DESCRIPTOR();
 
-            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDevice: hDrive, dwIoControlCode: ioctlStorageQueryProperty, lpInBuffer: ref querySeekPenalty,
-                nInBufferSize: ( UInt32 ) Marshal.SizeOf( structure: querySeekPenalty ), lpOutBuffer: ref querySeekPenaltyDesc,
-                nOutBufferSize: ( UInt32 ) Marshal.SizeOf( structure: querySeekPenaltyDesc ), lpBytesReturned: out var returnedQuerySeekPenaltySize,
-                lpOverlapped: IntPtr.Zero );
+            var querySeekPenaltyResult = NativeMethods.DeviceIoControl( hDrive, ioctlStorageQueryProperty, ref querySeekPenalty, ( UInt32 ) Marshal.SizeOf( querySeekPenalty ),
+                ref querySeekPenaltyDesc, ( UInt32 ) Marshal.SizeOf( querySeekPenaltyDesc ), out var returnedQuerySeekPenaltySize, IntPtr.Zero );
 
             hDrive.Close();
 
@@ -106,10 +103,8 @@ namespace Librainian.OperatingSystem.Storage {
         public static Boolean? IsRotateDevice( this Byte diskNumber ) {
             var sDrive = @"\\.\PhysicalDrive" + diskNumber;
 
-            var hDrive = NativeMethods.CreateFileW( lpFileName: sDrive,
-                dwDesiredAccess: NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE, // Administrative privilege is required
-                dwShareMode: NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, lpSecurityAttributes: IntPtr.Zero,
-                dwCreationDisposition: NativeMethods.OPEN_EXISTING, dwFlagsAndAttributes: NativeMethods.FILE_ATTRIBUTE_NORMAL, hTemplateFile: IntPtr.Zero );
+            var hDrive = NativeMethods.CreateFileW( sDrive, NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE, // Administrative privilege is required
+                NativeMethods.FILE_SHARE_READ | NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING, NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
             if ( hDrive.IsInvalid ) {
 
@@ -117,25 +112,24 @@ namespace Librainian.OperatingSystem.Storage {
                 return default;
             }
 
-            var ioctlAtaPassThrough = CTL_CODE( deviceType: NativeMethods.IOCTL_SCSI_BASE, function: 0x040b, method: NativeMethods.METHOD_BUFFERED,
-                access: NativeMethods.FILE_READ_ACCESS | NativeMethods.FILE_WRITE_ACCESS ); // From ntddscsi.h
+            var ioctlAtaPassThrough = CTL_CODE( NativeMethods.IOCTL_SCSI_BASE, 0x040b, NativeMethods.METHOD_BUFFERED,
+                NativeMethods.FILE_READ_ACCESS | NativeMethods.FILE_WRITE_ACCESS ); // From ntddscsi.h
 
             var idQuery = new NativeMethods.ATAIdentifyDeviceQuery {
                 data = new UInt16[ 256 ]
             };
 
-            idQuery.header.Length = ( UInt16 ) Marshal.SizeOf( structure: idQuery.header );
+            idQuery.header.Length = ( UInt16 ) Marshal.SizeOf( idQuery.header );
             idQuery.header.AtaFlags = ( UInt16 ) NativeMethods.ATA_FLAGS_DATA_IN;
             idQuery.header.DataTransferLength = ( UInt32 ) ( idQuery.data.Length * 2 ); // Size of "data" in bytes
             idQuery.header.TimeOutValue = 3;                                            // Sec
-            idQuery.header.DataBufferOffset = Marshal.OffsetOf( t: typeof( NativeMethods.ATAIdentifyDeviceQuery ), fieldName: "data" );
+            idQuery.header.DataBufferOffset = Marshal.OffsetOf( typeof( NativeMethods.ATAIdentifyDeviceQuery ), "data" );
             idQuery.header.PreviousTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile = new Byte[ 8 ];
             idQuery.header.CurrentTaskFile[ 6 ] = 0xec; // ATA IDENTIFY DEVICE
 
-            var result = NativeMethods.DeviceIoControl( hDevice: hDrive, dwIoControlCode: ioctlAtaPassThrough, lpInBuffer: ref idQuery,
-                nInBufferSize: ( UInt32 ) Marshal.SizeOf( structure: idQuery ), lpOutBuffer: ref idQuery, nOutBufferSize: ( UInt32 ) Marshal.SizeOf( structure: idQuery ),
-                lpBytesReturned: out var retvalSize, lpOverlapped: IntPtr.Zero );
+            var result = NativeMethods.DeviceIoControl( hDrive, ioctlAtaPassThrough, ref idQuery, ( UInt32 ) Marshal.SizeOf( idQuery ), ref idQuery,
+                ( UInt32 ) Marshal.SizeOf( idQuery ), out var retvalSize, IntPtr.Zero );
 
             hDrive.Close();
 

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "HashSetLinqAccess.cs" was last formatted by Protiguous on 2020/03/16 at 9:36 PM.
+// Project: "Librainian", File: "HashSetLinqAccess.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 
@@ -46,16 +46,16 @@ namespace Librainian.Extensions {
 
         [NotNull]
         public static HashSet<T> AddRange<T>( [NotNull] this HashSet<T> hashSet, [NotNull] IEnumerable<T> range ) {
-            if ( Equals( objA: hashSet, objB: null ) ) {
-                throw new ArgumentNullException( paramName: nameof( hashSet ) );
+            if ( Equals( hashSet, null ) ) {
+                throw new ArgumentNullException( nameof( hashSet ) );
             }
 
-            if ( Equals( objA: range, objB: null ) ) {
-                throw new ArgumentNullException( paramName: nameof( range ) );
+            if ( Equals( range, null ) ) {
+                throw new ArgumentNullException( nameof( range ) );
             }
 
             foreach ( var item in range ) {
-                hashSet.Add( item: item );
+                hashSet.Add( item );
             }
 
             return hashSet;
@@ -64,7 +64,7 @@ namespace Librainian.Extensions {
         [NotNull]
         public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
             if ( null == fromEnumerable ) {
-                throw new ArgumentNullException( paramName: nameof( fromEnumerable ) );
+                throw new ArgumentNullException( nameof( fromEnumerable ) );
             }
 
             if ( null == comparer ) {
@@ -75,7 +75,7 @@ namespace Librainian.Extensions {
                 return set;
             }
 
-            return new HashSet<T>( collection: fromEnumerable, comparer: comparer );
+            return new HashSet<T>( fromEnumerable, comparer );
         }
 
         //public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );

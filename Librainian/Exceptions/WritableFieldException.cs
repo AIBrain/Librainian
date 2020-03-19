@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "WritableFieldException.cs" was last formatted by Protiguous on 2020/03/16 at 9:35 PM.
+// Project: "Librainian", File: "WritableFieldException.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Exceptions {
 
@@ -43,23 +43,22 @@ namespace Librainian.Exceptions {
     [Serializable]
     internal class WritableFieldException : ImmutableFailureException {
 
-        protected WritableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo: serializationInfo,
-            streamingContext: streamingContext ) {
+        protected WritableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
             if ( serializationInfo is null ) {
-                throw new ArgumentNullException( paramName: nameof( serializationInfo ) );
+                throw new ArgumentNullException( nameof( serializationInfo ) );
             }
         }
 
-        internal WritableFieldException( [NotNull] FieldInfo fieldInfo ) : base( type: fieldInfo.DeclaringType, message: FormatMessage( fieldInfo: fieldInfo ) ) {
+        internal WritableFieldException( [NotNull] FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
             if ( fieldInfo is null ) {
-                throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
+                throw new ArgumentNullException( nameof( fieldInfo ) );
             }
         }
 
         [NotNull]
         private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
             if ( fieldInfo is null ) {
-                throw new ArgumentNullException( paramName: nameof( fieldInfo ) );
+                throw new ArgumentNullException( nameof( fieldInfo ) );
             }
 
             return $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";

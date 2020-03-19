@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ScriptDBObjects.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "ScriptDBObjects.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Databases {
 
@@ -52,18 +52,17 @@ namespace Librainian.Databases {
 
             var dboDict = new ConcurrentDictionary<String, IEnumerable<ScriptSchemaObjectBase>>();
 
-            Parallel.Invoke( () => dboDict.TryAdd( key: nameof( db.Views ), value: db.Views.Cast<View>().Where( predicate: x => !x.IsSystemObject ) ),
-                () => dboDict.TryAdd( key: nameof( db.Tables ), value: db.Tables.Cast<Table>().Where( predicate: x => !x.IsSystemObject ) ),
-                () => dboDict.TryAdd( key: nameof( db.UserDefinedFunctions ),
-                    value: db.UserDefinedFunctions.Cast<UserDefinedFunction>().Where( predicate: x => !x.IsSystemObject ) ),
-                () => dboDict.TryAdd( key: nameof( db.StoredProcedures ), value: db.StoredProcedures.Cast<StoredProcedure>().Where( predicate: x => !x.IsSystemObject ) ) );
+            Parallel.Invoke( () => dboDict.TryAdd( nameof( db.Views ), db.Views.Cast<View>().Where( x => !x.IsSystemObject ) ),
+                () => dboDict.TryAdd( nameof( db.Tables ), db.Tables.Cast<Table>().Where( x => !x.IsSystemObject ) ),
+                () => dboDict.TryAdd( nameof( db.UserDefinedFunctions ), db.UserDefinedFunctions.Cast<UserDefinedFunction>().Where( x => !x.IsSystemObject ) ),
+                () => dboDict.TryAdd( nameof( db.StoredProcedures ), db.StoredProcedures.Cast<StoredProcedure>().Where( x => !x.IsSystemObject ) ) );
 
-            Parallel.ForEach( source: dboDict, body: dict => {
+            Parallel.ForEach( dboDict, dict => {
                 var objPath = $@"{saveFolder.FullPath}\{dict.Key}\";
 
                 try {
-                    if ( !Directory.Exists( path: objPath ) ) {
-                        Directory.CreateDirectory( path: objPath );
+                    if ( !Directory.Exists( objPath ) ) {
+                        Directory.CreateDirectory( objPath );
                     }
                 }
                 catch ( Exception exception ) {
@@ -72,13 +71,13 @@ namespace Librainian.Databases {
                     return;
                 }
 
-                Parallel.ForEach( source: dict.Value, body: obj => {
+                Parallel.ForEach( dict.Value, obj => {
 
                     var objFile = $"{objPath}{obj.Schema}.{obj.Name}.sql";
-                    var scriptString = GetScriptString( server: srv, obj: obj );
+                    var scriptString = GetScriptString( srv, obj );
 
                     try {
-                        File.WriteAllText( path: objFile, contents: scriptString );
+                        File.WriteAllText( objFile, scriptString );
                     }
                     catch ( Exception exception ) {
                         exception.Log();
@@ -90,14 +89,14 @@ namespace Librainian.Databases {
         [NotNull]
         public static String GetScriptString( [CanBeNull] Server server, [CanBeNull] SqlSmoObject obj ) {
             var output = new StringBuilder();
-            var scr = new Scripter( svr: server );
+            var scr = new Scripter( server );
 
-            var script = scr.EnumScript( objects: new[] {
+            var script = scr.EnumScript( new[] {
                 obj
             } );
 
             foreach ( var line in script ) {
-                output.AppendLine( value: line );
+                output.AppendLine( line );
             }
 
             return output.ToString();

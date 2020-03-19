@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "NinjectIocContainer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "NinjectIocContainer.cs" was last formatted by Protiguous on 2020/03/16 at 3:03 PM.
+// 
+// Project: "Librainian", File: "NinjectIocContainer.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Magic {
 
@@ -48,10 +48,53 @@ namespace Librainian.Magic {
 
         public IKernel Kernel { get; }
 
+        /// <summary>Returns a new instance of the given type or throws NullReferenceException.</summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        [DebuggerStepThrough]
+        public T Get<T>() {
+            var tryGet = this.Kernel.TryGet<T>();
+
+            if ( Equals( default, tryGet ) ) {
+                tryGet = this.Kernel.TryGet<T>(); //HACK why would it work at the second time?
+
+                if ( Equals( default, tryGet ) ) {
+                    throw new NullReferenceException( "Unable to TryGet() class " + typeof( T ).FullName );
+                }
+            }
+
+            return tryGet;
+        }
+
+        public void Inject<T>( [CanBeNull] T item ) => this.Kernel.Inject( item );
+
+        /// <summary>Warning!</summary>
+        public void ResetKernel() {
+
+            foreach ( var module in this.Kernel.GetModules() ) {
+                this.Kernel.Unload( module.Name );
+            }
+
+            this.Kernel.Components.Get<ICache>().Clear();
+
+            "Ninject is loading assemblies...".Log();
+            this.Kernel.Load( AppDomain.CurrentDomain.GetAssemblies() );
+            $"loaded {this.Kernel.GetModules().Count()} assemblies.".Log();
+            $"{this.Kernel.GetModules().ToStrings()}".Log();
+        }
+
+        /// <summary>Re</summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [CanBeNull]
+        [DebuggerStepThrough]
+        public T TryGet<T>() => this.Kernel.TryGet<T>();
+
         public NinjectIocContainer( [NotNull] params INinjectModule[] modules ) {
             try {
                 "Loading IoC kernel...".Log();
-                this.Kernel = new StandardKernel( modules: modules );
+                this.Kernel = new StandardKernel( modules );
             }
             finally {
                 "Loading IoC kernel done.".Log();
@@ -63,47 +106,6 @@ namespace Librainian.Magic {
             using ( this.Kernel ) { }
         }
 
-        /// <summary>Returns a new instance of the given type or throws NullReferenceException.</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
-        [DebuggerStepThrough]
-        public T Get<T>() {
-            var tryGet = this.Kernel.TryGet<T>();
-
-            if ( Equals( objA: default, objB: tryGet ) ) {
-                tryGet = this.Kernel.TryGet<T>(); //HACK why would it work at the second time?
-
-                if ( Equals( objA: default, objB: tryGet ) ) {
-                    throw new NullReferenceException( message: "Unable to TryGet() class " + typeof( T ).FullName );
-                }
-            }
-
-            return tryGet;
-        }
-
-        public void Inject<T>( [CanBeNull] T item ) => this.Kernel.Inject( instance: item );
-
-        /// <summary>Warning!</summary>
-        public void ResetKernel() {
-
-            foreach ( var module in this.Kernel.GetModules() ) {
-                this.Kernel.Unload( name: module.Name );
-            }
-
-            this.Kernel.Components.Get<ICache>().Clear();
-
-            "Ninject is loading assemblies...".Log();
-            this.Kernel.Load( assemblies: AppDomain.CurrentDomain.GetAssemblies() );
-            $"loaded {this.Kernel.GetModules().Count()} assemblies.".Log();
-            $"{this.Kernel.GetModules().ToStrings()}".Log();
-        }
-
-        /// <summary>Re</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        [CanBeNull]
-        [DebuggerStepThrough]
-        public T TryGet<T>() => this.Kernel.TryGet<T>();
     }
+
 }

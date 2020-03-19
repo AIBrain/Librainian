@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "ConverterExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
+// 
+// Project: "Librainian", File: "ConverterExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Converters {
 
@@ -64,17 +64,17 @@ namespace Librainian.Converters {
     public static class ConverterExtensions {
 
         [NotNull]
-        private static readonly String[] FalseStrings = new[] {
+        private static readonly String[] FalseStrings = {
             "N", "0", "no", "false", Boolean.FalseString, "Fail", "failed", "Failure", "bad"
         };
 
         [NotNull]
-        private static readonly Char[] TrueChars = new[] {
+        private static readonly Char[] TrueChars = {
             'Y', '1'
         };
 
         [NotNull]
-        private static readonly String[] TrueStrings = new[] {
+        private static readonly String[] TrueStrings = {
             "Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
         };
 
@@ -93,7 +93,7 @@ namespace Librainian.Converters {
             }
 
             try {
-                return ( T )Convert.ChangeType( self, typeof( T ) );
+                return ( T ) Convert.ChangeType( self, typeof( T ) );
             }
             catch ( InvalidCastException ) { }
             catch ( FormatException ) { }
@@ -173,18 +173,18 @@ namespace Librainian.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return default;
                 case String s: {
-                        s = s.Trimmed();
+                    s = s.Trimmed();
 
-                        if ( s.In( TrueStrings ) ) {
-                            return true;
-                        }
-
-                        if ( Boolean.TryParse( s, out var result ) ) {
-                            return result;
-                        }
-
-                        break;
+                    if ( s.In( TrueStrings ) ) {
+                        return true;
                     }
+
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
+
+                    break;
+                }
                 case Control control: return control.Text().ToBoolean();
             }
 
@@ -219,26 +219,26 @@ namespace Librainian.Converters {
                 case Int32 i: return i >= 1;
                 case String s when String.IsNullOrWhiteSpace( s ): return null;
                 case String s: {
-                        s = s.Trimmed();
+                    s = s.Trimmed();
 
-                        if ( s is null ) {
-                            return default;
-                        }
-
-                        if ( s.In( ParsingConstants.TrueStrings ) ) {
-                            return true;
-                        }
-
-                        if ( s.In( ParsingConstants.FalseStrings ) ) {
-                            return default;
-                        }
-
-                        if ( Boolean.TryParse( s, out var result ) ) {
-                            return result;
-                        }
-
-                        break;
+                    if ( s is null ) {
+                        return default;
                     }
+
+                    if ( s.In( ParsingConstants.TrueStrings ) ) {
+                        return true;
+                    }
+
+                    if ( s.In( ParsingConstants.FalseStrings ) ) {
+                        return default;
+                    }
+
+                    if ( Boolean.TryParse( s, out var result ) ) {
+                        return result;
+                    }
+
+                    break;
+                }
             }
 
             var t = value.ToString();
@@ -322,7 +322,7 @@ namespace Librainian.Converters {
             //var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
             return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ], bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ),
-                ( DateTimeKind )bytes[ 15 ] );
+                ( DateTimeKind ) bytes[ 15 ] );
         }
 
         [Pure]
@@ -429,17 +429,17 @@ namespace Librainian.Converters {
         public static Guid ToGuid( this DateTime dateTime ) {
             try {
                 unchecked {
-                    var guid = new Guid( ( UInt32 )dateTime.Year           //0,1,2,3
-                        , ( UInt16 )dateTime.DayOfYear                     //4,5
-                        , ( UInt16 )dateTime.Millisecond                   //6,7
-                        , ( Byte )dateTime.DayOfWeek                       //8
-                        , ( Byte )dateTime.Day                             //9
-                        , ( Byte )dateTime.Hour                            //10
-                        , ( Byte )dateTime.Minute                          //11
-                        , ( Byte )dateTime.Second                          //12
-                        , ( Byte )dateTime.Month                           //13
+                    var guid = new Guid( ( UInt32 ) dateTime.Year           //0,1,2,3
+                        , ( UInt16 ) dateTime.DayOfYear                     //4,5
+                        , ( UInt16 ) dateTime.Millisecond                   //6,7
+                        , ( Byte ) dateTime.DayOfWeek                       //8
+                        , ( Byte ) dateTime.Day                             //9
+                        , ( Byte ) dateTime.Hour                            //10
+                        , ( Byte ) dateTime.Minute                          //11
+                        , ( Byte ) dateTime.Second                          //12
+                        , ( Byte ) dateTime.Month                           //13
                         , Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-                        , ( Byte )dateTime.Kind );                         //15
+                        , ( Byte ) dateTime.Kind );                         //15
 
                     return guid;
                 }
@@ -685,5 +685,7 @@ namespace Librainian.Converters {
         [Pure]
         [DebuggerStepThrough]
         public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
+
     }
+
 }

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "SemaphoreSlimExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 10:04 PM.
+// Project: "Librainian", File: "SemaphoreSlimExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Threading {
 
@@ -43,12 +43,12 @@ namespace Librainian.Threading {
         [ItemNotNull]
         public static async Task<IDisposable> UseWaitAsync( [NotNull] this SemaphoreSlim semaphore, CancellationToken cancelToken = default ) {
             if ( semaphore is null ) {
-                throw new ArgumentNullException( paramName: nameof( semaphore ) );
+                throw new ArgumentNullException( nameof( semaphore ) );
             }
 
-            await semaphore.WaitAsync( cancellationToken: cancelToken ).ConfigureAwait( continueOnCapturedContext: false );
+            await semaphore.WaitAsync( cancelToken ).ConfigureAwait( false );
 
-            return new ReleaseWrapper( semaphore: semaphore );
+            return new ReleaseWrapper( semaphore );
         }
 
         private class ReleaseWrapper : IDisposable {
@@ -63,7 +63,7 @@ namespace Librainian.Threading {
             [CanBeNull]
             private SemaphoreSlim _semaphore;
 
-            public ReleaseWrapper( [NotNull] SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentNullException( paramName: nameof( semaphore ) );
+            public ReleaseWrapper( [NotNull] SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
 
         }
 

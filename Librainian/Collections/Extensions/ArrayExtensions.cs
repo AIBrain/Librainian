@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ArrayExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:30 PM.
+// Project: "Librainian", File: "ArrayExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Collections.Extensions {
 
@@ -41,21 +41,21 @@ namespace Librainian.Collections.Extensions {
 
         public static void ForEach( [NotNull] this Array array, [NotNull] Action<Array, Int32[]> action ) {
             if ( array is null ) {
-                throw new ArgumentNullException( paramName: nameof( array ) );
+                throw new ArgumentNullException( nameof( array ) );
             }
 
             if ( action is null ) {
-                throw new ArgumentNullException( paramName: nameof( action ) );
+                throw new ArgumentNullException( nameof( action ) );
             }
 
             if ( array.LongLength == 0 ) {
                 return;
             }
 
-            var walker = new ArrayTraverse( array: array );
+            var walker = new ArrayTraverse( array );
 
             do {
-                action( arg1: array, arg2: walker.Position );
+                action( array, walker.Position );
             } while ( walker.Step() );
         }
 

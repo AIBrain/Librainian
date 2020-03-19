@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Sound.cs" was last formatted by Protiguous on 2020/03/16 at 9:32 PM.
+// Project: "Librainian", File: "Sound.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.ComputerSystem {
 
@@ -38,11 +38,11 @@ namespace Librainian.ComputerSystem {
 
     public class Sound {
 
-        public static void Beep( Int32 frequency, TimeSpan duration ) => Console.Beep( frequency: frequency, duration: ( Int32 ) duration.TotalMilliseconds );
+        public static void Beep( Int32 frequency, TimeSpan duration ) => Console.Beep( frequency, ( Int32 ) duration.TotalMilliseconds );
 
-        public void High() => Beep( frequency: 14917, duration: TimeExtensions.GetDateTimePrecision() );
+        public void High() => Beep( 14917, TimeExtensions.GetDateTimePrecision() );
 
-        public void Low() => Beep( frequency: 440, duration: TimeExtensions.GetDateTimePrecision() );
+        public void Low() => Beep( 440, TimeExtensions.GetDateTimePrecision() );
 
     }
 

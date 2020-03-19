@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "RegistryContext.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "RegistryContext.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -53,32 +53,32 @@ namespace Librainian.OperatingSystem {
         /// <param name="action"></param>
         public static Boolean AddRegistryContext( [NotNull] String menuName, [NotNull] String menuPath, [CanBeNull] String? command = null,
             [CanBeNull] String? action = null ) {
-            if ( String.IsNullOrWhiteSpace( value: menuPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuPath ) );
+            if ( String.IsNullOrWhiteSpace( menuPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( menuPath ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: menuName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuName ) );
+            if ( String.IsNullOrWhiteSpace( menuName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( menuName ) );
             }
 
             try {
-                using var registryKey = Registry.ClassesRoot.CreateSubKey( subkey: menuPath );
+                using var registryKey = Registry.ClassesRoot.CreateSubKey( menuPath );
 
                 if ( registryKey != default ) {
-                    registryKey.SetValue( name: String.Empty, value: menuName, valueKind: RegistryValueKind.String );
+                    registryKey.SetValue( String.Empty, menuName, RegistryValueKind.String );
 
-                    if ( String.IsNullOrEmpty( value: command ) ) {
+                    if ( String.IsNullOrEmpty( command ) ) {
                         command = "command";
                     }
 
-                    if ( String.IsNullOrEmpty( value: action ) ) {
+                    if ( String.IsNullOrEmpty( action ) ) {
                         action = $"{Application.ExecutablePath} \"%1\" \"%2\" \"%3\" \"%4\"";
                     }
 
-                    using ( var commandKey = registryKey.CreateSubKey( subkey: command ) ) {
+                    using ( var commandKey = registryKey.CreateSubKey( command ) ) {
 
                         if ( commandKey != default ) {
-                            commandKey.SetValue( name: String.Empty, value: action, valueKind: RegistryValueKind.String );
+                            commandKey.SetValue( String.Empty, action, RegistryValueKind.String );
                         }
                         else {
                             return default;
@@ -96,17 +96,17 @@ namespace Librainian.OperatingSystem {
         }
 
         public static void RemoveRegistryContext( [NotNull] String menuPath, [NotNull] String registryCommand ) {
-            if ( String.IsNullOrWhiteSpace( value: menuPath ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( menuPath ) );
+            if ( String.IsNullOrWhiteSpace( menuPath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( menuPath ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: registryCommand ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( registryCommand ) );
+            if ( String.IsNullOrWhiteSpace( registryCommand ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( registryCommand ) );
             }
 
             try {
-                Registry.ClassesRoot.DeleteSubKey( subkey: registryCommand );
-                Registry.ClassesRoot.DeleteSubKey( subkey: menuPath );
+                Registry.ClassesRoot.DeleteSubKey( registryCommand );
+                Registry.ClassesRoot.DeleteSubKey( menuPath );
             }
             catch ( Exception exception ) {
                 exception.Log();

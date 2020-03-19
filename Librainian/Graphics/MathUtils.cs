@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "MathUtils.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "MathUtils.cs" was last formatted by Protiguous on 2020/03/16 at 3:00 PM.
+// 
+// Project: "Librainian", File: "MathUtils.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Graphics {
 
@@ -44,7 +44,7 @@ namespace Librainian.Graphics {
 
     public static class MathUtils {
 
-        public static readonly Vector3D XAxis = new Vector3D( x: 1, y: 0, z: 0 );
+        public static readonly Vector3D XAxis = new Vector3D( 1, 0, 0 );
 
         //---------------------------------------------------------------------------
         //
@@ -59,12 +59,11 @@ namespace Librainian.Graphics {
         // http: //CodePlex.com/Wiki/View.aspx?ProjectName=3DTools
         //
         //---------------------------------------------------------------------------
-        public static readonly Vector3D YAxis = new Vector3D( x: 0, y: 1, z: 0 );
+        public static readonly Vector3D YAxis = new Vector3D( 0, 1, 0 );
 
-        public static readonly Vector3D ZAxis = new Vector3D( x: 0, y: 0, z: 1 );
+        public static readonly Vector3D ZAxis = new Vector3D( 0, 0, 1 );
 
-        public static readonly Matrix3D ZeroMatrix = new Matrix3D( m11: 0, m12: 0, m13: 0, m14: 0, m21: 0, m22: 0, m23: 0, m24: 0, m31: 0, m32: 0, m33: 0, m34: 0, offsetX: 0,
-            offsetY: 0, offsetZ: 0, m44: 0 );
+        public static readonly Matrix3D ZeroMatrix = new Matrix3D( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 );
 
         private static Matrix3D GetHomogeneousToViewportTransform( Rect viewport ) {
             var scaleX = viewport.Width / 2;
@@ -72,12 +71,11 @@ namespace Librainian.Graphics {
             var offsetX = viewport.X + scaleX;
             var offsetY = viewport.Y + scaleY;
 
-            return new Matrix3D( m11: scaleX, m12: 0, m13: 0, m14: 0, m21: 0, m22: -scaleY, m23: 0, m24: 0, m31: 0, m32: 0, m33: 1, m34: 0, offsetX: offsetX, offsetY: offsetY,
-                offsetZ: 0, m44: 1 );
+            return new Matrix3D( scaleX, 0, 0, 0, 0, -scaleY, 0, 0, 0, 0, 1, 0, offsetX, offsetY, 0, 1 );
         }
 
         private static Matrix3D GetProjectionMatrix( [NotNull] OrthographicCamera camera, Double aspectRatio ) {
-            Debug.Assert( condition: camera != null, message: "Caller needs to ensure camera is non-null." );
+            Debug.Assert( camera != null, "Caller needs to ensure camera is non-null." );
 
             // This math is identical to what you find documented for D3DXMatrixOrthoRH with the
             // exception that in WPF only the camera's width is specified. Height is calculated from
@@ -91,32 +89,30 @@ namespace Librainian.Graphics {
             var m33 = 1 / ( zn - zf );
             var m43 = zn * m33;
 
-            return new Matrix3D( m11: 2 / w, m12: 0, m13: 0, m14: 0, m21: 0, m22: 2 / h, m23: 0, m24: 0, m31: 0, m32: 0, m33: m33, m34: 0, offsetX: 0, offsetY: 0,
-                offsetZ: m43, m44: 1 );
+            return new Matrix3D( 2 / w, 0, 0, 0, 0, 2 / h, 0, 0, 0, 0, m33, 0, 0, 0, m43, 1 );
         }
 
         private static Matrix3D GetProjectionMatrix( [NotNull] PerspectiveCamera camera, Double aspectRatio ) {
-            Debug.Assert( condition: camera != null, message: "Caller needs to ensure camera is non-null." );
+            Debug.Assert( camera != null, "Caller needs to ensure camera is non-null." );
 
             // This math is identical to what you find documented for D3DXMatrixPerspectiveFovRH
             // with the exception that in WPF the camera's horizontal rather the vertical
             // field-of-view is specified.
 
-            var hFoV = DegreesToRadians( degrees: camera.FieldOfView );
+            var hFoV = DegreesToRadians( camera.FieldOfView );
             var zn = camera.NearPlaneDistance;
             var zf = camera.FarPlaneDistance;
 
-            var xScale = 1 / Math.Tan( a: hFoV / 2 );
+            var xScale = 1 / Math.Tan( hFoV / 2 );
             var yScale = aspectRatio * xScale;
-            var m33 = Double.IsPositiveInfinity( d: zf ) ? -1 : zf / ( zn - zf );
+            var m33 = Double.IsPositiveInfinity( zf ) ? -1 : zf / ( zn - zf );
             var m43 = zn * m33;
 
-            return new Matrix3D( m11: xScale, m12: 0, m13: 0, m14: 0, m21: 0, m22: yScale, m23: 0, m24: 0, m31: 0, m32: 0, m33: m33, m34: -1, offsetX: 0, offsetY: 0,
-                offsetZ: m43, m44: 0 );
+            return new Matrix3D( xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, m33, -1, 0, 0, m43, 0 );
         }
 
         private static Matrix3D GetViewMatrix( [NotNull] ProjectionCamera camera ) {
-            Debug.Assert( condition: camera != null, message: "Caller needs to ensure camera is non-null." );
+            Debug.Assert( camera != null, "Caller needs to ensure camera is non-null." );
 
             // This math is identical to what you find documented for D3DXMatrixLookAtRH with the
             // exception that WPF uses a LookDirection vector rather than a LookAt point.
@@ -124,18 +120,17 @@ namespace Librainian.Graphics {
             var zAxis = -camera.LookDirection;
             zAxis.Normalize();
 
-            var xAxis = Vector3D.CrossProduct( vector1: camera.UpDirection, vector2: zAxis );
+            var xAxis = Vector3D.CrossProduct( camera.UpDirection, zAxis );
             xAxis.Normalize();
 
-            var yAxis = Vector3D.CrossProduct( vector1: zAxis, vector2: xAxis );
+            var yAxis = Vector3D.CrossProduct( zAxis, xAxis );
 
-            var position = ( Vector3D )camera.Position;
-            var offsetX = -Vector3D.DotProduct( vector1: xAxis, vector2: position );
-            var offsetY = -Vector3D.DotProduct( vector1: yAxis, vector2: position );
-            var offsetZ = -Vector3D.DotProduct( vector1: zAxis, vector2: position );
+            var position = ( Vector3D ) camera.Position;
+            var offsetX = -Vector3D.DotProduct( xAxis, position );
+            var offsetY = -Vector3D.DotProduct( yAxis, position );
+            var offsetZ = -Vector3D.DotProduct( zAxis, position );
 
-            return new Matrix3D( m11: xAxis.X, m12: yAxis.X, m13: zAxis.X, m14: 0, m21: xAxis.Y, m22: yAxis.Y, m23: zAxis.Y, m24: 0, m31: xAxis.Z, m32: yAxis.Z, m33: zAxis.Z,
-                m34: 0, offsetX: offsetX, offsetY: offsetY, offsetZ: offsetZ, m44: 1 );
+            return new Matrix3D( xAxis.X, yAxis.X, zAxis.X, 0, xAxis.Y, yAxis.Y, zAxis.Y, 0, xAxis.Z, yAxis.Z, zAxis.Z, 0, offsetX, offsetY, offsetZ, 1 );
         }
 
         /// <summary>Gets the object space to world space transformation for the given DependencyObject</summary>
@@ -147,7 +142,7 @@ namespace Librainian.Graphics {
             viewport = null;
 
             if ( !( visual is Visual3D ) ) {
-                throw new ArgumentException( message: "Must be of type Visual3D.", paramName: nameof( visual ) );
+                throw new ArgumentException( "Must be of type Visual3D.", nameof( visual ) );
             }
 
             while ( visual != null ) {
@@ -155,13 +150,13 @@ namespace Librainian.Graphics {
                     break;
                 }
 
-                var transform = ( Transform3D )visual.GetValue( dp: ModelVisual3D.TransformProperty );
+                var transform = ( Transform3D ) visual.GetValue( ModelVisual3D.TransformProperty );
 
                 if ( transform != null ) {
-                    worldTransform.Append( matrix: transform.Value );
+                    worldTransform.Append( transform.Value );
                 }
 
-                visual = VisualTreeHelper.GetParent( reference: visual );
+                visual = VisualTreeHelper.GetParent( visual );
             }
 
             viewport = visual as Viewport3DVisual;
@@ -172,8 +167,7 @@ namespace Librainian.Graphics {
                     // In WPF 3D v1 the only possible configuration is a chain of ModelVisual3Ds
                     // leading up to a Viewport3DVisual.
 
-                    throw new ApplicationException(
-                        message: $"Unsupported type: '{visual.GetType().FullName}'.  Expected tree of ModelVisual3Ds leading up to a Viewport3DVisual." );
+                    throw new ApplicationException( $"Unsupported type: '{visual.GetType().FullName}'.  Expected tree of ModelVisual3Ds leading up to a Viewport3DVisual." );
                 }
 
                 return ZeroMatrix;
@@ -182,12 +176,12 @@ namespace Librainian.Graphics {
             return worldTransform;
         }
 
-        public static Double AngleBetweenVectors( Vector3D a, Vector3D b ) => TranslateRadianToAngle( radian: RadiansBetweenVectors( a: a, b: b ) );
+        public static Double AngleBetweenVectors( Vector3D a, Vector3D b ) => TranslateRadianToAngle( RadiansBetweenVectors( a, b ) );
 
         //===========================================================================================================
         public static Point3D Convert2DPoint( Point pointToConvert, [CanBeNull] Visual3D sphere, [CanBeNull] TranslateTransform3D cameraPosition ) // transform world matrix
         {
-            var screenTransform = TryTransformTo2DAncestor( visual: sphere, viewport: out var viewport, success: out var success );
+            var screenTransform = TryTransformTo2DAncestor( sphere, out var viewport, out var success );
 
             var pointInWorld = new Point3D();
 
@@ -198,10 +192,10 @@ namespace Librainian.Graphics {
 
                 screenTransform.Invert();
 
-                var pointOnScreen = new Point3D( x: pointToConvert.X, y: pointToConvert.Y, z: 1 );
+                var pointOnScreen = new Point3D( pointToConvert.X, pointToConvert.Y, 1 );
 
                 // pointInWorld = reverseTransform.Transform(pointOnScreen);
-                pointInWorld = screenTransform.Transform( point: pointOnScreen );
+                pointInWorld = screenTransform.Transform( pointOnScreen );
 
                 //pointInWorld = new Point3D(((pointInWorld.X + cameraPosition.OffsetX) / 4),
                 //                            ((pointInWorld.Y + cameraPosition.OffsetY) / 4),
@@ -213,29 +207,29 @@ namespace Librainian.Graphics {
 
         //FIXME: Should be replaced with method below
         public static Point Convert3DPoint( Point3D p3D, [NotNull] Viewport3D vp ) {
-            var vp3Dv = VisualTreeHelper.GetParent( reference: vp.Children[ index: 0 ] ) as Viewport3DVisual;
-            var m = TryWorldToViewportTransform( visual: vp3Dv, success: out var transformationResultOk );
+            var vp3Dv = VisualTreeHelper.GetParent( vp.Children[ 0 ] ) as Viewport3DVisual;
+            var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
 
             if ( !transformationResultOk ) {
-                return new Point( x: 0, y: 0 );
+                return new Point( 0, 0 );
             }
 
-            var pb = m.Transform( point: p3D );
-            var p2D = new Point( x: pb.X, y: pb.Y );
+            var pb = m.Transform( p3D );
+            var p2D = new Point( pb.X, pb.Y );
 
             return p2D;
         }
 
         public static Point Convert3DPoint( Point3D p3D, [NotNull] DependencyObject dependencyObject ) {
-            var vp3Dv = VisualTreeHelper.GetParent( reference: dependencyObject ) as Viewport3DVisual;
-            var m = TryWorldToViewportTransform( visual: vp3Dv, success: out var transformationResultOk );
+            var vp3Dv = VisualTreeHelper.GetParent( dependencyObject ) as Viewport3DVisual;
+            var m = TryWorldToViewportTransform( vp3Dv, out var transformationResultOk );
 
             if ( !transformationResultOk ) {
-                return new Point( x: 0, y: 0 );
+                return new Point( 0, 0 );
             }
 
-            var pb = m.Transform( point: p3D );
-            var p2D = new Point( x: pb.X, y: pb.Y );
+            var pb = m.Transform( p3D );
+            var p2D = new Point( pb.X, pb.Y );
 
             return p2D;
         }
@@ -247,22 +241,22 @@ namespace Librainian.Graphics {
         /// <summary>Computes the center of 'box'</summary>
         /// <param name="box">The Rect3D we want the center of</param>
         /// <returns>The center point</returns>
-        public static Point3D GetCenter( Rect3D box ) => new Point3D( x: box.X + box.SizeX / 2, y: box.Y + box.SizeY / 2, z: box.Z + box.SizeZ / 2 );
+        public static Point3D GetCenter( Rect3D box ) => new Point3D( box.X + ( box.SizeX / 2 ), box.Y + ( box.SizeY / 2 ), box.Z + ( box.SizeZ / 2 ) );
 
         public static Point3D GetCirclePoint( Double angle, Double radius, Point3D orientation = new Point3D() ) {
-            var x = radius * Math.Cos( d: TranslateAngleToRadian( angle: angle ) );
-            var y = radius * Math.Sin( a: TranslateAngleToRadian( angle: angle ) );
+            var x = radius * Math.Cos( TranslateAngleToRadian( angle ) );
+            var y = radius * Math.Sin( TranslateAngleToRadian( angle ) );
 
             // TODO: Try to find the best way to calculate circle point
-            if ( orientation.Equals( value: new Point3D() ) ) {
-                orientation = new Point3D( x: 1, y: 1, z: 0 );
+            if ( orientation.Equals( new Point3D() ) ) {
+                orientation = new Point3D( 1, 1, 0 );
             }
 
-            if ( orientation.X.Near( target: 0 ) ) {
-                return new Point3D( x: x * orientation.X, y: x * orientation.Y, z: y * orientation.Z );
+            if ( orientation.X.Near( 0 ) ) {
+                return new Point3D( x * orientation.X, x * orientation.Y, y * orientation.Z );
             }
 
-            return new Point3D( x: x * orientation.X, y: y * orientation.Y, z: y * orientation.Z );
+            return new Point3D( x * orientation.X, y * orientation.Y, y * orientation.Z );
         }
 
         [NotNull]
@@ -273,7 +267,7 @@ namespace Librainian.Graphics {
             Double angle = 0;
 
             for ( var i = 0; i < quantity; i++, angle += step ) {
-                circlePoints[ i ] = GetCirclePoint( angle: angle, radius: radius, orientation: orientation );
+                circlePoints[ i ] = GetCirclePoint( angle, radius, orientation );
             }
 
             return circlePoints;
@@ -282,12 +276,12 @@ namespace Librainian.Graphics {
         /// <summary>Computes the effective projection matrix for the given camera.</summary>
         public static Matrix3D GetProjectionMatrix( [NotNull] Camera camera, Double aspectRatio ) {
             switch ( camera ) {
-                case PerspectiveCamera perspectiveCamera: return GetProjectionMatrix( camera: perspectiveCamera, aspectRatio: aspectRatio );
-                case OrthographicCamera orthographicCamera: return GetProjectionMatrix( camera: orthographicCamera, aspectRatio: aspectRatio );
+                case PerspectiveCamera perspectiveCamera: return GetProjectionMatrix( perspectiveCamera, aspectRatio );
+                case OrthographicCamera orthographicCamera: return GetProjectionMatrix( orthographicCamera, aspectRatio );
                 case MatrixCamera matrixCamera: return matrixCamera.ProjectionMatrix;
             }
 
-            throw new ArgumentException( message: $"Unsupported camera type '{camera.GetType().FullName}'.", paramName: nameof( camera ) );
+            throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
         }
 
         [NotNull]
@@ -297,8 +291,8 @@ namespace Librainian.Graphics {
             var step = endAngle / resolution;
             var angle = startAngle;
 
-            for ( var i = 0; i < resolution + 1; i++, angle += step ) {
-                circlePoints[ i ] = GetCirclePoint( angle: angle, radius: radius, orientation: orientation );
+            for ( var i = 0; i < ( resolution + 1 ); i++, angle += step ) {
+                circlePoints[ i ] = GetCirclePoint( angle, radius, orientation );
             }
 
             return circlePoints;
@@ -309,14 +303,14 @@ namespace Librainian.Graphics {
             switch ( camera ) {
 
                 //case null: throw new ArgumentNullException( nameof( camera ) );
-                case ProjectionCamera projectionCamera: return GetViewMatrix( camera: projectionCamera );
+                case ProjectionCamera projectionCamera: return GetViewMatrix( projectionCamera );
                 case MatrixCamera matrixCamera: return matrixCamera.ViewMatrix;
             }
 
-            throw new ArgumentException( message: $"Unsupported camera type '{camera.GetType().FullName}'.", paramName: nameof( camera ) );
+            throw new ArgumentException( $"Unsupported camera type '{camera.GetType().FullName}'.", nameof( camera ) );
         }
 
-        public static Point3D MultiplyPoints( Point3D point1, Point3D point2 ) => new Point3D( x: point1.X * point2.X, y: point1.Y * point2.Y, z: point1.Z * point2.Z );
+        public static Point3D MultiplyPoints( Point3D point1, Point3D point2 ) => new Point3D( point1.X * point2.X, point1.Y * point2.Y, point1.Z * point2.Z );
 
         /// <summary>
         /// Takes a 3D point and returns the corresponding 2D point (X,Y) within the viewport. Requires the 3DUtils project available at
@@ -328,17 +322,17 @@ namespace Librainian.Graphics {
         public static Point Point3DToScreen2D( Point3D point3D, [NotNull] Viewport3D viewPort ) {
 
             // We need a Viewport3DVisual but we only have a Viewport3D.
-            var vpv = VisualTreeHelper.GetParent( reference: viewPort.Children[ index: 0 ] ) as Viewport3DVisual;
+            var vpv = VisualTreeHelper.GetParent( viewPort.Children[ 0 ] ) as Viewport3DVisual;
 
             // Get the world to viewport transform matrix
-            var m = TryWorldToViewportTransform( visual: vpv, success: out var bOk );
+            var m = TryWorldToViewportTransform( vpv, out var bOk );
 
             if ( bOk ) {
 
                 // Transform the 3D point to 2D
-                var transformedPoint = m.Transform( point: point3D );
+                var transformedPoint = m.Transform( point3D );
 
-                var screen2DPoint = new Point( x: transformedPoint.X, y: transformedPoint.Y );
+                var screen2DPoint = new Point( transformedPoint.X, transformedPoint.Y );
 
                 return screen2DPoint;
             }
@@ -346,15 +340,14 @@ namespace Librainian.Graphics {
             return new Point();
         }
 
-        public static Double RadiansBetweenVectors( Vector3D a, Vector3D b ) =>
-            Math.Acos( d: VectorMultiplication( a: a, b: b ) / ( VectorLength( a: a ) * VectorLength( a: b ) ) );
+        public static Double RadiansBetweenVectors( Vector3D a, Vector3D b ) => Math.Acos( VectorMultiplication( a, b ) / ( VectorLength( a ) * VectorLength( b ) ) );
 
         public static Point3D RotatePoint3D( Double angle, Point3D point, Point3D center = new Point3D() ) {
-            var radians = TranslateAngleToRadian( angle: angle );
-            var x = center.X + ( point.X - center.X ) * Math.Cos( d: radians ) + ( center.Y - point.Y ) * Math.Sin( a: radians );
-            var y = center.Y + ( point.X - center.X ) * Math.Sin( a: radians ) + ( point.Y - center.Y ) * Math.Cos( d: radians );
+            var radians = TranslateAngleToRadian( angle );
+            var x = center.X + ( ( point.X - center.X ) * Math.Cos( radians ) ) + ( ( center.Y - point.Y ) * Math.Sin( radians ) );
+            var y = center.Y + ( ( point.X - center.X ) * Math.Sin( radians ) ) + ( ( point.Y - center.Y ) * Math.Cos( radians ) );
 
-            return new Point3D( x: x, y: y, z: point.Z );
+            return new Point3D( x, y, point.Z );
         }
 
         /// <summary>Transforms the axis-aligned bounding box 'bounds' by 'transform'</summary>
@@ -370,11 +363,11 @@ namespace Librainian.Graphics {
             var z2 = bounds.Z + bounds.SizeZ;
 
             Point3D[] points = {
-                new Point3D( x: x1, y: y1, z: z1 ), new Point3D( x: x1, y: y1, z: z2 ), new Point3D( x: x1, y: y2, z: z1 ), new Point3D( x: x1, y: y2, z: z2 ),
-                new Point3D( x: x2, y: y1, z: z1 ), new Point3D( x: x2, y: y1, z: z2 ), new Point3D( x: x2, y: y2, z: z1 ), new Point3D( x: x2, y: y2, z: z2 )
+                new Point3D( x1, y1, z1 ), new Point3D( x1, y1, z2 ), new Point3D( x1, y2, z1 ), new Point3D( x1, y2, z2 ), new Point3D( x2, y1, z1 ),
+                new Point3D( x2, y1, z2 ), new Point3D( x2, y2, z1 ), new Point3D( x2, y2, z2 )
             };
 
-            transform.Transform( points: points );
+            transform.Transform( points );
 
             // reuse the 1 and 2 variables to stand for smallest and largest
             var p = points[ 0 ];
@@ -385,18 +378,18 @@ namespace Librainian.Graphics {
             for ( var i = 1; i < points.Length; i++ ) {
                 p = points[ i ];
 
-                x1 = Math.Min( val1: x1, val2: p.X );
-                y1 = Math.Min( val1: y1, val2: p.Y );
-                z1 = Math.Min( val1: z1, val2: p.Z );
-                x2 = Math.Max( val1: x2, val2: p.X );
-                y2 = Math.Max( val1: y2, val2: p.Y );
-                z2 = Math.Max( val1: z2, val2: p.Z );
+                x1 = Math.Min( x1, p.X );
+                y1 = Math.Min( y1, p.Y );
+                z1 = Math.Min( z1, p.Z );
+                x2 = Math.Max( x2, p.X );
+                y2 = Math.Max( y2, p.Y );
+                z2 = Math.Max( z2, p.Z );
             }
 
-            return new Rect3D( x: x1, y: y1, z: z1, sizeX: x2 - x1, sizeY: y2 - y1, sizeZ: z2 - z1 );
+            return new Rect3D( x1, y1, z1, x2 - x1, y2 - y1, z2 - z1 );
         }
 
-        public static Double TranslateAngleToRadian( Double angle ) => angle * Math.PI / 180;
+        public static Double TranslateAngleToRadian( Double angle ) => ( angle * Math.PI ) / 180;
 
         public static Double TranslateRadianToAngle( Double radian ) => radian * ( 180 / Math.PI );
 
@@ -409,7 +402,7 @@ namespace Librainian.Graphics {
         public static Boolean TryNormalize( ref Vector3D v ) {
             var length = v.Length;
 
-            if ( length.Near( target: 0 ) ) {
+            if ( length.Near( 0 ) ) {
                 return default;
             }
 
@@ -428,8 +421,8 @@ namespace Librainian.Graphics {
         /// <param name="success"></param>
         /// <returns></returns>
         public static Matrix3D TryTransformTo2DAncestor( [CanBeNull] DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
-            var to2D = GetWorldTransformationMatrix( visual: visual, viewport: out viewport );
-            to2D.Append( matrix: TryWorldToViewportTransform( visual: viewport, success: out success ) );
+            var to2D = GetWorldTransformationMatrix( visual, out viewport );
+            to2D.Append( TryWorldToViewportTransform( viewport, out success ) );
 
             if ( !success ) {
                 return ZeroMatrix;
@@ -447,8 +440,8 @@ namespace Librainian.Graphics {
         /// <param name="success"></param>
         /// <returns></returns>
         public static Matrix3D TryTransformToCameraSpace( [CanBeNull] DependencyObject visual, [CanBeNull] out Viewport3DVisual viewport, out Boolean success ) {
-            var toViewSpace = GetWorldTransformationMatrix( visual: visual, viewport: out viewport );
-            toViewSpace.Append( matrix: TryWorldToCameraTransform( visual: viewport, success: out success ) );
+            var toViewSpace = GetWorldTransformationMatrix( visual, out viewport );
+            toViewSpace.Append( TryWorldToCameraTransform( viewport, out success ) );
 
             if ( !success ) {
                 return ZeroMatrix;
@@ -488,10 +481,10 @@ namespace Librainian.Graphics {
                     }
 
                     m.Invert();
-                    result.Append( matrix: m );
+                    result.Append( m );
                 }
 
-                result.Append( matrix: GetViewMatrix( camera: camera ) );
+                result.Append( GetViewMatrix( camera ) );
 
                 success = true;
 
@@ -506,44 +499,46 @@ namespace Librainian.Graphics {
         /// planes will be coincident and nothing will render. In this case success will be false.
         /// </summary>
         public static Matrix3D TryWorldToViewportTransform( [CanBeNull] Viewport3DVisual visual, out Boolean success ) {
-            var result = TryWorldToCameraTransform( visual: visual, success: out success );
+            var result = TryWorldToCameraTransform( visual, out success );
 
             if ( success ) {
-                result.Append( matrix: GetProjectionMatrix( camera: visual.Camera, aspectRatio: GetAspectRatio( size: visual.Viewport.Size ) ) );
-                result.Append( matrix: GetHomogeneousToViewportTransform( viewport: visual.Viewport ) );
+                result.Append( GetProjectionMatrix( visual.Camera, GetAspectRatio( visual.Viewport.Size ) ) );
+                result.Append( GetHomogeneousToViewportTransform( visual.Viewport ) );
             }
 
             return result;
         }
 
-        public static Double VectorLength( Vector3D a ) => Math.Sqrt( d: a.X * a.X + a.Y * a.Y + a.Z * a.Z );
+        public static Double VectorLength( Vector3D a ) => Math.Sqrt( ( a.X * a.X ) + ( a.Y * a.Y ) + ( a.Z * a.Z ) );
 
-        public static Double VectorLength( Vector a ) => Math.Sqrt( d: a.X * a.X + a.Y * a.Y );
+        public static Double VectorLength( Vector a ) => Math.Sqrt( ( a.X * a.X ) + ( a.Y * a.Y ) );
 
-        public static Double VectorMultiplication( Vector3D a, Vector3D b ) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        public static Double VectorMultiplication( Vector3D a, Vector3D b ) => ( a.X * b.X ) + ( a.Y * b.Y ) + ( a.Z * b.Z );
 
-        public static Vector VectorOnPlaneXoYrojection( Vector3D a ) => new Vector( x: a.X, y: a.Y );
+        public static Vector VectorOnPlaneXoYrojection( Vector3D a ) => new Vector( a.X, a.Y );
 
-        public static Vector VectorOnPlaneYozProjection( Vector3D a ) => new Vector( x: a.Y, y: a.Z );
+        public static Vector VectorOnPlaneYozProjection( Vector3D a ) => new Vector( a.Y, a.Z );
 
         public static Vector VectorProjectionOnPlane( Vector3D a, Vector3D plane ) {
-            if ( plane.X.Near( target: 0 ) ) {
-                return new Vector( x: a.Y * plane.Y, y: a.Z * plane.Z );
+            if ( plane.X.Near( 0 ) ) {
+                return new Vector( a.Y * plane.Y, a.Z * plane.Z );
             }
 
-            if ( plane.Y.Near( target: 0 ) ) {
-                return new Vector( x: a.X * plane.X, y: a.Z * plane.Z );
+            if ( plane.Y.Near( 0 ) ) {
+                return new Vector( a.X * plane.X, a.Z * plane.Z );
             }
 
-            if ( plane.Z.Near( target: 0 ) ) {
-                return new Vector( x: a.X * plane.X, y: a.Y * plane.Y );
+            if ( plane.Z.Near( 0 ) ) {
+                return new Vector( a.X * plane.X, a.Y * plane.Y );
             }
 
-            throw new ArgumentException( message: "The vector 'plane' doesn't contain at least one coordinate equals 0" );
+            throw new ArgumentException( "The vector 'plane' doesn't contain at least one coordinate equals 0" );
 
             //return new Vector();
         }
 
-        public static Double VectorProjectionOnVector( Vector3D a, Vector3D b ) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        public static Double VectorProjectionOnVector( Vector3D a, Vector3D b ) => ( a.X * b.X ) + ( a.Y * b.Y ) + ( a.Z * b.Z );
+
     }
+
 }

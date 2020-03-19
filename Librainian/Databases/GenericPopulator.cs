@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "GenericPopulator.cs" was last formatted by Protiguous on 2020/03/16 at 9:33 PM.
+// Project: "Librainian", File: "GenericPopulator.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Databases {
 
@@ -46,26 +46,26 @@ namespace Librainian.Databases {
         [CanBeNull]
         public static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
             if ( reader == null ) {
-                throw new ArgumentNullException( paramName: nameof( reader ) );
+                throw new ArgumentNullException( nameof( reader ) );
             }
 
             var readerColumns = new List<String>();
 
             for ( var index = 0; index < reader.FieldCount; index++ ) {
-                readerColumns.Add( item: reader.GetName( i: index ) );
+                readerColumns.Add( reader.GetName( index ) );
             }
 
             // determine the information about the reader
-            var readerParam = Expression.Parameter( type: typeof( SqlDataReader ), name: "reader" );
-            var readerGetValue = typeof( SqlDataReader ).GetMethod( name: "GetValue" );
+            var readerParam = Expression.Parameter( typeof( SqlDataReader ), "reader" );
+            var readerGetValue = typeof( SqlDataReader ).GetMethod( "GetValue" );
 
             if ( readerGetValue is null ) {
                 return null;
             }
 
             // create a Constant expression of DBNull.Value to compare values to in reader
-            var dbNullValue = typeof( DBNull ).GetField( name: "Value" );
-            var dbNullExp = Expression.Field( expression: Expression.Parameter( type: typeof( DBNull ), name: "System.DBNull" ), field: dbNullValue );
+            var dbNullValue = typeof( DBNull ).GetField( "Value" );
+            var dbNullExp = Expression.Field( Expression.Parameter( typeof( DBNull ), "System.DBNull" ), dbNullValue );
 
             // loop through the properties and create MemberBinding expressions for each property
             var memberBindings = new List<MemberBinding>();
@@ -76,35 +76,35 @@ namespace Librainian.Databases {
                 Object defaultValue = null;
 
                 if ( prop.PropertyType.IsValueType ) {
-                    defaultValue = Activator.CreateInstance( type: prop.PropertyType );
+                    defaultValue = Activator.CreateInstance( prop.PropertyType );
                 }
-                else if ( prop.PropertyType.Name.Like( right: "string" ) ) {
+                else if ( prop.PropertyType.Name.Like( "string" ) ) {
                     defaultValue = String.Empty;
                 }
 
-                if ( readerColumns.Contains( item: prop.Name ) ) {
+                if ( readerColumns.Contains( prop.Name ) ) {
 
                     // build the Call expression to retrieve the data value from the reader
-                    var indexExpression = Expression.Constant( value: reader.GetOrdinal( name: prop.Name ) );
-                    var getValueExp = Expression.Call( instance: readerParam, method: readerGetValue, indexExpression );
+                    var indexExpression = Expression.Constant( reader.GetOrdinal( prop.Name ) );
+                    var getValueExp = Expression.Call( readerParam, readerGetValue, indexExpression );
 
                     // create the conditional expression to make sure the reader value != DBNull.Value
-                    var testExp = Expression.NotEqual( left: dbNullExp, right: getValueExp );
-                    var ifTrue = Expression.Convert( expression: getValueExp, type: prop.PropertyType );
-                    var ifFalse = Expression.Convert( expression: Expression.Constant( value: defaultValue ), type: prop.PropertyType );
+                    var testExp = Expression.NotEqual( dbNullExp, getValueExp );
+                    var ifTrue = Expression.Convert( getValueExp, prop.PropertyType );
+                    var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
 
                     // create the actual Bind expression to bind the value from the reader to the property value
-                    var mi = typeof( T ).GetMember( name: prop.Name )[ 0 ];
-                    MemberBinding mb = Expression.Bind( member: mi, expression: Expression.Condition( test: testExp, ifTrue: ifTrue, ifFalse: ifFalse ) );
-                    memberBindings.Add( item: mb );
+                    var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
+                    MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
+                    memberBindings.Add( mb );
                 }
             }
 
             // create a MemberInit expression for the item with the member bindings
-            var newItem = Expression.New( type: typeof( T ) );
-            var memberInit = Expression.MemberInit( newExpression: newItem, bindings: memberBindings );
+            var newItem = Expression.New( typeof( T ) );
+            var memberInit = Expression.MemberInit( newItem, memberBindings );
 
-            var lambda = Expression.Lambda<Func<SqlDataReader, T>>( body: memberInit, readerParam );
+            var lambda = Expression.Lambda<Func<SqlDataReader, T>>( memberInit, readerParam );
             Delegate resDelegate = lambda.Compile();
 
             return ( Func<SqlDataReader, T> ) resDelegate;
@@ -117,10 +117,10 @@ namespace Librainian.Databases {
         [NotNull]
         public static List<T> CreateList<T>( [NotNull] SqlDataReader reader ) {
             var results = new List<T>();
-            var readRow = GenericPopulator<T>.GetReader( reader: reader );
+            var readRow = GenericPopulator<T>.GetReader( reader );
 
             while ( reader.Read() ) {
-                results.Add( item: readRow( arg: reader ) );
+                results.Add( readRow( reader ) );
             }
 
             return results;

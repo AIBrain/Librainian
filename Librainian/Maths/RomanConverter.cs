@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "RomanConverter.cs" was last formatted by Protiguous on 2020/03/16 at 9:47 PM.
+// Project: "Librainian", File: "RomanConverter.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Maths {
 
@@ -59,7 +59,7 @@ namespace Librainian.Maths {
         [CanBeNull]
         public static String ToRoman( this UInt32 number ) {
 
-            var result = new Queue<RomanNumber>( capacity: number.ToString().Length * 2 );
+            var result = new Queue<RomanNumber>( number.ToString().Length * 2 );
 
             var currentRoman = RomanValues.Length - 1;
 
@@ -68,12 +68,12 @@ namespace Librainian.Maths {
                     --currentRoman;
                 }
                 else {
-                    result.Enqueue( item: RomanValues[ currentRoman ] );
+                    result.Enqueue( RomanValues[ currentRoman ] );
                     i -= ( UInt32 ) RomanValues[ currentRoman ];
                 }
             }
 
-            return result.Aggregate( seed: String.Empty, func: ( current, romanNumber ) => current + romanNumber );
+            return result.Aggregate( String.Empty, ( current, romanNumber ) => current + romanNumber );
         }
 
     }

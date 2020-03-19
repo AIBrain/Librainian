@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "CollectionExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "CollectionExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:53 PM.
+// 
+// Project: "Librainian", File: "CollectionExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Collections.Extensions {
 
@@ -123,7 +123,7 @@ namespace Librainian.Collections.Extensions {
 
             UInt64 numInstSoFar = 0;
 
-            return self.Any( element => predicate( element ) && ++numInstSoFar == minInstances );
+            return self.Any( element => predicate( element ) && ( ++numInstSoFar == minInstances ) );
         }
 
         /// <summary>Ascertains whether there are no more than <paramref name="maxInstances" /> elements in the source sequence that satisfy the given <paramref name="predicate" />.</summary>
@@ -147,7 +147,7 @@ namespace Librainian.Collections.Extensions {
 
             UInt64 numInstSoFar = 0;
 
-            return self.All( element => !predicate( element ) || ++numInstSoFar <= maxInstances );
+            return self.All( element => !predicate( element ) || ( ++numInstSoFar <= maxInstances ) );
         }
 
         public static Int32 Clear<T>( [NotNull] this IProducerConsumerCollection<T> collection ) => collection.RemoveAll();
@@ -454,7 +454,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( ( Int32 )( ValueType )type & ( Int32 )( ValueType )value ) == ( Int32 )( ValueType )value;
+            return ( ( Int32 ) ( ValueType ) type & ( Int32 ) ( ValueType ) value ) == ( Int32 ) ( ValueType ) value;
         }
 
         [Pure]
@@ -550,7 +550,7 @@ namespace Librainian.Collections.Extensions {
                     if ( i == seq.Length ) {
 
                         // Bingo !
-                        return p - seq.Length + 1;
+                        return ( p - seq.Length ) + 1;
                     }
                 }
                 else // Mismatch
@@ -560,7 +560,7 @@ namespace Librainian.Collections.Extensions {
 
                         // Yes, use the first one
                         var k = prospects[ 0 ];
-                        i = p - k + 1;
+                        i = ( p - k ) + 1;
                     }
                     else {
 
@@ -598,7 +598,7 @@ namespace Librainian.Collections.Extensions {
         public static Boolean IsEmpty<T>( [CanBeNull] this IEnumerable<T> source ) => source?.Any() != true;
 
         [Pure]
-        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+        public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 ) u );
 
         [CanBeNull]
         [Pure]
@@ -779,7 +779,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( type ) );
             }
 
-            return ( T )( ValueType )( ( Int32 )( ValueType )type & ~( Int32 )( ValueType )value );
+            return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
         }
 
         /// <summary>Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and returns how many <paramref name="specificItem" /> or null were removed.</summary>
@@ -1017,7 +1017,7 @@ namespace Librainian.Collections.Extensions {
 
             var sources = source as IList<TSource> ?? source.ToList();
 
-            return sources.Take( ( Int32 )( x * sources.Count ) );
+            return sources.Take( ( Int32 ) ( x * sources.Count ) );
         }
 
         [NotNull]
@@ -1074,7 +1074,7 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( dictionary ) );
             }
 
-            return ( ( ICollection<KeyValuePair<TKey, TValue>> )dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
+            return ( ( ICollection<KeyValuePair<TKey, TValue>> ) dictionary ).Remove( new KeyValuePair<TKey, TValue>( key, value ) );
         }
 
         /// <summary>Wrapper for <see cref="ConcurrentQueue{T}.TryDequeue" /></summary>
@@ -1110,7 +1110,7 @@ namespace Librainian.Collections.Extensions {
         }
 
         [Pure]
-        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 )( collection as Int32[] ).SumS();
+        public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 ) ( collection as Int32[] ).SumS();
 
         /// <summary>why?</summary>
         /// <typeparam name="TKey"></typeparam>
@@ -1154,5 +1154,7 @@ namespace Librainian.Collections.Extensions {
                 }
             }
         }
+
     }
+
 }

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ReferenceEqualityComparer.cs" was last formatted by Protiguous on 2020/03/16 at 10:04 PM.
+// Project: "Librainian", File: "ReferenceEqualityComparer.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Threading {
 
@@ -38,7 +38,7 @@ namespace Librainian.Threading {
 
     public class ReferenceEqualityComparer : EqualityComparer<Object> {
 
-        public override Boolean Equals( Object x, Object y ) => ReferenceEquals( objA: x, objB: y );
+        public override Boolean Equals( Object x, Object y ) => ReferenceEquals( x, y );
 
         public override Int32 GetHashCode( Object obj ) => obj?.GetHashCode() ?? 0;
 

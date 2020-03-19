@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Path.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Path.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
+// 
+// Project: "Librainian", File: "Path.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -147,13 +147,13 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 return path1;
             }
 
-            if ( path1.Length == 0 || path2.IsPathRooted() ) {
+            if ( ( path1.Length == 0 ) || path2.IsPathRooted() ) {
                 return path2;
             }
 
             var ch = path1[ path1.Length - 1 ];
 
-            if ( ch.IsDirectorySeparator() || ch == VolumeSeparatorChar ) {
+            if ( ch.IsDirectorySeparator() || ( ch == VolumeSeparatorChar ) ) {
                 return path1 + path2;
             }
 
@@ -176,29 +176,29 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             switch ( paths.Length ) {
                 case 0: return String.Empty;
                 case 1: {
-                        var z = paths[ 0 ];
+                    var z = paths[ 0 ];
 
-                        if ( z == null ) {
-                            throw new ArgumentException( "Value cannot be null or whitespace." );
-                        }
-
-                        return z.CheckInvalidPathChars().ThrowIfBlank();
+                    if ( z == null ) {
+                        throw new ArgumentException( "Value cannot be null or whitespace." );
                     }
+
+                    return z.CheckInvalidPathChars().ThrowIfBlank();
+                }
                 default: {
-                        var z = paths[ 0 ];
+                    var z = paths[ 0 ];
 
-                        if ( z == null ) {
-                            throw new ArgumentException( "Value cannot be null or whitespace." );
-                        }
-
-                        var path = z.CheckInvalidPathChars().ThrowIfBlank();
-
-                        for ( var i = 1; i < paths.Length; ++i ) {
-                            path = path.Combine( paths[ i ] );
-                        }
-
-                        return path;
+                    if ( z == null ) {
+                        throw new ArgumentException( "Value cannot be null or whitespace." );
                     }
+
+                    var path = z.CheckInvalidPathChars().ThrowIfBlank();
+
+                    for ( var i = 1; i < paths.Length; ++i ) {
+                        path = path.Combine( paths[ i ] );
+                    }
+
+                    return path;
+                }
             }
         }
 
@@ -221,7 +221,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var length = path.Length;
 
-            do { } while ( length > rootLength && !path[ --length ].IsDirectorySeparator() );
+            do { } while ( ( length > rootLength ) && !path[ --length ].IsDirectorySeparator() );
 
             if ( basePath == null ) {
                 return path.Substring( 0, length );
@@ -299,23 +299,24 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             var rootLength = 0;
             var length = path.Length;
 
-            if ( length >= 1 && path[ 0 ].IsDirectorySeparator() ) {
+            if ( ( length >= 1 ) && path[ 0 ].IsDirectorySeparator() ) {
                 rootLength = 1;
 
-                if ( length >= 2 && path[ 1 ].IsDirectorySeparator() ) {
+                if ( ( length >= 2 ) && path[ 1 ].IsDirectorySeparator() ) {
                     rootLength = 2;
                     var num = 2;
 
-                    while ( rootLength >= length ||
-                            ( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) && --num <= 0 ) {
+                    while ( ( rootLength >= length ) ||
+                            ( ( ( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar ) || ( path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) ) &&
+                              ( --num <= 0 ) ) ) {
                         ++rootLength;
                     }
                 }
             }
-            else if ( length >= 2 && path[ 1 ] == System.IO.Path.VolumeSeparatorChar ) {
+            else if ( ( length >= 2 ) && ( path[ 1 ] == System.IO.Path.VolumeSeparatorChar ) ) {
                 rootLength = 2;
 
-                if ( length >= 3 && path[ 2 ].IsDirectorySeparator() ) {
+                if ( ( length >= 3 ) && path[ 2 ].IsDirectorySeparator() ) {
                     ++rootLength;
                 }
             }
@@ -339,7 +340,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        public static Boolean IsDirectorySeparator( this Char c ) => c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
+        public static Boolean IsDirectorySeparator( this Char c ) => ( c == DirectorySeparatorChar ) || ( c == AltDirectorySeparatorChar );
 
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -358,13 +359,13 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
 
             var buffer = new StringBuilder( path.Length + 1 ); // Add 1 for NULL
-            var length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), ( UInt32 )buffer.Capacity, buffer, IntPtr.Zero );
+            var length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), ( UInt32 ) buffer.Capacity, buffer, IntPtr.Zero );
 
             if ( length > buffer.Capacity ) {
 
                 // Resulting path longer than our buffer, so increase it
 
-                buffer.Capacity = ( Int32 )length;
+                buffer.Capacity = ( Int32 ) length;
                 length = NativeMethods.GetFullPathNameW( path.ThrowIfBlank(), length, buffer, IntPtr.Zero );
             }
 
@@ -376,7 +377,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 throw Common.GetExceptionFromWin32Error( NativeMethods.ERROR_FILENAME_EXCED_RANGE, parameterName );
             }
 
-            if ( length > 1 && buffer[ 0 ].IsDirectorySeparator() && buffer[ 1 ].IsDirectorySeparator() ) {
+            if ( ( length > 1 ) && buffer[ 0 ].IsDirectorySeparator() && buffer[ 1 ].IsDirectorySeparator() ) {
                 if ( length < 2 ) {
                     throw new ArgumentException( @"The UNC path should be of the form \\server\share." );
                 }
@@ -422,5 +423,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             return false;
         }
+
     }
+
 }

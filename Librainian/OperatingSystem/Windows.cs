@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Windows.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Windows.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
+// 
+// Project: "Librainian", File: "Windows.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem {
 
@@ -60,14 +60,12 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Document?> CommandPrompt =
-            new Lazy<Document>( valueFactory: () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: "cmd.exe" ) ),
-                isThreadSafe: true );
+            new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: "cmd.exe" ) ), true );
 
         [NotNull]
         public static readonly Lazy<Document?> IrfanView64 =
-            new Lazy<Document?>(
-                valueFactory: () => FindDocument( fullname: Path.Combine( path1: Environment.GetFolderPath( folder: Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\",
-                    path2: "i_view64.exe" ) ), isThreadSafe: true );
+            new Lazy<Document?>( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ),
+                true );
 
         public static readonly Char[] PathSeparator = {
             ';'
@@ -75,21 +73,17 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Document?> PowerShell =
-            new Lazy<Document?>( valueFactory: () => FindDocument( fullname: Path.Combine( path1: PowerShellFolder.Value.FullPath, path2: "powershell.exe" ) ),
-                isThreadSafe: true );
+            new Lazy<Document?>( () => FindDocument( Path.Combine( PowerShellFolder.Value.FullPath, "powershell.exe" ) ), true );
 
         [NotNull]
         public static readonly Lazy<Folder?> PowerShellFolder =
-            new Lazy<Folder?>( valueFactory: () => FindFolder( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: @"WindowsPowerShell\v1.0" ) ),
-                isThreadSafe: true );
+            new Lazy<Folder?>( () => FindFolder( Path.Combine( WindowsSystem32Folder.Value.FullPath, @"WindowsPowerShell\v1.0" ) ), true );
 
         [NotNull]
-        public static readonly Lazy<Folder?> WindowsFolder =
-            new Lazy<Folder?>( valueFactory: () => FindFolder( fullname: Environment.GetFolderPath( folder: Environment.SpecialFolder.Windows ) ), isThreadSafe: true );
+        public static readonly Lazy<Folder?> WindowsFolder = new Lazy<Folder?>( () => FindFolder( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) ), true );
 
         [NotNull]
-        public static readonly Lazy<Folder?> WindowsSystem32Folder =
-            new Lazy<Folder?>( valueFactory: () => FindFolder( fullname: Path.Combine( path1: WindowsFolder.Value.FullPath, path2: "System32" ) ), isThreadSafe: true );
+        public static readonly Lazy<Folder?> WindowsSystem32Folder = new Lazy<Folder?>( () => FindFolder( Path.Combine( WindowsFolder.Value.FullPath, "System32" ) ), true );
 
         /// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
         /// <returns></returns>
@@ -128,14 +122,14 @@ namespace Librainian.OperatingSystem {
                 "Examining entries...".Info();
             }
 
-            foreach ( var pair in pathsData.Where( predicate: pair => pair.Value?.Exists() == false ) ) {
-                if ( pair.Key != null && pathsData.TryRemove( key: pair.Key, value: out var dummy ) && reportToConsole ) {
+            foreach ( var pair in pathsData.Where( pair => pair.Value?.Exists() == false ) ) {
+                if ( ( pair.Key != null ) && pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
                     $"Removing nonexistent folder `{dummy?.FullPath ?? Symbols.Null}` from PATH".Info();
                 }
             }
 
-            foreach ( var pair in pathsData.Where( predicate: pair => pair.Value?.GetFolders( searchPattern: "*" ).Any() == false && !pair.Value.GetDocuments().Any() ) ) {
-                if ( pair.Key != null && pathsData.TryRemove( key: pair.Key, value: out var dummy ) && reportToConsole ) {
+            foreach ( var pair in pathsData.Where( pair => ( pair.Value?.GetFolders( "*" ).Any() == false ) && !pair.Value.GetDocuments().Any() ) ) {
+                if ( ( pair.Key != null ) && pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
                     $"Removing empty folder {dummy?.FullPath ?? Symbols.Null} from PATH".Info();
                 }
             }
@@ -144,14 +138,14 @@ namespace Librainian.OperatingSystem {
                 "Rebuilding PATH entries...".Info();
             }
 
-            var rebuiltPath = pathsData.Values.Where( predicate: folder => !( folder is null ) ).OrderByDescending( keySelector: info => info.FullPath.Length )
-                                       .Select( selector: info => info.FullPath ).ToStrings( separator: ";" );
+            var rebuiltPath = pathsData.Values.Where( folder => !( folder is null ) ).OrderByDescending( info => info.FullPath.Length ).Select( info => info.FullPath )
+                                       .ToStrings( ";" );
 
             if ( reportToConsole ) {
                 "Applying new PATH entries...".Info();
             }
 
-            Environment.SetEnvironmentVariable( variable: PATH, value: rebuiltPath, target: EnvironmentVariableTarget.Machine );
+            Environment.SetEnvironmentVariable( PATH, rebuiltPath, EnvironmentVariableTarget.Machine );
         }
 
         public static Boolean CreateRestorePoint( String description = null ) {
@@ -182,7 +176,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String? arguments ) =>
-            Task.Run( function: () => {
+            Task.Run( () => {
                 try {
 
                     var proc = new ProcessStartInfo {
@@ -209,7 +203,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static Task<Boolean> ExecutePowershellCommandAsync( [CanBeNull] String? arguments, Boolean elevated = false ) =>
-            Task.Run( function: () => {
+            Task.Run( () => {
                 try {
                     var startInfo = new ProcessStartInfo {
                         UseShellExecute = false,
@@ -232,7 +226,7 @@ namespace Librainian.OperatingSystem {
                         return default;
                     }
 
-                    process.WaitForExit( milliseconds: ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
+                    process.WaitForExit( milliseconds: ( Int32 ) Minutes.One.ToSeconds().ToMilliseconds().Value );
                     "success.".Info();
 
                     return true;
@@ -254,7 +248,7 @@ namespace Librainian.OperatingSystem {
                 throw new ArgumentNullException( paramName: nameof( workingFolder ) );
             }
 
-            return Task.Run( function: () => {
+            return Task.Run( () => {
                 try {
                     var proc = new ProcessStartInfo {
                         UseShellExecute = false,
@@ -269,7 +263,7 @@ namespace Librainian.OperatingSystem {
 
                     $"Running process '{filename} {proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Blue );
 
-                    return Process.Start( startInfo: proc );
+                    return Process.Start( proc );
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -385,7 +379,7 @@ namespace Librainian.OperatingSystem {
                     service.WaitForStatus( desiredStatus: ServiceControllerStatus.Running, timeout: timeout );
 
                     return service.Status == ServiceControllerStatus.Running;
-                } ).ConfigureAwait( continueOnCapturedContext: false );
+                } ).ConfigureAwait( false );
             }
             catch ( TimeoutException exception ) {
                 exception.Log();
@@ -407,7 +401,7 @@ namespace Librainian.OperatingSystem {
                     service.WaitForStatus( desiredStatus: ServiceControllerStatus.Stopped, timeout: timeout );
 
                     return service.Status == ServiceControllerStatus.Stopped;
-                } ).ConfigureAwait( continueOnCapturedContext: false );
+                } ).ConfigureAwait( false );
             }
             catch ( TimeoutException exception ) {
                 exception.Log();
@@ -426,9 +420,9 @@ namespace Librainian.OperatingSystem {
                 throw new ArgumentNullException( paramName: nameof( outDocument ) );
             }
 
-            return Task.Run( function: () => {
+            return Task.Run( () => {
 
-                if ( IrfanView64.Value == null || !IrfanView64.Value.Exists() ) {
+                if ( ( IrfanView64.Value == null ) || !IrfanView64.Value.Exists() ) {
                     return null;
                 }
 
@@ -449,7 +443,7 @@ namespace Librainian.OperatingSystem {
 
                     $"Running irfanview command '{proc.Arguments}'...".Info();
 
-                    return Process.Start( startInfo: proc );
+                    return Process.Start( proc );
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -467,5 +461,7 @@ namespace Librainian.OperatingSystem {
                 Thread.Yield();
             }
         }
+
     }
+
 }

@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Win32.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Win32.cs" was last formatted by Protiguous on 2020/03/16 at 2:54 PM.
+// 
+// Project: "Librainian", File: "Win32.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Controls {
 
@@ -48,6 +48,7 @@ namespace Librainian.Controls {
         Regular,
 
         Fast
+
     }
 
     public static class Win32 {
@@ -80,7 +81,7 @@ namespace Librainian.Controls {
                 var cy = Cursor.Position.Y;
 
                 while ( true ) {
-                    if ( Cursor.Position.X == x && Cursor.Position.Y == y ) {
+                    if ( ( Cursor.Position.X == x ) && ( Cursor.Position.Y == y ) ) {
                         break;
                     }
 
@@ -92,7 +93,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cx -= ( Int32 )step;
+                            cx -= ( Int32 ) step;
                         }
                         else {
                             var step = ( cx - x ) / 10.0f;
@@ -101,7 +102,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cx += ( Int32 )step;
+                            cx += ( Int32 ) step;
                         }
                     }
                     else {
@@ -112,7 +113,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cy -= ( Int32 )step;
+                            cy -= ( Int32 ) step;
                         }
                         else {
                             var step = ( cy - y ) / 10.0f;
@@ -121,7 +122,7 @@ namespace Librainian.Controls {
                                 step = 1;
                             }
 
-                            cy += ( Int32 )step;
+                            cy += ( Int32 ) step;
                         }
                     }
 
@@ -142,5 +143,7 @@ namespace Librainian.Controls {
         //for maximize button on forms
 
         // ReSharper restore InconsistentNaming
+
     }
+
 }

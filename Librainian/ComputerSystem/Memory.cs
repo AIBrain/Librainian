@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Memory.cs" was last formatted by Protiguous on 2020/03/16 at 9:31 PM.
+// Project: "Librainian", File: "Memory.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.ComputerSystem {
 
@@ -50,10 +50,10 @@ namespace Librainian.ComputerSystem {
                 }
 
                 if ( gc ) {
-                    GC.Collect( generation: 2, mode: GCCollectionMode.Optimized, blocking: true, compacting: true );
+                    GC.Collect( 2, GCCollectionMode.Optimized, true, true );
                 }
 
-                using var _ = new MemoryFailPoint( sizeInMegabytes: megabytes );
+                using var _ = new MemoryFailPoint( megabytes );
 
                 return true;
             }
@@ -69,7 +69,7 @@ namespace Librainian.ComputerSystem {
         }
 
         public static Int32 LargestCanAllocate( UInt64 maxNeeded = Int32.MaxValue ) {
-            var size = ( Int32 ) Math.Min( val1: maxNeeded, val2: Int32.MaxValue );
+            var size = ( Int32 ) Math.Min( maxNeeded, Int32.MaxValue );
 
             do {
                 if ( size.CanAllocateMemory() ) {

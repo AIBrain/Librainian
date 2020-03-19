@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "CompressExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "CompressExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:59 PM.
+// 
+// Project: "Librainian", File: "CompressExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem.Compression {
 
@@ -50,13 +50,13 @@ namespace Librainian.OperatingSystem.Compression {
         [NotNull]
         public static Byte[] Compress( [NotNull] this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
             var output = new MemoryStream();
 
-            using ( var compress = new GZipStream( stream: output, compressionLevel: compressionLevel ) ) {
-                compress.Write( array: data, offset: 0, count: data.Length );
+            using ( var compress = new GZipStream( output, compressionLevel ) ) {
+                compress.Write( data, 0, data.Length );
             }
 
             return output.ToArray();
@@ -69,23 +69,23 @@ namespace Librainian.OperatingSystem.Compression {
         [NotNull]
         public static Byte[] Compress( [NotNull] this String text ) {
             if ( text is null ) {
-                throw new ArgumentNullException( paramName: nameof( text ) );
+                throw new ArgumentNullException( nameof( text ) );
             }
 
-            return Compress( text: text, encoding: Encoding.Default );
+            return Compress( text, Encoding.Default );
         }
 
         [NotNull]
         public static Byte[] Compress( [NotNull] this String text, [NotNull] Encoding encoding ) {
             if ( text is null ) {
-                throw new ArgumentNullException( paramName: nameof( text ) );
+                throw new ArgumentNullException( nameof( text ) );
             }
 
             if ( encoding is null ) {
-                throw new ArgumentNullException( paramName: nameof( encoding ) );
+                throw new ArgumentNullException( nameof( encoding ) );
             }
 
-            return encoding.GetBytes( s: text ).Compress();
+            return encoding.GetBytes( text ).Compress();
         }
 
         /// <summary>Returns the string, Gzip compressed and then converted to base64.</summary>
@@ -93,15 +93,15 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns></returns>
         [ItemNotNull]
         public static async Task<String> CompressAsync( [NotNull] this String text ) {
-            var buffer = Encoding.Unicode.GetBytes( s: text );
+            var buffer = Encoding.Unicode.GetBytes( text );
 
-            using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
+            using ( var streamIn = new MemoryStream( buffer ) ) {
                 using ( var streamOut = new MemoryStream() ) {
-                    using ( var zipStream = new GZipStream( stream: streamOut, mode: CompressionMode.Compress ) ) {
-                        await streamIn.CopyToAsync( destination: zipStream ).ConfigureAwait( continueOnCapturedContext: false );
+                    using ( var zipStream = new GZipStream( streamOut, CompressionMode.Compress ) ) {
+                        await streamIn.CopyToAsync( zipStream ).ConfigureAwait( false );
                     }
 
-                    return Convert.ToBase64String( inArray: streamOut.ToArray() );
+                    return Convert.ToBase64String( streamOut.ToArray() );
                 }
             }
         }
@@ -109,12 +109,12 @@ namespace Librainian.OperatingSystem.Compression {
         [NotNull]
         public static Byte[] Decompress( [NotNull] this Byte[] data ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            using ( var decompress = new GZipStream( stream: new MemoryStream( buffer: data ), mode: CompressionMode.Decompress ) ) {
+            using ( var decompress = new GZipStream( new MemoryStream( data ), CompressionMode.Decompress ) ) {
                 using ( var output = new MemoryStream() ) {
-                    decompress.CopyTo( destination: output );
+                    decompress.CopyTo( output );
 
                     return output.ToArray();
                 }
@@ -126,15 +126,15 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns></returns>
         [ItemNotNull]
         public static async Task<String> DecompressAsync( [NotNull] this String text ) {
-            var buffer = Convert.FromBase64String( s: text );
+            var buffer = Convert.FromBase64String( text );
 
-            using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
+            using ( var streamIn = new MemoryStream( buffer ) ) {
                 using ( var streamOut = new MemoryStream() ) {
-                    using ( var gs = new GZipStream( stream: streamIn, mode: CompressionMode.Decompress ) ) {
-                        await gs.CopyToAsync( destination: streamOut ).ConfigureAwait( continueOnCapturedContext: false );
+                    using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
+                        await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
                     }
 
-                    return Encoding.Unicode.GetString( bytes: streamOut.ToArray() );
+                    return Encoding.Unicode.GetString( streamOut.ToArray() );
                 }
             }
         }
@@ -142,23 +142,23 @@ namespace Librainian.OperatingSystem.Compression {
         [NotNull]
         public static String DecompressToString( [NotNull] this Byte[] data ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
-            return DecompressToString( data: data, encoding: Encoding.Default );
+            return DecompressToString( data, Encoding.Default );
         }
 
         [NotNull]
         public static String DecompressToString( [NotNull] this Byte[] data, [NotNull] Encoding encoding ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
             if ( encoding is null ) {
-                throw new ArgumentNullException( paramName: nameof( encoding ) );
+                throw new ArgumentNullException( nameof( encoding ) );
             }
 
-            return encoding.GetString( bytes: data.Decompress() );
+            return encoding.GetString( data.Decompress() );
         }
 
         /// <summary>Returns the string decompressed (from base64).</summary>
@@ -169,11 +169,11 @@ namespace Librainian.OperatingSystem.Compression {
         public static String FromCompressedBase64( [NotNull] this String text, [CanBeNull] Encoding encoding = null ) {
 
             using ( var streamOut = new MemoryStream() ) {
-                var buffer = Convert.FromBase64String( s: text );
+                var buffer = Convert.FromBase64String( text );
 
-                using ( var streamIn = new MemoryStream( buffer: buffer ) ) {
-                    using ( var gs = new GZipStream( stream: streamIn, mode: CompressionMode.Decompress ) ) {
-                        gs.CopyTo( destination: streamOut );
+                using ( var streamIn = new MemoryStream( buffer ) ) {
+                    using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
+                        gs.CopyTo( streamOut );
                     }
                 }
 
@@ -181,7 +181,7 @@ namespace Librainian.OperatingSystem.Compression {
                     encoding = Encoding.Unicode;
                 }
 
-                return encoding.GetString( bytes: streamOut.ToArray() );
+                return encoding.GetString( streamOut.ToArray() );
             }
         }
 
@@ -195,15 +195,17 @@ namespace Librainian.OperatingSystem.Compression {
                 encoding = Encoding.Unicode;
             }
 
-            using ( var incoming = new MemoryStream( buffer: encoding.GetBytes( s: text ), writable: false ) ) {
+            using ( var incoming = new MemoryStream( encoding.GetBytes( text ), false ) ) {
                 using ( var streamOut = new MemoryStream() ) {
-                    using ( var destination = new GZipStream( stream: streamOut, compressionLevel: CompressionLevel.Fastest ) ) {
-                        incoming.CopyTo( destination: destination );
+                    using ( var destination = new GZipStream( streamOut, CompressionLevel.Fastest ) ) {
+                        incoming.CopyTo( destination );
                     }
 
-                    return Convert.ToBase64String( inArray: streamOut.ToArray() );
+                    return Convert.ToBase64String( streamOut.ToArray() );
                 }
             }
         }
+
     }
+
 }

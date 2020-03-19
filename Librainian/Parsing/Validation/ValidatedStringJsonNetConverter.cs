@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "ValidatedStringJsonNetConverter.cs" was last formatted by Protiguous on 2020/03/16 at 10:00 PM.
+// Project: "Librainian", File: "ValidatedStringJsonNetConverter.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing.Validation {
 
@@ -42,7 +42,7 @@ namespace Librainian.Parsing.Validation {
     public class ValidatedStringJsonNetConverter : JsonConverter {
 
         public override Boolean CanConvert( [NotNull] Type objectType ) {
-            if ( objectType.IsSubclassOf( c: typeof( ValidatedString ) ) ) {
+            if ( objectType.IsSubclassOf( typeof( ValidatedString ) ) ) {
                 return true;
             }
 
@@ -51,10 +51,10 @@ namespace Librainian.Parsing.Validation {
 
         [NotNull]
         public override Object ReadJson( [NotNull] JsonReader reader, [NotNull] Type objectType, [CanBeNull] Object existingValue, [CanBeNull] JsonSerializer serializer ) =>
-            Activator.CreateInstance( type: objectType, reader.Value );
+            Activator.CreateInstance( objectType, reader.Value );
 
         public override void WriteJson( [NotNull] JsonWriter writer, [CanBeNull] Object value, [CanBeNull] JsonSerializer serializer ) =>
-            writer.WriteValue( value: ( ( ValidatedString ) value ).Value );
+            writer.WriteValue( ( ( ValidatedString ) value ).Value );
 
     }
 

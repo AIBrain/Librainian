@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "UniqueExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 9:57 PM.
+// Project: "Librainian", File: "UniqueExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -41,13 +41,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [NotNull]
         public static Unique ToUnique( [NotNull] this String location ) {
-            if ( String.IsNullOrWhiteSpace( value: location ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( location ) );
+            if ( String.IsNullOrWhiteSpace( location ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
             }
 
-            return Unique.TryCreate( location: location, unique: out var unique ) ?
-                unique :
-                throw new InvalidOperationException( message: $"Invalid location '{location}' given." );
+            return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
         }
 
         /// <summary>Convert a <see cref="TrimmedString" /> to a <see cref="Unique" /> location.</summary>
@@ -55,17 +53,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [NotNull]
         public static Unique ToUnique( this TrimmedString location ) =>
-            Unique.TryCreate( location: location, unique: out var unique ) ? unique : throw new InvalidOperationException( message: $"Invalid location '{location}' given." );
+            Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
 
         [NotNull]
         public static Unique ToUnique( [NotNull] this Uri location ) {
             if ( location is null ) {
-                throw new ArgumentNullException( paramName: nameof( location ) );
+                throw new ArgumentNullException( nameof( location ) );
             }
 
-            return Unique.TryCreate( uri: location, unique: out var unique ) ?
-                unique :
-                throw new InvalidOperationException( message: $"Invalid location '{location}' given." );
+            return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
         }
 
     }

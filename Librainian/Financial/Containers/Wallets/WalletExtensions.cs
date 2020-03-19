@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "WalletExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "WalletExtensions.cs" was last formatted by Protiguous on 2020/03/16 at 2:55 PM.
+// 
+// Project: "Librainian", File: "WalletExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 #pragma warning disable RCS1138 // Add summary to documentation comment.
 
@@ -161,7 +161,7 @@ namespace Librainian.Financial.Containers.Wallets {
         [NotNull]
         public static Task<ConcurrentDictionary<IDenomination, UInt64>> StartTransfer( [CanBeNull] this Wallet source, [CanBeNull] Wallet target ) =>
             Task.Run( () => {
-                if ( null == source || null == target ) {
+                if ( ( null == source ) || ( null == target ) ) {
                     return new ConcurrentDictionary<IDenomination, UInt64>();
                 }
 
@@ -182,11 +182,11 @@ namespace Librainian.Financial.Containers.Wallets {
 
             leftOverAmount = amount;
 
-            while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
+            while ( ( leftOverAmount > Decimal.Zero ) && denominations.Any() ) {
                 var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
                 denominations.Remove( highestBill );
 
-                var count = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
+                var count = ( UInt64 ) ( leftOverAmount / highestBill.FaceValue );
 
                 if ( count.Any() ) {
                     optimal[ highestBill ] += count;
@@ -272,7 +272,7 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) &&
-                   target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0m;
+                   ( target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0m );
         }
 
         /// <summary>Create a TPL dataflow task for depositing large volumes of money into this wallet.</summary>
@@ -292,5 +292,7 @@ namespace Librainian.Financial.Containers.Wallets {
 
             return block.Completion;
         }
+
     }
+
 }

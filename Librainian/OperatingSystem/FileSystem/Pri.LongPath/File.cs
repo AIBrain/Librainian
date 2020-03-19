@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "File.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,20 +20,20 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "File.cs" was last formatted by Protiguous on 2020/03/16 at 2:57 PM.
+// 
+// Project: "Librainian", File: "File.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo( assemblyName: "Tests" )]
+[assembly: InternalsVisibleTo( "Tests" )]
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -49,42 +49,39 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
     public static class File {
 
+        [NotNull]
+        public static Encoding UTF8NoBOM => _UTF8NoBOM ??= new UTF8Encoding( false, true );
+
         private static Encoding _UTF8NoBOM;
 
-        [NotNull]
-        public static Encoding UTF8NoBOM => _UTF8NoBOM ??= new UTF8Encoding( encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true );
-
-        public static void AppendAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) =>
-            AppendAllLines( path: path.ThrowIfBlank(), contents: contents, encoding: Encoding.UTF8 );
+        public static void AppendAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) => AppendAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
         public static void AppendAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents, [NotNull] Encoding encoding ) {
 
             const Boolean append = true;
 
-            using var writer = CreateStreamWriter( path: path.ThrowIfBlank(), append: append, encoding: encoding );
+            using var writer = CreateStreamWriter( path.ThrowIfBlank(), append, encoding );
 
             foreach ( var line in contents ) {
-                writer.WriteLine( value: line );
+                writer.WriteLine( line );
             }
         }
 
-        public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents ) =>
-            AppendAllText( path: path.ThrowIfBlank(), contents: contents, encoding: Encoding.UTF8 );
+        public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents ) => AppendAllText( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
         public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents, [NotNull] Encoding encoding ) {
 
             const Boolean append = true;
 
-            using var writer = CreateStreamWriter( path: path.ThrowIfBlank(), append: append, encoding: encoding );
+            using var writer = CreateStreamWriter( path.ThrowIfBlank(), append, encoding );
 
-            writer.Write( value: contents );
+            writer.Write( contents );
         }
 
         [NotNull]
-        public static StreamWriter AppendText( [NotNull] String path ) => CreateStreamWriter( path: path.ThrowIfBlank(), append: true );
+        public static StreamWriter AppendText( [NotNull] String path ) => CreateStreamWriter( path.ThrowIfBlank(), true );
 
-        public static void Copy( [NotNull] String sourceFileName, [NotNull] String destFileName ) =>
-            Copy( sourcePath: sourceFileName.ThrowIfBlank(), destinationPath: destFileName.ThrowIfBlank(), overwrite: false );
+        public static void Copy( [NotNull] String sourceFileName, [NotNull] String destFileName ) => Copy( sourceFileName.ThrowIfBlank(), destFileName.ThrowIfBlank(), false );
 
         /// <summary>Copies the specified file to a specified new file, indicating whether to overwrite an existing file.</summary>
         /// <param name="sourcePath">A <see cref="String" /> containing the path of the file to copy.</param>
@@ -92,8 +89,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <param name="overwrite"><see langword="true" /> if <paramref name="destinationPath" /> should be overwritten if it refers to an existing file, otherwise, <see langword="false" />.</param>
         /// <exception cref="ArgumentNullException"><paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined
-        /// in <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is an empty string (""), contains only white space, or contains one
+        /// or more invalid characters as defined in <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
         /// <para>-or-</para>
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> contains one or more components that exceed the drive-defined maximum length. For example, on
         /// Windows-based platforms, components must not exceed 255 characters.
@@ -121,33 +118,32 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> specifies a device that is not ready.
         /// </exception>
         public static void Copy( [NotNull] String sourcePath, [NotNull] String destinationPath, Boolean overwrite ) {
-            var normalizedSourcePath = sourcePath.ThrowIfBlank().NormalizeLongPath( parameterName: "sourcePath" );
-            var normalizedDestinationPath = destinationPath.ThrowIfBlank().NormalizeLongPath( parameterName: "destinationPath" );
+            var normalizedSourcePath = sourcePath.ThrowIfBlank().NormalizeLongPath( "sourcePath" );
+            var normalizedDestinationPath = destinationPath.ThrowIfBlank().NormalizeLongPath( "destinationPath" );
 
-            if ( !NativeMethods.CopyFile( src: normalizedSourcePath, dst: normalizedDestinationPath, failIfExists: !overwrite ) ) {
+            if ( !NativeMethods.CopyFile( normalizedSourcePath, normalizedDestinationPath, !overwrite ) ) {
                 throw Common.GetExceptionFromLastWin32Error();
             }
         }
 
         [NotNull]
-        public static FileStream Create( [NotNull] String path ) => Create( path: path.ThrowIfBlank(), bufferSize: Common.DefaultBufferSize );
+        public static FileStream Create( [NotNull] String path ) => Create( path.ThrowIfBlank(), Common.DefaultBufferSize );
 
         [NotNull]
         public static FileStream Create( [NotNull] String path, Int32 bufferSize ) =>
-            Open( path: path.ThrowIfBlank(), mode: FileMode.Create, access: FileAccess.ReadWrite, share: FileShare.None, bufferSize: bufferSize, options: FileOptions.None );
+            Open( path.ThrowIfBlank(), FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSize, FileOptions.None );
 
         [NotNull]
         public static FileStream Create( [NotNull] String path, Int32 bufferSize, FileOptions options ) =>
-            Open( path: path.ThrowIfBlank(), mode: FileMode.Create, access: FileAccess.ReadWrite, share: FileShare.None, bufferSize: bufferSize, options: options );
+            Open( path.ThrowIfBlank(), FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSize, options );
 
         /// <remarks>replaces "new StreamReader(path, true|false)"</remarks>
         [NotNull]
         public static StreamReader CreateStreamReader( [NotNull] String path, [NotNull] Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize ) {
 
-            var fileStream = Open( path: path.ThrowIfBlank(), mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            return new StreamReader( stream: fileStream, encoding: encoding, detectEncodingFromByteOrderMarks: detectEncodingFromByteOrderMarks, bufferSize: bufferSize );
+            return new StreamReader( fileStream, encoding, detectEncodingFromByteOrderMarks, bufferSize );
         }
 
         /// <remarks>replaces "new StreamWriter(path, true|false)"</remarks>
@@ -156,10 +152,9 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var fileMode = append ? FileMode.Append : FileMode.Create;
 
-            var fileStream = Open( path: path.ThrowIfBlank(), mode: fileMode, access: FileAccess.Write, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), fileMode, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            return new StreamWriter( stream: fileStream, encoding: UTF8NoBOM, bufferSize: Common.DefaultBufferSize );
+            return new StreamWriter( fileStream, UTF8NoBOM, Common.DefaultBufferSize );
         }
 
         [NotNull]
@@ -167,45 +162,42 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var fileMode = append ? FileMode.Append : FileMode.Create;
 
-            var fileStream = Open( path: path.ThrowIfBlank(), mode: fileMode, access: FileAccess.Write, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), fileMode, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            return new StreamWriter( stream: fileStream, encoding: encoding, bufferSize: Common.DefaultBufferSize );
+            return new StreamWriter( fileStream, encoding, Common.DefaultBufferSize );
         }
 
         [NotNull]
         public static StreamWriter CreateText( [NotNull] String path ) {
 
-            var fileStream = Open( path: path.ThrowIfBlank(), mode: FileMode.Create, access: FileAccess.Write, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), FileMode.Create, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            return new StreamWriter( stream: fileStream, encoding: UTF8NoBOM, bufferSize: Common.DefaultBufferSize );
+            return new StreamWriter( fileStream, UTF8NoBOM, Common.DefaultBufferSize );
         }
 
         [NotNull]
-        public static StreamWriter CreateText( [NotNull] String path, [NotNull] Encoding encoding ) =>
-            CreateStreamWriter( path: path.ThrowIfBlank(), append: false, encoding: encoding );
+        public static StreamWriter CreateText( [NotNull] String path, [NotNull] Encoding encoding ) => CreateStreamWriter( path.ThrowIfBlank(), false, encoding );
 
         public static void Decrypt( [NotNull] String path ) {
 
             var fullPath = path.ThrowIfBlank().GetFullPath();
             var normalizedPath = fullPath.NormalizeLongPath();
 
-            if ( NativeMethods.DecryptFile( path: normalizedPath, reservedMustBeZero: 0 ) ) {
+            if ( NativeMethods.DecryptFile( normalizedPath, 0 ) ) {
                 return;
             }
 
             var errorCode = Marshal.GetLastWin32Error();
 
             if ( errorCode == NativeMethods.ERROR_ACCESS_DENIED ) {
-                var di = new DriveInfo( driveName: normalizedPath.GetPathRoot() );
+                var di = new DriveInfo( normalizedPath.GetPathRoot() );
 
-                if ( !String.Equals( a: "NTFS", b: di.DriveFormat ) ) {
-                    throw new NotSupportedException( message: "NTFS drive required for file encryption" );
+                if ( !String.Equals( "NTFS", di.DriveFormat ) ) {
+                    throw new NotSupportedException( "NTFS drive required for file encryption" );
                 }
             }
 
-            Common.ThrowIOError( errorCode: errorCode, maybeFullPath: fullPath );
+            Common.ThrowIOError( errorCode, fullPath );
         }
 
         /// <summary>Deletes the specified file.</summary>
@@ -244,7 +236,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 return;
             }
 
-            if ( !NativeMethods.DeleteFile( lpFileName: normalizedPath ) ) {
+            if ( !NativeMethods.DeleteFile( normalizedPath ) ) {
                 throw Common.GetExceptionFromLastWin32Error();
             }
         }
@@ -254,21 +246,21 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             var fullPath = path.ThrowIfBlank().GetFullPath();
             var normalizedPath = fullPath.NormalizeLongPath();
 
-            if ( NativeMethods.EncryptFile( path: normalizedPath ) ) {
+            if ( NativeMethods.EncryptFile( normalizedPath ) ) {
                 return;
             }
 
             var errorCode = Marshal.GetLastWin32Error();
 
             if ( errorCode == NativeMethods.ERROR_ACCESS_DENIED ) {
-                var di = new DriveInfo( driveName: normalizedPath.GetPathRoot() );
+                var di = new DriveInfo( normalizedPath.GetPathRoot() );
 
-                if ( !String.Equals( a: "NTFS", b: di.DriveFormat ) ) {
-                    throw new NotSupportedException( message: "NTFS drive required for file encryption" );
+                if ( !String.Equals( "NTFS", di.DriveFormat ) ) {
+                    throw new NotSupportedException( "NTFS drive required for file encryption" );
                 }
             }
 
-            Common.ThrowIOError( errorCode: errorCode, maybeFullPath: fullPath );
+            Common.ThrowIOError( errorCode, fullPath );
         }
 
         /// <summary>Returns a value indicating whether the specified path refers to an existing file.</summary>
@@ -279,13 +271,13 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// thrown exceptions including (but not limited to); passing in a file name with invalid or too many characters, an I/O error such as a failing or missing disk, or if the caller does
         /// not have Windows or Code Access Security (CAS) permissions to to read the file.
         /// </remarks>
-        public static Boolean Exists( [NotNull] String path ) => path.ThrowIfBlank().Exists( isDirectory: out var isDirectory ) && !isDirectory;
+        public static Boolean Exists( [NotNull] String path ) => path.ThrowIfBlank().Exists( out var isDirectory ) && !isDirectory;
 
         public static FileAttributes GetAttributes( [NotNull] String path ) => path.ThrowIfBlank().GetFileAttributes();
 
         public static DateTime GetCreationTime( [NotNull] this String path ) => path.ThrowIfBlank().GetCreationTimeUtc().ToLocalTime();
 
-        public static DateTime GetCreationTimeUtc( [NotNull] this String path ) => new FileInfo( fileName: path ).CreationTimeUtc;
+        public static DateTime GetCreationTimeUtc( [NotNull] this String path ) => new FileInfo( path ).CreationTimeUtc;
 
         [NotNull]
 
@@ -298,21 +290,21 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 mode = FileMode.OpenOrCreate;
             }
 
-            var underlyingAccess = GetUnderlyingAccess( access: access );
+            var underlyingAccess = GetUnderlyingAccess( access );
 
-            var handle = NativeMethods.CreateFile( lpFileName: normalizedPath.ThrowIfBlank(), dwDesiredAccess: underlyingAccess, dwShareMode: ( UInt32 )share,
-                lpSecurityAttributes: IntPtr.Zero, dwCreationDisposition: ( UInt32 )mode, dwFlagsAndAttributes: ( UInt32 )options, hTemplateFile: IntPtr.Zero );
+            var handle = NativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 ) share, IntPtr.Zero, ( UInt32 ) mode, ( UInt32 ) options,
+                IntPtr.Zero );
 
             if ( handle.IsInvalid ) {
                 var ex = Common.GetExceptionFromLastWin32Error();
-                Debug.WriteLine( message: $"error {ex.Message} with {normalizedPath}{Environment.NewLine}{ex.StackTrace}" );
-                Debug.WriteLine( message: $"{mode} {access} {share} {options}" );
+                Debug.WriteLine( $"error {ex.Message} with {normalizedPath}{Environment.NewLine}{ex.StackTrace}" );
+                Debug.WriteLine( $"{mode} {access} {share} {options}" );
 
                 throw ex;
             }
 
             if ( append ) {
-                NativeMethods.SetFilePointer( handle: handle, origin: SeekOrigin.End, offset: 0 );
+                NativeMethods.SetFilePointer( handle, SeekOrigin.End, 0 );
             }
 
             return handle;
@@ -320,11 +312,11 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         public static DateTime GetLastAccessTime( [NotNull] this String path ) => path.ThrowIfBlank().GetLastAccessTimeUtc().ToLocalTime();
 
-        public static DateTime GetLastAccessTimeUtc( [NotNull] this String path ) => new FileInfo( fileName: path.ThrowIfBlank() ).LastAccessTimeUtc;
+        public static DateTime GetLastAccessTimeUtc( [NotNull] this String path ) => new FileInfo( path.ThrowIfBlank() ).LastAccessTimeUtc;
 
         public static DateTime GetLastWriteTime( [NotNull] this String path ) => path.ThrowIfBlank().GetLastWriteTimeUtc().ToLocalTime();
 
-        public static DateTime GetLastWriteTimeUtc( [NotNull] this String path ) => new FileInfo( fileName: path.ThrowIfBlank() ).LastWriteTimeUtc;
+        public static DateTime GetLastWriteTimeUtc( [NotNull] this String path ) => new FileInfo( path.ThrowIfBlank() ).LastWriteTimeUtc;
 
         public static NativeMethods.EFileAccess GetUnderlyingAccess( FileAccess access ) {
             switch ( access ) {
@@ -334,7 +326,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
                 case FileAccess.ReadWrite: return NativeMethods.EFileAccess.GenericRead | NativeMethods.EFileAccess.GenericWrite;
 
-                default: throw new ArgumentOutOfRangeException( paramName: nameof( access ) );
+                default: throw new ArgumentOutOfRangeException( nameof( access ) );
             }
         }
 
@@ -343,8 +335,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <param name="destinationPath">A <see cref="String" /> containing the new path of the file.</param>
         /// <exception cref="ArgumentNullException"><paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined
-        /// in <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is an empty string (""), contains only white space, or contains one
+        /// or more invalid characters as defined in <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
         /// <para>-or-</para>
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> contains one or more components that exceed the drive-defined maximum length. For example, on
         /// Windows-based platforms, components must not exceed 255 characters.
@@ -366,17 +358,17 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> specifies a device that is not ready.
         /// </exception>
         public static void Move( [NotNull] String sourcePath, [NotNull] String destinationPath ) {
-            var normalizedSourcePath = sourcePath.ThrowIfBlank().NormalizeLongPath( parameterName: "sourcePath" );
-            var normalizedDestinationPath = destinationPath.ThrowIfBlank().NormalizeLongPath( parameterName: "destinationPath" );
+            var normalizedSourcePath = sourcePath.ThrowIfBlank().NormalizeLongPath( "sourcePath" );
+            var normalizedDestinationPath = destinationPath.ThrowIfBlank().NormalizeLongPath( "destinationPath" );
 
-            if ( !NativeMethods.MoveFile( lpPathNameFrom: normalizedSourcePath, lpPathNameTo: normalizedDestinationPath ) ) {
+            if ( !NativeMethods.MoveFile( normalizedSourcePath, normalizedDestinationPath ) ) {
                 throw Common.GetExceptionFromLastWin32Error();
             }
         }
 
         [NotNull]
         public static FileStream Open( [NotNull] String path, FileMode mode ) =>
-            Open( path: path.ThrowIfBlank(), mode: mode, access: mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite, share: FileShare.None );
+            Open( path.ThrowIfBlank(), mode, mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite, FileShare.None );
 
         /// <summary>Opens the specified file.</summary>
         /// <param name="path">A <see cref="String" /> containing the path of the file to open.</param>
@@ -413,7 +405,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// </exception>
         [NotNull]
         public static FileStream Open( [NotNull] String path, FileMode mode, FileAccess access ) =>
-            Open( path: path.ThrowIfBlank(), mode: mode, access: access, share: FileShare.None, bufferSize: 0, options: FileOptions.None );
+            Open( path.ThrowIfBlank(), mode, access, FileShare.None, 0, FileOptions.None );
 
         /// <summary>Opens the specified file.</summary>
         /// <param name="path">A <see cref="String" /> containing the path of the file to open.</param>
@@ -451,7 +443,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// </exception>
         [NotNull]
         public static FileStream Open( [NotNull] String path, FileMode mode, FileAccess access, FileShare share ) =>
-            Open( path: path.ThrowIfBlank(), mode: mode, access: access, share: share, bufferSize: 0, options: FileOptions.None );
+            Open( path.ThrowIfBlank(), mode, access, share, 0, FileOptions.None );
 
         /// <summary>Opens the specified file.</summary>
         /// <param name="path">A <see cref="String" /> containing the path of the file to open.</param>
@@ -504,55 +496,52 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            var handle = GetFileHandle( normalizedPath: normalizedPath, mode: mode, access: access, share: share, options: options );
+            var handle = GetFileHandle( normalizedPath, mode, access, share, options );
 
-            return new FileStream( handle: handle, access: access, bufferSize: bufferSize, isAsync: options.HasFlag( flag: FileOptions.Asynchronous ) );
+            return new FileStream( handle, access, bufferSize, options.HasFlag( FileOptions.Asynchronous ) );
         }
 
         [NotNull]
-        public static FileStream OpenRead( [NotNull] String path ) => Open( path: path.ThrowIfBlank(), mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read );
+        public static FileStream OpenRead( [NotNull] String path ) => Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read );
 
         [NotNull]
         public static StreamReader OpenText( [NotNull] String path, [NotNull] Encoding encoding ) {
 
-            var stream = Open( path: path.ThrowIfBlank(), mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            return new StreamReader( stream: stream, encoding: encoding, detectEncodingFromByteOrderMarks: true, bufferSize: Common.DefaultBufferSize );
+            return new StreamReader( stream, encoding, true, Common.DefaultBufferSize );
         }
 
         [NotNull]
         public static StreamReader OpenText( [NotNull] String path ) {
 
-            var stream = Open( path: path.ThrowIfBlank(), mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            return new StreamReader( stream: stream, encoding: Encoding.UTF8, detectEncodingFromByteOrderMarks: true, bufferSize: Common.DefaultBufferSize );
+            return new StreamReader( stream, Encoding.UTF8, true, Common.DefaultBufferSize );
         }
 
         [NotNull]
-        public static FileStream OpenWrite( [NotNull] String path ) =>
-            Open( path: path.ThrowIfBlank(), mode: FileMode.OpenOrCreate, access: FileAccess.Write, share: FileShare.None );
+        public static FileStream OpenWrite( [NotNull] String path ) => Open( path.ThrowIfBlank(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None );
 
         [NotNull]
         public static Byte[] ReadAllBytes( [NotNull] String path ) {
 
-            using var fileStream = Open( path: path.ThrowIfBlank(), mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read );
+            using var fileStream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read );
 
             var length = fileStream.Length;
 
             if ( length > Int32.MaxValue ) {
-                throw new IOException( message: "File length greater than 2GB." );
+                throw new IOException( "File length greater than 2GB." );
             }
 
             var bytes = new Byte[ length ];
             var offset = 0;
 
             while ( length > 0 ) {
-                var read = fileStream.Read( array: bytes, offset: offset, count: ( Int32 )length );
+                var read = fileStream.Read( bytes, offset, ( Int32 ) length );
 
                 if ( read == 0 ) {
-                    throw new EndOfStreamException( message: "Read beyond end of file." );
+                    throw new EndOfStreamException( "Read beyond end of file." );
                 }
 
                 offset += read;
@@ -563,34 +552,32 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         }
 
         [NotNull]
-        public static IEnumerable<String> ReadAllLines( [NotNull] String path ) => ReadLines( path: path.ThrowIfBlank() ).ToArray();
+        public static IEnumerable<String> ReadAllLines( [NotNull] String path ) => ReadLines( path.ThrowIfBlank() ).ToArray();
 
         [NotNull]
-        public static IEnumerable<String> ReadAllLines( [NotNull] String path, [NotNull] Encoding encoding ) =>
-            ReadLines( path: path.ThrowIfBlank(), encoding: encoding ).ToArray();
+        public static IEnumerable<String> ReadAllLines( [NotNull] String path, [NotNull] Encoding encoding ) => ReadLines( path.ThrowIfBlank(), encoding ).ToArray();
 
         [NotNull]
-        public static String ReadAllText( [NotNull] String path ) => ReadAllText( path: path.ThrowIfBlank(), encoding: Encoding.UTF8 );
+        public static String ReadAllText( [NotNull] String path ) => ReadAllText( path.ThrowIfBlank(), Encoding.UTF8 );
 
         [NotNull]
         public static String ReadAllText( [NotNull] String path, [NotNull] Encoding encoding ) {
 
-            using var streamReader = OpenText( path: path.ThrowIfBlank(), encoding: encoding );
+            using var streamReader = OpenText( path.ThrowIfBlank(), encoding );
 
             return streamReader.ReadToEnd();
         }
 
         [NotNull]
-        public static IEnumerable<String> ReadLines( [NotNull] String path ) => ReadAllLines( path: path.ThrowIfBlank(), encoding: Encoding.UTF8 );
+        public static IEnumerable<String> ReadLines( [NotNull] String path ) => ReadAllLines( path.ThrowIfBlank(), Encoding.UTF8 );
 
         [NotNull]
         [ItemCanBeNull]
         public static IEnumerable<String> ReadLines( [NotNull] String path, [NotNull] Encoding encoding ) {
 
-            var stream = Open( path: path.ThrowIfBlank(), mode: FileMode.Open, access: FileAccess.Read, share: FileShare.Read, bufferSize: Common.DefaultBufferSize,
-                options: FileOptions.SequentialScan );
+            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
 
-            using var sr = new StreamReader( stream: stream, encoding: encoding, detectEncodingFromByteOrderMarks: true, bufferSize: Common.DefaultBufferSize );
+            using var sr = new StreamReader( stream, encoding, true, Common.DefaultBufferSize );
 
             while ( !sr.EndOfStream ) {
                 yield return sr.ReadLine();
@@ -598,8 +585,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         }
 
         public static void Replace( [NotNull] String sourceFileName, [NotNull] String destinationFileName, [NotNull] String destinationBackupFileName ) =>
-            Replace( sourceFileName: sourceFileName.ThrowIfBlank(), destinationFileName: destinationFileName.ThrowIfBlank(),
-                destinationBackupFileName: destinationBackupFileName.ThrowIfBlank(), ignoreMetadataErrors: false );
+            Replace( sourceFileName.ThrowIfBlank(), destinationFileName.ThrowIfBlank(), destinationBackupFileName.ThrowIfBlank(), false );
 
         public static void Replace( [NotNull] String sourceFileName, [NotNull] String destinationFileName, [NotNull] String destinationBackupFileName,
             Boolean ignoreMetadataErrors ) {
@@ -614,122 +600,117 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 flags |= NativeMethods.REPLACEFILE_IGNORE_MERGE_ERRORS;
             }
 
-            var r = NativeMethods.ReplaceFile( replacedFileName: fullDestPath, replacementFileName: fullSrcPath, backupFileName: fullBackupPath, dwReplaceFlags: flags,
-                lpExclude: IntPtr.Zero, lpReserved: IntPtr.Zero );
+            var r = NativeMethods.ReplaceFile( fullDestPath, fullSrcPath, fullBackupPath, flags, IntPtr.Zero, IntPtr.Zero );
 
             if ( !r ) {
-                Common.ThrowIOError( errorCode: Marshal.GetLastWin32Error(), maybeFullPath: String.Empty );
+                Common.ThrowIOError( Marshal.GetLastWin32Error(), String.Empty );
             }
         }
 
-        public static void SetAttributes( [NotNull] String path, FileAttributes fileAttributes ) => path.ThrowIfBlank().SetAttributes( fileAttributes: fileAttributes );
+        public static void SetAttributes( [NotNull] String path, FileAttributes fileAttributes ) => path.ThrowIfBlank().SetAttributes( fileAttributes );
 
-        public static void SetCreationTime( [NotNull] this String path, DateTime creationTime ) =>
-            SetCreationTimeUtc( path: path.ThrowIfBlank(), creationTimeUtc: creationTime.ToUniversalTime() );
+        public static void SetCreationTime( [NotNull] this String path, DateTime creationTime ) => SetCreationTimeUtc( path.ThrowIfBlank(), creationTime.ToUniversalTime() );
 
         public static unsafe void SetCreationTimeUtc( [NotNull] this String path, DateTime creationTimeUtc ) {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            using ( var handle = GetFileHandle( normalizedPath: normalizedPath, mode: FileMode.Open, access: FileAccess.Write, share: FileShare.ReadWrite,
-                options: FileOptions.None ) ) {
-                var fileTime = new FILE_TIME( fileTime: creationTimeUtc.ToFileTimeUtc() );
-                var r = NativeMethods.SetFileTime( hFile: handle, creationTime: &fileTime, lastAccessTime: null, lastWriteTime: null );
+            using ( var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None ) ) {
+                var fileTime = new FILE_TIME( creationTimeUtc.ToFileTimeUtc() );
+                var r = NativeMethods.SetFileTime( handle, &fileTime, null, null );
 
                 if ( !r ) {
                     var errorCode = Marshal.GetLastWin32Error();
-                    Common.ThrowIOError( errorCode: errorCode, maybeFullPath: path );
+                    Common.ThrowIOError( errorCode, path );
                 }
             }
         }
 
         public static void SetLastAccessTime( [NotNull] String path, DateTime lastAccessTime ) =>
-            SetLastAccessTimeUtc( path: path.ThrowIfBlank(), lastAccessTimeUtc: lastAccessTime.ToUniversalTime() );
+            SetLastAccessTimeUtc( path.ThrowIfBlank(), lastAccessTime.ToUniversalTime() );
 
         public static unsafe void SetLastAccessTimeUtc( [NotNull] String path, DateTime lastAccessTimeUtc ) {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            using var handle = GetFileHandle( normalizedPath: normalizedPath, mode: FileMode.Open, access: FileAccess.Write, share: FileShare.ReadWrite,
-                options: FileOptions.None );
+            using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
 
-            var fileTime = new FILE_TIME( fileTime: lastAccessTimeUtc.ToFileTimeUtc() );
-            var r = NativeMethods.SetFileTime( hFile: handle, creationTime: null, lastAccessTime: &fileTime, lastWriteTime: null );
+            var fileTime = new FILE_TIME( lastAccessTimeUtc.ToFileTimeUtc() );
+            var r = NativeMethods.SetFileTime( handle, null, &fileTime, null );
 
             if ( !r ) {
                 var errorCode = Marshal.GetLastWin32Error();
-                Common.ThrowIOError( errorCode: errorCode, maybeFullPath: path );
+                Common.ThrowIOError( errorCode, path );
             }
         }
 
         public static void SetLastWriteTime( [NotNull] this String path, DateTime lastWriteTime ) =>
-            SetLastWriteTimeUtc( path: path.ThrowIfBlank(), lastWriteTimeUtc: lastWriteTime.ToUniversalTime() );
+            SetLastWriteTimeUtc( path.ThrowIfBlank(), lastWriteTime.ToUniversalTime() );
 
         public static unsafe void SetLastWriteTimeUtc( [NotNull] String path, DateTime lastWriteTimeUtc ) {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            using var handle = GetFileHandle( normalizedPath: normalizedPath, mode: FileMode.Open, access: FileAccess.Write, share: FileShare.ReadWrite,
-                options: FileOptions.None );
+            using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
 
-            var fileTime = new FILE_TIME( fileTime: lastWriteTimeUtc.ToFileTimeUtc() );
-            var r = NativeMethods.SetFileTime( hFile: handle, creationTime: null, lastAccessTime: null, lastWriteTime: &fileTime );
+            var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
+            var r = NativeMethods.SetFileTime( handle, null, null, &fileTime );
 
             if ( !r ) {
                 var errorCode = Marshal.GetLastWin32Error();
-                Common.ThrowIOError( errorCode: errorCode, maybeFullPath: path );
+                Common.ThrowIOError( errorCode, path );
             }
         }
 
         public static void WriteAllBytes( [NotNull] String path, [NotNull] Byte[] bytes ) {
 
-            using var fileStream = Open( path: path.ThrowIfBlank(), mode: FileMode.Create, access: FileAccess.Write, share: FileShare.Read );
+            using var fileStream = Open( path.ThrowIfBlank(), FileMode.Create, FileAccess.Write, FileShare.Read );
 
-            fileStream.Write( array: bytes, offset: 0, count: bytes.Length );
+            fileStream.Write( bytes, 0, bytes.Length );
         }
 
         public static void WriteAllLines( [NotNull] String path, [NotNull] String[] contents ) {
 
             if ( contents == null ) {
-                throw new ArgumentNullException( paramName: nameof( contents ) );
+                throw new ArgumentNullException( nameof( contents ) );
             }
 
-            WriteAllLines( path: path.ThrowIfBlank(), contents: contents, encoding: Encoding.UTF8 );
+            WriteAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
         }
 
         public static void WriteAllLines( [NotNull] String path, [NotNull] String[] contents, [NotNull] Encoding encoding ) {
 
-            using var writer = CreateStreamWriter( path: path.ThrowIfBlank(), append: false, encoding: encoding );
+            using var writer = CreateStreamWriter( path.ThrowIfBlank(), false, encoding );
 
             foreach ( var line in contents ) {
-                writer.WriteLine( value: line );
+                writer.WriteLine( line );
             }
         }
 
-        public static void WriteAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) =>
-            WriteAllLines( path: path.ThrowIfBlank(), contents: contents, encoding: Encoding.UTF8 );
+        public static void WriteAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) => WriteAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
         public static void WriteAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents, [NotNull] Encoding encoding ) {
 
             const Boolean doNotAppend = false;
 
-            using var writer = CreateStreamWriter( path: path.ThrowIfBlank(), append: doNotAppend, encoding: encoding );
+            using var writer = CreateStreamWriter( path.ThrowIfBlank(), doNotAppend, encoding );
 
             foreach ( var line in contents ) {
-                writer.WriteLine( value: line );
+                writer.WriteLine( line );
             }
         }
 
-        public static void WriteAllText( [NotNull] String path, [NotNull] String contents ) =>
-            WriteAllText( path: path.ThrowIfBlank(), contents: contents, encoding: UTF8NoBOM );
+        public static void WriteAllText( [NotNull] String path, [NotNull] String contents ) => WriteAllText( path.ThrowIfBlank(), contents, UTF8NoBOM );
 
         public static void WriteAllText( [NotNull] String path, [NotNull] String contents, [NotNull] Encoding encoding ) {
 
             const Boolean doNotAppend = false;
 
-            using var sw = CreateStreamWriter( path: path.ThrowIfBlank(), append: doNotAppend, encoding: encoding );
+            using var sw = CreateStreamWriter( path.ThrowIfBlank(), doNotAppend, encoding );
 
-            sw.Write( value: contents );
+            sw.Write( contents );
         }
+
     }
+
 }

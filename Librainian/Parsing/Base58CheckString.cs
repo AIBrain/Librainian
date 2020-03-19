@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Base58CheckString.cs" was last formatted by Protiguous on 2020/03/16 at 9:58 PM.
+// Project: "Librainian", File: "Base58CheckString.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.Parsing {
 
@@ -45,11 +45,11 @@ namespace Librainian.Parsing {
             using ( SHA256 sha256 = new SHA256Managed() ) {
                 b = new[] {
                     version
-                }.Concat( second: b ).ToArray();
+                }.Concat( b ).ToArray();
 
-                var hash = sha256.ComputeHash( buffer: sha256.ComputeHash( buffer: b ) ).Take( count: 4 ).ToArray();
+                var hash = sha256.ComputeHash( buffer: sha256.ComputeHash( b ) ).Take( 4 ).ToArray();
 
-                return b.Concat( second: hash ).ToArray().FromByteArray();
+                return b.Concat( hash ).ToArray().FromByteArray();
             }
         }
 
@@ -60,18 +60,18 @@ namespace Librainian.Parsing {
             using ( SHA256 sha256 = new SHA256Managed() ) {
                 var hash = sha256.ComputeHash( buffer: sha256.ComputeHash( buffer: b.Take( count: b.Length - 4 ).ToArray() ) );
 
-                if ( !hash.Take( count: 4 ).SequenceEqual( second: b.Skip( count: b.Length - 4 ).Take( count: 4 ) ) ) {
-                    throw new ArgumentException( message: "Invalid Base58Check String" );
+                if ( !hash.Take( 4 ).SequenceEqual( second: b.Skip( count: b.Length - 4 ).Take( 4 ) ) ) {
+                    throw new ArgumentException( "Invalid Base58Check String" );
                 }
 
                 version = b.First();
 
-                return b.Skip( count: 1 ).Take( count: b.Length - 5 ).ToArray();
+                return b.Skip( 1 ).Take( count: b.Length - 5 ).ToArray();
             }
         }
 
         [NotNull]
-        public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s: s, version: out var b );
+        public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, version: out var b );
 
     }
 

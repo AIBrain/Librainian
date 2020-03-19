@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "BufferedTreeView.cs" was last formatted by Protiguous on 2020/03/16 at 9:32 PM.
+// Project: "Librainian", File: "BufferedTreeView.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.Controls {
 
@@ -48,8 +48,8 @@ namespace Librainian.Controls {
         private const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
 
         protected override void OnHandleCreated( [CanBeNull] EventArgs e ) {
-            NativeMethods.SendMessage( hWnd: this.Handle, msg: TVM_SETEXTENDEDSTYLE, wp: ( IntPtr ) TVS_EX_DOUBLEBUFFER, lp: ( IntPtr ) TVS_EX_DOUBLEBUFFER );
-            base.OnHandleCreated( e: e );
+            NativeMethods.SendMessage( this.Handle, TVM_SETEXTENDEDSTYLE, ( IntPtr ) TVS_EX_DOUBLEBUFFER, ( IntPtr ) TVS_EX_DOUBLEBUFFER );
+            base.OnHandleCreated( e );
         }
 
     }

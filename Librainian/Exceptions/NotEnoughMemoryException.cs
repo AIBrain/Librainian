@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "NotEnoughMemoryException.cs" was last formatted by Protiguous on 2020/03/16 at 9:34 PM.
+// Project: "Librainian", File: "NotEnoughMemoryException.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Exceptions {
 
@@ -46,9 +46,9 @@ namespace Librainian.Exceptions {
         /// <summary>Disallow no message.</summary>
         private NotEnoughMemoryException() { }
 
-        public NotEnoughMemoryException( [CanBeNull] String? message ) : base( message: message ) { }
+        public NotEnoughMemoryException( [CanBeNull] String? message ) : base( message ) { }
 
-        public NotEnoughMemoryException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message: message, innerException: inner ) { }
+        public NotEnoughMemoryException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) { }
 
     }
 

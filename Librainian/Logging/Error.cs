@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Error.cs" was last formatted by Protiguous on 2020/03/16 at 9:43 PM.
+// Project: "Librainian", File: "Error.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Logging {
 
@@ -37,13 +37,13 @@ namespace Librainian.Logging {
     using System.Diagnostics.CodeAnalysis;
     using JetBrains.Annotations;
 
-    [SuppressMessage( category: "ReSharper", checkId: "AnnotateCanBeNullParameter" )]
+    [SuppressMessage( "ReSharper", "AnnotateCanBeNullParameter" )]
     public static class Error {
 
         public static void Trap( [CanBeNull] Action action ) {
             try {
                 if ( action is null ) {
-                    throw new ArgumentNullException( paramName: nameof( action ) );
+                    throw new ArgumentNullException( nameof( action ) );
                 }
 
                 action();
@@ -56,7 +56,7 @@ namespace Librainian.Logging {
         public static void Trap<E>( [CanBeNull] Action action ) where E : Exception {
             try {
                 if ( action is null ) {
-                    throw new ArgumentNullException( paramName: nameof( action ) );
+                    throw new ArgumentNullException( nameof( action ) );
                 }
 
                 action();
@@ -69,11 +69,11 @@ namespace Librainian.Logging {
         public static void Trap( [CanBeNull] params Action[] actions ) {
             try {
                 if ( actions is null ) {
-                    throw new ArgumentNullException( paramName: nameof( actions ) );
+                    throw new ArgumentNullException( nameof( actions ) );
                 }
 
                 foreach ( var action in actions ) {
-                    Trap( action: action );
+                    Trap( action );
                 }
             }
             catch ( Exception exception ) {
@@ -85,7 +85,7 @@ namespace Librainian.Logging {
         public static Object Trap<T>( [CanBeNull] Func<T> func ) {
             try {
                 if ( func is null ) {
-                    throw new ArgumentNullException( paramName: nameof( func ) );
+                    throw new ArgumentNullException( nameof( func ) );
                 }
 
                 return func();

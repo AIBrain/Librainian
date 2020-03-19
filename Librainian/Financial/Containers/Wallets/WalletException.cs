@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "WalletException.cs" was last formatted by Protiguous on 2020/03/16 at 9:38 PM.
+// Project: "Librainian", File: "WalletException.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
@@ -42,9 +42,9 @@ namespace Librainian.Financial.Containers.Wallets {
     [Serializable]
     public class WalletException : InvalidOperationException {
 
-        protected WalletException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info: info, context: ctxt ) { }
+        protected WalletException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
-        public WalletException( [CanBeNull] String? message ) : base( message: message ) { }
+        public WalletException( [CanBeNull] String? message ) : base( message ) { }
 
     }
 

@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "SomeTargets.cs" was last formatted by Protiguous on 2020/03/16 at 9:44 PM.
+// Project: "Librainian", File: "SomeTargets.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Logging {
 
@@ -43,13 +43,13 @@ namespace Librainian.Logging {
     public static class SomeTargets {
 
         [NotNull]
-        public static readonly Lazy<ColoredConsoleTarget> ColoredConsoleTarget = new Lazy<ColoredConsoleTarget>( valueFactory: () => new ColoredConsoleTarget {
+        public static readonly Lazy<ColoredConsoleTarget> ColoredConsoleTarget = new Lazy<ColoredConsoleTarget>( () => new ColoredConsoleTarget {
             Name = nameof( ColoredConsoleTarget ),
             Layout = new CsvLayout {
                 WithHeader = false,
                 Delimiter = CsvColumnDelimiterMode.Space,
                 Columns = {
-                    new CsvColumn( name: "Time", layout: "${longdate}" ), new CsvColumn( name: "Message", layout: "${message}" )
+                    new CsvColumn( "Time", "${longdate}" ), new CsvColumn( "Message", "${message}" )
                 }
             },
             UseDefaultRowHighlightingRules = true
@@ -58,12 +58,12 @@ namespace Librainian.Logging {
         [NotNull]
 
         //TODO Add in the connection string somehow?
-        public static readonly Lazy<DatabaseTarget> DataBaseTarget = new Lazy<DatabaseTarget>( valueFactory: () => new DatabaseTarget {
+        public static readonly Lazy<DatabaseTarget> DataBaseTarget = new Lazy<DatabaseTarget>( () => new DatabaseTarget {
             Name = nameof( DataBaseTarget ), CommandType = CommandType.StoredProcedure, ConnectionString = "", CommandText = ""
         } );
 
         [NotNull]
-        public static readonly Lazy<TraceTarget> TraceTarget = new Lazy<TraceTarget>( valueFactory: () => new TraceTarget {
+        public static readonly Lazy<TraceTarget> TraceTarget = new Lazy<TraceTarget>( () => new TraceTarget {
             Name = nameof( TraceTarget ),
             Layout = new CsvLayout {
                 Delimiter = CsvColumnDelimiterMode.Space

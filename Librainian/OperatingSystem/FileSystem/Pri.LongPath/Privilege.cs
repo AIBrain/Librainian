@@ -1,18 +1,18 @@
 // Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "Privilege.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "Privilege.cs" was last formatted by Protiguous on 2020/03/16 at 2:58 PM.
+// 
+// Project: "Librainian", File: "Privilege.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -51,18 +51,6 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
     public sealed class Privilege : ABetterClassDispose {
 
         [NotNull]
-        private static readonly HybridDictionary luids = new HybridDictionary();
-
-        [NotNull]
-        private static readonly ReaderWriterLock privilegeLock = new ReaderWriterLock();
-
-        [NotNull]
-        private static readonly HybridDictionary privileges = new HybridDictionary();
-
-        [NotNull]
-        private static readonly LocalDataStoreSlot tlsSlot = Thread.AllocateDataSlot();
-
-        [NotNull]
         private readonly Thread currentThread = Thread.CurrentThread;
 
         private readonly LUID luid;
@@ -72,6 +60,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         private Boolean stateWasChanged;
 
         private TlsContents tlsContents;
+
+        public Boolean NeedToRevert { get; private set; }
 
         public const String AssignPrimaryToken = "SeAssignPrimaryTokenPrivilege";
 
@@ -137,7 +127,17 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         public const String UnsolicitedInput = "SeUnsolicitedInputPrivilege";
 
-        public Boolean NeedToRevert { get; private set; }
+        [NotNull]
+        private static readonly HybridDictionary luids = new HybridDictionary();
+
+        [NotNull]
+        private static readonly ReaderWriterLock privilegeLock = new ReaderWriterLock();
+
+        [NotNull]
+        private static readonly HybridDictionary privileges = new HybridDictionary();
+
+        [NotNull]
+        private static readonly LocalDataStoreSlot tlsSlot = Thread.AllocateDataSlot();
 
         //
         // This routine is a wrapper around a hashtable containing mappings
@@ -145,13 +145,13 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         //
         public Privilege( [NotNull] String privilegeName ) {
             if ( privilegeName == null ) {
-                throw new ArgumentNullException( paramName: nameof( privilegeName ) );
+                throw new ArgumentNullException( nameof( privilegeName ) );
             }
 
-            this.luid = LuidFromPrivilege( privilege: privilegeName );
+            this.luid = LuidFromPrivilege( privilegeName );
         }
 
-        [ReliabilityContract( consistencyGuarantee: Consistency.WillNotCorruptState, cer: Cer.MayFail )]
+        [ReliabilityContract( Consistency.WillNotCorruptState, Cer.MayFail )]
         private static LUID LuidFromPrivilege( [NotNull] String privilege ) {
             LUID luid;
             luid.LowPart = 0;
@@ -164,13 +164,13 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             RuntimeHelpers.PrepareConstrainedRegions();
 
             try {
-                privilegeLock.AcquireReaderLock( millisecondsTimeout: Timeout.Infinite );
+                privilegeLock.AcquireReaderLock( Timeout.Infinite );
 
-                if ( luids.Contains( key: privilege ) ) {
-                    var o = luids[ key: privilege ];
+                if ( luids.Contains( privilege ) ) {
+                    var o = luids[ privilege ];
 
                     if ( o != null ) {
-                        luid = ( LUID )o;
+                        luid = ( LUID ) o;
                     }
 
                     privilegeLock.ReleaseReaderLock();
@@ -178,20 +178,19 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 else {
                     privilegeLock.ReleaseReaderLock();
 
-                    if ( !NativeMethods.LookupPrivilegeValue( lpSystemName: null, lpName: privilege, Luid: ref luid ) ) {
+                    if ( !NativeMethods.LookupPrivilegeValue( null, privilege, ref luid ) ) {
                         var error = Marshal.GetLastWin32Error();
 
                         switch ( error ) {
                             case NativeMethods.ERROR_NOT_ENOUGH_MEMORY: throw new OutOfMemoryException();
                             case NativeMethods.ERROR_ACCESS_DENIED:
-                                throw new UnauthorizedAccessException( message: "Caller does not have the rights to look up privilege local unique identifier" );
-                            case NativeMethods.ERROR_NO_SUCH_PRIVILEGE:
-                                throw new ArgumentException( message: $"{privilege} is not a valid privilege name", paramName: nameof( privilege ) );
-                            default: throw new Win32Exception( error: error );
+                                throw new UnauthorizedAccessException( "Caller does not have the rights to look up privilege local unique identifier" );
+                            case NativeMethods.ERROR_NO_SUCH_PRIVILEGE: throw new ArgumentException( $"{privilege} is not a valid privilege name", nameof( privilege ) );
+                            default: throw new Win32Exception( error );
                         }
                     }
 
-                    privilegeLock.AcquireWriterLock( millisecondsTimeout: Timeout.Infinite );
+                    privilegeLock.AcquireWriterLock( Timeout.Infinite );
                 }
             }
             finally {
@@ -200,9 +199,9 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 }
 
                 if ( privilegeLock.IsWriterLockHeld ) {
-                    if ( !luids.Contains( key: privilege ) ) {
-                        luids[ key: privilege ] = luid;
-                        privileges[ key: luid ] = privilege;
+                    if ( !luids.Contains( privilege ) ) {
+                        luids[ privilege ] = luid;
+                        privileges[ luid ] = privilege;
                     }
 
                     privilegeLock.ReleaseWriterLock();
@@ -212,7 +211,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             return luid;
         }
 
-        [ReliabilityContract( consistencyGuarantee: Consistency.WillNotCorruptState, cer: Cer.Success )]
+        [ReliabilityContract( Consistency.WillNotCorruptState, Cer.Success )]
         private void Reset() {
             RuntimeHelpers.PrepareConstrainedRegions();
 
@@ -228,12 +227,12 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
                 if ( 0 == this.tlsContents?.DecrementReferenceCount() ) {
                     this.tlsContents = null;
-                    Thread.SetData( slot: tlsSlot, data: null );
+                    Thread.SetData( tlsSlot, null );
                 }
             }
         }
 
-        [ReliabilityContract( consistencyGuarantee: Consistency.WillNotCorruptState, cer: Cer.MayFail )]
+        [ReliabilityContract( Consistency.WillNotCorruptState, Cer.MayFail )]
         private void ToggleState( Boolean enable ) {
             var error = 0;
 
@@ -241,8 +240,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             // All privilege operations must take place on the same thread
             //
 
-            if ( !this.currentThread.Equals( obj: Thread.CurrentThread ) ) {
-                throw new InvalidOperationException( message: "Operation must take place on the thread that created the object" );
+            if ( !this.currentThread.Equals( Thread.CurrentThread ) ) {
+                throw new InvalidOperationException( "Operation must take place on the thread that created the object" );
             }
 
             //
@@ -250,7 +249,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             //
 
             if ( this.NeedToRevert ) {
-                throw new InvalidOperationException( message: "Must revert the privilege prior to attempting this operation" );
+                throw new InvalidOperationException( "Must revert the privilege prior to attempting this operation" );
             }
 
             //
@@ -275,11 +274,11 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     // Retrieve TLS state
                     //
 
-                    this.tlsContents = Thread.GetData( slot: tlsSlot ) as TlsContents;
+                    this.tlsContents = Thread.GetData( tlsSlot ) as TlsContents;
 
                     if ( this.tlsContents == null ) {
                         this.tlsContents = new TlsContents();
-                        Thread.SetData( slot: tlsSlot, data: this.tlsContents );
+                        Thread.SetData( tlsSlot, this.tlsContents );
                     }
                     else {
                         this.tlsContents.IncrementReferenceCount();
@@ -299,8 +298,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     // Place the new privilege on the thread token and remember the previous state.
                     //
 
-                    if ( !NativeMethods.AdjustTokenPrivileges( TokenHandle: this.tlsContents.ThreadHandle, DisableAllPrivileges: false, NewState: ref newState,
-                        BufferLength: ( UInt32 )Marshal.SizeOf( structure: previousState ), PreviousState: ref previousState, ReturnLength: ref previousSize ) ) {
+                    if ( !NativeMethods.AdjustTokenPrivileges( this.tlsContents.ThreadHandle, false, ref newState, ( UInt32 ) Marshal.SizeOf( previousState ),
+                        ref previousState, ref previousSize ) ) {
                         error = Marshal.GetLastWin32Error();
                     }
                     else if ( NativeMethods.ERROR_NOT_ALL_ASSIGNED == Marshal.GetLastWin32Error() ) {
@@ -335,15 +334,15 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
 
             switch ( error ) {
-                case NativeMethods.ERROR_NOT_ALL_ASSIGNED: throw new PrivilegeNotHeldException( privilege: privileges[ key: this.luid ] as String );
+                case NativeMethods.ERROR_NOT_ALL_ASSIGNED: throw new PrivilegeNotHeldException( privileges[ this.luid ] as String );
                 case NativeMethods.ERROR_NOT_ENOUGH_MEMORY: throw new OutOfMemoryException();
                 case NativeMethods.ERROR_ACCESS_DENIED:
                 case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
-                    throw new UnauthorizedAccessException( message: "The caller does not have the right to change the privilege" );
+                    throw new UnauthorizedAccessException( "The caller does not have the right to change the privilege" );
             }
 
             if ( error != 0 ) {
-                throw new Win32Exception( error: error );
+                throw new Win32Exception( error );
             }
         }
 
@@ -351,10 +350,10 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             using ( this.tlsContents ) { }
         }
 
-        [ReliabilityContract( consistencyGuarantee: Consistency.WillNotCorruptState, cer: Cer.MayFail )]
-        public void Enable() => this.ToggleState( enable: true );
+        [ReliabilityContract( Consistency.WillNotCorruptState, Cer.MayFail )]
+        public void Enable() => this.ToggleState( true );
 
-        [ReliabilityContract( consistencyGuarantee: Consistency.WillNotCorruptState, cer: Cer.MayFail )]
+        [ReliabilityContract( Consistency.WillNotCorruptState, Cer.MayFail )]
         public void Revert() {
             var error = 0;
 
@@ -362,8 +361,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             // All privilege operations must take place on the same thread
             //
 
-            if ( !this.currentThread.Equals( obj: Thread.CurrentThread ) ) {
-                throw new InvalidOperationException( message: "Operation must take place on the thread that created the object" );
+            if ( !this.currentThread.Equals( Thread.CurrentThread ) ) {
+                throw new InvalidOperationException( "Operation must take place on the thread that created the object" );
             }
 
             if ( !this.NeedToRevert ) {
@@ -394,7 +393,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     // on this Revert, since doing the latter obliterates the thread token anyway
                     //
 
-                    if ( this.stateWasChanged && ( this.tlsContents.ReferenceCountValue > 1 || !this.tlsContents.IsImpersonating ) ) {
+                    if ( this.stateWasChanged && ( ( this.tlsContents.ReferenceCountValue > 1 ) || !this.tlsContents.IsImpersonating ) ) {
                         var newState = new TOKEN_PRIVILEGE {
                             PrivilegeCount = 1,
                             Privilege = {
@@ -405,8 +404,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                         var previousState = new TOKEN_PRIVILEGE();
                         UInt32 previousSize = 0;
 
-                        if ( !NativeMethods.AdjustTokenPrivileges( TokenHandle: this.tlsContents.ThreadHandle, DisableAllPrivileges: false, NewState: ref newState,
-                            BufferLength: ( UInt32 )Marshal.SizeOf( structure: previousState ), PreviousState: ref previousState, ReturnLength: ref previousSize ) ) {
+                        if ( !NativeMethods.AdjustTokenPrivileges( this.tlsContents.ThreadHandle, false, ref newState, ( UInt32 ) Marshal.SizeOf( previousState ),
+                            ref previousState, ref previousSize ) ) {
                             error = Marshal.GetLastWin32Error();
                             success = false;
                         }
@@ -421,24 +420,34 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             switch ( error ) {
                 case NativeMethods.ERROR_NOT_ENOUGH_MEMORY: throw new OutOfMemoryException();
-                case NativeMethods.ERROR_ACCESS_DENIED: throw new UnauthorizedAccessException( message: "Caller does not have the permission to change the privilege" );
+                case NativeMethods.ERROR_ACCESS_DENIED: throw new UnauthorizedAccessException( "Caller does not have the permission to change the privilege" );
             }
 
             if ( error != 0 ) {
-                throw new Win32Exception( error: error );
+                throw new Win32Exception( error );
             }
         }
 
         private sealed class TlsContents : IDisposable {
 
-            [NotNull]
-            private static readonly Object syncRoot = new Object();
+            public void Dispose() {
+                if ( this.disposed ) {
+                    return;
+                }
+
+                using ( this.threadHandle ) { }
+
+                if ( this.IsImpersonating ) {
+                    NativeMethods.RevertToSelf();
+                }
+
+                this.disposed = true;
+
+                GC.SuppressFinalize( this );
+            }
 
             [NotNull]
-            private static SafeTokenHandle processHandle = new SafeTokenHandle( handle: IntPtr.Zero );
-
-            [NotNull]
-            private readonly SafeTokenHandle threadHandle = new SafeTokenHandle( handle: IntPtr.Zero );
+            private readonly SafeTokenHandle threadHandle = new SafeTokenHandle( IntPtr.Zero );
 
             private Boolean disposed;
 
@@ -449,6 +458,12 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             [NotNull]
             public SafeTokenHandle ThreadHandle => this.threadHandle;
 
+            [NotNull]
+            private static readonly Object syncRoot = new Object();
+
+            [NotNull]
+            private static SafeTokenHandle processHandle = new SafeTokenHandle( IntPtr.Zero );
+
             public TlsContents() {
                 var error = 0;
                 var cachingError = 0;
@@ -457,8 +472,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 if ( processHandle.IsInvalid ) {
                     lock ( syncRoot ) {
                         if ( processHandle.IsInvalid ) {
-                            if ( !NativeMethods.OpenProcessToken( ProcessToken: NativeMethods.GetCurrentProcess(), DesiredAccess: TokenAccessLevels.Duplicate,
-                                TokenHandle: ref processHandle ) ) {
+                            if ( !NativeMethods.OpenProcessToken( NativeMethods.GetCurrentProcess(), TokenAccessLevels.Duplicate, ref processHandle ) ) {
                                 cachingError = Marshal.GetLastWin32Error();
                                 success = false;
                             }
@@ -475,8 +489,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     // copy the process token onto the thread
                     //
 
-                    if ( !NativeMethods.OpenThreadToken( ThreadToken: NativeMethods.GetCurrentThread(),
-                        DesiredAccess: TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges, OpenAsSelf: true, TokenHandle: ref this.threadHandle ) ) {
+                    if ( !NativeMethods.OpenThreadToken( NativeMethods.GetCurrentThread(), TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges, true,
+                        ref this.threadHandle ) ) {
                         if ( success ) {
                             error = Marshal.GetLastWin32Error();
 
@@ -487,17 +501,16 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                             if ( success ) {
                                 error = 0;
 
-                                if ( !NativeMethods.DuplicateTokenEx( ExistingToken: processHandle,
-                                    DesiredAccess: TokenAccessLevels.Impersonate | TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges, TokenAttributes: IntPtr.Zero,
-                                    ImpersonationLevel: NativeMethods.SecurityImpersonationLevel.Impersonation, TokenType: NativeMethods.TokenType.Impersonation,
-                                    NewToken: ref this.threadHandle ) ) {
+                                if ( !NativeMethods.DuplicateTokenEx( processHandle,
+                                    TokenAccessLevels.Impersonate | TokenAccessLevels.Query | TokenAccessLevels.AdjustPrivileges, IntPtr.Zero,
+                                    NativeMethods.SecurityImpersonationLevel.Impersonation, NativeMethods.TokenType.Impersonation, ref this.threadHandle ) ) {
                                     error = Marshal.GetLastWin32Error();
                                     success = false;
                                 }
                             }
 
                             if ( success ) {
-                                if ( !NativeMethods.SetThreadToken( Thread: IntPtr.Zero, Token: this.threadHandle ) ) {
+                                if ( !NativeMethods.SetThreadToken( IntPtr.Zero, this.threadHandle ) ) {
                                     error = Marshal.GetLastWin32Error();
                                     success = false;
                                 }
@@ -530,14 +543,14 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     case NativeMethods.ERROR_NOT_ENOUGH_MEMORY: throw new OutOfMemoryException();
                     case NativeMethods.ERROR_ACCESS_DENIED:
                     case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
-                        throw new UnauthorizedAccessException( message: "The caller does not have the rights to perform the operation" );
+                        throw new UnauthorizedAccessException( "The caller does not have the rights to perform the operation" );
                     default: {
-                            if ( error != 0 ) {
-                                throw new Win32Exception( error: error );
-                            }
-
-                            break;
+                        if ( error != 0 ) {
+                            throw new Win32Exception( error );
                         }
+
+                        break;
+                    }
                 }
             }
 
@@ -555,23 +568,10 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 return result;
             }
 
-            public void Dispose() {
-                if ( this.disposed ) {
-                    return;
-                }
-
-                using ( this.threadHandle ) { }
-
-                if ( this.IsImpersonating ) {
-                    NativeMethods.RevertToSelf();
-                }
-
-                this.disposed = true;
-
-                GC.SuppressFinalize( obj: this );
-            }
-
             public void IncrementReferenceCount() => this.ReferenceCountValue++;
+
         }
+
     }
+
 }

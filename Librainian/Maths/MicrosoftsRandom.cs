@@ -1,18 +1,18 @@
 ﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
 // from our binaries, libraries, projects, or solutions.
-//
+// 
 // This source code contained in "MicrosoftsRandom.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
 // by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
 // If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-//
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-//
+// 
 // Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // =========================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //    No warranties are expressed, implied, or given.
@@ -20,16 +20,16 @@
 //    We are NOT responsible for Anything You Do With Our Executables.
 //    We are NOT responsible for Anything You Do With Your Computer.
 // =========================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
+// 
 // Our website can be found at "https://Protiguous.com/"
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
-//
-// Project: "Librainian", File: "MicrosoftsRandom.cs" was last formatted by Protiguous on 2020/03/16 at 2:56 PM.
+// 
+// Project: "Librainian", File: "MicrosoftsRandom.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Maths {
 
@@ -57,9 +57,9 @@ namespace Librainian.Maths {
         [ThreadStatic]
         private static Int32[] SeedArray;
 
-        private MicrosoftsRandom() : this( seed: Middle ) { }
+        private MicrosoftsRandom() : this( Middle ) { }
 
-        public MicrosoftsRandom( Int32 seed ) => Seed( seed: seed );
+        public MicrosoftsRandom( Int32 seed ) => Seed( seed );
 
         private static Int32 InternalSample() {
             unchecked {
@@ -89,7 +89,7 @@ namespace Librainian.Maths {
 
         public static void Seed( Int32 seed ) {
             unchecked {
-                if ( SeedArray is null || SeedArray.Length != SpecialLength ) {
+                if ( SeedArray is null || ( SeedArray.Length != SpecialLength ) ) {
                     SeedArray = new Int32[ SpecialLength ];
                 }
 
@@ -100,7 +100,7 @@ namespace Librainian.Maths {
                 var mk = 1;
 
                 for ( var i = 0; i < Special; i++ ) {
-                    var ii = 21 * i % Special;
+                    var ii = ( 21 * i ) % Special;
                     SeedArray[ ii ] = mk;
                     mk = mj - mk;
                     mj = SeedArray[ ii ];
@@ -108,7 +108,7 @@ namespace Librainian.Maths {
 
                 for ( var k = 1; k < 5; k++ ) {
                     for ( var i = 1; i < SpecialLength; i++ ) {
-                        SeedArray[ i ] -= SeedArray[ 1 + ( i + 30 ) % Special ];
+                        SeedArray[ i ] -= SeedArray[ 1 + ( ( i + 30 ) % Special ) ];
                     }
                 }
 
@@ -137,10 +137,10 @@ namespace Librainian.Maths {
 
         public virtual Int32 Next( Int32 maxValue ) {
             if ( maxValue < 0 ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( maxValue ) );
+                throw new ArgumentOutOfRangeException( nameof( maxValue ) );
             }
 
-            return ( Int32 )( this.Sample() * maxValue );
+            return ( Int32 ) ( this.Sample() * maxValue );
         }
 
         /*=====================================Next=====================================
@@ -151,11 +151,11 @@ namespace Librainian.Maths {
 
         public virtual void NextBytes( [NotNull] Byte[] buffer ) {
             if ( buffer is null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
+                throw new ArgumentNullException( nameof( buffer ) );
             }
 
             for ( var i = 0; i < buffer.Length; i++ ) {
-                buffer[ i ] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
+                buffer[ i ] = ( Byte ) ( InternalSample() % ( Byte.MaxValue + 1 ) );
             }
         }
 
@@ -167,5 +167,7 @@ namespace Librainian.Maths {
 	**Arugments:  buffer -- the array to be filled.
 	**Exceptions: None
 	==============================================================================*/
+
     }
+
 }
