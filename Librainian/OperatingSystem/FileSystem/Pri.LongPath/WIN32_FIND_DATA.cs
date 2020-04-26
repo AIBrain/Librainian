@@ -39,7 +39,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
     using JetBrains.Annotations;
     using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
-    [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
     public struct WIN32_FIND_DATA {
 
         public readonly FileAttributes dwFileAttributes;
@@ -58,11 +58,11 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         public readonly Int32 dwReserved1;
 
-        [MarshalAs( unmanagedType: UnmanagedType.ByValTStr, SizeConst = NativeMethods.MAX_PATH )]
+        [MarshalAs( UnmanagedType.ByValTStr, SizeConst = NativeMethods.MAX_PATH )]
         [NotNull]
         public readonly String cFileName;
 
-        [MarshalAs( unmanagedType: UnmanagedType.ByValTStr, SizeConst = NativeMethods.MAX_ALTERNATE )]
+        [MarshalAs( UnmanagedType.ByValTStr, SizeConst = NativeMethods.MAX_ALTERNATE )]
         [CanBeNull]
         public readonly String cAlternate;
 

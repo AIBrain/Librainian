@@ -49,7 +49,7 @@ namespace Librainian.Databases {
     using Logging;
     using Maths;
     using Measurement.Time;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
     using Parsing;
     using Persistence;
     using static Persistence.Cache;
@@ -539,7 +539,7 @@ namespace Librainian.Databases {
                 throw new ArgumentNullException( nameof( exception ) );
             }
 
-            return exception.Message?.Contains( "The server was not found or was not accessible" ) == true;
+            return exception.Message.Contains( "The server was not found or was not accessible" );
         }
 
         /// <summary>Convert our IList to a DataSet</summary>

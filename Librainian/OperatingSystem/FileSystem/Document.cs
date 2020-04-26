@@ -765,6 +765,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="onCompleted"></param>
         /// <returns></returns>
         [Pure]
+        [CanBeNull]
         public Task Copy( [NotNull] IDocument destination, [CanBeNull] Action<(UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress,
             [CanBeNull] Action onCompleted ) {
             if ( destination == null ) {
@@ -1219,6 +1220,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String Name => this.FileName;
 
         [Pure]
+        [NotNull]
         public Task<String> ReadStringAsync() {
             using var reader = new StreamReader( this.FullPath );
 
@@ -1297,6 +1299,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
         /// <returns></returns>
         [Pure]
+        [ItemNotNull]
         public async Task<String> ToJSON() {
             using ( var reader = new StreamReader( this.FullPath ) ) {
                 return await reader.ReadToEndAsync().ConfigureAwait( false );
@@ -1306,6 +1309,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         [Pure]
+        [NotNull]
         public override String ToString() => this.FullPath;
 
         /// <summary>

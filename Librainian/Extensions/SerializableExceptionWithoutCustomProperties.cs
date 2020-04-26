@@ -44,14 +44,14 @@ namespace Librainian.Extensions {
     public class SerializableExceptionWithoutCustomProperties : Exception {
 
         // Without this constructor, deserialization will fail
-        protected SerializableExceptionWithoutCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info: info, context: context ) { }
+        protected SerializableExceptionWithoutCustomProperties( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
         public SerializableExceptionWithoutCustomProperties() { }
 
-        public SerializableExceptionWithoutCustomProperties( [CanBeNull] String? message ) : base( message: message ) { }
+        public SerializableExceptionWithoutCustomProperties( [CanBeNull] String? message ) : base( message ) { }
 
-        public SerializableExceptionWithoutCustomProperties( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message: message,
-            innerException: innerException ) { }
+        public SerializableExceptionWithoutCustomProperties( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message,
+            innerException ) { }
 
     }
 

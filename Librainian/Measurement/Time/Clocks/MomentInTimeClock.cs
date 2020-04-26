@@ -59,9 +59,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public Boolean IsPm() => this.Hour.Value >= 12;
 
-        public Time Time() => new Time( hour: this.Hour, minute: this.Minute, second: this.Second );
+        public Time Time() => new Time( this.Hour, this.Minute, this.Second );
 
-        public MomentInTimeClock() : this( time: Measurement.Time.Time.Now() ) { }
+        public MomentInTimeClock() : this( Measurement.Time.Time.Now() ) { }
 
         public MomentInTimeClock( Time time ) {
             this.Hour = time.Hour;
@@ -70,7 +70,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Millisecond = time.Millisecond;
         }
 
-        public MomentInTimeClock( DateTime time ) : this( time: ( Time ) time ) { }
+        public MomentInTimeClock( DateTime time ) : this( ( Time ) time ) { }
 
     }
 

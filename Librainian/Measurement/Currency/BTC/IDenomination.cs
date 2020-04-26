@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Currency.BTC {
         using System;
         using System.Diagnostics;
 
-        [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct Btc : ICoin {
 
             public Decimal FaceValue => 1.00M;
@@ -49,7 +49,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         }
 
-        [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct MBtc : ICoin {
 
             public Decimal FaceValue => 0.001M;
@@ -58,7 +58,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         }
 
-        [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct Satoshi : ICoin {
 
             public Decimal FaceValue => 0.00000001M;
@@ -67,7 +67,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
         }
 
-        [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+        [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
         public struct ΜBtc : ICoin {
 
             public Decimal FaceValue => 0.000001M;

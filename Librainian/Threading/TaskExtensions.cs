@@ -192,6 +192,7 @@ namespace Librainian.Threading {
 
 #pragma warning restore CA1030 // Use events where appropriate
 
+        [ItemCanBeNull]
         public static async Task<TResult> FromEvent<TDelegate, TResult>( [NotNull] Func<TaskCompletionSource<TResult>, TDelegate> createDelegate,
             [NotNull] Action<TDelegate> registerDelegate, [NotNull] Action<TDelegate> unregisterDelegate, TimeSpan timeout ) {
             if ( createDelegate is null ) {

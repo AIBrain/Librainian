@@ -99,6 +99,7 @@ namespace Librainian.Maths.Numbers {
 
         public void Multiply( Single amount ) => this.Value *= amount;
 
+        [NotNull]
         public override String ToString() => $"{this.Value:P3}";
 
     }

@@ -32,7 +32,7 @@
 // Project: "Librainian", File: "Excel.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Databases {
-
+    /*
     using System;
     using System.Data;
     using System.Data.OleDb;
@@ -46,8 +46,8 @@ namespace Librainian.Databases {
 
         private String Path { get; }
 
-        public Excel( [CanBeNull] String? path, Boolean hasHeaders, Boolean hasMixedData ) {
-            this.Path = path;
+        public Excel( [NotNull] String path, Boolean hasHeaders, Boolean hasMixedData ) {
+            this.Path = path ?? throw new ArgumentNullException( nameof( path ) );
 
             var strBuilder = new OleDbConnectionStringBuilder {
                 Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = this.Path
@@ -159,5 +159,5 @@ namespace Librainian.Databases {
         }
 
     }
-
+    */
 }

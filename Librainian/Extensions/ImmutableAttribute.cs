@@ -43,7 +43,7 @@ namespace Librainian.Extensions {
 
     /// <summary>Without further ado, here's the ImmutableAttribute itself. Now.. does it work?</summary>
     /// <see cref="http://blogs.msdn.com/b/kevinpilchbisson/archive/2007/11/20/enforcing-immutability-in-code.aspx" />
-    [AttributeUsage( validOn: AttributeTargets.Class | AttributeTargets.Struct )]
+    [AttributeUsage( AttributeTargets.Class | AttributeTargets.Struct )]
     [JsonObject]
     [MeansImplicitUse]
     public sealed class ImmutableAttribute : Attribute {
@@ -52,7 +52,7 @@ namespace Librainian.Extensions {
 
         private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             return type.TypeHasAttribute<ImmutableAttribute>();
@@ -60,7 +60,7 @@ namespace Librainian.Extensions {
 
         private static Boolean IsWhiteListed( [NotNull] Type type ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             // Boolean, int, etc.
@@ -85,7 +85,7 @@ namespace Librainian.Extensions {
             }
 
             // override all checks on this type if [ImmutableAttribute(OnFaith=true)] is set
-            var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( element: type );
+            var immutableAttribute = ReflectionHelper.GetCustomAttribute<ImmutableAttribute>( type );
 
             return immutableAttribute?.OnFaith == true;
         }
@@ -100,49 +100,49 @@ namespace Librainian.Extensions {
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
             if ( type is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             if ( type.BaseType is null ) {
-                throw new ArgumentNullException( paramName: nameof( type ) );
+                throw new ArgumentNullException( nameof( type ) );
             }
 
             if ( whiteList is null ) {
-                throw new ArgumentNullException( paramName: nameof( whiteList ) );
+                throw new ArgumentNullException( nameof( whiteList ) );
             }
 
             var enumerable = whiteList as IList<Type> ?? whiteList.ToList();
 
-            if ( enumerable.Contains( item: type ) ) {
+            if ( enumerable.Contains( type ) ) {
                 return;
             }
 
-            if ( IsWhiteListed( type: type ) ) {
+            if ( IsWhiteListed( type ) ) {
                 return;
             }
 
             try {
-                VerifyTypeIsImmutable( type: type.BaseType, whiteList: enumerable );
+                VerifyTypeIsImmutable( type.BaseType, enumerable );
             }
             catch ( ImmutableFailureException ex ) {
-                throw new MutableBaseException( type: type, inner: ex );
+                throw new MutableBaseException( type, ex );
             }
 
             foreach ( var fieldInfo in type.GetAllDeclaredInstanceFields() ) {
                 if ( ( fieldInfo.Attributes & FieldAttributes.InitOnly ) == 0 ) {
-                    throw new WritableFieldException( fieldInfo: fieldInfo );
+                    throw new WritableFieldException( fieldInfo );
                 }
 
                 // if it's marked with [Immutable], that's good enough, as we can be sure that these tests will all be applied to this type
-                if ( IsMarkedImmutable( type: fieldInfo.FieldType ) ) {
+                if ( IsMarkedImmutable( fieldInfo.FieldType ) ) {
                     continue;
                 }
 
                 try {
-                    VerifyTypeIsImmutable( type: fieldInfo.FieldType, whiteList: enumerable );
+                    VerifyTypeIsImmutable( fieldInfo.FieldType, enumerable );
                 }
                 catch ( ImmutableFailureException ex ) {
-                    throw new MutableFieldException( fieldInfo: fieldInfo, inner: ex );
+                    throw new MutableFieldException( fieldInfo, ex );
                 }
             }
         }
@@ -151,17 +151,17 @@ namespace Librainian.Extensions {
         /// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
         public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [NotNull] params Type[] whiteList ) {
             if ( assemblies is null ) {
-                throw new ArgumentNullException( paramName: nameof( assemblies ) );
+                throw new ArgumentNullException( nameof( assemblies ) );
             }
 
             if ( whiteList == null ) {
-                throw new ArgumentNullException( paramName: nameof( whiteList ) );
+                throw new ArgumentNullException( nameof( whiteList ) );
             }
 
-            var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type: type ) select type;
+            var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;
 
             foreach ( var type in typesMarkedImmutable ) {
-                VerifyTypeIsImmutable( type: type, whiteList: whiteList );
+                VerifyTypeIsImmutable( type, whiteList );
             }
         }
 

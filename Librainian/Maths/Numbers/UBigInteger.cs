@@ -205,6 +205,7 @@ namespace Librainian.Maths.Numbers {
         [NotNull]
         public Byte[] ToByteArray() => this._internalValue.ToByteArray();
 
+        [CanBeNull]
         public override String ToString() => this._internalValue.ToString();
 
         [CanBeNull]

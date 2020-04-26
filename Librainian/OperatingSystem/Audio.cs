@@ -146,6 +146,7 @@ namespace Librainian.OperatingSystem {
 
         }
 
+        [ItemCanBeNull]
         public static IEnumerable<String> EnumerateApplications() {
 
             // get the speakers (1st render + multimedia) device

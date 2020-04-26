@@ -50,7 +50,7 @@ namespace Librainian.Collections.Queues {
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         [NotNull]
-        public IEnumerable<T> Items => this.Queue.Select( selector: item => item.Item );
+        public IEnumerable<T> Items => this.Queue.Select( item => item.Item );
 
         [JsonProperty]
         public ConcurrentQueue<WithTime<T>> Queue { get; } = new ConcurrentQueue<WithTime<T>>();
@@ -63,18 +63,18 @@ namespace Librainian.Collections.Queues {
                 return default;
             }
 
-            this.Queue.Enqueue( item: new WithTime<T>( item: item ) );
+            this.Queue.Enqueue( new WithTime<T>( item ) );
 
-            return new WithTime<T>( item: item ).TimeStamp;
+            return new WithTime<T>( item ).TimeStamp;
         }
 
         public void AddRange( [CanBeNull] params T[] items ) {
             if ( null != items ) {
-                Parallel.ForEach( source: items, body: obj => this.Add( item: obj ) );
+                Parallel.ForEach( items, obj => this.Add( obj ) );
             }
         }
 
-        public Boolean Contains( [CanBeNull] T value ) => this.Queue.Any( predicate: q => Equals( objA: q.Item, objB: value ) );
+        public Boolean Contains( [CanBeNull] T value ) => this.Queue.Any( q => Equals( q.Item, value ) );
 
         /// <summary>Returns the next <see cref="T" /> in the <see cref="Queue" /> or null.</summary>
         /// <returns></returns>
@@ -88,12 +88,12 @@ namespace Librainian.Collections.Queues {
         /// <summary>Does a Dequeue for each item in the <see cref="Queue" /> ?or null?</summary>
         /// <returns></returns>
         [NotNull]
-        public IEnumerable<T> NextAll() => this.Queue.Select( selector: o => this.Next() );
+        public IEnumerable<T> NextAll() => this.Queue.Select( o => this.Next() );
 
         /// <summary>Returns the next Object in the <see cref="Queue" /> or null.</summary>
         /// <returns></returns>
         [CanBeNull]
-        public WithTime<T> Pull() => this.Queue.TryDequeue( result: out var temp ) ? temp : default;
+        public WithTime<T> Pull() => this.Queue.TryDequeue( out var temp ) ? temp : default;
 
     }
 

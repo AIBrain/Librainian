@@ -60,7 +60,7 @@ namespace Librainian.Linguistics.PoS {
                 return default;
             }
 
-            return ReferenceEquals( objA: this, objB: other ) || this.Tokens.SequenceEqual( second: other.Tokens );
+            return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
         }
 
         [JsonProperty]
@@ -69,39 +69,39 @@ namespace Librainian.Linguistics.PoS {
 
         public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
             if ( words is null ) {
-                throw new ArgumentNullException( paramName: nameof( words ) );
+                throw new ArgumentNullException( nameof( words ) );
             }
 
-            this.Tokens.AddRange( collection: words.Where( predicate: word => null != word ).Select( selector: word => word ) );
+            this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
         }
 
         [Pure]
         [NotNull]
-        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( separator: " " );
+        public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
 
         /// <summary>Returns a value that indicates whether two <see cref="TaggedSentence" /> objects have different values.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static Boolean operator !=( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => !Equals( objA: left, objB: right );
+        public static Boolean operator !=( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => !Equals( left, right );
 
         /// <summary>Returns a value that indicates whether the values of two <see cref="TaggedSentence" /> objects are equal.</summary>
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static Boolean operator ==( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => Equals( objA: left, objB: right );
+        public static Boolean operator ==( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => Equals( left, right );
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( objA: this, objB: obj as TaggedSentence );
+        public override Boolean Equals( Object obj ) => Equals( this, obj as TaggedSentence );
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>
         public override Int32 GetHashCode() => this.Tokens.GetHashCode();
 
         [Pure]
-        public override String ToString() => this.Tokens.ToStrings( separator: " " );
+        public override String ToString() => this.Tokens.ToStrings( " " );
 
     }
 

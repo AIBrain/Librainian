@@ -41,7 +41,7 @@ namespace Librainian.Internet {
     using Parsing;
 
     /// <summary>Simple container for a <see cref="Username" /> and <see cref="Password" />.</summary>
-    [JsonObject( memberSerialization: MemberSerialization.Fields )]
+    [JsonObject( MemberSerialization.Fields )]
     public class Credentials {
 
         [CanBeNull]
@@ -160,16 +160,16 @@ namespace Librainian.Internet {
         /// <param name="username">Accepts Base64 encoded strings.</param>
         /// <param name="password">Accepts Base64 encoded strings.</param>
         public Credentials( [NotNull] String? username, [NotNull] String? password ) {
-            if ( String.IsNullOrWhiteSpace( value: username ) ) {
-                throw new MissingTextException( parameterName: nameof( username ) );
+            if ( String.IsNullOrWhiteSpace( username ) ) {
+                throw new MissingTextException( nameof( username ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: password ) ) {
-                throw new MissingTextException( parameterName: nameof( password ) );
+            if ( String.IsNullOrWhiteSpace( password ) ) {
+                throw new MissingTextException( nameof( password ) );
             }
 
-            this.Username = username.EndsWith( value: "=" ) ? username.FromBase64() : username;
-            this.Password = password.EndsWith( value: "=" ) ? password.FromBase64() : password;
+            this.Username = username.EndsWith( "=" ) ? username.FromBase64() : username;
+            this.Password = password.EndsWith( "=" ) ? password.FromBase64() : password;
         }
 
         public override String? ToString() => $"{this.Username ?? Symbols.Null} : {this.Password ?? Symbols.Null}";
@@ -177,7 +177,7 @@ namespace Librainian.Internet {
         /// <summary>Ensure <see cref="Username" /> and <see cref="Password" /> are not null, empty, or whitespace.</summary>
         [DebuggerStepThrough]
         public Status Validate() {
-            if ( String.IsNullOrWhiteSpace( value: this.Username ) || String.IsNullOrWhiteSpace( value: this.Password ) ) {
+            if ( String.IsNullOrWhiteSpace( this.Username ) || String.IsNullOrWhiteSpace( this.Password ) ) {
                 return Status.Failure;
             }
 

@@ -25,10 +25,10 @@ namespace Librainian.OperatingSystem {
 
     public static class Extensions {
         [ CanBeNull ]
-        public static String Execute( String command ) {
+        public static String Execute( [CanBeNull] String command ) {
             var str = "";
 
-            using ( var process = Process.Start( startInfo: new ProcessStartInfo( "cmd", arguments: "/c " + command ) { RedirectStandardOutput = true, UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true } ) ) {
+            using ( var process = Process.Start( new ProcessStartInfo( "cmd", "/c " + command ) { RedirectStandardOutput = true, UseShellExecute = false, RedirectStandardError = true, CreateNoWindow = true } ) ) {
                 using ( var standardOutput = process?.StandardOutput ) {
                     str = standardOutput?.ReadToEnd();
                 }

@@ -47,14 +47,14 @@ namespace Librainian.Extensions {
             var t = typeof( T );
 
             if ( t == typeof( String ) ) {
-                return Expression.Lambda<Func<T>>( body: Expression.Constant( value: String.Empty ) ).Compile();
+                return Expression.Lambda<Func<T>>( Expression.Constant( String.Empty ) ).Compile();
             }
 
             if ( t.HasDefaultConstructor() ) {
-                return Expression.Lambda<Func<T>>( body: Expression.New( type: t ) ).Compile();
+                return Expression.Lambda<Func<T>>( Expression.New( t ) ).Compile();
             }
 
-            return () => ( T ) FormatterServices.GetUninitializedObject( type: t );
+            return () => ( T ) FormatterServices.GetUninitializedObject( t );
         }
 
     }

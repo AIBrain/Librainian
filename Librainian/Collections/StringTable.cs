@@ -53,15 +53,15 @@ namespace Librainian.Collections {
         /// <param name="key"></param>
         /// <returns></returns>
         public UInt64 this[ [NotNull] String key ] {
-            get => this.Words.TryGetValue( key: key, value: out var result ) ? result : default;
+            get => this.Words.TryGetValue( key, out var result ) ? result : default;
 
             set {
-                if ( String.IsNullOrEmpty( value: key ) ) {
+                if ( String.IsNullOrEmpty( key ) ) {
                     return;
                 }
 
-                this.Words[ key: key ] = value;
-                this.Ints[ key: value ] = key;
+                this.Words[ key ] = value;
+                this.Ints[ value ] = key;
             }
         }
 
@@ -70,24 +70,24 @@ namespace Librainian.Collections {
         /// <returns></returns>
         [CanBeNull]
         public String this[ UInt64 key ] {
-            get => this.Ints[ key: key ];
+            get => this.Ints[ key ];
 
             set {
                 if ( value != null ) {
-                    this.Words[ key: value ] = key;
+                    this.Words[ value ] = key;
                 }
 
-                this.Ints[ key: key ] = value;
+                this.Ints[ key ] = value;
             }
         }
 
         public StringTable( [NotNull] Folder commonName ) {
             if ( commonName is null ) {
-                throw new ArgumentNullException( paramName: nameof( commonName ) );
+                throw new ArgumentNullException( nameof( commonName ) );
             }
 
-            this.Ints = new PersistTable<UInt64, String>( folder: new Folder( folder: commonName, subFolder: nameof( this.Ints ) ), testForReadWriteAccess: true );
-            this.Words = new PersistTable<String, UInt64>( folder: new Folder( folder: commonName, subFolder: nameof( this.Words ) ), testForReadWriteAccess: true );
+            this.Ints = new PersistTable<UInt64, String>( new Folder( commonName, nameof( this.Ints ) ), true );
+            this.Words = new PersistTable<String, UInt64>( new Folder( commonName, nameof( this.Words ) ), true );
         }
 
         public void Clear() {
@@ -99,17 +99,17 @@ namespace Librainian.Collections {
         /// <param name="word"></param>
         /// <returns></returns>
         public Boolean Contains( [CanBeNull] String? word ) {
-            if ( String.IsNullOrEmpty( value: word ) ) {
+            if ( String.IsNullOrEmpty( word ) ) {
                 return default;
             }
 
-            return this.Words.TryGetValue( key: word, value: out _ );
+            return this.Words.TryGetValue( word, out _ );
         }
 
         /// <summary>Returns true if the guid is contained in the collection.</summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key: key, value: out _ );
+        public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out _ );
 
         [NotNull]
         public ICollection<UInt64> EachInt() => this.Ints.Keys;

@@ -236,7 +236,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var folders = new List<Folder>( this.Info.BetterEnumerateDirectories( searchPattern, searchOption ).Select( info => new Folder( info.FullPath ) ) );
 
                 if ( randomize ) {
-                    folders.ShuffleByHarker( token: token );
+                    folders.ShuffleByHarker( token );
                 }
 
                 return folders;

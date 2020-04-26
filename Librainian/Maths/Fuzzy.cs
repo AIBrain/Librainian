@@ -191,6 +191,7 @@ namespace Librainian.Maths {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Value:R}";
 
     }

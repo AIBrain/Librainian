@@ -35,7 +35,7 @@ namespace Librainian.Databases {
 
     using System;
     using JetBrains.Annotations;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
 
     public class SqlServer {
 

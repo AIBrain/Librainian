@@ -37,7 +37,6 @@ namespace Librainian.Databases {
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
-    using System.Data.Sql;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
@@ -51,7 +50,7 @@ namespace Librainian.Databases {
     using Logging;
     using Maths;
     using Measurement.Time;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
     using Parsing;
     using Utilities;
 
@@ -776,6 +775,7 @@ namespace Librainian.Databases {
             throw new InvalidOperationException();
         }
 
+        /*
         [NotNull]
         public static IEnumerable<SqlConnectionStringBuilder> LookForAnyDatabaseServerWithThisCredential( [CanBeNull] Credentials credentials, TimeSpan connectTimeout ) {
             if ( SqlDataSourceEnumerator.Instance != null ) {
@@ -790,6 +790,7 @@ namespace Librainian.Databases {
 
             return Enumerable.Empty<SqlConnectionStringBuilder>();
         }
+        */
 
         [NotNull]
         public static SqlConnectionStringBuilder PopulateConnectionStringBuilder( [NotNull] String serverName, [NotNull] String instanceName, TimeSpan connectTimeout,
@@ -804,7 +805,7 @@ namespace Librainian.Databases {
 
             var builder = new SqlConnectionStringBuilder {
                 DataSource = $@"{serverName}\{instanceName}",
-                AsynchronousProcessing = true,
+                //AsynchronousProcessing = true,
                 ApplicationIntent = ApplicationIntent.ReadWrite,
                 ApplicationName = Application.ProductName,
                 ConnectRetryCount = 3,

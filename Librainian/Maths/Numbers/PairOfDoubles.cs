@@ -48,8 +48,8 @@ namespace Librainian.Maths.Numbers {
         public Double Low { get; private set; }
 
         public PairOfDoubles( Double low, Double high ) : this() {
-            this.Low = Math.Min( val1: low, val2: high );
-            this.High = Math.Max( val1: low, val2: high );
+            this.Low = Math.Min( low, high );
+            this.High = Math.Max( low, high );
         }
 
     }

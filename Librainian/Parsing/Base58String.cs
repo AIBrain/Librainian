@@ -79,7 +79,7 @@ namespace Librainian.Parsing {
             var b = bi.ToByteArray();
 
             // Remove 0x00 sign byte if present.
-            if ( b[ b.Length - 1 ] == 0x00 ) {
+            if ( b[ ^1 ] == 0x00 ) {
                 b = b.Take( b.Length - 1 ).ToArray();
             }
 

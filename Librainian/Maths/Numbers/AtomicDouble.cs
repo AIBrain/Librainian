@@ -41,7 +41,7 @@ namespace Librainian.Maths.Numbers {
 
     /// <summary>A Double number thread-safe by <see cref="Interlocked" />.</summary>
     [JsonObject]
-    [Description( description: "A Double number thread-safe by Interlocked." )]
+    [Description( "A Double number thread-safe by Interlocked." )]
     public struct AtomicDouble {
 
         /// <summary>ONLY used in the getter and setter.</summary>
@@ -49,20 +49,20 @@ namespace Librainian.Maths.Numbers {
         private Double _value;
 
         public Double Value {
-            get => Interlocked.Exchange( location1: ref this._value, value: this._value );
+            get => Interlocked.Exchange( ref this._value, this._value );
 
-            set => Interlocked.Exchange( location1: ref this._value, value: value );
+            set => Interlocked.Exchange( ref this._value, value );
         }
 
         public AtomicDouble( Double value ) : this() => this.Value = value;
 
         public static implicit operator Double( AtomicDouble special ) => special.Value;
 
-        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( value: a1.Value - a2.Value );
+        public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value - a2.Value );
 
-        public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( value: a1.Value * a2.Value );
+        public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value * a2.Value );
 
-        public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( value: a1.Value + a2.Value );
+        public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value + a2.Value );
 
         public static AtomicDouble operator ++( AtomicDouble a1 ) {
             a1.Value++;
@@ -72,10 +72,10 @@ namespace Librainian.Maths.Numbers {
 
         public static AtomicDouble Parse( [NotNull] String value ) {
             if ( value is null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return new AtomicDouble( value: Double.Parse( s: value ) );
+            return new AtomicDouble( Double.Parse( value ) );
         }
 
         /// <summary>Resets the value to zero if less than zero;</summary>
@@ -85,6 +85,7 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Value:R}";
 
     }

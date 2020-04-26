@@ -41,9 +41,9 @@ namespace Librainian.Threading {
     /// <typeparam name="T"></typeparam>
     public class AsyncLazy<T> : Lazy<Task<T>> {
 
-        public AsyncLazy( [NotNull] Func<T> valueFactory ) : base( valueFactory: () => Task.Run( function: valueFactory ) ) { }
+        public AsyncLazy( [NotNull] Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }
 
-        public AsyncLazy( [NotNull] Func<Task<T>> taskFactory ) : base( valueFactory: () => Task.Factory.StartNew( function: taskFactory ).Unwrap() ) { }
+        public AsyncLazy( [NotNull] Func<Task<T>> taskFactory ) : base( () => Task.Factory.StartNew( taskFactory ).Unwrap() ) { }
 
     }
 

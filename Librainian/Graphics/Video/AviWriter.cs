@@ -81,36 +81,36 @@ namespace Librainian.Graphics.Video {
 
             //highest quality! Compression destroys the hidden message
 
-            var result = NativeMethods.AVIFileCreateStream( pfile: this._aviFile, ppavi: out this._aviStream, ptrStreaminfo: ref strhdr );
+            var result = NativeMethods.AVIFileCreateStream( this._aviFile, out this._aviStream, ref strhdr );
 
             if ( result != 0 ) {
-                throw new Exception( message: "Error in AVIFileCreateStream: " + result );
+                throw new Exception( "Error in AVIFileCreateStream: " + result );
             }
 
             //define the image format
 
             var bi = new Avi.Bitmapinfoheader();
-            bi.biSize = ( UInt32 ) Marshal.SizeOf( structure: bi );
+            bi.biSize = ( UInt32 ) Marshal.SizeOf( bi );
             bi.biWidth = this._width;
             bi.biHeight = this._height;
             bi.biPlanes = 1;
             bi.biBitCount = 24;
             bi.biSizeImage = ( UInt32 ) ( this._stride * this._height );
 
-            result = NativeMethods.AVIStreamSetFormat( aviStream: this._aviStream, lPos: 0, lpFormat: ref bi, cbFormat: Marshal.SizeOf( structure: bi ) );
+            result = NativeMethods.AVIStreamSetFormat( this._aviStream, 0, ref bi, Marshal.SizeOf( bi ) );
 
             if ( result != 0 ) {
-                throw new Exception( message: "Error in AVIStreamSetFormat: " + result );
+                throw new Exception( "Error in AVIStreamSetFormat: " + result );
             }
         }
 
         /// <summary>Adds a new frame to the AVI stream</summary>
         /// <param name="bmp">The image to add</param>
         public void AddFrame( [NotNull] Bitmap bmp ) {
-            bmp.RotateFlip( rotateFlipType: RotateFlipType.RotateNoneFlipY );
+            bmp.RotateFlip( RotateFlipType.RotateNoneFlipY );
 
-            var bmpDat = bmp.LockBits( rect: new Rectangle( x: 0, y: 0, width: bmp.Width, height: bmp.Height ), flags: ImageLockMode.ReadOnly,
-                format: PixelFormat.Format24bppRgb );
+            var bmpDat = bmp.LockBits( new Rectangle( 0, 0, bmp.Width, bmp.Height ), ImageLockMode.ReadOnly,
+                PixelFormat.Format24bppRgb );
 
             if ( this._countFrames == 0 ) {
 
@@ -121,27 +121,27 @@ namespace Librainian.Graphics.Video {
                 this.CreateStream();
             }
 
-            var result = NativeMethods.AVIStreamWrite( aviStream: this._aviStream, lStart: this._countFrames, lSamples: 1,
-                lpBuffer: bmpDat.Scan0, //pointer to the beginning of the image data
-                cbBuffer: ( Int32 ) ( this._stride * this._height ), dwFlags: 0, dummy1: 0, dummy2: 0 );
+            var result = NativeMethods.AVIStreamWrite( this._aviStream, this._countFrames, 1,
+                bmpDat.Scan0, //pointer to the beginning of the image data
+                ( Int32 ) ( this._stride * this._height ), 0, 0, 0 );
 
             if ( result != 0 ) {
-                throw new Exception( message: "Error in AVIStreamWrite: " + result );
+                throw new Exception( "Error in AVIStreamWrite: " + result );
             }
 
-            bmp.UnlockBits( bitmapdata: bmpDat );
+            bmp.UnlockBits( bmpDat );
             this._countFrames++;
         }
 
         /// <summary>Closes stream, file and AVI Library</summary>
         public void Close() {
             if ( this._aviStream != IntPtr.Zero ) {
-                NativeMethods.AVIStreamRelease( aviStream: this._aviStream );
+                NativeMethods.AVIStreamRelease( this._aviStream );
                 this._aviStream = IntPtr.Zero;
             }
 
             if ( this._aviFile != 0 ) {
-                NativeMethods.AVIFileRelease( pfile: this._aviFile );
+                NativeMethods.AVIFileRelease( this._aviFile );
                 this._aviFile = 0;
             }
 
@@ -159,10 +159,10 @@ namespace Librainian.Graphics.Video {
 
             NativeMethods.AVIFileInit();
 
-            var hr = NativeMethods.AVIFileOpen( ppfile: ref this._aviFile, szFile: fileName, uMode: 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, pclsidHandler: 0 );
+            var hr = NativeMethods.AVIFileOpen( ref this._aviFile, fileName, 4097 /* OF_WRITE | OF_CREATE (winbase.h) */, 0 );
 
             if ( hr != 0 ) {
-                throw new Exception( message: "Error in AVIFileOpen: " + hr );
+                throw new Exception( "Error in AVIFileOpen: " + hr );
             }
         }
 

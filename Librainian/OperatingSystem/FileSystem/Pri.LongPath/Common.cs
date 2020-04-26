@@ -72,7 +72,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             return buffer.ToString();
         }
 
-        public static Boolean EndsWith( [CanBeNull] this String text, Char value ) => !String.IsNullOrEmpty( text ) && ( text[ text.Length - 1 ] == value );
+        public static Boolean EndsWith( [CanBeNull] this String text, Char value ) => !String.IsNullOrEmpty( text ) && ( text[ ^1 ] == value );
 
         public static Boolean Exists( [NotNull] this String path, out Boolean isDirectory ) {
             path = path.ThrowIfBlank();

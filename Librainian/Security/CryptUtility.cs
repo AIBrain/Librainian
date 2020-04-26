@@ -452,7 +452,7 @@ namespace Librainian.Security {
             if ( sumBytes > messageLength ) {
 
                 //correct Math.Ceiling effects
-                imageFiles[ imageFiles.Length - 1 ].MessageBytesToHide -= sumBytes - messageLength;
+                imageFiles[ ^1 ].MessageBytesToHide -= sumBytes - messageLength;
             }
 
             //set count of bytes for the first image

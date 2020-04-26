@@ -157,6 +157,7 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean IsYesWinning() => ( this.Yes > this.No ) && ( this.Yes > 1 ) && ( this.No > 1 );
 
+        [NotNull]
         public override String ToString() => $"{this.ChanceYes():P1} yes vs {this.ChanceNo():p1} no of {this.Votes} votes.";
 
         /// <summary>

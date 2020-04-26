@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time.FluentTime {
     public static class Tomorrow {
 
         public static DateTime At( Int32 hour, Int32 minute = 0, Int32 second = 0 ) =>
-            AdjustableCurrentTime.Today.AddDays( value: 1 ).At( hour: hour, minute: minute, second: second );
+            AdjustableCurrentTime.Today.AddDays( 1 ).At( hour, minute, second );
 
     }
 

@@ -107,7 +107,7 @@ namespace Librainian.Parsing {
 
         [NotNull]
         public String PeekNextChar() =>
-            new String( value: new[] {
+            new String( new[] {
                 this.CurrentBuffer.FirstOrDefault()
             } );
 
@@ -141,7 +141,7 @@ namespace Librainian.Parsing {
                     return String.Empty;
                 }
 
-                var result = new String( value: new[] {
+                var result = new String( new[] {
                     this._inputBuffer.FirstOrDefault()
                 } );
 
@@ -165,7 +165,7 @@ namespace Librainian.Parsing {
 
                 if ( !String.IsNullOrWhiteSpace( sentence ) ) {
                     var position = this._inputBuffer.IndexOf( sentence, StringComparison.Ordinal );
-                    this.CurrentBuffer = this._inputBuffer.Substring( startIndex: position + sentence.Length );
+                    this.CurrentBuffer = this._inputBuffer.Substring( position + sentence.Length );
 
                     return sentence;
                 }

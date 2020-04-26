@@ -57,15 +57,15 @@ namespace Librainian.Databases.MMF {
         private Type Type { get; } = typeof( T );
 
         private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
-            sb.Append( value: $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
-            sb.Append( value: "{" );
+            sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
+            sb.Append( "{" );
 
-            sb.Append( value: @"
+            sb.Append( @"
                 fixed (byte* srcPtr = &bytes[0])
                 {" );
 
-            sb.Append( value: $"return *({typeFullName}*)srcPtr;" );
-            sb.Append( value: "}}" );
+            sb.Append( $"return *({typeFullName}*)srcPtr;" );
+            sb.Append( "}}" );
         }
 
         private Boolean CanGetSize() {
@@ -87,30 +87,30 @@ namespace Librainian.Databases.MMF {
                 }
             };
 
-            CodeDomProvider provider = new CSharpCodeProvider( providerOptions: providerOptions );
+            CodeDomProvider provider = new CSharpCodeProvider( providerOptions );
             var compilerParameters = this.GetCompilerParameters();
 
-            return provider.CompileAssemblyFromSource( options: compilerParameters, this.GenerateCode() );
+            return provider.CompileAssemblyFromSource( compilerParameters, this.GenerateCode() );
         }
 
         [NotNull]
         private String GenerateCode() {
-            var typeFullName = this.Type.FullName.Replace( oldChar: '+', newChar: '.' );
+            var typeFullName = this.Type.FullName.Replace( '+', '.' );
 
             var sb = new StringBuilder();
-            sb.AppendLine( value: "using System;" );
+            sb.AppendLine( "using System;" );
             sb.AppendLine();
 
             var interfaceType = typeof( ISerializeDeserialize<T> );
 
-            sb.Append( value: $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
-            sb.Append( value: "{" );
-            sb.AppendFormat( format: "public Boolean CanSerializeType(){{return true;}}" );
+            sb.Append( $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
+            sb.Append( "{" );
+            sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
 
-            this.ObjectToBytesCode( sb: sb, typeFullName: typeFullName );
-            BytesToObjectCode( sb: sb, typeFullName: typeFullName );
+            this.ObjectToBytesCode( sb, typeFullName );
+            BytesToObjectCode( sb, typeFullName );
 
-            sb.Append( value: "}" );
+            sb.Append( "}" );
 
             return sb.ToString();
         }
@@ -120,9 +120,9 @@ namespace Librainian.Databases.MMF {
             var length = this._size;
 
             do {
-                this.MovePointers( sb: sb );
-                this.SetPointerLength( length: length );
-                sb.AppendFormat( format: @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", arg0: this._ptrType, arg1: this._addCount / this._ptrSize );
+                this.MovePointers( sb );
+                this.SetPointerLength( length );
+                sb.AppendFormat( @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", this._ptrType, this._addCount / this._ptrSize );
                 length -= this._ptrSize;
                 this._addCount += this._ptrSize;
             } while ( length > 0 );
@@ -134,8 +134,8 @@ namespace Librainian.Databases.MMF {
                 GenerateInMemory = true, GenerateExecutable = false, TreatWarningsAsErrors = false, IncludeDebugInformation = false, CompilerOptions = "/optimize /unsafe"
             };
 
-            cParameters.ReferencedAssemblies.Add( value: Assembly.GetExecutingAssembly().Location );
-            cParameters.ReferencedAssemblies.Add( value: this.Type.Assembly.Location );
+            cParameters.ReferencedAssemblies.Add( Assembly.GetExecutingAssembly().Location );
+            cParameters.ReferencedAssemblies.Add( this.Type.Assembly.Location );
 
             return cParameters;
         }
@@ -144,28 +144,28 @@ namespace Librainian.Databases.MMF {
             var modifer = this._addCount / this._ptrSize;
 
             if ( modifer >= this._ptrSize ) {
-                sb.Append( value: $"dest += {this._addCount};" );
-                sb.Append( value: $"src += {this._addCount};" );
+                sb.Append( $"dest += {this._addCount};" );
+                sb.Append( $"src += {this._addCount};" );
                 this._addCount = 0;
             }
         }
 
         private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
-            sb.Append( value: $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
-            sb.Append( value: "{" );
-            sb.Append( value: $"byte[] buffer = new byte[{this._size}];" );
+            sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
+            sb.Append( "{" );
+            sb.Append( $"byte[] buffer = new byte[{this._size}];" );
 
-            sb.Append( value: @"
+            sb.Append( @"
                 fixed (byte* destPtr = &buffer[0])
                 {
                     " );
 
-            sb.Append( value: "byte* src = (byte*)&srcObject;" );
-            sb.Append( value: "byte* dest = destPtr;" );
+            sb.Append( "byte* src = (byte*)&srcObject;" );
+            sb.Append( "byte* dest = destPtr;" );
 
-            this.GenerateMethodBodyCode( sb: sb );
+            this.GenerateMethodBodyCode( sb );
 
-            sb.Append( value: @"}
+            sb.Append( @"}
                 return buffer;}" );
         }
 
@@ -194,7 +194,7 @@ namespace Librainian.Databases.MMF {
                 return null;
             }
 
-            var checker = new ValueTypeCheck( objectType: typeof( T ) );
+            var checker = new ValueTypeCheck( typeof( T ) );
 
             if ( !checker.OnlyValueTypes() ) {
                 return null;
@@ -203,10 +203,10 @@ namespace Librainian.Databases.MMF {
             var res = this.CompileCode();
 
             if ( res.Errors.Count > 0 ) {
-                throw new SerializerException( message: res.Errors[ index: 0 ].ErrorText );
+                throw new SerializerException( res.Errors[ 0 ].ErrorText );
             }
 
-            return ( ISerializeDeserialize<T> ) res.CompiledAssembly.CreateInstance( typeName: "UnsafeConverter" );
+            return ( ISerializeDeserialize<T> ) res.CompiledAssembly.CreateInstance( "UnsafeConverter" );
         }
 
     }

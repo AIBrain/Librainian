@@ -36,7 +36,7 @@ namespace Librainian.Databases {
     using System;
     using System.Collections.Generic;
     using JetBrains.Annotations;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
 
     public class ReflectionPopulator<T> {
 
@@ -49,13 +49,13 @@ namespace Librainian.Databases {
                 var item = Activator.CreateInstance<T>();
 
                 foreach ( var property in typeof( T ).GetProperties() ) {
-                    if ( !reader.IsDBNull( i: reader.GetOrdinal( name: property.Name ) ) ) {
-                        var convertTo = Nullable.GetUnderlyingType( nullableType: property.PropertyType ) ?? property.PropertyType;
-                        property.SetValue( obj: item, value: Convert.ChangeType( value: reader[ name: property.Name ], conversionType: convertTo ), index: null );
+                    if ( !reader.IsDBNull( reader.GetOrdinal( property.Name ) ) ) {
+                        var convertTo = Nullable.GetUnderlyingType( property.PropertyType ) ?? property.PropertyType;
+                        property.SetValue( item, Convert.ChangeType( reader[ property.Name ], convertTo ), null );
                     }
                 }
 
-                results.Add( item: item );
+                results.Add( item );
             }
 
             return results;

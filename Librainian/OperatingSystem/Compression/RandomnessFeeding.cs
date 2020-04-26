@@ -60,7 +60,7 @@ namespace Librainian.OperatingSystem.Compression {
         public RandomnessFeeding() {
             this.HowManyBytesAsCompressed = BigInteger.Zero;
             this.HowManyBytesFed = BigInteger.Zero;
-            this.GZipStream = new GZipStream( stream: this.NullStream, compressionLevel: CompressionLevel.Optimal );
+            this.GZipStream = new GZipStream( this.NullStream, CompressionLevel.Optimal );
         }
 
         public override void DisposeManaged() {
@@ -71,33 +71,33 @@ namespace Librainian.OperatingSystem.Compression {
 
         public void FeedItData( [NotNull] Byte[] data ) {
             if ( data is null ) {
-                throw new ArgumentNullException( paramName: nameof( data ) );
+                throw new ArgumentNullException( nameof( data ) );
             }
 
             this.HowManyBytesFed += data.LongLength;
-            this.GZipStream.Write( array: data, offset: 0, count: data.Length );
+            this.GZipStream.Write( data, 0, data.Length );
             this.HowManyBytesAsCompressed += this.NullStream.Length;
-            this.NullStream.Seek( offset: 0, origin: SeekOrigin.Begin ); //rewind our 'position' so we don't overrun a long
+            this.NullStream.Seek( 0, SeekOrigin.Begin ); //rewind our 'position' so we don't overrun a long
         }
 
         public void FeedItData( [NotNull] Document document ) {
             if ( document == null ) {
-                throw new ArgumentNullException( paramName: nameof( document ) );
+                throw new ArgumentNullException( nameof( document ) );
             }
 
             var bytes = document.AsBytes();
-            this.FeedItData( data: bytes.ToArray() );
+            this.FeedItData( bytes.ToArray() );
         }
 
         /// <summary>The smaller the compressed 'data' is, the less the random it was.</summary>
         /// <returns></returns>
         public Double GetCurrentCompressionRatio() {
-            var d = ( Double ) new Rational( numerator: this.HowManyBytesAsCompressed, denominator: this.HowManyBytesFed );
+            var d = ( Double ) new Rational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
 
             return 1 - d; // BUG ?
         }
 
-        public void Report() => Debug.WriteLine( message: $"Current compression is now {this.GetCurrentCompressionRatio():P4}" );
+        public void Report() => Debug.WriteLine( $"Current compression is now {this.GetCurrentCompressionRatio():P4}" );
 
     }
 

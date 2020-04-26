@@ -403,7 +403,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <param name="offset"></param>
         /// <returns></returns>
         /// <exception cref="IOException"></exception>
-        public static UInt64 SetFilePointer( SafeFileHandle handle, SeekOrigin origin, UInt64 offset ) {
+        public static UInt64 SetFilePointer( [CanBeNull] SafeFileHandle handle, SeekOrigin origin, UInt64 offset ) {
 
             var result = SetFilePointerEx( handle, offset, out var filePointer, origin );
 

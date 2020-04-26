@@ -209,6 +209,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
         /// <returns>An array of [virtual cluster, physical cluster]</returns>
         [NotNull]
+        [JetBrains.Annotations.NotNull]
         public static Array GetFileMap( [CanBeNull] String? path ) {
             var hFile = IntPtr.Zero;
             var pAlloc = IntPtr.Zero;
@@ -292,6 +293,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="deviceName">use "c:"</param>
         /// <returns>a bitarray for each cluster</returns>
         [NotNull]
+        [JetBrains.Annotations.NotNull]
         public static BitArray GetVolumeMap( [NotNull] String deviceName ) {
             if ( String.IsNullOrWhiteSpace( deviceName ) ) {
                 throw new ArgumentException( "Value cannot be null or whitespace.", nameof( deviceName ) );

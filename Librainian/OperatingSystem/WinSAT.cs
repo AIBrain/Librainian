@@ -41,23 +41,23 @@ namespace Librainian.OperatingSystem {
     public static class WinSAT {
 
         private static (Decimal CpuScore, Decimal MemoryScore, Decimal GraphicsScore, Decimal GamingScore, Decimal DiskScore) ReadXML() {
-            var folder = new Folder( specialFolder: Environment.SpecialFolder.Windows, subFolder: "Performance\\WinSAT\\DataStore" );
+            var folder = new Folder( Environment.SpecialFolder.Windows, "Performance\\WinSAT\\DataStore" );
 
-            var documents = folder.GetDocuments( searchPattern: "*.xml" );
+            var documents = folder.GetDocuments( "*.xml" );
 
-            var newest = documents.Where( predicate: document => document.FullPath.Contains( value: "Formal.Assessment" ) )
-                                  .OrderByDescending( keySelector: document => document.LastWriteTime ).FirstOrDefault();
+            var newest = documents.Where( document => document.FullPath.Contains( "Formal.Assessment" ) )
+                                  .OrderByDescending( document => document.LastWriteTime ).FirstOrDefault();
 
             var xml = new XmlDocument();
 
             if ( newest != null ) {
-                xml.Load( filename: newest.FullPath );
-                var xnList = xml.SelectNodes( xpath: "/WinSAT/WinSPR" );
-                var dugum = xnList?.Item( index: 0 );
+                xml.Load( newest.FullPath );
+                var xnList = xml.SelectNodes( "/WinSAT/WinSPR" );
+                var dugum = xnList?.Item( 0 );
 
-                return ( CpuScore: Convert.ToDecimal( value: dugum[ name: "CpuScore" ] ), MemoryScore: Convert.ToDecimal( value: dugum[ name: "MemoryScore" ] ),
-                    GraphicsScore: Convert.ToDecimal( value: dugum[ name: "GraphicsScore" ] ), GamingScore: Convert.ToDecimal( value: dugum[ name: "GamingScore" ] ),
-                    DiskScore: Convert.ToDecimal( value: dugum[ name: "DiskScore" ] ) );
+                return ( CpuScore: Convert.ToDecimal( dugum[ "CpuScore" ] ), MemoryScore: Convert.ToDecimal( dugum[ "MemoryScore" ] ),
+                    GraphicsScore: Convert.ToDecimal( dugum[ "GraphicsScore" ] ), GamingScore: Convert.ToDecimal( dugum[ "GamingScore" ] ),
+                    DiskScore: Convert.ToDecimal( dugum[ "DiskScore" ] ) );
             }
 
             return ( 0, 0, 0, 0, 0 );

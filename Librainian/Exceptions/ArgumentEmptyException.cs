@@ -45,12 +45,12 @@ namespace Librainian.Exceptions {
 
         private ArgumentEmptyException() { }
 
-        public ArgumentEmptyException( [CanBeNull] String? message ) : base( message: message ) { }
+        public ArgumentEmptyException( [CanBeNull] String? message ) : base( message ) { }
 
-        public ArgumentEmptyException( [CanBeNull] String? message, [CanBeNull] String? paramName ) : base( message: message, paramName: paramName ) =>
+        public ArgumentEmptyException( [CanBeNull] String? message, [CanBeNull] String? paramName ) : base( message, paramName ) =>
             this.Parameter = paramName;
 
-        public ArgumentEmptyException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message: message, innerException: inner ) { }
+        public ArgumentEmptyException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) { }
 
     }
 

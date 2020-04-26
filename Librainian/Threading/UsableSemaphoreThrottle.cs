@@ -42,6 +42,7 @@ namespace Librainian.Threading {
 
         public void Dispose() => this._semaphore.Dispose();
 
+        [ItemCanBeNull]
         public async Task<IUsableSemaphoreWrapper> WaitAsync() {
             IUsableSemaphoreWrapper wrapper = default;
 

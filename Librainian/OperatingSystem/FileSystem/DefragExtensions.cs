@@ -45,17 +45,17 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="disk">Drive to defrag - format is "c:" for example</param>
         [NotNull]
         private static String Defrag( [CanBeNull] Disk disk ) {
-            var path = Path.Combine( path1: Windows.WindowsSystem32Folder.Value.FullPath, path2: "defrag.exe" );
+            var path = Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "defrag.exe" );
 
             var info = new ProcessStartInfo {
                 FileName = path,
-                Arguments = String.Format( format: "{{{0}}} /O /V /M " + Environment.ProcessorCount, arg0: disk ),
+                Arguments = String.Format( "{{{0}}} /O /V /M " + Environment.ProcessorCount, disk ),
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true
             };
 
-            var defrag = Process.Start( startInfo: info );
+            var defrag = Process.Start( info );
 
             if ( defrag is null ) {
                 return String.Empty;

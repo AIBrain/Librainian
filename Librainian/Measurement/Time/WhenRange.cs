@@ -66,7 +66,7 @@ namespace Librainian.Measurement.Time {
             }
 
             var δ = this.Max.Value - this.Min.Value;
-            this.Length = new SpanOfTime( planckTimes: δ );
+            this.Length = new SpanOfTime( δ );
         }
 
     }

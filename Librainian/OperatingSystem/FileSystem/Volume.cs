@@ -66,7 +66,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 return -1;
             }
 
-            return String.Compare( strA: this.GetLogicalDrive(), strB: device.GetLogicalDrive(), StringComparison.Ordinal );
+            return String.Compare( this.GetLogicalDrive(), device.GetLogicalDrive(), StringComparison.Ordinal );
         }
 
         [NotNull]
@@ -75,12 +75,12 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             if ( this.GetLogicalDrive() != null ) {
 
-                Trace.WriteLine( message: $"Finding disk extents for volume: {this.GetLogicalDrive()}" );
+                Trace.WriteLine( $"Finding disk extents for volume: {this.GetLogicalDrive()}" );
 
-                var hFile = NativeMethods.CreateFile( lpFileName: $@"\\.\{this.GetLogicalDrive()}", 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+                var hFile = NativeMethods.CreateFile( $@"\\.\{this.GetLogicalDrive()}", 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
                 if ( hFile.IsInvalid ) {
-                    throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                    throw new Win32Exception( Marshal.GetLastWin32Error() );
                 }
 
                 const Int32 size = 0x400; // some big size
@@ -88,7 +88,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 UInt32 bytesReturned;
 
                 try {
-                    if ( !NativeMethods.DeviceIoControl( hDevice: hFile.DangerousGetHandle(), NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0, buffer, size,
+                    if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0, buffer, size,
                         out bytesReturned, IntPtr.Zero ) ) {
 
                         // do nothing here on purpose
@@ -99,13 +99,13 @@ namespace Librainian.OperatingSystem.FileSystem {
                 }
 
                 if ( bytesReturned > 0 ) {
-                    var numberOfDiskExtents = ( Int32 ) Marshal.PtrToStructure( buffer, structureType: typeof( Int32 ) );
+                    var numberOfDiskExtents = ( Int32 ) Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
                     for ( var i = 0; i < numberOfDiskExtents; i++ ) {
-                        var extentPtr = new IntPtr( value: buffer.ToInt32() + Marshal.SizeOf( t: typeof( Int64 ) ) +
-                                                           ( i * Marshal.SizeOf( t: typeof( NativeMethods.DISK_EXTENT ) ) ) );
+                        var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) +
+                                                           ( i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) ) );
 
-                        var extent = ( NativeMethods.DISK_EXTENT ) Marshal.PtrToStructure( extentPtr, structureType: typeof( NativeMethods.DISK_EXTENT ) );
+                        var extent = ( NativeMethods.DISK_EXTENT ) Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
                         numbers.Add( extent.DiskNumber );
                     }
                 }
@@ -158,7 +158,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String? GetVolumeName() {
             var sb = new StringBuilder( 1024 );
 
-            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( volumeName: $@"{this.Path}\", sb, uniqueNameBufferCapacity: ( UInt32 ) sb.Capacity ) ) {
+            if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 ) sb.Capacity ) ) {
 
                 // throw new Win32Exception(Marshal.GetLastWin32Error());
                 return null;

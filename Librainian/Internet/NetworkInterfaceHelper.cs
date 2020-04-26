@@ -46,22 +46,22 @@ namespace Librainian.Internet {
 
         public static IDictionary<String, NetworkInterface> NetworkInterfaces { get; }
 
-        static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( keySelector: o => o.Id );
+        static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
 
         [CanBeNull]
         public static NetworkInterface GetBestInterface( [NotNull] this IPAddress address ) {
             var byteArray1 = address.GetAddressBytes();
 
-            var ipaddr = BitConverter.ToUInt32( value: byteArray1, startIndex: 0 );
-            var error = NativeMethods.GetBestInterface( destAddr: ipaddr, bestIfIndex: out var interfaceIndex );
+            var ipaddr = BitConverter.ToUInt32( byteArray1, 0 );
+            var error = NativeMethods.GetBestInterface( ipaddr, out var interfaceIndex );
 
             if ( error != 0 ) {
-                throw new InvalidOperationException( message: $"Error while calling GetBestInterface(). Error={error}" );
+                throw new InvalidOperationException( $"Error while calling GetBestInterface(). Error={error}" );
             }
 
-            var indexedIpAdapterInfo = AdapterInfo.IndexedIpAdapterInfos[ key: interfaceIndex ];
+            var indexedIpAdapterInfo = AdapterInfo.IndexedIpAdapterInfos[ interfaceIndex ];
 
-            return NetworkInterfaces[ key: indexedIpAdapterInfo.AdapterName ];
+            return NetworkInterfaces[ indexedIpAdapterInfo.AdapterName ];
         }
 
     }

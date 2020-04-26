@@ -41,7 +41,7 @@ namespace Librainian.Databases {
     using JetBrains.Annotations;
     using Logging;
     using Measurement.Time;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
     using OperatingSystem.FileSystem;
     using Utilities;
 

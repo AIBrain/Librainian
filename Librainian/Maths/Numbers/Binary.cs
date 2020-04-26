@@ -141,6 +141,7 @@ namespace Librainian.Maths.Numbers {
 
         public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
 
+        [NotNull]
         public override String ToString() {
             var stringBuilder = new StringBuilder( this.Length );
 

@@ -45,22 +45,22 @@ namespace Librainian.Threading {
         [NotNull]
         public static IPropagatorBlock<T, T> CreateDelayBlock<T>( [NotNull] SpanOfTime delay ) {
             if ( delay is null ) {
-                throw new ArgumentNullException( paramName: nameof( delay ) );
+                throw new ArgumentNullException( nameof( delay ) );
             }
 
             var lastItem = DateTime.MinValue;
 
-            return new TransformBlock<T, T>( transform: async x => {
+            return new TransformBlock<T, T>( async x => {
                 var waitTime = ( lastItem + delay ) - DateTime.UtcNow;
 
                 if ( waitTime > TimeSpan.Zero ) {
-                    await Task.Delay( delay: waitTime ).ConfigureAwait( continueOnCapturedContext: false );
+                    await Task.Delay( waitTime ).ConfigureAwait( false );
                 }
 
                 lastItem = DateTime.UtcNow;
 
                 return x;
-            }, dataflowBlockOptions: new ExecutionDataflowBlockOptions {
+            }, new ExecutionDataflowBlockOptions {
                 BoundedCapacity = 1
             } );
         }

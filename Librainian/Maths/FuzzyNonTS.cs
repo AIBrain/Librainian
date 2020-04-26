@@ -45,11 +45,11 @@ namespace Librainian.Maths {
         [JsonProperty]
         private Double _value;
 
-        public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( value: new FuzzyNonTs( value: 0.5D ) - ( new FuzzyNonTs( value: 0.5D ) / 2 ) );
+        public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - ( new FuzzyNonTs( 0.5D ) / 2 ) );
 
-        public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( value: new FuzzyNonTs( value: 0.5D ) + ( new FuzzyNonTs( value: 0.5D ) / 2 ) );
+        public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + ( new FuzzyNonTs( 0.5D ) / 2 ) );
 
-        public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( value: 0.5D );
+        public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
 
         public Double Value {
             get => this._value;
@@ -74,16 +74,16 @@ namespace Librainian.Maths {
 
         public FuzzyNonTs( Double value ) => this.Value = value;
 
-        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh: lmh );
+        public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
         [NotNull]
-        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( value: ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
         [NotNull]
-        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( value: ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
         [NotNull]
-        public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( value: ( value1 + value2 ) / 2D );
+        public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
 
         public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
@@ -93,10 +93,10 @@ namespace Librainian.Maths {
 
         public static Boolean IsTruer( [CanBeNull] FuzzyNonTs special ) => ( null != special ) && ( special.Value >= Truer.Value );
 
-        public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special: special ) && !IsFalser( special: special );
+        public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
         [NotNull]
-        public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( value: Double.Parse( s: value ) );
+        public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( Double.Parse( value ) );
 
         public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 
@@ -129,6 +129,7 @@ namespace Librainian.Maths {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Value:R}";
 
     }

@@ -37,23 +37,23 @@ using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following set of attributes.
 // Change these attribute values to modify the information associated with an assembly.
-[assembly: AssemblyTitle( title: "Librainian" )]
-[assembly: AssemblyDescription( description: "AIBrain's Librainian library that I will use in my various Protiguous Projects." )]
-[assembly: AssemblyConfiguration( configuration: "" )]
-[assembly: AssemblyCompany( company: "Protiguous" )]
-[assembly: AssemblyProduct( product: "Librainian" )]
-[assembly: AssemblyCopyright( copyright: "Copyright © AIBrain, Protiguous" )]
-[assembly: AssemblyTrademark( trademark: "Librainian" )]
-[assembly: AssemblyCulture( culture: "" )]
+[assembly: AssemblyTitle( "Librainian" )]
+[assembly: AssemblyDescription( "AIBrain's Librainian library that I will use in my various Protiguous Projects." )]
+[assembly: AssemblyConfiguration( "" )]
+[assembly: AssemblyCompany( "Protiguous" )]
+[assembly: AssemblyProduct( "Librainian" )]
+[assembly: AssemblyCopyright( "Copyright © AIBrain, Protiguous" )]
+[assembly: AssemblyTrademark( "Librainian" )]
+[assembly: AssemblyCulture( "" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible to COM components. If
 // you need to access a type in this assembly from COM, set the ComVisible attribute to true on that type.
 
-[assembly: ComVisible( visibility: false )]
+[assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid( guid: "1b20b7d7-0f3a-4ef8-b751-ad4a683f7f7f" )]
+[assembly: Guid( "1b20b7d7-0f3a-4ef8-b751-ad4a683f7f7f" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -62,6 +62,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers by using the '*'
 // as shown below: [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion( version: "2020.3.11.16" )]
-[assembly: AssemblyFileVersion( version: "2020.3.11.16" )]
-[assembly: NeutralResourcesLanguage( cultureName: "en-US" )]
+[assembly: AssemblyVersion( "2020.3.11.16" )]
+[assembly: AssemblyFileVersion( "2020.3.11.16" )]
+[assembly: NeutralResourcesLanguage( "en-US" )]

@@ -43,7 +43,7 @@ namespace Librainian.Linguistics.PoS {
 
         public PartsOfSpeech PartOfSpeech => PartsOfSpeech.Noun;
 
-        public Noun( String word ) : base( word: word ) { }
+        public Noun( String word ) : base( word ) { }
 
         /// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
@@ -53,7 +53,7 @@ namespace Librainian.Linguistics.PoS {
                 return default;
             }
 
-            return ReferenceEquals( objA: this, objB: other ) || this.SequenceEqual( second: other );
+            return ReferenceEquals( this, other ) || this.SequenceEqual( other );
         }
 
     }

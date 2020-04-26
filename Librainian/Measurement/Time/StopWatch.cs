@@ -44,9 +44,9 @@ namespace Librainian.Measurement.Time {
     /// <para>Made my changes to it. Needs some unit tests.</para>
     /// </summary>
     /// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
-    [Obsolete( message: "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
+    [Obsolete( "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
     public class StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Time {
         /// follows <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( [NotNull] StopWatch other ) => this.GetElapsedTicks().CompareTo( value: other.GetElapsedTicks() );
+        public Int32 CompareTo( [NotNull] StopWatch other ) => this.GetElapsedTicks().CompareTo( other.GetElapsedTicks() );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -71,7 +71,7 @@ namespace Librainian.Measurement.Time {
         /// follows <paramref name="other" /> in the sort order.
         /// </returns>
         /// <param name="other">An object to compare with this instance. </param>
-        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( value: other );
+        public Int32 CompareTo( TimeSpan other ) => this.Elapsed.CompareTo( other );
 
         [JsonProperty]
         private Int64 _endTimeStamp;
@@ -82,7 +82,7 @@ namespace Librainian.Measurement.Time {
         [JsonProperty]
         private Int64 _startTimeStamp;
 
-        public TimeSpan Elapsed => new TimeSpan( ticks: this.GetElapsedTicks() );
+        public TimeSpan Elapsed => new TimeSpan( this.GetElapsedTicks() );
 
         public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 
@@ -91,9 +91,9 @@ namespace Librainian.Measurement.Time {
         public Int64 ElapsedTicks => this.GetElapsedTicks();
 
         public Int64 EndTimeStamp {
-            get => Interlocked.Read( location: ref this._endTimeStamp );
+            get => Interlocked.Read( ref this._endTimeStamp );
 
-            private set => Interlocked.Exchange( location1: ref this._endTimeStamp, value: value );
+            private set => Interlocked.Exchange( ref this._endTimeStamp, value );
         }
 
         public Boolean IsRunning {
@@ -103,9 +103,9 @@ namespace Librainian.Measurement.Time {
         }
 
         public Int64 StartTimeStamp {
-            get => Interlocked.Read( location: ref this._startTimeStamp );
+            get => Interlocked.Read( ref this._startTimeStamp );
 
-            private set => Interlocked.Exchange( location1: ref this._startTimeStamp, value: value );
+            private set => Interlocked.Exchange( ref this._startTimeStamp, value );
         }
 
         public const Int64 TicksPerMicrosecond = 10;
@@ -124,7 +124,7 @@ namespace Librainian.Measurement.Time {
             return this.EndTimeStamp - this.StartTimeStamp;
         }
 
-        public static implicit operator TimeSpan( [NotNull] StopWatch stopWatch ) => TimeSpan.FromMilliseconds( value: stopWatch.ElapsedMilliseconds );
+        public static implicit operator TimeSpan( [NotNull] StopWatch stopWatch ) => TimeSpan.FromMilliseconds( stopWatch.ElapsedMilliseconds );
 
         [NotNull]
         public static StopWatch StartNew() {
@@ -175,7 +175,7 @@ namespace Librainian.Measurement.Time {
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => this.Elapsed.ToString( format: "g" );
+        public override String ToString() => this.Elapsed.ToString( "g" );
 
     }
 

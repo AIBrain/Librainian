@@ -59,10 +59,10 @@ namespace Librainian.Collections.Trees {
                     return;
                 }
 
-                this._parent?.Children.Remove( item: this );
+                this._parent?.Children.Remove( this );
 
-                if ( value?.Children.Contains( item: this ) == false ) {
-                    value.Children.Add( node: this );
+                if ( value?.Children.Contains( this ) == false ) {
+                    value.Children.Add( this );
                 }
 
                 this._parent = value;
@@ -101,13 +101,13 @@ namespace Librainian.Collections.Trees {
         public TreeNode( [CanBeNull] T value ) {
             this.Value = value;
             this.Parent = null;
-            this.Children = new TreeNodeList<T>( parent: this );
+            this.Children = new TreeNodeList<T>( this );
         }
 
         public TreeNode( [CanBeNull] T value, [NotNull] TreeNode<T> parent ) {
             this.Value = value;
-            this.Parent = parent ?? throw new ArgumentNullException( paramName: nameof( parent ) );
-            this.Children = new TreeNodeList<T>( parent: this );
+            this.Parent = parent ?? throw new ArgumentNullException( nameof( parent ) );
+            this.Children = new TreeNodeList<T>( this );
         }
 
         /// <summary>Dispose any disposable members.</summary>

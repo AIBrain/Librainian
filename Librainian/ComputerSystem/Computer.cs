@@ -29,7 +29,7 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "Computer.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
+// Project: "Librainian", File: "Computer.cs" was last formatted by Protiguous on 2020/04/26 at 4:32 PM.
 
 namespace Librainian.ComputerSystem {
 
@@ -43,21 +43,17 @@ namespace Librainian.ComputerSystem {
     using Converters;
     using JetBrains.Annotations;
     using Logging;
-    using Microsoft.VisualBasic.Devices;
     using Parsing;
 
     public class Computer {
 
         [NotNull]
         private ManagementObjectSearcher PerfFormattedDataManagementObjectSearcher { get; } =
-            new ManagementObjectSearcher( "select * from Win32_PerfFormattedData_PerfOS_Processor" );
+            new ManagementObjectSearcher( queryString: "select * from Win32_PerfFormattedData_PerfOS_Processor" );
 
-        [NotNull]
-        [ItemNotNull]
-        private HashSet<PerformanceCounter> UtilizationCounters { get; } = new HashSet<PerformanceCounter>( Environment.ProcessorCount );
+        //[NotNull] [ItemNotNull] private HashSet<PerformanceCounter> UtilizationCounters { get; } = new HashSet<PerformanceCounter>( Environment.ProcessorCount );
 
-        [NotNull]
-        public ComputerInfo Info { get; }
+        //[NotNull] public ComputerInfo Info { get; }
 
         /// <summary></summary>
         /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
@@ -65,12 +61,12 @@ namespace Librainian.ComputerSystem {
         public UInt64 RAM {
             get {
                 try {
-                    using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_PhysicalMemory" ) ) {
+                    using ( var searcher = new ManagementObjectSearcher( queryString: "Select * from Win32_PhysicalMemory" ) ) {
                         UInt64 total = 0;
 
                         foreach ( var result in searcher.Get() ) {
                             if ( result != null ) {
-                                var mem = Convert.ToUInt64( result[ "Capacity" ] );
+                                var mem = Convert.ToUInt64( value: result[ propertyName: "Capacity" ] );
                                 total += mem;
                             }
                         }
@@ -86,6 +82,8 @@ namespace Librainian.ComputerSystem {
             }
         }
 
+        /*
+
         /// <summary></summary>
         /// <see cref="http://msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx" />
         public UInt64 TotalPhysicalMemory {
@@ -100,7 +98,9 @@ namespace Librainian.ComputerSystem {
                 }
             }
         }
+        */
 
+        /*
         public Computer() {
 
             for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
@@ -109,10 +109,13 @@ namespace Librainian.ComputerSystem {
 
             this.Info = new ComputerInfo(); // TODO how slow is this class? The code behind it doesn't *look* slow..
         }
+        */
 
-        private Int32 GetFreeProcessors() => this.UtilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
+        //private Int32 GetFreeProcessors() => this.UtilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
 
-        public void AbortShutdown() => Process.Start( "shutdown", "/a" );
+        public void AbortShutdown() => Process.Start( fileName: "shutdown", arguments: "/a" );
+
+        /*
 
         /// <summary>//TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of the two? Is this real time? How fast/slow is this method?</summary>
         /// <returns></returns>
@@ -121,15 +124,18 @@ namespace Librainian.ComputerSystem {
 
             return Math.Min( info.AvailablePhysicalMemory, info.AvailableVirtualMemory );
         }
+        */
 
         /// <summary></summary>
         /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
         /// <returns></returns>
         public UInt64 GetAvailableVirtualMemory() {
             try {
-                using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_LogicalMemoryConfiguration" ) ) {
-                    var total = searcher.Get().Cast<ManagementBaseObject>().Select( baseObject => ( UInt64 ) baseObject[ "AvailableVirtualMemory" ] )
-                                        .Aggregate( 0UL, ( current, mem ) => current + mem );
+                using ( var searcher = new ManagementObjectSearcher( queryString: "Select * from Win32_LogicalMemoryConfiguration" ) ) {
+                    var total = searcher.Get()
+                                        .Cast<ManagementBaseObject>()
+                                        .Select( selector: baseObject => Convert.ToUInt64( value: baseObject?[ propertyName: "AvailableVirtualMemory" ] ) )
+                                        .Aggregate( seed: 0UL, func: ( current, mem ) => current + mem );
 
                     return total;
                 }
@@ -147,11 +153,11 @@ namespace Librainian.ComputerSystem {
         [NotNull]
         public String GetCPUDescription() {
             try {
-                using ( var searcher = new ManagementObjectSearcher( "Select * from Win32_Processor" ) ) {
+                using ( var searcher = new ManagementObjectSearcher( queryString: "Select * from Win32_Processor" ) ) {
                     var sb = new StringBuilder();
 
                     foreach ( var result in searcher.Get() ) {
-                        sb.Append( $"{result?[ "Name" ] ?? Symbols.Null} with {result?[ "NumberOfCores" ] ?? Symbols.Null} cores" );
+                        sb.Append( value: $"{result?[ propertyName: "Name" ] ?? Symbols.Null} with {result?[ propertyName: "NumberOfCores" ] ?? Symbols.Null} cores" );
                     }
 
                     return sb.ToString();
@@ -166,40 +172,53 @@ namespace Librainian.ComputerSystem {
         /// <returns></returns>
         /// <exception cref="InvalidOperationException"></exception>
         public Single? GetCPUUsage() {
-            var cpuTimes = this.PerfFormattedDataManagementObjectSearcher.Get().Cast<ManagementObject>().Select( managementObject => new {
-                Name = managementObject?[ "Name" ], Usage = managementObject?[ "PercentProcessorTime" ].Cast<Single>() / 100.0f
-            } ); //.ToList();
+            var cpuTimes = this.PerfFormattedDataManagementObjectSearcher.Get()
+                               .Cast<ManagementObject>()
+                               .Select( selector: managementObject => new {
+                                   Name = managementObject?[ propertyName: "Name" ],
+                                   Usage = managementObject?[ propertyName: "PercentProcessorTime" ]
+                                       .Cast<Single>() / 100.0f
+                               } ); //.ToList();
 
             //The '_Total' value represents the average usage across all cores, and is the best representation of overall CPU usage
-            var cpuUsage = cpuTimes.Where( x => x.Name.ToString() == "_Total" ).Select( x => x.Usage ).Single();
+            var cpuUsage = cpuTimes.Where( predicate: x => x.Name.ToString() == "_Total" )
+                                   .Select( selector: x => x.Usage )
+                                   .Single();
 
             return cpuUsage;
         }
 
         [NotNull]
         public IEnumerable<String> GetVersions() =>
-            AppDomain.CurrentDomain.GetAssemblies().Where( assembly => !( assembly is null ) )
-                     .Select( assembly => $"Assembly: {assembly.GetName().Name}, {assembly.GetName().Version}" );
+            AppDomain.CurrentDomain.GetAssemblies()
+                     .Select( selector: assembly => $"Assembly: {assembly.GetName().Name}, {assembly.GetName().Version}" );
 
         [NotNull]
         public IEnumerable<String> GetWorkingMacAddresses() =>
-            from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
+            from nic in NetworkInterface.GetAllNetworkInterfaces()
+            where nic.OperationalStatus == OperationalStatus.Up
+            select nic.GetPhysicalAddress()
+                      .ToString();
 
-        public void Hibernate( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 ) delay.Value.TotalSeconds}" );
+        public void Hibernate( TimeSpan? delay = null ) =>
+            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/h" : $"/h /t {( Int32 ) delay.Value.TotalSeconds}" );
 
         /// <summary>Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system. (Uses the VisualBasic library)</summary>
-        public void Logoff( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 ) delay.Value.TotalSeconds}" );
+        public void Logoff( TimeSpan? delay = null ) =>
+            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/l" : $"/l /t {( Int32 ) delay.Value.TotalSeconds}" );
 
         /// <summary>Send a reboot request.</summary>
-        public void Restart( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 ) delay.Value.TotalSeconds}" );
+        public void Restart( TimeSpan? delay = null ) =>
+            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/r" : $"/r /t {( Int32 ) delay.Value.TotalSeconds}" );
 
         public void RestartFast( TimeSpan? delay = null ) =>
-            Process.Start( "shutdown", !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 ) delay.Value.TotalSeconds}" );
+            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 ) delay.Value.TotalSeconds}" );
 
-        public void Shutdown( TimeSpan? delay = null ) => Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 ) delay.Value.TotalSeconds}" );
+        public void Shutdown( TimeSpan? delay = null ) =>
+            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/s" : $"/s /t {( Int32 ) delay.Value.TotalSeconds}" );
 
         /// <summary>Turn off the local computer with no time-out or warning.</summary>
-        public void ShutdownNow() => Process.Start( "shutdown", "/p" );
+        public void ShutdownNow() => Process.Start( fileName: "shutdown", arguments: "/p" );
 
     }
 

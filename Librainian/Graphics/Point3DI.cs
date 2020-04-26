@@ -85,19 +85,19 @@ namespace Librainian.Graphics {
         /// <param name="left"></param>
         /// <param name="right"> </param>
         /// <returns></returns>
-        public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( other: right );
+        public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( right );
 
         /// <summary>Determines whether the specified Point3D instances are unequal.</summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are unequal; false otherwise.</returns>
-        public static Boolean operator !=( Point3Di a, Point3Di b ) => !a.Equals( other: b );
+        public static Boolean operator !=( Point3Di a, Point3Di b ) => !a.Equals( b );
 
         /// <summary>Determines whether the specified Point3D instances are equal.</summary>
         /// <param name="a">The first Point3D instance to compare.</param>
         /// <param name="b">The second Point3D instance to compare.</param>
         /// <returns>True if the Point3D instances are equal; false otherwise.</returns>
-        public static Boolean operator ==( Point3Di a, Point3Di b ) => a.Equals( other: b );
+        public static Boolean operator ==( Point3Di a, Point3Di b ) => a.Equals( b );
 
         /// <summary>Determines whether this instance is very nearly equal to a specified Point3D structure.</summary>
         /// <remarks>
@@ -109,18 +109,18 @@ namespace Librainian.Graphics {
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are approximately equal; false otherwise.</returns>
         public Boolean ApproximatelyEquals( Point3Di other ) =>
-            ( Math.Abs( value: this.X - other.X ) <= Tolerance ) && ( Math.Abs( value: this.Y - other.Y ) <= Tolerance ) &&
-            ( Math.Abs( value: this.Z - other.Z ) <= Tolerance );
+            ( Math.Abs( this.X - other.X ) <= Tolerance ) && ( Math.Abs( this.Y - other.Y ) <= Tolerance ) &&
+            ( Math.Abs( this.Z - other.Z ) <= Tolerance );
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
         /// <param name="obj">An object to compare with this instance.</param>
         /// <returns>True if the object equals this instance; false otherwise.</returns>
-        public override Boolean Equals( Object obj ) => obj is Point3Di di && this.Equals( other: di );
+        public override Boolean Equals( Object obj ) => obj is Point3Di di && this.Equals( di );
 
         /// <summary>Returns a value indicating whether this instance is equal to a specified Point3D structure.</summary>
         /// <param name="other">A Point3D structure to compare to this instance.</param>
         /// <returns>True if the X,Y,Z components are the same; false otherwise.</returns>
-        public Boolean Equals( Point3Di other ) => Equals( left: this, right: other );
+        public Boolean Equals( Point3Di other ) => Equals( this, other );
 
         /// <summary>Returns the hash code for this instance.</summary>
         /// <returns>A 32-bit signed integer hash code.</returns>

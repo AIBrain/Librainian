@@ -46,7 +46,7 @@ namespace Librainian.Linguistics {
     ///     <para>A <see cref="Library" /> is a cluster of <see cref="Book" /> s.</para>
     /// </summary>
     [JsonObject]
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Library : IEquatable<Library>, IEnumerable<KeyValuePair<UDC, Book>> {
 
@@ -58,20 +58,20 @@ namespace Librainian.Linguistics {
         /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Books ).GetEnumerator();
 
-        public Boolean Equals( [CanBeNull] Library other ) => Equals( left: this, right: other );
+        public Boolean Equals( [CanBeNull] Library other ) => Equals( this, other );
 
         [NotNull]
         [JsonProperty]
         private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
 
-        public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc: udc, book: book );
+        public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc, book );
 
         /// <summary>Static equality test</summary>
         /// <param name="left"></param>
         /// <param name="right"> </param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Library left, [CanBeNull] Library right ) {
-            if ( ReferenceEquals( objA: left, objB: right ) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
@@ -80,19 +80,19 @@ namespace Librainian.Linguistics {
             }
 
             //shouldn't this be more of a set-type comparison? If all A are contained in B or all B are contained in A then true?
-            return left.OrderBy( keySelector: pair => pair.Key ).SequenceEqual( second: right.OrderBy( keySelector: pair => pair.Key ) );
+            return left.OrderBy( pair => pair.Key ).SequenceEqual( right.OrderBy( pair => pair.Key ) );
         }
 
         public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
             if ( udc is null ) {
-                throw new ArgumentNullException( paramName: nameof( udc ) );
+                throw new ArgumentNullException( nameof( udc ) );
             }
 
             if ( book is null ) {
-                throw new ArgumentNullException( paramName: nameof( book ) );
+                throw new ArgumentNullException( nameof( book ) );
             }
 
-            this.Books.TryAdd( key: udc, value: book );
+            this.Books.TryAdd( udc, book );
 
             return true;
         }
@@ -100,7 +100,7 @@ namespace Librainian.Linguistics {
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( left: this, right: obj as Library );
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Library );
 
         /// <summary>Serves as the default hash function.</summary>
         /// <returns>A hash code for the current object.</returns>

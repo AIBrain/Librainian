@@ -50,7 +50,7 @@ namespace Librainian.Converters {
     using Logging;
     using Maths;
     using Maths.Numbers;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
     using OperatingSystem.FileSystem;
     using OperatingSystem.FileSystem.Pri.LongPath;
     using Parsing;
@@ -556,9 +556,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         [Pure]
         public static Guid ToMD5HashedGUID( this String value ) {
-            if ( value is null ) {
-                value = String.Empty;
-            }
+            value ??= String.Empty;
 
             var bytes = Encoding.Unicode.GetBytes( value );
             var data = MD5.Create().ComputeHash( bytes );

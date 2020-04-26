@@ -42,10 +42,10 @@ namespace Librainian.Parsing.Validation {
     [JsonObject]
     public class NonEmptyString : ValidatedString {
 
-        public NonEmptyString( String value ) : base( value: value, validationFunc: s => !String.IsNullOrWhiteSpace( value: s ) ) { }
+        public NonEmptyString( String value ) : base( value, s => !String.IsNullOrWhiteSpace( s ) ) { }
 
         [NotNull]
-        public static explicit operator NonEmptyString( [CanBeNull] String? str ) => new NonEmptyString( value: str );
+        public static explicit operator NonEmptyString( [CanBeNull] String? str ) => new NonEmptyString( str );
 
     }
 

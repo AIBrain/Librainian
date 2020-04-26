@@ -39,9 +39,9 @@ namespace Librainian.Exceptions {
     [Serializable]
     public class StreamWriteException : StreamException {
 
-        public StreamWriteException( [CanBeNull] String? message ) : base( message: message ) { }
+        public StreamWriteException( [CanBeNull] String? message ) : base( message ) { }
 
-        public StreamWriteException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message: message, innerException: innerException ) { }
+        public StreamWriteException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
 
     }
 

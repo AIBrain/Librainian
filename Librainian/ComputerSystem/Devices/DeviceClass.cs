@@ -31,6 +31,8 @@
 // 
 // Project: "Librainian", File: "DeviceClass.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
+#nullable enable
+
 namespace Librainian.ComputerSystem.Devices {
 
     using System;
@@ -59,37 +61,37 @@ namespace Librainian.ComputerSystem.Devices {
         private DeviceClass( Guid classGuid, IntPtr hwndParent ) {
             this._classGuid = classGuid;
 
-            this._deviceInfoSet = NativeMethods.SetupDiGetClassDevs( classGuid: ref this._classGuid, enumerator: "" /*was 0*/, hwndParent: hwndParent,
-                flags: NativeMethods.DIGCF_DEVICEINTERFACE | NativeMethods.DIGCF_PRESENT );
+            this._deviceInfoSet = NativeMethods.SetupDiGetClassDevs( ref this._classGuid, "" /*was 0*/, hwndParent,
+                NativeMethods.DIGCF_DEVICEINTERFACE | NativeMethods.DIGCF_PRESENT );
 
             var lastError = Marshal.GetLastWin32Error();
 
             if ( this._deviceInfoSet == ( IntPtr ) ( -1 ) ) {
-                throw new Win32Exception( error: lastError );
+                throw new Win32Exception( lastError );
             }
         }
 
-        protected DeviceClass( Guid classGuid ) : this( classGuid: classGuid, hwndParent: IntPtr.Zero ) { }
+        protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
 
         [NotNull]
         protected virtual Device CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String? path, Int32 index,
             Int32 disknum = -1 ) =>
-            new Device( deviceClass: deviceClass, deviceInfoData: deviceInfoData, path: path, index: index, diskNumber: disknum );
+            new Device( deviceClass, deviceInfoData, path, index, disknum );
 
         internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
-            var sb = new StringBuilder( capacity: 1024 );
-            var hr = NativeMethods.CM_Get_Device_ID( dnDevInst: dnDevInst, buffer: sb, bufferLen: sb.Capacity, ulFlags: 0 );
+            var sb = new StringBuilder( 1024 );
+            var hr = NativeMethods.CM_Get_Device_ID( dnDevInst, sb, sb.Capacity, 0 );
 
             if ( hr != 0 ) {
-                throw new Win32Exception( error: hr );
+                throw new Win32Exception( hr );
             }
 
             var devData = new NativeMethods.SP_DEVINFO_DATA();
-            devData.cbSize = ( UInt32 ) Marshal.SizeOf( structure: devData );
+            devData.cbSize = ( UInt32 ) Marshal.SizeOf( devData );
 
-            if ( !NativeMethods.SetupDiOpenDeviceInfo( deviceInfoSet: this._deviceInfoSet, deviceInstanceId: sb.ToString(), hwndParent: IntPtr.Zero, openFlags: 0,
-                deviceInfoData: devData ) ) {
-                throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+            if ( !NativeMethods.SetupDiOpenDeviceInfo( this._deviceInfoSet, sb.ToString(), IntPtr.Zero, 0,
+                devData ) ) {
+                throw new Win32Exception( Marshal.GetLastWin32Error() );
             }
 
             return devData;
@@ -98,22 +100,22 @@ namespace Librainian.ComputerSystem.Devices {
         [NotNull]
         internal String GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [NotNull] String defaultValue ) {
             if ( defaultValue == null ) {
-                throw new ArgumentNullException( paramName: nameof( defaultValue ) );
+                throw new ArgumentNullException( nameof( defaultValue ) );
             }
 
             const Int32 propertyBufferSize = 1024;
 
             var propertyBuffer = new Byte[ propertyBufferSize ];
 
-            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( deviceInfoSet: this._deviceInfoSet, deviceInfoData: ref devData, property: property,
-                propertyRegDataType: out var propertyRegDataType, propertyBuffer: propertyBuffer, propertyBufferSize: propertyBufferSize,
-                requiredSize: out var requiredSize ) ) {
+            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property,
+                out var propertyRegDataType, propertyBuffer, propertyBufferSize,
+                out var requiredSize ) ) {
 
                 //Marshal.FreeHGlobal( propertyBuffer );
                 var error = Marshal.GetLastWin32Error();
 
                 if ( error != NativeMethods.ERROR_INVALID_DATA ) {
-                    throw new Win32Exception( error: error );
+                    throw new Win32Exception( error );
                 }
 
                 return defaultValue;
@@ -121,25 +123,25 @@ namespace Librainian.ComputerSystem.Devices {
 
             //var value = Marshal.PtrToStringAuto( propertyBuffer );
             //Marshal.FreeHGlobal( propertyBuffer );
-            return Encoding.Default.GetString( bytes: propertyBuffer );
+            return Encoding.Default.GetString( propertyBuffer );
         }
 
         internal UInt32 GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, UInt32 defaultValue ) {
 
-            var propertyBufferSize = ( UInt32 ) Marshal.SizeOf( t: typeof( UInt32 ) );
+            var propertyBufferSize = ( UInt32 ) Marshal.SizeOf( typeof( UInt32 ) );
 
             //var propertyBuffer = Marshal.AllocHGlobal( propertyBufferSize );
             var propertyBuffer = new Byte[ propertyBufferSize ];
 
-            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( deviceInfoSet: this._deviceInfoSet, deviceInfoData: ref devData, property: property,
-                propertyRegDataType: out var propertyRegDataType, propertyBuffer: propertyBuffer, propertyBufferSize: propertyBufferSize,
-                requiredSize: out var requiredSize ) ) {
+            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property,
+                out var propertyRegDataType, propertyBuffer, propertyBufferSize,
+                out var requiredSize ) ) {
 
                 //Marshal.FreeHGlobal( propertyBuffer );
                 var error = Marshal.GetLastWin32Error();
 
                 if ( error != NativeMethods.ERROR_INVALID_DATA ) {
-                    throw new Win32Exception( error: error );
+                    throw new Win32Exception( error );
                 }
 
                 return defaultValue;
@@ -148,30 +150,30 @@ namespace Librainian.ComputerSystem.Devices {
             //var value = ( Int32 )Marshal.PtrToStructure( propertyBuffer, typeof( Int32 ) );
             //Marshal.FreeHGlobal( propertyBuffer );
             //return value;
-            return Convert.ToUInt32( value: propertyBuffer );
+            return Convert.ToUInt32( propertyBuffer );
         }
 
         internal Guid GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, Guid defaultValue ) {
 
-            var propertyBufferSize = ( UInt32 ) Marshal.SizeOf( t: typeof( Guid ) );
+            var propertyBufferSize = ( UInt32 ) Marshal.SizeOf( typeof( Guid ) );
 
             var propertyBuffer = new Byte[ propertyBufferSize ];
 
-            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( deviceInfoSet: this._deviceInfoSet, deviceInfoData: ref devData, property: property,
-                propertyRegDataType: out var propertyRegDataType, propertyBuffer: propertyBuffer, propertyBufferSize: propertyBufferSize,
-                requiredSize: out var requiredSize ) ) {
+            if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property,
+                out var propertyRegDataType, propertyBuffer, propertyBufferSize,
+                out var requiredSize ) ) {
 
                 //Marshal.FreeHGlobal( propertyBuffer );
                 var error = Marshal.GetLastWin32Error();
 
                 if ( error != NativeMethods.ERROR_INVALID_DATA ) {
-                    throw new Win32Exception( error: error );
+                    throw new Win32Exception( error );
                 }
 
                 return defaultValue;
             }
 
-            return new Guid( b: propertyBuffer );
+            return new Guid( propertyBuffer );
 
             //var value = ( Guid )Marshal.PtrToStructure( propertyBuffer, typeof( Guid ) );
             //Marshal.FreeHGlobal( propertyBuffer );
@@ -184,7 +186,7 @@ namespace Librainian.ComputerSystem.Devices {
         /// <summary>Dispose of COM objects, etc...</summary>
         public override void DisposeNative() {
             if ( this._deviceInfoSet != IntPtr.Zero ) {
-                NativeMethods.SetupDiDestroyDeviceInfoList( deviceInfoSet: this._deviceInfoSet );
+                NativeMethods.SetupDiDestroyDeviceInfoList( this._deviceInfoSet );
                 this._deviceInfoSet = IntPtr.Zero;
             }
         }
@@ -199,51 +201,51 @@ namespace Librainian.ComputerSystem.Devices {
 
             while ( true ) {
                 var interfaceData = new NativeMethods.SP_DEVICE_INTERFACE_DATA();
-                interfaceData.cbSize = ( UInt32 ) Marshal.SizeOf( structure: interfaceData );
+                interfaceData.cbSize = ( UInt32 ) Marshal.SizeOf( interfaceData );
 
-                if ( !NativeMethods.SetupDiEnumDeviceInterfaces( deviceInfoSet: this._deviceInfoSet, deviceInfoData: default, interfaceClassGuid: ref this._classGuid,
-                    memberIndex: index, deviceInterfaceData: interfaceData ) ) {
+                if ( !NativeMethods.SetupDiEnumDeviceInterfaces( this._deviceInfoSet, default, ref this._classGuid,
+                    index, interfaceData ) ) {
                     var error = Marshal.GetLastWin32Error();
 
                     if ( error != NativeMethods.ERROR_NO_MORE_ITEMS ) {
-                        throw new Win32Exception( error: error );
+                        throw new Win32Exception( error );
                     }
 
                     break;
                 }
 
                 var devData = new NativeMethods.SP_DEVINFO_DATA();
-                devData.cbSize = ( UInt32 ) Marshal.SizeOf( structure: devData );
+                devData.cbSize = ( UInt32 ) Marshal.SizeOf( devData );
                 var size = 0;
 
-                if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( deviceInfoSet: this._deviceInfoSet, deviceInterfaceData: interfaceData,
-                    deviceInterfaceDetailData: IntPtr.Zero, deviceInterfaceDetailDataSize: 0, requiredSize: ref size, deviceInfoData: devData ) ) {
+                if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData,
+                    IntPtr.Zero, 0, ref size, devData ) ) {
                     var error = Marshal.GetLastWin32Error();
 
                     if ( error != NativeMethods.ERROR_INSUFFICIENT_BUFFER ) {
-                        throw new Win32Exception( error: error );
+                        throw new Win32Exception( error );
                     }
                 }
 
-                var buffer = Marshal.AllocHGlobal( cb: size );
+                var buffer = Marshal.AllocHGlobal( size );
                 var detailData = new NativeMethods.SP_DEVICE_INTERFACE_DETAIL_DATA();
-                detailData.cbSize = Marshal.SizeOf( structure: detailData );
+                detailData.cbSize = Marshal.SizeOf( detailData );
 
-                Marshal.WriteInt32( ptr: buffer, val: IntPtr.Size );
+                Marshal.WriteInt32( buffer, IntPtr.Size );
 
                 //Marshal.StructureToPtr(detailData, buffer, false);
 
-                if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( deviceInfoSet: this._deviceInfoSet, deviceInterfaceData: interfaceData, deviceInterfaceDetailData: buffer,
-                    deviceInterfaceDetailDataSize: size, requiredSize: ref size, deviceInfoData: devData ) ) {
+                if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData, buffer,
+                    size, ref size, devData ) ) {
                     try {
-                        throw new Win32Exception( error: Marshal.GetLastWin32Error() );
+                        throw new Win32Exception( Marshal.GetLastWin32Error() );
                     }
                     finally {
-                        Marshal.FreeHGlobal( hglobal: buffer );
+                        Marshal.FreeHGlobal( buffer );
                     }
                 }
 
-                var strPtr = new IntPtr( value: buffer.ToInt64() + 4 );
+                var strPtr = new IntPtr( buffer.ToInt64() + 4 );
                 var devicePath = Marshal.PtrToStringAuto( strPtr );
 
                 //IntPtr pDevicePath = (IntPtr)((int)buffer + Marshal.SizeOf(typeof(int)));

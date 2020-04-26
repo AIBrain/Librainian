@@ -51,7 +51,7 @@ namespace Librainian.Extensions {
             var result = new StringBuilder();
 
             foreach ( var usingStatement in usingStatements ) {
-                result.AppendLine( value: $"using {usingStatement};" );
+                result.AppendLine( $"using {usingStatement};" );
             }
 
             return result.ToString();
@@ -73,7 +73,7 @@ namespace Librainian.Extensions {
             var returnType = typeof( TResult );
             var inputType = typeof( T );
 
-            var includeUsings = new HashSet<String>( collection: new[] {
+            var includeUsings = new HashSet<String>( new[] {
                 "System"
             } ) {
                 returnType.Namespace, inputType.Namespace
@@ -81,25 +81,25 @@ namespace Librainian.Extensions {
 
             if ( usingStatements != null ) {
                 foreach ( var usingStatement in usingStatements ) {
-                    includeUsings.Add( item: usingStatement );
+                    includeUsings.Add( usingStatement );
                 }
             }
 
             using ( var compiler = new CSharpCodeProvider() ) {
-                var includeAssemblies = new HashSet<String>( collection: new[] {
+                var includeAssemblies = new HashSet<String>( new[] {
                     "system.dll"
                 } );
 
                 if ( assemblies != null ) {
                     foreach ( var assembly in assemblies ) {
-                        includeAssemblies.Add( item: assembly );
+                        includeAssemblies.Add( assembly );
                     }
                 }
 
-                var name = "F" + Guid.NewGuid().ToString().Replace( oldValue: "-", newValue: String.Empty );
+                var name = "F" + Guid.NewGuid().ToString().Replace( "-", String.Empty );
 
                 var source = $@"
-{GetUsing( usingStatements: includeUsings )}
+{GetUsing( includeUsings )}
 namespace {name}
 {{
 	public static class EvalClass
@@ -111,16 +111,16 @@ namespace {name}
 	}}
 }}";
 
-                var parameters = new CompilerParameters( assemblyNames: includeAssemblies.ToArray() ) {
+                var parameters = new CompilerParameters( includeAssemblies.ToArray() ) {
                     GenerateInMemory = true
                 };
 
-                var compilerResult = compiler.CompileAssemblyFromSource( options: parameters, source );
+                var compilerResult = compiler.CompileAssemblyFromSource( parameters, source );
                 var compiledAssembly = compilerResult.CompiledAssembly;
-                var type = compiledAssembly.GetType( name: $"{name}.EvalClass" );
-                var method = type.GetMethod( name: "Eval" );
+                var type = compiledAssembly.GetType( $"{name}.EvalClass" );
+                var method = type.GetMethod( "Eval" );
 
-                return ( Func<T, TResult> ) Delegate.CreateDelegate( type: typeof( Func<T, TResult> ), method: method ?? throw new InvalidOperationException() );
+                return ( Func<T, TResult> ) Delegate.CreateDelegate( typeof( Func<T, TResult> ), method ?? throw new InvalidOperationException() );
             }
         }
 

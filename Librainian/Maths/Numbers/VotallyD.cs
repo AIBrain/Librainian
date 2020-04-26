@@ -147,6 +147,7 @@ namespace Librainian.Maths.Numbers {
 
         public Boolean IsTied() => this.A.Near( this.B );
 
+        [NotNull]
         public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 
         /// <summary>

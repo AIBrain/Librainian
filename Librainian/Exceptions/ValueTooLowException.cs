@@ -40,12 +40,12 @@ namespace Librainian.Exceptions {
     [Serializable]
     public class ValueTooLowException : OutOfRangeException {
 
-        public ValueTooLowException( [CanBeNull] String? message ) : base( message: message ) {
+        public ValueTooLowException( [CanBeNull] String? message ) : base( message ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }
 
-        public ValueTooLowException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message: message, inner: inner ) {
+        public ValueTooLowException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }

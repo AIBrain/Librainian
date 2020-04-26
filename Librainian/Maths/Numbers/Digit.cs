@@ -131,6 +131,7 @@ namespace Librainian.Maths.Numbers {
         [NotNull]
         public String Number() => this.Value.ToString();
 
+        [NotNull]
         public override String ToString() {
             switch ( this.Value ) {
                 case 0: return nameof( Zero );

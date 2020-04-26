@@ -72,7 +72,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Check if the specified range is inside this range</summary>
         /// <param name="range">Range to check</param>
         /// <returns><b>True</b> if the specified range is inside this range or <b>false</b> otherwise.</returns>
-        public Boolean IsInside( SpanRange range ) => this.IsInside( x: range.Min ) && this.IsInside( x: range.Max );
+        public Boolean IsInside( SpanRange range ) => this.IsInside( range.Min ) && this.IsInside( range.Max );
 
         /// <summary>Check if the specified value is inside this range</summary>
         /// <param name="x">Value to check</param>
@@ -82,7 +82,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Check if the specified range overlaps with this range</summary>
         /// <param name="range">Range to check for overlapping</param>
         /// <returns><b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.</returns>
-        public Boolean IsOverlapping( SpanRange range ) => this.IsInside( x: range.Min ) || this.IsInside( x: range.Max );
+        public Boolean IsOverlapping( SpanRange range ) => this.IsInside( range.Min ) || this.IsInside( range.Max );
 
     }
 

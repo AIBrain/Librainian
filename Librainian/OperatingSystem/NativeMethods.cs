@@ -553,6 +553,7 @@ namespace Librainian.OperatingSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
+        [JetBrains.Annotations.NotNull]
         public static NativeWindow Desktop() {
             var desktopWindow = GetDesktopWindow();
             var nativeWindow = new NativeWindow();

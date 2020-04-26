@@ -43,7 +43,7 @@ namespace Librainian.Measurement.Time {
     /// </summary>
     /// <remarks>Adapted from <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates/DateSpan.cs" /></remarks>
     [Immutable]
-    [JsonObject( memberSerialization: MemberSerialization.Fields )]
+    [JsonObject( MemberSerialization.Fields )]
     [Serializable]
     public struct DateSpan {
 
@@ -145,7 +145,7 @@ namespace Librainian.Measurement.Time {
                 this.Days = end.Day - start.Day;
 
                 if ( end.Day < start.Day ) {
-                    this.Days = ( DateTime.DaysInMonth( year: start.Year, month: start.Month ) - start.Day ) + end.Day;
+                    this.Days = ( DateTime.DaysInMonth( start.Year, start.Month ) - start.Day ) + end.Day;
                 }
 
                 if ( this.Days > 0 ) {
@@ -217,14 +217,14 @@ namespace Librainian.Measurement.Time {
         /// <param name="start">The start date</param>
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
-        public DateSpan( DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = true ) : this( start: start.DateTime, end: end.DateTime,
-            excludeEndDate: excludeEndDate ) { }
+        public DateSpan( DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = true ) : this( start.DateTime, end.DateTime,
+            excludeEndDate ) { }
 
         private static Int64 CalculateDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate ) {
             Int64 sum = 0;
-            var span = new DateSpan( start: start, end: end );
+            var span = new DateSpan( start, end );
 
-            var differenceInDays = GetDifferenceInDays( start: start, span: span, excludeEndDate: excludeEndDate );
+            var differenceInDays = GetDifferenceInDays( start, span, excludeEndDate );
 
             switch ( interval ) {
                 case DateInterval.Years:
@@ -274,7 +274,7 @@ namespace Librainian.Measurement.Time {
 
                     break;
 
-                default: throw new ArgumentOutOfRangeException( paramName: nameof( interval ) );
+                default: throw new ArgumentOutOfRangeException( nameof( interval ) );
             }
 
             return sum;
@@ -287,10 +287,10 @@ namespace Librainian.Measurement.Time {
         /// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
         /// <returns></returns>
         public static Int64 GetDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate = false ) =>
-            CalculateDifference( interval: interval, start: start, end: end, excludeEndDate: excludeEndDate );
+            CalculateDifference( interval, start, end, excludeEndDate );
 
         public static Int64 GetDifference( DateInterval interval, DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = false ) =>
-            CalculateDifference( interval: interval, start: start.DateTime, end: end.DateTime, excludeEndDate: excludeEndDate );
+            CalculateDifference( interval, start.DateTime, end.DateTime, excludeEndDate );
 
         public static Int64 GetDifferenceInDays( DateTime start, DateSpan span, Boolean excludeEndDate = true ) {
             var sum = 0;
@@ -298,7 +298,7 @@ namespace Librainian.Measurement.Time {
             if ( span.Years > 0 ) {
                 for ( var i = 0; i < span.Years; i++ ) {
                     var year = start.Year + i;
-                    sum += DateTime.IsLeapYear( year: year ) ? 366 : 365;
+                    sum += DateTime.IsLeapYear( year ) ? 366 : 365;
                 }
             }
 
@@ -310,7 +310,7 @@ namespace Librainian.Measurement.Time {
                         month -= 12;
                     }
 
-                    sum += DateTime.DaysInMonth( year: start.Year + span.Years, month: month );
+                    sum += DateTime.DaysInMonth( start.Year + span.Years, month );
                 }
             }
 

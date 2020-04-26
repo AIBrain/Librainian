@@ -152,7 +152,7 @@ namespace Librainian.OperatingSystem {
             return UInt32.TryParse( versionParts[ 1 ], out minorAsUInt ) ? ( UInt32? )minorAsUInt : null;
         }
 
-        private static Boolean TryGeRegistryKey( [NotNull] String path, [NotNull] String key, out dynamic value ) {
+        private static Boolean TryGeRegistryKey( [NotNull] String path, [NotNull] String key, [CanBeNull] out dynamic value ) {
             if ( path == null ) {
                 throw new ArgumentNullException( nameof( path ) );
             }

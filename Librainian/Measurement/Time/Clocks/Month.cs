@@ -47,18 +47,18 @@ namespace Librainian.Measurement.Time.Clocks {
         public const SByte MinValue = 1;
 
         /// <summary>12</summary>
-        public static Month Maximum { get; } = new Month( value: MaxValue );
+        public static Month Maximum { get; } = new Month( MaxValue );
 
         /// <summary>1</summary>
-        public static Month Minimum { get; } = new Month( value: MinValue );
+        public static Month Minimum { get; } = new Month( MinValue );
 
         [JsonProperty]
         public SByte Value { get; }
 
         public Month( SByte value ) {
             if ( ( value < MinValue ) || ( value > MaxValue ) ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( value ),
-                    message: $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+                throw new ArgumentOutOfRangeException( nameof( value ),
+                    $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
             }
 
             this.Value = value;
@@ -69,9 +69,9 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public static explicit operator Byte( Month value ) => ( Byte ) value.Value;
 
-        public static implicit operator Month( SByte value ) => new Month( value: value );
+        public static implicit operator Month( SByte value ) => new Month( value );
 
-        public Int32 CompareTo( Month other ) => this.Value.CompareTo( value: other.Value );
+        public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
 
         /// <summary>Provide the next <see cref="Month" />.</summary>
         /// <param name="tocked"></param>

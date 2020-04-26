@@ -43,7 +43,7 @@ namespace Librainian.Parsing {
         public static IntermediateMatchResultContext<T, TResult> When<T, TResult>( [NotNull] this MatchContext<T, TResult> ctx, [CanBeNull] T value ) where T : IEquatable<T> {
             var comp = EqualityComparer<T>.Default;
 
-            return ctx.When( condition: t => comp.Equals( x: t, y: value ) );
+            return ctx.When( t => comp.Equals( t, value ) );
         }
 
         [CanBeNull]
@@ -51,7 +51,7 @@ namespace Librainian.Parsing {
             where T : IEquatable<T> {
             var comp = EqualityComparer<T>.Default;
 
-            return ctx.When( condition: t => comp.Equals( x: t, y: value1 ) || comp.Equals( x: t, y: value2 ) );
+            return ctx.When( t => comp.Equals( t, value1 ) || comp.Equals( t, value2 ) );
         }
 
     }

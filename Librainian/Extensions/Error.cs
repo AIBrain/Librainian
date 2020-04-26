@@ -78,7 +78,7 @@ namespace System {
                 if ( actions is null ) {
 
                     if ( Debugger.IsAttached ) {
-                        throw new ArgumentNullException( paramName: $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
+                        throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
                     }
 
                     return default;
@@ -106,7 +106,7 @@ namespace System {
         public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func, [InstantHandle] [CanBeNull] Action final = default ) {
             if ( func is null ) {
                 if ( Debugger.IsAttached ) {
-                    throw new ArgumentNullException( paramName: nameof( func ) );
+                    throw new ArgumentNullException( nameof( func ) );
                 }
 
                 return default;
@@ -143,10 +143,10 @@ namespace System {
             [InstantHandle] [CanBeNull] Action final = default, [CanBeNull] params Action[] actions ) {
             if ( func is null ) {
                 if ( Debugger.IsAttached ) {
-                    throw new ArgumentNullException( paramName: nameof( func ) );
+                    throw new ArgumentNullException( nameof( func ) );
                 }
 
-                exception = new ArgumentNullException( paramName: nameof( func ) );
+                exception = new ArgumentNullException( nameof( func ) );
 
                 return default;
             }
@@ -154,7 +154,7 @@ namespace System {
             try {
                 exception = default;
 
-                return func( arg: argument );
+                return func( argument );
             }
             catch ( Exception e ) {
                 exception = e.Log();
@@ -162,7 +162,7 @@ namespace System {
             finally {
                 try {
                     if ( actions != null ) {
-                        Trap( actions: actions );
+                        Trap( actions );
                     }
                 }
                 catch ( Exception e ) {

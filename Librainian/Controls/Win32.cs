@@ -71,10 +71,10 @@ namespace Librainian.Controls {
         [NotNull]
         public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
             if ( form is null ) {
-                throw new ArgumentNullException( paramName: nameof( form ) );
+                throw new ArgumentNullException( nameof( form ) );
             }
 
-            return Task.Run( function: async () => {
+            return Task.Run( async () => {
 
                 // Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
                 var cx = Cursor.Position.X;
@@ -126,8 +126,8 @@ namespace Librainian.Controls {
                         }
                     }
 
-                    Cursor.Position = new Point( x: cx, y: cy );
-                    await Task.Delay( delay: Hertz.Sixty ).ConfigureAwait( continueOnCapturedContext: false );
+                    Cursor.Position = new Point( cx, cy );
+                    await Task.Delay( Hertz.Sixty ).ConfigureAwait( false );
                 }
             } );
         }

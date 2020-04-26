@@ -56,7 +56,7 @@ namespace Librainian.Graphics.DD {
         [CanBeNull]
         public static implicit operator PointF[]( Polygon polygon ) => polygon.Points;
 
-        public static implicit operator Polygon( [CanBeNull] PointF[] points ) => new Polygon( points: points );
+        public static implicit operator Polygon( [CanBeNull] PointF[] points ) => new Polygon( points );
 
         public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
 

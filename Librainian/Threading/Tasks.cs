@@ -29,6 +29,7 @@ namespace Librainian.Threading {
 	using System.Threading.Tasks.Dataflow;
 	using JetBrains.Annotations;
 	using Measurement.Time;
+	using Logging;
 
 	/// <summary>Execute an <see cref="Action" /> on a <see cref="Timer" />.</summary>
 	public static class Tasks {
@@ -39,19 +40,29 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
+		[NotNull]
+		[ItemNotNull]
+		public static IEnumerable<Task<T>> InCompletionOrder<T>( [NotNull] this IEnumerable<Task<T>> source ) {
+			if ( source == null ) {
+				throw new ArgumentNullException( nameof( source ) );
+			}
+
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
+
 			var currentIndex = -1;
 
 			foreach ( var task in inputs ) {
-				task.ContinueWith( completed => {
-					var nextBox = boxes[ index: Interlocked.Increment( location: ref currentIndex ) ];
-					PropagateResult( completedTask: completed, completionSource: nextBox );
-				}, continuationOptions: TaskContinuationOptions.ExecuteSynchronously );
+				task?.ContinueWith( completed => {
+					var nextBox = boxes[ Interlocked.Increment( ref currentIndex ) ];
+
+					if ( nextBox != null ) {
+						PropagateResult( completed, nextBox );
+					}
+				}, TaskContinuationOptions.ExecuteSynchronously );
 			}
 
-			return boxes.Select( box => box.Task );
+			return boxes.Where( box => box != null ).Select( box => box.Task );
 		}
 
 		/// <summary>
@@ -60,24 +71,37 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="completedTask"></param>
 		/// <param name="completionSource"></param>
-		private static void PropagateResult<T>( Task<T> completedTask, TaskCompletionSource<T> completionSource ) {
-			switch ( completedTask.Status ) {
-				case TaskStatus.Canceled:
-					completionSource.TrySetCanceled();
-					break;
+		private static void PropagateResult<T>( [NotNull] Task<T> completedTask, [NotNull] TaskCompletionSource<T> completionSource ) {
+			if ( completedTask == null ) {
+				throw new ArgumentNullException( nameof( completedTask ) );
+			}
 
-				case TaskStatus.Faulted:
+			if ( completionSource == null ) {
+				throw new ArgumentNullException( nameof( completionSource ) );
+			}
+
+			switch ( completedTask.Status ) {
+				case TaskStatus.RanToCompletion: {
+					completionSource.TrySetResult( completedTask.Result );
+
+					break;
+				}
+				case TaskStatus.Canceled: {
+					completionSource.TrySetCanceled();
+
+					break;
+				}
+				case TaskStatus.Faulted: {
 					if ( completedTask.Exception != null ) {
-						completionSource.TrySetException( exceptions: completedTask.Exception.InnerExceptions );
+						completionSource.TrySetException( completedTask.Exception.InnerExceptions );
 					}
 
 					break;
+				}
 
-				case TaskStatus.RanToCompletion:
-					completionSource.TrySetResult( result: completedTask.Result );
-					break;
-
-				default: throw new ArgumentException( "Task was not completed." );
+				default: {
+					throw new ArgumentException( "Task was not completed." );
+				}
 			}
 		}
 
@@ -157,9 +181,10 @@ namespace Librainian.Threading {
 		///     foreach (var bucket in Interleaved(tasks)) { var t = await bucket; int result = await t;
 		///     Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
+		[NotNull]
 		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
 			if ( tasks == null ) {
-				throw new ArgumentNullException( paramName: nameof( tasks ) );
+				throw new ArgumentNullException( nameof( tasks ) );
 			}
 
 			var inputTasks = tasks.ToList();
@@ -177,12 +202,12 @@ namespace Librainian.Threading {
 
 			void Continuation( Task<T> completed )
 			{
-				var bucket = buckets[ Interlocked.Increment( location: ref nextTaskIndex ) ];
-				bucket.TrySetResult( result: completed );
+				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
+				bucket.TrySetResult( completed );
 			}
 
 			foreach ( var inputTask in inputTasks ) {
-				inputTask.ContinueWith( continuationAction: Continuation, cancellationToken: CancellationToken.None, continuationOptions: TaskContinuationOptions.ExecuteSynchronously, scheduler: TaskScheduler.Default );
+				inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
 			}
 
 			return results;
@@ -210,14 +235,15 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( paramName: nameof( job ) );
+				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay: delay );
+			await Task.Delay( delay );
 
-			await Task.Run( action: job );
+			await Task.Run( job );
 		}
 
+		/*
 		/// <summary>
 		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
 		/// </summary>
@@ -233,6 +259,7 @@ namespace Librainian.Threading {
 
 			await Task.Run( action: job ).ConfigureAwait( false );
 		}
+		*/
 
 		/// <summary>
 		///     <para>Do the <paramref name="job" /> with a dataflow after a <see cref="System.Threading.Timer" />.</para>
@@ -242,12 +269,12 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( paramName: nameof( job ) );
+				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay: delay ).ConfigureAwait( false );
+			await Task.Delay( delay ).ConfigureAwait( false );
 
-			await Task.Run( action: job ).ConfigureAwait( false );
+			await Task.Run( job ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -258,12 +285,12 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( paramName: nameof( job ) );
+				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay: delay ).ConfigureAwait( false );
+			await Task.Delay( delay ).ConfigureAwait( false );
 
-			await Task.Run( action: job ).ConfigureAwait( false );
+			await Task.Run( job ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -274,12 +301,12 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( paramName: nameof( job ) );
+				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay: delay ).ConfigureAwait( false );
+			await Task.Delay( delay ).ConfigureAwait( false );
 
-			await Task.Run( action: job ).ConfigureAwait( false );
+			await Task.Run( job ).ConfigureAwait( false );
 		}
 
 		/// <summary>Wrap 3 methods into one.</summary>
@@ -287,26 +314,27 @@ namespace Librainian.Threading {
 		/// <param name="pre"></param>
 		/// <param name="post"></param>
 		/// <returns></returns>
+		[NotNull]
 		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) => () => {
 			try {
 				pre?.Invoke();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 			}
 
 			try {
 				action?.Invoke();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 			}
 
 			try {
 				post?.Invoke();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 			}
 
 		};
@@ -503,20 +531,21 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="target"></param>
 		/// <param name="item"></param>
-		public static void TryPost<T>( this ITargetBlock<T> target, T item ) {
+		public static void TryPost<T>( this ITargetBlock<T> target, [CanBeNull] T item ) {
 			if ( target == null ) {
 #if DEBUG
-				throw new ArgumentNullException( paramName: nameof( target ) );
+				throw new ArgumentNullException( nameof( target ) );
 #else
                 return;
 #endif
 			}
 
-			if ( !target.Post( item: item ) ) {
-				target.TryPost( item: item, delay: TimeExtensions.GetAverageDateTimePrecision() ); //retry
+			if ( !target.Post( item ) ) {
+				target.TryPost( item, TimeExtensions.GetDateTimePrecision() ); //retry
 			}
 		}
 
+		
 		/// <summary>
 		///     After a delay, keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
 		/// </summary>
@@ -524,9 +553,10 @@ namespace Librainian.Threading {
 		/// <param name="target"></param>
 		/// <param name="item"></param>
 		/// <param name="delay"></param>
-		public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, T item, TimeSpan delay ) {
+		[NotNull]
+		public static System.Timers.Timer TryPost<T>( this ITargetBlock<T> target, [CanBeNull] T item, TimeSpan delay ) {
 			if ( target == null ) {
-				throw new ArgumentNullException( paramName: nameof( target ) );
+				throw new ArgumentNullException( nameof( target ) );
 			}
 
 			try {
@@ -534,13 +564,14 @@ namespace Librainian.Threading {
 					delay = Milliseconds.One;
 				}
 
-				return delay.CreateTimer( () => target.TryPost( item: item ) ).AndStart();
+				return delay.Create( () => target.TryPost( item ) ).Begin();
 			}
 			catch ( Exception exception ) {
-				exception.More();
+				exception.Log();
 				throw;
 			}
 		}
+		
 
 		/// <summary>
 		///     Start a timer. When it fires, check the <paramref name="condition" />, and if true do
@@ -549,29 +580,38 @@ namespace Librainian.Threading {
 		/// <param name="afterDelay"></param>
 		/// <param name="action"></param>
 		/// <param name="condition"></param>
+		[CanBeNull]
 		public static System.Timers.Timer When( this TimeSpan afterDelay, Func<Boolean> condition, Action action ) {
 			if ( condition == null ) {
-				throw new ArgumentNullException( paramName: nameof( condition ) );
+				throw new ArgumentNullException( nameof( condition ) );
 			}
 			if ( action == null ) {
-				throw new ArgumentNullException( paramName: nameof( action ) );
+				throw new ArgumentNullException( nameof( action ) );
 			}
 			try {
-				return afterDelay.CreateTimer( () => {
-					if ( condition() ) {
-						action();
-					}
-				} )
-								 .Once()
-								 .AndStart();
+				return afterDelay.Create( () => {
+					                 if ( condition() ) {
+						                 action();
+					                 }
+				                 } )
+				                 .Once()
+				                 .Begin();
 			}
 			catch ( Exception exception ) {
-				exception.More();
-				return null;
+				exception.Log();
 			}
+			return null;
 		}
 
-		public static ConfiguredTaskAwaitable Multitude( params Action[] actions ) => Task.Run( () => { Parallel.Invoke( actions ); } ).ConfigureAwait( false );
+		[NotNull]
+		public static Task ActionsIntoTask( [NotNull] params Action[] actions ) {
+			if ( actions == null ) {
+				throw new ArgumentNullException( paramName: nameof( actions ) );
+			}
+
+			return Task.Run( () => Parallel.Invoke( actions ) );
+
+		}
 
 	}
 

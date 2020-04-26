@@ -38,7 +38,7 @@ namespace Librainian.Databases {
     using System.Data;
     using System.Threading.Tasks;
     using JetBrains.Annotations;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
 
     public interface IDatabase {
 

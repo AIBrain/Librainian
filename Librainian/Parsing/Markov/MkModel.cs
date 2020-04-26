@@ -52,8 +52,8 @@ namespace Librainian.Parsing.Markov {
         private MkModel() => throw new NotImplementedException();
 
         public MkModel( [NotNull] String name ) {
-            if ( String.IsNullOrWhiteSpace( value: name ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( name ) );
+            if ( String.IsNullOrWhiteSpace( name ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
             }
 
             this.Name = name;
@@ -65,16 +65,16 @@ namespace Librainian.Parsing.Markov {
                 return String.Empty;
             }
 
-            var word = this._markovChains.OrderBy( keySelector: o => Randem.Next() ).First().Key;
-            var corpus = new StringBuilder( capacity: numberOfWords * 128 ); //just using 128 as a max avg word length..
+            var word = this._markovChains.OrderBy( o => Randem.Next() ).First().Key;
+            var corpus = new StringBuilder( numberOfWords * 128 ); //just using 128 as a max avg word length..
 
             while ( numberOfWords.Any() ) {
 
                 //var word = startWord;
-                var randomChain = this.Nexts( word: word ).Where( predicate: w => !String.IsNullOrEmpty( value: w ) ).OrderBy( keySelector: o => Randem.Next() );
+                var randomChain = this.Nexts( word ).Where( w => !String.IsNullOrEmpty( w ) ).OrderBy( o => Randem.Next() );
 
                 foreach ( var w in randomChain ) {
-                    corpus.Append( value: $"{w}{Symbols.Singlespace}" );
+                    corpus.Append( $"{w}{Symbols.Singlespace}" );
 
                     word = w;
                     numberOfWords -= 1;
@@ -89,8 +89,8 @@ namespace Librainian.Parsing.Markov {
         /// <returns></returns>
         [NotNull]
         public IEnumerable<String> Nexts( [CanBeNull] String? word ) {
-            if ( !( word is null ) && this._markovChains.ContainsKey( key: word ) ) {
-                return this._markovChains[ key: word ];
+            if ( !( word is null ) && this._markovChains.ContainsKey( word ) ) {
+                return this._markovChains[ word ];
             }
 
             return Enumerable.Empty<String>().ToList();
@@ -99,8 +99,8 @@ namespace Librainian.Parsing.Markov {
         public void Train( [CanBeNull] String? corpus, Int32 level = 3 ) {
             var words = corpus.ToWords();
 
-            Parallel.For( fromInclusive: 0, toExclusive: words.Length,
-                body: ( i, state ) => this._markovChains.TryAdd( key: words[ i ], value: words.Skip( count: i + 1 ).Take( count: level ).ToList() ) );
+            Parallel.For( 0, words.Length,
+                ( i, state ) => this._markovChains.TryAdd( words[ i ], words.Skip( i + 1 ).Take( level ).ToList() ) );
         }
 
     }

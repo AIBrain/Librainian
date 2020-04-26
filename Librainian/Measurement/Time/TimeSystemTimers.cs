@@ -68,7 +68,7 @@ namespace Librainian.Measurement.Time {
             _threadingCounter = 0;
             try {
                 var state = new Object();
-                using ( var threadingTimer = new System.Threading.Timer( callback: Callback, state: state, dueTime: ( Int32 )Milliseconds.One.Value, period: ( Int32 )Milliseconds.One.Value ) ) {
+                using ( var threadingTimer = new System.Threading.Timer( Callback, state, ( Int32 )Milliseconds.One.Value, ( Int32 )Milliseconds.One.Value ) ) {
                     var stopwatch = Stopwatch.StartNew();
                     while ( stopwatch.Elapsed < howLong ) {
                         ThreadingExtensions.DoNothing();

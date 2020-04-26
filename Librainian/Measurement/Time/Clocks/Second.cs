@@ -44,9 +44,9 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public class Second : IClockPart {
 
-        public static Second Maximum { get; } = new Second( value: MaxValue );
+        public static Second Maximum { get; } = new Second( MaxValue );
 
-        public static Second Minimum { get; } = new Second( value: MinValue );
+        public static Second Minimum { get; } = new Second( MinValue );
 
         [JsonProperty]
         public SByte Value { get; }
@@ -56,12 +56,12 @@ namespace Librainian.Measurement.Time.Clocks {
         public const SByte MinValue = 0;
 
         public static readonly Byte[] ValidSeconds =
-            Enumerable.Range( start: 0, count: Seconds.InOneMinute ).Select( selector: i => ( Byte ) i ).OrderBy( keySelector: b => b ).ToArray();
+            Enumerable.Range( 0, Seconds.InOneMinute ).Select( i => ( Byte ) i ).OrderBy( b => b ).ToArray();
 
         public Second( SByte value ) {
             if ( ( value < MinValue ) || ( value > MaxValue ) ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( value ),
-                    message: $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+                throw new ArgumentOutOfRangeException( nameof( value ),
+                    $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
             }
 
             this.Value = value;
@@ -78,7 +78,7 @@ namespace Librainian.Measurement.Time.Clocks {
         public static implicit operator SByte( [NotNull] Second value ) => value.Value;
 
         [NotNull]
-        public static implicit operator Second( SByte value ) => new Second( value: value );
+        public static implicit operator Second( SByte value ) => new Second( value );
 
         /// <summary>Provide the next second.</summary>
         [NotNull]

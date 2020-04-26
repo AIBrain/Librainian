@@ -47,7 +47,7 @@ namespace Librainian.Persistence.InIFiles {
 
         /// <summary>Gets the number of elements in the collection.</summary>
         /// <returns>The number of elements in the collection. </returns>
-        public Int32 Count => this.lines.Select( selector: pair => pair.Value ).Count();
+        public Int32 Count => this.lines.Select( pair => pair.Value ).Count();
 
         /// <summary>Gets the element at the specified index in the read-only list.</summary>
         /// <param name="index">The zero-based index of the element to get. </param>
@@ -56,10 +56,10 @@ namespace Librainian.Persistence.InIFiles {
         public IniLine this[ Int32 index ] {
             get {
                 if ( ( index <= 0 ) || ( index > this.Count ) ) {
-                    throw new ArgumentOutOfRangeException( paramName: nameof( index ) );
+                    throw new ArgumentOutOfRangeException( nameof( index ) );
                 }
 
-                return this.lines[ index: index ];
+                return this.lines[ index ];
             }
         }
 
@@ -77,24 +77,24 @@ namespace Librainian.Persistence.InIFiles {
         private List<IniLine> lines { get; } = new List<IniLine>();
 
         public Boolean Add( [NotNull] String key, [CanBeNull] String? value ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
-                throw new ArgumentException( message: "Value cannot be null or empty.", paramName: nameof( key ) );
+            if ( String.IsNullOrEmpty( key ) ) {
+                throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
             }
 
-            this.lines.Add( item: new IniLine( key: key, value: value ) );
+            this.lines.Add( new IniLine( key, value ) );
 
             return true;
         }
 
         public Boolean Exists( [NotNull] String key ) {
-            if ( String.IsNullOrEmpty( value: key ) ) {
+            if ( String.IsNullOrEmpty( key ) ) {
                 return default;
             }
 
-            return this.lines.Any( predicate: pair => pair.Key.Like( right: key ) );
+            return this.lines.Any( pair => pair.Key.Like( key ) );
         }
 
-        public Boolean Remove( [NotNull] String key ) => this.lines.RemoveAll( match: pair => pair?.Key.Like( right: key ) == true ).Any();
+        public Boolean Remove( [NotNull] String key ) => this.lines.RemoveAll( pair => pair?.Key.Like( key ) == true ).Any();
 
     }
 

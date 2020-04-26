@@ -120,7 +120,7 @@ namespace Librainian.Threading {
             InternalCopy( originalObject, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
 
         [CanBeNull]
-        public static T Copy<T>( [CanBeNull] this T original ) => ( T ) Copy( originalObject: original );
+        public static T Copy<T>( [CanBeNull] this T original ) => ( T ) Copy( original );
 
         [CanBeNull]
         public static Object GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {

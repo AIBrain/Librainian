@@ -31,6 +31,7 @@
 // 
 // Project: "Librainian", File: "CollectionExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
+#nullable enable
 namespace Librainian.Collections.Extensions {
 
     using System;
@@ -44,7 +45,6 @@ namespace Librainian.Collections.Extensions {
     using Exceptions;
     using JetBrains.Annotations;
     using JM.LinqFaster.SIMD;
-    using Maths;
     using Threading;
 
     public static class CollectionExtensions {
@@ -164,7 +164,7 @@ namespace Librainian.Collections.Extensions {
 
         [CanBeNull]
         [Pure]
-        public static Byte[] Clone( [CanBeNull] this Byte[] bytes ) {
+        public static Byte[]? Clone( [CanBeNull] this Byte[] bytes ) {
             if ( bytes is null ) {
                 return null;
             }
@@ -625,13 +625,11 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( source ) );
             }
 
-            T[] array = null;
+            T[]? array = null;
             var count = 0;
 
             foreach ( var item in source ) {
-                if ( array is null ) {
-                    array = new T[ size ];
-                }
+                array ??= new T[ size ];
 
                 array[ count ] = item;
                 count++;
@@ -645,7 +643,7 @@ namespace Librainian.Collections.Extensions {
                 count = 0;
             }
 
-            if ( array is null ) {
+            if ( array == null ) {
                 yield break;
             }
 
@@ -729,10 +727,6 @@ namespace Librainian.Collections.Extensions {
         [Pure]
         public static IEnumerable<TU> Rank<T, TKey, TU>( [NotNull] this IEnumerable<T> source, [NotNull] Func<T, TKey> keySelector, [NotNull] Func<T, Int32, TU> selector ) {
 
-            //if ( !source.Any() ) {
-            //    yield break;
-            //}
-
             if ( source is null ) {
                 throw new ArgumentNullException( nameof( source ) );
             }
@@ -752,7 +746,7 @@ namespace Librainian.Collections.Extensions {
 
             foreach ( var t in ordered ) {
                 itemCount += 1;
-                var current = keySelector( t );
+                var current = keySelector( t ) ?? throw new NullReferenceException($"null key in function {nameof(keySelector)} in function {nameof(Rank)}.");
 
                 if ( !current.Equals( previous ) ) {
                     rank = itemCount;
@@ -761,16 +755,6 @@ namespace Librainian.Collections.Extensions {
                 yield return selector( t, rank );
                 previous = current;
             }
-        }
-
-        [CanBeNull]
-        [Pure]
-        public static T Remove<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
-            if ( collection is null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
-
-            return collection.TryTake( out var result ) ? result : default;
         }
 
         [Pure]
@@ -782,38 +766,6 @@ namespace Librainian.Collections.Extensions {
             return ( T ) ( ValueType ) ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( ValueType ) value );
         }
 
-        /// <summary>Removes the <paramref name="specificItem" /> from the <paramref name="collection" /> and returns how many <paramref name="specificItem" /> or null were removed.</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="collection">  </param>
-        /// <param name="specificItem"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        [Pure]
-        public static T Remove<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] T specificItem ) {
-            if ( collection is null ) {
-                throw new ArgumentNullException( nameof( collection ) );
-            }
-
-            if ( Equals( specificItem, null ) ) {
-                throw new ArgumentNullException( nameof( specificItem ) );
-            }
-
-            var sanity = collection.LongCount() * 2; //or LongCount() + 1 ?
-
-            while ( sanity.Any() && collection.Contains( specificItem ) ) {
-                --sanity;
-
-                if ( collection.TryTake( out var temp ) ) {
-                    if ( Equals( temp, specificItem ) ) {
-                        return specificItem;
-                    }
-
-                    collection.TryAdd( temp );
-                }
-            }
-
-            return default;
-        }
 
         public static Int32 RemoveAll<T>( [NotNull] this IProducerConsumerCollection<T> collection ) {
             if ( collection is null ) {

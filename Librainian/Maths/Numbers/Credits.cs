@@ -106,6 +106,7 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.CurrentCredits:N0} credits ({this.LifetimeCredits:N0} lifetime credits).";
 
     }

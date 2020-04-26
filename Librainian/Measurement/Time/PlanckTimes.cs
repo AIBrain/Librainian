@@ -51,7 +51,7 @@ namespace Librainian.Measurement.Time {
     ///     </para>
     /// </summary>
     /// <see cref="http://wikipedia.org/wiki/Planck_time" />
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [JsonObject]
     public struct PlanckTimes : IQuantityOfTime {
 
@@ -89,30 +89,30 @@ namespace Librainian.Measurement.Time {
         public const Double InOneZeptosecond = InOneAttosecond / Zeptoseconds.InOneAttosecond;
 
         /// <summary>One <see cref="PlanckTimes" />.</summary>
-        public static PlanckTimes One { get; } = new PlanckTimes( value: 1 );
+        public static PlanckTimes One { get; } = new PlanckTimes( 1 );
 
         /// <summary>Two <see cref="PlanckTimes" />.</summary>
-        public static PlanckTimes Two { get; } = new PlanckTimes( value: 2 );
+        public static PlanckTimes Two { get; } = new PlanckTimes( 2 );
 
         /// <summary>Zero <see cref="PlanckTimes" />.</summary>
-        public static PlanckTimes Zero { get; } = new PlanckTimes( value: 0 );
+        public static PlanckTimes Zero { get; } = new PlanckTimes( 0 );
 
         [JsonProperty]
         public BigInteger Value { get; }
 
-        public PlanckTimes( Int64 value ) : this( value: ( BigInteger ) value ) { }
+        public PlanckTimes( Int64 value ) : this( ( BigInteger ) value ) { }
 
-        public PlanckTimes( Rational value ) : this( value: value.WholePart ) { }
+        public PlanckTimes( Rational value ) : this( value.WholePart ) { }
 
         public PlanckTimes( BigInteger value ) => this.Value = value;
 
-        public PlanckTimes( Seconds seconds ) : this( value: seconds.ToPlanckTimes().Value ) { }
+        public PlanckTimes( Seconds seconds ) : this( seconds.ToPlanckTimes().Value ) { }
 
-        public PlanckTimes( Years years ) : this( value: years.ToPlanckTimes().Value ) { }
+        public PlanckTimes( Years years ) : this( years.ToPlanckTimes().Value ) { }
 
-        public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new PlanckTimes( value: left.Value + right.Value );
+        public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new PlanckTimes( left.Value + right.Value );
 
-        public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new PlanckTimes( value: left.Value + planckTimes );
+        public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new PlanckTimes( left.Value + planckTimes );
 
         /// <summary>
         ///     <para>static equality test</para>
@@ -123,26 +123,26 @@ namespace Librainian.Measurement.Time {
         public static Boolean Equals( PlanckTimes left, PlanckTimes right ) => left.Value == right.Value;
 
         [NotNull]
-        public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes: planckTimes );
+        public static implicit operator SpanOfTime( PlanckTimes planckTimes ) => new SpanOfTime( planckTimes );
 
         /// <summary>Implicitly convert the number of <paramref name="planckTimes" /> to <see cref="Yoctoseconds" />.</summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        public static implicit operator Yoctoseconds( PlanckTimes planckTimes ) => ToYoctoseconds( planckTimes: planckTimes );
+        public static implicit operator Yoctoseconds( PlanckTimes planckTimes ) => ToYoctoseconds( planckTimes );
 
-        public static PlanckTimes operator -( PlanckTimes left, BigInteger planckTimes ) => Combine( left: left, planckTimes: -planckTimes );
+        public static PlanckTimes operator -( PlanckTimes left, BigInteger planckTimes ) => Combine( left, -planckTimes );
 
-        public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) => !Equals( left: left, right: right );
+        public static Boolean operator !=( PlanckTimes left, PlanckTimes right ) => !Equals( left, right );
 
-        public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) => Combine( left: left, right: right );
+        public static PlanckTimes operator +( PlanckTimes left, PlanckTimes right ) => Combine( left, right );
 
-        public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) => Combine( left: left, planckTimes: planckTimes );
+        public static PlanckTimes operator +( PlanckTimes left, BigInteger planckTimes ) => Combine( left, planckTimes );
 
         public static Boolean operator <( PlanckTimes left, PlanckTimes right ) => left.Value < right.Value;
 
         public static Boolean operator <=( PlanckTimes left, PlanckTimes right ) => left.Value <= right.Value;
 
-        public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) => Equals( left: left, right: right );
+        public static Boolean operator ==( PlanckTimes left, PlanckTimes right ) => Equals( left, right );
 
         public static Boolean operator >( PlanckTimes left, PlanckTimes right ) => left.Value > right.Value;
 
@@ -153,9 +153,9 @@ namespace Librainian.Measurement.Time {
         /// </summary>
         /// <param name="planckTimes"></param>
         /// <returns></returns>
-        public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new Yoctoseconds( value: planckTimes.Value / ( Rational ) InOneYoctosecond );
+        public static Yoctoseconds ToYoctoseconds( PlanckTimes planckTimes ) => new Yoctoseconds( planckTimes.Value / ( Rational ) InOneYoctosecond );
 
-        public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other: other.Value );
+        public Int32 CompareTo( PlanckTimes other ) => this.Value.CompareTo( other.Value );
 
         /// <summary>
         /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the
@@ -169,27 +169,27 @@ namespace Librainian.Measurement.Time {
         /// </returns>
         public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
             if ( other is null ) {
-                throw new ArgumentNullException( paramName: nameof( other ) );
+                throw new ArgumentNullException( nameof( other ) );
             }
 
-            return this.ToPlanckTimes().Value.CompareTo( other: other.ToPlanckTimes().Value );
+            return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
         }
 
-        public Boolean Equals( PlanckTimes other ) => Equals( left: this, right: other );
+        public Boolean Equals( PlanckTimes other ) => Equals( this, other );
 
         public override Boolean Equals( Object obj ) {
             if ( obj is null ) {
                 return default;
             }
 
-            return obj is PlanckTimes times && this.Equals( other: times );
+            return obj is PlanckTimes times && this.Equals( times );
         }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
         public PlanckTimes ToPlanckTimes() => this;
 
-        public Seconds ToSeconds() => new Seconds( value: this.Value * ( Rational ) InOneSecond );
+        public Seconds ToSeconds() => new Seconds( this.Value * ( Rational ) InOneSecond );
 
         public override String ToString() => $"{this.Value} tP";
 

@@ -36,7 +36,7 @@ namespace Librainian.Financial.Currency.Coins {
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public sealed class Penny : ICoin {
 
         public Decimal FaceValue => 0.01M;

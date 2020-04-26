@@ -102,7 +102,7 @@ namespace Librainian.Graphics.Geometry {
 
             var denom = ( d2121 * d4343 ) - ( d4321 * d4321 );
 
-            if ( Math.Abs( value: denom ) < Single.Epsilon ) {
+            if ( Math.Abs( denom ) < Single.Epsilon ) {
                 resultSegmentPoint1 = new Vector3();
                 resultSegmentPoint2 = new Vector3();
 
@@ -162,17 +162,17 @@ namespace Librainian.Graphics.Geometry {
 
             var denom = ( d2121 * d4343 ) - ( d4321 * d4321 );
 
-            if ( Math.Abs( value: denom ) < Single.Epsilon ) {
+            if ( Math.Abs( denom ) < Single.Epsilon ) {
                 return default;
             }
 
             var numer = ( d1343 * d4321 ) - ( d1321 * d4343 );
 
             var mua = numer / denom;
-            resultSegmentPoint1 = new CoordinateF( x: p1.X + ( mua * p21.X ), y: p1.Y + ( mua * p21.Y ), z: p1.Z + ( mua * p21.Z ) );
+            resultSegmentPoint1 = new CoordinateF( p1.X + ( mua * p21.X ), p1.Y + ( mua * p21.Y ), p1.Z + ( mua * p21.Z ) );
 
             var mub = ( d1343 + ( d4321 * mua ) ) / d4343;
-            resultSegmentPoint2 = new CoordinateF( x: p3.X + ( mub * p43.X ), y: p3.Y + ( mub * p43.Y ), z: p3.Z + ( mub * p43.Z ) );
+            resultSegmentPoint2 = new CoordinateF( p3.X + ( mub * p43.X ), p3.Y + ( mub * p43.Y ), p3.Z + ( mub * p43.Z ) );
 
             return true;
         }
@@ -234,43 +234,43 @@ namespace Librainian.Graphics.Geometry {
                 br = ( rectAngles & RectAngles.BottomRight ) != 0,
                 bl = ( rectAngles & RectAngles.BottomLeft ) != 0;
 
-            var pointP = tl ? new Point( x: x + ( horizontalDiameter / 2 ), y: y ) : new Point( x: x, y: y );
+            var pointP = tl ? new Point( x + ( horizontalDiameter / 2 ), y ) : new Point( x, y );
 
-            var pointQ = tr ? new Point( x: ( x + width ) - ( horizontalDiameter / 2 ) - 1, y: y ) : new Point( x: ( x + width ) - 1, y: y );
+            var pointQ = tr ? new Point( ( x + width ) - ( horizontalDiameter / 2 ) - 1, y ) : new Point( ( x + width ) - 1, y );
 
-            var pointR = tr ? new Point( x: ( x + width ) - 1, y: y + ( verticalDiameter / 2 ) ) : pointQ;
+            var pointR = tr ? new Point( ( x + width ) - 1, y + ( verticalDiameter / 2 ) ) : pointQ;
 
-            var pointS = br ? new Point( x: ( x + width ) - 1, y: ( y + height ) - ( verticalDiameter / 2 ) - 1 ) : new Point( x: ( x + width ) - 1, y: ( y + height ) - 1 );
+            var pointS = br ? new Point( ( x + width ) - 1, ( y + height ) - ( verticalDiameter / 2 ) - 1 ) : new Point( ( x + width ) - 1, ( y + height ) - 1 );
 
-            var pointT = br ? new Point( dw: ( x + width ) - ( horizontalDiameter / 2 ) - 1 ) : pointS;
+            var pointT = br ? new Point( ( x + width ) - ( horizontalDiameter / 2 ) - 1 ) : pointS;
 
-            var pointU = bl ? new Point( x: x + ( horizontalDiameter / 2 ), y: ( y + height ) - 1 ) : new Point( x: x, y: ( y + height ) - 1 );
+            var pointU = bl ? new Point( x + ( horizontalDiameter / 2 ), ( y + height ) - 1 ) : new Point( x, ( y + height ) - 1 );
 
-            var pointV = bl ? new Point( x: x, y: ( y + height ) - ( verticalDiameter / 2 ) - 1 ) : pointU;
+            var pointV = bl ? new Point( x, ( y + height ) - ( verticalDiameter / 2 ) - 1 ) : pointU;
 
-            var pointW = tl ? new Point( x: x, y: y + ( verticalDiameter / 2 ) ) : pointP;
+            var pointW = tl ? new Point( x, y + ( verticalDiameter / 2 ) ) : pointP;
 
             using ( var gp = new GraphicsPath() ) {
 
                 // a
-                gp.AddLine( pt1: pointP, pt2: pointQ );
+                gp.AddLine( pointP, pointQ );
 
                 // b
                 if ( tr ) {
-                    gp.AddArc( x: ( x + width ) - horizontalDiameter - 1, y: y, width: horizontalDiameter, height: verticalDiameter, startAngle: 270, sweepAngle: 90 );
+                    gp.AddArc( ( x + width ) - horizontalDiameter - 1, y, horizontalDiameter, verticalDiameter, 270, 90 );
                 }
 
                 // c
-                gp.AddLine( pt1: pointR, pt2: pointS );
+                gp.AddLine( pointR, pointS );
 
                 // d
                 if ( br ) {
-                    gp.AddArc( x: ( x + width ) - horizontalDiameter - 1, y: ( y + height ) - verticalDiameter - 1, width: horizontalDiameter, height: verticalDiameter,
-                        startAngle: 0, sweepAngle: 90 );
+                    gp.AddArc( ( x + width ) - horizontalDiameter - 1, ( y + height ) - verticalDiameter - 1, horizontalDiameter, verticalDiameter,
+                        0, 90 );
                 }
 
                 // e
-                gp.AddLine( pt1: pointT, pt2: pointU );
+                gp.AddLine( pointT, pointU );
 
                 // f
                 if ( bl ) {

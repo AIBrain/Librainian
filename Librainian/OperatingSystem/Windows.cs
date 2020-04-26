@@ -60,7 +60,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static readonly Lazy<Document?> CommandPrompt =
-            new Lazy<Document>( () => FindDocument( fullname: Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: "cmd.exe" ) ), true );
+            new Lazy<Document>( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
 
         [NotNull]
         public static readonly Lazy<Document?> IrfanView64 =
@@ -94,7 +94,7 @@ namespace Librainian.OperatingSystem {
 
             var currentPath = GetCurrentPATH().Trim();
 
-            if ( String.IsNullOrWhiteSpace( value: currentPath ) ) {
+            if ( String.IsNullOrWhiteSpace( currentPath ) ) {
                 "Unable to obtain the current PATH variable.".Log();
 
                 if ( reportToConsole ) {
@@ -104,17 +104,17 @@ namespace Librainian.OperatingSystem {
                 return;
             }
 
-            var justpaths = currentPath.Split( separator: PathSeparator, options: StringSplitOptions.RemoveEmptyEntries ).ToHashSet();
+            var justpaths = currentPath.Split( PathSeparator, StringSplitOptions.RemoveEmptyEntries ).ToHashSet();
 
             if ( reportToConsole ) {
                 $"Found PATH list with {justpaths.Count} entries.".Info();
             }
 
-            var pathsData = new ConcurrentDictionary<String, Folder>( concurrencyLevel: Environment.ProcessorCount, capacity: justpaths.Count );
+            var pathsData = new ConcurrentDictionary<String, Folder>( Environment.ProcessorCount, justpaths.Count );
 
             foreach ( var s in justpaths ) {
-                if ( !String.IsNullOrWhiteSpace( value: s ) ) {
-                    pathsData[ key: s ] = new Folder( fullPath: s );
+                if ( !String.IsNullOrWhiteSpace( s ) ) {
+                    pathsData[ s ] = new Folder( s );
                 }
             }
 
@@ -150,21 +150,21 @@ namespace Librainian.OperatingSystem {
 
         public static Boolean CreateRestorePoint( String description = null ) {
             try {
-                if ( String.IsNullOrWhiteSpace( value: description ) ) {
+                if ( String.IsNullOrWhiteSpace( description ) ) {
                     description = DateTime.Now.ToLongDateTime();
                 }
 
-                var oScope = new ManagementScope( path: @"\\localhost\root\default" );
-                var oPath = new ManagementPath( path: "SystemRestore" );
+                var oScope = new ManagementScope( @"\\localhost\root\default" );
+                var oPath = new ManagementPath( "SystemRestore" );
                 var oGetOp = new ObjectGetOptions();
 
-                using ( var oProcess = new ManagementClass( scope: oScope, path: oPath, options: oGetOp ) ) {
-                    var oInParams = oProcess.GetMethodParameters( methodName: "CreateRestorePoint" );
-                    oInParams[ propertyName: "Description" ] = description;
-                    oInParams[ propertyName: "RestorePointType" ] = 12; // MODIFY_SETTINGS
-                    oInParams[ propertyName: "EventType" ] = 100;
+                using ( var oProcess = new ManagementClass( oScope, oPath, oGetOp ) ) {
+                    var oInParams = oProcess.GetMethodParameters( "CreateRestorePoint" );
+                    oInParams[ "Description" ] = description;
+                    oInParams[ "RestorePointType" ] = 12; // MODIFY_SETTINGS
+                    oInParams[ "EventType" ] = 100;
 
-                    var oOutParams = oProcess.InvokeMethod( methodName: "CreateRestorePoint", inParameters: oInParams, options: null );
+                    var oOutParams = oProcess.InvokeMethod( "CreateRestorePoint", oInParams, null );
 
                     return oOutParams != null;
                 }
@@ -190,9 +190,9 @@ namespace Librainian.OperatingSystem {
                         WindowStyle = ProcessWindowStyle.Normal
                     };
 
-                    $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Blue );
+                    $"Running command '{proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
 
-                    return Process.Start( startInfo: proc );
+                    return Process.Start( proc );
                 }
                 catch ( Exception exception ) {
                     exception.Log();
@@ -216,9 +216,9 @@ namespace Librainian.OperatingSystem {
                         WindowStyle = ProcessWindowStyle.Normal
                     };
 
-                    $"Running PowerShell command '{arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Green );
+                    $"Running PowerShell command '{arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Green );
 
-                    var process = Process.Start( startInfo: startInfo );
+                    var process = Process.Start( startInfo );
 
                     if ( null == process ) {
                         "failure.".Info();
@@ -226,7 +226,7 @@ namespace Librainian.OperatingSystem {
                         return default;
                     }
 
-                    process.WaitForExit( milliseconds: ( Int32 ) Minutes.One.ToSeconds().ToMilliseconds().Value );
+                    process.WaitForExit( ( Int32 ) Minutes.One.ToSeconds().ToMilliseconds().Value );
                     "success.".Info();
 
                     return true;
@@ -241,11 +241,11 @@ namespace Librainian.OperatingSystem {
         [NotNull]
         public static Task<Process> ExecuteProcessAsync( [NotNull] Document filename, [NotNull] Folder workingFolder, [CanBeNull] String? arguments, Boolean elevate ) {
             if ( filename == null ) {
-                throw new ArgumentNullException( paramName: nameof( filename ) );
+                throw new ArgumentNullException( nameof( filename ) );
             }
 
             if ( workingFolder == null ) {
-                throw new ArgumentNullException( paramName: nameof( workingFolder ) );
+                throw new ArgumentNullException( nameof( workingFolder ) );
             }
 
             return Task.Run( () => {
@@ -261,7 +261,7 @@ namespace Librainian.OperatingSystem {
                         WindowStyle = ProcessWindowStyle.Normal
                     };
 
-                    $"Running process '{filename} {proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Blue );
+                    $"Running process '{filename} {proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
 
                     return Process.Start( proc );
                 }
@@ -275,11 +275,11 @@ namespace Librainian.OperatingSystem {
 
         [CanBeNull]
         public static Document? FindDocument( [NotNull] String fullname, [CanBeNull] String? okayMessage = null, [CanBeNull] String? errorMessage = null ) {
-            if ( !String.IsNullOrEmpty( value: okayMessage ) ) {
+            if ( !String.IsNullOrEmpty( okayMessage ) ) {
                 $"Finding {fullname}...".Info();
             }
 
-            var mainDocument = new Document( fullPath: fullname );
+            var mainDocument = new Document( fullname );
 
             if ( mainDocument.Exists() ) {
                 okayMessage.Info();
@@ -294,15 +294,15 @@ namespace Librainian.OperatingSystem {
 
         [CanBeNull]
         public static Folder? FindFolder( [NotNull] String fullname, [CanBeNull] String? okayMessage = null, [CanBeNull] String? errorMessage = null ) {
-            if ( String.IsNullOrWhiteSpace( value: fullname ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( fullname ) );
+            if ( String.IsNullOrWhiteSpace( fullname ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullname ) );
             }
 
-            if ( !String.IsNullOrEmpty( value: okayMessage ) ) {
+            if ( !String.IsNullOrEmpty( okayMessage ) ) {
                 $"Finding {fullname}...".Info();
             }
 
-            var mainFolder = new Folder( fullPath: fullname );
+            var mainFolder = new Folder( fullname );
 
             if ( !mainFolder.Exists() ) {
                 errorMessage.Error();
@@ -310,7 +310,7 @@ namespace Librainian.OperatingSystem {
                 return null;
             }
 
-            if ( !String.IsNullOrEmpty( value: okayMessage ) ) {
+            if ( !String.IsNullOrEmpty( okayMessage ) ) {
                 okayMessage.Info();
             }
 
@@ -318,7 +318,7 @@ namespace Librainian.OperatingSystem {
         }
 
         [NotNull]
-        public static String GetCurrentPATH() => Environment.GetEnvironmentVariable( variable: PATH, target: EnvironmentVariableTarget.Machine ) ?? String.Empty;
+        public static String GetCurrentPATH() => Environment.GetEnvironmentVariable( PATH, EnvironmentVariableTarget.Machine ) ?? String.Empty;
 
         public static Boolean IsServer() => GCSettings.IsServerGC;
 
@@ -326,7 +326,7 @@ namespace Librainian.OperatingSystem {
 
         [NotNull]
         public static Task<Boolean> MirrorFolderStructureAsync( [NotNull] Folder folder, [NotNull] Folder baseFolder ) =>
-            ExecutePowershellCommandAsync( arguments: $"xcopy.exe \"{folder.FullPath}\" \"{baseFolder.FullPath}\" /E /T" );
+            ExecutePowershellCommandAsync( $"xcopy.exe \"{folder.FullPath}\" \"{baseFolder.FullPath}\" /E /T" );
 
         [CanBeNull]
         public static Process OpenWithExplorer( [CanBeNull] String? value ) {
@@ -336,16 +336,16 @@ namespace Librainian.OperatingSystem {
                 var proc = new ProcessStartInfo {
                     UseShellExecute = false,
                     WorkingDirectory = Environment.CurrentDirectory,
-                    FileName = Path.Combine( path1: WindowsSystem32Folder.Value.FullPath, path2: "explorer.exe" ),
+                    FileName = Path.Combine( WindowsSystem32Folder.Value.FullPath, "explorer.exe" ),
                     Arguments = $" /separate /select,\"{value}\" ",
                     CreateNoWindow = false,
                     ErrorDialog = true,
                     WindowStyle = ProcessWindowStyle.Normal
                 };
 
-                $"Running command '{proc.Arguments}'...".WriteLineColor( foreColor: ConsoleColor.White, backColor: ConsoleColor.Cyan );
+                $"Running command '{proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Cyan );
 
-                return Process.Start( startInfo: proc );
+                return Process.Start( proc );
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -355,28 +355,28 @@ namespace Librainian.OperatingSystem {
         }
 
         public static async Task<Boolean> RestartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            if ( String.IsNullOrWhiteSpace( serviceName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( serviceName ) );
             }
 
-            return await StartServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( continueOnCapturedContext: false ) &&
-                   await StopServiceAsync( serviceName: serviceName, timeout: timeout ).ConfigureAwait( continueOnCapturedContext: false );
+            return await StartServiceAsync( serviceName, timeout ).ConfigureAwait( false ) &&
+                   await StopServiceAsync( serviceName, timeout ).ConfigureAwait( false );
         }
 
         public static async Task<Boolean> StartServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            if ( String.IsNullOrWhiteSpace( serviceName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( serviceName ) );
             }
 
             try {
-                return await Task.Run( function: () => {
-                    using var service = new ServiceController( name: serviceName );
+                return await Task.Run( () => {
+                    using var service = new ServiceController( serviceName );
 
                     if ( service.Status != ServiceControllerStatus.Running ) {
                         service.Start();
                     }
 
-                    service.WaitForStatus( desiredStatus: ServiceControllerStatus.Running, timeout: timeout );
+                    service.WaitForStatus( ServiceControllerStatus.Running, timeout );
 
                     return service.Status == ServiceControllerStatus.Running;
                 } ).ConfigureAwait( false );
@@ -389,16 +389,16 @@ namespace Librainian.OperatingSystem {
         }
 
         public static async Task<Boolean> StopServiceAsync( [NotNull] String serviceName, TimeSpan timeout ) {
-            if ( String.IsNullOrWhiteSpace( value: serviceName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( serviceName ) );
+            if ( String.IsNullOrWhiteSpace( serviceName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( serviceName ) );
             }
 
             try {
-                return await Task.Run( function: () => {
-                    using var service = new ServiceController( name: serviceName );
+                return await Task.Run( () => {
+                    using var service = new ServiceController( serviceName );
 
                     service.Stop();
-                    service.WaitForStatus( desiredStatus: ServiceControllerStatus.Stopped, timeout: timeout );
+                    service.WaitForStatus( ServiceControllerStatus.Stopped, timeout );
 
                     return service.Status == ServiceControllerStatus.Stopped;
                 } ).ConfigureAwait( false );
@@ -413,11 +413,11 @@ namespace Librainian.OperatingSystem {
         [CanBeNull]
         public static Task<Process?> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
             if ( inDocument == null ) {
-                throw new ArgumentNullException( paramName: nameof( inDocument ) );
+                throw new ArgumentNullException( nameof( inDocument ) );
             }
 
             if ( outDocument == null ) {
-                throw new ArgumentNullException( paramName: nameof( outDocument ) );
+                throw new ArgumentNullException( nameof( outDocument ) );
             }
 
             return Task.Run( () => {

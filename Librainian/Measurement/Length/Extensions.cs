@@ -49,7 +49,7 @@ namespace Librainian.Measurement.Length {
         /// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Meters" /> ? (1000)</summary>
         public const Decimal MillimetersInSingleMeter = CentimetersinSingleMeter * MillimetersInSingleCentimeter;
 
-        public static Int32 Comparison( this Millimeters left, Millimeters right ) => left.Value.CompareTo( other: right.Value );
+        public static Int32 Comparison( this Millimeters left, Millimeters right ) => left.Value.CompareTo( right.Value );
 
         //public static Int32 Comparison( this Millimeters millimeters, Centimeters centimeters ) {
         //    var left = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.

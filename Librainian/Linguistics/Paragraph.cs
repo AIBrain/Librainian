@@ -50,7 +50,7 @@ namespace Librainian.Linguistics {
     /// <see cref="Page"></see>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
 
@@ -63,7 +63,7 @@ namespace Librainian.Linguistics {
                 return default;
             }
 
-            return ReferenceEquals( objA: this, objB: other ) || this.Sentences.SequenceEqual( second: other.Sentences );
+            return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
         }
 
         [NotNull]
@@ -76,13 +76,13 @@ namespace Librainian.Linguistics {
 
         /// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
         /// <param name="paragraph"></param>
-        public Paragraph( [CanBeNull] String? paragraph ) : this( sentences: paragraph.ToSentences() ) { }
+        public Paragraph( [CanBeNull] String? paragraph ) : this( paragraph.ToSentences() ) { }
 
         /// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
         /// <param name="sentences"></param>
         public Paragraph( [CanBeNull] IEnumerable<Sentence> sentences ) {
             if ( sentences != null ) {
-                this.Sentences.AddRange( collection: sentences.Where( predicate: sentence => sentence != null ) );
+                this.Sentences.AddRange( sentences.Where( sentence => sentence != null ) );
             }
 
             this.Sentences.TrimExcess();
@@ -99,7 +99,7 @@ namespace Librainian.Linguistics {
             var sb = new StringBuilder();
 
             foreach ( var sentence in this.Sentences ) {
-                sb.AppendLine( value: sentence.ToString() );
+                sb.AppendLine( sentence.ToString() );
             }
 
             return sb.ToString();

@@ -43,7 +43,7 @@ namespace Librainian.Measurement.Time.Clocks {
     [Immutable]
     public struct Year : IComparable<Year>, IClockPart {
 
-        public static Year Zero { get; } = new Year( value: 0 );
+        public static Year Zero { get; } = new Year( 0 );
 
         public Int32 MaxValue { get; }
 
@@ -60,11 +60,11 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public static Boolean operator >( Year left, Year right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( Year other ) => this.Value.CompareTo( other: other.Value );
+        public Int32 CompareTo( Year other ) => this.Value.CompareTo( other.Value );
 
-        public Year Next() => new Year( value: this.Value + 1 );
+        public Year Next() => new Year( this.Value + 1 );
 
-        public Year Previous() => new Year( value: this.Value - 1 );
+        public Year Previous() => new Year( this.Value - 1 );
 
     }
 

@@ -55,7 +55,7 @@ namespace Librainian.Persistence {
                 return true;
             }
             catch ( ConfigurationErrorsException exception ) {
-                exception.More();
+                exception.Log();
             }
             return false;
         }
@@ -75,7 +75,7 @@ namespace Librainian.Persistence {
                 return configFile.AppSettings.Settings[ key ]?.Value;
             }
             catch ( ConfigurationErrorsException exception ) {
-                exception.More();
+                exception.Log();
                 return null;
             }
         }
@@ -84,7 +84,7 @@ namespace Librainian.Persistence {
         public static void TestStaticStorage() {
             const String phraseToTest = "Hello world";
 
-            Settings( key: nameof( phraseToTest ), value: phraseToTest );
+            Settings( nameof( phraseToTest ), phraseToTest );
 
             Assert.AreEqual( phraseToTest, Settings( nameof( phraseToTest ) ) );
         }

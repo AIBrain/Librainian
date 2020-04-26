@@ -74,7 +74,7 @@ namespace Librainian.Security {
                 for ( var j = 0; j < bmp.Width; j++ ) {
 
                     // holds the pixel that is currently being processed
-                    var pixel = bmp.GetPixel( x: j, y: i );
+                    var pixel = bmp.GetPixel( j, i );
 
                     // now, clear the least significant bit (LSB) from each pixel element
                     var r = pixel.R - ( pixel.R % 2 );
@@ -94,7 +94,7 @@ namespace Librainian.Security {
                                 // apply the last pixel on the image
                                 // even if only a part of its elements have been affected
                                 if ( ( ( pixelElementIndex - 1 ) % 3 ) < 2 ) {
-                                    bmp.SetPixel( x: j, y: i, color: Color.FromArgb( red: r, green: g, blue: b ) );
+                                    bmp.SetPixel( j, i, Color.FromArgb( r, g, b ) );
                                 }
 
                                 // return the bitmap with the text hidden in
@@ -110,7 +110,7 @@ namespace Librainian.Security {
                             else {
 
                                 // move to the next character and process again
-                                charValue = text[ index: charIndex++ ];
+                                charValue = text[ charIndex++ ];
                             }
                         }
 
@@ -151,7 +151,7 @@ namespace Librainian.Security {
                                     charValue /= 2;
                                 }
 
-                                bmp.SetPixel( x: j, y: i, color: Color.FromArgb( red: r, green: g, blue: b ) );
+                                bmp.SetPixel( j, i, Color.FromArgb( r, g, b ) );
                             }
 
                                 break;
@@ -184,7 +184,7 @@ namespace Librainian.Security {
 
                 // pass through each row
                 for ( var j = 0; j < bmp.Width; j++ ) {
-                    var pixel = bmp.GetPixel( x: j, y: i );
+                    var pixel = bmp.GetPixel( j, i );
 
                     // for each pixel, pass through its elements (RGB)
                     for ( var n = 0; n < 3; n++ ) {
@@ -220,7 +220,7 @@ namespace Librainian.Security {
                         if ( ( colorUnitIndex % 8 ) == 0 ) {
 
                             // reverse? of course, since each time the process happens on the right (for simplicity)
-                            charValue = ReverseBits( n: charValue );
+                            charValue = ReverseBits( charValue );
 
                             // can only be 0 if it is the stop character (the 8 zeros)
                             if ( charValue == 0 ) {

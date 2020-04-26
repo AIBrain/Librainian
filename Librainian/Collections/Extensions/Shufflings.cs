@@ -140,7 +140,6 @@ namespace Librainian.Collections.Extensions {
 
         /// <summary>Take a list and scramble the order of its items.</summary>
         /// <param name="list"></param>
-        /// <remarks>Isn't this just the Fisher-Yates shuffle??</remarks>
         public static void Shuffle<T>( [NotNull] this IList<T> list ) {
             if ( list is null ) {
                 throw new ArgumentNullException( nameof( list ) );
@@ -148,10 +147,10 @@ namespace Librainian.Collections.Extensions {
 
             var length = list.Count;
 
-            for ( var i = length - 1; i >= 0; i-- ) {
+            for ( var i = 0; i < length; i++ ) {
                 var a = 0.Next( length );
                 var b = 0.Next( length );
-                var (x, y) = ( list[ a ], list[ b ] );
+                var (x, y) = (list[ a ], list[ b ]);
                 list[ a ] = y;
                 list[ b ] = x;
             }
@@ -293,15 +292,13 @@ namespace Librainian.Collections.Extensions {
                 throw new ArgumentNullException( nameof( list ) );
             }
 
-            Stopwatch started = null;
+            Stopwatch? started = null;
 
             if ( forHowLong.HasValue ) {
                 started = Stopwatch.StartNew(); //don't allocate/start a stopwatch unless we're waiting for time to pass.
             }
 
-            if ( !token.HasValue ) {
-                token = CancellationToken.None;
-            }
+            token ??= CancellationToken.None;
 
             do {
                 list.Shuffle();

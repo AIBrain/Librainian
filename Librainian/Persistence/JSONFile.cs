@@ -168,15 +168,15 @@ namespace Librainian.Persistence {
 									 return result.IsCompleted;
 								 }
 								 catch ( JsonException exception ) {
-									 exception.More();
+									 exception.Log();
 								 }
 								 catch ( IOException exception ) {
 									 //file in use by another app
-									 exception.More();
+									 exception.Log();
 								 }
 								 catch ( OutOfMemoryException exception ) {
 									 //file is huge
-									 exception.More();
+									 exception.Log();
 								 }
 
 								 return false;
@@ -261,7 +261,7 @@ namespace Librainian.Persistence {
 				if ( retries.Any() ) {
 					goto TryAgain;
 				}
-				exception.More();
+				exception.Log();
 			}
 			return false;
 		}

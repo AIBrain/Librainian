@@ -43,16 +43,16 @@ namespace Librainian.ComputerSystem {
 
         [NotNull]
         private ManagementObjectSearcher Instance =>
-            this.Searcher.Value ?? throw new InvalidOperationException( message: $"Unable to use {nameof( ManagementObjectSearcher )}." );
+            this.Searcher.Value ?? throw new InvalidOperationException( $"Unable to use {nameof( ManagementObjectSearcher )}." );
 
         [NotNull]
-        public Lazy<ManagementObjectSearcher> Searcher { get; } = new Lazy<ManagementObjectSearcher>( valueFactory: () =>
-            new ManagementObjectSearcher( scope: "root\\CIMV2", queryString: "SELECT * FROM Win32_WinSAT" ) );
+        public Lazy<ManagementObjectSearcher> Searcher { get; } = new Lazy<ManagementObjectSearcher>( () =>
+            new ManagementObjectSearcher( "root\\CIMV2", "SELECT * FROM Win32_WinSAT" ) );
 
         public Single? CPU() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Single.TryParse( s: queryObj[ propertyName: "CPUScore" ]?.ToString(), result: out var result ) ) {
+                    if ( Single.TryParse( queryObj[ "CPUScore" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }
@@ -67,7 +67,7 @@ namespace Librainian.ComputerSystem {
         public Single? D3D() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Single.TryParse( s: queryObj[ propertyName: "D3DScore" ]?.ToString(), result: out var result ) ) {
+                    if ( Single.TryParse( queryObj[ "D3DScore" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }
@@ -82,7 +82,7 @@ namespace Librainian.ComputerSystem {
         public Single? Disk() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Single.TryParse( s: queryObj[ propertyName: "DiskScore" ]?.ToString(), result: out var result ) ) {
+                    if ( Single.TryParse( queryObj[ "DiskScore" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }
@@ -97,7 +97,7 @@ namespace Librainian.ComputerSystem {
         public Single? Graphics() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Single.TryParse( s: queryObj[ propertyName: "GraphicsScore" ]?.ToString(), result: out var result ) ) {
+                    if ( Single.TryParse( queryObj[ "GraphicsScore" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }
@@ -112,7 +112,7 @@ namespace Librainian.ComputerSystem {
         public Single? Memory() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Single.TryParse( s: queryObj[ propertyName: "MemoryScore" ]?.ToString(), result: out var result ) ) {
+                    if ( Single.TryParse( queryObj[ "MemoryScore" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }
@@ -128,7 +128,7 @@ namespace Librainian.ComputerSystem {
         public Object TimeTaken() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    return queryObj[ propertyName: "TimeTaken" ];
+                    return queryObj[ "TimeTaken" ];
                 }
             }
             catch ( ManagementException exception ) {
@@ -141,7 +141,7 @@ namespace Librainian.ComputerSystem {
         public Int32? WinSAT_AssessmentState() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Int32.TryParse( s: queryObj[ propertyName: "WinSATAssessmentState" ]?.ToString(), result: out var result ) ) {
+                    if ( Int32.TryParse( queryObj[ "WinSATAssessmentState" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }
@@ -156,7 +156,7 @@ namespace Librainian.ComputerSystem {
         public Single? WinSPRLevel() {
             try {
                 foreach ( var queryObj in this.Instance.Get().OfType<ManagementObject>() ) {
-                    if ( Single.TryParse( s: queryObj[ propertyName: "WinSPRLevel" ]?.ToString(), result: out var result ) ) {
+                    if ( Single.TryParse( queryObj[ "WinSPRLevel" ]?.ToString(), out var result ) ) {
                         return result;
                     }
                 }

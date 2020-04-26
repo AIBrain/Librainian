@@ -38,7 +38,7 @@ namespace Librainian.Maths.Numbers {
     /// <summary>Struct with 4 readonly-fields.</summary>
 
     //TODO this class needs fleshed out
-    public struct Int256 {
+    public readonly struct Int256 {
 
         public Int64 Bits0 { get; }
 

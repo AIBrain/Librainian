@@ -35,6 +35,7 @@ namespace Librainian.Maths.Numbers {
 
     using System;
     using Extensions;
+    using JetBrains.Annotations;
 
     /// <summary>Wrapper for Int32 that represents a hexadecimal number</summary>
     [Immutable]
@@ -124,6 +125,7 @@ namespace Librainian.Maths.Numbers {
 
         /// <summary>Returns a <see cref="String" /> that represents this instance.</summary>
         /// <returns>A <see cref="String" /> that represents this instance.</returns>
+        [NotNull]
         public override String ToString() => "0x" + this.Value.ToString( "X" );
 
     }

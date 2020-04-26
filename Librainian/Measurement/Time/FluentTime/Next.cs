@@ -41,24 +41,24 @@ namespace Librainian.Measurement.Time.FluentTime {
             var today = AdjustableCurrentTime.Today;
             var delta = dayOfWeek - today.DayOfWeek;
 
-            var result = today.AddDays( value: delta <= 0 ? delta + 7 : delta );
+            var result = today.AddDays( delta <= 0 ? delta + 7 : delta );
 
             return result;
         }
 
-        public static DateTime Friday() => GetNextOfDay( dayOfWeek: DayOfWeek.Friday );
+        public static DateTime Friday() => GetNextOfDay( DayOfWeek.Friday );
 
-        public static DateTime Monday() => GetNextOfDay( dayOfWeek: DayOfWeek.Monday );
+        public static DateTime Monday() => GetNextOfDay( DayOfWeek.Monday );
 
-        public static DateTime Saturday() => GetNextOfDay( dayOfWeek: DayOfWeek.Saturday );
+        public static DateTime Saturday() => GetNextOfDay( DayOfWeek.Saturday );
 
-        public static DateTime Sunday() => GetNextOfDay( dayOfWeek: DayOfWeek.Sunday );
+        public static DateTime Sunday() => GetNextOfDay( DayOfWeek.Sunday );
 
-        public static DateTime Thursday() => GetNextOfDay( dayOfWeek: DayOfWeek.Thursday );
+        public static DateTime Thursday() => GetNextOfDay( DayOfWeek.Thursday );
 
-        public static DateTime Tuesday() => GetNextOfDay( dayOfWeek: DayOfWeek.Tuesday );
+        public static DateTime Tuesday() => GetNextOfDay( DayOfWeek.Tuesday );
 
-        public static DateTime Wednesday() => GetNextOfDay( dayOfWeek: DayOfWeek.Wednesday );
+        public static DateTime Wednesday() => GetNextOfDay( DayOfWeek.Wednesday );
 
     }
 

@@ -82,6 +82,7 @@ namespace Librainian.Maths.Numbers {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Value}";
 
         //public long Increment( long byAmount ) {

@@ -344,6 +344,7 @@ namespace Librainian.Maths {
         /// <summary>memoize?</summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
+        [CanBeNull]
         public static String[] GetNames<T>() {
             var key = typeof( T );
 
@@ -482,7 +483,7 @@ namespace Librainian.Maths {
 
             var buffer = new Byte[ numberOfDigits ];
             Instance().NextBytes( buffer );
-            buffer[ buffer.Length - 1 ] &= 0x7f; //force sign bit to positive according to http://stackoverflow.com/a/17367241/956364
+            buffer[ ^1 ] &= 0x7f; //force sign bit to positive according to http://stackoverflow.com/a/17367241/956364
 
             return new BigInteger( buffer );
         }
@@ -933,7 +934,7 @@ namespace Librainian.Maths {
 
                 //generate a uniformly random value in [0, 2^(buffer.Length * 8 - 1))
                 source.GetBytes( buffer );
-                buffer[ buffer.Length - 1 ] &= 0x7F; //force sign bit to positive
+                buffer[ ^1 ] &= 0x7F; //force sign bit to positive
                 var r = new BigInteger( buffer );
 
                 //return unless in the partial fragment

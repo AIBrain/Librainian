@@ -103,6 +103,7 @@ namespace Librainian.Threading {
 
         /// <summary>Returns the String representation of the current value.</summary>
         /// <returns>the String representation of the current value.</returns>
+        [NotNull]
         public override String ToString() {
             var value = this.ReadFullFence();
 
@@ -195,6 +196,7 @@ namespace Librainian.Threading {
 
         /// <summary>Returns the String representation of the current value.</summary>
         /// <returns>the String representation of the current value.</returns>
+        [NotNull]
         public override String ToString() {
             var value = this.ReadFullFence();
 
@@ -317,6 +319,7 @@ namespace Librainian.Threading {
 
         /// <summary>Returns the String representation of the current value.</summary>
         /// <returns>the String representation of the current value.</returns>
+        [NotNull]
         public override String ToString() {
             var value = this.ReadFullFence();
 
@@ -422,6 +425,7 @@ namespace Librainian.Threading {
 
         /// <summary>Returns the String representation of the current value.</summary>
         /// <returns>the String representation of the current value.</returns>
+        [NotNull]
         public override String ToString() {
             var value = this.ReadFullFence();
 
@@ -516,6 +520,7 @@ namespace Librainian.Threading {
 
         /// <summary>Returns the String representation of the current value.</summary>
         /// <returns>the String representation of the current value.</returns>
+        [NotNull]
         public override String ToString() {
             var value = this.ReadFullFence();
 
@@ -579,6 +584,7 @@ namespace Librainian.Threading {
 
         /// <summary>Returns the String representation of the current value.</summary>
         /// <returns>the String representation of the current value.</returns>
+        [CanBeNull]
         public override String ToString() {
             var value = this.ReadFullFence();
 

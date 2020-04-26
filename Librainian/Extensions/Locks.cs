@@ -44,21 +44,21 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
         [NotNull]
-        public static IDisposable Read( [NotNull] this ReaderWriterLockSlim obj ) => new ReadLockToken( slimLock: obj );
+        public static IDisposable Read( [NotNull] this ReaderWriterLockSlim obj ) => new ReadLockToken( obj );
 
         /// <summary>put an upgradeable ( will-read / may-write ) lock on the access object.</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
         [NotNull]
-        public static IDisposable Upgrade( [NotNull] this ReaderWriterLockSlim obj ) => new UpgradeLockToken( slimLock: obj );
+        public static IDisposable Upgrade( [NotNull] this ReaderWriterLockSlim obj ) => new UpgradeLockToken( obj );
 
         /// <summary>put a Write ( will-write ) lock on the access object.</summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         /// <example>ReaderWriterLockSlim sync = new ReaderWriterLockSlim(); using (sync.Read()) { ... }</example>
         [NotNull]
-        public static IDisposable Write( [NotNull] this ReaderWriterLockSlim obj ) => new WriteLockToken( slimLock: obj );
+        public static IDisposable Write( [NotNull] this ReaderWriterLockSlim obj ) => new WriteLockToken( obj );
 
         private sealed class ReadLockToken : IDisposable {
 
@@ -126,10 +126,10 @@ namespace Librainian.Extensions {
         public sealed class Manager : IDisposable {
 
             public void Dispose() {
-                this.Dispose( freeManagedObjectsAlso: true );
+                this.Dispose( true );
 
                 // ReSharper disable GCSuppressFinalizeForTypeWithoutDestructor
-                GC.SuppressFinalize( obj: this );
+                GC.SuppressFinalize( this );
 
                 // ReSharper restore GCSuppressFinalizeForTypeWithoutDestructor
             }

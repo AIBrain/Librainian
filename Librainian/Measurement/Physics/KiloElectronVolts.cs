@@ -42,7 +42,7 @@ namespace Librainian.Measurement.Physics {
     /// <summary>Units of mass and energy in ElectronVolts.</summary>
     /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
     /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     [Immutable]
     public struct KiloElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<KiloElectronVolts>, IComparable<MegaElectronVolts>,
                                       IComparable<GigaElectronVolts> {
@@ -60,20 +60,20 @@ namespace Librainian.Measurement.Physics {
         public const Decimal InOneTeraElectronVolt = 1E9m;
 
         /// <summary>About 79228162514264337593543950335.</summary>
-        public static readonly KiloElectronVolts MaxValue = new KiloElectronVolts( value: Decimal.MaxValue );
+        public static readonly KiloElectronVolts MaxValue = new KiloElectronVolts( Decimal.MaxValue );
 
         /// <summary>About -79228162514264337593543950335.</summary>
-        public static readonly KiloElectronVolts MinValue = new KiloElectronVolts( value: Decimal.MinValue );
+        public static readonly KiloElectronVolts MinValue = new KiloElectronVolts( Decimal.MinValue );
 
-        public static readonly KiloElectronVolts NegativeOne = new KiloElectronVolts( value: -1m );
-
-        /// <summary></summary>
-        public static readonly KiloElectronVolts NegativeZero = new KiloElectronVolts( value: -Decimal.Zero );
+        public static readonly KiloElectronVolts NegativeOne = new KiloElectronVolts( -1m );
 
         /// <summary></summary>
-        public static readonly KiloElectronVolts One = new KiloElectronVolts( value: 1m );
+        public static readonly KiloElectronVolts NegativeZero = new KiloElectronVolts( -Decimal.Zero );
 
-        public static readonly KiloElectronVolts Zero = new KiloElectronVolts( value: 0m );
+        /// <summary></summary>
+        public static readonly KiloElectronVolts One = new KiloElectronVolts( 1m );
+
+        public static readonly KiloElectronVolts Zero = new KiloElectronVolts( 0m );
 
         public readonly Rational Value;
 
@@ -91,58 +91,58 @@ namespace Librainian.Measurement.Physics {
 
         public static implicit operator KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) => gigaElectronVolts.ToKiloElectronVolts();
 
-        public static KiloElectronVolts operator -( KiloElectronVolts electronVolts ) => new KiloElectronVolts( aBigFraction: -electronVolts.Value );
+        public static KiloElectronVolts operator -( KiloElectronVolts electronVolts ) => new KiloElectronVolts( -electronVolts.Value );
 
-        public static KiloElectronVolts operator *( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left.Value * right.Value );
+        public static KiloElectronVolts operator *( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( left.Value * right.Value );
 
-        public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( aBigFraction: left.Value * ( Rational ) right );
+        public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( left.Value * ( Rational ) right );
 
-        public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: ( Rational ) left * right.Value );
+        public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new KiloElectronVolts( ( Rational ) left * right.Value );
 
-        public static KiloElectronVolts operator *( Rational left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left * right.Value );
+        public static KiloElectronVolts operator *( Rational left, KiloElectronVolts right ) => new KiloElectronVolts( left * right.Value );
 
         public static KiloElectronVolts operator *( BigInteger left, KiloElectronVolts right ) =>
-            new KiloElectronVolts( aBigFraction: new Rational( whole: left ) * right.Value );
+            new KiloElectronVolts( new Rational( left ) * right.Value );
 
-        public static KiloElectronVolts operator /( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left.Value / right.Value );
+        public static KiloElectronVolts operator /( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( left.Value / right.Value );
 
-        public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( aBigFraction: left.Value / ( Rational ) right );
+        public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( left.Value / ( Rational ) right );
 
         public static MegaElectronVolts operator +( KiloElectronVolts left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
         public static GigaElectronVolts operator +( KiloElectronVolts left, GigaElectronVolts right ) => left.ToGigaElectronVolts() + right;
 
-        public static KiloElectronVolts operator +( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( aBigFraction: left.Value + right.Value );
+        public static KiloElectronVolts operator +( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( left.Value + right.Value );
 
         public static Boolean operator <( KiloElectronVolts left, KiloElectronVolts right ) => left.Value < right.Value;
 
         public static Boolean operator >( KiloElectronVolts left, KiloElectronVolts right ) => left.Value > right.Value;
 
-        public Int32 CompareTo( ElectronVolts other ) => this.Value.CompareTo( other: other.ToKiloElectronVolts().Value );
+        public Int32 CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.ToKiloElectronVolts().Value );
 
-        public Int32 CompareTo( GigaElectronVolts other ) => this.ToGigaElectronVolts().Value.CompareTo( other: other.Value );
+        public Int32 CompareTo( GigaElectronVolts other ) => this.ToGigaElectronVolts().Value.CompareTo( other.Value );
 
-        public Int32 CompareTo( KiloElectronVolts other ) => this.Value.CompareTo( other: other.Value );
+        public Int32 CompareTo( KiloElectronVolts other ) => this.Value.CompareTo( other.Value );
 
-        public Int32 CompareTo( MegaElectronVolts other ) => this.ToMegaElectronVolts().Value.CompareTo( other: other.Value );
+        public Int32 CompareTo( MegaElectronVolts other ) => this.ToMegaElectronVolts().Value.CompareTo( other.Value );
 
-        public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other: other.ToKiloElectronVolts().Value );
+        public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToKiloElectronVolts().Value );
 
-        public ElectronVolts ToElectronVolts() => new ElectronVolts( value: this.Value * ( Rational ) InOneElectronVolt );
+        public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational ) InOneElectronVolt );
 
-        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( units: this.Value * ( Rational ) InOneGigaElectronVolt );
+        public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational ) InOneGigaElectronVolt );
 
-        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( aBigFraction: this.Value * ( Rational ) InOneKiloElectronVolt );
+        public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational ) InOneKiloElectronVolt );
 
-        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( units: this.Value * ( Rational ) InOneMegaElectronVolt );
+        public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational ) InOneMegaElectronVolt );
 
-        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( units: this.Value * ( Rational ) InOneMilliElectronVolt );
+        public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational ) InOneMilliElectronVolt );
 
         /// <summary>Returns the fully qualified type name of this instance.</summary>
         /// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
         public override String ToString() => $"{this.Value} eV";
 
-        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( units: this.Value * ( Rational ) InOneTeraElectronVolt );
+        public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational ) InOneTeraElectronVolt );
 
     }
 

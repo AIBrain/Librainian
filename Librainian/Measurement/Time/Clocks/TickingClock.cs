@@ -99,7 +99,7 @@ namespace Librainian.Measurement.Time.Clocks {
             try {
                 this._timer?.Stop(); //stop the timer so the seconds don't tick while we get the values.
 
-                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
+                return new Time( this.Hour.Value, this.Minute.Value, this.Second.Value );
             }
             finally {
                 this._timer?.Start();
@@ -135,7 +135,7 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Second = ( Second ) time.Second;
             this.Millisecond = ( Millisecond ) time.Millisecond;
             this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
-            this.ResetTimer( granularity: granularity );
+            this.ResetTimer( granularity );
         }
 
         public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
@@ -144,23 +144,23 @@ namespace Librainian.Measurement.Time.Clocks {
             this.Second = time.Second;
             this.Millisecond = time.Millisecond;
             this.Microsecond = time.Microsecond;
-            this.ResetTimer( granularity: granularity );
+            this.ResetTimer( granularity );
         }
 
         private void OnHourElapsed( [CanBeNull] Object sender, [CanBeNull] ElapsedEventArgs e ) {
 
-            this.Hour = this.Hour.Next( tocked: out var ticked );
+            this.Hour = this.Hour.Next( out var ticked );
 
             if ( !ticked ) {
                 return;
             }
 
-            this.OnHourTick?.Invoke( obj: this.Hour );
+            this.OnHourTick?.Invoke( this.Hour );
         }
 
         private void OnMillisecondElapsed( [CanBeNull] Object sender, [CanBeNull] ElapsedEventArgs e ) {
 
-            this.Millisecond = this.Millisecond.Next( ticked: out var ticked );
+            this.Millisecond = this.Millisecond.Next( out var ticked );
 
             if ( !ticked ) {
                 return;
@@ -168,12 +168,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
             this.OnMillisecondTick?.Invoke();
 
-            this.OnSecondElapsed( sender: sender, e: e );
+            this.OnSecondElapsed( sender, e );
         }
 
         private void OnMinuteElapsed( [CanBeNull] Object sender, [CanBeNull] ElapsedEventArgs e ) {
 
-            this.Minute = this.Minute.Next( tocked: out var ticked );
+            this.Minute = this.Minute.Next( out var ticked );
 
             if ( !ticked ) {
                 return;
@@ -181,12 +181,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
             this.OnMinuteTick?.Invoke();
 
-            this.OnHourElapsed( sender: sender, e: e );
+            this.OnHourElapsed( sender, e );
         }
 
         private void OnSecondElapsed( [CanBeNull] Object sender, [CanBeNull] ElapsedEventArgs e ) {
 
-            this.Second = this.Second.Next( tocked: out var ticked );
+            this.Second = this.Second.Next( out var ticked );
 
             if ( !ticked ) {
                 return;
@@ -194,7 +194,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
             this.OnSecondTick?.Invoke();
 
-            this.OnMinuteElapsed( sender: sender, e: e );
+            this.OnMinuteElapsed( sender, e );
         }
 
         /// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
@@ -211,7 +211,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Milliseconds:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
+                    this._timer = new Timer( ( Double ) Milliseconds.One.Value ) {
                         AutoReset = true
                     };
 
@@ -222,7 +222,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Seconds:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Seconds.One.Value ) {
+                    this._timer = new Timer( ( Double ) Seconds.One.Value ) {
                         AutoReset = true
                     };
 
@@ -233,7 +233,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Minutes:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Minutes.One.Value ) {
+                    this._timer = new Timer( ( Double ) Minutes.One.Value ) {
                         AutoReset = true
                     };
 
@@ -244,7 +244,7 @@ namespace Librainian.Measurement.Time.Clocks {
                 case Granularity.Hours:
 
                     // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Hours.One.Value ) {
+                    this._timer = new Timer( ( Double ) Hours.One.Value ) {
                         AutoReset = true
                     };
 
@@ -252,7 +252,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
                     break;
 
-                default: throw new ArgumentOutOfRangeException( paramName: nameof( granularity ) );
+                default: throw new ArgumentOutOfRangeException( nameof( granularity ) );
             }
 
             this._timer.Start();

@@ -91,7 +91,7 @@ namespace Librainian.Measurement.Time {
         public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
         [NotNull]
-        public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months: months );
+        public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months );
 
         public static implicit operator Weeks( Months months ) => months.ToWeeks();
 

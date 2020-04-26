@@ -133,6 +133,7 @@ namespace Librainian.Maths {
             }
         }
 
+        [NotNull]
         public override String ToString() => $"{this.SuccessPercentage():P1} successes vs {this.FailurePercentage():p1} failures out of {this.Total} total.";
 
     }

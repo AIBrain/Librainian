@@ -46,20 +46,20 @@ namespace Librainian.Converters {
         /// <returns>A String representation of the Double's exact System.Decimal value.</returns>
         [NotNull]
         public static String ToExactString( this Double d ) {
-            if ( Double.IsPositiveInfinity( d: d ) ) {
+            if ( Double.IsPositiveInfinity( d ) ) {
                 return "+Infinity";
             }
 
-            if ( Double.IsNegativeInfinity( d: d ) ) {
+            if ( Double.IsNegativeInfinity( d ) ) {
                 return "-Infinity";
             }
 
-            if ( Double.IsNaN( d: d ) ) {
+            if ( Double.IsNaN( d ) ) {
                 return "NaN";
             }
 
             // Translate the Double into sign, exponent and mantissa.
-            var bits = BitConverter.DoubleToInt64Bits( value: d );
+            var bits = BitConverter.DoubleToInt64Bits( d );
 
             // Note that the shift is sign-extended, hence the test against -1 not 1
             var negative = bits < 0;
@@ -93,22 +93,22 @@ namespace Librainian.Converters {
             }
 
             // Construct a new System.Decimal expansion with the mantissa
-            var ad = new ArbitraryDecimal( x: mantissa );
+            var ad = new ArbitraryDecimal( mantissa );
 
             // If the exponent is less than 0, we need to repeatedly divide by 2 - which is the
             // equivalent of multiplying by 5 and dividing by 10.
             if ( exponent < 0 ) {
                 for ( var i = 0; i < -exponent; i++ ) {
-                    ad.MultiplyBy( amount: 5 );
+                    ad.MultiplyBy( 5 );
                 }
 
-                ad.Shift( amount: -exponent );
+                ad.Shift( -exponent );
             }
 
             // Otherwise, we need to repeatedly multiply by 2
             else {
                 for ( var i = 0; i < exponent; i++ ) {
-                    ad.MultiplyBy( amount: 2 );
+                    ad.MultiplyBy( 2 );
                 }
             }
 

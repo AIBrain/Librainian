@@ -67,9 +67,12 @@ namespace Librainian.Threading {
                 throw new ArgumentNullException( nameof( timer ) );
             }
 
-            timer.Start();
-
-            return timer;
+            try {
+                return timer;
+            }
+            finally {
+                timer.Start();
+            }
         }
 
         [NotNull]

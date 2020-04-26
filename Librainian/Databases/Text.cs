@@ -56,7 +56,7 @@ namespace Librainian.Databases {
                 Provider = "Microsoft.Jet.OLEDB.4.0", DataSource = path
             };
 
-            connectionStringBuilder.Add( keyword: "Extended Properties", value: "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
+            connectionStringBuilder.Add( "Extended Properties", "Excel 8.0;" + $"HDR={( hasHeaders ? "Yes" : "No" )}{';'}" );
             this.ConnectionString = connectionStringBuilder.ToString();
         }
 
@@ -65,10 +65,10 @@ namespace Librainian.Databases {
             String[] columns = { };
 
             try {
-                var connection = new OleDbConnection( connectionString: this.ConnectionString );
+                var connection = new OleDbConnection( this.ConnectionString );
                 connection.Open();
 
-                var tableColumns = connection.GetSchema( collectionName: "Columns", restrictionValues: new[] {
+                var tableColumns = connection.GetSchema( "Columns", new[] {
                     null, null, worksheet + '$', null
                 } );
 
@@ -77,7 +77,7 @@ namespace Librainian.Databases {
                 columns = new String[ tableColumns.Rows.Count ];
 
                 for ( var i = 0; i < columns.Length; i++ ) {
-                    columns[ i ] = ( String ) tableColumns.Rows[ index: i ][ columnName: "COLUMN_NAME" ];
+                    columns[ i ] = ( String ) tableColumns.Rows[ i ][ "COLUMN_NAME" ];
                 }
             }
             catch ( Exception exception ) {
@@ -89,25 +89,25 @@ namespace Librainian.Databases {
 
         [NotNull]
         public DataSet GetWorkplace() {
-            using ( var connection = new OleDbConnection( connectionString: this.ConnectionString ) ) {
-                using ( var adaptor = new OleDbDataAdapter( selectCommandText: "SELECT * FROM *", selectConnection: connection ) ) {
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( "SELECT * FROM *", connection ) ) {
                     var workplace = new DataSet();
-                    adaptor.FillSchema( dataSet: workplace, schemaType: SchemaType.Source );
-                    adaptor.Fill( dataSet: workplace );
+                    adaptor.FillSchema( workplace, SchemaType.Source );
+                    adaptor.Fill( workplace );
 
                     return workplace;
                 }
             }
         }
 
-        [SuppressMessage( category: "Microsoft.Security", checkId: "CA2100:Review SQL queries for security vulnerabilities" )]
+        [SuppressMessage( "Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities" )]
         [NotNull]
         public DataTable GetWorksheet( [CanBeNull] String? worksheet ) {
-            using ( var connection = new OleDbConnection( connectionString: this.ConnectionString ) ) {
-                using ( var adaptor = new OleDbDataAdapter( selectCommandText: $"SELECT * FROM [{worksheet}$]", selectConnection: connection ) ) {
-                    var ws = new DataTable( tableName: worksheet );
-                    adaptor.FillSchema( dataTable: ws, schemaType: SchemaType.Source );
-                    adaptor.Fill( dataTable: ws );
+            using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
+                using ( var adaptor = new OleDbDataAdapter( $"SELECT * FROM [{worksheet}$]", connection ) ) {
+                    var ws = new DataTable( worksheet );
+                    adaptor.FillSchema( ws, SchemaType.Source );
+                    adaptor.Fill( ws );
 
                     return ws;
                 }
@@ -121,16 +121,16 @@ namespace Librainian.Databases {
             try {
                 DataTable tableWorksheets;
 
-                using ( var connection = new OleDbConnection( connectionString: this.ConnectionString ) ) {
+                using ( var connection = new OleDbConnection( this.ConnectionString ) ) {
                     connection.Open();
-                    tableWorksheets = connection.GetSchema( collectionName: "Tables" );
+                    tableWorksheets = connection.GetSchema( "Tables" );
                 }
 
                 worksheets = new String[ tableWorksheets.Rows.Count ];
 
                 for ( var i = 0; i < worksheets.Length; i++ ) {
-                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ index: i ][ columnName: "TABLE_NAME" ];
-                    worksheets[ i ] = worksheets[ i ].Remove( startIndex: worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
+                    worksheets[ i ] = ( String ) tableWorksheets.Rows[ i ][ "TABLE_NAME" ];
+                    worksheets[ i ] = worksheets[ i ].Remove( worksheets[ i ].Length - 1 ).Trim( '"', '\'' );
                 }
             }
             catch ( OleDbException exception ) {

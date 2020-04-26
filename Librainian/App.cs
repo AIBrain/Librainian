@@ -105,11 +105,11 @@ namespace Librainian {
         }
 
         private static void RunInternalCommon() {
-            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e?.ExceptionObject as Exception )?.Log( true );
-            Application.ThreadException += ( sender, e ) => e?.Exception?.Log( true );
+            AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e.ExceptionObject as Exception )?.Log( true );
+            Application.ThreadException += ( sender, e ) => e.Exception.Log( true );
 
-            ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
-            ProfileOptimization.StartProfile( Application.ExecutablePath );
+            //ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
+            //ProfileOptimization.StartProfile( Application.ExecutablePath );
 
             Debug.AutoFlush = true;
             Trace.AutoFlush = true;

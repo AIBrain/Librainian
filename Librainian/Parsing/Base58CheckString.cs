@@ -47,7 +47,7 @@ namespace Librainian.Parsing {
                     version
                 }.Concat( b ).ToArray();
 
-                var hash = sha256.ComputeHash( buffer: sha256.ComputeHash( b ) ).Take( 4 ).ToArray();
+                var hash = sha256.ComputeHash( sha256.ComputeHash( b ) ).Take( 4 ).ToArray();
 
                 return b.Concat( hash ).ToArray().FromByteArray();
             }
@@ -58,20 +58,20 @@ namespace Librainian.Parsing {
             var b = s.ToByteArray();
 
             using ( SHA256 sha256 = new SHA256Managed() ) {
-                var hash = sha256.ComputeHash( buffer: sha256.ComputeHash( buffer: b.Take( count: b.Length - 4 ).ToArray() ) );
+                var hash = sha256.ComputeHash( sha256.ComputeHash( b.Take( b.Length - 4 ).ToArray() ) );
 
-                if ( !hash.Take( 4 ).SequenceEqual( second: b.Skip( count: b.Length - 4 ).Take( 4 ) ) ) {
+                if ( !hash.Take( 4 ).SequenceEqual( b.Skip( b.Length - 4 ).Take( 4 ) ) ) {
                     throw new ArgumentException( "Invalid Base58Check String" );
                 }
 
                 version = b.First();
 
-                return b.Skip( 1 ).Take( count: b.Length - 5 ).ToArray();
+                return b.Skip( 1 ).Take( b.Length - 5 ).ToArray();
             }
         }
 
         [NotNull]
-        public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, version: out var b );
+        public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, out var b );
 
     }
 

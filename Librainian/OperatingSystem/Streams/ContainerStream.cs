@@ -58,13 +58,13 @@ namespace Librainian.OperatingSystem.Streams {
 
         public override Int64 Length => this.Stream.Length;
 
-        protected ContainerStream( [NotNull] Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( paramName: nameof( stream ) );
+        protected ContainerStream( [NotNull] Stream stream ) => this.Stream = stream ?? throw new ArgumentNullException( nameof( stream ) );
 
         public override void Flush() => this.Stream.Flush();
 
-        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Read( buffer: buffer, offset: offset, count: count );
+        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Read( buffer, offset, count );
 
-        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer: buffer, offset: offset, count: count );
+        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Stream.Write( buffer, offset, count );
 
     }
 

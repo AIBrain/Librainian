@@ -165,6 +165,7 @@ namespace Librainian.Maths.Numbers {
             return default;
         }
 
+        [NotNull]
         public override String ToString() => $"{this.Quotient}";
 
     }

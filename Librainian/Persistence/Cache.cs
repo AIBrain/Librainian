@@ -43,7 +43,7 @@ namespace Librainian.Persistence {
     using JetBrains.Annotations;
     using Logging;
     using Maths;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
     using Parsing;
 
     /// <summary>

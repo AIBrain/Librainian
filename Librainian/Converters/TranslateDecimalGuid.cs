@@ -36,13 +36,13 @@ namespace Librainian.Converters {
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct TranslateDecimalGuid {
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Decimal Decimal;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public Guid Guid;
 
     }

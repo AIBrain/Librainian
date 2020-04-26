@@ -97,6 +97,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
+        [NotNull]
         public override String ToString() =>
             $"{this.SourceDocument?.FileName ?? Symbols.Null} copied to {this.DestinationDocument?.ContainingingFolder().FullPath ?? Symbols.Null} @ {this.MegabytesPerSecond()}MB/s";
 

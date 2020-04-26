@@ -76,7 +76,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
 
             while ( pathComponents.Count > 0 ) {
-                var str = pathComponents[ pathComponents.Count - 1 ];
+                var str = pathComponents[ ^1 ];
 
                 if ( !String.IsNullOrWhiteSpace( str ) ) {
                     str = str.NormalizeLongPath();
@@ -296,7 +296,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
 
             while ( pathComponents.Count > 0 ) {
-                var str = pathComponents[ pathComponents.Count - 1 ].ThrowIfBlank();
+                var str = pathComponents[ ^1 ].ThrowIfBlank();
                 pathComponents.RemoveAt( pathComponents.Count - 1 );
 
                 if ( str.CreateDirectory( IntPtr.Zero ) ) {
@@ -436,6 +436,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
         /// </exception>
+        [NotNull]
         public static IEnumerable<String> EnumerateDirectories( [NotNull] String path ) =>
             EnumerateFileSystemEntries( path.ThrowIfBlank(), "*", true, false, SearchOption.TopDirectoryOnly );
 
@@ -465,9 +466,11 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
         /// </exception>
+        [NotNull]
         public static IEnumerable<String> EnumerateDirectories( [NotNull] String path, [NotNull] String searchPattern ) =>
             EnumerateFileSystemEntries( path.ThrowIfBlank(), searchPattern, true, false, SearchOption.TopDirectoryOnly );
 
+        [NotNull]
         public static IEnumerable<String> EnumerateDirectories( [NotNull] String path, [NotNull] String searchPattern, SearchOption options ) =>
             EnumerateFileSystemEntries( path.ThrowIfBlank(), searchPattern, true, false, options );
 

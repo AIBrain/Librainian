@@ -54,26 +54,26 @@ namespace Librainian.Extensions {
         /// <example>5. Between(5, 5))</example>
         public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, [NotNull] T endInclusive ) where T : IComparable {
             if ( target is null ) {
-                throw new ArgumentNullException( paramName: nameof( target ) );
+                throw new ArgumentNullException( nameof( target ) );
             }
 
             if ( startInclusive is null ) {
-                throw new ArgumentNullException( paramName: nameof( startInclusive ) );
+                throw new ArgumentNullException( nameof( startInclusive ) );
             }
 
             if ( endInclusive is null ) {
-                throw new ArgumentNullException( paramName: nameof( endInclusive ) );
+                throw new ArgumentNullException( nameof( endInclusive ) );
             }
 
-            if ( startInclusive.CompareTo( obj: endInclusive ) == 1 ) {
-                return ( target.CompareTo( obj: startInclusive ) <= 0 ) && ( target.CompareTo( obj: endInclusive ) >= 0 );
+            if ( startInclusive.CompareTo( endInclusive ) == 1 ) {
+                return ( target.CompareTo( startInclusive ) <= 0 ) && ( target.CompareTo( endInclusive ) >= 0 );
             }
 
-            return ( target.CompareTo( obj: startInclusive ) >= 0 ) && ( target.CompareTo( obj: endInclusive ) <= 0 );
+            return ( target.CompareTo( startInclusive ) >= 0 ) && ( target.CompareTo( endInclusive ) <= 0 );
         }
 
         [DebuggerStepThrough]
-        [Conditional( conditionString: "DEBUG" )]
+        [Conditional( "DEBUG" )]
         public static void BreakIfDebug<T>( [CanBeNull] this T obj ) {
             if ( Debugger.IsAttached ) {
                 Debugger.Break();
@@ -88,22 +88,22 @@ namespace Librainian.Extensions {
         [NotNull]
         public static T Clamp<T>( [NotNull] this T self, [NotNull] T min, [NotNull] T max ) where T : IComparable<T> {
             if ( self is null ) {
-                throw new ArgumentNullException( paramName: nameof( self ) );
+                throw new ArgumentNullException( nameof( self ) );
             }
 
             if ( min is null ) {
-                throw new ArgumentNullException( paramName: nameof( min ) );
+                throw new ArgumentNullException( nameof( min ) );
             }
 
             if ( max is null ) {
-                throw new ArgumentNullException( paramName: nameof( max ) );
+                throw new ArgumentNullException( nameof( max ) );
             }
 
-            if ( self.CompareTo( other: min ) < 0 ) {
+            if ( self.CompareTo( min ) < 0 ) {
                 return min;
             }
 
-            return self.CompareTo( other: max ) > 0 ? max : self;
+            return self.CompareTo( max ) > 0 ? max : self;
         }
 
         [ItemCanBeNull]
@@ -116,9 +116,9 @@ namespace Librainian.Extensions {
         }
 
         /// <summary>Just a no-op for setting a breakpoint on.</summary>
-        [MethodImpl( methodImplOptions: MethodImplOptions.AggressiveInlining )]
+        [MethodImpl( MethodImplOptions.AggressiveInlining )]
         [DebuggerStepThrough]
-        [Conditional( conditionString: "DEBUG" )]
+        [Conditional( "DEBUG" )]
         public static void Nop<T>( [CanBeNull] this T obj ) { }
 
         /// <summary>
@@ -132,19 +132,19 @@ namespace Librainian.Extensions {
         /// <returns></returns>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static T NullIf<T>( [NotNull] this T left, [CanBeNull] T right ) => Comparer<T>.Default.Compare( x: left, y: right ) == 0 ? default : left;
+        public static T NullIf<T>( [NotNull] this T left, [CanBeNull] T right ) => Comparer<T>.Default.Compare( left, right ) == 0 ? default : left;
 
         [CanBeNull]
         public static String OnlyDigits( [CanBeNull] this String input ) =>
-            String.IsNullOrWhiteSpace( value: input ) ? null : new String( value: input.Where( predicate: Char.IsDigit ).ToArray() );
+            String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsDigit ).ToArray() );
 
         [CanBeNull]
         public static String OnlyLetters( [CanBeNull] String? input ) =>
-            String.IsNullOrWhiteSpace( value: input ) ? null : new String( value: input.Where( predicate: Char.IsLetter ).ToArray() );
+            String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( Char.IsLetter ).ToArray() );
 
         [CanBeNull]
         public static String OnlyLettersAndNumbers( [CanBeNull] String? input ) =>
-            String.IsNullOrWhiteSpace( value: input ) ? null : new String( value: input.Where( predicate: c => Char.IsDigit( c: c ) || Char.IsLetter( c: c ) ).ToArray() );
+            String.IsNullOrWhiteSpace( input ) ? null : new String( input.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ).ToArray() );
 
         /// <summary>Swap <paramref name="left" /> with <paramref name="right" />.</summary>
         /// <typeparam name="T"></typeparam>

@@ -29,17 +29,16 @@
 // Our GitHub address is "https://github.com/Protiguous".
 // Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", File: "HashingExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
+// Project: "Librainian", File: "HashingExtensions.cs" was last formatted by Protiguous on 2020/04/26 at 9:43 AM.
 
 namespace Librainian.Maths.Hashings {
 
+    // ReSharper disable RedundantUsingDirective
     using System;
     using System.Linq;
     using Converters;
     using JetBrains.Annotations;
     using OperatingSystem.FileSystem;
-
-    // ReSharper disable RedundantUsingDirective
     using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
 
     // ReSharper restore RedundantUsingDirective
@@ -130,9 +129,7 @@ namespace Librainian.Maths.Hashings {
         /// <returns></returns>
         /// <remarks>A faster Randem.Reseed would be nice here.</remarks>
         public static Int32 Deterministic( this Int32 index ) {
-            if ( RandomInstance is null ) {
-                RandomInstance = new Random( index );
-            }
+            RandomInstance ??= new Random( index );
 
             return RandomInstance.Next();
         }
@@ -147,11 +144,10 @@ namespace Librainian.Maths.Hashings {
 
             var bufferA = new Byte[ sizeof( Int32 ) ];
             new Random( translate64.SignedLow ).NextBytes( bufferA );
+            translate64.SignedLow = Convert.ToInt32( bufferA );
 
             var bufferB = new Byte[ sizeof( Int32 ) ];
             new Random( translate64.SignedHigh ).NextBytes( bufferB );
-
-            translate64.SignedLow = Convert.ToInt32( bufferA );
             translate64.SignedHigh = Convert.ToInt32( bufferB );
 
             return translate64.SignedValue;

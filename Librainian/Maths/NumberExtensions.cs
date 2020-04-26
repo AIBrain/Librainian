@@ -763,9 +763,7 @@ namespace Librainian.Maths {
         [Pure]
         [NotNull]
         public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
-            if ( !step.HasValue ) {
-                step = ToInternalDateTimes( from, to );
-            }
+            step ??= ToInternalDateTimes( @from, to );
 
             if ( from > to ) {
                 if ( !step.HasValue ) {

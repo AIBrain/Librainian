@@ -41,9 +41,7 @@ namespace Librainian.Logging {
     using Extensions;
     using JetBrains.Annotations;
     using NLog;
-    using NLog.Layouts;
     using NLog.Targets;
-    using NLog.Windows.Forms;
     using Parsing;
     using Persistence;
 
@@ -64,7 +62,7 @@ namespace Librainian.Logging {
         /// <param name="message"></param>
         [CanBeNull]
         [DebuggerStepThrough]
-        public static String Break<T>( [CanBeNull] this T s, [CanBeNull] String? message = null ) {
+        public static String? Break<T>( [CanBeNull] this T s, [CanBeNull] String? message = null ) {
             if ( !String.IsNullOrEmpty( message ) ) {
                 message.Debug();
             }
@@ -173,7 +171,7 @@ namespace Librainian.Logging {
         [Conditional( "DEBUG" )]
         [Conditional( "TRACE" )]
         [DebuggerStepThrough]
-        public static void Log( this String message, Boolean breakinto = false ) {
+        public static void Log( [CanBeNull] this String? message, Boolean breakinto = false ) {
             message = $"[{DateTime.Now:t}] {message ?? Symbols.Null}";
 
             if ( Debugger.IsAttached ) {
@@ -198,14 +196,11 @@ namespace Librainian.Logging {
         /// <returns></returns>
         [DebuggerStepThrough]
         [NotNull]
-        public static Exception Log( [CanBeNull] this Exception exception, Boolean breakinto = false ) {
-            if ( exception is null ) {
-                $"Null {nameof( Exception )}".Log( true );
-            }
+        public static Exception Log( [NotNull] this Exception exception, Boolean breakinto = false ) {
 
-            exception.ToStringDemystified().Log( breakinto );
+            (exception.ToStringDemystified() ?? String.Empty).Log( breakinto );
 
-            return exception ?? new NullReferenceException( $"Null {nameof( Exception )}" );
+            return exception;
         }
 
         [DebuggerStepThrough]
@@ -217,7 +212,7 @@ namespace Librainian.Logging {
                 }
             }
             else {
-                message.ToString().Log( breakinto );
+                (message.ToString() ?? String.Empty).Log( breakinto );
             }
 
             return message;
@@ -281,10 +276,10 @@ namespace Librainian.Logging {
 
                     return default;
 
-                case null:
-                    target = rtb.ToTarget();
+                //case null:
+                //    target = rtb.ToTarget();
 
-                    break;
+                //    break;
             }
 
             if ( target is null ) {
@@ -299,14 +294,10 @@ namespace Librainian.Logging {
             return LogManager.Configuration?.AllTargets?.Contains( target ) == true;
         }
 
+        /*
         [DebuggerStepThrough]
         [CanBeNull]
-        public static Target? ToTarget( [CanBeNull] this RichTextBox rtb ) {
-            if ( rtb is null ) {
-
-                //throw new ArgumentNullException(nameof( rtb ),"The paramter 'rtb' was null." );
-                return default;
-            }
+        public static Target? ToTarget( [NotNull] this RichTextBox rtb ) {
 
             if ( String.IsNullOrWhiteSpace( rtb.Name ) ) {
                 throw new ArgumentNullException( nameof( rtb ), "No name given on this RichTextBox control." );
@@ -354,6 +345,7 @@ namespace Librainian.Logging {
 
             return target;
         }
+        */
 
         [DebuggerStepThrough]
         public static void Trace( [CanBeNull] this String message ) => Logger.Trace( message );

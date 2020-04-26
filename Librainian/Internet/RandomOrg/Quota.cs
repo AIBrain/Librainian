@@ -43,10 +43,10 @@ namespace Librainian.Internet.RandomOrg {
 
         public const Int64 Error = Int64.MinValue;
 
-        public static Int64 Check() => Int64.TryParse( s: "http://www.random.org/quota/?format=plain".GetWebPage(), result: out var result ) ? result : Error;
+        public static Int64 Check() => Int64.TryParse( "http://www.random.org/quota/?format=plain".GetWebPage(), out var result ) ? result : Error;
 
         public static Int64 Check( [CanBeNull] IPAddress ip ) =>
-            Int64.TryParse( s: $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), result: out var result ) ? result : Error;
+            Int64.TryParse( $"http://www.random.org/quota/?ip={ip}&format=plain".GetWebPage(), out var result ) ? result : Error;
 
     }
 

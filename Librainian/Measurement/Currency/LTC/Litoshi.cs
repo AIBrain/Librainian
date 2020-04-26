@@ -36,7 +36,7 @@ namespace Librainian.Measurement.Currency.LTC {
     using System;
     using System.Diagnostics;
 
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "(),nq}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
     public struct Litoshi : ICoin {
 
         public Decimal FaceValue => 0.00000001M;

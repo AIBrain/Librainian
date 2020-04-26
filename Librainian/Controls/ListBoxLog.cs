@@ -136,7 +136,7 @@ namespace Librainian.Controls {
                 return;
             }
 
-            var currentText = items[ items.Count - 1 ] as String ?? String.Empty;
+            var currentText = items[ ^1 ] as String ?? String.Empty;
             currentText += item as String ?? String.Empty;
             this.Box.Items[ items.Count - 1 ] = currentText;
         }

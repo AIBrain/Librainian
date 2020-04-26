@@ -43,12 +43,12 @@ namespace Librainian.Exceptions {
         /// <summary>Disallow no message.</summary>
         private InvalidParameterException() { }
 
-        public InvalidParameterException( [NotNull] String message ) : base( message: message ) {
+        public InvalidParameterException( [NotNull] String message ) : base( message ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }
 
-        public InvalidParameterException( [NotNull] String message, [CanBeNull] Exception inner ) : base( message: message, innerException: inner ) {
+        public InvalidParameterException( [NotNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) {
 
             //if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
         }

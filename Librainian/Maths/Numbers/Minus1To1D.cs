@@ -81,6 +81,7 @@ namespace Librainian.Maths.Numbers {
 
         public static Minus1To1D Parse( [NotNull] String value ) => new Minus1To1D( Double.Parse( value ) );
 
+        [NotNull]
         public override String ToString() => $"{this.Value:P}";
 
     }

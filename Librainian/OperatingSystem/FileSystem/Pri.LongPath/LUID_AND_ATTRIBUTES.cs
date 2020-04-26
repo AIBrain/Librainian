@@ -36,7 +36,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
     public struct LUID_AND_ATTRIBUTES {
 
         public LUID Luid;

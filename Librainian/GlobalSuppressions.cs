@@ -62,3 +62,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Performance", "RCS1080:Use 'Count/Length' property instead of 'Any' method.", Justification = "This is the opposite of a Performance boost." )]
 [assembly: SuppressMessage( "Design", "CA1067:Override Object.Equals(object) when implementing IEquatable<T>", Justification = "Code smell." )]
 [assembly: SuppressMessage( "Performance", "CA1815:Override equals and operator equals on value types", Justification = "Um, no." )]
+[assembly: SuppressMessage( "Style", "IDE0047:Remove unnecessary parentheses" )]

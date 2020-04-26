@@ -62,8 +62,8 @@ namespace Librainian.Extensions {
             }
 
             // ReSharper disable once UnusedVariable
-            using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( path: source.FullName, mode: FileMode.Open, mapName: "why?", capacity: source.Length,
-                access: MemoryMappedFileAccess.Read ) ) { }
+            using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length,
+                MemoryMappedFileAccess.Read ) ) { }
 
             return default;
         }

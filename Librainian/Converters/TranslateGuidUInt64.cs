@@ -36,16 +36,16 @@ namespace Librainian.Converters {
     using System;
     using System.Runtime.InteropServices;
 
-    [StructLayout( layoutKind: LayoutKind.Explicit, Pack = 0 )]
+    [StructLayout( LayoutKind.Explicit, Pack = 0 )]
     public struct TranslateGuidUInt64 {
 
-        [FieldOffset( offset: 0 )] // bytes 0..15 == 16 bytes
+        [FieldOffset( 0 )] // bytes 0..15 == 16 bytes
         public Guid guid;
 
-        [FieldOffset( offset: 0 )]
+        [FieldOffset( 0 )]
         public readonly UInt64 Low;
 
-        [FieldOffset( offset: sizeof( UInt64 ) )]
+        [FieldOffset( sizeof( UInt64 ) )]
         public readonly UInt64 High;
 
         public TranslateGuidUInt64( UInt64 high, UInt64 low ) {

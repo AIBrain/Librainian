@@ -31,6 +31,8 @@
 // 
 // Project: "Librainian", File: "Disk.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
+#nullable enable
+
 namespace Librainian.ComputerSystem.Devices {
 
     using System;

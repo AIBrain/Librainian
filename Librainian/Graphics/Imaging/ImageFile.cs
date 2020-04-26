@@ -134,7 +134,7 @@ namespace Librainian.Graphics.Imaging {
                         // check the length of actual data
                         var iLength = abtTmp.Length;
 
-                        if ( abtTmp[ abtTmp.Length - 1 ] == 0 ) {
+                        if ( abtTmp[ ^1 ] == 0 ) {
                             for ( var i = abtTmp.Length - 1; i > -1; i-- ) {
                                 if ( abtTmp[ i ] == 0 ) {
                                     continue;

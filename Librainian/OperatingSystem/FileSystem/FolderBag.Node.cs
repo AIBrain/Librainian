@@ -94,6 +94,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             public override Int32 GetHashCode() => this.Data?.GetHashCode() ?? 0;
 
+            [NotNull]
             public override String ToString() => this.Data ?? Symbols.Null;
 
         }

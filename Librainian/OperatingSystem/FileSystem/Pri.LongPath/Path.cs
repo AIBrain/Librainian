@@ -151,7 +151,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 return path2;
             }
 
-            var ch = path1[ path1.Length - 1 ];
+            var ch = path1[ ^1 ];
 
             if ( ch.IsDirectorySeparator() || ( ch == VolumeSeparatorChar ) ) {
                 return path1 + path2;

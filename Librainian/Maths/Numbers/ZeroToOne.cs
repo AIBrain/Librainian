@@ -124,6 +124,7 @@ namespace Librainian.Maths.Numbers {
         [NotNull]
         public static ZeroToOne TryParse( [NotNull] String value ) => Single.TryParse( value, out var result ) ? result : MinValue;
 
+        [NotNull]
         public override String ToString() => $"{this.Value:P}";
 
     }

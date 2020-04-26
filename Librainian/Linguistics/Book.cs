@@ -47,7 +47,7 @@ namespace Librainian.Linguistics {
     /// </summary>
     [JsonObject]
     [Immutable]
-    [DebuggerDisplay( value: "{" + nameof( ToString ) + "()}" )]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
     [Serializable]
     public class Book : IEquatable<Book>, IEnumerable<(Int32, Page)> {
 
@@ -59,7 +59,7 @@ namespace Librainian.Linguistics {
         /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Pages ).GetEnumerator();
 
-        public Boolean Equals( [CanBeNull] Book other ) => Equals( left: this, right: other );
+        public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
 
         [NotNull]
         [JsonProperty]
@@ -75,17 +75,17 @@ namespace Librainian.Linguistics {
 
         public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
             if ( pages is null ) {
-                throw new ArgumentNullException( paramName: nameof( pages ) );
+                throw new ArgumentNullException( nameof( pages ) );
             }
 
             var pageNumber = 0;
 
-            foreach ( var page in pages.Where( predicate: page => page != null ) ) {
-                this.Pages[ key: pageNumber++ ] = page;
+            foreach ( var page in pages.Where( page => page != null ) ) {
+                this.Pages[ pageNumber++ ] = page;
             }
 
             if ( null != authors ) {
-                this.Authors.AddRange( range: authors.Where( predicate: author => null != author ) );
+                this.Authors.AddRange( authors.Where( author => null != author ) );
             }
         }
 
@@ -94,7 +94,7 @@ namespace Librainian.Linguistics {
         /// <param name="right"> </param>
         /// <returns></returns>
         public static Boolean Equals( [CanBeNull] Book left, [CanBeNull] Book right ) {
-            if ( ReferenceEquals( objA: left, objB: right ) ) {
+            if ( ReferenceEquals( left, right ) ) {
                 return true;
             }
 
@@ -102,13 +102,13 @@ namespace Librainian.Linguistics {
                 return default;
             }
 
-            return left.SequenceEqual( second: right ); //no authors?? No authors.
+            return left.SequenceEqual( right ); //no authors?? No authors.
         }
 
         /// <summary>Determines whether the specified object is equal to the current object.</summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns><see langword="true" /> if the specified object  is equal to the current object; otherwise, <see langword="false" />.</returns>
-        public override Boolean Equals( Object obj ) => Equals( left: this, right: obj as Book );
+        public override Boolean Equals( Object obj ) => Equals( this, obj as Book );
 
         [NotNull]
         public IEnumerable<Author> GetAuthors() => this.Authors;
@@ -118,7 +118,7 @@ namespace Librainian.Linguistics {
         public override Int32 GetHashCode() => this.Pages.GetHashCode();
 
         [NotNull]
-        public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( selector: pair => ( pair.Key, pair.Value ) );
+        public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( pair => ( pair.Key, pair.Value ) );
 
     }
 

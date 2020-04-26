@@ -121,7 +121,7 @@ namespace Librainian.Measurement.Time {
         public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
 
         [NotNull]
-        public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new SpanOfTime( picoseconds: picoseconds );
+        public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new SpanOfTime( picoseconds );
 
         public static Picoseconds operator -( Picoseconds nanoseconds ) {
             if ( nanoseconds == null ) {

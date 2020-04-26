@@ -60,12 +60,12 @@ namespace Librainian.Graphics.Video {
         public Int64 MessageBytesToHide;
 
         public CarrierImage( [NotNull] String sourceFileName, [NotNull] String resultFileName, Int64 countPixels, Int32 aviCountFrames, Boolean useGrayscale ) {
-            if ( String.IsNullOrWhiteSpace( value: sourceFileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( sourceFileName ) );
+            if ( String.IsNullOrWhiteSpace( sourceFileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sourceFileName ) );
             }
 
-            if ( String.IsNullOrWhiteSpace( value: resultFileName ) ) {
-                throw new ArgumentException( message: "Value cannot be null or whitespace.", paramName: nameof( resultFileName ) );
+            if ( String.IsNullOrWhiteSpace( resultFileName ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( resultFileName ) );
             }
 
             this.SourceFileName = sourceFileName;
@@ -80,14 +80,14 @@ namespace Librainian.Graphics.Video {
         public void SetCountBytesToHide( Int64 messageBytesToHide ) {
             this.MessageBytesToHide = messageBytesToHide;
 
-            if ( this.SourceFileName.EndsWith( value: ".avi", comparisonType: StringComparison.CurrentCultureIgnoreCase ) ) {
+            if ( this.SourceFileName.EndsWith( ".avi", StringComparison.CurrentCultureIgnoreCase ) ) {
                 this.AviMessageBytesToHide = new Int64[ this.AviCountFrames ];
 
                 //calculate count of message-bytes to hide in (or extract from) each image
                 Int64 sumBytes = 0;
 
                 for ( var n = 0; n < this.AviCountFrames; n++ ) {
-                    this.AviMessageBytesToHide[ n ] = ( Int64 ) Math.Ceiling( a: messageBytesToHide / ( Single ) this.AviCountFrames );
+                    this.AviMessageBytesToHide[ n ] = ( Int64 ) Math.Ceiling( messageBytesToHide / ( Single ) this.AviCountFrames );
                     sumBytes += this.AviMessageBytesToHide[ n ];
                 }
 

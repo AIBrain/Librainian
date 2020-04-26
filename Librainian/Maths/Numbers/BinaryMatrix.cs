@@ -79,6 +79,7 @@ namespace Librainian.Maths.Numbers {
 
         public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[ row, column ] = value;
 
+        [NotNull]
         public override String ToString() {
             var stringBuilder = new StringBuilder( this.Matrix.Length );
 

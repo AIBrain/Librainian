@@ -39,10 +39,10 @@ namespace Librainian.Parsing.Validation {
     /// <summary>contain only alphabetical (a-z) characters</summary>
     public class StringAlpha : RegexString {
 
-        public StringAlpha( String value ) : base( value: value, pattern: "^[a-zA-Z]*$" ) { }
+        public StringAlpha( String value ) : base( value, "^[a-zA-Z]*$" ) { }
 
         [NotNull]
-        public static explicit operator StringAlpha( [CanBeNull] String? str ) => new StringAlpha( value: str );
+        public static explicit operator StringAlpha( [CanBeNull] String? str ) => new StringAlpha( str );
 
     }
 

@@ -47,22 +47,22 @@ namespace Librainian.Internet {
 
         public const Int32 MaxAdapterNameLength = 256;
 
-        [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct IPAdapterInfo {
 
             internal IntPtr Next;
 
             public readonly Int32 ComboIndex;
 
-            [MarshalAs( unmanagedType: UnmanagedType.ByValTStr, SizeConst = MaxAdapterNameLength + 4 )]
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterNameLength + 4 )]
             public readonly String AdapterName;
 
-            [MarshalAs( unmanagedType: UnmanagedType.ByValTStr, SizeConst = MaxAdapterDescriptionLength + 4 )]
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterDescriptionLength + 4 )]
             public readonly String AdapterDescription;
 
             public UInt32 AddressLength;
 
-            [MarshalAs( unmanagedType: UnmanagedType.ByValArray, SizeConst = MaxAdapterAddressLength )]
+            [MarshalAs( UnmanagedType.ByValArray, SizeConst = MaxAdapterAddressLength )]
             public Byte[] Address;
 
             public Int32 Index;
@@ -91,15 +91,15 @@ namespace Librainian.Internet {
 
         }
 
-        [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct IPAddressString {
 
-            [MarshalAs( unmanagedType: UnmanagedType.ByValTStr, SizeConst = 16 )]
+            [MarshalAs( UnmanagedType.ByValTStr, SizeConst = 16 )]
             public readonly String Address;
 
         }
 
-        [StructLayout( layoutKind: LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+        [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
         public struct IPAddrString {
 
             private readonly IntPtr Next;

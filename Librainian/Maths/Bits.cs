@@ -44,29 +44,29 @@ namespace Librainian.Maths {
 
         private static UInt64 ToUInt64( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return BitConverter.ToUInt64( value: Order( value: value ), startIndex: startIndex );
+            return BitConverter.ToUInt64( Order( value ), startIndex );
         }
 
         [NotNull]
-        public static Byte[] GetBytes( this Int16 value ) => Order( value: BitConverter.GetBytes( value: value ) );
+        public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this UInt16 value ) => Order( value: BitConverter.GetBytes( value: value ) );
+        public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this Int32 value ) => Order( value: BitConverter.GetBytes( value: value ) );
+        public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this UInt32 value ) => Order( value: BitConverter.GetBytes( value: value ) );
+        public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this Int64 value ) => Order( value: BitConverter.GetBytes( value: value ) );
+        public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
-        public static Byte[] GetBytes( this UInt64 value ) => Order( value: BitConverter.GetBytes( value: value ) );
+        public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
 
         [NotNull]
         public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
@@ -74,7 +74,7 @@ namespace Librainian.Maths {
         [NotNull]
         public static Byte[] Order( [NotNull] this Byte[] value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
             return IsLittleEndian ? value : value.Reverse().ToArray();
@@ -82,43 +82,43 @@ namespace Librainian.Maths {
 
         public static Int32 ToInt32( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return BitConverter.ToInt32( value: Order( value: value ), startIndex: startIndex );
+            return BitConverter.ToInt32( Order( value ), startIndex );
         }
 
         [NotNull]
         public static String ToString( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return BitConverter.ToString( value: Order( value: value ), startIndex: startIndex );
+            return BitConverter.ToString( Order( value ), startIndex );
         }
 
         public static UInt16 ToUInt16( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return BitConverter.ToUInt16( value: Order( value: value ), startIndex: startIndex );
+            return BitConverter.ToUInt16( Order( value ), startIndex );
         }
 
         public static UInt256 ToUInt256( [NotNull] this Byte[] value ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return new UInt256( value: value );
+            return new UInt256( value );
         }
 
         public static UInt32 ToUInt32( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
             if ( value == null ) {
-                throw new ArgumentNullException( paramName: nameof( value ) );
+                throw new ArgumentNullException( nameof( value ) );
             }
 
-            return BitConverter.ToUInt32( value: Order( value: value ), startIndex: startIndex );
+            return BitConverter.ToUInt32( Order( value ), startIndex );
         }
 
     }

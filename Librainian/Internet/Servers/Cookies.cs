@@ -68,7 +68,7 @@ namespace Librainian.Internet.Servers {
                 }
 
                 var name = s.Substring( 0, idxEquals ).Trim();
-                var value = s.Substring( startIndex: idxEquals + 1 ).Trim();
+                var value = s.Substring( idxEquals + 1 ).Trim();
                 cookies.Add( name, value );
             }
 
@@ -97,7 +97,7 @@ namespace Librainian.Internet.Servers {
         /// <param name="name">The name of the cookie.</param>
         /// <returns></returns>
         [CanBeNull]
-        public Cookie? Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, value: out var cookie ) ? cookie : null;
+        public Cookie? Get( [NotNull] String name ) => this._cookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
         /// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
         /// <param name="name">The name of the cookie.</param>

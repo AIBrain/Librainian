@@ -61,11 +61,11 @@ namespace Librainian.OperatingSystem.Compression {
             while ( counter-- > 0 ) {
 
                 //Trace.WriteLine( $"Generating {bufferLength} bytes of data.." );
-                Randem.NextBytes( buffer: ref buffer );
+                Randem.NextBytes( ref buffer );
 
                 //Trace.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
                 //var before = RandomnessFeeding.HowManyBytesFed;
-                RandomnessFeeding.FeedItData( data: buffer );
+                RandomnessFeeding.FeedItData( buffer );
 
                 //var after = RandomnessFeeding.HowManyBytesFed;
 

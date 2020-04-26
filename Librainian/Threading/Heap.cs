@@ -52,19 +52,19 @@ namespace Librainian.Threading {
 
         }
 
-        [DllImport( dllName: "kernel32.dll", SetLastError = true )]
+        [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern IntPtr GetProcessHeap();
 
-        [DllImport( dllName: "kernel32.dll", SetLastError = true )]
+        [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern IntPtr HeapAlloc( IntPtr hHeap, HeapFlags dwFlags, UInt32 dwSize );
 
-        [DllImport( dllName: "kernel32.dll", SetLastError = true )]
+        [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern IntPtr HeapCreate( HeapFlags flOptions, UInt32 dwInitialsize, UInt32 dwMaximumSize );
 
-        [DllImport( dllName: "kernel32.dll", SetLastError = true )]
+        [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern Boolean HeapDestroy( IntPtr hHeap );
 
-        [DllImport( dllName: "kernel32.dll", SetLastError = true )]
+        [DllImport( "kernel32.dll", SetLastError = true )]
         public static extern Boolean HeapFree( IntPtr hHeap, HeapFlags dwFlags, IntPtr lpMem );
 
     }

@@ -42,7 +42,6 @@ namespace Librainian.Maths {
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
-    using System.Windows.Media.Media3D;
     using Collections.Extensions;
     using JetBrains.Annotations;
     using Measurement.Time;
@@ -180,7 +179,7 @@ namespace Librainian.Maths {
         public static Byte[] Concat( [NotNull] this Byte[] first, Byte second ) {
             var buffer = new Byte[ first.Length + 1 ];
             Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
-            buffer[ buffer.Length - 1 ] = second;
+            buffer[ ^1 ] = second;
 
             return buffer;
         }
@@ -773,10 +772,12 @@ namespace Librainian.Maths {
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean Near( this Point here, Point there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
 
+        /*
         [DebuggerStepThrough]
         [Pure]
         [MethodImpl( MethodImplOptions.AggressiveInlining )]
         public static Boolean Near( this Point3D here, Point3D there ) => here.X.Near( there.X ) && here.Y.Near( there.Y ) && here.Z.Near( there.Z );
+        */
 
         [DebuggerStepThrough]
         [Pure]

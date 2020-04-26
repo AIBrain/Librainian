@@ -38,6 +38,7 @@ namespace Librainian.Threading {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using JetBrains.Annotations;
 
     /// <summary></summary>
     /// <example>
@@ -76,9 +77,10 @@ namespace Librainian.Threading {
             GC.SuppressFinalize( this );
         }
 
+        [CanBeNull]
         protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
 
-        protected override void QueueTask( Task task ) {
+        protected override void QueueTask( [CanBeNull] Task task ) {
             this._tasks.Add( task );
 
             if ( this._threads != null ) {
@@ -100,7 +102,7 @@ namespace Librainian.Threading {
             }
         }
 
-        protected override Boolean TryExecuteTaskInline( Task task, Boolean taskWasPreviouslyQueued ) => false;
+        protected override Boolean TryExecuteTaskInline( [CanBeNull] Task task, Boolean taskWasPreviouslyQueued ) => false;
 
     }
 

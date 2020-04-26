@@ -160,6 +160,7 @@ namespace Librainian.Maths.Numbers {
             this.Total += byAmount;
         }
 
+        [NotNull]
         public override String ToString() => $"U:{this.Ups:f1} vs D:{this.Downs:f1} out of {this.Total:f1}";
 
     }

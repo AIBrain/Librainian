@@ -46,17 +46,17 @@ namespace Librainian.Measurement.Time.Clocks {
 
         public const Int32 MinValue = 0;
 
-        public static Millisecond Maximum { get; } = new Millisecond( value: MaxValue );
+        public static Millisecond Maximum { get; } = new Millisecond( MaxValue );
 
-        public static Millisecond Minimum { get; } = new Millisecond( value: MinValue );
+        public static Millisecond Minimum { get; } = new Millisecond( MinValue );
 
         [JsonProperty]
         public Int16 Value { get; }
 
         public Millisecond( Int16 value ) {
             if ( ( value < MinValue ) || ( value > MaxValue ) ) {
-                throw new ArgumentOutOfRangeException( paramName: nameof( value ),
-                    message: $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+                throw new ArgumentOutOfRangeException( nameof( value ),
+                    $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
             }
 
             this.Value = value;
@@ -69,7 +69,7 @@ namespace Librainian.Measurement.Time.Clocks {
         /// <returns></returns>
         public static implicit operator Int16( Millisecond value ) => value.Value;
 
-        public static implicit operator Millisecond( Int16 value ) => new Millisecond( value: value );
+        public static implicit operator Millisecond( Int16 value ) => new Millisecond( value );
 
         /// <summary>Provide the next <see cref="Millisecond" />.</summary>
         public Millisecond Next( out Boolean ticked ) {

@@ -46,22 +46,22 @@ namespace Librainian.Exceptions {
 
         public ImmutableFailureException() { }
 
-        public ImmutableFailureException( [CanBeNull] String? message ) : base( message: message ) { }
+        public ImmutableFailureException( [CanBeNull] String? message ) : base( message ) { }
 
-        public ImmutableFailureException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message: message, innerException: innerException ) { }
+        public ImmutableFailureException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
 
-        public ImmutableFailureException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( info: serializationInfo,
-            context: streamingContext ) {
+        public ImmutableFailureException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo,
+            streamingContext ) {
             if ( serializationInfo is null ) {
-                throw new ArgumentNullException( paramName: nameof( serializationInfo ) );
+                throw new ArgumentNullException( nameof( serializationInfo ) );
             }
         }
 
         public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message, [CanBeNull] Exception inner ) :
-            base( message: message, innerException: inner ) =>
+            base( message, inner ) =>
             this.Type = type;
 
-        public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message ) : base( message: message ) => this.Type = type;
+        public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message ) : base( message ) => this.Type = type;
 
     }
 

@@ -38,7 +38,7 @@ namespace Librainian.Databases {
     using System.Data;
     using System.Linq.Expressions;
     using JetBrains.Annotations;
-    using Microsoft.Data.SqlClient;
+    using System.Data.SqlClient;
     using Parsing;
 
     public static class GenericPopulator<T> {

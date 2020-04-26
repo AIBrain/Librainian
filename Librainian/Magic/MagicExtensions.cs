@@ -93,10 +93,10 @@ namespace Librainian.Magic {
             } );
         */
 
-        /// <summary>If <paramref name="b" /> is <see cref="Boolean.True" /> then perform the <paramref name="action" />.</summary>
+        /// <summary>If <paramref name="b" /> is true then perform the <paramref name="action" />.</summary>
         /// <param name="b"></param>
         /// <param name="action"></param>
-        public static void Then( this Boolean b, [NotNull] Action action ) {
+        public static void IfTrueThen( this Boolean b, [NotNull] Action action ) {
             if ( action is null ) {
                 throw new ArgumentNullException( nameof( action ) );
             }

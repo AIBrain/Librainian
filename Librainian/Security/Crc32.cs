@@ -64,10 +64,10 @@ namespace Librainian.Security {
 
         private static UInt32[] _defaultTable;
 
-        public CRC32() : this( polynomial: DefaultPolynomial, seed: DefaultSeed ) { }
+        public CRC32() : this( DefaultPolynomial, DefaultSeed ) { }
 
         public CRC32( UInt32 polynomial, UInt32 seed ) {
-            this.Table = InitializeTable( polynomial: polynomial );
+            this.Table = InitializeTable( polynomial );
             this.Seed = this._hash = seed;
         }
 
@@ -102,11 +102,11 @@ namespace Librainian.Security {
         }
 
         protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) =>
-            this._hash = CalculateHash( table: this.Table, seed: this._hash, buffer: buffer, start: start, size: length );
+            this._hash = CalculateHash( this.Table, this._hash, buffer, start, length );
 
         [NotNull]
         protected override Byte[] HashFinal() {
-            var hashBuffer = UInt32ToBigEndianBytes( uint32: ~this._hash );
+            var hashBuffer = UInt32ToBigEndianBytes( ~this._hash );
             this.HashValue = hashBuffer;
 
             return hashBuffer;
@@ -123,25 +123,25 @@ namespace Librainian.Security {
             var crc = seed;
 
             for ( var i = start; i < ( size - start ); i++ ) {
-                crc = ( crc >> 8 ) ^ table[ buffer[ index: i ] ^ ( crc & 0xff ) ];
+                crc = ( crc >> 8 ) ^ table[ buffer[ i ] ^ ( crc & 0xff ) ];
             }
 
             return crc;
         }
 
-        public static UInt32 Compute( [NotNull] Byte[] buffer ) => Compute( seed: DefaultSeed, buffer: buffer );
+        public static UInt32 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
-        public static UInt32 Compute( UInt32 seed, [NotNull] Byte[] buffer ) => Compute( polynomial: DefaultPolynomial, seed: seed, buffer: buffer );
+        public static UInt32 Compute( UInt32 seed, [NotNull] Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
 
         public static UInt32 Compute( UInt32 polynomial, UInt32 seed, [NotNull] Byte[] buffer ) =>
-            ~CalculateHash( table: InitializeTable( polynomial: polynomial ), seed: seed, buffer: buffer, start: 0, size: buffer.Length );
+            ~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 
         [NotNull]
         public static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
-            var result = BitConverter.GetBytes( value: uint32 );
+            var result = BitConverter.GetBytes( uint32 );
 
             if ( BitConverter.IsLittleEndian ) {
-                Array.Reverse( array: result );
+                Array.Reverse( result );
             }
 
             return result;
