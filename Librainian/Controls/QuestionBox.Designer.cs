@@ -1,4 +1,5 @@
-﻿namespace Librainian.Controls {
+﻿#if !NETSTANDARD
+namespace Librainian.Controls {
     partial class QuestionBox {
         /// <summary>
         /// Required designer variable.
@@ -38,7 +39,7 @@
             this.buttonOkay.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.buttonOkay.Name = "buttonOkay";
             this.buttonOkay.Size = new System.Drawing.Size(137, 42);
-            this.buttonOkay.TabIndex = 0;
+            this.buttonOkay.TabIndex = 1;
             this.buttonOkay.Text = "Okay";
             this.buttonOkay.UseVisualStyleBackColor = true;
             this.buttonOkay.Click += new System.EventHandler(this.buttonOkay_Click);
@@ -51,7 +52,7 @@
             this.buttonCancel.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(137, 42);
-            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.TabIndex = 2;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -68,6 +69,7 @@
             this.richTextBoxQuestion.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.richTextBoxQuestion.Size = new System.Drawing.Size(878, 250);
             this.richTextBoxQuestion.TabIndex = 3;
+            this.richTextBoxQuestion.TabStop = false;
             this.richTextBoxQuestion.Text = " \n \n \n \n ";
             // 
             // textBoxInput
@@ -78,7 +80,7 @@
             this.textBoxInput.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.textBoxInput.Name = "textBoxInput";
             this.textBoxInput.Size = new System.Drawing.Size(565, 29);
-            this.textBoxInput.TabIndex = 4;
+            this.textBoxInput.TabIndex = 0;
             this.textBoxInput.VisibleChanged += new System.EventHandler(this.textBoxInput_VisibleChanged);
             // 
             // flowLayoutPanel1
@@ -131,3 +133,4 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }
+#endif

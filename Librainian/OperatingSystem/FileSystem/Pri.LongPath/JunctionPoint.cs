@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "JunctionPoint.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "JunctionPoint.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -182,8 +176,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
             try {
-                var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0, outBuffer, outBufferSize, out var bytesReturned,
-                    IntPtr.Zero );
+                var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT, IntPtr.Zero, 0,
+                    outBuffer, outBufferSize, out var bytesReturned, IntPtr.Zero );
 
                 if ( !result ) {
                     var error = Marshal.GetLastWin32Error();
@@ -201,7 +195,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                     return null;
                 }
 
-                var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
+                var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset,
+                    reparseDataBuffer.SubstituteNameLength );
 
                 if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
                     targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length );
@@ -216,10 +211,10 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         [NotNull]
         private static SafeFileHandle OpenReparsePoint( [NotNull] String reparsePoint, EFileAccess accessMode ) {
-            var reparsePointHandle =
-                new SafeFileHandle(
-                    CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete, IntPtr.Zero, ECreationDisposition.OpenExisting,
-                        EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero ), true );
+            var reparsePointHandle = new SafeFileHandle(
+                CreateFile( reparsePoint, accessMode, EFileShare.Read | EFileShare.Write | EFileShare.Delete,
+                    IntPtr.Zero, ECreationDisposition.OpenExisting,
+                    EFileAttributes.BackupSemantics | EFileAttributes.OpenReparsePoint, IntPtr.Zero ), true );
 
             if ( Marshal.GetLastWin32Error() != 0 ) {
                 ThrowLastWin32Error( "Unable to open reparse point." );
@@ -228,7 +223,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             return reparsePointHandle;
         }
 
-        private static void ThrowLastWin32Error( [NotNull] String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
+        private static void ThrowLastWin32Error( [NotNull] String message ) =>
+            throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
 
         /// <summary>Creates a junction point from the specified directory to the specified target directory.</summary>
         /// <remarks>Only works on NTFS.</remarks>
@@ -252,39 +248,40 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 junctionPoint.CreateDirectory();
             }
 
-            using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite ) ) {
-                var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + targetDir.GetFullPath() );
+			using var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite );
 
-                var reparseDataBuffer = new REPARSE_DATA_BUFFER {
-                    ReparseTag = IO_REPARSE_TAG_MOUNT_POINT,
-                    ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
-                    SubstituteNameOffset = 0,
-                    SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
-                    PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
-                    PrintNameLength = 0,
-                    PathBuffer = new Byte[ 0x3ff0 ]
-                };
+			var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + targetDir.GetFullPath() );
 
-                Array.Copy( targetDirBytes, reparseDataBuffer.PathBuffer, targetDirBytes.Length );
+			var reparseDataBuffer = new REPARSE_DATA_BUFFER {
+				ReparseTag = IO_REPARSE_TAG_MOUNT_POINT,
+				ReparseDataLength = ( UInt16 ) ( targetDirBytes.Length + 12 ),
+				SubstituteNameOffset = 0,
+				SubstituteNameLength = ( UInt16 ) targetDirBytes.Length,
+				PrintNameOffset = ( UInt16 ) ( targetDirBytes.Length + 2 ),
+				PrintNameLength = 0,
+				PathBuffer = new Byte[ 0x3ff0 ]
+			};
 
-                var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
-                var inBuffer = Marshal.AllocHGlobal( inBufferSize );
+			Array.Copy( targetDirBytes, reparseDataBuffer.PathBuffer, targetDirBytes.Length );
 
-                try {
-                    Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
+			var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
+			var inBuffer = Marshal.AllocHGlobal( inBufferSize );
 
-                    var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, inBuffer, targetDirBytes.Length + 20, IntPtr.Zero, 0,
-                        out var bytesReturned, IntPtr.Zero );
+			try {
+				Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
-                    if ( !result ) {
-                        ThrowLastWin32Error( "Unable to create junction point." );
-                    }
-                }
-                finally {
-                    Marshal.FreeHGlobal( inBuffer );
-                }
-            }
-        }
+				var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, inBuffer,
+											  targetDirBytes.Length + 20, IntPtr.Zero, 0, out var bytesReturned,
+											  IntPtr.Zero );
+
+				if ( !result ) {
+					ThrowLastWin32Error( "Unable to create junction point." );
+				}
+			}
+			finally {
+				Marshal.FreeHGlobal( inBuffer );
+			}
+		}
 
         /// <summary>Deletes a junction point at the specified source directory along with the directory itself. Does nothing if the junction point does not exist.</summary>
         /// <remarks>Only works on NTFS.</remarks>
@@ -298,35 +295,36 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 return;
             }
 
-            using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite ) ) {
-                var reparseDataBuffer = new REPARSE_DATA_BUFFER {
-                    ReparseTag = IO_REPARSE_TAG_MOUNT_POINT, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ]
-                };
+			using var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericWrite );
 
-                var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
-                var inBuffer = Marshal.AllocHGlobal( inBufferSize );
+			var reparseDataBuffer = new REPARSE_DATA_BUFFER {
+				ReparseTag = IO_REPARSE_TAG_MOUNT_POINT, ReparseDataLength = 0, PathBuffer = new Byte[ 0x3ff0 ]
+			};
 
-                try {
-                    Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
+			var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
+			var inBuffer = Marshal.AllocHGlobal( inBufferSize );
 
-                    var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_DELETE_REPARSE_POINT, inBuffer, 8, IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
+			try {
+				Marshal.StructureToPtr( reparseDataBuffer, inBuffer, false );
 
-                    if ( !result ) {
-                        ThrowLastWin32Error( "Unable to delete junction point." );
-                    }
-                }
-                finally {
-                    Marshal.FreeHGlobal( inBuffer );
-                }
+				var result = DeviceIoControl( handle.DangerousGetHandle(), FSCTL_DELETE_REPARSE_POINT, inBuffer, 8,
+											  IntPtr.Zero, 0, out var bytesReturned, IntPtr.Zero );
 
-                try {
-                    Directory.Delete( junctionPoint );
-                }
-                catch ( IOException ex ) {
-                    throw new IOException( "Unable to delete junction point.", ex );
-                }
-            }
-        }
+				if ( !result ) {
+					ThrowLastWin32Error( "Unable to delete junction point." );
+				}
+			}
+			finally {
+				Marshal.FreeHGlobal( inBuffer );
+			}
+
+			try {
+				Directory.Delete( junctionPoint );
+			}
+			catch ( IOException ex ) {
+				throw new IOException( "Unable to delete junction point.", ex );
+			}
+		}
 
         /// <summary>Determines whether the specified path exists and refers to a junction point.</summary>
         /// <param name="path">The junction point path</param>
@@ -339,12 +337,12 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 return false;
             }
 
-            using ( var handle = OpenReparsePoint( path.ThrowIfBlank(), EFileAccess.GenericRead ) ) {
-                var target = InternalGetTarget( handle );
+			using var handle = OpenReparsePoint( path.ThrowIfBlank(), EFileAccess.GenericRead );
 
-                return target != null;
-            }
-        }
+			var target = InternalGetTarget( handle );
+
+			return target != null;
+		}
 
         /// <summary>Gets the target of the specified junction point.</summary>
         /// <remarks>Only works on NTFS.</remarks>
@@ -353,16 +351,16 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="IOException">Thrown when the specified path does not exist, is invalid, is not a junction point, or some other error occurs</exception>
         [NotNull]
         public static String GetTarget( [NotNull] String junctionPoint ) {
-            using ( var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericRead ) ) {
-                var target = InternalGetTarget( handle );
+			using var handle = OpenReparsePoint( junctionPoint, EFileAccess.GenericRead );
 
-                if ( target == null ) {
-                    throw new IOException( "Path is not a junction point." );
-                }
+			var target = InternalGetTarget( handle );
 
-                return target;
-            }
-        }
+			if ( target == null ) {
+				throw new IOException( "Path is not a junction point." );
+			}
+
+			return target;
+		}
 
         [StructLayout( LayoutKind.Sequential )]
         private struct REPARSE_DATA_BUFFER {

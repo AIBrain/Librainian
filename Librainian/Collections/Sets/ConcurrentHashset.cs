@@ -1,179 +1,166 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ConcurrentHashset.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "ConcurrentHashset.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
+
+#nullable enable
 
 namespace Librainian.Collections.Sets {
 
-    using System;
-    using System.Collections;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using JetBrains.Annotations;
-    using Librainian.Extensions;
-    using Newtonsoft.Json;
+	using System;
+	using System.Collections;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
 
-    /// <summary>Threadsafe set. Does not allow nulls inside the set.
-    /// <para>Add will not throw an <see cref="ArgumentNullException" /> on <see cref="Add" />ing a null.</para>
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <remarks>Class designed by Rick Harker</remarks>
-    /// //TODO someday add in set theory.. someday.. ISet
-    [Serializable]
-    [JsonObject]
-    public class ConcurrentHashset<T> : IEnumerable<T> {
+	/// <summary>Threadsafe set. Does not allow nulls inside the set.
+	/// <para>Add will not throw an <see cref="ArgumentNullException" /> on <see cref="Add" />ing a null.</para>
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <remarks>Class designed by Rick Harker</remarks>
+	/// //TODO someday add in set theory.. someday.. ISet
+	[Serializable]
+	[JsonObject]
+	public class ConcurrentHashset<T> : IEnumerable<T> {
 
-        public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
+		[JsonProperty]
+		[NotNull]
+		private ConcurrentDictionary<T, Object> Set { get; }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		public Int32 Count => this.Set.Count;
 
-        [JsonProperty]
-        [NotNull]
-        private ConcurrentDictionary<T, Object> Set { get; }
+		/// <summary>Gets the item in the set *at this point in time* (snapshot).</summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public T this[ Int32 index ] {
+			[CanBeNull]
+			get {
+				var list = this.Set.Keys.ToList();
 
-        public Int32 Count => this.Set.Count;
+				return (index.Between( 0, list.Count ) ? list[ index ] : default)!;
+			}
+		}
 
-        /// <summary>Gets the item in the set *at this point in time* (snapshot).</summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public T this[ Int32 index ] {
-            [CanBeNull]
-            get {
-                var list = this.Set.Keys.ToList();
+		[DebuggerStepThrough]
+		public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) => this.AddRange( list );
 
-                return index.Between( 0, list.Count ) ? list[ index ] : default;
-            }
-        }
+		[DebuggerStepThrough]
+		public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object>( concurrency, capacity );
 
-        [DebuggerStepThrough]
-        public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) {
-            if ( list is null ) {
-                throw new ArgumentNullException( nameof( list ) );
-            }
+		[DebuggerStepThrough]
+		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object>();
 
-            this.AddRange( list );
-        }
+		[DebuggerStepThrough]
+		public void Add( [CanBeNull] T item ) {
+			if ( item is null ) {
+				return;
+			}
 
-        [DebuggerStepThrough]
-        public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object>( concurrency, capacity );
+			this.Set[ item ] = null;
+		}
 
-        [DebuggerStepThrough]
-        public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object>();
+		[DebuggerStepThrough]
+		public void AddRange( [NotNull] IEnumerable<T> items ) {
+			if ( items is null ) {
+				throw new ArgumentNullException( nameof( items ) );
+			}
 
-        [DebuggerStepThrough]
-        public void Add( [CanBeNull] T item ) {
-            if ( item is null ) {
-                return;
-            }
+			Parallel.ForEach( items.AsParallel(), this.Add );
+		}
 
-            this.Set[ item ] = null;
-        }
+		[DebuggerStepThrough]
+		public void Clear() => this.Set.Clear();
 
-        [DebuggerStepThrough]
-        public void AddRange( [NotNull] IEnumerable<T> items ) {
-            if ( items is null ) {
-                throw new ArgumentNullException( nameof( items ) );
-            }
+		[DebuggerStepThrough]
+		public Boolean Contains( [NotNull] T item ) {
+			if ( item is null ) {
+				throw new ArgumentNullException( nameof( item ) );
+			}
 
-            Parallel.ForEach( items.AsParallel(), this.Add );
-        }
+			return this.Set.ContainsKey( item );
+		}
 
-        [DebuggerStepThrough]
-        public void Clear() => this.Set.Clear();
+		public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
 
-        [DebuggerStepThrough]
-        public Boolean Contains( [NotNull] T item ) {
-            if ( item is null ) {
-                throw new ArgumentNullException( nameof( item ) );
-            }
+		[DebuggerStepThrough]
+		public Boolean Remove( [NotNull] T item ) {
+			if ( item is null ) {
+				throw new ArgumentNullException( nameof( item ) );
+			}
 
-            return this.Set.ContainsKey( item );
-        }
+			return this.Set.TryRemove( item, out _ );
+		}
 
-        [DebuggerStepThrough]
-        public Boolean Remove( [NotNull] T item ) {
-            if ( item is null ) {
-                throw new ArgumentNullException( nameof( item ) );
-            }
+		/// <summary>Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" /> <paramref name="right" />)</summary>
+		/// <param name="left"> </param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public void Replace( [CanBeNull] T left, [CanBeNull] T right ) {
 
-            return this.Set.TryRemove( item, out _ );
-        }
+			if ( !( left is null ) ) {
+				this.Remove( left );
+			}
 
-        /// <summary>Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" /> <paramref name="right" />)</summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public void Replace( [CanBeNull] T left, [CanBeNull] T right ) {
+			if ( !( right is null ) ) {
+				this.Add( right );
+			}
+		}
 
-            if ( !( left is null ) ) {
-                this.Remove( left );
-            }
+		/// <summary>Set the tag on an item.</summary>
+		/// <param name="item"></param>
+		/// <param name="tag"></param>
+		/// <returns></returns>
+		public Boolean Tag( [NotNull] T item, [CanBeNull] Object? tag ) {
+			if ( item is null ) {
+				throw new ArgumentNullException( nameof( item ) );
+			}
 
-            if ( !( right is null ) ) {
-                this.Add( right );
-            }
-        }
+			this.Set[ item ] = tag;
 
-        /// <summary>Set the tag on an item.</summary>
-        /// <param name="item"></param>
-        /// <param name="tag"></param>
-        /// <returns></returns>
-        public Boolean Tag( [NotNull] T item, [CanBeNull] Object tag ) {
-            if ( item is null ) {
-                throw new ArgumentNullException( nameof( item ) );
-            }
+			return true;
+		}
 
-            this.Set[ item ] = tag;
+		/// <summary>Get the tag on an item.</summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public Object Tag( [NotNull] T item ) {
+			if ( item is null ) {
+				throw new ArgumentNullException( nameof( item ) );
+			}
 
-            return true;
-        }
+			this.Set.TryGetValue( item, out var tag );
 
-        /// <summary>Get the tag on an item.</summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public Object Tag( [NotNull] T item ) {
-            if ( item is null ) {
-                throw new ArgumentNullException( nameof( item ) );
-            }
+			return tag;
+		}
 
-            this.Set.TryGetValue( item, out var tag );
-
-            return tag;
-        }
-
-    }
-
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+	}
 }

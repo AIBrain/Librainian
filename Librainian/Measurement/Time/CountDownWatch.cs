@@ -1,116 +1,91 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "CountDownWatch.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "CountDownWatch.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
+﻿#nullable enable
 
 namespace Librainian.Measurement.Time {
 
-    using System;
-    using System.Timers;
-    using JetBrains.Annotations;
-    using Logging;
-    using Newtonsoft.Json;
-    using Threading;
+	using System;
+	using JetBrains.Annotations;
+	using Logging;
+	using Newtonsoft.Json;
+	using Threading;
+	using Threadsafe;
 
-    /// <summary>The 'reverse' of the Stopwatch class. //TODO needs unit testing.</summary>
-    [JsonObject( MemberSerialization.Fields )]
-    public class CountDownWatch {
+	/// <summary>
+	///     The 'reverse' of the Stopwatch struct.
+	///     <remarks>
+	///         //TODO needs unit testing.
+	///     </remarks>
+	/// </summary>
+	[JsonObject( MemberSerialization.Fields )]
+	public class CountDownWatch {
 
-        [NotNull]
-        private Action Liftoff { get; }
+		/// <summary></summary>
+		/// <param name="countdown"></param>
+		/// <param name="liftoff">Action to invoke when countdown reaches zero.</param>
+		public CountDownWatch( TimeSpan countdown, [CanBeNull] Action? liftoff = null ) {
+			if ( countdown < TimeSpan.Zero ) {
+				throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." );
+			}
 
-        private Timer Timer { get; set; }
+			this.Countdown = countdown;
+			this.TargetTime = DateTime.UtcNow.Add( this.Countdown );
 
-        public TimeSpan Countdown { get; }
+			this.Liftoff = () => {
+				try {
+					this.HasLaunched = true;
+					liftoff?.Invoke();
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+			};
 
-        public Boolean HasLaunched { get; private set; }
+			this.Timer = this.Countdown.CreateTimer( () => {
+				this.Stop();
+				this.Liftoff();
+			} ).Once();
+		}
 
-        public Boolean IsRunning { get; private set; }
+		[NotNull]
+		private Action Liftoff { get; }
 
-        public DateTime TargetTime { get; private set; }
+		private FluentTimer Timer { get; set; }
 
-        public DateTime WhenStarted { get; private set; }
+		public TimeSpan Countdown { get; }
 
-        public DateTime WhenStopped { get; private set; }
+		public VolatileBoolean HasLaunched { get; private set; }
 
-        /// <summary></summary>
-        /// <param name="countdown"></param>
-        /// <param name="liftoff">Action to invoke when countdown reaches zero.</param>
-        public CountDownWatch( TimeSpan countdown, [CanBeNull] Action liftoff = null ) {
-            if ( countdown < TimeSpan.Zero ) {
-                throw new ArgumentOutOfRangeException( nameof( countdown ), "Must be a positive value." );
-            }
+		public VolatileBoolean IsRunning { get; private set; }
 
-            this.Countdown = countdown;
-            this.TargetTime = DateTime.UtcNow.Add( this.Countdown );
+		public DateTime TargetTime { get; private set; }
 
-            this.Liftoff = () => {
-                try {
-                    this.HasLaunched = true;
-                    liftoff?.Invoke();
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-                }
-            };
-        }
+		public DateTime WhenStarted { get; private set; }
 
-        public TimeSpan Remaining() {
-            if ( this.IsRunning ) {
-                return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted );
-            }
+		public DateTime WhenStopped { get; private set; }
 
-            if ( this.HasLaunched ) {
-                return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted );
-            }
+		public TimeSpan Remaining() {
+			if ( this.IsRunning ) {
+				return this.Countdown.Subtract( DateTime.UtcNow - this.WhenStarted );
+			}
 
-            throw new InvalidOperationException( "???" );
-        }
+			if ( this.HasLaunched ) {
+				return this.Countdown.Subtract( this.WhenStopped - this.WhenStarted );
+			}
 
-        public void Start() {
-            this.WhenStarted = DateTime.UtcNow;
-            this.IsRunning = true;
+			throw new InvalidOperationException( "???" );
+		}
 
-            this.Timer = this.Countdown.Create( () => {
-                this.Stop();
-                this.Liftoff();
-            } ).Once().Begin();
-        }
+		public void Start() {
+			this.WhenStarted = DateTime.UtcNow;
+			this.IsRunning = true;
+			this.Timer.Start();
+		}
 
-        public void Stop() {
-            this.IsRunning = false;
-            this.WhenStopped = DateTime.UtcNow;
-            this.Timer.Stop();
-        }
+		public void Stop() {
+			this.IsRunning = false;
+			this.WhenStopped = DateTime.UtcNow;
+			this.Timer.Stop();
+		}
 
-    }
+	}
 
 }

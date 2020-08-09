@@ -1,35 +1,29 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "IniFile.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "IniFile.cs" was last formatted by Protiguous on 2020/03/18 at 10:28 AM.
 
 namespace Librainian.Persistence.InIFiles {
 
@@ -59,7 +53,7 @@ namespace Librainian.Persistence.InIFiles {
         public IEnumerable<String> Sections => this.Data.Keys;
 
         [CanBeNull]
-        public IniSection this[ [CanBeNull] String? section ] {
+        public IniSection this[ [CanBeNull] String section ] {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
@@ -96,7 +90,7 @@ namespace Librainian.Persistence.InIFiles {
         }
 
         [CanBeNull]
-        public String this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
+        public String this[ [CanBeNull] String section, [CanBeNull] String key ] {
             [DebuggerStepThrough]
             [CanBeNull]
             get {
@@ -170,7 +164,7 @@ namespace Librainian.Persistence.InIFiles {
         private static String Encode( [NotNull] String section ) => $"{SectionBegin}{section.TrimStart()}{SectionEnd}";
 
         [CanBeNull]
-        private IniSection? EnsureDataSection( [NotNull] String section ) {
+        private IniSection EnsureDataSection( [NotNull] String section ) {
             if ( String.IsNullOrEmpty( section ) ) {
                 throw new ArgumentException( "Value cannot be null or empty.", nameof( section ) );
             }
@@ -256,24 +250,22 @@ namespace Librainian.Persistence.InIFiles {
                 throw new ArgumentNullException( nameof( section ) );
             }
 
-            if ( !this.Data.TryGetValue( section, out var dict ) || dict is null ) {
+            if ( !this.Data.TryGetValue( section, out var dict ) ) {
                 return default; //section not found
             }
 
             try {
-                using ( var writer = File.AppendText( document.FullPath ) ) {
-                    writer.WriteLine( Encode( section ) );
+				using var writer = File.AppendText( document.FullPath );
 
-                    foreach ( var pair in dict.OrderBy( pair => pair?.Key ) ) {
-                        if ( pair != null ) {
-                            writer.WriteLine( Encode( pair ) );
-                        }
-                    }
+				writer.WriteLine( Encode( section ) );
 
-                    writer.WriteLine( String.Empty );
-                }
+				foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
+					writer.WriteLine( Encode( pair ) );
+				}
 
-                return true;
+				writer.WriteLine( String.Empty );
+
+				return true;
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -296,15 +288,15 @@ namespace Librainian.Persistence.InIFiles {
                     return default; //section not found
                 }
 
-                using ( var writer = File.AppendText( document.FullPath ) ) {
-                    await writer.WriteLineAsync( Encode( section ) ).ConfigureAwait( false );
+				await using var writer = File.AppendText( document.FullPath );
 
-                    foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
-                        await writer.WriteLineAsync( Encode( pair ) ).ConfigureAwait( false );
-                    }
-                }
+				await writer.WriteLineAsync( Encode( section ) ).ConfigureAwait( false );
 
-                return true;
+				foreach ( var pair in dict.OrderBy( pair => pair.Key ) ) {
+					await writer.WriteLineAsync( Encode( pair ) ).ConfigureAwait( false );
+				}
+
+				return true;
             }
             catch ( Exception exception ) {
                 exception.Log();
@@ -313,7 +305,7 @@ namespace Librainian.Persistence.InIFiles {
             return default;
         }
 
-        public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String? value ) {
+        public Boolean Add( [NotNull] String section, [NotNull] String key, [CanBeNull] String value ) {
             section = section.Trimmed();
 
             if ( String.IsNullOrEmpty( section ) ) {
@@ -332,18 +324,17 @@ namespace Librainian.Persistence.InIFiles {
             try {
                 var dataSection = this.EnsureDataSection( section );
 
-                if ( dataSection != default ) {
-                    var found = dataSection.FirstOrDefault( line => line?.Key.Like( key ) == true );
+                var found = dataSection.FirstOrDefault( line => line?.Key.Like( key ) == true );
 
-                    if ( found == default ) {
-                        dataSection.Add( key, value );
-                    }
-                    else {
-                        found.Value = value;
-                    }
-
-                    return true;
+                if ( found == default ) {
+                    dataSection.Add( key, value );
                 }
+                else {
+                    found.Value = value;
+                }
+
+                return true;
+
             }
             catch ( KeyNotFoundException exception ) {
                 exception.Log();
@@ -431,7 +422,7 @@ namespace Librainian.Persistence.InIFiles {
                     }
                 }
 
-                if ( ( section != null ) && this.FindComment( line, section, ref counter ) ) {
+                if ( section != null && this.FindComment( line, section, ref counter ) ) {
                     continue;
                 }
 

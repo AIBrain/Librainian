@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ThreadingExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "ThreadingExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Threading {
 
@@ -43,16 +37,12 @@ namespace Librainian.Threading {
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using JetBrains.Annotations;
-    using Measurement.Time;
 
     public static class ThreadingExtensions {
 
-        public static Boolean IsRunningFromNUnit { get; } = AppDomain.CurrentDomain.GetAssemblies()
-                                                                     .Any( assembly =>
-                                                                         assembly.FullName?.StartsWith( "nunit.framework", StringComparison.CurrentCultureIgnoreCase ) ==
-                                                                         true );
+        public static Boolean IsRunningFromNUnit { get; } =
+            AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName.ToLowerInvariant().StartsWith( "nunit.framework" ) );
 
         /// <summary>Only allow a delegate to run X times.</summary>
         /// <param name="action">      </param>
@@ -99,7 +89,7 @@ namespace Librainian.Threading {
             Thread.BeginThreadAffinity();
             Thread.BeginCriticalRegion();
 
-            if ( lowPriority && ( Thread.CurrentThread.Priority != ThreadPriority.Lowest ) ) {
+            if ( lowPriority && Thread.CurrentThread.Priority != ThreadPriority.Lowest ) {
                 Thread.CurrentThread.Priority = ThreadPriority.Lowest;
             }
         }
@@ -204,36 +194,6 @@ namespace Librainian.Threading {
         public static void End() {
             Thread.EndThreadAffinity();
             Thread.EndCriticalRegion();
-        }
-
-        /// <summary>Split the given <paramref name="timeSpan" /> into tenths, alternating between <see cref="Thread.Sleep(TimeSpan)" /> and <see cref="Thread.Yield" /></summary>
-        /// <param name="thread">  </param>
-        /// <param name="timeSpan"></param>
-        public static void Fraggle( [NotNull] this Thread thread, TimeSpan timeSpan ) {
-            if ( null == thread ) {
-                throw new ArgumentNullException( nameof( thread ) );
-            }
-
-            var stopwatch = Stopwatch.StartNew();
-            var portion = TimeSpan.FromMilliseconds( timeSpan.TotalMilliseconds / 10.0 );
-
-            if ( portion > Seconds.One ) {
-                portion = Seconds.One;
-            }
-
-            var toggle = true;
-
-            do {
-                Application.DoEvents();
-                toggle = !toggle;
-
-                if ( toggle ) {
-                    Thread.Sleep( portion );
-                }
-                else {
-                    Thread.Yield();
-                }
-            } while ( stopwatch.Elapsed < timeSpan );
         }
 
         public static Int32 GetMaximumActiveWorkerThreads() {
@@ -383,13 +343,13 @@ namespace Librainian.Threading {
         /// <param name="description"></param>
         /// <param name="inParallel"> </param>
         /// <returns></returns>
-        public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String? description = null,
+        public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
             if ( actions is null ) {
                 throw new ArgumentNullException( nameof( actions ) );
             }
 
-            if ( ( output != null ) && !String.IsNullOrWhiteSpace( description ) ) {
+            if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
                 output( description );
             }
 
@@ -412,13 +372,13 @@ namespace Librainian.Threading {
         /// <param name="description"></param>
         /// <param name="inParallel"> </param>
         /// <returns></returns>
-        public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String? description = null,
+        public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String> output = null, [CanBeNull] String description = null,
             Boolean inParallel = true ) {
             if ( functions is null ) {
                 throw new ArgumentNullException( nameof( functions ) );
             }
 
-            if ( ( output != null ) && !String.IsNullOrWhiteSpace( description ) ) {
+            if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
                 output( description );
             }
 

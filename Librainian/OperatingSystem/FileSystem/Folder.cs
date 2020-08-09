@@ -1,35 +1,29 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Folder.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "Folder.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -39,16 +33,14 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.IO;
     using System.Linq;
     using System.Security;
-    using System.Security.Permissions;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using Collections.Extensions;
     using ComputerSystem.Devices;
-    using Extensions;
     using JetBrains.Annotations;
+    using Librainian.Extensions;
     using Logging;
     using Maths;
     using Newtonsoft.Json;
@@ -56,10 +48,10 @@ namespace Librainian.OperatingSystem.FileSystem {
     using DirectoryInfo = Pri.LongPath.DirectoryInfo;
     using FileSystemInfo = Pri.LongPath.FileSystemInfo;
 
-    // ReSharper disable RedundantUsingDirective
+    
     using Path = Pri.LongPath.Path;
 
-    // ReSharper restore RedundantUsingDirective
+    
 
     public interface IFolder : IEquatable<IFolder> {
 
@@ -76,22 +68,17 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary></summary>
         /// <param name="searchPattern"></param>
         /// <param name="randomize">    </param>
-        /// <param name="searchOption"></param>
         /// <returns></returns>
         [NotNull]
-        [ItemNotNull]
-        IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String? searchPattern = "*", Boolean randomize = false, SearchOption searchOption = SearchOption.AllDirectories );
+        IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String searchPattern = "*", Boolean randomize = false );
 
         /// <summary>Return a list of all <see cref="IFolder" /> matching the <paramref name="searchPattern" />.</summary>
         /// <param name="token"></param>
         /// <param name="searchPattern"></param>
         /// <param name="randomize">Return the folders in random order.</param>
-        /// <param name="searchOption"></param>
         /// <returns></returns>
         [NotNull]
-        [ItemNotNull]
-        Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String? searchPattern = "*", Boolean randomize = true,
-            SearchOption searchOption = SearchOption.AllDirectories );
+        Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String searchPattern = "*", Boolean randomize = true );
 
         /// <summary>Returns a copy of the folder instance.</summary>
         /// <returns></returns>
@@ -128,30 +115,24 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        [ItemNotNull]
         IEnumerable<Document> GetDocuments();
 
         [NotNull]
-        [ItemNotNull]
         IEnumerable<Document> GetDocuments( [NotNull] String searchPattern );
 
         [NotNull]
-        [ItemNotNull]
         IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns );
 
         [NotNull]
         Disk GetDrive();
 
         [NotNull]
-        [ItemNotNull]
-        IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
+        IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
 
         Int32 GetHashCode();
 
         [CanBeNull]
         IFolder GetParent();
-
-        Boolean HavePermission( FileIOPermissionAccess access );
 
         /// <summary>
         ///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
@@ -199,24 +180,20 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary></summary>
         /// <param name="searchPattern"></param>
         /// <param name="randomize">    </param>
-        /// <param name="searchOption"></param>
         /// <returns></returns>
         [ItemNotNull]
-        public IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String? searchPattern = "*", Boolean randomize = false,
-            SearchOption searchOption = SearchOption.AllDirectories ) {
+        public IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String searchPattern = "*", Boolean randomize = false ) {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
 
             if ( randomize ) {
-                foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ).OrderBy( info => Randem.Next() ) ) {
-                    if ( fileInfo != null ) {
-                        yield return new Folder( fileInfo.FullPath );
-                    }
+                foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ).OrderBy( info => Randem.Next() ) ) {
+                    yield return new Folder( fileInfo.FullPath );
                 }
             }
             else {
-                foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ) ) {
+                foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ) ) {
                     yield return new Folder( fileInfo.FullPath );
                 }
             }
@@ -226,23 +203,26 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="token"></param>
         /// <param name="searchPattern"></param>
         /// <param name="randomize">Return the folders in random order.</param>
-        /// <param name="searchOption"></param>
         /// <returns></returns>
         [NotNull]
         [ItemNotNull]
-        public Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String? searchPattern = "*", Boolean randomize = false,
-            SearchOption searchOption = SearchOption.AllDirectories ) =>
+        public Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String searchPattern = "*", Boolean randomize = true ) =>
             Task.Run( () => {
-                var folders = new List<Folder>( this.Info.BetterEnumerateDirectories( searchPattern, searchOption ).Select( info => new Folder( info.FullPath ) ) );
+                var folders = new List<Folder>();
+
+                folders.AddRange( this.Info.BetterEnumerateDirectories( searchPattern )
+                                                  .Select( fileInfo => new Folder( fileInfo.FullPath ) ) );
+
+                folders.RemoveAll( folder => folder is null ); //just in case. probably will never happen, unless BetterEnumerateDirectories() gets goofed up.
 
                 if ( randomize ) {
-                    folders.ShuffleByHarker( token );
+                    Shufflings.ShuffleByHarker( folders, 1, null, token );
                 }
 
                 return folders;
             }, token );
 
-        /// <summary>Returns a copy of this folder instance. (Doesn't change anything in the file system.)</summary>
+        /// <summary>Returns a copy of this folder instance.</summary>
         /// <returns></returns>
         [NotNull]
         public IFolder Clone() => new Folder( this );
@@ -323,7 +303,6 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// </summary>
         /// <returns></returns>
         [NotNull]
-        [ItemNotNull]
         public IEnumerable<Document> GetDocuments() {
             if ( !this.Info.Exists ) {
                 this.Refresh();
@@ -337,12 +316,10 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
 
         [NotNull]
-        [ItemNotNull]
         public IEnumerable<Document> GetDocuments( [NotNull] String searchPattern ) =>
             this.Info.BetterEnumerateFiles( searchPattern ).Select( fileInfo => new Document( fileInfo.FullPath ) );
 
         [NotNull]
-        [ItemNotNull]
         public IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns ) => searchPatterns.SelectMany( this.GetDocuments );
 
         [NotNull]
@@ -350,7 +327,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [ItemNotNull]
         [NotNull]
-        public IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern, SearchOption searchOption = SearchOption.AllDirectories ) {
+        public IEnumerable<IFolder> GetFolders( [CanBeNull] String searchPattern, SearchOption searchOption = SearchOption.AllDirectories ) {
             if ( String.IsNullOrEmpty( searchPattern ) ) {
                 yield break;
             }
@@ -364,21 +341,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         [CanBeNull]
         public IFolder GetParent() => new Folder( this.Info.Parent );
-
-        public Boolean HavePermission( FileIOPermissionAccess access ) {
-            try {
-                var bob = new FileIOPermission( access, this.FullPath );
-                bob.Demand();
-
-                return true;
-            }
-            catch ( ArgumentException exception ) {
-                exception.Log();
-            }
-            catch ( SecurityException ) { }
-
-            return default;
-        }
 
         /// <summary>
         ///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
@@ -400,7 +362,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         public String ToCompactFormat() {
             var sb = new StringBuilder();
 
-            NativeMethods.PathCompactPathEx( sb, this.FullPath, this.FullPath.Length, 0 ); //TODO untested. //HACK may be buggy on extensions also
+            NativeMethods.PathCompactPathEx( sb, this.FullPath, this.FullPath.Length,
+                0 ); //TODO untested. //HACK may be buggy on extensions also
 
             return sb.ToString();
         }
@@ -429,7 +392,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
         /// <summary>String of invalid characters in a path or filename.</summary>
         [NotNull]
-        private static readonly String InvalidPathCharacters = new String( ( Char[] ) Path.GetInvalidPathChars() );
+        private static readonly String InvalidPathCharacters = new String( Path.InvalidPathChars );
 
         [NotNull]
         public static readonly Regex RegexForInvalidPathCharacters = new Regex( $"[{Regex.Escape( InvalidPathCharacters )}]", RegexOptions.Compiled );
@@ -475,8 +438,9 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="PathTooLongException"></exception>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
-        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String? applicationName, [NotNull] String subFolder ) : this(
-            Path.Combine( Environment.GetFolderPath( specialFolder ), applicationName ?? Application.ProductName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
+        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String applicationName, [NotNull] String subFolder ) : this(
+            Path.Combine( Environment.GetFolderPath( specialFolder ), applicationName ?? AppDomain.CurrentDomain.FriendlyName,
+                subFolder ) ) { }
 
         /// <summary>
         ///     <para>Pass null to automatically fill in <paramref name="companyName" /> and <paramref name="applicationName" /> .</para>
@@ -490,14 +454,15 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [DebuggerStepThrough]
-        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String? companyName, [CanBeNull] String? applicationName, [NotNull] params String[] subFolders ) :
+        public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String companyName, [CanBeNull] String applicationName, [NotNull] params String[] subFolders ) :
             this( Path.Combine( Environment.GetFolderPath( specialFolder ),
-                companyName ?? Application.CompanyName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.CompanyName}." ),
-                applicationName ?? Application.ProductName ?? throw new InvalidOperationException( $"Empty {nameof( Application )}.{Application.ProductName}." ),
+                companyName ?? throw new InvalidOperationException( $"Empty {nameof( companyName )}." ),
+                applicationName ?? throw new InvalidOperationException( $"Empty {nameof( applicationName )}." ),
                 subFolders.ToStrings( @"\" ) ) ) { }
 
         [DebuggerStepThrough]
-        public Folder( Environment.SpecialFolder specialFolder, [NotNull] params String[] subFolders ) : this( Path.Combine( Environment.GetFolderPath( specialFolder ),
+        public Folder( Environment.SpecialFolder specialFolder, [NotNull] params String[] subFolders ) : this( Path.Combine(
+            Environment.GetFolderPath( specialFolder ),
             subFolders.Select( fullpath => CleanPath( fullpath ) ).ToStrings( @"\" ) ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
@@ -519,7 +484,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="FileNotFoundException"></exception>
         [DebuggerStepThrough]
-        public Folder( [NotNull] IDocument document, [NotNull] String subFolder ) : this( Path.Combine( document.ContainingingFolder().FullPath, subFolder ) ) { }
+        public Folder( [NotNull] IDocument document, [NotNull] String subFolder ) : this( Path.Combine( document.ContainingingFolder().FullPath,
+            subFolder ) ) { }
 
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="PathTooLongException"></exception>
@@ -534,7 +500,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <returns></returns>
         [DebuggerStepThrough]
         [NotNull]
-        public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String? replacement = null ) {
+        public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String replacement = null ) {
             if ( fullpath is null ) {
                 throw new ArgumentNullException( nameof( fullpath ) );
             }
@@ -608,7 +574,7 @@ namespace Librainian.OperatingSystem.FileSystem {
             Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullPath}\"" );
         }
 
-        public static Boolean TryParse( [CanBeNull] String? path, [CanBeNull] out IFolder folder ) {
+        public static Boolean TryParse( [CanBeNull] String path, [CanBeNull] out IFolder folder ) {
             folder = null;
 
             try {
@@ -631,8 +597,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                     return true;
                 }
 
-                dirInfo = new DirectoryInfo( path ); //try it anyways
-                folder = new Folder( dirInfo );      //eh? //TODO
+                dirInfo = new DirectoryInfo( path );      //try it anyways
+                folder = new Folder( dirInfo ); //eh? //TODO
 
                 return true;
             }

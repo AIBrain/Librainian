@@ -1,221 +1,172 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ConsoleWindow.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "ConsoleWindow.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.ComputerSystem {
 
-    using System;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using System.Windows.Forms;
+	using System;
+	using System.Diagnostics;
+	using System.Drawing;
+	using System.IO;
+	using System.Runtime.InteropServices;
+	using System.Text;
+	using Controls;
 
-    public static class ConsoleWindow {
+	public static class ConsoleWindow {
 
-        [Flags]
-        public enum DesiredAccess : UInt32 {
+		private const Int32 MY_CODE_PAGE = 437;
 
-            GenericRead = 0x80000000,
+		private const Int32 STD_ERROR_HANDLE = -12;
 
-            GenericWrite = 0x40000000,
+		private const Int32 STD_OUTPUT_HANDLE = -11;
 
-            GenericExecute = 0x20000000,
+		private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
 
-            GenericAll = 0x10000000
+		public static Boolean IsConsoleVisible { get; set; }
 
-        }
+		[Flags]
+		public enum DesiredAccess : UInt32 {
 
-        public enum StdHandle {
+			GenericRead = 0x80000000,
 
-            Input = -10,
+			GenericWrite = 0x40000000,
 
-            Output = -11,
+			GenericExecute = 0x20000000,
 
-            Error = -12
+			GenericAll = 0x10000000
+		}
 
-        }
+		public enum StdHandle {
 
-        public static Boolean IsConsoleVisible { get; set; }
+			Input = -10,
 
-        private const Int32 MY_CODE_PAGE = 437;
+			Output = -11,
 
-        private const Int32 STD_ERROR_HANDLE = -12;
+			Error = -12
+		}
 
-        private const Int32 STD_OUTPUT_HANDLE = -11;
+		[DllImport( WindowsDLL.Kernel32, EntryPoint = "AllocConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
+		public static extern Int32 AllocConsole();
 
-        private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
+		[DllImport( WindowsDLL.Kernel32, SetLastError = true, CharSet = CharSet.Unicode )]
+		public static extern IntPtr CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] DesiredAccess dwDesiredAccess,
+			[MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition,
+			[MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
-        [DllImport( "kernel32.dll", EntryPoint = "AllocConsole", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
-        public static extern Int32 AllocConsole();
+		[DllImport( WindowsDLL.Kernel32, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, SetLastError = true )]
+		[return: MarshalAs( UnmanagedType.Bool )]
+		public static extern Boolean FreeConsole();
 
-        [DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Auto )]
-        public static extern IntPtr CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] DesiredAccess dwDesiredAccess,
-            [MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition,
-            [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
+		public static IntPtr GetConsoleStandardError() {
+			var handle = CreateFile( "CONERR$", DesiredAccess.GenericWrite | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
+				FileAttributes.Normal, IntPtr.Zero );
 
-        [DllImport( "kernel32.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall, SetLastError = true )]
-        [return: MarshalAs( UnmanagedType.Bool )]
-        public static extern Boolean FreeConsole();
+			return handle == InvalidHandleValue ? InvalidHandleValue : handle;
+		}
 
-        public static IntPtr GetConsoleStandardError() {
-            var handle = CreateFile( "CONERR$", DesiredAccess.GenericWrite | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
-                FileAttributes.Normal, IntPtr.Zero );
+		public static IntPtr GetConsoleStandardInput() {
+			var handle = CreateFile( "CONIN$", DesiredAccess.GenericRead | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, FileAttributes.Normal,
+				IntPtr.Zero );
 
-            return handle == InvalidHandleValue ? InvalidHandleValue : handle;
-        }
+			return handle == InvalidHandleValue ? InvalidHandleValue : handle;
+		}
 
-        public static IntPtr GetConsoleStandardInput() {
-            var handle = CreateFile( "CONIN$", DesiredAccess.GenericRead | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, FileAttributes.Normal,
-                IntPtr.Zero );
+		public static IntPtr GetConsoleStandardOutput() {
+			var handle = CreateFile( "CONOUT$", DesiredAccess.GenericWrite | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
+				FileAttributes.Normal, IntPtr.Zero );
 
-            return handle == InvalidHandleValue ? InvalidHandleValue : handle;
-        }
+			return handle == InvalidHandleValue ? InvalidHandleValue : handle;
+		}
 
-        public static IntPtr GetConsoleStandardOutput() {
-            var handle = CreateFile( "CONOUT$", DesiredAccess.GenericWrite | DesiredAccess.GenericWrite, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open,
-                FileAttributes.Normal, IntPtr.Zero );
+		[DllImport( "kernel32.dll" )]
+		public static extern IntPtr GetConsoleWindow();
 
-            return handle == InvalidHandleValue ? InvalidHandleValue : handle;
-        }
+		[DllImport( WindowsDLL.Kernel32, EntryPoint = "GetStdHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
+		public static extern IntPtr GetStdHandle( Int32 nStdHandle );
 
-        [DllImport( "kernel32.dll" )]
-        public static extern IntPtr GetConsoleWindow();
+		public static void Hide() => FreeConsole();
 
-        [DllImport( "kernel32.dll", EntryPoint = "GetStdHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
-        public static extern IntPtr GetStdHandle( Int32 nStdHandle );
+		public static void Maximize() {
+			var p = Process.GetCurrentProcess();
+			ShowWindow( p.MainWindowHandle, 3 ); //SW_MAXIMIZE = 3
+		}
 
-        public static void Hide() => FreeConsole();
+		[DllImport( "user32.dll" )]
+		public static extern Boolean MoveWindow( IntPtr hWnd, Int32 X, Int32 Y, Int32 nWidth, Int32 nHeight, Boolean bRepaint );
 
-        public static void Maximize() {
-            var p = Process.GetCurrentProcess();
-            ShowWindow( p.MainWindowHandle, 3 ); //SW_MAXIMIZE = 3
-        }
+		[DllImport( "kernel32.dll" )]
+		public static extern Boolean SetConsoleScreenBufferSize( IntPtr hConsoleOutput, Point size );
 
-        [DllImport( "user32.dll" )]
-        public static extern Boolean MoveWindow( IntPtr hWnd, Int32 X, Int32 Y, Int32 nWidth, Int32 nHeight, Boolean bRepaint );
+		[DllImport( "kernel32.dll" )]
+		public static extern Boolean SetStdHandle( StdHandle nStdHandle, IntPtr hHandle );
 
-        [DllImport( "kernel32.dll" )]
-        public static extern Boolean SetConsoleScreenBufferSize( IntPtr hConsoleOutput, Point size );
+		public static void Show( Int32 bufferWidth = -1, Boolean breakRedirection = true, Int32 bufferHeight = 1600, Int32 screenNum = -1 /*-1 = Any but primary*/ ) {
+			AllocConsole();
+			var stdOut = InvalidHandleValue;
 
-        [DllImport( "kernel32.dll" )]
-        public static extern Boolean SetStdHandle( StdHandle nStdHandle, IntPtr hHandle );
+			if ( breakRedirection ) {
+				UnredirectConsole( out stdOut, out _, out _ );
+			}
 
-        public static void Show( Int32 bufferWidth = -1, Boolean breakRedirection = true, Int32 bufferHeight = 1600, Int32 screenNum = -1 /*-1 = Any but primary*/ ) {
-            AllocConsole();
-            var stdOut = InvalidHandleValue;
+			var outStream = Console.OpenStandardOutput();
+			var errStream = Console.OpenStandardError();
+			var encoding = Encoding.GetEncoding( MY_CODE_PAGE );
+			StreamWriter standardOutput = new StreamWriter( outStream, encoding ), standardError = new StreamWriter( errStream, encoding );
 
-            if ( breakRedirection ) {
-                UnredirectConsole( out stdOut, out _, out _ );
-            }
+			try {
+				standardOutput.AutoFlush = true;
+				standardError.AutoFlush = true;
+				Console.SetOut( standardOutput );
+				Console.SetError( standardError );
 
-            var outStream = Console.OpenStandardOutput();
-            var errStream = Console.OpenStandardError();
-            var encoding = Encoding.GetEncoding( MY_CODE_PAGE );
-            StreamWriter standardOutput = new StreamWriter( outStream, encoding ), standardError = new StreamWriter( errStream, encoding );
-            Screen screen = null;
+				if ( breakRedirection ) {
+					var coord = new Point {
+						X = bufferWidth,
+						Y = bufferHeight
+					};
 
-            try {
-                if ( screenNum < 0 ) {
-                    screen = Screen.AllScreens.FirstOrDefault( s => !s.Primary );
-                }
-                else {
-                    screen = Screen.AllScreens[ Math.Min( screenNum, Screen.AllScreens.Length - 1 ) ];
-                }
-            }
-            catch ( Exception ) { }
+					SetConsoleScreenBufferSize( stdOut, coord );
+				}
+				else {
+					Console.SetBufferSize( bufferWidth, bufferHeight );
+				}
+			}
+			catch ( Exception e ) // Could be redirected
+			{
+				Debug.WriteLine( e.ToString() );
+			}
+		}
 
-            if ( bufferWidth == -1 ) {
-                if ( screen is null ) {
-                    bufferWidth = 180;
-                }
-                else {
-                    bufferWidth = screen.WorkingArea.Width / 10;
+		[DllImport( "user32.dll" )]
+		public static extern Boolean ShowWindow( IntPtr hWnd, Int32 cmdShow );
 
-                    if ( bufferWidth > 15 ) {
-                        bufferWidth -= 5;
-                    }
-                    else {
-                        bufferWidth = 10;
-                    }
-                }
-            }
-
-            try {
-                standardOutput.AutoFlush = true;
-                standardError.AutoFlush = true;
-                Console.SetOut( standardOutput );
-                Console.SetError( standardError );
-
-                if ( breakRedirection ) {
-                    var coord = new Point {
-                        X = bufferWidth, Y = bufferHeight
-                    };
-
-                    SetConsoleScreenBufferSize( stdOut, coord );
-                }
-                else {
-                    Console.SetBufferSize( bufferWidth, bufferHeight );
-                }
-            }
-            catch ( Exception e ) // Could be redirected
-            {
-                Debug.WriteLine( e.ToString() );
-            }
-
-            try {
-                if ( screen != null ) {
-                    var workingArea = screen.WorkingArea;
-                    var hConsole = GetConsoleWindow();
-                    MoveWindow( hConsole, workingArea.Left, workingArea.Top, workingArea.Width / 2, workingArea.Height / 2, true );
-                }
-            }
-            catch ( Exception e ) // Could be redirected
-            {
-                Debug.WriteLine( e.ToString() );
-            }
-        }
-
-        [DllImport( "user32.dll" )]
-        public static extern Boolean ShowWindow( IntPtr hWnd, Int32 cmdShow );
-
-        public static void UnredirectConsole( out IntPtr stdOut, out IntPtr stdIn, out IntPtr stdErr ) {
-            SetStdHandle( StdHandle.Output, stdOut = GetConsoleStandardOutput() );
-            SetStdHandle( StdHandle.Input, stdIn = GetConsoleStandardInput() );
-            SetStdHandle( StdHandle.Error, stdErr = GetConsoleStandardError() );
-        }
-
-    }
-
+		public static void UnredirectConsole( out IntPtr stdOut, out IntPtr stdIn, out IntPtr stdErr ) {
+			SetStdHandle( StdHandle.Output, stdOut = GetConsoleStandardOutput() );
+			SetStdHandle( StdHandle.Input, stdIn = GetConsoleStandardInput() );
+			SetStdHandle( StdHandle.Error, stdErr = GetConsoleStandardError() );
+		}
+	}
 }

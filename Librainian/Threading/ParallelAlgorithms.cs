@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ParallelAlgorithms.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "ParallelAlgorithms.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Threading {
 
@@ -50,7 +44,7 @@ namespace Librainian.Threading {
         /// <returns>The result computed.</returns>
         [CanBeNull]
         public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] Func<Int32, TResult> body ) =>
-            fromInclusive.SpeculativeFor( toExclusive, CPU.AllCPUExceptOne, body );
+            fromInclusive.SpeculativeFor( toExclusive, CPU.AllExceptOne, body );
 
         /// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TResult">The type of the data returned.</typeparam>
@@ -89,7 +83,7 @@ namespace Librainian.Threading {
         /// <returns>The result computed.</returns>
         [CanBeNull]
         public static TResult SpeculativeForEach<TSource, TResult>( [NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, TResult> body ) =>
-            source.SpeculativeForEach( CPU.AllCPUExceptOne, body );
+            source.SpeculativeForEach( CPU.AllExceptOne, body );
 
         /// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
         /// <typeparam name="TSource">The type of the data in the source.</typeparam>
@@ -126,7 +120,7 @@ namespace Librainian.Threading {
         /// <param name="functions">The functions to be executed.</param>
         /// <returns>A result from executing one of the functions.</returns>
         [CanBeNull]
-        public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => CPU.AllCPUExceptOne.SpeculativeInvoke( functions );
+        public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => CPU.AllExceptOne.SpeculativeInvoke( functions );
 
         /// <summary>Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.</summary>
         /// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
@@ -167,11 +161,11 @@ namespace Librainian.Threading {
                 throw new ArgumentOutOfRangeException( nameof( numColumns ) );
             }
 
-            if ( ( numBlocksPerRow <= 0 ) || ( numBlocksPerRow > numRows ) ) {
+            if ( numBlocksPerRow <= 0 || numBlocksPerRow > numRows ) {
                 throw new ArgumentOutOfRangeException( nameof( numBlocksPerRow ) );
             }
 
-            if ( ( numBlocksPerColumn <= 0 ) || ( numBlocksPerColumn > numColumns ) ) {
+            if ( numBlocksPerColumn <= 0 || numBlocksPerColumn > numColumns ) {
                 throw new ArgumentOutOfRangeException( nameof( numBlocksPerColumn ) );
             }
 
@@ -185,10 +179,10 @@ namespace Librainian.Threading {
 
             Wavefront( ( row, column ) => {
                 var startI = row * rowBlockSize;
-                var endI = row < ( numBlocksPerRow - 1 ) ? startI + rowBlockSize : numRows;
+                var endI = row < numBlocksPerRow - 1 ? startI + rowBlockSize : numRows;
 
                 var startJ = column * columnBlockSize;
-                var endJ = column < ( numBlocksPerColumn - 1 ) ? startJ + columnBlockSize : numColumns;
+                var endJ = column < numBlocksPerColumn - 1 ? startJ + columnBlockSize : numColumns;
 
                 processBlock( startI, endI, startJ, endJ );
             }, numBlocksPerRow, numBlocksPerColumn );
@@ -230,12 +224,12 @@ namespace Librainian.Threading {
                     // Create a task with the appropriate dependencies.
                     Task curTask;
 
-                    if ( ( row == 0 ) && ( column == 0 ) ) {
+                    if ( row == 0 && column == 0 ) {
 
                         // Upper-left task kicks everything off, having no dependencies
                         curTask = Task.Run( () => processRowColumnCell( j, i ) );
                     }
-                    else if ( ( row == 0 ) || ( column == 0 ) ) {
+                    else if ( row == 0 || column == 0 ) {
 
                         // Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only on the task to their left
                         var antecedent = column == 0 ? prevTaskRow[ 0 ] : prevTaskInCurrentRow;

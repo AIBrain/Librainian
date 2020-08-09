@@ -1,163 +1,198 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Digit.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "Digit.cs" was last formatted by Protiguous on 2020/03/18 at 10:24 AM.
 
 namespace Librainian.Maths.Numbers {
 
-    using System;
-    using Extensions;
-    using JetBrains.Annotations;
+	using System;
+	using System.Runtime.CompilerServices;
+	using Extensions;
+	using JetBrains.Annotations;
 
-    /// <summary>Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</summary>
-    /// <remarks>All functions should be atomic.</remarks>
-    [Immutable]
-    public struct Digit : IComparable<Digit> {
+	/// <summary>Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9</summary>
+	[Immutable]
+	public struct Digit : IComparable<Digit>, IEquatable<Digit>, IEquatable<Byte> {
 
-        public const Byte Maximum = 9;
+		public const Byte Maximum = 9;
 
-        public const Byte Minimum = 0;
+		public const Byte Minimum = 0;
 
-        public static Digit Eight { get; } = new Digit( 8 );
+		public static Digit Eight { get; } = new Digit( 8 );
 
-        public static Digit Five { get; } = new Digit( 5 );
+		public static Digit Five { get; } = new Digit( 5 );
 
-        public static Digit Four { get; } = new Digit( 4 );
+		public static Digit Four { get; } = new Digit( 4 );
 
-        public static Digit Nine { get; } = new Digit( 9 );
+		public static Digit Nine { get; } = new Digit( 9 );
 
-        public static Digit One { get; } = new Digit( 1 );
+		public static Digit One { get; } = new Digit( 1 );
 
-        public static Digit Seven { get; } = new Digit( 7 );
+		public static Digit Seven { get; } = new Digit( 7 );
 
-        public static Digit Six { get; } = new Digit( 6 );
+		public static Digit Six { get; } = new Digit( 6 );
 
-        public static Digit Three { get; } = new Digit( 3 );
+		public static Digit Three { get; } = new Digit( 3 );
 
-        public static Digit Two { get; } = new Digit( 2 );
+		public static Digit Two { get; } = new Digit( 2 );
 
-        public static Digit Zero { get; } = new Digit( 0 );
+		public static Digit Zero { get; } = new Digit( 0 );
 
-        public Byte Value { get; }
+		public Byte Value { get; }
 
-        public Digit( SByte value ) {
-            if ( ( value < Minimum ) || ( value > Maximum ) ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
-            }
+		public Digit( Byte value ) {
+			if ( value > Maximum ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
+			}
 
-            this.Value = ( Byte ) value;
-        }
+			this.Value = value;
+		}
 
-        public Digit( Byte value ) : this( ( SByte ) value ) { }
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Equals( Digit left, Digit right ) => left.Value == right.Value;
 
-        public static implicit operator Byte( Digit digit ) => digit.Value;
+		public static implicit operator Byte( Digit digit ) => digit.Value;
 
-        public static Boolean operator <( Digit left, Digit right ) => left.Value < right.Value;
+		/// <summary>Returns a value that indicates whether two <see cref="Digit" /> objects have different values.</summary>
+		/// <param name="left">The first value to compare.</param>
+		/// <param name="right">The second value to compare.</param>
+		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+		public static Boolean operator !=( Digit left, Digit right ) => !Equals( left, right );
 
-        public static Boolean operator <( Digit left, SByte right ) => left.Value < right;
+		public static Boolean operator <( Digit left, Digit right ) => left.Value < right.Value;
 
-        public static Boolean operator <( Digit left, Byte right ) => left.Value < right;
+		public static Boolean operator <( Digit left, SByte right ) => left.Value < right;
 
-        public static Boolean operator <( Byte left, Digit right ) => left < right.Value;
+		public static Boolean operator <( Digit left, Byte right ) => left.Value < right;
 
-        public static Boolean operator <( SByte left, Digit right ) => left < right.Value;
+		public static Boolean operator <( Byte left, Digit right ) => left < right.Value;
 
-        public static Boolean operator <=( Digit left, Digit right ) => left.Value <= right.Value;
+		public static Boolean operator <( SByte left, Digit right ) => left < right.Value;
 
-        public static Boolean operator <=( Digit left, SByte right ) => left.Value <= right;
+		public static Boolean operator <=( Digit left, Digit right ) => left.Value <= right.Value;
 
-        public static Boolean operator <=( Digit left, Byte right ) => left.Value <= right;
+		public static Boolean operator <=( Digit left, SByte right ) => left.Value <= right;
 
-        public static Boolean operator <=( Byte left, Digit right ) => left <= right.Value;
+		public static Boolean operator <=( Digit left, Byte right ) => left.Value <= right;
 
-        public static Boolean operator <=( SByte left, Digit right ) => left <= right.Value;
+		public static Boolean operator <=( Byte left, Digit right ) => left <= right.Value;
 
-        public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
+		public static Boolean operator <=( SByte left, Digit right ) => left <= right.Value;
 
-        public static Boolean operator >( Digit left, SByte right ) => left.Value > right;
+		/// <summary>Returns a value that indicates whether the values of two <see cref="Digit" /> objects are equal.</summary>
+		/// <param name="left">The first value to compare.</param>
+		/// <param name="right">The second value to compare.</param>
+		/// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
+		public static Boolean operator ==( Digit left, Digit right ) => Equals( left, right );
 
-        public static Boolean operator >( Digit left, Byte right ) => left.Value > right;
+		public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
 
-        public static Boolean operator >( Byte left, Digit right ) => left > right.Value;
+		public static Boolean operator >( Digit left, SByte right ) => left.Value > right;
 
-        public static Boolean operator >( SByte left, Digit right ) => left > right.Value;
+		public static Boolean operator >( Digit left, Byte right ) => left.Value > right;
 
-        public static Boolean operator >=( Digit left, Digit right ) => left.Value >= right.Value;
+		public static Boolean operator >( Byte left, Digit right ) => left > right.Value;
 
-        public static Boolean operator >=( Digit left, SByte right ) => left.Value >= right;
+		public static Boolean operator >( SByte left, Digit right ) => left > right.Value;
 
-        public static Boolean operator >=( Digit left, Byte right ) => left.Value >= right;
+		public static Boolean operator >=( Digit left, Digit right ) => left.Value >= right.Value;
 
-        public static Boolean operator >=( Byte left, Digit right ) => left >= right.Value;
+		public static Boolean operator >=( Digit left, SByte right ) => left.Value >= right;
 
-        public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
+		public static Boolean operator >=( Digit left, Byte right ) => left.Value >= right;
 
-        /// <summary>Compares the current object with another object of the same type.</summary>
-        /// <returns>
-        /// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less
-        /// than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
+		public static Boolean operator >=( Byte left, Digit right ) => left >= right.Value;
 
-        [NotNull]
-        public String Number() => this.Value.ToString();
+		public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
 
-        [NotNull]
-        public override String ToString() {
-            switch ( this.Value ) {
-                case 0: return nameof( Zero );
+		/// <summary>Compares the current object with another object of the same type.</summary>
+		/// <returns>
+		/// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less
+		/// than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
+		/// </returns>
+		/// <param name="other">An object to compare with this object.</param>
+		public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
 
-                case 1: return nameof( One );
+		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+		public Boolean Equals( Digit other ) => Equals( this, other );
 
-                case 2: return nameof( Two );
+		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+		public Boolean Equals( Byte other ) => this.Value.Equals( other );
 
-                case 3: return nameof( Three );
+		/// <summary>Indicates whether this instance and a specified object are equal.</summary>
+		/// <param name="obj">The object to compare with the current instance.</param>
+		/// <returns><see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
+		public override Boolean Equals( Object? obj ) => obj is Digit other && Equals( this, other );
 
-                case 4: return nameof( Four );
+		/// <summary>Returns the hash code for this instance.</summary>
+		/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
+		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-                case 5: return nameof( Five );
+		[NotNull]
+		public String Number() => this.Value.ToString();
 
-                case 6: return nameof( Six );
+		[NotNull]
+		public override String ToString() {
+			switch ( this.Value ) {
+				case 0:
+					return nameof( Zero );
 
-                case 7: return nameof( Seven );
+				case 1:
+					return nameof( One );
 
-                case 8: return nameof( Eight );
+				case 2:
+					return nameof( Two );
 
-                case 9: return nameof( Nine );
+				case 3:
+					return nameof( Three );
 
-                default: return String.Empty;
-            }
-        }
+				case 4:
+					return nameof( Four );
 
-    }
+				case 5:
+					return nameof( Five );
 
+				case 6:
+					return nameof( Six );
+
+				case 7:
+					return nameof( Seven );
+
+				case 8:
+					return nameof( Eight );
+
+				case 9:
+					return nameof( Nine );
+
+				default:
+					return String.Empty;
+			}
+		}
+	}
 }

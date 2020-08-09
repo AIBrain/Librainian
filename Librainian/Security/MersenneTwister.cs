@@ -1,54 +1,52 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "MersenneTwister.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "MersenneTwister.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
+
+#nullable enable
 
 namespace Librainian.Security {
 
     using System;
 
-    /// <summary>Mersenne Twister random number generator; from http://takel.jp/mt/MersenneTwister.cs</summary>
-    internal class MersenneTwister : Random {
+	/// <summary>
+	/// <para>Mersenne Twister random number generator; from <see cref="http://takel.jp/mt/MersenneTwister.cs"/></para>
+	/// </summary>
+	internal class MersenneTwister : Random {
 
         private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
 
         private Int16 _mti;
 
-        private const UInt32 LowerMask = 0x7fffffff;
+        private const UInt32 LowerMask = 0b1111111111111111111111111111111;
 
-        private const Int32 M = 397;
+        private const Int32 M = 0b110001101;
 
-        private const UInt32 MatrixA = 0x9908b0df;
+        private const UInt32 MatrixA = 0b10011001000010001011000011011111;
 
-        private const Int32 N = 624;
+        private const Int32 N = 0b1001110000;
 
         private const UInt32 TemperingMaskB = 0x9d2c5680;
 
@@ -90,12 +88,12 @@ namespace Librainian.Security {
             if ( this._mti >= N ) /* generate N words at one time */ {
                 Int16 kk = 0;
 
-                for ( ; kk < ( N - M ); ++kk ) {
+                for ( ; kk < N - M; ++kk ) {
                     y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
                     this._mt[ kk ] = this._mt[ kk + M ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
                 }
 
-                for ( ; kk < ( N - 1 ); ++kk ) {
+                for ( ; kk < N - 1; ++kk ) {
                     y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
                     this._mt[ kk ] = this._mt[ kk + ( M - N ) ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
                 }

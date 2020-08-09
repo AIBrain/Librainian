@@ -1,157 +1,158 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ObjectExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "ObjectExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
+
+#nullable enable
 
 namespace Librainian.Threading {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
-    using Collections.Extensions;
-    using JetBrains.Annotations;
+	using System;
+	using System.Collections.Generic;
+	using System.Reflection;
+	using Collections.Extensions;
+	using JetBrains.Annotations;
 
-    /// <summary>Code pulled from https://raw.githubusercontent.com/Burtsev-Alexey/net-object-deep-copy/master/ObjectExtensions.cs</summary>
-    public static class ObjectExtensions {
+	/// <summary>Code pulled from https://raw.githubusercontent.com/Burtsev-Alexey/net-object-deep-copy/master/ObjectExtensions.cs</summary>
+	public static class ObjectExtensions {
 
-        private static MethodInfo CloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
+		private static MethodInfo MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance )!;
 
-        private static void CopyFields( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited, [CanBeNull] Object cloneObject,
-            [NotNull] Type typeToReflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-            [CanBeNull] Func<FieldInfo, Boolean> filter = null ) {
-            foreach ( var fieldInfo in typeToReflect.GetFields( bindingFlags ) ) {
-                if ( filter?.Invoke( fieldInfo ) == false ) {
-                    continue;
-                }
+		private static void CopyFields( [NotNull] this Object original, [NotNull] IDictionary<Object, Object> visited, [NotNull] Object clonedObject,
+			[NotNull] IReflect reflect, BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
+			[CanBeNull] Func<FieldInfo, Boolean>? filter = null ) {
+			var fields = reflect.GetFields( bindingFlags );
 
-                if ( IsPrimitive( fieldInfo.FieldType ) ) {
-                    continue;
-                }
+			if ( fields is null ) {
+				return;
+			}
 
-                var originalFieldValue = fieldInfo.GetValue( originalObject );
-                var clonedFieldValue = InternalCopy( originalFieldValue, visited );
-                fieldInfo.SetValue( cloneObject, clonedFieldValue );
-            }
-        }
+			foreach ( var field in fields ) {
+				if ( field is null || filter?.Invoke( field ) == false ) {
+					continue;
+				}
 
-        [CanBeNull]
-        private static Object InternalCopy( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited ) {
-            if ( originalObject is null ) {
-                return null;
-            }
+				//if ( fieldInfo.FieldType.IsPrimitive() ) { continue; }	//why skip a primitive?
 
-            var typeToReflect = originalObject.GetType();
+				var value = field.GetValue( original );
+				field.SetValue( clonedObject, InternalCopy( value, visited ) );
+			}
+		}
 
-            if ( IsPrimitive( typeToReflect ) ) {
-                return originalObject;
-            }
+		[CanBeNull]
+		private static Object? InternalCopy( [CanBeNull] Object? originalObject, [NotNull] IDictionary<Object, Object> visits ) {
+			if ( originalObject is null ) {
+				return null;
+			}
 
-            if ( visited.ContainsKey( originalObject ) ) {
-                return visited[ originalObject ];
-            }
+			var reflect = originalObject.GetType();
 
-            if ( typeof( Delegate ).IsAssignableFrom( typeToReflect ) ) {
-                return null;
-            }
+			if ( reflect.IsPrimitive() ) {
+				return originalObject;
+			}
 
-            var cloneObject = CloneMethod.Invoke( originalObject, null );
+			if ( visits.ContainsKey( originalObject ) ) {
+				return visits[ originalObject ];
+			}
 
-            if ( typeToReflect.IsArray ) {
-                var arrayType = typeToReflect.GetElementType();
+			if ( typeof( Delegate ).IsAssignableFrom( reflect ) ) {
+				return null;
+			}
 
-                if ( ( arrayType != null ) && ( IsPrimitive( arrayType ) == false ) ) {
-                    var clonedArray = ( Array ) cloneObject;
+			var copy = MemberwiseCloneMethod.Invoke( originalObject, null );
 
-                    clonedArray.ForEach( ( array, indices ) => array.SetValue( InternalCopy( clonedArray.GetValue( indices ), visited ), indices ) );
-                }
-            }
+			if ( reflect.IsArray ) {
+				var elementsType = reflect.GetElementType();
 
-            visited.Add( originalObject, cloneObject );
-            CopyFields( originalObject, visited, cloneObject, typeToReflect );
-            RecursiveCopyBaseTypePrivateFields( originalObject, visited, cloneObject, typeToReflect );
+				if ( elementsType != null && !elementsType.IsPrimitive() ) {
+					var clonedArray = copy as Array;
 
-            return cloneObject;
-        }
+					clonedArray?.ForEach( ( array, index ) => {
+						if ( index != null ) {
+							array?.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
+						}
+					} );
+				}
+			}
 
-        private static void RecursiveCopyBaseTypePrivateFields( [CanBeNull] Object originalObject, [CanBeNull] IDictionary<Object, Object> visited,
-            [CanBeNull] Object cloneObject, [NotNull] Type typeToReflect ) {
-            if ( null == typeToReflect.BaseType ) {
-                return;
-            }
+			visits.Add( originalObject, copy );
+			originalObject.CopyFields( visits, copy, reflect );
+			RecursiveCopyBaseTypePrivateFields( originalObject, visits, copy, reflect );
 
-            RecursiveCopyBaseTypePrivateFields( originalObject, visited, cloneObject, typeToReflect.BaseType );
+			return copy;
+		}
 
-            CopyFields( originalObject, visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
-        }
+		private static void RecursiveCopyBaseTypePrivateFields( [CanBeNull] Object? originalObject, [CanBeNull] IDictionary<Object, Object> visited,
+			[CanBeNull] Object? cloneObject, [NotNull] Type typeToReflect ) {
+			if ( null == typeToReflect.BaseType ) {
+				return;
+			}
 
-        /// <summary>Returns a deep copy of this object.</summary>
-        /// <param name="originalObject"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public static Object Copy( [CanBeNull] this Object originalObject ) =>
-            InternalCopy( originalObject, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+			RecursiveCopyBaseTypePrivateFields( originalObject, visited, cloneObject, typeToReflect.BaseType );
 
-        [CanBeNull]
-        public static T Copy<T>( [CanBeNull] this T original ) => ( T ) Copy( original );
+			originalObject.CopyFields( visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
+		}
 
-        [CanBeNull]
-        public static Object GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
-            if ( instance is null ) {
-                throw new ArgumentNullException( nameof( instance ) );
-            }
+		/// <summary>Returns a deep copy of this object.</summary>
+		/// <param name="original"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public static Object DeepCopy<T>( [CanBeNull] this T original ) =>
+			InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
 
-            if ( String.IsNullOrWhiteSpace( fieldName ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fieldName ) );
-            }
+		[CanBeNull]
+		public static T Copy<T>( [CanBeNull] this T original ) => ( T )DeepCopy( original );
 
-            var type = instance.GetType();
-            var info = type.GetField( fieldName, BindingFlags.NonPublic | BindingFlags.Instance );
+		[CanBeNull]
+		public static Object GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
+			if ( instance is null ) {
+				throw new ArgumentNullException( nameof( instance ) );
+			}
 
-            if ( info is null ) {
-                throw new ArgumentException( $"{type.FullName} does not contain the private field '{fieldName}'." );
-            }
+			if ( String.IsNullOrWhiteSpace( fieldName ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fieldName ) );
+			}
 
-            return info.GetValue( instance );
-        }
+			var type = instance.GetType();
+			var info = type.GetField( fieldName, BindingFlags.NonPublic | BindingFlags.Instance );
 
-        public static Boolean IsPrimitive<T>( [NotNull] this T type ) {
-            if ( type is String ) {
-                return true;
-            }
+			if ( info is null ) {
+				throw new ArgumentException( $"{type.FullName} does not contain the private field '{fieldName}'." );
+			}
 
-            var gt = type.GetType();
+			return info.GetValue( instance );
+		}
 
-            return gt.IsValueType && gt.IsPrimitive;
-        }
+		public static Boolean IsPrimitive<T>( [CanBeNull] this T type ) =>
+			type switch
+			{
+				null => false,
+				String _ => true,
+				_ => type.GetType().IsPrimitive
+			};
 
-    }
+	}
 
 }

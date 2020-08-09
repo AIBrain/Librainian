@@ -1,216 +1,86 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "DatabaseExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "DatabaseExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
+﻿#nullable enable
 
 namespace Librainian.Databases {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Linq;
-    using System.Management;
-    using System.Reflection;
-    using System.Runtime.Serialization;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Internet;
-    using JetBrains.Annotations;
-    using Logging;
-    using Maths;
-    using Measurement.Time;
-    using System.Data.SqlClient;
-    using Parsing;
-    using Persistence;
-    using static Persistence.Cache;
-    using Fields = System.Collections.Generic.Dictionary<System.String, System.Int32>;
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using System.Data;
+	using System.Diagnostics;
+	using System.Globalization;
+	using System.Linq;
+	using System.Management;
+	using System.Reflection;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using Internet;
+	using JetBrains.Annotations;
+	using Logging;
+	using Maths;
+	using Microsoft.Data.SqlClient;
+	using Parsing;
+	using Persistence;
+	using FieldDictionary = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
-    public static class DatabaseExtensions {
+	public static class DatabaseExtensions {
 
-        [NotNull]
-        private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
+		[NotNull]
+		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
 
-        [NotNull]
-        private static T CreateItemFromRow<T>( [NotNull] DataRow row, [NotNull] [ItemNotNull] IEnumerable<PropertyInfo> properties ) {
-            if ( row is null ) {
-                throw new ArgumentNullException( nameof( row ) );
-            }
+		/// <summary>Return a dictionary of fields and their index.</summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		[NotNull]
+		private static FieldDictionary GetFieldNames( [NotNull] this IDataReader reader ) {
+			var dictionary = new FieldDictionary( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
 
-            if ( properties is null ) {
-                throw new ArgumentNullException( nameof( properties ) );
-            }
+			if ( !reader.IsClosed ) {
+				for ( var i = 0; i < reader.FieldCount; i++ ) {
+					dictionary.Add( reader.GetName( i ) ?? throw new InvalidOperationException(), i );
+				}
+			}
 
-            //T item = new T();
-            //var item = Activator.CreateInstance<T>(); //TODO use the faster creation function below?
-            //var t = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
+			return dictionary;
+		}
 
-            var item = ( T ) FormatterServices.GetUninitializedObject( typeof( T ) ) ?? throw new InvalidOperationException( "Something bad happened." );
+		[CanBeNull]
+		public static T Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
+			if ( String.IsNullOrWhiteSpace( command ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
+			}
 
-            foreach ( var property in properties ) {
-                property.SetValue( item, row[ property.Name ], null );
-            }
+			try {
+				using var db = new DatabaseServer( builderToTest.ConnectionString, token: token );
 
-            return item;
-        }
+				return db.ExecuteScalar<T>( command, CommandType.Text );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
 
-        /// <summary>Cache the fields in this <paramref name="reader" /> for 1 minute.</summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        [NotNull]
-        private static Fields GetDict( [NotNull] this IDataReader reader ) {
-            if ( reader is null ) {
-                throw new ArgumentNullException( nameof( reader ) );
-            }
+				throw;
+			}
+		}
 
-            var key = reader.Key();
+		[ItemCanBeNull]
+		public static async ValueTask<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
+			if ( String.IsNullOrWhiteSpace( command ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
+			}
 
-            if ( !( Recall( key ) is Fields fields ) ) {
-                fields = reader.GetFieldNames();
-                Remember( key, fields, Sliding.Minutes( 1 ) );
-            }
+			try {
+				using var db = new DatabaseServer( builderToTest.ConnectionString, token: token );
 
-            return fields;
-        }
+				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
 
-        /// <summary>Return a dictionary of fields and their index.</summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        [NotNull]
-        private static Fields GetFieldNames( [NotNull] this IDataReader reader ) {
-            if ( reader is null ) {
-                throw new ArgumentNullException( nameof( reader ) );
-            }
+				throw;
+			}
+		}
 
-            var dictionary = new Fields( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
-
-            if ( !reader.IsClosed ) {
-                for ( var i = 0; i < reader.FieldCount; i++ ) {
-                    dictionary.Add( reader.GetName( i ) ?? throw new InvalidOperationException(), i );
-                }
-            }
-
-            return dictionary;
-        }
-
-        /// <summary>Get a key for this <paramref name="reader" />.</summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        [NotNull]
-        private static String Key( [NotNull] this IDataReader reader ) {
-            if ( reader is null ) {
-                throw new ArgumentNullException( nameof( reader ) );
-            }
-
-            return BuildKey( reader.GetHashCode(), reader.FieldCount.GetHashCode(), reader.Depth, reader.RecordsAffected, reader.FieldCount, reader.IsClosed );
-        }
-
-        public static Boolean Add<T>( [NotNull] this DataSet dataSet, [NotNull] IEnumerable<T> list ) {
-            if ( dataSet is null ) {
-                throw new ArgumentNullException( nameof( dataSet ) );
-            }
-
-            if ( list is null ) {
-                throw new ArgumentNullException( nameof( list ) );
-            }
-
-            try {
-                dataSet.Tables.Add( list.ToDataTable2() );
-
-                return true;
-            }
-            catch ( ArgumentNullException exception ) {
-                exception.Log();
-
-                throw;
-            }
-            catch ( ArgumentException exception ) {
-                exception.Log();
-
-                throw;
-            }
-            catch ( DuplicateNameException exception ) {
-                exception.Log();
-
-                throw;
-            }
-        }
-
-        [CanBeNull]
-        public static T Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
-
-            if ( builderToTest == default ) {
-                throw new ArgumentNullException( nameof( builderToTest ) );
-            }
-
-            if ( String.IsNullOrWhiteSpace( command ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
-            }
-
-            try {
-                using ( var db = new DatabaseServer( builderToTest.ConnectionString, token: token ) ) {
-                    return db.ExecuteScalar<T>( command, CommandType.Text );
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
-
-        [ItemCanBeNull]
-        public static async Task<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
-
-            if ( builderToTest == default ) {
-                throw new ArgumentNullException( nameof( builderToTest ) );
-            }
-
-            if ( String.IsNullOrWhiteSpace( command ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
-            }
-
-            try {
-                using ( var db = new DatabaseServer( builderToTest.ConnectionString, token: token ) ) {
-
-                    return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return default;
-        }
+		/*
 
         /// <summary>Converts a DataTable to a list with generic objects</summary>
         /// <typeparam name="T">Generic object</typeparam>
@@ -246,414 +116,416 @@ namespace Librainian.Databases {
 
             return list;
         }
-
-        public static void DisplayTable( [NotNull] this DataTable table ) {
-            if ( table is null ) {
-                throw new ArgumentNullException( nameof( table ) );
-            }
-
-            foreach ( DataRow row in table.Rows ) {
-                foreach ( DataColumn dataColumn in table.Columns ) {
-                    Debug.WriteLine( "{0} = {1}", dataColumn.ColumnName, row[ dataColumn ] );
-                }
-
-                Debug.WriteLine( String.Empty );
-            }
-        }
-
-        /// <summary>Enumerates all SQL Server instances on the machine.</summary>
-        /// <returns></returns>
-        [ItemNotNull]
-        public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
-            const String query = @"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = 'instanceID'";
-
-            foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
-
-                using var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
-
-                try {
-                    if ( !getSqlEngine.Get().Count.Any() ) {
-                        yield break;
-                    }
-                }
-                catch ( ManagementException ) {
-                    yield break;
-                }
-
-                foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine?[ "ServiceName" ]?.ToString() ) ) {
-
-                    if ( !String.IsNullOrWhiteSpace( serviceName ) ) {
-                        yield return new SqlServerInstance {
-                            InstanceName = GetInstanceNameFromServiceName( serviceName ),
-                            ServiceName = serviceName,
-                            Version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ),
-                            Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" ),
-                            MachineName = Environment.MachineName
-                        };
-                    }
-                }
-            }
-        }
-
-        [CanBeNull]
-        public static String Get( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String key = Words.PrimeConnectionString,
-            Boolean throwIfNotFound = true ) {
-            if ( file is null ) {
-                throw new ArgumentNullException( nameof( file ) );
-            }
-
-            if ( String.IsNullOrWhiteSpace( key ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
-            }
-
-            if ( file.TryGetValue( key, out var connection ) ) {
-                if ( !String.IsNullOrWhiteSpace( connection ) ) {
-                    return connection;
-                }
-            }
-
-            if ( throwIfNotFound ) {
-                throw new InvalidOperationException( "No usable connection string." );
-            }
-
-            return default;
-        }
-
-        /// <summary>Method returns the correct SQL namespace to use to detect SQL Server instances.</summary>
-        /// <returns>namespace to use to detect SQL Server instances</returns>
-        [ItemNotNull]
-        [NotNull]
-        public static IEnumerable<String> GetCorrectWmiNameSpaces() {
-            const String root = "root\\Microsoft\\sqlserver";
-            var namespaces = new List<String>();
-
-            try {
-
-                // Enumerate all WMI instances of __namespace WMI class.
-                using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
-                namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ].ToString() ) );
-            }
-            catch ( ManagementException exception ) {
-                exception.Log();
-            }
-
-            foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement", true, CultureInfo.CurrentCulture ) ) ) {
-                yield return $@"{root}\{ns}";
-            }
-        }
-
-        /// <summary>method extracts the instance name from the service name</summary>
-        /// <param name="serviceName"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String GetInstanceNameFromServiceName( [CanBeNull] String? serviceName ) {
-            if ( String.IsNullOrEmpty( serviceName ) ) {
-                return String.Empty;
-            }
-
-            if ( serviceName.Like( "MSSQLSERVER" ) ) {
-                return serviceName;
-            }
-
-            return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
-        }
-
-        [CanBeNull]
-        public static IList<PropertyInfo> GetPropertiesForType<T>() {
-            var type = typeof( T );
-
-            if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) {
-                TypeDictionary.Add( type, type.GetProperties() );
-            }
-
-            return TypeDictionary[ type ];
-        }
-
-        /// <summary>Returns the WMI property value for a given property name for a particular SQL Server service Name</summary>
-        /// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
-        /// <param name="wmiNamespace">The wmi namespace to connect to</param>
-        /// <param name="propertyName">The property name whose value is required</param>
-        /// <returns></returns>
-        [NotNull]
-        public static String GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
-            if ( serviceName is null ) {
-                throw new ArgumentNullException( nameof( serviceName ) );
-            }
-
-            if ( wmiNamespace is null ) {
-                throw new ArgumentNullException( nameof( wmiNamespace ) );
-            }
-
-            if ( propertyName is null ) {
-                throw new ArgumentNullException( nameof( propertyName ) );
-            }
-
-            var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
-            using var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
-
-            foreach ( var o in propertySearcher.Get() ) {
-                if ( o is ManagementObject managementObject ) {
-                    return managementObject[ "PropertyStrValue" ].ToString();
-                }
-            }
-
-            return String.Empty;
-        }
-
-        public static Status InitializeDatabaseConnection( [NotNull] ConcurrentDictionaryFile<String, String> file, [NotNull] Credentials credentials,
-            CancellationToken token ) {
-            if ( file is null ) {
-                throw new ArgumentNullException( nameof( file ) );
-            }
-
-            if ( credentials is null ) {
-                throw new ArgumentNullException( nameof( credentials ) );
-            }
-
-            try {
-                var primeConnectionString = file.Get();
-
-                if ( !String.IsNullOrWhiteSpace( primeConnectionString ) ) {
-                    var builder = new SqlConnectionStringBuilder( primeConnectionString );
-
-                    var sqlServer = builder.TryGetResponse( token );
-
-                    if ( ( sqlServer != null ) && ( sqlServer.Status == Status.Success ) && ( sqlServer.ConnectionStringBuilder != default ) ) {
-
-                        file.Set( sqlServer.ConnectionStringBuilder.ToString() );
-
-                        return sqlServer.Status;
-                    }
-                }
-
-                return DatabaseServer.FindUsableServers( Seconds.Thirty, credentials ).Where( server => {
-                    if ( server.Status.IsGood() ) {
-                        return default;
-                    }
-
-                    if ( file.Set( server ) ) {
-                        return true;
-                    }
-
-                    return default;
-                } ).Select( server => server.Status ).FirstOrDefault();
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-
-            return Status.Failure;
-        }
-
-        /// <summary>Returns the ordinal or null.</summary>
-        /// <param name="reader">    </param>
-        /// <param name="columnName"></param>
-        /// <returns></returns>
-        public static Int32? Ordinal( [NotNull] this SqlDataReader reader, [NotNull] String columnName ) {
-            if ( reader == default ) {
-                throw new ArgumentNullException( nameof( reader ) );
-            }
-
-            if ( String.IsNullOrEmpty( columnName ) ) {
-                throw new ArgumentException( "Value cannot be null or empty.", nameof( columnName ) );
-            }
-
-            var dictionary = reader.GetDict();
-
-            if ( dictionary.TryGetValue( columnName, out var result ) ) {
-                return result;
-            }
-
-            return default;
-        }
-
-        public static void PopulateParameters( [CanBeNull] this SqlCommand command, [CanBeNull] IEnumerable<SqlParameter> parameters ) {
-            if ( parameters is null || command?.Parameters is null ) {
-                return;
-            }
-
-            foreach ( var parameter in parameters ) {
-                command.Parameters.Add( parameter );
-            }
-        }
-
-        /// <summary>Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given <paramref name="key" />.
-        /// <para>Returns the key.</para>
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] String connectionString,
-            [NotNull] String key = Words.PrimeConnectionString ) {
-            if ( file is null ) {
-                throw new ArgumentNullException( nameof( file ) );
-            }
-
-            if ( String.IsNullOrWhiteSpace( key ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
-            }
-
-            if ( String.IsNullOrWhiteSpace( connectionString ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
-            }
-
-            file[ key ] = connectionString;
-            file.Flush();
-
-            Debug.Assert( file[ key ].Like( connectionString ) );
-
-            return key;
-        }
-
-        public static Boolean Set( [NotNull] this ConcurrentDictionaryFile<String, String> file, [NotNull] SqlServer sqlServer,
-            [NotNull] String key = Words.PrimeConnectionString ) {
-            if ( file is null ) {
-                throw new ArgumentNullException( nameof( file ) );
-            }
-
-            if ( sqlServer is null ) {
-                throw new ArgumentNullException( nameof( sqlServer ) );
-            }
-
-            if ( sqlServer.Status != Status.Success ) {
-                return default;
-            }
-
-            var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
-
-            if ( connectionStringBuilder == default ) {
-                return default;
-            }
-
-            var connectionString = connectionStringBuilder.ConnectionString;
-
-            file.Set( connectionString, key );
-
-            return file.Get( key ).Like( connectionString );
-        }
-
-        public static Boolean SQLTimeout( [NotNull] this SqlException exception ) {
-            if ( exception is null ) {
-                throw new ArgumentNullException( nameof( exception ) );
-            }
-
-            return exception.Message.Contains( "The server was not found or was not accessible" );
-        }
-
-        /// <summary>Convert our IList to a DataSet</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns>DataSet</returns>
-        /// <copyright>Based from http://codereview.stackexchange.com/q/40891</copyright>
-        [NotNull]
-        public static DataSet ToDataSet<T>( [NotNull] this IEnumerable<T> list ) {
-            if ( list is null ) {
-                throw new ArgumentNullException( nameof( list ) );
-            }
-
-            var ds = new DataSet();
-            ds.Tables.Add( list.ToDataTable2() );
-
-            return ds;
-        }
-
-        /// <summary>To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.</summary>
-        /// <param name="dataReader"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static DataTable ToDataTable( [CanBeNull] this SqlDataReader dataReader ) {
-            var table = new DataTable();
-            table.BeginLoadData();
-
-            if ( dataReader != null ) {
-                table.Load( dataReader, LoadOption.OverwriteChanges );
-            }
-
-            table.EndLoadData();
-
-            return table;
-        }
-
-        /// <summary>
-        /// <para>Warning: Untested and possibly buggy.</para>
-        /// Convert our <paramref name="list" /> to a <see cref="DataTable" />.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns>DataTable</returns>
-        /// <copyright>Based from http://codereview.stackexchange.com/q/40891</copyright>
-        [NotNull]
-        public static DataTable ToDataTable2<T>( [NotNull] this IEnumerable<T> list ) {
-            if ( list is null ) {
-                throw new ArgumentNullException( nameof( list ) );
-            }
-
-            var table = new DataTable();
-
-            var properties = list.GetType().GetProperties();
-
-            foreach ( var propInfo in properties ) {
-                var propertyType = propInfo.PropertyType;
-                var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
-                table.Columns.Add( propInfo.Name, colType );
-            }
-
-            foreach ( var item in list ) {
-                var newRow = table.NewRow();
-
-                foreach ( var propInfo in properties ) {
-                    newRow[ propInfo.Name ] = item; // DBNull.Value?
-                }
-
-                table.Rows.Add( newRow );
-            }
-
-            return table;
-        }
-
-        /// <summary>Warning: Untested.</summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static DataTable ToDataTable3<T>( [CanBeNull] this IEnumerable<T> list ) {
-            "Untested".Break();
-            var table = new DataTable();
-
-            if ( list is null ) {
-                "Null list".Break();
-
-                return table;
-            }
-
-            var columns = list.GetType().GetProperties();
-
-            foreach ( var getProperty in columns ) {
-                var icolType = getProperty.PropertyType;
-
-                if ( icolType.IsGenericType && ( icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) ) {
-                    icolType = icolType.GetGenericArguments()[ 0 ];
-                }
-
-                table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
-            }
-
-            foreach ( var record in list.Where( record => !( record is null ) ) ) {
-                var dr = table.NewRow();
-
-                foreach ( var p in columns ) {
-                    dr[ p.Name ] = p.GetValue( record, default ) ?? DBNull.Value;
-                }
-
-                table.Rows.Add( dr );
-            }
-
-            return table;
-        }
-
-        /*
+		*/
+
+		public static Boolean PossibleTimeout( [NotNull] this SqlException exception ) {
+			if ( exception is null ) {
+				throw new ArgumentNullException( nameof( exception ) );
+			}
+
+#if NETCORE || NETSTANDARD
+			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase );
+#else
+			return exception.Message.Contains( "server was not found" ) || exception.Message.Contains( "was not accessible" ) || exception.Message.Contains( "timed out" );
+#endif
+		}
+
+		/// <summary>Enumerates all SQL Server instances on the machine.</summary>
+		/// <returns></returns>
+		[ItemNotNull]
+		public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
+			const String query = @"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = 'instanceID'";
+
+			foreach ( var correctNamespace in GetCorrectWmiNameSpaces() ) {
+				using var getSqlEngine = new ManagementObjectSearcher( correctNamespace, query );
+
+				try {
+					if ( !getSqlEngine.Get().Count.Any() ) {
+						yield break;
+					}
+				}
+				catch ( ManagementException ) {
+					yield break;
+				}
+
+				foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine["ServiceName"]?.ToString() ) ) {
+					if ( !String.IsNullOrWhiteSpace( serviceName ) ) {
+						yield return new SqlServerInstance {
+							InstanceName = GetInstanceNameFromServiceName( serviceName ), ServiceName = serviceName,
+							Version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ),
+							Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" ), MachineName = Environment.MachineName
+						};
+					}
+				}
+			}
+		}
+
+		[CanBeNull]
+		public static String Get(
+			[NotNull] this ConcurrentDictionaryFile<String, String> file,
+			[NotNull] String key = Words.PrimeConnectionString,
+			Boolean throwIfNotFound = true
+		) {
+			if ( file is null ) {
+				throw new ArgumentNullException( nameof( file ) );
+			}
+
+			if ( String.IsNullOrWhiteSpace( key ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+			}
+
+			if ( file.TryGetValue( key, out var connection ) ) {
+				if ( !String.IsNullOrWhiteSpace( connection ) ) {
+					return connection;
+				}
+			}
+
+			if ( throwIfNotFound ) {
+				throw new InvalidOperationException( "No usable connection string." );
+			}
+
+			return default;
+		}
+
+		/// <summary>Method returns the correct SQL namespace to use to detect SQL Server instances.</summary>
+		/// <returns>namespace to use to detect SQL Server instances</returns>
+		[ItemNotNull]
+		[NotNull]
+		public static IEnumerable<String> GetCorrectWmiNameSpaces() {
+			const String root = "root\\Microsoft\\sqlserver";
+			var namespaces = new List<String>();
+
+			try {
+				// Enumerate all WMI instances of __namespace WMI class.
+				using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
+				namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"].ToString() ) );
+			}
+			catch ( ManagementException exception ) {
+				exception.Log();
+			}
+
+			foreach ( var ns in namespaces.Where( s => s.StartsWith( "ComputerManagement", true, CultureInfo.CurrentCulture ) ) ) {
+				yield return $@"{root}\{ns}";
+			}
+		}
+
+		/// <summary>method extracts the instance name from the service name</summary>
+		/// <param name="serviceName"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static String GetInstanceNameFromServiceName( [CanBeNull] String serviceName ) {
+			if ( String.IsNullOrEmpty( serviceName ) ) {
+				return String.Empty;
+			}
+
+			if ( serviceName.Like( "MSSQLSERVER" ) ) {
+				return serviceName;
+			}
+
+			return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
+		}
+
+		[CanBeNull]
+		public static IList<PropertyInfo> GetPropertiesForType<T>() {
+			var type = typeof( T );
+
+			if ( !TypeDictionary.ContainsKey( typeof( T ) ) ) {
+				TypeDictionary.Add( type, type.GetProperties() );
+			}
+
+			return TypeDictionary[type];
+		}
+
+		/// <summary>Returns the WMI property value for a given property name for a particular SQL Server service Name</summary>
+		/// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
+		/// <param name="wmiNamespace">The wmi namespace to connect to</param>
+		/// <param name="propertyName">The property name whose value is required</param>
+		/// <returns></returns>
+		[NotNull]
+		public static String? GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
+			if ( serviceName is null ) {
+				throw new ArgumentNullException( nameof( serviceName ) );
+			}
+
+			if ( wmiNamespace is null ) {
+				throw new ArgumentNullException( nameof( wmiNamespace ) );
+			}
+
+			if ( propertyName is null ) {
+				throw new ArgumentNullException( nameof( propertyName ) );
+			}
+
+			var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
+			using var propertySearcher = new ManagementObjectSearcher( wmiNamespace, query );
+
+			foreach ( var o in propertySearcher.Get() ) {
+				if ( o is ManagementObject managementObject ) {
+					return managementObject["PropertyStrValue"]?.ToString();
+				}
+			}
+
+			return String.Empty;
+		}
+
+		public static async ValueTask<Status> InitializeDatabaseConnection(
+			[NotNull] ConcurrentDictionaryFile<String, String> file,
+			[NotNull] Credentials credentials,
+			CancellationToken token
+		) {
+			if ( file is null ) {
+				throw new ArgumentNullException( nameof( file ) );
+			}
+
+			if ( credentials is null ) {
+				throw new ArgumentNullException( nameof( credentials ) );
+			}
+
+			try {
+				var primeConnectionString = file.Get();
+
+				if ( !String.IsNullOrWhiteSpace( primeConnectionString ) ) {
+					var builder = new SqlConnectionStringBuilder( primeConnectionString );
+
+					var sqlServer = await builder.TryGetResponse( token ).ConfigureAwait( false );
+
+					if ( sqlServer != null && sqlServer.Status == Status.Success ) {
+						if ( sqlServer.ConnectionStringBuilder != null ) {
+							file.Set( sqlServer.ConnectionStringBuilder.ToString() );
+
+							return sqlServer.Status;
+						}
+					}
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+
+			return Status.Failure;
+		}
+
+		[Pure]
+		public static SqlCommand PopulateParameters( [NotNull] this SqlCommand command, IEnumerable<SqlParameter?>? parameters ) {
+			if ( command.Parameters is null || parameters is null ) {
+				return command;
+			}
+
+			foreach ( var parameter in parameters.Where( parameter => parameter != null ) ) {
+				command.Parameters.Add( parameter );
+			}
+
+			return command;
+		}
+
+		/// <summary>
+		///     Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given
+		///     <paramref name="key" />.
+		///     <para>Returns the key.</para>
+		/// </summary>
+		/// <param name="file"></param>
+		/// <param name="connectionString"></param>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static String Set(
+			[NotNull] this ConcurrentDictionaryFile<String, String> file,
+			[NotNull] String connectionString,
+			[NotNull] String key = Words.PrimeConnectionString
+		) {
+			if ( file is null ) {
+				throw new ArgumentNullException( nameof( file ) );
+			}
+
+			if ( String.IsNullOrWhiteSpace( key ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+			}
+
+			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
+			}
+
+			file[key] = connectionString;
+			file.Flush();
+
+			Debug.Assert( file[key].Like( connectionString ) );
+
+			return key;
+		}
+
+		public static Boolean Set(
+			[NotNull] this ConcurrentDictionaryFile<String, String> file,
+			[NotNull] SqlServer sqlServer,
+			[NotNull] String key = Words.PrimeConnectionString
+		) {
+			if ( file is null ) {
+				throw new ArgumentNullException( nameof( file ) );
+			}
+
+			if ( sqlServer is null ) {
+				throw new ArgumentNullException( nameof( sqlServer ) );
+			}
+
+			if ( sqlServer.Status != Status.Success ) {
+				return default;
+			}
+
+			var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
+
+			if ( connectionStringBuilder == null ) {
+				return default;
+			}
+
+			var connectionString = connectionStringBuilder.ConnectionString;
+
+			file.Set( connectionString, key );
+
+			return file.Get( key ).Like( connectionString );
+		}
+
+		/// <summary>Convert our IList to a DataSet</summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <param name="exampleSet"></param>
+		/// <returns>DataSet</returns>
+		/// <copyright>Based from http://codereview.stackexchange.com/q/40891</copyright>
+		[NotNull]
+		public static DataSet ToDataSet<T>( [NotNull] this IEnumerable<T> list, DataSet? exampleSet = null ) {
+			if ( list is null ) {
+				throw new ArgumentNullException( nameof( list ) );
+			}
+
+			var set = new DataSet {
+				Tables = {
+					list.ToDataTable()
+				},
+				Namespace = exampleSet?.Namespace, CaseSensitive = exampleSet?.CaseSensitive == true, EnforceConstraints = exampleSet?.EnforceConstraints == true,
+				DataSetName = exampleSet?.DataSetName, Locale = exampleSet?.Locale, Prefix = exampleSet?.Prefix, RemotingFormat = exampleSet?.RemotingFormat switch {
+					SerializationFormat.Binary => SerializationFormat.Binary,
+					SerializationFormat.Xml    => SerializationFormat.Xml,
+					null                       => SerializationFormat.Xml,
+					_                          => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.RemotingFormat )}." )
+				},
+				SchemaSerializationMode = exampleSet?.SchemaSerializationMode switch {
+					SchemaSerializationMode.ExcludeSchema => SchemaSerializationMode.ExcludeSchema,
+					SchemaSerializationMode.IncludeSchema => SchemaSerializationMode.IncludeSchema,
+					null                                  => SchemaSerializationMode.IncludeSchema,
+					_                                     => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.SchemaSerializationMode )}." )
+				},
+				Site = exampleSet?.Site
+			};
+
+			if ( exampleSet != null ) {
+				if ( exampleSet.Container != null ) {
+					foreach ( IComponent? o in exampleSet.Container.Components ) {
+						set.Container?.Add( o );
+					}
+				}
+
+				foreach ( DictionaryEntry entry in exampleSet.ExtendedProperties ) {
+					set.ExtendedProperties.Add( entry.Key, entry.Value );
+				}
+
+				foreach ( DataRelation relation in exampleSet.Relations ) {
+					set.Relations.Add( relation );
+				}
+
+				if ( exampleSet.DefaultViewManager.DataViewSettings != null && set.DefaultViewManager.DataViewSettings != null ) {
+					for ( var i = 0; i < exampleSet.DefaultViewManager.DataViewSettings.Count; i++ ) {
+						set.DefaultViewManager.DataViewSettings[i] = exampleSet.DefaultViewManager.DataViewSettings[i];
+					}
+				}
+			}
+
+			return set;
+		}
+
+		/// <summary>To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.</summary>
+		/// <param name="dataReader"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static DataTable ToDataTable( [NotNull] this SqlDataReader dataReader ) {
+			var table = new DataTable();
+			table.BeginLoadData();
+			table.Load( dataReader, LoadOption.OverwriteChanges, ( sender, args ) => $"Error reading {nameof( dataReader )}.".Log() );
+			table.EndLoadData();
+
+			return table;
+		}
+
+		/// <summary>
+		///     <para>Warning: Untested and possibly buggy.</para>
+		///     Convert our <paramref name="list" /> to a <see cref="DataTable" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <returns>DataTable</returns>
+		/// <copyright>Based from http://codereview.stackexchange.com/q/40891</copyright>
+		[NotNull]
+		public static DataTable ToDataTable<T>( [NotNull] this IEnumerable<T> list ) {
+			if ( list is null ) {
+				throw new ArgumentNullException( nameof( list ) );
+			}
+
+			var table = new DataTable();
+
+			var properties = list.GetType().GetProperties();
+
+			foreach ( var propInfo in properties ) {
+				var propertyType = propInfo.PropertyType;
+				var colType = Nullable.GetUnderlyingType( propertyType ) ?? propertyType;
+				table.Columns.Add( propInfo.Name, colType );
+			}
+
+			foreach ( var item in list ) {
+				var newRow = table.NewRow();
+
+				foreach ( var propInfo in properties ) {
+					newRow[propInfo.Name] = item; // DBNull.Value?
+				}
+
+				table.Rows.Add( newRow );
+			}
+
+			return table;
+		}
+
+		/// <summary>Warning: Untested.</summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static DataTable ToDataTable3<T>( [NotNull] this IEnumerable<T> list ) {
+			"Untested code!".Break();
+			var table = new DataTable();
+
+			var columns = list.GetType().GetProperties();
+
+			foreach ( var getProperty in columns ) {
+				var icolType = getProperty.PropertyType;
+
+				if ( icolType.IsGenericType && icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
+					icolType = icolType.GetGenericArguments()[0];
+				}
+
+				table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
+			}
+
+			foreach ( var record in list.Where( record => !( record is null ) ) ) {
+				var dr = table.NewRow();
+
+				foreach ( var p in columns ) {
+					dr[p.Name] = p.GetValue( record, default ) ?? DBNull.Value;
+				}
+
+				table.Rows.Add( dr );
+			}
+
+			return table;
+		}
+
+		/*
         public static DataTable ToDataTable<T>(this IEnumerable<T> source)
         {
             DataTable table = new DataTable();
@@ -687,32 +559,32 @@ namespace Librainian.Databases {
         }
         */
 
-        [NotNull]
-        public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
-            if ( table is null ) {
-                throw new ArgumentNullException( nameof( table ) );
-            }
+		[NotNull]
+		public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
+			if ( table is null ) {
+				throw new ArgumentNullException( nameof( table ) );
+			}
 
-            var properties = GetPropertiesForType<T>();
+			var properties = GetPropertiesForType<T>();
 
-            foreach ( var row in table.Rows.Cast<DataRow>() ) {
-                if ( row != null ) {
-                    yield return CreateItemFromRow<T>( row, properties );
-                }
-            }
-        }
+			foreach ( var row in table.Rows.Cast<DataRow>() ) {
+				if ( row != null ) {
+					yield return row.CreateItemFromRow<T>( properties );
+				}
+			}
+		}
 
-        [NotNull]
-        public static SqlParameter ToSqlParameter<TValue>( [CanBeNull] this TValue value, [CanBeNull] String? parameterName ) =>
-            new SqlParameter( parameterName, value ) {
-                Value = value
-            };
+		[NotNull]
+		public static SqlParameter ToSqlParameter<TValue>( [CanBeNull] this TValue value, [CanBeNull] String? parameterName ) =>
+			new SqlParameter( parameterName, value ) {
+				Value = value
+			};
 
-        [NotNull]
-        public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String? parameterName, Int32 size ) =>
-            new SqlParameter( parameterName, sqlDbType, size );
+		[NotNull]
+		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String? parameterName, Int32 size ) =>
+			new SqlParameter( parameterName, sqlDbType, size );
 
-        /*
+		/*
                 private static List<T> MapList<T>( DataTable dt ) {
                     List<T> list = new List<T>();
 
@@ -729,7 +601,7 @@ namespace Librainian.Databases {
                     return list;
                 }
         */
-        /*
+		/*
 
                 /// <summary>
                 /// <para>"Attempting below to get a fluent Object to DTO builder - which fails when a property is missed."</para>
@@ -778,7 +650,7 @@ namespace Librainian.Databases {
                 }
         */
 
-        /*
+		/*
 
                 /// <summary>
                 /// Returns the total time taken for a simple query. (connect + execute + fetch...)
@@ -814,59 +686,59 @@ namespace Librainian.Databases {
                 }
         */
 
-        /// <summary>Performs two adhoc selects on the database. <code>select @@VERSION;" and "select SYSUTCDATETIME();</code></summary>
-        /// <param name="test"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public static SqlServer? TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
+		/// <summary>
+		///     Performs two adhoc selects on the database. <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
+		/// </summary>
+		/// <param name="test"></param>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		[ItemCanBeNull]
+		public static async ValueTask<SqlServer?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
+			if ( test == default ) {
+				throw new ArgumentNullException( nameof( test ) );
+			}
 
-            if ( test == default ) {
-                throw new ArgumentNullException( nameof( test ) );
-            }
+			try {
+				var version = await test.AdhocAsync<String>( "select @@version;", token ).ConfigureAwait( false );
 
-            try {
+				if ( String.IsNullOrWhiteSpace( version ) ) {
+					$"Failed connecting to server {test.DataSource}.".Break();
 
-                var version = test.Adhoc<String>( "select @@version;", token );
+					return default;
+				}
 
-                if ( String.IsNullOrWhiteSpace( version ) ) {
-                    $"Failed connecting to server {test.DataSource}.".Break();
+				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", token ).ConfigureAwait( false );
 
-                    return default;
-                }
+				if ( !getdate.HasValue ) {
+					$"Failed connecting to server {test.DataSource}.".Break();
 
-                var getdate = test.Adhoc<DateTime?>( "select sysutcdatetime();", token );
+					return default;
+				}
 
-                if ( !getdate.HasValue ) {
-                    $"Failed connecting to server {test.DataSource}.".Break();
+				var serverDateTime = getdate.Value; //should already be utc.
+				var now = DateTime.UtcNow;          //get this computer's utc
 
-                    return default;
-                }
+				if ( serverDateTime.Date == now.Date ) {
+					( $"Opened a connection to {test.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +
+					  $"{Environment.NewLine}Server time is {serverDateTime.ToLocalTime()}" ).Log();
 
-                var serverDateTime = getdate.Value; //should already be utc.
-                var now = DateTime.UtcNow;          //get this computer's utc
+					var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
-                if ( serverDateTime.Date == now.Date ) {
-                    ( $"Opened a connection to {test.DataSource}!" + $"{Environment.NewLine}Server Version:{version}" +
-                      $"{Environment.NewLine}Server time is {serverDateTime.ToLocalTime()}" ).Log();
+					return new SqlServer {
+						Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
+					};
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
 
-                    var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
+			"Failed connecting to server.".Break();
 
-                    return new SqlServer {
-                        Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
-                    };
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
+			return default;
+		}
 
-            "Failed connecting to server.".Break();
-
-            return default;
-        }
-
-        /*
+		/*
                 [Obsolete( "No access to a local Server atm." )]
                 public static TimeSpan PingAverage() {
                     var stopwatch = Stopwatch.StartNew();
@@ -882,7 +754,7 @@ namespace Librainian.Databases {
                 }
         */
 
-        /*
+		/*
 
                 /// <summary>
                 /// Returns the total time taken for a simple query. (connect + execute + fetch...)
@@ -917,6 +789,6 @@ namespace Librainian.Databases {
                 }
         */
 
-    }
+	}
 
 }

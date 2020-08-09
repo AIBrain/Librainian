@@ -1,35 +1,29 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "FolderExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "FolderExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -39,10 +33,8 @@ namespace Librainian.OperatingSystem.FileSystem {
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Security.Permissions;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Forms;
     using ComputerSystem.Devices;
     using JetBrains.Annotations;
     using Parsing;
@@ -51,10 +43,10 @@ namespace Librainian.OperatingSystem.FileSystem {
     using DirectoryInfo = Pri.LongPath.DirectoryInfo;
     using File = Pri.LongPath.File;
 
-    // ReSharper disable RedundantUsingDirective
+    
     using Path = Pri.LongPath.Path;
 
-    // ReSharper restore RedundantUsingDirective
+    
 
     public static class FolderExtensions {
 
@@ -113,19 +105,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 
             var documentCopyStatistics = new ConcurrentBag<DocumentCopyStatistics>();
 
-            if ( !sourceFolder.HavePermission( FileIOPermissionAccess.Read ) ) {
-                return documentCopyStatistics;
-            }
-
-            if ( !destinationFolder.HavePermission( FileIOPermissionAccess.Write ) ) {
-                return documentCopyStatistics;
-            }
-
             var sourceFiles = sourceFolder.GetDocuments( searchPatterns ?? new[] {
                 "*.*"
             } );
 
-            Parallel.ForEach( sourceFiles.AsParallel(), CPU.AllCPUExceptOne, sourceDocument => {
+            Parallel.ForEach( sourceFiles.AsParallel(), CPU.AllExceptOne, sourceDocument => {
                 try {
                     var beginTime = DateTime.UtcNow;
 
@@ -228,7 +212,7 @@ namespace Librainian.OperatingSystem.FileSystem {
                 throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
             }
 
-            return path.Split( Folder.FolderSeparatorChar ).Where( s => !s.IsNullOrWhiteSpace() );
+            return path.Split( Folder.FolderSeparatorChar ).Where( s => !String.IsNullOrWhiteSpace( s ) );
         }
 
         /// <summary><see cref="PathSplitter" />.</summary>
@@ -274,7 +258,6 @@ namespace Librainian.OperatingSystem.FileSystem {
                 // IOExcception is thrown when the file is in use by any process.
                 if ( stopwatch.Elapsed <= tryFor ) {
                     Thread.Yield();
-                    Application.DoEvents();
 
                     goto TryAgain;
                 }

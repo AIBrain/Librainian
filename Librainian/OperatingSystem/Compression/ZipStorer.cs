@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "ZipStorer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "ZipStorer.cs" was last formatted by Protiguous on 2020/03/18 at 10:27 AM.
 
 namespace Librainian.OperatingSystem.Compression {
 
@@ -169,7 +163,7 @@ namespace Librainian.OperatingSystem.Compression {
                         var commentSize = br.ReadUInt16();
 
                         // check if comment field is the very last data in file
-                        if ( ( this._zipFileStream.Position + commentSize ) != this._zipFileStream.Length ) {
+                        if ( this._zipFileStream.Position + commentSize != this._zipFileStream.Length ) {
                             return default;
                         }
 
@@ -233,7 +227,7 @@ namespace Librainian.OperatingSystem.Compression {
             zfe.CompressedSize = ( UInt32 ) ( this._zipFileStream.Position - posStart );
 
             // Verify for real compression
-            if ( ( zfe.Method == Compression.Deflate ) && !this.ForceDeflating && source.CanSeek && ( zfe.CompressedSize > zfe.FileSize ) ) {
+            if ( zfe.Method == Compression.Deflate && !this.ForceDeflating && source.CanSeek && zfe.CompressedSize > zfe.FileSize ) {
 
                 // Start operation again with Store algorithm
                 zfe.Method = Compression.Store;
@@ -270,13 +264,13 @@ namespace Librainian.OperatingSystem.Compression {
             this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) ( zfe.EncodeUtf8 ? 0x0800 : 0 ) ), 0,
                 2 ); // filename and comment encoding
 
-            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) zfe.Method ), 0, 2 ); // zipping method
-            this._zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 );      // zipping date and time
-            this._zipFileStream.Write( BitConverter.GetBytes( zfe.Crc32 ), 0, 4 );                                           // file CRC
-            this._zipFileStream.Write( BitConverter.GetBytes( zfe.CompressedSize ), 0, 4 );                                  // compressed file size
-            this._zipFileStream.Write( BitConverter.GetBytes( zfe.FileSize ), 0, 4 );                                        // uncompressed file size
-            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) encodedFilename.Length ), 0, 2 );                   // Filename in zip
-            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) 0 ), 0, 2 );                                        // extra length
+            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) zfe.Method ), 0, 2 );                   // zipping method
+            this._zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 ); // zipping date and time
+            this._zipFileStream.Write( BitConverter.GetBytes( zfe.Crc32 ), 0, 4 );                               // file CRC
+            this._zipFileStream.Write( BitConverter.GetBytes( zfe.CompressedSize ), 0, 4 );                      // compressed file size
+            this._zipFileStream.Write( BitConverter.GetBytes( zfe.FileSize ), 0, 4 );                            // uncompressed file size
+            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) encodedFilename.Length ), 0, 2 );       // Filename in zip
+            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) 0 ), 0, 2 );                            // extra length
             this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) encodedComment.Length ), 0, 2 );
 
             this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) 0 ), 0, 2 );      // disk=0
@@ -317,8 +311,8 @@ namespace Librainian.OperatingSystem.Compression {
             this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) ( zfe.EncodeUtf8 ? 0x0800 : 0 ) ), 0,
                 2 ); // filename and comment encoding
 
-            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) zfe.Method ), 0, 2 ); // zipping method
-            this._zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 );      // zipping date and time
+            this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) zfe.Method ), 0, 2 );                   // zipping method
+            this._zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 ); // zipping date and time
 
             this._zipFileStream.Write( new Byte[] {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -336,7 +330,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="comment"> General comment for Zip file</param>
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
-        public static ZipStorer Create( [NotNull] String filename, [CanBeNull] String? comment ) {
+        public static ZipStorer Create( [NotNull] String filename, [CanBeNull] String comment ) {
             Stream stream = new FileStream( filename, FileMode.Create, FileAccess.ReadWrite );
 
             var zip = Create( stream, comment );
@@ -351,7 +345,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="comment"></param>
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
-        public static ZipStorer Create( [CanBeNull] Stream stream, [CanBeNull] String? comment ) {
+        public static ZipStorer Create( [CanBeNull] Stream stream, [CanBeNull] String comment ) {
             var zip = new ZipStorer {
                 _comment = comment, _zipFileStream = stream, _access = FileAccess.Write
             };
@@ -379,7 +373,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <returns>A valid ZipStorer object</returns>
         [NotNull]
         public static ZipStorer Open( [NotNull] Stream stream, FileAccess access ) {
-            if ( !stream.CanSeek && ( access != FileAccess.Read ) ) {
+            if ( !stream.CanSeek && access != FileAccess.Read ) {
                 throw new InvalidOperationException( "Stream cannot seek" );
             }
 
@@ -453,7 +447,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="pathname">     Full path of file to add to Zip storage</param>
         /// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
         /// <param name="comment">      Comment for stored file</param>
-        public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String? comment ) {
+        public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String comment ) {
             if ( this._access == FileAccess.Read ) {
                 throw new InvalidOperationException( "Writing is not allowed" );
             }
@@ -469,7 +463,7 @@ namespace Librainian.OperatingSystem.Compression {
         /// <param name="source">       Stream object containing the data to store in Zip</param>
         /// <param name="modTime">      Modification time of the data to store</param>
         /// <param name="comment">      Comment for stored file</param>
-        public void AddStream( Compression method, [NotNull] String filenameInZip, [NotNull] Stream source, DateTime modTime, [CanBeNull] String? comment ) {
+        public void AddStream( Compression method, [NotNull] String filenameInZip, [NotNull] Stream source, DateTime modTime, [CanBeNull] String comment ) {
             if ( this._access == FileAccess.Read ) {
                 throw new InvalidOperationException( "Writing is not allowed" );
             }
@@ -561,7 +555,7 @@ namespace Librainian.OperatingSystem.Compression {
             // Make sure the parent directory exists
             var path = Path.GetDirectoryName( filename );
 
-            if ( ( path != null ) && !Directory.Exists( path ) ) {
+            if ( path != null && !Directory.Exists( path ) ) {
                 Directory.CreateDirectory( path );
             }
 
@@ -734,7 +728,7 @@ namespace Librainian.OperatingSystem.Compression {
 
             /// <summary>Overridden method</summary>
             /// <returns>Filename in Zip</returns>
-            [CanBeNull]
+            [NotNull]
             public override String ToString() => this.FilenameInZip;
 
         }

@@ -1,35 +1,29 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "IOWrapper.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "IOWrapper.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -208,9 +202,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
         /// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
         /// <returns>An array of [virtual cluster, physical cluster]</returns>
-        [NotNull]
         [JetBrains.Annotations.NotNull]
-        public static Array GetFileMap( [CanBeNull] String? path ) {
+        public static Array GetFileMap( [CanBeNull] String path ) {
             var hFile = IntPtr.Zero;
             var pAlloc = IntPtr.Zero;
 
@@ -226,7 +219,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 
                 pAlloc = Marshal.AllocHGlobal( q );
                 var pDest = pAlloc;
-                var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
+
+                var fResult = NativeMethods.DeviceIoControl( hFile, FSConstants.FsctlGetRetrievalPointers, p,
+                    Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
                 if ( !fResult ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -292,9 +287,8 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <summary>Get cluster usage for a device</summary>
         /// <param name="deviceName">use "c:"</param>
         /// <returns>a bitarray for each cluster</returns>
-        [NotNull]
         [JetBrains.Annotations.NotNull]
-        public static BitArray GetVolumeMap( [NotNull] String deviceName ) {
+        public static BitArray GetVolumeMap( [JetBrains.Annotations.NotNull] String deviceName ) {
             if ( String.IsNullOrWhiteSpace( deviceName ) ) {
                 throw new ArgumentException( "Value cannot be null or whitespace.", nameof( deviceName ) );
             }
@@ -318,7 +312,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 pAlloc = Marshal.AllocHGlobal( q );
                 var pDest = pAlloc;
 
-                var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p, Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
+                var result = NativeMethods.DeviceIoControl( hDevice, FSConstants.FsctlGetVolumeBitmap, p,
+                    Marshal.SizeOf( i64 ), pDest, q, out var size, IntPtr.Zero );
 
                 if ( !result ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -377,7 +372,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         /// <param name="vcn">cluster number in file to move</param>
         /// <param name="lcn">cluster on disk to move to</param>
         /// <param name="count">for how many clusters</param>
-        public static void MoveFile( [CanBeNull] String? deviceName, [CanBeNull] String? path, Int64 vcn, Int64 lcn, Int32 count ) {
+        public static void MoveFile( [CanBeNull] String deviceName, [CanBeNull] String path, Int64 vcn, Int64 lcn, Int32 count ) {
             var hVol = IntPtr.Zero;
             var hFile = IntPtr.Zero;
 
@@ -394,8 +389,8 @@ namespace Librainian.OperatingSystem.FileSystem {
                 var p = handle.AddrOfPinnedObject();
                 var bufSize = ( UInt32 ) Marshal.SizeOf( mfd );
 
-                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize, IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size,
-                    IntPtr.Zero );
+                var fResult = NativeMethods.DeviceIoControl( hVol, FSConstants.FsctlMoveFile, p, bufSize,
+                    IntPtr.Zero, /* no output data from this FSCTL*/ 0, out var size, IntPtr.Zero );
 
                 if ( !fResult ) {
                     throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -409,9 +404,10 @@ namespace Librainian.OperatingSystem.FileSystem {
             }
         }
 
-        public static IntPtr OpenFile( [CanBeNull] String? path ) {
-            var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
-                FileMode.Open, 0, IntPtr.Zero );
+        public static IntPtr OpenFile( [CanBeNull] String path ) {
+            var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ),
+                FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0,
+                IntPtr.Zero );
 
             if ( hFile.IsInvalid ) {
                 throw new Exception( Marshal.GetLastWin32Error().ToString() );
@@ -420,8 +416,9 @@ namespace Librainian.OperatingSystem.FileSystem {
             return hFile.DangerousGetHandle();
         }
 
-        public static IntPtr OpenVolume( [CanBeNull] String? deviceName ) {
-            var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
+        public static IntPtr OpenVolume( [CanBeNull] String deviceName ) {
+            var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName,
+                ( System.IO.FileAccess ) ( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
                 IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
             if ( hDevice.IsInvalid ) {

@@ -1,113 +1,110 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "LargeSizeFormatProvider.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "LargeSizeFormatProvider.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
+
+#nullable enable
 
 namespace Librainian.Extensions {
 
-    using System;
-    using JetBrains.Annotations;
-    using Maths;
+	using System;
+	using JetBrains.Annotations;
+	using Maths;
 
-    public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
+	public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
-        [NotNull]
-        public String Format( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
-            if ( arg == null ) {
-                throw new ArgumentNullException( nameof( arg ) );
-            }
+		private const String FileSizeFormat = "fs";
 
-            if ( String.IsNullOrWhiteSpace( format ) ) {
-                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
-            }
+		[NotNull]
+		private static String DefaultFormat( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider? formatProvider ) {
+			var formattableArg = arg as IFormattable;
 
-            if ( !format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) ) {
-                return DefaultFormat( format, arg, formatProvider );
-            }
+			var s = formattableArg?.ToString( format, formatProvider );
 
-            if ( arg is String ) {
-                return DefaultFormat( format, arg, formatProvider );
-            }
+			if ( s != null ) {
+				return s;
+			}
 
-            Single size;
+			return arg.ToString();
+		}
 
-            try {
-                size = Convert.ToUInt64( arg );
-            }
-            catch ( InvalidCastException ) {
-                return DefaultFormat( format, arg, formatProvider );
-            }
+		[NotNull]
+		public String Format( [CanBeNull] String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider ) {
+			if ( arg == null ) {
+				throw new ArgumentNullException( nameof( arg ) );
+			}
 
-            var suffix = "n/a";
+			if ( String.IsNullOrWhiteSpace( format ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
+			}
 
-            if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
-                size /= MathConstants.Sizes.OneTeraByte;
-                suffix = "trillion";
-            }
-            else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
-                size /= MathConstants.Sizes.OneGigaByte;
-                suffix = "billion";
-            }
-            else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
-                size /= MathConstants.Sizes.OneMegaByte;
-                suffix = "million";
-            }
-            else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
-                size /= MathConstants.Sizes.OneKiloByte;
-                suffix = "thousand";
-            }
-            else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
-                suffix = "";
-            }
+			if ( format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) != true ) {
+				return DefaultFormat( format, arg, formatProvider );
+			}
 
-            return $"{size:N3} {suffix}";
-        }
+			if ( arg is String ) {
+				return DefaultFormat( format, arg, formatProvider );
+			}
 
-        public Object GetFormat( [NotNull] Type formatType ) {
-            if ( formatType is null ) {
-                throw new ArgumentNullException( nameof( formatType ) );
-            }
+			Single size;
 
-            return formatType == typeof( ICustomFormatter ) ? this : null;
-        }
+			try {
+				size = Convert.ToUInt64( arg );
+			}
+			catch ( InvalidCastException ) {
+				return DefaultFormat( format, arg, formatProvider );
+			}
 
-        private const String FileSizeFormat = "fs";
+			var suffix = "n/a";
 
-        [NotNull]
-        private static String DefaultFormat( [CanBeNull] String? format, [NotNull] Object arg, [CanBeNull] IFormatProvider formatProvider ) {
-            var formattableArg = arg as IFormattable;
+			//TODO add larger sizes
 
-            return formattableArg?.ToString( format, formatProvider ) ?? arg.ToString();
-        }
+			if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
+				size /= MathConstants.Sizes.OneTeraByte;
+				suffix = "trillion";
+			}
+			else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
+				size /= MathConstants.Sizes.OneGigaByte;
+				suffix = "billion";
+			}
+			else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
+				size /= MathConstants.Sizes.OneMegaByte;
+				suffix = "million";
+			}
+			else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
+				size /= MathConstants.Sizes.OneKiloByte;
+				suffix = "thousand";
+			}
+			else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
+				suffix = "";
+			}
 
-    }
+			return $"{size:N3} {suffix}";
+		}
 
+		public Object? GetFormat( Type? formatType ) => formatType != null && formatType == typeof( ICustomFormatter ) ? this : null;
+
+	}
 }

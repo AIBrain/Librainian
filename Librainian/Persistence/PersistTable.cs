@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "PersistTable.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "PersistTable.cs" was last formatted by Protiguous on 2020/03/18 at 10:29 AM.
 
 namespace Librainian.Persistence {
 
@@ -69,7 +63,7 @@ namespace Librainian.Persistence {
         public ICollection<TKey> Keys => this.Dictionary.Keys;
 
         /// <summary>This deserializes the list of values.. I have a feeling this cannot be very fast.</summary>
-        public ICollection<TValue> Values => ( ICollection<TValue> ) this.Dictionary.Values.Select( value => value.FromCompressedBase64().FromJSON<TValue>() );
+        public ICollection<TValue> Values => ( ICollection<TValue> ) this.Dictionary.Values.Select( selector: value => value.FromCompressedBase64().FromJSON<TValue>() );
 
         /// <summary></summary>
         /// <param name="key"></param>
@@ -82,7 +76,7 @@ namespace Librainian.Persistence {
                     return default;
                 }
 
-                if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+                if ( !this.Dictionary.TryGetValue( key: key, value: out var storedValue ) ) {
                     return default;
                 }
 
@@ -95,12 +89,12 @@ namespace Librainian.Persistence {
                 }
 
                 if ( value is null ) {
-                    this.Dictionary.Remove( key );
+                    this.Dictionary.Remove( key: key );
 
                     return;
                 }
 
-                this.Dictionary[ key ] = value.ToJSON()?.ToCompressedBase64();
+                this.Dictionary[ key: key ] = value.ToJSON().ToCompressedBase64();
             }
         }
 
@@ -114,23 +108,24 @@ namespace Librainian.Persistence {
             var value = item.Value.ToJSON()?.ToCompressedBase64();
             var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
-            return this.Dictionary.Contains( asItem );
+            return this.Dictionary.Contains( item: asItem );
         }
 
-        public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
+        public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key: key );
 
         public void CopyTo( KeyValuePair<TKey, TValue>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => this.Items().GetEnumerator();
 
-        public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
+        public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key: key ) && this.Dictionary.Remove( key: key );
 
         public Boolean Remove( KeyValuePair<TKey, TValue> item ) {
 
             var value = item.Value.ToJSON()?.ToCompressedBase64();
             var asItem = new KeyValuePair<TKey, String>( item.Key, value );
 
-            return this.Dictionary.Remove( asItem );
+            return this.Dictionary.Remove( item: asItem );
+
         }
 
         /// <summary>Gets the value associated with the specified key.</summary>
@@ -148,7 +143,7 @@ namespace Librainian.Persistence {
 
             value = default;
 
-            if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+            if ( !this.Dictionary.TryGetValue( key: key, value: out var storedValue ) ) {
                 return default;
             }
 
@@ -173,18 +168,19 @@ namespace Librainian.Persistence {
         private PersistTable() => throw new NotImplementedException();
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
+        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
+            null, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, subFolder,
-            tableName ) ) { }
+        public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String subFolder, [NotNull] String tableName ) : this(
+            new Folder( specialFolder, subFolder, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
-        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, subFolder,
-            tableName ) ) { }
+        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath,
+            subFolder, tableName ) ) { }
 
         // ReSharper disable once NotNullMemberIsNotInitialized
         public PersistTable( [CanBeNull] Folder folder, Boolean testForReadWriteAccess = false ) {
@@ -199,7 +195,7 @@ namespace Librainian.Persistence {
                     CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true
                 };
 
-                this.Dictionary = new PersistentDictionary<TKey, String>( this.Folder.FullPath, customConfig );
+                this.Dictionary = new PersistentDictionary<TKey, String>( directory: this.Folder.FullPath, customConfig: customConfig );
 
                 if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
                     throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
@@ -222,7 +218,7 @@ namespace Librainian.Persistence {
                 var text = Randem.NextString( 64, true, true, true, true );
                 document.AppendText( text );
 
-                await document.TryDeleting( Seconds.Ten, CancellationToken.None ).ConfigureAwait( false );
+                await document.TryDeleting( Seconds.Ten, CancellationToken.None ).ConfigureAwait( continueOnCapturedContext: false );
 
                 return true;
             }
@@ -253,10 +249,11 @@ namespace Librainian.Persistence {
         /// <returns></returns>
         [NotNull]
         public IEnumerable<KeyValuePair<TKey, TValue>> Items() =>
-            this.Dictionary.Select( pair => new KeyValuePair<TKey, TValue>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
+            this.Dictionary.Select( selector: pair => new KeyValuePair<TKey, TValue>( key: pair.Key, value: pair.Value.FromCompressedBase64().FromJSON<TValue>() ) );
 
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
+        [NotNull]
         public override String ToString() => $"{this.Count} items";
 
         public void TryAdd( [NotNull] TKey key, [CanBeNull] TValue value ) {
@@ -264,7 +261,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( key ) );
             }
 
-            if ( !this.Dictionary.ContainsKey( key ) ) {
+            if ( !this.Dictionary.ContainsKey( key: key ) ) {
                 this[ key ] = value;
             }
         }
@@ -274,7 +271,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( key ) );
             }
 
-            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
+            return this.Dictionary.ContainsKey( key: key ) && this.Dictionary.Remove( key: key );
         }
 
     }

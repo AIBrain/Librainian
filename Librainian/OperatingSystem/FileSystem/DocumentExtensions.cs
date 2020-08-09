@@ -1,55 +1,47 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "DocumentExtensions.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "DocumentExtensions.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem {
 
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Media;
-    using System.Threading.Tasks;
-    using JetBrains.Annotations;
-    using Logging;
-    using Maths;
-    using Measurement.Time;
+	using System;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
+	using Maths;
+	using Measurement.Time;
 
-    public static class DocumentExtensions {
+	public static class DocumentExtensions {
 
-        /// <summary>16mb</summary>
-        public static UInt32 BufferSize { get; } = 0x1000000;
+		/// <summary>16mb</summary>
+		public static UInt32 BufferSize { get; } = 0x1000000;
 
-        /*
+		/*
 
         /// <summary>
         ///     The characters not allowed in file names.
@@ -58,26 +50,30 @@ namespace Librainian.OperatingSystem.FileSystem {
         public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
         */
 
-        private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
-            [CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
-            using ( var reader = new StreamReader( source.FullPath ) ) {
-                using ( var writer = new StreamWriter( destination.FullPath, false ) ) {
-                    Int32 numRead;
+		private static async Task InternalCopyWithProgress( [NotNull] Document source, [NotNull] Document destination, [CanBeNull] IProgress<Single> progress,
+			[CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Single bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
+			using var reader = new StreamReader( source.FullPath );
 
-                    while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
-                        await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
-                        var bytesCopied = ( UInt64 ) numRead;
+#if NET48
+			using var writer = new StreamWriter( destination.FullPath, false );
+#else
+			await using var writer = new StreamWriter( destination.FullPath, false );
+#endif
 
-                        var percent = bytesCopied / bytesToBeCopied;
+			Int32 numRead;
 
-                        progress?.Report( percent );
-                        eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
-                    }
-                }
-            }
-        }
+			while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
+				await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
+				var bytesCopied = ( UInt64 )numRead;
 
-        /*
+				var percent = bytesCopied / bytesToBeCopied;
+
+				progress?.Report( percent );
+				eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
+			}
+		}
+
+		/*
 
         /// <summary>
         ///     Returns the <paramref name="filename" /> with any invalid chars removed.
@@ -96,7 +92,7 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
         */
 
-        /*
+		/*
 
         /// <summary>
         ///     Any result less than 1 is an error of some sort.
@@ -189,93 +185,56 @@ namespace Librainian.OperatingSystem.FileSystem {
         }
         */
 
-        /*
+		/*
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
 
-        [NotNull]
-        public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
+		[NotNull]
+		public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
+			if ( document is null ) {
+				throw new ArgumentNullException( nameof( document ) );
+			}
 
-            if ( !document.Exists() ) {
-                return default;
-            }
+			if ( !document.Exists() ) {
+				return default;
+			}
 
-            using ( var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte,
-                FileOptions.SequentialScan ) ) {
+#if NET48
+			using var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+											   MathConstants.Sizes.OneGigaByte, FileOptions.SequentialScan );
+#else
+			await using var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
+													 MathConstants.Sizes.OneGigaByte, FileOptions.SequentialScan );
+#endif
 
-                if ( !stream.CanRead ) {
-                    throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
-                }
+			if ( !stream.CanRead ) {
+				throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
+			}
 
-                var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
+			var buffer = new Byte[ MathConstants.Sizes.OneGigaByte ];
 
-                using var buffered = new BufferedStream( stream );
+#if NET48
+			using var buffered = new BufferedStream( stream );
+#else
+				await using var buffered = new BufferedStream( stream );
+#endif
 
-                var bytesRead = 0;
+			Int32 bytesRead;
 
-                do {
-                    var readTask = buffered.ReadAsync( buffer, 0, buffer.Length );
+			do {
+				var readTask = buffered.ReadAsync( buffer, 0, buffer.Length );
 
-                    if ( readTask != null ) {
-                        bytesRead = await readTask.ConfigureAwait( false );
+				bytesRead = await readTask.ConfigureAwait( false );
 
-                        if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
-                            return default;
-                        }
-                    }
-                } while ( bytesRead.Any() );
+				if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
+					return default;
+				}
+			} while ( bytesRead.Any() );
 
-                return true;
-            }
-        }
+			return true;
+		}
 
-        public static void TryPlayFile( [NotNull] this Document document ) {
-            if ( document is null ) {
-                throw new ArgumentNullException( nameof( document ) );
-            }
-
-            try {
-                using ( var player = new SoundPlayer() ) {
-                    player.SoundLocation = document.FullPath;
-                    player.Load();
-                    player.Play();
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
-        }
-
-    }
-
-    /*
-    [TestFixture]
-    public static class TestAsyncCopyAndMoves {
-
-        [Test]
-        public static async Task TestCopyAsync() {
-            var source = Document.GetTempDocument();
-            source.AppendText( "0123456789,\r\n".Repeat( UInt16.MaxValue, String.Empty ) );
-            var sourceSize = source.Size();
-
-            var destination = Document.GetTempDocument();
-            var eta = new Progress<TimeSpan>();
-            await source.MoveAsync( destination, false, null, eta );
-
-            Console.WriteLine( destination.Size() );
-
-            //TODO
-            //destination.Size().Should( ).Should().Be( sourceSize );
-
-            source.Delete();
-
-            destination.Delete();
-        }
-    }
-    */
+	}
 
 }

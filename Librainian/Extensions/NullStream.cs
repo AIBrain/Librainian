@@ -1,107 +1,99 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "NullStream.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "NullStream.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
 
 namespace Librainian.Extensions {
 
-    using System;
-    using System.IO;
+	using System;
+	using System.IO;
 
-    public class NullStream : Stream {
+	public class NullStream : Stream {
 
-        private Int64 _length;
+		private Int64 _length;
 
-        private Int64 _position;
+		private Int64 _position;
 
-        public override Boolean CanRead => false;
+		public override Boolean CanRead => false;
 
-        public override Boolean CanSeek => true;
+		public override Boolean CanSeek => true;
 
-        public override Boolean CanWrite => true;
+		public override Boolean CanWrite => true;
 
-        public override Int64 Length => this._length;
+		public override Int64 Length => this._length;
 
-        public override Int64 Position {
-            get => this._position;
+		public override Int64 Position {
+			get => this._position;
 
-            set {
-                this._position = value;
+			set {
+				this._position = value;
 
-                if ( this._position > this._length ) {
-                    this._length = this._position;
-                }
-            }
-        }
+				if ( this._position > this._length ) {
+					this._length = this._position;
+				}
+			}
+		}
 
-        public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) =>
-            throw new NotImplementedException( "This stream doesn't support reading." );
+		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) =>
+			throw new NotImplementedException( "This stream doesn't support reading." );
 
-        public override void Flush() { }
+		public override void Flush() { }
 
-        public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => throw new NotImplementedException( "This stream doesn't support reading." );
+		public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => throw new NotImplementedException( "This stream doesn't support reading." );
 
-        public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
-            var newPosition = this.Position;
+		public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
+			var newPosition = this.Position;
 
-            switch ( origin ) {
-                case SeekOrigin.Begin:
-                    newPosition = offset;
+			switch ( origin ) {
+				case SeekOrigin.Begin:
+					newPosition = offset;
 
-                    break;
+					break;
 
-                case SeekOrigin.Current:
-                    newPosition = this.Position + offset;
+				case SeekOrigin.Current:
+					newPosition = this.Position + offset;
 
-                    break;
+					break;
 
-                case SeekOrigin.End:
-                    newPosition = this.Length + offset;
+				case SeekOrigin.End:
+					newPosition = this.Length + offset;
 
-                    break;
-            }
+					break;
+			}
 
-            if ( newPosition < 0 ) {
-                throw new ArgumentException( "Attempt to seek before start of stream." );
-            }
+			if ( newPosition < 0 ) {
+				throw new ArgumentException( "Attempt to seek before start of stream." );
+			}
 
-            this.Position = newPosition;
+			this.Position = newPosition;
 
-            return newPosition;
-        }
+			return newPosition;
+		}
 
-        public override void SetLength( Int64 value ) => this._length = value;
+		public override void SetLength( Int64 value ) => this._length = value;
 
-        public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
-
-    }
-
+		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
+	}
 }

@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "DeserializeReportStats.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "DeserializeReportStats.cs" was last formatted by Protiguous on 2020/03/18 at 10:29 AM.
 
 namespace Librainian.Persistence {
 
@@ -47,8 +41,8 @@ namespace Librainian.Persistence {
         [NotNull]
         private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( true );
 
-        [CanBeNull]
-        private Action<DeserializeReportStats>? Handler { get; }
+        [NotNull]
+        private Action<DeserializeReportStats> Handler { get; }
 
         [NotNull]
         private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( true );
@@ -59,11 +53,11 @@ namespace Librainian.Persistence {
 
         public Int64 Total { get; set; }
 
-        public DeserializeReportStats( [CanBeNull] Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) {
-            this.Gains.Values?.Clear();
+        public DeserializeReportStats( [CanBeNull] Action<DeserializeReportStats> handler, TimeSpan? timing = null ) {
+            this.Gains.Values.Clear();
             this.Gains.Value = 0;
 
-            this.Losses.Values?.Clear();
+            this.Losses.Values.Clear();
             this.Losses.Value = 0;
 
             this.Total = 0;
@@ -77,14 +71,10 @@ namespace Librainian.Persistence {
                 return;
             }
 
-            var handler = this.Handler;
+            this.Handler( this );
 
-            if ( !( handler is null ) ) {
-                handler( this );
-
-                if ( this.Enabled ) {
-                    await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
-                }
+            if ( this.Enabled ) {
+                await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
             }
         }
 
@@ -98,9 +88,9 @@ namespace Librainian.Persistence {
             this.Losses.Dispose();
         }
 
-        public Int64 GetGains() => this.Gains.Values?.Sum( arg => arg ) ?? default;
+        public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
 
-        public Int64 GetLoss() => this.Losses.Values?.Sum( arg => arg ) ?? default;
+        public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
 
         [NotNull]
         public Task StartReporting() {

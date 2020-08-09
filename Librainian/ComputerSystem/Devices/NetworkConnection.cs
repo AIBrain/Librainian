@@ -1,236 +1,222 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "NetworkConnection.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "NetworkConnection.cs" was last formatted by Protiguous on 2020/03/18 at 10:22 AM.
 
 namespace Librainian.ComputerSystem.Devices {
 
-    using System;
-    using System.ComponentModel;
-    using System.Net;
-    using System.Net.NetworkInformation;
-    using System.Runtime.InteropServices;
-    using System.Threading;
-    using JetBrains.Annotations;
-    using Logging;
-    using Measurement.Time;
-    using OperatingSystem;
+	using System;
+	using System.ComponentModel;
+	using System.Net;
+	using System.Net.NetworkInformation;
+	using System.Runtime.InteropServices;
+	using System.Threading;
+	using JetBrains.Annotations;
+	using Logging;
+	using Measurement.Time;
+	using OperatingSystem;
 
-    public enum ResourceDisplaytype {
+	public enum ResourceDisplaytype {
 
-        Generic = 0x0,
+		Generic = 0x0,
 
-        Domain = 0x01,
+		Domain = 0x01,
 
-        Server = 0x02,
+		Server = 0x02,
 
-        Share = 0x03,
+		Share = 0x03,
 
-        File = 0x04,
+		File = 0x04,
 
-        Group = 0x05,
+		Group = 0x05,
 
-        Network = 0x06,
+		Network = 0x06,
 
-        Root = 0x07,
+		Root = 0x07,
 
-        Shareadmin = 0x08,
+		Shareadmin = 0x08,
 
-        Directory = 0x09,
+		Directory = 0x09,
 
-        Tree = 0x0a,
+		Tree = 0x0a,
 
-        Ndscontainer = 0x0b
+		Ndscontainer = 0x0b
+	}
 
-    }
+	public enum ResourceDisplayType {
 
-    public enum ResourceDisplayType {
+		GENERIC,
 
-        GENERIC,
+		DOMAIN,
 
-        DOMAIN,
+		SERVER,
 
-        SERVER,
+		SHARE,
 
-        SHARE,
+		FILE,
 
-        FILE,
+		GROUP,
 
-        GROUP,
+		NETWORK,
 
-        NETWORK,
+		ROOT,
 
-        ROOT,
+		SHAREADMIN,
 
-        SHAREADMIN,
+		DIRECTORY,
 
-        DIRECTORY,
+		TREE,
 
-        TREE,
+		NDSCONTAINER
+	}
 
-        NDSCONTAINER
+	public enum ResourceScope {
 
-    }
+		Connected = 1,
 
-    public enum ResourceScope {
+		GlobalNetwork,
 
-        Connected = 1,
+		Remembered,
 
-        GlobalNetwork,
+		Recent,
 
-        Remembered,
+		Context
+	}
 
-        Recent,
+	public enum ResourceType {
 
-        Context
+		Any = 0,
 
-    }
+		Disk = 1,
 
-    public enum ResourceType {
+		Print = 2,
 
-        Any = 0,
+		Reserved = 8
+	}
 
-        Disk = 1,
+	public enum ResourceUsage {
 
-        Print = 2,
+		CONNECTABLE = 0x00000001,
 
-        Reserved = 8
+		CONTAINER = 0x00000002,
 
-    }
+		NOLOCALDEVICE = 0x00000004,
 
-    public enum ResourceUsage {
+		SIBLING = 0x00000008,
 
-        CONNECTABLE = 0x00000001,
+		ATTACHED = 0x00000010,
 
-        CONTAINER = 0x00000002,
+		ALL = CONNECTABLE | CONTAINER | ATTACHED
+	}
 
-        NOLOCALDEVICE = 0x00000004,
+	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+	public class NetResource {
 
-        SIBLING = 0x00000008,
+		public ResourceDisplaytype DisplayType;
 
-        ATTACHED = 0x00000010,
+		[MarshalAs( UnmanagedType.LPWStr )]
+		public String LocalName;
 
-        ALL = CONNECTABLE | CONTAINER | ATTACHED
+		[MarshalAs( UnmanagedType.LPWStr )]
+		public String Provider;
 
-    }
+		[MarshalAs( UnmanagedType.LPWStr )]
+		public String RemoteName;
 
-    [StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-    public class NetResource {
+		public ResourceType ResourceType;
 
-        public ResourceDisplaytype DisplayType;
+		public ResourceScope Scope;
 
-        [MarshalAs( UnmanagedType.LPWStr )]
-        public String LocalName;
+		public Int32 Usage;
 
-        [MarshalAs( UnmanagedType.LPWStr )]
-        public String Provider;
+		[field: MarshalAs( UnmanagedType.LPWStr )]
+		public String Comment { get; set; }
+	}
 
-        [MarshalAs( UnmanagedType.LPWStr )]
-        public String RemoteName;
+	[StructLayout( LayoutKind.Sequential )]
+	public class NETRESOURCE {
 
-        public ResourceType ResourceType;
+		public ResourceDisplayType dwDisplayType = 0;
 
-        public ResourceScope Scope;
+		public ResourceScope dwScope = 0;
 
-        public Int32 Usage;
+		public ResourceType dwType = 0;
 
-        [field: MarshalAs( UnmanagedType.LPWStr )]
-        public String Comment { get; set; }
+		public ResourceUsage dwUsage = 0;
 
-    }
+		public String lpComment = null;
 
-    [StructLayout( LayoutKind.Sequential )]
-    public class NETRESOURCE {
+		public String lpLocalName = null;
 
-        public ResourceDisplayType dwDisplayType = 0;
+		public String lpProvider = null;
 
-        public ResourceScope dwScope = 0;
+		public String lpRemoteName = null;
+	}
 
-        public ResourceType dwType = 0;
+	public class NetworkConnection : IDisposable {
 
-        public ResourceUsage dwUsage = 0;
+		private String NetworkName { get; }
 
-        public String lpComment = null;
+		public NetworkConnection( [CanBeNull] String networkName, [NotNull] NetworkCredential credentials ) {
+			this.NetworkName = networkName;
 
-        public String lpLocalName = null;
+			var netResource = new NetResource {
+				Scope = ResourceScope.GlobalNetwork,
+				ResourceType = ResourceType.Disk,
+				DisplayType = ResourceDisplaytype.Share,
+				RemoteName = networkName
+			};
 
-        public String lpProvider = null;
+			var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
 
-        public String lpRemoteName = null;
+			var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
 
-    }
+			if ( result != 0 ) {
+				throw new Win32Exception( result, "Error connecting to remote share" );
+			}
+		}
 
-    public class NetworkConnection : IDisposable {
+		~NetworkConnection() => this.Dispose( false );
 
-        public void Dispose() {
-            this.Dispose( true );
-            GC.SuppressFinalize( this );
-        }
+		protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 
-        private String NetworkName { get; }
+		public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
+			var counter = retries;
 
-        public NetworkConnection( [CanBeNull] String? networkName, [NotNull] NetworkCredential credentials ) {
-            this.NetworkName = networkName;
+			while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
+				--counter;
+				$"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
+				Thread.Sleep( Seconds.One );
+			}
 
-            var netResource = new NetResource {
-                Scope = ResourceScope.GlobalNetwork, ResourceType = ResourceType.Disk, DisplayType = ResourceDisplaytype.Share, RemoteName = networkName
-            };
+			return NetworkInterface.GetIsNetworkAvailable();
+		}
 
-            var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
-
-            var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
-
-            if ( result != 0 ) {
-                throw new Win32Exception( result, "Error connecting to remote share" );
-            }
-        }
-
-        ~NetworkConnection() {
-            this.Dispose( false );
-        }
-
-        protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
-
-        public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
-            var counter = retries;
-
-            while ( !NetworkInterface.GetIsNetworkAvailable() && ( counter > 0 ) ) {
-                --counter;
-                $"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
-                Thread.Sleep( Seconds.One );
-            }
-
-            return NetworkInterface.GetIsNetworkAvailable();
-        }
-
-    }
-
+		public void Dispose() {
+			this.Dispose( true );
+			GC.SuppressFinalize( this );
+		}
+	}
 }

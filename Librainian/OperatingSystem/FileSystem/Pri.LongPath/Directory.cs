@@ -1,35 +1,29 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Directory.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "Directory.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
@@ -42,9 +36,6 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
     using JetBrains.Annotations;
     using Microsoft.Win32.SafeHandles;
 
-    // ReSharper disable RedundantUsingDirective
-    // ReSharper restore RedundantUsingDirective
-
     public static class Directory {
 
         [NotNull]
@@ -52,7 +43,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             path = path.ThrowIfBlank();
             var length = path.Length;
 
-            if ( ( length >= 2 ) && path[ length - 1 ].IsDirectorySeparator() ) {
+            if ( length >= 2 && path[ length - 1 ].IsDirectorySeparator() ) {
                 --length;
             }
 
@@ -68,8 +59,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                         pathComponents.Add( subPath );
                     }
 
-                    while ( ( index > rootLength ) && ( path[ index ] != System.IO.Path.DirectorySeparatorChar ) &&
-                            ( path[ index ] != System.IO.Path.AltDirectorySeparatorChar ) ) {
+                    while ( index > rootLength && path[ index ] != System.IO.Path.DirectorySeparatorChar && path[ index ] != System.IO.Path.AltDirectorySeparatorChar ) {
                         --index;
                     }
                 }
@@ -90,7 +80,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 // To mimic Directory.CreateDirectory, we don't throw if the directory (not a file) already exists
                 var errorCode = Marshal.GetLastWin32Error();
 
-                if ( ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS ) || !path.Exists() ) {
+                if ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS || !path.Exists() ) {
                     throw Common.GetExceptionFromWin32Error( errorCode );
                 }
             }
@@ -110,32 +100,31 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var path = normalizedPath.IsPathUnc() ? normalizedPath : normalizedPath.RemoveLongPathPrefix();
 
-            using ( var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData ) ) {
+			using var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData );
 
-                do {
-                    if ( findData.dwFileAttributes.IsDirectory() ) {
-                        if ( findData.cFileName.IsCurrentOrParentDirectory() ) {
-                            continue;
-                        }
+			do {
+				if ( findData.dwFileAttributes.IsDirectory() ) {
+					if ( findData.cFileName.IsCurrentOrParentDirectory() ) {
+						continue;
+					}
 
-                        if ( includeDirectories ) {
-                            yield return path.RemoveLongPathPrefix().Combine( findData.cFileName );
-                        }
-                    }
-                    else {
-                        if ( includeFiles ) {
-                            yield return path.RemoveLongPathPrefix().Combine( findData.cFileName );
-                        }
-                    }
-                } while ( handle.FindNextFile( out findData ) );
+					if ( includeDirectories ) {
+						yield return path.RemoveLongPathPrefix().Combine( findData.cFileName );
+					}
+				}
+				else {
+					if ( includeFiles ) {
+						yield return path.RemoveLongPathPrefix().Combine( findData.cFileName );
+					}
+				}
+			} while ( handle.FindNextFile( out findData ) );
 
-                var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = Marshal.GetLastWin32Error();
 
-                if ( errorCode != NativeMethods.ERROR_NO_MORE_FILES ) {
-                    throw Common.GetExceptionFromWin32Error( errorCode );
-                }
-            }
-        }
+			if ( errorCode != NativeMethods.ERROR_NO_MORE_FILES ) {
+				throw Common.GetExceptionFromWin32Error( errorCode );
+			}
+		}
 
         [NotNull]
         [ItemNotNull]
@@ -157,37 +146,36 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
                 var path = normalizedPath.IsPathUnc() ? normalizedPath : normalizedPath.RemoveLongPathPrefix();
 
-                using ( var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData ) ) {
+				using var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData );
 
-                    do {
-                        var fullPath = path.Combine( findData.cFileName );
+				do {
+					var fullPath = path.Combine( findData.cFileName );
 
-                        if ( findData.dwFileAttributes.IsDirectory() ) {
-                            if ( findData.cFileName.IsCurrentOrParentDirectory() ) {
-                                continue;
-                            }
+					if ( findData.dwFileAttributes.IsDirectory() ) {
+						if ( findData.cFileName.IsCurrentOrParentDirectory() ) {
+							continue;
+						}
 
-                            var fullNormalizedPath = normalizedPath.Combine( findData.cFileName );
+						var fullNormalizedPath = normalizedPath.Combine( findData.cFileName );
 
-                            Debug.Assert( fullPath.Exists() );
-                            Debug.Assert( ( fullNormalizedPath.IsPathUnc() ? fullNormalizedPath : fullNormalizedPath.RemoveLongPathPrefix() ).Exists() );
+						Debug.Assert( Common.Exists( fullPath ) );
+						Debug.Assert( Common.Exists( fullNormalizedPath.IsPathUnc() ? fullNormalizedPath : fullNormalizedPath.RemoveLongPathPrefix() ) );
 
-                            if ( includeDirectories ) {
-                                yield return fullPath.RemoveLongPathPrefix();
-                            }
-                        }
-                        else if ( includeFiles ) {
-                            yield return fullPath.RemoveLongPathPrefix();
-                        }
-                    } while ( handle.FindNextFile( out findData ) );
+						if ( includeDirectories ) {
+							yield return fullPath.RemoveLongPathPrefix();
+						}
+					}
+					else if ( includeFiles ) {
+						yield return fullPath.RemoveLongPathPrefix();
+					}
+				} while ( handle.FindNextFile( out findData ) );
 
-                    var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = Marshal.GetLastWin32Error();
 
-                    if ( errorCode != NativeMethods.ERROR_NO_MORE_FILES ) {
-                        throw Common.GetExceptionFromWin32Error( errorCode );
-                    }
-                }
-            }
+				if ( errorCode != NativeMethods.ERROR_NO_MORE_FILES ) {
+					throw Common.GetExceptionFromWin32Error( errorCode );
+				}
+			}
         }
 
         [NotNull]
@@ -228,8 +216,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var errorCode = Marshal.GetLastWin32Error();
 
-            if ( ( errorCode != NativeMethods.ERROR_FILE_NOT_FOUND ) && ( errorCode != NativeMethods.ERROR_PATH_NOT_FOUND ) &&
-                 ( errorCode != NativeMethods.ERROR_NOT_READY ) ) {
+            if ( errorCode != NativeMethods.ERROR_FILE_NOT_FOUND && errorCode != NativeMethods.ERROR_PATH_NOT_FOUND && errorCode != NativeMethods.ERROR_NOT_READY ) {
                 throw Common.GetExceptionFromWin32Error( errorCode );
             }
 
@@ -240,24 +227,23 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <param name="path">A <see cref="String" /> containing the path of the directory to create.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
         /// </exception>
-        /// <remarks>Note: Unlike <see cref="Directory.CreateDirectory(System.String)" />, this method only creates the last directory in <paramref name="path" />.</remarks>
+        /// <remarks>Note: Unlike <see cref="CreateDirectory(String)" />, this method only creates the last directory in <paramref name="path" />.</remarks>
         [NotNull]
         public static DirectoryInfo CreateDirectory( [NotNull] this String path ) {
             if ( String.IsNullOrWhiteSpace( path ) ) {
@@ -273,7 +259,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var length = fullPath.Length;
 
-            if ( ( length >= 2 ) && fullPath[ length - 1 ].IsDirectorySeparator() ) {
+            if ( length >= 2 && fullPath[ length - 1 ].IsDirectorySeparator() ) {
                 --length;
             }
 
@@ -289,7 +275,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                         pathComponents.Add( subPath.NormalizeLongPath() );
                     }
 
-                    while ( ( index > rootLength ) && fullPath[ index ].IsDirectorySeparator() ) {
+                    while ( index > rootLength && fullPath[ index ].IsDirectorySeparator() ) {
                         --index;
                     }
                 }
@@ -306,7 +292,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 // To mimic Directory.CreateDirectory, we don't throw if the directory (not a file) already exists
                 var errorCode = Marshal.GetLastWin32Error();
 
-                if ( ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS ) || !path.Exists() ) {
+                if ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS || !path.Exists() ) {
                     throw Common.GetExceptionFromWin32Error( errorCode );
                 }
             }
@@ -380,23 +366,22 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <param name="path">A <see cref="String" /> containing the path of the directory to delete.</param>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">
         /// The caller does not have the required access permissions.
         /// <para>-or-</para>
         /// <paramref name="path" /> refers to a directory that is read-only.
         /// </exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> refers to a directory that is not empty.
@@ -419,19 +404,18 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <returns>A <see cref="IEnumerable{T}" /> containing the directory names within <paramref name="path" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
@@ -449,19 +433,18 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <returns>A <see cref="IEnumerable{T}" /> containing the directory names within <paramref name="path" /> that match <paramref name="searchPattern" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
@@ -479,19 +462,18 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <returns>A <see cref="IEnumerable{T}" /> containing the file names within <paramref name="path" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
@@ -515,19 +497,18 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <returns>A <see cref="IEnumerable{T}" /> containing the file names within <paramref name="path" /> that match <paramref name="searchPattern" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
@@ -542,19 +523,18 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <returns>A <see cref="IEnumerable{T}" /> containing the file and directory names within <paramref name="path" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
@@ -573,19 +553,18 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <returns>A <see cref="IEnumerable{T}" /> containing the file and directory names within <paramref name="path" />that match <paramref name="searchPattern" />.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
         /// </exception>
-        /// <exception cref="System.IO.PathTooLongException">
-        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed
-        /// 32,000 characters.
+        /// <exception cref="PathTooLongException">
+        /// <paramref name="path" /> exceeds the system-defined maximum length. For example, on Windows-based platforms, paths must not exceed 32,000
+        /// characters.
         /// </exception>
-        /// <exception cref="System.IO.DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
+        /// <exception cref="DirectoryNotFoundException"><paramref name="path" /> contains one or more directories that could not be found.</exception>
         /// <exception cref="UnauthorizedAccessException">The caller does not have the required access permissions.</exception>
-        /// <exception cref="System.IO.IOException">
+        /// <exception cref="IOException">
         /// <paramref name="path" /> is a file.
         /// <para>-or-</para>
         /// <paramref name="path" /> specifies a device that is not ready.
@@ -602,7 +581,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         [NotNull]
         [ItemNotNull]
-        public static IEnumerable<String> EnumerateFileSystemEntries( [NotNull] String path, [CanBeNull] String? searchPattern, Boolean includeDirectories,
+        public static IEnumerable<String> EnumerateFileSystemEntries( [NotNull] String path, [CanBeNull] String searchPattern, Boolean includeDirectories,
             Boolean includeFiles, SearchOption option ) {
             var normalizedSearchPattern = searchPattern.NormalizeSearchPattern();
             var normalizedPath = path.NormalizeLongPath();
@@ -747,19 +726,19 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var normalizedPath = path.GetFullPath().NormalizeLongPath();
 
-            using ( var handle = normalizedPath.GetDirectoryHandle() ) {
-                unsafe {
-                    var fileTime = new FILE_TIME( creationTimeUtc.ToFileTimeUtc() );
+			using var handle = normalizedPath.GetDirectoryHandle();
 
-                    if ( NativeMethods.SetFileTime( handle, &fileTime, null, null ) ) {
-                        return;
-                    }
+			unsafe {
+				var fileTime = new FILE_TIME( creationTimeUtc.ToFileTimeUtc() );
 
-                    var errorCode = Marshal.GetLastWin32Error();
-                    Common.ThrowIOError( errorCode, path );
-                }
-            }
-        }
+				if ( NativeMethods.SetFileTime( handle, &fileTime, null, null ) ) {
+					return;
+				}
+
+				var errorCode = Marshal.GetLastWin32Error();
+				Common.ThrowIOError( errorCode, path );
+			}
+		}
 
         /// <summary>Author's remark: NotSupportedException("Windows does not support setting the current directory to a long path");</summary>
         /// <param name="path"></param>
@@ -787,52 +766,52 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var normalizedPath = path.ThrowIfBlank().GetFullPath().NormalizeLongPath();
 
-            using ( var handle = normalizedPath.GetDirectoryHandle() ) {
-                var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
+			using var handle = normalizedPath.GetDirectoryHandle();
 
-                if ( NativeMethods.SetFileTime( handle, null, &fileTime, null ) ) {
-                    return;
-                }
+			var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
 
-                var errorCode = Marshal.GetLastWin32Error();
-                Common.ThrowIOError( errorCode, path );
-            }
-        }
+			if ( NativeMethods.SetFileTime( handle, null, &fileTime, null ) ) {
+				return;
+			}
+
+			var errorCode = Marshal.GetLastWin32Error();
+			Common.ThrowIOError( errorCode, path );
+		}
 
         public static void SetLastWriteTime( [NotNull] this String path, DateTime lastWriteTimeUtc ) {
 
             unsafe {
                 var normalizedPath = path.GetFullPath().NormalizeLongPath();
 
-                using ( var handle = normalizedPath.GetDirectoryHandle() ) {
-                    var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
-                    var r = NativeMethods.SetFileTime( handle, null, null, &fileTime );
+				using var handle = normalizedPath.GetDirectoryHandle();
 
-                    if ( r ) {
-                        return;
-                    }
+				var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
+				var r = NativeMethods.SetFileTime( handle, null, null, &fileTime );
 
-                    var errorCode = Marshal.GetLastWin32Error();
-                    Common.ThrowIOError( errorCode, path );
-                }
-            }
+				if ( r ) {
+					return;
+				}
+
+				var errorCode = Marshal.GetLastWin32Error();
+				Common.ThrowIOError( errorCode, path );
+			}
         }
 
         public static unsafe void SetLastWriteTimeUtc( [NotNull] this String path, DateTime lastWriteTimeUtc ) {
 
             var normalizedPath = path.GetFullPath().NormalizeLongPath();
 
-            using ( var handle = normalizedPath.GetDirectoryHandle() ) {
-                var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
+			using var handle = normalizedPath.GetDirectoryHandle();
 
-                if ( NativeMethods.SetFileTime( handle, null, null, &fileTime ) ) {
-                    return;
-                }
+			var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
 
-                var errorCode = Marshal.GetLastWin32Error();
-                Common.ThrowIOError( errorCode, path );
-            }
-        }
+			if ( NativeMethods.SetFileTime( handle, null, null, &fileTime ) ) {
+				return;
+			}
+
+			var errorCode = Marshal.GetLastWin32Error();
+			Common.ThrowIOError( errorCode, path );
+		}
 
     }
 

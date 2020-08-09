@@ -1,206 +1,165 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Address.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "Address.cs" was last formatted by Protiguous on 2020/03/18 at 10:25 AM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
-    using System;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Threading;
-    using JetBrains.Annotations;
-    using Parsing;
+	using System;
+	using System.Linq;
+	using System.Security.Cryptography;
+	using System.Threading;
+	using JetBrains.Annotations;
+	using Parsing;
 
-    /// <summary></summary>
-    /// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
-    public class Address {
+	/// <summary></summary>
+	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
+	public class Address {
 
-        [CanBeNull]
-        private String _address;
+		[CanBeNull]
+		private String _address;
 
-        [CanBeNull]
-        private Hash _pubKeyHash;
+		[CanBeNull]
+		private Hash _pubKeyHash;
 
-        private Hash _scriptHash;
+		private Hash _scriptHash;
 
-        private Byte? _type;
+		private Byte? _type;
 
-        public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
+		public const Byte Pubkey = 0xFE;
 
-        [NotNull]
-        public Hash EitherHash {
-            get {
-                if ( this._pubKeyHash is null && this._scriptHash is null ) {
-                    this.CalcHash();
-                }
+		public const Byte Pubkeyhash = 0x00;
 
-                if ( this._pubKeyHash != null ) {
-                    return this._pubKeyHash;
-                }
+		public const Byte Script = 0xFF;
 
-                return this._scriptHash;
-            }
-        }
+		public const Byte Scripthash = 0x05;
 
-        [CanBeNull]
-        public Hash PubKeyHash {
-            get {
-                if ( this._pubKeyHash is null && ( this.CalcHash() != Pubkeyhash ) ) {
-                    throw new InvalidOperationException( "Address is not a public key hash." );
-                }
+		public static ThreadLocal<SHA256> SHA256 { get; } = new ThreadLocal<SHA256>( () => new SHA256Managed() );
 
-                return this._pubKeyHash;
-            }
-        }
+		[NotNull]
+		public Hash EitherHash {
+			get {
+				if ( this._pubKeyHash is null && this._scriptHash is null ) {
+					this.CalcHash();
+				}
 
-        [CanBeNull]
-        public Hash ScriptHash {
-            get {
-                if ( this._pubKeyHash is null && ( this.CalcHash() != Scripthash ) ) {
-                    throw new InvalidOperationException( "Address is not a script hash." );
-                }
+				if ( this._pubKeyHash != null ) {
+					return this._pubKeyHash;
+				}
 
-                return this._scriptHash;
-            }
-        }
+				return this._scriptHash;
+			}
+		}
 
-        public Byte Type {
-            get {
-                if ( this._type is null ) {
-                    this.CalcHash();
-                }
+		[CanBeNull]
+		public Hash PubKeyHash {
+			get {
+				if ( this._pubKeyHash is null && this.CalcHash() != Pubkeyhash ) {
+					throw new InvalidOperationException( "Address is not a public key hash." );
+				}
 
-                if ( this._type is null ) {
-                    throw new InvalidOperationException();
-                }
+				return this._pubKeyHash;
+			}
+		}
 
-                return this._type.Value;
-            }
-        }
+		[CanBeNull]
+		public Hash ScriptHash {
+			get {
+				if ( this._pubKeyHash is null && this.CalcHash() != Scripthash ) {
+					throw new InvalidOperationException( "Address is not a script hash." );
+				}
 
-        public const Byte Pubkey = 0xFE;
+				return this._scriptHash;
+			}
+		}
 
-        public const Byte Pubkeyhash = 0x00;
+		public Byte Type {
+			get {
+				if ( this._type is null ) {
+					this.CalcHash();
+				}
 
-        public const Byte Script = 0xFF;
+				if ( this._type is null ) {
+					throw new InvalidOperationException();
+				}
 
-        public const Byte Scripthash = 0x05;
+				return this._type.Value;
+			}
+		}
 
-        public Address( [NotNull] Byte[] data, Byte version = Pubkey ) {
-            if ( data == null ) {
-                throw new ArgumentNullException( nameof( data ) );
-            }
+		public Address( [CanBeNull] String address ) => this._address = address;
 
-            RIPEMD160 ripemd160 = new RIPEMD160Managed();
+		private void CalcBase58() {
+			if ( this._pubKeyHash != null ) {
+				this._address = Base58CheckString.FromByteArray( this._pubKeyHash, Pubkeyhash );
+			}
+			else if ( this._scriptHash != null ) {
+				this._address = Base58CheckString.FromByteArray( this._scriptHash, Scripthash );
+			}
+			else {
+				throw new InvalidOperationException( "Address is not a public key or script hash!" );
+			}
+		}
 
-            switch ( version ) {
-                case Pubkey:
-                    this._pubKeyHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
-                    version = Pubkeyhash;
+		private Byte CalcHash() {
+			var hash = Base58CheckString.ToByteArray( this.ToString(), out var version );
 
-                    break;
+			switch ( version ) {
+				case Pubkeyhash:
+					this._pubKeyHash = hash;
 
-                case Script:
-                    this._scriptHash = ripemd160.ComputeHash( SHA256.Value.ComputeHash( data ) );
-                    version = Scripthash;
+					break;
 
-                    break;
+				case Scripthash:
+					this._scriptHash = hash;
 
-                case Pubkeyhash:
-                    this._pubKeyHash = data;
+					break;
+			}
 
-                    break;
+			this._type = version;
 
-                case Scripthash:
-                    this._scriptHash = data;
+			return version;
+		}
 
-                    break;
-            }
+		public override Boolean Equals( Object obj ) {
+			if ( !( obj is Address ) ) {
+				return default;
+			}
 
-            this._type = version;
-        }
+			return this.EitherHash.HashBytes.SequenceEqual( ( ( Address )obj ).EitherHash.HashBytes );
+		}
 
-        public Address( [CanBeNull] String? address ) => this._address = address;
+		public override Int32 GetHashCode() => this.EitherHash.GetHashCode();
 
-        private void CalcBase58() {
-            if ( this._pubKeyHash != null ) {
-                this._address = Base58CheckString.FromByteArray( this._pubKeyHash, Pubkeyhash );
-            }
-            else if ( this._scriptHash != null ) {
-                this._address = Base58CheckString.FromByteArray( this._scriptHash, Scripthash );
-            }
-            else {
-                throw new InvalidOperationException( "Address is not a public key or script hash!" );
-            }
-        }
+		[NotNull]
+		public override String ToString() {
+			if ( this._address is null ) {
+				this.CalcBase58();
+			}
 
-        private Byte CalcHash() {
-            var hash = Base58CheckString.ToByteArray( this.ToString(), out var version );
-
-            switch ( version ) {
-                case Pubkeyhash:
-                    this._pubKeyHash = hash;
-
-                    break;
-
-                case Scripthash:
-                    this._scriptHash = hash;
-
-                    break;
-            }
-
-            this._type = version;
-
-            return version;
-        }
-
-        public override Boolean Equals( Object obj ) {
-            if ( !( obj is Address ) ) {
-                return default;
-            }
-
-            return this.EitherHash.HashBytes.SequenceEqual( ( ( Address ) obj ).EitherHash.HashBytes );
-        }
-
-        public override Int32 GetHashCode() => this.EitherHash.GetHashCode();
-
-        public override String ToString() {
-            if ( this._address is null ) {
-                this.CalcBase58();
-            }
-
-            return this._address ?? throw new InvalidOperationException();
-        }
-
-    }
-
+			return this._address ?? throw new InvalidOperationException();
+		}
+	}
 }

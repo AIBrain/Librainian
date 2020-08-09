@@ -1,225 +1,70 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Computer.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "Computer.cs" was last formatted by Protiguous on 2020/04/26 at 4:32 PM.
 
 namespace Librainian.ComputerSystem {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Management;
-    using System.Net.NetworkInformation;
-    using System.Text;
-    using Converters;
-    using JetBrains.Annotations;
-    using Logging;
-    using Parsing;
+	using System;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
+	using System.Net.NetworkInformation;
+	using JetBrains.Annotations;
+	using Parsing;
 
-    public class Computer {
+	public class Computer {
 
-        [NotNull]
-        private ManagementObjectSearcher PerfFormattedDataManagementObjectSearcher { get; } =
-            new ManagementObjectSearcher( queryString: "select * from Win32_PerfFormattedData_PerfOS_Processor" );
+		public void AbortShutdown() => Process.Start( "shutdown", "/a" );
 
-        //[NotNull] [ItemNotNull] private HashSet<PerformanceCounter> UtilizationCounters { get; } = new HashSet<PerformanceCounter>( Environment.ProcessorCount );
+		[NotNull]
+		public IEnumerable<String> GetVersions() =>
+			AppDomain.CurrentDomain.GetAssemblies().Select( assembly => $"Assembly: {assembly.GetName().Name ?? Symbols.Null}, {assembly.GetName().Version?.ToString() ?? Symbols.Null}" );
 
-        //[NotNull] public ComputerInfo Info { get; }
+		[NotNull]
+		public IEnumerable<String> GetWorkingMacAddresses() =>
+			from nic in NetworkInterface.GetAllNetworkInterfaces() where nic.OperationalStatus == OperationalStatus.Up select nic.GetPhysicalAddress().ToString();
 
-        /// <summary></summary>
-        /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
-        /// <returns></returns>
-        public UInt64 RAM {
-            get {
-                try {
-                    using ( var searcher = new ManagementObjectSearcher( queryString: "Select * from Win32_PhysicalMemory" ) ) {
-                        UInt64 total = 0;
+		public void Hibernate( TimeSpan? delay = null ) =>
+			Process.Start( "shutdown", !delay.HasValue ? "/h" : $"/h /t {( Int32 )delay.Value.TotalSeconds}" );
 
-                        foreach ( var result in searcher.Get() ) {
-                            if ( result != null ) {
-                                var mem = Convert.ToUInt64( value: result[ propertyName: "Capacity" ] );
-                                total += mem;
-                            }
-                        }
+		/// <summary>Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system. (Uses the VisualBasic library)</summary>
+		public void Logoff( TimeSpan? delay = null ) =>
+			Process.Start( "shutdown", !delay.HasValue ? "/l" : $"/l /t {( Int32 )delay.Value.TotalSeconds}" );
 
-                        return total;
-                    }
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-                }
+		/// <summary>Send a reboot request.</summary>
+		public void Restart( TimeSpan? delay = null ) =>
+			Process.Start( "shutdown", !delay.HasValue ? "/r" : $"/r /t {( Int32 )delay.Value.TotalSeconds}" );
 
-                return 0;
-            }
-        }
+		public void RestartFast( TimeSpan? delay = null ) =>
+			Process.Start( "shutdown", !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        /*
+		public void Shutdown( TimeSpan? delay = null ) =>
+			Process.Start( "shutdown", !delay.HasValue ? "/s" : $"/s /t {( Int32 )delay.Value.TotalSeconds}" );
 
-        /// <summary></summary>
-        /// <see cref="http://msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx" />
-        public UInt64 TotalPhysicalMemory {
-            get {
-                try {
-                    return this.Info.TotalPhysicalMemory;
-                }
-                catch ( Exception exception ) {
-                    exception.Log();
-
-                    return 0;
-                }
-            }
-        }
-        */
-
-        /*
-        public Computer() {
-
-            for ( var i = 0; i < Environment.ProcessorCount; i++ ) {
-                this.UtilizationCounters.Add( new PerformanceCounter( "Processor", "% Processor Time", i.ToString() ) );
-            }
-
-            this.Info = new ComputerInfo(); // TODO how slow is this class? The code behind it doesn't *look* slow..
-        }
-        */
-
-        //private Int32 GetFreeProcessors() => this.UtilizationCounters.Count( pc => pc.NextValue() <= 0.50f );
-
-        public void AbortShutdown() => Process.Start( fileName: "shutdown", arguments: "/a" );
-
-        /*
-
-        /// <summary>//TODO description. Bytes? Which one does .NET allocate objects in..? Sum, or smaller of the two? Is this real time? How fast/slow is this method?</summary>
-        /// <returns></returns>
-        public UInt64 GetAvailableMemeory() {
-            var info = this.Info;
-
-            return Math.Min( info.AvailablePhysicalMemory, info.AvailableVirtualMemory );
-        }
-        */
-
-        /// <summary></summary>
-        /// <remarks>http: //msdn.microsoft.com/en-us/Library/aa394347(VS.85).aspx</remarks>
-        /// <returns></returns>
-        public UInt64 GetAvailableVirtualMemory() {
-            try {
-                using ( var searcher = new ManagementObjectSearcher( queryString: "Select * from Win32_LogicalMemoryConfiguration" ) ) {
-                    var total = searcher.Get()
-                                        .Cast<ManagementBaseObject>()
-                                        .Select( selector: baseObject => Convert.ToUInt64( value: baseObject?[ propertyName: "AvailableVirtualMemory" ] ) )
-                                        .Aggregate( seed: 0UL, func: ( current, mem ) => current + mem );
-
-                    return total;
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-
-                return 0;
-            }
-        }
-
-        /// <summary>Use WMI (System.Managment) to get the CPU type</summary>
-        /// <remarks>http: //msdn2.microsoft.com/en-us/Library/aa394373(VS.85).aspx</remarks>
-        /// <returns></returns>
-        [NotNull]
-        public String GetCPUDescription() {
-            try {
-                using ( var searcher = new ManagementObjectSearcher( queryString: "Select * from Win32_Processor" ) ) {
-                    var sb = new StringBuilder();
-
-                    foreach ( var result in searcher.Get() ) {
-                        sb.Append( value: $"{result?[ propertyName: "Name" ] ?? Symbols.Null} with {result?[ propertyName: "NumberOfCores" ] ?? Symbols.Null} cores" );
-                    }
-
-                    return sb.ToString();
-                }
-            }
-            catch ( Exception ex ) {
-                return $"WMI Error: {ex.Message}";
-            }
-        }
-
-        /// <summary>Get the average percent of all cpu cores being used.</summary>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public Single? GetCPUUsage() {
-            var cpuTimes = this.PerfFormattedDataManagementObjectSearcher.Get()
-                               .Cast<ManagementObject>()
-                               .Select( selector: managementObject => new {
-                                   Name = managementObject?[ propertyName: "Name" ],
-                                   Usage = managementObject?[ propertyName: "PercentProcessorTime" ]
-                                       .Cast<Single>() / 100.0f
-                               } ); //.ToList();
-
-            //The '_Total' value represents the average usage across all cores, and is the best representation of overall CPU usage
-            var cpuUsage = cpuTimes.Where( predicate: x => x.Name.ToString() == "_Total" )
-                                   .Select( selector: x => x.Usage )
-                                   .Single();
-
-            return cpuUsage;
-        }
-
-        [NotNull]
-        public IEnumerable<String> GetVersions() =>
-            AppDomain.CurrentDomain.GetAssemblies()
-                     .Select( selector: assembly => $"Assembly: {assembly.GetName().Name}, {assembly.GetName().Version}" );
-
-        [NotNull]
-        public IEnumerable<String> GetWorkingMacAddresses() =>
-            from nic in NetworkInterface.GetAllNetworkInterfaces()
-            where nic.OperationalStatus == OperationalStatus.Up
-            select nic.GetPhysicalAddress()
-                      .ToString();
-
-        public void Hibernate( TimeSpan? delay = null ) =>
-            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/h" : $"/h /t {( Int32 ) delay.Value.TotalSeconds}" );
-
-        /// <summary>Provides properties for getting information about the computer's memory, loaded assemblies, name, and operating system. (Uses the VisualBasic library)</summary>
-        public void Logoff( TimeSpan? delay = null ) =>
-            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/l" : $"/l /t {( Int32 ) delay.Value.TotalSeconds}" );
-
-        /// <summary>Send a reboot request.</summary>
-        public void Restart( TimeSpan? delay = null ) =>
-            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/r" : $"/r /t {( Int32 ) delay.Value.TotalSeconds}" );
-
-        public void RestartFast( TimeSpan? delay = null ) =>
-            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/hybrid /s" : $"/hybrid /s /t {( Int32 ) delay.Value.TotalSeconds}" );
-
-        public void Shutdown( TimeSpan? delay = null ) =>
-            Process.Start( fileName: "shutdown", arguments: !delay.HasValue ? "/s" : $"/s /t {( Int32 ) delay.Value.TotalSeconds}" );
-
-        /// <summary>Turn off the local computer with no time-out or warning.</summary>
-        public void ShutdownNow() => Process.Start( fileName: "shutdown", arguments: "/p" );
-
-    }
-
+		/// <summary>Turn off the local computer with no time-out or warning.</summary>
+		public void ShutdownNow() => Process.Start( "shutdown", "/p" );
+	}
 }

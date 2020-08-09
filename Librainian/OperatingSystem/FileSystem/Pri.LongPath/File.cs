@@ -1,35 +1,29 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "File.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "File.cs" was last formatted by Protiguous on 2020/03/18 at 10:26 AM.
 
 using System.Runtime.CompilerServices;
 
@@ -54,7 +48,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         private static Encoding _UTF8NoBOM;
 
-        public static void AppendAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) => AppendAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
+        public static void AppendAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) =>
+            AppendAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
         public static void AppendAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents, [NotNull] Encoding encoding ) {
 
@@ -67,9 +62,10 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
         }
 
-        public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents ) => AppendAllText( path.ThrowIfBlank(), contents, Encoding.UTF8 );
+        public static void AppendAllText( [NotNull] String path, [CanBeNull] String contents ) =>
+            AppendAllText( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
-        public static void AppendAllText( [NotNull] String path, [CanBeNull] String? contents, [NotNull] Encoding encoding ) {
+        public static void AppendAllText( [NotNull] String path, [CanBeNull] String contents, [NotNull] Encoding encoding ) {
 
             const Boolean append = true;
 
@@ -81,7 +77,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         public static StreamWriter AppendText( [NotNull] String path ) => CreateStreamWriter( path.ThrowIfBlank(), true );
 
-        public static void Copy( [NotNull] String sourceFileName, [NotNull] String destFileName ) => Copy( sourceFileName.ThrowIfBlank(), destFileName.ThrowIfBlank(), false );
+        public static void Copy( [NotNull] String sourceFileName, [NotNull] String destFileName ) =>
+            Copy( sourceFileName.ThrowIfBlank(), destFileName.ThrowIfBlank(), false );
 
         /// <summary>Copies the specified file to a specified new file, indicating whether to overwrite an existing file.</summary>
         /// <param name="sourcePath">A <see cref="String" /> containing the path of the file to copy.</param>
@@ -90,7 +87,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="ArgumentNullException"><paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is an empty string (""), contains only white space, or contains one
-        /// or more invalid characters as defined in <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> contains one or more components that exceed the drive-defined maximum length. For example, on
         /// Windows-based platforms, components must not exceed 255 characters.
@@ -141,7 +138,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         public static StreamReader CreateStreamReader( [NotNull] String path, [NotNull] Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize ) {
 
-            var fileStream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             return new StreamReader( fileStream, encoding, detectEncodingFromByteOrderMarks, bufferSize );
         }
@@ -152,7 +150,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var fileMode = append ? FileMode.Append : FileMode.Create;
 
-            var fileStream = Open( path.ThrowIfBlank(), fileMode, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), fileMode, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             return new StreamWriter( fileStream, UTF8NoBOM, Common.DefaultBufferSize );
         }
@@ -162,7 +161,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var fileMode = append ? FileMode.Append : FileMode.Create;
 
-            var fileStream = Open( path.ThrowIfBlank(), fileMode, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), fileMode, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             return new StreamWriter( fileStream, encoding, Common.DefaultBufferSize );
         }
@@ -170,13 +170,15 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         public static StreamWriter CreateText( [NotNull] String path ) {
 
-            var fileStream = Open( path.ThrowIfBlank(), FileMode.Create, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var fileStream = Open( path.ThrowIfBlank(), FileMode.Create, FileAccess.Write, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             return new StreamWriter( fileStream, UTF8NoBOM, Common.DefaultBufferSize );
         }
 
         [NotNull]
-        public static StreamWriter CreateText( [NotNull] String path, [NotNull] Encoding encoding ) => CreateStreamWriter( path.ThrowIfBlank(), false, encoding );
+        public static StreamWriter CreateText( [NotNull] String path, [NotNull] Encoding encoding ) =>
+            CreateStreamWriter( path.ThrowIfBlank(), false, encoding );
 
         public static void Decrypt( [NotNull] String path ) {
 
@@ -205,7 +207,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
@@ -292,8 +294,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var underlyingAccess = GetUnderlyingAccess( access );
 
-            var handle = NativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 ) share, IntPtr.Zero, ( UInt32 ) mode, ( UInt32 ) options,
-                IntPtr.Zero );
+            var handle = NativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 ) share,
+                IntPtr.Zero, ( UInt32 ) mode, ( UInt32 ) options, IntPtr.Zero );
 
             if ( handle.IsInvalid ) {
                 var ex = Common.GetExceptionFromLastWin32Error();
@@ -336,7 +338,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="ArgumentNullException"><paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> is an empty string (""), contains only white space, or contains one
-        /// or more invalid characters as defined in <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// or more invalid characters as defined in <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="sourcePath" /> and/or <paramref name="destinationPath" /> contains one or more components that exceed the drive-defined maximum length. For example, on
         /// Windows-based platforms, components must not exceed 255 characters.
@@ -381,7 +383,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
@@ -419,7 +421,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
@@ -462,7 +464,7 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="path" /> is an empty string (""), contains only white space, or contains one or more invalid characters as defined in
-        /// <see cref="Librainian.OperatingSystem.FileSystem.Pri.LongPath.Path.GetInvalidPathChars()" />.
+        /// <see cref="Path.GetInvalidPathChars" />.
         /// <para>-or-</para>
         /// <paramref name="path" /> contains one or more components that exceed the drive-defined maximum length. For example, on Windows-based platforms, components must not exceed 255
         /// characters.
@@ -507,7 +509,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         public static StreamReader OpenText( [NotNull] String path, [NotNull] Encoding encoding ) {
 
-            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             return new StreamReader( stream, encoding, true, Common.DefaultBufferSize );
         }
@@ -515,13 +518,15 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [NotNull]
         public static StreamReader OpenText( [NotNull] String path ) {
 
-            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             return new StreamReader( stream, Encoding.UTF8, true, Common.DefaultBufferSize );
         }
 
         [NotNull]
-        public static FileStream OpenWrite( [NotNull] String path ) => Open( path.ThrowIfBlank(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None );
+        public static FileStream OpenWrite( [NotNull] String path ) =>
+            Open( path.ThrowIfBlank(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None );
 
         [NotNull]
         public static Byte[] ReadAllBytes( [NotNull] String path ) {
@@ -555,7 +560,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         public static IEnumerable<String> ReadAllLines( [NotNull] String path ) => ReadLines( path.ThrowIfBlank() ).ToArray();
 
         [NotNull]
-        public static IEnumerable<String> ReadAllLines( [NotNull] String path, [NotNull] Encoding encoding ) => ReadLines( path.ThrowIfBlank(), encoding ).ToArray();
+        public static IEnumerable<String> ReadAllLines( [NotNull] String path, [NotNull] Encoding encoding ) =>
+            ReadLines( path.ThrowIfBlank(), encoding ).ToArray();
 
         [NotNull]
         public static String ReadAllText( [NotNull] String path ) => ReadAllText( path.ThrowIfBlank(), Encoding.UTF8 );
@@ -575,7 +581,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         [ItemCanBeNull]
         public static IEnumerable<String> ReadLines( [NotNull] String path, [NotNull] Encoding encoding ) {
 
-            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize, FileOptions.SequentialScan );
+            var stream = Open( path.ThrowIfBlank(), FileMode.Open, FileAccess.Read, FileShare.Read, Common.DefaultBufferSize,
+                FileOptions.SequentialScan );
 
             using var sr = new StreamReader( stream, encoding, true, Common.DefaultBufferSize );
 
@@ -585,7 +592,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
         }
 
         public static void Replace( [NotNull] String sourceFileName, [NotNull] String destinationFileName, [NotNull] String destinationBackupFileName ) =>
-            Replace( sourceFileName.ThrowIfBlank(), destinationFileName.ThrowIfBlank(), destinationBackupFileName.ThrowIfBlank(), false );
+            Replace( sourceFileName.ThrowIfBlank(), destinationFileName.ThrowIfBlank(),
+                destinationBackupFileName.ThrowIfBlank(), false );
 
         public static void Replace( [NotNull] String sourceFileName, [NotNull] String destinationFileName, [NotNull] String destinationBackupFileName,
             Boolean ignoreMetadataErrors ) {
@@ -600,7 +608,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
                 flags |= NativeMethods.REPLACEFILE_IGNORE_MERGE_ERRORS;
             }
 
-            var r = NativeMethods.ReplaceFile( fullDestPath, fullSrcPath, fullBackupPath, flags, IntPtr.Zero, IntPtr.Zero );
+            var r = NativeMethods.ReplaceFile( fullDestPath, fullSrcPath, fullBackupPath, flags,
+                IntPtr.Zero, IntPtr.Zero );
 
             if ( !r ) {
                 Common.ThrowIOError( Marshal.GetLastWin32Error(), String.Empty );
@@ -609,22 +618,24 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
         public static void SetAttributes( [NotNull] String path, FileAttributes fileAttributes ) => path.ThrowIfBlank().SetAttributes( fileAttributes );
 
-        public static void SetCreationTime( [NotNull] this String path, DateTime creationTime ) => SetCreationTimeUtc( path.ThrowIfBlank(), creationTime.ToUniversalTime() );
+        public static void SetCreationTime( [NotNull] this String path, DateTime creationTime ) =>
+            SetCreationTimeUtc( path.ThrowIfBlank(), creationTime.ToUniversalTime() );
 
         public static unsafe void SetCreationTimeUtc( [NotNull] this String path, DateTime creationTimeUtc ) {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            using ( var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None ) ) {
-                var fileTime = new FILE_TIME( creationTimeUtc.ToFileTimeUtc() );
-                var r = NativeMethods.SetFileTime( handle, &fileTime, null, null );
+			using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite,
+											  FileOptions.None );
 
-                if ( !r ) {
-                    var errorCode = Marshal.GetLastWin32Error();
-                    Common.ThrowIOError( errorCode, path );
-                }
-            }
-        }
+			var fileTime = new FILE_TIME( creationTimeUtc.ToFileTimeUtc() );
+			var r = NativeMethods.SetFileTime( handle, &fileTime, null, null );
+
+			if ( !r ) {
+				var errorCode = Marshal.GetLastWin32Error();
+				Common.ThrowIOError( errorCode, path );
+			}
+		}
 
         public static void SetLastAccessTime( [NotNull] String path, DateTime lastAccessTime ) =>
             SetLastAccessTimeUtc( path.ThrowIfBlank(), lastAccessTime.ToUniversalTime() );
@@ -633,7 +644,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
+            using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite,
+                FileOptions.None );
 
             var fileTime = new FILE_TIME( lastAccessTimeUtc.ToFileTimeUtc() );
             var r = NativeMethods.SetFileTime( handle, null, &fileTime, null );
@@ -651,7 +663,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
 
             var normalizedPath = path.ThrowIfBlank().NormalizeLongPath();
 
-            using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
+            using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite,
+                FileOptions.None );
 
             var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
             var r = NativeMethods.SetFileTime( handle, null, null, &fileTime );
@@ -687,7 +700,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
         }
 
-        public static void WriteAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) => WriteAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
+        public static void WriteAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents ) =>
+            WriteAllLines( path.ThrowIfBlank(), contents, Encoding.UTF8 );
 
         public static void WriteAllLines( [NotNull] String path, [NotNull] IEnumerable<String> contents, [NotNull] Encoding encoding ) {
 
@@ -700,7 +714,8 @@ namespace Librainian.OperatingSystem.FileSystem.Pri.LongPath {
             }
         }
 
-        public static void WriteAllText( [NotNull] String path, [NotNull] String contents ) => WriteAllText( path.ThrowIfBlank(), contents, UTF8NoBOM );
+        public static void WriteAllText( [NotNull] String path, [NotNull] String contents ) =>
+            WriteAllText( path.ThrowIfBlank(), contents, UTF8NoBOM );
 
         public static void WriteAllText( [NotNull] String path, [NotNull] String contents, [NotNull] Encoding encoding ) {
 

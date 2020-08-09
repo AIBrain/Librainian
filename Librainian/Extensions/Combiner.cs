@@ -1,250 +1,244 @@
-// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "Combiner.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "Combiner.cs" was last formatted by Protiguous on 2020/03/18 at 10:23 AM.
+
+#nullable enable
 
 namespace Librainian.Extensions {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using JetBrains.Annotations;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using JetBrains.Annotations;
 
-    [SuppressMessage( "ReSharper", "PossibleMultipleEnumeration" )]
-    public static class Combiner {
+	public static class Combiner {
 
-        [ItemCanBeNull]
-        public static IEnumerable<T> Append<T>( [CanBeNull] this IEnumerable<T> a, [CanBeNull] IEnumerable<T> b ) {
-            if ( a != null ) {
-                foreach ( var item in a ) {
-                    yield return item;
-                }
-            }
+		[ItemCanBeNull]
+		public static IEnumerable<T> Append<T>( [NotNull][ItemCanBeNull] this IEnumerable<T> a, [NotNull][ItemCanBeNull] IEnumerable<T> b ) {
+			foreach ( var item in a ) {
+				yield return item;
+			}
 
-            if ( b != null ) {
-                foreach ( var item in b ) {
-                    yield return item;
-                }
-            }
-        }
+			foreach ( var item in b ) {
+				yield return item;
+			}
+		}
 
-        /// <summary>add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" /></summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        [ItemCanBeNull]
-        public static IEnumerable<T> Append<T>( [CanBeNull] this T a, [ItemCanBeNull] [CanBeNull] IEnumerable<T> b ) {
-            yield return a;
+		/// <summary>add the new item <paramref name="a" /> at the beginning of the collection <paramref name="b" /></summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		[ItemCanBeNull]
+		public static IEnumerable<T> Append<T>( [NotNull] this T a, [ItemCanBeNull] [NotNull] IEnumerable<T> b ) {
+			yield return a;
 
-            if ( b != null ) {
-                foreach ( var item in b ) {
-                    yield return item;
-                }
-            }
-        }
+			foreach ( var item in b ) {
+				yield return item;
+			}
+		}
 
-        /// <summary>add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" /></summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="a"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        [ItemCanBeNull]
-        public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, [CanBeNull] T b ) {
-            foreach ( var item in a ) {
-                yield return item;
-            }
+		/// <summary>add the collection <paramref name="a" /> at the beginning of the new item <paramref name="b" /></summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		[ItemCanBeNull]
+		public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, [CanBeNull] T b ) {
+			foreach ( var item in a ) {
+				yield return item;
+			}
 
-            yield return b;
-        }
+			yield return b;
+		}
 
-        [CanBeNull]
-        public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
-            IEnumerable<IEnumerable<T>> emptyProduct = new[] {
-                Enumerable.Empty<T>()
-            };
+		[NotNull]
+		public static IEnumerable<IEnumerable<T>>? CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
+			IEnumerable<IEnumerable<T>> emptyProduct = new[] {
+				Enumerable.Empty<T>()
+			};
 
-            return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
-                var enumerable = sequence as IList<T> ?? sequence?.ToList() ?? Enumerable.Empty<T>();
+			return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
+				var enumerable = sequence as IList<T> ?? sequence.ToList();
 
-                return
-                    from accseq in accumulator
-                    from item in enumerable
-                    where accseq?.Contains( item ) == false
-                    select accseq?.Concat( new[] {
-                        item
-                    } );
-            } );
-        }
+				return
+					from accseq in accumulator
+					from item in enumerable
+					where accseq?.Contains( item ) == false
+					select accseq.Concat( new[] {
+						item
+					} );
+			} );
+		}
 
-        [CanBeNull]
-        public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] params IEnumerable<T>[] input ) {
-            if ( input is null ) {
-                throw new ArgumentNullException( nameof( input ) );
-            }
+		[CanBeNull]
+		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( [CanBeNull] params IEnumerable<T>[]? input ) {
+			IEnumerable<IEnumerable<T>> result = Array.Empty<T[]>();
 
-            IEnumerable<IEnumerable<T>> result = new T[ 0 ][];
+			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
+		}
 
-            return input.Aggregate( result, ( current, item ) => item != null ? current?.Combine( item.Combinations() ) : default );
-        }
+		/// <summary>
+		/// eh?
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] this IEnumerable<T> input ) =>
+			input.Select( item => new[] {
+				item
+			} );
 
-        [NotNull]
-        public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] this IEnumerable<T> input ) =>
-            input.Select( item => new[] {
-                item
-            } );
+		[ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? groupAs, [CanBeNull][ItemCanBeNull] IEnumerable<IEnumerable<T>?>? groupBs ) {
+			var found = false;
 
-        [ItemCanBeNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> groupAs, [NotNull] IEnumerable<IEnumerable<T>> groupBs ) {
-            var found = false;
+			var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
 
-            var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
+			foreach ( var a in groupAs ) {
+				found = true;
 
-            foreach ( var groupA in groupAs ) {
-                found = true;
+				foreach ( var groupB in bs ) {
+					// ReSharper disable once PossibleMultipleEnumeration
+					yield return a.Append( groupB );
+				}
+			}
 
-                foreach ( var groupB in bs ) {
+			if ( found ) {
+				yield break;
+			}
 
-                    yield return groupA.Append( groupB );
-                }
-            }
+			foreach ( var b in bs ) {
+				yield return b;
+			}
+		}
 
-            if ( found ) {
-                yield break;
-            }
+		[ItemCanBeNull]
+		[CanBeNull]
+		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull] this IEnumerable<T>? a, [NotNull] IEnumerable<IEnumerable<T>?>? b ) {
+			var found = false;
 
-            foreach ( var groupB in bs ) {
-                yield return groupB;
-            }
-        }
+			foreach ( var bGroup in b ) {
+				found = true;
 
-        [ItemCanBeNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this IEnumerable<T> a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
-            var found = false;
+				if ( a != null ) {
+					yield return a.Append( bGroup );
+				}
+				else {
+					yield return null;
+				}
+			}
 
-            foreach ( var bGroup in b ) {
-                found = true;
+			if ( !found ) {
+				yield return a;
+			}
+		}
 
-                yield return a.Append( bGroup );
-            }
+		[ItemCanBeNull]
+		[CanBeNull]
+		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull][ItemCanBeNull] IEnumerable<T>? b ) {
+			var found = false;
 
-            if ( !found ) {
+			foreach ( var aGroup in a ) {
+				found = true;
 
-                yield return a;
-            }
-        }
+				yield return aGroup.Append( b );
+			}
 
-        [ItemCanBeNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull] IEnumerable<T> b ) {
-            var found = false;
+			if ( !found ) {
+				yield return b;
+			}
+		}
 
-            foreach ( var aGroup in a ) {
-                found = true;
+		[CanBeNull][ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull] this T a, [CanBeNull][ItemCanBeNull] IEnumerable<IEnumerable<T>?>? b ) {
+			var found = false;
 
-                yield return aGroup.Append( b );
-            }
+			foreach ( var bGroup in b ) {
+				found = true;
 
-            if ( !found ) {
-                yield return b;
-            }
-        }
+				yield return a.Append( bGroup );
+			}
 
-        [ItemCanBeNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this T a, [NotNull] IEnumerable<IEnumerable<T>> b ) {
-            var found = false;
+			if ( !found ) {
+				yield return new[] {
+					a
+				};
+			}
+		}
 
-            foreach ( var bGroup in b ) {
-                found = true;
+		[CanBeNull][ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? a, [CanBeNull] T b ) {
+			var found = false;
 
-                yield return a.Append( bGroup );
-            }
+			foreach ( var aGroup in a ) {
+				found = true;
 
-            if ( !found ) {
-                yield return new[] {
-                    a
-                };
-            }
-        }
+				yield return aGroup.Append( b );
+			}
 
-        [ItemCanBeNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this IEnumerable<IEnumerable<T>> a, [CanBeNull] T b ) {
-            var found = false;
+			if ( !found ) {
+				yield return new[] {
+					b
+				};
+			}
+		}
 
-            foreach ( var aGroup in a ) {
-                found = true;
+		[NotNull]
+		public static T[][] FastPowerSet<T>( [NotNull] this T[] seq ) {
+			var powerSet = new T[ 1 << seq.Length ][];
+			powerSet[ 0 ] = Array.Empty<T>();
 
-                yield return aGroup.Append( b );
-            }
+			for ( var i = 0; i < seq.Length; i++ ) {
+				var cur = seq[ i ];
+				var count = 1 << i;
 
-            if ( !found ) {
-                yield return new[] {
-                    b
-                };
-            }
-        }
+				for ( var j = 0; j < count; j++ ) {
+					var source = powerSet[ j ];
 
-        [NotNull]
-        public static T[][] FastPowerSet<T>( [NotNull] this T[] seq ) {
-            var powerSet = new T[ 1 << seq.Length ][];
-            powerSet[ 0 ] = new T[ 0 ];
+					var sourceLength = source.Length;
 
-            for ( var i = 0; i < seq.Length; i++ ) {
-                var cur = seq[ i ];
-                var count = 1 << i;
+					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
 
-                for ( var j = 0; j < count; j++ ) {
-                    var source = powerSet[ j ];
+					for ( var q = 0; q < sourceLength; q++ ) {
+						destination[ q ] = source[ q ];
+					}
 
-                    var sourceLength = source.Length;
+					destination[ sourceLength ] = cur;
+				}
+			}
 
-                    var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
+			return powerSet;
+		}
 
-                    for ( var q = 0; q < sourceLength; q++ ) {
-                        destination[ q ] = source[ q ];
-                    }
-
-                    destination[ sourceLength ] = cur;
-                }
-            }
-
-            return powerSet;
-        }
-
-        [ItemCanBeNull]
-        public static IEnumerable<T> Group<T>( [CanBeNull] this T a, [CanBeNull] T b ) {
-            yield return a;
-            yield return b;
-        }
-
-    }
-
+		[ItemCanBeNull]
+		public static IEnumerable<T> Group<T>( [CanBeNull] this T a, [CanBeNull] T b ) {
+			yield return a;
+			yield return b;
+		}
+	}
 }

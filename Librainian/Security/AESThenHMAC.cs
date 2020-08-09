@@ -1,35 +1,29 @@
-﻿// Copyright © 2020 Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, and source code (directly or derived)
-// from our binaries, libraries, projects, or solutions.
-// 
-// This source code contained in "AESThenHMAC.cs" belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
-// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original license and our thanks goes to those Authors.
-// If you find your code in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission and a quote.
-// 
-// Donations are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+//
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-// 
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our website can be found at "https://Protiguous.com/"
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-// 
-// Project: "Librainian", File: "AESThenHMAC.cs" was last formatted by Protiguous on 2020/03/18 at 10:30 AM.
 
 namespace Librainian.Security {
 
@@ -40,9 +34,9 @@ namespace Librainian.Security {
     using JetBrains.Annotations;
     using Maths;
 
-    /// <summary>
-    /// This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright restrictions. https: //gist.github.com/4336842 http:
-    /// //creativecommons.org/publicdomain/mark/1.0/
+    /// <summary>This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright restrictions.
+    /// <remarks>https://gist.github.com/4336842</remarks>
+    /// <remarks>http://creativecommons.org/publicdomain/mark/1.0/</remarks>
     /// </summary>
     public static class AESThenHmac {
 
@@ -79,70 +73,68 @@ namespace Librainian.Security {
         public static Byte[]? SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 
             //Basic Usage Error Checks
-            if ( cryptKey is null || ( cryptKey.Length != ( KeyBitSize / 8 ) ) ) {
+            if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
             }
 
-            if ( authKey is null || ( authKey.Length != ( KeyBitSize / 8 ) ) ) {
+            if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"AuthKey needs to be {KeyBitSize} bit!", nameof( authKey ) );
             }
 
-            if ( encryptedMessage is null || ( encryptedMessage.Length == 0 ) ) {
+            if ( encryptedMessage is null || encryptedMessage.Length == 0 ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
-            using ( var hmac = new HMACSHA256( authKey ) ) {
-                var sentTag = new Byte[ hmac.HashSize / 8 ];
+			using var hmac = new HMACSHA256( authKey );
 
-                //Calculate Tag
-                var calcTag = hmac.ComputeHash( encryptedMessage, 0, encryptedMessage.Length - sentTag.Length );
-                const Int32 ivLength = BlockBitSize / 8;
+			var sentTag = new Byte[ hmac.HashSize / 8 ];
 
-                //if message length is to small just return null
-                if ( encryptedMessage.Length < ( sentTag.Length + nonSecretPayloadLength + ivLength ) ) {
-                    return null;
-                }
+			//Calculate Tag
+			var calcTag = hmac.ComputeHash( encryptedMessage, 0, encryptedMessage.Length - sentTag.Length );
+			const Int32 ivLength = BlockBitSize / 8;
 
-                //Grab Sent Tag
-                Array.Copy( encryptedMessage, encryptedMessage.Length - sentTag.Length, sentTag, 0, sentTag.Length );
+			//if message length is to small just return null
+			if ( encryptedMessage.Length < sentTag.Length + nonSecretPayloadLength + ivLength ) {
+				return null;
+			}
 
-                //Compare Tag with constant time comparison
-                var compare = 0;
+			//Grab Sent Tag
+			Array.Copy( encryptedMessage, encryptedMessage.Length - sentTag.Length, sentTag, 0, sentTag.Length );
 
-                for ( var i = 0; i < sentTag.Length; i++ ) {
-                    compare |= sentTag[ i ] ^ calcTag[ i ];
-                }
+			//Compare Tag with constant time comparison
+			var compare = 0;
 
-                //if message doesn't authenticate return null
-                if ( compare != 0 ) {
-                    return null;
-                }
+			for ( var i = 0; i < sentTag.Length; i++ ) {
+				compare |= sentTag[ i ] ^ calcTag[ i ];
+			}
 
-                using ( var aes = new AesManaged {
-                    KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
-                } ) {
+			//if message doesn't authenticate return null
+			if ( compare != 0 ) {
+				return null;
+			}
 
-                    //Grab IV from message
-                    var iv = new Byte[ ivLength ];
-                    Array.Copy( encryptedMessage, nonSecretPayloadLength, iv, 0, iv.Length );
+			using var aes = new AesManaged {
+				KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
+			};
 
-                    using ( var decrypter = aes.CreateDecryptor( cryptKey, iv ) ) {
-                        var plainTextStream = new MemoryStream();
-                        var decrypterStream = new CryptoStream( plainTextStream, decrypter, CryptoStreamMode.Write );
+			//Grab IV from message
+			var iv = new Byte[ ivLength ];
+			Array.Copy( encryptedMessage, nonSecretPayloadLength, iv, 0, iv.Length );
 
-                        using ( var binaryWriter = new BinaryWriter( decrypterStream ) ) {
+			using var decrypter = aes.CreateDecryptor( cryptKey, iv );
 
-                            //Decrypt Cipher Text from Message
-                            binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length,
-                                encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
-                        }
+			using var plainTextStream = new MemoryStream();
 
-                        //Return Plain Text
-                        return plainTextStream.ToArray();
-                    }
-                }
-            }
-        }
+			using var decrypterStream = new CryptoStream( plainTextStream, decrypter, CryptoStreamMode.Write );
+
+			using var binaryWriter = new BinaryWriter( decrypterStream );
+
+			//Decrypt Cipher Text from Message
+			binaryWriter.Write( encryptedMessage, nonSecretPayloadLength + iv.Length, encryptedMessage.Length - nonSecretPayloadLength - iv.Length - sentTag.Length );
+
+			//Return Plain Text
+			return plainTextStream.ToArray();
+		}
 
         /// <summary>Simple Authentication (HMAC) then Decryption (AES) for a secrets UTF8 Message.</summary>
         /// <param name="encryptedMessage">The encrypted message.</param>
@@ -152,7 +144,7 @@ namespace Librainian.Security {
         /// <returns>Decrypted Message</returns>
         /// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         [CanBeNull]
-        public static String? SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+        public static String SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
@@ -171,7 +163,7 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
         /// <remarks>Significantly less secure than using random binary keys.</remarks>
         [CanBeNull]
-        public static String? SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+        public static String SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
             if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
@@ -201,11 +193,11 @@ namespace Librainian.Security {
         public static Byte[]? SimpleDecryptWithPassword( [NotNull] Byte[] encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
 
             //User Error Checks
-            if ( String.IsNullOrWhiteSpace( password ) || ( password.Length < MinPasswordLength ) ) {
+            if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
                 throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
             }
 
-            if ( encryptedMessage is null || ( encryptedMessage.Length == 0 ) ) {
+            if ( encryptedMessage is null || encryptedMessage.Length == 0 ) {
                 throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
             }
 
@@ -244,35 +236,33 @@ namespace Librainian.Security {
         public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[] nonSecretPayload = null ) {
 
             //User Error Checks
-            if ( cryptKey is null || ( cryptKey.Length != ( KeyBitSize / 8 ) ) ) {
+            if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
             }
 
-            if ( authKey is null || ( authKey.Length != ( KeyBitSize / 8 ) ) ) {
+            if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
                 throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( authKey ) );
             }
 
-            if ( secretMessage is null || ( secretMessage.Length < 1 ) ) {
+            if ( secretMessage is null || secretMessage.Length < 1 ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
             //non-secret payload optional
-            nonSecretPayload ??= new Byte[] { };
+            if ( nonSecretPayload == null ) {
+                nonSecretPayload = Array.Empty<Byte>();
+            }
 
             Byte[] cipherText;
-            Byte[] iv;
 
-            using ( var aes = new AesManaged {
+            using var aes = new AesManaged {
                 KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
-            } ) {
+            };
 
-                //Use random IV
-                aes.GenerateIV();
-                iv = aes.IV;
+            aes.GenerateIV();
 
-                using ( var encrypter = aes.CreateEncryptor( cryptKey, iv ) ) {
-                    var cipherStream = new MemoryStream();
-
+            using ( var encrypter = aes.CreateEncryptor( cryptKey, aes.IV ) ) {
+                using ( var cipherStream = new MemoryStream() ) {
                     using ( var binaryWriter = new BinaryWriter( new CryptoStream( cipherStream, encrypter, CryptoStreamMode.Write ) ) ) {
                         binaryWriter.Write( secretMessage );
                     }
@@ -283,28 +273,28 @@ namespace Librainian.Security {
 
             //Assemble encrypted message and add authentication
             using ( var hmac = new HMACSHA256( authKey ) ) {
-                var encryptedStream = new MemoryStream();
+                using ( var encryptedStream = new MemoryStream() ) {
+                    using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
 
-                using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
+                        //Prepend non-secret payload if any
+                        binaryWriter.Write( nonSecretPayload );
 
-                    //Prepend non-secret payload if any
-                    binaryWriter.Write( nonSecretPayload );
+                        //Prepend IV
+                        binaryWriter.Write( aes.IV );
 
-                    //Prepend IV
-                    binaryWriter.Write( iv );
+                        //Write Ciphertext
+                        binaryWriter.Write( cipherText );
+                        binaryWriter.Flush(); //why?
 
-                    //Write Ciphertext
-                    binaryWriter.Write( cipherText );
-                    binaryWriter.Flush(); //why?
+                        //Authenticate all data
+                        var tag = hmac.ComputeHash( encryptedStream.ToArray() );
 
-                    //Authenticate all data
-                    var tag = hmac.ComputeHash( encryptedStream.ToArray() );
+                        //Postpend tag
+                        binaryWriter.Write( tag );
+                    }
 
-                    //Postpend tag
-                    binaryWriter.Write( tag );
+                    return encryptedStream.ToArray();
                 }
-
-                return encryptedStream.ToArray();
             }
         }
 
@@ -317,8 +307,7 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">Secret Message Required!;secretMessage</exception>
         /// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
         [NotNull]
-        public static String SimpleEncrypt( [NotNull] String secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey,
-            [CanBeNull] Byte[]? nonSecretPayload = null ) {
+        public static String SimpleEncrypt( [NotNull] String secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, [CanBeNull] Byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
@@ -337,7 +326,7 @@ namespace Librainian.Security {
         /// <exception cref="ArgumentException">password</exception>
         /// <remarks>Significantly less secure than using random binary keys. Adds additional non secret payload for key generation parameters.</remarks>
         [NotNull]
-        public static String SimpleEncryptWithPassword( [NotNull] String secretMessage, [NotNull] String password, [CanBeNull] Byte[]? nonSecretPayload = null ) {
+        public static String SimpleEncryptWithPassword( [NotNull] String secretMessage, [NotNull] String password, [CanBeNull] Byte[] nonSecretPayload = null ) {
             if ( String.IsNullOrEmpty( secretMessage ) ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
@@ -357,14 +346,14 @@ namespace Librainian.Security {
         /// <remarks>Significantly less secure than using random binary keys. Adds additional non secret payload for key generation parameters.</remarks>
         [NotNull]
         public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[] nonSecretPayload = null ) {
-            nonSecretPayload ??= new Byte[] { };
+            nonSecretPayload ??= Array.Empty<Byte>();
 
             //User Error Checks
-            if ( String.IsNullOrWhiteSpace( password ) || ( password.Length < MinPasswordLength ) ) {
+            if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
                 throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
             }
 
-            if ( secretMessage is null || ( secretMessage.Length == 0 ) ) {
+            if ( secretMessage is null || secretMessage.Length == 0 ) {
                 throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
             }
 
