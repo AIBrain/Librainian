@@ -1,30 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Types.cs" last formatted on 2020-08-14 at 8:33 PM.
 
+#nullable enable
 namespace Librainian.Extensions {
 
 	using System;
@@ -47,8 +45,6 @@ namespace Librainian.Extensions {
 		public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
 
 		public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
-
-		private delegate Object ObjectActivator();
 
 		public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object? value ) {
 			if ( p is null ) {
@@ -104,7 +100,10 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		/// <summary>Copy the value of each field of the <paramref name="source" /> to the matching field in the <paramref name="destination" /> .</summary>
+		/// <summary>
+		///     Copy the value of each field of the <paramref name="source" /> to the matching field in the
+		///     <paramref name="destination" /> .
+		/// </summary>
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">     </param>
 		/// <param name="destination"></param>
@@ -125,7 +124,10 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		/// <summary>Copy the value of each get property of the <paramref name="source" /> to each set property of the <paramref name="destination" /> .</summary>
+		/// <summary>
+		///     Copy the value of each get property of the <paramref name="source" /> to each set property of the
+		///     <paramref name="destination" /> .
+		/// </summary>
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">     </param>
 		/// <param name="destination"></param>
@@ -173,9 +175,15 @@ namespace Librainian.Extensions {
 		}
 
 		/// <summary>
-		///     <para>Copy each field in the <paramref name="source" /> to the matching field in the <paramref name="destination" />.</para>
+		///     <para>
+		///         Copy each field in the <paramref name="source" /> to the matching field in the
+		///         <paramref name="destination" />.
+		///     </para>
 		///     <para>then</para>
-		///     <para>Copy each property in the <paramref name="source" /> to the matching property in the <paramref name="destination" />.</para>
+		///     <para>
+		///         Copy each property in the <paramref name="source" /> to the matching property in the
+		///         <paramref name="destination" />.
+		///     </para>
 		/// </summary>
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">     </param>
@@ -229,10 +237,13 @@ namespace Librainian.Extensions {
 		}
 
 		[ItemCanBeNull]
-		public static IEnumerable<T> GetEnumerableOfType<T>( [CanBeNull] params Object[] constructorArgs ) where T : class, IComparable<T> {
+		public static IEnumerable<T> GetEnumerableOfType<T>( [CanBeNull] params Object[]? constructorArgs ) where T : class, IComparable<T> {
 			if ( !EnumerableOfTypeCache.TryGetValue( typeof( T ), out var list ) ) {
-				list = Assembly.GetAssembly( typeof( T ) ).GetTypes().ToList();
-				EnumerableOfTypeCache[ typeof( T ) ] = list;
+				list = Assembly.GetAssembly( typeof( T ) )?.GetTypes().ToList();
+
+				if ( list != null ) {
+					EnumerableOfTypeCache[typeof( T )] = list;
+				}
 			}
 
 			if ( null == list ) {
@@ -248,7 +259,7 @@ namespace Librainian.Extensions {
 
 					foreach ( var _ in declaredCtor.Select( constructorInfo => constructorInfo.GetParameters() )
 												   .SelectMany( parms => parms.Where( parameterInfo => parameterInfo.ParameterType == typeof( Guid ) ),
-													   ( parms, parameterInfo ) => parms ) ) {
+																( parms, parameterInfo ) => parms ) ) {
 						yield return Activator.CreateInstance( myType, Guid.NewGuid() ) as T;
 					}
 				}
@@ -268,8 +279,8 @@ namespace Librainian.Extensions {
 		}
 
 		/// <summary>
-		/// Get all <see cref="Type" /> from <see cref="AppDomain.CurrentDomain" /> that should be able to be created via
-		/// <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,System.Object[],CultureInfo) " />.
+		///     Get all <see cref="Type" /> from <see cref="AppDomain.CurrentDomain" /> that should be able to be created via
+		///     <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,System.Object[],CultureInfo) " />.
 		/// </summary>
 		/// <param name="baseType"></param>
 		/// <returns></returns>
@@ -292,8 +303,10 @@ namespace Librainian.Extensions {
 		}
 
 		/// <summary>
-		/// Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory without potential segmentation faults (i.e. the type
-		/// contains no managed references such as <see cref="String" /> s). This function will always return <c>false</c> for non- <see cref="ValueType" /> s.
+		///     Returns whether or not objects of this type can be copied byte-for-byte in to another part of the system memory
+		///     without potential segmentation faults (i.e. the type
+		///     contains no managed references such as <see cref="String" /> s). This function will always return <c>false</c> for
+		///     non- <see cref="ValueType" /> s.
 		/// </summary>
 		/// <returns>True if the type can be copied (blitted), or false if not.</returns>
 		public static Boolean IsBlittable( [NotNull] this Type self ) {
@@ -353,7 +366,7 @@ namespace Librainian.Extensions {
 
 			foreach ( var key in sourceValue.Keys ) {
 				try {
-					destAsDictionary[ key ] = sourceValue[ key ];
+					destAsDictionary[key] = sourceValue[key];
 				}
 				catch ( Exception exception ) {
 					exception.Log();
@@ -387,7 +400,6 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		[NotNull]
 		public static T Newby<T>( this Type type ) where T : class {
-
 			if ( !ObjectActivators.TryGetValue( type, out var activator ) ) {
 				var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );
 
@@ -395,7 +407,8 @@ namespace Librainian.Extensions {
 				ilGenerator.Emit( OpCodes.Nop );                  //why nop here? alignment?
 
 				ilGenerator.Emit( OpCodes.Newobj,
-					type.GetConstructor( Type.EmptyTypes ) ?? throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
+								  type.GetConstructor( Type.EmptyTypes ) ??
+								  throw new InvalidOperationException( $"Could not {nameof( type.GetConstructor )} for type {type.FullName}." ) );
 
 				ilGenerator.Emit( OpCodes.Ret );
 
@@ -432,66 +445,28 @@ namespace Librainian.Extensions {
 		/// <param name="self">The extended TypeCode.</param>
 		/// <returns>A <see cref="Type" /> that <paramref name="self" /> represents.</returns>
 		[NotNull]
-		public static Type ToType( this TypeCode self ) {
-			switch ( self ) {
-				case TypeCode.Boolean:
-					return typeof( Boolean );
-
-				case TypeCode.Byte:
-					return typeof( Byte );
-
-				case TypeCode.Char:
-					return typeof( Char );
-
-				case TypeCode.DBNull:
-					return typeof( DBNull );
-
-				case TypeCode.DateTime:
-					return typeof( DateTime );
-
-				case TypeCode.Decimal:
-					return typeof( Decimal );
-
-				case TypeCode.Double:
-					return typeof( Double );
-
-				case TypeCode.Int16:
-					return typeof( Int16 );
-
-				case TypeCode.Int32:
-					return typeof( Int32 );
-
-				case TypeCode.Int64:
-					return typeof( Int64 );
-
-				case TypeCode.SByte:
-					return typeof( SByte );
-
-				case TypeCode.Single:
-					return typeof( Single );
-
-				case TypeCode.String:
-					return typeof( String );
-
-				case TypeCode.UInt16:
-					return typeof( UInt16 );
-
-				case TypeCode.UInt32:
-					return typeof( UInt32 );
-
-				case TypeCode.UInt64:
-					return typeof( UInt64 );
-
-				case TypeCode.Empty:
-					return typeof( Object );
-
-				case TypeCode.Object:
-					return typeof( Object );
-
-				default:
-					return typeof( Object );
-			}
-		}
+		public static Type ToType( this TypeCode self ) =>
+			self switch {
+				TypeCode.Boolean  => typeof( Boolean ),
+				TypeCode.Byte     => typeof( Byte ),
+				TypeCode.Char     => typeof( Char ),
+				TypeCode.DBNull   => typeof( DBNull ),
+				TypeCode.DateTime => typeof( DateTime ),
+				TypeCode.Decimal  => typeof( Decimal ),
+				TypeCode.Double   => typeof( Double ),
+				TypeCode.Int16    => typeof( Int16 ),
+				TypeCode.Int32    => typeof( Int32 ),
+				TypeCode.Int64    => typeof( Int64 ),
+				TypeCode.SByte    => typeof( SByte ),
+				TypeCode.Single   => typeof( Single ),
+				TypeCode.String   => typeof( String ),
+				TypeCode.UInt16   => typeof( UInt16 ),
+				TypeCode.UInt32   => typeof( UInt32 ),
+				TypeCode.UInt64   => typeof( UInt64 ),
+				TypeCode.Empty    => typeof( Object ),
+				TypeCode.Object   => typeof( Object ),
+				_                 => typeof( Object )
+			};
 
 		public static Boolean TryCast<T>( this Object value, [CanBeNull] out T result ) {
 			var type = typeof( T );
@@ -507,7 +482,6 @@ namespace Librainian.Extensions {
 			var underlyingType = Nullable.GetUnderlyingType( type ) ?? type;
 
 			try {
-
 				// Just one edge case you might want to handle.
 				if ( underlyingType == typeof( Guid ) ) {
 					switch ( value ) {
@@ -516,6 +490,7 @@ namespace Librainian.Extensions {
 
 							break;
 						}
+
 						case Byte[] bytes: {
 							value = new Guid( bytes );
 
@@ -534,6 +509,8 @@ namespace Librainian.Extensions {
 				return default;
 			}
 		}
+
+		private delegate Object ObjectActivator();
 
 		/*
                 public static String GetName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
@@ -605,5 +582,7 @@ namespace Librainian.Extensions {
 		//            }
 		//    }
 		//}
+
 	}
+
 }

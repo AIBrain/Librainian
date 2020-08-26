@@ -1,188 +1,188 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Section.cs" last formatted on 2020-08-14 at 8:42 PM.
 
 namespace Librainian.Persistence.InIFiles {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Collections.Extensions;
-    using JetBrains.Annotations;
-    using Logging;
-    using Newtonsoft.Json;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Linq;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
+	using Logging;
+	using Newtonsoft.Json;
+	using Parsing;
 
-    /// <summary>
-    ///     <para>This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}" /> so we can index the <see cref="Data" /> without throwing exceptions on missing or null keys.</para>
-    ///     <para>Does not throw <see cref="ArgumentNullException" /> on null keys passed to the indexer.</para>
-    /// </summary>
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject]
-    public class Section : IEquatable<Section> {
+	/// <summary>
+	///     <para>
+	///         This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}" /> so we can index the <see cref="Data" />
+	///         without throwing exceptions on missing or null keys.
+	///     </para>
+	///     <para>Does not throw <see cref="ArgumentNullException" /> on null keys passed to the indexer.</para>
+	/// </summary>
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[JsonObject]
+	public class Section : IEquatable<Section> {
 
-        public Boolean Equals( [CanBeNull] Section other ) => Equals( this, other );
+		[JsonProperty( IsReference = false, ItemIsReference = false )]
+		private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
 
-        [JsonProperty( IsReference = false, ItemIsReference = false )]
-        private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
+		/// <summary>Automatically remove any key where there is no value. Defaults to true.</summary>
+		[JsonIgnore]
+		public Boolean AutoCleanup { get; set; } = true;
 
-        /// <summary>Automatically remove any key where there is no value. Defaults to true.</summary>
-        [JsonIgnore]
-        public Boolean AutoCleanup { get; set; } = true;
+		[JsonIgnore]
+		[NotNull]
+		public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
 
-        [JsonIgnore]
-        [NotNull]
-        public IReadOnlyList<String> Keys => ( IReadOnlyList<String> ) this.Data.Keys;
+		[JsonIgnore]
+		[NotNull]
+		public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
 
-        [JsonIgnore]
-        [NotNull]
-        public IReadOnlyList<String> Values => ( IReadOnlyList<String> ) this.Data.Values;
+		[JsonIgnore]
+		[CanBeNull]
+		public String this[ [CanBeNull] String? key ] {
+			[CanBeNull]
+			get {
+				if ( key is null ) {
+					return default;
+				}
 
-        [JsonIgnore]
-        [CanBeNull]
-        public String this[ [CanBeNull] String key ] {
-            [CanBeNull]
-            get {
-                if ( key is null ) {
-                    return null;
-                }
+				return this.Data.TryGetValue( key, out var value ) ? value : null;
+			}
 
-                return this.Data.TryGetValue( key, out var value ) ? value : null;
-            }
+			set {
+				if ( key is null ) {
+					return;
+				}
 
-            set {
-                if ( key is null ) {
-                    return;
-                }
+				if ( value is null && this.AutoCleanup ) {
+					this.Data.TryRemove( key, out _ ); //a little cleanup
+				}
+				else {
+					this.Data[key] = value;
+				}
+			}
+		}
 
-                if ( value is null && this.AutoCleanup ) {
-                    this.Data.TryRemove( key, out _ ); //a little cleanup
-                }
-                else {
-                    this.Data[ key ] = value;
-                }
-            }
-        }
+		public Boolean Equals( [CanBeNull] Section other ) => Equals( this, other );
 
-        /// <summary>Static comparison. Checks references and then keys and then values.</summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] Section left, [CanBeNull] Section right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
+		/// <summary>Static comparison. Checks references and then keys and then values.</summary>
+		/// <param name="left"> </param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static Boolean Equals( [CanBeNull] Section left, [CanBeNull] Section right ) {
+			if ( ReferenceEquals( left, right ) ) {
+				return true;
+			}
 
-            if ( left is null || right is null ) {
-                return default;
-            }
+			if ( left is null || right is null ) {
+				return default;
+			}
 
-            if ( ReferenceEquals( left.Data, right.Data ) ) {
-                return true;
-            }
+			if ( ReferenceEquals( left.Data, right.Data ) ) {
+				return true;
+			}
 
-            return left.Data.OrderBy( pair => pair.Key ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ) ); //will this work?
-        }
+			return left.Data.OrderBy( pair => pair.Key ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ) ); //will this work?
+		}
 
-        public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left, right );
+		public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left, right );
 
-        public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left, right );
+		public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left, right );
 
-        /// <summary>Remove any key where there is no value.</summary>
-        /// <returns></returns>
-        [NotNull]
-        public Task CleanupAsync() =>
-            Task.Run( () => {
-                foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
-                    if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
-                        this[ key ] = value; //whoops, re-add value. Cause: other threads.
-                    }
-                }
-            } );
+		/// <summary>Remove any key where there is no value.</summary>
+		/// <returns></returns>
+		[NotNull]
+		public Task CleanupAsync() =>
+			Task.Run( () => {
+				foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
+					if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
+						this[key] = value; //whoops, re-add value. Cause: other threads.
+					}
+				}
+			} );
 
-        public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as Section );
+		public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as Section );
 
-        public override Int32 GetHashCode() => this.Data.GetHashCode();
+		public override Int32 GetHashCode() => this.Data.GetHashCode();
 
-        /// <summary>Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.</summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        [NotNull]
-        public Task<Boolean> ReadAsync( [NotNull] TextReader reader ) {
-            if ( reader is null ) {
-                throw new ArgumentNullException( nameof( reader ) );
-            }
+		/// <summary>Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.</summary>
+		/// <param name="reader"></param>
+		/// <returns></returns>
+		[NotNull]
+		public Task<Boolean> ReadAsync( [NotNull] TextReader reader ) {
+			if ( reader is null ) {
+				throw new ArgumentNullException( nameof( reader ) );
+			}
 
-            try {
-                var that = reader.ReadLineAsync();
+			try {
+				var that = reader.ReadLineAsync();
 
-                return that.ContinueWith( task => {
-                    if ( JsonConvert.DeserializeObject( that.Result, this.Data.GetType() ) is ConcurrentDictionary<String, String> other ) {
-                        Parallel.ForEach( other, pair => this[ pair.Key ] = pair.Value );
+				return that.ContinueWith( task => {
+					if ( JsonConvert.DeserializeObject( that.Result, this.Data.GetType() ) is ConcurrentDictionary<String, String> other ) {
+						Parallel.ForEach( other, pair => this[pair.Key] = pair.Value );
 
-                        return true;
-                    }
+						return true;
+					}
 
-                    return default;
-                } );
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-            }
+					return default;
+				} );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
 
-            return Task.FromResult( false );
-        }
+			return Task.FromResult( false );
+		}
 
-        [NotNull]
-        public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
+		[NotNull]
+		public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
 
-        /// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>
-        /// <param name="writer"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public Task Write( [NotNull] TextWriter writer ) {
-            if ( writer is null ) {
-                throw new ArgumentNullException( nameof( writer ) );
-            }
+		/// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>
+		/// <param name="writer"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public Task Write( [NotNull] TextWriter writer ) {
+			if ( writer is null ) {
+				throw new ArgumentNullException( nameof( writer ) );
+			}
 
-            try {
-                var me = JsonConvert.SerializeObject( this, Formatting.None );
+			try {
+				var me = JsonConvert.SerializeObject( this, Formatting.None );
 
-                return writer.WriteLineAsync( me );
-            }
-            catch ( Exception exception ) {
-                exception.Log();
+				return writer.WriteLineAsync( me );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
 
-                return Task.FromException( exception );
-            }
-        }
+				return Task.FromException( exception );
+			}
+		}
 
-    }
+	}
 
 }

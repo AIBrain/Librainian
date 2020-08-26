@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "MicrosoftsRandom.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
 
@@ -68,9 +65,9 @@ namespace Librainian.Maths {
 					locINextp = 1;
 				}
 
-				var retVal = SeedArray[ locINext ] - SeedArray[ locINextp ];
+				var retVal = SeedArray[locINext] - SeedArray[locINextp];
 
-				SeedArray[ locINext ] = retVal;
+				SeedArray[locINext] = retVal;
 
 				inext = locINext;
 				inextp = locINextp;
@@ -84,25 +81,25 @@ namespace Librainian.Maths {
 		public static void Seed( Int32 seed ) {
 			unchecked {
 				if ( SeedArray is null || SeedArray.Length != SpecialLength ) {
-					SeedArray = new Int32[ SpecialLength ];
+					SeedArray = new Int32[SpecialLength];
 				}
 
 				var mj = Middle - ( seed ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() );
 
-				SeedArray[ Special ] = mj;
+				SeedArray[Special] = mj;
 
 				var mk = 1;
 
 				for ( var i = 0; i < Special; i++ ) {
-					var ii = ( 21 * i ) % Special;
-					SeedArray[ ii ] = mk;
+					var ii = 21 * i % Special;
+					SeedArray[ii] = mk;
 					mk = mj - mk;
-					mj = SeedArray[ ii ];
+					mj = SeedArray[ii];
 				}
 
 				for ( var k = 1; k < 5; k++ ) {
 					for ( var i = 1; i < SpecialLength; i++ ) {
-						SeedArray[ i ] -= SeedArray[ 1 + ( ( i + 30 ) % Special ) ];
+						SeedArray[i] -= SeedArray[1 + ( i + 30 ) % Special];
 					}
 				}
 
@@ -149,7 +146,7 @@ namespace Librainian.Maths {
 			}
 
 			for ( var i = 0; i < buffer.Length; i++ ) {
-				buffer[ i ] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
+				buffer[i] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
 			}
 		}
 
@@ -161,5 +158,7 @@ namespace Librainian.Maths {
 	**Arugments:  buffer -- the array to be filled.
 	**Exceptions: None
 	==============================================================================*/
+
 	}
+
 }

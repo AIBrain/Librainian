@@ -1,30 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "ConcurrentList.cs" last formatted on 2020-08-14 at 8:31 PM.
 
+#nullable enable
 namespace Librainian.Collections.Lists {
 
 	using System;
@@ -37,11 +35,11 @@ namespace Librainian.Collections.Lists {
 	using System.Runtime.Serialization;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Extensions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
 	using Newtonsoft.Json;
+	using Parsing;
 	using Threading;
 	using Utilities;
 
@@ -53,7 +51,7 @@ namespace Librainian.Collections.Lists {
 	/// <remarks>
 	///     <para>This class was created on a spur of the moment idea, and is <b>THOROUGHLY UNTESTED™</b>.</para>
 	///     <para>Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
-	/// <para>Call <see cref="CatchUp"/> to quickly add any pending items.</para>
+	///     <para>Call <see cref="CatchUp" /> to quickly add any pending items.</para>
 	/// </remarks>
 	/// <copyright>Protiguous@Protiguous.com</copyright>
 	[JsonObject( MemberSerialization.Fields )]
@@ -66,6 +64,8 @@ namespace Librainian.Collections.Lists {
 			Throw
 
 		}
+
+		private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
 
 		private Int32 _isReadOnly;
 
@@ -88,8 +88,6 @@ namespace Librainian.Collections.Lists {
 		}
 
 		public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
-
-		private Int32 ResizeCapacity( Int32 capacity ) => this.Write( () => this.TheList.Capacity = capacity );
 
 		[NotNull]
 		private ConcurrentQueue<T> InputBuffer { get; } = new ConcurrentQueue<T>();
@@ -147,7 +145,7 @@ namespace Librainian.Collections.Lists {
 					return this.ThrowWhenOutOfRange( index );
 				}
 
-				return this.Read( () => this.TheList[ index ] );
+				return this.Read( () => this.TheList[index] );
 			}
 
 			set {
@@ -165,7 +163,7 @@ namespace Librainian.Collections.Lists {
 					}
 
 					try {
-						this.TheList[ index ] = value;
+						this.TheList[index] = value;
 
 						return true;
 					}
@@ -321,6 +319,8 @@ namespace Librainian.Collections.Lists {
 		[NotNull]
 		IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
+		private Int32 ResizeCapacity( Int32 capacity ) => this.Write( () => this.TheList.Capacity = capacity );
+
 		private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
 
 		private void AnItemHasBeenRemoved( [CanBeNull] Action? action = null ) {
@@ -378,8 +378,6 @@ namespace Librainian.Collections.Lists {
 			return default!;
 		}
 
-		private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
-
 		private void ResetCount( Int32 toCount = default ) => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) + toCount );
 
 		private void ThrowWhenDisallowedModifications() {
@@ -423,8 +421,6 @@ namespace Librainian.Collections.Lists {
 
 			return isReadOnly;
 		}
-
-
 
 		/// <summary>
 		///     <para>
@@ -492,7 +488,6 @@ namespace Librainian.Collections.Lists {
 			}
 		}
 
-
 		/// <summary>
 		///     <para>
 		///         Add the
@@ -547,7 +542,6 @@ namespace Librainian.Collections.Lists {
 		/// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
 		/// <exception cref="ArgumentNullException"></exception>
 		public void AddRange( [NotNull] IEnumerable<T> items, Byte useParallelism = 0, [CanBeNull] Action? afterEachAdd = null, [CanBeNull] Action? afterRangeAdded = null ) {
-
 			if ( this.ThrowWhenDisposed() ) {
 				return;
 			}
@@ -570,6 +564,7 @@ namespace Librainian.Collections.Lists {
 			}
 			finally {
 				this.TrimExcess();
+
 				if ( !this.ThrowWhenDisposed() ) {
 					afterRangeAdded?.Invoke();
 				}
@@ -584,8 +579,13 @@ namespace Librainian.Collections.Lists {
 		/// <param name="useParallelism"></param>
 		/// <returns></returns>
 		[NotNull]
-		public Task AddRangeAsync( [CanBeNull] IEnumerable<T>? items, CancellationToken token, [CanBeNull] Action? afterEachAdd = null,
-								   [CanBeNull] Action? afterRangeAdded = null, Byte useParallelism = 0 ) =>
+		public Task AddRangeAsync(
+			[CanBeNull] IEnumerable<T>? items,
+			CancellationToken token,
+			[CanBeNull] Action? afterEachAdd = null,
+			[CanBeNull] Action? afterRangeAdded = null,
+			Byte useParallelism = 0
+		) =>
 			Task.Run( () => {
 				this.ThrowWhenDisposed();
 
@@ -616,7 +616,6 @@ namespace Librainian.Collections.Lists {
 					}
 
 					while ( this.InputBuffer.TryDequeue( out var item ) ) {
-
 						if ( this.IsReadOnly || this.ThrowWhenDisposed() ) {
 							return;
 						}
@@ -711,7 +710,7 @@ namespace Librainian.Collections.Lists {
 		public Boolean TryAdd( [CanBeNull] T item, [CanBeNull] Action? afterAdd = null ) => this.Add( item, afterAdd );
 
 		/// <summary>
-		/// Returns true if there are no more incoming items.
+		///     Returns true if there are no more incoming items.
 		/// </summary>
 		/// <param name="timeout"></param>
 		/// <returns></returns>
@@ -753,7 +752,7 @@ namespace Librainian.Collections.Lists {
 					return default;
 				}
 
-				var result = this.TheList[ index ];
+				var result = this.TheList[index];
 				afterGet?.Invoke( result );
 
 				return true;

@@ -1,30 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "RegistryServer.cs" last formatted on 2020-08-14 at 8:33 PM.
 
+#nullable enable
 namespace Librainian.Extensions {
 
 	using System;
@@ -36,8 +34,9 @@ namespace Librainian.Extensions {
 	using Microsoft.Win32;
 
 	/// <summary>
-	/// Provider immutable projections from the registry of the machine, as well as events for status and errors via a singeton wrapper on the .NET Registry singleton. Here we
-	/// are only exposing the HKLM area subkey but you can see it is easily extensible
+	///     Provider immutable projections from the registry of the machine, as well as events for status and errors via a
+	///     singeton wrapper on the .NET Registry singleton. Here we
+	///     are only exposing the HKLM area subkey but you can see it is easily extensible
 	/// </summary>
 	public class RegistryServer : IEqualityComparer<RegistryKey> /*, IInitializable*/, IEnumerable<RegistryKey> {
 
@@ -57,6 +56,10 @@ namespace Librainian.Extensions {
 		private PopulateProgressDelegateError _populateError;
 
 		private PopulateProgressDelegate _populateEventOk;
+
+		static RegistryServer() => Instance = new RegistryServer();
+
+		private RegistryServer() { }
 
 		public static Int64 Count {
 			get {
@@ -79,9 +82,40 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		private RegistryServer() { }
+		public IEnumerator<RegistryKey> GetEnumerator() {
+			if ( !this._isInitialized ) {
+				throw new InvalidOperationException( "Please initialize the backing store first" );
+			}
 
-		static RegistryServer() => Instance = new RegistryServer();
+			return this._allKeys.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+		/// <summary>
+		///     If either contains a null, the result is false (actually it is null be we do not have that option. It is 'unknown
+		///     and indeterminant'. An emptry String however is treated
+		///     as 'known to be empty' where null is 'could be anything we have no idea'.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public Boolean Equals( [CanBeNull] RegistryKey? x, [CanBeNull] RegistryKey? y ) {
+			if ( x is null ) {
+				throw new ArgumentNullException( nameof( x ) );
+			}
+
+			if ( y is null ) {
+				throw new ArgumentNullException( nameof( y ) );
+			}
+
+			return String.CompareOrdinal( x.Name, y.Name ) == 0;
+		}
+
+		/// <summary>For null names here we will calculate a funky random number as null != null</summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public Int32 GetHashCode( [CanBeNull] RegistryKey? obj ) => obj?.Name.GetHashCode() ?? 0;
 
 		public static event PopulateProgressDelegate PopulateProgress {
 			add => Instance._populateEventOk += value;
@@ -180,38 +214,6 @@ namespace Librainian.Extensions {
 
 		public static void Initialize() => Initialize( Registry.LocalMachine );
 
-		/// <summary>
-		/// If either contains a null, the result is false (actually it is null be we do not have that option. It is 'unknown and indeterminant'. An emptry String however is treated
-		/// as 'known to be empty' where null is 'could be anything we have no idea'.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		public Boolean Equals( RegistryKey x, RegistryKey y ) {
-			if ( x is null ) {
-				throw new ArgumentNullException( nameof( x ) );
-			}
-
-			if ( y is null ) {
-				throw new ArgumentNullException( nameof( y ) );
-			}
-
-			return x.Name != null && y.Name != null && x.Name == y.Name;
-		}
-
-		public IEnumerator<RegistryKey> GetEnumerator() {
-			if ( !this._isInitialized ) {
-				throw new InvalidOperationException( "Please initialize the backing store first" );
-			}
-
-			return this._allKeys.GetEnumerator();
-		}
-
-		/// <summary>For null names here we will calculate a funky random number as null != null</summary>
-		/// <param name="obj"></param>
-		/// <returns></returns>
-		public Int32 GetHashCode( [CanBeNull] RegistryKey obj ) => obj?.Name?.GetHashCode() ?? 0;
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
+
 }

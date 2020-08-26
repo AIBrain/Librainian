@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Enums.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Extensions {
 
@@ -35,9 +32,11 @@ namespace Librainian.Extensions {
 	/// <summary>Strongly typed version of Enum with Parsing and performance improvements.</summary>
 	/// <typeparam name="T">Type of Enum</typeparam>
 	/// <remarks>
-	/// Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License, Version 2. 0 (the "License"); you may not use this file except in compliance with the
-	/// License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Originally published at http:
-	/// //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
+	///     Copyright (c) Damien Guard. All rights reserved. Licensed under the Apache License, Version 2. 0 (the "License");
+	///     you may not use this file except in compliance with the
+	///     License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Originally published at
+	///     http:
+	///     //damieng.com/blog/2010/10/17/enums-better-syntax-improved-performance-and-tryparse-in-net-3-5
 	/// </remarks>
 	public static class Enums<T> where T : struct {
 
@@ -56,7 +55,7 @@ namespace Librainian.Extensions {
 				return foundValue;
 			}
 
-			return null;
+			return default;
 		}
 
 		/// <summary>Gets all items for an enum type.</summary>
@@ -87,7 +86,7 @@ namespace Librainian.Extensions {
 
 		public static Boolean IsDefined( T value ) => Names.Keys.Contains( value );
 
-		public static Boolean IsDefined( [CanBeNull] String value ) => SensitiveNames.Keys.Contains( value );
+		public static Boolean IsDefined( [CanBeNull] String? value ) => SensitiveNames.Keys.Contains( value );
 
 		public static Boolean IsDefined( Int32 value ) => Values.Keys.Contains( value );
 
@@ -111,32 +110,32 @@ namespace Librainian.Extensions {
 			return parsed;
 		}
 
-		public static T? ParseOrNull( [CanBeNull] String value ) {
+		public static T? ParseOrNull( [CanBeNull] String? value ) {
 			if ( String.IsNullOrEmpty( value ) ) {
-				return null;
+				return default;
 			}
 
 			if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) {
 				return foundValue;
 			}
 
-			return null;
+			return default;
 		}
 
-		public static T? ParseOrNull( [CanBeNull] String value, Boolean ignoreCase ) {
+		public static T? ParseOrNull( [CanBeNull] String? value, Boolean ignoreCase ) {
 			if ( !ignoreCase ) {
 				return ParseOrNull( value );
 			}
 
 			if ( String.IsNullOrEmpty( value ) ) {
-				return null;
+				return default;
 			}
 
 			if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) {
 				return foundValue;
 			}
 
-			return null;
+			return default;
 		}
 
 		public static T SetFlags( [NotNull] IEnumerable<T> flags ) {
@@ -149,5 +148,7 @@ namespace Librainian.Extensions {
 
 		public static Boolean TryParse( [NotNull] String value, Boolean ignoreCase, out T returnValue ) =>
 			ignoreCase ? InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out returnValue ) : TryParse( value, out returnValue );
+
 	}
+
 }

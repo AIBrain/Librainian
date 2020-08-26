@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD
+﻿
 namespace Librainian.Controls {
 
     using System.ComponentModel;
@@ -33,4 +33,3 @@ namespace Librainian.Controls {
         #endregion
     }
 }
-#endif

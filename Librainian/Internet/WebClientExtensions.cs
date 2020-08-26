@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "WebClientExtensions.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 namespace Librainian.Internet {
 
@@ -108,7 +105,7 @@ namespace Librainian.Internet {
 				exception.Log();
 			}
 
-			return null;
+			return default;
 		}
 
 		/// <summary>This seems to work great!</summary>
@@ -117,8 +114,12 @@ namespace Librainian.Internet {
 		/// <param name="fileName"></param>
 		/// <param name="progress"></param>
 		/// <returns></returns>
-		public static async Task DownloadFileTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String fileName,
-			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress ) {
+		public static async Task DownloadFileTaskAsync(
+			[NotNull] this WebClient webClient,
+			[NotNull] Uri address,
+			[NotNull] String fileName,
+			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress
+		) {
 			if ( webClient is null ) {
 				throw new ArgumentNullException( nameof( webClient ) );
 			}
@@ -150,9 +151,8 @@ namespace Librainian.Internet {
 			}
 
 			void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
-
 				if ( pe.UserState == tcs ) {
-					progress.Report( (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
+					progress.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
 				}
 			}
 
@@ -168,8 +168,9 @@ namespace Librainian.Internet {
 			}
 		}
 
-		/// <summary>A thread-local (threadsafe) <see cref="WebClient" />.
-		/// <para>Do NOT use Dispose on these clients. You've been warned.</para>
+		/// <summary>
+		///     A thread-local (threadsafe) <see cref="WebClient" />.
+		///     <para>Do NOT use Dispose on these clients. You've been warned.</para>
 		/// </summary>
 		[NotNull]
 		public static WebClient Instance() => ThreadSafeWebClients.Value.Value;
@@ -263,7 +264,6 @@ namespace Librainian.Internet {
 				webClient.OpenWriteAsync( address, method, taskCompletionSource );
 			}
 			catch ( Exception exc ) {
-
 				// If something goes wrong kicking off the async work, unregister the callback and
 				// cancel the created task
 				webClient.OpenWriteCompleted -= Handler;
@@ -371,7 +371,6 @@ namespace Librainian.Internet {
 				webClient.UploadDataAsync( address, method, data, tcs );
 			}
 			catch ( Exception exc ) {
-
 				// If something goes wrong kicking off the async work, unregister the callback and
 				// cancel the created task
 				webClient.UploadDataCompleted -= Handler;
@@ -446,7 +445,6 @@ namespace Librainian.Internet {
 				webClient.UploadFileAsync( address, method, fileName, tcs );
 			}
 			catch ( Exception exc ) {
-
 				// If something goes wrong kicking off the async work, unregister the callback and
 				// cancel the created task
 				webClient.UploadFileCompleted -= Handler;
@@ -521,7 +519,6 @@ namespace Librainian.Internet {
 				webClient.UploadStringAsync( address, method, data, tcs );
 			}
 			catch ( WebException exception ) {
-
 				// If something goes wrong kicking off the async work, unregister the callback and cancel the created task
 				webClient.UploadStringCompleted -= Handler;
 				tcs.TrySetException( exception );
@@ -530,5 +527,7 @@ namespace Librainian.Internet {
 			// Return the task that represents the async operation
 			return tcs.Task;
 		}
+
 	}
+
 }

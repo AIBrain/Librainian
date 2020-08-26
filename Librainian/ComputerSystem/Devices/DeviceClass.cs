@@ -1,29 +1,26 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "DeviceClass.cs" last formatted on 2020-08-14 at 8:31 PM.
 
 namespace Librainian.ComputerSystem.Devices {
 
@@ -44,17 +41,17 @@ namespace Librainian.ComputerSystem.Devices {
 
 		private IntPtr _deviceInfoSet;
 
-		/// <summary>Gets the device class's guid.</summary>
-		public Guid ClassGuid => this._classGuid;
-
 		/// <summary>Initializes a new instance of the DeviceClass class.</summary>
 		/// <param name="classGuid"> A device class Guid.</param>
-		/// <param name="hwndParent">The handle of the top-level window to be used for any user interface or IntPtr.Zero for no handle.</param>
+		/// <param name="hwndParent">
+		///     The handle of the top-level window to be used for any user interface or IntPtr.Zero for no
+		///     handle.
+		/// </param>
 		private DeviceClass( Guid classGuid, IntPtr hwndParent ) {
 			this._classGuid = classGuid;
 
 			this._deviceInfoSet = NativeMethods.SetupDiGetClassDevs( ref this._classGuid, "" /*was 0*/, hwndParent,
-				NativeMethods.DIGCF_DEVICEINTERFACE | NativeMethods.DIGCF_PRESENT );
+																	 NativeMethods.DIGCF_DEVICEINTERFACE | NativeMethods.DIGCF_PRESENT );
 
 			var lastError = Marshal.GetLastWin32Error();
 
@@ -65,9 +62,17 @@ namespace Librainian.ComputerSystem.Devices {
 
 		protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
 
+		/// <summary>Gets the device class's guid.</summary>
+		public Guid ClassGuid => this._classGuid;
+
 		[NotNull]
-		protected virtual Device CreateDevice( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String path, Int32 index,
-			Int32 disknum = -1 ) =>
+		protected virtual Device CreateDevice(
+			[NotNull] DeviceClass deviceClass,
+			NativeMethods.SP_DEVINFO_DATA deviceInfoData,
+			[CanBeNull] String? path,
+			Int32 index,
+			Int32 disknum = -1
+		) =>
 			new Device( deviceClass, deviceInfoData, path, index, disknum );
 
 		internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
@@ -81,8 +86,7 @@ namespace Librainian.ComputerSystem.Devices {
 			var devData = new NativeMethods.SP_DEVINFO_DATA();
 			devData.cbSize = ( UInt32 )Marshal.SizeOf( devData );
 
-			if ( !NativeMethods.SetupDiOpenDeviceInfo( this._deviceInfoSet, sb.ToString(), IntPtr.Zero, 0,
-				devData ) ) {
+			if ( !NativeMethods.SetupDiOpenDeviceInfo( this._deviceInfoSet, sb.ToString(), IntPtr.Zero, 0, devData ) ) {
 				throw new Win32Exception( Marshal.GetLastWin32Error() );
 			}
 
@@ -90,16 +94,13 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		[CanBeNull]
-		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String defaultValue ) {
-
+		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String? defaultValue ) {
 			const Int32 propertyBufferSize = 1024;
 
-			var propertyBuffer = new Byte[ propertyBufferSize ];
+			var propertyBuffer = new Byte[propertyBufferSize];
 
-			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property,
-				out var propertyRegDataType, propertyBuffer, propertyBufferSize,
-				out var requiredSize ) ) {
-
+			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
+																  out var requiredSize ) ) {
 				//Marshal.FreeHGlobal( propertyBuffer );
 				var error = Marshal.GetLastWin32Error();
 
@@ -116,16 +117,13 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		internal UInt32 GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, UInt32 defaultValue ) {
-
 			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( UInt32 ) );
 
 			//var propertyBuffer = Marshal.AllocHGlobal( propertyBufferSize );
-			var propertyBuffer = new Byte[ propertyBufferSize ];
+			var propertyBuffer = new Byte[propertyBufferSize];
 
-			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property,
-				out var propertyRegDataType, propertyBuffer, propertyBufferSize,
-				out var requiredSize ) ) {
-
+			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
+																  out var requiredSize ) ) {
 				//Marshal.FreeHGlobal( propertyBuffer );
 				var error = Marshal.GetLastWin32Error();
 
@@ -143,15 +141,12 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		internal Guid GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, Guid defaultValue ) {
-
 			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( Guid ) );
 
-			var propertyBuffer = new Byte[ propertyBufferSize ];
+			var propertyBuffer = new Byte[propertyBufferSize];
 
-			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property,
-				out var propertyRegDataType, propertyBuffer, propertyBufferSize,
-				out var requiredSize ) ) {
-
+			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
+																  out var requiredSize ) ) {
 				//Marshal.FreeHGlobal( propertyBuffer );
 				var error = Marshal.GetLastWin32Error();
 
@@ -192,8 +187,7 @@ namespace Librainian.ComputerSystem.Devices {
 				var interfaceData = new NativeMethods.SP_DEVICE_INTERFACE_DATA();
 				interfaceData.cbSize = ( UInt32 )Marshal.SizeOf( interfaceData );
 
-				if ( !NativeMethods.SetupDiEnumDeviceInterfaces( this._deviceInfoSet, default, ref this._classGuid,
-					index, interfaceData ) ) {
+				if ( !NativeMethods.SetupDiEnumDeviceInterfaces( this._deviceInfoSet, default, ref this._classGuid, index, interfaceData ) ) {
 					var error = Marshal.GetLastWin32Error();
 
 					if ( error != NativeMethods.ERROR_NO_MORE_ITEMS ) {
@@ -207,8 +201,7 @@ namespace Librainian.ComputerSystem.Devices {
 				devData.cbSize = ( UInt32 )Marshal.SizeOf( devData );
 				var size = 0;
 
-				if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData,
-					IntPtr.Zero, 0, ref size, devData ) ) {
+				if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData, IntPtr.Zero, 0, ref size, devData ) ) {
 					var error = Marshal.GetLastWin32Error();
 
 					if ( error != NativeMethods.ERROR_INSUFFICIENT_BUFFER ) {
@@ -224,8 +217,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 				//Marshal.StructureToPtr(detailData, buffer, false);
 
-				if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData, buffer,
-					size, ref size, devData ) ) {
+				if ( !NativeMethods.SetupDiGetDeviceInterfaceDetail( this._deviceInfoSet, interfaceData, buffer, size, ref size, devData ) ) {
 					try {
 						throw new Win32Exception( Marshal.GetLastWin32Error() );
 					}
@@ -242,10 +234,8 @@ namespace Librainian.ComputerSystem.Devices {
 				Marshal.FreeHGlobal( buffer );
 
 				if ( this._classGuid.Equals( new Guid( NativeMethods.GUID_DEVINTERFACE_DISK ) ) ) {
-
 					// Find disks
-					var hFile = NativeMethods.CreateFile( devicePath, 0, FileShare.ReadWrite, IntPtr.Zero,
-						FileMode.Open, 0, IntPtr.Zero );
+					var hFile = NativeMethods.CreateFile( devicePath, 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
 					if ( hFile.IsInvalid ) {
 						throw new Win32Exception( Marshal.GetLastWin32Error() );
@@ -257,9 +247,8 @@ namespace Librainian.ComputerSystem.Devices {
 					NativeMethods.STORAGE_DEVICE_NUMBER disknum;
 
 					try {
-						if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_STORAGE_GET_DEVICE_NUMBER,
-							IntPtr.Zero, 0, numBuffer, numBufSize, out bytesReturned,
-							IntPtr.Zero ) ) {
+						if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, numBuffer, numBufSize,
+															 out bytesReturned, IntPtr.Zero ) ) {
 							Console.WriteLine( "IOCTL failed." );
 						}
 					}
@@ -271,14 +260,11 @@ namespace Librainian.ComputerSystem.Devices {
 					}
 
 					if ( bytesReturned > 0 ) {
-						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER )Marshal.PtrToStructure( numBuffer,
-							typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
+						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER )Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
 					}
 					else {
 						disknum = new NativeMethods.STORAGE_DEVICE_NUMBER {
-							DeviceNumber = -1,
-							DeviceType = -1,
-							PartitionNumber = -1
+							DeviceNumber = -1, DeviceType = -1, PartitionNumber = -1
 						};
 					}
 
@@ -299,5 +285,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 			return devices;
 		}
+
 	}
+
 }

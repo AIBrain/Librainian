@@ -1,29 +1,26 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Wallet.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Financial.Containers.Wallets {
 
@@ -43,8 +40,9 @@ namespace Librainian.Financial.Containers.Wallets {
 	using Utilities;
 
 	/// <summary>
-	/// My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for production.. Use at your own risk. Any tips or ideas? Any dos or
-	/// don'ts? Email me!
+	///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for
+	///     production.. Use at your own risk. Any tips or ideas? Any dos or
+	///     don'ts? Email me!
 	/// </summary>
 	/// <remarks>A database with proper locking would be better than this, although not as fun to create.</remarks>
 	/// <see cref="SimpleWallet" />
@@ -52,6 +50,8 @@ namespace Librainian.Financial.Containers.Wallets {
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class Wallet : ABetterClassDispose, IEnumerable<KeyValuePair<IDenomination, UInt64>> {
+
+		public Wallet( Guid id ) => this.ID = id;
 
 		/// <summary>Count of each <see cref="IBankNote" />.</summary>
 		[JsonProperty]
@@ -69,7 +69,9 @@ namespace Librainian.Financial.Containers.Wallets {
 		[JsonProperty]
 		public WalletStatistics Statistics { get; } = new WalletStatistics();
 
-		public Wallet( Guid id ) => this.ID = id;
+		public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.GetGroups().GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		private UInt64 Deposit( [CanBeNull] IBankNote bankNote, UInt64 quantity ) {
 			if ( null == bankNote ) {
@@ -79,14 +81,14 @@ namespace Librainian.Financial.Containers.Wallets {
 			try {
 				lock ( this.BankNotes ) {
 					if ( this.BankNotes.ContainsKey( bankNote ) ) {
-						this.BankNotes[ bankNote ] += quantity; //todo AddOrUpdate to avoid a race condition
+						this.BankNotes[bankNote] += quantity; //todo AddOrUpdate to avoid a race condition
 					}
 					else {
 						if ( this.BankNotes.TryAdd( bankNote, quantity ) ) { }
 					}
 				}
 
-				return this.BankNotes[ bankNote ]; //outside of lock... is this okay?
+				return this.BankNotes[bankNote]; //outside of lock... is this okay?
 			}
 			finally {
 				this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity;
@@ -183,11 +185,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 
 			var message = new TransactionMessage {
-				Date = DateTime.Now,
-				Denomination = denomination,
-				ID = id ?? Guid.NewGuid(),
-				Quantity = quantity,
-				TransactionType = TransactionType.Deposit
+				Date = DateTime.Now, Denomination = denomination, ID = id ?? Guid.NewGuid(), Quantity = quantity, TransactionType = TransactionType.Deposit
 			};
 
 			this.Deposit( message );
@@ -208,7 +206,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			try {
 				lock ( this.Coins ) {
 					if ( this.Coins.ContainsKey( coin ) ) {
-						this.Coins[ coin ] += quantity;
+						this.Coins[coin] += quantity;
 					}
 					else {
 						if ( !this.Coins.TryAdd( coin, quantity ) ) {
@@ -217,7 +215,7 @@ namespace Librainian.Financial.Containers.Wallets {
 					}
 				}
 
-				return this.Coins[ coin ];
+				return this.Coins[coin];
 			}
 			finally {
 				this.Statistics.AllTimeDeposited += coin.FaceValue * quantity;
@@ -255,8 +253,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		[NotNull]
 		public IEnumerable<KeyValuePair<ICoin, UInt64>> GetCoinsGrouped() => this.Coins;
 
-		public IEnumerator<KeyValuePair<IDenomination, UInt64>> GetEnumerator() => this.GetGroups().GetEnumerator();
-
 		/// <summary>Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.</summary>
 		[NotNull]
 		public IEnumerable<KeyValuePair<IDenomination, UInt64>> GetGroups() =>
@@ -266,7 +262,10 @@ namespace Librainian.Financial.Containers.Wallets {
 		[NotNull]
 		public IEnumerable<IBankNote> GetNotes() => this.BankNotes.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
-		/// <summary>Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" />.</summary>
+		/// <summary>
+		///     Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" />
+		///     .
+		/// </summary>
 		[NotNull]
 		public IEnumerable<IDenomination> GetNotesAndCoins() => this.GetCoins().Concat<IDenomination>( this.GetNotes() );
 
@@ -289,19 +288,22 @@ namespace Librainian.Financial.Containers.Wallets {
 
 		/// <summary>Return the total amount of banknotes contained in this <see cref="Wallet" />.</summary>
 		public Decimal TotalBankNotes() {
-			var total = this.BankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + ( pair.Key.FaceValue * pair.Value ) );
+			var total = this.BankNotes.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
 			return total;
 		}
 
 		/// <summary>Return the total amount of coins contained in this <see cref="Wallet" />.</summary>
 		public Decimal TotalCoins() {
-			var total = this.Coins.Aggregate( Decimal.Zero, ( current, pair ) => current + ( pair.Key.FaceValue * pair.Value ) );
+			var total = this.Coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
 			return total;
 		}
 
-		/// <summary>Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this <see cref="Wallet" />.</summary>
+		/// <summary>
+		///     Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this
+		///     <see cref="Wallet" />.
+		/// </summary>
 		/// <param name="bankNote"></param>
 		/// <param name="quantity"></param>
 		/// <returns></returns>
@@ -316,17 +318,20 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 
 			lock ( this.BankNotes ) {
-				if ( !this.BankNotes.ContainsKey( bankNote ) || this.BankNotes[ bankNote ] < quantity ) {
+				if ( !this.BankNotes.ContainsKey( bankNote ) || this.BankNotes[bankNote] < quantity ) {
 					return default; //no bills to withdraw!
 				}
 
-				this.BankNotes[ bankNote ] -= quantity;
+				this.BankNotes[bankNote] -= quantity;
 
 				return true;
 			}
 		}
 
-		/// <summary>Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this <see cref="Wallet" /> .</summary>
+		/// <summary>
+		///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
+		///     <see cref="Wallet" /> .
+		/// </summary>
 		/// <param name="coin">    </param>
 		/// <param name="quantity"></param>
 		/// <returns></returns>
@@ -341,11 +346,11 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 
 			lock ( this.Coins ) {
-				if ( !this.Coins.ContainsKey( coin ) || this.Coins[ coin ] < quantity ) {
+				if ( !this.Coins.ContainsKey( coin ) || this.Coins[coin] < quantity ) {
 					return default; //no coins to withdraw!
 				}
 
-				this.Coins[ coin ] -= quantity;
+				this.Coins[coin] -= quantity;
 
 				return true;
 			}
@@ -358,11 +363,9 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <exception cref="WalletException"></exception>
 		public Boolean TryWithdraw( [NotNull] IDenomination denomination, UInt64 quantity ) {
 			switch ( denomination ) {
-				case IBankNote asBankNote:
-					return this.TryWithdraw( asBankNote, quantity );
+				case IBankNote asBankNote: return this.TryWithdraw( asBankNote, quantity );
 
-				case ICoin asCoin:
-					return this.TryWithdraw( asCoin, quantity );
+				case ICoin asCoin: return this.TryWithdraw( asCoin, quantity );
 			}
 
 			throw new WalletException( $"Unknown denomination {denomination}" );
@@ -374,16 +377,14 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <exception cref="WalletException"></exception>
 		public Boolean TryWithdraw( TransactionMessage message ) {
 			switch ( message.Denomination ) {
-				case IBankNote asBankNote:
-					return this.TryWithdraw( asBankNote, message.Quantity );
+				case IBankNote asBankNote: return this.TryWithdraw( asBankNote, message.Quantity );
 
-				case ICoin asCoin:
-					return this.TryWithdraw( asCoin, message.Quantity );
+				case ICoin asCoin: return this.TryWithdraw( asCoin, message.Quantity );
 			}
 
 			throw new WalletException( $"Unknown denomination {message.Denomination}" );
 		}
 
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
+
 }

@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "DateSpan.cs" last formatted on 2020-08-14 at 8:38 PM.
 
 namespace Librainian.Measurement.Time {
 
@@ -32,10 +29,13 @@ namespace Librainian.Measurement.Time {
 	using Newtonsoft.Json;
 
 	/// <summary>
-	/// A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates, but does so in a way that respects the number of actual days in the elapsed
-	/// years and months.
+	///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates, but does so in a way
+	///     that respects the number of actual days in the elapsed
+	///     years and months.
 	/// </summary>
-	/// <remarks>Adapted from <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates/DateSpan.cs" /></remarks>
+	/// <remarks>
+	///     Adapted from <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates/DateSpan.cs" />
+	/// </remarks>
 	[Immutable]
 	[JsonObject( MemberSerialization.Fields )]
 	[Serializable]
@@ -109,8 +109,8 @@ namespace Librainian.Measurement.Time {
 			{
 				this.Months = end.Month - start.Month;
 
-				if ( end.Month < start.Month || ( end.Month <= start.Month && this.Years > 1 ) ) {
-					this.Months = ( 12 - start.Month ) + end.Month;
+				if ( end.Month < start.Month || end.Month <= start.Month && this.Years > 1 ) {
+					this.Months = 12 - start.Month + end.Month;
 				}
 
 				if ( this.Months <= 0 ) { }
@@ -139,7 +139,7 @@ namespace Librainian.Measurement.Time {
 				this.Days = end.Day - start.Day;
 
 				if ( end.Day < start.Day ) {
-					this.Days = ( DateTime.DaysInMonth( start.Year, start.Month ) - start.Day ) + end.Day;
+					this.Days = DateTime.DaysInMonth( start.Year, start.Month ) - start.Day + end.Day;
 				}
 
 				if ( this.Days > 0 ) {
@@ -171,7 +171,7 @@ namespace Librainian.Measurement.Time {
 				this.Hours = end.Hour - start.Hour;
 
 				if ( end.Hour < start.Hour ) {
-					this.Hours = ( 24 - start.Hour ) + end.Hour;
+					this.Hours = 24 - start.Hour + end.Hour;
 				}
 
 				if ( this.Hours <= 0 ) { }
@@ -190,7 +190,7 @@ namespace Librainian.Measurement.Time {
 				this.Minutes = end.Minute - start.Minute;
 
 				if ( end.Minute < start.Minute ) {
-					this.Minutes = ( 60 - start.Minute ) + end.Minute;
+					this.Minutes = 60 - start.Minute + end.Minute;
 				}
 
 				if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
@@ -203,7 +203,7 @@ namespace Librainian.Measurement.Time {
 				this.Seconds = end.Second - start.Second;
 
 				if ( end.Second < start.Second ) {
-					this.Seconds = ( 60 - start.Second ) + end.Second;
+					this.Seconds = 60 - start.Second + end.Second;
 				}
 			}
 		}
@@ -211,8 +211,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="start">The start date</param>
 		/// <param name="end">The end date</param>
 		/// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
-		public DateSpan( DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = true ) : this( start.DateTime, end.DateTime,
-			excludeEndDate ) { }
+		public DateSpan( DateTimeOffset start, DateTimeOffset end, Boolean excludeEndDate = true ) : this( start.DateTime, end.DateTime, excludeEndDate ) { }
 
 		private static Int64 CalculateDifference( DateInterval interval, DateTime start, DateTime end, Boolean excludeEndDate ) {
 			Int64 sum = 0;
@@ -268,8 +267,7 @@ namespace Librainian.Measurement.Time {
 
 					break;
 
-				default:
-					throw new ArgumentOutOfRangeException( nameof( interval ) );
+				default: throw new ArgumentOutOfRangeException( nameof( interval ) );
 			}
 
 			return sum;
@@ -319,5 +317,7 @@ namespace Librainian.Measurement.Time {
 
 			return sum;
 		}
+
 	}
+
 }

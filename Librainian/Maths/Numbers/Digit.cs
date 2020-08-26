@@ -1,29 +1,26 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Digit.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 namespace Librainian.Maths.Numbers {
 
@@ -104,7 +101,10 @@ namespace Librainian.Maths.Numbers {
 		/// <summary>Returns a value that indicates whether the values of two <see cref="Digit" /> objects are equal.</summary>
 		/// <param name="left">The first value to compare.</param>
 		/// <param name="right">The second value to compare.</param>
-		/// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
+		/// <returns>
+		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
+		///     false.
+		/// </returns>
 		public static Boolean operator ==( Digit left, Digit right ) => Equals( left, right );
 
 		public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
@@ -129,25 +129,36 @@ namespace Librainian.Maths.Numbers {
 
 		/// <summary>Compares the current object with another object of the same type.</summary>
 		/// <returns>
-		/// A value that indicates the relative order of the objects being compared. The return value has the following meanings: Value Meaning Less than zero This object is less
-		/// than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than zero This object is greater than <paramref name="other" />.
+		///     A value that indicates the relative order of the objects being compared. The return value has the following
+		///     meanings: Value Meaning Less than zero This object is less
+		///     than the <paramref name="other" /> parameter.Zero This object is equal to <paramref name="other" />. Greater than
+		///     zero This object is greater than <paramref name="other" />.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
 		public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
 
 		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
 		/// <param name="other">An object to compare with this object.</param>
-		/// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+		/// <returns>
+		///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
 		public Boolean Equals( Digit other ) => Equals( this, other );
 
 		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
 		/// <param name="other">An object to compare with this object.</param>
-		/// <returns><see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.</returns>
+		/// <returns>
+		///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
 		public Boolean Equals( Byte other ) => this.Value.Equals( other );
 
 		/// <summary>Indicates whether this instance and a specified object are equal.</summary>
 		/// <param name="obj">The object to compare with the current instance.</param>
-		/// <returns><see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.</returns>
+		/// <returns>
+		///     <see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same
+		///     value; otherwise, <see langword="false" />.
+		/// </returns>
 		public override Boolean Equals( Object? obj ) => obj is Digit other && Equals( this, other );
 
 		/// <summary>Returns the hash code for this instance.</summary>
@@ -160,39 +171,30 @@ namespace Librainian.Maths.Numbers {
 		[NotNull]
 		public override String ToString() {
 			switch ( this.Value ) {
-				case 0:
-					return nameof( Zero );
+				case 0: return nameof( Zero );
 
-				case 1:
-					return nameof( One );
+				case 1: return nameof( One );
 
-				case 2:
-					return nameof( Two );
+				case 2: return nameof( Two );
 
-				case 3:
-					return nameof( Three );
+				case 3: return nameof( Three );
 
-				case 4:
-					return nameof( Four );
+				case 4: return nameof( Four );
 
-				case 5:
-					return nameof( Five );
+				case 5: return nameof( Five );
 
-				case 6:
-					return nameof( Six );
+				case 6: return nameof( Six );
 
-				case 7:
-					return nameof( Seven );
+				case 7: return nameof( Seven );
 
-				case 8:
-					return nameof( Eight );
+				case 8: return nameof( Eight );
 
-				case 9:
-					return nameof( Nine );
+				case 9: return nameof( Nine );
 
-				default:
-					return String.Empty;
+				default: return String.Empty;
 			}
 		}
+
 	}
+
 }

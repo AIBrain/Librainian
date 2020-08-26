@@ -1,30 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Device.cs" last formatted on 2020-08-14 at 8:31 PM.
 
+#nullable enable
 namespace Librainian.ComputerSystem.Devices {
 
 	using System;
@@ -51,6 +49,16 @@ namespace Librainian.ComputerSystem.Devices {
 		[CanBeNull]
 		private Device? _parent;
 
+		private Boolean? isUsb;
+
+		public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA? deviceInfoData, [CanBeNull] String? path, Int32 index, Int32? diskNumber = null ) {
+			this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
+			this.Path = path; // may be null
+			this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
+			this.Index = index;
+			this.DiskNumber = diskNumber;
+		}
+
 		private NativeMethods.SP_DEVINFO_DATA DeviceInfoData { get; }
 
 		/// <summary>Gets the device's class instance.</summary>
@@ -65,14 +73,6 @@ namespace Librainian.ComputerSystem.Devices {
 		/// <summary>Gets the device's path.</summary>
 		[CanBeNull]
 		public String? Path { get; }
-
-		public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA? deviceInfoData, [CanBeNull] String? path, Int32 index, Int32? diskNumber = null ) {
-			this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
-			this.Path = path; // may be null
-			this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
-			this.Index = index;
-			this.DiskNumber = diskNumber;
-		}
 
 		/// <summary>Compares the current instance with another object of the same type.</summary>
 		/// <param name="obj">An object to compare with this instance.</param>
@@ -111,7 +111,7 @@ namespace Librainian.ComputerSystem.Devices {
 				}
 			}
 
-			return null;
+			return default;
 		}
 
 		/// <summary>Gets the device's capabilities.</summary>
@@ -124,20 +124,20 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		/// <summary>Gets the device's class name.</summary>
-		[CanBeNull]
-		public String? GetClass() => this._class ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null );
+		[NotNull]
+		public String GetClass() => ( this._class ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASS, null ) ) ?? throw new InvalidOperationException();
 
 		/// <summary>Gets the device's class Guid as a string.</summary>
-		[CanBeNull]
-		public String? GetClassGuid() => this._classGuid ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null );
+		[NotNull]
+		public String GetClassGuid() => ( this._classGuid ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_CLASSGUID, null ) ) ?? throw new InvalidOperationException();
 
 		/// <summary>Gets the device's description.</summary>
-		[CanBeNull]
-		public String? GetDescription() => this._description ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null );
+		[NotNull]
+		public String GetDescription() => ( this._description ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_DEVICEDESC, null ) ) ?? throw new InvalidOperationException();
 
 		/// <summary>Gets the device's friendly name.</summary>
-		[CanBeNull]
-		public String? GetFriendlyName() => this._friendlyName ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null );
+		[NotNull]
+		public String GetFriendlyName() => ( this._friendlyName ??= this.DeviceClass.GetProperty( this.DeviceInfoData, NativeMethods.SPDRP_FRIENDLYNAME, null ) ) ?? throw new InvalidOperationException();
 
 		/// <summary>Gets the device's instance handle.</summary>
 		public UInt32 GetInstanceHandle() => this.DeviceInfoData.devInst;
@@ -163,11 +163,13 @@ namespace Librainian.ComputerSystem.Devices {
 
 		/// <summary>Gets a value indicating whether this device is a USB device.</summary>
 		public virtual Boolean IsUsb() {
-			if ( this.GetClass().ToUpper().Contains( "USB" ) ) {
-				return true;
+			this.isUsb ??= this.GetClass().ToUpper().Contains( "USB" );
+
+			if ( this.isUsb != true ) {
+				this.isUsb = this.Parent()?.IsUsb();
 			}
 
-			return this.Parent()?.IsUsb() == true;
+			return this.isUsb == true;
 		}
 
 		/// <summary>Gets the device's parent device or null if this device has not parent.</summary>
@@ -181,14 +183,12 @@ namespace Librainian.ComputerSystem.Devices {
 			var hr = NativeMethods.CM_Get_Parent( ref parentDevInst, this.DeviceInfoData.devInst, 0 );
 
 			if ( hr == 0 ) {
-				if ( this.DeviceClass is null ) {
-					return default;
-				}
-
 				this._parent = new Device( this.DeviceClass, this.DeviceClass.GetInfo( parentDevInst ), null, -1 );
 			}
 
 			return this._parent;
 		}
+
 	}
+
 }

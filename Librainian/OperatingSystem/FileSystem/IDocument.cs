@@ -1,4 +1,28 @@
-﻿#nullable enable
+﻿// Copyright © Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "IDocument.cs" last formatted on 2020-08-20 at 4:26 PM.
+
+#nullable enable
 namespace Librainian.OperatingSystem.FileSystem {
 
 	using System;
@@ -15,7 +39,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 	using PooledAwait;
 	using FileInfo = Pri.LongPath.FileInfo;
 
-	public interface IDocument : IComparable<IDocument>, IEquatable<IDocument>, IEnumerable<Byte> {
+	public interface IDocument : IEquatable<IDocument>, IEnumerable<Byte> {
 
 		[NotNull]
 		String FullPath { get; }
@@ -245,6 +269,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
 		/// </summary>
 		/// <param name="right"></param>
+		/// <param name="token"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="SecurityException"></exception>
@@ -255,7 +280,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right );
+		PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken token );
 
 		/// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
 		/// <returns></returns>
@@ -286,7 +311,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <returns></returns>
 		PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( [NotNull] Uri destination );
 
-		PooledValueTask<Boolean> IsAll( Byte number );
+		PooledValueTask<Boolean> IsAll( Byte number, CancellationToken token );
 
 		/// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="Document.FullPath" />.</summary>
 		/// <see cref="Document.op_Implicit" />

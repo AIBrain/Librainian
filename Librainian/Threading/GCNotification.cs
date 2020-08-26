@@ -1,95 +1,88 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "GCNotification.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 namespace Librainian.Threading {
 
-    using System;
-    using System.Threading;
+	using System;
+	using System.Threading;
 
-    /// <summary>From http://www.wintellect.com/cs/blogs/jeffreyr/default.aspx</summary>
-    public static class GcNotification {
+	/// <summary>From http://www.wintellect.com/cs/blogs/jeffreyr/default.aspx</summary>
+	public static class GcNotification {
 
-        private static Action<Int32> _sGcDone;
+		private static Action<Int32> _sGcDone;
 
-        public static event Action<Int32> GcDone {
-            add {
+		public static event Action<Int32> GcDone {
+			add {
+				// If there were no registered delegates before, start reporting notifications now
+				if ( _sGcDone is null ) {
+					// ReSharper disable once ObjectCreationAsStatement
+					new GenObject( 0 );
 
-                // If there were no registered delegates before, start reporting notifications now
-                if ( _sGcDone is null ) {
+					// ReSharper disable once ObjectCreationAsStatement
+					new GenObject( 2 );
+				}
 
-                    // ReSharper disable once ObjectCreationAsStatement
-                    new GenObject( 0 );
+				_sGcDone += value;
+			}
+			remove => _sGcDone -= value;
+		}
 
-                    // ReSharper disable once ObjectCreationAsStatement
-                    new GenObject( 2 );
-                }
+		private sealed class GenObject {
 
-                _sGcDone += value;
-            }
-            remove => _sGcDone -= value;
-        }
+			private readonly Int32 _mGeneration;
 
-        private sealed class GenObject {
+			public GenObject( Int32 generation ) => this._mGeneration = generation;
 
-            private readonly Int32 _mGeneration;
+			~GenObject() {
+				// This is the Finalize method If this object is in the generation we want (or
+				// higher), notify the delegates that a GC just completed
+				if ( GC.GetGeneration( this ) >= this._mGeneration ) {
+					var temp = Interlocked.CompareExchange( ref _sGcDone, null, null );
+					temp?.Invoke( this._mGeneration );
+				}
 
-            public GenObject( Int32 generation ) => this._mGeneration = generation;
+				// Keep reporting notifications if there is at least one delegate registered, the
+				// AppDomain isn't unloading, and the process isn’t shutting down
+				if ( _sGcDone is null || AppDomain.CurrentDomain.IsFinalizingForUnload() || Environment.HasShutdownStarted ) {
+					return;
+				}
 
-            ~GenObject() {
+				// For Gen 0, create a new object; for Gen 2, resurrect the object & let the GC call
+				// Finalize again the next time Gen 2 is GC'd
+				if ( this._mGeneration == 0 ) {
+					// ReSharper disable once ObjectCreationAsStatement
+					new GenObject( 0 );
+				}
+				else {
+					GC.ReRegisterForFinalize( this );
+				}
+			}
 
-                // This is the Finalize method If this object is in the generation we want (or
-                // higher), notify the delegates that a GC just completed
-                if ( GC.GetGeneration( this ) >= this._mGeneration ) {
-                    var temp = Interlocked.CompareExchange( ref _sGcDone, null, null );
-                    temp?.Invoke( this._mGeneration );
-                }
+		}
 
-                // Keep reporting notifications if there is at least one delegate registered, the
-                // AppDomain isn't unloading, and the process isn’t shutting down
-                if ( _sGcDone is null || AppDomain.CurrentDomain.IsFinalizingForUnload() || Environment.HasShutdownStarted ) {
-                    return;
-                }
+		// The event’s field
 
-                // For Gen 0, create a new object; for Gen 2, resurrect the object & let the GC call
-                // Finalize again the next time Gen 2 is GC'd
-                if ( this._mGeneration == 0 ) {
-
-                    // ReSharper disable once ObjectCreationAsStatement
-                    new GenObject( 0 );
-                }
-                else {
-                    GC.ReRegisterForFinalize( this );
-                }
-            }
-
-        }
-
-        // The event’s field
-
-    }
+	}
 
 }

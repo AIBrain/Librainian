@@ -1,6 +1,30 @@
-﻿#nullable enable
+﻿// Copyright © Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "ControlExtensions.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-#if !NETSTANDARD
+#nullable enable
+
+
 
 namespace Librainian.Controls {
 
@@ -9,9 +33,7 @@ namespace Librainian.Controls {
 	using System.ComponentModel;
 	using System.Diagnostics;
 	using System.Drawing;
-#if NETCORE || NETSTANDARD
 	using System.Runtime.CompilerServices;
-#endif
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows.Forms;
@@ -21,7 +43,6 @@ namespace Librainian.Controls {
 	using Maths;
 	using Measurement.Time;
 	using Threading;
-	using Timer = System.Timers.Timer;
 
 	public static class ControlExtensions {
 
@@ -58,9 +79,7 @@ namespace Librainian.Controls {
 			} );
 		}
 
-#if NETCORE || NETSTANDARD
-		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
-#endif
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Color Blend( this Color thisColor, Color blendToColor, Double blendToPercent ) {
 			blendToPercent = I().ForceBounds( 0, 1 );
 
@@ -68,11 +87,11 @@ namespace Librainian.Controls {
 
 			Double I() => 1 - blendToPercent;
 
-			Byte Red() => ( Byte )( ( thisColor.R * blendToPercent ) + ( blendToColor.R * I() ) );
+			Byte Red() => ( Byte )( thisColor.R * blendToPercent + blendToColor.R * I() );
 
-			Byte Green() => ( Byte )( ( thisColor.G * blendToPercent ) + ( blendToColor.G * I() ) );
+			Byte Green() => ( Byte )( thisColor.G * blendToPercent + blendToColor.G * I() );
 
-			Byte Blue() => ( Byte )( ( thisColor.B * blendToPercent ) + ( blendToColor.B * I() ) );
+			Byte Blue() => ( Byte )( thisColor.B * blendToPercent + blendToColor.B * I() );
 		}
 
 		/// <summary>Just changes the cursor to the <see cref="Cursors.WaitCursor" />.</summary>
@@ -92,7 +111,7 @@ namespace Librainian.Controls {
 
 			Boolean? Target() {
 				if ( control.CheckState == CheckState.Indeterminate ) {
-					return null;
+					return default;
 				}
 
 				return control.Checked;
@@ -143,7 +162,13 @@ namespace Librainian.Controls {
 			// Counting the perceptive luminance - human eye favors green color...
 			return A() < 0.5 ? darkForeColor : lightForeColor;
 
-			Double A() => ( 1 - ( ( 0.299 * thisColor.R ) + ( 0.587 * thisColor.G ) + ( 0.114 * thisColor.B ) ) ) / 255;
+			Double A() {
+				var r = 0.299 * thisColor.R;
+				var g = 0.587 * thisColor.G;
+				var b = 0.114 * thisColor.B;
+				var i = 1 - ( r + g + b );
+				return i / 255;
+			}
 		}
 
 		/// <summary>
@@ -211,6 +236,7 @@ namespace Librainian.Controls {
 			}
 
 			spanOff ??= Milliseconds.One;
+			spanOff.Value.CreateTimer( OnTick ).Once().Start();
 
 			void Action() {
 				var foreColor = control.ForeColor;
@@ -219,8 +245,8 @@ namespace Librainian.Controls {
 				control.Refresh();
 			}
 
-			using var bob = spanOff.Value.CreateTimer( () => control.InvokeAction( Action ) );
-			bob.Once().Start();
+			void OnTick() => control.InvokeAction( Action );
+
 		}
 
 		[NotNull]
@@ -348,9 +374,9 @@ namespace Librainian.Controls {
 		}
 
 		public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-			transparentPercent = 255 - ( transparentPercent.ForceBounds( 0, 1 ) * 255 );
+			transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
-			return Color.FromArgb( thisColor.ToArgb() + ( ( Int32 )transparentPercent * 0x1000000 ) );
+			return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
 		}
 
 		[NotNull]
@@ -438,9 +464,7 @@ namespace Librainian.Controls {
 		/// <param name="delay">  </param>
 		/// <returns></returns>
 		/// <see cref="Push" />
-		public static void PerformClick( [NotNull] this Button control, TimeSpan? delay = null ) {
-			using var push = control.Push( delay );
-		}
+		public static void PerformClick( [NotNull] this Button control, TimeSpan? delay = null ) => control.Push( delay );
 
 		/// <summary>Threadsafe <see cref="Button.PerformClick" />.</summary>
 		/// <param name="control"></param>
@@ -457,17 +481,14 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control">   </param>
 		/// <param name="delay">     </param>
-		/// <param name="afterDelay"></param>
+		/// <param name="afterClick"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static Timer Push( this Button control, TimeSpan? delay = null, [CanBeNull] Action? afterDelay = null ) {
-			var timer = ( delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeAction( () => {
+		public static FluentTimer Push( this Button control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
+			return ( delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeAction( () => {
 				control.PerformClick();
-				afterDelay?.Invoke();
-			} ) );
-			timer.Start();
-
-			return timer;
+				afterClick?.Invoke();
+			} ) ).Start();
 		}
 
 		/// <summary>Threadsafe <see cref="Control.Refresh" />.</summary>
@@ -486,7 +507,11 @@ namespace Librainian.Controls {
 
 			while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
 				var item = browser.Document.GetElementsByTagName( tagName )[ 0 ];
-				item.OuterHtml = String.Empty;
+
+				if ( item is not null ) {
+					item.OuterHtml = String.Empty;
+				}
+
 				browser.BeginInvoke( new Action( browser.Update ) );
 			}
 
@@ -787,4 +812,3 @@ namespace Librainian.Controls {
 
 }
 
-#endif

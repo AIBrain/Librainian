@@ -1,4 +1,28 @@
-﻿#nullable enable
+﻿// Copyright © Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Document.cs" last formatted on 2020-08-14 at 8:39 PM.
+
+#nullable enable
 
 namespace Librainian.OperatingSystem.FileSystem {
 
@@ -59,7 +83,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
 			}
 
-			this.FullPath = Path.Combine( Path.GetFullPath( fullPath ), CleanFileName( Path.GetFileName( fullPath ) ) ).TrimAndThrowIfBlank();
+			this.FullPath = Path.Combine( Path.GetFullPath( fullPath ), Path.GetFileName( fullPath ) ).TrimAndThrowIfBlank();
 
 			if ( Uri.TryCreate( fullPath, UriKind.Absolute, out var uri ) ) {
 				if ( uri.IsFile ) {
@@ -94,7 +118,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 			if ( watchFile ) {
 				this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullPath, this.FileName ) {
-					IncludeSubdirectories = false, EnableRaisingEvents = true
+					IncludeSubdirectories = false,
+					EnableRaisingEvents = true
 				} );
 
 				this.WatchEvents = new Lazy<FileWatchingEvents>( () => new FileWatchingEvents(), false );
@@ -153,18 +178,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } =
 			new Lazy<Regex>( () => new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
-		/// <summary>Compares this. <see cref="FullPath" /> against other <see cref="FullPath" />.</summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		[Pure]
-		public Int32 CompareTo( [NotNull] IDocument other ) {
-			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
-			}
-
-			return String.Compare( this.FullPath, other.FullPath, StringComparison.Ordinal );
-		}
-
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
 		/// <returns>A <see cref="IEnumerator" /> that can be used to iterate through the collection.</returns>
 		[Pure]
@@ -181,7 +194,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <param name="other"></param>
 		/// <returns></returns>
 		[Pure]
-		public Boolean Equals( IDocument other ) => Equals( this, other );
+		public Boolean Equals( [CanBeNull] IDocument? other ) => Equals( this, other );
 
 		/// <summary>
 		///     Represents the fully qualified path of the file.
@@ -529,11 +542,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 			try {
 				if ( this.Length.Any() ) {
 					if ( Uri.TryCreate( this.FullPath, UriKind.Absolute, out var sourceAddress ) ) {
-
 						using var client = new WebClient().Add( token );
 
 						await client.DownloadFileTaskAsync( sourceAddress, destination.FullPath ).ConfigureAwait( false );
-
 
 						return (true, stopwatch.Elapsed);
 					}
@@ -564,11 +575,10 @@ namespace Librainian.OperatingSystem.FileSystem {
 			if ( !Uri.TryCreate( this.FullPath, UriKind.RelativeOrAbsolute, out var uri ) || uri == null ) {
 				throw new UriFormatException( $"Unable to parse {this.FullPath.DoubleQuote()} into a Uri." );
 			}
-			
 
 			using var webClient = new WebClient();
 
-			webClient.DownloadProgressChanged += ( sender, args ) => onProgress?.Invoke( ( ( UInt64 )args.BytesReceived, ( UInt64 )args.TotalBytesToReceive ) );
+			webClient.DownloadProgressChanged += ( sender, args ) => onProgress?.Invoke( (( UInt64 )args.BytesReceived, ( UInt64 )args.TotalBytesToReceive) );
 
 			webClient.DownloadFileCompleted += ( sender, args ) => onCompleted?.Invoke();
 
@@ -590,7 +600,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 					return BitConverter.ToInt32( result, 0 );
 				}
 
-				return null;
+				return default;
 			}
 			catch ( FileNotFoundException exception ) {
 				exception.Break();
@@ -608,7 +618,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				exception.Break();
 			}
 
-			return null;
+			return default;
 		}
 
 		[Pure]
@@ -623,13 +633,13 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public String? CRC32Hex() {
 			try {
 				if ( this.Exists() == false ) {
-					return null;
+					return default;
 				}
 
 				var size = this.Size();
 
 				if ( !size.HasValue ) {
-					return null;
+					return default;
 				}
 
 				if ( size > Int32.MaxValue / 2 ) {
@@ -658,7 +668,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				exception.Break();
 			}
 
-			return null;
+			return default;
 		}
 
 		/// <summary>Returns a lowercase hex-string of the hash.</summary>
@@ -671,7 +681,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public Int64? CRC64() {
 			try {
 				if ( this.Exists() == false ) {
-					return null;
+					return default;
 				}
 
 				using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read );
@@ -679,7 +689,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				var size = this.Size();
 
 				if ( !size.HasValue || !size.Any() ) {
-					return null;
+					return default;
 				}
 
 				using var crc64 = new CRC64( size.Value, size.Value );
@@ -702,7 +712,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				exception.Break();
 			}
 
-			return null;
+			return default;
 		}
 
 		[Pure]
@@ -718,7 +728,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				var size = this.Size();
 
 				if ( !size.HasValue || !size.Any() || size > Int32.MaxValue / 2 ) {
-					return null;
+					return default;
 				}
 
 				using var crc64 = new CRC64( size.Value, size.Value );
@@ -733,7 +743,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 			catch ( IOException ) { }
 			catch ( UnauthorizedAccessException ) { }
 
-			return null;
+			return default;
 		}
 
 		/// <summary>Returns a lowercase hex-string of the hash.</summary>
@@ -743,9 +753,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public Task<String> CRC64HexAsync( CancellationToken token ) => Task.Run( this.CRC64Hex, token );
 
 		[Pure]
-		public async PooledValueTask<Boolean> IsAll( Byte number ) {
+		public async PooledValueTask<Boolean> IsAll( Byte number, CancellationToken token ) {
 			if ( !this.IsBufferLoaded ) {
-				var result = await this.LoadDocumentIntoBuffer().ConfigureAwait( false );
+				var result = await this.LoadDocumentIntoBuffer( token ).ConfigureAwait( false );
 
 				if ( !result.IsGood() ) {
 					return default;
@@ -831,7 +841,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// </summary>
 		/// <param name="text"></param>
 		[NotNull]
-		public IDocument AppendText( [CanBeNull] String text ) {
+		public IDocument AppendText( [CanBeNull] String? text ) {
 			var folder = this.ContainingingFolder();
 
 			if ( !folder.Exists() ) {
@@ -897,10 +907,12 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <param name="useShell"></param>
 		/// <returns></returns>
 		[Pure]
-		public PooledValueTask<Process> Launch( [CanBeNull] String? arguments = null, [CanBeNull] String verb = "runas", Boolean useShell = false ) {
+		public PooledValueTask<Process> Launch( [CanBeNull] String? arguments = null, [CanBeNull] String? verb = "runas", Boolean useShell = false ) {
 			try {
 				var info = new ProcessStartInfo( this.FullPath ) {
-					Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb
+					Arguments = arguments ?? String.Empty,
+					UseShellExecute = useShell,
+					Verb = verb ?? String.Empty
 				};
 
 				return new PooledValueTask<Process>( Process.Start( info ) );
@@ -928,14 +940,15 @@ namespace Librainian.OperatingSystem.FileSystem {
 				using var jsonReader = new JsonTextReader( textReader );
 
 				return new JsonSerializer {
-					ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+					ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+					PreserveReferencesHandling = PreserveReferencesHandling.All
 				}.Deserialize<T>( jsonReader )!;
 			}
 			catch ( Exception exception ) {
 				exception.Log();
 			}
 
-			return default!;
+			return default;
 		}
 
 		[Pure]
@@ -961,6 +974,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
 		/// </summary>
 		/// <param name="right"></param>
+		/// <param name="token"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="SecurityException"></exception>
@@ -972,17 +986,17 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[Pure]
-		public async PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right ) {
+		public async PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken token ) {
 			if ( right is null || !this.Exists() || !right.Exists() || this.Size() != right.Size() ) {
 				return default;
 			}
 
 			if ( !this.IsBufferLoaded ) {
-				await this.LoadDocumentIntoBuffer().ConfigureAwait( false );
+				await this.LoadDocumentIntoBuffer( token ).ConfigureAwait( false );
 			}
 
 			if ( !right.IsBufferLoaded ) {
-				await right.LoadDocumentIntoBuffer().ConfigureAwait( false );
+				await right.LoadDocumentIntoBuffer( token ).ConfigureAwait( false );
 			}
 
 			if ( this.IsBufferLoaded && !( this.Buffer is null ) && right.IsBufferLoaded && !( right.Buffer is null ) ) {
@@ -1032,7 +1046,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public async PooledValueTask<String?> ToJSON() {
 			using var reader = new StreamReader( this.FullPath );
 
-			return (await reader.ReadToEndAsync().ConfigureAwait( false ))!;
+			return ( await reader.ReadToEndAsync().ConfigureAwait( false ) )!;
 		}
 
 		/// <summary>Returns a string that represents the current object.</summary>
@@ -1143,7 +1157,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 		/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
 		/// <returns></returns>
-		public async PooledValueTask<Status> LoadDocumentIntoBuffer() {
+		public async PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken token ) {
 			var size = this.Size();
 
 			if ( !size.HasValue ) {
@@ -1158,34 +1172,33 @@ namespace Librainian.OperatingSystem.FileSystem {
 				return Status.Exception;
 			}
 
+			var bytesLeft = size.Value;
+
 			var filelength = ( Int32 )size.Value; //will we EVER have an image (or whatever) larger than Int32? (yes, probably)
-			var bytesLeft = filelength;
 			this.Buffer = new Byte[ filelength ];
 
 			var offset = 0;
 
-#if NET48
+
+			await
+
 			using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan );
-#else
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan );
-#endif
 
 			if ( !stream.CanRead ) {
 				//throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
 				return Status.Exception;
 			}
 
-#if NET48
+
+			await
+
 			using var buffered = new BufferedStream( stream );
-#else
-			await using var buffered = new BufferedStream( stream );
-#endif
 
 			Int32 bytesRead;
 
 			do {
-				bytesRead = await buffered.ReadAsync( this.Buffer, offset, filelength ).ConfigureAwait( false );
-				bytesLeft -= bytesRead;
+				bytesRead = await buffered.ReadAsync( this.Buffer, offset, filelength, token ).ConfigureAwait( false );
+				bytesLeft -= bytesRead.Positive();
 
 				if ( !bytesRead.Any() || !bytesLeft.Any() ) {
 					this.IsBufferLoaded = true;
@@ -1526,14 +1539,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 		//[Pure] private static WebClient WebClientInstance() => WebClients.Value.Value;
 
-		/// <summary>
-		///     Returns a unique file in the user's temp folder.
-		///     <para>If an extension is not provided, a random extension (a <see cref="Guid" />) will be used.</para>
-		///     <para><b>Note</b>: Does not create a 0-byte file like <see cref="Path.GetTempFileName" />.</para>
-		///     <para>If the temp folder is not found, one attempt will be made to create it.</para>
-		/// </summary>
-		/// <returns></returns>
-		/// <exception cref="DirectoryNotFoundException"></exception>
 		[NotNull]
 		[Pure]
 		public static IDocument GetTempDocument( [CanBeNull] String? extension = null ) {
@@ -1541,11 +1546,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				extension = Guid.NewGuid().ToString();
 			}
 
-			extension = extension.Trimmed();
-
-			while ( extension?.StartsWith( ".", StringComparison.OrdinalIgnoreCase ) == true ) {
-				extension = extension.Substring( 1 ).Trim();
-			}
+			extension = extension.TrimLeading( ".", StringComparison.OrdinalIgnoreCase );
 
 			return new Document( Folder.GetTempFolder(), $"{Guid.NewGuid()}.{extension}" );
 		}
@@ -1571,7 +1572,10 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <summary>
 		///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
 		///     <para>To compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.SameContent" />.</para>
-		///     <para>To quickly compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.CRC32" />, <see cref="IDocument.CRC32Async"/>, <see cref="IDocument.CRC64"/>, or <see cref="IDocument.CRC64Async"/>.</para>
+		///     <para>
+		///         To quickly compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.CRC32" />,
+		///         <see cref="IDocument.CRC32Async" />, <see cref="IDocument.CRC64" />, or <see cref="IDocument.CRC64Async" />.
+		///     </para>
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
@@ -1595,6 +1599,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 			path.Length >= 4 && path[ 0 ] == PathInternal.Constants.Backslash && ( path[ 1 ] == PathInternal.Constants.Backslash || path[ 1 ] == '?' ) && path[ 2 ] == '?' &&
 			path[ 3 ] == PathInternal.Constants.Backslash;
 
+		/*
 		/// <summary>
 		///     Returns the path with any invalid filename characters replaced with <paramref name="replacement" />. (Defaults
 		///     to <see cref="String.Empty" />.)
@@ -1610,6 +1615,15 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 			return file ?? throw new InvalidOperationException( $"Invalid file name {filename.DoubleQuote()}." );
 		}
+		*/
+
+		/*
+		/// <summary>Compares this. <see cref="FullPath" /> against other <see cref="FullPath" />.</summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		[Pure]
+		public Int32 CompareTo( [NotNull] Document other ) => String.Compare( this.FullPath, other?.FullPath, StringComparison.Ordinal );
+		*/
 
 	}
 

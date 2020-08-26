@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Images.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics {
 
@@ -34,10 +31,6 @@ namespace Librainian.Graphics {
 	using System.Text;
 	using Imaging;
 	using JetBrains.Annotations;
-
-	
-
-	
 
 	public static class Images {
 
@@ -55,8 +48,7 @@ namespace Librainian.Graphics {
 			ImageSubfileType =
 				0x00ff, // A general indication of the kind of data contained in this subfile. This field is deprecated. The NewSubfileType field should be used instead.
 
-			ImageImageWidth =
-				0x0100, // The number of columns of image data, equal to the number of pixels per row. In JPEG compressed data a JPEG marker is used instead of this tag.
+			ImageImageWidth = 0x0100, // The number of columns of image data, equal to the number of pixels per row. In JPEG compressed data a JPEG marker is used instead of this tag.
 
 			ImageImageLength = 0x0101, // The number of rows of image data. In JPEG compressed data a JPEG marker is used instead of this tag.
 
@@ -81,11 +73,9 @@ namespace Librainian.Graphics {
 			ImageImageDescription =
 				0x010e, // A character string giving the title of the Image It may be a comment such as "1988 company picnic" or the like. Two-bytes character codes cannot be used. When a 2-bytes code is necessary, the Exif Private tag <UserComment> is to be used.
 
-			ImageMake =
-				0x010f, // The manufacturer of the recording equipment. This is the manufacturer of the DSC, scanner, video digitizer or other equipment that generated the Image When the field is left blank, it is treated as unknown.
+			ImageMake = 0x010f, // The manufacturer of the recording equipment. This is the manufacturer of the DSC, scanner, video digitizer or other equipment that generated the Image When the field is left blank, it is treated as unknown.
 
-			ImageModel =
-				0x0110, // The model name or model number of the equipment. This is the model name or number of the DSC, scanner, video digitizer or other equipment that generated the Image When the field is left blank, it is treated as unknown.
+			ImageModel = 0x0110, // The model name or model number of the equipment. This is the model name or number of the DSC, scanner, video digitizer or other equipment that generated the Image When the field is left blank, it is treated as unknown.
 
 			ImageStripOffsets =
 				0x0111, // For each strip, the byte offset of that strip. It is recommended that this be selected so the number of strip bytes does not exceed 64 Kbytes. With JPEG compressed data this designation is not needed and is omitted. See also <RowsPerStrip> and <StripByteCounts>.
@@ -122,26 +112,22 @@ namespace Librainian.Graphics {
 			ImageTransferFunction =
 				0x012d, // A transfer function for the image, described in tabular style. Normally this tag is not necessary, since color space is specified in the color space information tag (<ColorSpace>).
 
-			ImageSoftware =
-				0x0131, // This tag records the name and version of the software or firmware of the camera or image input device used to generate the Image The detailed format is not specified, but it is recommended that the example shown below be followed. When the field is left blank, it is treated as unknown.
+			ImageSoftware = 0x0131, // This tag records the name and version of the software or firmware of the camera or image input device used to generate the Image The detailed format is not specified, but it is recommended that the example shown below be followed. When the field is left blank, it is treated as unknown.
 
 			ImageDateTime = 0x0132, // The date and time of image creation. In Exif standard, it is the date and time the file was changed.
 
-			ImageArtist =
-				0x013b, // This tag records the name of the camera owner, photographer or image creator. The detailed format is not specified, but it is recommended that the information be written as in the example below for ease of Interoperability. When the field is left blank, it is treated as unknown. Ex.) "Camera owner, John Smith; Photographer, Michael Brown; Image creator, Ken James"
+			ImageArtist = 0x013b, // This tag records the name of the camera owner, photographer or image creator. The detailed format is not specified, but it is recommended that the information be written as in the example below for ease of Interoperability. When the field is left blank, it is treated as unknown. Ex.) "Camera owner, John Smith; Photographer, Michael Brown; Image creator, Ken James"
 
 			ImageHostComputer = 0x013c, // This tag records information about the host computer used to generate the Image
 
 			ImagePredictor = 0x013d, // A predictor is a mathematical operator that is applied to the image data before an encoding scheme is applied.
 
-			ImageWhitePoint =
-				0x013e, // The chromaticity of the white point of the Image Normally this tag is not necessary, since color space is specified in the colorspace information tag (<ColorSpace>).
+			ImageWhitePoint = 0x013e, // The chromaticity of the white point of the Image Normally this tag is not necessary, since color space is specified in the colorspace information tag (<ColorSpace>).
 
 			ImagePrimaryChromaticities =
 				0x013f, // The chromaticity of the three primary colors of the Image Normally this tag is not necessary, since colorspace is specified in the colorspace information tag (<ColorSpace>).
 
-			ImageColorMap =
-				0x0140, // A color map for palette color images. This field defines a Red-Green-Blue color map (often called a lookup table) for palette-color images. In a palette-color image, a pixel value is used to index into an RGB lookup table.
+			ImageColorMap = 0x0140, // A color map for palette color images. This field defines a Red-Green-Blue color map (often called a lookup table) for palette-color images. In a palette-color image, a pixel value is used to index into an RGB lookup table.
 
 			ImageHalftoneHints =
 				0x0141, // The purpose of the HalftoneHints field is to convey to the halftone function the range of gray levels within a colorimetrically-specified image that should retain tonal detail.
@@ -184,8 +170,7 @@ namespace Librainian.Graphics {
 
 			ImageYClipPathUnits = 0x0159, // The number of units that span the height of the image, in terms of integer ClipPath coordinates.
 
-			ImageIndexed =
-				0x015a, // Indexed images are images where the 'pixels' do not represent color values, but rather an index (usually 8-bit) into a separate color table, the ColorMap.
+			ImageIndexed = 0x015a, // Indexed images are images where the 'pixels' do not represent color values, but rather an index (usually 8-bit) into a separate color table, the ColorMap.
 
 			ImageJpegTables = 0x015b, // This optional tag may be used to encode the JPEG quantization andHuffman tables for subsequent use by the JPEG decompression process.
 
@@ -228,18 +213,15 @@ namespace Librainian.Graphics {
 
 			ImageRatingPercent = 0x4749, // Rating tag used by Windows, value in percent
 
-			ImageImageID =
-				0x800d, // ImageID is the full pathname of the original, high-resolution image, or any other identifying string that uniquely identifies the original image (Adobe OPI).
+			ImageImageID = 0x800d, // ImageID is the full pathname of the original, high-resolution image, or any other identifying string that uniquely identifies the original image (Adobe OPI).
 
 			ImageCfaRepeatPatternDim = 0x828d, // Contains two values representing the minimum rows and columns to define the repeating patterns of the color filter array
 
-			ImageCfaPattern =
-				0x828e, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods
+			ImageCfaPattern = 0x828e, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods
 
 			ImageBatteryLevel = 0x828f, // Contains a value of the battery level as a fraction or string
 
-			ImageCopyright =
-				0x8298, // Copyright information. In this standard the tag is used to indicate both the photographer and editor copyrights. It is the copyright notice of the person or organization claiming rights to the Image The Interoperability copyright statement including date and rights should be written in this field; e.g., "Copyright, John Smith, 19xx. All rights reserved.". In this standard the field records both the photographer and editor copyrights, with each recorded in a separate part of the statement. When there is a clear distinction between the photographer and editor copyrights, these are to be written in the order of photographer followed by editor copyright, separated by NULL (in this case since the statement also ends with a NULL, there are two NULL codes). When only the photographer copyright is given, it is terminated by one NULL code . When only the editor copyright is given, the photographer copyright part consists of one space followed by a terminating NULL code, then the editor copyright is given. When the field is left blank, it is treated as unknown.
+			ImageCopyright = 0x8298, // Copyright information. In this standard the tag is used to indicate both the photographer and editor copyrights. It is the copyright notice of the person or organization claiming rights to the Image The Interoperability copyright statement including date and rights should be written in this field; e.g., "Copyright, John Smith, 19xx. All rights reserved.". In this standard the field records both the photographer and editor copyrights, with each recorded in a separate part of the statement. When there is a clear distinction between the photographer and editor copyrights, these are to be written in the order of photographer followed by editor copyright, separated by NULL (in this case since the statement also ends with a NULL, there are two NULL codes). When only the photographer copyright is given, it is terminated by one NULL code . When only the editor copyright is given, the photographer copyright part consists of one space followed by a terminating NULL code, then the editor copyright is given. When the field is left blank, it is treated as unknown.
 
 			ImageExposureTime = 0x829a, // Exposure time, given in seconds.
 
@@ -249,8 +231,7 @@ namespace Librainian.Graphics {
 
 			ImageImageResources = 0x8649, // Contains information embedded by the Adobe Photoshop application
 
-			ImageExifTag =
-				0x8769, // A pointer to the Exif IFD. Interoperability, Exif IFD has the same structure as that of the IFD specified in TIFF. ordinarily, however, it does not contain image data as in the case of TIFF.
+			ImageExifTag = 0x8769, // A pointer to the Exif IFD. Interoperability, Exif IFD has the same structure as that of the IFD specified in TIFF. ordinarily, however, it does not contain image data as in the case of TIFF.
 
 			ImageInterColorProfile = 0x8773, // Contains an InterColor Consortium (ICC) format color space characterization/profile
 
@@ -333,8 +314,7 @@ namespace Librainian.Graphics {
 
 			ImagePrintImageMatching = 0xc4a5, // Print Image Matching, description needed.
 
-			ImageDngVersion =
-				0xc612, // This tag encodes the DNG four-tier version number. For files compliant with version 1.1.0.0 of the DNG specification, this tag should contain the bytes: 1, 1, 0, 0.
+			ImageDngVersion = 0xc612, // This tag encodes the DNG four-tier version number. For files compliant with version 1.1.0.0 of the DNG specification, this tag should contain the bytes: 1, 1, 0, 0.
 
 			ImageDngBackwardVersion =
 				0xc613, // This tag specifies the oldest version of the Digital Negative specification for which a file is compatible. Readers shouldnot attempt to read a file if this tag specifies a version number that is higher than the version number of the specification the reader was based on. In addition to checking the version tags, readers should, for all tags, check the types, counts, and values, to verify it is able to correctly read the file.
@@ -355,8 +335,7 @@ namespace Librainian.Graphics {
 
 			ImageBlackLevelRepeatDim = 0xc619, // Specifies repeat pattern size for the BlackLevel tag.
 
-			ImageBlackLevel =
-				0xc61a, // Specifies the zero light (a.k.a. thermal black or black current) encoding level, as a repeating pattern. The origin of this pattern is the top-left corner of the ActiveArea rectangle. The values are stored in row-column-sample scan order.
+			ImageBlackLevel = 0xc61a, // Specifies the zero light (a.k.a. thermal black or black current) encoding level, as a repeating pattern. The origin of this pattern is the top-left corner of the ActiveArea rectangle. The values are stored in row-column-sample scan order.
 
 			ImageBlackLevelDeltaH =
 				0xc61b, // If the zero light encoding level is a function of the image column, BlackLevelDeltaH specifies the difference between the zero light encoding level for each column and the baseline zero light encoding level. If SamplesPerPixel is not equal to one, this single table applies to all the samples for each pixel.
@@ -364,8 +343,7 @@ namespace Librainian.Graphics {
 			ImageBlackLevelDeltaV =
 				0xc61c, // If the zero light encoding level is a function of the image row, this tag specifies the difference between the zero light encoding level for each row and the baseline zero light encoding level. If SamplesPerPixel is not equal to one, this single table applies to all the samples for each pixel.
 
-			ImageWhiteLevel =
-				0xc61d, // This tag specifies the fully saturated encoding level for the raw sample values. Saturation is caused either by the sensor itself becoming highly non-linear in response, or by the camera's analog to digital converter clipping.
+			ImageWhiteLevel = 0xc61d, // This tag specifies the fully saturated encoding level for the raw sample values. Saturation is caused either by the sensor itself becoming highly non-linear in response, or by the camera's analog to digital converter clipping.
 
 			ImageDefaultScale =
 				0xc61e, // DefaultScale is required for cameras with non-square pixels. It specifies the default scale factors for each direction to convert the image to square pixels. Typically these factors are selected to approximately preserve total pixel count. For CFA images that use CFALayout equal to 2, 3, 4, or 5, such as the Fujifilm SuperCCD, these two values should usually differ by a factor of 2.0.
@@ -453,8 +431,7 @@ namespace Librainian.Graphics {
 			ImageOriginalRawFileData =
 				0xc68c, // If the DNG file was converted from a non-DNG raw file, then this tag contains the compressed contents of that original raw file. The contents of this tag always use the big-endian byte order. The tag contains a sequence of data blocks. Future versions of the DNG specification may define additional data blocks, so DNG readers should ignore extra bytes when parsing this tag. DNG readers should also detect the case where data blocks are missing from the end of the sequence, and should assume a default value for all the missing blocks. There are no padding or alignment bytes between data blocks.
 
-			ImageActiveArea =
-				0xc68d, // This rectangle defines the active (non-masked) pixels of the sensor. The order of the rectangle coordinates is: top, left, bottom, right.
+			ImageActiveArea = 0xc68d, // This rectangle defines the active (non-masked) pixels of the sensor. The order of the rectangle coordinates is: top, left, bottom, right.
 
 			ImageMaskedAreas =
 				0xc68e, // This tag contains a list of non-overlapping rectangle coordinates of fully masked pixels, which can be optionally used by DNG readers to measure the black encoding level. The order of each rectangle's coordinates is: top, left, bottom, right. If the raw image data has already had its black encoding level subtracted, then this tag should not be used, since the masked pixels are no longer useful.
@@ -561,8 +538,7 @@ namespace Librainian.Graphics {
 
 			PhotoIsoSpeedRatings = 0x8827, // Indicates the ISO Speed and ISO Latitude of the camera or input device as specified in ISO 12232.
 
-			PhotoOecf =
-				0x8828, // Indicates the Opto-Electoric Conversion Function (OECF) specified in ISO 14524. <OECF> is the relationship between the camera optical input and the image values.
+			PhotoOecf = 0x8828, // Indicates the Opto-Electoric Conversion Function (OECF) specified in ISO 14524. <OECF> is the relationship between the camera optical input and the image values.
 
 			PhotoSensitivityType =
 				0x8830, // The SensitivityType tag indicates PhotographicSensitivity tag. which one of the parameters of ISO12232 is the Although it is an optional tag, it should be recorded when a PhotographicSensitivity tag is recorded. Value = 4, 5, 6, or 7 may be used in case that the values of plural parameters are the same.
@@ -573,8 +549,7 @@ namespace Librainian.Graphics {
 			PhotoRecommendedExposureIndex =
 				0x8832, // This tag indicates the recommended exposure index value of a camera or input device defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
 
-			PhotoIsoSpeed =
-				0x8833, // This tag indicates the ISO speed value of a camera or input device that is defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
+			PhotoIsoSpeed = 0x8833, // This tag indicates the ISO speed value of a camera or input device that is defined in ISO 12232. When recording this tag, the PhotographicSensitivity and SensitivityType tags shall also be recorded.
 
 			PhotoIsoSpeedLatitudeyyy =
 				0x8834, // This tag indicates the ISO speed latitude yyy value of a camera or input device that is defined in ISO 12232. However, this tag shall not be recorded without ISOSpeed and ISOSpeedLatitudezzz.
@@ -631,8 +606,7 @@ namespace Librainian.Graphics {
 
 			PhotoFlashpixVersion = 0xa000, // The FlashPix format version supported by a FPXR file.
 
-			PhotoColorSpace =
-				0xa001, // The color space information tag is always recorded as the color space specifier. Normally sRGB is used to define the color space based on the PC monitor conditions and environment. If a color space other than sRGB is used, Uncalibrated is set. Image data recorded as Uncalibrated can be treated as sRGB when it is converted to FlashPix.
+			PhotoColorSpace = 0xa001, // The color space information tag is always recorded as the color space specifier. Normally sRGB is used to define the color space based on the PC monitor conditions and environment. If a color space other than sRGB is used, Uncalibrated is set. Image data recorded as Uncalibrated can be treated as sRGB when it is converted to FlashPix.
 
 			PhotoPixelXDimension =
 				0xa002, // Information specific to compressed data. When a compressed file is recorded, the valid width of the meaningful image must be recorded in this tag, whether or not there is padding data or a restart marker. This tag should not exist in an uncompressed file.
@@ -665,14 +639,11 @@ namespace Librainian.Graphics {
 
 			PhotoSensingMethod = 0xa217, // Indicates the image sensor type on the camera or input device.
 
-			PhotoFileSource =
-				0xa300, // Indicates the image source. If a DSC recorded the image, this tag value of this tag always be set to 3, indicating that the image was recorded on a DSC.
+			PhotoFileSource = 0xa300, // Indicates the image source. If a DSC recorded the image, this tag value of this tag always be set to 3, indicating that the image was recorded on a DSC.
 
-			PhotoSceneType =
-				0xa301, // Indicates the type of scene. If a DSC recorded the image, this tag value must always be set to 1, indicating that the image was directly photographed.
+			PhotoSceneType = 0xa301, // Indicates the type of scene. If a DSC recorded the image, this tag value must always be set to 1, indicating that the image was directly photographed.
 
-			PhotoCfaPattern =
-				0xa302, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods.
+			PhotoCfaPattern = 0xa302, // Indicates the color filter array (CFA) geometric pattern of the image sensor when a one-chip color area sensor is used. It does not apply to all sensing methods.
 
 			PhotoCustomRendered =
 				0xa401, // This tag indicates the use of special processing on image data, such as rendering geared to output. When special processing is performed, the reader is expected to disable or minimize any further processing.
@@ -731,41 +702,31 @@ namespace Librainian.Graphics {
 
 			IopRelatedImageLength = 0x1002, // Image height
 
-			GpsVersionID =
-				0x0000, // Indicates the version of <GPSInfoIFD>. The version is given as 2.0.0.0. This tag is mandatory when <GPSInfo> tag is present. (Note: The <GPSVersionID> tag is given in bytes, unlike the <ExifVersion> tag. When the version is 2.0.0.0, the tag value is 02000000.H).
+			GpsVersionID = 0x0000, // Indicates the version of <GPSInfoIFD>. The version is given as 2.0.0.0. This tag is mandatory when <GPSInfo> tag is present. (Note: The <GPSVersionID> tag is given in bytes, unlike the <ExifVersion> tag. When the version is 2.0.0.0, the tag value is 02000000.H).
 
 			GpsLatitudeRef = 0x0001, // Indicates whether the latitude is north or south latitude. The ASCII value 'N' indicates north latitude, and 'S' is south latitude.
 
-			GpsLatitude =
-				0x0002, // Indicates the latitude. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is dd/1,mmmm/100,0/1.
+			GpsLatitude = 0x0002, // Indicates the latitude. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is dd/1,mmmm/100,0/1.
 
 			GpsLongitudeRef = 0x0003, // Indicates whether the longitude is east or west longitude. ASCII 'E' indicates east longitude, and 'W' is west longitude.
 
-			GpsLongitude =
-				0x0004, // Indicates the longitude. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is ddd/1,mmmm/100,0/1.
+			GpsLongitude = 0x0004, // Indicates the longitude. The longitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. When degrees, minutes and seconds are expressed, the format is ddd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format is ddd/1,mmmm/100,0/1.
 
-			GpsAltitudeRef =
-				0x0005, // Indicates the altitude used as the reference altitude. If the reference is sea level and the altitude is above sea level, 0 is given. If the altitude is below sea level, a value of 1 is given and the altitude is indicated as an absolute value in the GSPAltitude tag. The reference unit is meters. Note that this tag is BYTE type, unlike other reference tags.
+			GpsAltitudeRef = 0x0005, // Indicates the altitude used as the reference altitude. If the reference is sea level and the altitude is above sea level, 0 is given. If the altitude is below sea level, a value of 1 is given and the altitude is indicated as an absolute value in the GSPAltitude tag. The reference unit is meters. Note that this tag is BYTE type, unlike other reference tags.
 
-			GpsAltitude =
-				0x0006, // Indicates the altitude based on the reference in GPSAltitudeRef. Altitude is expressed as one RATIONAL value. The reference unit is meters.
+			GpsAltitude = 0x0006, // Indicates the altitude based on the reference in GPSAltitudeRef. Altitude is expressed as one RATIONAL value. The reference unit is meters.
 
-			GpsTimeStamp =
-				0x0007, // Indicates the time as UTC (Coordinated Universal Time). <TimeStamp> is expressed as three RATIONAL values giving the hour, minute, and second (atomic clock).
+			GpsTimeStamp = 0x0007, // Indicates the time as UTC (Coordinated Universal Time). <TimeStamp> is expressed as three RATIONAL values giving the hour, minute, and second (atomic clock).
 
-			GpsSatellites =
-				0x0008, // Indicates the GPS satellites used for measurements. This tag can be used to describe the number of satellites, their ID number, angle of elevation, azimuth, SNR and other information in ASCII notation. The format is not specified. If the GPS receiver is incapable of taking measurements, value of the tag is set to NULL.
+			GpsSatellites = 0x0008, // Indicates the GPS satellites used for measurements. This tag can be used to describe the number of satellites, their ID number, angle of elevation, azimuth, SNR and other information in ASCII notation. The format is not specified. If the GPS receiver is incapable of taking measurements, value of the tag is set to NULL.
 
-			GpsStatus =
-				0x0009, // Indicates the status of the GPS receiver when the image is recorded. "A" means measurement is in progress, and "V" means the measurement is Interoperability.
+			GpsStatus = 0x0009, // Indicates the status of the GPS receiver when the image is recorded. "A" means measurement is in progress, and "V" means the measurement is Interoperability.
 
 			GpsMeasureMode = 0x000a, // Indicates the GPS measurement mode. "2" means two-dimensional measurement and "3" means three-dimensional measurement is in progress.
 
-			Gpsdop =
-				0x000b, // Indicates the GPS DOP (data degree of precision). An HDOP value is written during two-dimensional measurement, and PDOP during three-dimensional measurement.
+			Gpsdop = 0x000b, // Indicates the GPS DOP (data degree of precision). An HDOP value is written during two-dimensional measurement, and PDOP during three-dimensional measurement.
 
-			GpsSpeedRef =
-				0x000c, // Indicates the unit used to express the GPS receiver speed of movement. "K" "M" and "N" represents kilometers per hour, miles per hour, and knots.
+			GpsSpeedRef = 0x000c, // Indicates the unit used to express the GPS receiver speed of movement. "K" "M" and "N" represents kilometers per hour, miles per hour, and knots.
 
 			GpsSpeed = 0x000d, // Indicates the speed of GPS receiver movement.
 
@@ -778,14 +739,12 @@ namespace Librainian.Graphics {
 
 			GpsImgDirection = 0x0011, // Indicates the direction of the image when it was captured. The range of values is from 0.00 to 359.99.
 
-			GpsMapDatum =
-				0x0012, // Indicates the geodetic survey data used by the GPS receiver. If the survey data is restricted to Japan, the value of this tag is "TOKYO" or "WGS-84".
+			GpsMapDatum = 0x0012, // Indicates the geodetic survey data used by the GPS receiver. If the survey data is restricted to Japan, the value of this tag is "TOKYO" or "WGS-84".
 
 			GpsDestLatitudeRef =
 				0x0013, // Indicates whether the latitude of the destination point is north or south latitude. The ASCII value "N" indicates north latitude, and "S" is south latitude.
 
-			GpsDestLatitude =
-				0x0014, // Indicates the latitude of the destination point. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If latitude is expressed as degrees, minutes and seconds, a typical format would be dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be dd/1,mmmm/100,0/1.
+			GpsDestLatitude = 0x0014, // Indicates the latitude of the destination point. The latitude is expressed as three RATIONAL values giving the degrees, minutes, and seconds, respectively. If latitude is expressed as degrees, minutes and seconds, a typical format would be dd/1,mm/1,ss/1. When degrees and minutes are used and, for example, fractions of minutes are given up to two decimal places, the format would be dd/1,mmmm/100,0/1.
 
 			GpsDestLongitudeRef =
 				0x0015, // Indicates whether the longitude of the destination point is east or west longitude. ASCII "E" indicates east longitude, and "W" is west longitude.
@@ -814,132 +773,70 @@ namespace Librainian.Graphics {
 
 			// Missing
 			ThumbnailImageHeight = 0x5021,
-
 			ThumbnailImageWidth = 0x5020,
-
 			ThumbnailBitsPerSample = 0x5022,
-
 			ThumbnailCompression = 0x5023,
-
 			ThumbnailPhotometricInterpretation = 0x5024,
-
 			ThumbnailImageDescription = 0x5025,
-
 			ThumbnailMake = 0x5026,
-
 			ThumbnailModel = 0x5027,
-
 			ThumbnailStripOffsets = 0x5028,
-
 			ThumbnailOrientation = 0x5029,
-
 			ThumbnailSamplesPerPixel = 0x502A,
-
 			ThumbnailRowsPerStrip = 0x502B,
-
 			ThumbnailStripBytesCount = 0x502C,
-
 			ThumbnailXResolution = 0x502D,
-
 			ThumbnailYResolution = 0x502E,
-
 			ThumbnailPlanarConfig = 0x502F,
-
 			ThumbnailResolutionUnit = 0x5030,
-
 			ThumbnailTransferFunction = 0x5031,
-
 			ThumbnailSoftware = 0x5032,
-
 			ThumbnailDateTime = 0x5033,
-
 			ThumbnailArtist = 0x5034,
-
 			ThumbnailWhitePoint = 0x5035,
-
 			ThumbnailPrimaryChromaticities = 0x5036,
-
 			ThumbnailYCbCrCoefficients = 0x5037,
-
 			ThumbnailYCbCrSubSampling = 0x5038,
-
 			ThumbnailYCbCrPositioning = 0x5039,
-
 			ThumbnailReferenceBlackWhite = 0x503A,
-
 			ThumbnailCopyright = 0x503B,
-
 			ThumbnailColorDepth = 0x5015,
-
 			ThumbnailCompressedSize = 0x5019,
-
 			ThumbnailData = 0x501B,
-
 			ThumbnailFormat = 0x5012,
-
 			ThumbnailHeight = 0x5014,
-
 			ThumbnailPlanes = 0x5016,
-
 			ThumbnailRawBytes = 0x5017,
-
 			Thumbnail = 0x5018,
-
 			ThumbnailWidth = 0x5013,
-
 			JpegQuality = 0x5010,
-
 			JpegRestartInterval = 0x0203,
-
 			LoopCount = 0x5101,
-
 			LuminanceTable = 0x5090,
-
 			PaletteHistogram = 0x5113,
-
 			PixelPerUnitX = 0x5111,
-
 			PixelPerUnitY = 0x5112,
-
 			PixelUnit = 0x5110,
-
 			PrintFlags = 0x5005,
-
 			PrintFlagsBleedWidth = 0x5008,
-
 			PrintFlagsBleedWidthScale = 0x5009,
-
 			PrintFlagsCrop = 0x5007,
-
 			PrintFlagsVersion = 0x5006,
-
 			ResolutionXLengthUnit = 0x5003,
-
 			ResolutionXUnit = 0x5001,
-
 			ResolutionYLengthUnit = 0x5004,
-
 			ResolutionYUnit = 0x5002,
-
 			InteroperabilityIndex = 0x5041,
-
 			ChrominanceTable = 0x5091,
-
 			ColorTransferFunction = 0x501A,
-
 			GridSize = 0x5011,
-
 			HalftoneDegree = 0x500C,
-
 			HalftoneLpi = 0x500A,
-
 			HalftoneLpiUnit = 0x500B,
-
 			HalftoneMisc = 0x500E,
-
 			HalftoneScreen = 0x500F,
-
 			HalftoneShape = 0x500D
+
 		}
 
 		[NotNull]
@@ -949,8 +846,7 @@ namespace Librainian.Graphics {
 			}
 
 			if ( baselineLocations.Count != registerLocations.Count ) {
-				throw new Exception(
-					"Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
+				throw new Exception( "Unable to compute the forward transform. The number of control point pairs in baseline and registration results must be equal." );
 			}
 
 			// To compute Transform = ((X^T * X)^-1 * X^T)U = (X^T * X)^-1 (X^T * U)
@@ -965,24 +861,23 @@ namespace Librainian.Graphics {
 			Double p = 0, q = 0, r = 0, s = 0, t = 0, u = 0;
 
 			for ( var i = 0; i < n; i++ ) {
-
 				// Compute sum of squares for X^T * X
-				a += xy[ i ].X * xy[ i ].X;
-				b += xy[ i ].X * xy[ i ].Y;
-				c += xy[ i ].X;
-				d += xy[ i ].X * xy[ i ].Y;
-				e += xy[ i ].Y * xy[ i ].Y;
-				f += xy[ i ].Y;
-				g += xy[ i ].X;
-				h += xy[ i ].Y;
+				a += xy[i].X * xy[i].X;
+				b += xy[i].X * xy[i].Y;
+				c += xy[i].X;
+				d += xy[i].X * xy[i].Y;
+				e += xy[i].Y * xy[i].Y;
+				f += xy[i].Y;
+				g += xy[i].X;
+				h += xy[i].Y;
 
 				// Compute sum of squares for X^T * U
-				p += xy[ i ].X * uv[ i ].X;
-				q += xy[ i ].X * uv[ i ].Y;
-				r += xy[ i ].Y * uv[ i ].X;
-				s += xy[ i ].Y * uv[ i ].Y;
-				t += uv[ i ].X;
-				u += uv[ i ].Y;
+				p += xy[i].X * uv[i].X;
+				q += xy[i].X * uv[i].Y;
+				r += xy[i].Y * uv[i].X;
+				s += xy[i].Y * uv[i].Y;
+				t += uv[i].X;
+				u += uv[i].Y;
 			}
 
 			// Create matrices from the coefficients
@@ -1002,7 +897,7 @@ namespace Librainian.Graphics {
 		[CanBeNull]
 		public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
 			if ( null == item ) {
-				return null;
+				return default;
 			}
 
 			var value = Encoding.ASCII.GetString( item.Value );
@@ -1012,19 +907,18 @@ namespace Librainian.Graphics {
 			}
 
 			if ( value == "0000:00:00 00:00:00" ) {
-				return null;
+				return default;
 			}
 
 			if ( DateTime.TryParse( value, out var result ) ) {
 				return result;
 			}
 
-			if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces,
-				out result ) ) {
+			if ( DateTime.TryParseExact( value, "yyyy:MM:dd HH:mm:ss", CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces, out result ) ) {
 				return result;
 			}
 
-			return null;
+			return default;
 		}
 
 		/// <summary>Returns true if the date is 'old' enough.</summary>
@@ -1047,6 +941,7 @@ namespace Librainian.Graphics {
 			/// <see cref="http://wikipedia.org/wiki/TIFF" />
 			[NotNull]
 			public static String Tiff => ".tif";
+
 		}
 
 		internal static class PropertyList {
@@ -1056,6 +951,9 @@ namespace Librainian.Graphics {
 			public const Int32 DateTimeOriginal = 0x9003;
 
 			public const Int32 PropertyTagDateTime = 0x132;
+
 		}
+
 	}
+
 }

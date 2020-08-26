@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "SimpleWebServer.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Internet.Servers {
 
@@ -42,10 +39,14 @@ namespace Librainian.Internet.Servers {
 	/// <summary></summary>
 	/// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
 	/// <example>
-	/// WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A simple webserver. Press a key to quit."); Console.ReadKey();
-	/// ws.Stop();
+	///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/"); ws.Run(); Console.WriteLine("A simple
+	///     webserver. Press a key to quit."); Console.ReadKey();
+	///     ws.Stop();
 	/// </example>
-	/// <example>public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }</example>
+	/// <example>
+	///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page",
+	///     DateTime.Now); }
+	/// </example>
 	[UsedImplicitly]
 	public class SimpleWebServer : ABetterClassDispose {
 
@@ -56,10 +57,6 @@ namespace Librainian.Internet.Servers {
 		/// <summary></summary>
 		[CanBeNull]
 		private readonly Func<HttpListenerRequest, String> _responderMethod;
-
-		public Boolean IsReadyForRequests { get; private set; }
-
-		public String NotReadyBecause { get; private set; }
 
 		/// <summary></summary>
 		/// <param name="prefixes"></param>
@@ -104,7 +101,11 @@ namespace Librainian.Internet.Servers {
 
 		public SimpleWebServer( [CanBeNull] Func<HttpListenerRequest, String> method, [CanBeNull] params String[] prefixes ) : this( prefixes, method ) { }
 
-		private void ImNotReady( [CanBeNull] String because ) {
+		public Boolean IsReadyForRequests { get; private set; }
+
+		public String NotReadyBecause { get; private set; }
+
+		private void ImNotReady( [CanBeNull] String? because ) {
 			this.IsReadyForRequests = false;
 			this.NotReadyBecause = because;
 		}
@@ -136,7 +137,6 @@ namespace Librainian.Internet.Servers {
 							var responderMethod = this._responderMethod;
 
 							if ( responderMethod is null ) {
-
 								//no responderMethod?!?
 								return;
 							}
@@ -145,12 +145,11 @@ namespace Librainian.Internet.Servers {
 								var response = responderMethod( listenerContext.Request );
 								var buf = Encoding.UTF8.GetBytes( response );
 								listenerContext.Response.ContentLength64 = buf.Length;
-								await listenerContext.Response.OutputStream.WriteAsync( buf, 0, buf.Length, cancellationToken ).ConfigureAwait(false);
+								await listenerContext.Response.OutputStream.WriteAsync( buf, 0, buf.Length, cancellationToken ).ConfigureAwait( false );
 							}
 
 							// ReSharper disable once EmptyGeneralCatchClause
 							catch {
-
 								// suppress any exceptions
 							}
 							finally {
@@ -162,7 +161,6 @@ namespace Librainian.Internet.Servers {
 
 				// ReSharper disable once EmptyGeneralCatchClause
 				catch {
-
 					// suppress any exceptions
 				}
 			}, cancellationToken );
@@ -179,5 +177,7 @@ namespace Librainian.Internet.Servers {
 				this._httpListener.Close();
 			}
 		}
+
 	}
+
 }

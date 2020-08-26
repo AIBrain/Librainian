@@ -1,4 +1,28 @@
-﻿#nullable enable
+﻿// Copyright © Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "IOExtensions.cs" last formatted on 2020-08-14 at 8:40 PM.
+
+#nullable enable
 namespace Librainian.OperatingSystem.FileSystem {
 
 	using System;
@@ -30,20 +54,6 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 		public const Int32 FsctlSetCompression = 0x9C040;
 
-		[CanBeNull]
-		private static FileInfo? InternalSearchFoundFile( [CanBeNull] this FileInfo? info, [CanBeNull] Action<FileInfo?>? onFindFile, CancellationToken token ) {
-			try {
-				if ( !token.IsCancellationRequested ) {
-					onFindFile?.Invoke( info );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return info;
-		}
-
 		/// <summary>
 		///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait(); Example: await WriteTextAsync( fullPath:
 		///     fullPath, text: message );
@@ -61,9 +71,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 				var length = encodedText.Length;
 
 #if !NET48
-                await
+				await
 #endif
-				using var sourceStream = new FileStream( fileInfo.FullPath, FileMode.Append, FileAccess.Write, FileShare.Write, length, true );
+					using var sourceStream = new FileStream( fileInfo.FullPath, FileMode.Append, FileAccess.Write, FileShare.Write, length, true );
 
 				var writetask = sourceStream.WriteAsync( encodedText, 0, length );
 
@@ -402,7 +412,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return null;
+				return default;
 			}
 
 			return directoryInfo;
@@ -502,16 +512,23 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 							try {
 								foreach ( var file in folder.BetterEnumerateFiles( searchPattern ) ) {
-									file.InternalSearchFoundFile( onFindFile, token );
+									try {
+										if ( !token.IsCancellationRequested ) {
+											onFindFile?.Invoke( file );
+										}
+									}
+									catch ( Exception exception ) {
+										exception.Log();
+									}
 								}
 							}
 							catch ( UnauthorizedAccessException ) { }
 							catch ( DirectoryNotFoundException ) { }
 							catch ( IOException ) { }
 							catch ( SecurityException ) { }
-							catch ( AggregateException exception ) {
-								exception.Handle( ex => {
-									switch ( ex ) {
+							catch ( AggregateException aggregateException ) {
+								aggregateException.Handle( exception => {
+									switch ( exception ) {
 										case UnauthorizedAccessException _:
 										case DirectoryNotFoundException _:
 										case IOException _:
@@ -519,22 +536,22 @@ namespace Librainian.OperatingSystem.FileSystem {
 											return true;
 									}
 
-									ex?.Log();
+									exception.Log();
 
 									return default;
 								} );
 							}
 
-							folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, searchStyle ); //recurse
+							folder?.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, searchStyle ); //recurse
 						} );
 					}
 					catch ( UnauthorizedAccessException ) { }
 					catch ( DirectoryNotFoundException ) { }
 					catch ( IOException ) { }
 					catch ( SecurityException ) { }
-					catch ( AggregateException exception ) {
-						exception.Handle( ex => {
-							switch ( ex ) {
+					catch ( AggregateException aggregateException ) {
+						aggregateException.Handle( exception => {
+							switch ( exception ) {
 								case UnauthorizedAccessException _:
 								case DirectoryNotFoundException _:
 								case IOException _:
@@ -542,7 +559,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 									return true;
 							}
 
-							ex?.Log();
+							exception!.Log();
 
 							return default;
 						} );
@@ -553,9 +570,9 @@ namespace Librainian.OperatingSystem.FileSystem {
 			catch ( DirectoryNotFoundException ) { }
 			catch ( IOException ) { }
 			catch ( SecurityException ) { }
-			catch ( AggregateException exception ) {
-				exception.Handle( ex => {
-					switch ( ex ) {
+			catch ( AggregateException aggregateException ) {
+				aggregateException.Handle( exception => {
+					switch ( exception ) {
 						case UnauthorizedAccessException _:
 						case DirectoryNotFoundException _:
 						case IOException _:
@@ -563,7 +580,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 							return true;
 					}
 
-					ex?.Log();
+					exception.Log();
 
 					return default;
 				} );
@@ -591,7 +608,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 			var losize = NativeMethods.GetCompressedFileSizeW( info.FullPath, out var sizeHigh );
 			var size = ( ( Int64 )sizeHigh << 32 ) | losize;
 
-			return ( UInt64 )( ( ( ( size + clusterSize ) - 1 ) / clusterSize ) * clusterSize );
+			return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
 		}
 
 		[CanBeNull]
@@ -794,7 +811,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 			var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{folder.FullPath}\" " );
 
-			return proc?.Responding == true;
+			return proc.Responding;
 		}
 
 		/// <summary>Open with Explorer.exe</summary>
@@ -806,7 +823,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 			var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{folder.FullPath}\" " );
 
-			return proc?.Responding == true;
+			return proc.Responding;
 		}
 
 		/// <summary>Open with Explorer.exe</summary>
@@ -817,7 +834,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 
 			var proc = Process.Start( $@"{Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "explorer.exe" )}", $" /separate /select,\"{document.FullPath}\" " );
 
-			return proc?.Responding == true;
+			return proc.Responding;
 		}
 
 		/// <summary>Before: "hello.txt". After: "hello 345680969061906730476346.txt"</summary>
@@ -947,7 +964,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				return default;
 			}
 
-			if ( !left.Exists || !right.Exists) {
+			if ( !left.Exists || !right.Exists ) {
 				return default;
 			}
 
@@ -976,7 +993,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( [CanBeNull] this String? leftFileName, [CanBeNull] String rightFileName ) {
+		public static Boolean SameContent( [CanBeNull] this String? leftFileName, [CanBeNull] String? rightFileName ) {
 			if ( leftFileName is null || rightFileName is null ) {
 				return default;
 			}
@@ -1014,8 +1031,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( [CanBeNull] this Document left, [CanBeNull] FileInfo right ) {
-			if ( left is null || right is null ) {
+		public static Boolean SameContent( [CanBeNull] this Document? left, [CanBeNull] FileInfo? right ) {
+			if ( left == null || right == null ) {
 				return default;
 			}
 
@@ -1061,7 +1078,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( [CanBeNull] this FileInfo left, [CanBeNull] Document right ) {
+		public static Boolean SameContent( [CanBeNull] this FileInfo? left, [CanBeNull] Document? right ) {
 			if ( left == default || right == default ) {
 				return default;
 			}
@@ -1102,8 +1119,8 @@ namespace Librainian.OperatingSystem.FileSystem {
 		public static void SearchAllDrives(
 			[NotNull] this IEnumerable<String> fileSearchPatterns,
 			CancellationToken token,
-			[CanBeNull] Action<FileInfo> onFindFile = null,
-			[CanBeNull] Action<DirectoryInfo> onEachDirectory = null,
+			[CanBeNull] Action<FileInfo>? onFindFile = null,
+			[CanBeNull] Action<DirectoryInfo>? onEachDirectory = null,
 			SearchStyle searchStyle = SearchStyle.FilesFirst
 		) {
 			if ( fileSearchPatterns is null ) {
@@ -1253,11 +1270,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 		}
 
 		[DebuggerStepThrough]
-		public static Boolean TryGetFolderFromPath( this TrimmedString path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) =>
+		public static Boolean TryGetFolderFromPath( this TrimmedString path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) =>
 			TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
 
 		[DebuggerStepThrough]
-		public static Boolean TryGetFolderFromPath( [CanBeNull] this String? path, [CanBeNull] out DirectoryInfo directoryInfo, [CanBeNull] out Uri uri ) {
+		public static Boolean TryGetFolderFromPath( [CanBeNull] this String? path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) {
 			directoryInfo = null;
 			uri = null;
 
@@ -1292,7 +1309,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		[NotNull]
-		public static Document TryGetTempDocument( [NotNull] this Folder folder, String extension = null, Boolean deleteAfterClose = false ) {
+		public static Document TryGetTempDocument( [NotNull] this Folder folder, [CanBeNull] String? extension = null, Boolean deleteAfterClose = false ) {
 			if ( folder is null ) {
 				throw new ArgumentNullException( nameof( folder ) );
 			}
@@ -1317,7 +1334,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 		///     attempts
 		/// </returns>
 		[CanBeNull]
-		public static FileStream TryOpen( [CanBeNull] String filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+		public static FileStream? TryOpen( [CanBeNull] String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 			//TODO
 			try {
 				return File.Open( filePath, fileMode, fileAccess, fileShare );
@@ -1326,11 +1343,11 @@ namespace Librainian.OperatingSystem.FileSystem {
 				// IOExcception is thrown if the file is in use by another process.
 			}
 
-			return null;
+			return default;
 		}
 
 		[CanBeNull]
-		public static FileStream TryOpenForReading(
+		public static FileStream? TryOpenForReading(
 			[NotNull] String filePath,
 			Boolean bePatient = true,
 			FileMode fileMode = FileMode.Open,
@@ -1352,7 +1369,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 			catch ( IOException ) {
 				// IOExcception is thrown if the file is in use by another process.
 				if ( !bePatient ) {
-					return null;
+					return default;
 				}
 
 				if ( !Thread.Yield() ) {
@@ -1362,12 +1379,12 @@ namespace Librainian.OperatingSystem.FileSystem {
 				goto TryAgain;
 			}
 
-			return null;
+			return default;
 		}
 
 		[CanBeNull]
-		public static FileStream TryOpenForWriting(
-			[CanBeNull] String filePath,
+		public static FileStream? TryOpenForWriting(
+			[CanBeNull] String? filePath,
 			FileMode fileMode = FileMode.Create,
 			FileAccess fileAccess = FileAccess.Write,
 			FileShare fileShare = FileShare.ReadWrite
@@ -1380,7 +1397,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				// IOExcception is thrown if the file is in use by another process.
 			}
 
-			return null;
+			return default;
 		}
 
 		public static Int32? TurnOnCompression( [NotNull] this FileInfo info ) {
@@ -1392,7 +1409,7 @@ namespace Librainian.OperatingSystem.FileSystem {
 				info.Refresh();
 
 				if ( !info.Exists ) {
-					return null;
+					return default;
 				}
 			}
 

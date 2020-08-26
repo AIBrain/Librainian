@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "PingExtensions.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 namespace Librainian.Internet {
 
@@ -43,8 +40,9 @@ namespace Librainian.Internet {
 		/// <param name="ping">The Ping.</param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <param name="sendAsync">
-		/// A delegate that initiates the asynchronous send. The provided TaskCompletionSource must be passed as the user-supplied state to the actual Ping.SendAsync
-		/// method.
+		///     A delegate that initiates the asynchronous send. The provided TaskCompletionSource must be passed as the
+		///     user-supplied state to the actual Ping.SendAsync
+		///     method.
 		/// </param>
 		/// <returns></returns>
 		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
@@ -72,8 +70,7 @@ namespace Librainian.Internet {
 			var tcs = new TaskCompletionSource<PingReply>( userToken, TaskCreationOptions.RunContinuationsAsynchronously );
 
 			// Register a handler that will transfer completion results to the TCS Task
-			void Handler( Object sender, PingCompletedEventArgs e ) =>
-				tcs.HandleCompletion( e, () => e.Reply, () => ping.PingCompleted -= Handler );
+			void Handler( Object sender, PingCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Reply, () => ping.PingCompleted -= Handler );
 
 			ping.PingCompleted += Handler;
 
@@ -117,8 +114,9 @@ namespace Librainian.Internet {
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="hostNameOrAddress">
-		/// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
-		/// or a String representation of an IP address.
+		///     A String that identifies the computer that is the destination for the ICMP echo message. The value specified for
+		///     this parameter can be a host name
+		///     or a String representation of an IP address.
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
@@ -135,7 +133,10 @@ namespace Librainian.Internet {
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
-		/// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+		/// <param name="timeout">
+		///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
+		///     to wait for the ICMP echo reply message.
+		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
 		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
@@ -151,10 +152,14 @@ namespace Librainian.Internet {
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="hostNameOrAddress">
-		/// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
-		/// or a String representation of an IP address.
+		///     A String that identifies the computer that is the destination for the ICMP echo message. The value specified for
+		///     this parameter can be a host name
+		///     or a String representation of an IP address.
 		/// </param>
-		/// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+		/// <param name="timeout">
+		///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
+		///     to wait for the ICMP echo reply message.
+		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
 		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
@@ -164,17 +169,20 @@ namespace Librainian.Internet {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( hostNameOrAddress ) );
 			}
 
-			return SendTaskCore( ping, userToken,
-				tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
+			return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, tcs ) );
 		}
 
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
-		/// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+		/// <param name="timeout">
+		///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
+		///     to wait for the ICMP echo reply message.
+		/// </param>
 		/// <param name="buffer">
-		/// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
-		/// bytes.
+		///     A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message.
+		///     The array cannot contain more than 65,500
+		///     bytes.
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
@@ -199,13 +207,18 @@ namespace Librainian.Internet {
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="hostNameOrAddress">
-		/// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
-		/// or a String representation of an IP address.
+		///     A String that identifies the computer that is the destination for the ICMP echo message. The value specified for
+		///     this parameter can be a host name
+		///     or a String representation of an IP address.
 		/// </param>
-		/// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+		/// <param name="timeout">
+		///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
+		///     to wait for the ICMP echo reply message.
+		/// </param>
 		/// <param name="buffer">
-		/// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
-		/// bytes.
+		///     A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message.
+		///     The array cannot contain more than 65,500
+		///     bytes.
 		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
@@ -224,25 +237,37 @@ namespace Librainian.Internet {
 				throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
 			}
 
-			return SendTaskCore( ping, userToken,
-				tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
+			return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, tcs ) );
 		}
 
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="address">An IPAddress that identifies the computer that is the destination for the ICMP echo message.</param>
-		/// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
-		/// <param name="buffer">
-		/// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
-		/// bytes.
+		/// <param name="timeout">
+		///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
+		///     to wait for the ICMP echo reply message.
 		/// </param>
-		/// <param name="options">A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+		/// <param name="buffer">
+		///     A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message.
+		///     The array cannot contain more than 65,500
+		///     bytes.
+		/// </param>
+		/// <param name="options">
+		///     A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP echo
+		///     message packet.
+		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
 		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
 		[CanBeNull]
-		public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] IPAddress address, Int32 timeout, [NotNull] Byte[] buffer, [CanBeNull] PingOptions options,
-			Object userToken ) {
+		public static Task<PingReply> SendTask(
+			[NotNull] this Ping ping,
+			[NotNull] IPAddress address,
+			Int32 timeout,
+			[NotNull] Byte[] buffer,
+			[CanBeNull] PingOptions options,
+			Object userToken
+		) {
 			if ( address == null ) {
 				throw new ArgumentNullException( nameof( address ) );
 			}
@@ -255,28 +280,41 @@ namespace Librainian.Internet {
 				throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
 			}
 
-			return SendTaskCore( ping, userToken,
-				tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
+			return SendTaskCore( ping, userToken, tcs => ping.SendAsync( address, timeout, buffer, options, tcs ) );
 		}
 
 		/// <summary>Asynchronously attempts to send an Internet Control Message Protocol (ICMP) echo message.</summary>
 		/// <param name="ping">The Ping.</param>
 		/// <param name="hostNameOrAddress">
-		/// A String that identifies the computer that is the destination for the ICMP echo message. The value specified for this parameter can be a host name
-		/// or a String representation of an IP address.
+		///     A String that identifies the computer that is the destination for the ICMP echo message. The value specified for
+		///     this parameter can be a host name
+		///     or a String representation of an IP address.
 		/// </param>
-		/// <param name="timeout">An Int32 value that specifies the maximum number of milliseconds (after sending the echo message) to wait for the ICMP echo reply message.</param>
+		/// <param name="timeout">
+		///     An Int32 value that specifies the maximum number of milliseconds (after sending the echo message)
+		///     to wait for the ICMP echo reply message.
+		/// </param>
 		/// <param name="buffer">
-		/// A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message. The array cannot contain more than 65,500
-		/// bytes.
+		///     A Byte array that contains data to be sent with the ICMP echo message and returned in the ICMP echo reply message.
+		///     The array cannot contain more than 65,500
+		///     bytes.
 		/// </param>
-		/// <param name="options">A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP echo message packet.</param>
+		/// <param name="options">
+		///     A PingOptions object used to control fragmentation and Time-to-Live values for the ICMP echo
+		///     message packet.
+		/// </param>
 		/// <param name="userToken">A user-defined object stored in the resulting Task.</param>
 		/// <returns>A task that represents the asynchronous operation.</returns>
 		/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
 		[CanBeNull]
-		public static Task<PingReply> SendTask( [NotNull] this Ping ping, [NotNull] String hostNameOrAddress, Int32 timeout, [NotNull] Byte[] buffer,
-			[CanBeNull] PingOptions options, Object userToken ) {
+		public static Task<PingReply> SendTask(
+			[NotNull] this Ping ping,
+			[NotNull] String hostNameOrAddress,
+			Int32 timeout,
+			[NotNull] Byte[] buffer,
+			[CanBeNull] PingOptions options,
+			Object userToken
+		) {
 			if ( buffer == null ) {
 				throw new ArgumentNullException( nameof( buffer ) );
 			}
@@ -289,8 +327,9 @@ namespace Librainian.Internet {
 				throw new ArgumentException( "Value cannot be an empty collection.", nameof( buffer ) );
 			}
 
-			return SendTaskCore( ping, userToken,
-				tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
+			return SendTaskCore( ping, userToken, tcs => ping.SendAsync( hostNameOrAddress, timeout, buffer, options, tcs ) );
 		}
+
 	}
+
 }

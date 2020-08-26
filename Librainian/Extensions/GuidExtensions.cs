@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "GuidExtensions.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Extensions {
 
@@ -34,21 +31,19 @@ namespace Librainian.Extensions {
 	using Logging;
 	using Maths.Numbers;
 	using OperatingSystem.FileSystem;
+	using OperatingSystem.FileSystem.Pri.LongPath;
 
-	
-	using DirectoryInfo = OperatingSystem.FileSystem.Pri.LongPath.DirectoryInfo;
-
-	
-
-	/// <summary>A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique identifier is required.</summary>
+	/// <summary>
+	///     A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique
+	///     identifier is required.
+	/// </summary>
 	/// <remarks>I just love guids!</remarks>
 	public static class GuidExtensions {
 
 		public static readonly Regex InGuidFormat =
 			new Regex(
 				"^[A-Fa-f0-9]{32}$|" + "^({|\\()?[A-Fa-f0-9]{8}-([A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12}(}|\\))?$|" +
-						 "^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$",
-				RegexOptions.Compiled );
+				"^({)?[0xA-Fa-f0-9]{3,10}(, {0,1}[0xA-Fa-f0-9]{3,6}){2}, {0,1}({)([0xA-Fa-f0-9]{3,4}, {0,1}){7}[0xA-Fa-f0-9]{3,4}(}})$", RegexOptions.Compiled );
 
 		/// <summary>
 		///     <see cref="Converters.ConverterExtensions.ToPath" />
@@ -67,10 +62,10 @@ namespace Librainian.Extensions {
 				return Guid.Empty;
 			}
 
-			var b = new Byte[ s.Count ];
+			var b = new Byte[s.Count];
 
 			for ( var i = 0; i < s.Count; i++ ) {
-				b[ i ] = Convert.ToByte( s[ i ] );
+				b[i] = Convert.ToByte( s[i] );
 			}
 
 			try {
@@ -85,7 +80,10 @@ namespace Librainian.Extensions {
 			return Guid.Empty;
 		}
 
-		/// <summary>Converts the string representation of a Guid to its Guid equivalent. A return value indicates whether the operation succeeded.</summary>
+		/// <summary>
+		///     Converts the string representation of a Guid to its Guid equivalent. A return value indicates whether the
+		///     operation succeeded.
+		/// </summary>
 		/// <param name="s">A string containing a Guid to convert.</param>
 		/// When this method returns, contains the Guid value equivalent to the Guid contained in
 		/// <paramref name="s" />
@@ -98,7 +96,10 @@ namespace Librainian.Extensions {
 		/// reference (
 		/// <see langword="Nothing" />
 		/// in Visual Basic), or is not of the correct format.
-		/// <value><see langword="true" /> if <paramref name="s" /> was converted successfully; otherwise, <see langword="false" /> .</value>
+		/// <value>
+		///     <see langword="true" /> if <paramref name="s" /> was converted successfully; otherwise, <see langword="false" />
+		///     .
+		/// </value>
 		/// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
 		/// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
 		public static Boolean IsGuid( [NotNull] this String s ) {
@@ -117,13 +118,13 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		public static Guid Munge( this Guid left, Guid right ) {
 			const Int32 bytecount = 16;
-			var destByte = new Byte[ bytecount ];
+			var destByte = new Byte[bytecount];
 			var lhsBytes = left.ToByteArray();
 			var rhsBytes = right.ToByteArray();
 
 			for ( var i = 0; i < bytecount; i++ ) {
 				unchecked {
-					destByte[ i ] = ( Byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
+					destByte[i] = ( Byte )( lhsBytes[i] ^ rhsBytes[i] );
 				}
 			}
 
@@ -159,5 +160,7 @@ namespace Librainian.Extensions {
 
 			return next;
 		}
+
 	}
+
 }

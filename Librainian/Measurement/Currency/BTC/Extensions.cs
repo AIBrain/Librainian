@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Extensions.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Measurement.Currency.BTC {
 
@@ -79,7 +76,10 @@ namespace Librainian.Measurement.Currency.BTC {
 			Parallel.ForEach( sourceAmounts, pair => coinWallet.Deposit( pair.Key, pair.Value ) );
 		}
 
-		/// <summary>Adds the optimal amount of <see cref="ICoin" />. Returns any unused portion of the money (fractions of the smallest <see cref="ICoin" />).</summary>
+		/// <summary>
+		///     Adds the optimal amount of <see cref="ICoin" />. Returns any unused portion of the money (fractions of the
+		///     smallest <see cref="ICoin" />).
+		/// </summary>
 		/// <param name="coinWallet"></param>
 		/// <param name="amount"></param>
 		/// <param name="optimalAmountOfCoin"></param>
@@ -96,8 +96,9 @@ namespace Librainian.Measurement.Currency.BTC {
 		}
 
 		/// <summary>
-		/// Given the <paramref name="amount" />, return the optimal amount of <see cref="ICoin" /> ( <see cref="CoinWallet.Total" />) it would take to
-		/// <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
+		///     Given the <paramref name="amount" />, return the optimal amount of <see cref="ICoin" /> (
+		///     <see cref="CoinWallet.Total" />) it would take to
+		///     <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
@@ -115,7 +116,7 @@ namespace Librainian.Measurement.Currency.BTC {
 				var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
 
 				if ( chunks > Decimal.Zero ) {
-					result[ coin ] += chunks;
+					result[coin] += chunks;
 					leftOverAmount -= chunks * coin.FaceValue;
 				}
 
@@ -165,10 +166,8 @@ namespace Librainian.Measurement.Currency.BTC {
 			btc = btc.Sanitize();
 
 			var list = new List<String> {
-				new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ),
-				$"{$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' )} m{coinSuffix}",
-				$"{$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' )} μ{coinSuffix}",
-				$"{btc.ToSatoshi():N0} satoshi"
+				new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ), $"{$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' )} m{coinSuffix}",
+				$"{$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' )} μ{coinSuffix}", $"{btc.ToSatoshi():N0} satoshi"
 			};
 
 			//as btc
@@ -194,7 +193,7 @@ namespace Librainian.Measurement.Currency.BTC {
 			}
 
 			var actionBlock = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ),
-				Blocks.ManyProducers.ConsumeSensible( default ) );
+																			Blocks.ManyProducers.ConsumeSensible( default ) );
 
 			Parallel.ForEach( sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>(), pair => actionBlock.Post( pair ) );
 			actionBlock.Complete();
@@ -202,7 +201,10 @@ namespace Librainian.Measurement.Currency.BTC {
 			return actionBlock.Completion;
 		}
 
-		/// <summary>Transfer everything FROM the <paramref name="source" /><see cref="CoinWallet" /> into this <paramref name="target" /><see cref="CoinWallet" />.</summary>
+		/// <summary>
+		///     Transfer everything FROM the <paramref name="source" /><see cref="CoinWallet" /> into this
+		///     <paramref name="target" /><see cref="CoinWallet" />.
+		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="target"></param>
 		[NotNull]
@@ -287,8 +289,9 @@ namespace Librainian.Measurement.Currency.BTC {
 		}
 
 		/// <summary>
-		/// Given the <paramref name="amount" />, return the unoptimal amount of <see cref="ICoin" /> ( <see cref="CoinWallet.Total" />) it would take to
-		/// <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
+		///     Given the <paramref name="amount" />, return the unoptimal amount of <see cref="ICoin" /> (
+		///     <see cref="CoinWallet.Total" />) it would take to
+		///     <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
@@ -306,7 +309,7 @@ namespace Librainian.Measurement.Currency.BTC {
 				var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
 
 				if ( chunks > Decimal.Zero ) {
-					result[ coin ] += chunks;
+					result[coin] += chunks;
 					leftOverAmount -= chunks * coin.FaceValue;
 				}
 
@@ -315,5 +318,7 @@ namespace Librainian.Measurement.Currency.BTC {
 
 			return result;
 		}
+
 	}
+
 }

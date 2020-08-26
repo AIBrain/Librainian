@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "DatabaseServer.cs" last formatted on 2020-08-14 at 8:32 PM.
 
 #nullable enable
 
@@ -36,8 +33,6 @@ namespace Librainian.Databases {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Threading;
-	using System.Threading.Tasks;
-	using Collections.Extensions;
 	using Collections.Sets;
 	using Converters;
 	using Internet;
@@ -47,6 +42,7 @@ namespace Librainian.Databases {
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
 	using Parsing;
+	using PooledAwait;
 	using Utilities;
 
 	public class DatabaseServer : ABetterClassDispose, IDatabase {
@@ -68,7 +64,10 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand {
-					Connection = this.OpenConnection(), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = commandType, CommandText = query
+					Connection = this.OpenConnection(),
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+					CommandType = commandType,
+					CommandText = query
 				};
 
 				return command.PopulateParameters( parameters ).ExecuteNonQuery();
@@ -109,7 +108,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				return command.PopulateParameters( parameters ).ExecuteNonQuery();
@@ -124,17 +124,17 @@ namespace Librainian.Databases {
 			return default;
 		}
 
-		[ItemCanBeNull]
-		public async ValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
 			this.Sproc = query ?? throw new ArgumentNullException( nameof( query ) );
 
 			try {
-#if NETCORE || NETSTANDARD
+
 				await
-#endif
-					using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-						CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-					};
+
+				using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+				};
 
 				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
 
@@ -173,16 +173,19 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var bob = command.PopulateParameters( parameters ).ExecuteReader();
 
-				if ( bob != null ) {
-					table.BeginLoadData();
-					table.Load( bob );
-					table.EndLoadData();
+				if ( bob is null ) {
+					return false;
 				}
+
+				table.BeginLoadData();
+				table.Load( bob );
+				table.EndLoadData();
 
 				return true;
 			}
@@ -199,8 +202,7 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		[ItemCanBeNull]
-		public async ValueTask<DataTableReader?> ExecuteReaderAsyncDataReader(
+		public async PooledValueTask<DataTableReader?> ExecuteReaderAsyncDataReader(
 			[NotNull] String query,
 			CommandType commandType,
 			[CanBeNull] params SqlParameter?[]? parameters
@@ -212,20 +214,16 @@ namespace Librainian.Databases {
 			this.Sproc = query;
 
 			try {
-#if NETCORE || NETSTANDARD
-				await
-#endif
-					using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-						CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-					};
+
+				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+				};
 
 				using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
 
 				if ( reader != null ) {
-#if NETCORE || NETSTANDARD
-					await
-#endif
-						using var readerAsync = await reader.ConfigureAwait( false );
+					await using var readerAsync = await reader.ConfigureAwait( false );
 					using var table = readerAsync.ToDataTable();
 
 					return table.CreateDataReader();
@@ -253,7 +251,7 @@ namespace Librainian.Databases {
 		private SqlConnection Connection { get; set; }
 
 		[Pure]
-		private async ValueTask<SqlConnection> OpenConnectionAsync() {
+		private async PooledValueTask<SqlConnection> OpenConnectionAsync() {
 			this.Connection = new SqlConnection( this.ConnectionString );
 
 			using var open = this.Connection.OpenAsync( this.Token );
@@ -272,8 +270,11 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		[ItemNotNull]
-		public async ValueTask<DataTable> ExecuteReaderDataTableAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<DataTable> ExecuteReaderDataTableAsync(
+			[NotNull] String query,
+			CommandType commandType,
+			[CanBeNull] params SqlParameter?[]? parameters
+		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
@@ -283,18 +284,16 @@ namespace Librainian.Databases {
 			var table = new DataTable();
 
 			try {
-#if NETCORE || NETSTANDARD
-				await
-#endif
-					using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-						CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-					};
+				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+				};
 
 				using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
 
 				if ( reader != null ) {
 					table.BeginLoadData();
-					table.Load( await reader.ConfigureAwait( false )  );
+					table.Load( await reader.ConfigureAwait( false ) );
 					table.EndLoadData();
 				}
 			}
@@ -327,12 +326,11 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
-				return command.PopulateParameters( parameters ).ExecuteScalar()?.Cast<T>();
-					
-				
+				return command.PopulateParameters( parameters ).ExecuteScalar().Cast<T>();
 			}
 			catch ( SqlException exception ) {
 				exception.Log( Rebuild( query, parameters ) );
@@ -353,8 +351,7 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		[ItemCanBeNull]
-		public async ValueTask<T> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<T> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -362,12 +359,10 @@ namespace Librainian.Databases {
 			this.Sproc = query;
 
 			try {
-#if NETCORE || NETSTANDARD
-				await
-#endif
-					using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-						CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-					};
+				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+				};
 
 				using var run = command.PopulateParameters( parameters ).ExecuteScalarAsync( this.Token );
 
@@ -407,7 +402,7 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="table"></param>
 		/// <param name="parameters"></param>
-		public async ValueTask<Boolean> FillTableAsync(
+		public async PooledValueTask<Boolean> FillTableAsync(
 			[NotNull] String sproc,
 			CommandType commandType,
 			[NotNull] DataTable table,
@@ -426,9 +421,12 @@ namespace Librainian.Databases {
 			table.Clear();
 
 			using var dataAdapter = new SqlDataAdapter( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-				AcceptChangesDuringFill = false, FillLoadOption = LoadOption.OverwriteChanges, MissingMappingAction = MissingMappingAction.Passthrough,
-				MissingSchemaAction = MissingSchemaAction.Add, SelectCommand = {
-					CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = commandType
+				AcceptChangesDuringFill = false,
+				FillLoadOption = LoadOption.OverwriteChanges,
+				MissingMappingAction = MissingMappingAction.Passthrough,
+				MissingSchemaAction = MissingSchemaAction.Add,
+				SelectCommand = {
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds, CommandType = commandType
 				}
 			};
 
@@ -446,20 +444,19 @@ namespace Librainian.Databases {
 		/// <param name="sproc"></param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"></param>
-		public async ValueTask NonQueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask NonQueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( sproc ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sproc ) );
 			}
 
 			this.Sproc = $"Executing SQL command {sproc}.";
 
-#if NETCORE || NETSTANDARD
-			await
-#endif
-				using var command = new SqlCommand {
-					Connection = await this.OpenConnectionAsync().ConfigureAwait( false ), CommandType = commandType,
-					CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandText = sproc
-				};
+			await using var command = new SqlCommand {
+				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
+				CommandType = commandType,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+				CommandText = sproc
+			};
 
 			var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
 
@@ -480,7 +477,10 @@ namespace Librainian.Databases {
 			this.Sproc = $"Executing AdHoc SQL: {sql.DoubleQuote()}.";
 
 			using var command = new SqlCommand {
-				Connection = this.OpenConnection(), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+				Connection = this.OpenConnection(),
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+				CommandType = CommandType.Text,
+				CommandText = sql
 			};
 
 			using var reader = command.PopulateParameters( parameters ).ExecuteReader();
@@ -489,29 +489,24 @@ namespace Librainian.Databases {
 			return table.CreateDataReader();
 		}
 
-		[ItemNotNull]
-		public async ValueTask<DataTableReader> QueryAdHocAsync( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<DataTableReader> QueryAdHocAsync( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( sql ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sql ) );
 			}
 
 			this.Sproc = $"Executing AdHoc SQL: {sql.DoubleQuote()}.";
 
-#if NETCORE || NETSTANDARD
-			await
-#endif
-				using var command = new SqlCommand {
-					Connection = await this.OpenConnectionAsync().ConfigureAwait( false ), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
-					CommandType = CommandType.Text, CommandText = sql
-				};
+			await using var command = new SqlCommand {
+				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+				CommandType = CommandType.Text,
+				CommandText = sql
+			};
 
 			var execute = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
 
 			if ( execute != null ) {
-#if NETCORE || NETSTANDARD
-				await
-#endif
-					using var reader = await execute.ConfigureAwait( false );
+				await using var reader = await execute.ConfigureAwait( false );
 				using var table = reader.ToDataTable();
 
 				return table.CreateDataReader();
@@ -529,21 +524,19 @@ namespace Librainian.Databases {
 		/// <param name="parameters"></param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		[ItemCanBeNull]
-		public async ValueTask<SqlDataReader?> QueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( sproc ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sproc ) );
 			}
 
 			this.Sproc = sproc;
 
-#if NETCORE || NETSTANDARD
-			await
-#endif
-				using var command = new SqlCommand {
-					Connection = await this.OpenConnectionAsync().ConfigureAwait( false ), CommandType = commandType,
-					CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandText = sproc
-				};
+			await using var command = new SqlCommand {
+				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
+				CommandType = commandType,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+				CommandText = sproc
+			};
 
 			using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
 
@@ -557,7 +550,7 @@ namespace Librainian.Databases {
 		/// <returns></returns>
 		[CanBeNull]
 		[ItemCanBeNull]
-		public IEnumerable<TResult> QueryList<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public IEnumerable<TResult>? QueryList<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -566,7 +559,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				var reader = command.PopulateParameters( parameters ).ExecuteReader();
@@ -590,18 +584,15 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( dbName ) );
 			}
 
-			using ( var _ = this.QueryAdHoc( $"USE {dbName.Bracket()};" ) ) { }
+			using var _ = this.QueryAdHoc( $"USE {dbName.Bracket()};" );
 		}
 
-		public async ValueTask UseDatabaseAsync( [NotNull] String dbName ) {
+		public async PooledValueTask UseDatabaseAsync( [NotNull] String dbName ) {
 			if ( String.IsNullOrWhiteSpace( dbName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( dbName ) );
 			}
 
-#if NETCORE || NETSTANDARD
-			await
-#endif
-				using ( var _ = await this.QueryAdHocAsync( $"USE {dbName.Bracket()};" ).ConfigureAwait( false ) ) { }
+			await using var _ = await this.QueryAdHocAsync( $"USE {dbName.Bracket()};" ).ConfigureAwait( false );
 		}
 
 		[NotNull]
@@ -653,7 +644,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var reader = command.PopulateParameters( parameters ).ExecuteReader( CommandBehavior.CloseConnection );
@@ -699,7 +691,7 @@ namespace Librainian.Databases {
 				$"exec {query} {parameters.Where( parameter => parameter != null ).Select( parameter => $"{parameter!.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings( "," )}; ";
 		}
 
-		public static async ValueTask<Boolean> CreateDatabase( [NotNull] String databaseName, [NotNull] String connectionString ) {
+		public static async PooledValueTask<Boolean> CreateDatabase( [NotNull] String databaseName, [NotNull] String connectionString ) {
 			databaseName = databaseName.Trimmed() ?? throw new ArgumentException( "Value cannot be null or whitespace.", nameof( databaseName ) );
 			connectionString = connectionString.Trimmed() ?? throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 
@@ -724,7 +716,7 @@ namespace Librainian.Databases {
 			[NotNull] String serverName,
 			[NotNull] String instanceName,
 			TimeSpan connectTimeout,
-			[CanBeNull] Credentials credentials = default
+			[CanBeNull] Credentials? credentials = default
 		) {
 			if ( String.IsNullOrWhiteSpace( serverName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( serverName ) );
@@ -738,8 +730,12 @@ namespace Librainian.Databases {
 				DataSource = $@"{serverName}\{instanceName}",
 
 				//AsynchronousProcessing = true,
-				ApplicationIntent = ApplicationIntent.ReadWrite, ConnectRetryCount = 3, ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds, ConnectRetryInterval = 1,
-				PacketSize = 4096, Pooling = true
+				ApplicationIntent = ApplicationIntent.ReadWrite,
+				ConnectRetryCount = 3,
+				ConnectTimeout = ( Int32 )connectTimeout.TotalSeconds,
+				ConnectRetryInterval = 1,
+				PacketSize = 4096,
+				Pooling = true
 			};
 
 			//security
@@ -762,8 +758,8 @@ namespace Librainian.Databases {
 		/*
         [NotNull]
         [DebuggerStepThrough]
-        public static async ValueTask StartAnySQLBrowsers( TimeSpan timeout ) {
-            await ValueTask.Run( () => {
+        public static async PooledValueTask StartAnySQLBrowsers( TimeSpan timeout ) {
+            await PooledValueTask.Run( () => {
 
                 "Searching for any database servers...".Log();
 

@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Matrix.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics {
 
@@ -45,7 +42,7 @@ namespace Librainian.Graphics {
 		}
 
 		protected Matrix( Int32 rows, Int32 cols ) {
-			this.matrix = new Single[ rows, cols ];
+			this.matrix = new Single[rows, cols];
 			this.Rows = rows;
 			this.Cols = cols;
 		}
@@ -62,17 +59,17 @@ namespace Librainian.Graphics {
 			var m2Cols = matrix2.Cols;
 			var m1 = matrix1.matrix;
 			var m2 = matrix2.matrix;
-			var m3 = new Single[ m1Rows, m2Cols ];
+			var m3 = new Single[m1Rows, m2Cols];
 
 			for ( var i = 0; i < m1Rows; ++i ) {
 				for ( var j = 0; j < m2Cols; ++j ) {
 					Single sum = 0;
 
 					for ( var it = 0; it < m1Cols; ++it ) {
-						sum += m1[ i, it ] * m2[ it, j ];
+						sum += m1[i, it] * m2[it, j];
 					}
 
-					m3[ i, j ] = sum;
+					m3[i, j] = sum;
 				}
 			}
 
@@ -84,11 +81,11 @@ namespace Librainian.Graphics {
 			var rows = matrix.Rows;
 			var cols = matrix.Cols;
 			var m1 = matrix.matrix;
-			var m2 = new Single[ rows, cols ];
+			var m2 = new Single[rows, cols];
 
 			for ( var i = 0; i < rows; ++i ) {
 				for ( var j = 0; j < cols; ++j ) {
-					m2[ i, j ] = m1[ i, j ] * scalar;
+					m2[i, j] = m1[i, j] * scalar;
 				}
 			}
 
@@ -115,11 +112,13 @@ namespace Librainian.Graphics {
 						res += ",";
 					}
 
-					res += this.matrix[ i, j ];
+					res += this.matrix[i, j];
 				}
 			}
 
 			return $"({res})";
 		}
+
 	}
+
 }

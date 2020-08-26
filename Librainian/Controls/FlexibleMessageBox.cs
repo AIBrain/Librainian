@@ -1,44 +1,42 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "FlexibleMessageBox.cs" last formatted on 2020-08-14 at 8:32 PM.
 
 #nullable enable
-#if !NETSTANDARD
+
 
 namespace Librainian.Controls {
 
 	using System;
-	using JetBrains.Annotations;
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Diagnostics;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Linq;
 	using System.Windows.Forms;
+	using JetBrains.Annotations;
 
 	/*  FlexibleMessageBox – A flexible replacement for the .NET MessageBox
      *
@@ -89,21 +87,25 @@ namespace Librainian.Controls {
      ************************************************************************************************************
     */
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage( "ReSharper", "InconsistentNaming" )]
+	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
 	public static class FlexibleMessageBox {
 
 		/// <summary>Defines the font for all FlexibleMessageBox instances. Default is: SystemFonts.MessageBoxFont</summary>
 		public static Font FONT { get; } = SystemFonts.MessageBoxFont;
 
 		/// <summary>
-		/// Defines the maximum height for all FlexibleMessageBox instances in percent of the working area. Allowed values are 0.2 - 1.0 where: 0.2 means: The FlexibleMessageBox can
-		/// be at most half as high as the working area. 1.0 means: The FlexibleMessageBox can be as high as the working area. Default is: 90% of the working area height.
+		///     Defines the maximum height for all FlexibleMessageBox instances in percent of the working area. Allowed values are
+		///     0.2 - 1.0 where: 0.2 means: The FlexibleMessageBox can
+		///     be at most half as high as the working area. 1.0 means: The FlexibleMessageBox can be as high as the working area.
+		///     Default is: 90% of the working area height.
 		/// </summary>
 		public static Double MAX_HEIGHT_FACTOR { get; } = 0.9;
 
 		/// <summary>
-		/// Defines the maximum width for all FlexibleMessageBox instances in percent of the working area. Allowed values are 0.2 - 1.0 where: 0.2 means: The FlexibleMessageBox can
-		/// be at most half as wide as the working area. 1.0 means: The FlexibleMessageBox can be as wide as the working area. Default is: 70% of the working area width.
+		///     Defines the maximum width for all FlexibleMessageBox instances in percent of the working area. Allowed values are
+		///     0.2 - 1.0 where: 0.2 means: The FlexibleMessageBox can
+		///     be at most half as wide as the working area. 1.0 means: The FlexibleMessageBox can be as wide as the working area.
+		///     Default is: 70% of the working area width.
 		/// </summary>
 		public static Double MAX_WIDTH_FACTOR { get; } = 0.7;
 
@@ -168,8 +170,13 @@ namespace Librainian.Controls {
 		/// <param name="buttons">The buttons.</param>
 		/// <param name="icon">   The icon.</param>
 		/// <returns>The dialog result.</returns>
-		public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons,
-			MessageBoxIcon icon ) =>
+		public static DialogResult Show(
+			[CanBeNull] IWin32Window owner,
+			[CanBeNull] String? text,
+			[CanBeNull] String? caption,
+			MessageBoxButtons buttons,
+			MessageBoxIcon icon
+		) =>
 			FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
 
 		/// <summary>Shows the specified message box.</summary>
@@ -179,8 +186,13 @@ namespace Librainian.Controls {
 		/// <param name="icon">         The icon.</param>
 		/// <param name="defaultButton">The default button.</param>
 		/// <returns>The dialog result.</returns>
-		public static DialogResult Show( [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons, MessageBoxIcon icon,
-			MessageBoxDefaultButton defaultButton ) =>
+		public static DialogResult Show(
+			[CanBeNull] String? text,
+			[CanBeNull] String? caption,
+			MessageBoxButtons buttons,
+			MessageBoxIcon icon,
+			MessageBoxDefaultButton defaultButton
+		) =>
 			FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, defaultButton );
 
 		/// <summary>Shows the specified message box.</summary>
@@ -191,11 +203,20 @@ namespace Librainian.Controls {
 		/// <param name="icon">         The icon.</param>
 		/// <param name="defaultButton">The default button.</param>
 		/// <returns>The dialog result.</returns>
-		public static DialogResult Show( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons, MessageBoxIcon icon,
-			MessageBoxDefaultButton defaultButton ) =>
+		public static DialogResult Show(
+			[CanBeNull] IWin32Window owner,
+			[CanBeNull] String? text,
+			[CanBeNull] String? caption,
+			MessageBoxButtons buttons,
+			MessageBoxIcon icon,
+			MessageBoxDefaultButton defaultButton
+		) =>
 			FlexibleMessageBoxForm.ShowDialog( owner, text, caption, buttons, icon, defaultButton );
 
-		/// <summary>The form to show the customized message box. It is defined as an internal class to keep the public interface of the FlexibleMessageBox clean.</summary>
+		/// <summary>
+		///     The form to show the customized message box. It is defined as an internal class to keep the public interface
+		///     of the FlexibleMessageBox clean.
+		/// </summary>
 		private class FlexibleMessageBoxForm : Form {
 
 			//These separators are used for the "copy to clipboard" standard operation, triggered by Ctrl + C (behavior and clipboard format is like in a standard MessageBox)
@@ -207,13 +228,13 @@ namespace Librainian.Controls {
 				"&OK", "&Cancel", "&Yes", "&No", "&Abort", "&Retry", "&Ignore"
 			};
 
-			[NotNull]
+			[JetBrains.Annotations.NotNull]
 			private Button _button1;
 
-			[NotNull]
+			[JetBrains.Annotations.NotNull]
 			private Button _button2;
 
-			[NotNull]
+			[JetBrains.Annotations.NotNull]
 			private Button _button3;
 
 			private BindingSource _flexibleMessageBoxFormBindingSource;
@@ -232,12 +253,6 @@ namespace Librainian.Controls {
 
 			private Int32 visibleButtonsCount;
 
-			/// <summary>The text that is been used for the heading.</summary>
-			public String CaptionText { get; set; }
-
-			/// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
-			public String MessageText { get; set; }
-
 			//Note: This is also the fallback language
 
 			/// <summary>Initializes a new instance of the <see cref="FlexibleMessageBoxForm" /> class.</summary>
@@ -251,36 +266,11 @@ namespace Librainian.Controls {
 				this.KeyUp += this.FlexibleMessageBoxForm_KeyUp;
 			}
 
-			//These are the possible buttons (in a standard MessageBox)
-			private enum ButtonID {
+			/// <summary>The text that is been used for the heading.</summary>
+			public String CaptionText { get; set; }
 
-				OK = 0,
-
-				CANCEL,
-
-				YES,
-
-				NO,
-
-				ABORT,
-
-				RETRY,
-
-				IGNORE
-			}
-
-			//These are the buttons texts for different languages.
-			//If you want to add a new language, add it here and in the GetButtonText-Function
-			private enum TwoLetterISOLanguageID {
-
-				en,
-
-				de,
-
-				es,
-
-				it
-			}
+			/// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
+			public String MessageText { get; set; }
 
 			/// <summary>Gets the button text for the CurrentUICulture language. Note: The fallback language is English</summary>
 			/// <param name="buttonID">The ID of the button.</param>
@@ -289,12 +279,13 @@ namespace Librainian.Controls {
 			private static String GetButtonText( ButtonID buttonID ) {
 				var buttonTextArrayIndex = Convert.ToInt32( buttonID );
 
-				return BUTTON_TEXTS_ENGLISH_EN[ buttonTextArrayIndex ];
+				return BUTTON_TEXTS_ENGLISH_EN[buttonTextArrayIndex];
 			}
 
 			/// <summary>
-			/// Ensure the given working area factor in the range of 0.2 - 1.0 where: 0.2 means: 20 percent of the working area height or width. 1.0 means: 100 percent of the working
-			/// area height or width.
+			///     Ensure the given working area factor in the range of 0.2 - 1.0 where: 0.2 means: 20 percent of the working area
+			///     height or width. 1.0 means: 100 percent of the working
+			///     area height or width.
 			/// </summary>
 			/// <param name="workingAreaFactor">The given working area factor.</param>
 			/// <returns>The corrected given working area factor.</returns>
@@ -320,7 +311,7 @@ namespace Librainian.Controls {
 			[ItemCanBeNull]
 			private static IEnumerable<String?>? GetStringRows( [CanBeNull] String? message ) {
 				if ( String.IsNullOrEmpty( message ) ) {
-					return null;
+					return default;
 				}
 
 				return message.Split( new[] {
@@ -331,7 +322,7 @@ namespace Librainian.Controls {
 			/// <summary>Handles the LinkClicked event of the richTextBoxMessage control.</summary>
 			/// <param name="sender">The source of the event.</param>
 			/// <param name="e">     The <see cref="LinkClickedEventArgs" /> instance containing the event data.</param>
-			private static void richTextBoxMessage_LinkClicked( [CanBeNull] Object sender, [NotNull] LinkClickedEventArgs e ) {
+			private static void richTextBoxMessage_LinkClicked( [CanBeNull] Object sender, [JetBrains.Annotations.NotNull] LinkClickedEventArgs e ) {
 				try {
 					Cursor.Current = Cursors.WaitCursor;
 
@@ -348,8 +339,11 @@ namespace Librainian.Controls {
 			/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 			/// <param name="buttons">               The buttons.</param>
 			/// <param name="defaultButton">         The default button.</param>
-			private static void SetDialogButtons( [NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, MessageBoxButtons buttons, MessageBoxDefaultButton defaultButton ) {
-
+			private static void SetDialogButtons(
+				[JetBrains.Annotations.NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm,
+				MessageBoxButtons buttons,
+				MessageBoxDefaultButton defaultButton
+			) {
 				//Set the buttons visibilities and texts
 				switch ( buttons ) {
 					case MessageBoxButtons.AbortRetryIgnore:
@@ -454,7 +448,7 @@ namespace Librainian.Controls {
 			/// <summary>Set the dialogs icon. When no icon is used: Correct placement and width of rich text box.</summary>
 			/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 			/// <param name="icon">                  The MessageBoxIcon.</param>
-			private static void SetDialogIcon( [NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, MessageBoxIcon icon ) {
+			private static void SetDialogIcon( [JetBrains.Annotations.NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, MessageBoxIcon icon ) {
 				switch ( icon ) {
 					case MessageBoxIcon.Information:
 						flexibleMessageBoxForm._pictureBoxForIcon.Image = SystemIcons.Information.ToBitmap();
@@ -487,15 +481,21 @@ namespace Librainian.Controls {
 				}
 			}
 
-			/// <summary>Calculate the dialogs start size (Try to auto-size width to show longest text row). Also set the maximum dialog size.</summary>
+			/// <summary>
+			///     Calculate the dialogs start size (Try to auto-size width to show longest text row). Also set the maximum
+			///     dialog size.
+			/// </summary>
 			/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 			/// <param name="text">                  The text (the longest text row is used to calculate the dialog width).</param>
 			/// <param name="caption">               The caption (this can also affect the dialog width).</param>
-			private static void SetDialogSizes( [NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm, [CanBeNull] String? text, [CanBeNull] String? caption ) {
-
+			private static void SetDialogSizes(
+				[JetBrains.Annotations.NotNull] FlexibleMessageBoxForm flexibleMessageBoxForm,
+				[CanBeNull] String? text,
+				[CanBeNull] String? caption
+			) {
 				//First set the bounds for the maximum dialog size
 				flexibleMessageBoxForm.MaximumSize = new Size( Convert.ToInt32( SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor( MAX_WIDTH_FACTOR ) ),
-					Convert.ToInt32( SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor( MAX_HEIGHT_FACTOR ) ) );
+															   Convert.ToInt32( SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor( MAX_HEIGHT_FACTOR ) ) );
 
 				//Get rows. Exit if there are no rows to render...
 				var stringRows = GetStringRows( text );
@@ -524,23 +524,21 @@ namespace Librainian.Controls {
 			/// <summary>Set the dialogs start position when given. Otherwise center the dialog on the current screen.</summary>
 			/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 			/// <param name="owner">                 The owner.</param>
-			private static void SetDialogStartPosition( [NotNull] Form flexibleMessageBoxForm, [CanBeNull] IWin32Window? owner ) {
-
+			private static void SetDialogStartPosition( [JetBrains.Annotations.NotNull] Form flexibleMessageBoxForm, [CanBeNull] IWin32Window? owner ) {
 				//If no owner given: Center on current screen
 				if ( owner is null ) {
 					var screen = Screen.FromPoint( Cursor.Position );
 
 					flexibleMessageBoxForm.StartPosition = FormStartPosition.Manual;
-					flexibleMessageBoxForm.Left = ( screen.Bounds.Left + ( screen.Bounds.Width / 2 ) ) - ( flexibleMessageBoxForm.Width / 2 );
-					flexibleMessageBoxForm.Top = ( screen.Bounds.Top + ( screen.Bounds.Height / 2 ) ) - ( flexibleMessageBoxForm.Height / 2 );
+					flexibleMessageBoxForm.Left = screen.Bounds.Left + screen.Bounds.Width / 2 - flexibleMessageBoxForm.Width / 2;
+					flexibleMessageBoxForm.Top = screen.Bounds.Top + screen.Bounds.Height / 2 - flexibleMessageBoxForm.Height / 2;
 				}
 			}
 
 			/// <summary>Handles the KeyUp event of the richTextBoxMessage control.</summary>
 			/// <param name="sender">The source of the event.</param>
 			/// <param name="e">     The <see cref="KeyEventArgs" /> instance containing the event data.</param>
-			private void FlexibleMessageBoxForm_KeyUp( [CanBeNull] Object sender, [NotNull] KeyEventArgs e ) {
-
+			private void FlexibleMessageBoxForm_KeyUp( [CanBeNull] Object sender, [JetBrains.Annotations.NotNull] KeyEventArgs e ) {
 				//Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
 				if ( e.Control && ( e.KeyCode == Keys.C || e.KeyCode == Keys.Insert ) ) {
 					var buttonsTextLine = ( this._button1.Visible ? this._button1.Text + STANDARD_MESSAGEBOX_SEPARATOR_SPACES : String.Empty ) +
@@ -562,20 +560,18 @@ namespace Librainian.Controls {
 			/// <param name="e">     The <see cref="EventArgs" /> instance containing the event data.</param>
 			private void FlexibleMessageBoxForm_Shown( [CanBeNull] Object sender, [CanBeNull] EventArgs e ) {
 				//Set the default button...
-				var buttonIndexToFocus = this.defaultButton switch
-				{
+				var buttonIndexToFocus = this.defaultButton switch {
 					MessageBoxDefaultButton.Button1 => 1,
 					MessageBoxDefaultButton.Button2 => 2,
 					MessageBoxDefaultButton.Button3 => 3,
-					_ => 1
+					_                               => 1
 				};
 
 				if ( buttonIndexToFocus > this.visibleButtonsCount ) {
 					buttonIndexToFocus = this.visibleButtonsCount;
 				}
 
-				var buttonToFocus = buttonIndexToFocus switch
-				{
+				var buttonToFocus = buttonIndexToFocus switch {
 					3 => this._button3,
 					2 => this._button2,
 					_ => this._button1
@@ -584,7 +580,10 @@ namespace Librainian.Controls {
 				buttonToFocus.Focus();
 			}
 
-			/// <summary>Erforderliche Methode für die Designerunterstützung. Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.</summary>
+			/// <summary>
+			///     Erforderliche Methode für die Designerunterstützung. Der Inhalt der Methode darf nicht mit dem Code-Editor
+			///     geändert werden.
+			/// </summary>
 			private void InitializeComponent() {
 				this.components = new Container();
 				this._button1 = new Button();
@@ -618,7 +617,7 @@ namespace Librainian.Controls {
 				this._richTextBoxMessage.BorderStyle = BorderStyle.None;
 
 				this._richTextBoxMessage.DataBindings.Add( new Binding( "Text", this._flexibleMessageBoxFormBindingSource, "MessageText", true,
-					DataSourceUpdateMode.OnPropertyChanged ) );
+																		DataSourceUpdateMode.OnPropertyChanged ) );
 
 				this._richTextBoxMessage.Font = new Font( "Microsoft Sans Serif", 9F, FontStyle.Regular, GraphicsUnit.Point, 0 );
 				this._richTextBoxMessage.Location = new Point( 50, 26 );
@@ -720,10 +719,15 @@ namespace Librainian.Controls {
 			/// <param name="icon">         The icon.</param>
 			/// <param name="defaultButton">The default button.</param>
 			/// <returns>The dialog result.</returns>
-			public static DialogResult ShowDialog( [CanBeNull] IWin32Window owner, [CanBeNull] String? text, [CanBeNull] String? caption, MessageBoxButtons buttons,
-				MessageBoxIcon icon, MessageBoxDefaultButton defaultButton ) {
+			public static DialogResult ShowDialog(
+				[CanBeNull] IWin32Window owner,
+				[CanBeNull] String? text,
+				[CanBeNull] String? caption,
+				MessageBoxButtons buttons,
+				MessageBoxIcon icon,
+				MessageBoxDefaultButton defaultButton
+			) {
 				var func = new Func<DialogResult>( () => {
-
 					//Create a new instance of the FlexibleMessageBox form
 					var flexibleMessageBoxForm = new FlexibleMessageBoxForm {
 						ShowInTaskbar = false, CaptionText = caption, MessageText = text
@@ -757,7 +761,33 @@ namespace Librainian.Controls {
 
 				return func();
 			}
+
+			//These are the possible buttons (in a standard MessageBox)
+			private enum ButtonID {
+
+				OK = 0,
+				CANCEL,
+				YES,
+				NO,
+				ABORT,
+				RETRY,
+				IGNORE
+
+			}
+
+			//These are the buttons texts for different languages.
+			//If you want to add a new language, add it here and in the GetButtonText-Function
+			private enum TwoLetterISOLanguageID {
+
+				en,
+				de,
+				es,
+				it
+
+			}
+
 		}
+
 	}
+
 }
-#endif

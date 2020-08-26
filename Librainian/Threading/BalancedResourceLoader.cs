@@ -1,149 +1,146 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "BalancedResourceLoader.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 namespace Librainian.Threading {
 
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using JetBrains.Annotations;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
 
-    public class BalancedResourceLoader<T> : IResourceLoader<T> {
+	public class BalancedResourceLoader<T> : IResourceLoader<T> {
 
-        public Int32 Available => this._resourceLoaders.Sum( r => r.Available );
+		private Int32 _index;
 
-        public Int32 Count => this._resourceLoaders.Sum( r => r.Count );
+		public BalancedResourceLoader( [NotNull] params IResourceLoader<T>[] resourceLoaders ) : this( resourceLoaders as IList<IResourceLoader<T>> ) { }
 
-        public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
+		public BalancedResourceLoader( [NotNull] IList<IResourceLoader<T>> resourceLoaders ) =>
+			this._resourceLoaders = resourceLoaders ?? throw new ArgumentNullException( nameof( resourceLoaders ) );
 
-        [CanBeNull]
-        public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
-            lock ( this._lock ) {
-                this.GetOrQueue( out var resource, cancelToken, true );
+		[NotNull]
+		private Object _lock { get; } = new Object();
 
-                return resource;
-            }
-        }
+		[NotNull]
+		private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new Queue<(TaskCompletionSource<T>, CancellationToken)>();
 
-        public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
-            lock ( this._lock ) {
-                return this.GetOrQueue( out resource, cancelToken, false );
-            }
-        }
+		[NotNull]
+		[ItemNotNull]
+		private IList<IResourceLoader<T>> _resourceLoaders { get; }
 
-        private Int32 _index;
+		public Int32 Available => this._resourceLoaders.Sum( r => r.Available );
 
-        [NotNull]
-        private Object _lock { get; } = new Object();
+		public Int32 Count => this._resourceLoaders.Sum( r => r.Count );
 
-        [NotNull]
-        private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new Queue<(TaskCompletionSource<T>, CancellationToken)>();
+		public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
 
-        [NotNull]
-        [ItemNotNull]
-        private IList<IResourceLoader<T>> _resourceLoaders { get; }
+		[CanBeNull]
+		public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
+			lock ( this._lock ) {
+				this.GetOrQueue( out var resource, cancelToken, true );
 
-        public BalancedResourceLoader( [NotNull] params IResourceLoader<T>[] resourceLoaders ) : this( resourceLoaders as IList<IResourceLoader<T>> ) { }
+				return resource;
+			}
+		}
 
-        public BalancedResourceLoader( [NotNull] IList<IResourceLoader<T>> resourceLoaders ) =>
-            this._resourceLoaders = resourceLoaders ?? throw new ArgumentNullException( nameof( resourceLoaders ) );
+		public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
+			lock ( this._lock ) {
+				return this.GetOrQueue( out resource, cancelToken, false );
+			}
+		}
 
-        private Boolean GetOrQueue( [CanBeNull] out Task<T> resource, CancellationToken cancelToken, Boolean queueOnFailure ) {
-            var i = this._index;
+		private Boolean GetOrQueue( [CanBeNull] out Task<T> resource, CancellationToken cancelToken, Boolean queueOnFailure ) {
+			var i = this._index;
 
-            while ( true ) {
-                if ( i >= this._resourceLoaders.Count ) {
-                    i = 0;
-                }
+			while ( true ) {
+				if ( i >= this._resourceLoaders.Count ) {
+					i = 0;
+				}
 
-                if ( this._resourceLoaders[ i ].TryGet( out resource, cancelToken ) ) {
-                    resource.ContinueWith( this.OnResourceLoaded, cancelToken );
+				if ( this._resourceLoaders[i].TryGet( out resource, cancelToken ) ) {
+					resource.ContinueWith( this.OnResourceLoaded, cancelToken );
 
-                    this._index++;
+					this._index++;
 
-                    return true;
-                }
+					return true;
+				}
 
-                i++;
+				i++;
 
-                if ( i != this._index ) {
-                    continue;
-                }
+				if ( i != this._index ) {
+					continue;
+				}
 
-                if ( queueOnFailure ) {
-                    var tcs = new TaskCompletionSource<T>( TaskCreationOptions.RunContinuationsAsynchronously );
-                    cancelToken.Register( () => tcs.TrySetCanceled() );
+				if ( queueOnFailure ) {
+					var tcs = new TaskCompletionSource<T>( TaskCreationOptions.RunContinuationsAsynchronously );
+					cancelToken.Register( () => tcs.TrySetCanceled() );
 
-                    this._queue.Enqueue( ( tcs, cancelToken ) );
+					this._queue.Enqueue( ( tcs, cancelToken ) );
 
-                    resource = tcs.Task;
-                }
+					resource = tcs.Task;
+				}
 
-                return default;
-            }
-        }
+				return default;
+			}
+		}
 
-        private void OnResourceLoaded( [NotNull] Task<T> task ) {
-            if ( task is null ) {
-                throw new ArgumentNullException( nameof( task ) );
-            }
+		private void OnResourceLoaded( [NotNull] Task<T> task ) {
+			if ( task is null ) {
+				throw new ArgumentNullException( nameof( task ) );
+			}
 
-            Task<T> _resource;
-            (TaskCompletionSource<T>, CancellationToken) _tuple;
+			Task<T> _resource;
+			(TaskCompletionSource<T>, CancellationToken) _tuple;
 
-            lock ( this._lock ) {
-                if ( this._queue.Count == 0 ) {
-                    return;
-                }
+			lock ( this._lock ) {
+				if ( this._queue.Count == 0 ) {
+					return;
+				}
 
-                _tuple = this._queue.Peek();
+				_tuple = this._queue.Peek();
 
-                if ( !this.GetOrQueue( out _resource, _tuple.Item2, false ) ) {
-                    return;
-                }
+				if ( !this.GetOrQueue( out _resource, _tuple.Item2, false ) ) {
+					return;
+				}
 
-                this._queue.Dequeue();
-            }
+				this._queue.Dequeue();
+			}
 
-            _resource?.ContinueWith( t => {
-                if ( _tuple.Item1 is null ) {
-                    return;
-                }
+			_resource?.ContinueWith( t => {
+				if ( _tuple.Item1 is null ) {
+					return;
+				}
 
-                if ( t is null ) {
-                    return;
-                }
+				if ( t is null ) {
+					return;
+				}
 
-                _tuple.Item1.SetFromTask( t );
-            } );
-        }
+				_tuple.Item1.SetFromTask( t );
+			} );
+		}
 
-    }
+	}
 
 }

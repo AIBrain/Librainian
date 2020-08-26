@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "ImageFile.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics.Imaging {
 
@@ -31,15 +28,24 @@ namespace Librainian.Graphics.Imaging {
 	using System.Collections.Generic;
 	using System.Linq;
 	using JetBrains.Annotations;
-	using File = OperatingSystem.FileSystem.Pri.LongPath.File;
-
-
-	using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
-
-
+	using OperatingSystem.FileSystem.Pri.LongPath;
 
 	/// <summary>Untested. Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/</summary>
 	public class ImageFile {
+
+		public enum Types {
+
+			FileNotFound,
+			FileEmpty,
+			FileNull,
+			FileTooLarge,
+			FileUnrecognized,
+			PNG,
+			JPG,
+			GIFa,
+			GIFb
+
+		}
 
 		private readonly Byte[] _abEndGIF = {
 			0, 59
@@ -73,14 +79,6 @@ namespace Librainian.Graphics.Imaging {
 			137, 80, 78, 71, 13, 10, 26, 10
 		};
 
-		public Int32 EndingNullBytes { get; }
-
-		public String Filename { get; }
-
-		public Types FileType { get; } = Types.FileNotFound;
-
-		public Boolean IsComplete { get; }
-
 		public ImageFile( [NotNull] String filename, Boolean cullEndingNullBytes = true, Int32 maxFileSize = Int32.MaxValue ) {
 			this.Filename = filename.Trim();
 			var fliTmp = new FileInfo( this.Filename );
@@ -93,22 +91,20 @@ namespace Librainian.Graphics.Imaging {
 					this.FileType = Types.FileEmpty;
 				}
 				else {
-
 					// check file isn't like stupid crazy big
 					if ( fliTmp.Length > maxFileSize ) {
 						this.FileType = Types.FileTooLarge;
 					}
 					else {
-
 						// load the whole file
 						var abtTmp = File.ReadAllBytes( this.Filename );
 
 						// check the length of actual data
 						var iLength = abtTmp.Length;
 
-						if ( abtTmp[ iLength - 1 ] == 0 ) {
+						if ( abtTmp[iLength - 1] == 0 ) {
 							for ( var i = abtTmp.Length - 1; i > -1; i-- ) {
-								if ( abtTmp[ i ] == 0 ) {
+								if ( abtTmp[i] == 0 ) {
 									continue;
 								}
 
@@ -160,23 +156,17 @@ namespace Librainian.Graphics.Imaging {
 
 									break;
 
-								case Types.FileNotFound:
-									break;
+								case Types.FileNotFound: break;
 
-								case Types.FileEmpty:
-									break;
+								case Types.FileEmpty: break;
 
-								case Types.FileNull:
-									break;
+								case Types.FileNull: break;
 
-								case Types.FileTooLarge:
-									break;
+								case Types.FileTooLarge: break;
 
-								case Types.FileUnrecognized:
-									break;
+								case Types.FileUnrecognized: break;
 
-								default:
-									throw new ArgumentOutOfRangeException();
+								default: throw new ArgumentOutOfRangeException();
 							}
 
 							// get rid of ending null bytes at caller's option
@@ -189,26 +179,13 @@ namespace Librainian.Graphics.Imaging {
 			}
 		}
 
-		public enum Types {
+		public Int32 EndingNullBytes { get; }
 
-			FileNotFound,
+		public String Filename { get; }
 
-			FileEmpty,
+		public Types FileType { get; } = Types.FileNotFound;
 
-			FileNull,
-
-			FileTooLarge,
-
-			FileUnrecognized,
-
-			PNG,
-
-			JPG,
-
-			GIFa,
-
-			GIFb
-		}
+		public Boolean IsComplete { get; }
 
 		private static Boolean _EndsWidth( [NotNull] IReadOnlyList<Byte> data, [NotNull] IReadOnlyCollection<Byte> search ) {
 			if ( data is null ) {
@@ -223,7 +200,7 @@ namespace Librainian.Graphics.Imaging {
 
 			if ( search.Count <= data.Count ) {
 				var iStart = data.Count - search.Count;
-				blRet = !search.Where( ( t, i ) => data[ iStart + i ] != t ).Any();
+				blRet = !search.Where( ( t, i ) => data[iStart + i] != t ).Any();
 			}
 
 			return blRet; // RETURN
@@ -240,5 +217,7 @@ namespace Librainian.Graphics.Imaging {
 
 			return search.Count <= data.Count && search.SequenceEqual( data.Take( search.Count ) );
 		}
+
 	}
+
 }

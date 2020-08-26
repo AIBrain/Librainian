@@ -1,29 +1,26 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "MathStatistics.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
 
@@ -39,12 +36,13 @@ namespace Librainian.Maths {
 		public static Decimal CalcAvg( [NotNull] this IEnumerable<Decimal> values ) => values.DefaultIfEmpty().Average( arg => arg );
 
 		public static Decimal CalcEma( [NotNull] this IEnumerable<Decimal> values, Decimal alpha ) =>
-			values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => ( alpha * nextQuote ) + ( ( 1 - alpha ) * ema ) );
+			values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
 
 		/// <summary>
 		///     <para>
-		///     In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their
-		///     values (as opposed to the arithmetic mean which uses their sum).
+		///         In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or
+		///         typical value of a set of numbers by using the product of their
+		///         values (as opposed to the arithmetic mean which uses their sum).
 		///     </para>
 		///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
 		/// </summary>
@@ -60,8 +58,9 @@ namespace Librainian.Maths {
 
 		/// <summary>
 		///     <para>
-		///     In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their
-		///     values (as opposed to the arithmetic mean which uses their sum).
+		///         In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or
+		///         typical value of a set of numbers by using the product of their
+		///         values (as opposed to the arithmetic mean which uses their sum).
 		///     </para>
 		///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
 		/// </summary>
@@ -77,8 +76,9 @@ namespace Librainian.Maths {
 
 		/// <summary>
 		///     <para>
-		///     In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value of a set of numbers by using the product of their
-		///     values (as opposed to the arithmetic mean which uses their sum).
+		///         In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or
+		///         typical value of a set of numbers by using the product of their
+		///         values (as opposed to the arithmetic mean which uses their sum).
 		///     </para>
 		///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
 		/// </summary>
@@ -99,7 +99,7 @@ namespace Librainian.Maths {
 
 			var slope = data.Slope();
 
-			return data.Average( d => d.Progress ) - ( slope * data.Average( d => d.MillisecondsPassed ) );
+			return data.Average( d => d.Progress ) - slope * data.Average( d => d.MillisecondsPassed );
 		}
 
 		public static Double MeanGeometric( [NotNull] this IEnumerable<Double> numbers ) {
@@ -223,15 +223,15 @@ namespace Librainian.Maths {
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this SByte possible ) => 1d / possible;
 
-		public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 )( ( x * percent ) / 100.0f );
+		public static Int32 Percent( this Int32 x, Single percent ) => ( Int32 )( x * percent / 100.0f );
 
-		public static Single Percent( this Single x, Single percent ) => ( x * percent ) / 100.0f;
+		public static Single Percent( this Single x, Single percent ) => x * percent / 100.0f;
 
-		public static Double Percent( this Double x, Double percent ) => ( x * percent ) / 100.0;
+		public static Double Percent( this Double x, Double percent ) => x * percent / 100.0;
 
-		public static Decimal Percent( this Decimal x, Decimal percent ) => ( x * percent ) / 100.0m;
+		public static Decimal Percent( this Decimal x, Decimal percent ) => x * percent / 100.0m;
 
-		public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 )( ( x * percent ) / 100.0f );
+		public static UInt64 Percent( this UInt64 x, Single percent ) => ( UInt64 )( x * percent / 100.0f );
 
 		/// <summary>Returns true if this probability happens.</summary>
 		/// <param name="probability"></param>
@@ -277,7 +277,7 @@ namespace Librainian.Maths {
 		/// <param name="probability"></param>
 		/// <remarks>the higher the value of P, the more often this function should return true.</remarks>
 		public static Boolean Probability( this Double probability ) {
-			var chance = Randem.NextDouble( 0.0d, 1.0d );
+			var chance = Randem.NextDouble();
 
 			return probability >= chance;
 		}
@@ -286,7 +286,7 @@ namespace Librainian.Maths {
 		/// <param name="probability"></param>
 		/// <remarks>the higher the value of P, the more often this function should return true.</remarks>
 		public static Boolean Probability( this Single probability ) {
-			var chance = Randem.NextSingle( 0.0f, 1.0f );
+			var chance = Randem.NextSingle();
 
 			return probability >= chance;
 
@@ -323,5 +323,7 @@ namespace Librainian.Maths {
 
 			return ( Decimal )Math.Sqrt( decimals.Average( v => Math.Pow( ( Double )( v - avg ), 2 ) ) );
 		}
+
 	}
+
 }

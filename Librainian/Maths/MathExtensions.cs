@@ -1,4 +1,29 @@
-﻿namespace Librainian.Maths {
+﻿// Copyright © Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "MathExtensions.cs" last formatted on 2020-08-20 at 4:37 PM.
+
+#nullable enable
+namespace Librainian.Maths {
 
 	using System;
 	using System.Collections;
@@ -19,7 +44,7 @@
 	public static class MathExtensions {
 
 		/// <summary>
-		///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
+		///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
 		/// </summary>
 		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
 
@@ -27,9 +52,11 @@
 		/// <summary>Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.</summary>
 		[NotNull]
 		private static UInt32[] FibonacciLookup { get; } = {
-			1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040,
-			1346269, 2178309, 3524578, 5702887, 9227465, 14930352, 24157817, 39088169, 63245986, 102334155, 165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903,
-			2971215073
+			1, 1, 2, 3, 5, 8, 13, 21, 34, 55,
+			89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765,
+			10946, 17711, 28657, 46368, 75025, 121393, 196418, 317811, 514229, 832040,
+			1346269, 2178309, 3524578, 5702887, 9227465, 14930352, 24157817, 39088169, 63245986, 102334155,
+			165580141, 267914296, 433494437, 701408733, 1134903170, 1836311903, 2971215073
 		};
 
 		/// <summary>Add two <see cref="UInt64" />.</summary>
@@ -78,7 +105,7 @@
 		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[Pure]
-		public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + ( percentTax / 100.0m ) );
+		public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
 
 		/// <summary>Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.</summary>
 		/// <param name="high"></param>
@@ -144,7 +171,7 @@
 		public static Byte[] Concat( [NotNull] this Byte[] first, Byte second ) {
 			var buffer = new Byte[first.Length + 1];
 			Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
-			buffer[buffer.Length - 1] = second;
+			buffer[^1] = second;
 
 			return buffer;
 		}
@@ -232,7 +259,7 @@
 				var a = ( Int32 )( ( Int32 )d / Math.Pow( 10, i ) ) % 10;
 
 				for ( var j = 0; j < 4; j++ ) {
-					input[j + ( i * 4 )] = ( a & ( 1 << j ) ) != 0;
+					input[j + i * 4] = ( a & ( 1 << j ) ) != 0;
 				}
 			}
 
@@ -284,8 +311,8 @@
 			x = Math.Abs( x );
 
 			// A&S formula 7.1.26
-			var t = 1.0 / ( 1.0 + ( p * x ) );
-			var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( -x * x ) );
+			var t = 1.0 / ( 1.0 + p * x );
+			var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( -x * x );
 
 			return sign * y;
 		}
@@ -346,7 +373,7 @@
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[Pure]
 		public static Int32 FractionOf( this Int32 x, Double top, Double bottom ) {
-			var result = ( top * x ) / bottom;
+			var result = top * x / bottom;
 
 			return result < 1.0 ? 1 : ( Int32 )result;
 		}
@@ -354,24 +381,24 @@
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[Pure]
-		public static Double FractionOf( this Double x, Double top, Double bottom ) => ( top * x ) / bottom;
+		public static Double FractionOf( this Double x, Double top, Double bottom ) => top * x / bottom;
 
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[Pure]
-		public static Single FractionOf( this Single x, Single top, Single bottom ) => ( top * x ) / bottom;
+		public static Single FractionOf( this Single x, Single top, Single bottom ) => top * x / bottom;
 
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static UInt64 FractionOf( this UInt64 x, UInt64 top, UInt64 bottom ) => ( top * x ) / bottom;
+		public static UInt64 FractionOf( this UInt64 x, UInt64 top, UInt64 bottom ) => top * x / bottom;
 
 		/// <summary>Greatest Common Divisor for int</summary>
 		/// <remarks>Uses recursion, passing a remainder each time.</remarks>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public static Int32 gcd( this Int32 x, Int32 y ) {
+		public static Int32 Gcd( this Int32 x, Int32 y ) {
 			while ( true ) {
 				if ( y == 0 ) {
 					return x;
@@ -388,7 +415,7 @@
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		public static Int64 gcd( this Int64 x, Int64 y ) {
+		public static Int64 Gcd( this Int64 x, Int64 y ) {
 			while ( true ) {
 				if ( y == 0 ) {
 					return x;
@@ -671,7 +698,7 @@
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Single Lerp( this Single source, Single target, Single amount ) => source + ( ( target - source ) * amount );
+		public static Single Lerp( this Single source, Single target, Single amount ) => source + ( target - source ) * amount;
 
 		/// <summary>Linearly interpolates between two values.</summary>
 		/// <param name="source">Source value.</param>
@@ -680,7 +707,7 @@
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Double Lerp( this Double source, Double target, Single amount ) => source + ( ( target - source ) * amount );
+		public static Double Lerp( this Double source, Double target, Single amount ) => source + ( target - source ) * amount;
 
 		/// <summary>Linearly interpolates between two values.</summary>
 		/// <param name="source">Source value.</param>
@@ -689,7 +716,7 @@
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( ( target - source ) * amount ) );
+		public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 )( source + ( target - source ) * amount );
 
 		/// <summary>Linearly interpolates between two values.</summary>
 		/// <param name="source">Source value.</param>
@@ -698,7 +725,7 @@
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( ( target - source ) * amount ) );
+		public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 )( source + ( target - source ) * amount );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -714,7 +741,7 @@
 
 			var x = n + 1d;
 
-			return ( ( ( x - 0.5 ) * Math.Log( x ) ) - x ) + ( 0.5 * Math.Log( 2 * Math.PI ) ) + ( 1.0 / ( 12.0 * x ) );
+			return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
 		}
 
 		/// <summary>compute log(1+x) without losing precision for small values of x</summary>
@@ -734,7 +761,7 @@
 			}
 
 			// Use Taylor approx. log(1 + x) = x - x^2/2 with error roughly x^3/3 since |x| < 10^-4, |x|^3 < 10^-12, relative error less than 10^-8
-			return ( ( -0.5 * x ) + 1.0 ) * x;
+			return ( -0.5 * x + 1.0 ) * x;
 		}
 
 		[DebuggerStepThrough]
@@ -836,7 +863,7 @@
 			var x = 0.1M;
 
 			do {
-				deltaX = ( ( baseValue / x.Pow( n - 1 ) ) - x ) / n;
+				deltaX = ( baseValue / x.Pow( n - 1 ) - x ) / n;
 				x += deltaX;
 			} while ( Math.Abs( deltaX ) > 0 );
 
@@ -900,10 +927,10 @@
 			x = Math.Abs( x ) / Math.Sqrt( 2.0 );
 
 			// A&S formula 7.1.26
-			var t = 1.0 / ( 1.0 + ( p * x ) );
-			var y = 1.0 - ( ( ( ( ( ( ( ( ( a5 * t ) + a4 ) * t ) + a3 ) * t ) + a2 ) * t ) + a1 ) * t * Math.Exp( -x * x ) );
+			var t = 1.0 / ( 1.0 + p * x );
+			var y = 1.0 - ( ( ( ( a5 * t + a4 ) * t + a3 ) * t + a2 ) * t + a1 ) * t * Math.Exp( -x * x );
 
-			return 0.5 * ( 1.0 + ( sign * y ) );
+			return 0.5 * ( 1.0 + sign * y );
 		}
 
 		[DebuggerStepThrough]
@@ -1035,7 +1062,7 @@
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Double SigmoidNeg1To1( this Double x ) => 1.0D - ( 2.0D / ( 1.0D + Math.Exp( x ) ) );
+		public static Double SigmoidNeg1To1( this Double x ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( x ) );
 
 		public static Double Slope( [NotNull] this List<TimeProgression> data ) {
 			if ( data is null ) {
@@ -1180,16 +1207,16 @@
 		public static TimeSpan TendTo( this TimeSpan time, TimeSpan goal ) => ( time + goal ).Half();
 
 		public static Int32 ThreeFourths( this Int32 x ) {
-			var result = ( 3.0 * x ) / 4.0;
+			var result = 3.0 * x / 4.0;
 
 			return result < 1.0 ? 1 : ( Int32 )result;
 		}
 
-		public static UInt64 ThreeQuarters( this UInt64 x ) => ( 3 * x ) / 4;
+		public static UInt64 ThreeQuarters( this UInt64 x ) => 3 * x / 4;
 
-		public static Single ThreeQuarters( this Single x ) => ( 3.0f * x ) / 4.0f;
+		public static Single ThreeQuarters( this Single x ) => 3.0f * x / 4.0f;
 
-		public static Double ThreeQuarters( this Double x ) => ( 3.0d * x ) / 4.0d;
+		public static Double ThreeQuarters( this Double x ) => 3.0d * x / 4.0d;
 
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -1366,6 +1393,18 @@
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Int64 Twice( this Int64 number ) => number * 2L;
+
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static UInt64 Positive( this Int16 value ) => value < 0 ? 0 : Convert.ToUInt64( value );
+
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static UInt64 Positive( this Int32 value ) => value < 0 ? 0 : Convert.ToUInt64( value );
+
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static UInt64 Positive( this Int64 value ) => value < 0 ? 0 : Convert.ToUInt64( value );
 
 	}
 
