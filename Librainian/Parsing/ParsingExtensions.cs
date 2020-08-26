@@ -817,13 +817,9 @@ namespace Librainian.Parsing {
 		) {
 			culture ??= CultureInfo.CurrentCulture;
 
-			if ( String.IsNullOrEmpty( input ) ) {
+			if ( String.IsNullOrEmpty( input = input.Trimmed() ) ) {
 				yield break;
 			}
-
-			yield return input;
-
-			input = input.Trimmed();
 
 			yield return input;
 
