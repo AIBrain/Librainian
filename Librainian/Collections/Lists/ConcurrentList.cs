@@ -23,6 +23,7 @@
 // File "ConcurrentList.cs" last formatted on 2020-08-14 at 8:31 PM.
 
 #nullable enable
+
 namespace Librainian.Collections.Lists {
 
 	using System;
@@ -67,7 +68,7 @@ namespace Librainian.Collections.Lists {
 
 		private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
 
-		private Int32 _isReadOnly;
+		private Int64 _isReadOnly;
 
 		/// <summary>Threadsafe item counter (so we don't have to enter and exit the readerwriter).</summary>
 		[JsonIgnore]
@@ -122,7 +123,7 @@ namespace Librainian.Collections.Lists {
 		public Boolean IsReadOnly {
 			[MethodImpl( MethodImplOptions.AggressiveInlining )]
 			[DebuggerStepThrough]
-			get => Interlocked.CompareExchange( ref this._isReadOnly, 0, 0 ) == 1;
+			get => Interlocked.Read( ref this._isReadOnly ) == 1;
 
 			[MethodImpl( MethodImplOptions.AggressiveInlining )]
 			[DebuggerStepThrough]
