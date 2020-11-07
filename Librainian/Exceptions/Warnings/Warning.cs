@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Warning.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "Warning.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 #nullable enable
 
@@ -45,7 +45,9 @@ namespace Librainian.Exceptions.Warnings {
 
 		public Warning( String? message ) : base( message ) => message.Break();
 
-		public Warning( String? message, [CanBeNull] Exception? inner ) : base( message, inner ) => message.Break();
+		public Warning( String? message, [CanBeNull]
+		                Exception? inner ) : base( message, inner ) =>
+			message.Break();
 
 		protected Warning( SerializationInfo serializationInfo, StreamingContext streamingContext ) {
 			this.SerializationInfo = serializationInfo;
@@ -53,6 +55,7 @@ namespace Librainian.Exceptions.Warnings {
 		}
 
 		public SerializationInfo? SerializationInfo { get; protected set; }
+
 		public StreamingContext? StreamingContext { get; protected set; }
 
 	}

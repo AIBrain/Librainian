@@ -35,9 +35,9 @@ namespace Librainian.Financial.Containers.Wallets {
 	using Currency.Coins;
 	using JetBrains.Annotations;
 	using Maths;
-	using Measurement.Currency;
 	using Newtonsoft.Json;
 	using Utilities;
+	using IDenomination = Currency.IDenomination;
 
 	/// <summary>
 	///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for
@@ -46,7 +46,7 @@ namespace Librainian.Financial.Containers.Wallets {
 	/// </summary>
 	/// <remarks>A database with proper locking would be better than this, although not as fun to create.</remarks>
 	/// <see cref="SimpleWallet" />
-	/// <see cref="Measurement.Currency.BTC.SimpleBitcoinWallet" />
+	/// <see cref="Currency.BTC.SimpleBitcoinWallet" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class Wallet : ABetterClassDispose, IEnumerable<KeyValuePair<IDenomination, UInt64>> {
@@ -58,7 +58,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		[NotNull]
 		private ConcurrentDictionary<IBankNote, UInt64> BankNotes { get; } = new ConcurrentDictionary<IBankNote, UInt64>();
 
-		/// <summary>Count of each <see cref="ICoin" />.</summary>
+		/// <summary>Count of each <see cref="Currency.Coins.ICoin" />.</summary>
 		[JsonProperty]
 		[NotNull]
 		private ConcurrentDictionary<ICoin, UInt64> Coins { get; } = new ConcurrentDictionary<ICoin, UInt64>();

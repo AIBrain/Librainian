@@ -20,18 +20,20 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "PlanckLengths.cs" last formatted on 2020-08-14 at 8:37 PM.
+// File "PlanckLengths.cs" last formatted on 2020-08-26 at 6:11 AM.
 
 namespace Librainian.Measurement.Length {
 
 	using System;
 	using System.Diagnostics;
-	using System.Numerics;
 	using JetBrains.Annotations;
+	using Maths.Numbers;
 	using Newtonsoft.Json;
 
-	/// <summary></summary>
-	/// <see cref="https://wikipedia.org/wiki/Plank_length" />
+	/// <summary>
+	/// <see cref="http://wikipedia.org/wiki/Plank_length" />
+	/// </summary>
+	/// 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public struct PlanckLengths : IComparable<PlanckLengths> {
@@ -39,22 +41,19 @@ namespace Librainian.Measurement.Length {
 		/// <summary>One <see cref="PlanckLengths" />.</summary>
 		public static readonly PlanckLengths One = new PlanckLengths( 1 );
 
-		/// <summary>One <see cref="PlanckLengths" />.</summary>
+		/// <summary>Two <see cref="PlanckLengths" />.</summary>
 		public static readonly PlanckLengths Two = new PlanckLengths( 2 );
 
 		/// <summary>Zero <see cref="PlanckLengths" />.</summary>
 		public static readonly PlanckLengths Zero = new PlanckLengths( 0 );
 
 		[JsonProperty]
-		public BigInteger Value { get; }
+		public UBigInteger Value { get; }
 
-		public PlanckLengths( BigInteger planckLengths ) : this() => this.Value = planckLengths;
+		public PlanckLengths( UBigInteger planckLengths ) : this() => this.Value = planckLengths;
 
 		public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
-		//public static Boolean operator >( PlanckUnits left, Minutes right ) {
-		//    return left.Comparison( right ) > 0;
-		//}
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
 		[NotNull]

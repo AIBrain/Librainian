@@ -31,12 +31,12 @@ namespace Librainian.Databases {
 	using System.Data.Common;
 	using System.Reflection;
 	using System.Threading.Tasks;
+	using FileSystem;
+	using FileSystem.Pri.LongPath;
 	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
-	using OperatingSystem.FileSystem;
-	using OperatingSystem.FileSystem.Pri.LongPath;
 	using Utilities;
 
 	public class LocalDb : ABetterClassDispose {
@@ -80,13 +80,11 @@ namespace Librainian.Databases {
 			this.ConnectionString =
 				$@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPath};";
 
-			this.Connection = new SqlConnection( this.ConnectionString );
+			this.Connection = new SqlConnection( this.ConnectionString ) {
+				Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info(),
+				StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info(), InfoMessage += ( sender, args ) => args.Message.Info()
+			};
 
-			this.Connection.Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info();
-
-			this.Connection.StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
-
-			this.Connection.InfoMessage += ( sender, args ) => args.Message.Info();
 
 			$"Attempting connection to {this.DatabaseMdf}...".Info();
 			this.Connection.Open();

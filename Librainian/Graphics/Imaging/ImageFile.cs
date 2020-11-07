@@ -27,8 +27,8 @@ namespace Librainian.Graphics.Imaging {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using FileSystem.Pri.LongPath;
 	using JetBrains.Annotations;
-	using OperatingSystem.FileSystem.Pri.LongPath;
 
 	/// <summary>Untested. Pulled from http://www.dreamincode.net/forums/topic/286802-detect-partially-corrupted-image/</summary>
 	public class ImageFile {

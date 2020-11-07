@@ -20,18 +20,17 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DocumentInfo.cs" last formatted on 2020-08-14 at 8:44 PM.
+// File "DocumentInfo.cs" last formatted on 2020-10-09 at 9:45 AM.
 
 namespace Librainian.Persistence {
-
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
 
 	/// <summary>
 	///     <para>Computes the various hashes of the given <see cref="AbsolutePath" />.</para>
@@ -184,7 +183,6 @@ namespace Librainian.Persistence {
 
 		public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
 
-		// ReSharper disable once NonReadonlyMemberInGetHashCode
 		public override Int32 GetHashCode() => this.Length.GetHashCode();
 
 		/// <summary>Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)</summary>
@@ -196,27 +194,25 @@ namespace Librainian.Persistence {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			Debug.Write( $"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}..." );
+			$"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
 			var addHash = Task.Run( document.CalculateHarkerHashInt32, this.CancellationToken );
-			var crc32 = document.CRC32Async( this.CancellationToken );
-			var crc64 = document.CRC64Async( this.CancellationToken );
+			var crc32 = document.CRC32( this.CancellationToken ).AsValueTask();
+			var crc64 = document.CRC64( this.CancellationToken ).AsValueTask();
 
-			await Task.WhenAll( crc32, crc64, addHash ).ConfigureAwait( false );
+			await Task.WhenAll( crc32.AsTask(), crc64.AsTask(), addHash ).ConfigureAwait( false );
 
-			if ( addHash.IsCompleted ) {
-				this.AddHash = addHash.Result;
-			}
 
-			if ( crc32.IsCompleted ) {
-				this.CRC32 = crc32.Result;
-			}
+			this.AddHash = addHash.Result;
 
-			if ( crc64.IsCompleted ) {
-				this.CRC64 = crc64.Result;
-			}
 
-			Debug.Write( $"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}..." );
+			this.CRC32 = crc32.Result;
+
+
+			this.CRC64 = crc64.Result;
+
+
+			$"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}...".Verbose();
 		}
 
 		/// <summary>
@@ -275,5 +271,4 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
 
 	}
-
 }

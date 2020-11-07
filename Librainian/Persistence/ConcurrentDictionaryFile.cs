@@ -22,25 +22,28 @@
 // 
 // File "ConcurrentDictionaryFile.cs" last formatted on 2020-08-14 at 8:44 PM.
 
+#nullable enable
+
 namespace Librainian.Persistence {
 
 	using System;
 	using System.Collections.Concurrent;
-	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
+	using Maths.Numbers;
 	using Measurement.Time;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
+	using PooledAwait;
 
 	/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
 	[JsonObject]
-	public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
+	public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable where TKey:notnull {
 
 		private volatile Boolean _isLoading;
 
@@ -51,8 +54,9 @@ namespace Librainian.Persistence {
 		/// <summary></summary>
 		/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
 		/// <param name="document"></param>
+		/// <param name="progress"></param>
 		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
+		public ConcurrentDictionaryFile( [NotNull] Document document, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) {
 			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
 			if ( !this.Document.ContainingingFolder().Exists() ) {
@@ -60,7 +64,9 @@ namespace Librainian.Persistence {
 			}
 
 			if ( preload ) {
-				this.Load();
+#pragma warning disable 4014
+				this.Load( progress );
+#pragma warning restore 4014
 			}
 		}
 
@@ -69,8 +75,9 @@ namespace Librainian.Persistence {
 		///     <para>Defaults to user\appdata\Local\productname\filename</para>
 		/// </summary>
 		/// <param name="filename"></param>
+		/// <param name="progress"></param>
 		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( new Document( filename ), preload ) { }
+		public ConcurrentDictionaryFile( [NotNull] String filename, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) : this( new Document( filename ), progress, preload ) { }
 
 		[JsonProperty]
 		[NotNull]
@@ -90,29 +97,27 @@ namespace Librainian.Persistence {
 
 		protected virtual void Dispose( Boolean releaseManaged ) {
 			if ( releaseManaged ) {
-				this.Save().Wait( Minutes.One );
+				this.Save().AsValueTask().AsTask().Wait( Minutes.One );
 			}
-
+			
 			GC.SuppressFinalize( this );
 		}
 
-		public Boolean Flush() {
+		public async PooledValueTask<Boolean> Flush( CancellationToken token ) {
 			var document = this.Document;
 
 			if ( !document.ContainingingFolder().Exists() ) {
 				document.ContainingingFolder().Create();
 			}
 
-			IDictionary<TKey, TValue> me = new Dictionary<TKey, TValue>( this.Count );
+			var json = this.ToJSON( Formatting.Indented );
+			await document.TryDeleting( Seconds.One, token ).ConfigureAwait(false);
+			document.AppendText( json );
 
-			foreach ( var pair in this ) {
-				me[pair.Key] = pair.Value;
-			}
-
-			return me.TrySave( document, true, Formatting.Indented );
+			return true;
 		}
 
-		public Boolean Load( CancellationToken token = default ) {
+		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress, CancellationToken token = default ) {
 			var document = this.Document;
 
 			if ( document.Exists() == false ) {
@@ -126,14 +131,18 @@ namespace Librainian.Persistence {
 					token = this.MainCTS.Token;
 				}
 
-				var dictionary = document.LoadJSON<ConcurrentDictionary<TKey, TValue>>();
+				var result = await document.LoadJSON<ConcurrentDictionary<TKey, TValue>>( progress, token ).ConfigureAwait( false );
 
-				if ( dictionary != null ) {
-					var result = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[key] = dictionary[key], parallelOptions: new ParallelOptions {
-						CancellationToken = token
-					} );
+				if ( result.status.IsGood() ) {
+					var options = new ParallelOptions {
+						CancellationToken = token,
+						MaxDegreeOfParallelism = Environment.ProcessorCount - 1
+					};
 
-					return result.IsCompleted;
+					var dictionary = result.obj;
+					var r = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: options );
+
+					return r.IsCompleted.ToStatus();
 				}
 			}
 			catch ( JsonException exception ) {
@@ -151,20 +160,13 @@ namespace Librainian.Persistence {
 				this.IsLoading = false;
 			}
 
-			return default;
+			return Status.Failure;
 		}
 
 		/// <summary>Saves the data to the <see cref="Document" />.</summary>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		[NotNull]
-		public Task<Boolean> Save( CancellationToken token = default ) {
-			if ( token == default ) {
-				token = this.MainCTS.Token;
-			}
-
-			return Task.Run( this.Flush, token );
-		}
+		public PooledValueTask<Boolean> Save( CancellationToken? token = null ) => this.Flush( token ?? this.MainCTS.Token );
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>

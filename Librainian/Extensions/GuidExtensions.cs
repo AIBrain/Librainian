@@ -27,11 +27,11 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Linq;
 	using System.Text.RegularExpressions;
+	using FileSystem;
+	using FileSystem.Pri.LongPath;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
-	using OperatingSystem.FileSystem;
-	using OperatingSystem.FileSystem.Pri.LongPath;
 
 	/// <summary>
 	///     A GUID is a 128-bit integer (16 bytes) that can be used across all computers and networks wherever a unique

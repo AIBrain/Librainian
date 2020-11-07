@@ -26,6 +26,7 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Diagnostics;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Logging;
@@ -79,6 +80,14 @@ namespace Librainian.Threading {
 		public static ParallelOptions CPULight { get; } = new ParallelOptions {
 			MaxDegreeOfParallelism = Environment.ProcessorCount / 2
 		};
+		
+		/// <summary>
+		/// Set MaxDegreeOfParallelism to half of maximum CPU processors.
+		/// </summary>
+		[NotNull]
+		public static ParallelOptions HalfOfCPU { get; } = new ParallelOptions {
+			MaxDegreeOfParallelism = Environment.ProcessorCount / 2
+		};
 
 		/// <summary>
 		///     <para>
@@ -109,7 +118,9 @@ namespace Librainian.Threading {
 
 				foreach ( ProcessThread processThread in processThreads ) {
 					try {
-						processThread.IdealProcessor = core;
+						if ( processThread != null ) {
+							processThread.IdealProcessor = core;
+						}
 					}
 					catch ( Exception exception ) {
 						exception.Log();

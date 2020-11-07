@@ -35,11 +35,11 @@ namespace Librainian.Security {
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
-	using OperatingSystem.FileSystem;
-	using File = OperatingSystem.FileSystem.Pri.LongPath.File;
-	using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+	using File = FileSystem.Pri.LongPath.File;
+	using FileInfo = FileSystem.Pri.LongPath.FileInfo;
 
 	public static class SecurityExtensions {
 

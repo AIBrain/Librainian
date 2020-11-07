@@ -22,6 +22,8 @@
 // 
 // File "PriorityScheduler.cs" last formatted on 2020-08-14 at 8:46 PM.
 
+#nullable enable
+
 namespace Librainian.Threading {
 
 	using System;
@@ -39,34 +41,25 @@ namespace Librainian.Threading {
 	/// <see cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
 	public class PriorityScheduler : TaskScheduler, IDisposable {
 
-		public static PriorityScheduler AboveNormal = new PriorityScheduler( ThreadPriority.AboveNormal );
+		public static PriorityScheduler AboveNormal { get; } = new PriorityScheduler( ThreadPriority.AboveNormal );
 
-		public static PriorityScheduler BelowNormal = new PriorityScheduler( ThreadPriority.BelowNormal );
+		public static PriorityScheduler BelowNormal { get; } = new PriorityScheduler( ThreadPriority.BelowNormal );
 
-		public static PriorityScheduler Lowest = new PriorityScheduler( ThreadPriority.Lowest );
-
-		private readonly Int32 _maximumConcurrencyLevel = Math.Max( 1, Environment.ProcessorCount );
+		public static PriorityScheduler Lowest { get; } = new PriorityScheduler( ThreadPriority.Lowest );
 
 		private readonly ThreadPriority _priority;
 
+		[NotNull]
 		private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
 
-		private Thread[] _threads;
+		[CanBeNull]
+		private Thread[]? _threads;
 
 		public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
 
-		public override Int32 MaximumConcurrencyLevel => this._maximumConcurrencyLevel;
+		public override Int32 MaximumConcurrencyLevel { get; } = Math.Max( 1, Environment.ProcessorCount );
 
-		/// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
-		public void Dispose() => this.Dispose( true );
 
-		protected virtual void Dispose( Boolean sdfsss ) {
-			if ( sdfsss ) {
-				this._tasks.Dispose();
-			}
-
-			GC.SuppressFinalize( this );
-		}
 
 		[NotNull]
 		protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
@@ -74,26 +67,36 @@ namespace Librainian.Threading {
 		protected override void QueueTask( [CanBeNull] Task task ) {
 			this._tasks.Add( task );
 
-			if ( this._threads != null ) {
-				return;
-			}
+			if ( this._threads is null ) {
+				this._threads = new Thread[Math.Max( 1, Environment.ProcessorCount )];
 
-			this._threads = new Thread[this._maximumConcurrencyLevel];
+				var threads = this._threads;
 
-			for ( var i = 0; i < this._threads.Length; i++ ) {
-				this._threads[i] = new Thread( () => {
-					foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
-						this.TryExecuteTask( t );
-					}
-				} ) {
-					Name = $"PriorityScheduler: {i}", Priority = this._priority, IsBackground = true
-				};
+				for ( var i = 0; i < threads.Length; i++ ) {
+					threads[i] = new Thread( () => {
+						foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
+							if ( t is null ) {
+								continue;
+							}
 
-				this._threads[i].Start();
+							this.TryExecuteTask( t );
+						}
+					} ) {
+						Name = $"PriorityScheduler: {i}", Priority = this._priority, IsBackground = true
+					};
+
+					threads[i].Start();
+				}
 			}
 		}
 
 		protected override Boolean TryExecuteTaskInline( [CanBeNull] Task task, Boolean taskWasPreviouslyQueued ) => false;
+
+		public void Dispose() {
+			this._tasks.Dispose();
+			GC.SuppressFinalize( this );
+		}
+
 
 	}
 

@@ -30,9 +30,9 @@ namespace Librainian.Persistence {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using ComputerSystem;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
-	using OperatingSystem.FileSystem;
 	using Parsing;
 
 	/// <summary>The last data storage class your program should ever need. Hah, I wish.</summary>

@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IniLine.cs" last formatted on 2020-08-14 at 8:42 PM.
+// File "IniLine.cs" last formatted on 2020-08-28 at 1:45 AM.
 
 #nullable enable
 
@@ -61,7 +61,7 @@ namespace Librainian.Persistence.InIFiles {
 	[JsonObject]
 	public class IniLine {
 
-		public enum LineTipe {
+		public enum LineTypes {
 
 			Empty,
 			Text,
@@ -69,18 +69,25 @@ namespace Librainian.Persistence.InIFiles {
 
 		}
 
-		public const String CommentHeader = ";";
-
 		public const String PairSeparator = "=";
 
-		public IniLine( [CanBeNull] String key, [CanBeNull] String? value = default ) {
+		public static readonly String[] CommentHeaders = {
+			"#", ";", ":", "rem", "REM"
+		};
+
+		public IniLine( [CanBeNull]
+		                String? key, [CanBeNull]
+		                String? value = default ) {
 
 			key = key.Trimmed() ?? String.Empty;
 
-			if ( key.StartsWith( CommentHeader, StringComparison.Ordinal ) ) {
+			var test = key.StartsWith( CommentHeaders, StringComparison.Ordinal );
+
+			if ( test.status.IsGood() ) {
 				this.Key = key;
 				this.Value = value;
-				this.LineType = LineTipe.Comment;
+				this.LineType = LineTypes.Comment;
+				this.LineHeader = test.start;
 
 				return;
 			}
@@ -89,22 +96,27 @@ namespace Librainian.Persistence.InIFiles {
 			this.Value = value;
 
 			if ( String.IsNullOrEmpty( key ) || String.IsNullOrEmpty( value ) ) {
-				this.LineType = LineTipe.Empty;
+				this.LineType = LineTypes.Empty;
 				this.Value = default;
 			}
 			else {
-				this.LineType = LineTipe.Text;
+				this.LineType = LineTypes.Text;
 			}
 		}
 
-
+		/// <summary>
+		///     The prefix for lines.
+		/// </summary>
+		[JsonProperty]
+		[CanBeNull]
+		public String? LineHeader { get; set; }
 
 		[JsonProperty]
 		[CanBeNull]
 		public String? Key { get; }
 
 		[JsonProperty]
-		public LineTipe LineType { get; }
+		public LineTypes LineType { get; }
 
 		[JsonProperty]
 		[CanBeNull]
@@ -114,10 +126,10 @@ namespace Librainian.Persistence.InIFiles {
 		/// <returns>A string that represents the current object.</returns>
 		public override String ToString() =>
 			this.LineType switch {
-				LineTipe.Text    => $"{this.Key}{PairSeparator}{this.Value}",
-				LineTipe.Comment => $"{this.Key}",
-				LineTipe.Empty   => $"{String.Empty}",
-				_                => throw new ArgumentOutOfRangeException()
+				LineTypes.Text => $"{this.Key}{PairSeparator}{this.Value}",
+				LineTypes.Comment => $"{this.LineHeader} {this.Key}",
+				LineTypes.Empty => $"{String.Empty}",
+				_ => throw new ArgumentOutOfRangeException()
 			};
 
 	}

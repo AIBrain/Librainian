@@ -24,10 +24,11 @@
 
 namespace Librainian {
 
+	using System;
 	using System.ComponentModel;
 	using Parsing;
 
-	public enum Status {
+	public enum Status : Int16 {
 
 		[Description( Symbols.SkullAndCrossbones )]
 		Fatal = Exception - 1,
@@ -96,4 +97,5 @@ namespace Librainian {
 		Flawless = Advance + 1
 	}
 
+	
 }

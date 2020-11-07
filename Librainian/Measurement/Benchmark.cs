@@ -29,7 +29,7 @@ namespace Librainian.Measurement {
 	using System.Threading;
 	using JetBrains.Annotations;
 	using Logging;
-	using Time;
+	using Seconds = Time.Seconds;
 
 	/// <summary>
 	///     Originally based upon the idea from

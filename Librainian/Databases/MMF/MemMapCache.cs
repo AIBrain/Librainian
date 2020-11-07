@@ -35,6 +35,7 @@ namespace Librainian.Databases.MMF {
 	using Logging;
 	using Utilities;
 
+	[Obsolete("Unfinished attempt at caching.")]
 	public class MemMapCache<T> : ABetterClassDispose {
 
 		private const String Delim = "[!@#]";

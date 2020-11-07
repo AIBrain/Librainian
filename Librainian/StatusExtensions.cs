@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "StatusExtensions.cs" last formatted on 2020-08-21 at 4:19 PM.
+// File "StatusExtensions.cs" last formatted on 2020-08-28 at 1:38 AM.
 
 namespace Librainian {
 
@@ -58,8 +58,13 @@ namespace Librainian {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Boolean IsGood( this Status status ) => status.Succeeded();
 
+		[Pure]
 		[NotNull]
 		public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
+
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Status ToStatus( this Boolean status ) => status ? Status.Success : Status.Failure;
 
 	}
 

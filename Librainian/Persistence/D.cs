@@ -22,6 +22,7 @@
 // 
 // File "D.cs" last formatted on 2020-08-14 at 8:44 PM.
 
+#nullable enable
 namespace Librainian.Persistence {
 
 	using System;
@@ -38,7 +39,7 @@ namespace Librainian.Persistence {
 	/// </summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Serializable]
-	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore,
+	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, /*ItemNullValueHandling = NullValueHandling.Ignore,*/
 				 ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
 	public class D : IEqualityComparer<D> {
 

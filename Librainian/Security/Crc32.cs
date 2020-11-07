@@ -22,6 +22,8 @@
 // 
 // File "Crc32.cs" last formatted on 2020-08-14 at 8:44 PM.
 
+#nullable enable
+
 namespace Librainian.Security {
 
 	using System;
@@ -47,7 +49,7 @@ namespace Librainian.Security {
 
 		public const UInt32 DefaultSeed = 0xFFFFFFFFu;
 
-		private static UInt32[] _defaultTable;
+		private static UInt32[]? _defaultTable;
 
 		private UInt32 _hash;
 
@@ -66,7 +68,7 @@ namespace Librainian.Security {
 
 		[NotNull]
 		private static UInt32[] InitializeTable( UInt32 polynomial ) {
-			if ( polynomial == DefaultPolynomial && _defaultTable != null ) {
+			if ( _defaultTable != null ) {
 				return _defaultTable;
 			}
 
@@ -111,7 +113,9 @@ namespace Librainian.Security {
 		/// <param name="start"> </param>
 		/// <param name="size">  </param>
 		/// <returns></returns>
-		public static UInt32 CalculateHash( [CanBeNull] UInt32[] table, UInt32 seed, [CanBeNull] IList<Byte> buffer, Int32 start, Int32 size ) {
+		public static UInt32 CalculateHash( [NotNull]
+		                                    UInt32[] table, UInt32 seed, [NotNull]
+		                                    IList<Byte> buffer, Int32 start, Int32 size ) {
 			var crc = seed;
 
 			for ( var i = start; i < size - start; i++ ) {
@@ -129,7 +133,7 @@ namespace Librainian.Security {
 			~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 
 		[NotNull]
-		public static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
+		internal static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
 			var result = BitConverter.GetBytes( uint32 );
 
 			if ( BitConverter.IsLittleEndian ) {

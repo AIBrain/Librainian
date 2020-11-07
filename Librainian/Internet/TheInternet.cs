@@ -28,10 +28,10 @@ namespace Librainian.Internet {
 	using System.Collections.Generic;
 	using System.Net;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
-	using OperatingSystem.FileSystem;
 
 	public static class TheInternet {
 

@@ -30,9 +30,9 @@ namespace Librainian.Graphics.Manipulation {
 	using System.Drawing;
 	using System.Drawing.Imaging;
 	using System.IO;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Maths;
-	using OperatingSystem.FileSystem;
 
 	public static class ManipulationExtensions {
 

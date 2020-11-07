@@ -20,12 +20,11 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ConcurrentHashset.cs" last formatted on 2020-08-14 at 8:31 PM.
+// File "ConcurrentHashset.cs" last formatted on 2020-09-29 at 2:56 AM.
 
 #nullable enable
 
 namespace Librainian.Collections.Sets {
-
 	using System;
 	using System.Collections;
 	using System.Collections.Concurrent;
@@ -45,33 +44,44 @@ namespace Librainian.Collections.Sets {
 	/// //TODO someday add in set theory.. someday.. ISet
 	[Serializable]
 	[JsonObject]
-	public class ConcurrentHashset<T> : IEnumerable<T> {
-
+	public class ConcurrentHashset<T> : IEnumerable<T> where T : notnull {
 		[DebuggerStepThrough]
 		public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) => this.AddRange( list );
 
 		[DebuggerStepThrough]
-		public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object>( concurrency, capacity );
+		public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object?>( concurrency, capacity );
 
 		[DebuggerStepThrough]
-		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object>();
+		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object?>();
 
 		[JsonProperty]
 		[NotNull]
-		private ConcurrentDictionary<T, Object> Set { get; }
+		private ConcurrentDictionary<T, Object?> Set { get; }
 
 		public Int32 Count => this.Set.Count;
 
-		/// <summary>Gets the item in the set *at this point in time* (snapshot).</summary>
+		/// <summary>Gets the item in the set or throws.</summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		[CanBeNull]
+		/// <exception cref="IndexOutOfRangeException"></exception>
+		[NotNull]
 		public T this[ Int32 index ] {
-			[CanBeNull]
+			[NotNull]
 			get {
-				var list = this.Set.Keys.ToList();
+				var list = this.Set.Keys;
 
-				return ( index.Between( 0, list.Count ) ? list[index] : default )!;
+				if ( index < 0 ) {
+					throw new IndexOutOfRangeException( $"The index {index} is less than 0." );
+				}
+
+				if ( index > list.Count ) {
+					throw new IndexOutOfRangeException( $"The index {index} is greater than items in set ({list.Count})." );
+				}
+
+				//TODO Is this any better than var list = this.Set.Keys.ToList()?
+				//TODO Will this skip work?
+				//TODO Is it off by -1?
+				return list.Skip( index ).First();
 			}
 		}
 
@@ -80,17 +90,11 @@ namespace Librainian.Collections.Sets {
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		[DebuggerStepThrough]
-		public void Add( [CanBeNull] T item ) {
-			if ( item is null ) {
-				return;
-			}
-
-			this.Set[item] = null;
-		}
+		public void Add( [NotNull] T item ) => this.Set[item] = null;
 
 		[DebuggerStepThrough]
 		public void AddRange( [NotNull] IEnumerable<T> items ) {
-			if ( items is null ) {
+			if ( items == null ) {
 				throw new ArgumentNullException( nameof( items ) );
 			}
 
@@ -101,22 +105,10 @@ namespace Librainian.Collections.Sets {
 		public void Clear() => this.Set.Clear();
 
 		[DebuggerStepThrough]
-		public Boolean Contains( [NotNull] T item ) {
-			if ( item is null ) {
-				throw new ArgumentNullException( nameof( item ) );
-			}
-
-			return this.Set.ContainsKey( item );
-		}
+		public Boolean Contains( [NotNull] T item ) => this.Set.ContainsKey( item );
 
 		[DebuggerStepThrough]
-		public Boolean Remove( [NotNull] T item ) {
-			if ( item is null ) {
-				throw new ArgumentNullException( nameof( item ) );
-			}
-
-			return this.Set.TryRemove( item, out _ );
-		}
+		public Boolean Remove( [NotNull] T item ) => this.Set.TryRemove( item, out _ );
 
 		/// <summary>
 		///     Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" />
@@ -125,14 +117,9 @@ namespace Librainian.Collections.Sets {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public void Replace( [CanBeNull] T left, [CanBeNull] T right ) {
-			if ( !( left is null ) ) {
-				this.Remove( left );
-			}
-
-			if ( !( right is null ) ) {
-				this.Add( right );
-			}
+		public void Replace( [NotNull] T left, [NotNull] T right ) {
+			this.Remove( left );
+			this.Add( right );
 		}
 
 		/// <summary>Set the tag on an item.</summary>
@@ -140,10 +127,6 @@ namespace Librainian.Collections.Sets {
 		/// <param name="tag"></param>
 		/// <returns></returns>
 		public Boolean Tag( [NotNull] T item, [CanBeNull] Object? tag ) {
-			if ( item is null ) {
-				throw new ArgumentNullException( nameof( item ) );
-			}
-
 			this.Set[item] = tag;
 
 			return true;
@@ -153,16 +136,10 @@ namespace Librainian.Collections.Sets {
 		/// <param name="item"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public Object Tag( [NotNull] T item ) {
-			if ( item is null ) {
-				throw new ArgumentNullException( nameof( item ) );
-			}
-
+		public Object? Tag( [NotNull] T item ) {
 			this.Set.TryGetValue( item, out var tag );
 
 			return tag;
 		}
-
 	}
-
 }

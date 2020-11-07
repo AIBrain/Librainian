@@ -6,8 +6,8 @@ dotnet_style_parentheses_in_arithmetic_binary_operators=never_if_unnecessary:err
 dotnet_style_parentheses_in_other_binary_operators=never_if_unnecessary:error
 dotnet_style_parentheses_in_relational_binary_operators=never_if_unnecessary:error
 
+# IDE0058: Expression value is never used
+csharp_style_unused_value_expression_statement_preference = discard_variable:silent
+
 # ReSharper inspection severities
 resharper_arrange_redundant_parentheses_highlighting=none
-
-# ReSharper properties
-resharper_max_attribute_length_for_same_line=10

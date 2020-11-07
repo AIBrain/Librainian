@@ -55,26 +55,24 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ), "Progress must not be null." );
 
 			this.Timer = new Timer( this.UpdateRate.TotalMilliseconds ) {
-				AutoReset = false
+				AutoReset = false,
+				Elapsed += ( sender, elapsedEventArgs ) => {
+					try {
+						this.Pause();
+						this.Counter++;
+
+						this.Progress.Report( new ReportBack {Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow()} );
+					}
+					catch ( Exception exception ) {
+						exception.Log();
+					}
+					finally {
+						this.LastProgressReport = DateTime.UtcNow;
+						this.Resume();
+					}
+				}
 			};
 
-			this.Timer.Elapsed += ( sender, elapsedEventArgs ) => {
-				try {
-					this.Pause();
-					this.Counter++;
-
-					this.Progress.Report( new ReportBack {
-						Counter = this.Counter, Elapsed = this.Elapsed, RunningSlow = this.IsRunningSlow()
-					} );
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-				finally {
-					this.LastProgressReport = DateTime.UtcNow;
-					this.Resume();
-				}
-			};
 
 			this.Resume();
 		}

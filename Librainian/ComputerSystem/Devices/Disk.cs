@@ -30,8 +30,8 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.IO;
 	using System.Linq;
 	using Extensions;
+	using FileSystem;
 	using JetBrains.Annotations;
-	using OperatingSystem.FileSystem;
 
 	/// <summary>
 	///     <para>A Drive contains 1 or more <see cref="Disk" />.</para>

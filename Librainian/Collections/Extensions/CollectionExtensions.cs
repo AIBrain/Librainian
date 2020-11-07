@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CollectionExtensions.cs" last formatted on 2020-08-23 at 6:10 AM.
+// File "CollectionExtensions.cs" last formatted on 2020-08-27 at 7:46 PM.
 
 #nullable enable
 
@@ -43,11 +43,8 @@ namespace Librainian.Collections.Extensions {
 
 	public static class CollectionExtensions {
 
-		public static void Add<T>(
-			[NotNull] this IProducerConsumerCollection<T> collection,
-			[CanBeNull]
-			T item
-		) =>
+		public static void Add<T>( [NotNull] this IProducerConsumerCollection<T> collection, [CanBeNull]
+		                           T item ) =>
 			collection.TryAdd( item );
 
 		/// <summary>
@@ -56,11 +53,8 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection"></param>
 		/// <param name="items"></param>
-		public static void AddRange<T>(
-			[NotNull] this IProducerConsumerCollection<T> collection,
-			[NotNull] [ItemCanBeNull]
-			IEnumerable<T> items
-		) =>
+		public static void AddRange<T>( [NotNull] this IProducerConsumerCollection<T> collection, [NotNull] [ItemCanBeNull]
+		                                IEnumerable<T> items ) =>
 			Parallel.ForEach( items.AsParallel(), CPU.AllExceptOne, obj => collection.TryAdd( obj ) );
 
 		/// <summary>
@@ -254,10 +248,8 @@ namespace Librainian.Collections.Extensions {
 		/// <returns>A dictionary of elements mapped to the number of times they appeared in <paramref name="values" />.</returns>
 		[NotNull]
 		[Pure]
-		public static IDictionary<T, Int32> CountInstances<T>(
-			[NotNull] [ItemNotNull]
-			this IEnumerable<T> values
-		) where T : notnull {
+		public static IDictionary<T, Int32> CountInstances<T>( [NotNull] [ItemNotNull]
+		                                                       this IEnumerable<T> values ) where T : notnull {
 			if ( values is null ) {
 				throw new ArgumentNullException( nameof( values ), "CountInstances called on a null IEnumerable<T>." );
 			}
@@ -367,12 +359,16 @@ namespace Librainian.Collections.Extensions {
 		/// <returns></returns>
 		[Pure]
 		[CanBeNull]
-		public static TValue GetOrAdd<TKey, TValue>(
-			[NotNull] this ConcurrentDictionary<TKey, TValue> dictionary,
-			[NotNull] TKey key,
-			[NotNull] Func<TKey, TValue> function,
-			out Boolean added
-		) {
+		public static TValue GetOrAdd<[NotNull]TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [NotNull] Func<TKey, TValue> function,
+		                                                      out Boolean added ) {
+			if ( dictionary == null ) {
+				throw new ArgumentNullException( nameof( dictionary ) );
+			}
+
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
+
 			if ( function is null ) {
 				throw new ArgumentNullException( nameof( function ) );
 			}
@@ -416,11 +412,8 @@ namespace Librainian.Collections.Extensions {
 		}
 
 		[Pure]
-		public static Int32 IndexOf<T>(
-			[NotNull] this T[] self,
-			[CanBeNull]
-			T item
-		) =>
+		public static Int32 IndexOf<T>( [NotNull] this T[] self, [CanBeNull]
+		                                T item ) =>
 			Array.IndexOf( self, item );
 
 		/// <summary></summary>
@@ -534,29 +527,21 @@ namespace Librainian.Collections.Extensions {
 		[Pure]
 		public static Boolean IsEmpty<T>( [NotNull] this IEnumerable<T> source ) => source.Any() != true;
 
-		[Pure]
-		public static Int64 LongSum( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
-		[Pure]
-		public static Int64 LongSum( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
-		[Pure]
-		public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
-		[Pure]
-		public static Int64 LongSum( [NotNull] this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-		[Pure]
-		public static Int64 SumLong( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
-		[Pure]
-		public static Int64 SumLong( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
-		[Pure]
-		public static Int64 SumLong( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
 
-		[Pure]
-		public static Int64 SumLong( [NotNull] this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
 		[CanBeNull]
 		[Pure]
@@ -797,11 +782,8 @@ namespace Librainian.Collections.Extensions {
 		}
 
 		[ItemCanBeNull]
-		public static IEnumerable<T> SideEffects<T>(
-			[NotNull] this IEnumerable<T> items,
-			[CanBeNull]
-			Action<T>? perfomAction
-		) {
+		public static IEnumerable<T> SideEffects<T>( [NotNull] this IEnumerable<T> items, [CanBeNull]
+		                                             Action<T>? perfomAction ) {
 			if ( items is null ) {
 				throw new ArgumentNullException( nameof( items ) );
 			}
@@ -822,10 +804,7 @@ namespace Librainian.Collections.Extensions {
 
 			var i = 0;
 
-			var splits = from item in list
-						 group item by ++i % parts
-						 into part
-						 select part;
+			var splits = list.GroupBy( item => ++i % parts ).Select( part => part );
 
 			return splits;
 		}
@@ -874,11 +853,8 @@ namespace Librainian.Collections.Extensions {
 		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		/// <exception cref="NotSupportedException"></exception>
-		public static Boolean TakeFirst<T>(
-			[NotNull] this IList<T> list,
-			[CanBeNull]
-			out T item
-		) {
+		public static Boolean TakeFirst<T>( [NotNull] this IList<T> list, [CanBeNull]
+		                                    out T item ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
@@ -924,11 +900,8 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="list"></param>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		public static Boolean TakeLast<T>(
-			[NotNull] this IList<T> list,
-			[CanBeNull]
-			out T item
-		) {
+		public static Boolean TakeLast<T>( [NotNull] this IList<T> list, [CanBeNull]
+		                                   out T item ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
@@ -980,6 +953,7 @@ namespace Librainian.Collections.Extensions {
 		public static List<TSource> ToListTrimExcess<TSource>( [NotNull] this IEnumerable<TSource> source ) {
 			var bob = new List<TSource>( source );
 			bob.TrimExcess();
+
 			return bob;
 		}
 
@@ -1002,7 +976,7 @@ namespace Librainian.Collections.Extensions {
 
 		[NotNull]
 		[Pure]
-		public static List<T> SortList<T>( [NotNull] this IEnumerable<T> values ) {
+		public static List<T> ToSortedList<T>( [NotNull] this IEnumerable<T> values ) {
 			var list = new List<T>( values );
 			list.Sort();
 
@@ -1031,11 +1005,8 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="item"> </param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean TryTake<T>(
-			[NotNull] this ConcurrentQueue<T> queue,
-			[CanBeNull]
-			out T item
-		) {
+		public static Boolean TryTake<T>( [NotNull] this ConcurrentQueue<T> queue, [CanBeNull]
+		                                  out T item ) {
 			if ( queue is null ) {
 				throw new ArgumentNullException( nameof( queue ) );
 			}
@@ -1053,11 +1024,8 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="item"> </param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean TryTake<T>(
-			[NotNull] this ConcurrentStack<T> stack,
-			[CanBeNull]
-			out T item
-		) {
+		public static Boolean TryTake<T>( [NotNull] this ConcurrentStack<T> stack, [CanBeNull]
+		                                  out T item ) {
 			if ( null == stack ) {
 				throw new ArgumentNullException( nameof( stack ) );
 			}
@@ -1065,20 +1033,15 @@ namespace Librainian.Collections.Extensions {
 			return stack.TryPop( out item! );
 		}
 
-		[Pure]
-		public static UInt64 ULongSum( [NotNull] this IEnumerable<SByte> collection ) => ( UInt64 )( ( SByte[] )collection ).SumS();
+		[Pure] public static UInt64 ULongSum( [NotNull] this IEnumerable<SByte> collection ) => ( UInt64 )( ( SByte[] )collection ).SumS();
 
-		[Pure]
-		public static UInt64 ULongSum( [NotNull] this IEnumerable<Byte> collection ) => ( ( Byte[] )collection ).SumS();
+		[Pure] public static UInt64 ULongSum( [NotNull] this IEnumerable<Byte> collection ) => ( ( Byte[] )collection ).SumS();
 
-		[Pure]
-		public static UInt64 ULongSum( [NotNull] this IEnumerable<Int16> collection ) => ( UInt64 )( ( Int16[] )collection ).SumS();
+		[Pure] public static UInt64 ULongSum( [NotNull] this IEnumerable<Int16> collection ) => ( UInt64 )( ( Int16[] )collection ).SumS();
 
-		[Pure]
-		public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 )( ( Int32[] )collection ).SumS();
+		[Pure] public static UInt64 ULongSum( [NotNull] this IEnumerable<Int32> collection ) => ( UInt64 )( ( Int32[] )collection ).SumS();
 
-		[Pure]
-		public static UInt64 ULongSum( [NotNull] this IEnumerable<Int64> collection ) => ( UInt64 )( ( Int64[] )collection ).SumS();
+		[Pure] public static UInt64 ULongSum( [NotNull] this IEnumerable<Int64> collection ) => ( UInt64 )( ( Int64[] )collection ).SumS();
 
 		/// <summary>why?</summary>
 		/// <typeparam name="TKey"></typeparam>
@@ -1086,12 +1049,8 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="dictionary"></param>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
-		public static void Update<TKey, TValue>(
-			[NotNull] this ConcurrentDictionary<TKey, TValue> dictionary,
-			[NotNull] TKey key,
-			[CanBeNull]
-			TValue value
-		) {
+		public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [CanBeNull]
+		                                         TValue value ) {
 			if ( dictionary is null ) {
 				throw new ArgumentNullException( nameof( dictionary ) );
 			}

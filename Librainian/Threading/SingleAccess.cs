@@ -28,13 +28,12 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Threading;
+	using FileSystem;
+	using FileSystem.Pri.LongPath;
 	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
-	using OperatingSystem.FileSystem;
-	using OperatingSystem.FileSystem.Pri.LongPath;
 	using Persistence;
-	using Security;
 	using Utilities;
 
 	/// <summary>
@@ -122,8 +121,7 @@ namespace Librainian.Threading {
 				timeout ??= Minutes.One;
 
 				this.Snagged = false;
-				var hex = self.Serializer()?.ToHexString();
-				this.Semaphore = new Semaphore( 1, 1, hex ); //what happens on a null?
+				this.Semaphore = new Semaphore( 1, 1, self.ToJSON() ); //what happens on a null?
 				this.Snagged = this.Semaphore.WaitOne( timeout.Value );
 			}
 			catch ( Exception exception ) {

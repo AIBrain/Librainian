@@ -34,11 +34,12 @@ namespace Librainian.Persistence {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
+	using Measurement.Time;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
 
 	/// <summary>Persist a document to and from a JSON formatted text document.</summary>
 	/// TODO Needs testing.
@@ -58,12 +59,15 @@ namespace Librainian.Persistence {
 		public JSONFile() { }
 
 		[NotNull]
-		public IEnumerable<String?>? AllKeys =>
-			this.Sections.SelectMany( section => {
-				var keys = this.Data[section]?.Keys;
-
-				return keys!;
-			} );
+		public IEnumerable<String?> AllKeys {
+			get {
+				foreach ( var section in this.Sections ) {
+					foreach ( var key in this.Data[section].Keys ) {
+						yield return key;
+					}
+				}
+			}
+		}
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -120,7 +124,7 @@ namespace Librainian.Persistence {
 					return default;
 				}
 
-				return this.Data[section].TryGetValue( key, out var value ) ? value : null;
+				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
 			}
 
 			[DebuggerStepThrough]
@@ -146,41 +150,45 @@ namespace Librainian.Persistence {
 		}
 
 		[NotNull]
-		public Task<Boolean> Read( CancellationToken cancellationToken = default ) {
+		public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
 			var document = this.Document;
 
-			return Task.Run( () => {
-				if ( !document.Exists() ) {
+			if ( !document.Exists() ) {
+				return false;
+			}
+
+			try {
+				var p = await document.LoadJSON<ConcurrentDictionary<String, ConcurrentDictionary<String, String>>>( null, null );
+
+				if ( !p.status.IsGood() ) {
 					return false;
 				}
 
-				try {
-					var data = document.LoadJSON<ConcurrentDictionary<String, ConcurrentDictionary<String, String>>>();
+				var data = p.obj;
+				var result = Parallel.ForEach( data.Keys.AsParallel(),
+					section => {
+						if ( data != null ) {
+							Parallel.ForEach( data[section].Keys.AsParallel().AsUnordered(),
+								key => this.Add( section, new KeyValuePair<String, String>( key, data[section][key] ) ) );
+						}
+					} );
 
-					if ( data == null ) {
-						return false;
-					}
+				return result.IsCompleted;
+			}
+			catch ( JsonException exception ) {
+				exception.Log();
+			}
+			catch ( IOException exception ) {
+				//file in use by another app
+				exception.Log();
+			}
+			catch ( OutOfMemoryException exception ) {
+				//file is huge
+				exception.Log();
+			}
 
-					var result = Parallel.ForEach( data.Keys.AsParallel(),
-												   section => Parallel.ForEach( data[section].Keys.AsParallel().AsUnordered(),
-																				key => this.Add( section, new KeyValuePair<String, String>( key, data[section][key] ) ) ) );
+			return false;
 
-					return result.IsCompleted;
-				}
-				catch ( JsonException exception ) {
-					exception.Log();
-				}
-				catch ( IOException exception ) {
-					//file in use by another app
-					exception.Log();
-				}
-				catch ( OutOfMemoryException exception ) {
-					//file is huge
-					exception.Log();
-				}
-
-				return false;
-			}, cancellationToken );
 		}
 
 		/// <summary>Returns a string that represents the current object.</summary>
@@ -207,23 +215,20 @@ namespace Librainian.Persistence {
 				return false;
 			}
 
-			return this.Data[section].TryRemove( key, out var value );
+			return this.Data[ section ].TryRemove( key, out var value );
 		}
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
-		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public Task<Boolean> Write( CancellationToken cancellationToken = default ) {
+		public async Task<Boolean> Write( CancellationToken token  ) {
 			var document = this.Document;
 
-			return Task.Run( () => {
-				if ( document.Exists() ) {
-					document.Delete();
-				}
+			await document.TryDeleting( Seconds.One, token ).ConfigureAwait(false);
 
-				return this.Data.TrySave( document, true, Formatting.Indented );
-			}, cancellationToken );
+			document.AppendText( this.Data.ToJSON( Formatting.Indented ) );
+
+			return true;
 		}
 
 		/// <summary>(Trims whitespaces from section and key)</summary>
@@ -249,7 +254,7 @@ namespace Librainian.Persistence {
 			}
 
 			try {
-				this.Data[section][pair.Key.Trim()] = pair.Value;
+				this.Data[ section ][ pair.Key.Trim() ] = pair.Value;
 
 				return true;
 			}

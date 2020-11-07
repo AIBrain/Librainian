@@ -26,9 +26,9 @@ namespace Librainian.Collections {
 
 	using System;
 	using System.Collections.Generic;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
 	using Persistence;
 
 	[JsonObject]

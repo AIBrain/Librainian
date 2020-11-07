@@ -33,7 +33,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
-	using Measurement.Time;
+	using Librainian.Measurement.Time;
 	using Newtonsoft.Json;
 	using Threading;
 	using Utilities;

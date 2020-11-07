@@ -25,15 +25,30 @@
 #nullable enable
 
 namespace Librainian.Logging {
-
 	using System;
 	using System.Diagnostics;
 	using System.Drawing;
+	using System.Threading;
 	using JetBrains.Annotations;
 	using Parsing;
 	using Persistence;
 
 	public static class Logging {
+
+		[DebuggerStepThrough]
+		[Conditional( "DEBUG" )]
+		public static void BreakIfDebug<T>( [CanBeNull] this T _, [CanBeNull] String? breakReason = null ) {
+			if ( !Debugger.IsAttached ) {
+				return;
+			}
+
+			if ( breakReason != null ) {
+				System.Diagnostics.Debug.WriteLine( $"Break reason: {breakReason}" );
+			}
+
+			Debugger.Break();
+		}
+
 
 		/// <summary>
 		///     <para>Prints the <paramref name="message" /></para>
@@ -137,7 +152,8 @@ namespace Librainian.Logging {
 				breakinto = true;
 			}
 
-			var log = exception.ToStringDemystified().Log( breakinto );
+			//var _ = exception.ToStringDemystified().Log( breakinto );
+			exception.ToString().Log( breakinto );
 
 			return exception;
 		}
@@ -171,7 +187,6 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		[CanBeNull]
 		public static T Log<T, M>( [CanBeNull] this T self, [CanBeNull] M more ) {
-			//Console.Beep( 14000, 100 );
 			var o = $"{self.ToJSON()}";
 
 			if ( more is null ) {
@@ -199,9 +214,37 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void Verbose( [NotNull] this String message ) => System.Diagnostics.Trace.WriteLine( message );
 
-		[Conditional( "VERBOSE" )]
+		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
-		public static void Trace( [NotNull] this String message ) => System.Diagnostics.Trace.WriteLine( message );
+		public static void Trace( [NotNull] this String message ) => System.Diagnostics.Trace.Write( message );
+
+		[Conditional( "TRACE" )]
+		[DebuggerStepThrough]
+		public static void TraceLine( [NotNull] this String message ) => System.Diagnostics.Trace.WriteLine( message );
+
+		[Conditional( "DEBUG" )]
+		[DebuggerStepThrough]
+		public static void TimeDebug( [NotNull] this String message, Boolean newline = true, Boolean showThread = false ) {
+			if ( newline ) {
+				var m = showThread ? $"[{DateTime.UtcNow:s}].({Thread.CurrentThread.ManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
+				System.Diagnostics.Debug.WriteLine( m );
+			}
+			else {
+				System.Diagnostics.Debug.Write( message );
+			}
+		}
+		
+		[Conditional( "DEBUG" )]
+		[DebuggerStepThrough]
+		public static void TraceWithTime( [NotNull] this String message, Boolean newline = true, Boolean showThread = false ) {
+			if ( newline ) {
+				var m = showThread ? $"[{DateTime.UtcNow:s}].({Thread.CurrentThread.ManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
+				m.TraceLine();
+			}
+			else {
+				message.Trace();
+			}
+		}
 
 	}
 

@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NotAllowedException.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "NotAllowedException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 #nullable enable
 
@@ -29,16 +29,17 @@ namespace Librainian.Exceptions.Warnings {
 	using System;
 	using System.Runtime.Serialization;
 	using JetBrains.Annotations;
-	using Parsing;
 
 	/// <summary><see cref="Warning" />: What the code just tried to do is <see cref="NotAllowedException" />.</summary>
 	[Serializable]
 	public class NotAllowedException : Warning {
 
 		public NotAllowedException() : this( nameof( NotAllowedException ) ) { }
-		public NotAllowedException( TrimmedString message ) : base( message ) { }
 
-		public NotAllowedException( TrimmedString message, [CanBeNull] Exception inner ) : base( message, inner ) { }
+		public NotAllowedException( String message ) : base( message ) { }
+
+		public NotAllowedException( String message, [CanBeNull]
+		                            Exception inner ) : base( message, inner ) { }
 
 		protected NotAllowedException( SerializationInfo serializationInfo, StreamingContext streamingContext ) {
 			this.SerializationInfo = serializationInfo;

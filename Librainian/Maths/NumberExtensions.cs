@@ -34,8 +34,8 @@ namespace Librainian.Maths {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using JetBrains.Annotations;
+	using Librainian.Measurement.Time;
 	using Logging;
-	using Measurement.Time;
 	using Numbers;
 	using Rationals;
 

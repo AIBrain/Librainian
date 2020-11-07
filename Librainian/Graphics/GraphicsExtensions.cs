@@ -30,11 +30,11 @@ namespace Librainian.Graphics {
 	using System.Runtime.Serialization.Formatters.Binary;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using Imaging;
 	using JetBrains.Annotations;
 	using Moving;
 	using OperatingSystem;
-	using OperatingSystem.FileSystem;
 
 	public static class GraphicsExtensions {
 
@@ -82,8 +82,8 @@ namespace Librainian.Graphics {
 				for ( var i = 1; i < 256; i++ ) {
 					var iArrayValue = i * ( gamma + 128 );
 
-					if ( iArrayValue > 65535 ) {
-						iArrayValue = 65535;
+					if ( iArrayValue > 0xffff ) {
+						iArrayValue = 0xffff;
 					}
 
 					ramp.Red[i] = ramp.Blue[i] = ramp.Green[i] = ( UInt16 )iArrayValue;

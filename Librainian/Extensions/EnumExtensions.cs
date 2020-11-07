@@ -123,7 +123,7 @@ namespace Librainian.Extensions {
 				throw new ArgumentNullException( nameof( value ) );
 			}
 
-			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
+			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item! );
 		}
 
 		/// <summary>Gets all values for an enum type.</summary>
@@ -147,7 +147,7 @@ namespace Librainian.Extensions {
 			[CanBeNull]
 			this T e
 		) where T : IConvertible {
-			if ( !( e is Enum ) ) {
+			if ( e is not Enum ) {
 				return default;
 			}
 
@@ -159,12 +159,8 @@ namespace Librainian.Extensions {
 				}
 
 				var ename = type.GetEnumName( val );
-
-				if ( ename is null ) {
-					continue;
-				}
-
-				var memInfo = type.GetMember( ename );
+			
+				var memInfo = type.GetMember( ename! );
 
 				if ( memInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
 					return descriptionAttribute.Description;
@@ -179,7 +175,7 @@ namespace Librainian.Extensions {
 			[CanBeNull]
 			this T _
 		) =>
-			Enum.GetValues( typeof( T ) ).Cast<T>();
+			Enum.GetValues( typeof( T ) ).Cast<T>()!;
 
 	}
 

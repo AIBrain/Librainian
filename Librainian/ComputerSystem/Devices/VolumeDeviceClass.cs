@@ -27,9 +27,9 @@ namespace Librainian.ComputerSystem.Devices {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using OperatingSystem;
-	using OperatingSystem.FileSystem;
 
 	/// <summary>The device class for volume devices.</summary>
 	/// <remarks>UsbEject version 1.0 March 2006</remarks>

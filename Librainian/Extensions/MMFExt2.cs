@@ -28,7 +28,7 @@ namespace Librainian.Extensions {
 	using System.IO;
 	using System.IO.MemoryMappedFiles;
 	using JetBrains.Annotations;
-	using FileInfo = OperatingSystem.FileSystem.Pri.LongPath.FileInfo;
+	using FileInfo = FileSystem.Pri.LongPath.FileInfo;
 
 	public static class MmfExt2 {
 

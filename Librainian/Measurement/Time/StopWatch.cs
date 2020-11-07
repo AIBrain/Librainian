@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time {
 	/// <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
-	[Obsolete( "Not really obsolete, but BUGS MIGHT HAVE BEEN INTRODUCED." )]
+	[Obsolete( "Not really obsolete, but bugs might have been introduced." )]
 	public struct StopWatch : IComparable<StopWatch>, IComparable<TimeSpan> {
 
 		[JsonProperty]

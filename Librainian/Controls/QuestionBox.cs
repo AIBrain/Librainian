@@ -66,12 +66,13 @@ namespace Librainian.Controls {
 
 			void AddCancelButton() {
 				var cancelButton = new Button {
-					Text = "Cancel", Dock = DockStyle.Right
-				};
-				cancelButton.MouseClick += ( sender, args ) => {
-					this.Response = null;
-					this.DialogResult = DialogResult.Cancel;
-					this.Close();
+					Text = "Cancel",
+					Dock = DockStyle.Right,
+					MouseClick += ( sender, args ) => {
+						this.Response = null;
+						this.DialogResult = DialogResult.Cancel;
+						this.Close();
+					}
 				};
 
 				flow.Controls.Add( cancelButton );

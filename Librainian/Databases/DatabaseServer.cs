@@ -366,7 +366,7 @@ namespace Librainian.Databases {
 
 				using var run = command.PopulateParameters( parameters ).ExecuteScalarAsync( this.Token );
 
-				if ( run == null ) {
+				if ( run is null ) {
 					throw new InvalidOperationException(
 						$"Exception calling {nameof( command.ExecuteScalarAsync ).DoubleQuote()} on command {command.CommandText.DoubleQuote()}." );
 				}

@@ -20,26 +20,28 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ThreadingExtensions.cs" last formatted on 2020-08-14 at 8:47 PM.
+// File "ThreadingExtensions.cs" last formatted on 2020-10-12 at 4:26 PM.
+
+#nullable enable
 
 namespace Librainian.Threading {
-
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Reflection;
-	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
+	using Logging;
+	using Maths;
 
 	public static class ThreadingExtensions {
-
+		
 		public static Boolean IsRunningFromNUnit { get; } =
-			AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName.ToLowerInvariant().StartsWith( "nunit.framework" ) );
+			AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName?.ToLowerInvariant().StartsWith( "nunit.framework" ) == true );
 
 		/// <summary>Only allow a delegate to run X times.</summary>
 		/// <param name="action">      </param>
@@ -48,12 +50,12 @@ namespace Librainian.Threading {
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
 		[NotNull]
-		public static Action ActionBarrier( [CanBeNull] this Action action, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier( [NotNull] this Action action, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
 				if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-					action?.Invoke();
+					action();
 				}
 			};
 		}
@@ -66,12 +68,12 @@ namespace Librainian.Threading {
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
 		[NotNull]
-		public static Action ActionBarrier<T1>( [CanBeNull] this Action<T1> action, [CanBeNull] T1 parameter, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier<T>( [NotNull] this Action<T> action, [CanBeNull] T parameter, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
 				if ( Interlocked.Decrement( ref context.CallsAllowed ) >= 0 ) {
-					action?.Invoke( parameter );
+					action( parameter );
 				}
 			};
 		}
@@ -100,86 +102,48 @@ namespace Librainian.Threading {
 				return 0;
 			}
 
-			if ( Equals( obj, default ) ) {
-				return 0;
-			}
+			var sizeInBytes = obj.GetSizeOfPrimitive();
 
-			if ( obj.GetSizeOfPrimitives( out var sizeInBytes ) ) {
+			if ( sizeInBytes.Any() ) {
 				return sizeInBytes;
 			}
 
 			var fields = obj.GetType().GetFields( BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance );
 
-			foreach ( var field in fields ) {
-				//UInt64 localsize;
-				//if ( GetSizeOfPrimitives( field.FieldType, out localsize ) ) {
-				//    sizeInBytes += localsize;
-				//    continue;
-				//}
-				//if ( field.is ) {
-				//TODO check for array in GetValue
-				//}
-				var value = field.GetValue( obj );
-
-				// http://rogeralsing.com/2008/02/28/linq-expressions-creating-objects/
-				//// Make a NewExpression that calls the ctor with the args we just created
-				//NewExpression newExp = Expression.New( ctor, argsExp );
-
-				//// Create a lambda with the New expression as body and our param object[] as arg
-				//LambdaExpression lambda = Expression.Lambda( typeof( ObjectActivator ), newExp, param );
-
-				//// Compile it
-				//ObjectActivator compiled = ( ObjectActivator )lambda.Compile();
-
-				if ( field.FieldType.IsSubclassOf( typeof( IList ) ) ) {
-					if ( !( value is IList list ) ) {
-						continue;
-					}
-
-					sizeInBytes = list.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
-
-					continue;
-				}
-
-				if ( field.FieldType.IsSubclassOf( typeof( IDictionary ) ) ) {
-					if ( value is IDictionary dictionary ) {
-						foreach ( var key in dictionary.Keys ) {
-							sizeInBytes += key.CalcSizeInBytes();
-							sizeInBytes += dictionary[key].CalcSizeInBytes();
+			foreach ( var value in from field in fields select field.GetValue( obj ) ) {
+				switch ( value ) {
+					case Array array:
+						foreach ( var o in array ) {
+							sizeInBytes += CalcSizeInBytes( o );
 						}
-					}
+						continue;
+					case IList list:
+						foreach ( var o in list ) {
+							sizeInBytes += CalcSizeInBytes( o );
+						}
 
-					continue;
+						continue;
+					case IDictionary dictionary:
+						foreach ( DictionaryEntry o in dictionary ) {
+							sizeInBytes += CalcSizeInBytes( o.Key );
+							sizeInBytes += CalcSizeInBytes( o.Value );
+						}
+
+						continue;
+					case IEnumerable enumerable:
+						foreach ( var o in enumerable ) {
+							sizeInBytes += CalcSizeInBytes( o );
+						}
+
+						continue;
+					default:
+						sizeInBytes += value.CalcSizeInBytes();
+						break;
 				}
-
-				if ( field.FieldType.IsSubclassOf( typeof( IEnumerable ) ) ) {
-					if ( value is IEnumerable enumerable ) {
-						sizeInBytes = enumerable.Cast<Object>().Aggregate( sizeInBytes, ( current, o ) => current + o.CalcSizeInBytes() );
-					}
-
-					continue;
-				}
-
-				if ( field.FieldType.IsArray ) {
-					if ( field.GetValue( obj ) is Array bob ) {
-						sizeInBytes += bob.Cast<Object>().Aggregate( 0UL, ( current, o ) => current + o.CalcSizeInBytes() );
-					}
-
-					continue;
-				}
-
-				sizeInBytes += value.CalcSizeInBytes();
 			}
 
 			return sizeInBytes;
 		}
-
-		/// <summary>
-		///     Has attributes <see cref="MethodImplOptions.NoInlining" /> and <see cref="MethodImplOptions.NoOptimization" />
-		///     .
-		/// </summary>
-		[MethodImpl( MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization )]
-		public static void DoNothing() { }
 
 		/// <summary>
 		///     <para>
@@ -200,87 +164,25 @@ namespace Librainian.Threading {
 			return maxPortThreads;
 		}
 
-		public static Boolean GetSizeOfPrimitives<T>( [CanBeNull] this T obj, out UInt64 total ) {
-			if ( obj is String s ) {
-				total = ( UInt64 )s.Length;
-
-				return true;
-			}
-
-			var type = typeof( T );
-
-			if ( !type.IsPrimitive ) {
-				total = 0; //TODO recurse all fields
-
-				return default;
-			}
-
-			switch ( obj ) {
-				case UInt32 _:
-					total = sizeof( UInt32 );
-
-					return true;
-
-				case Int32 _:
-					total = sizeof( Int32 );
-
-					return true;
-
-				case UInt64 _:
-					total = sizeof( UInt64 );
-
-					return true;
-
-				case Int64 _:
-					total = sizeof( Int64 );
-
-					return true;
-
-				case Decimal _:
-					total = sizeof( Decimal );
-
-					return true;
-
-				case Double _:
-					total = sizeof( Double );
-
-					return true;
-
-				case UInt16 _:
-					total = sizeof( UInt16 );
-
-					return true;
-
-				case Byte _:
-					total = sizeof( Byte );
-
-					return true;
-
-				case SByte _:
-					total = sizeof( SByte );
-
-					return true;
-
-				case Int16 _:
-					total = sizeof( Int16 );
-
-					return true;
-
-				case Single _:
-					total = sizeof( Single );
-
-					return true;
-
-				case Boolean _:
-					total = sizeof( Boolean );
-
-					return true;
-			}
-
-			total = 0;
-
-			return default; //unknown type
-		}
+		public static UInt64 GetSizeOfPrimitive<T>( [CanBeNull] this T obj ) =>
+			( UInt64 )( obj switch {
+				Boolean => sizeof( Boolean ),
+				Byte => sizeof( Byte ),
+				SByte => sizeof( SByte ),
+				Char => sizeof( Char ),
+				Int16 => sizeof( Int16 ),
+				UInt16 => sizeof( UInt16 ),
+				Int32 => sizeof( Int32 ),
+				UInt32 => sizeof( UInt32 ),
+				Int64 => sizeof( Int64 ),
+				UInt64 => sizeof( UInt64 ),
+				Single => sizeof( Single ),
+				Double => sizeof( Double ),
+				Decimal => sizeof( Decimal ),
+				String s => sizeof( Char ) * s.Length,
+				{ } => sizeof( Int32 ),	//BUG 4 ?? 8. sizeof(Pointer)
+				_ => 0
+			} );
 
 		/// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
 		/// <typeparam name="T"></typeparam>
@@ -291,49 +193,52 @@ namespace Librainian.Threading {
 		/// <summary>boxed returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static Int32 MarshalSizeOf( [NotNull] this Object obj ) {
-			if ( obj is null ) {
-				throw new ArgumentNullException( nameof( obj ) );
-			}
-
-			return Marshal.SizeOf( obj );
-		}
+		public static Int32 MarshalSizeOf( [NotNull] this Object obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>generic returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static Int32 MarshalSizeOf<T>( [CanBeNull] this T obj ) => Marshal.SizeOf( obj );
+		public static Int32 MarshalSizeOf<T>( [NotNull] this T obj ) => Marshal.SizeOf( obj );
 
-		/// <summary>Repeat the <paramref name="action" /><paramref name="times" /> .</summary>
+		/// <summary>Repeat the <paramref name="action" /><paramref name="times" />.
+		/// <para>Swallows <see cref="Exception"/>.</para>
+		/// </summary>
 		/// <param name="times"> </param>
 		/// <param name="action"></param>
-		public static void Repeat( this Int32 times, [CanBeNull] Action action ) {
-			if ( action is null ) {
-				return;
-			}
-
+		public static void Repeat( this Int32 times, [NotNull] Action action ) {
 			for ( var i = 0; i < Math.Abs( times ); i++ ) {
+				try {
+					action();
+				}
+				catch ( Exception ) { }
+			}
+		}
+
+		/// <summary>
+		/// <para>Swallows <see cref="Exception"/>.</para>
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="times"></param>
+		public static void Repeat( [NotNull] this Action action, Int32 times ) {
+			for ( var i = 0; i < Math.Abs( times ); i++ ) {
+				try {
+					action();
+				}
+				catch ( Exception ) { }
+			}
+		}
+
+		/// <summary>
+		/// <para>Swallows <see cref="Exception"/>.</para>
+		/// </summary>
+		/// <param name="action"></param>
+		/// <param name="counter"></param>
+		public static void RepeatAction( [NotNull] this Action action, Int32 counter ) => Parallel.For( 1, counter, i => {
+			try {
 				action();
 			}
-		}
-
-		public static void Repeat( [CanBeNull] this Action action, Int32 times ) {
-			if ( action is null ) {
-				return;
-			}
-
-			for ( var i = 0; i < Math.Abs( times ); i++ ) {
-				action();
-			}
-		}
-
-		public static void RepeatAction( this Int32 counter, [CanBeNull] Action action ) {
-			if ( null == action ) {
-				return;
-			}
-
-			Parallel.For( 1, counter, i => action() );
-		}
+			catch ( Exception ) { }
+		} );
 
 		/// <summary>
 		///     Run each <see cref="Action" />, optionally in parallel (defaults to true), optionally printing feedback
@@ -344,12 +249,8 @@ namespace Librainian.Threading {
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
-		public static Boolean Run(
-			[NotNull] this IEnumerable<Action> actions,
-			[CanBeNull] Action<String> output = null,
-			[CanBeNull] String? description = null,
-			Boolean inParallel = true
-		) {
+		public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String>? output = null, [CanBeNull] String? description = null,
+			Boolean inParallel = true ) {
 			if ( actions is null ) {
 				throw new ArgumentNullException( nameof( actions ) );
 			}
@@ -359,13 +260,13 @@ namespace Librainian.Threading {
 			}
 
 			if ( inParallel ) {
-				var result = Parallel.ForEach( actions, action => action?.Invoke() );
+				var result = Parallel.ForEach( actions.AsParallel(), action => action() );
 
 				return result.IsCompleted;
 			}
 
 			foreach ( var action in actions ) {
-				action?.Invoke();
+				action();
 			}
 
 			return true;
@@ -377,12 +278,8 @@ namespace Librainian.Threading {
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
-		public static Boolean Run(
-			[NotNull] this IEnumerable<Func<Boolean>> functions,
-			[CanBeNull] Action<String> output = null,
-			[CanBeNull] String? description = null,
-			Boolean inParallel = true
-		) {
+		public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String>? output = null, [CanBeNull] String? description = null,
+			Boolean inParallel = true ) {
 			if ( functions is null ) {
 				throw new ArgumentNullException( nameof( functions ) );
 			}
@@ -392,20 +289,31 @@ namespace Librainian.Threading {
 			}
 
 			if ( inParallel ) {
-				var result = Parallel.ForEach( functions, func => func?.Invoke() );
+				var result = Parallel.ForEach( functions.AsParallel(), function => {
+					try {
+						function();
+					}
+					catch ( Exception exception ) {
+						exception.Log();
+					}
+				} );
 
 				return result.IsCompleted;
 			}
 
 			foreach ( var function in functions ) {
-				function?.Invoke();
+				try {
+					function();
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
 			}
 
 			return true;
 		}
 
 		public sealed class ContextCallOnlyXTimes {
-
 			public Int64 CallsAllowed;
 
 			public ContextCallOnlyXTimes( Int64 times ) {
@@ -415,7 +323,6 @@ namespace Librainian.Threading {
 
 				this.CallsAllowed = times;
 			}
-
 		}
 
 		/*
@@ -456,7 +363,5 @@ namespace Librainian.Threading {
 					next.Spawn();
 				}
 		*/
-
 	}
-
 }

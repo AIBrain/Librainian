@@ -20,25 +20,29 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "InvalidFormatException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "InvalidFormatException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
 	using System;
 	using JetBrains.Annotations;
-	using Newtonsoft.Json;
 
 	[Serializable]
-	[JsonObject]
 	public class InvalidFormatException : Exception {
 
 		private InvalidFormatException() { }
 
-		public InvalidFormatException( [CanBeNull] String? message ) : base( message ) { }
+		public InvalidFormatException( [CanBeNull]
+		                               String? message ) : base( message ) { }
 
-		public InvalidFormatException( [CanBeNull] String? message, [CanBeNull] String? paramName ) : base( message ) => this.Parameter = paramName;
+		public InvalidFormatException( [CanBeNull]
+		                               String? message, [CanBeNull]
+		                               String? paramName ) : base( message ) =>
+			this.Parameter = paramName;
 
-		public InvalidFormatException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) { }
+		public InvalidFormatException( [CanBeNull]
+		                               String? message, [CanBeNull]
+		                               Exception inner ) : base( message, inner ) { }
 
 		public String Parameter { get; }
 

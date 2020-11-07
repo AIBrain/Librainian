@@ -36,9 +36,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public static Year Zero { get; } = new Year( 0 );
 
-		public Int32 MaxValue { get; }
+		public Int32 Maximum { get; }
 
-		public Int32 MinValue { get; }
+		public Int32 Minimum { get; }
 
 		[JsonProperty]
 		public BigInteger Value { get; }

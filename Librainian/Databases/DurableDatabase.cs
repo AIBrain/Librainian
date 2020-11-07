@@ -20,12 +20,11 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DurableDatabase.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "DurableDatabase.cs" last formatted on 2020-09-11 at 12:34 PM.
 
 #nullable enable
 
 namespace Librainian.Databases {
-
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
@@ -45,6 +44,7 @@ namespace Librainian.Databases {
 		/// <param name="connectionString"></param>
 		/// <param name="retries">         </param>
 		/// <exception cref="InvalidOperationException"></exception>
+		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.</remarks>
 		public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
@@ -54,8 +54,7 @@ namespace Librainian.Databases {
 			this.ConnectionString = connectionString;
 
 			this.SqlConnections = new ThreadLocal<SqlConnection>( () => {
-				var connection = new SqlConnection( this.ConnectionString );
-				connection.StateChange += this.SqlConnection_StateChange;
+				var connection = new SqlConnection( this.ConnectionString ) {StateChange += this.SqlConnection_StateChange};
 
 				return connection;
 			}, true );
@@ -69,13 +68,11 @@ namespace Librainian.Databases {
 			}
 		}
 
-		[NotNull]
-		private String ConnectionString { get; }
+		[NotNull] private String ConnectionString { get; }
 
 		private UInt16 Retries { get; }
 
-		[NotNull]
-		private ThreadLocal<SqlConnection> SqlConnections { get; }
+		[NotNull] private ThreadLocal<SqlConnection> SqlConnections { get; }
 
 		public CancellationTokenSource CancelConnection { get; } = new CancellationTokenSource();
 
@@ -100,7 +97,8 @@ namespace Librainian.Databases {
 		/// <summary>Return true if connected.</summary>
 		/// <param name="sender"></param>
 		/// <returns></returns>
-		private Boolean ReOpenConnection( [CanBeNull] Object? sender ) {
+		private Boolean ReOpenConnection( [CanBeNull]
+			Object? sender ) {
 			if ( this.CancelConnection.IsCancellationRequested ) {
 				return default;
 			}
@@ -136,7 +134,8 @@ namespace Librainian.Databases {
 			return default;
 		}
 
-		private void SqlConnection_StateChange( [CanBeNull] Object? sender, [NotNull] StateChangeEventArgs e ) {
+		private void SqlConnection_StateChange( [CanBeNull]
+			Object? sender, [NotNull] StateChangeEventArgs e ) {
 			switch ( e.CurrentState ) {
 				case ConnectionState.Closed:
 					this.ReOpenConnection( sender );
@@ -214,7 +213,8 @@ namespace Librainian.Databases {
 
 		/// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
 		/// <returns></returns>
-		public Int32? ExecuteNonQuery( [NotNull] String query, [CanBeNull] params SqlParameter[]? parameters ) {
+		public Int32? ExecuteNonQuery( [NotNull] String query, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -243,7 +243,8 @@ namespace Librainian.Databases {
 			return default;
 		}
 
-		public Int32? ExecuteNonQuery( [NotNull] String query, Int32 retries, [CanBeNull] params SqlParameter[]? parameters ) {
+		public Int32? ExecuteNonQuery( [NotNull] String query, Int32 retries, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -309,7 +310,8 @@ namespace Librainian.Databases {
 		}
 
 		[ItemCanBeNull]
-		public async Task<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[]? parameters ) {
+		public async Task<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -344,7 +346,8 @@ namespace Librainian.Databases {
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		public Boolean ExecuteReader( [NotNull] String query, CommandType commandType, [NotNull] out DataTable table, [CanBeNull] params SqlParameter[]? parameters ) {
+		public Boolean ExecuteReader( [NotNull] String query, CommandType commandType, [NotNull] out DataTable table, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -389,7 +392,8 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
 		[NotNull]
-		public DataTable ExecuteReader( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[]? parameters ) {
+		public DataTable ExecuteReader( [NotNull] String query, CommandType commandType, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -432,7 +436,9 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public async Task<DataTableReader> ExecuteReaderAsyncDataReader( [CanBeNull] String? query, CommandType commandType, [CanBeNull] params SqlParameter[]? parameters ) {
+		public async Task<DataTableReader> ExecuteReaderAsyncDataReader( [CanBeNull]
+			String? query, CommandType commandType, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -472,7 +478,8 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
 		[ItemNotNull]
-		public async Task<DataTable> ExecuteReaderDataTableAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[]? parameters ) {
+		public async Task<DataTable> ExecuteReaderDataTableAsync( [NotNull] String query, CommandType commandType, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			var table = new DataTable();
 
 			try {
@@ -518,7 +525,8 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		public (Status status, TResult result) ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter[]? parameters ) {
+		public (Status status, TResult result) ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
@@ -561,11 +569,8 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>(
-			[NotNull] String query,
-			CommandType commandType,
-			[CanBeNull] params SqlParameter[]? parameters
-		) {
+		public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
@@ -627,7 +632,8 @@ namespace Librainian.Databases {
 		/// <returns></returns>
 		[CanBeNull]
 		[ItemCanBeNull]
-		public IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, [CanBeNull] params SqlParameter[]? parameters ) {
+		public IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, [CanBeNull]
+			params SqlParameter[]? parameters ) {
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = CommandType.StoredProcedure
@@ -657,5 +663,4 @@ namespace Librainian.Databases {
 		}
 
 	}
-
 }

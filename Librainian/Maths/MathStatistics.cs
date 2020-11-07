@@ -28,7 +28,7 @@ namespace Librainian.Maths {
 	using System.Collections.Generic;
 	using System.Linq;
 	using JetBrains.Annotations;
-	using Measurement.Time;
+	using Librainian.Measurement.Time;
 	using Rationals;
 
 	public static class MathStatistics {

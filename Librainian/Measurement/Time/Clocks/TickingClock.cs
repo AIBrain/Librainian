@@ -20,7 +20,9 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TickingClock.cs" last formatted on 2020-08-14 at 8:37 PM.
+// File "TickingClock.cs" last formatted on 2020-08-27 at 7:45 PM.
+
+#nullable enable
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -64,7 +66,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary></summary>
 		[CanBeNull]
-		private Timer _timer;
+		private Timer? _timer;
 
 		public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
 			this.Hour = ( Hour )time.Hour;
@@ -89,19 +91,19 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		[CanBeNull]
 		[JsonProperty]
-		public Action<Hour> OnHourTick { get; set; }
+		public Action<Hour>? OnHourTick { get; set; }
 
 		[CanBeNull]
 		[JsonProperty]
-		public Action OnMillisecondTick { get; set; }
+		public Action? OnMillisecondTick { get; set; }
 
 		[CanBeNull]
 		[JsonProperty]
-		public Action OnMinuteTick { get; set; }
+		public Action? OnMinuteTick { get; set; }
 
 		[CanBeNull]
 		[JsonProperty]
-		public Action OnSecondTick { get; set; }
+		public Action? OnSecondTick { get; set; }
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -134,55 +136,61 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 		}
 
-		private void OnHourElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs e ) {
-			this.Hour = this.Hour.Next( out var ticked );
+		private void OnHourElapsed( [CanBeNull]
+		                            Object? sender, [CanBeNull]
+		                            ElapsedEventArgs? e ) {
+			this.Hour = this.Hour.Next( out var tocked );
 
-			if ( !ticked ) {
-				return;
+			if ( tocked ) {
+				this.OnHourTick?.Invoke( this.Hour );
 			}
 
-			this.OnHourTick( this.Hour );
 		}
 
-		private void OnMillisecondElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs e ) {
-			this.Millisecond = this.Millisecond.Next( out var ticked );
+		private void OnMillisecondElapsed( [CanBeNull]
+		                                   Object? sender, [CanBeNull]
+		                                   ElapsedEventArgs e ) {
+			this.Millisecond = this.Millisecond.Next( out var tocked );
 
-			if ( !ticked ) {
-				return;
+			if ( tocked ) {
+				this.OnMillisecondTick?.Invoke();
+
+				this.OnSecondElapsed( sender, e );
 			}
 
-			this.OnMillisecondTick();
-
-			this.OnSecondElapsed( sender, e );
 		}
 
-		private void OnMinuteElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs e ) {
-			this.Minute = this.Minute.Next( out var ticked );
+		private void OnMinuteElapsed( [CanBeNull]
+		                              Object? sender, [CanBeNull]
+		                              ElapsedEventArgs e ) {
+			this.Minute = this.Minute.Next( out var tocked );
 
-			if ( !ticked ) {
-				return;
+			if ( tocked ) {
+				this.OnMinuteTick?.Invoke();
+
+				this.OnHourElapsed( sender, e );
 			}
 
-			this.OnMinuteTick();
-
-			this.OnHourElapsed( sender, e );
 		}
 
-		private void OnSecondElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs e ) {
-			this.Second = this.Second.Next( out var ticked );
+		private void OnSecondElapsed( [CanBeNull]
+		                              Object? sender, [CanBeNull]
+		                              ElapsedEventArgs e ) {
+			this.Second = this.Second.Next( out var tocked );
 
-			if ( !ticked ) {
-				return;
+			if ( tocked ) {
+				this.OnSecondTick?.Invoke();
+
+				this.OnMinuteElapsed( sender, e );
 			}
 
-			this.OnSecondTick();
-
-			this.OnMinuteElapsed( sender, e );
 		}
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() {
-			using ( this._timer ) { }
+			using ( this._timer ) {
+				this._timer?.Stop();
+			}
 		}
 
 		public void ResetTimer( Granularity granularity ) {
@@ -235,7 +243,8 @@ namespace Librainian.Measurement.Time.Clocks {
 
 					break;
 
-				default: throw new ArgumentOutOfRangeException( nameof( granularity ) );
+				default:
+					throw new ArgumentOutOfRangeException( nameof( granularity ) );
 			}
 
 			this._timer.Start();

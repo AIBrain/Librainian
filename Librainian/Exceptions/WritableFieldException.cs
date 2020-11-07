@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "WritableFieldException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "WritableFieldException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
@@ -28,9 +28,7 @@ namespace Librainian.Exceptions {
 	using System.Reflection;
 	using System.Runtime.Serialization;
 	using JetBrains.Annotations;
-	using Newtonsoft.Json;
 
-	[JsonObject]
 	[Serializable]
 	internal class WritableFieldException : ImmutableFailureException {
 
@@ -47,13 +45,7 @@ namespace Librainian.Exceptions {
 		}
 
 		[NotNull]
-		private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
-			if ( fieldInfo is null ) {
-				throw new ArgumentNullException( nameof( fieldInfo ) );
-			}
-
-			return $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";
-		}
+		private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) => $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";
 
 	}
 

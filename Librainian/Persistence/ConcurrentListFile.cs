@@ -30,10 +30,11 @@ namespace Librainian.Persistence {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Collections.Lists;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
+	using Maths.Numbers;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
 
 	/// <summary>Persist a list to and from a JSON formatted text document.</summary>
 	[JsonObject]
@@ -74,9 +75,11 @@ namespace Librainian.Persistence {
 			}
 
 			try {
-				var data = this.Document.LoadJSON<IEnumerable<TValue>>();
+				var progress = new Progress<ZeroToOne>( pro => { } );
+				var result = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, token );
 
-				if ( data != null ) {
+				if ( result.status.IsGood() ) {
+					var data = result.obj;
 					await this.AddRangeAsync( data, token ).ConfigureAwait( false );
 
 					return true;
@@ -102,23 +105,21 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.Count} items";
 
 		/// <summary>Saves the data to the <see cref="Document" />.</summary>
-		/// <param name="token"></param>
 		/// <returns></returns>
-		[NotNull]
-		public Task<Boolean> Write( CancellationToken token = default ) {
+		public Boolean Write() {
 			var document = this.Document;
 
-			return Task.Run( () => {
-				if ( !document.ContainingingFolder().Exists() ) {
-					document.ContainingingFolder().Create();
-				}
+			if ( !document.ContainingingFolder().Exists() ) {
+				document.ContainingingFolder().Create();
+			}
 
-				if ( document.Exists() ) {
-					document.Delete();
-				}
+			if ( document.Exists() ) {
+				document.Delete();
+			}
 
-				return this.TrySave( document, true, Formatting.Indented );
-			}, token );
+			document.AppendText( this.ToJSON( Formatting.Indented ) );
+
+			return true;
 		}
 
 	}

@@ -25,6 +25,7 @@
 #nullable enable
 namespace Librainian.Persistence {
 
+	/*
 	using System;
 	using System.Diagnostics;
 	using System.Linq;
@@ -592,5 +593,6 @@ namespace Librainian.Persistence {
 		public static void Set( [NotNull] String folder, [NotNull] String key, Int64 value ) => Set( folder, key, value, RegistryValueKind.QWord );
 
 	}
+	*/
 
 }

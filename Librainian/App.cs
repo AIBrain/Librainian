@@ -113,7 +113,7 @@ namespace Librainian {
 				}
 			}
 
-			Status TellError() {
+			static Status TellError() {
 				ConsoleWindow.AttachConsoleWindow();
 				ConsoleWindow.ShowWindow();
 				"Error parsing command line.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
@@ -173,8 +173,8 @@ namespace Librainian {
 			form.SuspendLayout();
 			form.WindowState = FormWindowState.Normal;
 			form.StartPosition = FormStartPosition.WindowsDefaultBounds;
-			form.LoadLocation();
-			form.LoadSize();
+			//form.LoadLocation();
+			//form.LoadSize();
 
 			if ( !form.IsFullyVisibleOnAnyScreen() ) {
 				form.WindowState = FormWindowState.Normal;
@@ -183,9 +183,9 @@ namespace Librainian {
 
 			form.ResumeLayout( true );
 
-			var frm = form;
-			form.LocationChanged += ( sender, args ) => frm.SaveLocation();
-			form.SizeChanged += ( sender, args ) => frm.SaveSize();
+			//var frm = form;
+			//form.LocationChanged += ( sender, args ) => frm.SaveLocation();
+			//form.SizeChanged += ( sender, args ) => frm.SaveSize();
 
 			Application.Run( form );
 		}

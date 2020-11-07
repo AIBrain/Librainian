@@ -39,7 +39,10 @@ namespace Librainian.Threading {
 
 		public UsableSemaphoreSlim( Int32 initialCount, Int32 maxCount ) => this._semaphore = new SemaphoreSlim( initialCount, maxCount );
 
-		public void Dispose() => this._semaphore.Dispose();
+		public void Dispose() {
+			this._semaphore.Dispose();
+			GC.SuppressFinalize( this );
+		}
 
 		[ItemNotNull]
 		public async Task<IUsableSemaphoreWrapper> WaitAsync() {

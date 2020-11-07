@@ -22,19 +22,20 @@
 // 
 // File "I.cs" last formatted on 2020-08-14 at 8:44 PM.
 
+#nullable enable
 namespace Librainian.Persistence {
 
 	using System;
 	using System.Diagnostics;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Microsoft.VisualBasic;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
 
 	/// <summary>[K]ey and a [U]nique location. (an [I]ndexer of storage locations)</summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Serializable]
-	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, ItemNullValueHandling = NullValueHandling.Ignore,
+	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, /*ItemNullValueHandling = NullValueHandling.Ignore,*/
 				 ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
 	public class I {
 

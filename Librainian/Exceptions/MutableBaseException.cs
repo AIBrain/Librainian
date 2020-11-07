@@ -20,16 +20,14 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MutableBaseException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "MutableBaseException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
 	using JetBrains.Annotations;
-	using Newtonsoft.Json;
 
-	[JsonObject]
 	[Serializable]
 	public class MutableBaseException : ImmutableFailureException {
 
@@ -46,13 +44,7 @@ namespace Librainian.Exceptions {
 		}
 
 		[NotNull]
-		private static String FormatMessage( [NotNull] Type type ) {
-			if ( type is null ) {
-				throw new ArgumentNullException( nameof( type ) );
-			}
-
-			return $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
-		}
+		private static String FormatMessage( [NotNull] Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
 
 	}
 

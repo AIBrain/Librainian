@@ -31,9 +31,9 @@ namespace Librainian.Internet {
 	using System.Net.Cache;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
-	using OperatingSystem.FileSystem;
 
 	public static class Internet {
 

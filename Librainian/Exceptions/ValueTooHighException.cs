@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ValueTooHighException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "ValueTooHighException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
@@ -35,7 +35,8 @@ namespace Librainian.Exceptions {
 			//if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
 		}
 
-		public ValueTooHighException( [NotNull] String message, [CanBeNull] Exception inner ) : base( message, inner ) {
+		public ValueTooHighException( [NotNull] String message, [CanBeNull]
+		                              Exception inner ) : base( message, inner ) {
 			//if ( message.IsNullOrEmpty() ) { throw new NotAllowed( "A message must be provided." ); }
 		}
 

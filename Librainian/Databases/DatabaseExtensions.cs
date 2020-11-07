@@ -45,6 +45,7 @@ namespace Librainian.Databases {
 	using Microsoft.Data.SqlClient;
 	using Parsing;
 	using Persistence;
+	using PooledAwait;
 	using FieldDictionary = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
 	public static class DatabaseExtensions {
@@ -68,7 +69,7 @@ namespace Librainian.Databases {
 			return dictionary;
 		}
 
-		[CanBeNull]
+		[NotNull]
 		public static T Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
@@ -86,8 +87,7 @@ namespace Librainian.Databases {
 			}
 		}
 
-		[ItemCanBeNull]
-		public static async ValueTask<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
+		public static async PooledValueTask<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
@@ -95,7 +95,7 @@ namespace Librainian.Databases {
 			try {
 				using var db = new DatabaseServer( builderToTest.ConnectionString, token: token );
 
-				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
+				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait(false);
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -187,7 +187,7 @@ namespace Librainian.Databases {
 		}
 
 		[CanBeNull]
-		public static String Get(
+		public static String? Get(
 			[NotNull] this ConcurrentDictionaryFile<String, String> file,
 			[NotNull] String key = Words.PrimeConnectionString,
 			Boolean throwIfNotFound = true
@@ -251,7 +251,7 @@ namespace Librainian.Databases {
 			return serviceName.Substring( serviceName.IndexOf( '$' ) + 1, serviceName.Length - serviceName.IndexOf( '$' ) - 1 );
 		}
 
-		[CanBeNull]
+		[NotNull]
 		public static IList<PropertyInfo> GetPropertiesForType<T>() {
 			var type = typeof( T );
 
@@ -314,9 +314,9 @@ namespace Librainian.Databases {
 
 					var sqlServer = await builder.TryGetResponse( token ).ConfigureAwait( false );
 
-					if ( sqlServer != null && sqlServer.Status == Status.Success ) {
+					if ( sqlServer?.Status == Status.Success ) {
 						if ( sqlServer.ConnectionStringBuilder != null ) {
-							file.Set( sqlServer.ConnectionStringBuilder.ToString() );
+							await file.Set( sqlServer.ConnectionStringBuilder.ToString() ).ConfigureAwait(false);
 
 							return sqlServer.Status;
 						}
@@ -353,7 +353,7 @@ namespace Librainian.Databases {
 		/// <param name="key"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static String Set(
+		public static async Task<String> Set(
 			[NotNull] this ConcurrentDictionaryFile<String, String> file,
 			[NotNull] String connectionString,
 			[NotNull] String key = Words.PrimeConnectionString
@@ -371,7 +371,7 @@ namespace Librainian.Databases {
 			}
 
 			file[key] = connectionString;
-			file.Flush();
+			await file.Flush( CancellationToken.None );
 
 			Debug.Assert( file[key].Like( connectionString ) );
 
@@ -440,28 +440,31 @@ namespace Librainian.Databases {
 				Site = exampleSet?.Site
 			};
 
-			if ( exampleSet != null ) {
-				if ( exampleSet.Container != null ) {
-					foreach ( IComponent? o in exampleSet.Container.Components ) {
-						set.Container?.Add( o );
-					}
-				}
+			if ( exampleSet is null ) {
+				return set;
+			}
 
-				foreach ( DictionaryEntry entry in exampleSet.ExtendedProperties ) {
-					set.ExtendedProperties.Add( entry.Key, entry.Value );
-				}
-
-				foreach ( DataRelation relation in exampleSet.Relations ) {
-					set.Relations.Add( relation );
-				}
-
-				if ( exampleSet.DefaultViewManager.DataViewSettings != null && set.DefaultViewManager.DataViewSettings != null ) {
-					for ( var i = 0; i < exampleSet.DefaultViewManager.DataViewSettings.Count; i++ ) {
-						set.DefaultViewManager.DataViewSettings[i] = exampleSet.DefaultViewManager.DataViewSettings[i];
-					}
+			if ( exampleSet.Container is null ) { }
+			else {
+				foreach ( IComponent? o in exampleSet.Container.Components ) {
+					set.Container?.Add( o );
 				}
 			}
 
+			foreach ( DictionaryEntry entry in exampleSet.ExtendedProperties ) {
+				set.ExtendedProperties.Add( entry.Key, entry.Value );
+			}
+
+			foreach ( DataRelation relation in exampleSet.Relations ) {
+				set.Relations.Add( relation );
+			}
+
+			var i = 0;
+			
+			foreach ( DataViewSetting dataViewSetting in exampleSet.DefaultViewManager.DataViewSettings ) {
+				set.DefaultViewManager.DataViewSettings[i++] = dataViewSetting;
+			}
+			
 			return set;
 		}
 
@@ -599,10 +602,19 @@ namespace Librainian.Databases {
 		}
 
 		[NotNull]
-		public static SqlParameter ToSqlParameter<TValue>( [CanBeNull] this TValue value, [CanBeNull] String? parameterName ) =>
-			new SqlParameter( parameterName, value ) {
+		public static SqlParameter ToSqlParameter<TValue>( [NotNull] this TValue value, [NotNull] String parameterName ) {
+			if ( value is null ) {
+				throw new ArgumentNullException( nameof( value ) );
+			}
+
+			if ( String.IsNullOrEmpty( parameterName ) ) {
+				throw new ArgumentException( "Value cannot be null or empty.", nameof( parameterName ) );
+			}
+
+			return new SqlParameter( parameterName, value ) {
 				Value = value
 			};
+		}
 
 		[NotNull]
 		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String? parameterName, Int32 size ) =>
@@ -718,7 +730,7 @@ namespace Librainian.Databases {
 		/// <returns></returns>
 		[ItemCanBeNull]
 		public static async ValueTask<SqlServer?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
-			if ( test == default ) {
+			if ( test is null ) {
 				throw new ArgumentNullException( nameof( test ) );
 			}
 
@@ -728,7 +740,7 @@ namespace Librainian.Databases {
 				if ( String.IsNullOrWhiteSpace( version ) ) {
 					$"Failed connecting to server {test.DataSource}.".Break();
 
-					return default;
+					return default( SqlServer? );
 				}
 
 				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", token ).ConfigureAwait( false );
@@ -736,7 +748,7 @@ namespace Librainian.Databases {
 				if ( !getdate.HasValue ) {
 					$"Failed connecting to server {test.DataSource}.".Break();
 
-					return default;
+					return default( SqlServer? );
 				}
 
 				var serverDateTime = getdate.Value; //should already be utc.

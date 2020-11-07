@@ -24,19 +24,18 @@
 
 #nullable enable
 
+// ReSharper disable once CheckNamespace
 namespace Librainian {
 
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using System.Linq;
+	using System.Globalization;
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading;
 	using JetBrains.Annotations;
-	using Logging;
 	using Newtonsoft.Json;
-	using Parsing;
 
 	public static class Common {
 
@@ -63,19 +62,58 @@ namespace Librainian {
 			};
 		}
 
-		[DebuggerStepThrough]
-		[Conditional( "DEBUG" )]
-		public static void BreakIfDebug<T>( [CanBeNull] this T _, [CanBeNull] String? breakReason = null ) {
-			if ( !Debugger.IsAttached ) {
-				return;
-			}
+		/// <summary>Return true if a value is <see cref="Between{T}" /> two inclusive values.</summary>
+		/// <param name="target">        </param>
+		/// <param name="startInclusive"></param>
+		/// <param name="endInclusive">  </param>
+		/// <returns></returns>
+		/// <example>5. Between(1, 10)</example>
+		/// <example>5. Between(10, 1)</example>
+		/// <example>5. Between(10, 6) == false</example>
+		/// <example>5. Between(5, 5))</example>
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Between( this Byte target, Byte startInclusive, Byte endInclusive ) => target >= startInclusive && target <= endInclusive;
 
-			if ( breakReason != null ) {
-				Debug.WriteLine( $"Break reason: {breakReason}" );
-			}
+		/// <summary>Return true if a value is <see cref="Between{T}" /> two inclusive values.</summary>
+		/// <param name="target">        </param>
+		/// <param name="startInclusive"></param>
+		/// <param name="endInclusive">  </param>
+		/// <returns></returns>
+		/// <example>5. Between(1, 10)</example>
+		/// <example>5. Between(10, 1)</example>
+		/// <example>5. Between(10, 6) == false</example>
+		/// <example>5. Between(5, 5))</example>
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Between( this Int32 target, Int32 startInclusive, Int32 endInclusive ) => target >= startInclusive && target <= endInclusive;
 
-			Debugger.Break();
-		}
+		/// <summary>Return true if a value is <see cref="Between{T}" /> two inclusive values.</summary>
+		/// <param name="target">        </param>
+		/// <param name="startInclusive"></param>
+		/// <param name="endInclusive">  </param>
+		/// <returns></returns>
+		/// <example>5. Between(1, 10)</example>
+		/// <example>5. Between(10, 1)</example>
+		/// <example>5. Between(10, 6) == false</example>
+		/// <example>5. Between(5, 5))</example>
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Between( this Int64 target, Int64 startInclusive, Int64 endInclusive ) => target >= startInclusive && target <= endInclusive;
+
+		/// <summary>Return true if a value is <see cref="Between{T}" /> two inclusive values.</summary>
+		/// <param name="target">        </param>
+		/// <param name="startInclusive"></param>
+		/// <param name="endInclusive">  </param>
+		/// <returns></returns>
+		/// <example>5. Between(1, 10)</example>
+		/// <example>5. Between(10, 1)</example>
+		/// <example>5. Between(10, 6) == false</example>
+		/// <example>5. Between(5, 5))</example>
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Between( this UInt64 target, UInt64 startInclusive, UInt64 endInclusive ) => target >= startInclusive && target <= endInclusive;
+
 
 		/// <summary>
 		///     Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between
@@ -117,7 +155,6 @@ namespace Librainian {
 		}
 
 		/// <summary>Just a no-op for setting a breakpoint on.</summary>
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[DebuggerStepThrough]
 		[Conditional( "DEBUG" )]
 		public static void Nop<T>( [CanBeNull] this T _ ) { }
@@ -131,8 +168,8 @@ namespace Librainian {
 		/// <summary>
 		///     <para>Works like the SQL "nullif" function.</para>
 		///     <para>
-		///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null (or the default value for
-		///         value types).
+		///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null for classes or the default
+		///         value for value types.
 		///     </para>
 		///     <para>Otherwise return <paramref name="left" />.</para>
 		/// </summary>
@@ -142,17 +179,7 @@ namespace Librainian {
 		/// <returns></returns>
 		[CanBeNull]
 		[DebuggerStepThrough]
-		public static T NullIf<T>( [NotNull] this T left, [NotNull] T right ) where T : IComparer<T> => ( Comparer<T>.Default.Compare( left, right ) == 0 ? default : left )!;
-
-		[CanBeNull]
-		public static String? OnlyDigits( [CanBeNull] this String? input ) => input == null ? null : String.Concat( input.Where( Char.IsDigit ) );
-
-		[CanBeNull]
-		public static String? OnlyLetters( [CanBeNull] String? input ) => input == null ? null : String.Concat( input.Where( Char.IsLetter ) );
-
-		[CanBeNull]
-		public static String? OnlyLettersAndNumbers( [CanBeNull] String? input ) =>
-			input == null ? null : String.Concat( input!.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ) );
+		public static T? NullIf<T>( [CanBeNull] this T left, [CanBeNull] T right ) where T : class => Comparer<T>.Default.Compare( left, right ) == 0 ? null : left;
 
 		/// <summary>Swap <paramref name="left" /> with <paramref name="right" />.</summary>
 		/// <typeparam name="T"></typeparam>
@@ -172,6 +199,18 @@ namespace Librainian {
 		[Pure]
 		public static (T right, T left) Swap<T>( [CanBeNull] this T left, [CanBeNull] T right ) => ( right, left );
 
+		[Pure]
+		public static UInt64 LengthReal( [CanBeNull]
+		                                 this String? s ) {
+			if ( String.IsNullOrEmpty( s! ) ) {
+				return 0;
+			}
+
+			var stringInfo = new StringInfo( s! );
+
+			return ( UInt64 )stringInfo.LengthInTextElements;
+		}
+
 		/// <summary>
 		///     Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using
 		///     <see cref="Newtonsoft.Json.JsonConvert" /> .
@@ -179,23 +218,14 @@ namespace Librainian {
 		/// <param name="bob"></param>
 		/// <returns></returns>
 		[Pure]
-		public static UInt64 MemoryUsed<T>( [NotNull] this T bob ) {
-			try {
-				return JsonConvert.SerializeObject( bob, Formatting.None ).LengthReal();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return 0;
-		}
+		public static UInt64 MemoryUsed<T>( [NotNull] this T bob ) => JsonConvert.SerializeObject( bob!, Formatting.None ).LengthReal();
 
 		/// <summary>
 		///     Create only 1 instance of <see cref="T" /> per thread. (only unique when using this class!)
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		[NotNull]
-		public static class Cache<T> where T : new() {
+		public static class Cache<T> where T: notnull,new() {
 
 			[NotNull]
 			private static readonly ThreadLocal<T> LocalCache = new ThreadLocal<T>( () => new T(), false );
@@ -210,7 +240,7 @@ namespace Librainian {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		[NotNull]
-		public static class CacheGlobal<T> where T : new() {
+		public static class CacheGlobal<T> where T : notnull, new() {
 
 			[NotNull]
 			public static T Instance { get; } = new T();

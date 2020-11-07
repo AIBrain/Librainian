@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Millisecond.cs" last formatted on 2020-08-14 at 8:37 PM.
+// File "Millisecond.cs" last formatted on 2020-08-27 at 7:33 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
 
@@ -45,8 +45,11 @@ namespace Librainian.Measurement.Time.Clocks {
 		public Int16 Value { get; }
 
 		public Millisecond( Int16 value ) {
-			if ( value < MinValue || value > MaxValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinValue} to {MaxValue}." );
+			if ( value < MinValue ) {
+				value = MinValue;
+			}
+			else if ( value > MaxValue ) {
+				value = MaxValue;
 			}
 
 			this.Value = value;
@@ -61,27 +64,37 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public static implicit operator Millisecond( Int16 value ) => new Millisecond( value );
 
-		/// <summary>Provide the next <see cref="Millisecond" />.</summary>
-		public Millisecond Next( out Boolean ticked ) {
-			ticked = false;
+		/// <summary>
+		///     Provide the next <see cref="Millisecond" />.
+		/// </summary>
+		/// <param name="tocked">True when the <see cref="Value" /> went higher than <see cref="Maximum" />.</param>
+		/// <returns></returns>
+		public Millisecond Next( out Boolean tocked ) {
+
 			var next = this.Value + 1;
 
-			if ( next > Maximum ) {
-				next = Minimum;
-				ticked = true;
+			if ( next > MaxValue ) {
+				next = MinValue;
+				tocked = true;
+			}
+			else {
+				tocked = false;
 			}
 
 			return ( Int16 )next;
 		}
 
 		/// <summary>Provide the previous <see cref="Millisecond" />.</summary>
-		public Millisecond Previous( out Boolean ticked ) {
-			ticked = false;
+		public Millisecond Previous( out Boolean tocked ) {
+
 			var next = this.Value - 1;
 
-			if ( next < Minimum ) {
-				next = Maximum;
-				ticked = true;
+			if ( next < MinValue ) {
+				next = MaxValue;
+				tocked = true;
+			}
+			else {
+				tocked = false;
 			}
 
 			return ( Int16 )next;

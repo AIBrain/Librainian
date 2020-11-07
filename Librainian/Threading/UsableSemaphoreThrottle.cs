@@ -52,7 +52,11 @@ namespace Librainian.Threading {
 			this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
 		}
 
-		public void Dispose() => this._semaphore.Dispose();
+		public void Dispose() {
+			this._semaphore.Dispose();
+			GC.SuppressFinalize( this );
+		}
+
 
 		public async Task<IUsableSemaphoreWrapper> WaitAsync() {
 			IUsableSemaphoreWrapper wrapper = default;

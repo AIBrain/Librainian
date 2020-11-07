@@ -30,9 +30,9 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.IO.Compression;
 	using System.Linq;
 	using System.Numerics;
-	using FileSystem;
 	using JetBrains.Annotations;
 	using Librainian.Extensions;
+	using Librainian.FileSystem;
 	using Rationals;
 	using Utilities;
 

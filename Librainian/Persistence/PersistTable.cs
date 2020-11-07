@@ -33,6 +33,7 @@ namespace Librainian.Persistence {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
@@ -42,7 +43,6 @@ namespace Librainian.Persistence {
 	using Microsoft.Isam.Esent.Interop.Windows81;
 	using Newtonsoft.Json;
 	using OperatingSystem.Compression;
-	using OperatingSystem.FileSystem;
 	using Utilities;
 
 	/// <summary>

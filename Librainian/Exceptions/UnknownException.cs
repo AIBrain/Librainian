@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UnknownException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "UnknownException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
@@ -45,7 +45,8 @@ namespace Librainian.Exceptions {
 		///     <para>Something should not have happened, but it did.</para>
 		/// </summary>
 		/// <param name="message"></param>
-		public UnknownException( [CanBeNull] String? message ) : base( message ) { }
+		public UnknownException( [CanBeNull]
+		                         String? message ) : base( message ) { }
 
 		/// <inheritdoc />
 		/// <summary>
@@ -53,7 +54,9 @@ namespace Librainian.Exceptions {
 		/// </summary>
 		/// <param name="message"></param>
 		/// <param name="innerException"></param>
-		public UnknownException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+		public UnknownException( [CanBeNull]
+		                         String? message, [CanBeNull]
+		                         Exception innerException ) : base( message, innerException ) { }
 
 	}
 

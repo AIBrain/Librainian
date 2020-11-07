@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "StreamException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "StreamException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
@@ -45,9 +45,12 @@ namespace Librainian.Exceptions {
 			}
 		}
 
-		public StreamException( [CanBeNull] String? message ) : base( message ) { }
+		public StreamException( [CanBeNull]
+		                        String? message ) : base( message ) { }
 
-		public StreamException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+		public StreamException( [CanBeNull]
+		                        String? message, [CanBeNull]
+		                        Exception innerException ) : base( message, innerException ) { }
 
 	}
 

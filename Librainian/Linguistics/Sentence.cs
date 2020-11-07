@@ -20,10 +20,11 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Sentence.cs" last formatted on 2020-08-14 at 8:35 PM.
+// File "Sentence.cs" last formatted on 2020-10-19 at 7:02 AM.
+
+#nullable enable
 
 namespace Librainian.Linguistics {
-
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -42,7 +43,6 @@ namespace Librainian.Linguistics {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	[Serializable]
 	public sealed class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
-
 		static Sentence() => Empty = Parse( $"{StartOfSentence}{EndOfSentence}" );
 
 		private Sentence() => throw new InvalidOperationException( "No." );
@@ -54,11 +54,7 @@ namespace Librainian.Linguistics {
 		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
 		/// <param name="words"></param>
 		public Sentence( [NotNull] IEnumerable<Word> words ) {
-			if ( words is null ) {
-				throw new ArgumentNullException( nameof( words ) );
-			}
-
-			foreach ( var word in words.Where( word => word != null ) ) {
+			foreach ( var word in words ) {
 				this.Words.Add( word );
 			}
 		}
@@ -66,6 +62,7 @@ namespace Librainian.Linguistics {
 		/// <summary></summary>
 		[NotNull]
 		[JsonProperty]
+		[ItemNotNull]
 		private List<Word> Words { get; } = new List<Word>();
 
 		[NotNull]
@@ -77,15 +74,15 @@ namespace Librainian.Linguistics {
 		[NotNull]
 		public static String StartOfSentence { get; } = new String( Char.MinValue, 2 );
 
-		public Int32 CompareTo( [CanBeNull] Sentence other ) => String.Compare( this.ToString(), other?.ToString(), StringComparison.Ordinal );
+		public Int32 CompareTo( [CanBeNull] Sentence? other ) => String.Compare( this.ToString(), other?.ToString(), StringComparison.Ordinal );
 
 		public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		public Boolean Equals( [CanBeNull] Sentence other ) => Equals( this, other );
+		public Boolean Equals( [CanBeNull] Sentence? other ) => Equals( this, other );
 
-		public static Int32 Compare( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) {
+		public static Int32 Compare( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return 0;
 			}
@@ -101,13 +98,13 @@ namespace Librainian.Linguistics {
 			return left.CompareTo( right );
 		}
 
-		public static Boolean Equals( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) {
+		public static Boolean Equals( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return false;
 			}
 
 			return left.Words.SequenceEqual( right.Words );
@@ -122,7 +119,7 @@ namespace Librainian.Linguistics {
 		public static Boolean operator >( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) > 0;
 
 		[NotNull]
-		public static Sentence Parse( String sentence ) => new Sentence( sentence ?? throw new ArgumentNullException( nameof( sentence ) ) );
+		public static Sentence Parse( String sentence ) => new Sentence( sentence );
 
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>
 		/// <param name="obj">The object to compare with the current object.</param>
@@ -130,7 +127,7 @@ namespace Librainian.Linguistics {
 		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
 		///     <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
+		public override Boolean Equals( [CanBeNull] Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
 
 		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
@@ -138,7 +135,5 @@ namespace Librainian.Linguistics {
 		public override String ToString() => this.Words.ToStrings( ParsingConstants.Singlespace );
 
 		//[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
-
 	}
-
 }

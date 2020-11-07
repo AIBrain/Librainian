@@ -20,19 +20,17 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MissingTextException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "MissingTextException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 namespace Librainian.Exceptions {
 
 	using System;
-	using Newtonsoft.Json;
 
 	/// <summary>
 	///     Use when a string parameter cannot be null, empty, or whitespace.
 	///     <para><see cref="ArgumentException" /> will be thrown.</para>
 	/// </summary>
 	[Serializable]
-	[JsonObject]
 	public class MissingTextException : ArgumentException {
 
 		private MissingTextException() { }
@@ -44,7 +42,7 @@ namespace Librainian.Exceptions {
 			throw new ArgumentException( $"{parameterName} cannot be null, empty, or whitespace.", parameterName );
 
 		public MissingTextException( String parameterName, String message, Exception innerException ) : base( paramName: parameterName, message: message,
-																											  innerException: innerException ) =>
+			innerException: innerException ) =>
 			throw new ArgumentException( $"{parameterName} cannot be null, empty, or whitespace.", parameterName, innerException );
 
 	}

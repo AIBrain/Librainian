@@ -38,6 +38,7 @@ namespace Librainian.Measurement.Time {
 	using Logging;
 	using Maths;
 	using Parsing;
+	using PooledAwait;
 
 	public static class TimeExtensions {
 
@@ -119,19 +120,11 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Adds the given number of business days to the <see cref="DateTime" />.</summary>
 		/// <param name="current">The date to be changed.</param>
-		/// <param name="days">   Number of business days to be added.</param>
 		/// <returns>A <see cref="DateTime" /> increased by a given number of business days.</returns>
-		public static DateTime AddBusinessDays( this DateTime current, Int32 days ) {
-			var sign = Math.Sign( days );
-			var unsignedDays = Math.Abs( days );
-
-			for ( var i = 0; i < unsignedDays; i++ ) {
-				do {
-					current = current.AddDays( sign );
-				} while ( current.DayOfWeek == DayOfWeek.Saturday || current.DayOfWeek == DayOfWeek.Sunday );
+		public static void MakeNextBusinessDay( ref this DateTime current ) {
+			while ( current.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday ) {
+				current += TimeSpan.FromDays(1);
 			}
-
-			return current;
 		}
 
 		public static DateTime Ago( this DateTime dateTime, TimeSpan timeSpan ) => dateTime - timeSpan;
@@ -832,17 +825,6 @@ namespace Librainian.Measurement.Time {
 			return sb.ToString().Trim();
 		}
 
-		/// <summary>Obsolete. This method has been renamed to FirstDayOfWeek to be more consistent with existing conventions.</summary>
-		/// <param name="dateTime"></param>
-		/// <returns></returns>
-		[Obsolete( "This method has been renamed to FirstDayOfWeek to be more consistent with existing conventions." )]
-		public static DateTime StartOfWeek( this DateTime dateTime ) => dateTime.FirstDayOfWeek();
-
-		/// <summary>Subtracts the given number of business days to the <see cref="DateTime" />.</summary>
-		/// <param name="current">The date to be changed.</param>
-		/// <param name="days">   Number of business days to be subtracted.</param>
-		/// <returns>A <see cref="DateTime" /> increased by a given number of business days.</returns>
-		public static DateTime SubtractBusinessDays( this DateTime current, Int32 days ) => current.AddBusinessDays( -days );
 
 		/// <summary>
 		///     <para>
@@ -862,9 +844,9 @@ namespace Librainian.Measurement.Time {
 		}
 
 		/// <summary>The fastest time a task context switch should take?</summary>
-		public static TimeSpan TimeATaskWait() {
+		public static async PooledTask<TimeSpan> AwaitContextSwitch() {
 			var stopwatch = Stopwatch.StartNew();
-			Task.Run( () => Task.Delay( 1 ).Wait() ).Wait();
+			await Task.Run( () => Task.Delay( 1 ).Wait() );
 
 			return stopwatch.Elapsed;
 		}

@@ -20,24 +20,26 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ImmutableFailureException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "ImmutableFailureException.cs" last formatted on 2020-08-28 at 1:10 PM.
 
+#nullable enable
 namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
 	using JetBrains.Annotations;
-	using Newtonsoft.Json;
 
-	[JsonObject]
 	[Serializable]
 	public class ImmutableFailureException : Exception {
 
 		public ImmutableFailureException() { }
 
-		public ImmutableFailureException( [CanBeNull] String? message ) : base( message ) { }
+		public ImmutableFailureException( [CanBeNull]
+		                                  String? message ) : base( message ) { }
 
-		public ImmutableFailureException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+		public ImmutableFailureException( [CanBeNull]
+		                                  String? message, [CanBeNull]
+		                                  Exception? innerException ) : base( message, innerException ) { }
 
 		public ImmutableFailureException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
 			if ( serializationInfo is null ) {
@@ -45,11 +47,19 @@ namespace Librainian.Exceptions {
 			}
 		}
 
-		public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) => this.Type = type;
+		public ImmutableFailureException( [CanBeNull]
+		                                  Type? type, [CanBeNull]
+		                                  String? message, [CanBeNull]
+		                                  Exception? inner ) : base( message, inner ) =>
+			this.Type = type;
 
-		public ImmutableFailureException( [CanBeNull] Type type, [CanBeNull] String? message ) : base( message ) => this.Type = type;
+		public ImmutableFailureException( [CanBeNull]
+		                                  Type? type, [CanBeNull]
+		                                  String? message ) : base( message ) =>
+			this.Type = type;
 
-		public Type Type { get; }
+		[CanBeNull]
+		public Type? Type { get; }
 
 	}
 

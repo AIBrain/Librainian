@@ -22,12 +22,14 @@
 // 
 // File "NetworkAdapter.cs" last formatted on 2020-08-14 at 8:31 PM.
 
+#nullable enable
 namespace Librainian.ComputerSystem.Devices {
 
 	using System;
-	using System.Collections.Generic;
 	using System.Linq;
+	using System.Collections.Generic;
 	using System.Management;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using Converters;
 	using JetBrains.Annotations;
@@ -50,6 +52,7 @@ namespace Librainian.ComputerSystem.Devices {
 			try {
 				var networkAdapters = WMIExtensions.WmiQuery( strWQuery );
 
+				//OfType() instead of Cast()??
 				var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
 
 				if ( null == crtNetworkAdapter ) {
@@ -78,7 +81,7 @@ namespace Librainian.ComputerSystem.Devices {
 		public Int32 DeviceId { get; }
 
 		/// <summary>The ProductName of the NetworkAdapter</summary>
-		public String Name { get; }
+		public String? Name { get; }
 
 		/// <summary>The Net Connection Status Value</summary>
 		public Int32 NetConnectionStatus { get; }
@@ -105,14 +108,14 @@ namespace Librainian.ComputerSystem.Devices {
 
 		/// <summary>Enable Or Disable The NetworkAdapter</summary>
 		/// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
-		public Int32 EnableOrDisableNetworkAdapter( [NotNull] String strOperation ) {
+		public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( [NotNull] String strOperation, CancellationToken token ) {
 			if ( String.IsNullOrWhiteSpace( strOperation ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( strOperation ) );
 			}
 
 			strOperation = strOperation.Trim();
 
-			Int32 resultEnableDisableNetworkAdapter;
+			EnumEnableDisableResult resultEnableDisableNetworkAdapter;
 			ManagementObject crtNetworkAdapter;
 
 			using ( crtNetworkAdapter = new ManagementObject() ) {
@@ -127,19 +130,19 @@ namespace Librainian.ComputerSystem.Devices {
 
 					crtNetworkAdapter?.InvokeMethod( strOperation, null );
 
-					Task.Delay( Milliseconds.OneHundred ).Wait();
+					await Task.Delay( Milliseconds.OneHundred, token );
 
 					while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled :
 														  ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
-						Task.Delay( Milliseconds.OneHundred ).Wait();
+						await Task.Delay( Milliseconds.OneHundred, token );
 					}
 
-					resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Success;
+					resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Success;
 				}
 				catch ( NullReferenceException ) {
 					// If there is a NullReferenceException, the result of the enable or disable network
 					// adapter operation will be fail
-					resultEnableDisableNetworkAdapter = ( Int32 )EnumEnableDisableResult.Fail;
+					resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Fail;
 				}
 			}
 
@@ -163,7 +166,7 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		/// <summary>Enum the Operation result of Enable and Disable Network Adapter</summary>
-		private enum EnumEnableDisableResult {
+		public enum EnumEnableDisableResult {
 
 			Fail = -1,
 			Unknow,
@@ -172,7 +175,7 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		/// <summary>Enum the NetEnabled Status</summary>
-		private enum EnumNetEnabledStatus {
+		public enum EnumNetEnabledStatus {
 
 			Disabled = -1,
 			Unknown,

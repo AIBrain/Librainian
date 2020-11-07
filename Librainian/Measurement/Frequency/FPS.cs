@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "FPS.cs" last formatted on 2020-08-14 at 8:37 PM.
+// File "FPS.cs" last formatted on 2020-08-26 at 6:07 AM.
 
 namespace Librainian.Measurement.Frequency {
 
@@ -31,8 +31,10 @@ namespace Librainian.Measurement.Frequency {
 	using Newtonsoft.Json;
 	using Time;
 
-	/// <summary></summary>
-	/// <see cref="https://wikipedia.org/wiki/Frame_rate" />
+	/// <summary>
+	/// <see cref="http://wikipedia.org/wiki/Frame_rate" />
+	/// </summary>
+	/// 
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public struct Fps {

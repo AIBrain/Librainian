@@ -20,17 +20,18 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NativeMethods.cs" last formatted on 2020-08-14 at 8:40 PM.
+// File "NativeMethods.cs" last formatted on 2020-10-12 at 2:55 PM.
 
 #nullable enable
-namespace Librainian.OperatingSystem {
 
+namespace Librainian.OperatingSystem {
 	using System;
 	using System.Diagnostics;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Drawing;
 	using System.IO;
-	using System.Runtime.ConstrainedExecution;
 	using System.Runtime.InteropServices;
+	using System.Runtime.InteropServices.ComTypes;
 	using System.Security;
 	using System.Text;
 	using System.Threading;
@@ -40,13 +41,26 @@ namespace Librainian.OperatingSystem {
 	using Graphics.Video;
 	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
-	using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 	public static class NativeMethods {
+		/// <summary>
+		///     https://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx
+		/// </summary>
+		/// <param name="TotalFileSize"></param>
+		/// <param name="TotalBytesTransferred"></param>
+		/// <param name="StreamSize"></param>
+		/// <param name="StreamBytesTransferred"></param>
+		/// <param name="dwStreamNumber"></param>
+		/// <param name="dwCallbackReason"></param>
+		/// <param name="hSourceFile"></param>
+		/// <param name="hDestinationFile"></param>
+		/// <param name="lpData"></param>
+		[UnmanagedFunctionPointer( CallingConvention.Winapi )]
+		public delegate UInt32 CopyProgressRoutine( Int64 TotalFileSize, Int64 TotalBytesTransferred, Int64 StreamSize, Int64 StreamBytesTransferred, UInt32 dwStreamNumber,
+			COPY_CALLBACK_REASON dwCallbackReason, [In] IntPtr hSourceFile, [In] IntPtr hDestinationFile, [In] IntPtr lpData );
 
 		[Flags]
 		public enum AllocationType : UInt32 {
-
 			COMMIT = 0x1000,
 			RESERVE = 0x2000,
 			RESET = 0x80000,
@@ -54,12 +68,10 @@ namespace Librainian.OperatingSystem {
 			PHYSICAL = 0x400000,
 			TOP_DOWN = 0x100000,
 			WRITE_WATCH = 0x200000
-
 		}
 
 		/// <summary>The reason that CopyProgressRoutine was called.</summary>
 		public enum COPY_CALLBACK_REASON : UInt32 {
-
 			/// <summary>Another part of the data file was copied.</summary>
 			CALLBACK_CHUNK_FINISHED = 0x00000000,
 
@@ -68,19 +80,15 @@ namespace Librainian.OperatingSystem {
 			///     routine is first invoked.
 			/// </summary>
 			CALLBACK_STREAM_SWITCH = 0x00000001
-
 		}
 
 		public enum ErrorCodes {
-
 			ERROR_FILE_NOT_FOUND = 2,
 			ERROR_PATH_NOT_FOUND = 3,
 			ERROR_ACCESS_DENIED = 5
-
 		}
 
 		public enum FILE_INFO_BY_HANDLE_CLASS {
-
 			FileBasicInfo = 0,
 			FileStandardInfo = 1,
 			FileNameInfo = 2,
@@ -114,28 +122,41 @@ namespace Librainian.OperatingSystem {
 			FileIdExtdDirectoryRestartInfo = 20, // 0x14
 
 			MaximumFileInfoByHandlesClass
+		}
 
+		[Flags]
+		public enum FINDEX_ADDITIONAL_FLAGS {
+			FindFirstExCaseSensitive,
+			FindFirstExLargeFetch
+		}
+
+		public enum FINDEX_INFO_LEVELS {
+			FindExInfoStandard = 0,
+			FindExInfoBasic = 1,
+			FindExInfoMaxInfoLevel = 2
+		}
+
+		public enum FINDEX_SEARCH_OPS {
+			FindExSearchNameMatch,
+			FindExSearchLimitToDirectories,
+			FindExSearchLimitToDevices,
+			FindExSearchMaxSearchOp
 		}
 
 		[Flags]
 		public enum HeapFlags {
-
 			HEAP_NO_SERIALIZE = 0x1,
 			HEAP_GENERATE_EXCEPTIONS = 0x4,
 			HEAP_ZERO_MEMORY = 0x8
-
 		}
 
 		public enum IconSize : Byte {
-
 			Small = ICON_SMALL,
 			Big = ICON_BIG
-
 		}
 
 		[Flags]
 		public enum MemoryProtection : UInt32 {
-
 			EXECUTE = 0x10,
 			EXECUTE_READ = 0x20,
 			EXECUTE_READWRITE = 0x40,
@@ -147,21 +168,17 @@ namespace Librainian.OperatingSystem {
 			GUARD_Modifierflag = 0x100,
 			NOCACHE_Modifierflag = 0x200,
 			WRITECOMBINE_Modifierflag = 0x400
-
 		}
 
 		public enum PLATFORM_ID {
-
 			PlatformIDDos = 300,
 			PlatformIDOs2 = 400,
 			PlatformIDNt = 500,
 			PlatformIDOsf = 600,
 			PlatformIDVms = 700
-
 		}
 
 		public enum PNP_VETO_TYPE {
-
 			Ok,
 			TypeUnknown,
 			LegacyDevice,
@@ -175,12 +192,10 @@ namespace Librainian.OperatingSystem {
 			InsufficientPower,
 			NonDisableable,
 			LegacyDriver
-
 		}
 
 		[Flags]
 		public enum Sv101Types : UInt32 {
-
 			SvTypeWorkstation = 0x00000001,
 			SvTypeServer = 0x00000002,
 			SvTypeSqlserver = 0x00000004,
@@ -214,27 +229,7 @@ namespace Librainian.OperatingSystem {
 			SvTypeLocalListOnly = 0x40000000,
 			SvTypeDomainEnum = 0x80000000,
 			SvTypeAll = 0xFFFFFFFF
-
 		}
-
-		// DWORD CALLBACK CopyProgressRoutine( _In_ LARGE_INTEGER TotalFileSize, _In_ LARGE_INTEGER TotalBytesTransferred, _In_ LARGE_INTEGER
-		// StreamSize, _In_ LARGE_INTEGER StreamBytesTransferred, _In_ DWORD dwStreamNumber, _In_ DWORD dwCallbackReason, _In_ HANDLE
-		// hSourceFile, _In_ HANDLE hDestinationFile, _In_opt_ LPVOID lpData);typedef DWORD (WINAPI *LPPROGRESS_ROUTINE)( _In_ LARGE_INTEGER
-		// TotalFileSize, _In_ LARGE_INTEGER TotalBytesTransferred, _In_ LARGE_INTEGER StreamSize, _In_ LARGE_INTEGER StreamBytesTransferred,
-		// _In_ DWORD dwStreamNumber, _In_ DWORD dwCallbackReason, _In_ HANDLE hSourceFile, _In_ HANDLE hDestinationFile, _In_opt_ LPVOID
-		// lpData); https://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx
-		[UnmanagedFunctionPointer( CallingConvention.Winapi )]
-		public delegate UInt32 CopyProgressRoutine(
-			Int64 TotalFileSize,
-			Int64 TotalBytesTransferred,
-			Int64 StreamSize,
-			Int64 StreamBytesTransferred,
-			UInt32 dwStreamNumber,
-			COPY_CALLBACK_REASON dwCallbackReason,
-			[In] IntPtr hSourceFile,
-			[In] IntPtr hDestinationFile,
-			[In] IntPtr lpData
-		);
 
 		internal const Int32 CREATE_ALWAYS = 2;
 
@@ -355,14 +350,10 @@ namespace Librainian.OperatingSystem {
 		public const Int32 WM_DEVICECHANGE = 0x0219;
 
 		public const Int32 WM_SETICON = 0x80;
+		private static readonly IntPtr NegativeOneIntPtr = new IntPtr( -1 );
 
-		public interface IHandle {
-
-			/// <summary>Returns the value of the handle field.</summary>
-			/// <returns>An IntPtr representing the value of the handle field.</returns>
-			IntPtr DangerousGetHandle();
-
-		}
+		[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
+		public static extern Boolean PathMatchSpec( [In] String pszFileParam, [In] String pszSpec );
 
 		[DllImport( "Mpr.dll", EntryPoint = "WNetAddConnection2", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode, SetLastError = true )]
 		private static extern Int32 WNetAddConnection2( NETRESOURCE lpNetResource, ref String lpPassword, ref String lpUsername, UInt32 dwFlags );
@@ -413,22 +404,13 @@ namespace Librainian.OperatingSystem {
 		public static extern Int32 AVIStreamStart( Int32 pavi );
 
 		[DllImport( "avifil32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Int32 AVIStreamWrite(
-			IntPtr aviStream,
-			Int32 lStart,
-			Int32 lSamples,
-			IntPtr lpBuffer,
-			Int32 cbBuffer,
-			Int32 dwFlags,
-			Int32 dummy1,
-			Int32 dummy2
-		);
+		public static extern Int32 AVIStreamWrite( IntPtr aviStream, Int32 lStart, Int32 lSamples, IntPtr lpBuffer, Int32 cbBuffer, Int32 dwFlags, Int32 dummy1,
+			Int32 dummy2 );
 
 		[DllImport( "User32.Dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Boolean ClientToScreen( IntPtr hWnd, ref Point point );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		[ReliabilityContract( Consistency.WillNotCorruptState, Cer.Success )]
 		[SuppressUnmanagedCodeSecurity]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean CloseHandle( this IntPtr handle );
@@ -440,22 +422,12 @@ namespace Librainian.OperatingSystem {
 		public static extern Int32 CM_Get_Parent( ref Int32 pdnDevInst, UInt32 dnDevInst, Int32 ulFlags );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Int32 CM_Request_Device_Eject(
-			UInt32 dnDevInst,
-			out PNP_VETO_TYPE pVetoType,
-			[MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName,
-			Int32 ulNameLength,
-			Int32 ulFlags
-		);
+		public static extern Int32 CM_Request_Device_Eject( UInt32 dnDevInst, out PNP_VETO_TYPE pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName,
+			Int32 ulNameLength, Int32 ulFlags );
 
 		[DllImport( "setupapi.dll", EntryPoint = "CM_Request_Device_Eject", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Int32 CM_Request_Device_Eject_NoUi(
-			UInt32 dnDevInst,
-			IntPtr pVetoType,
-			[MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName,
-			Int32 ulNameLength,
-			Int32 ulFlags
-		);
+		public static extern Int32 CM_Request_Device_Eject_NoUi( UInt32 dnDevInst, IntPtr pVetoType, [MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName,
+			Int32 ulNameLength, Int32 ulFlags );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Boolean CopyFileW( String lpExistingFileName, String lpNewFileName, Boolean bFailIfExists );
@@ -464,40 +436,20 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean CreateDirectory( String lpPathName, IntPtr lpSecurityAttributes );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern SafeFileHandle CreateFile(
-			String lpFileName,
-			[MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess,
-			[MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode,
-			IntPtr lpSecurityAttributes,
-			[MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition,
-			[MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes,
-			IntPtr hTemplateFile
-		);
+		public static extern SafeFileHandle CreateFile( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAccess dwDesiredAccess,
+			[MarshalAs( UnmanagedType.U4 )] FileShare dwShareMode, IntPtr lpSecurityAttributes, [MarshalAs( UnmanagedType.U4 )] FileMode dwCreationDisposition,
+			[MarshalAs( UnmanagedType.U4 )] FileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern SafeFileHandle CreateFile(
-			String lpFileName,
-			Int32 dwDesiredAccess,
-			Int32 dwShareMode,
-			IntPtr lpSecurityAttributes,
-			Int32 dwCreationDisposition,
-			Int32 dwFlagsAndAttributes,
-			IntPtr hTemplateFile
-		);
+		public static extern SafeFileHandle CreateFile( String lpFileName, Int32 dwDesiredAccess, Int32 dwShareMode, IntPtr lpSecurityAttributes, Int32 dwCreationDisposition,
+			Int32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern IntPtr CreateFileMapping( IntPtr hFile, IntPtr lpAttributes, Int32 flProtect, Int32 dwMaximumSizeLow, Int32 dwMaximumSizeHigh, String lpName );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern SafeFileHandle CreateFileW(
-			[MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
-			UInt32 dwDesiredAccess,
-			UInt32 dwShareMode,
-			IntPtr lpSecurityAttributes,
-			UInt32 dwCreationDisposition,
-			UInt32 dwFlagsAndAttributes,
-			IntPtr hTemplateFile
-		);
+		public static extern SafeFileHandle CreateFileW( [MarshalAs( UnmanagedType.LPWStr )] String lpFileName, UInt32 dwDesiredAccess, UInt32 dwShareMode,
+			IntPtr lpSecurityAttributes, UInt32 dwCreationDisposition, UInt32 dwFlagsAndAttributes, IntPtr hTemplateFile );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
 		[return: MarshalAs( UnmanagedType.Bool )]
@@ -508,78 +460,30 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean DeleteFileW( String lpFileName );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean DeviceIoControl(
-			IntPtr hDevice,
-			UInt32 dwIoControlCode,
-			IntPtr inBuffer,
-			Int32 nInBufferSize,
-			IntPtr outBuffer,
-			Int32 nOutBufferSize,
-			out Int32 pBytesReturned,
-			IntPtr lpOverlapped
-		);
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr inBuffer, Int32 nInBufferSize, IntPtr outBuffer, Int32 nOutBufferSize,
+			out Int32 pBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Int32 DeviceIoControl(
-			IntPtr hDevice,
-			Int32 dwIoControlCode,
-			ref Int16 lpInBuffer,
-			Int32 nInBufferSize,
-			IntPtr lpOutBuffer,
-			Int32 nOutBufferSize,
-			ref Int32 lpBytesReturned,
-			IntPtr lpOverlapped
-		);
+		public static extern Int32 DeviceIoControl( IntPtr hDevice, Int32 dwIoControlCode, ref Int16 lpInBuffer, Int32 nInBufferSize, IntPtr lpOutBuffer, Int32 nOutBufferSize,
+			ref Int32 lpBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean DeviceIoControl(
-			IntPtr hDevice,
-			UInt32 dwIoControlCode,
-			IntPtr lpInBuffer,
-			UInt32 nInBufferSize,
-			[Out] IntPtr lpOutBuffer,
-			UInt32 nOutBufferSize,
-			out UInt32 lpBytesReturned,
-			IntPtr lpOverlapped
-		);
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, IntPtr lpInBuffer, UInt32 nInBufferSize, [Out] IntPtr lpOutBuffer,
+			UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "Kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean DeviceIoControl(
-			IntPtr hDevice,
-			UInt32 dwIoControlCode,
-			ref Int64 inBuffer,
-			Int32 inBufferSize,
-			ref Int64 outBuffer,
-			Int32 outBufferSize,
-			ref Int32 bytesReturned,
-			[In] ref NativeOverlapped overlapped
-		);
+		public static extern Boolean DeviceIoControl( IntPtr hDevice, UInt32 dwIoControlCode, ref Int64 inBuffer, Int32 inBufferSize, ref Int64 outBuffer, Int32 outBufferSize,
+			ref Int32 bytesReturned, [In] ref NativeOverlapped overlapped );
 
 		[DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", CharSet = CharSet.Unicode, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean DeviceIoControl(
-			SafeFileHandle hDevice,
-			UInt32 dwIoControlCode,
-			ref STORAGE_PROPERTY_QUERY lpInBuffer,
-			UInt32 nInBufferSize,
-			ref DEVICE_SEEK_PENALTY_DESCRIPTOR lpOutBuffer,
-			UInt32 nOutBufferSize,
-			out UInt32 lpBytesReturned,
-			IntPtr lpOverlapped
-		);
+		public static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref STORAGE_PROPERTY_QUERY lpInBuffer, UInt32 nInBufferSize,
+			ref DEVICE_SEEK_PENALTY_DESCRIPTOR lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "kernel32.dll", EntryPoint = "DeviceIoControl", CharSet = CharSet.Unicode, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean DeviceIoControl(
-			SafeFileHandle hDevice,
-			UInt32 dwIoControlCode,
-			ref ATAIdentifyDeviceQuery lpInBuffer,
-			UInt32 nInBufferSize,
-			ref ATAIdentifyDeviceQuery lpOutBuffer,
-			UInt32 nOutBufferSize,
-			out UInt32 lpBytesReturned,
-			IntPtr lpOverlapped
-		);
+		public static extern Boolean DeviceIoControl( SafeFileHandle hDevice, UInt32 dwIoControlCode, ref ATAIdentifyDeviceQuery lpInBuffer, UInt32 nInBufferSize,
+			ref ATAIdentifyDeviceQuery lpOutBuffer, UInt32 nOutBufferSize, out UInt32 lpBytesReturned, IntPtr lpOverlapped );
 
 		[DllImport( "advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Int32 DuplicateToken( IntPtr hToken, Int32 impersonationLevel, ref IntPtr hNewToken );
@@ -632,6 +536,11 @@ namespace Librainian.OperatingSystem {
 		[CanBeNull]
 		public static extern SafeSearchHandle? FindFirstFile( String lpFileName, out Win32FindData lpFindData );
 
+		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+		public static extern SafeFindHandle FindFirstFileExW( String lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, out WIN32_FIND_DATAW lpFindFileData,
+			FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, FINDEX_ADDITIONAL_FLAGS dwAdditionalFlags );
+
+
 		/// <summary>Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.</summary>
 		/// <param name="hFindFile">The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx function.</param>
 		/// <param name="lpFindData">
@@ -647,6 +556,9 @@ namespace Librainian.OperatingSystem {
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364428%28VS.85%29.aspx" />
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
 		public static extern Boolean FindNextFile( SafeSearchHandle hFindFile, out Win32FindData lpFindData );
+
+		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode )]
+		public static extern Boolean FindNextFile( SafeFindHandle hFindFile, out WIN32_FIND_DATAW lpFindFileData );
 
 		[DllImport( "kernel32", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Boolean FindNextFile( IntPtr hFindFile, out Win32FindData lpFindFileData );
@@ -685,11 +597,8 @@ namespace Librainian.OperatingSystem {
 		/// <returns></returns>
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 GetCompressedFileSizeW(
-			[In] [MarshalAs( UnmanagedType.LPWStr )]
-			String lpFileName,
-			[Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
-		);
+		public static extern UInt32 GetCompressedFileSizeW( [In] [MarshalAs( UnmanagedType.LPWStr )]
+			String lpFileName, [Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern IntPtr GetCurrentThread();
@@ -717,14 +626,8 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean GetDeviceGammaRamp( IntPtr hDC, ref GraphicsExtensions.RAMP lpRamp );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, PreserveSig = true )]
-		public static extern UInt32 GetDiskFreeSpaceW(
-			[In] [MarshalAs( UnmanagedType.LPWStr )]
-			String lpRootPathName,
-			out UInt32 lpSectorsPerCluster,
-			out UInt32 lpBytesPerSector,
-			out UInt32 lpNumberOfFreeClusters,
-			out UInt32 lpTotalNumberOfClusters
-		);
+		public static extern UInt32 GetDiskFreeSpaceW( [In] [MarshalAs( UnmanagedType.LPWStr )]
+			String lpRootPathName, out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector, out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Int32 GetFileAttributesW( String lpFileName );
@@ -757,22 +660,20 @@ namespace Librainian.OperatingSystem {
 		public static extern void GetSystemTimePreciseAsFileTime( out Int64 filetime );
 
 		[DllImport( "kernel32", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean GetVolumeNameForVolumeMountPoint(
-			[MarshalAs( UnmanagedType.LPWStr )] String volumeName,
-			[MarshalAs( UnmanagedType.LPWStr )] StringBuilder uniqueVolumeName,
-			UInt32 uniqueNameBufferCapacity
-		);
+		public static extern Boolean GetVolumeNameForVolumeMountPoint( [MarshalAs( UnmanagedType.LPWStr )] String volumeName,
+			[MarshalAs( UnmanagedType.LPWStr )] StringBuilder uniqueVolumeName, UInt32 uniqueNameBufferCapacity );
 
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern IntPtr GetWindowDC( IntPtr hwnd );
 
-		public static void HandleLastError( [NotNull] String fullPath ) {
-			if ( fullPath is null ) {
-				throw new ArgumentNullException( nameof( fullPath ) );
-			}
-
+		public static void HandleLastError( [JetBrains.Annotations.NotNull] String fullPath ) {
 			var lastWin32Error = Marshal.GetLastWin32Error();
 
+			HandleLastError( fullPath, lastWin32Error );
+		}
+
+		[DoesNotReturn]
+		public static void HandleLastError( String fullPath, Int32 lastWin32Error ) {
 			switch ( lastWin32Error ) {
 				case ( Int32 )ErrorCodes.ERROR_FILE_NOT_FOUND: {
 					ThrowFileNotFound( fullPath );
@@ -835,13 +736,8 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean MoveFileW( String lpExistingFileName, String lpNewFileName );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Boolean MoveFileWithProgress(
-			[MarshalAs( UnmanagedType.LPWStr )] String lpExistingFileName,
-			String lpNewFileName,
-			CopyProgressRoutine lpProgressRoutine,
-			IntPtr lpData,
-			MoveFileFlags dwFlags
-		);
+		public static extern Boolean MoveFileWithProgress( [MarshalAs( UnmanagedType.LPWStr )] String lpExistingFileName, String lpNewFileName,
+			CopyProgressRoutine lpProgressRoutine, IntPtr lpData, MoveFileFlags dwFlags );
 
 		/// <summary>
 		///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
@@ -864,29 +760,15 @@ namespace Librainian.OperatingSystem {
 		/// <returns></returns>
 		/// <see cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
 		[DllImport( "netapi32.dll", EntryPoint = "NetServerEnum", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Int32 NetServerEnum(
-			[MarshalAs( UnmanagedType.LPWStr )] String servername,
-			Int32 level,
-			out IntPtr bufptr,
-			Int32 prefmaxlen,
-			ref Int32 entriesread,
-			ref Int32 totalentries,
-			Sv101Types servertype,
-			[MarshalAs( UnmanagedType.LPWStr )] String domain,
-			IntPtr resumeHandle
-		);
+		public static extern Int32 NetServerEnum( [MarshalAs( UnmanagedType.LPWStr )] String servername, Int32 level, out IntPtr bufptr, Int32 prefmaxlen,
+			ref Int32 entriesread, ref Int32 totalentries, Sv101Types servertype, [MarshalAs( UnmanagedType.LPWStr )] String domain, IntPtr resumeHandle );
 
 		[DllImport( "kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
 
 		[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean PathCompactPathEx(
-			[MarshalAs( UnmanagedType.LPWStr )] [Out]
-			StringBuilder pszOut,
-			String szPath,
-			Int32 cchMax,
-			Int32 dwFlags
-		);
+		public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )] [Out]
+			StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Boolean QueryPerformanceCounter( out Int64 value );
@@ -949,55 +831,27 @@ namespace Librainian.OperatingSystem {
 		public static extern UInt32 SetupDiDestroyDeviceInfoList( IntPtr deviceInfoSet );
 
 		[DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Boolean SetupDiEnumDeviceInterfaces(
-			IntPtr deviceInfoSet,
-			SP_DEVINFO_DATA deviceInfoData,
-			ref Guid interfaceClassGuid,
-			Int32 memberIndex,
-			SP_DEVICE_INTERFACE_DATA deviceInterfaceData
-		);
+		public static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, ref Guid interfaceClassGuid, Int32 memberIndex,
+			SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean SetupDiEnumDeviceInterfaces(
-			IntPtr hDevInfo,
-			ref SP_DEVINFO_DATA devInfo,
-			ref Guid interfaceClassGuid,
-			UInt32 memberIndex,
-			ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData
-		);
+		public static extern Boolean SetupDiEnumDeviceInterfaces( IntPtr hDevInfo, ref SP_DEVINFO_DATA devInfo, ref Guid interfaceClassGuid, UInt32 memberIndex,
+			ref SP_DEVICE_INTERFACE_DATA deviceInterfaceData );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
 		public static extern IntPtr SetupDiGetClassDevs( ref Guid classGuid, [MarshalAs( UnmanagedType.LPTStr )] String enumerator, IntPtr hwndParent, UInt32 flags );
 
 		[DllImport( "setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Boolean SetupDiGetDeviceInterfaceDetail(
-			IntPtr deviceInfoSet,
-			SP_DEVICE_INTERFACE_DATA deviceInterfaceData,
-			IntPtr deviceInterfaceDetailData,
-			Int32 deviceInterfaceDetailDataSize,
-			ref Int32 requiredSize,
-			SP_DEVINFO_DATA deviceInfoData
-		);
+		public static extern Boolean SetupDiGetDeviceInterfaceDetail( IntPtr deviceInfoSet, SP_DEVICE_INTERFACE_DATA deviceInterfaceData, IntPtr deviceInterfaceDetailData,
+			Int32 deviceInterfaceDetailDataSize, ref Int32 requiredSize, SP_DEVINFO_DATA deviceInfoData );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Boolean SetupDiGetDeviceRegistryProperty(
-			IntPtr deviceInfoSet,
-			ref SP_DEVINFO_DATA deviceInfoData,
-			UInt32 property,
-			out UInt32 propertyRegDataType,
-			Byte[] propertyBuffer,
-			UInt32 propertyBufferSize,
-			out UInt32 requiredSize
-		);
+		public static extern Boolean SetupDiGetDeviceRegistryProperty( IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, UInt32 property,
+			out UInt32 propertyRegDataType, Byte[] propertyBuffer, UInt32 propertyBufferSize, out UInt32 requiredSize );
 
 		[DllImport( "setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false, ThrowOnUnmappableChar = true )]
-		public static extern Boolean SetupDiOpenDeviceInfo(
-			IntPtr deviceInfoSet,
-			[MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId,
-			IntPtr hwndParent,
-			Int32 openFlags,
-			SP_DEVINFO_DATA deviceInfoData
-		);
+		public static extern Boolean SetupDiOpenDeviceInfo( IntPtr deviceInfoSet, [MarshalAs( UnmanagedType.LPWStr )] String deviceInstanceId, IntPtr hwndParent,
+			Int32 openFlags, SP_DEVINFO_DATA deviceInfoData );
 
 		/// <summary>
 		///     <code>
@@ -1011,18 +865,23 @@ namespace Librainian.OperatingSystem {
 
 		/// <summary>Throw a useful <see cref="IOException" />.</summary>
 		[DebuggerStepThrough]
+		[DoesNotReturn]
 		public static void ThrowAccessDenied( String fullPath ) => throw new IOException( $"Access denied to file \"{fullPath}\"." );
 
+
 		[DebuggerStepThrough]
-		public static void ThrowExceptionForHR( Int32 errorCode ) => Marshal.ThrowExceptionForHR( errorCode, new IntPtr( -1 ) );
+		public static void ThrowExceptionForHR( Int32 errorCode ) => Marshal.ThrowExceptionForHR( errorCode, NegativeOneIntPtr );
+
 
 		/// <summary>Throw a useful <see cref="FileNotFoundException" />.</summary>
 		/// <exception cref="FileNotFoundException"></exception>
 		[DebuggerStepThrough]
+		[DoesNotReturn]
 		public static void ThrowFileNotFound( String fullPath ) => throw new FileNotFoundException( $"The file \"{fullPath}\" was not found.", fullPath );
 
 		/// <summary>Throw a useful <see cref="DirectoryNotFoundException" />.</summary>
 		[DebuggerStepThrough]
+		[DoesNotReturn]
 		public static void ThrowPathNotFound( String fullPath ) => throw new DirectoryNotFoundException( $"The path for file \"{fullPath}\" was not found." );
 
 		[DebuggerStepThrough]
@@ -1068,12 +927,8 @@ namespace Librainian.OperatingSystem {
 		public static extern Boolean VirtualFree( UIntPtr lpAddress, UIntPtr dwSize, UInt32 dwFreeType );
 
 		[DllImport( "mpr.dll", BestFitMapping = false, ThrowOnUnmappableChar = true, SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern Int32 WNetAddConnection2(
-			NetResource netResource,
-			[MarshalAs( UnmanagedType.LPWStr )] String password,
-			[MarshalAs( UnmanagedType.LPWStr )] String username,
-			Int32 flags
-		);
+		public static extern Int32 WNetAddConnection2( NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password,
+			[MarshalAs( UnmanagedType.LPWStr )] String username, Int32 flags );
 
 		/// <summary>this must be used if NETRESOURCE is defined as a struct???</summary>
 		/// <param name="netResource"></param>
@@ -1082,19 +937,47 @@ namespace Librainian.OperatingSystem {
 		/// <param name="flags">      </param>
 		/// <returns></returns>
 		[DllImport( "mpr.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern Int32 WNetAddConnection2(
-			ref NetResource netResource,
-			[MarshalAs( UnmanagedType.LPWStr )] String password,
-			[MarshalAs( UnmanagedType.LPWStr )] String username,
-			UInt32 flags
-		);
+		public static extern Int32 WNetAddConnection2( ref NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password,
+			[MarshalAs( UnmanagedType.LPWStr )] String username, UInt32 flags );
 
 		[DllImport( "mpr.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Int32 WNetCancelConnection2( [MarshalAs( UnmanagedType.LPWStr )] String name, Int32 flags, Boolean force );
 
+		[SecurityCritical]
+		public class SafeFindHandle : SafeHandleZeroOrMinusOneIsInvalid {
+			[SecurityCritical]
+			public SafeFindHandle() : base( true ) { }
+
+			[SecurityCritical]
+			protected override Boolean ReleaseHandle() => FindClose( this.handle );
+		}
+
+		public interface IHandle {
+			/// <summary>Returns the value of the handle field.</summary>
+			/// <returns>An IntPtr representing the value of the handle field.</returns>
+			IntPtr DangerousGetHandle();
+		}
+
+		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+		public struct WIN32_FIND_DATAW {
+			public FileAttributes dwFileAttributes;
+			internal FILETIME ftCreationTime;
+			internal FILETIME ftLastAccessTime;
+			internal FILETIME ftLastWriteTime;
+			public UInt32 nFileSizeHigh;
+			public UInt32 nFileSizeLow;
+			public UInt32 dwReserved0;
+			public UInt32 dwReserved1;
+
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 260 )]
+			public String cFileName;
+
+			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
+			public String cAlternateFileName;
+		}
+
 		[StructLayout( LayoutKind.Sequential )]
 		public struct ATA_PASS_THROUGH_EX {
-
 			public UInt16 Length;
 
 			public UInt16 AtaFlags;
@@ -1120,45 +1003,37 @@ namespace Librainian.OperatingSystem {
 
 			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
 			public Byte[] CurrentTaskFile;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public struct ATAIdentifyDeviceQuery {
-
 			public ATA_PASS_THROUGH_EX header;
 
 			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
 			public UInt16[] data;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public readonly struct DEVICE_SEEK_PENALTY_DESCRIPTOR {
-
 			public readonly UInt32 Version;
 
 			public readonly UInt32 Size;
 
 			[MarshalAs( UnmanagedType.U1 )]
 			public readonly Boolean IncursSeekPenalty;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public readonly struct DISK_EXTENT {
-
 			public readonly Int32 DiskNumber;
 
 			public readonly Int64 StartingOffset;
 
 			public readonly Int64 ExtentLength;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
 		public struct FILE_ID_BOTH_DIR_INFO {
-
 			public readonly UInt32 NextEntryOffset;
 
 			public readonly UInt32 FileIndex;
@@ -1190,7 +1065,6 @@ namespace Librainian.OperatingSystem {
 
 			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
 			public readonly String FileName;
-
 		}
 
 		/// <summary>
@@ -1200,16 +1074,13 @@ namespace Librainian.OperatingSystem {
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
 		[StructLayout( LayoutKind.Sequential )]
 		public readonly struct Filetime {
-
 			public readonly UInt32 dwLowDateTime;
 
 			public readonly UInt32 dwHighDateTime;
-
 		}
 
 		[StructLayout( LayoutKind.Explicit, Pack = 0 )]
 		public struct LargeInteger {
-
 			[FieldOffset( 0 )]
 			public Int32 Low;
 
@@ -1228,12 +1099,10 @@ namespace Librainian.OperatingSystem {
 				new LargeInteger {
 					Low = ( Int32 )value, High = ( Int32 )( value >> 32 )
 				};
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public readonly struct ServerInfo101 {
-
 			[MarshalAs( UnmanagedType.U4 )]
 			public readonly UInt32 sv101_platform_id;
 
@@ -1251,12 +1120,10 @@ namespace Librainian.OperatingSystem {
 
 			[MarshalAs( UnmanagedType.LPWStr )]
 			public readonly String sv101_comment;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
 		public struct SP_DEVICE_INTERFACE_DATA {
-
 			public UInt32 cbSize;
 
 			public readonly UInt32 Flags;
@@ -1264,21 +1131,17 @@ namespace Librainian.OperatingSystem {
 			public Guid InterfaceClassGuid;
 
 			private readonly IntPtr Reserved;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential, Pack = 2 )]
 		public struct SP_DEVICE_INTERFACE_DETAIL_DATA {
-
 			public Int32 cbSize;
 
 			public readonly Int16 devicePath;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
 		public struct SP_DEVINFO_DATA {
-
 			public UInt32 cbSize;
 
 			public Guid classGuid;
@@ -1286,35 +1149,29 @@ namespace Librainian.OperatingSystem {
 			public readonly UInt32 devInst;
 
 			public IntPtr reserved;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public struct STORAGE_DEVICE_NUMBER {
-
 			public Int32 DeviceType;
 
 			public Int32 DeviceNumber;
 
 			public Int32 PartitionNumber;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public struct STORAGE_PROPERTY_QUERY {
-
 			public UInt32 PropertyId;
 
 			public UInt32 QueryType;
 
 			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
 			public readonly Byte[] AdditionalParameters;
-
 		}
 
 		[StructLayout( LayoutKind.Sequential )]
 		public struct WIN32_FILE_ATTRIBUTE_DATA {
-
 			public FileAttributes dwFileAttributes;
 
 			public Filetime ftCreationTime;
@@ -1336,7 +1193,6 @@ namespace Librainian.OperatingSystem {
 				this.nFileSizeHigh = findData.nFileSizeHigh;
 				this.nFileSizeLow = findData.nFileSizeLow;
 			}
-
 		}
 
 		/// <summary>
@@ -1347,7 +1203,6 @@ namespace Librainian.OperatingSystem {
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
 		public struct Win32FindData {
-
 			public readonly FileAttributes dwFileAttributes;
 
 			public Filetime ftCreationTime;
@@ -1369,7 +1224,6 @@ namespace Librainian.OperatingSystem {
 
 			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
 			public readonly String cAlternateFileName;
-
 		}
 
 		/// <summary>Base class for all native handles.</summary>
@@ -1377,16 +1231,6 @@ namespace Librainian.OperatingSystem {
 		/// <seealso cref="IEquatable{T}" />
 		/// <seealso cref="IHandle" />
 		public class HANDLE : SafeHandleZeroOrMinusOneIsInvalid, IEquatable<HANDLE>, IHandle {
-
-			/// <summary>Determines whether the specified <see cref="HANDLE" />, is equal to this instance.</summary>
-			/// <param name="other">The <see cref="HANDLE" /> to compare with this instance.</param>
-			/// <returns><c>true</c> if the specified <see cref="HANDLE" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-			public Boolean Equals( HANDLE other ) => Equals( this, other );
-
-			/// <summary>Gets a value indicating whether this instance is null.</summary>
-			/// <value><c>true</c> if this instance is null; otherwise, <c>false</c>.</value>
-			public Boolean IsNull => this.handle == IntPtr.Zero;
-
 			/// <summary>Initializes a new instance of the <see cref="HANDLE" /> class and assigns an existing handle.</summary>
 			/// <param name="preexistingHandle">An <see cref="IntPtr" /> object that represents the pre-existing handle to use.</param>
 			/// <param name="ownsHandle">
@@ -1397,6 +1241,15 @@ namespace Librainian.OperatingSystem {
 
 			[DebuggerStepThrough]
 			public HANDLE() : base( true ) { }
+
+			/// <summary>Gets a value indicating whether this instance is null.</summary>
+			/// <value><c>true</c> if this instance is null; otherwise, <c>false</c>.</value>
+			public Boolean IsNull => this.handle == IntPtr.Zero;
+
+			/// <summary>Determines whether the specified <see cref="HANDLE" />, is equal to this instance.</summary>
+			/// <param name="other">The <see cref="HANDLE" /> to compare with this instance.</param>
+			/// <returns><c>true</c> if the specified <see cref="HANDLE" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+			public Boolean Equals( HANDLE? other ) => Equals( this, other );
 
 			/// <summary>
 			///     Internal method that actually releases the handle. this is called by <see cref="ReleaseHandle" /> for valid
@@ -1456,11 +1309,10 @@ namespace Librainian.OperatingSystem {
 			/// <summary>Determines whether the specified <see cref="Object" />, is equal to this instance.</summary>
 			/// <param name="obj">The <see cref="Object" /> to compare with this instance.</param>
 			/// <returns><c>true</c> if the specified <see cref="Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-			public override Boolean Equals( Object obj ) => Equals( this, obj as HANDLE );
+			public override Boolean Equals( Object? obj ) => Equals( this, obj as HANDLE );
 
 			// ReSharper disable once NonReadonlyMemberInGetHashCode
 			public override Int32 GetHashCode() => this.handle.GetHashCode();
-
 		}
 
 		/// <summary>
@@ -1469,7 +1321,6 @@ namespace Librainian.OperatingSystem {
 		///     FindFirstStreamTransactedW, or FindFirstStreamW functions.
 		/// </summary>
 		public class SafeSearchHandle : HANDLE {
-
 			[DebuggerStepThrough]
 			private SafeSearchHandle() { }
 
@@ -1485,7 +1336,6 @@ namespace Librainian.OperatingSystem {
 
 				return FindClose( this );
 			}
-
 		}
 
 		/*
@@ -1505,7 +1355,5 @@ namespace Librainian.OperatingSystem {
 			public String cAlternate;
 		}
 		*/
-
 	}
-
 }

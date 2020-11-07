@@ -20,7 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "OutOfRangeException.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "OutOfRangeException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
 #nullable enable
 
@@ -39,13 +39,16 @@ namespace Librainian.Exceptions {
 		/// <summary>Disallow no message.</summary>
 		private OutOfRangeException() { }
 
-		public OutOfRangeException( [CanBeNull] String? message ) : base( message ) {
+		public OutOfRangeException( [CanBeNull]
+		                            String? message ) : base( message ) {
 			if ( message.IsNullOrEmpty() ) {
 				throw new NotAllowedException( "A message must be provided." );
 			}
 		}
 
-		public OutOfRangeException( [CanBeNull] String? message, [CanBeNull] Exception inner ) : base( message, inner ) {
+		public OutOfRangeException( [CanBeNull]
+		                            String? message, [CanBeNull]
+		                            Exception inner ) : base( message, inner ) {
 			if ( message.IsNullOrEmpty() ) {
 				throw new NotAllowedException( "A message must be provided." );
 			}

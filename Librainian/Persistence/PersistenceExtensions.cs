@@ -22,12 +22,14 @@
 // 
 // File "PersistenceExtensions.cs" last formatted on 2020-08-14 at 8:44 PM.
 
+#nullable enable
 namespace Librainian.Persistence {
 
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.IdentityModel.Tokens.Jwt;
 	using System.IO;
 	using System.IO.IsolatedStorage;
 	using System.Linq;
@@ -37,14 +39,13 @@ namespace Librainian.Persistence {
 	using System.Text;
 	using System.Threading;
 	using Converters;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Newtonsoft.Json.Serialization;
-	using OperatingSystem.FileSystem;
-	using Threading;
-	using File = OperatingSystem.FileSystem.Pri.LongPath.File;
+	using File = FileSystem.Pri.LongPath.File;
 
 	public static class PersistenceExtensions {
 
@@ -96,22 +97,19 @@ namespace Librainian.Persistence {
 				exception.Log();
 			}
 
-			return default;
+			return default!;
 		}
 
 		public static Boolean DeserializeDictionary<TKey, TValue>(
-			[CanBeNull] this ConcurrentDictionary<TKey, TValue> toDictionary,
-			[CanBeNull] Folder folder,
+			[NotNull]
+			this ConcurrentDictionary<TKey, TValue> toDictionary,
+			[CanBeNull] Folder? folder,
 			[CanBeNull] String? calledWhat,
 			[CanBeNull] String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
 			try {
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
-
-				if ( null == toDictionary ) {
-					return default;
-				}
 
 				if ( folder?.Exists() != true ) {
 					return default;
@@ -127,8 +125,6 @@ namespace Librainian.Persistence {
 					var length = document.Length;
 
 					if ( length < 1 ) {
-						document.Delete();
-
 						continue;
 					}
 
@@ -138,11 +134,12 @@ namespace Librainian.Persistence {
 
 						lines.ForAll( line => {
 							try {
+								if ( String.IsNullOrWhiteSpace(line) ) {
+									return;
+								}
 								var tuple = line.Deserialize<Tuple<TKey, TValue>>();
 
-								if ( tuple != null ) {
-									toDictionary[tuple.Item1] = tuple.Item2;
-								}
+								toDictionary[tuple.Item1] = tuple.Item2;
 							}
 							catch ( Exception lineexception ) {
 								lineexception.Log();
@@ -171,7 +168,7 @@ namespace Librainian.Persistence {
 			return default;
 		}
 
-		/// <summary>See also <see cref="Serializer{T}" />.</summary>
+		/// <summary>See also <see cref="Serializer" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="bytes"></param>
 		/// <returns></returns>
@@ -250,12 +247,17 @@ namespace Librainian.Persistence {
 		/// <param name="data"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static TKey FromJSON<TKey>( [CanBeNull] this String? data ) =>
-			String.IsNullOrWhiteSpace( data ) ? default : JsonConvert.DeserializeObject<TKey>( data, Jss.Value );
+		public static TKey FromJSON<TKey>( [CanBeNull] this String? data ) {
+			if ( String.IsNullOrWhiteSpace( data ) ) {
+				return default!;
+			}
+
+			return JsonConvert.DeserializeObject<TKey>( data, Jss.Value! );
+		}
 
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="obj"></param>
+		/// <param name="self"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="InvalidDataContractException">
@@ -266,13 +268,13 @@ namespace Librainian.Persistence {
 		/// <exception cref="SerializationException">there is a problem with the instance being serialized.</exception>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[CanBeNull]
-		public static String Serialize<T>( [NotNull] this T obj ) {
-			if ( Equals( obj, default ) ) {
-				throw new ArgumentNullException( nameof( obj ) );
+		public static String? Serialize<T>( [NotNull] this T self ) {
+			if ( Equals( self, null ) ) {
+				throw new ArgumentNullException( nameof( self ) );
 			}
 
 			try {
-				return obj.ToJSON();
+				return self.ToJSON();
 			}
 			catch ( SerializationException exception ) {
 				exception.Log();
@@ -296,19 +298,12 @@ namespace Librainian.Persistence {
 		/// <param name="extension"> </param>
 		/// <returns></returns>
 		public static Boolean SerializeDictionary<TKey, TValue>(
-			[CanBeNull] this IDictionary<TKey, TValue> dictionary,
-			[CanBeNull] Folder folder,
+			[NotNull] this IDictionary<TKey, TValue> dictionary,
+			[NotNull] Folder folder,
 			[CanBeNull] String? calledWhat,
-			[CanBeNull] IProgress<Single> progress = null,
+			[CanBeNull] IProgress<Single>? progress = null,
 			[CanBeNull] String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
-			if ( null == dictionary ) {
-				return default;
-			}
-
-			if ( null == folder ) {
-				return default;
-			}
 
 			if ( !dictionary.Any() ) {
 				return default;
@@ -380,6 +375,7 @@ namespace Librainian.Persistence {
 			return default;
 		}
 
+		/*
 		/// <summary>See also <see cref="Deserializer{T}" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
@@ -404,9 +400,9 @@ namespace Librainian.Persistence {
 
 			return default;
 		}
+		*/
 
 		/*
-
 		/// <summary>
 		///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use
 		///     <see cref="TryLoad{TSource}" /> to load an object.
@@ -445,12 +441,12 @@ namespace Librainian.Persistence {
 
 		/// <summary>Return this object as a JSON string.</summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="obj">       </param>
+		/// <param name="self">       </param>
 		/// <param name="formatting"></param>
 		/// <returns></returns>
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[CanBeNull]
-		public static String? ToJSON<T>( [CanBeNull] this T obj, Formatting formatting = Formatting.None ) => JsonConvert.SerializeObject( obj, formatting, Jss.Value );
+		public static String? ToJSON<T>( [CanBeNull]
+			this T self, Formatting formatting = Formatting.None ) => self is null ? null : JsonConvert.SerializeObject( self, formatting, Jss.Value! );
 
 		/*
 
@@ -494,6 +490,7 @@ namespace Librainian.Persistence {
 		}
 		*/
 
+		/*
 		/// <summary>Persist the <paramref name="self" /> to a JSON text file.</summary>
 		/// <typeparam name="TKey"></typeparam>
 		/// <param name="self">    </param>
@@ -531,6 +528,7 @@ namespace Librainian.Persistence {
 
 			return true;
 		}
+		*/
 
 		private class MyContractResolver : DefaultContractResolver {
 

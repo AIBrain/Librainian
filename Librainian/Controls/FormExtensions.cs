@@ -33,9 +33,6 @@ namespace Librainian.Controls {
 	using System.Linq;
 	using System.Windows.Forms;
 	using JetBrains.Annotations;
-	using Logging;
-	using Microsoft.Win32;
-	using Persistence;
 
 	public static class FormExtensions {
 
@@ -51,6 +48,7 @@ namespace Librainian.Controls {
 
 		public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
 
+		/*
 		public static void LoadLocation( [NotNull] this Form form ) {
 			if ( form is null ) {
 				throw new ArgumentNullException( nameof( form ) );
@@ -63,7 +61,9 @@ namespace Librainian.Controls {
 				form.InvokeAction( () => form.SetDesktopLocation( x.Value, y.Value ) );
 			}
 		}
+		*/
 
+		/*
 		/// <summary>
 		///     <seealso cref="SaveSize(Form)" />
 		/// </summary>
@@ -86,6 +86,7 @@ namespace Librainian.Controls {
 				form.Size( new Size( width.Value, height.Value ) );
 			}
 		}
+		*/
 
 		/// <summary>Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.</summary>
 		/// <remarks></remarks>
@@ -97,6 +98,7 @@ namespace Librainian.Controls {
 			form.InvokeAction( () => form.SetDesktopLocation( location.X, location.Y ) );
 		}
 
+		/*
 		public static void SaveLocation( [CanBeNull] this Form form ) {
 			if ( form is null ) {
 				throw new ArgumentNullException( nameof( form ) );
@@ -114,7 +116,9 @@ namespace Librainian.Controls {
 			AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.DesktopLocation.Y ),
 							 form.WindowState == FormWindowState.Normal ? form.DesktopLocation.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
 		}
+		*/
 
+		/*
 		/// <summary>
 		///     <seealso cref="LoadSize(Form)" />
 		/// </summary>
@@ -136,6 +140,7 @@ namespace Librainian.Controls {
 			AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
 							 form.WindowState == FormWindowState.Normal ? form.DesktopBounds.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
 		}
+		*/
 
 		/// <summary>Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.</summary>
 		/// <param name="form"></param>

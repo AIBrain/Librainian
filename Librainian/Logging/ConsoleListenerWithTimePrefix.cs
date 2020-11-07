@@ -20,9 +20,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ConsoleListenerWithTimePrefix.cs" last formatted on 2020-08-14 at 8:35 PM.
-
-
+// File "ConsoleListenerWithTimePrefix.cs" last formatted on 2020-08-28 at 11:52 AM.
 
 namespace Librainian.Logging {
 

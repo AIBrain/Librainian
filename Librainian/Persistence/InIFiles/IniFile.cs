@@ -32,11 +32,11 @@ namespace Librainian.Persistence.InIFiles {
 	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
+	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
 	using Newtonsoft.Json;
-	using OperatingSystem.FileSystem;
 	using Parsing;
 
 	/// <summary>
@@ -137,7 +137,7 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		[CanBeNull]
-		public String this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
+		public String? this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -156,6 +156,7 @@ namespace Librainian.Persistence.InIFiles {
 				return this.Data[ section ].FirstOrDefault( line => line.Key.Like( key ) )?.Value;
 			}
 
+			[CanBeNull]
 			[DebuggerStepThrough]
 			set {
 				if ( String.IsNullOrEmpty( section ) ) {
@@ -202,7 +203,7 @@ namespace Librainian.Persistence.InIFiles {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( section ) );
 			}
 
-			if ( line.StartsWith( IniLine.CommentHeader ) && this.Add( section, line, null ) ) {
+			if ( line.StartsWith( IniLine.CommentHeaders ).status.IsGood() && this.Add( section, line, null ) ) {
 				return true;
 			}
 
@@ -235,7 +236,7 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		public static LineType GuessLineType( String line ) {
-			if ( line.StartsWith( IniLine.CommentHeader, StringComparison.CurrentCultureIgnoreCase ) ) {
+			if ( line.StartsWith( IniLine.CommentHeaders, StringComparison.CurrentCultureIgnoreCase ).status.IsGood() ) {
 				return LineType.Comment;
 			}
 
@@ -258,7 +259,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			if ( lineType == LineType.Comment ) {
-				return $"{IniLine.CommentHeader} {key}";
+				return $"{IniLine.CommentHeaders.First()} {key}";
 			}
 
 			if ( lineType == LineType.Section ) {

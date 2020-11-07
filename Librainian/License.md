@@ -9,7 +9,8 @@ If you find your code unattributed in this source code, please let us know so we
 
 If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 
-Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+Use of any Librainian source code, nuget package, or dll will incur a usage fee of 1 bitcoin per month per package.
+Please send payments via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
 
 ====================================================================
 Disclaimer:  Usage of the source code or binaries is AS-IS.

@@ -149,6 +149,8 @@ namespace Librainian.Utilities {
 
 			if ( this.IsDisposed && !this.HasSuppressedFinalize ) {
 				try {
+					
+					// ReSharper disable once CA1816
 					GC.SuppressFinalize( this );
 				}
 				catch ( Exception exception ) {
@@ -166,7 +168,7 @@ namespace Librainian.Utilities {
 		///     <code>using ( var bob = )</code>)
 		/// </remarks>
 		[DebuggerStepThrough]
-		public abstract void DisposeManaged();
+		public virtual void DisposeManaged() { }
 
 		/// <summary>Dispose of COM objects, Handles, etc in this method.</summary>
 		[DebuggerStepThrough]

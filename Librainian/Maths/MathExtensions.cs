@@ -20,9 +20,10 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MathExtensions.cs" last formatted on 2020-08-20 at 4:37 PM.
+// File "MathExtensions.cs" last formatted on 2020-08-26 at 6:25 AM.
 
 #nullable enable
+
 namespace Librainian.Maths {
 
 	using System;
@@ -35,8 +36,9 @@ namespace Librainian.Maths {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using Collections.Extensions;
+	using Exceptions;
 	using JetBrains.Annotations;
-	using Measurement.Time;
+	using Librainian.Measurement.Time;
 	using Numbers;
 	using Parsing;
 	using Rationals;
@@ -1282,7 +1284,11 @@ namespace Librainian.Maths {
 			return s;
 		}
 
-		public static UInt64? ToUInt64( [CanBeNull] this String? text ) => UInt64.TryParse( text, out var result ) ? ( UInt64? )result : null;
+		public static UInt64? ToUInt64(
+			[CanBeNull]
+			this String? text
+		) =>
+			UInt64.TryParse( text, out var result ) ? ( UInt64? )result : null;
 
 		public static UInt64 ToUInt64( [NotNull] this Byte[] bytes, Int32 pos ) =>
 			( UInt64 )( bytes[pos++] | ( bytes[pos++] << 8 ) | ( bytes[pos++] << 16 ) | ( bytes[pos] << 24 ) );
@@ -1298,7 +1304,11 @@ namespace Librainian.Maths {
 		/// <param name="numberString"></param>
 		/// <param name="result">      </param>
 		/// <returns></returns>
-		public static Boolean TryParse( [CanBeNull] this String? numberString, out Rational result ) {
+		public static Boolean TryParse(
+			[CanBeNull]
+			this String? numberString,
+			out Rational result
+		) {
 			result = Rational.Zero;
 
 			if ( null == numberString ) {
@@ -1335,19 +1345,25 @@ namespace Librainian.Maths {
 				return default;
 			}
 
-			BigInteger.TryParse( top, out var numerator );
+			if ( BigInteger.TryParse( top, out var numerator ) ) {
 
-			BigInteger.TryParse( bottom, out var denominator );
+				if ( BigInteger.TryParse( bottom, out var denominator ) ) {
+					result = new Rational( numerator, denominator );
 
-			result = new Rational( numerator, denominator );
+					return true;
+				}
 
-			return true;
+				throw new OutOfRangeException( "Couldn't parse denominator" );
+			}
+
+			throw new OutOfRangeException( "Couldn't parse numerator" );
+
 		}
 
 		public static Boolean TrySplitDecimal( this Decimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
 			var theString = value.ToString( "R" );
 
-			if ( !theString.Contains( "." ) ) {
+			if ( !theString.Contains( ".", StringComparison.CurrentCulture ) ) {
 				theString += ".0";
 			}
 

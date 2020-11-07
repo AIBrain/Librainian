@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -45,7 +45,7 @@ namespace Librainian.Threading {
 		private static void CopyFields(
 			[NotNull] this Object original,
 			[NotNull] IDictionary<Object, Object> visited,
-			[NotNull] Object clonedObject,
+			[NotNull] Object destination,
 			[NotNull] IReflect reflect,
 			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
 			[CanBeNull] Func<FieldInfo, Boolean>? filter = null
@@ -60,14 +60,14 @@ namespace Librainian.Threading {
 				//if ( fieldInfo.FieldType.IsPrimitive() ) { continue; }	//why skip a primitive?
 
 				var value = field.GetValue( original );
-				field.SetValue( clonedObject, InternalCopy( value, visited ) );
+				field.SetValue( destination, InternalCopy( value, visited ) );
 			}
 		}
 
 		[CanBeNull]
 		private static Object? InternalCopy( [CanBeNull] Object? originalObject, [NotNull] IDictionary<Object, Object> visits ) {
 			if ( originalObject is null ) {
-				return default;
+				return null;
 			}
 
 			var reflect = originalObject.GetType();
@@ -81,7 +81,7 @@ namespace Librainian.Threading {
 			}
 
 			if ( typeof( Delegate ).IsAssignableFrom( reflect ) ) {
-				return default;
+				return null;
 			}
 
 			var copy = MemberwiseCloneMethod.Invoke( originalObject, null );
@@ -117,29 +117,36 @@ namespace Librainian.Threading {
 		private static void RecursiveCopyBaseTypePrivateFields(
 			[CanBeNull] Object? originalObject,
 			[CanBeNull] IDictionary<Object, Object> visited,
-			[CanBeNull] Object? cloneObject,
+			[CanBeNull] Object? destination,
 			[NotNull] Type typeToReflect
 		) {
-			if ( null == typeToReflect.BaseType ) {
+			if ( originalObject is null ) {
+				return;
+			}
+			if ( destination is null ) {
+				return;
+			}
+			if ( typeToReflect.BaseType is null ) {
 				return;
 			}
 
-			RecursiveCopyBaseTypePrivateFields( originalObject, visited, cloneObject, typeToReflect.BaseType );
+			RecursiveCopyBaseTypePrivateFields( originalObject, visited, destination, typeToReflect.BaseType );
 
-			originalObject.CopyFields( visited, cloneObject, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
+			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
 		}
 
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static Object DeepCopy<T>( [CanBeNull] this T original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+		public static Object? DeepCopy<T>( [CanBeNull] this T original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
 
 		[CanBeNull]
-		public static T Copy<T>( [CanBeNull] this T original ) => ( T )DeepCopy( original );
+		public static T? Copy<T>( [CanBeNull] this T original ) =>
+			( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
 
 		[CanBeNull]
-		public static Object GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
+		public static Object? GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
 			if ( instance is null ) {
 				throw new ArgumentNullException( nameof( instance ) );
 			}

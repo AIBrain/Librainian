@@ -29,9 +29,9 @@ namespace Librainian.Maths.Hashings {
 	using System;
 	using System.Linq;
 	using Converters;
+	using FileSystem;
+	using FileSystem.Pri.LongPath;
 	using JetBrains.Annotations;
-	using OperatingSystem.FileSystem;
-	using OperatingSystem.FileSystem.Pri.LongPath;
 
 	public static class HashingExtensions {
 

@@ -191,7 +191,7 @@ namespace Librainian.Maths.Numbers {
 		public override String ToString() => this._internalValue.ToString();
 
 		[CanBeNull]
-		public String? ToString( [NotNull] String format ) => this._internalValue.ToString( format );
+		public String ToString( [NotNull] String format ) => this._internalValue.ToString( format );
 
 	}
 
