@@ -47,7 +47,7 @@ namespace Librainian.FileSystem {
 		/// <param name="obj">An object to compare with this instance.</param>
 		/// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
 		public override Int32 CompareTo( Object obj ) {
-			if ( !( obj is Volume device ) ) {
+			if ( obj is not Volume device) {
 				throw new ArgumentException();
 			}
 

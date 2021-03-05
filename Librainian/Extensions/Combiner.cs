@@ -34,7 +34,7 @@ namespace Librainian.Extensions {
 	public static class Combiner {
 
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull] [ItemCanBeNull] this IEnumerable<T> a, [NotNull] [ItemCanBeNull] IEnumerable<T> b ) {
+		public static IEnumerable<T> Append<T>( [NotNull][ItemCanBeNull] this IEnumerable<T> a, [NotNull][ItemCanBeNull] IEnumerable<T> b ) {
 			foreach ( var item in a ) {
 				yield return item;
 			}
@@ -50,7 +50,7 @@ namespace Librainian.Extensions {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull] this T a, [ItemCanBeNull] [NotNull] IEnumerable<T> b ) {
+		public static IEnumerable<T> Append<T>( [NotNull] this T a, [ItemCanBeNull][NotNull] IEnumerable<T> b ) {
 			yield return a;
 
 			foreach ( var item in b ) {
@@ -73,7 +73,7 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static IEnumerable<IEnumerable<T>>? CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
+		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
 			IEnumerable<IEnumerable<T>> emptyProduct = new[] {
 				Enumerable.Empty<T>()
 			};
@@ -97,33 +97,32 @@ namespace Librainian.Extensions {
 			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
 		}
 
-		/// <summary>
-		///     eh?
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="input"></param>
-		/// <returns></returns>
 		[NotNull]
 		public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] this IEnumerable<T> input ) =>
 			input.Select( item => new[] {
 				item
 			} );
 
-		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>(
-			[CanBeNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? groupAs,
-			[CanBeNull] [ItemCanBeNull] IEnumerable<IEnumerable<T>?>? groupBs
+		[ItemNotNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>(
+			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?> setA,
+			[NotNull][ItemCanBeNull] IEnumerable<IEnumerable<T>?> setB
 		) {
 			var found = false;
 
-			var bs = groupBs as IEnumerable<T>[] ?? groupBs.ToArray();
+			var eachB = setB as IEnumerable<T>[] ?? setB.ToArray();
 
-			foreach ( var a in groupAs ) {
-				found = true;
+			foreach ( var a in setA ) {
+				if ( a != null ) {
+                    found = true;
 
-				foreach ( var groupB in bs ) {
-					// ReSharper disable once PossibleMultipleEnumeration
-					yield return a.Append( groupB );
+					foreach ( var b in eachB ) {
+
+                        // ReSharper disable once PossibleMultipleEnumeration
+                        if ( b != null ) {
+                            yield return a.Append( b );
+                        }
+                    }
 				}
 			}
 
@@ -131,57 +130,70 @@ namespace Librainian.Extensions {
 				yield break;
 			}
 
-			foreach ( var b in bs ) {
-				yield return b;
-			}
+			foreach ( var b in eachB ) {
+                if ( b != null ) {
+                    yield return b;
+                }
+            }
 		}
 
-		[ItemCanBeNull]
-		[CanBeNull]
-		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull] this IEnumerable<T>? a, [NotNull] IEnumerable<IEnumerable<T>?>? b ) {
+		[ItemNotNull]
+        [CanBeNull]
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this IEnumerable<T>? setA, [NotNull] IEnumerable<IEnumerable<T>?>? setB ) {
 			var found = false;
 
-			foreach ( var bGroup in b ) {
-				found = true;
+            if ( setB != null ) {
+                foreach ( var b in setB ) {
+                    found = true;
 
-				if ( a != null ) {
-					yield return a.Append( bGroup );
-				}
-				else {
-					yield return default( IEnumerable<T>? );
-				}
-			}
+                    if ( setA != null ) {
+                        // ReSharper disable once PossibleMultipleEnumeration
+                        if ( b != null ) {
+                            yield return setA.Append( b );
+                        }
+                    }
+                }
+            }
 
-			if ( !found ) {
-				yield return a;
-			}
+            if ( !found ) {
+                if ( setA != null ) {
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    yield return setA;
+                }
+            }
 		}
 
 		[ItemCanBeNull]
 		[CanBeNull]
-		public static IEnumerable<IEnumerable<T>?>? Combine<T>(
-			[CanBeNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>> a,
-			[CanBeNull] [ItemCanBeNull] IEnumerable<T>? b
+		public static IEnumerable<IEnumerable<T>> Combine<T>(
+			[NotNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>> setA,
+			[NotNull] [ItemCanBeNull] IEnumerable<T> setB
 		) {
 			var found = false;
 
-			foreach ( var aGroup in a ) {
-				found = true;
+			foreach ( var a in setA ) {
+                found = true;
 
-				yield return aGroup.Append( b );
-			}
+                if ( setB != null ) {
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    yield return a.Append( setB );
+                }
+            }
 
 			if ( !found ) {
-				yield return b;
-			}
+                if ( setB != null ) {
+                    // ReSharper disable once PossibleMultipleEnumeration
+                    yield return setB;
+                }
+            }
 		}
 
 		[CanBeNull]
 		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull] this T a, [CanBeNull] [ItemCanBeNull] IEnumerable<IEnumerable<T>?>? b ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this T a, [NotNull] [ItemNotNull] IEnumerable<IEnumerable<T>> setB ) {
 			var found = false;
 
-			foreach ( var bGroup in b ) {
+			foreach ( var bGroup in setB ) {
 				found = true;
 
 				yield return a.Append( bGroup );
@@ -195,11 +207,11 @@ namespace Librainian.Extensions {
 		}
 
 		[CanBeNull]
-		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [CanBeNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? a, [CanBeNull] T b ) {
+        [ItemNotNull]
+        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] [ItemNotNull] this IEnumerable<IEnumerable<T>> setA, [NotNull] T b ) {
 			var found = false;
 
-			foreach ( var aGroup in a ) {
+			foreach ( var aGroup in setA ) {
 				found = true;
 
 				yield return aGroup.Append( b );
@@ -213,26 +225,26 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static T[][] FastPowerSet<T>( [NotNull] this T[] seq ) {
-			var powerSet = new T[1 << seq.Length][];
-			powerSet[0] = Array.Empty<T>();
+		public static T[][] FastPowerSet<T>( [NotNull] this T[] array ) {
+			var powerSet = new T[ 1 << array.Length ][];
+			powerSet[ 0 ] = Array.Empty<T>();
 
-			for ( var i = 0; i < seq.Length; i++ ) {
-				var cur = seq[i];
+			for ( var i = 0; i < array.Length; i++ ) {
+				var cur = array[ i ];
 				var count = 1 << i;
 
 				for ( var j = 0; j < count; j++ ) {
-					var source = powerSet[j];
+					var source = powerSet[ j ];
 
 					var sourceLength = source.Length;
 
-					var destination = powerSet[count + j] = new T[sourceLength + 1];
+					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
 
 					for ( var q = 0; q < sourceLength; q++ ) {
-						destination[q] = source[q];
+						destination[ q ] = source[ q ];
 					}
 
-					destination[sourceLength] = cur;
+					destination[ sourceLength ] = cur;
 				}
 			}
 
@@ -240,7 +252,7 @@ namespace Librainian.Extensions {
 		}
 
 		[ItemCanBeNull]
-		public static IEnumerable<T> Group<T>( [CanBeNull] this T a, [CanBeNull] T b ) {
+		public static IEnumerable<T> Group<T>( [NotNull] this T a, [NotNull] T b ) {
 			yield return a;
 			yield return b;
 		}

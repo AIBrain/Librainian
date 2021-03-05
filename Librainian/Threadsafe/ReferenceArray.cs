@@ -69,11 +69,10 @@ namespace Librainian.Threadsafe {
 		/// <param name="newValue">The new value</param>
 		/// <param name="index">   The index.</param>
 		/// <returns>The original value</returns>
-		[CanBeNull]
-		public T AtomicExchange( Int32 index, [CanBeNull] T newValue ) {
+		public T? AtomicExchange( Int32 index, [CanBeNull] T newValue ) {
 			var result = Interlocked.Exchange( ref this.Array[index], newValue );
 
-			return result!;
+			return result;
 		}
 
 		/// <summary>Read the value applying acquire fence semantic</summary>

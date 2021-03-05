@@ -48,7 +48,7 @@ namespace Librainian.Graphics.Video {
 		//stream and header info
 		private Avi.Avistreaminfo _streamInfo;
 
-		public Size BitmapSize => new Size( ( Int32 )this._streamInfo.rcFrame.right, ( Int32 )this._streamInfo.rcFrame.bottom );
+		public Size BitmapSize => new( ( Int32 )this._streamInfo.rcFrame.right, ( Int32 )this._streamInfo.rcFrame.bottom );
 
 		public Int32 CountFrames { get; private set; }
 

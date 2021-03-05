@@ -54,7 +54,8 @@ namespace Librainian.Databases {
 			this.ConnectionString = connectionString;
 
 			this.SqlConnections = new ThreadLocal<SqlConnection>( () => {
-				var connection = new SqlConnection( this.ConnectionString ) {StateChange += this.SqlConnection_StateChange};
+				var connection = new SqlConnection( this.ConnectionString );
+				connection.StateChange += this.SqlConnection_StateChange;
 
 				return connection;
 			}, true );
@@ -78,12 +79,13 @@ namespace Librainian.Databases {
 
 		[CanBeNull]
 		private SqlConnection? OpenConnection() {
-			if ( this.SqlConnections.Value.State == ConnectionState.Open ) {
+			var sqlConnectionsValue = this.SqlConnections.Value;
+			if ( sqlConnectionsValue?.State == ConnectionState.Open ) {
 				return this.SqlConnections.Value;
 			}
 
 			try {
-				this.SqlConnections.Value.Open();
+				this.SqlConnections.Value?.Open();
 
 				return this.SqlConnections.Value;
 			}
@@ -100,11 +102,11 @@ namespace Librainian.Databases {
 		private Boolean ReOpenConnection( [CanBeNull]
 			Object? sender ) {
 			if ( this.CancelConnection.IsCancellationRequested ) {
-				return default( Boolean );
+				return false;
 			}
 
-			if ( !( sender is SqlConnection connection ) ) {
-				return default( Boolean );
+			if ( sender is not SqlConnection connection ) {
+				return false;
 			}
 
 			var retries = this.Retries;
@@ -114,7 +116,7 @@ namespace Librainian.Databases {
 
 				try {
 					if ( this.CancelConnection.IsCancellationRequested ) {
-						return default( Boolean );
+						return false;
 					}
 
 					connection.Open();
@@ -131,7 +133,8 @@ namespace Librainian.Databases {
 				}
 			} while ( retries > 0 );
 
-			return default( Boolean );
+			return false;
+
 		}
 
 		private void SqlConnection_StateChange( [CanBeNull]
@@ -145,7 +148,7 @@ namespace Librainian.Databases {
 				case ConnectionState.Open: break; //do nothing
 
 				case ConnectionState.Connecting:
-					Thread.SpinWait( 99 ); //TODO pooa.
+					Thread.SpinWait( 99 ); //TODO pooa. then test.
 
 					break;
 
@@ -220,15 +223,18 @@ namespace Librainian.Databases {
 			}
 
 			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = CommandType.Text
-				};
+				var open = this.OpenConnection();
+				if ( open != null ) {
+					using var command = new SqlCommand( query, open ) {
+						CommandType = CommandType.Text
+					};
 
-				if ( null != parameters ) {
-					command.Parameters?.AddRange( parameters );
+					if ( null != parameters ) {
+						command.Parameters?.AddRange( parameters );
+					}
+
+					return command.ExecuteNonQuery();
 				}
-
-				return command.ExecuteNonQuery();
 			}
 			catch ( SqlException exception ) {
 				exception.Log();
@@ -306,7 +312,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		[ItemCanBeNull]
@@ -317,7 +323,7 @@ namespace Librainian.Databases {
 			}
 
 			try {
-#if !NET48
+#if NET5_0_OR_GREATER
 				await
 #endif
 					using var command = new SqlCommand( query, this.OpenConnection() ) {
@@ -383,7 +389,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -446,7 +452,7 @@ namespace Librainian.Databases {
 			try {
 				DataTable table;
 
-#if !NET48
+#if NET5_0_OR_GREATER
 				await
 #endif
 					using ( var command = new SqlCommand( query, this.OpenConnection() ) {
@@ -456,7 +462,7 @@ namespace Librainian.Databases {
 						command.Parameters?.AddRange( parameters );
 					}
 
-#if !NET48
+#if NET5_0_OR_GREATER
 					await
 #endif
 						using var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
@@ -483,7 +489,7 @@ namespace Librainian.Databases {
 			var table = new DataTable();
 
 			try {
-#if !NET48
+#if NET5_0_OR_GREATER
 				await
 #endif
 					using var command = new SqlCommand( query, this.OpenConnection() ) {
@@ -496,7 +502,7 @@ namespace Librainian.Databases {
 
 				table.BeginLoadData();
 
-#if !NET48
+#if NET5_0_OR_GREATER
 				await
 #endif
 					using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) {
@@ -576,7 +582,7 @@ namespace Librainian.Databases {
 			}
 
 			try {
-#if !NET48
+#if NET5_0_OR_GREATER
 				await
 #endif
 					using var command = new SqlCommand( query, this.OpenConnection() ) {

@@ -31,7 +31,7 @@ namespace Librainian.Threadsafe {
 	using System.Threading;
 	using JetBrains.Annotations;
 
-	/// <summary>An <see cref="int" /> array that may be updated atomically</summary>
+	/// <summary>An <see cref="Int32" /> array that may be updated atomically</summary>
 	public class IntegerArray {
 
 		/// <summary>Create a new <see cref="IntegerArray" /> of a given length</summary>

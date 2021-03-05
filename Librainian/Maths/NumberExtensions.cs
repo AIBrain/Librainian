@@ -34,8 +34,7 @@ namespace Librainian.Maths {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using JetBrains.Annotations;
-	using Librainian.Measurement.Time;
-	using Logging;
+	using Measurement.Time;
 	using Numbers;
 	using Rationals;
 
@@ -449,7 +448,7 @@ namespace Librainian.Maths {
 			}
 
 			if ( value == 0 ) {
-				return "0.0 bytes";
+				return "0 bytes";
 			}
 
 			// mag is 0 for bytes, 1 for KB, 2, for MB.
@@ -467,17 +466,17 @@ namespace Librainian.Maths {
 			return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[mag] );
 		}
 
-		public static IEnumerable<Int32> Through( this Int32 startValue, Int32 end ) {
+		public static IEnumerable<Int32> Through( this Int32 begin, Int32 end ) {
 			Int32 offset;
 
-			if ( startValue < end ) {
+			if ( begin < end ) {
 				offset = 1;
 			}
 			else {
 				offset = -1;
 			}
 
-			for ( var i = startValue; i != end + offset; i += offset ) {
+			for ( var i = begin; i != end + offset; i += offset ) {
 				yield return i;
 			}
 		}
@@ -488,17 +487,17 @@ namespace Librainian.Maths {
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		public static IEnumerable<Byte> To( this Byte start, Byte end, Byte step = 1 ) {
-			if ( step <= 1 ) {
-				step = 1;
-			}
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
 			if ( start <= end ) {
 				for ( var b = start; b <= end; b += step ) {
 					yield return b;
 
 					if ( b == Byte.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+						yield break; //special case to deal with overflow
+					} 
 				}
 			}
 			else {
@@ -506,70 +505,73 @@ namespace Librainian.Maths {
 					yield return b;
 
 					if ( b == Byte.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+						yield break; //special case to deal with underflow
+					} 
 				}
 			}
 		}
 
 		/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
-		/// <param name="start"></param>
+		/// <param name="begin"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"> </param>
 		/// <returns></returns>
-		public static IEnumerable<UInt64> To( this Int32 start, UInt64 end, UInt64 step = 1 ) {
-			if ( start < 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( start ), "'low' must be equal to or greater than zero." );
-			}
+		public static IEnumerable<UInt64> To( this Int32 begin, UInt64 end, UInt64 step = 1 ) {
 
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			var reFrom = ( UInt64 )start;
+			var start = ( Decimal )begin;
 
-			if ( start <= ( Decimal )end ) {
-				for ( var ul = reFrom; ul <= end; ul += step ) {
-					yield return ul;
+            if ( start <= end ) {
+                const Decimal maxValue = UInt64.MaxValue;
 
-					if ( ul == UInt64.MaxValue ) {
-						yield break;
-					} //special case to deal with overflow
+				for ( var value = start; value <= end; value += step ) {
+                    yield return ( UInt64 )value;	//TODO needs unit tested
+
+                    if ( value >= maxValue ) {
+                        yield break; //special case to deal with overflow
+					} 
+
 				}
 			}
 			else {
-				for ( var ul = reFrom; ul >= end; ul -= step ) {
-					yield return ul;
+                const Decimal minValue = UInt64.MinValue;
 
-					if ( ul == UInt64.MinValue ) {
-						yield break;
-					} //special case to deal with overflow
+				for ( var ul = start; ul >= end; ul -= step ) {
+                    yield return ( UInt64 )ul; //TODO needs unit test
+
+                    if ( ul < minValue ) {
+                        yield break; //special case to deal with overflow
+                    }
+
 				}
 			}
 		}
 
 		/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
-		/// <param name="start">inclusive</param>
+		/// <param name="begin">inclusive</param>
 		/// <param name="end">  inclusive</param>
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		[Pure]
 		[NotNull]
-		public static IEnumerable<Int32> To( this Int32 start, Int32 end, Int32 step = 1 ) {
-			if ( step == 0 ) {
-				$"Overriding {nameof( step )} value of {step} with {step = 1}.".Verbose();
-			}
+		public static IEnumerable<Int32> To( this Int32 begin, Int32 end, Int32 step = 1 ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			if ( start == end ) {
+			if ( begin == end ) {
 				/*no-op?*/
 			}
-			else if ( start < end ) {
-				for ( var i = start; i < end; i += step ) {
+			else if ( begin < end ) {
+				for ( var i = begin; i < end; i += step ) {
 					yield return i;
 				}
 			}
 			else {
-				var length = end - start;
+				var length = end - begin;
 
 				for ( var i = length - 1; i >= 0; i-- ) {
 					yield return i; //TODO needs a proper test, with many variations
@@ -585,9 +587,9 @@ namespace Librainian.Maths {
 		[Pure]
 		[NotNull]
 		public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
 			if ( from <= end ) {
 				for ( var ul = from; ul <= end; ul += step ) {
@@ -610,19 +612,19 @@ namespace Librainian.Maths {
 		}
 
 		/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
-		/// <param name="from"></param>
+		/// <param name="begin"></param>
 		/// <param name="end"> </param>
 		/// <param name="step"></param>
 		/// <returns></returns>
 		[Pure]
 		[NotNull]
-		public static IEnumerable<Int64> To( this Int64 from, Int64 end, Int64 step = 1 ) {
-			if ( step == 0L ) {
-				step = 1L;
-			}
+		public static IEnumerable<Int64> To( this Int64 begin, Int64 end, Int64 step = 1 ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			if ( from <= end ) {
-				for ( var ul = from; ul <= end; ul += step ) {
+			if ( begin <= end ) {
+				for ( var ul = begin; ul <= end; ul += step ) {
 					yield return ul;
 
 					if ( ul == Int64.MaxValue ) {
@@ -631,7 +633,7 @@ namespace Librainian.Maths {
 				}
 			}
 			else {
-				for ( var ul = from; ul >= end; ul -= step ) {
+				for ( var ul = begin; ul >= end; ul -= step ) {
 					yield return ul;
 
 					if ( ul == Int64.MinValue ) {
@@ -643,81 +645,81 @@ namespace Librainian.Maths {
 
 		/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 		/// <param name="from"></param>
-		/// <param name="to">  </param>
+		/// <param name="end">  </param>
 		/// <param name="step"></param>
 		/// <returns></returns>
 		[Pure]
 		[NotNull]
-		public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger to, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+		public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger end, UInt64 step = 1 ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			if ( from <= to ) {
-				for ( var ul = from; ul <= to; ul += step ) {
+			if ( from <= end ) {
+				for ( var ul = from; ul <= end; ul += step ) {
 					yield return ul;
 				}
 			}
 			else {
-				for ( var ul = from; ul >= to; ul -= step ) {
+				for ( var ul = from; ul >= end; ul -= step ) {
 					yield return ul;
 				}
 			}
 		}
 
 		/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
-		/// <param name="from"></param>
-		/// <param name="to">  </param>
+		/// <param name="begin"></param>
+		/// <param name="end">  </param>
 		/// <param name="step"></param>
 		/// <returns></returns>
 		[Pure]
 		[NotNull]
-		public static IEnumerable<BigInteger> To( this Int64 from, BigInteger to, UInt64 step = 1 ) {
-			if ( step == 0UL ) {
-				step = 1UL;
-			}
+		public static IEnumerable<BigInteger> To( this Int64 begin, BigInteger end, UInt64 step = 1 ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			BigInteger reFrom = from;
+			BigInteger start = begin;
 
-			if ( reFrom <= to ) {
-				for ( var ul = reFrom; ul <= to; ul += step ) {
+			if ( start <= end ) {
+				for ( var ul = start; ul <= end; ul += step ) {
 					yield return ul;
 				}
 			}
 			else {
-				for ( var ul = reFrom; ul >= to; ul -= step ) {
+				for ( var ul = start; ul >= end; ul -= step ) {
 					yield return ul;
 				}
 			}
 		}
 
 		/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
-		/// <param name="start"></param>
-		/// <param name="to">   </param>
+		/// <param name="begin"></param>
+		/// <param name="end">   </param>
 		/// <param name="step"> </param>
 		/// <returns></returns>
 		[Pure]
 		[NotNull]
-		public static IEnumerable<Rational> To( this Int32 start, Rational to, Rational step ) {
-			if ( step < 0 ) {
-				step = 1;
-			}
+		public static IEnumerable<Rational> To( this Int32 begin, Rational end, Rational step ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			Rational reFrom = start;
+			Rational start = begin;
 
-			if ( reFrom <= to ) {
-				for ( var ul = reFrom; ul <= to; ul += step ) {
+			if ( start <= end ) {
+				for ( var ul = start; ul <= end; ul += step ) {
 					yield return ul;
 				}
 			}
 			else {
-				for ( var ul = reFrom; ul >= to; ul -= step ) {
+				for ( var ul = start; ul >= end; ul -= step ) {
 					yield return ul;
 				}
 			}
 		}
 
-		public static TimeSpan GetApproximateStep( this DateTime from, DateTime to ) {
+		public static TimeSpan GetStep( this DateTime from, DateTime to ) {
 			var diff = from >= to ? from - to : to - from;
 
 			if ( diff.TotalDays > 1 ) {
@@ -756,7 +758,11 @@ namespace Librainian.Maths {
 		[Pure]
 		[NotNull]
 		public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
-			step ??= from.GetApproximateStep( to );
+			step ??= from.GetStep( to );
+
+            if ( step == TimeSpan.Zero ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
 			if ( from > to ) {
 				for ( var dateTime = from; dateTime >= to; dateTime -= step.Value ) {
@@ -773,6 +779,10 @@ namespace Librainian.Maths {
 		[Pure]
 		[NotNull]
 		public static IEnumerable<Single> To( this Single start, Single end, Single step ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
+
 			var count = end - start + 1.0f;
 
 			for ( var idx = 0.0f; idx < count; idx += step ) {
@@ -783,22 +793,40 @@ namespace Librainian.Maths {
 		[Pure]
 		[NotNull]
 		public static IEnumerable<Double> To( this Double start, Double end, Single step ) {
-			var count = end - start + 1.0;
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			for ( var idx = 0.0; idx < count; idx += step ) {
-				yield return start + idx;
-			}
+            if ( end >= start ) {
+                for ( var i = start; i <= end; i += step ) {
+                    yield return i;
+                }
+            }
+            else {
+                for ( var i = start; i >= end; i -= step ) {
+                    yield return i;
+                }
+            }
 		}
 
 		[Pure]
 		[NotNull]
-		public static IEnumerable<Decimal> To( this Decimal start, Decimal end ) {
-			var count = end - start + 1;
+		public static IEnumerable<Decimal> To( this Decimal start, Decimal end, Decimal step ) {
+            if ( step == 0 ) {
+                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+            }
 
-			for ( var i = 0; i < count; i++ ) {
-				yield return start + i;
+            if ( end >= start ) {
+				for ( var i = start; i <= end; i += step ) {
+                    yield return i;
+                }
 			}
-		}
+            else {
+                for ( var i = start; i >= end; i -= step ) {
+					yield return i;
+                }
+            }
+        }
 
 		[Pure]
 		[NotNull]

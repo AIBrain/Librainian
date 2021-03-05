@@ -33,7 +33,7 @@ namespace Librainian.Threadsafe {
 	using System.Threading;
 	using JetBrains.Annotations;
 
-	/// <summary>A <see cref="bool" /> array that may be updated atomically</summary>
+	/// <summary>A <see cref="Boolean" /> array that may be updated atomically</summary>
 	public class BooleanArray {
 
 		private const Byte False = 0;

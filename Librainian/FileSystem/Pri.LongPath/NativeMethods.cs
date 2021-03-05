@@ -517,7 +517,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="newFile"></param>
 		/// <param name="progress"></param>
 		/// <param name="isCancelled">I believe this becomes 1 if the file copy was cancelled, and 0 otherwise.</param>
-		public static void XCopy( [NotNull] this String oldFile, [NotNull] String newFile, [CanBeNull] CopyProgressRoutine progress, ref Int32 isCancelled ) {
+		public static void XCopy( [NotNull] this String oldFile, [NotNull] String newFile, [CanBeNull] CopyProgressRoutine? progress, ref Int32 isCancelled ) {
 			if ( String.IsNullOrWhiteSpace( oldFile ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( oldFile ) );
 			}

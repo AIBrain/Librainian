@@ -103,7 +103,7 @@ namespace Librainian.FileSystem {
 				else {
 					this.Reset();
 
-					return default( Boolean );
+					return false;
 				}
 			}
 

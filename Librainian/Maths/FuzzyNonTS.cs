@@ -30,7 +30,7 @@ namespace Librainian.Maths {
 
 	/// <summary>A Double number, constrained between 0 and 1. Not thread safe!</summary>
 	[JsonObject]
-	public sealed class FuzzyNonTs {
+	public class FuzzyNonTs {
 
 		public const Double MaxValue = 1D;
 
@@ -80,44 +80,29 @@ namespace Librainian.Maths {
 
 		public static implicit operator Double( [NotNull] FuzzyNonTs special ) => special.Value;
 
-		public static Boolean IsFalser( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value <= Falser.Value;
+		public static Boolean IsFalser( [NotNull] FuzzyNonTs special ) => special.Value <= Falser.Value;
 
-		public static Boolean IsTruer( [CanBeNull] FuzzyNonTs special ) => null != special && special.Value >= Truer.Value;
+		public static Boolean IsTruer( [NotNull] FuzzyNonTs special ) => special.Value >= Truer.Value;
 
-		public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
+		public static Boolean IsUndecided( [NotNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
 		[NotNull]
 		public static FuzzyNonTs Parse( [NotNull] String value ) => new( Double.Parse( value ) );
 
 		public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 
-		public void MoreLikely( [CanBeNull] FuzzyNonTs towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
+		public void MoreLikely( [CanBeNull] FuzzyNonTs? towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
 
 		public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
 
-		/// <summary>Initializes a random number between 0 and 1 within a range, defaulting to Middle</summary>
+		/// <summary>Initializes a random number between 0 and 1 within a range, default is <see cref="LowMiddleHigh.Middle"/></summary>
 		public void Randomize( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
-			switch ( lmh ) {
-				case LowMiddleHigh.Low:
-					this.Value = Randem.NextDouble() / 10;
-
-					break;
-
-				case LowMiddleHigh.Middle:
-					this.Value = ( 1 - Randem.NextDouble() / 10 ) / 2;
-
-					break;
-
-				case LowMiddleHigh.High:
-					this.Value = 1 - Randem.NextDouble() / 10;
-
-					break;
-
-				default:
-					this.Value = Randem.NextDouble();
-
-					break;
-			}
+			this.Value = lmh switch {
+				LowMiddleHigh.Low => Randem.NextDouble() / 10,
+				LowMiddleHigh.Middle => ( 1 - Randem.NextDouble() / 10 ) / 2,
+				LowMiddleHigh.High => 1 - Randem.NextDouble() / 10,
+				_ => Randem.NextDouble()
+			};
 		}
 
 		[NotNull]

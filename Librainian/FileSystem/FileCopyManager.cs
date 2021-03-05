@@ -31,62 +31,64 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-	using System.Net;
+    using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Measurement.Time;
-	using PooledAwait;
+	using JetBrains.Annotations;
+    using Logging;
+    using Measurement.Time;
+    using Parsing;
+    using PooledAwait;
 
 	public class FileCopyManager {
 
-		private ConcurrentDictionary<Document, (PooledValueTask,Status)> SourceFilesToBeCopied { get; } = new ConcurrentDictionary<Document, (PooledValueTask, Status)>( );
+		private ConcurrentDictionary<Document, PooledValueTask<FileCopyData>> SourceFilesToBeCopied { get; } = new();
 
-		public async Task LoadFilesToBeCopied( IEnumerable<Document> sourceFiles, IFolder destinationFolder, Boolean overwriteDestination, CancellationToken cancellationToken,
-			Action<(IDocument destination, UInt64, UInt64, Document)> documentProgressChanged, Action<(IDocument destination, Exception? Error)> onEachComplete ) {
-			
-			//add all source files.
-			//does this also start the copy too?
-			await Task.Run( () => {
-				foreach ( var sourceFile in sourceFiles ) {
+        public IAsyncEnumerable<PooledValueTask<FileCopyData>> FilesToBeCopied() => this.SourceFilesToBeCopied.Values.ToAsyncEnumerable();
 
-					onEachComplete += tuple => {
-						//this.SourceFilesToBeCopied[tuple.
-					};
-
-					this.SourceFilesToBeCopied[sourceFile] =
-						( CreateCopyFileTask( sourceFile, destinationFolder, overwriteDestination, documentProgressChanged, onEachComplete, cancellationToken ),
-							Status.Unknown );
-				}
-			}, cancellationToken ).ConfigureAwait(false);
-			
-			
-			
-		}
-
-		private static async PooledValueTask CreateCopyFileTask( Document sourceFile, IFolder destinationFolder, Boolean overwriteDestination,
-			IProgress<(IDocument source,IDocument destination, UInt64, UInt64, Document)> documentProgressChanged, Action<(IDocument destination, Exception? Error)> onEachComplete, CancellationToken cancellationToken ) {
-
-			var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
-
-			if ( overwriteDestination && destinationDocument.Exists() ) {
-				await destinationDocument.TryDeleting( Seconds.Seven, cancellationToken ).ConfigureAwait(false);
+        /// <summary>
+		/// Each <see cref="SourceFilesToBeCopied"/> still needs to be awaited.
+		/// </summary>
+		/// <param name="sourceFiles"></param>
+		/// <param name="destinationFolder"></param>
+		/// <param name="overwriteDestination"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public async Task LoadFilesToBeCopied( [NotNull] IAsyncEnumerable<Document> sourceFiles, IFolder destinationFolder, Boolean overwriteDestination, CancellationToken cancellationToken ) {
+			if ( sourceFiles == null ) {
+				throw new ArgumentNullException( nameof( sourceFiles ) );
 			}
 
-			var fileData = new FileCopyData {
-				Source = sourceFile,
-				Destination = destinationDocument,
-				Exceptions = null,
-				CopyTask = null,
-				DataCopied = null,
-				OnCompleted = null,
-				SourceSize = default( UInt64 ),
-				WhenCompleted = null,
-				WhenStarted = null
-			};
+			await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ) ) {
 
-			var copy = sourceFile.Copy( destinationDocument, documentProgressChanged, onEachComplete, cancellationToken );
+				var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
 
+				var fileCopyData = new FileCopyData( sourceFile, destinationDocument ) {
+					Exceptions = null,
+					DataCopied = null,
+					OnCompleted = null,
+					SourceSize = default( UInt64 ),
+					WhenCompleted = null,
+					WhenStarted = null
+				};
 
+				this.SourceFilesToBeCopied[ sourceFile ] = CreateCopyFileTask( fileCopyData, overwriteDestination, cancellationToken );
+			}
+
+            static async PooledValueTask<FileCopyData> CreateCopyFileTask( FileCopyData fileCopyData, Boolean overwriteDestination, CancellationToken cancellationToken ) {
+
+                if ( overwriteDestination && fileCopyData.Destination.Exists() ) {
+                    $"Deleting destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
+                    await fileCopyData.Destination.TryDeleting( Seconds.Seven, cancellationToken ).ConfigureAwait( false );
+                }
+
+                await fileCopyData.Source.Copy( fileCopyData, cancellationToken );
+
+                return fileCopyData;
+
+            }
 		}
+
+		
 	}
 }

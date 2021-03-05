@@ -52,20 +52,20 @@ namespace Librainian.Measurement.Physics {
 		public const Decimal InOneTeraElectronVolt = 1E9m;
 
 		/// <summary>About 79228162514264337593543950335.</summary>
-		public static readonly KiloElectronVolts MaxValue = new KiloElectronVolts( Decimal.MaxValue );
+		public static readonly KiloElectronVolts MaxValue = new( Decimal.MaxValue );
 
 		/// <summary>About -79228162514264337593543950335.</summary>
-		public static readonly KiloElectronVolts MinValue = new KiloElectronVolts( Decimal.MinValue );
+		public static readonly KiloElectronVolts MinValue = new( Decimal.MinValue );
 
-		public static readonly KiloElectronVolts NegativeOne = new KiloElectronVolts( -1m );
-
-		/// <summary></summary>
-		public static readonly KiloElectronVolts NegativeZero = new KiloElectronVolts( -Decimal.Zero );
+		public static readonly KiloElectronVolts NegativeOne = new( -1m );
 
 		/// <summary></summary>
-		public static readonly KiloElectronVolts One = new KiloElectronVolts( 1m );
+		public static readonly KiloElectronVolts NegativeZero = new( -Decimal.Zero );
 
-		public static readonly KiloElectronVolts Zero = new KiloElectronVolts( 0m );
+		/// <summary></summary>
+		public static readonly KiloElectronVolts One = new( 1m );
+
+		public static readonly KiloElectronVolts Zero = new( 0m );
 
 		public readonly Rational Value;
 
@@ -83,27 +83,27 @@ namespace Librainian.Measurement.Physics {
 
 		public static implicit operator KiloElectronVolts( GigaElectronVolts gigaElectronVolts ) => gigaElectronVolts.ToKiloElectronVolts();
 
-		public static KiloElectronVolts operator -( KiloElectronVolts electronVolts ) => new KiloElectronVolts( -electronVolts.Value );
+		public static KiloElectronVolts operator -( KiloElectronVolts electronVolts ) => new( -electronVolts.Value );
 
-		public static KiloElectronVolts operator *( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( left.Value * right.Value );
+		public static KiloElectronVolts operator *( KiloElectronVolts left, KiloElectronVolts right ) => new( left.Value * right.Value );
 
-		public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( left.Value * ( Rational )right );
+		public static KiloElectronVolts operator *( KiloElectronVolts left, Decimal right ) => new( left.Value * ( Rational )right );
 
-		public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new KiloElectronVolts( ( Rational )left * right.Value );
+		public static KiloElectronVolts operator *( Decimal left, KiloElectronVolts right ) => new( ( Rational )left * right.Value );
 
-		public static KiloElectronVolts operator *( Rational left, KiloElectronVolts right ) => new KiloElectronVolts( left * right.Value );
+		public static KiloElectronVolts operator *( Rational left, KiloElectronVolts right ) => new( left * right.Value );
 
-		public static KiloElectronVolts operator *( BigInteger left, KiloElectronVolts right ) => new KiloElectronVolts( new Rational( left ) * right.Value );
+		public static KiloElectronVolts operator *( BigInteger left, KiloElectronVolts right ) => new( new Rational( left ) * right.Value );
 
-		public static KiloElectronVolts operator /( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( left.Value / right.Value );
+		public static KiloElectronVolts operator /( KiloElectronVolts left, KiloElectronVolts right ) => new( left.Value / right.Value );
 
-		public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) => new KiloElectronVolts( left.Value / ( Rational )right );
+		public static KiloElectronVolts operator /( KiloElectronVolts left, Decimal right ) => new( left.Value / ( Rational )right );
 
 		public static MegaElectronVolts operator +( KiloElectronVolts left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
 		public static GigaElectronVolts operator +( KiloElectronVolts left, GigaElectronVolts right ) => left.ToGigaElectronVolts() + right;
 
-		public static KiloElectronVolts operator +( KiloElectronVolts left, KiloElectronVolts right ) => new KiloElectronVolts( left.Value + right.Value );
+		public static KiloElectronVolts operator +( KiloElectronVolts left, KiloElectronVolts right ) => new( left.Value + right.Value );
 
 		public static Boolean operator <( KiloElectronVolts left, KiloElectronVolts right ) => left.Value < right.Value;
 
@@ -119,22 +119,22 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToKiloElectronVolts().Value );
 
-		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational )InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new( this.Value * ( Rational )InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational )InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * ( Rational )InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational )InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * ( Rational )InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational )InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * ( Rational )InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * ( Rational )InOneMilliElectronVolt );
 
 		/// <summary>Returns the fully qualified type name of this instance.</summary>
 		/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
 		[NotNull]
 		public override String ToString() => $"{this.Value} eV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * ( Rational )InOneTeraElectronVolt );
 
 	}
 

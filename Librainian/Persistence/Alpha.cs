@@ -45,7 +45,7 @@ namespace Librainian.Persistence {
 		public static Boolean TryGet( [CanBeNull] String? key, [CanBeNull] out String? value ) {
 			value = null;
 
-			return default( Boolean );
+			return false;
 		}
 
 		public interface IResourceSource {
@@ -96,15 +96,15 @@ namespace Librainian.Persistence {
 				Root = new PersistTable<String, String>( RootPath );
 			}
 
-			[NotNull] private static TimeTracker InitializeTimeTracker { get; } = new TimeTracker();
+			[NotNull] private static TimeTracker InitializeTimeTracker { get; } = new();
 
 			[CanBeNull] private static Task? LocalDiscoveryTask { get; set; }
 
-			[NotNull] private static TimeTracker LocalDiscoveryTimeTracker { get; } = new TimeTracker();
+			[NotNull] private static TimeTracker LocalDiscoveryTimeTracker { get; } = new();
 
 			[CanBeNull] private static Task? RemoteDiscoveryTask { get; set; }
 
-			[NotNull] private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new TimeTracker();
+			[NotNull] private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new();
 
 			public static CancellationToken LocalDiscoveryCancellationToken { get; set; }
 
@@ -114,7 +114,7 @@ namespace Librainian.Persistence {
 			public static PersistTable<String, String> Root { get; }
 
 			/// <summary>Where the main indexes will be stored.</summary>
-			public static Folder RootPath { get; } = new Folder( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
+			public static Folder RootPath { get; } = new( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.CommonApplicationData ),
 				Path.Combine( nameof( Storage ), nameof( Root ) ) ) );
 
 			private static Boolean DiscoverLocalResources() {
@@ -136,7 +136,7 @@ namespace Librainian.Persistence {
 					LocalDiscoveryTimeTracker.Finished = DateTime.UtcNow;
 				}
 
-				return default( Boolean );
+				return false;
 			}
 
 			private static Boolean DiscoverRemoteResources() {
@@ -154,7 +154,7 @@ namespace Librainian.Persistence {
 					RemoteResourceDiscoveryTimeTracker.Finished = DateTime.UtcNow;
 				}
 
-				return default( Boolean );
+				return false;
 			}
 
 			[NotNull]
@@ -194,7 +194,7 @@ namespace Librainian.Persistence {
 
 	}
 
-	public class TimeTracker {
+	public record TimeTracker {
 
 		/// <summary>Null? Hasn't finished yet.</summary>
 		public DateTime? Finished { get; set; }

@@ -39,23 +39,23 @@ namespace Librainian.Measurement.Physics {
 	public struct ElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
 		/// <summary>About 79228162514264337593543950335.</summary>
-		public static readonly ElectronVolts MaxValue = new ElectronVolts( Decimal.MaxValue );
+		public static readonly ElectronVolts MaxValue = new( Decimal.MaxValue );
 
 		/// <summary>About -79228162514264337593543950335.</summary>
-		public static readonly ElectronVolts MinValue = new ElectronVolts( Decimal.MinValue );
+		public static readonly ElectronVolts MinValue = new( Decimal.MinValue );
 
-		public static readonly ElectronVolts NegativeOne = new ElectronVolts( -1m );
+		public static readonly ElectronVolts NegativeOne = new( -1m );
 
 		/// <summary></summary>
-		public static readonly ElectronVolts NegativeZero = new ElectronVolts( -Decimal.Zero );
+		public static readonly ElectronVolts NegativeZero = new( -Decimal.Zero );
 
 		/// <summary>More than nothing (unknown but not massless).</summary>
-		public static readonly ElectronVolts NonZero = new ElectronVolts( MathExtensions.EpsilonDecimal );
+		public static readonly ElectronVolts NonZero = new( MathExtensions.EpsilonDecimal );
 
 		/// <summary></summary>
-		public static readonly ElectronVolts One = new ElectronVolts( 1m );
+		public static readonly ElectronVolts One = new( 1m );
 
-		public static readonly ElectronVolts Zero = new ElectronVolts( 0m );
+		public static readonly ElectronVolts Zero = new( 0m );
 
 		public Rational Value { get; }
 
@@ -73,25 +73,25 @@ namespace Librainian.Measurement.Physics {
 
 		public static implicit operator ElectronVolts( GigaElectronVolts gigaElectronVolts ) => gigaElectronVolts.ToElectronVolts();
 
-		public static ElectronVolts operator -( ElectronVolts electronVolts ) => new ElectronVolts( -electronVolts.Value );
+		public static ElectronVolts operator -( ElectronVolts electronVolts ) => new( -electronVolts.Value );
 
-		public static ElectronVolts operator *( ElectronVolts left, ElectronVolts right ) => new ElectronVolts( left.Value * right.Value );
+		public static ElectronVolts operator *( ElectronVolts left, ElectronVolts right ) => new( left.Value * right.Value );
 
-		public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new ElectronVolts( left.Value * ( Rational )right );
+		public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new( left.Value * ( Rational )right );
 
-		public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new ElectronVolts( ( Rational )left * right.Value );
+		public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new( ( Rational )left * right.Value );
 
-		public static ElectronVolts operator *( Rational left, ElectronVolts right ) => new ElectronVolts( left * right.Value );
+		public static ElectronVolts operator *( Rational left, ElectronVolts right ) => new( left * right.Value );
 
-		public static ElectronVolts operator /( ElectronVolts left, ElectronVolts right ) => new ElectronVolts( left.Value / right.Value );
+		public static ElectronVolts operator /( ElectronVolts left, ElectronVolts right ) => new( left.Value / right.Value );
 
-		public static ElectronVolts operator /( ElectronVolts left, Decimal right ) => new ElectronVolts( left.Value / ( Rational )right );
+		public static ElectronVolts operator /( ElectronVolts left, Decimal right ) => new( left.Value / ( Rational )right );
 
 		public static MegaElectronVolts operator +( ElectronVolts left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
 		public static GigaElectronVolts operator +( ElectronVolts left, GigaElectronVolts right ) => left.ToGigaElectronVolts() + right;
 
-		public static ElectronVolts operator +( ElectronVolts left, ElectronVolts right ) => new ElectronVolts( left.Value + right.Value );
+		public static ElectronVolts operator +( ElectronVolts left, ElectronVolts right ) => new( left.Value + right.Value );
 
 		public static Boolean operator <( ElectronVolts left, ElectronVolts right ) => left.Value < right.Value;
 
@@ -109,22 +109,22 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToElectronVolts().Value );
 
-		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * InOne.ElectronVolt );
+		public ElectronVolts ToElectronVolts() => new( this.Value * InOne.ElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * InOne.GigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOne.GigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * InOne.KiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOne.KiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * InOne.MegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOne.MegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * InOne.MilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOne.MilliElectronVolt );
 
 		/// <summary>Returns the fully qualified type name of this instance.</summary>
 		/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
 		[NotNull]
 		public override String ToString() => $"{this.Value} eV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * InOne.TeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOne.TeraElectronVolt );
 
 		public static class InOne {
 

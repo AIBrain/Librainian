@@ -67,7 +67,7 @@ namespace Librainian.Databases {
 				if ( prop.PropertyType.IsValueType ) {
 					defaultValue = Activator.CreateInstance( prop.PropertyType );
 				}
-				else if ( prop.PropertyType.Name.ToLower().Equals( "string" ) ) {
+				else if (prop.PropertyType.Name.ToLower().Equals("string", StringComparison.Ordinal)) {
 					defaultValue = String.Empty;
 				}
 

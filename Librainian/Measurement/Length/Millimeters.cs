@@ -37,10 +37,10 @@ namespace Librainian.Measurement.Length {
 		//public static readonly Millimeters MinValue = new Millimeters( Decimal.MinValue );
 
 		/// <summary>One <see cref="Millimeters" /> .</summary>
-		public static readonly Millimeters One = new Millimeters( 1 );
+		public static readonly Millimeters One = new( 1 );
 
 		/// <summary>Two <see cref="Millimeters" /> .</summary>
-		public static readonly Millimeters Two = new Millimeters( 2 );
+		public static readonly Millimeters Two = new( 2 );
 
 		[JsonProperty]
 		public Rational Value { get; }

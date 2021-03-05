@@ -1,6 +1,7 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code
+//  (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -17,13 +18,13 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DocumentExtensions.cs" last formatted on 2020-08-14 at 8:39 PM.
+// File "DocumentExtensions.cs" last formatted on 2021-02-24 at 8:00 AM.
 
 namespace Librainian.FileSystem {
-
 	using System;
 	using System.Diagnostics;
 	using System.IO;
@@ -36,34 +37,28 @@ namespace Librainian.FileSystem {
 
 	public static class DocumentExtensions {
 
-		/// <summary>16mb</summary>
+		/// <summary>
+		///     16mb
+		/// </summary>
 		public static UInt32 BufferSize { get; } = 0x1000000;
 
 		/*
 
         /// <summary>
-        ///     The characters not allowed in file names.
+        /// The characters not allowed in file names.
         /// </summary>
         [NotNull]
         public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
         */
 
-		private static async Task InternalCopyWithProgress(
-			[NotNull] Document source,
-			[NotNull] Document destination,
-			[CanBeNull] IProgress<Single> progress,
-			[CanBeNull] IProgress<TimeSpan> eta,
-			[NotNull] Char[] buffer,
-			Single bytesToBeCopied,
-			[CanBeNull] Stopwatch begin
-		) {
+		private static async Task InternalCopyWithProgress( [NotNull] IDocument source, [NotNull] IDocument destination, [CanBeNull] IProgress<Decimal> progress,
+			[CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Decimal bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
 			using var reader = new StreamReader( source.FullPath );
 
-#if NET48
-			using var writer = new StreamWriter( destination.FullPath, false );
-#else
-			await using var writer = new StreamWriter( destination.FullPath, false );
+#if NET5_0_OR_GREATER
+			await
 #endif
+				using var writer = new StreamWriter( destination.FullPath, false );
 
 			Int32 numRead;
 
@@ -78,9 +73,10 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-
 		[Pure]
 		public static Boolean BadlyNamedFile( this Document document, out BadlyNamedReason badlyNamedReason ) {
+			//TODO This actually needs fleshed out with a whole host of options to decide what constitutes a "bad" file name
+
 			var currentExtension = Path.GetExtension( document.FullPath );
 			if ( !String.IsNullOrWhiteSpace( currentExtension ) ) {
 				badlyNamedReason = BadlyNamedReason.MissingExtension;
@@ -95,20 +91,18 @@ namespace Librainian.FileSystem {
 			}
 
 			var justName = Path.GetFileName( document.FileName );
-			
+
 			var regex = new Regex( "", RegexOptions.Compiled );
-			if ( regex.IsMatch( justName ) ) {
-				
-			}
+			if ( regex.IsMatch( justName ) ) { }
 
 			badlyNamedReason = BadlyNamedReason.NotNamedBadly;
 			return false;
 		}
-		
+
 		/*
 
         /// <summary>
-        ///     Returns the <paramref name="filename" /> with any invalid chars removed.
+        /// Returns the <paramref name="filename" /> with any invalid chars removed.
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
@@ -127,7 +121,7 @@ namespace Librainian.FileSystem {
 		/*
 
         /// <summary>
-        ///     Any result less than 1 is an error of some sort.
+        /// Any result less than 1 is an error of some sort.
         /// </summary>
         /// <param name="source">              </param>
         /// <param name="destination">         </param>
@@ -229,16 +223,14 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( !document.Exists() ) {
-				return default( Boolean );
+				return false;
 			}
 
-#if NET48
-			using var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read,
-											   MathConstants.Sizes.OneGigaByte, FileOptions.SequentialScan );
-#else
-			await using var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte,
-													 FileOptions.SequentialScan );
+#if NET5_0_OR_GREATER
+			await
 #endif
+				using var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte,
+					FileOptions.SequentialScan );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
@@ -246,11 +238,10 @@ namespace Librainian.FileSystem {
 
 			var buffer = new Byte[MathConstants.Sizes.OneGigaByte];
 
-#if NET48
-			using var buffered = new BufferedStream( stream );
-#else
-			await using var buffered = new BufferedStream( stream );
+#if NET5_0_OR_GREATER
+			await
 #endif
+				using var buffered = new BufferedStream( stream );
 
 			Int32 bytesRead;
 
@@ -260,7 +251,7 @@ namespace Librainian.FileSystem {
 				bytesRead = await readTask.ConfigureAwait( false );
 
 				if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
-					return default( Boolean );
+					return false;
 				}
 			} while ( bytesRead.Any() );
 
@@ -268,5 +259,4 @@ namespace Librainian.FileSystem {
 		}
 
 	}
-
 }

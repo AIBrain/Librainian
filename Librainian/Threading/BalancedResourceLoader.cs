@@ -56,7 +56,6 @@ namespace Librainian.Threading {
 
 		public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
 
-		[CanBeNull]
 		public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
 			lock ( this._lock ) {
 				this.GetOrQueue( out var resource, cancelToken, true );
@@ -65,7 +64,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new() ) {
+		public Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default ) {
 			lock ( this._lock ) {
 				return this.GetOrQueue( out resource, cancelToken, false );
 			}
@@ -102,7 +101,7 @@ namespace Librainian.Threading {
 					resource = tcs.Task;
 				}
 
-				return default( Boolean );
+				return false;
 			}
 		}
 
@@ -128,17 +127,7 @@ namespace Librainian.Threading {
 				this._queue.Dequeue();
 			}
 
-			_resource?.ContinueWith( t => {
-				if ( _tuple.Item1 is null ) {
-					return;
-				}
-
-				if ( t is null ) {
-					return;
-				}
-
-				_tuple.Item1.SetFromTask( t );
-			} );
+			_resource.ContinueWith( t => _tuple.Item1.SetFromTask( t ) );
 		}
 
 	}

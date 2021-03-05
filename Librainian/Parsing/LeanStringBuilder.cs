@@ -95,7 +95,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( left is null || right is null || left._charCount != right._charCount || left._parts.Count != right._parts.Count ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( left._compiled != null && right._compiled != null ) {

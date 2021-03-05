@@ -31,13 +31,13 @@ namespace Librainian.Parsing {
 	using System.Globalization;
 	using System.Linq;
 	using System.Runtime.CompilerServices;
-	using Exceptions;
+	using Exceptions.Warnings;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 
-	/// <summary>This <see cref="string" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
+	/// <summary>This <see cref="String" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Serializable]
 	[JsonObject]
@@ -127,9 +127,9 @@ namespace Librainian.Parsing {
 
 		public static implicit operator TrimmedString( [CanBeNull] String? value ) => new( value );
 
-		public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.CurrentCulture );
+		public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal);
 
-		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.CurrentCulture );
+		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal);
 
 		public Boolean Equals( TrimmedString other ) => Equals( this, other );
 

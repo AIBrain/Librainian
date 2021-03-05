@@ -55,7 +55,7 @@ namespace Librainian.Persistence {
 		///         <see cref="Environment.SpecialFolder.LocalApplicationData" />
 		///     </para>
 		/// </summary>
-		public static readonly Lazy<Folder> LocalDataFolder = new Lazy<Folder>( () => {
+		public static readonly Lazy<Folder> LocalDataFolder = new( () => {
 			var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
 			if ( !folder.Exists() ) {
@@ -66,22 +66,22 @@ namespace Librainian.Persistence {
 		} );
 
 		[NotNull]
-		public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new ThreadLocal<JsonSerializer>( () => new JsonSerializer {
+		public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
 			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
 		public static readonly ThreadLocal<StreamingContext> StreamingContexts =
-			new ThreadLocal<StreamingContext>( () => new StreamingContext( StreamingContextStates.All ), true );
+			new( () => new StreamingContext( StreamingContextStates.All ), true );
 
 		[NotNull]
-		public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new ThreadLocal<JsonSerializerSettings>( () => new JsonSerializerSettings {
+		public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
 			//ContractResolver = new MyContractResolver(),
 			TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.Objects //All?
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
 		/// <summary></summary>
-		/// <typeparam name="TType"></typeparam>
+		/// <typeparam name="T"></typeparam>
 		/// <param name="storedAsString"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
@@ -89,15 +89,15 @@ namespace Librainian.Persistence {
 		/// <exception cref="FormatException"></exception>
 		/// <exception cref="System.Xml.XmlException"></exception>
 		[CanBeNull]
-		public static TType Deserialize<TType>( [CanBeNull] this String? storedAsString ) {
+		public static T? Deserialize<T>( [CanBeNull] this String? storedAsString ) {
 			try {
-				return storedAsString.FromJSON<TType>();
+				return storedAsString.FromJSON<T>();
 			}
 			catch ( SerializationException exception ) {
 				exception.Log();
 			}
 
-			return default( TType )!;
+			return default( T? );
 		}
 
 		public static Boolean DeserializeDictionary<TKey, TValue>(
@@ -112,7 +112,7 @@ namespace Librainian.Persistence {
 				var stopwatch = Stopwatch.StartNew();
 
 				if ( folder?.Exists() != true ) {
-					return default( Boolean );
+					return false;
 				}
 
 				var fileCount = UInt64.MinValue;
@@ -165,7 +165,7 @@ namespace Librainian.Persistence {
 			//finally {
 			//    //Report.Exit();
 			//}
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>See also <see cref="Serializer" />.</summary>
@@ -173,11 +173,8 @@ namespace Librainian.Persistence {
 		/// <param name="bytes"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static T Deserializer<T>( [CanBeNull] this Byte[] bytes ) {
-			if ( bytes == default( Object ) ) {
-				return default( T );
-			}
-
+		[Obsolete]
+		public static T Deserializer<T>( [NotNull] this Byte[] bytes ) {
 			using var memoryStream = new MemoryStream( bytes );
 
 			var binaryFormatter = new BinaryFormatter();
@@ -227,7 +224,7 @@ namespace Librainian.Persistence {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
@@ -243,16 +240,16 @@ namespace Librainian.Persistence {
 		}
 
 		/// <summary>Return this JSON string as an object.</summary>
-		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="T"></typeparam>
 		/// <param name="data"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static TKey FromJSON<TKey>( [CanBeNull] this String? data ) {
+		public static T? FromJSON<T>( [CanBeNull] this String? data ) {
 			if ( String.IsNullOrWhiteSpace( data ) ) {
-				return default( TKey )!;
+				return default( T );
 			}
 
-			return JsonConvert.DeserializeObject<TKey>( data, Jss.Value! );
+			return JsonConvert.DeserializeObject<T>( data, Jss.Value );
 		}
 
 		/// <summary></summary>
@@ -306,7 +303,7 @@ namespace Librainian.Persistence {
 		) where TKey : IComparable<TKey> {
 
 			if ( !dictionary.Any() ) {
-				return default( Boolean );
+				return false;
 			}
 
 			try {
@@ -372,7 +369,7 @@ namespace Librainian.Persistence {
 			//finally {
 			//    //Report.Exit();
 			//}
-			return default( Boolean );
+			return false;
 		}
 
 		/*
@@ -446,9 +443,16 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		[CanBeNull]
 		public static String? ToJSON<T>( [CanBeNull]
-			this T self, Formatting formatting = Formatting.None ) => self is null ? null : JsonConvert.SerializeObject( self, formatting, Jss.Value! );
+			this T self, Formatting formatting = Formatting.None ) {
 
-		/*
+            if ( self is null ) {
+                return default(String?);
+            }
+
+            return JsonConvert.SerializeObject( self, formatting, Jss.Value );
+        }
+
+        /*
 
 		/// <summary>
 		///     <para>

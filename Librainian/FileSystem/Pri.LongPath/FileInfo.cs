@@ -1,4 +1,4 @@
-// Copyright Â© Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -30,8 +30,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using JetBrains.Annotations;
 
 	public class FileInfo : FileSystemInfo {
-
-		public const Int32 DefaultBufferSize = 4096;
 
 		public FileInfo( [NotNull] String fileName ) : base( fileName.GetFullPath() ) => this.Name = this.FullPath.GetFileName();
 
@@ -71,13 +69,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public override String Name { get; }
 
 		[NotNull]
-		public System.IO.FileInfo SysFileInfo => new( this.FullPath );
+		public System.IO.FileInfo SysFileInfo => new System.IO.FileInfo( this.FullPath );
 
 		[NotNull]
 		public override System.IO.FileSystemInfo SystemInfo => this.SysFileInfo;
 
 		[NotNull]
-		public DirectoryInfo Directory => new( this.DirectoryName );
+		public DirectoryInfo Directory => new DirectoryInfo( this.DirectoryName );
 
 		private Int64 GetFileLength() {
 			if ( this.state == State.Uninitialized ) {
@@ -129,13 +127,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public FileStream Open( FileMode mode, FileAccess access ) => this.Open( mode, access, FileShare.None );
 
 		[NotNull]
-		public FileStream Open( FileMode mode, FileAccess access, FileShare share ) => File.Open( this.FullPath, mode, access, share, DefaultBufferSize, FileOptions.SequentialScan );
+		public FileStream Open( FileMode mode, FileAccess access, FileShare share ) => File.Open( this.FullPath, mode, access, share, 4096, FileOptions.SequentialScan );
 
 		[NotNull]
-		public FileStream OpenRead() => File.Open( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, DefaultBufferSize, FileOptions.None );
+		public FileStream OpenRead() => File.Open( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None );
 
 		[NotNull]
-		public StreamReader OpenText() => File.CreateStreamReader( this.FullPath, Encoding.UTF8, true, DefaultBufferSize );
+		public StreamReader OpenText() => File.CreateStreamReader( this.FullPath, Encoding.UTF8, true, 1024 );
 
 		[NotNull]
 		public FileStream OpenWrite() => File.Open( this.FullPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None );

@@ -33,8 +33,20 @@ namespace Librainian {
 	public static class StatusExtensions {
 
 		static StatusExtensions() {
-			if ( Status.Good.IsBad() || Status.Failure.IsGood() || Status.Success.IsBad() || !Status.Unknown.IsUnknown() ) {
-				throw new InvalidOperationException( "The universe messed up." );
+			if ( Status.Good.IsBad() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
+
+			if ( Status.Failure.IsGood() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
+
+			if ( Status.Success.IsBad() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
+
+			if ( !Status.Unknown.IsUnknown() ) {
+				throw new InvalidOperationException( "Someone blinked." );
 			}
 		}
 

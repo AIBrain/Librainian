@@ -28,15 +28,15 @@ namespace Librainian.Measurement.Time.Clocks {
 
 	public interface IStandardClockWithSmallUnits {
 
-		Hour Hour { get; }
+		ClockHour Hour { get; }
 
-		Microsecond Microsecond { get; }
+		ClockMicrosecond Microsecond { get; }
 
-		Millisecond Millisecond { get; }
+		ClockMillisecond Millisecond { get; }
 
-		Minute Minute { get; }
+		ClockMinute Minute { get; }
 
-		Second Second { get; }
+		ClockSecond Second { get; }
 
 		Time GetTime();
 

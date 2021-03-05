@@ -615,7 +615,7 @@ namespace Librainian.OperatingSystem {
 
 			// just for demonstration
 			public static LargeInteger FromInt64( Int64 value ) =>
-				new LargeInteger {
+				new() {
 					Low = ( Int32 )value, High = ( Int32 )( value >> 32 )
 				};
 

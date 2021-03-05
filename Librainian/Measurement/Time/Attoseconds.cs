@@ -40,19 +40,16 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public record Attoseconds : IQuantityOfTime {
+	public record Attoseconds( Rational Value ) : IQuantityOfTime {
 
 		/// <summary>1000</summary>
 		/// <see cref="Femtoseconds" />
 		public const UInt16 InOneFemtosecond = 1000;
 
-		public Attoseconds( Decimal value ) => this.Value = ( Rational )value;
+		public Attoseconds( Int64 value ) : this( ( Rational )value ) { }
+		public Attoseconds( UInt64 value ) : this( ( Rational )value ) { }
 
-		public Attoseconds( Rational value ) => this.Value = value;
-
-		public Attoseconds( Int64 value ) => this.Value = value;
-
-		public Attoseconds( BigInteger value ) => this.Value = value;
+		public Attoseconds( BigInteger value ) : this( ( Rational )value ) { }
 
 		/// <summary>Ten <see cref="Attoseconds" /> s.</summary>
 		public static Attoseconds Fifteen { get; } = new( 15 );
@@ -124,12 +121,11 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Zero <see cref="Attoseconds" />.</summary>
 		public static Attoseconds Zero { get; } = new( 0 );
 
-		[JsonProperty]
-		public Rational Value { get; }
+		
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToZeptoseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneAttosecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational )PlanckTimes.InOneAttosecond);
 
 		public Seconds ToSeconds() => new( ( Rational )this.ToTimeSpan().TotalSeconds );
 
@@ -219,7 +215,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "as" )}";
 			}
 
-			var dec = ( Decimal )this.Value;
+			var dec = this.Value;
 
 			return $"{dec} {dec.PluralOf( "as" )}";
 		}

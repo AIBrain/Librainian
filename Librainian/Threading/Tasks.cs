@@ -209,7 +209,7 @@ namespace Librainian.Threading {
 		/// <param name="post"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static Action Wrap( [CanBeNull] this Action action, [CanBeNull] Action pre, [CanBeNull] Action post ) =>
+		public static Action Wrap( [CanBeNull] this Action? action, [CanBeNull] Action? pre, [CanBeNull] Action? post ) =>
 			() => {
 				try {
 					pre?.Invoke();

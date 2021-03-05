@@ -44,31 +44,34 @@ namespace Librainian.Linguistics {
 
 		private Book() { }
 
-		public Book( [ItemCanBeNull] [NotNull] IEnumerable<Page> pages, [ItemCanBeNull] [CanBeNull] IEnumerable<Author> authors = null ) {
+		public Book( [ItemNotNull] [NotNull] IEnumerable<Page> pages, [ItemNotNull] [CanBeNull] IEnumerable<Author>? authors = null ) {
 			if ( pages is null ) {
 				throw new ArgumentNullException( nameof( pages ) );
 			}
 
 			var pageNumber = 0;
 
-			foreach ( var page in pages.Where( page => page != null ) ) {
+			foreach ( var page in pages ) {
 				this.Pages[pageNumber++] = page;
 			}
 
 			if ( null != authors ) {
-				this.Authors.AddRange( authors.Where( author => null != author ) );
+                //TODO Can there be different Authors per Chapter and/or page?
+				this.Authors.AddRange( authors );
 			}
 		}
 
-		[NotNull]
-		[JsonProperty]
-		private HashSet<Author> Authors { get; } = new HashSet<Author>();
 
 		[NotNull]
 		[JsonProperty]
-		private Dictionary<Int32, Page> Pages { get; } = new Dictionary<Int32, Page>();
+		//TODO Can there be different Authors per Chapter and/or page?
+		private HashSet<Author> Authors { get; } = new();
 
-		public static Book Empty { get; } = new Book();
+		[NotNull]
+		[JsonProperty]
+		private Dictionary<Int32, Page> Pages { get; } = new();
+
+		public static Book Empty { get; } = new();
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
 		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
@@ -78,19 +81,19 @@ namespace Librainian.Linguistics {
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
 
-		public Boolean Equals( [CanBeNull] Book other ) => Equals( this, other );
+		public Boolean Equals( [CanBeNull] Book? other ) => Equals( this, other );
 
 		/// <summary>static equality test, compare sequence of Pages</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Book left, [CanBeNull] Book right ) {
+		public static Boolean Equals( [CanBeNull] Book? left, [CanBeNull] Book? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return left.SequenceEqual( right ); //no authors?? No authors.
@@ -102,7 +105,7 @@ namespace Librainian.Linguistics {
 		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
 		///     <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( Object obj ) => Equals( this, obj as Book );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as Book );
 
 		[NotNull]
 		public IEnumerable<Author> GetAuthors() => this.Authors;

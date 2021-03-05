@@ -28,7 +28,8 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
-	using Maths;
+    using JetBrains.Annotations;
+    using Maths;
 	using Newtonsoft.Json;
 	using Parsing;
 	using Rationals;
@@ -36,7 +37,7 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public struct Microseconds : IComparable<Microseconds>, IQuantityOfTime {
+	public record Microseconds( Rational Value ) : IComparable<Microseconds>, IQuantityOfTime {
 
 		/// <summary>1000</summary>
 		public const UInt16 InOneMillisecond = 1000;
@@ -82,17 +83,7 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Zero <see cref="Microseconds" />.</summary>
 		public static Microseconds Zero { get; } = new( 0 );
-
-		[JsonProperty]
-		public Rational Value { get; }
-
-		public Microseconds( Decimal value ) => this.Value = ( Rational )value;
-
-		public Microseconds( Rational value ) => this.Value = value;
-
-		public Microseconds( Int64 value ) => this.Value = value;
-
-		public Microseconds( BigInteger value ) => this.Value = value;
+		
 
 		public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
@@ -120,7 +111,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Microseconds operator -( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational )( -microseconds ) );
 
-		public static Boolean operator !=( Microseconds left, Microseconds right ) => !Equals( left, right );
+		
 
 		public static Microseconds operator +( Microseconds left, Microseconds right ) => Combine( left, right );
 
@@ -132,35 +123,37 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds )left < right;
 
-		public static Boolean operator ==( Microseconds left, Microseconds right ) => Equals( left, right );
+		
 
 		public static Boolean operator >( Microseconds left, Microseconds right ) => left.Value > right.Value;
 
 		public static Boolean operator >( Microseconds left, Milliseconds right ) => left.Value > right.Value;
 
-		public Int32 CompareTo( Microseconds other ) => this.Value.CompareTo( other.Value );
+		public Int32 CompareTo( [NotNull] Microseconds? other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
 
-		public Boolean Equals( Microseconds other ) => Equals( this, other );
+            return this.Value.CompareTo( other.Value );
+        }
 
-		public override Boolean Equals( Object obj ) {
-			if ( obj is null ) {
-				return default;
-			}
-
-			return obj is Microseconds microseconds && this.Equals( microseconds );
-		}
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+        public override Int32 GetHashCode() => this.Value.GetHashCode();
 
 		public Milliseconds ToMilliseconds() => new( this.Value / InOneMillisecond );
 
 		public Nanoseconds ToNanoseconds() => new( this.Value * Nanoseconds.InOneMicrosecond );
 
-		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneMicrosecond * this.Value );
+        public IQuantityOfTime ToFinerGranularity() => throw new NotImplementedException();
+
+        public PlanckTimes ToPlanckTimes() => new( (( Rational )PlanckTimes.InOneMicrosecond * this.Value).WholePart );
 
 		public Seconds ToSeconds() => new( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
 
-		public override String ToString() {
+        public IQuantityOfTime ToCoarserGranularity() => this.ToMilliseconds();
+
+        TimeSpan IQuantityOfTime.ToTimeSpan() => TimeSpan.FromMilliseconds( ( Double )(this.Value / InOneMillisecond) );
+
+        public override String ToString() {
 			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
 				var whole = this.Value.WholePart;
 

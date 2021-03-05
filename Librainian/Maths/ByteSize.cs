@@ -276,7 +276,7 @@ namespace Librainian.Maths {
 			catch {
 				result = new ByteSize();
 
-				return default( Boolean );
+				return false;
 			}
 		}
 

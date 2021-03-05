@@ -31,7 +31,7 @@ namespace Librainian.Exceptions {
 
 	/// <summary>
 	///     Throw when the object has not been initialized.
-	///     <para><see cref="Logging.Log(string?,bool)" /> gets called.</para>
+	///     <para><see cref="Logging.Log(String?,Boolean)" /> gets called.</para>
 	/// </summary>
 	[Serializable]
 	public class NotInitializedException : Exception {

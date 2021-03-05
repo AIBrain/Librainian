@@ -147,7 +147,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[NotNull]
 		[ItemNotNull]
 		public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos() =>
-			Directory.EnumerateFileSystemEntries( this.FullPath ).Select( e => e.Exists() ? new DirectoryInfo( e ) : ( FileSystemInfo )new FileInfo( e ) );
+			Directory.EnumerateFileSystemEntries( this.FullPath ).Select( e => {
+				if ( e.Exists() ) {
+					return new DirectoryInfo( e );
+				}
+
+				return (FileSystemInfo)new FileInfo( e );
+			} );
 
 		[NotNull]
 		[ItemNotNull]

@@ -102,7 +102,7 @@ namespace Librainian.Maths {
 		}
 
 		[CanBeNull]
-		public static Fuzzy Parse( [CanBeNull] String? value ) {
+		public static Fuzzy? Parse( [CanBeNull] String? value ) {
 			if ( String.IsNullOrWhiteSpace( value ) ) {
 				throw new ArgumentNullException( nameof( value ) );
 			}
@@ -111,7 +111,7 @@ namespace Librainian.Maths {
 				return new Fuzzy( result );
 			}
 
-			return default( Fuzzy );
+			return default( Fuzzy? );
 		}
 
 		public static Boolean TryParse( [CanBeNull] String? value, [CanBeNull] out Fuzzy result ) {
@@ -150,7 +150,7 @@ namespace Librainian.Maths {
 
 							do {
 								this.Value = Randem.NextDouble( 0.0D, 0.25D );
-							} while ( this.Value < MinValue || this.Value > 0.25D );
+							} while ( this.Value is < MinValue or > 0.25D);
 
 							break;
 
@@ -158,7 +158,7 @@ namespace Librainian.Maths {
 
 							do {
 								this.Value = Randem.NextDouble( 0.25D, 0.75D );
-							} while ( this.Value < 0.25D || this.Value > 0.75D );
+							} while ( this.Value is < 0.25D or > 0.75D);
 
 							break;
 
@@ -166,7 +166,7 @@ namespace Librainian.Maths {
 
 							do {
 								this.Value = Randem.NextDouble();
-							} while ( this.Value < 0.75D || this.Value > MaxValue );
+							} while ( this.Value is < 0.75D or > MaxValue);
 
 							break;
 

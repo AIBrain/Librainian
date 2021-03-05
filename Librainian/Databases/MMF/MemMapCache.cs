@@ -22,6 +22,8 @@
 // 
 // File "MemMapCache.cs" last formatted on 2020-08-14 at 8:32 PM.
 
+#nullable enable
+
 namespace Librainian.Databases.MMF {
 
 	using System;
@@ -41,7 +43,7 @@ namespace Librainian.Databases.MMF {
 		private const String Delim = "[!@#]";
 
 		[CanBeNull]
-		private NetworkStream _networkStream;
+		private NetworkStream? _networkStream;
 
 		[NotNull]
 		private BinaryFormatter _formatter { get; } = new();
@@ -76,7 +78,7 @@ namespace Librainian.Databases.MMF {
 		}
 
 		[CanBeNull]
-		public T Get( [NotNull] String key ) {
+		public T? Get( [NotNull] String key ) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 			}
@@ -94,7 +96,9 @@ namespace Librainian.Databases.MMF {
 					}
 				}
 
+#pragma warning disable CA1416 // Validate platform compatibility
 				using var memoryMappedFile = MemoryMappedFile.OpenExisting( key );
+#pragma warning restore CA1416 // Validate platform compatibility
 
 				using var viewStream = memoryMappedFile.CreateViewStream( 0, 0 ); //TODO
 
@@ -155,7 +159,9 @@ namespace Librainian.Databases.MMF {
 					this._keyExpirations[key] = expire;
 				}
 
+#pragma warning disable CA1416 // Validate platform compatibility
 				using ( var mmf = MemoryMappedFile.CreateOrOpen( key, size ) ) {
+#pragma warning restore CA1416 // Validate platform compatibility
 					var vs = mmf.CreateViewStream();
 					this._formatter.Serialize( vs, obj );
 				}
@@ -163,9 +169,15 @@ namespace Librainian.Databases.MMF {
 				var cmd = $"{key}{Delim}{expire:s}";
 
 				var buf = this.Encoding.GetBytes( cmd );
-				this._networkStream.Write( buf, 0, buf.Length );
-				this._networkStream.Flush();
-			}
+
+                var networkStream = this._networkStream;
+
+                if ( networkStream != null ) {
+                    networkStream.Write( buf, 0, buf.Length );
+                    networkStream.Flush();
+                }
+
+            }
 			catch ( NotSupportedException exception ) {
 				//Console.WriteLine( "{0} is too small for {1}.", size, key );
 				exception.Log();
@@ -214,7 +226,7 @@ namespace Librainian.Databases.MMF {
 		}
 
 		[CanBeNull]
-		public T TryGetThenSet( [NotNull] String key, [CanBeNull] Func<T> cacheMiss ) {
+		public T? TryGetThenSet( [NotNull] String key, [CanBeNull] Func<T> cacheMiss ) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 			}
@@ -223,7 +235,7 @@ namespace Librainian.Databases.MMF {
 		}
 
 		[CanBeNull]
-		public T TryGetThenSet( [NotNull] String key, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
+		public T? TryGetThenSet( [NotNull] String key, DateTime expire, [CanBeNull] Func<T>? cacheMiss ) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 			}
@@ -246,7 +258,7 @@ namespace Librainian.Databases.MMF {
 		}
 
 		[CanBeNull]
-		public T TryGetThenSet( [NotNull] String key, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
+		public T? TryGetThenSet( [NotNull] String key, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 			}
@@ -257,7 +269,7 @@ namespace Librainian.Databases.MMF {
 		}
 
 		[CanBeNull]
-		public T TryGetThenSet( [NotNull] String key, Int64 size, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
+		public T? TryGetThenSet( [NotNull] String key, Int64 size, TimeSpan expire, [CanBeNull] Func<T> cacheMiss ) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 			}
@@ -268,20 +280,25 @@ namespace Librainian.Databases.MMF {
 		}
 
 		[CanBeNull]
-		public T TryGetThenSet( [NotNull] String key, Int64 size, DateTime expire, [CanBeNull] Func<T> cacheMiss ) {
+		public T? TryGetThenSet( [NotNull] String key, Int64 size, DateTime expire, [CanBeNull] Func<T>? cacheMiss ) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 			}
 
 			var obj = this.Get( key );
 
-			if ( obj is null && !( cacheMiss is null ) ) {
-				obj = cacheMiss.Invoke();
+			if ( obj is null ) {
 
-				if ( !( obj is null ) ) {
-					this.Set( key, obj, size, expire );
-				}
-			}
+                if ( cacheMiss is null ) {
+                    return obj;
+                }
+
+                obj = cacheMiss.Invoke();
+
+                if ( !( obj is null ) ) {
+                    this.Set( key, obj, size, expire );
+                }
+            }
 
 			return obj;
 		}

@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,12 +23,11 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "EnumExtensions.cs" last formatted on 2020-08-21 at 4:17 PM.
+// File "EnumExtensions.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 #nullable enable
 
 namespace Librainian.Extensions {
-
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -35,7 +37,6 @@ namespace Librainian.Extensions {
 
 	/// <summary>Pulled from <see cref="http://stackoverflow.com/a/944352/956364" /></summary>
 	public static class EnumExtensions {
-
 		/// <summary>
 		///     Determines whether the enum value contains a specific value. The enum itself must be decorated with the
 		///     FlagsAttribute.
@@ -52,12 +53,7 @@ namespace Librainian.Extensions {
 		/// }
 		/// </code>
 		/// </example>
-		public static Boolean Contains<T>(
-			[CanBeNull]
-			this Enum value,
-			[CanBeNull]
-			T request
-		) {
+		public static Boolean Contains<T>( [CanBeNull] this Enum value, [CanBeNull] T request ) {
 			var valueAsInt = Convert.ToInt32( value );
 			var requestAsInt = Convert.ToInt32( request );
 
@@ -101,16 +97,10 @@ namespace Librainian.Extensions {
 		/// </code>
 		/// </example>
 		[NotNull]
-		public static IEnumerable<T> GetAllSelectedItems<T>(
-			[CanBeNull]
-			this Enum value
-		) {
+		public static IEnumerable<T> GetAllSelectedItems<T>( [CanBeNull] this Enum value ) {
 			var valueAsInt = Convert.ToInt32( value );
 
-			return from Object item in Enum.GetValues( typeof( T ) )
-				   let itemAsInt = Convert.ToInt32( item )
-				   where itemAsInt == ( valueAsInt & itemAsInt )
-				   select ( T )item;
+			return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T ) item;
 		}
 
 		/// <summary>Gets all items for an enum value.</summary>
@@ -123,7 +113,7 @@ namespace Librainian.Extensions {
 				throw new ArgumentNullException( nameof( value ) );
 			}
 
-			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item! );
+			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T ) item! );
 		}
 
 		/// <summary>Gets all values for an enum type.</summary>
@@ -134,19 +124,16 @@ namespace Librainian.Extensions {
 
 		// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
 		[CanBeNull]
-		public static T? GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
+		public static T GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
 			var type = value.GetType();
 			var memberInfo = type.GetMember( value.ToString() );
 			var attributes = memberInfo[0].GetCustomAttributes( typeof( T ), false );
 
-			return ( T )attributes[0];
+			return ( T ) attributes[0];
 		}
 
 		[CanBeNull]
-		public static String? GetDescription<T>(
-			[CanBeNull]
-			this T e
-		) where T : IConvertible {
+		public static String? GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
 			if ( e is not Enum ) {
 				return default( String? );
 			}
@@ -159,8 +146,12 @@ namespace Librainian.Extensions {
 				}
 
 				var ename = type.GetEnumName( val );
-			
-				var memInfo = type.GetMember( ename! );
+
+				if ( ename is null ) {
+					continue;
+				}
+
+				var memInfo = type.GetMember( ename );
 
 				if ( memInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
 					return descriptionAttribute.Description;
@@ -171,12 +162,6 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static IEnumerable<T> GetEnums<T>(
-			[CanBeNull]
-			this T _
-		) =>
-			Enum.GetValues( typeof( T ) ).Cast<T>()!;
-
+		public static IEnumerable<T> GetEnums<T>( [CanBeNull] this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>()!;
 	}
-
 }

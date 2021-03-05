@@ -220,9 +220,9 @@ namespace Librainian.Measurement.Spatial {
 			return angles;
 		}
 
-		public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new Degrees( degrees.Value += DegreesToRadians( angle ) );
+		public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new( degrees.Value += DegreesToRadians( angle ) );
 
-		public static Degrees TurnRight( this Degrees degrees, Single angle ) => new Degrees( degrees.Value -= DegreesToRadians( angle ) );
+		public static Degrees TurnRight( this Degrees degrees, Single angle ) => new( degrees.Value -= DegreesToRadians( angle ) );
 
 	}
 

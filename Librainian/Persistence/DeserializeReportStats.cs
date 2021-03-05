@@ -48,13 +48,13 @@ namespace Librainian.Persistence {
 		}
 
 		[NotNull]
-		private ThreadLocal<Int64> Gains { get; } = new ThreadLocal<Int64>( true );
+		private ThreadLocal<Int64> Gains { get; } = new( true );
 
 		[NotNull]
 		private Action<DeserializeReportStats> Handler { get; }
 
 		[NotNull]
-		private ThreadLocal<Int64> Losses { get; } = new ThreadLocal<Int64>( true );
+		private ThreadLocal<Int64> Losses { get; } = new( true );
 
 		public Boolean Enabled { get; set; }
 

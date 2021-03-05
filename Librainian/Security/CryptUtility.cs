@@ -31,40 +31,23 @@ namespace Librainian.Security {
 	using System.Linq;
 	using JetBrains.Annotations;
 
+	/// <summary>
+	/// Where did this class come from?
+	/// </summary>
+
 	public static class CryptUtility {
-
-		//TODO use the real temp filename
-		private const String TempFileName = "picturekey_temp.bmp";
-
-		/// <summary>Get the value of a bit</summary>
-		/// <param name="b">The byte value</param>
-		/// <param name="position">The position of the bit</param>
-		/// <returns>The value of the bit</returns>
-		private static Boolean GetBit( Byte b, Byte position ) => ( b & ( Byte )( 1 << position ) ) != 0;
 
 		/// <summary>Return one component of a color</summary>
 		/// <param name="pixelColor">The Color</param>
 		/// <param name="colorComponent">The component to return (0-R, 1-G, 2-B)</param>
 		/// <returns>The requested component</returns>
 		private static Byte GetColorComponent( Color pixelColor, Int32 colorComponent ) {
-			Byte returnValue = 0;
-
-			switch ( colorComponent ) {
-				case 0:
-					returnValue = pixelColor.R;
-
-					break;
-
-				case 1:
-					returnValue = pixelColor.G;
-
-					break;
-
-				case 2:
-					returnValue = pixelColor.B;
-
-					break;
-			}
+			Byte returnValue = colorComponent switch {
+				0 => pixelColor.R,
+				1 => pixelColor.G,
+				2 => pixelColor.B,
+				_ => 0
+			};
 
 			return returnValue;
 		}
@@ -91,18 +74,17 @@ namespace Librainian.Security {
 			} ).Max();
 
 			for ( Int64 n = 0; n <= maxLength; n++ ) {
-				for ( var streamIndex = 0; streamIndex < keyStreams.Length; streamIndex++ ) {
-					if ( keyStreams[streamIndex] is null ) {
-						continue;
-					}
-
-					var readByte = keyStreams[streamIndex].ReadByte();
+				foreach ( var stream in keyStreams ) {
+					var readByte = stream.ReadByte();
 
 					if ( readByte < 0 ) {
 						//end of stream - close the file
 						//the last loop (n==maxLength) will close the last stream
-						keyStreams[streamIndex].Close();
-						keyStreams[streamIndex] = null;
+						using ( stream ) {
+							stream.Close();
+						}
+
+						
 					}
 					else {
 						//copy a byte into the result key
@@ -126,46 +108,21 @@ namespace Librainian.Security {
 			return reverseKeyByte;
 		}
 
-		/// <summary>Set a bit to [newBitValue]</summary>
-		/// <param name="b">The byte value</param>
-		/// <param name="position">The position (1-8) of the bit</param>
-		/// <param name="newBitValue">The new value of the bit in position [position]</param>
-		/// <returns>The new byte value</returns>
-		private static Byte SetBit( Byte b, Byte position, Boolean newBitValue ) {
-			var mask = ( Byte )( 1 << position );
-
-			if ( newBitValue ) {
-				return ( Byte )( b | mask );
-			}
-
-			return ( Byte )( b & ~mask );
-		}
-
 		/// <summary>Changees one component of a color</summary>
 		/// <param name="pixelColor">The Color</param>
 		/// <param name="colorComponent">The component to change (0-R, 1-G, 2-B)</param>
 		/// <param name="newValue">New value of the component</param>
-		private static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
-			switch ( colorComponent ) {
-				case 0:
-					pixelColor = Color.FromArgb( newValue, pixelColor.G, pixelColor.B );
-
-					break;
-
-				case 1:
-					pixelColor = Color.FromArgb( pixelColor.R, newValue, pixelColor.B );
-
-					break;
-
-				case 2:
-					pixelColor = Color.FromArgb( pixelColor.R, pixelColor.G, newValue );
-
-					break;
-			}
+		public static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
+			pixelColor = colorComponent switch {
+				0 => Color.FromArgb( newValue, pixelColor.G, pixelColor.B ),
+				1 => Color.FromArgb( pixelColor.R, newValue, pixelColor.B ),
+				2 => Color.FromArgb( pixelColor.R, pixelColor.G, newValue ),
+				_ => pixelColor
+			};
 		}
 
 		[NotNull]
-		private static String UnTrimColorString( String color, Int32 desiredLength ) {
+		public static String UnTrimColorString( String color, Int32 desiredLength ) {
 			var difference = desiredLength - color.Length;
 
 			if ( difference > 0 ) {

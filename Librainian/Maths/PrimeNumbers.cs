@@ -34,7 +34,7 @@ namespace Librainian.Maths {
 		[NotNull]
 		public static readonly HashSet<Int32> MemoizedPrimes = new();
 
-		public static Int64[][] GoldenPrimes = {
+		public static Int64[][] GoldenPrimes { get; } = {
 			new Int64[] {
 				1, 1
 			},

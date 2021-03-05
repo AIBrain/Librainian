@@ -23,6 +23,7 @@
 // File "FolderBag.Node.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 #nullable enable
+
 namespace Librainian.FileSystem {
 
 	using System;
@@ -40,7 +41,7 @@ namespace Librainian.FileSystem {
 
 		public FolderBagNode( [CanBeNull] String? data ) => this.Data = data;
 
-		public FolderBagNode( [CanBeNull] String? data, [CanBeNull] FolderBagNode parent ) {
+		public FolderBagNode( [CanBeNull] String? data, [CanBeNull] FolderBagNode? parent ) {
 			this.Data = data;
 			this.Parent = parent;
 		}
@@ -56,7 +57,7 @@ namespace Librainian.FileSystem {
 
 		[JsonProperty]
 		[NotNull]
-		public List<FolderBagNode> SubFolders { get; } = new List<FolderBagNode>();
+		public List<FolderBagNode> SubFolders { get; } = new();
 
 		public Int32 CompareTo( [CanBeNull]
 		                        FolderBagNode? other ) => String.Compare( this.Data, other?.Data, StringComparison.Ordinal );
@@ -73,7 +74,7 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return String.Equals( left.Data, right.Data, StringComparison.Ordinal );

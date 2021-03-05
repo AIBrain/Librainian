@@ -41,10 +41,7 @@ namespace Librainian.Exceptions.Warnings {
 		public NotAllowedException( String message, [CanBeNull]
 		                            Exception inner ) : base( message, inner ) { }
 
-		protected NotAllowedException( SerializationInfo serializationInfo, StreamingContext streamingContext ) {
-			this.SerializationInfo = serializationInfo;
-			this.StreamingContext = streamingContext;
-		}
+		protected NotAllowedException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
 	}
 

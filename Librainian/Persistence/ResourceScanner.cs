@@ -59,13 +59,13 @@ namespace Librainian.Persistence {
 		}
 
 		[NotNull]
-		private TaskCompletionSource<Status> CompletionSource { get; } = new TaskCompletionSource<Status>( TaskCreationOptions.RunContinuationsAsynchronously );
+		private TaskCompletionSource<Status> CompletionSource { get; } = new( TaskCreationOptions.RunContinuationsAsynchronously );
 
 		[NotNull]
 		private Task DiscoveryTask { get; }
 
 		[NotNull]
-		private TimeTracker TimeTracker { get; } = new TimeTracker();
+		private TimeTracker TimeTracker { get; } = new();
 
 		[NotNull]
 		public CancellationTokenSource CancellationSource { get; }

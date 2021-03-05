@@ -176,7 +176,7 @@ namespace Librainian.Maths.Numbers {
 
 			result = default( Percentage );
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>

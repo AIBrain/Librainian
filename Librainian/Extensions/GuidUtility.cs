@@ -34,13 +34,13 @@ namespace Librainian.Extensions {
 	public static class GuidUtility {
 
 		/// <summary>The namespace for fully-qualified domain names (from RFC 4122, Appendix C).</summary>
-		public static Guid DnsNamespace { get; } = new Guid( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
+		public static Guid DnsNamespace { get; } = new( "6ba7b810-9dad-11d1-80b4-00c04fd430c8" );
 
 		/// <summary>The namespace for ISO OIDs (from RFC 4122, Appendix C).</summary>
-		public static Guid IsoOidNamespace { get; } = new Guid( "6ba7b812-9dad-11d1-80b4-00c04fd430c8" );
+		public static Guid IsoOidNamespace { get; } = new( "6ba7b812-9dad-11d1-80b4-00c04fd430c8" );
 
 		/// <summary>The namespace for URLs (from RFC 4122, Appendix C).</summary>
-		public static Guid UrlNamespace { get; } = new Guid( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
+		public static Guid UrlNamespace { get; } = new( "6ba7b811-9dad-11d1-80b4-00c04fd430c8" );
 
 		/// <summary>Creates a name-based UUID using the algorithm from RFC 4122 §4.3.</summary>
 		/// <param name="namespaceId">The ID of the namespace.</param>
@@ -71,7 +71,7 @@ namespace Librainian.Extensions {
 				throw new ArgumentNullException( nameof( name ) );
 			}
 
-			if ( version != 3 && version != 5 ) {
+			if ( version is not 3 and not 5) {
 				throw new ArgumentOutOfRangeException( nameof( version ), "version must be either 3 or 5." );
 			}
 

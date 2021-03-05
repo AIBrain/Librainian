@@ -29,7 +29,7 @@ namespace Librainian.Maths.Numbers {
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
-	/// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="ulong" /> )</summary>
+	/// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )</summary>
 	[JsonObject]
 	public sealed class AutoNumber {
 

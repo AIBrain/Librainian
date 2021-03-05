@@ -40,7 +40,7 @@ namespace Librainian.Linguistics {
 		public UDC( [NotNull] String notation ) => this.Notation = notation.Trimmed();
 
 		[CanBeNull]
-		public static UDC Unknown { get; } = new UDC( String.Empty );
+		public static UDC Unknown { get; } = new( String.Empty );
 
 		[CanBeNull]
 		public String? Notation { get; }

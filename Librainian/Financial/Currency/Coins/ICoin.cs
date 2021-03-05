@@ -22,7 +22,7 @@
 // 
 // File "ICoin.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-#pragma warning disable RCS1138 // Add summary to documentation comment.
+#nullable enable
 
 namespace Librainian.Financial.Currency.Coins {
 

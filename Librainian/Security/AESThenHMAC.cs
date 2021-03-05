@@ -236,7 +236,7 @@ namespace Librainian.Security {
 		/// <returns>Encrypted Message</returns>
 		/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
 		[NotNull]
-		public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[] nonSecretPayload = null ) {
+		public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 			//User Error Checks
 			if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
@@ -358,7 +358,7 @@ namespace Librainian.Security {
 		///     parameters.
 		/// </remarks>
 		[NotNull]
-		public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[] nonSecretPayload = null ) {
+		public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[]? nonSecretPayload = null ) {
 			nonSecretPayload ??= Array.Empty<Byte>();
 
 			//User Error Checks
@@ -375,7 +375,9 @@ namespace Librainian.Security {
 
 			var payload = new Byte[saltier + nonSecretPayload.Length];
 
-			Array.Copy( nonSecretPayload, payload, nonSecretPayload.Length );
+            Buffer.BlockCopy( nonSecretPayload, 0, payload, 0, nonSecretPayload.Length );
+			//Array.Copy( nonSecretPayload, payload, nonSecretPayload.Length );
+
 			var payloadIndex = nonSecretPayload.Length;
 
 			Byte[] cryptKey;
@@ -389,7 +391,9 @@ namespace Librainian.Security {
 				cryptKey = generator.GetBytes( KeyBitSize / 8 );
 
 				//Create Non Secret Payload
-				Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
+                Buffer.BlockCopy( salt, 0, payload, payloadIndex, salt.Length );
+				//Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
+
 				payloadIndex += salt.Length;
 			}
 
@@ -402,7 +406,8 @@ namespace Librainian.Security {
 				authKey = generator.GetBytes( KeyBitSize / 8 );
 
 				//Create Rest of Non Secret Payload
-				Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
+				Buffer.BlockCopy( salt, 0, payload, payloadIndex, salt.Length );
+				//Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
 			}
 
 			return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );

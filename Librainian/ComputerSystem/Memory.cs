@@ -49,13 +49,13 @@ namespace Librainian.ComputerSystem {
 				return true;
 			}
 			catch ( ArgumentOutOfRangeException ) {
-				return default( Boolean );
+				return false;
 			}
 			catch ( InsufficientMemoryException ) {
-				return default( Boolean );
+				return false;
 			}
 			catch ( OutOfMemoryException ) {
-				return default( Boolean );
+				return false;
 			}
 		}
 

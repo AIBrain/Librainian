@@ -51,7 +51,7 @@ namespace Librainian.ComputerSystem.Devices {
 		public Disk( Char driveLetter ) {
 			this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
 
-			if ( this.DriveLetter < 'A' || this.DriveLetter > 'Z' ) {
+			if ( this.DriveLetter is < 'A' or > 'Z') {
 				throw new ArgumentOutOfRangeException( nameof( driveLetter ), driveLetter, $"The specified drive \"{driveLetter}\" is outside of the range A through Z." );
 			}
 

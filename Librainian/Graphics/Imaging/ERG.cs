@@ -51,7 +51,7 @@ namespace Librainian.Graphics.Imaging {
 
 		/// <summary>EXIF metadata</summary>
 		[JsonProperty]
-		public readonly ConcurrentDictionary<String, String> Exifs = new ConcurrentDictionary<String, String>();
+		public readonly ConcurrentDictionary<String, String> Exifs = new();
 
 		public Erg() => this.Checksum = UInt64.MaxValue;
 
@@ -63,15 +63,15 @@ namespace Librainian.Graphics.Imaging {
 
 		[JsonProperty]
 		[NotNull]
-		public ConcurrentSet<Pixel> Pixels { get; } = new ConcurrentSet<Pixel>();
+		public ConcurrentSet<Pixel> Pixels { get; } = new();
 
 		[JsonProperty]
 		[NotNull]
-		public ConcurrentSet<Int32> PropertyIdList { get; } = new ConcurrentSet<Int32>();
+		public ConcurrentSet<Int32> PropertyIdList { get; } = new();
 
 		[JsonProperty]
 		[NotNull]
-		public ConcurrentSet<PropertyItem> PropertyItems { get; } = new ConcurrentSet<PropertyItem>();
+		public ConcurrentSet<PropertyItem> PropertyItems { get; } = new();
 
 		public UInt32 Width { get; private set; }
 

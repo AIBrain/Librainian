@@ -22,6 +22,8 @@
 // 
 // File "Section.cs" last formatted on 2020-08-14 at 8:42 PM.
 
+#nullable enable
+
 namespace Librainian.Persistence.InIFiles {
 
 	using System;
@@ -30,11 +32,17 @@ namespace Librainian.Persistence.InIFiles {
 	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 	using Parsing;
+
+	using DataType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>;
+	using ReadOnlyDataType = System.Collections.Generic.IReadOnlyDictionary<System.String, System.String?>;
+	using SectionType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>>;
+
 
 	/// <summary>
 	///     <para>
@@ -43,12 +51,12 @@ namespace Librainian.Persistence.InIFiles {
 	///     </para>
 	///     <para>Does not throw <see cref="ArgumentNullException" /> on null keys passed to the indexer.</para>
 	/// </summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[DebuggerDisplay("{" + nameof(ToString) + "(),nq}")]
 	[JsonObject]
 	public class Section : IEquatable<Section> {
 
-		[JsonProperty( IsReference = false, ItemIsReference = false )]
-		private ConcurrentDictionary<String, String> Data { get; } = new ConcurrentDictionary<String, String>();
+		[JsonProperty(IsReference = false, ItemIsReference = false)]
+		private DataType Data { get; } = new();
 
 		/// <summary>Automatically remove any key where there is no value. Defaults to true.</summary>
 		[JsonIgnore]
@@ -56,31 +64,31 @@ namespace Librainian.Persistence.InIFiles {
 
 		[JsonIgnore]
 		[NotNull]
-		public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
+		public IReadOnlyList<String> Keys => (IReadOnlyList<String>)this.Data.Keys;
 
 		[JsonIgnore]
 		[NotNull]
-		public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
+		public IReadOnlyList<String> Values => (IReadOnlyList<String>)this.Data.Values;
 
 		[JsonIgnore]
 		[CanBeNull]
-		public String this[ [CanBeNull] String? key ] {
+		public String? this[[CanBeNull] String? key] {
 			[CanBeNull]
 			get {
-				if ( key is null ) {
-					return default( String );
+				if (key is null) {
+					return default(String);
 				}
 
-				return this.Data.TryGetValue( key, out var value ) ? value : null;
+				return this.Data.TryGetValue(key, out var value) ? value : null;
 			}
 
 			set {
-				if ( key is null ) {
+				if (key is null) {
 					return;
 				}
 
-				if ( value is null && this.AutoCleanup ) {
-					this.Data.TryRemove( key, out _ ); //a little cleanup
+				if (value is null && this.AutoCleanup) {
+					this.Data.TryRemove(key, out _); //a little cleanup
 				}
 				else {
 					this.Data[key] = value;
@@ -88,45 +96,49 @@ namespace Librainian.Persistence.InIFiles {
 			}
 		}
 
-		public Boolean Equals( [CanBeNull] Section other ) => Equals( this, other );
+		public Boolean Equals([CanBeNull] Section? other) => Equals(this, other);
 
 		/// <summary>Static comparison. Checks references and then keys and then values.</summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Section left, [CanBeNull] Section right ) {
-			if ( ReferenceEquals( left, right ) ) {
+		public static Boolean Equals([CanBeNull] Section? left, [CanBeNull] Section? right) {
+			if (ReferenceEquals(left, right)) {
 				return true;
 			}
 
-			if ( left is null || right is null ) {
-				return default( Boolean );
+			if (left is null || right is null) {
+				return false;
 			}
 
-			if ( ReferenceEquals( left.Data, right.Data ) ) {
+			if (ReferenceEquals(left.Data, right.Data)) {
 				return true;
 			}
 
-			return left.Data.OrderBy( pair => pair.Key ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ) ); //will this work?
+			return left.Data.OrderBy(pair => pair.Key).SequenceEqual(right.Data.OrderBy(pair => pair.Key)); //will this work? //TODO what about comparing values also?
 		}
 
-		public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left, right );
+		public static Boolean operator !=([CanBeNull] Section left, [CanBeNull] Section right) => !Equals(left, right);
 
-		public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left, right );
+		public static Boolean operator ==([CanBeNull] Section left, [CanBeNull] Section right) => Equals(left, right);
 
 		/// <summary>Remove any key where there is no value.</summary>
 		/// <returns></returns>
 		[NotNull]
-		public Task CleanupAsync() =>
-			Task.Run( () => {
-				foreach ( var key in this.Keys.Where( String.IsNullOrEmpty ) ) {
-					if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
+		public Task CleanupAsync(CancellationToken token) =>
+			Task.Run(() => {
+				//TODO Unit test this.
+				foreach (var key in this.Keys) {
+					if (token.IsCancellationRequested) {
+						return;
+					}
+					if (this.Data.TryRemove(key, out var value) && !String.IsNullOrEmpty(value)) {
 						this[key] = value; //whoops, re-add value. Cause: other threads.
 					}
 				}
-			} );
+			}, token);
 
-		public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as Section );
+		public override Boolean Equals([CanBeNull] Object? obj) => Equals(this, obj as Section);
 
 		public override Int32 GetHashCode() => this.Data.GetHashCode();
 
@@ -134,52 +146,54 @@ namespace Librainian.Persistence.InIFiles {
 		/// <param name="reader"></param>
 		/// <returns></returns>
 		[NotNull]
-		public Task<Boolean> ReadAsync( [NotNull] TextReader reader ) {
-			if ( reader is null ) {
-				throw new ArgumentNullException( nameof( reader ) );
+		public async Task<Boolean> ReadAsync([NotNull] TextReader reader, CancellationToken token) {
+			if (reader is null) {
+				throw new ArgumentNullException(nameof(reader));
 			}
 
 			try {
-				var that = reader.ReadLineAsync();
+				var that = await reader.ReadLineAsync().ConfigureAwait(false);
 
-				return that.ContinueWith( task => {
-					if ( JsonConvert.DeserializeObject( that.Result, this.Data.GetType() ) is ConcurrentDictionary<String, String> other ) {
-						Parallel.ForEach( other, pair => this[pair.Key] = pair.Value );
+				if (that != null && JsonConvert.DeserializeObject(that, this.Data.GetType()) is DataType other) {
+					Parallel.ForEach(other.TakeWhile( _ => !token.IsCancellationRequested ), pair => {
+						var (key, value) = pair;
+						this[key] = value;
+					} );
 
-						return true;
-					}
+					return true;
+				}
 
-					return default( Boolean );
-				} );
+				return false;
+
 			}
-			catch ( Exception exception ) {
+			catch (Exception exception) {
 				exception.Log();
 			}
 
-			return Task.FromResult( false );
+			return false;
 		}
 
 		[NotNull]
-		public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
+		public override String ToString() => $"{this.Keys.Take(25).ToStrings()}";
 
 		/// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>
 		/// <param name="writer"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public Task Write( [NotNull] TextWriter writer ) {
-			if ( writer is null ) {
-				throw new ArgumentNullException( nameof( writer ) );
+		public Task Write([NotNull] TextWriter writer) {
+			if (writer is null) {
+				throw new ArgumentNullException(nameof(writer));
 			}
 
 			try {
-				var me = JsonConvert.SerializeObject( this, Formatting.None );
+				var me = JsonConvert.SerializeObject(this, Formatting.None);
 
-				return writer.WriteLineAsync( me );
+				return writer.WriteLineAsync(me);
 			}
-			catch ( Exception exception ) {
+			catch (Exception exception) {
 				exception.Log();
 
-				return Task.FromException( exception );
+				return Task.FromException(exception);
 			}
 		}
 

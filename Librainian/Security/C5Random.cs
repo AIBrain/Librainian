@@ -107,7 +107,7 @@ namespace Librainian.Security {
 			if ( array.Length > 0 ) {
 				Buffer.BlockCopy( array, 0, this._q, 0, _qLength );
 			}
-			else if ( array.Length > 0 && array.Length < _qLength ) {
+			else if ( array.Length is > 0 and < _qLength) {
 				var b = Array.ConvertAll( array, j => {
 					j ^= j << 0xD;
 					j ^= j >> 0x11;
@@ -120,7 +120,7 @@ namespace Librainian.Security {
 			else {
 				var j = DateTime.UtcNow.Ticks;
 
-				var b = new Int64[_qLength / sizeof( Int64 )] {
+				var b = new[] {
 					j >> 0x11, j << 0x5
 				};
 

@@ -29,7 +29,6 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections;
 	using System.Diagnostics;
-	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using JetBrains.Annotations;
@@ -41,7 +40,7 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Access flags.</summary>
 		[Flags]
-		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+		
 		public enum ACCESS_MASK : UInt32 {
 
 			/// <summary>The right to delete the object.</summary>
@@ -111,7 +110,7 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the that may apply to files.</summary>
 		/// <remarks>These flags may be passed to CreateFile.</remarks>
 		[Flags]
-		[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+		
 		public enum FileAccess : UInt32 {
 
 			/// <summary>Read access.</summary>

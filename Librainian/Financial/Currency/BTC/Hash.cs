@@ -46,7 +46,7 @@ namespace Librainian.Financial.Currency.BTC {
 		public static implicit operator Byte[]( [NotNull] Hash hash ) => hash.HashBytes;
 
 		[NotNull]
-		public static implicit operator Hash( [CanBeNull] Byte[] bytes ) => new Hash( bytes );
+		public static implicit operator Hash( [CanBeNull] Byte[] bytes ) => new( bytes );
 
 		public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
 

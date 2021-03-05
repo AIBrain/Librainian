@@ -93,10 +93,10 @@ namespace Librainian.Graphics {
 		}
 
 		[NotNull]
-		public static Matrix operator *( [NotNull] Matrix m, Single scalar ) => new Matrix( Multiply( m, scalar ) );
+		public static Matrix operator *( [NotNull] Matrix m, Single scalar ) => new( Multiply( m, scalar ) );
 
 		[NotNull]
-		public static Matrix operator *( [NotNull] Matrix m1, [NotNull] Matrix m2 ) => new Matrix( Multiply( m1, m2 ) );
+		public static Matrix operator *( [NotNull] Matrix m1, [NotNull] Matrix m2 ) => new( Multiply( m1, m2 ) );
 
 		[NotNull]
 		public override String ToString() {

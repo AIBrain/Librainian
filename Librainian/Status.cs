@@ -72,6 +72,9 @@ namespace Librainian {
 									[Description( Symbols.WhiteStar )]
 									Success = 1,
 
+									[Description( Symbols.WhiteStar )]
+									Okay = Success,
+
 								[Description( Symbols.CheckMark )]
 								Good = Success + 1,
 

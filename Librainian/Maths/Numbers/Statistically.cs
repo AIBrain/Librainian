@@ -39,7 +39,7 @@ namespace Librainian.Maths.Numbers {
 
 		public static readonly Statistically Zero = new();
 
-		public static Statistically Undecided = new( 0.5, 0.5 );
+		public static Statistically Undecided { get; } = new( 0.5, 0.5 );
 
 		//public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
 		public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( this, ups, downs );

@@ -33,14 +33,14 @@ namespace Librainian.FileSystem {
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
-	public class DocumentCopyStatistics {
+	public record DocumentCopyStatistics {
 
 		[JsonProperty]
 		public UInt64 BytesCopied { get; set; }
 
 		[JsonProperty]
 		[CanBeNull]
-		public Document? DestinationDocument { get; set; }
+		public IDocument? DestinationDocument { get; set; }
 
 		[JsonProperty]
 		[CanBeNull]
@@ -48,7 +48,7 @@ namespace Librainian.FileSystem {
 
 		[JsonProperty]
 		[CanBeNull]
-		public Document? SourceDocument { get; set; }
+		public IDocument? SourceDocument { get; set; }
 
 		[JsonProperty]
 		[CanBeNull]
@@ -90,7 +90,7 @@ namespace Librainian.FileSystem {
 		/// <returns>A string that represents the current object.</returns>
 		[NotNull]
 		public override String ToString() =>
-			$"{this.SourceDocument.FileName} copied to {this.DestinationDocument.ContainingingFolder().FullPath} @ {this.MegabytesPerSecond()}MB/s";
+			$"{this.SourceDocument?.FileName} copied to {this.DestinationDocument?.ContainingingFolder().FullPath} @ {this.MegabytesPerSecond()}MB/s";
 
 	}
 

@@ -37,43 +37,44 @@ namespace Librainian.Internet {
 
 	public static class Internet {
 
-		private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new ConcurrentDictionary<Guid, IDownloader>();
+		private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new();
 
-		internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new ThreadLocal<WebClientWithTimeout>( () => new WebClientWithTimeout(), true );
+		internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new( () => new WebClientWithTimeout(), true );
 
 		public interface IDownloader {
 
 			[CanBeNull]
-			ICredentials Credentials { get; }
+			ICredentials? Credentials { get; }
 
 			/// <summary>When downloading data, this will be the destination.</summary>
 			[CanBeNull]
-			Byte[] DestinationBuffer { get; }
+			Byte[]? DestinationBuffer { get; }
 
 			/// <summary>When downloading a file, this will be the destination.</summary>
 			[CanBeNull]
-			Document DestinationDocument { get; }
+			Document? DestinationDocument { get; }
 
 			/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
-			Stopwatch Elasped { get; set; }
+			[CanBeNull]
+            Stopwatch? Elasped { get; set; }
 
 			[CanBeNull]
-			Action OnCancelled { get; set; }
+			Action? OnCancelled { get; set; }
 
 			[CanBeNull]
-			Action OnCompleted { get; set; }
+			Action? OnCompleted { get; set; }
 
 			[CanBeNull]
-			Action OnFailure { get; set; }
+			Action? OnFailure { get; set; }
 
 			[CanBeNull]
-			Action OnTimeout { get; set; }
+			Action? OnTimeout { get; set; }
 
 			[NotNull]
 			Uri Source { get; }
 
 			[CanBeNull]
-			Task Task { get; set; }
+			Task? Task { get; set; }
 
 			/// <summary>
 			///     The length of time to wait before the download is cancelled. See also:
@@ -121,7 +122,7 @@ namespace Librainian.Internet {
 				TimeSpan timeout,
 				CancellationToken token,
 				Boolean autoStart = true,
-				[CanBeNull] ICredentials credentials = null
+				[CanBeNull] ICredentials? credentials = null
 			) : base( source, destination, waitifBusy, timeout, token, credentials ) {
 				$"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
@@ -174,7 +175,7 @@ namespace Librainian.Internet {
 				Boolean waitIfBusy,
 				TimeSpan timeout,
 				CancellationToken token,
-				[CanBeNull] ICredentials credentials = null
+				[CanBeNull] ICredentials? credentials = null
 			) {
 				var web = WebClients.Value;
 
@@ -207,40 +208,41 @@ namespace Librainian.Internet {
 			[NotNull]
 			public WebClientWithTimeout Client { get; }
 
-			public ManualResetEventSlim Downloaded { get; } = new ManualResetEventSlim( false );
+			public ManualResetEventSlim Downloaded { get; } = new( false );
 
 			/// <summary>The unique identifier assigned to this download.</summary>
 			public Guid Id { get; }
 
 			[CanBeNull]
-			public ICredentials Credentials { get; set; }
+			public ICredentials? Credentials { get; set; }
 
 			[CanBeNull]
-			public Byte[] DestinationBuffer { get; set; }
+			public Byte[]? DestinationBuffer { get; set; }
 
 			[NotNull]
 			public Document DestinationDocument { get; set; }
 
 			/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
-			public Stopwatch Elasped { get; set; }
+			[CanBeNull]
+            public Stopwatch? Elasped { get; set; }
 
 			[CanBeNull]
-			public Action OnCancelled { get; set; }
+			public Action? OnCancelled { get; set; }
 
 			[CanBeNull]
-			public Action OnCompleted { get; set; }
+			public Action? OnCompleted { get; set; }
 
 			[CanBeNull]
-			public Action OnFailure { get; set; }
+			public Action? OnFailure { get; set; }
 
 			[CanBeNull]
-			public Action OnTimeout { get; set; }
+			public Action? OnTimeout { get; set; }
 
 			[NotNull]
 			public Uri Source { get; set; }
 
 			[CanBeNull]
-			public Task Task { get; set; }
+			public Task? Task { get; set; }
 
 			/// <summary>The length of time to wait before the download is cancelled. See also: <seealso cref="Forever" />.</summary>
 			public TimeSpan Timeout { get; set; }
@@ -286,19 +288,19 @@ namespace Librainian.Internet {
 				catch ( Exception exception ) {
 					switch ( exception ) {
 						case ArgumentOutOfRangeException _: {
-							return default( Boolean );
+							return false;
 						}
 
 						case ObjectDisposedException _: {
-							return default( Boolean );
+							return false;
 						}
 
 						case AbandonedMutexException _: {
-							return default( Boolean );
+							return false;
 						}
 
 						case InvalidOperationException _: {
-							return default( Boolean );
+							return false;
 						}
 
 						default: {

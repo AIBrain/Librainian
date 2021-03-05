@@ -42,7 +42,7 @@ namespace Librainian.Extensions {
 		public override Object GetEntity( [CanBeNull] Uri absoluteUri, [CanBeNull] String? role, [CanBeNull] Type ofObjectToReturn ) => new MemoryStream();
 
 		[NotNull]
-		public override Uri ResolveUri( [CanBeNull] Uri baseUri, [CanBeNull] String? relativeUri ) => new Uri( String.Empty );
+		public override Uri ResolveUri( [CanBeNull] Uri baseUri, [CanBeNull] String? relativeUri ) => new( String.Empty );
 
 	}
 

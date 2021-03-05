@@ -37,10 +37,10 @@ namespace Librainian.Extensions {
 	public static class Utility {
 
 		[NotNull]
-		private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new( LockRecursionPolicy.SupportsRecursion );
 
 		[NotNull]
-		private static DummyXMLResolver DummyXMLResolver { get; } = new DummyXMLResolver();
+		private static DummyXMLResolver DummyXMLResolver { get; } = new();
 
 		/// <summary>Output the <paramref name="text" /> at the end of the current <see cref="Console" /> line.</summary>
 		/// <param name="text">   </param>

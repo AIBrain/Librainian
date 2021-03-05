@@ -39,7 +39,7 @@ namespace Librainian.Graphics {
 
 		[NotNull]
 		public static Matrix3 I() =>
-			new Matrix3( new[,] {
+			new( new[,] {
 				{
 					1.0f, 0.0f, 0.0f
 				}, {
@@ -68,7 +68,7 @@ namespace Librainian.Graphics {
 		}
 
 		[NotNull]
-		public static Matrix3 operator *( [NotNull] Matrix3 m, Single scalar ) => new Matrix3( Multiply( m, scalar ) );
+		public static Matrix3 operator *( [NotNull] Matrix3 m, Single scalar ) => new( Multiply( m, scalar ) );
 
 	}
 

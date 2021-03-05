@@ -29,8 +29,9 @@ namespace Librainian.Measurement.Time {
 	using System.Numerics;
 	using Extensions;
 	using Newtonsoft.Json;
+    using Rationals;
 
-	/// <summary>
+    /// <summary>
 	///     <para>Absolute universal date and time.</para>
 	///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
 	/// </summary>
@@ -40,7 +41,7 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "ToString()" )]
 	public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-		public static UniversalDateTime Now => new( DateTime.UtcNow );
+		public static UniversalDateTime Now() => new( DateTime.UtcNow );
 
 		/// <summary>
 		///     <para>1 planck times</para>
@@ -51,7 +52,7 @@ namespace Librainian.Measurement.Time {
 		///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
 		///     <para>430,000,000,000,000,000 seconds</para>
 		/// </summary>
-		public static PlanckTimes PlancksUpToMinDateTime { get; } = new( new Seconds( 4.3E17m ) );
+		public static PlanckTimes PlancksUpToMinDateTime { get; } = new( new Seconds( ( Rational )4.3E17m ).Value.WholePart );
 
 		/// <summary>
 		///     <para>0 planck times</para>

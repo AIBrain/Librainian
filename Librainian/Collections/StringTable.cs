@@ -71,7 +71,7 @@ namespace Librainian.Collections {
 		/// <param name="key"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public String this[ UInt64 key ] {
+		public String? this[ UInt64 key ] {
 			get => this.Ints[key];
 
 			set {
@@ -93,7 +93,7 @@ namespace Librainian.Collections {
 		/// <returns></returns>
 		public Boolean Contains( [CanBeNull] String? word ) {
 			if ( String.IsNullOrEmpty( word ) ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return this.Words.TryGetValue( word, out _ );

@@ -45,17 +45,17 @@ namespace Librainian.Measurement.Time.Clocks {
 		public MomentInTimeClock( DateTime time ) : this( ( Time )time ) { }
 
 		[JsonProperty]
-		public Hour Hour { get; }
+		public ClockHour Hour { get; }
 
 		/// <summary></summary>
 		[JsonProperty]
-		public Millisecond Millisecond { get; }
+		public ClockMillisecond Millisecond { get; }
 
 		[JsonProperty]
-		public Minute Minute { get; }
+		public ClockMinute Minute { get; }
 
 		[JsonProperty]
-		public Second Second { get; }
+		public ClockSecond Second { get; }
 
 		public Boolean IsAm() => !this.IsPm();
 

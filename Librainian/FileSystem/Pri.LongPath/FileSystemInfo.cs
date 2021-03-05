@@ -219,17 +219,17 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public abstract System.IO.FileSystemInfo SystemInfo { get; }
 
-		private static void ThrowLastWriteTimeUtcIOError( Int32 errorCode, [NotNull] String maybeFullPath ) {
+		private static void ThrowLastWriteTimeUtcIOError( NativeMethods.ERROR errorCode, [NotNull] String maybeFullPath ) {
 			// This doesn't have to be perfect, but is a perf optimization.
-			var isInvalidPath = errorCode == NativeMethods.ERROR_INVALID_NAME || errorCode == NativeMethods.ERROR_BAD_PATHNAME;
+			var isInvalidPath = errorCode is NativeMethods.ERROR.ERROR_INVALID_NAME or NativeMethods.ERROR.ERROR_BAD_PATHNAME;
 			var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
 			switch ( errorCode ) {
-				case NativeMethods.ERROR_FILE_NOT_FOUND: break;
+				case NativeMethods.ERROR.ERROR_FILE_NOT_FOUND: break;
 
-				case NativeMethods.ERROR_PATH_NOT_FOUND: break;
+				case NativeMethods.ERROR.ERROR_PATH_NOT_FOUND: break;
 
-				case NativeMethods.ERROR_ACCESS_DENIED:
+				case NativeMethods.ERROR.ERROR_ACCESS_DENIED:
 
 					if ( str.Length == 0 ) {
 						throw new UnauthorizedAccessException( "Empty path" );
@@ -238,7 +238,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						throw new UnauthorizedAccessException( $"Access denied accessing {str}" );
 					}
 
-				case NativeMethods.ERROR_ALREADY_EXISTS:
+				case NativeMethods.ERROR.ERROR_ALREADY_EXISTS:
 
 					if ( str.Length == 0 ) {
 						goto default;
@@ -246,13 +246,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 					throw new IOException( $"File {str}", NativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case NativeMethods.ERROR_FILENAME_EXCED_RANGE: throw new PathTooLongException( "Path too long" );
+				case NativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE: throw new PathTooLongException( "Path too long" );
 
-				case NativeMethods.ERROR_INVALID_DRIVE: throw new DriveNotFoundException( $"Drive {str} not found" );
+				case NativeMethods.ERROR.ERROR_INVALID_DRIVE: throw new DriveNotFoundException( $"Drive {str} not found" );
 
-				case NativeMethods.ERROR_INVALID_PARAMETER: throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
+				case NativeMethods.ERROR.ERROR_INVALID_PARAMETER: throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case NativeMethods.ERROR_SHARING_VIOLATION:
+				case NativeMethods.ERROR.ERROR_SHARING_VIOLATION:
 
 					if ( str.Length == 0 ) {
 						throw new IOException( "Sharing violation with empty filename", NativeMethods.MakeHRFromErrorCode( errorCode ) );
@@ -261,7 +261,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						throw new IOException( $"Sharing violation: {str}", NativeMethods.MakeHRFromErrorCode( errorCode ) );
 					}
 
-				case NativeMethods.ERROR_FILE_EXISTS:
+				case NativeMethods.ERROR.ERROR_FILE_EXISTS:
 
 					if ( str.Length == 0 ) {
 						goto default;
@@ -269,7 +269,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 					throw new IOException( $"File exists {str}", NativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case NativeMethods.ERROR_OPERATION_ABORTED: throw new OperationCanceledException();
+				case NativeMethods.ERROR.ERROR_OPERATION_ABORTED: throw new OperationCanceledException();
 
 				default: throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
 			}
@@ -296,11 +296,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 			catch ( DirectoryNotFoundException ) {
 				this.state = State.Error;
-				this.errorCode = NativeMethods.ERROR_PATH_NOT_FOUND;
+				this.errorCode = NativeMethods.ERROR.ERROR_PATH_NOT_FOUND;
 			}
 			catch ( Exception ) {
 				if ( this.state != State.Error ) {
-					Common.ThrowIOError( Marshal.GetLastWin32Error(), this.FullPath );
+					Common.ThrowIOError( ( NativeMethods.ERROR )Marshal.GetLastWin32Error(), this.FullPath );
 				}
 			}
 		}

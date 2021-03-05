@@ -27,37 +27,46 @@ namespace Librainian.Threading {
 	using System;
 	using System.Threading;
 	using JetBrains.Annotations;
+	using Logging;
 	using Measurement.Time;
+	using Threadsafe;
 	using Utilities;
 
 	/// <summary>
-	///     Accepts one <see cref="Action" /> to perform (a loop) when the <see cref="Signal" /> is <see cref="Poke" />.
-	///     <para>Starts 1 thread and waits for the signal.</para>
+	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="_signal" /> is Set (<see cref="Poke"/>).
 	/// </summary>
 	public class BackgroundThread : ABetterClassDispose {
 
+		//I don't like using "threads".. is this a good use case for them? Would a BackGroundWorker be more suited?
+
 		/// <summary></summary>
-		/// <param name="loop">Action to perform on each <see cref="Signal" />.</param>
+		/// <param name="actionToPerform">Action to perform on each <see cref="_signal" />.</param>
 		/// <param name="autoStart"></param>
 		/// <param name="cancellationTokenSource"></param>
-		public BackgroundThread( [NotNull] Action loop, Boolean autoStart, [NotNull] out CancellationTokenSource cancellationTokenSource ) {
-			this.Loop = loop ?? throw new ArgumentNullException( nameof( loop ) );
-			this.CTS = cancellationTokenSource = new CancellationTokenSource();
+		public BackgroundThread( [NotNull] Action actionToPerform, Boolean autoStart, CancellationToken cancellationToken ) {
+			
+			this._actionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
+			this._cancellationToken = cancellationToken;
 
 			this.thread = new Thread( () => {
-				while ( !this.Token.IsCancellationRequested ) {
-					if ( this.Signal.WaitOne( Seconds.Five ) ) {
+				while ( !this._cancellationToken.IsCancellationRequested ) {
+					if ( this._signal.WaitOne( Seconds.One ) ) {
 						try {
-							this.RunningLoop = true;
-							this.Loop();
+							this.RunningAction = true;
+							try {
+								this._actionToPerform();
+							}
+							catch ( Exception exception) {
+								exception.Log();
+							}
 						}
 						finally {
-							this.RunningLoop = false;
+							this.RunningAction = false;
 						}
 					}
 				}
 			} ) {
-				IsBackground = true
+				IsBackground = true, Priority = ThreadPriority.BelowNormal
 			};
 
 			if ( autoStart ) {
@@ -65,43 +74,41 @@ namespace Librainian.Threading {
 			}
 		}
 
+		
+
 		[NotNull]
 		private Thread thread { get; }
 
-		[NotNull]
-		public CancellationTokenSource CTS { get; }
+		private CancellationToken _cancellationToken { get; }
 
 		[NotNull]
-		public Action Loop { get; }
+		private Action _actionToPerform { get; }
+
 
 		/// <summary>True if the loop is currently running.</summary>
-		public Boolean RunningLoop { get; private set; }
+		public VolatileBoolean RunningAction { get; private set; }
 
 		[NotNull]
-		public AutoResetEvent Signal { get; } = new( true );
+		private AutoResetEvent _signal { get; } = new( true );
 
-		private CancellationToken Token => this.CTS.Token;
-
-		private void Start() => this.thread.Start();
-
-		/// <summary>Marks to exit the loop.</summary>
-		public void Cancel() {
-			if ( !this.CTS.IsCancellationRequested ) {
-				this.CTS.Cancel();
+		private void Start() {
+			if ( this.thread.ThreadState != ThreadState.Running ) {
+				this.thread.Start();
 			}
 		}
-
-		/// <summary>Calling this or <see cref="IDisposable.Dispose" /> will cancel the signal-waiting loop.</summary>
-		public override void DisposeManaged() => this.Cancel();
 
 		/// <summary>Do anything needed in this method before the loops run.</summary>
 		public virtual void Initialize() { }
 
 		/// <summary>Set the signal.</summary>
-		public void Poke() => this.Signal.Set();
+		public void Poke() => this._signal.Set();
 
-		/// <summary>Calls <see cref="Cancel" />.</summary>
-		public void Quit() => this.Cancel();
+		public override void DisposeManaged() {
+			if ( this.thread.ThreadState == ThreadState.Running ) {
+				this.thread.Join( Seconds.Seven );
+			}
+			base.DisposeManaged();
+		}
 
 	}
 

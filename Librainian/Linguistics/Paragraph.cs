@@ -30,7 +30,6 @@ namespace Librainian.Linguistics {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Text;
-	using Extensions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -40,22 +39,26 @@ namespace Librainian.Linguistics {
 	/// </summary>
 	/// <see cref="Page"></see>
 	[JsonObject]
-	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	[Serializable]
-	public sealed class Paragraph : IEquatable<Paragraph>, IEnumerable<Sentence> {
+	public record Paragraph : IEnumerable<Sentence> {
 
 		private Paragraph() { }
 
 		/// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
 		/// <param name="paragraph"></param>
-		public Paragraph( [CanBeNull] String? paragraph ) : this( paragraph.ToSentences() ) { }
+		public Paragraph( [NotNull] String paragraph ) : this( paragraph.ToSentences() ) { }
 
 		/// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
 		/// <param name="sentences"></param>
-		public Paragraph( [CanBeNull] IEnumerable<Sentence> sentences ) {
+		public Paragraph( [CanBeNull] IEnumerable<Sentence?>? sentences ) {
 			if ( sentences != null ) {
-				this.Sentences.AddRange( sentences.Where( sentence => sentence != null ) );
+                foreach ( var sentence in sentences ) {
+                    if ( sentence is not null ) {
+                        this.Sentences.Add( sentence );
+                    }
+
+                }
 			}
 
 			this.Sentences.TrimExcess();
@@ -63,26 +66,29 @@ namespace Librainian.Linguistics {
 
 		[NotNull]
 		[JsonProperty]
-		private List<Sentence> Sentences { get; } = new List<Sentence>();
+		private List<Sentence> Sentences { get; } = new();
 
-		public static Paragraph Empty { get; } = new Paragraph();
+		public static Paragraph Empty { get; } = new();
 
 		public IEnumerator<Sentence> GetEnumerator() => this.Sentences.GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+		/*
 		public Boolean Equals( [CanBeNull] Paragraph other ) {
 			if ( other is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return ReferenceEquals( this, other ) || this.Sentences.SequenceEqual( other.Sentences );
 		}
+		*/
 
 		[NotNull]
 		public static implicit operator String( [NotNull] Paragraph paragraph ) => paragraph.ToString();
 
-		/// <summary>Serves as the default hash function. </summary>
+
+        /// <summary>Serves as the default hash function. </summary>
 		/// <returns>A hash code for the current object.</returns>
 		public override Int32 GetHashCode() => this.Sentences.GetHashCode();
 
@@ -91,12 +97,27 @@ namespace Librainian.Linguistics {
 			var sb = new StringBuilder();
 
 			foreach ( var sentence in this.Sentences ) {
-				sb.AppendLine( sentence.ToString() );
+				sb.Append( sentence ).Append( ' ' );
 			}
 
-			return sb.ToString();
+			return sb.ToString().TrimEnd();
 		}
 
-	}
+
+        public virtual Boolean Equals( Paragraph? other ) {
+            if ( other is null ) {
+                return false;
+            }
+
+            if ( ReferenceEquals( this, other ) ) {
+                return true;
+            }
+
+            return this.Sentences.SequenceEqual( other.Sentences );
+        }
+
+    
+
+    }
 
 }

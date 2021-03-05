@@ -41,6 +41,10 @@ namespace Librainian.Persistence {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 
+	using DataType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>;
+	using ReadOnlyDataType = System.Collections.Generic.IReadOnlyDictionary<System.String, System.String?>;
+	using SectionType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>>;
+
 	/// <summary>Persist a document to and from a JSON formatted text document.</summary>
 	/// TODO Needs testing.
 	[JsonObject]
@@ -48,26 +52,18 @@ namespace Librainian.Persistence {
 
 		/// <summary></summary>
 		/// <param name="document"></param>
-		public JSONFile( [CanBeNull] Document document ) : this() {
+		public JSONFile([CanBeNull] Document document, CancellationToken token) : this() {
 			this.Document = document;
 
 			this.Document?.ContainingingFolder().Create();
 
-			this.Read().Wait();
+			this.Read( token ).Wait();
 		}
 
 		public JSONFile() { }
 
 		[NotNull]
-		public IEnumerable<String?> AllKeys {
-			get {
-				foreach ( var section in this.Sections ) {
-					foreach ( var key in this.Data[section].Keys ) {
-						yield return key;
-					}
-				}
-			}
-		}
+		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[section].Keys );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -79,27 +75,27 @@ namespace Librainian.Persistence {
 
 		[JsonProperty]
 		[NotNull]
-		private ConcurrentDictionary<String, ConcurrentDictionary<String, String>> Data {
+		private SectionType Data {
 			[DebuggerStepThrough]
 			get;
-		} = new ConcurrentDictionary<String, ConcurrentDictionary<String, String>>();
+		} = new();
 
 		[CanBeNull]
-		public IReadOnlyDictionary<String?, String?> this[ [CanBeNull] String? section ] {
+		public ReadOnlyDataType? this[[CanBeNull] String? section] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
-				if ( String.IsNullOrEmpty( section ) ) {
-					return default( IReadOnlyDictionary<String?, String?> );
+				if (String.IsNullOrEmpty(section)) {
+					return default( ReadOnlyDataType );
 				}
 
-				if ( this.Data.ContainsKey( section ) ) {
-					if ( this.Data.TryGetValue( section, out var result ) ) {
+				if (this.Data.ContainsKey(section)) {
+					if (this.Data.TryGetValue(section, out var result)) {
 						return result;
 					}
 				}
 
-				return default( IReadOnlyDictionary<String?, String?> );
+				return default( ReadOnlyDataType );
 			}
 		}
 
@@ -108,81 +104,78 @@ namespace Librainian.Persistence {
 		/// <param name="key"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public String this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
+		public String? this[[CanBeNull] String? section, [CanBeNull] String? key] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
-				if ( String.IsNullOrEmpty( section ) ) {
-					return default( String );
+				if (String.IsNullOrEmpty(section)) {
+					return default(String?);
 				}
 
-				if ( String.IsNullOrEmpty( key ) ) {
-					return default( String );
+				if (String.IsNullOrEmpty(key)) {
+					return default(String?);
 				}
 
-				if ( !this.Data.ContainsKey( section ) ) {
-					return default( String );
+				if (!this.Data.ContainsKey(section)) {
+					return default(String?);
 				}
 
-				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
+				return this.Data[section].TryGetValue(key, out var value) ? value : null;
 			}
 
 			[DebuggerStepThrough]
 			set {
-				if ( String.IsNullOrEmpty( section ) ) {
+				if (String.IsNullOrEmpty(section)) {
 					return;
 				}
 
-				if ( String.IsNullOrEmpty( key ) ) {
+				if (String.IsNullOrEmpty(key)) {
 					return;
 				}
 
-				this.Add( section, new KeyValuePair<String, String>( key, value ) );
+				this.Add(section, (key, value));
 			}
 		}
 
 		/// <summary>Removes all data from all sections.</summary>
 		/// <returns></returns>
-		public Boolean Clear() {
-			Parallel.ForEach( this.Data.Keys, section => this.TryRemove( section ) );
+		public Boolean Clear( CancellationToken token) {
+			Parallel.ForEach(this.Data.Keys.TakeWhile( _ => !token.IsCancellationRequested ), section => this.TryRemove(section));
 
 			return !this.Data.Keys.Any();
 		}
 
 		[NotNull]
-		public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
+		public async Task<Boolean> Read(CancellationToken token) {
 			var document = this.Document;
 
-			if ( !document.Exists() ) {
+			if (document is null || !document.Exists()) {
 				return false;
 			}
 
 			try {
-				var p = await document.LoadJSON<ConcurrentDictionary<String, ConcurrentDictionary<String, String>>>( null, null );
+				(var status, var data) = await document.LoadJSON<ConcurrentDictionary<String, DataType>>(null, null);
 
-				if ( !p.status.IsGood() ) {
+				if (!status.IsGood()) {
 					return false;
 				}
 
-				var data = p.obj;
-				var result = Parallel.ForEach( data.Keys.AsParallel(),
+				var result = Parallel.ForEach(data.Keys.AsParallel(),
 					section => {
-						if ( data != null ) {
-							Parallel.ForEach( data[section].Keys.AsParallel().AsUnordered(),
-								key => this.Add( section, new KeyValuePair<String, String>( key, data[section][key] ) ) );
-						}
-					} );
+						Parallel.ForEach(data[section].Keys.AsParallel().AsUnordered(),
+							key => this.Add(section, new KeyValuePair<String, String>(key, data[section][key])));
+					});
 
 				return result.IsCompleted;
 			}
-			catch ( JsonException exception ) {
+			catch (JsonException exception) {
 				exception.Log();
 			}
-			catch ( IOException exception ) {
+			catch (IOException exception) {
 				//file in use by another app
 				exception.Log();
 			}
-			catch ( OutOfMemoryException exception ) {
+			catch (OutOfMemoryException exception) {
 				//file is huge
 				exception.Log();
 			}
@@ -197,36 +190,44 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.Sections.Count()} sections, {this.AllKeys.Count()} keys";
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( String section ) {
-			if ( section == null ) {
-				throw new ArgumentNullException( nameof( section ) );
+		public Boolean TryRemove(String section) {
+			if (section == null) {
+				throw new ArgumentNullException(nameof(section));
 			}
 
-			return this.Data.TryRemove( section, out var dict );
+			return this.Data.TryRemove(section, out var dict);
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( String section, [CanBeNull] String? key ) {
-			if ( section == null ) {
-				throw new ArgumentNullException( nameof( section ) );
+		public Boolean TryRemove(String section, [CanBeNull] String? key) {
+			if (section == null) {
+				throw new ArgumentNullException(nameof(section));
 			}
 
-			if ( !this.Data.ContainsKey( section ) ) {
+			if (key is null) {
+				return false;
+			}
+			if (!this.Data.ContainsKey(section)) {
 				return false;
 			}
 
-			return this.Data[ section ].TryRemove( key, out var value );
+			return this.Data[section].TryRemove(key, out _);
 		}
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
 		/// <returns></returns>
 		[NotNull]
-		public async Task<Boolean> Write( CancellationToken token  ) {
+		public async Task<Boolean> Write(CancellationToken token) {
 			var document = this.Document;
 
-			await document.TryDeleting( Seconds.One, token ).ConfigureAwait(false);
+			if (document is not null) {
+				await document.TryDeleting(Seconds.Seven, token).ConfigureAwait(false);
 
-			document.AppendText( this.Data.ToJSON( Formatting.Indented ) );
+				var bob = this.Data.ToJSON(Formatting.Indented);
+				if (bob != null) {
+					document.AppendText(bob);
+				}
+			}
 
 			return true;
 		}
@@ -235,33 +236,75 @@ namespace Librainian.Persistence {
 		/// <param name="section"></param>
 		/// <param name="pair"></param>
 		/// <returns></returns>
-		public Boolean Add( String section, KeyValuePair<String, String> pair ) {
-			if ( String.IsNullOrWhiteSpace( section ) ) {
-				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
+		public Boolean Add(String section, KeyValuePair<String, String?> pair) {
+			if (String.IsNullOrWhiteSpace(section)) {
+				throw new ArgumentException("Argument is null or whitespace", nameof(section));
 			}
 
 			section = section.Trim();
 
-			if ( String.IsNullOrWhiteSpace( section ) ) {
-				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
+			if (String.IsNullOrWhiteSpace(section)) {
+				throw new ArgumentException("Argument is null or whitespace", nameof(section));
 			}
 
 			var retries = 10;
-			TryAgain:
+		TryAgain:
 
-			if ( !this.Data.ContainsKey( section ) ) {
-				this.Data.TryAdd( section, new ConcurrentDictionary<String, String>() );
+			if (!this.Data.ContainsKey(section)) {
+				this.Data.TryAdd(section, new DataType());
 			}
 
 			try {
-				this.Data[ section ][ pair.Key.Trim() ] = pair.Value;
+				var (key, value) = pair;
+				this.Data[section][key.Trim()] = value;
 
 				return true;
 			}
-			catch ( KeyNotFoundException exception ) {
+			catch (KeyNotFoundException exception) {
 				retries--;
 
-				if ( retries.Any() ) {
+				if (retries.Any()) {
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
+
+			return false;
+		}
+		
+		/// <summary>(Trims whitespaces from section and key)</summary>
+		/// <param name="section"></param>
+		/// <param name="pair"></param>
+		/// <returns></returns>
+		public Boolean Add(String section, (String k, String? v) tuple) {
+			if (String.IsNullOrWhiteSpace(section)) {
+				throw new ArgumentException("Argument is null or whitespace", nameof(section));
+			}
+
+			section = section.Trim();
+
+			if (String.IsNullOrWhiteSpace(section)) {
+				throw new ArgumentException("Argument is null or whitespace", nameof(section));
+			}
+
+			var retries = 10;
+		TryAgain:
+
+			if (!this.Data.ContainsKey(section)) {
+				this.Data.TryAdd( section, new DataType() );
+			}
+
+			try {
+				var (key, value) = tuple;
+				this.Data[section][key.Trim()] = value;
+
+				return true;
+			}
+			catch (KeyNotFoundException exception) {
+				retries--;
+
+				if (retries.Any()) {
 					goto TryAgain;
 				}
 
@@ -272,5 +315,6 @@ namespace Librainian.Persistence {
 		}
 
 	}
+
 
 }

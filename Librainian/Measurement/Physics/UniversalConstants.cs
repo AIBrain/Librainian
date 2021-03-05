@@ -31,7 +31,7 @@ namespace Librainian.Measurement.Physics {
 
 		/// <summary></summary>
 		/// <see cref="http://wikipedia.org/wiki/Elementary_charge" />
-		public static ElectronVolts ElementaryCharge { get; } = new ElectronVolts( 0.0000000000000000001602176565m );
+		public static ElectronVolts ElementaryCharge { get; } = new( 0.0000000000000000001602176565m );
 
 		public static Decimal HalfSpin { get; } = ( Decimal )MathConstants.OneOverTwo;
 

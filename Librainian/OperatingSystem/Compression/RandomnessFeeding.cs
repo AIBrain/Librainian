@@ -48,7 +48,7 @@ namespace Librainian.OperatingSystem.Compression {
 		private GZipStream GZipStream { get; }
 
 		[NotNull]
-		private NullStream NullStream { get; } = new NullStream();
+		private NullStream NullStream { get; } = new();
 
 		public BigInteger HowManyBytesAsCompressed { get; private set; }
 

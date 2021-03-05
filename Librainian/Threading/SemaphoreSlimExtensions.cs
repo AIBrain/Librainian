@@ -45,7 +45,7 @@ namespace Librainian.Threading {
 		private class ReleaseWrapper : IDisposable {
 
 			[CanBeNull]
-			private SemaphoreSlim _semaphore;
+			private SemaphoreSlim? _semaphore;
 
 			public ReleaseWrapper( [NotNull] SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
 

@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<Platforms>x64</Platforms>
 		<ApplicationIcon>Librainian.ico</ApplicationIcon>
 		<RootNamespace>Librainian</RootNamespace>
@@ -17,13 +18,13 @@
 		<RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<UserSecretsId>46013adb-36bf-4982-9a1a-6755470fdccc</UserSecretsId>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageLicenseFile>License.md</PackageLicenseFile>
 		<AssemblyVersion>2020.9.7.4</AssemblyVersion>
 		<FileVersion>2020.9.7.4</FileVersion>
-		<GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
-		<LangVersion>preview</LangVersion>
+		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+		<LangVersion>latest</LangVersion>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<OutputType>Library</OutputType>
@@ -64,42 +65,31 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommandLineParser" Version="2.8.0" />
+		<PackageReference Include="FluentAssertions" Version="5.10.3" />
 		<PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
 		<PackageReference Include="LinqFaster.SIMD" Version="1.0.3" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="PooledAwait" Version="1.0.49" />
 		<PackageReference Include="Rationals" Version="1.4.0" />
+		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 		<PackageReference Include="System.Management" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="Esent.Collections">
 			<HintPath>Persistence\DLL\Esent.Collections.dll</HintPath>
 		</Reference>
-		<Reference Include="Esent.Interop">
-			<HintPath>Persistence\DLL\Esent.Interop.dll</HintPath>
-		</Reference>
 		<Reference Include="Esent.Isam">
 			<HintPath>Persistence\DLL\Esent.Isam.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 	<ItemGroup>
-		<Reference Include="System.Windows.Forms">
-			<HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.0-rc.2.20475.6\System.Windows.Forms.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Drawing">
-			<HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.0-rc.2.20475.6\System.Drawing.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Drawing.Common">
-			<HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.0-rc.2.20475.6\System.Drawing.Common.dll</HintPath>
-		</Reference>
-		<Reference Include="System.Windows.Forms.Primitives">
-			<HintPath>C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.0-rc.2.20475.6\System.Windows.Forms.Primitives.dll</HintPath>
-		</Reference>
-	</ItemGroup>
-	<ItemGroup>
 		<None Include="..\Librainian.png">
 			<Pack>True</Pack>
+		</None>
+		<None Include="..\License.md">
+		  <Pack>True</Pack>
+		  <PackagePath></PackagePath>
 		</None>
 	</ItemGroup>
 	<ProjectExtensions>

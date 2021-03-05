@@ -51,10 +51,10 @@ namespace Librainian.Measurement.Physics {
 		public const Decimal InOneTeraElectronVolt = 1E0m;
 
 		/// <summary></summary>
-		public static readonly TeraElectronVolts One = new TeraElectronVolts( 1m );
+		public static readonly TeraElectronVolts One = new( 1m );
 
 		/// <summary></summary>
-		public static readonly TeraElectronVolts Zero = new TeraElectronVolts( 0m );
+		public static readonly TeraElectronVolts Zero = new( 0m );
 
 		/// <summary></summary>
 		public Rational Value { get; }
@@ -69,14 +69,14 @@ namespace Librainian.Measurement.Physics {
 
 		public TeraElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToTeraElectronVolts().Value;
 
-		public static TeraElectronVolts operator *( TeraElectronVolts left, Rational right ) => new TeraElectronVolts( left.Value * right );
+		public static TeraElectronVolts operator *( TeraElectronVolts left, Rational right ) => new( left.Value * right );
 
-		public static TeraElectronVolts operator *( Rational left, TeraElectronVolts right ) => new TeraElectronVolts( left * right.Value );
+		public static TeraElectronVolts operator *( Rational left, TeraElectronVolts right ) => new( left * right.Value );
 
 		public static TeraElectronVolts operator +( GigaElectronVolts left, TeraElectronVolts right ) =>
-			new TeraElectronVolts( left.ToTeraElectronVolts().Value + right.Value );
+			new( left.ToTeraElectronVolts().Value + right.Value );
 
-		public static TeraElectronVolts operator +( TeraElectronVolts left, TeraElectronVolts right ) => new TeraElectronVolts( left.Value + right.Value );
+		public static TeraElectronVolts operator +( TeraElectronVolts left, TeraElectronVolts right ) => new( left.Value + right.Value );
 
 		public static Boolean operator <( TeraElectronVolts left, TeraElectronVolts right ) => left.Value.CompareTo( right.Value ) < 0;
 
@@ -90,20 +90,20 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( TeraElectronVolts other ) => this.Value.CompareTo( other.Value );
 
-		public ElectronVolts ToElectronVolts() => new ElectronVolts( this.Value * ( Rational )InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new( this.Value * ( Rational )InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new GigaElectronVolts( this.Value * ( Rational )InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * ( Rational )InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new KiloElectronVolts( this.Value * ( Rational )InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * ( Rational )InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new MegaElectronVolts( this.Value * ( Rational )InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * ( Rational )InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new MilliElectronVolts( this.Value * ( Rational )InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * ( Rational )InOneMilliElectronVolt );
 
 		[NotNull]
 		public override String ToString() => $"{this.Value} TeV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new TeraElectronVolts( this.Value * ( Rational )InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * ( Rational )InOneTeraElectronVolt );
 
 	}
 

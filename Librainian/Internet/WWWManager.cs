@@ -33,7 +33,7 @@ namespace Librainian.Internet {
 	[Obsolete( "Needs rewriting" )]
 	public class WwwManager {
 
-		public static readonly ThreadLocal<WebClient> WebClients = new ThreadLocal<WebClient>( () => {
+		public static readonly ThreadLocal<WebClient> WebClients = new( () => {
 			var webClient = new WebClient();
 			webClient.Headers.Add( "user-agent", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15" );
 

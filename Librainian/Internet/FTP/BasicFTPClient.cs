@@ -1,142 +1,192 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BasicFTPClient.cs" last formatted on 2020-08-14 at 8:34 PM.
+// Our software can be found at "https://Protiguous.com/Software"
+// Our GitHub address is "https://github.com/Protiguous".
+
+#nullable enable
 
 namespace Librainian.Internet.FTP {
 
-	using System;
-	using System.IO;
-	using System.Net;
-	using JetBrains.Annotations;
+    using System;
+    using System.IO;
+    using System.Net;
+    using JetBrains.Annotations;
 
-	public class BasicFtpClient {
+    public class BasicFtpClient {
 
-		public BasicFtpClient() {
-			this.Username = "anonymous";
-			this.Password = "anonymous@internet.com";
-			this.Port = 21;
-			this.Host = "";
-		}
+        public BasicFtpClient() {
+            this.Username = "anonymous";
+            this.Password = "anonymous@internet.com";
+            this.Port = 21;
+            this.Host = "";
+        }
 
-		public BasicFtpClient( [CanBeNull] String? theUser, [CanBeNull] String? thePassword, [CanBeNull] String? theHost ) {
-			this.Username = theUser;
-			this.Password = thePassword;
-			this.Host = theHost;
-			this.Port = 21;
-		}
+        public BasicFtpClient( [NotNull] String theUser, [NotNull] String thePassword, [NotNull] String theHost ) {
+            if ( String.IsNullOrWhiteSpace( theUser ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( theUser ) );
+            }
 
-		public String Host { get; set; }
+            if ( String.IsNullOrWhiteSpace( thePassword ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( thePassword ) );
+            }
 
-		public String Password { get; set; }
+            if ( String.IsNullOrWhiteSpace( theHost ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( theHost ) );
+            }
 
-		public Int32 Port { get; set; }
+            this.Username = theUser;
+            this.Password = thePassword;
+            this.Host = theHost;
+            this.Port = 21;
+        }
 
-		public String Username { get; set; }
+        public String Host { get; }
 
-		[NotNull]
-		private Uri BuildServerUri( [CanBeNull] String? path ) => new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
+        public String Password { get; }
 
-		/// <summary>
-		///     This method downloads the given file name from the FTP Server and returns a byte array containing its
-		///     contents. Throws a WebException on encountering a network error.
-		/// </summary>
-		[CanBeNull]
-		public Byte[]? DownloadData( [CanBeNull] String? path ) {
-			// Get the object used to communicate with the Server.
-			var request = new WebClient {
-				Credentials = new NetworkCredential( this.Username, this.Password )
-			};
+        public Int32 Port { get; }
 
-			// Logon to the Server using username + password
-			return request.DownloadData( this.BuildServerUri( path ) );
-		}
+        public String Username { get; }
 
-		/// <summary>
-		///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile". Throws a WebException on
-		///     encountering a network error.
-		/// </summary>
-		public void DownloadFile( [CanBeNull] String? ftppath, [NotNull] String destfile ) {
-			// Download the data
-			var data = this.DownloadData( ftppath );
+        [NotNull]
+        private Uri BuildServerUri( [NotNull] String path ) {
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+            }
 
-			// Save the data to disk
+            return new Uri( $"ftp://{this.Host}:{this.Port}/{path}" );
+        }
 
-			if ( data != null ) {
-				using var fs = new FileStream( destfile, FileMode.Create );
+        /// <summary>
+        ///     This method downloads the given file name from the FTP Server and returns a byte array containing its contents.
+        ///     Throws a WebException on encountering a network error.
+        /// </summary>
+        [NotNull]
+        public Byte[] DownloadData( [NotNull] String path ) {
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+            }
 
-				fs.Write( data, 0, data.Length );
-				fs.Close();
-			}
-		}
+            // Get the object used to communicate with the Server.
+            var request = new WebClient {
+                Credentials = new NetworkCredential( this.Username, this.Password )
+            };
 
-		/// <summary>Upload a byte[] to the FTP Server</summary>
-		/// <param name="path">Path on the FTP Server (upload/myfile.txt)</param>
-		/// <param name="data">A byte[] containing the data to upload</param>
-		/// <returns>The Server response in a byte[]</returns>
-		[CanBeNull]
-		public Byte[] UploadData( [CanBeNull] String? path, [NotNull] Byte[] data ) {
-			// Get the object used to communicate with the Server.
-			var request = new WebClient {
-				Credentials = new NetworkCredential( this.Username, this.Password )
-			};
+            // Logon to the Server using username + password
+            return request.DownloadData( this.BuildServerUri( path ) );
+        }
 
-			// Logon to the Server using username + password
-			return request.UploadData( this.BuildServerUri( path ), data );
-		}
+        /// <summary>
+        ///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile". Throws a WebException on
+        ///     encountering a network error.
+        /// </summary>
+        public void DownloadFile( [NotNull] String ftppath, [NotNull] String destfile ) {
+            if ( String.IsNullOrWhiteSpace( ftppath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( ftppath ) );
+            }
 
-		/// <summary>Load a file from disk and upload it to the FTP Server</summary>
-		/// <param name="ftppath">Path on the FTP Server (/upload/myfile.txt)</param>
-		/// <param name="srcfile">File on the local harddisk to upload</param>
-		/// <returns>The Server response in a byte[]</returns>
-		[CanBeNull]
-		public Byte[] UploadFile( [CanBeNull] String? ftppath, [NotNull] String srcfile ) {
-			// Read the data from disk
-			var fs = new FileStream( srcfile, FileMode.Open );
-			var fileData = new Byte[fs.Length];
+            if ( String.IsNullOrWhiteSpace( destfile ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( destfile ) );
+            }
 
-			var numBytesToRead = ( Int32 )fs.Length;
-			var numBytesRead = 0;
+            // Download the data
+            var data = this.DownloadData( ftppath );
 
-			while ( numBytesToRead > 0 ) {
-				// Read may return anything from 0 to numBytesToRead.
-				var n = fs.Read( fileData, numBytesRead, numBytesToRead );
+            // Save the data to disk
 
-				// Break when the end of the file is reached.
-				if ( n == 0 ) {
-					break;
-				}
+            using var fs = new FileStream( destfile, FileMode.Create );
 
-				numBytesRead += n;
-				numBytesToRead -= n;
-			}
+            fs.Write( data, 0, data.Length );
+            fs.Close();
+        }
 
-			//numBytesToRead = FileData.Length;
-			fs.Close();
+        /// <summary>
+        ///     Upload a byte[] to the FTP Server
+        /// </summary>
+        /// <param name="path">Path on the FTP Server (upload/myfile.txt)</param>
+        /// <param name="data">A byte[] containing the data to upload</param>
+        /// <returns>The Server response in a byte[]</returns>
+        [NotNull]
+        public Byte[] UploadData( [NotNull] String path, [NotNull] Byte[] data ) {
+            if ( String.IsNullOrWhiteSpace( path ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+            }
 
-			// Upload the data from the buffer
-			return this.UploadData( ftppath, fileData );
-		}
+            if ( data == null ) {
+                throw new ArgumentNullException( nameof( data ) );
+            }
 
-	}
+            // Get the object used to communicate with the Server.
+            var request = new WebClient {
+                Credentials = new NetworkCredential( this.Username, this.Password )
+            };
+
+            // Logon to the Server using username + password
+            return request.UploadData( this.BuildServerUri( path ), data );
+        }
+
+        /// <summary>
+        ///     Load a file from disk and upload it to the FTP Server
+        /// </summary>
+        /// <param name="ftppath">Path on the FTP Server (/upload/myfile.txt)</param>
+        /// <param name="srcfile">File on the local harddisk to upload</param>
+        /// <returns>The Server response in a byte[]</returns>
+        [NotNull]
+        public Byte[] UploadFile( [NotNull] String ftppath, [NotNull] String srcfile ) {
+            if ( String.IsNullOrWhiteSpace( ftppath ) ) {
+                throw new ArgumentException( "Value cannot be null or whitespace.", nameof( ftppath ) );
+            }
+
+            // Read the data from disk
+            var fs = new FileStream( srcfile, FileMode.Open );
+            var fileData = new Byte[fs.Length];
+
+            var numBytesToRead = ( Int32 )fs.Length;
+            var numBytesRead = 0;
+
+            while ( numBytesToRead > 0 ) {
+
+                // Read may return anything from 0 to numBytesToRead.
+                var n = fs.Read( fileData, numBytesRead, numBytesToRead );
+
+                // Break when the end of the file is reached.
+                if ( n == 0 ) {
+                    break;
+                }
+
+                numBytesRead += n;
+                numBytesToRead -= n;
+            }
+
+            //numBytesToRead = FileData.Length;
+            fs.Close();
+
+            // Upload the data from the buffer
+            return this.UploadData( ftppath, fileData );
+        }
+
+    }
 
 }

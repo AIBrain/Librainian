@@ -350,7 +350,7 @@ namespace Librainian.OperatingSystem {
 		public const Int32 WM_DEVICECHANGE = 0x0219;
 
 		public const Int32 WM_SETICON = 0x80;
-		private static readonly IntPtr NegativeOneIntPtr = new IntPtr( -1 );
+		private static readonly IntPtr NegativeOneIntPtr = new( -1 );
 
 		[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
 		public static extern Boolean PathMatchSpec( [In] String pszFileParam, [In] String pszSpec );
@@ -1096,7 +1096,7 @@ namespace Librainian.OperatingSystem {
 
 			// just for demonstration
 			public static LargeInteger FromInt64( Int64 value ) =>
-				new LargeInteger {
+				new() {
 					Low = ( Int32 )value, High = ( Int32 )( value >> 32 )
 				};
 		}
@@ -1265,7 +1265,7 @@ namespace Librainian.OperatingSystem {
 				}
 
 				if ( !this.InternalReleaseHandle() ) {
-					return default( Boolean );
+					return false;
 				}
 
 				this.handle = IntPtr.Zero;
@@ -1288,7 +1288,7 @@ namespace Librainian.OperatingSystem {
 				}
 
 				if ( left is null || right is null ) {
-					return default( Boolean );
+					return false;
 				}
 
 				return left.handle == right.handle;

@@ -161,10 +161,10 @@ namespace Librainian.FileSystem {
 
 		/// <summary>String of invalid characters in a path or filename.</summary>
 		[NotNull]
-		private static readonly String InvalidPathCharacters = new String( Path.InvalidPathChars );
+		private static readonly String InvalidPathCharacters = new( Path.InvalidPathChars );
 
 		[NotNull]
-		public static readonly Regex RegexForInvalidPathCharacters = new Regex( $"[{Regex.Escape( InvalidPathCharacters )}]", RegexOptions.Compiled );
+		public static readonly Regex RegexForInvalidPathCharacters = new( $"[{Regex.Escape( InvalidPathCharacters )}]", RegexOptions.Compiled );
 
 		/// <summary></summary>
 		/// <param name="fullPath"></param>
@@ -261,14 +261,14 @@ namespace Librainian.FileSystem {
 		/// <summary>"/"</summary>
 		[JsonIgnore]
 		[NotNull]
-		public static String FolderAltSeparator { get; } = new String( new[] {
+		public static String FolderAltSeparator { get; } = new( new[] {
 			Path.AltDirectorySeparatorChar
 		} );
 
 		/// <summary>"\"</summary>
 		[JsonIgnore]
 		[NotNull]
-		public static String FolderSeparator { get; } = new String( new[] {
+		public static String FolderSeparator { get; } = new( new[] {
 			Path.DirectorySeparatorChar
 		} );
 
@@ -299,14 +299,18 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( randomize ) {
-				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ).OrderBy( info => Randem.Next() ) ) {
-					yield return new Folder( fileInfo.FullPath );
-				}
+				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ).OrderBy( _ => Randem.Next() ) ) {
+                    if ( fileInfo != null ) {
+                        yield return new Folder( fileInfo.FullPath );
+                    }
+                }
 			}
 			else {
 				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ) ) {
-					yield return new Folder( fileInfo.FullPath );
-				}
+                    if ( fileInfo != null ) {
+                        yield return new Folder( fileInfo.FullPath );
+                    }
+                }
 			}
 		}
 
@@ -322,8 +326,6 @@ namespace Librainian.FileSystem {
 				var folders = new List<Folder>();
 
 				folders.AddRange( this.Info.BetterEnumerateDirectories( searchPattern ).Select( fileInfo => new Folder( fileInfo.FullPath ) ) );
-
-				folders.RemoveAll( folder => folder is null ); //just in case. probably will never happen, unless BetterEnumerateDirectories() gets goofed up.
 
 				if ( randomize ) {
 					Shufflings.ShuffleByHarker( folders, 1, null, token );
@@ -363,7 +365,7 @@ namespace Librainian.FileSystem {
 				return this.Exists();
 			}
 			catch ( IOException ) {
-				return default( Boolean );
+				return false;
 			}
 		}
 
@@ -383,7 +385,7 @@ namespace Librainian.FileSystem {
 			}
 			catch ( IOException ) { }
 
-			return default( Boolean );
+			return false;
 		}
 
 		public Boolean Equals( IFolder other ) => Equals( this, other );
@@ -432,8 +434,8 @@ namespace Librainian.FileSystem {
 		[NotNull]
 		public IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns ) => searchPatterns.SelectMany( this.GetDocuments );
 
-		[NotNull]
-		public Disk GetDrive() => new Disk( this.Info.Root.FullPath );
+        [NotNull]
+		public Disk GetDrive() => new( this.Info.Root.FullPath );
 
 		[ItemNotNull]
 		[NotNull]
@@ -443,8 +445,10 @@ namespace Librainian.FileSystem {
 			}
 
 			foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ) ) {
-				yield return new Folder( fileInfo.FullPath );
-			}
+                if ( fileInfo != null ) {
+                    yield return new Folder( fileInfo.FullPath );
+                }
+            }
 		}
 
 		public override Int32 GetHashCode() => this.FullPath.GetHashCode();
@@ -536,13 +540,13 @@ namespace Librainian.FileSystem {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] IFolder left, [CanBeNull] IFolder right ) {
+		public static Boolean Equals( [CanBeNull] IFolder? left, [CanBeNull] IFolder? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return left.FullPath.Is( right.FullPath );
@@ -572,13 +576,13 @@ namespace Librainian.FileSystem {
 
 			try {
 				if ( String.IsNullOrWhiteSpace( path ) ) {
-					return default( Boolean );
+					return false;
 				}
 
 				path = CleanPath( path );
 
 				if ( String.IsNullOrEmpty( path ) ) {
-					return default( Boolean );
+					return false;
 				}
 
 				DirectoryInfo dirInfo;
@@ -601,7 +605,7 @@ namespace Librainian.FileSystem {
 			catch ( PathTooLongException ) { }
 			catch ( InvalidOperationException ) { }
 
-			return default( Boolean );
+			return false;
 		}
 
 		public Boolean Explore() => this.Info.OpenWithExplorer();

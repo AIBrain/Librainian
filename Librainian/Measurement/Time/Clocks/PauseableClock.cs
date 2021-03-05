@@ -39,7 +39,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		private volatile Boolean _isPaused;
 
 		/// <summary>Default to year 0.</summary>
-		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Zero ) { }
+		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Minimum ) { }
 
 		public PauseableClock( Date date, Time time ) {
 			this.Year = date.Year;
@@ -91,19 +91,19 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary></summary>
 		[JsonProperty]
-		public Hour Hour { get; private set; }
+		public ClockHour Hour { get; private set; }
 
 		/// <summary></summary>
 		[JsonProperty]
-		public Millisecond Millisecond { get; private set; }
+		public ClockMillisecond Millisecond { get; private set; }
 
 		/// <summary></summary>
 		[JsonProperty]
-		public Minute Minute { get; private set; }
+		public ClockMinute Minute { get; private set; }
 
 		/// <summary></summary>
 		[JsonProperty]
-		public Second Second { get; private set; }
+		public ClockSecond Second { get; private set; }
 
 		public Boolean IsAm() => !this.IsPm();
 
@@ -115,7 +115,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Day = this.Day.Next( out var tocked );
 
 			if ( !tocked ) {
-				return default;
+				return false;
 			}
 
 			try {
@@ -134,7 +134,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Hour = this.Hour.Next( out var tocked );
 
 			if ( !tocked ) {
-				return default;
+				return false;
 			}
 
 			try {
@@ -153,7 +153,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Millisecond = this.Millisecond.Next( out var tocked );
 
 			if ( !tocked ) {
-				return default;
+				return false;
 			}
 
 			try {
@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Minute = this.Minute.Next( out var tocked );
 
 			if ( !tocked ) {
-				return default;
+				return false;
 			}
 
 			try {
@@ -191,7 +191,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Month = this.Month.Next( out var tocked );
 
 			if ( !tocked ) {
-				return default;
+				return false;
 			}
 
 			try {
@@ -224,7 +224,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.Second = this.Second.Next( out var tocked );
 
 			if ( !tocked ) {
-				return default;
+				return false;
 			}
 
 			try {

@@ -34,7 +34,7 @@ namespace Librainian.Threading {
 	using JetBrains.Annotations;
 	using Logging;
 	using Utilities;
-	using Error = System.Error;
+	using Error = Extensions.Error;
 
 	public enum JobStatus {
 

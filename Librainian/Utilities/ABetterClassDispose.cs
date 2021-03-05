@@ -9,7 +9,7 @@
 // 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
-// Donations, payments, and royalties are accepted via bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal:Protiguous@Protiguous.com
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
@@ -22,14 +22,13 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ABetterClassDispose.cs" last formatted on 2020-11-07.
 
 #nullable enable
 
 namespace Librainian.Utilities {
+
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
@@ -43,6 +42,7 @@ namespace Librainian.Utilities {
     /// <remarks>ABCD (hehe).</remarks>
     /// <copyright>Created by Protiguous.</copyright>
     public abstract class ABetterClassDispose : IDisposable {
+
         private Int32 _hasDisposedManaged;
 
         private Int32 _hasDisposedNative;
@@ -61,7 +61,7 @@ namespace Librainian.Utilities {
                     return; //don't allow the setting to be changed once it has been set.
                 }
 
-                Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
+                _ = Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
             }
         }
 
@@ -77,7 +77,7 @@ namespace Librainian.Utilities {
                     return; //don't allow the setting to be changed once it has been set.
                 }
 
-                Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
+                _ = Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
             }
         }
 
@@ -93,7 +93,7 @@ namespace Librainian.Utilities {
                     return; //don't allow the setting to be changed once it has been set.
                 }
 
-                Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
+                _ = Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
             }
         }
 
@@ -103,7 +103,8 @@ namespace Librainian.Utilities {
 
         /// <summary>
         ///     <para>
-        ///         Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> for this object.
+        ///         Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> for
+        ///         this object.
         ///     </para>
         ///     <para>Note: Calling <see cref="Dispose()" /> multiple times has no effect beyond the first call.</para>
         /// </summary>
@@ -151,13 +152,16 @@ namespace Librainian.Utilities {
         /// </summary>
         /// <param name="dispose"></param>
         [DebuggerStepThrough]
-        public void Dispose( Boolean dispose ) => this.Dispose();
+		// ReSharper disable once UnusedParameter.Global
+#pragma warning disable IDE0060 // Remove unused parameter
+		public void Dispose( Boolean dispose ) => this.Dispose();
+#pragma warning restore IDE0060 // Remove unused parameter
 
-        /// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
-        /// <example>
-        ///     <code>using var bob = new DisposableType();</code>
-        /// </example>
-        [DebuggerStepThrough]
+		/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
+		/// <example>
+		///     <code>using var bob = new DisposableType();</code>
+		/// </example>
+		[DebuggerStepThrough]
         public virtual void DisposeManaged() { }
 
         /// <summary>
@@ -180,5 +184,7 @@ namespace Librainian.Utilities {
         [Conditional( "DEBUG" )]
         public void SetDisposeHint( [CanBeNull] String? hint ) => this.DisposeHint = hint;
         */
+
     }
+
 }

@@ -43,9 +43,9 @@ namespace Librainian.Extensions {
 
 		private static readonly IDictionary<Type, ObjectActivator> ObjectActivators = new Dictionary<Type, ObjectActivator>();
 
-		public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new Lazy<Assembly[]>( () => AppDomain.CurrentDomain.GetAssemblies() );
+		public static Lazy<Assembly[]> CurrentDomainGetAssemblies { get; } = new( () => AppDomain.CurrentDomain.GetAssemblies() );
 
-		public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new ConcurrentDictionary<Type, IList<Type>>();
+		public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new();
 
 		public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object? value ) {
 			if ( p is null ) {
@@ -53,6 +53,27 @@ namespace Librainian.Extensions {
 			}
 
 			return value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
+		}
+
+		/// <summary>
+		/// only quickly/simply tested. Seems to work.. is it useful now that we have pattern matching?
+		/// </summary>
+		/// <typeparam name="TType"></typeparam>
+		/// <param name="_"></param>
+		/// <param name="c"></param>
+		/// <returns></returns>
+		public static Boolean IsDerivedFrom<TType>( this TType _, Type c ) {
+			var p = typeof( TType );
+
+			do {
+				if ( p == c ) {
+					return true;
+				}
+
+				p = p.BaseType;
+			} while ( p != null );
+
+			return false;
 		}
 
 		/// <summary>Creates a new <see cref="IList{T}" /> with a clone of each item.</summary>
@@ -117,7 +138,7 @@ namespace Librainian.Extensions {
 				return true;
 			}
 			catch ( Exception ) {
-				return default( Boolean );
+				return false;
 			}
 		}
 
@@ -141,7 +162,7 @@ namespace Librainian.Extensions {
 				return true;
 			}
 			catch ( Exception ) {
-				return default( Boolean );
+				return false;
 			}
 		}
 
@@ -199,12 +220,12 @@ namespace Librainian.Extensions {
 				return true;
 			}
 
-			if (  source is null ) {
-				return default( Boolean );
+			if ( source is null ) {
+				return false;
 			}
 
 			if ( destination is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			//copy all settable fields
@@ -247,7 +268,7 @@ namespace Librainian.Extensions {
 				list = Assembly.GetAssembly( typeof( T ) )?.GetTypes().ToList();
 
 				if ( list is not null ) {
-					EnumerableOfTypeCache[typeof( T )] = list;
+					EnumerableOfTypeCache[ typeof( T ) ] = list;
 				}
 			}
 
@@ -349,8 +370,8 @@ namespace Librainian.Extensions {
 		/// <summary>Ascertains if the given type is a numeric type (e.g. <see cref="Int32" />).</summary>
 		/// <returns>True if the type represents a numeric type, false if not.</returns>
 		public static Boolean IsNumeric<T>( [NotNull] this T self ) =>
-			self is Int32 || self is Double || self is Single || self is Int64 || self is Int16 || self is Byte || self is SByte || self is UInt32 || self is UInt64 ||
-			self is UInt16 || self is Decimal;
+			self is Int32 or Double or Single or Int64 or Int16 or Byte or SByte or UInt32 or UInt64 or
+			UInt16 or Decimal;
 
 		/// <summary>
 		///     <para>Checks a type to see if it derives from a raw generic (e.g. List[[]])</para>
@@ -369,18 +390,18 @@ namespace Librainian.Extensions {
 				type = type?.BaseType;
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
-		public static Boolean MergeDictionaries<TSource>( [NotNull] [ItemCanBeNull] this IDictionary sourceValue, [NotNull] FieldInfo field, [CanBeNull] TSource destination ) {
+		public static Boolean MergeDictionaries<TSource>( [NotNull][ItemCanBeNull] this IDictionary sourceValue, [NotNull] FieldInfo field, [CanBeNull] TSource destination ) {
 
-			if ( !( field.GetValue( destination ) is IDictionary destAsDictionary ) ) {
+			if ( field.GetValue( destination ) is not IDictionary destAsDictionary) {
 				return false;
 			}
 
 			foreach ( DictionaryEntry pair in sourceValue ) {
 				try {
-					destAsDictionary[pair.Key] = pair.Value;
+					destAsDictionary[ pair.Key ] = pair.Value;
 				}
 				catch ( Exception exception ) {
 					exception.Log();
@@ -391,7 +412,7 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static String Name<T>( [NotNull] this Expression<Func<T>> propertyExpression ) => (propertyExpression.Body as MemberExpression)?.Member.Name ?? String.Empty;
+		public static String Name<T>( [NotNull] this Expression<Func<T>> propertyExpression ) => ( propertyExpression.Body as MemberExpression )?.Member.Name ?? String.Empty;
 
 		/// <summary>Alternate method of creating an object of type. Not proven to be faster than new().</summary>
 		/// <typeparam name="T"></typeparam>
@@ -437,25 +458,25 @@ namespace Librainian.Extensions {
 		[NotNull]
 		public static Type ToType( this TypeCode self ) =>
 			self switch {
-				TypeCode.Boolean  => typeof( Boolean ),
-				TypeCode.Byte     => typeof( Byte ),
-				TypeCode.Char     => typeof( Char ),
-				TypeCode.DBNull   => typeof( DBNull ),
+				TypeCode.Boolean => typeof( Boolean ),
+				TypeCode.Byte => typeof( Byte ),
+				TypeCode.Char => typeof( Char ),
+				TypeCode.DBNull => typeof( DBNull ),
 				TypeCode.DateTime => typeof( DateTime ),
-				TypeCode.Decimal  => typeof( Decimal ),
-				TypeCode.Double   => typeof( Double ),
-				TypeCode.Int16    => typeof( Int16 ),
-				TypeCode.Int32    => typeof( Int32 ),
-				TypeCode.Int64    => typeof( Int64 ),
-				TypeCode.SByte    => typeof( SByte ),
-				TypeCode.Single   => typeof( Single ),
-				TypeCode.String   => typeof( String ),
-				TypeCode.UInt16   => typeof( UInt16 ),
-				TypeCode.UInt32   => typeof( UInt32 ),
-				TypeCode.UInt64   => typeof( UInt64 ),
-				TypeCode.Empty    => typeof( Object ),
-				TypeCode.Object   => typeof( Object ),
-				_                 => typeof( Object )
+				TypeCode.Decimal => typeof( Decimal ),
+				TypeCode.Double => typeof( Double ),
+				TypeCode.Int16 => typeof( Int16 ),
+				TypeCode.Int32 => typeof( Int32 ),
+				TypeCode.Int64 => typeof( Int64 ),
+				TypeCode.SByte => typeof( SByte ),
+				TypeCode.Single => typeof( Single ),
+				TypeCode.String => typeof( String ),
+				TypeCode.UInt16 => typeof( UInt16 ),
+				TypeCode.UInt32 => typeof( UInt32 ),
+				TypeCode.UInt64 => typeof( UInt64 ),
+				TypeCode.Empty => typeof( Object ),
+				TypeCode.Object => typeof( Object ),
+				_ => typeof( Object )
 			};
 
 		public static Boolean TryCast<T>( this Object value, [CanBeNull] out T result ) {
@@ -488,7 +509,7 @@ namespace Librainian.Extensions {
 			catch ( Exception ) {
 				result = default( T )!;
 
-				return default( Boolean );
+				return false;
 			}
 		}
 

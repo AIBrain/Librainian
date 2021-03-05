@@ -46,16 +46,16 @@ namespace Librainian.Maths.Numbers {
 		///     <para>The lowest <see cref="UBigInteger" /> that is higher than <see cref="Zero" />.</para>
 		///     <para>Should be "1".</para>
 		/// </summary>
-		public static readonly UBigInteger Epsilon = new( 1 );
+		public static readonly UBigInteger Epsilon = new UBigInteger( 1 );
 
 		/// <summary>1</summary>
-		public static readonly UBigInteger One = new( 1 );
+		public static readonly UBigInteger One = new UBigInteger( 1 );
 
 		/// <summary>2</summary>
-		public static readonly UBigInteger Two = new( 2 );
+		public static readonly UBigInteger Two = new UBigInteger( 2 );
 
 		/// <summary>0</summary>
-		public static readonly UBigInteger Zero = new( 0 );
+		public static readonly UBigInteger Zero = new UBigInteger( 0 );
 
 		private UBigInteger( BigInteger value ) {
 			//value.Should().BeGreaterOrEqualTo(expected: BigInteger.Zero);
@@ -97,7 +97,7 @@ namespace Librainian.Maths.Numbers {
 			this._internalValue = value;
 		}
 
-		public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new( BigInteger.Add( left._internalValue, right._internalValue ) );
+		public static UBigInteger Add( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Add( left._internalValue, right._internalValue ) );
 
 		public static explicit operator Decimal( UBigInteger number ) => ( Decimal )number._internalValue;
 
@@ -109,21 +109,21 @@ namespace Librainian.Maths.Numbers {
 
 		public static implicit operator BigInteger( UBigInteger number ) => number._internalValue;
 
-		public static implicit operator UBigInteger( Int64 number ) => new( number );
+		public static implicit operator UBigInteger( Int64 number ) => new UBigInteger( number );
 
-		public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) => new( BigInteger.Multiply( left._internalValue, right._internalValue ) );
+		public static UBigInteger Multiply( UBigInteger left, UBigInteger right ) => new UBigInteger( BigInteger.Multiply( left._internalValue, right._internalValue ) );
 
-		public static UBigInteger operator -( UBigInteger number ) => new( -number._internalValue );
+		public static UBigInteger operator -( UBigInteger number ) => new UBigInteger( -number._internalValue );
 
-		public static UBigInteger operator -( UBigInteger left, UBigInteger right ) => new( left._internalValue - right._internalValue );
+		public static UBigInteger operator -( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue - right._internalValue );
 
-		public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) => new( dividend._internalValue % divisor._internalValue );
+		public static UBigInteger operator %( UBigInteger dividend, UBigInteger divisor ) => new UBigInteger( dividend._internalValue % divisor._internalValue );
 
-		public static UBigInteger operator &( UBigInteger left, UBigInteger right ) => new( left._internalValue & right._internalValue );
+		public static UBigInteger operator &( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue & right._internalValue );
 
-		public static UBigInteger operator *( UBigInteger left, UBigInteger right ) => new( left._internalValue * right._internalValue );
+		public static UBigInteger operator *( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue * right._internalValue );
 
-		public static UBigInteger operator /( UBigInteger left, UBigInteger right ) => new( left._internalValue / right._internalValue );
+		public static UBigInteger operator /( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue / right._internalValue );
 
 		public static Double operator /( Double left, UBigInteger right ) {
 			Debug.Assert( right > Zero );
@@ -133,7 +133,7 @@ namespace Librainian.Maths.Numbers {
 			return ( Double )rational;
 		}
 
-		public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new( left._internalValue + right._internalValue );
+		public static UBigInteger operator +( UBigInteger left, UBigInteger right ) => new UBigInteger( left._internalValue + right._internalValue );
 
 		public static Boolean operator <( UBigInteger left, Int64 right ) => left._internalValue < right;
 
@@ -143,7 +143,7 @@ namespace Librainian.Maths.Numbers {
 
 		public static Boolean operator <( UInt64 left, UBigInteger right ) => left < right._internalValue;
 
-		public static UBigInteger operator <<( UBigInteger number, Int32 shift ) => new( number._internalValue << shift );
+		public static UBigInteger operator <<( UBigInteger number, Int32 shift ) => new UBigInteger( number._internalValue << shift );
 
 		public static Boolean operator <=( UBigInteger left, UInt64 right ) => left._internalValue <= right;
 
@@ -169,7 +169,7 @@ namespace Librainian.Maths.Numbers {
 			return new UBigInteger( BigInteger.Parse( number, style ) );
 		}
 
-		public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new( BigInteger.Pow( number._internalValue, exponent ) );
+		public static UBigInteger Pow( UBigInteger number, Int32 exponent ) => new UBigInteger( BigInteger.Pow( number._internalValue, exponent ) );
 
 		[Pure]
 		public Int32 CompareTo( Object? obj ) =>

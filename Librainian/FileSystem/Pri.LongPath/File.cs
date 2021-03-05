@@ -1,6 +1,6 @@
 // Copyright © Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -17,10 +17,11 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "File.cs" last formatted on 2020-08-14 at 8:39 PM.
+// File "File.cs" last formatted on 2021-02-08 at 2:37 AM.
 
 #nullable enable
 using System.Runtime.CompilerServices;
@@ -28,7 +29,6 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo( "Tests" )]
 
 namespace Librainian.FileSystem.Pri.LongPath {
-
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
@@ -185,12 +185,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return;
 			}
 
-			var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-			if ( errorCode == NativeMethods.ERROR_ACCESS_DENIED ) {
+			if ( errorCode == NativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
 				var di = new DriveInfo( normalizedPath.GetPathRoot() );
 
-				if ( !String.Equals( "NTFS", di.DriveFormat ) ) {
+				if ( !String.Equals( "NTFS", di.DriveFormat, StringComparison.Ordinal ) ) {
 					throw new NotSupportedException( "NTFS drive required for file encryption" );
 				}
 			}
@@ -230,13 +230,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		///     <paramref name="path" /> specifies a device that is not ready.
 		/// </exception>
 		public static void Delete( [NotNull] String path ) {
-			var normalizedPath = path.NormalizeLongPath();
+			path = path.NormalizeLongPath();
 
-			if ( !path.Exists() ) {
+			if ( !Exists( path ) ) {
 				return;
 			}
 
-			if ( !NativeMethods.DeleteFile( normalizedPath ) ) {
+			if ( !NativeMethods.DeleteFile( path ) ) {
 				throw Common.GetExceptionFromLastWin32Error();
 			}
 		}
@@ -249,12 +249,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return;
 			}
 
-			var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-			if ( errorCode == NativeMethods.ERROR_ACCESS_DENIED ) {
+			if ( errorCode == NativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
 				var di = new DriveInfo( normalizedPath.GetPathRoot() );
 
-				if ( !String.Equals( "NTFS", di.DriveFormat ) ) {
+				if ( !String.Equals( "NTFS", di.DriveFormat, StringComparison.Ordinal ) ) {
 					throw new NotSupportedException( "NTFS drive required for file encryption" );
 				}
 			}
@@ -296,9 +296,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var underlyingAccess = GetUnderlyingAccess( access );
 
 			var handle = NativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 )share, IntPtr.Zero, ( UInt32 )mode, ( UInt32 )options,
-												   IntPtr.Zero );
+				IntPtr.Zero );
 
-			if ( handle?.IsInvalid != false ) {
+			if ( handle.IsInvalid ) {
 				var ex = Common.GetExceptionFromLastWin32Error();
 				Debug.WriteLine( $"error {ex.Message} with {normalizedPath}{Environment.NewLine}{ex.StackTrace}" );
 				Debug.WriteLine( $"{mode} {access} {share} {options}" );
@@ -590,9 +590,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return bytes;
 		}
 
-		[NotNull] public static IEnumerable<String?> ReadAllLines( [NotNull] String path ) => ReadLines( path.ThrowIfBlank() );
+		[NotNull]
+		public static IEnumerable<String?> ReadAllLines( [NotNull] String path ) => ReadLines( path.ThrowIfBlank() );
 
-		[NotNull] public static IEnumerable<String?> ReadAllLines( [NotNull] String path, [NotNull] Encoding encoding ) => ReadLines( path.ThrowIfBlank(), encoding );
+		[NotNull]
+		public static IEnumerable<String?> ReadAllLines( [NotNull] String path, [NotNull] Encoding encoding ) => ReadLines( path.ThrowIfBlank(), encoding );
 
 		[NotNull]
 		public static String ReadAllText( [NotNull] String path ) => ReadAllText( path.ThrowIfBlank(), Encoding.UTF8 );
@@ -622,12 +624,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static void Replace( [NotNull] String sourceFileName, [NotNull] String destinationFileName, [NotNull] String destinationBackupFileName ) =>
 			Replace( sourceFileName.ThrowIfBlank(), destinationFileName.ThrowIfBlank(), destinationBackupFileName.ThrowIfBlank(), false );
 
-		public static void Replace(
-			[NotNull] String sourceFileName,
-			[NotNull] String destinationFileName,
-			[NotNull] String destinationBackupFileName,
-			Boolean ignoreMetadataErrors
-		) {
+		public static void Replace( [NotNull] String sourceFileName, [NotNull] String destinationFileName, [NotNull] String destinationBackupFileName,
+			Boolean ignoreMetadataErrors ) {
 			var fullSrcPath = sourceFileName.ThrowIfBlank().GetFullPath().NormalizeLongPath();
 			var fullDestPath = destinationFileName.ThrowIfBlank().GetFullPath().NormalizeLongPath();
 			var fullBackupPath = destinationBackupFileName.ThrowIfBlank().GetFullPath().NormalizeLongPath();
@@ -641,7 +639,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var r = NativeMethods.ReplaceFile( fullDestPath, fullSrcPath, fullBackupPath, flags, IntPtr.Zero, IntPtr.Zero );
 
 			if ( !r ) {
-				Common.ThrowIOError( Marshal.GetLastWin32Error(), String.Empty );
+				Common.ThrowIOError( ( NativeMethods.ERROR )Marshal.GetLastWin32Error(), String.Empty );
 			}
 		}
 
@@ -658,7 +656,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var r = NativeMethods.SetFileTime( handle, &fileTime, null, null );
 
 			if ( !r ) {
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -675,7 +673,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var r = NativeMethods.SetFileTime( handle, null, &fileTime, null );
 
 			if ( !r ) {
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -692,7 +690,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var r = NativeMethods.SetFileTime( handle, null, null, &fileTime );
 
 			if ( !r ) {
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -742,5 +740,4 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 	}
-
 }

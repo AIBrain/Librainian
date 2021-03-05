@@ -1,6 +1,6 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -17,13 +17,13 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "StringKVPTable.cs" last formatted on 2020-08-14 at 8:44 PM.
+// File "StringKVPTable.cs" last formatted on 2021-02-08 at 12:58 AM.
 
 namespace Librainian.Persistence {
-
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -53,14 +53,14 @@ namespace Librainian.Persistence {
 	/// <see cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
-	public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, String> {
+	public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, String?> {
 
 		private StringKVPTable() => throw new NotImplementedException();
 
 		public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
 
-		public StringKVPTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this(
-			new Folder( specialFolder, subFolder, tableName ) ) { }
+		public StringKVPTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
+			subFolder, tableName ) ) { }
 
 		public StringKVPTable( Byte specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( ( Environment.SpecialFolder )specialFolder,
 			subFolder, tableName ) ) { }
@@ -83,10 +83,12 @@ namespace Librainian.Persistence {
 				}
 
 				var customConfig = new DatabaseConfig {
-					CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true
+					CreatePathIfNotExist = true,
+					EnableShrinkDatabase = ShrinkDatabaseGrbit.On,
+					DefragmentSequentialBTrees = true
 				};
 
-				this.Dictionary = new PersistentDictionary<String, String>( this.Folder.FullPath, customConfig );
+				this.Dictionary = new PersistentDictionary<String, String?>( this.Folder.FullPath, customConfig );
 
 				if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
 					throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
@@ -94,6 +96,7 @@ namespace Librainian.Persistence {
 			}
 			catch ( Exception exception ) {
 				exception.Log();
+				throw;
 			}
 		}
 
@@ -101,14 +104,16 @@ namespace Librainian.Persistence {
 
 		[JsonProperty]
 		[NotNull]
-		private PersistentDictionary<String, String> Dictionary { get; }
+		private PersistentDictionary<String, String?> Dictionary { get; }
 
-		/// <summary>No path given?</summary>
+		/// <summary>
+		///     No path given?
+		/// </summary>
 		[NotNull]
 		public Folder Folder { get; }
 
 		[CanBeNull]
-		public String this[ [NotNull] params String[] keys ] {
+		public String? this[ [NotNull] params String[] keys ] {
 			[CanBeNull]
 			get {
 				if ( keys is null ) {
@@ -117,7 +122,11 @@ namespace Librainian.Persistence {
 
 				var key = CacheKeyBuilder.BuildKey( keys );
 
-				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default( String );
+				if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+					return storedValue?.FromCompressedBase64();
+				}
+
+				return default( String? );
 			}
 
 			set {
@@ -134,6 +143,26 @@ namespace Librainian.Persistence {
 				}
 
 				this.Dictionary[key] = value.ToCompressedBase64();
+			}
+		}
+
+		public ICollection<String> Keys {
+			get {
+				var keys = this.Dictionary.Keys;
+				return keys switch {
+					null => ( ICollection<String> )Enumerable.Empty<String>(),
+					_ => keys
+				};
+			}
+		}
+
+		public ICollection<String?> Values {
+			get {
+				var values = this.Dictionary.Values;
+				return values switch {
+					null => ( ICollection<String?> )Enumerable.Empty<String>(),
+					_ => ( ICollection<String?> )values.Select( value => value?.FromCompressedBase64() )
+				};
 			}
 		}
 
@@ -141,22 +170,23 @@ namespace Librainian.Persistence {
 
 		public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
 
-		public ICollection<String> Keys => this.Dictionary.Keys;
-
-		public ICollection<String> Values => ( ICollection<String> )this.Dictionary.Values.Select( value => value.FromCompressedBase64() );
-
-		/// <summary></summary>
+		/// <summary>
+		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public String this[ [NotNull] String key ] {
+		public String? this[ [NotNull] String key ] {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
 					throw new ArgumentNullException( nameof( key ) );
 				}
 
-				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default( String );
+				if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
+					return storedValue?.FromCompressedBase64();
+				}
+
+				return default( String? );
 			}
 
 			set {
@@ -174,60 +204,74 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public void Add( String key, [CanBeNull] String? value ) => this[key] = value;
+		public void Add( String key, [CanBeNull] String? value ) {
+			if ( value is not null ) {
+				this[key] = value;
+			}
+		}
 
-		public void Add( KeyValuePair<String, String> item ) {
-			if ( item.Key != null ) {
-				this[item.Key] = item.Value;
+		public void Add( KeyValuePair<String, String?> item ) {
+			var (key, value) = item;
+			if ( key is not null ) {
+				this[key] = value;
 			}
 		}
 
 		public void Clear() => this.Dictionary.Clear();
 
-		public Boolean Contains( KeyValuePair<String, String> item ) {
-			if ( item.Value != null ) {
-				var value = item.Value.ToJSON()?.ToCompressedBase64();
-				var asItem = new KeyValuePair<String, String>( item.Key, value );
+		public Boolean Contains( KeyValuePair<String, String?> item ) {
+			var (key, s) = item;
+			var value = s?.ToJSON()?.ToCompressedBase64();
 
-				return this.Dictionary.Contains( asItem );
-			}
+			var asItem = new KeyValuePair<String, String?>( key, value );
 
-			return default( Boolean );
+			return this.Dictionary.Contains( asItem );
 		}
 
 		public Boolean ContainsKey( String key ) => this.Dictionary.ContainsKey( key );
 
-		public void CopyTo( KeyValuePair<String, String>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
+		public void CopyTo( KeyValuePair<String, String?>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
 
-		public IEnumerator<KeyValuePair<String, String>> GetEnumerator() => this.Items().GetEnumerator();
+		public IEnumerator<KeyValuePair<String, String?>> GetEnumerator() => this.Items().GetEnumerator();
 
-		/// <summary>Removes the element with the specified key from the <see cref="IDictionary" /> .</summary>
+		/// <summary>
+		///     Removes the element with the specified key from the <see cref="IDictionary" /> .
+		/// </summary>
 		/// <returns>
 		///     true if the element is successfully removed; otherwise, false. This method also returns false if
 		///     <paramref name="key" /> was not found in the original
-		///     <see cref="IDictionary" /> .
+		///     <see
+		///         cref="IDictionary" />
+		///     .
 		/// </returns>
 		/// <param name="key">The key of the element to remove.</param>
 		/// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
 		/// <exception cref="NotSupportedException">The <see cref="IDictionary" /> is read-only.</exception>
 		public Boolean Remove( String key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
-		/// <summary>Removes the first occurrence of a specific object from the <see cref="ICollection" /> .</summary>
+		/// <summary>
+		///     Removes the first occurrence of a specific object from the <see cref="ICollection" /> .
+		/// </summary>
 		/// <returns>
 		///     true if <paramref name="item" /> was successfully removed from the <see cref="ICollection" /> ; otherwise, false.
 		///     This method also returns false if
-		///     <paramref name="item" /> is not found in the original <see cref="ICollection" /> .
+		///     <paramref
+		///         name="item" />
+		///     is not found in the original <see cref="ICollection" /> .
 		/// </returns>
 		/// <param name="item">The object to remove from the <see cref="ICollection" /> .</param>
 		/// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
-		public Boolean Remove( KeyValuePair<String, String> item ) {
-			var value = item.Value.ToJSON()?.ToCompressedBase64();
-			var asItem = new KeyValuePair<String, String>( item.Key, value );
+		public Boolean Remove( KeyValuePair<String, String?> item ) {
+			var (key, s) = item;
+			var value = s.ToJSON()?.ToCompressedBase64();
+			var asItem = new KeyValuePair<String, String?>( key, value );
 
 			return this.Dictionary.Remove( asItem );
 		}
 
-		/// <summary>Gets the value associated with the specified key.</summary>
+		/// <summary>
+		///     Gets the value associated with the specified key.
+		/// </summary>
 		/// <returns>
 		///     true if the object that implements <see cref="IDictionary" /> contains an element with the specified key;
 		///     otherwise, false.
@@ -235,31 +279,34 @@ namespace Librainian.Persistence {
 		/// <param name="key">  The key whose value to get.</param>
 		/// <param name="value">
 		///     When this method returns, the value associated with the specified key, if the key is found; otherwise, the default
-		///     value for the type of the
-		///     <paramref name="value" /> parameter. This parameter is passed uninitialized.
+		///     value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.
 		/// </param>
 		/// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-		public Boolean TryGetValue( [NotNull] String key, out String value ) {
+		public Boolean TryGetValue( [NotNull] String key, [NotNull] out String value ) {
 			if ( key is null ) {
 				throw new ArgumentNullException( nameof( key ) );
 			}
 
-			value = default( String );
-
 			if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
-				value = storedValue.FromCompressedBase64();
-
-				return true;
+				if ( storedValue != null ) {
+					value = storedValue.FromCompressedBase64();
+					return true;
+				}
 			}
 
-			return default( Boolean );
+			value = String.Empty;
+			return false;
 		}
 
-		/// <summary>Returns an enumerator that iterates through a collection.</summary>
+		/// <summary>
+		///     Returns an enumerator that iterates through a collection.
+		/// </summary>
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		/// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
+		/// <summary>
+		///     Return true if we can read/write in the <see cref="Folder" /> .
+		/// </summary>
 		/// <returns></returns>
 		private async Task<Boolean> TestForReadWriteAccess() {
 			try {
@@ -276,12 +323,14 @@ namespace Librainian.Persistence {
 			}
 			catch { }
 
-			return default( Boolean );
+			return false;
 		}
 
 		public void Add( (String key, String value) kvp ) => this[kvp.key] = kvp.value;
 
-		/// <summary>Dispose any disposable managed fields or properties.</summary>
+		/// <summary>
+		///     Dispose any disposable managed fields or properties.
+		/// </summary>
 		public override void DisposeManaged() {
 			Trace.Write( $"Disposing of {nameof( this.Dictionary )}..." );
 
@@ -290,7 +339,9 @@ namespace Librainian.Persistence {
 			Trace.WriteLine( "done." );
 		}
 
-		/// <summary>Force all changes to be written to disk.</summary>
+		/// <summary>
+		///     Force all changes to be written to disk.
+		/// </summary>
 		public void Flush() => this.Dictionary.Flush();
 
 		public void Initialize() {
@@ -299,15 +350,19 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		/// <summary>All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="String" /> deserialized.</summary>
+		/// <summary>
+		///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="String" /> deserialized.
+		/// </summary>
 		/// <returns></returns>
 		[NotNull]
-		public IEnumerable<KeyValuePair<String, String>> Items() =>
-			this.Dictionary.Select( pair => new KeyValuePair<String, String>( pair.Key, pair.Value.FromCompressedBase64() ) );
+		public IEnumerable<KeyValuePair<String, String?>> Items() =>
+			this.Dictionary.Select( pair => new KeyValuePair<String, String?>( pair.Key, pair.Value?.FromCompressedBase64() ) );
 
 		public void Save() => this.Flush();
 
-		/// <summary>Returns a string that represents the current object.</summary>
+		/// <summary>
+		///     Returns a string that represents the current object.
+		/// </summary>
 		/// <returns>A string that represents the current object.</returns>
 		[NotNull]
 		public override String ToString() => $"{this.Count} items";
@@ -332,5 +387,4 @@ namespace Librainian.Persistence {
 		}
 
 	}
-
 }

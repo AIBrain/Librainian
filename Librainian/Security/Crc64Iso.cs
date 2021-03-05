@@ -36,7 +36,7 @@ namespace Librainian.Security {
 
 		public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
-		internal static UInt64[] Table;
+		internal static UInt64[]? Table;
 
 		public Crc64Iso() : base( Iso3309Polynomial ) { }
 

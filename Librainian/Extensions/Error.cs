@@ -24,13 +24,14 @@
 
 
 
-namespace System {
+namespace Librainian.Extensions {
 
-	using Diagnostics;
-	using JetBrains.Annotations;
-	using Librainian.Logging;
+    using System;
+    using System.Diagnostics;
+    using JetBrains.Annotations;
+    using Logging;
 
-	public static class Error {
+    public static class Error {
 
 		/// <summary>
 		///     Wrap an action with a try/catch.
@@ -40,9 +41,9 @@ namespace System {
 		/// <param name="final"> </param>
 		/// <returns>Returns true if successful.</returns>
 		[DebuggerStepThrough]
-		public static Boolean Trap( [InstantHandle] [CanBeNull] this Action action, [InstantHandle] [CanBeNull] Action final = default ) {
+		public static Boolean Trap( [InstantHandle] [NotNull] this Action action, [InstantHandle] [CanBeNull] Action? final = default( Action? ) ) {
 			try {
-				action?.Invoke();
+				action();
 
 				return true;
 			}
@@ -58,21 +59,21 @@ namespace System {
 				}
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>Wrap an each action with a try/catch.</summary>
 		/// <param name="actions"></param>
 		/// <returns>Returns true if successful.</returns>
 		[DebuggerStepThrough]
-		public static Boolean Trap( [InstantHandle] [CanBeNull] params Action[] actions ) {
+		public static Boolean Trap( [InstantHandle] [CanBeNull] params Action[]? actions ) {
 			try {
 				if ( actions is null ) {
 					if ( Debugger.IsAttached ) {
 						throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
 					}
 
-					return default( Boolean );
+					return false;
 				}
 
 				foreach ( var action in actions ) {
@@ -85,7 +86,7 @@ namespace System {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>Wrap a function with a try/catch.</summary>
@@ -94,7 +95,7 @@ namespace System {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[CanBeNull]
-		public static T Trap<T>( [InstantHandle] [CanBeNull] this Func<T> func, [InstantHandle] [CanBeNull] Action final = default ) {
+		public static T? Trap<T>( [InstantHandle] [CanBeNull] this Func<T>? func, [InstantHandle] [CanBeNull] Action? final = default( Action? ) ) {
 			if ( func is null ) {
 				if ( Debugger.IsAttached ) {
 					throw new ArgumentNullException( nameof( func ) );
@@ -130,12 +131,12 @@ namespace System {
 		/// <returns></returns>
 		[CanBeNull]
 		[DebuggerStepThrough]
-		public static R Trap<T, R>(
-			[InstantHandle] [CanBeNull] this Func<T, R> func,
-			[CanBeNull] T argument,
-			[CanBeNull] out Exception exception,
-			[InstantHandle] [CanBeNull] Action final = default,
-			[CanBeNull] params Action[] actions
+		public static R? Trap<T, R>(
+			[InstantHandle] [CanBeNull] this Func<T?, R>? func,
+			[CanBeNull] T? argument,
+			[CanBeNull] out Exception? exception,
+			[InstantHandle] [CanBeNull] Action? final = default( Action? ),
+			[CanBeNull] params Action[]? actions
 		) {
 			if ( func is null ) {
 				if ( Debugger.IsAttached ) {

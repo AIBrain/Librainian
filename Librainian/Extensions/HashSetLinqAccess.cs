@@ -55,8 +55,8 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T> comparer ) {
-			if ( null == fromEnumerable ) {
+		public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T>? comparer ) {
+			if ( fromEnumerable is null ) {
 				throw new ArgumentNullException( nameof( fromEnumerable ) );
 			}
 

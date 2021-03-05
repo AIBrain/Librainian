@@ -35,7 +35,7 @@ namespace Librainian.Financial.Currency.USD {
 	public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
 
 		[NotNull]
-		private readonly ReaderWriterLockSlim _access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
 		private Decimal _balance;
 
@@ -99,7 +99,7 @@ namespace Librainian.Financial.Currency.USD {
 
 		public Boolean TryDeposit( Decimal amount ) {
 			if ( amount < Decimal.Zero ) {
-				return default( Boolean );
+				return false;
 			}
 
 			try {
@@ -121,7 +121,7 @@ namespace Librainian.Financial.Currency.USD {
 		public Boolean TryUpdateBalance( Decimal amount ) {
 			try {
 				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-					return default( Boolean );
+					return false;
 				}
 
 				this._balance = amount;
@@ -139,7 +139,7 @@ namespace Librainian.Financial.Currency.USD {
 
 		public Boolean TryWithdraw( Decimal amount ) {
 			if ( amount < Decimal.Zero ) {
-				return default( Boolean );
+				return false;
 			}
 
 			try {
@@ -147,7 +147,7 @@ namespace Librainian.Financial.Currency.USD {
 				onBeforeWithdraw?.Invoke( amount );
 
 				if ( !this._access.TryEnterWriteLock( this.Timeout ) || this._balance < amount ) {
-					return default( Boolean );
+					return false;
 				}
 
 				this._balance -= amount;

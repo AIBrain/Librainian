@@ -41,7 +41,7 @@ namespace Librainian.Graphics {
 
 		[NotNull]
 		public static Matrix4 NewI() =>
-			new Matrix4( new[,] {
+			new( new[,] {
 				{
 					1.0f, 0.0f, 0.0f, 0.0f
 				}, {
@@ -79,7 +79,7 @@ namespace Librainian.Graphics {
 		}
 
 		[NotNull]
-		public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new Matrix4( Multiply( m, scalar ) );
+		public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new( Multiply( m, scalar ) );
 
 	}
 

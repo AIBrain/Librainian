@@ -45,7 +45,7 @@ namespace Librainian.Linguistics {
 
 		[NotNull]
 		[JsonProperty]
-		private ConcurrentDictionary<UDC, Book> Books { get; } = new ConcurrentDictionary<UDC, Book>();
+		private ConcurrentDictionary<UDC, Book> Books { get; } = new();
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
 		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
@@ -55,19 +55,19 @@ namespace Librainian.Linguistics {
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Books ).GetEnumerator();
 
-		public Boolean Equals( [CanBeNull] Library other ) => Equals( this, other );
+		public Boolean Equals( [CanBeNull] Library? other ) => Equals( this, other );
 
 		/// <summary>Static equality test</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Library left, [CanBeNull] Library right ) {
+		public static Boolean Equals( [CanBeNull] Library? left, [CanBeNull] Library? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			//shouldn't this be more of a set-type comparison? If all A are contained in B or all B are contained in A then true?
@@ -94,7 +94,7 @@ namespace Librainian.Linguistics {
 		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
 		///     <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( Object obj ) => Equals( this, obj as Library );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as Library );
 
 		/// <summary>Serves as the default hash function.</summary>
 		/// <returns>A hash code for the current object.</returns>

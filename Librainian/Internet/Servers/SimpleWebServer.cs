@@ -22,6 +22,8 @@
 // 
 // File "SimpleWebServer.cs" last formatted on 2020-08-14 at 8:34 PM.
 
+#nullable enable
+
 namespace Librainian.Internet.Servers {
 
 	using System;
@@ -52,18 +54,18 @@ namespace Librainian.Internet.Servers {
 
 		/// <summary></summary>
 		[NotNull]
-		private readonly HttpListener _httpListener = new HttpListener();
+		private readonly HttpListener _httpListener = new();
 
 		/// <summary></summary>
 		[CanBeNull]
-		private readonly Func<HttpListenerRequest, String> _responderMethod;
+		private readonly Func<HttpListenerRequest, String>? _responderMethod;
 
 		/// <summary></summary>
 		/// <param name="prefixes"></param>
 		/// <param name="method">  </param>
 		/// <exception cref="HttpListenerException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public SimpleWebServer( [CanBeNull] ICollection<String> prefixes, [CanBeNull] Func<HttpListenerRequest, String> method ) {
+		public SimpleWebServer( [CanBeNull] ICollection<String>? prefixes, [CanBeNull] Func<HttpListenerRequest, String>? method ) {
 			this.ImNotReady( String.Empty );
 
 			if ( !HttpListener.IsSupported ) {
@@ -103,7 +105,8 @@ namespace Librainian.Internet.Servers {
 
 		public Boolean IsReadyForRequests { get; private set; }
 
-		public String NotReadyBecause { get; private set; }
+		[CanBeNull]
+        public String? NotReadyBecause { get; private set; }
 
 		private void ImNotReady( [CanBeNull] String? because ) {
 			this.IsReadyForRequests = false;
@@ -128,7 +131,7 @@ namespace Librainian.Internet.Servers {
 
 						await Task.Run( async () => {
 							var listenerContext =
-								await this._httpListener.GetContextAsync().ConfigureAwait( false ); // Waits for an incoming request as an asynchronous operation.
+								await this._httpListener.GetContextAsync().ConfigureAwait( false );
 
 							if ( listenerContext is null ) {
 								return;
@@ -148,20 +151,18 @@ namespace Librainian.Internet.Servers {
 								await listenerContext.Response.OutputStream.WriteAsync( buf, 0, buf.Length, cancellationToken ).ConfigureAwait( false );
 							}
 
-							// ReSharper disable once EmptyGeneralCatchClause
 							catch {
-								// suppress any exceptions
 							}
 							finally {
-								listenerContext.Response.OutputStream.Close(); // always close the stream
-							}
+                                listenerContext.Response.OutputStream.Close();
+                            }
 						}, cancellationToken ).ConfigureAwait( false );
 					}
 				}
 
-				// ReSharper disable once EmptyGeneralCatchClause
+				
 				catch {
-					// suppress any exceptions
+					
 				}
 			}, cancellationToken );
 

@@ -32,7 +32,7 @@ namespace Librainian.OperatingSystem.Compression {
 	public static class RandomnessTest {
 
 		[NotNull]
-		public static RandomnessFeeding RandomnessFeeding { get; } = new RandomnessFeeding();
+		public static RandomnessFeeding RandomnessFeeding { get; } = new();
 
 		//[OneTimeTearDown]
 		public static void Done() {

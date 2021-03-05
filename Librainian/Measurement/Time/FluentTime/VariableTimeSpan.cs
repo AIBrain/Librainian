@@ -79,8 +79,8 @@ namespace Librainian.Measurement.Time.FluentTime {
 		public Boolean Equals( VariableTimeSpan other ) => this._months == other._months && this._years == other._years && this._timeSpan == other._timeSpan;
 
 		public override Boolean Equals( Object obj ) {
-			if ( !( obj is VariableTimeSpan ) ) {
-				return default;
+			if ( obj is not VariableTimeSpan) {
+				return false;
 			}
 
 			return this.Equals( ( VariableTimeSpan )obj );

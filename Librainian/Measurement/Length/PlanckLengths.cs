@@ -39,13 +39,13 @@ namespace Librainian.Measurement.Length {
 	public struct PlanckLengths : IComparable<PlanckLengths> {
 
 		/// <summary>One <see cref="PlanckLengths" />.</summary>
-		public static readonly PlanckLengths One = new PlanckLengths( 1 );
+		public static readonly PlanckLengths One = new( 1 );
 
 		/// <summary>Two <see cref="PlanckLengths" />.</summary>
-		public static readonly PlanckLengths Two = new PlanckLengths( 2 );
+		public static readonly PlanckLengths Two = new( 2 );
 
 		/// <summary>Zero <see cref="PlanckLengths" />.</summary>
-		public static readonly PlanckLengths Zero = new PlanckLengths( 0 );
+		public static readonly PlanckLengths Zero = new( 0 );
 
 		[JsonProperty]
 		public UBigInteger Value { get; }

@@ -39,18 +39,18 @@ namespace Librainian.Internet {
 
 	public class Surfer : ABetterClassDispose {
 
-		private readonly ReaderWriterLockSlim _downloadInProgressAccess = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		private readonly ReaderWriterLockSlim _downloadInProgressAccess = new( LockRecursionPolicy.SupportsRecursion );
 
-		private readonly ConcurrentBag<Uri> _pastUrls = new ConcurrentBag<Uri>();
+		private readonly ConcurrentBag<Uri> _pastUrls = new();
 
-		private readonly ConcurrentQueue<Uri> _urls = new ConcurrentQueue<Uri>();
+		private readonly ConcurrentQueue<Uri> _urls = new();
 
 		/// <remarks>Not thread safe.</remarks>
 		private readonly WebClient _webclient;
 
 		private Boolean _downloadInProgressStatus;
 
-		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs> onDownloadStringCompleted ) {
+		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) {
 			this._webclient = new WebClient {
 				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
 			};

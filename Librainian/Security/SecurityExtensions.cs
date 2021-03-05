@@ -28,7 +28,8 @@ namespace Librainian.Security {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using System.IO;
+    using System.Globalization;
+    using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Security;
 	using System.Security.Cryptography;
@@ -54,34 +55,34 @@ namespace Librainian.Security {
 		public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
 
 		private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
-			new ThreadLocal<TripleDESCryptoServiceProvider>( () => new TripleDESCryptoServiceProvider(), false );
+			new( () => new TripleDESCryptoServiceProvider(), false );
 
 		/// <summary></summary>
 		[NotNull]
-		public static SHA1CryptoServiceProvider CryptoProvider { get; } = new SHA1CryptoServiceProvider();
+		public static SHA1CryptoServiceProvider CryptoProvider { get; } = new();
 
 		[NotNull]
 		public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes( $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
 		/// <summary>threadsafe MD5 hashers</summary>
 		[NotNull]
-		public static ThreadLocal<MD5> MD5ThreadLocals { get; } = new ThreadLocal<MD5>( System.Security.Cryptography.MD5.Create );
+		public static ThreadLocal<MD5> MD5ThreadLocals { get; } = new( System.Security.Cryptography.MD5.Create );
 
 		/// <summary>Provide to each thread its own <see cref="SHA256Managed" />.</summary>
 		[NotNull]
-		public static ThreadLocal<SHA256Managed> SHA256ThreadLocals { get; } = new ThreadLocal<SHA256Managed>( () => new SHA256Managed(), false );
+		public static ThreadLocal<SHA256Managed> SHA256ThreadLocals { get; } = new( () => new SHA256Managed(), false );
 
 		/// <summary>Provide to each thread its own <see cref="SHA384Managed" />.</summary>
 		[NotNull]
-		public static ThreadLocal<SHA384Managed> SHA384ThreadLocals { get; } = new ThreadLocal<SHA384Managed>( () => new SHA384Managed(), false );
+		public static ThreadLocal<SHA384Managed> SHA384ThreadLocals { get; } = new( () => new SHA384Managed(), false );
 
 		/// <summary>Provide to each thread its own <see cref="SHA512Managed" />.</summary>
 		[NotNull]
-		public static ThreadLocal<SHA512Managed> SHA512ThreadLocals { get; } = new ThreadLocal<SHA512Managed>( () => new SHA512Managed(), false );
+		public static ThreadLocal<SHA512Managed> SHA512ThreadLocals { get; } = new( () => new SHA512Managed(), false );
 
 		[NotNull]
 		public static ThreadLocal<Lazy<SHA256Managed>> ThreadLocalSHA256Lazy { get; } =
-			new ThreadLocal<Lazy<SHA256Managed>>( () => new Lazy<SHA256Managed>( () => new SHA256Managed() ) );
+			new( () => new Lazy<SHA256Managed>( () => new SHA256Managed() ) );
 
 		[NotNull]
 		private static Byte[] Uid( [NotNull] String s ) {
@@ -190,7 +191,11 @@ namespace Librainian.Security {
 				arrayList.AddRange( rsaCryptoServiceProvider.Decrypt( encryptedBytes, true ) );
 			}
 
-			return !( arrayList.ToArray( typeof( Byte ) ) is Byte[] ba ) ? String.Empty : Encoding.Unicode.GetString( ba );
+			if ( arrayList.ToArray( typeof( Byte ) ) is Byte[] ba ) {
+				return Encoding.Unicode.GetString( ba );
+			}
+
+			return String.Empty;
 		}
 
 		[NotNull]
@@ -424,31 +429,53 @@ namespace Librainian.Security {
 		/// <param name="file"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String MD5( [NotNull] this FileInfo file ) {
+		public static String? MD5( [NotNull] this FileInfo file ) {
 			if ( !file.Exists ) {
-				return default( String );
+				return default( String? );
 			}
 
-			using var p = new Process {
+			using var process = new Process {
 				StartInfo = {
 					FileName = "md5sum.exe", Arguments = file.FullPath, UseShellExecute = false, RedirectStandardOutput = true
 				}
 			};
 
-			p.Start();
-			p.WaitForExit();
-			var output = p.StandardOutput.ReadToEnd();
+			process.Start();
+			process.WaitForExit();
 
-			var result = output.Split( ' ' )[0].Substring( 1 ).ToUpper();
+			var output = process.StandardOutput.ReadToEnd();
 
-			return String.IsNullOrWhiteSpace( result ) ? null : result;
-		}
+            if ( String.IsNullOrWhiteSpace(output) ) {
+                return default( String? );
+            }
+
+            var split = output.Split( ' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+
+            var first = split[0];
+
+            if ( String.IsNullOrWhiteSpace( first ) ) {
+                return default( String? );
+            }
+
+			var s = first[1..];
+
+            if ( String.IsNullOrWhiteSpace( s ) ) {
+                return default( String? );
+            }
+
+            return s.ToUpper( CultureInfo.InvariantCulture );
+            
+        }
 
 		[NotNull]
 		public static Byte[] Sha256( [NotNull] this Byte[] input ) {
 			if ( input is null ) {
 				throw new ArgumentNullException( nameof( input ) );
 			}
+
+            if ( SHA256ThreadLocals.Value is null) {
+                throw new NullReferenceException( nameof( SHA256ThreadLocals ) + " is null." );
+            }
 
 			return SHA256ThreadLocals.Value.ComputeHash( input, 0, input.Length );
 		}
@@ -461,7 +488,7 @@ namespace Librainian.Security {
 		/// <param name="encoding"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static Byte[] Sha256( [NotNull] this String input, Encoding encoding = null ) {
+		public static Byte[] Sha256( [NotNull] this String input, Encoding? encoding = null ) {
 			if ( input is null ) {
 				throw new ArgumentNullException( nameof( input ) );
 			}
@@ -479,7 +506,7 @@ namespace Librainian.Security {
 		/// <param name="encoding"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static Byte[] Sha384( [NotNull] this String input, Encoding encoding = null ) {
+		public static Byte[] Sha384( [NotNull] this String input, Encoding? encoding = null ) {
 			if ( input is null ) {
 				throw new ArgumentNullException( nameof( input ) );
 			}
@@ -495,6 +522,10 @@ namespace Librainian.Security {
 				throw new ArgumentNullException( nameof( input ) );
 			}
 
+            if ( SHA384ThreadLocals.Value is null) {
+                throw new NullReferenceException( nameof( SHA384ThreadLocals ) );
+            }
+
 			return SHA384ThreadLocals.Value.ComputeHash( input, 0, input.Length );
 		}
 
@@ -506,7 +537,7 @@ namespace Librainian.Security {
 		/// <param name="encoding"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static Byte[] Sha512( [NotNull] this String input, Encoding encoding = null ) {
+		public static Byte[] Sha512( [NotNull] this String input, Encoding? encoding = null ) {
 			if ( input is null ) {
 				throw new ArgumentNullException( nameof( input ) );
 			}
@@ -521,6 +552,10 @@ namespace Librainian.Security {
 			if ( input is null ) {
 				throw new ArgumentNullException( nameof( input ) );
 			}
+
+            if ( SHA512ThreadLocals.Value is null ) {
+                throw new NullReferenceException( nameof( SHA384ThreadLocals ) );
+            }
 
 			return SHA512ThreadLocals.Value.ComputeHash( input, 0, input.Length );
 		}
@@ -577,7 +612,7 @@ namespace Librainian.Security {
 
 			try {
 				if ( document is null || !File.Exists( "md5sum.exe" ) || document.Exists() == false ) {
-					return default( Boolean );
+					return false;
 				}
 
 				var p = new Process {
@@ -597,7 +632,7 @@ namespace Librainian.Security {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>Attempt to decrypt an encrypted version of the file with the given key and salt.</summary>
@@ -610,26 +645,20 @@ namespace Librainian.Security {
 		/// <param name="reportEveryXBytes"></param>
 		/// <returns>Returns true if all is successful</returns>
 		public static Boolean TryDecryptFile(
-			[CanBeNull] this Document? input,
-			[CanBeNull] Document output,
-			[CanBeNull] String? key,
+			[NotNull] this Document input,
+			[NotNull] Document output,
+			[NotNull] String key,
 			Int32 salt,
-			UInt64? reportEveryXBytes,
-			[CanBeNull] Action<Single> reportProgress,
+			UInt64 reportEveryXBytes,
+			[CanBeNull] Action<Single>? reportProgress,
 			[NotNull] out List<Exception> exceptions
 		) {
 			exceptions = new List<Exception>( 1 );
 
-			if ( input is null ) {
-				exceptions.Add( new ArgumentNullException( nameof( input ) ) );
-
-				return default( Boolean );
-			}
-
 			if ( input.Exists() == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			var size = input.Size();
@@ -637,33 +666,21 @@ namespace Librainian.Security {
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			var inputFileSize = ( Single )size.Value;
 
-			if ( output is null ) {
-				exceptions.Add( new ArgumentNullException( nameof( output ) ) );
-
-				return default( Boolean );
-			}
-
 			if ( output.Exists() ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return default( Boolean );
-			}
-
-			if ( key is null ) {
-				exceptions.Add( new ArgumentNullException( nameof( key ) ) );
-
-				return default( Boolean );
+				return false;
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			try {
@@ -672,7 +689,7 @@ namespace Librainian.Security {
 				if ( !containingingFolder.Create() ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return default( Boolean );
+					return false;
 				}
 
 				using var aes = new AesCryptoServiceProvider();
@@ -696,10 +713,10 @@ namespace Librainian.Security {
 				Int32 data;
 
 				while ( ( data = cs.ReadByte() ) != -1 ) {
-					if ( null != reportEveryXBytes && null != reportProgress ) {
+					if ( reportProgress is not null ) {
 						var position = ( UInt64 )inputStream.Position;
 
-						if ( position % reportEveryXBytes.Value == 0 ) {
+						if ( position % reportEveryXBytes == 0 ) {
 							var progress = position / inputFileSize;
 							reportProgress( progress );
 						}
@@ -713,12 +730,12 @@ namespace Librainian.Security {
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return default( Boolean );
+				return false;
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return default( Boolean );
+				return false;
 			}
 		}
 
@@ -745,13 +762,13 @@ namespace Librainian.Security {
 			if ( input is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( input ) ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			if ( input.Exists() == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			var size = input.Size();
@@ -759,33 +776,27 @@ namespace Librainian.Security {
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			var inputFileSize = ( Single )size.Value;
 
-			if ( output is null ) {
-				exceptions.Add( new ArgumentNullException( nameof( output ) ) );
-
-				return default( Boolean );
-			}
-
 			if ( output.Exists() ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			if ( key is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( key ) ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return default( Boolean );
+				return false;
 			}
 
 			try {
@@ -796,7 +807,7 @@ namespace Librainian.Security {
 				if ( !containingingFolder.Create() ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return default( Boolean );
+					return false;
 				}
 
 				using var aes = new AesCryptoServiceProvider {
@@ -811,7 +822,7 @@ namespace Librainian.Security {
 				if ( !outputStream.CanWrite ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath}." ) );
 
-					return default( Boolean );
+					return false;
 				}
 
 				using var encryptor = aes.CreateEncryptor();
@@ -823,7 +834,7 @@ namespace Librainian.Security {
 				if ( !inputStream.CanRead || !inputStream.CanSeek ) {
 					exceptions.Add( new IOException( $"Unable to read from {input.FullPath}." ) );
 
-					return default( Boolean );
+					return false;
 				}
 
 				inputStream.Seek( 0, SeekOrigin.Begin );
@@ -848,12 +859,12 @@ namespace Librainian.Security {
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return default( Boolean );
+				return false;
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return default( Boolean );
+				return false;
 			}
 		}
 

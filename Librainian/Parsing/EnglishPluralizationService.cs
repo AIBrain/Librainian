@@ -950,7 +950,7 @@ namespace Librainian.Parsing {
 				return true;
 			}
 
-			return !this.Singularize( word ).Equals( word );
+			return !this.Singularize(word).Equals(word, StringComparison.Ordinal);
 
 		}
 
@@ -968,7 +968,7 @@ namespace Librainian.Parsing {
 				return true;
 			}
 
-			return !this.IsNoOpWord( word ) && this.Singularize( word ).Equals( word );
+			return !this.IsNoOpWord( word ) && this.Singularize(word).Equals(word, StringComparison.Ordinal);
 		}
 
 		public override String Pluralize( String word ) => Capitalize( word, this.InternalPluralize );
@@ -1401,7 +1401,7 @@ namespace Librainian.Parsing {
 		private Boolean IsAlphabets( String word ) {
 			// return false when the word is "[\s]*" or leading or tailing with spaces
 			// or contains non alphabetical characters
-			if ( String.IsNullOrEmpty( word.Trim() ) || !word.Equals( word.Trim() ) || this.alpaLazy.Value.IsMatch( word ) ) {
+			if ( String.IsNullOrEmpty( word.Trim() ) || !word.Equals(word.Trim(), StringComparison.Ordinal) || this.alpaLazy.Value.IsMatch( word ) ) {
 				return false;
 			}
 
@@ -1410,7 +1410,7 @@ namespace Librainian.Parsing {
 
 		private Boolean IsUninflective( String word ) =>
 			PluralizationServiceUtil.DoesWordContainSuffix( word, this._uninflectiveSuffixList, this.Culture ) ||
-			!word.ToLower( this.Culture ).Equals( word ) && word.EndsWith( "ese", false, this.Culture ) || this._uninflectiveWordList.Contains( word.ToLowerInvariant() );
+			!word.ToLower(this.Culture).Equals(word, StringComparison.Ordinal) && word.EndsWith( "ese", false, this.Culture ) || this._uninflectiveWordList.Contains( word.ToLowerInvariant() );
 
 		/// <summary>
 		///     return true when the word is "[\s]*" or leading or tailing with spaces

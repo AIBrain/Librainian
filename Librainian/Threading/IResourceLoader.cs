@@ -38,7 +38,7 @@ namespace Librainian.Threading {
 
 		Task<T> GetAsync( CancellationToken cancelToken = default );
 
-		Boolean TryGet( out Task<T> resource, CancellationToken cancelToken = default );
+		Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default );
 
 	}
 

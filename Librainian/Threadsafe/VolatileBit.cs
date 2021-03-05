@@ -39,11 +39,11 @@ namespace Librainian.Threadsafe {
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[DebuggerStepThrough]
-		public static VolatileBit Create( Boolean value ) => new VolatileBit( value );
+		public static VolatileBit Create( Boolean value ) => new( value );
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[DebuggerStepThrough]
-		public static VolatileBit Create( Byte value ) => new VolatileBit( value );
+		public static VolatileBit Create( Byte value ) => new( value );
 
 		public const Byte On = 1;
 

@@ -65,7 +65,7 @@ namespace Librainian.Internet {
 
 		[NotNull]
 		[JsonProperty]
-		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new ConcurrentDictionary<DateTime, CaptchaStatus>();
+		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new();
 
 		[CanBeNull]
 		[JsonProperty]

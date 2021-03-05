@@ -41,7 +41,7 @@ namespace Librainian.Persistence.InIFiles {
 		[JsonProperty]
 		[NotNull]
 		[ItemNotNull]
-		private List<IniLine?> lines { get; } = new List<IniLine?>();
+		private List<IniLine?> lines { get; } = new();
 
 		/// <summary>Gets the number of elements in the collection.</summary>
 		/// <returns>The number of elements in the collection. </returns>

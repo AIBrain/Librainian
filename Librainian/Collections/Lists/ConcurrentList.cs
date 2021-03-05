@@ -160,7 +160,7 @@ namespace Librainian.Collections.Lists {
 					if ( this.IsReadOnly ) {
 						this.ThrowWhenDisallowedModifications();
 
-						return default( Boolean );
+						return false;
 					}
 
 					try {
@@ -172,7 +172,7 @@ namespace Librainian.Collections.Lists {
 						this.ThrowWhenOutOfRange( index );
 					}
 
-					return default( Boolean );
+					return false;
 				} );
 			}
 		}
@@ -273,7 +273,7 @@ namespace Librainian.Collections.Lists {
 				catch ( ArgumentOutOfRangeException ) {
 					this.ThrowWhenOutOfRange( index );
 
-					return default( Boolean );
+					return false;
 				}
 			} );
 		}
@@ -311,7 +311,7 @@ namespace Librainian.Collections.Lists {
 					this.ThrowWhenOutOfRange( index );
 				}
 
-				return default( Boolean );
+				return false;
 			} );
 		}
 
@@ -501,13 +501,13 @@ namespace Librainian.Collections.Lists {
 		/// <returns></returns>
 		public Boolean Add( [CanBeNull] T item, [CanBeNull] Action? afterAdd ) {
 			if ( this.ThrowWhenDisposed() ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( this.IsReadOnly ) {
 				this.ThrowWhenDisallowedModifications();
 
-				return default( Boolean );
+				return false;
 			}
 
 			return this.Write( () => {
@@ -675,13 +675,13 @@ namespace Librainian.Collections.Lists {
 		/// <returns></returns>
 		public Boolean Remove( [CanBeNull] T item, [CanBeNull] Action? afterRemoval ) {
 			if ( this.ThrowWhenDisposed() ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( this.IsReadOnly ) {
 				this.ThrowWhenDisallowedModifications();
 
-				return default( Boolean );
+				return false;
 			}
 
 			return this.Write( () => {
@@ -743,14 +743,14 @@ namespace Librainian.Collections.Lists {
 		/// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
 		public Boolean TryGet( Int32 index, [CanBeNull] Action<T>? afterGet ) {
 			if ( index < 0 ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return this.Read( () => {
 				if ( index >= this.TheList.Count ) {
 					this.ThrowWhenOutOfRange( index );
 
-					return default( Boolean );
+					return false;
 				}
 
 				var result = this.TheList[index];

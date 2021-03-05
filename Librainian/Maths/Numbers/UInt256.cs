@@ -266,7 +266,7 @@ namespace Librainian.Maths.Numbers {
 				return other._part1 == this._part1 && other._part2 == this._part2 && other._part3 == this._part3 && other._part4 == this._part4;
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		[Pure]

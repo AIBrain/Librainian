@@ -23,6 +23,7 @@
 // File "D.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 #nullable enable
+
 namespace Librainian.Persistence {
 
 	using System;
@@ -31,6 +32,7 @@ namespace Librainian.Persistence {
 	using JetBrains.Annotations;
 	using Microsoft.VisualBasic;
 	using Newtonsoft.Json;
+	using Parsing;
 
 	/// <summary>
 	///     <para>[D]ata([K]ey=[V]alue)</para>
@@ -63,17 +65,17 @@ namespace Librainian.Persistence {
 		/// <summary>The value.</summary>
 		[JsonProperty( IsReference = false, ItemIsReference = false )]
 		[CanBeNull]
-		public String V { get; set; }
+		public String? V { get; set; }
 
 		public Int32 GetHashCode( D d ) => d.K.GetHashCode();
 
-		Boolean IEqualityComparer<D>.Equals( D x, D y ) => Equals( x, y );
+		Boolean IEqualityComparer<D>.Equals( D? x, D? y ) => Equals( x, y );
 
 		public override Int32 GetHashCode() => this.K.GetHashCode();
 
 		[NotNull]
 		public override String ToString() {
-			var keypart = String.Empty;
+			String keypart;
 
 			if ( this.K.Length > 22 ) {
 				var left = Strings.Left( this.K, 10 );
@@ -81,9 +83,12 @@ namespace Librainian.Persistence {
 
 				keypart = $"{left}..{right}";
 			}
+			else {
+				keypart = this.K;
+			}
 
 			if ( this.V is null ) {
-				return $"{keypart}=";
+				return $"{keypart}={Symbols.Null}";
 			}
 
 			var valuepart = String.Empty;
@@ -107,17 +112,17 @@ namespace Librainian.Persistence {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] D left, [CanBeNull] D right ) {
+		public static Boolean Equals( [CanBeNull] D? left, [CanBeNull] D? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( !left.K.Equals( right.K, StringComparison.Ordinal ) ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( ReferenceEquals( left.V, right.V ) ) {
@@ -125,13 +130,13 @@ namespace Librainian.Persistence {
 			}
 
 			if ( left.V is null || right.V is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return left.V.Equals( right.V, StringComparison.Ordinal );
 		}
 
-		public override Boolean Equals( Object obj ) => Equals( this, obj as D );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as D );
 
 	}
 

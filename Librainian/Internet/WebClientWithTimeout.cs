@@ -43,11 +43,9 @@ namespace Librainian.Internet {
 		protected override WebRequest GetWebRequest( Uri address ) {
 			this.Request = base.GetWebRequest( address );
 
-			if ( this.Request != null ) {
-				this.Request.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
-			}
+            this.Request.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
 
-			return this.Request;
+            return this.Request;
 		}
 
 	}

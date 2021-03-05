@@ -49,7 +49,7 @@ namespace Librainian.Measurement.Time {
 		private volatile Single _progress;
 
 		[CanBeNull]
-		private Timer _timer;
+		private Timer? _timer;
 
 		public EtaCalculator() => this.Reset( Seconds.One );
 
@@ -66,7 +66,7 @@ namespace Librainian.Measurement.Time {
 					throw new InvalidOperationException();
 				}
 
-				if ( value < 0 || value > 1 ) {
+				if ( value is < 0 or > 1) {
 					throw new ArgumentOutOfRangeException( nameof( this.Progress ), $"{value:R} is out of the range 0 to 1." );
 				}
 
@@ -100,7 +100,6 @@ namespace Librainian.Measurement.Time {
 
 		public void Reset( TimeSpan samplingPeriod ) {
 			using ( this._timer ) {
-				//TODO what happens if this is null?
 				//this._timer?.Close();
 			}
 
@@ -110,13 +109,13 @@ namespace Librainian.Measurement.Time {
 			this._stopwatch.Start();
 			this.Progress = 0;
 
-			// ReSharper disable once UseObjectOrCollectionInitializer
+			
 			this._timer = new Timer {
 				Interval = samplingPeriod.TotalMilliseconds, AutoReset = true
 			};
 
 			this._timer.Elapsed += ( sender, args ) => this.Update();
-			this._timer?.Start();
+			this._timer.Start();
 		}
 
 		/// <summary>

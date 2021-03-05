@@ -75,7 +75,25 @@ namespace Librainian.Threading {
 	/// </summary>
 	public static class AwaitableExtensions {
 
-		private static void PrintContext( [CallerMemberName] [CanBeNull] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+		/// <summary>
+		/// Is this even legal? Just a shortcut for Task.FromResult{T}?
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Task<T> GetAwaiter<T>( this T value ) => Task.FromResult( value );
+
+		/// <summary>
+		/// Is this even legal?
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Task<Boolean> GetAwaiter( this Boolean value ) => Task.FromResult( value );
+
+
+        public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
+
+        private static void PrintContext( [CallerMemberName] [CanBeNull] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
 			var ctx = SynchronizationContext.Current;
 
 			if ( ctx != null ) {

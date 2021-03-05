@@ -134,7 +134,7 @@ namespace Librainian.Threadsafe {
 		}
 
 		private static Boolean ToBool( Int32 value ) {
-			if ( value != False && value != True ) {
+			if ( value is not False and not True) {
 				throw new ArgumentOutOfRangeException( nameof( value ) );
 			}
 

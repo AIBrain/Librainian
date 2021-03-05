@@ -31,7 +31,6 @@ namespace Librainian.Controls {
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Diagnostics;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Drawing;
 	using System.Globalization;
 	using System.Linq;
@@ -87,7 +86,7 @@ namespace Librainian.Controls {
      ************************************************************************************************************
     */
 
-	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+	
 	public static class FlexibleMessageBox {
 
 		/// <summary>Defines the font for all FlexibleMessageBox instances. Default is: SystemFonts.MessageBoxFont</summary>
@@ -755,7 +754,7 @@ namespace Librainian.Controls {
 					return flexibleMessageBoxForm.ShowDialog( owner );
 				} );
 
-				if ( owner is Control control && control.InvokeRequired ) {
+				if ( owner is Control {InvokeRequired: true} control ) {
 					return ( DialogResult )control.Invoke( func );
 				}
 

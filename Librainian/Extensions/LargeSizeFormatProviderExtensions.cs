@@ -31,7 +31,7 @@ namespace Librainian.Extensions {
 
 		//TODO Needs to account for singular amount.
 
-		private static LargeSizeFormatProvider FormatProvider { get; } = new LargeSizeFormatProvider();
+		private static LargeSizeFormatProvider FormatProvider { get; } = new();
 
 		/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
 		[NotNull]

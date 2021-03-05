@@ -232,7 +232,7 @@ namespace Librainian.Collections.Sets {
 
 			item = default( T );
 
-			return default( Boolean );
+			return false;
 		}
 
 	}

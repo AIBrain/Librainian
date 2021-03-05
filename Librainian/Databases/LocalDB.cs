@@ -1,6 +1,6 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -17,15 +17,15 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "LocalDB.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "LocalDB.cs" last formatted on 2021-02-03 at 5:04 PM.
 
 #nullable enable
 
 namespace Librainian.Databases {
-
 	using System;
 	using System.Data;
 	using System.Data.Common;
@@ -42,6 +42,10 @@ namespace Librainian.Databases {
 	public class LocalDb : ABetterClassDispose {
 
 		public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder? databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
+
+			//TODO Check for [] around databaseName.
+			//TODO Check for spaces in databaseName.
+
 			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
 				throw new ArgumentNullException( nameof( databaseName ) );
 			}
@@ -72,6 +76,10 @@ namespace Librainian.Databases {
 				connection.Open();
 				var command = connection.CreateCommand();
 
+				if ( command is null ) {
+					throw new InvalidOperationException( $"Error creating command object for {nameof( LocalDb )}." );
+				}
+
 				command.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdf.FullPath );
 
 				command.ExecuteNonQuery();
@@ -80,11 +88,10 @@ namespace Librainian.Databases {
 			this.ConnectionString =
 				$@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPath};";
 
-			this.Connection = new SqlConnection( this.ConnectionString ) {
-				Disposed += ( sender, args ) => $"Disposing SQL connection {args}".Info(),
-				StateChange += ( sender, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info(), InfoMessage += ( sender, args ) => args.Message.Info()
-			};
-
+			this.Connection = new SqlConnection( this.ConnectionString );
+			this.Connection.InfoMessage += ( _, args ) => args.Message.Info();
+			this.Connection.StateChange += ( _, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
+			this.Connection.Disposed += ( _, args ) => $"Disposing SQL connection {args}".Info();
 
 			$"Attempting connection to {this.DatabaseMdf}...".Info();
 			this.Connection.Open();
@@ -142,5 +149,4 @@ namespace Librainian.Databases {
 		public override void DisposeManaged() => this.DetachDatabaseAsync().Wait( this.ReadTimeout + this.WriteTimeout );
 
 	}
-
 }

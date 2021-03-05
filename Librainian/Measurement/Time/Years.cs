@@ -53,15 +53,12 @@ namespace Librainian.Measurement.Time {
         /// <summary>Zero <see cref="Years" /></summary>
         public static Years Zero { get; } = new( 0 );
 
-        [JsonProperty]
-        public Rational Value { get; init; }
-
         public Int32 CompareTo( IQuantityOfTime? other ) {
             if ( ReferenceEquals( this, other ) ) {
                 return 0;
             }
 
-            if ( ReferenceEquals( null, other ) ) {
+            if ( other is null ) {
                 return 1;
             }
 
@@ -79,12 +76,12 @@ namespace Librainian.Measurement.Time {
         public override Int32 GetHashCode() => this.Value.GetHashCode();
         public IQuantityOfTime ToFinerGranularity() => new Months( this.Value * Months.InOneCommonYear );
 
-        public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational )PlanckTimes.InOneYear );
+        public PlanckTimes ToPlanckTimes() => new( (this.Value * ( Rational )PlanckTimes.InOneYear).WholePart );
 
-        public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneCommonYear );
+        public Seconds ToSeconds() => new( this.Value * Seconds.InOneCommonYear );
         public IQuantityOfTime ToCoarserGranularity() => this;
 
-        public TimeSpan? ToTimeSpan() => this.ToSeconds();
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
 
 
         public static Years Combine( Years left, Years right ) => Combine( left, right.Value );

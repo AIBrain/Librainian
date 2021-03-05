@@ -36,7 +36,7 @@ namespace Librainian.Graphics.Geometry {
 	[JsonObject( MemberSerialization.Fields )]
 	public class Segment {
 
-		public static Segment Empty;
+		public static Segment Empty { get; } = new( CoordinateF.Empty, CoordinateF.Empty );
 		public readonly CoordinateF P1;
 
 		public readonly CoordinateF P2;

@@ -41,7 +41,7 @@ namespace Librainian.FileSystem {
 		public const Int32 DefaultBufferSize = 4096;
 
 		/// <summary>Just some common buffer sizes we might use.</summary>
-		private static readonly HashSet<Int32> BufferSizes = new HashSet<Int32>( SizeLow.To( SizeHigh ).Select( b => ( Int32 )Math.Pow( 2, b ) ) );
+		private static readonly HashSet<Int32> BufferSizes = new( SizeLow.To( SizeHigh ).Select( b => ( Int32 )Math.Pow( 2, b ) ) );
 
 	}
 

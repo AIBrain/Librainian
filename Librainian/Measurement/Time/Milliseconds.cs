@@ -147,14 +147,19 @@ namespace Librainian.Measurement.Time {
 		[Pure]
 		public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Seconds right ) => ( Seconds )left > right;
 
-		public Int32 CompareTo( [NotNull] Milliseconds other ) => this.Value.CompareTo( other.Value );
+		public Int32 CompareTo( [NotNull] Milliseconds? other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
 
+            return this.Value.CompareTo( other.Value );
+        }
 
-		public Microseconds ToMicroseconds() => new( this.Value * Microseconds.InOneMillisecond );
+        public Microseconds ToMicroseconds() => new( this.Value * Microseconds.InOneMillisecond );
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToMicroseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneMillisecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new( (( Rational )PlanckTimes.InOneMillisecond * this.Value).WholePart );
 
 		public Seconds ToSeconds() => new( this.Value / InOneSecond );
 		public IQuantityOfTime ToCoarserGranularity() => this.ToSeconds();
@@ -171,7 +176,7 @@ namespace Librainian.Measurement.Time {
 			return $"{dec} {dec.PluralOf( "millisecond" )}";
 		}
 
-		public TimeSpan? ToTimeSpan() => this;
+		public TimeSpan ToTimeSpan() => this;
 
 	}
 

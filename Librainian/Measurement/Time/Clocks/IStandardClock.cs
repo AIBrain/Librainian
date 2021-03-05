@@ -29,16 +29,16 @@ namespace Librainian.Measurement.Time.Clocks {
 	public interface IStandardClock {
 
 		/// <summary></summary>
-		Hour Hour { get; }
+		ClockHour Hour { get; }
 
 		/// <summary></summary>
-		Millisecond Millisecond { get; }
+		ClockMillisecond Millisecond { get; }
 
 		/// <summary></summary>
-		Minute Minute { get; }
+		ClockMinute Minute { get; }
 
 		/// <summary></summary>
-		Second Second { get; }
+		ClockSecond Second { get; }
 
 		/// <summary></summary>
 		/// <returns></returns>

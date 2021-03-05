@@ -33,10 +33,10 @@ namespace Librainian.Internet.Servers {
 	public class WebServer : ABetterClassDispose {
 
 		[NotNull]
-		private readonly HttpListener _httpListener = new HttpListener();
+		private readonly HttpListener _httpListener = new();
 
 		[NotNull]
-		private readonly AutoResetEvent _listenForNextRequest = new AutoResetEvent( false );
+		private readonly AutoResetEvent _listenForNextRequest = new( false );
 
 		public Boolean IsRunning { get; private set; }
 

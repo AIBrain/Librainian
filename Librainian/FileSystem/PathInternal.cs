@@ -72,7 +72,7 @@ namespace Librainian.FileSystem {
 		public static Boolean IsDevice( [JetBrains.Annotations.NotNull] this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
-			if ( Document.IsExtended( path ) ) {
+			if ( path.IsExtended() ) {
 				return true;
 			}
 
@@ -80,7 +80,7 @@ namespace Librainian.FileSystem {
 				return path[3].IsDirectorySeparator();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		[Pure]
@@ -101,7 +101,7 @@ namespace Librainian.FileSystem {
 					return !path[1].IsDirectorySeparator();
 				}
 
-				return default( Boolean );
+				return false;
 			}
 
 			if ( path.Length >= 3 && path[1] == Path.VolumeSeparatorChar && path[2].IsDirectorySeparator() ) {
@@ -118,7 +118,7 @@ namespace Librainian.FileSystem {
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsValidDriveChar( this Char value ) => value >= 'A' && value <= 'Z' || value >= 'a' && value <= 'z';
+		public static Boolean IsValidDriveChar( this Char value ) => value is >= 'A' and <= 'Z' or >= 'a' and <= 'z';
 
 		/// <summary>
 		///     Returns the trimmed <paramref name="path" /> or throws <see cref="ArgumentException" /> if null, empty, or

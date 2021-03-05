@@ -82,7 +82,7 @@ namespace Librainian.FileSystem.FileHistory {
 			var posB = value.LastIndexOf( "UTC)", StringComparison.Ordinal );
 
 			if ( posA == -1 || posB == -1 || posB < posA ) {
-				return default( Boolean );
+				return false;
 			}
 
 			var datepart = value.Substring( posA + 1, posB - ( posA + 1 ) );
@@ -109,7 +109,7 @@ namespace Librainian.FileSystem.FileHistory {
 
 			filename = $"{value}{extension}";
 
-			return default( Boolean );
+			return false;
 		}
 
 	}

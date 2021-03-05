@@ -1,2 +1,73 @@
 [*.cs]
-csharp_prefer_simple_default_expression = false
+
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = none
+
+# IDE0065: Misplaced using directive
+csharp_using_directive_placement = inside_namespace
+
+# IDE0003: Remove qualification
+dotnet_style_qualification_for_event = true
+
+# IDE0003: Remove qualification
+dotnet_style_qualification_for_field = true
+
+# IDE0023: Use block body for operators
+dotnet_diagnostic.IDE0023.severity = none
+
+# IDE0049: Simplify Names
+dotnet_style_predefined_type_for_locals_parameters_members = false
+
+# IDE0003: Remove qualification
+dotnet_style_qualification_for_property = true
+
+# IDE0003: Remove qualification
+dotnet_style_qualification_for_method = true
+
+# IDE0041: Use 'is null' check
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true
+
+# IDE0041: Use 'is null' check
+dotnet_diagnostic.IDE0041.severity = error
+
+# CA2211: Non-constant fields should not be visible
+dotnet_diagnostic.CA2211.severity = error
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = none
+
+# IDE0078: Use pattern matching
+csharp_style_prefer_pattern_matching = true
+
+# IDE0078: Use pattern matching
+dotnet_diagnostic.IDE0078.severity = error
+
+# IDE0049: Simplify Names
+dotnet_diagnostic.IDE0049.severity = error
+
+# IDE0049: Simplify Names
+dotnet_style_predefined_type_for_member_access = false
+
+# CA1416: Validate platform compatibility
+dotnet_diagnostic.CA1416.severity = none
+
+# CA2012: Use ValueTasks correctly
+dotnet_diagnostic.CA2012.severity = warning
+
+# CA1001: Types that own disposable fields should be disposable
+dotnet_diagnostic.CA1001.severity = error
+
+# CA1309: Use ordinal string comparison
+dotnet_diagnostic.CA1309.severity = error
+
+# IDE0004: Remove Unnecessary Cast
+dotnet_diagnostic.IDE0004.severity = error
+
+# CS8620: Argument cannot be used for parameter due to differences in the nullability of reference types.
+dotnet_diagnostic.CS8620.severity = warning
+
+# IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0060.severity = none
+
+# CA1834: Consider using 'StringBuilder.Append(char)' when applicable
+dotnet_diagnostic.CA1834.severity = warning

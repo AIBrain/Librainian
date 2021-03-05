@@ -33,7 +33,7 @@ namespace Librainian.Financial.Containers.Wallets {
 	public class Ledger {
 
 		[JsonProperty]
-		public ConcurrentQueue<TransactionMessage> Transactions { get; } = new ConcurrentQueue<TransactionMessage>();
+		public ConcurrentQueue<TransactionMessage> Transactions { get; } = new();
 
 		public Boolean TryAdd( TransactionMessage transaction ) {
 			try {
@@ -44,7 +44,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return default( Boolean );
+				return false;
 			}
 		}
 

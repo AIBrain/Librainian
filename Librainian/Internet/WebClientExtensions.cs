@@ -30,7 +30,7 @@ namespace Librainian.Internet {
 	using System.Net;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Exceptions;
+	using Exceptions.Warnings;
 	using JetBrains.Annotations;
 	using Logging;
 	using Parsing;
@@ -47,7 +47,7 @@ namespace Librainian.Internet {
 		/// </summary>
 		[NotNull]
 		public static ThreadLocal<Lazy<WebClient>> ThreadSafeWebClients { get; } =
-			new ThreadLocal<Lazy<WebClient>>( () => new Lazy<WebClient>( () => new WebClient() ), true );
+			new( () => new Lazy<WebClient>( () => new WebClient() ), true );
 
 		/// <summary>
 		///     <para>Register to cancel the <paramref name="client" /> with a <see cref="CancellationToken" />.</para>

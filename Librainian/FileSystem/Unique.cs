@@ -30,7 +30,7 @@ namespace Librainian.FileSystem {
 	using System.Net;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Exceptions;
+	using Exceptions.Warnings;
 	using Internet;
 	using JetBrains.Annotations;
 	using Logging;
@@ -45,6 +45,7 @@ namespace Librainian.FileSystem {
 	///     <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
 	///     <para>Locations should be case-sensitive (<see cref="Equals(Object)" />).</para>
 	///     <para>It's...<see cref="Unique" />!</para>
+	/// <see cref="Location"/>
 	/// </summary>
 	[Serializable]
 	public class Unique : IEquatable<Unique> {
@@ -52,11 +53,13 @@ namespace Librainian.FileSystem {
 		private const Int32 EOFMarker = -1;
 
 		/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
-		public static readonly Unique Empty = new Unique();
+		public static readonly Unique Empty = new();
 
 		[NotNull]
 		[JsonProperty]
 		private readonly Uri u;
+
+		//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
 
 		/// <summary>What effect will this have down the road?</summary>
 		private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
@@ -91,19 +94,19 @@ namespace Librainian.FileSystem {
 		[JsonIgnore]
 		public String AbsolutePath => this.U.AbsolutePath;
 
-		public Boolean Equals( Unique other ) => Equals( this, other );
+		public Boolean Equals( Unique? other ) => Equals( this, other );
 
 		/// <summary>Static (Ordinal) comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Unique left, [CanBeNull] Unique right ) {
+		public static Boolean Equals( [CanBeNull] Unique? left, [CanBeNull] Unique? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
@@ -126,18 +129,18 @@ namespace Librainian.FileSystem {
 
 			unique = Empty;
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>If the <paramref name="uri" /> is parsed, then <paramref name="unique" /> will never be null.</summary>
 		/// <param name="uri"></param>
 		/// <param name="unique"></param>
 		/// <returns></returns>
-		public static Boolean TryCreate( [CanBeNull] Uri uri, [NotNull] out Unique unique ) {
+		public static Boolean TryCreate( [CanBeNull] Uri? uri, [NotNull] out Unique unique ) {
 			if ( uri is null ) {
 				unique = Empty;
 
-				return default( Boolean );
+				return false;
 			}
 
 			if ( uri.IsAbsoluteUri ) {
@@ -148,43 +151,35 @@ namespace Librainian.FileSystem {
 
 			unique = Empty;
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Byte> AsBytes( CancellationToken token, TimeSpan timeout ) {
+		public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken token ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
 
 			using var stream = client.OpenRead( this.U );
 
-			if ( stream?.CanRead != true ) {
-				yield break;
-			}
+            while ( stream.CanRead ) {
+                var a = stream.ReadByte();
 
-			while ( true ) {
-				var a = stream.ReadByte();
+                if ( a == EOFMarker ) {
+                    yield break;
+                }
 
-				if ( a == EOFMarker ) {
-					yield break;
-				}
-
-				yield return ( Byte )a;
-			}
-		}
+                yield return ( Byte )a;
+            }
+        }
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt16( CancellationToken token, TimeSpan timeout ) {
+		public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken token ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
 
 			using var stream = client.OpenRead( this.U );
 
-			if ( stream?.CanRead != true ) {
-				yield break;
-			}
-
-			while ( true ) {
+			while ( stream.CanRead ) {
 				var a = stream.ReadByte();
 
 				if ( a == EOFMarker ) {
@@ -209,12 +204,12 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt32( CancellationToken token, TimeSpan timeout ) {
+		public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken token ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
 
 			using var stream = client.OpenRead( this.U );
 
-			if ( stream?.CanRead != true ) {
+			if ( stream.CanRead != true ) {
 				yield break;
 			}
 

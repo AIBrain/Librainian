@@ -75,9 +75,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				}
 
 				// To mimic Directory.CreateDirectory, we don't throw if the directory (not a file) already exists
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-				if ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS || !path.Exists() ) {
+				if ( errorCode != NativeMethods.ERROR.ERROR_ALREADY_EXISTS || !path.Exists() ) {
 					throw Common.GetExceptionFromWin32Error( errorCode );
 				}
 			}
@@ -120,9 +120,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				}
 			} while ( handle.FindNextFile( out findData ) );
 
-			var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = (NativeMethods.ERROR)Marshal.GetLastWin32Error();
 
-			if ( errorCode != NativeMethods.ERROR_NO_MORE_FILES ) {
+			if ( errorCode != NativeMethods.ERROR.ERROR_NO_MORE_FILES ) {
 				throw Common.GetExceptionFromWin32Error( errorCode );
 			}
 		}
@@ -142,7 +142,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			pendingDirectories.Enqueue( normalizedPath );
 
 			while ( pendingDirectories.Count > 0 ) {
-				normalizedPath = pendingDirectories.Dequeue() ?? String.Empty;
+                normalizedPath = pendingDirectories.Dequeue();
 
 				// get all subdirs to recurse in the next iteration
 				foreach ( var subdir in EnumerateNormalizedFileSystemEntries( true, false, SearchOption.TopDirectoryOnly, normalizedPath, "*" ) ) {
@@ -175,9 +175,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					}
 				} while ( handle.FindNextFile( out findData ) );
 
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-				if ( errorCode != NativeMethods.ERROR_NO_MORE_FILES ) {
+				if ( errorCode != NativeMethods.ERROR.ERROR_NO_MORE_FILES ) {
 					throw Common.GetExceptionFromWin32Error( errorCode );
 				}
 			}
@@ -215,7 +215,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 		[CanBeNull]
-		public static SafeFindHandle BeginFind( [NotNull] String normalizedPathWithSearchPattern, out WIN32_FIND_DATA findData ) {
+		public static SafeFindHandle? BeginFind( [NotNull] String normalizedPathWithSearchPattern, out WIN32_FIND_DATA findData ) {
 			normalizedPathWithSearchPattern = normalizedPathWithSearchPattern.TrimEnd( '\\' ).ThrowIfBlank();
 			var handle = NativeMethods.FindFirstFile( normalizedPathWithSearchPattern, out findData );
 
@@ -223,9 +223,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return handle;
 			}
 
-			var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-			if ( errorCode != NativeMethods.ERROR_FILE_NOT_FOUND && errorCode != NativeMethods.ERROR_PATH_NOT_FOUND && errorCode != NativeMethods.ERROR_NOT_READY ) {
+			if ( errorCode is not NativeMethods.ERROR.ERROR_FILE_NOT_FOUND and not NativeMethods.ERROR.ERROR_PATH_NOT_FOUND and not NativeMethods.ERROR.ERROR_NOT_READY) {
 				throw Common.GetExceptionFromWin32Error( errorCode );
 			}
 
@@ -308,9 +308,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				}
 
 				// To mimic Directory.CreateDirectory, we don't throw if the directory (not a file) already exists
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-				if ( errorCode != NativeMethods.ERROR_ALREADY_EXISTS || !path.Exists() ) {
+				if ( errorCode != NativeMethods.ERROR.ERROR_ALREADY_EXISTS || !path.Exists() ) {
 					throw Common.GetExceptionFromWin32Error( errorCode );
 				}
 			}
@@ -785,9 +785,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return;
 			}
 
-			var lastWin32Error = Marshal.GetLastWin32Error();
+			var lastWin32Error = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-			if ( lastWin32Error == NativeMethods.ERROR_ACCESS_DENIED ) {
+			if ( lastWin32Error == NativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
 				throw new IOException( $"Access to the path '{sourcePath}'is denied.", NativeMethods.MakeHRFromErrorCode( lastWin32Error ) );
 			}
 
@@ -816,7 +816,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					return;
 				}
 
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -830,10 +830,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var normalizedPath = path.ThrowIfBlank().GetFullPath().NormalizeLongPath();
 
 			if ( !NativeMethods.SetCurrentDirectory( normalizedPath ) ) {
-				var lastWin32Error = Marshal.GetLastWin32Error();
+				var lastWin32Error = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-				if ( lastWin32Error == NativeMethods.ERROR_FILE_NOT_FOUND ) {
-					lastWin32Error = NativeMethods.ERROR_PATH_NOT_FOUND;
+				if ( lastWin32Error == NativeMethods.ERROR.ERROR_FILE_NOT_FOUND ) {
+					lastWin32Error = NativeMethods.ERROR.ERROR_PATH_NOT_FOUND;
 				}
 
 				Common.ThrowIOError( lastWin32Error, normalizedPath );
@@ -857,7 +857,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return;
 			}
 
-			var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 			Common.ThrowIOError( errorCode, path );
 		}
 
@@ -874,7 +874,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					return;
 				}
 
-				var errorCode = Marshal.GetLastWin32Error();
+				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -890,7 +890,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return;
 			}
 
-			var errorCode = Marshal.GetLastWin32Error();
+			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
 			Common.ThrowIOError( errorCode, path );
 		}
 

@@ -50,7 +50,7 @@ namespace Librainian.OperatingSystem {
 		};
 
 		[NotNull]
-		public static readonly Lazy<Folder> WindowsFolder = new Lazy<Folder>( () => {
+		public static readonly Lazy<Folder> WindowsFolder = new( () => {
 			var folder = FindFolder( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) );
 
 			if ( folder is null ) {
@@ -61,15 +61,15 @@ namespace Librainian.OperatingSystem {
 		}, true );
 
 		[NotNull]
-		public static readonly Lazy<Folder?> WindowsSystem32Folder = new Lazy<Folder?>( () => FindFolder( Path.Combine( WindowsFolder.Value.FullPath, "System32" ) ), true );
+		public static readonly Lazy<Folder?> WindowsSystem32Folder = new( () => FindFolder( Path.Combine( WindowsFolder.Value.FullPath, "System32" ) ), true );
 
 		[NotNull]
 		public static Lazy<Document?> CommandPrompt { get; } =
-			new Lazy<Document?>( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
+			new( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
 
 		[NotNull]
 		public static Lazy<Document?> IrfanView64 { get; } =
-			new Lazy<Document?>( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ),
+			new( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ),
 								 true );
 
 		/// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
@@ -172,7 +172,7 @@ namespace Librainian.OperatingSystem {
 					if ( null == process ) {
 						"failure.".Info();
 
-						return default( Boolean );
+						return false;
 					}
 
 					process.WaitForExit( ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
@@ -184,7 +184,7 @@ namespace Librainian.OperatingSystem {
 					exception.Log();
 				}
 
-				return default( Boolean );
+				return false;
 			} );
 
 		[CanBeNull]

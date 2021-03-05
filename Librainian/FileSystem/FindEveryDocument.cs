@@ -53,11 +53,11 @@ namespace Librainian.FileSystem {
 
 		private String? Status { get; set; }
 
-		public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+		public CancellationTokenSource CancellationTokenSource { get; } = new();
 
 		/// <summary>A list of drives that exist in the system.</summary>
 		[NotNull]
-		public List<Disk> PossibleDrives { get; } = new List<Disk>( ParsingConstants.English.Alphabet.Uppercase.Length );
+		public List<Disk> PossibleDrives { get; } = new( ParsingConstants.English.Alphabet.Uppercase.Length );
 
 		public IProgress<Single> Progress { get; }
 
@@ -104,12 +104,10 @@ namespace Librainian.FileSystem {
 						return;
 					}
 
-					if ( folder != null ) {
-						this.Status = $"Found folder `{folder.FullPath}`.";
-						this.FoldersFound.Post( folder );
-					}
+                    this.Status = $"Found folder `{folder.FullPath}`.";
+                    this.FoldersFound?.Post( folder );
 
-					Interlocked.Increment( ref counter );
+                    Interlocked.Increment( ref counter );
 					this.Progress.Report( counter );
 				} );
 
@@ -122,7 +120,7 @@ namespace Librainian.FileSystem {
 				}
 
 				this.Status = $"Found folder `{folder.FullPath}`.";
-				this.FoldersFound.Post( folder );
+				this.FoldersFound?.Post( folder );
 
 				Interlocked.Increment( ref counter );
 				this.Progress.Report( counter );
@@ -136,7 +134,7 @@ namespace Librainian.FileSystem {
 				}
 
 				this.Status = $"Found document `{document.FullPath}`.";
-				this.DocumentsFound.Post( document );
+				this.DocumentsFound?.Post( document );
 
 				Interlocked.Increment( ref counter );
 

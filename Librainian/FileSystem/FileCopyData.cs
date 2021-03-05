@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -22,39 +22,44 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // 
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
 #nullable enable
 
 namespace Librainian.FileSystem {
-	using System;
-	using System.Collections.Generic;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 
-	public record FileCopyData( IDocument Source, IDocument Destination ) {
+    using System;
+    using System.Collections.Generic;
+    using JetBrains.Annotations;
 
-		[CanBeNull]
-		public DateTime? WhenStarted { get; init; }
+    public record FileCopyData( IDocument Source, IDocument Destination ) {
 
-		public UInt64 SourceSize { get; set; }
-		
-		public UInt64? BytesCopied { get; set; }
+        [CanBeNull]
+        public DateTime? WhenStarted { get; init; }
 
-		[CanBeNull]
-		public IProgress<FileCopyData>? DataCopied { get; set; }
+        public UInt64 SourceSize { get; set; }
 
-		[CanBeNull]
-		public Action<FileCopyData>? OnCompleted { get; set; }
+        [CanBeNull]
+        public UInt64? BytesCopied { get; set; }
 
-		[CanBeNull]
-		public DateTime? WhenCompleted { get; set; }
+        [CanBeNull]
+        public IProgress<FileCopyData>? DataCopied { get; set; }
 
-		[CanBeNull]
-		public IList<Exception>? Exceptions { get; set; }
+        [CanBeNull]
+        public Action<FileCopyData>? OnCompleted { get; set; }
 
-		[CanBeNull]
-		public Task? CopyTask { get; set; }
-	}
+        [CanBeNull]
+        public DateTime? WhenCompleted { get; set; }
+
+        [CanBeNull]
+        public IList<Exception>? Exceptions { get; set; }
+
+        //[CanBeNull] public PooledValueTask<FileCopyData>? CopyTask { get; set; }
+
+        [CanBeNull]
+        public Status? Status { get; set; }
+
+    }
+
 }

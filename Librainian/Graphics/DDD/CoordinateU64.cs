@@ -51,9 +51,9 @@ namespace Librainian.Graphics.DDD {
 		/// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
 		public static readonly UInt64 Maximum = ( UInt64 )Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
-		public static readonly CoordinateU64 MaxValue = new CoordinateU64( UInt64.MaxValue, UInt64.MaxValue, UInt64.MaxValue );
+		public static readonly CoordinateU64 MaxValue = new( UInt64.MaxValue, UInt64.MaxValue, UInt64.MaxValue );
 
-		public static readonly CoordinateU64 MinValue = new CoordinateU64( Minimum, Minimum, Minimum );
+		public static readonly CoordinateU64 MinValue = new( Minimum, Minimum, Minimum );
 
 		/// <summary>Maximum - Minimum</summary>
 		public static readonly UInt64 Range = Maximum - Minimum;
@@ -105,9 +105,9 @@ namespace Librainian.Graphics.DDD {
 		/// <returns></returns>
 		public static Boolean Equals( CoordinateU64 left, CoordinateU64 right ) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
 
-		public static implicit operator Point( CoordinateU64 coordinate ) => new Point( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
+		public static implicit operator Point( CoordinateU64 coordinate ) => new( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
 
-		public static implicit operator PointF( CoordinateU64 coordinate ) => new PointF( coordinate.X, coordinate.Y );
+		public static implicit operator PointF( CoordinateU64 coordinate ) => new( coordinate.X, coordinate.Y );
 
 		/// <summary>
 		///     <para>Returns a new Coordinate as a unit <see cref="CoordinateU64" />.</para>
@@ -119,7 +119,7 @@ namespace Librainian.Graphics.DDD {
 			return new CoordinateU64( ( UInt64 )( coordinate.X * num ), ( UInt64 )( coordinate.Y * num ), ( UInt64 )( coordinate.Z * num ) );
 		}
 
-		public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new CoordinateU64( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
+		public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
 		public static Boolean operator !=( CoordinateU64 left, CoordinateU64 right ) => !Equals( left, right );
 

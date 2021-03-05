@@ -25,7 +25,7 @@
 namespace Librainian.Financial.Containers.Shopping {
 
 	using System;
-	using Exceptions;
+	using Exceptions.Warnings;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
@@ -40,7 +40,7 @@ namespace Librainian.Financial.Containers.Shopping {
 			}
 
 			if ( itemID == Guid.Empty ) {
-				throw new InvalidParameterException( "", new ArgumentNullException( nameof( itemID ) ) );
+				throw new InvalidParameterWarning( "", new ArgumentNullException( nameof( itemID ) ) );
 			}
 
 			this.Category = category;
@@ -51,7 +51,7 @@ namespace Librainian.Financial.Containers.Shopping {
 		public ItemCategory Category { get; }
 
 		[JsonProperty]
-		public String Description { get; private set; }
+		public String? Description { get; private set; }
 
 		[JsonProperty]
 		public Guid ItemID { get; }
@@ -69,17 +69,18 @@ namespace Librainian.Financial.Containers.Shopping {
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] ShoppingItem left, [CanBeNull] ShoppingItem right ) {
+		public static Boolean Equals( [CanBeNull] ShoppingItem? left, [CanBeNull] ShoppingItem? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
 
-			if ( null == left || null == right ) {
-				return default( Boolean );
-			}
+            if ( left is null || right is null ) {
+                return false;
+            }
 
-			return left.Category == right.Category && left.ItemID == right.ItemID;
-		}
+            return left.Category == right.Category && left.ItemID == right.ItemID;
+
+        }
 
 		/// <summary>Serves as the default hash function.</summary>
 		/// <returns>A hash code for the current object.</returns>

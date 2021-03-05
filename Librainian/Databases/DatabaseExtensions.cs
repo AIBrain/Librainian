@@ -42,6 +42,7 @@ namespace Librainian.Databases {
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
+	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
 	using Parsing;
 	using Persistence;
@@ -70,7 +71,7 @@ namespace Librainian.Databases {
 		}
 
 		[NotNull]
-		public static T Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
+		public static T? Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
@@ -87,7 +88,7 @@ namespace Librainian.Databases {
 			}
 		}
 
-		public static async PooledValueTask<T> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
+		public static async PooledValueTask<T?> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken token ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
@@ -95,7 +96,7 @@ namespace Librainian.Databases {
 			try {
 				using var db = new DatabaseServer( builderToTest.ConnectionString, token: token );
 
-				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait(false);
+				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -143,6 +144,8 @@ namespace Librainian.Databases {
 		*/
 
 		public static Boolean PossibleTimeout( [NotNull] this SqlException exception ) {
+			// ugh.
+
 			if ( exception is null ) {
 				throw new ArgumentNullException( nameof( exception ) );
 			}
@@ -174,13 +177,19 @@ namespace Librainian.Databases {
 					yield break;
 				}
 
-				foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine["ServiceName"]?.ToString() ) ) {
+				foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine[ "ServiceName" ]?.ToString() ) ) {
 					if ( !String.IsNullOrWhiteSpace( serviceName ) ) {
-						yield return new SqlServerInstance {
-							InstanceName = GetInstanceNameFromServiceName( serviceName ), ServiceName = serviceName,
-							Version = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ),
-							Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" ), MachineName = Environment.MachineName
+
+						var instance = new SqlServerInstance {
+							ServiceName = serviceName, MachineName = Environment.MachineName, InstanceName = GetInstanceNameFromServiceName( serviceName ),
+							Edition = GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "SKUNAME" )
 						};
+
+						if ( Version.TryParse( GetWmiPropertyValueForEngineService( serviceName, correctNamespace, "Version" ), out var version ) ) {
+							instance.Version = version;
+						}
+
+						yield return instance;
 					}
 				}
 			}
@@ -219,12 +228,23 @@ namespace Librainian.Databases {
 		[NotNull]
 		public static IEnumerable<String> GetCorrectWmiNameSpaces() {
 			const String root = "root\\Microsoft\\sqlserver";
+
 			var namespaces = new List<String>();
 
 			try {
 				// Enumerate all WMI instances of __namespace WMI class.
-				using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), null );
-				namespaces.AddRange( nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"].ToString() ) );
+				var objectGetOptions = new ObjectGetOptions { Timeout = Seconds.Ten };
+
+				using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), objectGetOptions );
+
+				var items = nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ]?.ToString() );
+
+				foreach ( var item in items ) {
+					if ( !String.IsNullOrWhiteSpace(item) ) {
+						namespaces.Add( item );
+					}
+				}
+				
 			}
 			catch ( ManagementException exception ) {
 				exception.Log();
@@ -259,7 +279,7 @@ namespace Librainian.Databases {
 				TypeDictionary.Add( type, type.GetProperties() );
 			}
 
-			return TypeDictionary[type];
+			return TypeDictionary[ type ];
 		}
 
 		/// <summary>Returns the WMI property value for a given property name for a particular SQL Server service Name</summary>
@@ -286,7 +306,7 @@ namespace Librainian.Databases {
 
 			foreach ( var o in propertySearcher.Get() ) {
 				if ( o is ManagementObject managementObject ) {
-					return managementObject["PropertyStrValue"]?.ToString();
+					return managementObject[ "PropertyStrValue" ]?.ToString();
 				}
 			}
 
@@ -316,7 +336,7 @@ namespace Librainian.Databases {
 
 					if ( sqlServer?.Status == Status.Success ) {
 						if ( sqlServer.ConnectionStringBuilder != null ) {
-							await file.Set( sqlServer.ConnectionStringBuilder.ToString() ).ConfigureAwait(false);
+							await file.FileSet( sqlServer.ConnectionStringBuilder.ToString() ).ConfigureAwait( false );
 
 							return sqlServer.Status;
 						}
@@ -336,8 +356,10 @@ namespace Librainian.Databases {
 				return command;
 			}
 
-			foreach ( var parameter in parameters.Where( parameter => parameter != null ) ) {
-				command.Parameters.Add( parameter );
+			foreach ( var parameter in parameters ) {
+				if ( parameter != null ) {
+					command.Parameters.Add( parameter );
+				}
 			}
 
 			return command;
@@ -353,7 +375,7 @@ namespace Librainian.Databases {
 		/// <param name="key"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task<String> Set(
+		public static async Task<String> FileSet(
 			[NotNull] this ConcurrentDictionaryFile<String, String> file,
 			[NotNull] String connectionString,
 			[NotNull] String key = Words.PrimeConnectionString
@@ -370,15 +392,15 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 			}
 
-			file[key] = connectionString;
-			await file.Flush( CancellationToken.None );
+			file[ key ] = connectionString;
+			await file.Flush( CancellationToken.None ).ConfigureAwait(false);
 
-			Debug.Assert( file[key].Like( connectionString ) );
+			Debug.Assert( file[ key ].Like( connectionString ) );
 
 			return key;
 		}
 
-		public static Boolean Set(
+		public static async Task<Boolean> FileSet(
 			[NotNull] this ConcurrentDictionaryFile<String, String> file,
 			[NotNull] SqlServer sqlServer,
 			[NotNull] String key = Words.PrimeConnectionString
@@ -392,18 +414,18 @@ namespace Librainian.Databases {
 			}
 
 			if ( sqlServer.Status != Status.Success ) {
-				return default( Boolean );
+				return false;
 			}
 
 			var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
 
 			if ( connectionStringBuilder == null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			var connectionString = connectionStringBuilder.ConnectionString;
 
-			file.Set( connectionString, key );
+			await file.FileSet( connectionString, key ).ConfigureAwait(false);
 
 			return file.Get( key ).Like( connectionString );
 		}
@@ -420,52 +442,56 @@ namespace Librainian.Databases {
 				throw new ArgumentNullException( nameof( list ) );
 			}
 
-			var set = new DataSet {
+			var dataSet = new DataSet {
 				Tables = {
 					list.ToDataTable()
 				},
-				Namespace = exampleSet?.Namespace, CaseSensitive = exampleSet?.CaseSensitive == true, EnforceConstraints = exampleSet?.EnforceConstraints == true,
-				DataSetName = exampleSet?.DataSetName, Locale = exampleSet?.Locale, Prefix = exampleSet?.Prefix, RemotingFormat = exampleSet?.RemotingFormat switch {
+				Namespace = exampleSet?.Namespace,
+				CaseSensitive = exampleSet?.CaseSensitive == true,
+				EnforceConstraints = exampleSet?.EnforceConstraints == true,
+				DataSetName = exampleSet?.DataSetName ?? list.GetHashCode().ToString(),
+				Locale = exampleSet?.Locale ?? Thread.CurrentThread.CurrentCulture,
+				Prefix = exampleSet?.Prefix,
+				RemotingFormat = exampleSet?.RemotingFormat switch {
 					SerializationFormat.Binary => SerializationFormat.Binary,
-					SerializationFormat.Xml    => SerializationFormat.Xml,
-					null                       => SerializationFormat.Xml,
-					_                          => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.RemotingFormat )}." )
+					SerializationFormat.Xml => SerializationFormat.Xml,
+					null => SerializationFormat.Xml,
+					_ => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.RemotingFormat )}." )
 				},
 				SchemaSerializationMode = exampleSet?.SchemaSerializationMode switch {
 					SchemaSerializationMode.ExcludeSchema => SchemaSerializationMode.ExcludeSchema,
 					SchemaSerializationMode.IncludeSchema => SchemaSerializationMode.IncludeSchema,
-					null                                  => SchemaSerializationMode.IncludeSchema,
-					_                                     => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.SchemaSerializationMode )}." )
+					null => SchemaSerializationMode.IncludeSchema,
+					_ => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.SchemaSerializationMode )}." )
 				},
 				Site = exampleSet?.Site
 			};
 
 			if ( exampleSet is null ) {
-				return set;
+				return dataSet;
 			}
 
-			if ( exampleSet.Container is null ) { }
-			else {
+			if ( exampleSet.Container is not null && dataSet.Container is not null ) {
 				foreach ( IComponent? o in exampleSet.Container.Components ) {
-					set.Container?.Add( o );
+					dataSet.Container.Add( o );
 				}
 			}
 
 			foreach ( DictionaryEntry entry in exampleSet.ExtendedProperties ) {
-				set.ExtendedProperties.Add( entry.Key, entry.Value );
+				dataSet.ExtendedProperties.Add( entry.Key, entry.Value );
 			}
 
 			foreach ( DataRelation relation in exampleSet.Relations ) {
-				set.Relations.Add( relation );
+				dataSet.Relations.Add( relation );
 			}
 
 			var i = 0;
-			
+
 			foreach ( DataViewSetting dataViewSetting in exampleSet.DefaultViewManager.DataViewSettings ) {
-				set.DefaultViewManager.DataViewSettings[i++] = dataViewSetting;
+				dataSet.DefaultViewManager.DataViewSettings[ i++ ] = dataViewSetting;
 			}
-			
-			return set;
+
+			return dataSet;
 		}
 
 		/// <summary>To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.</summary>
@@ -475,7 +501,7 @@ namespace Librainian.Databases {
 		public static DataTable ToDataTable( [NotNull] this SqlDataReader dataReader ) {
 			var table = new DataTable();
 			table.BeginLoadData();
-			table.Load( dataReader, LoadOption.OverwriteChanges, ( sender, args ) => $"Error reading {nameof( dataReader )}.".Log() );
+			table.Load( dataReader, LoadOption.OverwriteChanges, ( _, _ ) => $"Error reading {nameof( dataReader )}.".Log() );
 			table.EndLoadData();
 
 			return table;
@@ -509,7 +535,7 @@ namespace Librainian.Databases {
 				var newRow = table.NewRow();
 
 				foreach ( var propInfo in properties ) {
-					newRow[propInfo.Name] = item; // DBNull.Value?
+					newRow[ propInfo.Name ] = item; // DBNull.Value?
 				}
 
 				table.Rows.Add( newRow );
@@ -533,7 +559,7 @@ namespace Librainian.Databases {
 				var icolType = getProperty.PropertyType;
 
 				if ( icolType.IsGenericType && icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
-					icolType = icolType.GetGenericArguments()[0];
+					icolType = icolType.GetGenericArguments()[ 0 ];
 				}
 
 				table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
@@ -543,7 +569,7 @@ namespace Librainian.Databases {
 				var dr = table.NewRow();
 
 				foreach ( var p in columns ) {
-					dr[p.Name] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
+					dr[ p.Name ] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
 				}
 
 				table.Rows.Add( dr );
@@ -586,6 +612,7 @@ namespace Librainian.Databases {
         }
         */
 
+		/*
 		[NotNull]
 		public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
 			if ( table is null ) {
@@ -600,6 +627,7 @@ namespace Librainian.Databases {
 				}
 			}
 		}
+		*/
 
 		[NotNull]
 		public static SqlParameter ToSqlParameter<TValue>( [NotNull] this TValue value, [NotNull] String parameterName ) {
@@ -617,8 +645,13 @@ namespace Librainian.Databases {
 		}
 
 		[NotNull]
-		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String? parameterName, Int32 size ) =>
-			new( parameterName, sqlDbType, size );
+		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [NotNull] String parameterName, Int32 size ) {
+			if ( String.IsNullOrWhiteSpace( parameterName ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( parameterName ) );
+			}
+
+			return new( parameterName, sqlDbType, size );
+		}
 
 		/*
                 private static List<T> MapList<T>( DataTable dt ) {
@@ -761,7 +794,10 @@ namespace Librainian.Databases {
 					var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
 					return new SqlServer {
-						Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
+						Status = Status.Success,
+						ConnectionStringBuilder = connectionStringBuilder,
+						Version = version,
+						UTCDateTime = serverDateTime
 					};
 				}
 			}

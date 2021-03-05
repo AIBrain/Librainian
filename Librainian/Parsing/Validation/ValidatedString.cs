@@ -58,9 +58,9 @@ namespace Librainian.Parsing.Validation {
 		[NotNull]
 		public String Value { get; }
 
-		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.CurrentCulture );
+		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal);
 
-		public Int32 CompareTo( [CanBeNull] IValidatedString? other ) => String.Compare( this.Value, other?.Value, StringComparison.CurrentCulture );
+		public Int32 CompareTo( [CanBeNull] IValidatedString? other ) => String.Compare( this.Value, other?.Value, StringComparison.Ordinal);
 
 		public Boolean Equals( String? other ) => Equals( this, other );
 
@@ -68,7 +68,7 @@ namespace Librainian.Parsing.Validation {
 
 		public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> )this.Value ).GetEnumerator();
 
-		Int32 IComparable.CompareTo( [CanBeNull] Object? obj ) => String.Compare( this.Value, obj as String, StringComparison.CurrentCulture );
+		Int32 IComparable.CompareTo( [CanBeNull] Object? obj ) => String.Compare( this.Value, obj as String, StringComparison.Ordinal);
 
 		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Value ).GetEnumerator();
 
@@ -77,7 +77,7 @@ namespace Librainian.Parsing.Validation {
 			comparisonType == StringComparison.CurrentCulture ? String.CompareOrdinal( left, right.Value ) : String.Compare( left.Value, right.Value, comparisonType );
 
 		public static Int32 Compare( [NotNull] ValidatedString left, Int32 leftIndex, [NotNull] IValidatedString right, Int32 rightIndex, Int32 length ) =>
-			String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, StringComparison.CurrentCulture );
+			String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, StringComparison.Ordinal);
 
 		[SecuritySafeCritical]
 		public static Int32 Compare(
@@ -106,15 +106,11 @@ namespace Librainian.Parsing.Validation {
 			}
 
 			if ( left is null || right is null ) {
-				return default( Boolean );
-			}
-
-			if ( left.Value is null || right.Value is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( left.Value.Length != right.Value.Length ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return left.SequenceEqual( right.Value );
@@ -130,7 +126,7 @@ namespace Librainian.Parsing.Validation {
 			}
 
 			if ( left is null || right?.Value is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return left.SequenceEqual( right.Value );
@@ -142,7 +138,7 @@ namespace Librainian.Parsing.Validation {
 		/// <returns></returns>
 		public static Boolean Equals( [CanBeNull] IValidatedString? left, [CanBeNull] String? right ) {
 			if ( left?.Value is null || right is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return left.Value.SequenceEqual( right );

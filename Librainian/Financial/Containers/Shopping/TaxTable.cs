@@ -30,7 +30,7 @@ namespace Librainian.Financial.Containers.Shopping {
 	public static class TaxTable {
 
 		//TODO this should look up factors like area/state/zip/country, if this were a real project.
-		public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new Dictionary<ItemCategory, Decimal> {
+		public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new() {
 			{
 				ItemCategory.Invalid, 0m
 			}, {

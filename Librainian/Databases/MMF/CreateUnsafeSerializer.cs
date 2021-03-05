@@ -60,7 +60,7 @@ namespace Librainian.Databases.MMF {
 				this._size = Marshal.SizeOf<T>();
 			}
 			catch ( ArgumentException ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return true;

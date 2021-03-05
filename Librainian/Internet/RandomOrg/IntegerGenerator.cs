@@ -35,9 +35,9 @@ namespace Librainian.Internet.RandomOrg {
 
 	public static class RandomDotOrg {
 
-		internal static Lazy<IntegerGenerator> Generator { get; } = new Lazy<IntegerGenerator>( () => new IntegerGenerator( 1, CancellationTokenSource.Token ) );
+		internal static Lazy<IntegerGenerator> Generator { get; } = new( () => new IntegerGenerator( 1, CancellationTokenSource.Token ) );
 
-		public static CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+		public static CancellationTokenSource CancellationTokenSource { get; } = new();
 
 		[ItemNotNull]
 		public static async Task<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue ) {
@@ -97,10 +97,10 @@ namespace Librainian.Internet.RandomOrg {
 			public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase, CancellationToken token ) =>
 				this.Init( num, min, max, col, inbase, token ).Wait( token );
 
-			private List<Int32> Ints { get; } = new List<Int32>();
+			private List<Int32> Ints { get; } = new();
 
 			private async Task Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase, CancellationToken token ) {
-				if ( num < NumMin || num > NumMax ) {
+				if ( num is < NumMin or > NumMax) {
 					throw new ArgumentOutOfRangeException( nameof( num ), "The number of random numbers to generate must be between 1 and 10000." );
 				}
 
@@ -116,11 +116,11 @@ namespace Librainian.Internet.RandomOrg {
 					throw new ArgumentOutOfRangeException( nameof( min ), "The random number upper bound must be greater than the lower bound." );
 				}
 
-				if ( col <= 0 || col > ColMax ) {
+				if ( col is <= 0 or > ColMax) {
 					throw new ArgumentOutOfRangeException( nameof( col ), "The column count must be between 1 and 1000000000." );
 				}
 
-				if ( inbase != 2 && inbase != 8 && inbase != 10 && inbase != 16 ) {
+				if ( inbase is not 2 and not 8 and not 10 and not 16) {
 					throw new ArgumentOutOfRangeException( nameof( inbase ), "The base must be 2, 8, 10, or 16." );
 				}
 

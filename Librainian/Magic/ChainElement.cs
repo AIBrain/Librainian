@@ -28,14 +28,14 @@ namespace Librainian.Magic {
 
 	public class ChainElement {
 
-		private readonly ChainElement _next;
+		private readonly ChainElement? _next;
 
-		protected ChainElement( [CanBeNull] ChainElement next ) => this._next = next;
+		protected ChainElement( [CanBeNull] ChainElement? next ) => this._next = next;
 
 		protected ChainElement() { }
 
 		[CanBeNull]
-		public T As<T>( [CanBeNull] T defaultValue ) where T : class {
+		public T? As<T>( [CanBeNull] T? defaultValue ) where T : class {
 			if ( this is T ) {
 				return this as T;
 			}

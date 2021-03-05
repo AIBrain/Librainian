@@ -38,7 +38,7 @@ namespace Librainian.Extensions {
 		//}
 
 		[NotNull]
-		private static Func<TA, TB, TR> Memoize<TA, TB, TR>( [CanBeNull] this Func<TA, TB, TR> f ) {
+		public static Func<TA, TB, TR> Memoize<TA, TB, TR>( [CanBeNull] this Func<TA, TB, TR> f ) {
 			var example = new {
 				A = default( TA ), B = default( TB )
 			};
@@ -55,12 +55,12 @@ namespace Librainian.Extensions {
 		public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( [CanBeNull] this Func<Tuple<TA, TB>, TR> func ) => ( a, b ) => func( Tuple.Create( a, b ) );
 
 		[NotNull]
-		public static Func<TKey, TResult> Memoize<TKey, TResult>( [CanBeNull] this Func<TKey, TResult> f ) {
+		public static Func<TKey, TResult> Memoize<TKey, TResult>( [NotNull] this Func<TKey, TResult> func ) where TKey: notnull{
 			var d = new ConcurrentDictionary<TKey, TResult>();
 
 			return a => {
 				if ( !d.TryGetValue( a, out var value ) ) {
-					value = f( a );
+					value = func( a );
 					d.TryAdd( a, value );
 				}
 

@@ -49,7 +49,7 @@ namespace Librainian.Measurement.Spatial {
 		public const Single RadiansToDegreesFactor = ( Single )( 180 / Math.PI );
 
 		/// <summary>One <see cref="Radians" />.</summary>
-		public static readonly Radians One = new Radians( 1 );
+		public static readonly Radians One = new( 1 );
 
 		public Single Value {
 			get => this._value;
@@ -69,7 +69,7 @@ namespace Librainian.Measurement.Spatial {
 
 		public Radians( Single value ) : this() => this.Value = value;
 
-		public static Radians Combine( Radians left, Single radians ) => new Radians( left.Value + radians );
+		public static Radians Combine( Radians left, Single radians ) => new( left.Value + radians );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -87,7 +87,7 @@ namespace Librainian.Measurement.Spatial {
 
 		public static implicit operator Single( Radians radians ) => radians.Value;
 
-		public static Radians operator -( Radians radians ) => new Radians( radians.Value * -1 );
+		public static Radians operator -( Radians radians ) => new( radians.Value * -1 );
 
 		public static Radians operator -( Radians left, Radians right ) => Combine( left, -right.Value );
 
@@ -105,19 +105,19 @@ namespace Librainian.Measurement.Spatial {
 
 		public static Boolean operator >( Radians left, Radians right ) => left.Value > right.Value;
 
-		public static Degrees ToDegrees( Single radians ) => new Degrees( radians * RadiansToDegreesFactor );
+		public static Degrees ToDegrees( Single radians ) => new( radians * RadiansToDegreesFactor );
 
-		public static Degrees ToDegrees( Double radians ) => new Degrees( ( Single )( radians * RadiansToDegreesFactor ) );
+		public static Degrees ToDegrees( Double radians ) => new( ( Single )( radians * RadiansToDegreesFactor ) );
 
-		public static Degrees ToDegrees( Radians radians ) => new Degrees( radians.Value * RadiansToDegreesFactor );
+		public static Degrees ToDegrees( Radians radians ) => new( radians.Value * RadiansToDegreesFactor );
 
 		public Int32 CompareTo( Radians other ) => this.Value.CompareTo( other.Value );
 
 		public Boolean Equals( Radians other ) => Equals( this, other );
 
-		public override Boolean Equals( Object obj ) {
+		public override Boolean Equals( Object? obj ) {
 			if ( obj is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return obj is Radians radians && Equals( this, radians );

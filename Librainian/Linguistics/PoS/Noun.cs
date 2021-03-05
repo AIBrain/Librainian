@@ -25,27 +25,28 @@
 namespace Librainian.Linguistics.PoS {
 
 	using System;
-	using System.Linq;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
-	public class Noun : Word, ITaggedWord {
+	public record Noun : Word, ITaggedWord {
 
-		public Noun( String word ) : base( word ) { }
+		public Noun( [NotNull] String word ) : base( word ) { }
 
 		public PartsOfSpeech PartOfSpeech => PartsOfSpeech.Noun;
 
+		/*
 		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
 		/// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
 		/// <param name="other">An object to compare with this object.</param>
-		public Boolean Equals( [CanBeNull] Noun other ) {
+		public Boolean Equals( [CanBeNull] Noun? other ) {
 			if ( other is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return ReferenceEquals( this, other ) || this.SequenceEqual( other );
 		}
+		*/
 
 	}
 

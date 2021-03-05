@@ -50,7 +50,7 @@ namespace Librainian.Measurement.Spatial {
 		public const Single MinimumValue = Single.Epsilon;
 
 		/// <summary>One <see cref="Degrees" />.</summary>
-		public static readonly Degrees One = new Degrees( 1 );
+		public static readonly Degrees One = new( 1 );
 
 		public Single Value {
 			get => this._value;
@@ -74,7 +74,7 @@ namespace Librainian.Measurement.Spatial {
 		//    this.Value = degrees;
 		//    return true;
 		//}
-		public static Degrees Combine( Degrees left, Single degrees ) => new Degrees( left.Value + degrees );
+		public static Degrees Combine( Degrees left, Single degrees ) => new( left.Value + degrees );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -92,7 +92,7 @@ namespace Librainian.Measurement.Spatial {
 
 		public static implicit operator Single( Degrees degrees ) => degrees.Value;
 
-		public static Degrees operator -( Degrees degrees ) => new Degrees( degrees.Value * -1f );
+		public static Degrees operator -( Degrees degrees ) => new( degrees.Value * -1f );
 
 		public static Degrees operator -( Degrees left, Degrees right ) => Combine( left, -right.Value );
 
@@ -110,17 +110,17 @@ namespace Librainian.Measurement.Spatial {
 
 		public static Boolean operator >( Degrees left, Degrees right ) => left.Value > right.Value;
 
-		public static Radians ToRadians( Degrees degrees ) => new Radians( degrees.Value * DegreesToRadiansFactor );
+		public static Radians ToRadians( Degrees degrees ) => new( degrees.Value * DegreesToRadiansFactor );
 
-		public static Radians ToRadians( Single degrees ) => new Radians( degrees * DegreesToRadiansFactor );
+		public static Radians ToRadians( Single degrees ) => new( degrees * DegreesToRadiansFactor );
 
 		public Int32 CompareTo( Degrees other ) => this.Value.CompareTo( other.Value );
 
 		public Boolean Equals( Degrees other ) => Equals( this, other );
 
-		public override Boolean Equals( Object obj ) {
+		public override Boolean Equals( Object? obj ) {
 			if ( obj is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return obj is Degrees degrees && Equals( this, degrees );

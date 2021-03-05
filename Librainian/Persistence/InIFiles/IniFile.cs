@@ -95,7 +95,7 @@ namespace Librainian.Persistence.InIFiles {
 		private ConcurrentDictionary<String, IniSection> Data {
 			[DebuggerStepThrough]
 			get;
-		} = new ConcurrentDictionary<String, IniSection>();
+		} = new();
 
 		[NotNull]
 		public IEnumerable<String> Sections => this.Data.Keys;
@@ -196,7 +196,7 @@ namespace Librainian.Persistence.InIFiles {
 
 		private Boolean FoundComment( [NotNull] String? line, [NotNull] String section ) {
 			if ( String.IsNullOrWhiteSpace( line ) ) {
-				return default( Boolean );
+				return false;
 			}
 
 			if ( String.IsNullOrWhiteSpace( section ) ) {
@@ -207,7 +207,7 @@ namespace Librainian.Persistence.InIFiles {
 				return true;
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
@@ -301,7 +301,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			if ( !this.Data.TryGetValue( section, out var dict ) ) {
-				return default( Boolean ); //section not found
+				return false; //section not found
 			}
 
 			try {
@@ -321,7 +321,7 @@ namespace Librainian.Persistence.InIFiles {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section ) {
@@ -335,7 +335,7 @@ namespace Librainian.Persistence.InIFiles {
 
 			try {
 				if ( !this.Data.TryGetValue( section, out var dict ) ) {
-					return default( Boolean ); //section not found
+					return false; //section not found
 				}
 
 				await using var writer = File.AppendText( document.FullPath );
@@ -352,7 +352,7 @@ namespace Librainian.Persistence.InIFiles {
 				exception.Log();
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		public Boolean Add( [CanBeNull] String? section, [NotNull] String key, [CanBeNull] String? value ) {
@@ -391,7 +391,7 @@ namespace Librainian.Persistence.InIFiles {
 				}
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		[DebuggerStepThrough]
@@ -529,7 +529,7 @@ namespace Librainian.Persistence.InIFiles {
 					document.Delete();
 				}
 				else {
-					return default( Boolean );
+					return false;
 				}
 			}
 
@@ -554,7 +554,7 @@ namespace Librainian.Persistence.InIFiles {
 					document.Delete();
 				}
 				else {
-					return default( Boolean );
+					return false;
 				}
 			}
 
@@ -562,7 +562,7 @@ namespace Librainian.Persistence.InIFiles {
 				await this.WriteSectionAsync( document, section ).ConfigureAwait( false );
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		[DebuggerStepThrough]
@@ -588,7 +588,7 @@ namespace Librainian.Persistence.InIFiles {
 				return this.Data[ section ]!.Remove( key );
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 	}

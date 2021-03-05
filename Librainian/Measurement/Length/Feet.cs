@@ -47,31 +47,31 @@ namespace Librainian.Measurement.Length {
 		public const Byte InOneYard = 3;
 
 		/// <summary><see cref="Five" /> .</summary>
-		public static readonly Feet Five = new Feet( 5 );
+		public static readonly Feet Five = new( 5 );
 
 		/// <summary><see cref="One" /> .</summary>
-		public static readonly Feet One = new Feet( 1 );
+		public static readonly Feet One = new( 1 );
 
 		/// <summary><see cref="Seven" /> .</summary>
-		public static readonly Feet Seven = new Feet( 7 );
+		public static readonly Feet Seven = new( 7 );
 
 		/// <summary><see cref="Ten" /> .</summary>
-		public static readonly Feet Ten = new Feet( 10 );
+		public static readonly Feet Ten = new( 10 );
 
 		/// <summary><see cref="Thirteen" /> .</summary>
-		public static readonly Feet Thirteen = new Feet( 13 );
+		public static readonly Feet Thirteen = new( 13 );
 
 		/// <summary><see cref="Thirty" /> .</summary>
-		public static readonly Feet Thirty = new Feet( 30 );
+		public static readonly Feet Thirty = new( 30 );
 
 		/// <summary><see cref="Three" /> .</summary>
-		public static readonly Feet Three = new Feet( 3 );
+		public static readonly Feet Three = new( 3 );
 
 		/// <summary><see cref="Two" /> .</summary>
-		public static readonly Feet Two = new Feet( 2 );
+		public static readonly Feet Two = new( 2 );
 
 		/// <summary></summary>
-		public static readonly Feet Zero = new Feet( 0 );
+		public static readonly Feet Zero = new( 0 );
 
 		[JsonProperty]
 		public readonly Rational Value;
@@ -82,9 +82,9 @@ namespace Librainian.Measurement.Length {
 
 		public Feet( BigInteger value ) => this.Value = value;
 
-		public static Feet Combine( Feet left, Rational feet ) => new Feet( left.Value + feet );
+		public static Feet Combine( Feet left, Rational feet ) => new( left.Value + feet );
 
-		public static Feet Combine( Feet left, BigInteger seconds ) => new Feet( left.Value + seconds );
+		public static Feet Combine( Feet left, BigInteger seconds ) => new( left.Value + seconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -94,7 +94,7 @@ namespace Librainian.Measurement.Length {
 		/// <returns></returns>
 		public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
 
-		public static Feet operator -( Feet feet ) => new Feet( feet.Value * -1 );
+		public static Feet operator -( Feet feet ) => new( feet.Value * -1 );
 
 		public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
@@ -118,9 +118,9 @@ namespace Librainian.Measurement.Length {
 
 		public Boolean Equals( Feet other ) => Equals( this, other );
 
-		public override Boolean Equals( Object obj ) {
+		public override Boolean Equals( Object? obj ) {
 			if ( obj is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return obj is Feet feet && this.Equals( feet );

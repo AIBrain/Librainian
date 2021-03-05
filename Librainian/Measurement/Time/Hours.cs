@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Time {
     public record Hours( Rational Value ) : IQuantityOfTime, IComparable<Hours> {
 
         /// <summary>24</summary>
-        public const SByte InOneDay = 24;
+        public const Byte InOneDay = 24;
 
         /// <summary>Eight <see cref="Hours" /> .</summary>
         [NotNull]
@@ -68,10 +68,7 @@ namespace Librainian.Measurement.Time {
         /// <summary>Zero <see cref="Hours" /></summary>
         [NotNull]
         public static Hours Zero { get; } = new( 0 );
-
-        [JsonProperty]
-        public Rational Value { get; init; }
-
+		
         public Int32 CompareTo( [NotNull] Hours? other ) {
             if ( other == null ) {
                 throw new ArgumentNullException( nameof( other ) );

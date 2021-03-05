@@ -29,20 +29,17 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Diagnostics;
+    using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
-	using System.Net;
-	using System.Threading;
+    using System.Threading;
 	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
 	using JetBrains.Annotations;
-	using Parsing;
-	using Threading;
+    using Logging;
+    using Parsing;
 	using Directory = Pri.LongPath.Directory;
 	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-	using File = Pri.LongPath.File;
 	using Path = Pri.LongPath.Path;
 
 	public static class FolderExtensions {
@@ -82,20 +79,16 @@ namespace Librainian.FileSystem {
 		}
 		*/
 
-		/// <summary>Returns a list of all files copied.</summary>
-		/// <param name="sourceFolder">                 </param>
-		/// <param name="destinationFolder">            </param>
-		/// <param name="searchPatterns">               </param>
-		/// <param name="overwriteDestinationDocuments"></param>
-		/// <param name="crc">                          Calculate the CRC64 of source and destination documents.</param>
-		/// <param name="token"></param>
-		/// <param name="progressChanged"></param>
-		/// <param name="onEachComplete"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<DocumentCopyStatistics> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
-			[CanBeNull] IEnumerable<String>? searchPatterns, Boolean overwriteDestinationDocuments, Boolean crc,
-			Action<DownloadProgressChangedEventArgs>? progressChanged, Action<AsyncCompletedEventArgs, (IDocument source, IDocument destination)>? onEachComplete,
+        /// <summary>Returns a list of all files copied.</summary>
+        /// <param name="sourceFolder">                 </param>
+        /// <param name="destinationFolder">            </param>
+        /// <param name="searchPatterns">               </param>
+        /// <param name="overwriteDestinationDocuments"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [NotNull]
+		public static async Task<IEnumerable<DocumentCopyStatistics>> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
+			[CanBeNull] IEnumerable<String>? searchPatterns, Boolean overwriteDestinationDocuments,
 			CancellationToken token ) {
 			if ( sourceFolder is null ) {
 				throw new ArgumentNullException( nameof( sourceFolder ) );
@@ -105,67 +98,94 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( destinationFolder ) );
 			}
 
-			var documentCopyStatistics = new ConcurrentDictionary<Document, DocumentCopyStatistics>();
+			var documentCopyStatistics = new ConcurrentDictionary<IDocument, DocumentCopyStatistics>();
 
+            $"Searching for documents in {sourceFolder.FullPath.DoubleQuote()}.".Verbose();
 			var sourceFiles = sourceFolder.GetDocuments( searchPatterns ?? new[] {
 				"*.*"
-			} );
+			} ).ToAsyncEnumerable();
 
-			//TODO Create a better task manager instead of Parallel.ForEach. Limit # of active copies happening (disk saturation). Check for stalled/failed copies, etc..
+			//TODO Create a better task manager instead of Parallel.ForEach.
+			//TODO Limit # of active copies happening (disk saturation, fragmentation, thrashing).
+			//TODO Check for stalled/failed copies, etc..
 			var fileCopyManager = new FileCopyManager();
 
-			await fileCopyManager.LoadFilesToBeCopied( sourceFiles, destinationFolder );
+			await fileCopyManager.LoadFilesToBeCopied( sourceFiles, destinationFolder, overwriteDestinationDocuments, token ).ConfigureAwait( false );
 
-			Parallel.ForEach( sourceFiles.AsParallel(), CPU.HalfOfCPU /*disk != cpu*/, async sourceDocument => {
-				if ( sourceDocument is null ) {
-					return;
+			await foreach ( var sourceFileTask in fileCopyManager.FilesToBeCopied().WithCancellation( token ) ) {
+
+				var fileCopyData = await sourceFileTask.ConfigureAwait( false );
+
+				var dcs = new DocumentCopyStatistics() {
+					DestinationDocument = fileCopyData.Destination,
+					DestinationDocumentCRC64 = default( String? ),
+					SourceDocument = fileCopyData.Source,
+					SourceDocumentCRC64 = default( String? )
+                };
+
+                if ( fileCopyData.WhenCompleted != null && fileCopyData.WhenStarted != null ) {
+                    dcs.TimeTaken = fileCopyData.WhenCompleted.Value - fileCopyData.WhenStarted.Value;
+                }
+
+                if ( fileCopyData.BytesCopied != null ) {
+					dcs.BytesCopied = fileCopyData.BytesCopied.Value;
 				}
-				try {
-					var beginTime = DateTime.UtcNow;
 
-					var statistics = new DocumentCopyStatistics {
-						TimeStarted = beginTime, SourceDocument = sourceDocument
-					};
+                documentCopyStatistics[fileCopyData.Source] = dcs;
 
-					if ( crc ) {
-						statistics.SourceDocumentCRC64 = await sourceDocument.CRC64Hex(token );
-					}
+            }
 
-					var destinationDocument = new Document( destinationFolder, sourceDocument.FileName );
+			//        Parallel.ForEach( sourceFiles.AsParallel(), CPU.HalfOfCPU /*disk != cpu*/, async sourceDocument => {
+			//if ( sourceDocument is null ) {
+			//	return;
+			//}
+			//try {
+			//	var beginTime = DateTime.UtcNow;
 
-					if ( overwriteDestinationDocuments && destinationDocument.Exists() ) {
-						destinationDocument.Delete();
-					}
+			//	var statistics = new DocumentCopyStatistics {
+			//		TimeStarted = beginTime,
+			//		SourceDocument = sourceDocument
+			//	};
 
-					//File.Copy( sourceDocument.FullPath, destinationDocument.FullPath );
-					await sourceDocument.Copy( destinationDocument, token, progressChanged, onEachComplete ).ConfigureAwait(false);
+			//	if ( crc ) {
+			//		statistics.SourceDocumentCRC64 = await sourceDocument.CRC64Hex( token );
+			//	}
 
-					if ( crc ) {
-						statistics.DestinationDocumentCRC64 = await destinationDocument.CRC64Hex( token).ConfigureAwait( false );
-					}
+			//	var destinationDocument = new Document( destinationFolder, sourceDocument.FileName );
 
-					var endTime = DateTime.UtcNow;
+			//	if ( overwriteDestinationDocuments && destinationDocument.Exists() ) {
+			//		destinationDocument.Delete();
+			//	}
 
-					if ( destinationDocument.Exists() == false ) {
-						return;
-					}
+			//	//File.Copy( sourceDocument.FullPath, destinationDocument.FullPath );
+			//	await sourceDocument.Copy( destinationDocument, token, progressChanged, onEachComplete ).ConfigureAwait( false );
 
-					statistics.BytesCopied = destinationDocument.Size().GetValueOrDefault( 0 );
+			//	if ( crc ) {
+			//		statistics.DestinationDocumentCRC64 = await destinationDocument.CRC64Hex( token ).ConfigureAwait( false );
+			//	}
 
-					if ( crc ) {
-						statistics.BytesCopied *= 2;
-					}
+			//	var endTime = DateTime.UtcNow;
 
-					statistics.TimeTaken = endTime - beginTime;
-					statistics.DestinationDocument = destinationDocument;
-					documentCopyStatistics.TryAdd( statistics );
-				}
-				catch ( Exception ) {
-					//swallow any errors
-				}
-			} );
+			//	if ( destinationDocument.Exists() == false ) {
+			//		return;
+			//	}
 
-			return documentCopyStatistics;
+			//	statistics.BytesCopied = destinationDocument.Size().GetValueOrDefault( 0 );
+
+			//	if ( crc ) {
+			//		statistics.BytesCopied *= 2;
+			//	}
+
+			//	statistics.TimeTaken = endTime - beginTime;
+			//	statistics.DestinationDocument = destinationDocument;
+			//	documentCopyStatistics.TryAdd( statistics );
+			//}
+			//catch ( Exception ) {
+			//	//swallow any errors
+			//}
+			//} );
+
+			return documentCopyStatistics.Values;
 		}
 
 		[ItemNotNull]

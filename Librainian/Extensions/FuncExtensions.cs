@@ -32,11 +32,11 @@ namespace Librainian.Extensions {
 	/// <summary>http://www.jaylee.org/post/2013/04/22/Immutable-Data-and-Memoization-in-CSharp-Part-2.aspx</summary>
 	public static class FuncExtensions {
 
-		public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new ConditionalWeakTable<Object, Storage>();
+		public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new();
 
 		// Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
 		[CanBeNull]
-		public static TResult ApplyMemoized<TSource, TResult, TParam>(
+		public static TResult? ApplyMemoized<TSource, TResult, TParam>(
 			[NotNull] this TSource source,
 			[NotNull] Func<TSource, TParam, TResult> selector,
 			[NotNull] TParam param
@@ -57,7 +57,7 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		public static Func<TParam, TResult> AsWeakMemoized<TSource, TResult, TParam>( [NotNull] this Func<TSource, TParam, TResult> selector, [NotNull] TSource source ) {
+		public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( [NotNull] this Func<TSource, TParam, TResult> selector, [NotNull] TSource source ) {
 			if ( selector == null ) {
 				throw new ArgumentNullException( nameof( selector ) );
 			}
@@ -80,10 +80,16 @@ namespace Librainian.Extensions {
 				if ( !cached ) {
 					res = selector( source, param );
 
-					values[key] = res;
+					if ( res != null ) {
+						values[key] = res;
+					}
 				}
 
-				return ( TResult )res;
+				if ( res != null ) {
+					return ( TResult? ) res;
+				}
+
+				return default;
 			};
 		}
 

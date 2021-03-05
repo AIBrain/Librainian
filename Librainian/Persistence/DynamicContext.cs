@@ -47,7 +47,7 @@ namespace Librainian.Persistence {
 
 		public DynamicContext() { }
 
-		private Dictionary<String, Object> Context { get; } = new Dictionary<String, Object>();
+		private Dictionary<String, Object> Context { get; } = new();
 
 		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 		public virtual void GetObjectData( [CanBeNull] SerializationInfo info, StreamingContext context ) {

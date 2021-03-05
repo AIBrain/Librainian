@@ -73,7 +73,7 @@ namespace Librainian.Graphics.Geometry {
 				resultSegmentPoint1 = new Vector3();
 				resultSegmentPoint2 = new Vector3();
 
-				return default( Boolean );
+				return false;
 			}
 
 			var p2 = line1Point2;
@@ -83,7 +83,7 @@ namespace Librainian.Graphics.Geometry {
 				resultSegmentPoint1 = new Vector3();
 				resultSegmentPoint2 = new Vector3();
 
-				return default( Boolean );
+				return false;
 			}
 
 			var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
@@ -98,7 +98,7 @@ namespace Librainian.Graphics.Geometry {
 				resultSegmentPoint1 = new Vector3();
 				resultSegmentPoint2 = new Vector3();
 
-				return default( Boolean );
+				return false;
 			}
 
 			var numer = d1343 * d4321 - d1321 * d4343;
@@ -145,13 +145,13 @@ namespace Librainian.Graphics.Geometry {
 			var p43 = p4 - p3;
 
 			if ( p43.SquareLength < Single.Epsilon ) {
-				return default( Boolean );
+				return false;
 			}
 
 			var p21 = p2 - p1;
 
 			if ( p21.SquareLength < Single.Epsilon ) {
-				return default( Boolean );
+				return false;
 			}
 
 			var d1343 = p13.X * p43.X + p13.Y * p43.Y + p13.Z * p43.Z;
@@ -163,7 +163,7 @@ namespace Librainian.Graphics.Geometry {
 			var denom = d2121 * d4343 - d4321 * d4321;
 
 			if ( Math.Abs( denom ) < Single.Epsilon ) {
-				return default( Boolean );
+				return false;
 			}
 
 			var numer = d1343 * d4321 - d1321 * d4343;

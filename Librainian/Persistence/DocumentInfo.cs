@@ -1,6 +1,6 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -17,10 +17,11 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DocumentInfo.cs" last formatted on 2020-10-09 at 9:45 AM.
+// File "DocumentInfo.cs" last formatted on 2021-02-07 at 2:48 PM.
 
 namespace Librainian.Persistence {
 	using System;
@@ -40,9 +41,6 @@ namespace Librainian.Persistence {
 	[JsonObject]
 	public class DocumentInfo : IEquatable<DocumentInfo> {
 
-		[JsonIgnore]
-		private UInt64? _length;
-
 		public DocumentInfo( [NotNull] Document document ) {
 			if ( document is null ) {
 				throw new ArgumentNullException( nameof( document ) );
@@ -59,12 +57,16 @@ namespace Librainian.Persistence {
 			this.LastScanned = null;
 		}
 
-		/// <summary>"drive:\folder\file.ext"</summary>
+		/// <summary>
+		///     "drive:\folder\file.ext"
+		/// </summary>
 		[NotNull]
 		[JsonProperty]
 		public String AbsolutePath { get; private set; }
 
-		/// <summary>The result of the Add-Hashing function.</summary>
+		/// <summary>
+		///     The result of the Add-Hashing function.
+		/// </summary>
 		[JsonProperty]
 		public Int32? AddHash { get; private set; }
 
@@ -80,57 +82,48 @@ namespace Librainian.Persistence {
 		[JsonProperty]
 		public DateTime? CreationTimeUtc { get; private set; }
 
-		/// <summary>The most recent UTC datetime this info was updated.</summary>
+		/// <summary>
+		///     The most recent UTC datetime this info was updated.
+		/// </summary>
 		[JsonProperty]
 		public DateTime? LastScanned { get; private set; }
 
 		[JsonProperty]
 		public DateTime? LastWriteTimeUtc { get; private set; }
 
-		/// <summary></summary>
+		/// <summary>
+		/// </summary>
 		[JsonProperty]
-		public UInt64? Length {
-			get => this._length;
+		public UInt64? Length { get; private set; }
 
-			private set => this._length = value;
-		}
+		public Boolean Equals( [CanBeNull] DocumentInfo? other ) => Equals( this, other );
 
-		public Boolean Equals( [CanBeNull] DocumentInfo other ) => Equals( this, other );
-
-		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo left, [NotNull] DocumentInfo right ) {
-			if ( left is null ) {
-				throw new ArgumentNullException( nameof( left ) );
-			}
-
-			if ( right is null ) {
-				throw new ArgumentNullException( nameof( right ) );
-			}
-
-			if ( !left.Length.HasValue || !right.Length.HasValue ) {
-				return default( Boolean? );
-			}
-
-			if ( !left.CreationTimeUtc.HasValue || !right.CreationTimeUtc.HasValue || !left.LastWriteTimeUtc.HasValue || !right.LastWriteTimeUtc.HasValue ) {
-				return default( Boolean? );
-			}
-
-			if ( left.Length.Value != right.Length.Value ) {
+		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo? left, [NotNull] DocumentInfo? right ) {
+			if ( left is null || right is null ) {
 				return true;
 			}
 
-			if ( left.CreationTimeUtc.Value != right.CreationTimeUtc.Value || left.LastWriteTimeUtc.Value != right.LastWriteTimeUtc.Value ) {
+			if ( left.Length != right.Length ) {
 				return true;
 			}
 
-			if ( !left.AddHash.HasValue || !right.AddHash.HasValue || !left.CRC32.HasValue || !right.CRC32.HasValue || !left.CRC64.HasValue || !right.CRC64.HasValue ) {
+			if ( left.CreationTimeUtc != right.CreationTimeUtc || left.LastWriteTimeUtc != right.LastWriteTimeUtc ) {
 				return true;
 			}
 
-			if ( left.AddHash.Value != right.AddHash.Value || left.CRC32.Value != right.CRC32.Value || left.CRC64.Value != right.CRC64.Value ) {
+			if ( left.AddHash != right.AddHash ) {
 				return true;
 			}
 
-			return default( Boolean? );
+			if ( left.CRC32 != right.CRC32 ) {
+				return true;
+			}
+
+			if ( left.CRC64 != right.CRC64 ) {
+				return true;
+			}
+
+			return false;
 		}
 
 		[NotNull]
@@ -144,50 +137,52 @@ namespace Librainian.Persistence {
 		///     </para>
 		///     <para>Unless <paramref name="left" /> is the same object as <paramref name="right" />.</para>
 		/// </summary>
-		/// <param name="left"></param>
+		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true; //this is true for null==null, right?
+		public static Boolean Equals( [CanBeNull] DocumentInfo? left, [CanBeNull] DocumentInfo? right ) {
+			if ( left is null || right is null ) {
+				return false;
 			}
 
-			if ( left is null || right is null ) {
-				return default( Boolean );
+			if ( ReferenceEquals( left, right ) ) {
+				return true;
 			}
 
 			if ( left.LastScanned is null || right.LastScanned is null ) {
-				return default( Boolean ); //the files need to be ran through Update() before we can compare them.
+				return false; //the files need to be ran through Update() before we can compare them.
 			}
 
-			if ( !left.Length.HasValue || !right.Length.HasValue || left.Length.Value != right.Length.Value ) {
-				return default( Boolean );
+			if ( left.Length != right.Length ) {
+				return false;
 			}
 
-			if ( !left.AddHash.HasValue || !right.AddHash.HasValue || left.AddHash.Value != right.AddHash.Value ) {
-				return default( Boolean );
+			if ( left.AddHash != right.AddHash ) {
+				return false;
 			}
 
-			if ( !left.CRC32.HasValue || !right.CRC32.HasValue || left.CRC32.Value != right.CRC32.Value ) {
-				return default( Boolean );
+			if ( left.CRC32 != right.CRC32 ) {
+				return false;
 			}
 
-			//Okay, we've compared by 3 different hashes. File should be unique by now.
-			//The chances of 3 collisions is so low.. I won't even bother worrying about it happening in my lifetime.
-			return left.CRC64.HasValue && right.CRC64.HasValue && left.CRC64.Value == right.CRC64.Value;
+			//The chance of 3 collisions is so low.. I won't even bother worrying about it happening.
+			return left.CRC64 == right.CRC64; //Okay, we've compared by 3 different hashes. File should be unique by now.
 		}
 
 		public static Boolean operator !=( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => !Equals( left, right );
 
 		public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
 
-		public override Boolean Equals( Object obj ) => Equals( this, obj as DocumentInfo );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as DocumentInfo );
 
-		public override Int32 GetHashCode() => this.Length.GetHashCode();
+		// ReSharper disable once NonReadonlyMemberInGetHashCode
+		public override Int32 GetHashCode() => this.Length?.GetHashCode() ?? 0;
 
-		/// <summary>Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)</summary>
+		/// <summary>
+		///     Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
+		/// </summary>
 		/// <param name="document"></param>
-		/// <param name="token"></param>
+		/// <param name="token">   </param>
 		/// <returns></returns>
 		public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
 			if ( document is null ) {
@@ -196,21 +191,17 @@ namespace Librainian.Persistence {
 
 			$"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
-			var addHash = Task.Run( document.CalculateHarkerHashInt32, this.CancellationToken );
-			var crc32 = document.CRC32( this.CancellationToken ).AsValueTask();
-			var crc64 = document.CRC64( this.CancellationToken ).AsValueTask();
+			var addHash = Task.Run( document.CalculateHarkerHashInt32, token );
+			var crc32 = document.CRC32( token ).AsValueTask().AsTask();
+			var crc64 = document.CRC64( token ).AsValueTask().AsTask();
 
-			await Task.WhenAll( crc32.AsTask(), crc64.AsTask(), addHash ).ConfigureAwait( false );
-
+			await Task.WhenAll( crc32, crc64, addHash ).ConfigureAwait( false );
 
 			this.AddHash = addHash.Result;
 
-
 			this.CRC32 = crc32.Result;
 
-
 			this.CRC64 = crc64.Result;
-
 
 			$"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}...".Verbose();
 		}
@@ -230,21 +221,17 @@ namespace Librainian.Persistence {
 			this.CRC64 = null;
 		}
 
-		/// <summary>Looks at the entire document.</summary>
+		/// <summary>
+		///     Looks at the entire document.
+		/// </summary>
 		/// <returns></returns>
 		public async Task ScanAsync( CancellationToken token ) {
 			try {
-				var needScanned = false;
+				var record = MainDocumentTable.DocumentInfos[this.AbsolutePath];
 
-				var record = MasterDocumentTable.DocumentInfos[this.AbsolutePath];
+				var needScanned = AreEitherDifferent( this, record );
 
-				if ( record != null ) {
-					if ( AreEitherDifferent( this, record ) == true ) {
-						needScanned = true;
-					}
-				}
-
-				if ( needScanned ) {
+				if ( needScanned == true ) {
 					var document = new Document( this.AbsolutePath );
 
 					this.Length = document.Length;
@@ -256,10 +243,13 @@ namespace Librainian.Persistence {
 					this.LastScanned = DateTime.UtcNow;
 
 					var copy = new DocumentInfo( document ) {
-						LastScanned = this.LastScanned, CRC32 = this.CRC32, CRC64 = this.CRC64, AddHash = this.AddHash
+						LastScanned = this.LastScanned,
+						CRC32 = this.CRC32,
+						CRC64 = this.CRC64,
+						AddHash = this.AddHash
 					};
 
-					MasterDocumentTable.DocumentInfos[this.AbsolutePath] = copy;
+					MainDocumentTable.DocumentInfos[this.AbsolutePath] = copy;
 				}
 			}
 			catch ( Exception exception ) {

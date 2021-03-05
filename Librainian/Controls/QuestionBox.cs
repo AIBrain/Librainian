@@ -29,7 +29,6 @@
 namespace Librainian.Controls {
 
 	using System;
-	using System.ComponentModel;
 	using System.Windows.Forms;
 
 	public partial class QuestionBox : Form {
@@ -39,7 +38,7 @@ namespace Librainian.Controls {
 
 		public QuestionBox( String question ) {
 			this.Question = question;
-			this.InitializeComponent();
+			//this.InitializeComponent();
 			this.AddControls();
 		}
 
@@ -67,12 +66,12 @@ namespace Librainian.Controls {
 			void AddCancelButton() {
 				var cancelButton = new Button {
 					Text = "Cancel",
-					Dock = DockStyle.Right,
-					MouseClick += ( sender, args ) => {
-						this.Response = null;
-						this.DialogResult = DialogResult.Cancel;
-						this.Close();
-					}
+					Dock = DockStyle.Right
+				};
+				cancelButton.MouseClick += ( _, _ ) => {
+					this.Response = null;
+					this.DialogResult = DialogResult.Cancel;
+					this.Close();
 				};
 
 				flow.Controls.Add( cancelButton );
@@ -108,11 +107,13 @@ namespace Librainian.Controls {
 
 		}
 
+		/*
 		public QuestionBox( IContainer container ) {
 			container.Add( this );
 
-			this.InitializeComponent();
+			//this.InitializeComponent();
 		}
+		*/
 
 	}
 

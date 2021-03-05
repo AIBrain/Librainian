@@ -39,34 +39,32 @@ namespace Librainian.Financial.Containers.Shopping {
 	public class ShoppingCart : ABetterClassDispose {
 
 		[JsonProperty]
-		private ConcurrentList<ShoppingItem> Items { get; } = new ConcurrentList<ShoppingItem>(); //TODO make this a dictionary of Item.Counts
+		private ConcurrentList<ShoppingItem> Items { get; } = new(); //TODO make this a dictionary of Item.Counts
 
-		public Boolean AddItem( [CanBeNull] ShoppingItem item ) => !( item is null ) && this.Items.TryAdd( item );
+		public Boolean AddItem( [NotNull] ShoppingItem item ) => this.Items.TryAdd( item );
 
-		public UInt32 AddItems( [CanBeNull] params ShoppingItem[] items ) {
-			if ( null == items ) {
+		public UInt32 AddItems( [CanBeNull] params ShoppingItem[]? items ) {
+			if ( items is null ) {
 				return 0;
 			}
 
 			return ( UInt32 )items.Count( this.AddItem );
 		}
 
-		public UInt32 AddItems( [CanBeNull] ShoppingItem item, UInt32 quantity ) {
-			if ( item is null ) {
-				return 0;
-			}
+		public UInt32 AddItems( [CanBeNull] ShoppingItem? item, UInt32 quantity = 1 ) {
+            UInt32 added = 0;
 
-			UInt32 added = 0;
+            if ( item is not null ) {
+                while ( quantity.Any() ) {
+                    if ( this.Items.TryAdd( item ) ) {
+                        added++;
+                    }
 
-			while ( quantity.Any() ) {
-				if ( this.Items.TryAdd( item ) ) {
-					added++;
-				}
+                    quantity--;
+                }
+            }
 
-				quantity--;
-			}
-
-			return added;
+            return added;
 		}
 
 		/// <summary>Dispose any disposable members.</summary>
@@ -84,14 +82,16 @@ namespace Librainian.Financial.Containers.Shopping {
 			var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 
 			foreach ( var shoppingItem in this.Items ) {
-				if ( !( shoppingItem is null ) ) {
-					if ( !items.ContainsKey( shoppingItem ) ) {
-						items.TryAdd( shoppingItem, 0 );
-					}
+                if ( shoppingItem is null ) {
+                    continue;
+                }
 
-					items[shoppingItem]++;
-				}
-			}
+                if ( !items.ContainsKey( shoppingItem ) ) {
+                    items.TryAdd( shoppingItem, 0 );
+                }
+
+                items[shoppingItem]++;
+            }
 
 			return items;
 		}

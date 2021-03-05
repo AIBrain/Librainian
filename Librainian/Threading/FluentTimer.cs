@@ -31,8 +31,9 @@ namespace Librainian.Threading {
 	using JetBrains.Annotations;
 	using Measurement.Frequency;
 	using Measurement.Time;
+    using Rationals;
 
-	public static class FluentTimerExt {
+    public static class FluentTimerExt {
 
 		/// <summary>
 		///     <para>Start the <paramref name="timer" />.</para>
@@ -46,7 +47,7 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( timer ) );
 			}
 
-			timer._timer.Start();
+			timer.Timer.Start();
 
 			return timer;
 		}
@@ -61,7 +62,7 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( timer ) );
 			}
 
-			timer._timer.AutoReset = set;
+			timer.Timer.AutoReset = set;
 
 			return timer;
 		}
@@ -78,7 +79,7 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( timer ) );
 			}
 
-			timer._timer.Start();
+			timer.Timer.Start();
 
 			return timer;
 		}
@@ -108,13 +109,13 @@ namespace Librainian.Threading {
 
 			var create = new FluentTimer( mills ).Once();
 
-			create._timer.Elapsed += ( sender, args ) => {
+			create.Timer.Elapsed += ( sender, args ) => {
 				try {
-					create._timer.Stop();
+					create.Timer.Stop();
 					onTick?.Invoke();
 				}
 				finally {
-					if ( create._timer.AutoReset ) {
+					if ( create.Timer.AutoReset ) {
 						create.Start();
 					}
 				}
@@ -129,7 +130,7 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( timer ) );
 			}
 
-			timer._timer.Stop();
+			timer.Timer.Stop();
 
 			return timer;
 		}
@@ -150,7 +151,7 @@ namespace Librainian.Threading {
 
 		[NotNull]
 		public static FluentTimer Once( [NotNull] this FluentTimer timer ) {
-			timer._timer.AutoReset = false;
+			timer.Timer.AutoReset = false;
 
 			return timer;
 		}
@@ -167,7 +168,7 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( timer ) );
 			}
 
-			timer._timer.Start();
+			timer.Timer.Start();
 
 			return timer;
 		}
@@ -178,7 +179,7 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( timer ) );
 			}
 
-			timer._timer.Stop();
+			timer.Timer.Stop();
 
 			return timer;
 		}
@@ -187,21 +188,21 @@ namespace Librainian.Threading {
 
 	public class FluentTimer  {
 
-		internal Timer _timer { get; }
+		internal Timer Timer { get; }
 
 		/// <summary>
 		///     Defaults to 1 millisecond.
 		/// </summary>
 		public FluentTimer() : this( Milliseconds.One ) { }
 
-		public FluentTimer( Double milliseconds ) : this( new Milliseconds( milliseconds ) ) { }
+		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Rational )milliseconds ) ) { }
 
 		public FluentTimer( [NotNull] IQuantityOfTime quantityOfTime ) {
 			if ( quantityOfTime == null ) {
 				throw new ArgumentNullException( nameof( quantityOfTime ) );
 			}
 
-			this._timer = new Timer( quantityOfTime.ToTimeSpan().TotalMilliseconds );
+			this.Timer = new Timer( quantityOfTime.ToTimeSpan().TotalMilliseconds );
 		}
 
 	}

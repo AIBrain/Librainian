@@ -22,6 +22,8 @@
 // 
 // File "FolderBag.cs" last formatted on 2020-08-14 at 8:40 PM.
 
+#nullable enable
+
 namespace Librainian.FileSystem {
 
 	using System;
@@ -39,10 +41,10 @@ namespace Librainian.FileSystem {
 	public class FolderBag : IEnumerable<Folder> {
 
 		[JsonProperty]
-		public List<FolderBagNode> Endings { get; } = new List<FolderBagNode>();
+		public List<FolderBagNode> Endings { get; } = new();
 
 		[JsonProperty]
-		public List<FolderBagNode> Roots { get; } = new List<FolderBagNode>();
+		public List<FolderBagNode> Roots { get; } = new();
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
 		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
@@ -65,24 +67,24 @@ namespace Librainian.FileSystem {
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		public Boolean Add( [CanBeNull] String? folderpath ) {
-			if ( null == folderpath ) {
-				return default( Boolean );
-			}
+		public Boolean Add( [NotNull] String folderpath ) {
+            if ( folderpath == null ) {
+                throw new ArgumentNullException( nameof( folderpath ) );
+            }
 
-			this.FoundAnotherFolder( new Folder( folderpath ) );
+            this.FoundAnotherFolder( new Folder( folderpath ) );
 
 			return true;
 		}
 
-		public UInt64 AddRange( [CanBeNull] IEnumerable<String> folderpaths ) {
-			var counter = 0UL;
+		public UInt64 AddRange( [NotNull] IEnumerable<String> folderpaths ) {
+            if ( folderpaths is null ) {
+                throw new ArgumentNullException( nameof( folderpaths ) );
+            }
 
-			if ( null == folderpaths ) {
-				return counter;
-			}
+            var counter = 0UL;
 
-			foreach ( var folderpath in folderpaths ) {
+            foreach ( var folderpath in folderpaths ) {
 				this.FoundAnotherFolder( new Folder( folderpath ) );
 				counter++;
 			}
@@ -117,13 +119,13 @@ namespace Librainian.FileSystem {
 			// ReSharper disable once LoopCanBePartlyConvertedToQuery
 			foreach ( var pathPart in pathParts.Skip( 1 ) ) {
 				var nextNode = new FolderBagNode( pathPart, currentNode );
-				existingNode = currentNode.SubFolders.Find( node => FolderBagNode.Equals( node, nextNode ) );
+				existingNode = currentNode?.SubFolders.Find( node => FolderBagNode.Equals( node, nextNode ) );
 
 				if ( !FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
 					nextNode = existingNode; // already there? don't need to add it.
 				}
 				else {
-					currentNode.SubFolders.Add( nextNode ); // didn't find one, add it
+					currentNode?.SubFolders.Add( nextNode ); // didn't find one, add it
 				}
 
 				currentNode = nextNode;
@@ -133,8 +135,10 @@ namespace Librainian.FileSystem {
 
 			//if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
 
-			this.Endings.Add( currentNode );
-		}
+            if ( currentNode != null ) {
+                this.Endings.Add( currentNode );
+            }
+        }
 
 	}
 

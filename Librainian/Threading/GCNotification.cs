@@ -30,7 +30,7 @@ namespace Librainian.Threading {
 	/// <summary>From http://www.wintellect.com/cs/blogs/jeffreyr/default.aspx</summary>
 	public static class GcNotification {
 
-		private static Action<Int32> _sGcDone;
+		private static Action<Int32>? _sGcDone;
 
 		public static event Action<Int32> GcDone {
 			add {

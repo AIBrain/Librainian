@@ -108,7 +108,7 @@ namespace Librainian.Collections.Sets {
 		public Boolean Contains( [NotNull] T item ) => this.Set.ContainsKey( item );
 
 		[DebuggerStepThrough]
-		public Boolean Remove( [NotNull] T item ) => this.Set.TryRemove( item, out _ );
+		public Boolean Remove( [NotNull] T item ) => this.Set.TryRemove( item, out var _ );
 
 		/// <summary>
 		///     Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" />

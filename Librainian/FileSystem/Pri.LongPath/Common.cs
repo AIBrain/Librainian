@@ -26,6 +26,7 @@
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
@@ -141,7 +142,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static Boolean IsPathDots( [NotNull] this String path ) {
 			path = path.ThrowIfBlank();
 
-			return path == "." || path == "..";
+			return path is "." or "..";
 		}
 
 		public static Boolean IsPathUnc( [NotNull] this String path ) {
@@ -302,12 +303,22 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[NotNull]
 		[Pure]
+		[DebuggerStepThrough]
 		public static String ThrowIfBlank( [CanBeNull] this String? path ) {
-			if ( String.IsNullOrWhiteSpace( path = path?.Trim() ) ) {
+			if ( String.IsNullOrEmpty( path = path?.Trim() ) ) {
 				throw new ArgumentNullException( nameof( path ), "Value cannot be null or whitespace." );
 			}
 
 			return path;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		public static void ThrowIfBlank( [CanBeNull] ref String? path ) {
+			if ( String.IsNullOrEmpty( path?.Trim() ) ) {
+				throw new ArgumentNullException( nameof( path ), "Value cannot be null or whitespace." );
+			}
+
 		}
 
 		public static void ThrowIfError( NativeMethods.ERROR errorCode, IntPtr byteArray ) {
@@ -351,7 +362,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			// This doesn't have to be perfect, but is a perf optimization.
-			var isInvalidPath = errorCode == NativeMethods.ERROR.ERROR_INVALID_NAME || errorCode == NativeMethods.ERROR.ERROR_BAD_PATHNAME;
+			var isInvalidPath = errorCode is NativeMethods.ERROR.ERROR_INVALID_NAME or NativeMethods.ERROR.ERROR_BAD_PATHNAME;
 			var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
 			switch ( errorCode ) {

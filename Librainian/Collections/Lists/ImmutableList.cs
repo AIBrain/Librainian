@@ -117,7 +117,7 @@ namespace Librainian.Collections.Lists {
 		Boolean ICollection<T>.Remove( T item ) {
 			this.ThrowNotMutable();
 
-			return default( Boolean );
+			return false;
 		}
 
 		/// <summary>This method is unsupported on this type, because it is immutable.</summary>

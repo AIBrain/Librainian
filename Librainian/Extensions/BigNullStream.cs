@@ -56,7 +56,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) {
+		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) {
 			if ( !this.CanRead ) {
 				throw new StreamReadException( "This stream doesn't support reading." );
 			}
@@ -75,24 +75,12 @@ namespace Librainian.Extensions {
 		}
 
 		public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
-			var newPosition = this.Position;
-
-			switch ( origin ) {
-				case SeekOrigin.Begin:
-					newPosition = offset;
-
-					break;
-
-				case SeekOrigin.Current:
-					newPosition = this.Position + offset;
-
-					break;
-
-				case SeekOrigin.End:
-					newPosition = this.Length + offset;
-
-					break;
-			}
+			var newPosition = origin switch {
+				SeekOrigin.Begin => offset,
+				SeekOrigin.Current => this.Position + offset,
+				SeekOrigin.End => this.Length + offset,
+				_ => this.Position
+			};
 
 			if ( newPosition < 0 ) {
 				throw new ArgumentException( "Attempt to seek before start of stream." );

@@ -36,7 +36,7 @@ namespace Librainian.Internet.Servers {
 	public class Cookies {
 
 		[NotNull]
-		private SortedList<String, Cookie> CookieCollection { get; } = new SortedList<String, Cookie>();
+		private SortedList<String, Cookie> CookieCollection { get; } = new();
 
 		/// <summary>
 		///     Returns a Cookies instance populated by parsing the specified String. The String should be the value of the
@@ -102,11 +102,11 @@ namespace Librainian.Internet.Servers {
 		/// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
 		/// <param name="name">The name of the cookie.</param>
 		/// <returns></returns>
-		[CanBeNull]
-		public String? GetValue( [NotNull] String name ) {
+		[NotNull]
+        public String GetValue( [NotNull] String name ) {
 			var cookie = this.Get( name );
 
-			return cookie is null ? "" : cookie.Value;
+			return cookie is null ? String.Empty : cookie.Value;
 		}
 
 		/// <summary>

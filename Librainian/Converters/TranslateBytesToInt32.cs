@@ -20,9 +20,10 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TranslateBytesToInt32.cs" last formatted on 2021-01-09 at 4:01 PM.
+// File "TranslateBytesToInt32.cs" last formatted on 2020-08-14 at 8:32 PM.
 
 namespace Librainian.Converters {
+
 	using System;
 	using System.Runtime.InteropServices;
 
@@ -30,11 +31,14 @@ namespace Librainian.Converters {
 	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
 	public struct TranslateBytesToInt32 {
 
+		// ReSharper disable once FieldCanBeMadeReadOnly.Global
 		[FieldOffset( 0 )]
 		public Byte[] ByteArray;
 
+		// ReSharper disable once FieldCanBeMadeReadOnly.Global
 		[FieldOffset( 0 )]
 		public Int32[] IntArray;
 
 	}
+
 }

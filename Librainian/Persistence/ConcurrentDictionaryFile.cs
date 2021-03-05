@@ -47,7 +47,7 @@ namespace Librainian.Persistence {
 
 		private volatile Boolean _isLoading;
 
-		// ReSharper disable once NotNullMemberIsNotInitialized
+		
 		private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
 		/// <summary>Disallow constructor without a document/filename</summary>
@@ -88,7 +88,7 @@ namespace Librainian.Persistence {
 			set => this._isLoading = value;
 		}
 
-		public CancellationTokenSource MainCTS { get; } = new CancellationTokenSource();
+		public CancellationTokenSource MainCTS { get; } = new();
 
 		public void Dispose() {
 			this.Dispose( true );

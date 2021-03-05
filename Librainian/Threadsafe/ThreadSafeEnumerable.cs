@@ -34,13 +34,13 @@ namespace Librainian.Threadsafe {
 
 	public class ThreadSafeEnumerable<T> : IEnumerable<T> {
 
-		public ThreadSafeEnumerable( [NotNull] IEnumerable<T> original ) => this._Original = original ?? throw new ArgumentNullException( nameof( original ) );
+		public ThreadSafeEnumerable( [NotNull] IEnumerable<T> original ) => this._original = original ?? throw new ArgumentNullException( nameof( original ) );
 
 		[NotNull]
-		private IEnumerable<T> _Original { get; }
+		private IEnumerable<T> _original { get; }
 
 		[NotNull]
-		public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this._Original.GetEnumerator() );
+		public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this._original.GetEnumerator() );
 
 		[NotNull]
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
@@ -50,16 +50,16 @@ namespace Librainian.Threadsafe {
 			internal ThreadSafeEnumerator( [NotNull] IEnumerator<T> original ) => this.original = original ?? throw new ArgumentNullException( nameof( original ) );
 
 			[NotNull]
-			private ThreadLocal<T> current { get; } = new ThreadLocal<T>();
+			private ThreadLocal<T> current { get; } = new();
 
 			[NotNull]
 			private IEnumerator<T> original { get; }
 
 			[NotNull]
-			private Object padlock { get; } = new Object();
+			private Object padlock { get; } = new();
 
 			[CanBeNull]
-			public T Current => this.current.Value;
+			public T? Current => this.current.Value;
 
 			[CanBeNull]
 			Object? IEnumerator.Current => this.Current;

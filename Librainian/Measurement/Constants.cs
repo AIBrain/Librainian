@@ -44,12 +44,12 @@ namespace Librainian.Measurement {
 		public const String ValueIsTooLow = "this value is too low. like really low.";
 
 		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MaxValue (79228162514264337593543950335M)</summary>
-		public static readonly BigInteger MaximumUsefulDecimal = new BigInteger( Decimal.MaxValue );
+		public static readonly BigInteger MaximumUsefulDecimal = new( Decimal.MaxValue );
 
 		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MinValue (-79228162514264337593543950335M)</summary>
-		public static readonly BigInteger MinimumUsefulDecimal = new BigInteger( Decimal.MinValue );
+		public static readonly BigInteger MinimumUsefulDecimal = new( Decimal.MinValue );
 
-		public static readonly Rational OneOverTwo = new Rational( 1, 2 ); //TODO overkill. But correct. lol.
+		public static readonly Rational OneOverTwo = new( 1, 2 ); //TODO overkill. But correct. lol.
 
 	}
 

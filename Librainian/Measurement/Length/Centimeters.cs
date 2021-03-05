@@ -32,10 +32,10 @@ namespace Librainian.Measurement.Length {
 	public struct Centimeters {
 
 		/// <summary>One <see cref="Centimeters" /> .</summary>
-		public static readonly Centimeters One = new Centimeters( 1 );
+		public static readonly Centimeters One = new( 1 );
 
 		/// <summary>Two <see cref="Centimeters" /> .</summary>
-		public static readonly Centimeters Two = new Centimeters( 2 );
+		public static readonly Centimeters Two = new( 2 );
 
 		[JsonProperty]
 		public readonly Rational Value;

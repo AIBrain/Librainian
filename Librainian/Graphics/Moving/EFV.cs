@@ -52,11 +52,11 @@ namespace Librainian.Graphics.Moving {
 		/// <remarks>I need to stop coding while I'm asleep.</remarks>
 		[JsonProperty]
 		[NotNull]
-		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples = new ConcurrentDictionary<UInt64, IList<UInt64>>();
+		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples = new();
 
 		[JsonProperty]
 		[NotNull]
-		public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new ConcurrentDictionary<UInt64, Pixelyx>();
+		public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new();
 
 		public Efv() => this.Checksum = UInt64.MaxValue;
 

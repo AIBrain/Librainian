@@ -40,7 +40,7 @@ namespace Librainian.Internet {
 
 	public static class InternetExtensions {
 
-		private static Regex ValidateURLRegex { get; } = new Regex( @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled );
+		private static Regex ValidateURLRegex { get; } = new( @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled );
 
 		[ItemCanBeNull]
 		public static async Task<TextReader> DoRequestAsync( [NotNull] this WebRequest request ) {
@@ -52,7 +52,7 @@ namespace Librainian.Internet {
 													   asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request )
 								   .ConfigureAwait( false );
 
-#if !NET48
+#if NET5_0_OR_GREATER
 			await
 #endif
 				using var stream = result.GetResponseStream();
@@ -143,7 +143,7 @@ namespace Librainian.Internet {
 
 				using var response = await request.GetResponseAsync().ConfigureAwait( false );
 
-#if !NET48
+#if NET5_0_OR_GREATER
 				await
 #endif
 					using var dataStream = response.GetResponseStream();
@@ -163,16 +163,16 @@ namespace Librainian.Internet {
 
 		public static Boolean IsValidIp( this String ip ) {
 			if ( !Regex.IsMatch( ip, "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}" ) ) {
-				return default( Boolean ); //TODO precompile this regex
+				return false; //TODO precompile this regex
 			}
 
 			var ips = ip.Split( '.' );
 
-			if ( ips.Length == 4 || ips.Length == 6 ) {
+			if ( ips.Length is 4 or 6) {
 				return Int32.Parse( ips[0] ) < 256 && ( Int32.Parse( ips[1] ) < 256 ) & ( Int32.Parse( ips[2] ) < 256 ) & ( Int32.Parse( ips[3] ) < 256 );
 			}
 
-			return default( Boolean );
+			return false;
 		}
 
 		public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );

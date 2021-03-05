@@ -529,19 +529,19 @@ namespace Librainian.Collections.Extensions {
 		[Pure]
 		public static Boolean IsEmpty<T>( [NotNull] this IEnumerable<T> source ) => source.Any() != true;
 
-		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
 		[Pure] public static Int64 LongSum( [NotNull] this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + ( Int64 )u );
+		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
 		[Pure] public static Int64 SumLong( [NotNull] this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
@@ -913,7 +913,7 @@ namespace Librainian.Collections.Extensions {
 			if ( index < 0 ) {
 				item = default( T )!;
 
-				return default( Boolean );
+				return false;
 			}
 
 			item = list[index];

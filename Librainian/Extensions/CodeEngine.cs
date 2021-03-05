@@ -57,13 +57,13 @@ namespace Librainian.Extensions {
 		}
 
 		[NotNull]
-		private Object _compileLock { get; } = new Object();
+		private Object _compileLock { get; } = new();
 
 		[NotNull]
-		private Object _sourceCodeLock { get; } = new Object();
+		private Object _sourceCodeLock { get; } = new();
 
 		[NotNull]
-		public static CSharpCodeProvider CSharpCodeProvider { get; } = new CSharpCodeProvider();
+		public static CSharpCodeProvider CSharpCodeProvider { get; } = new();
 
 		public Guid ID { get; private set; }
 
@@ -131,7 +131,7 @@ namespace Coding
 				if ( results.Errors?.HasErrors == true ) {
 					"Errors".Break();
 
-					return default( Boolean );
+					return false;
 				}
 
 				if ( results.Errors?.HasWarnings == true ) {
@@ -145,7 +145,7 @@ namespace Coding
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return default( Boolean );
+				return false;
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace Coding
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return default( Boolean );
+				return false;
 			}
 		}
 

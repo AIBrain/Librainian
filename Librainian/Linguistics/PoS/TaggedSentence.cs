@@ -33,19 +33,19 @@ namespace Librainian.Linguistics.PoS {
 	using Parsing;
 
 	[JsonObject]
-	public sealed class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord> {
+	public class TaggedSentence : IEquatable<TaggedSentence>, IEnumerable<ITaggedWord> {
 
 		public TaggedSentence( [NotNull] IEnumerable<ITaggedWord> words ) {
 			if ( words is null ) {
 				throw new ArgumentNullException( nameof( words ) );
 			}
 
-			this.Tokens.AddRange( words.Where( word => null != word ).Select( word => word ) );
+			this.Tokens.AddRange( words );
 		}
 
 		[JsonProperty]
 		[NotNull]
-		public List<ITaggedWord> Tokens { get; } = new List<ITaggedWord>();
+		public List<ITaggedWord> Tokens { get; } = new();
 
 		public IEnumerator<ITaggedWord> GetEnumerator() => this.Tokens.GetEnumerator();
 
@@ -58,9 +58,9 @@ namespace Librainian.Linguistics.PoS {
 		/// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
 		/// <param name="other">An object to compare with this object.</param>
 		[Pure]
-		public Boolean Equals( TaggedSentence other ) {
+		public Boolean Equals( TaggedSentence? other ) {
 			if ( other is null ) {
-				return default( Boolean );
+				return false;
 			}
 
 			return ReferenceEquals( this, other ) || this.Tokens.SequenceEqual( other.Tokens );
@@ -68,13 +68,13 @@ namespace Librainian.Linguistics.PoS {
 
 		[Pure]
 		[NotNull]
-		public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.Tokens.ToStrings( " " );
+		public static implicit operator String( [NotNull] TaggedSentence sentence ) => sentence.ToString();
 
 		/// <summary>Returns a value that indicates whether two <see cref="TaggedSentence" /> objects have different values.</summary>
 		/// <param name="left">The first value to compare.</param>
 		/// <param name="right">The second value to compare.</param>
 		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-		public static Boolean operator !=( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => !Equals( left, right );
+		public static Boolean operator !=( [CanBeNull] TaggedSentence? left, [CanBeNull] TaggedSentence? right ) => !Equals( left, right );
 
 		/// <summary>Returns a value that indicates whether the values of two <see cref="TaggedSentence" /> objects are equal.</summary>
 		/// <param name="left">The first value to compare.</param>
@@ -83,7 +83,7 @@ namespace Librainian.Linguistics.PoS {
 		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
 		///     false.
 		/// </returns>
-		public static Boolean operator ==( [CanBeNull] TaggedSentence left, [CanBeNull] TaggedSentence right ) => Equals( left, right );
+		public static Boolean operator ==( [CanBeNull] TaggedSentence? left, [CanBeNull] TaggedSentence? right ) => Equals( left, right );
 
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>
 		/// <param name="obj">The object to compare with the current object.</param>
@@ -91,7 +91,7 @@ namespace Librainian.Linguistics.PoS {
 		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
 		///     <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( Object obj ) => Equals( this, obj as TaggedSentence );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as TaggedSentence );
 
 		/// <summary>Serves as the default hash function.</summary>
 		/// <returns>A hash code for the current object.</returns>
@@ -99,7 +99,7 @@ namespace Librainian.Linguistics.PoS {
 
 		[Pure]
 		[NotNull]
-		public override String ToString() => this.Tokens.ToStrings( " " );
+		public override String ToString() => this.Tokens.ToStrings( ParsingConstants.Singlespace );
 
 	}
 

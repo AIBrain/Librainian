@@ -71,25 +71,23 @@ namespace Librainian.OperatingSystem.Compression {
 		public static async Task<String> CompressAsync( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
 			var buffer = ( encoding ?? Common.DefaultEncoding ).GetBytes( text );
 
-#if !NET48
+#if NET5_0_OR_GREATER
 			await
 #endif
 				using var streamIn = new MemoryStream( buffer );
 
-#if !NET48
+#if NET5_0_OR_GREATER
 			await
 #endif
 				using var streamOut = new MemoryStream();
 
-#if !NET48
+#if NET5_0_OR_GREATER
 			await
 #endif
 				using ( var zipStream = new GZipStream( streamOut, CompressionMode.Compress ) ) {
 				var task = streamIn.CopyToAsync( zipStream );
 
-				if ( task != null ) {
-					await task.ConfigureAwait( false );
-				}
+				await task.ConfigureAwait( false );
 			}
 
 			return Convert.ToBase64String( streamOut.ToArray() );
@@ -155,6 +153,10 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <returns></returns>
 		[NotNull]
 		public static String FromCompressedBase64( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
+			if ( text is null ) {
+				throw new ArgumentNullException( nameof( text ) );
+			}
+
 			var buffer = Convert.FromBase64String( text );
 
 			using var streamIn = new MemoryStream( buffer );

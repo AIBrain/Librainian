@@ -178,7 +178,10 @@ namespace Librainian.Controls {
 
 			selectedItemsAsRTFText.AppendLine( @"}" );
 			Debug.WriteLine( selectedItemsAsRTFText.ToString() );
-			Clipboard.SetData( DataFormats.Rtf, selectedItemsAsRTFText.ToString() );
+
+			if ( DataFormats.Rtf != null ) {
+				Clipboard.SetData( DataFormats.Rtf, selectedItemsAsRTFText.ToString() );
+			}
 		}
 
 		private void DrawItemHandler( [CanBeNull] Object? sender, [NotNull] DrawItemEventArgs e ) {
@@ -186,29 +189,28 @@ namespace Librainian.Controls {
 				return;
 			}
 
-			if ( !( sender is ListBox listbox ) ) {
-				"".Break();
+			if ( sender is ListBox listbox ) {
+				e.DrawBackground();
+				e.DrawFocusRectangle();
 
-				return;
+				var listboxItem = listbox.Items[e.Index];
+
+				var logEvent = listboxItem is LogEvent item ? item : new LogEvent( LoggingLevel.Critical, listboxItem.ToString() );
+
+				var (fore, back) = logEvent.LoggingLevel.Colors();
+
+				using var solidBrush = new SolidBrush( back );
+
+				using var brush = new SolidBrush( fore );
+
+				using var font = new Font( "Hack", 8.25f, FontStyle.Regular );
+
+				e.Graphics?.FillRectangle( solidBrush, e.Bounds );
+				e.Graphics?.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), font, brush, e.Bounds );
 			}
-
-			e.DrawBackground();
-			e.DrawFocusRectangle();
-
-			var listboxItem = listbox.Items[e.Index];
-
-			var logEvent = listboxItem is LogEvent item ? item : new LogEvent( LoggingLevel.Critical, listboxItem.ToString() );
-
-			var colors = logEvent.LoggingLevel.Colors();
-
-			using var solidBrush = new SolidBrush( colors.back );
-
-			using var brush = new SolidBrush( colors.fore );
-
-			using var font = new Font( "Hack", 8.25f, FontStyle.Regular );
-
-			e.Graphics?.FillRectangle( solidBrush, e.Bounds );
-			e.Graphics?.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), font, brush, e.Bounds );
+			else {
+				String.Empty.Break();
+			}
 		}
 
 		private void KeyDownHandler( [CanBeNull] Object? sender, [NotNull] KeyEventArgs e ) {

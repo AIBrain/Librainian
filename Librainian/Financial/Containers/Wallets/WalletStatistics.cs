@@ -35,10 +35,10 @@ namespace Librainian.Financial.Containers.Wallets {
 	public class WalletStatistics : ABetterClassDispose {
 
 		[NotNull]
-		private readonly ReaderWriterLockSlim _depositLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		private readonly ReaderWriterLockSlim _depositLock = new( LockRecursionPolicy.SupportsRecursion );
 
 		[NotNull]
-		private readonly ReaderWriterLockSlim _withwrawLock = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		private readonly ReaderWriterLockSlim _withwrawLock = new( LockRecursionPolicy.SupportsRecursion );
 
 		[JsonProperty]
 		private Decimal _allTimeDeposited;
