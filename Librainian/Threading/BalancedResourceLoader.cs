@@ -41,10 +41,10 @@ namespace Librainian.Threading {
 			this._resourceLoaders = resourceLoaders ?? throw new ArgumentNullException( nameof( resourceLoaders ) );
 
 		[NotNull]
-		private Object _lock { get; } = new Object();
+		private Object _lock { get; } = new();
 
 		[NotNull]
-		private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new Queue<(TaskCompletionSource<T>, CancellationToken)>();
+		private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new();
 
 		[NotNull]
 		[ItemNotNull]
@@ -57,7 +57,7 @@ namespace Librainian.Threading {
 		public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
 
 		[CanBeNull]
-		public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
+		public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
 			lock ( this._lock ) {
 				this.GetOrQueue( out var resource, cancelToken, true );
 
@@ -65,7 +65,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
+		public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new() ) {
 			lock ( this._lock ) {
 				return this.GetOrQueue( out resource, cancelToken, false );
 			}
@@ -102,7 +102,7 @@ namespace Librainian.Threading {
 					resource = tcs.Task;
 				}
 
-				return default;
+				return default( Boolean );
 			}
 		}
 

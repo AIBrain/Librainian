@@ -37,25 +37,25 @@ namespace Librainian.Maths.Numbers {
 
 		public const Byte Minimum = 0;
 
-		public static Digit Eight { get; } = new Digit( 8 );
+		public static Digit Eight { get; } = new( 8 );
 
-		public static Digit Five { get; } = new Digit( 5 );
+		public static Digit Five { get; } = new( 5 );
 
-		public static Digit Four { get; } = new Digit( 4 );
+		public static Digit Four { get; } = new( 4 );
 
-		public static Digit Nine { get; } = new Digit( 9 );
+		public static Digit Nine { get; } = new( 9 );
 
-		public static Digit One { get; } = new Digit( 1 );
+		public static Digit One { get; } = new( 1 );
 
-		public static Digit Seven { get; } = new Digit( 7 );
+		public static Digit Seven { get; } = new( 7 );
 
-		public static Digit Six { get; } = new Digit( 6 );
+		public static Digit Six { get; } = new( 6 );
 
-		public static Digit Three { get; } = new Digit( 3 );
+		public static Digit Three { get; } = new( 3 );
 
-		public static Digit Two { get; } = new Digit( 2 );
+		public static Digit Two { get; } = new( 2 );
 
-		public static Digit Zero { get; } = new Digit( 0 );
+		public static Digit Zero { get; } = new( 0 );
 
 		public Byte Value { get; }
 
@@ -71,6 +71,8 @@ namespace Librainian.Maths.Numbers {
 		public static Boolean Equals( Digit left, Digit right ) => left.Value == right.Value;
 
 		public static implicit operator Byte( Digit digit ) => digit.Value;
+		
+		public static implicit operator Digit( Byte value ) => new( value );
 
 		/// <summary>Returns a value that indicates whether two <see cref="Digit" /> objects have different values.</summary>
 		/// <param name="left">The first value to compare.</param>

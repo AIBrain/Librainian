@@ -125,11 +125,11 @@ namespace Librainian.Persistence {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
-					return default;
+					return default( TValue );
 				}
 
 				if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
-					return default;
+					return default( TValue );
 				}
 
 				return storedValue.FromCompressedBase64().FromJSON<TValue>();
@@ -195,10 +195,10 @@ namespace Librainian.Persistence {
 				throw new ArgumentNullException( nameof( key ) );
 			}
 
-			value = default;
+			value = default( TValue );
 
 			if ( !this.Dictionary.TryGetValue( key, out var storedValue ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			value = storedValue.FromCompressedBase64().FromJSON<TValue>();
@@ -225,7 +225,7 @@ namespace Librainian.Persistence {
 			}
 			catch { }
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Dispose any disposable managed fields or properties.</summary>

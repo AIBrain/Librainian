@@ -1,26 +1,29 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ParsingExtensions.cs" last formatted on 2020-10-19 at 7:17 AM.
 
 #nullable enable
 
@@ -50,7 +53,7 @@ namespace Librainian.Parsing {
 	public static class ParsingExtensions {
 		[NotNull]
 		[ItemNotNull]
-		public static readonly Lazy<Regex> RegexJustNumbers = new Lazy<Regex>( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
+		public static readonly Lazy<Regex> RegexJustNumbers = new( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 		[NotNull]
 		[ItemNotNull]
@@ -62,20 +65,20 @@ namespace Librainian.Parsing {
 		[NotNull]
 		[ItemNotNull]
 		public static Lazy<Regex> RegexBySentenceNotworking { get; } =
-			new Lazy<Regex>( () => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ) );
+			new( () => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ) );
 
 		[NotNull]
 		[ItemNotNull]
-		public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new Lazy<Regex>( () => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
+		public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new( () => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
 			RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ) );
 
 		[NotNull]
 		[ItemNotNull]
-		public static Lazy<Regex> RegexByWordBreak { get; } = new Lazy<Regex>( () => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ) );
+		public static Lazy<Regex> RegexByWordBreak { get; } = new( () => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 		[NotNull]
 		[ItemNotNull]
-		public static Lazy<Regex> RegexJustDigits { get; } = new Lazy<Regex>( () => new Regex( @"\D+", RegexOptions.Compiled | RegexOptions.Singleline ) );
+		public static Lazy<Regex> RegexJustDigits { get; } = new( () => new Regex( @"\D+", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 		[NotNull]
 		public static Char[] SplitBySpace { get; } = {
@@ -85,30 +88,28 @@ namespace Librainian.Parsing {
 		/// <summary>WHY?? For fun?</summary>
 		[NotNull]
 		[ItemNotNull]
-		public static Lazy<String> AllLowercaseLetters { get; } =
-			new Lazy<String>( () => new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
+		public static Lazy<String> AllLowercaseLetters { get; } = new( () => new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
 
 		/// <summary>WHY?? For fun?</summary>
 		[NotNull]
 		[ItemNotNull]
-		public static Lazy<String> AllUppercaseLetters { get; } =
-			new Lazy<String>( () => new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
+		public static Lazy<String> AllUppercaseLetters { get; } = new( () => new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
 
 		[NotNull]
 		[ItemNotNull]
-		private static Lazy<Regex> LowerUnderscore { get; } = new Lazy<Regex>( () => new Regex( @"([a-z\d])([A-Z])", RegexOptions.Compiled ) );
+		private static Lazy<Regex> LowerUnderscore { get; } = new( () => new Regex( @"([a-z\d])([A-Z])", RegexOptions.Compiled ) );
 
 		[NotNull]
 		[ItemNotNull]
-		private static Lazy<Regex> UpperToUnderscore { get; } = new Lazy<Regex>( () => new Regex( @"([A-Z]+)([A-Z][a-z])", RegexOptions.Compiled ) );
+		private static Lazy<Regex> UpperToUnderscore { get; } = new( () => new Regex( @"([A-Z]+)([A-Z][a-z])", RegexOptions.Compiled ) );
 
 		[NotNull]
 		[ItemNotNull]
-		private static Lazy<Regex> NoIdeaToUnderscore { get; } = new Lazy<Regex>( () => new Regex( @"[-\s]", RegexOptions.Compiled ) );
+		private static Lazy<Regex> NoIdeaToUnderscore { get; } = new( () => new Regex( @"[-\s]", RegexOptions.Compiled ) );
 
 		[ItemNotNull]
 		[NotNull]
-		private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new Lazy<Regex>( () => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ) );
+		private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new( () => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ) );
 
 		/// <summary>
 		///     Return list of all <see cref="Char" /> that are <see cref="Char.IsLetter(Char)" />
@@ -207,7 +208,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? Trimmed<T>( [CanBeNull] this T self ) =>
 			self switch {
-				null => default,
+				null => default( String? ),
 				String s => s.Trim().NullIfEmpty(),
 				_ => self.ToString()?.Trim().NullIfEmpty()
 			};
@@ -315,7 +316,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? After( [NotNull] this String? self, [CanBeNull] String? splitter, StringComparison comparison = StringComparison.Ordinal ) {
 			if ( self is null ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( self.Length == 0 ) {
@@ -369,7 +370,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? Before( [CanBeNull] this String? self, [CanBeNull] String? splitter, StringComparison comparison = StringComparison.Ordinal ) {
 			if ( self is null ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( self.Length == 0 ) {
@@ -619,11 +620,11 @@ namespace Librainian.Parsing {
 			}
 
 			if ( source.Length == 0 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( compare.Length == 0 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return source.SequenceEqual( compare );
@@ -736,11 +737,11 @@ namespace Librainian.Parsing {
 			return $"{s[0]}{result}";
 		}
 
-		private static Lazy<Regex> SoundExPart1 { get; } = new Lazy<Regex>( () => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true );
+		private static Lazy<Regex> SoundExPart1 { get; } = new( () => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true );
 
-		private static Lazy<Regex> SoundExPart2 { get; } = new Lazy<Regex>( () => new Regex( "^D+", RegexOptions.Compiled ), true );
+		private static Lazy<Regex> SoundExPart2 { get; } = new( () => new Regex( "^D+", RegexOptions.Compiled ), true );
 
-		private static Lazy<Regex> SoundExPart3 { get; } = new Lazy<Regex>( () => new Regex( "[D0]", RegexOptions.Compiled ), true );
+		private static Lazy<Regex> SoundExPart3 { get; } = new( () => new Regex( "[D0]", RegexOptions.Compiled ), true );
 
 		/// <summary>Return possible variants of a name for name matching.</summary>
 		/// <param name="input">  String to convert</param>
@@ -868,7 +869,7 @@ namespace Librainian.Parsing {
 				error.Log();
 			}
 
-			return default;
+			return default( String? );
 		}
 
 		/// <summary></summary>
@@ -901,7 +902,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Equals( right, StringComparison.OrdinalIgnoreCase );
@@ -926,7 +927,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Equals( right, StringComparison.Ordinal );
@@ -956,7 +957,7 @@ namespace Librainian.Parsing {
 		public static String? NullIfBlank( [CanBeNull] this String? self ) {
 			self = self?.Trim();
 
-			return String.IsNullOrEmpty( self ) ? default : self;
+			return String.IsNullOrEmpty( self ) ? default( String? ) : self;
 		}
 
 		/// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrEmpty" />.</summary>
@@ -998,13 +999,13 @@ namespace Librainian.Parsing {
 		[DebuggerStepThrough]
 		[Pure]
 		public static String? NullIfEmptyOrWhiteSpace( [CanBeNull] this String? self ) =>
-			String.IsNullOrWhiteSpace( self ) ? default : self;
+			String.IsNullOrWhiteSpace( self ) ? default( String? ) : self;
 
 		[DebuggerStepThrough]
 		[CanBeNull]
 		[Pure]
 		public static String? NullIfJustNumbers( [CanBeNull] this String? self ) =>
-			self.IsJustNumbers() ? default : self;
+			self.IsJustNumbers() ? default( String? ) : self;
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -1017,7 +1018,7 @@ namespace Librainian.Parsing {
 		[DebuggerStepThrough]
 		[NotNull]
 		[Pure]
-		public static String Repeat( this Char c, Int32 count ) => new String( c, count );
+		public static String Repeat( this Char c, Int32 count ) => new( c, count );
 
 		/// <summary>Repeats the first char of the string <paramref name="self" /> <paramref name="count" /> times.</summary>
 		/// <param name="self"></param>
@@ -1462,12 +1463,8 @@ namespace Librainian.Parsing {
 
 		[CanBeNull]
 		[Pure]
-		public static String? StringFromResponse( [NotNull] this WebResponse response ) {
+		public static String StringFromResponse( [NotNull] this WebResponse response ) {
 			using var restream = response.GetResponseStream();
-
-			if ( restream is null ) {
-				return default;
-			}
 
 			using var reader = new StreamReader( restream );
 
@@ -1683,7 +1680,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? ToPascalCase( [CanBeNull] this String? text, Boolean removeUnderscores = true, CultureInfo? cultureInfo = null ) {
 			if ( String.IsNullOrEmpty( text ) ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( removeUnderscores ) {
@@ -1691,7 +1688,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( String.IsNullOrEmpty( text = text.Trimmed() ) ) {
-				return default;
+				return default( String? );
 			}
 
 			var sb = new StringBuilder( text!.Length );
@@ -1865,26 +1862,25 @@ namespace Librainian.Parsing {
 		[NotNull]
 		[Pure]
 		public static String ToVerbalWord( this Decimal number ) {
-			if ( number == Decimal.Zero ) {
-				return "zero";
-			}
-
-			if ( number < Decimal.Zero ) {
-				return "minus " + ToVerbalWord( Math.Abs( number ) );
+			switch ( number ) {
+				case Decimal.Zero:
+					return "zero";
+				case < Decimal.Zero:
+					return "minus " + ToVerbalWord( Math.Abs( number ) );
 			}
 
 			var intPortion = ( Int32 )number;
 			var fraction = ( number - intPortion ) * 100;
 			var decPortion = ( Int32 )fraction; //TODO eh?
 
-			var words = intPortion.ToVerbalWord();
+			var words = ( ( Decimal )intPortion ).ToVerbalWord();
 
 			if ( decPortion <= 0 ) {
 				return words.Trim();
 			}
 
 			words += " and ";
-			words += decPortion.ToVerbalWord();
+			words += ( ( Decimal )decPortion ).ToVerbalWord();
 
 			return words.Trim();
 		}
@@ -2026,7 +2022,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? Capitialize( [CanBeNull] this String? text ) {
 			if ( String.IsNullOrEmpty( text ) ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( text!.Length == 1 ) {
@@ -2041,7 +2037,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? PluralOf( this BigInteger number, [CanBeNull] String? singular ) {
 			if ( String.IsNullOrEmpty( singular ) ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( number == BigInteger.One ) {
@@ -2056,7 +2052,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? PluralOf( this Decimal number, [CanBeNull] String? singular ) {
 			if ( String.IsNullOrEmpty( singular ) ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( number == 1 ) {
@@ -2071,7 +2067,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String? PluralOf( this Rational number, [CanBeNull] String? singular ) {
 			if ( String.IsNullOrEmpty( singular ) ) {
-				return default;
+				return default( String? );
 			}
 
 			if ( number == 1 ) {
@@ -2208,7 +2204,7 @@ namespace Librainian.Parsing {
 				return ( true.ToStatus(), start );
 			}
 
-			return ( false.ToStatus(), default );
+			return ( false.ToStatus(), default( String? ) );
 		}
 
 		public static (Status status, String? end ) EndsWith( this String value, IEnumerable<String> ofThese, StringComparison comparison = StringComparison.CurrentCulture ) {
@@ -2216,7 +2212,7 @@ namespace Librainian.Parsing {
 				return ( true.ToStatus(), end );
 			}
 
-			return ( false.ToStatus(), default );
+			return ( false.ToStatus(), default( String? ) );
 		}
 
 		[CanBeNull]

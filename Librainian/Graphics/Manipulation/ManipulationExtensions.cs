@@ -86,7 +86,7 @@ namespace Librainian.Graphics.Manipulation {
 		[CanBeNull]
 		public static Bitmap LoadAndResize( [CanBeNull] Document document, Single multiplier ) {
 			if ( !multiplier.IsNumber() ) {
-				return default;
+				return default( Bitmap );
 			}
 
 			try {
@@ -96,10 +96,10 @@ namespace Librainian.Graphics.Manipulation {
 				return new Bitmap( image, newSize );
 			}
 			catch ( FileNotFoundException ) {
-				return default;
+				return default( Bitmap );
 			}
 			catch ( OutOfMemoryException ) {
-				return default;
+				return default( Bitmap );
 			}
 		}
 

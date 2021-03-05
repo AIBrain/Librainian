@@ -150,7 +150,7 @@ namespace Librainian.OperatingSystem {
 					exception.Log();
 				}
 
-				return default;
+				return default( Process? );
 			} );
 
 		[NotNull]
@@ -172,7 +172,7 @@ namespace Librainian.OperatingSystem {
 					if ( null == process ) {
 						"failure.".Info();
 
-						return default;
+						return default( Boolean );
 					}
 
 					process.WaitForExit( ( Int32 )Minutes.One.ToSeconds().ToMilliseconds().Value );
@@ -184,7 +184,7 @@ namespace Librainian.OperatingSystem {
 					exception.Log();
 				}
 
-				return default;
+				return default( Boolean );
 			} );
 
 		[CanBeNull]
@@ -217,7 +217,7 @@ namespace Librainian.OperatingSystem {
 					exception.Log();
 				}
 
-				return default;
+				return default( Process? );
 			} );
 		}
 
@@ -237,7 +237,7 @@ namespace Librainian.OperatingSystem {
 
 			errorMessage.Error();
 
-			return default;
+			return default( Document? );
 		}
 
 		[CanBeNull]
@@ -255,7 +255,7 @@ namespace Librainian.OperatingSystem {
 			if ( !mainFolder.Exists() ) {
 				errorMessage.Error();
 
-				return default;
+				return default( Folder? );
 			}
 
 			if ( !String.IsNullOrEmpty( okayMessage ) ) {
@@ -293,7 +293,7 @@ namespace Librainian.OperatingSystem {
 				exception.Log();
 			}
 
-			return default;
+			return default( Process? );
 		}
 
 		[CanBeNull]
@@ -308,7 +308,7 @@ namespace Librainian.OperatingSystem {
 
 			return Task.Run( () => {
 				if ( IrfanView64.Value?.Exists() != true ) {
-					return default;
+					return default( Process? );
 				}
 
 				try {
@@ -329,12 +329,12 @@ namespace Librainian.OperatingSystem {
 					exception.Log();
 				}
 
-				return default;
+				return default( Process? );
 			} );
 		}
 
 		public static void Yield() {
-			if ( Randem.NextBooleanFast() ) {
+			if ( Randem.NextBoolean() ) {
 				Thread.Yield();
 			}
 		}

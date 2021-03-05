@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -42,46 +42,46 @@ namespace Librainian.Measurement.Time {
 		public const UInt16 InOneMicrosecond = 1000;
 
 		/// <summary>Ten <see cref="Nanoseconds" /> s.</summary>
-		public static Nanoseconds Fifteen = new Nanoseconds( 15 );
+		public static Nanoseconds Fifteen = new( 15 );
 
 		/// <summary>Five <see cref="Nanoseconds" /> s.</summary>
-		public static Nanoseconds Five = new Nanoseconds( 5 );
+		public static Nanoseconds Five = new( 5 );
 
 		/// <summary>Five Hundred <see cref="Nanoseconds" /> s.</summary>
-		public static Nanoseconds FiveHundred = new Nanoseconds( 500 );
+		public static Nanoseconds FiveHundred = new( 500 );
 
 		/// <summary>One <see cref="Nanoseconds" />.</summary>
-		public static Nanoseconds One = new Nanoseconds( 1 );
+		public static Nanoseconds One = new( 1 );
 
 		/// <summary>One Thousand Nine <see cref="Nanoseconds" /> (Prime).</summary>
-		public static Nanoseconds OneThousandNine = new Nanoseconds( 1009 );
+		public static Nanoseconds OneThousandNine = new( 1009 );
 
 		/// <summary>Sixteen <see cref="Nanoseconds" />.</summary>
-		public static Nanoseconds Sixteen = new Nanoseconds( 16 );
+		public static Nanoseconds Sixteen = new( 16 );
 
 		/// <summary>Ten <see cref="Nanoseconds" /> s.</summary>
-		public static Nanoseconds Ten = new Nanoseconds( 10 );
+		public static Nanoseconds Ten = new( 10 );
 
 		/// <summary>Three <see cref="Nanoseconds" /> s.</summary>
-		public static Nanoseconds Three = new Nanoseconds( 3 );
+		public static Nanoseconds Three = new( 3 );
 
 		/// <summary>Three Three Three <see cref="Nanoseconds" />.</summary>
-		public static Nanoseconds ThreeHundredThirtyThree = new Nanoseconds( 333 );
+		public static Nanoseconds ThreeHundredThirtyThree = new( 333 );
 
 		/// <summary>Two <see cref="Nanoseconds" /> s.</summary>
-		public static Nanoseconds Two = new Nanoseconds( 2 );
+		public static Nanoseconds Two = new( 2 );
 
 		/// <summary>Two Hundred <see cref="Nanoseconds" />.</summary>
-		public static Nanoseconds TwoHundred = new Nanoseconds( 200 );
+		public static Nanoseconds TwoHundred = new( 200 );
 
 		/// <summary>Two Hundred Eleven <see cref="Nanoseconds" /> (Prime).</summary>
-		public static Nanoseconds TwoHundredEleven = new Nanoseconds( 211 );
+		public static Nanoseconds TwoHundredEleven = new( 211 );
 
 		/// <summary>Two Thousand Three <see cref="Nanoseconds" /> (Prime).</summary>
-		public static Nanoseconds TwoThousandThree = new Nanoseconds( 2003 );
+		public static Nanoseconds TwoThousandThree = new( 2003 );
 
 		/// <summary>Zero <see cref="Nanoseconds" />.</summary>
-		public static Nanoseconds Zero = new Nanoseconds( 0 );
+		public static Nanoseconds Zero = new( 0 );
 
 		[JsonProperty]
 		public Rational Value { get; }
@@ -96,9 +96,9 @@ namespace Librainian.Measurement.Time {
 
 		public static Nanoseconds Combine( Nanoseconds left, Nanoseconds right ) => Combine( left, right.Value );
 
-		public static Nanoseconds Combine( Nanoseconds left, Rational nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
+		public static Nanoseconds Combine( Nanoseconds left, Rational nanoseconds ) => new( left.Value + nanoseconds );
 
-		public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new Nanoseconds( left.Value + nanoseconds );
+		public static Nanoseconds Combine( Nanoseconds left, BigInteger nanoseconds ) => new( left.Value + nanoseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -112,9 +112,9 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Picoseconds( Nanoseconds nanoseconds ) => nanoseconds.ToPicoseconds();
 
-		public static implicit operator SpanOfTime( Nanoseconds nanoseconds ) => new SpanOfTime( nanoseconds: nanoseconds );
+		public static implicit operator SpanOfTime( Nanoseconds nanoseconds ) => new( nanoseconds: nanoseconds );
 
-		public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new Nanoseconds( nanoseconds.Value * -1 );
+		public static Nanoseconds operator -( Nanoseconds nanoseconds ) => new( nanoseconds.Value * -1 );
 
 		public static Nanoseconds operator -( Nanoseconds left, Nanoseconds right ) => Combine( left, -right );
 
@@ -152,16 +152,16 @@ namespace Librainian.Measurement.Time {
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public Microseconds ToMicroseconds() => new Microseconds( this.Value / InOneMicrosecond );
+		public Microseconds ToMicroseconds() => new( this.Value / InOneMicrosecond );
 
-		public Picoseconds ToPicoseconds() => new Picoseconds( this.Value * Picoseconds.InOneNanosecond );
+		public Picoseconds ToPicoseconds() => new( this.Value * Picoseconds.InOneNanosecond );
 
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneNanosecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneNanosecond * this.Value );
 
 		public Seconds ToSeconds() => throw new NotImplementedException();
 
 		public override String ToString() {
-			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
 				var whole = this.Value.WholePart;
 
 				return $"{whole} {whole.PluralOf( "ns" )}";
@@ -172,7 +172,7 @@ namespace Librainian.Measurement.Time {
 			return $"{dec} {dec.PluralOf( "ns" )}";
 		}
 
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
+		public TimeSpan? ToTimeSpan() => this.ToSeconds();
 
 	}
 

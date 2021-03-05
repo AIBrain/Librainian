@@ -49,11 +49,11 @@ namespace Librainian.Maths.Numbers {
 
 		public static implicit operator Double( AtomicDouble special ) => special.Value;
 
-		public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value - a2.Value );
+		public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value - a2.Value );
 
-		public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value * a2.Value );
+		public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value * a2.Value );
 
-		public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new AtomicDouble( a1.Value + a2.Value );
+		public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value + a2.Value );
 
 		public static AtomicDouble operator ++( AtomicDouble a1 ) {
 			a1.Value++;

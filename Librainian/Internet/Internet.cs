@@ -286,19 +286,19 @@ namespace Librainian.Internet {
 				catch ( Exception exception ) {
 					switch ( exception ) {
 						case ArgumentOutOfRangeException _: {
-							return default;
+							return default( Boolean );
 						}
 
 						case ObjectDisposedException _: {
-							return default;
+							return default( Boolean );
 						}
 
 						case AbandonedMutexException _: {
-							return default;
+							return default( Boolean );
 						}
 
 						case InvalidOperationException _: {
-							return default;
+							return default( Boolean );
 						}
 
 						default: {
@@ -319,7 +319,7 @@ namespace Librainian.Internet {
 					return ( Status.Success, response.ContentLength );
 				}
 
-				return ( Status.Error, default );
+				return ( Status.Error, default( Int64 ) );
 			}
 
 		}

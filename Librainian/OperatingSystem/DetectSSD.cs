@@ -41,7 +41,7 @@ namespace Librainian.OperatingSystem {
 
 			if ( hDrive.IsInvalid ) {
 				//Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			var IOCTL_STORAGE_QUERY_PROPERTY = CTL_CODE( NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED,
@@ -62,7 +62,7 @@ namespace Librainian.OperatingSystem {
 
 			if ( !querySeekPenaltyResult ) {
 				//Debug.WriteLine( "DeviceIoControl failed: " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			return query_seek_penalty_desc.IncursSeekPenalty;
@@ -79,7 +79,7 @@ namespace Librainian.OperatingSystem {
 
 			if ( hDrive.IsInvalid ) {
 				//Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			var ioctlAtaPassThrough = CTL_CODE( NativeMethods.IOCTL_SCSI_BASE, 0x040b, NativeMethods.METHOD_BUFFERED,
@@ -105,7 +105,7 @@ namespace Librainian.OperatingSystem {
 
 			if ( !result ) {
 				//Debug.WriteLine( "DeviceIoControl failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			// Word index of nominal media rotation rate

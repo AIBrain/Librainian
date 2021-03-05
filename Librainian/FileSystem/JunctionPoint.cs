@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -142,7 +142,7 @@ namespace Librainian.FileSystem {
 					var error = Marshal.GetLastWin32Error();
 
 					if ( error == ErrorNotAReparsePoint ) {
-						return default;
+						return default( String? );
 					}
 
 					ThrowLastWin32Error( "Unable to get information about junction point." );
@@ -151,7 +151,7 @@ namespace Librainian.FileSystem {
 				var reparseDataBuffer = ( ReparseDataBuffer )Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
 
 				if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
-					return default;
+					return default( String? );
 				}
 
 				var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
@@ -290,7 +290,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
 		public static Boolean Exists( [CanBeNull] String? path ) {
 			if ( !Directory.Exists( path ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			using var handle = OpenReparsePoint( path, FileAccess.Read );

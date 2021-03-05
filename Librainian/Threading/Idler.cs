@@ -72,10 +72,10 @@ namespace Librainian.Threading {
 		}
 
 		[NotNull]
-		private ConcurrentDictionary<String, Action> Jobs { get; } = new ConcurrentDictionary<String, Action>();
+		private ConcurrentDictionary<String, Action> Jobs { get; } = new();
 
 		[NotNull]
-		private ConcurrentHashset<Task> Runners { get; } = new ConcurrentHashset<Task>();
+		private ConcurrentHashset<Task> Runners { get; } = new();
 
 		private CancellationToken Token { get; }
 

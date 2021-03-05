@@ -198,7 +198,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public const DWORD SE_PRIVILEGE_ENABLED = 0x00000002;
 
-		private static readonly Version ThreadErrorModeMinOsVersion = new Version( 6, 1, 7600 );
+		private static readonly Version ThreadErrorModeMinOsVersion = new( 6, 1, 7600 );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetErrorMode", ExactSpelling = true )]
 		private static extern Int32 SetErrorMode_VistaAndOlder( Int32 newMode );

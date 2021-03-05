@@ -25,7 +25,7 @@
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
-	
+	using System.Runtime.ConstrainedExecution;
 	using System.Runtime.InteropServices;
 	using System.Security;
 	using JetBrains.Annotations;
@@ -39,7 +39,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public SafeTokenHandle( IntPtr handle ) : base( true ) => this.SetHandle( handle );
 
 		[NotNull]
-		public static SafeTokenHandle InvalidHandle => new SafeTokenHandle( IntPtr.Zero );
+		public static SafeTokenHandle InvalidHandle => new( IntPtr.Zero );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
 		[SuppressUnmanagedCodeSecurity]

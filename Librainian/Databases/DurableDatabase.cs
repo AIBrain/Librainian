@@ -74,7 +74,7 @@ namespace Librainian.Databases {
 
 		[NotNull] private ThreadLocal<SqlConnection> SqlConnections { get; }
 
-		public CancellationTokenSource CancelConnection { get; } = new CancellationTokenSource();
+		public CancellationTokenSource CancelConnection { get; } = new();
 
 		[CanBeNull]
 		private SqlConnection? OpenConnection() {
@@ -91,7 +91,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( SqlConnection? );
 		}
 
 		/// <summary>Return true if connected.</summary>
@@ -100,11 +100,11 @@ namespace Librainian.Databases {
 		private Boolean ReOpenConnection( [CanBeNull]
 			Object? sender ) {
 			if ( this.CancelConnection.IsCancellationRequested ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !( sender is SqlConnection connection ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var retries = this.Retries;
@@ -114,7 +114,7 @@ namespace Librainian.Databases {
 
 				try {
 					if ( this.CancelConnection.IsCancellationRequested ) {
-						return default;
+						return default( Boolean );
 					}
 
 					connection.Open();
@@ -131,7 +131,7 @@ namespace Librainian.Databases {
 				}
 			} while ( retries > 0 );
 
-			return default;
+			return default( Boolean );
 		}
 
 		private void SqlConnection_StateChange( [CanBeNull]
@@ -240,7 +240,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		public Int32? ExecuteNonQuery( [NotNull] String query, Int32 retries, [CanBeNull]
@@ -277,7 +277,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		/// <summary></summary>
@@ -306,7 +306,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[ItemCanBeNull]
@@ -337,7 +337,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -383,7 +383,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -469,7 +469,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( DataTableReader );
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -539,7 +539,7 @@ namespace Librainian.Databases {
 				var scalar = command.ExecuteScalar();
 
 				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return ( Status.Success, default )!;
+					return ( Status.Success, default( TResult ) )!;
 				}
 
 				if ( scalar is TResult result1 ) {
@@ -559,7 +559,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( (Status status, TResult result) );
 		}
 
 		/// <summary>
@@ -602,7 +602,7 @@ namespace Librainian.Databases {
 				}
 
 				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return ( Status.Success, default )!;
+					return ( Status.Success, default( TResult ) )!;
 				}
 
 				if ( scalar is TResult scalarAsync ) {
@@ -623,7 +623,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( (Status status, TResult result) );
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -659,7 +659,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return default;
+			return default( IEnumerable<TResult> );
 		}
 
 	}

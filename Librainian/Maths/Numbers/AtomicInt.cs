@@ -48,13 +48,13 @@ namespace Librainian.Maths.Numbers {
 		public static implicit operator Int32( [NotNull] AtomicInt special ) => special.Value;
 
 		[NotNull]
-		public static AtomicInt operator -( [NotNull] AtomicInt a1, [NotNull] AtomicInt a2 ) => new AtomicInt( a1.Value - a2.Value );
+		public static AtomicInt operator -( [NotNull] AtomicInt a1, [NotNull] AtomicInt a2 ) => new( a1.Value - a2.Value );
 
 		[NotNull]
-		public static AtomicInt operator *( [NotNull] AtomicInt a1, [NotNull] AtomicInt a2 ) => new AtomicInt( a1.Value * a2.Value );
+		public static AtomicInt operator *( [NotNull] AtomicInt a1, [NotNull] AtomicInt a2 ) => new( a1.Value * a2.Value );
 
 		[NotNull]
-		public static AtomicInt operator +( [NotNull] AtomicInt a1, [NotNull] AtomicInt a2 ) => new AtomicInt( a1.Value + a2.Value );
+		public static AtomicInt operator +( [NotNull] AtomicInt a1, [NotNull] AtomicInt a2 ) => new( a1.Value + a2.Value );
 
 		[NotNull]
 		public static AtomicInt operator ++( [NotNull] AtomicInt a1 ) {
@@ -64,7 +64,7 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		[NotNull]
-		public static AtomicInt Parse( [NotNull] String value ) => new AtomicInt( Int32.Parse( value ) );
+		public static AtomicInt Parse( [NotNull] String value ) => new( Int32.Parse( value ) );
 
 		/// <summary>Resets the value to zero if less than zero at this moment in time;</summary>
 		public void CheckReset() {

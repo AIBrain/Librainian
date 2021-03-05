@@ -77,7 +77,7 @@ namespace Librainian.FileSystem {
 
 				await sourceStream.FlushAsync().ConfigureAwait( false );
 
-				return ( Status.Success,default);
+				return ( Status.Success,default( Exception? ));
 			}
 			catch ( UnauthorizedAccessException exception ) {
 				exception.Log();
@@ -585,7 +585,7 @@ namespace Librainian.FileSystem {
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return default;
+				return default( DirectoryInfo? );
 			}
 
 			return directoryInfo;
@@ -709,7 +709,7 @@ namespace Librainian.FileSystem {
 
 									exception.Log();
 
-									return default;
+									return default( Boolean );
 								} );
 							}
 
@@ -732,7 +732,7 @@ namespace Librainian.FileSystem {
 
 							exception!.Log();
 
-							return default;
+							return default( Boolean );
 						} );
 					}
 				} );
@@ -753,7 +753,7 @@ namespace Librainian.FileSystem {
 
 					exception.Log();
 
-					return default;
+					return default( Boolean );
 				} );
 			}
 		}
@@ -840,11 +840,11 @@ namespace Librainian.FileSystem {
 
 			try {
 				if ( token.IsCancellationRequested ) {
-					return default;
+					return default( Boolean );
 				}
 
 				if ( !startingFolder.Exists() ) {
-					return default;
+					return default( Boolean );
 				}
 
 				//if ( startingFolder.Name.Like( "$OF" ) ) {return default;}
@@ -881,7 +881,7 @@ namespace Librainian.FileSystem {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary></summary>
@@ -908,11 +908,11 @@ namespace Librainian.FileSystem {
 			//}
 
 			if ( cancellation.IsCancellationRequested ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !startingFolder.Exists() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			//foldersFound.Add( startingFolder );
@@ -933,7 +933,7 @@ namespace Librainian.FileSystem {
 					onEachDocumentFound( new Document( info ) );
 
 					if ( cancellation.IsCancellationRequested ) {
-						return default;
+						return default( Boolean );
 					}
 				}
 			}
@@ -1111,7 +1111,7 @@ namespace Librainian.FileSystem {
 			TryAgain:
 
 			if ( token.IsCancellationRequested ) {
-				return default;
+				return default( TResult? );
 			}
 
 			try {
@@ -1121,7 +1121,7 @@ namespace Librainian.FileSystem {
 				exception.Message.Error();
 
 				if ( stopwatch.Elapsed > tryFor ) {
-					return default;
+					return default( TResult? );
 				}
 
 				goto TryAgain;
@@ -1178,15 +1178,15 @@ namespace Librainian.FileSystem {
 		/// <exception cref="FileNotFoundException"></exception>
 		public static Boolean SameContent( [CanBeNull] this FileInfo? left, [CanBeNull] FileInfo? right ) {
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !left.Exists || !right.Exists ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Length != right.Length ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var lba = left.AsBytes(); //.ToArray();
@@ -1212,19 +1212,19 @@ namespace Librainian.FileSystem {
 		/// <exception cref="FileNotFoundException"></exception>
 		public static Boolean SameContent( [CanBeNull] this String? leftFileName, [CanBeNull] String? rightFileName ) {
 			if ( leftFileName is null || rightFileName is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !File.Exists( leftFileName ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !File.Exists( rightFileName ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( leftFileName.Length != rightFileName.Length ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var lba = leftFileName.AsBytes().ToArray();
@@ -1250,31 +1250,31 @@ namespace Librainian.FileSystem {
 		/// <exception cref="FileNotFoundException"></exception>
 		public static Boolean SameContent( [CanBeNull] this Document? left, [CanBeNull] FileInfo? right ) {
 			if ( left == null || right == null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Exists() == false ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var leftLength = left.Length;
 
 			if ( !leftLength.HasValue ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !right.Exists ) {
 				right.Refresh();
 
 				if ( !right.Exists ) {
-					return default;
+					return default( Boolean );
 				}
 			}
 
 			var rightLength = ( UInt64 )right.Length;
 
 			if ( !rightLength.Any() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return leftLength.Value == rightLength && left.AsBytes().SequenceEqual( right.AsBytes() );
@@ -1296,32 +1296,32 @@ namespace Librainian.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		public static Boolean SameContent( [CanBeNull] this FileInfo? left, [CanBeNull] Document? right ) {
-			if ( left == default || right == default ) {
-				return default;
+			if ( left == default( Object ) || right == default( IDocument? ) ) {
+				return default( Boolean );
 			}
 
 			if ( !left.Exists ) {
 				left.Refresh();
 
 				if ( !left.Exists ) {
-					return default;
+					return default( Boolean );
 				}
 			}
 
 			var rightLength = ( UInt64 )left.Length;
 
 			if ( !rightLength.Any() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( right.Exists() == false ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var leftLength = right.Length;
 
 			if ( !leftLength.HasValue ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return leftLength.Value == rightLength && right.AsBytes().SequenceEqual( left.AsBytes() );
@@ -1367,7 +1367,7 @@ namespace Librainian.FileSystem {
 
 					ex.Log();
 
-					return default;
+					return default( Boolean );
 				} );
 			}
 		}
@@ -1487,7 +1487,7 @@ namespace Librainian.FileSystem {
 
 			try {
 				if ( String.IsNullOrWhiteSpace( path ) ) {
-					return default;
+					return default( Boolean );
 				}
 
 				if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
@@ -1506,7 +1506,7 @@ namespace Librainian.FileSystem {
 			catch ( PathTooLongException ) { }
 			catch ( InvalidOperationException ) { }
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Returns a temporary <see cref="Document" /> (but does not create the file in the file system).</summary>
@@ -1550,7 +1550,7 @@ namespace Librainian.FileSystem {
 				// IOExcception is thrown if the file is in use by another process.
 			}
 
-			return default;
+			return default( FileStream? );
 		}
 
 		[CanBeNull]
@@ -1571,7 +1571,7 @@ namespace Librainian.FileSystem {
 			catch ( IOException ) {
 				// IOExcception is thrown if the file is in use by another process.
 				if ( !bePatient ) {
-					return default;
+					return default( FileStream? );
 				}
 
 				if ( !Thread.Yield() ) {
@@ -1581,7 +1581,7 @@ namespace Librainian.FileSystem {
 				goto TryAgain;
 			}
 
-			return default;
+			return default( FileStream? );
 		}
 
 		[CanBeNull]
@@ -1595,7 +1595,7 @@ namespace Librainian.FileSystem {
 				// IOExcception is thrown if the file is in use by another process.
 			}
 
-			return default;
+			return default( FileStream? );
 		}
 
 		public static Int32? TurnOnCompression( [NotNull] this FileInfo info ) {
@@ -1607,7 +1607,7 @@ namespace Librainian.FileSystem {
 				info.Refresh();
 
 				if ( !info.Exists ) {
-					return default;
+					return default( Int32? );
 				}
 			}
 

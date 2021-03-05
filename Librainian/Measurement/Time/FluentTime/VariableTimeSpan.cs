@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -64,9 +64,9 @@ namespace Librainian.Measurement.Time.FluentTime {
 		public static Boolean operator ==( VariableTimeSpan one, VariableTimeSpan other ) => one.Equals( other );
 
 		public VariableTimeSpan AddTo( VariableTimeSpan other ) =>
-			new VariableTimeSpan( this._years + other._years, this._months + other._months, this._timeSpan + other._timeSpan );
+			new( this._years + other._years, this._months + other._months, this._timeSpan + other._timeSpan );
 
-		public VariableTimeSpan AddTo( TimeSpan timeSpan ) => new VariableTimeSpan( this._years, this._months, this._timeSpan + timeSpan );
+		public VariableTimeSpan AddTo( TimeSpan timeSpan ) => new( this._years, this._months, this._timeSpan + timeSpan );
 
 		public DateTime AddTo( DateTime dateTime ) => dateTime.AddYears( this._years ).AddMonths( this._months ).Add( this._timeSpan );
 

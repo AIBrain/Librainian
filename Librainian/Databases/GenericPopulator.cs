@@ -50,7 +50,7 @@ namespace Librainian.Databases {
 			var readerGetValue = typeof( SqlDataReader ).GetMethod( "GetValue" );
 
 			if ( readerGetValue is null ) {
-				return default;
+				return default( Func<SqlDataReader, T> );
 			}
 
 			// create a Constant expression of DBNull.Value to compare values to in reader

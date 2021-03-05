@@ -1,170 +1,164 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Minutes.cs" last formatted on 2020-08-14 at 8:38 PM.
+// File "Minutes.cs" last formatted on 2020-04-03.
 
 namespace Librainian.Measurement.Time {
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Maths;
-	using Newtonsoft.Json;
-	using Parsing;
-	using Rationals;
+    using System;
+    using System.Diagnostics;
+    using System.Numerics;
+    using Extensions;
+    using JetBrains.Annotations;
+    using Maths;
+    using Newtonsoft.Json;
+    using Parsing;
+    using Rationals;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public struct Minutes : IComparable<Minutes>, IQuantityOfTime {
+    [JsonObject]
+    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+    [Immutable]
+    public record Minutes( Rational Value ) : IQuantityOfTime, IComparable<Minutes> {
 
-		/// <summary>60</summary>
-		public const Byte InOneHour = 60;
+        /// <summary>60</summary>
+        public const Byte InOneHour = 60;
 
-		/// <summary>15</summary>
-		public static Minutes Fifteen = new Minutes( 15 );
+        /// <summary>15</summary>
+        [NotNull]
+        public static Minutes Fifteen { get; } = new( 15 );
 
-		/// <summary>One <see cref="Minutes" /> .</summary>
-		public static Minutes One = new Minutes( 1 );
+        /// <summary>One <see cref="Minutes" /> .</summary>
+        [NotNull]
+        public static Minutes One { get; } = new( 1 );
 
-		/// <summary>10</summary>
-		public static Minutes Ten = new Minutes( 10 );
+        /// <summary>10</summary>
+        [NotNull]
+        public static Minutes Ten { get; } = new( 10 );
 
-		/// <summary>30</summary>
-		public static Minutes Thirty = new Minutes( 30 );
+        /// <summary>30</summary>
+        [NotNull]
+        public static Minutes Thirty { get; } = new( 30 );
 
-		/// <summary></summary>
-		public static Minutes Thousand = new Minutes( 1000 );
+        /// <summary></summary>
+        [NotNull]
+        public static Minutes Thousand { get; } = new( 1000 );
 
-		/// <summary>Zero <see cref="Minutes" /></summary>
-		public static Minutes Zero = new Minutes( 0 );
+        /// <summary>Zero <see cref="Minutes" /></summary>
+        [NotNull]
+        public static Minutes Zero { get; } = new( 0 );
 
-		[JsonProperty]
-		public Rational Value { get; }
+        public Int32 CompareTo( [CanBeNull] Minutes? other ) {
+            if ( other == null ) {
+                throw new ArgumentNullException( nameof( other ) );
+            }
 
-		public Minutes( Decimal value ) => this.Value = ( Rational )value;
+            return this.Value.CompareTo( other.Value );
+        }
 
-		public Minutes( Rational value ) => this.Value = value;
+        public IQuantityOfTime ToFinerGranularity() => this.ToSeconds();
 
-		public Minutes( Int64 value ) => this.Value = value;
+        public PlanckTimes ToPlanckTimes() => new( ( this.Value * ( Rational )PlanckTimes.InOneMinute ).WholePart );
 
-		public Minutes( BigInteger value ) => this.Value = value;
+        [Pure]
+        public Seconds ToSeconds() => new( this.Value * Seconds.InOneMinute );
 
-		public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
+        public IQuantityOfTime ToCoarserGranularity() => this.ToHours();
 
-		public static Minutes Combine( Minutes left, Rational minutes ) => new Minutes( left.Value + minutes );
+        public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-		public static Minutes Combine( Minutes left, BigInteger minutes ) => new Minutes( left.Value + minutes );
+        public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
+        public static Minutes Combine( Minutes left, Rational minutes ) => new( left.Value + minutes );
 
-		/// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.</summary>
-		/// <param name="minutes"></param>
-		/// <returns></returns>
-		public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
+        public static Minutes Combine( Minutes left, BigInteger minutes ) => new( left.Value + minutes );
 
-		/// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.</summary>
-		/// <param name="minutes"></param>
-		/// <returns></returns>
-		public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
+        /// <summary>
+        ///     <para>static equality test</para>
+        /// </summary>
+        /// <param name="left"> </param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
-		/// <summary>Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.</summary>
-		/// <param name="minutes"></param>
-		/// <returns></returns>
-		public static implicit operator SpanOfTime( Minutes minutes ) => new SpanOfTime( minutes );
+        /// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.</summary>
+        /// <param name="minutes"></param>
+        /// <returns></returns>
+        public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
 
-		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
+        /// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.</summary>
+        /// <param name="minutes"></param>
+        /// <returns></returns>
+        public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
-		public static Minutes operator -( Minutes minutes ) => new Minutes( minutes.Value * -1 );
+        /// <summary>Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.</summary>
+        /// <param name="minutes"></param>
+        /// <returns></returns>
+        public static implicit operator SpanOfTime( Minutes minutes ) => new( minutes );
 
-		public static Minutes operator -( Minutes left, Minutes right ) => Combine( left, -right );
+        public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
 
-		public static Minutes operator -( Minutes left, Decimal minutes ) => Combine( left, ( Rational )( -minutes ) );
+        public static Minutes operator -( Minutes minutes ) => new( minutes.Value * -1 );
 
-		public static Boolean operator !=( Minutes left, Minutes right ) => !Equals( left, right );
+        public static Minutes operator -( Minutes left, Minutes right ) => Combine( left, -right );
 
-		public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
+        public static Minutes operator -( Minutes left, Decimal minutes ) => Combine( left, ( Rational )( -minutes ) );
 
-		public static Minutes operator +( Minutes left, Decimal minutes ) => Combine( left, ( Rational )minutes );
+        public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
 
-		public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
+        public static Minutes operator +( Minutes left, Decimal minutes ) => Combine( left, ( Rational )minutes );
 
-		public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
+        public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
 
-		public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
+        public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
+        public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
 
-		public static Boolean operator ==( Minutes left, Minutes right ) => Equals( left, right );
+        public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
 
-		public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
+        public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
 
-		public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
+        public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
+        public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
 
-		public Int32 CompareTo( Minutes other ) => this.Value.CompareTo( other.Value );
+        public Hours ToHours() => new( this.Value / InOneHour );
 
-		public Boolean Equals( Minutes other ) => Equals( this, other );
+        public override String ToString() {
+            if ( this.Value > MathConstants.MaxiumDecimalValue ) {
+                var whole = this.Value.WholePart;
 
-		public override Boolean Equals( [CanBeNull] Object? obj ) {
-			if ( obj is null ) {
-				return default;
-			}
+                return $"{whole} {whole.PluralOf( "minute" )}";
+            }
 
-			return obj is Minutes minutes && this.Equals( minutes );
-		}
+            var dec = ( Decimal )this.Value;
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+            return $"{dec} {dec.PluralOf( "minute" )}";
+        }
 
-		public Hours ToHours() => new Hours( this.Value / InOneHour );
-
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMinute * this.Value );
-
-		[Pure]
-		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMinute );
-
-		public override String ToString() {
-			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-				var whole = this.Value.WholePart;
-
-				return $"{whole} {whole.PluralOf( "minute" )}";
-			}
-
-			var dec = ( Decimal )this.Value;
-
-			return $"{dec} {dec.PluralOf( "minute" )}";
-		}
-
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-	}
+    }
 
 }

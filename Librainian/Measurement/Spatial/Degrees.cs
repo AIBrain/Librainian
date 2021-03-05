@@ -120,7 +120,7 @@ namespace Librainian.Measurement.Spatial {
 
 		public override Boolean Equals( Object obj ) {
 			if ( obj is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return obj is Degrees degrees && Equals( this, degrees );

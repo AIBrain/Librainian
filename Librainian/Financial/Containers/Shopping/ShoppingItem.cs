@@ -75,7 +75,7 @@ namespace Librainian.Financial.Containers.Shopping {
 			}
 
 			if ( null == left || null == right ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Category == right.Category && left.ItemID == right.ItemID;

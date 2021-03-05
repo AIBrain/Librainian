@@ -283,7 +283,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public void Refresh() {
 			try {
-				this.data = default;
+				this.data = default( FileAttributeData? );
 
 				// TODO: BeginFind fails on "\\?\c:\"
 

@@ -78,13 +78,13 @@ namespace Librainian.Maths.Numbers {
 		///     Returns a new <see cref="Minus1To1" /> with the value of <paramref name="value1" /> moved closer to the value
 		///     of <paramref name="value2" /> .
 		/// </returns>
-		public static Minus1To1 Combine( Minus1To1 value1, Minus1To1 value2 ) => new Minus1To1( ( value1 + value2 ) / 2f );
+		public static Minus1To1 Combine( Minus1To1 value1, Minus1To1 value2 ) => new( ( value1 + value2 ) / 2f );
 
-		public static implicit operator Minus1To1( Single value ) => new Minus1To1( value );
+		public static implicit operator Minus1To1( Single value ) => new( value );
 
 		public static implicit operator Single( Minus1To1 special ) => special.Value;
 
-		public static Minus1To1 Parse( [NotNull] String value ) => new Minus1To1( Single.Parse( value ) );
+		public static Minus1To1 Parse( [NotNull] String value ) => new( Single.Parse( value ) );
 
 		[NotNull]
 		public override String ToString() => $"{this.Value:P}";

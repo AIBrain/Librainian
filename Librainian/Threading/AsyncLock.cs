@@ -42,7 +42,7 @@ namespace Librainian.Threading {
 		private Task<IDisposable> _releaser { get; }
 
 		[NotNull]
-		private SemaphoreSlim Semaphore { get; } = new SemaphoreSlim( 1 );
+		private SemaphoreSlim Semaphore { get; } = new( 1 );
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() {

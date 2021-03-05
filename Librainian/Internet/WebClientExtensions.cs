@@ -105,7 +105,7 @@ namespace Librainian.Internet {
 				exception.Log();
 			}
 
-			return default;
+			return default( Byte[] );
 		}
 
 		/// <summary>This seems to work great!</summary>

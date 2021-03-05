@@ -114,7 +114,7 @@ namespace Librainian.Security {
 		[CanBeNull]
 		public static String Decrypt( [CanBeNull] this String? value, [CanBeNull] String? iv = null, [CanBeNull] String? key = null ) {
 			if ( String.IsNullOrEmpty( value ) ) {
-				return default;
+				return default( String );
 			}
 
 			try {
@@ -137,7 +137,7 @@ namespace Librainian.Security {
 				exception.Log();
 			}
 
-			return default;
+			return default( String );
 		}
 
 		/// <summary>To encrypt use <seealso cref="EncryptDES" />.</summary>
@@ -242,7 +242,7 @@ namespace Librainian.Security {
 		[CanBeNull]
 		public static String Encrypt( [CanBeNull] this String? value, [CanBeNull] String? iv = null, [CanBeNull] String? key = null ) {
 			if ( String.IsNullOrEmpty( value ) ) {
-				return default;
+				return default( String );
 			}
 
 			try {
@@ -265,7 +265,7 @@ namespace Librainian.Security {
 				exception.Log();
 			}
 
-			return default;
+			return default( String );
 		}
 
 		/// <summary>To decrypt use <see cref="DecryptDES" />.</summary>
@@ -426,7 +426,7 @@ namespace Librainian.Security {
 		[CanBeNull]
 		public static String MD5( [NotNull] this FileInfo file ) {
 			if ( !file.Exists ) {
-				return default;
+				return default( String );
 			}
 
 			using var p = new Process {
@@ -577,7 +577,7 @@ namespace Librainian.Security {
 
 			try {
 				if ( document is null || !File.Exists( "md5sum.exe" ) || document.Exists() == false ) {
-					return default;
+					return default( Boolean );
 				}
 
 				var p = new Process {
@@ -597,7 +597,7 @@ namespace Librainian.Security {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Attempt to decrypt an encrypted version of the file with the given key and salt.</summary>
@@ -623,13 +623,13 @@ namespace Librainian.Security {
 			if ( input is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( input ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( input.Exists() == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			var size = input.Size();
@@ -637,7 +637,7 @@ namespace Librainian.Security {
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			var inputFileSize = ( Single )size.Value;
@@ -645,25 +645,25 @@ namespace Librainian.Security {
 			if ( output is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( output ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( output.Exists() ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( key is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( key ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			try {
@@ -672,7 +672,7 @@ namespace Librainian.Security {
 				if ( !containingingFolder.Create() ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return default;
+					return default( Boolean );
 				}
 
 				using var aes = new AesCryptoServiceProvider();
@@ -713,12 +713,12 @@ namespace Librainian.Security {
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return default;
+				return default( Boolean );
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return default;
+				return default( Boolean );
 			}
 		}
 
@@ -745,13 +745,13 @@ namespace Librainian.Security {
 			if ( input is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( input ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( input.Exists() == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			var size = input.Size();
@@ -759,7 +759,7 @@ namespace Librainian.Security {
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			var inputFileSize = ( Single )size.Value;
@@ -767,25 +767,25 @@ namespace Librainian.Security {
 			if ( output is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( output ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( output.Exists() ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( key is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( key ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return default;
+				return default( Boolean );
 			}
 
 			try {
@@ -796,7 +796,7 @@ namespace Librainian.Security {
 				if ( !containingingFolder.Create() ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return default;
+					return default( Boolean );
 				}
 
 				using var aes = new AesCryptoServiceProvider {
@@ -811,7 +811,7 @@ namespace Librainian.Security {
 				if ( !outputStream.CanWrite ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath}." ) );
 
-					return default;
+					return default( Boolean );
 				}
 
 				using var encryptor = aes.CreateEncryptor();
@@ -823,7 +823,7 @@ namespace Librainian.Security {
 				if ( !inputStream.CanRead || !inputStream.CanSeek ) {
 					exceptions.Add( new IOException( $"Unable to read from {input.FullPath}." ) );
 
-					return default;
+					return default( Boolean );
 				}
 
 				inputStream.Seek( 0, SeekOrigin.Begin );
@@ -848,12 +848,12 @@ namespace Librainian.Security {
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return default;
+				return default( Boolean );
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return default;
+				return default( Boolean );
 			}
 		}
 

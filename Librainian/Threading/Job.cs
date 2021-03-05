@@ -57,7 +57,7 @@ namespace Librainian.Threading {
 			}
 
 			this.TheTask = new Task( () => action.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith(
-				task => this.Done( default ), TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
+				task => this.Done( default( T ) ), TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
 		}
 
 		/// <summary>Set to cancel this job with the <see cref="MaxRunningTime" />.</summary>
@@ -141,7 +141,7 @@ namespace Librainian.Threading {
 				await this.TheTask.ConfigureAwait( false );
 			}
 			catch ( TaskCanceledException ) {
-				this.Result = default;
+				this.Result = default( T );
 			}
 		}
 

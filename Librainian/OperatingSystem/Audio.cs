@@ -107,7 +107,7 @@ namespace Librainian.OperatingSystem {
 
 			// ReSharper disable once SuspiciousTypeConversion.Global
 			if ( !( new MMDeviceEnumerator() is IMMDeviceEnumerator deviceEnumerator ) ) {
-				return default;
+				return default( ISimpleAudioVolume );
 			}
 
 			deviceEnumerator.GetDefaultAudioEndpoint( EDataFlow.eRender, ERole.eMultimedia, out var speakers );

@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -41,31 +41,31 @@ namespace Librainian.Measurement.Time.FluentTime {
 			return d.Hour < 12 ? d : d.AddHours( -12 );
 		}
 
-		public static DateTime April( this Int32 day, Int32 year ) => new DateTime( year, 4, day );
+		public static DateTime April( this Int32 day, Int32 year ) => new( year, 4, day );
 
-		public static DateTime At( this DateTime d, Int32 hour, Int32 minute = 0, Int32 second = 0 ) => new DateTime( d.Year, d.Month, d.Day, hour, minute, second );
+		public static DateTime At( this DateTime d, Int32 hour, Int32 minute = 0, Int32 second = 0 ) => new( d.Year, d.Month, d.Day, hour, minute, second );
 
-		public static DateTime August( this Int32 day, Int32 year ) => new DateTime( year, 8, day );
+		public static DateTime August( this Int32 day, Int32 year ) => new( year, 8, day );
 
-		public static DateTime December( this Int32 day, Int32 year ) => new DateTime( year, 12, day );
+		public static DateTime December( this Int32 day, Int32 year ) => new( year, 12, day );
 
-		public static DateTime February( this Int32 day, Int32 year ) => new DateTime( year, 2, day );
+		public static DateTime February( this Int32 day, Int32 year ) => new( year, 2, day );
 
-		public static DateTime January( this Int32 day, Int32 year ) => new DateTime( year, 1, day );
+		public static DateTime January( this Int32 day, Int32 year ) => new( year, 1, day );
 
-		public static DateTime July( this Int32 day, Int32 year ) => new DateTime( year, 7, day );
+		public static DateTime July( this Int32 day, Int32 year ) => new( year, 7, day );
 
-		public static DateTime June( this Int32 day, Int32 year ) => new DateTime( year, 6, day );
+		public static DateTime June( this Int32 day, Int32 year ) => new( year, 6, day );
 
 		public static DateTime Local( this DateTime d ) => DateTime.SpecifyKind( d, DateTimeKind.Local );
 
-		public static DateTime March( this Int32 day, Int32 year ) => new DateTime( year, 3, day );
+		public static DateTime March( this Int32 day, Int32 year ) => new( year, 3, day );
 
-		public static DateTime May( this Int32 day, Int32 year ) => new DateTime( year, 5, day );
+		public static DateTime May( this Int32 day, Int32 year ) => new( year, 5, day );
 
-		public static DateTime November( this Int32 day, Int32 year ) => new DateTime( year, 11, day );
+		public static DateTime November( this Int32 day, Int32 year ) => new( year, 11, day );
 
-		public static DateTime October( this Int32 day, Int32 year ) => new DateTime( year, 10, day );
+		public static DateTime October( this Int32 day, Int32 year ) => new( year, 10, day );
 
 		public static DateTime Pm( this DateTime d ) {
 			Reject24HourTime( d );
@@ -73,7 +73,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 			return d.Hour == 12 ? d : d.AddHours( 12 );
 		}
 
-		public static DateTime September( this Int32 day, Int32 year ) => new DateTime( year, 9, day );
+		public static DateTime September( this Int32 day, Int32 year ) => new( year, 9, day );
 
 		public static DateTime Utc( this DateTime d ) => DateTime.SpecifyKind( d, DateTimeKind.Utc );
 

@@ -20,15 +20,16 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ConverterExtensions.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "ConverterExtensions.cs" last formatted on 2021-01-09 at 4:02 PM.
 
 #nullable enable
-namespace Librainian.Converters {
 
+namespace Librainian.Converters {
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Numerics;
+	using System.Runtime.CompilerServices;
 	using System.Security.Cryptography;
 	using System.Text;
 	using System.Text.RegularExpressions;
@@ -61,41 +62,31 @@ namespace Librainian.Converters {
 			"Y", "1", "yes", "true", Boolean.TrueString, "Success", "good", "ok"
 		};
 
+		/// <summary>
+		///     Does nothing. Try <see cref="Cast{TIn,TOut}" /> instead.
+		/// </summary>
+		/// <param name="anything"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static T AsType<T>( this T anything ) => anything;
+
 		[CanBeNull]
-		public static T Cast<T>( this Object? self ) {
-			if ( self == null ) {
-				return default!;
+		public static TOut? Cast<TIn, TOut>( this TIn self ) {
+			if ( self is null ) {
+				return default( TOut? );
 			}
 
 			if ( Convert.IsDBNull( self ) ) {
-				return default;
+				return default( TOut? );
 			}
 
-			if ( self is { } cast ) {
-				return ( T )cast;
+			if ( self is TOut oOut ) {
+				return oOut;
 			}
 
-			return ( T )Convert.ChangeType( self, typeof( T ) );
+			return ( TOut )Convert.ChangeType( self, typeof( TIn ) );
 		}
-
-		/*
-		[CanBeNull]
-		public static T? Cast<T>( this Object? self ) where T : struct {
-			if ( self == null ) {
-				return default;
-			}
-
-			if ( Convert.IsDBNull( self ) ) {
-				return default;
-			}
-
-			if ( self is { } cast ) {
-				return cast as T?;
-			}
-
-			return ( T )Convert.ChangeType( self, typeof( T ) );
-		}
-		*/
 
 		/// <summary>
 		///     Converts strings that may contain "$" or "()" to a <see cref="Decimal" /> amount.
@@ -146,7 +137,7 @@ namespace Librainian.Converters {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
-		public static BigInteger ToBigInteger( this Guid self ) => new BigInteger( self.ToByteArray() );
+		public static BigInteger ToBigInteger( this Guid self ) => new( self.ToByteArray() );
 
 		/// <summary>
 		///     <para>Returns true if <paramref name="value" /> is a true, 'Y', "yes", "true", "1", or '1'.</para>
@@ -157,7 +148,7 @@ namespace Librainian.Converters {
 		[Pure]
 		public static Boolean ToBoolean<T>( [CanBeNull] this T value ) {
 			switch ( value ) {
-				case null: return default;
+				case null: return default( Boolean );
 
 				case Boolean b: return b;
 
@@ -165,7 +156,7 @@ namespace Librainian.Converters {
 
 				case Int32 i: return i >= 1;
 
-				case String s when String.IsNullOrWhiteSpace( s ): return default;
+				case String s when String.IsNullOrWhiteSpace( s ): return default( Boolean );
 
 				case String s: {
 					var clean = s.Trimmed();
@@ -196,7 +187,7 @@ namespace Librainian.Converters {
 				}
 
 				if ( t.In( FalseStrings ) ) {
-					return default;
+					return default( Boolean );
 				}
 
 				if ( Boolean.TryParse( t, out var rest ) ) {
@@ -204,14 +195,14 @@ namespace Librainian.Converters {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[DebuggerStepThrough]
 		[Pure]
 		public static Boolean? ToBooleanOrNull<T>( [CanBeNull] this T value ) {
 			switch ( value ) {
-				case null: return default;
+				case null: return default( Boolean? );
 
 				case Boolean b: return b;
 
@@ -219,13 +210,13 @@ namespace Librainian.Converters {
 
 				case Int32 i: return i >= 1;
 
-				case String s when String.IsNullOrWhiteSpace( s ): return default;
+				case String s when String.IsNullOrWhiteSpace( s ): return default( Boolean? );
 
 				case String s: {
 					s = s.Trimmed();
 
 					if ( s is null ) {
-						return default;
+						return default( Boolean? );
 					}
 
 					if ( s.In( ParsingConstants.TrueStrings ) ) {
@@ -233,7 +224,7 @@ namespace Librainian.Converters {
 					}
 
 					if ( s.In( ParsingConstants.FalseStrings ) ) {
-						return default;
+						return default( Boolean? );
 					}
 
 					if ( Boolean.TryParse( s, out var result ) ) {
@@ -247,7 +238,7 @@ namespace Librainian.Converters {
 			var t = value.ToString();
 
 			if ( String.IsNullOrWhiteSpace( t ) ) {
-				return default;
+				return default( Boolean? );
 			}
 
 			t = t.Trim();
@@ -257,7 +248,7 @@ namespace Librainian.Converters {
 			}
 
 			if ( t.In( ParsingConstants.FalseStrings ) ) {
-				return default;
+				return default( Boolean? );
 			}
 
 			return Boolean.TryParse( t, out var rest ) ? rest : default( Boolean? );
@@ -271,13 +262,13 @@ namespace Librainian.Converters {
 		public static Byte? ToByteOrNull<T>( [CanBeNull] this T value ) {
 			try {
 				if ( value is null ) {
-					return default;
+					return default( Byte? );
 				}
 
 				var s = value.ToString().Trim();
 
 				if ( String.IsNullOrWhiteSpace( s ) ) {
-					return default;
+					return default( Byte? );
 				}
 
 				if ( Byte.TryParse( s, out var result ) ) {
@@ -293,7 +284,7 @@ namespace Librainian.Converters {
 				exception.Log();
 			}
 
-			return default;
+			return default( Byte? );
 		}
 
 		[DebuggerStepThrough]
@@ -323,7 +314,7 @@ namespace Librainian.Converters {
 			//var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
 			return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[13], bytes[9], bytes[10], bytes[11], bytes[12], BitConverter.ToUInt16( bytes, 6 ),
-								 ( DateTimeKind )bytes[15] );
+				( DateTimeKind )bytes[15] );
 		}
 
 		[Pure]
@@ -338,7 +329,7 @@ namespace Librainian.Converters {
 				return DateTime.MinValue;
 			}
 
-			return default;
+			return default( DateTime? );
 		}
 
 		[DebuggerStepThrough]
@@ -358,16 +349,16 @@ namespace Librainian.Converters {
 		[Pure]
 		public static Decimal? ToDecimalOrNull<T>( [CanBeNull] this T value ) {
 			if ( value is null ) {
-				return default;
+				return default( Decimal? );
 			}
 
 			try {
 				//todo This really should look for BOTH "()" and replace with "-"
 				var s = value.Trimmed()?.StripLetters().Replace( "$", String.Empty ).Replace( ")", String.Empty ).Replace( "(", "-" ).Replace( "..", "." )
-							 .Replace( " ", String.Empty ).Trimmed();
+					.Replace( " ", String.Empty ).Trimmed();
 
 				if ( String.IsNullOrEmpty( s ) ) {
-					return default;
+					return default( Decimal? );
 				}
 
 				if ( Decimal.TryParse( s, out var result ) ) {
@@ -383,7 +374,7 @@ namespace Librainian.Converters {
 				exception.Log();
 			}
 
-			return default;
+			return default( Decimal? );
 		}
 
 		[DebuggerStepThrough]
@@ -398,7 +389,7 @@ namespace Librainian.Converters {
 		[NotNull]
 		[DebuggerStepThrough]
 		[Pure]
-		public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new Folder( guid.ToPath( reversed ) );
+		public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new( guid.ToPath( reversed ) );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -431,17 +422,17 @@ namespace Librainian.Converters {
 		public static Guid ToGuid( this DateTime dateTime ) {
 			try {
 				unchecked {
-					var guid = new Guid( ( UInt32 )dateTime.Year                           //0,1,2,3
-									   , ( UInt16 )dateTime.DayOfYear                      //4,5
-									   , ( UInt16 )dateTime.Millisecond                    //6,7
-									   , ( Byte )dateTime.DayOfWeek                        //8
-									   , ( Byte )dateTime.Day                              //9
-									   , ( Byte )dateTime.Hour                             //10
-									   , ( Byte )dateTime.Minute                           //11
-									   , ( Byte )dateTime.Second                           //12
-									   , ( Byte )dateTime.Month                            //13
-									   , Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
-									   , ( Byte )dateTime.Kind );                          //15
+					var guid = new Guid( ( UInt32 )dateTime.Year //0,1,2,3
+						, ( UInt16 )dateTime.DayOfYear //4,5
+						, ( UInt16 )dateTime.Millisecond //6,7
+						, ( Byte )dateTime.DayOfWeek //8
+						, ( Byte )dateTime.Day //9
+						, ( Byte )dateTime.Hour //10
+						, ( Byte )dateTime.Minute //11
+						, ( Byte )dateTime.Second //12
+						, ( Byte )dateTime.Month //13
+						, Convert.ToByte( dateTime.IsDaylightSavingTime() ) //14
+						, ( Byte )dateTime.Kind ); //15
 
 					return guid;
 				}
@@ -476,7 +467,7 @@ namespace Librainian.Converters {
 		[Pure]
 		public static Int32? ToIntOrNull<T>( [CanBeNull] this T value ) {
 			if ( value is null ) {
-				return default;
+				return default( Int32? );
 			}
 
 			try {
@@ -507,7 +498,7 @@ namespace Librainian.Converters {
 				exception.Log();
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		/// <summary>Converts <paramref name="value" /> to an <see cref="Int32" /> or throws <see cref="FormatException" />.</summary>
@@ -555,7 +546,7 @@ namespace Librainian.Converters {
 				exception.Log();
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		[DebuggerStepThrough]
@@ -590,7 +581,7 @@ namespace Librainian.Converters {
 				exception.Log();
 			}
 
-			return default;
+			return default( Decimal? );
 		}
 
 		/// <summary>Return the characters of the guid as a path structure.</summary>
@@ -607,13 +598,13 @@ namespace Librainian.Converters {
 
 			if ( reversed ) {
 				return Path.Combine( a[15].ToString()!, a[14].ToString()!, a[13].ToString()!, a[12].ToString()!, a[11].ToString()!, a[10].ToString()!, a[9].ToString()!,
-									 a[8].ToString()!, a[7].ToString()!, a[6].ToString()!, a[5].ToString()!, a[4].ToString()!, a[3].ToString()!, a[2].ToString()!,
-									 a[1].ToString()!, a[0].ToString()! );
+					a[8].ToString()!, a[7].ToString()!, a[6].ToString()!, a[5].ToString()!, a[4].ToString()!, a[3].ToString()!, a[2].ToString()!, a[1].ToString()!,
+					a[0].ToString()! );
 			}
 
 			return Path.Combine( a[0].ToString()!, a[1].ToString()!, a[2].ToString()!, a[3].ToString()!, a[4].ToString()!, a[5].ToString()!, a[6].ToString()!,
-								 a[7].ToString()!, a[8].ToString()!, a[9].ToString()!, a[10].ToString()!, a[11].ToString()!, a[12].ToString()!, a[13].ToString()!,
-								 a[14].ToString()!, a[15].ToString()! );
+				a[7].ToString()!, a[8].ToString()!, a[9].ToString()!, a[10].ToString()!, a[11].ToString()!, a[12].ToString()!, a[13].ToString()!, a[14].ToString()!,
+				a[15].ToString()! );
 		}
 
 		[DebuggerStepThrough]
@@ -643,10 +634,10 @@ namespace Librainian.Converters {
 		[Pure]
 		public static String? ToStringOrNull<T>( [CanBeNull] this T self ) =>
 			self switch {
-				null     => default,
-				DBNull _ => default,
+				null => default( String? ),
+				DBNull _ => default( String? ),
 				String s => s.Trimmed(),
-				_        => Equals( self, DBNull.Value ) ? default : self.ToString().Trimmed()
+				_ => Equals( self, DBNull.Value ) ? default( String? ) : self.ToString().Trimmed()
 			};
 
 		/// <summary>Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.</summary>
@@ -663,7 +654,7 @@ namespace Librainian.Converters {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
-		public static UBigInteger ToUBigInteger( this Guid guid ) => new UBigInteger( guid.ToByteArray() );
+		public static UBigInteger ToUBigInteger( this Guid guid ) => new( guid.ToByteArray() );
 
 		/// <summary>Returns a 'Y' for true, or an 'N' for false.</summary>
 		/// <param name="value"></param>
@@ -672,5 +663,4 @@ namespace Librainian.Converters {
 		public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
 
 	}
-
 }

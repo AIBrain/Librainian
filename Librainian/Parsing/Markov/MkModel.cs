@@ -48,7 +48,7 @@ namespace Librainian.Parsing.Markov {
 		}
 
 		[NotNull]
-		private ConcurrentDictionary<String, List<String>> _markovChains { get; } = new ConcurrentDictionary<String, List<String>>();
+		private ConcurrentDictionary<String, List<String>> _markovChains { get; } = new();
 
 		[NotNull]
 		public String GenerateRandomCorpus( Int32 numberOfWords ) {

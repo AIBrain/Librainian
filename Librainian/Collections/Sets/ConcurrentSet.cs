@@ -47,7 +47,7 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}" />.</summary>
 		[JsonProperty]
-		private ConcurrentDictionary<T, Object> Dictionary { get; } = new ConcurrentDictionary<T, Object>( Environment.ProcessorCount, 7 );
+		private ConcurrentDictionary<T, Object> Dictionary { get; } = new( Environment.ProcessorCount, 7 );
 
 		/// <summary>Gets a value that indicates if the set is empty.</summary>
 		public Boolean IsEmpty => this.Dictionary.IsEmpty;
@@ -230,9 +230,9 @@ namespace Librainian.Collections.Sets {
 				return true;
 			}
 
-			item = default;
+			item = default( T );
 
-			return default;
+			return default( Boolean );
 		}
 
 	}

@@ -106,15 +106,15 @@ namespace Librainian.Parsing.Validation {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Value is null || right.Value is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Value.Length != right.Value.Length ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.SequenceEqual( right.Value );
@@ -130,7 +130,7 @@ namespace Librainian.Parsing.Validation {
 			}
 
 			if ( left is null || right?.Value is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.SequenceEqual( right.Value );
@@ -142,7 +142,7 @@ namespace Librainian.Parsing.Validation {
 		/// <returns></returns>
 		public static Boolean Equals( [CanBeNull] IValidatedString? left, [CanBeNull] String? right ) {
 			if ( left?.Value is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Value.SequenceEqual( right );

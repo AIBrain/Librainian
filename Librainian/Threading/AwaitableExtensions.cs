@@ -22,7 +22,7 @@
 // 
 // File "AwaitableExtensions.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-// ReSharper disable once CheckNamespace
+
 
 #nullable enable
 

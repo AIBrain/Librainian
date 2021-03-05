@@ -60,7 +60,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeEverything( CancellationToken? token ) =>
-				new ExecutionDataflowBlockOptions {
+				new() {
 					SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount, EnsureOrdered = true,
 					CancellationToken = token ?? CancellationToken.None
 				};
@@ -68,7 +68,7 @@ namespace Librainian.Threading {
 			/// <summary>Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).</summary>
 			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
-				new ExecutionDataflowBlockOptions {
+				new() {
 					SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1, EnsureOrdered = true,
 					CancellationToken = token ?? CancellationToken.None
 				};
@@ -76,7 +76,7 @@ namespace Librainian.Threading {
 			/// <summary>Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).</summary>
 			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
-				new ExecutionDataflowBlockOptions {
+				new() {
 					SingleProducerConstrained = false, MaxDegreeOfParallelism = 1, EnsureOrdered = true, CancellationToken = token ?? CancellationToken.None
 				};
 
@@ -89,7 +89,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
-				new ExecutionDataflowBlockOptions {
+				new() {
 					SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1, EnsureOrdered = true,
 					CancellationToken = token ?? CancellationToken.None
 				};
@@ -99,7 +99,7 @@ namespace Librainian.Threading {
 			/// </summary>
 			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
-				new ExecutionDataflowBlockOptions {
+				new() {
 					SingleProducerConstrained = true, MaxDegreeOfParallelism = 1, EnsureOrdered = true, CancellationToken = token ?? CancellationToken.None
 				};
 

@@ -229,7 +229,7 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( !document.Exists() ) {
-				return default;
+				return default( Boolean );
 			}
 
 #if NET48
@@ -260,7 +260,7 @@ namespace Librainian.FileSystem {
 				bytesRead = await readTask.ConfigureAwait( false );
 
 				if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
-					return default;
+					return default( Boolean );
 				}
 			} while ( bytesRead.Any() );
 

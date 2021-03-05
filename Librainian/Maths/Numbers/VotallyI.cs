@@ -40,7 +40,7 @@ namespace Librainian.Maths.Numbers {
 	public class VotallyI {
 
 		/// <summary>No vote for either.</summary>
-		public static readonly VotallyI Zero = new VotallyI();
+		public static readonly VotallyI Zero = new();
 
 		/// <summary>ONLY used in the getter and setter.</summary>
 		private UInt64 _votesNo;
@@ -132,7 +132,7 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		[NotNull]
-		public VotallyI Clone() => new VotallyI( this.Yes, this.No );
+		public VotallyI Clone() => new( this.Yes, this.No );
 
 		public UInt64 HalfOfVotes() => this.Votes / 2;
 

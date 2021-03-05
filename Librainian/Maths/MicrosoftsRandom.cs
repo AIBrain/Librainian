@@ -80,7 +80,7 @@ namespace Librainian.Maths {
 
 		public static void Seed( Int32 seed ) {
 			unchecked {
-				if ( SeedArray is null || SeedArray.Length != SpecialLength ) {
+				if ( SeedArray?.Length != SpecialLength ) {
 					SeedArray = new Int32[SpecialLength];
 				}
 

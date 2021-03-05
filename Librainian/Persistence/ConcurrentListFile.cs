@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -71,7 +71,7 @@ namespace Librainian.Persistence {
 
 		public async Task<Boolean> Read( CancellationToken token = default ) {
 			if ( this.Document.Exists() == false ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
@@ -97,7 +97,7 @@ namespace Librainian.Persistence {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Returns a string that represents the current object.</summary>

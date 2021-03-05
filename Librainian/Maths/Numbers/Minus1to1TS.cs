@@ -39,7 +39,7 @@ namespace Librainian.Maths.Numbers {
 
 		public const Double MinValue = -1D;
 
-		private static readonly Random Rand = new Random( ( Int32 )DateTime.UtcNow.Ticks );
+		private static readonly Random Rand = new( ( Int32 )DateTime.UtcNow.Ticks );
 
 		/// <summary>ONLY used in the getter and setter.</summary>
 		[JsonProperty]
@@ -72,7 +72,7 @@ namespace Librainian.Maths.Numbers {
 		public static implicit operator Double( [NotNull] Minus1To1Ts special ) => special.Value;
 
 		[NotNull]
-		public static implicit operator Minus1To1Ts( Double value ) => new Minus1To1Ts( value );
+		public static implicit operator Minus1To1Ts( Double value ) => new( value );
 
 		[NotNull]
 		public override String ToString() => $"{this.Value:R}";

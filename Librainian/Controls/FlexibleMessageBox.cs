@@ -311,7 +311,7 @@ namespace Librainian.Controls {
 			[ItemCanBeNull]
 			private static IEnumerable<String?>? GetStringRows( [CanBeNull] String? message ) {
 				if ( String.IsNullOrEmpty( message ) ) {
-					return default;
+					return default( IEnumerable<String?>? );
 				}
 
 				return message.Split( new[] {

@@ -41,7 +41,7 @@ namespace Librainian.Threading {
 		private TimeSpan _interval { get; }
 
 		[NotNull]
-		private Object _lock { get; } = new Object();
+		private Object _lock { get; } = new();
 
 		public Task WaitAsync() {
 			lock ( this._lock ) {

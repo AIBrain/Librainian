@@ -126,6 +126,7 @@ namespace Librainian.Collections.Extensions {
 				}
 			} );
 
+        /*
 		/// <summary>
 		///     Side effects of <paramref name="items" /> other than a byte[] (array) are unknown!
 		/// </summary>
@@ -146,11 +147,12 @@ namespace Librainian.Collections.Extensions {
 			var copy = new T[items.Length];
 
 			foreach ( var VARIABLE in items ) {
-				copy[index++] = VARIABLE.Copy();
+				copy[index++] = VARIABLE.Copy() as T;
 			}
 
 			return copy;
 		}
+        */
 
 		[NotNull]
 		[Pure]
@@ -336,7 +338,7 @@ namespace Librainian.Collections.Extensions {
 				}
 			}
 
-			return default;
+			return default( (T a, T b)? );
 		}
 
 		[ItemCanBeNull]
@@ -614,7 +616,7 @@ namespace Librainian.Collections.Extensions {
 				return value;
 			}
 
-			return default!;
+			return default( TValue )!;
 		}
 
 		/// <summary>untested</summary>
@@ -706,7 +708,7 @@ namespace Librainian.Collections.Extensions {
 				return result;
 			}
 
-			return default!;
+			return default( T )!;
 		}
 
 		[Pure]
@@ -860,7 +862,7 @@ namespace Librainian.Collections.Extensions {
 			}
 
 			if ( list.Count <= 0 ) {
-				item = default!;
+				item = default( T )!;
 
 				return false;
 			}
@@ -884,7 +886,7 @@ namespace Librainian.Collections.Extensions {
 			}
 
 			if ( list.Count <= 0 ) {
-				return default!;
+				return default( T )!;
 			}
 
 			var item = list[0];
@@ -909,9 +911,9 @@ namespace Librainian.Collections.Extensions {
 			var index = list.Count - 1;
 
 			if ( index < 0 ) {
-				item = default!;
+				item = default( T )!;
 
-				return default;
+				return default( Boolean );
 			}
 
 			item = list[index];
@@ -935,7 +937,7 @@ namespace Librainian.Collections.Extensions {
 			var index = list.Count - 1;
 
 			if ( index < 0 ) {
-				return default;
+				return default( T? );
 			}
 
 			var item = list[index];

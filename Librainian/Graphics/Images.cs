@@ -897,7 +897,7 @@ namespace Librainian.Graphics {
 		[CanBeNull]
 		public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem item ) {
 			if ( null == item ) {
-				return default;
+				return default( DateTime? );
 			}
 
 			var value = Encoding.ASCII.GetString( item.Value );
@@ -907,7 +907,7 @@ namespace Librainian.Graphics {
 			}
 
 			if ( value == "0000:00:00 00:00:00" ) {
-				return default;
+				return default( DateTime? );
 			}
 
 			if ( DateTime.TryParse( value, out var result ) ) {
@@ -918,7 +918,7 @@ namespace Librainian.Graphics {
 				return result;
 			}
 
-			return default;
+			return default( DateTime? );
 		}
 
 		/// <summary>Returns true if the date is 'old' enough.</summary>

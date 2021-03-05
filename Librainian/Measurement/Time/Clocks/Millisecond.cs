@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -37,9 +37,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public const Int32 MinValue = 0;
 
-		public static Millisecond Maximum { get; } = new Millisecond( MaxValue );
+		public static Millisecond Maximum { get; } = new( MaxValue );
 
-		public static Millisecond Minimum { get; } = new Millisecond( MinValue );
+		public static Millisecond Minimum { get; } = new( MinValue );
 
 		[JsonProperty]
 		public Int16 Value { get; }
@@ -62,7 +62,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// <returns></returns>
 		public static implicit operator Int16( Millisecond value ) => value.Value;
 
-		public static implicit operator Millisecond( Int16 value ) => new Millisecond( value );
+		public static implicit operator Millisecond( Int16 value ) => new( value );
 
 		/// <summary>
 		///     Provide the next <see cref="Millisecond" />.

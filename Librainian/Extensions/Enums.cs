@@ -55,7 +55,7 @@ namespace Librainian.Extensions {
 				return foundValue;
 			}
 
-			return default;
+			return default( T? );
 		}
 
 		/// <summary>Gets all items for an enum type.</summary>
@@ -112,14 +112,14 @@ namespace Librainian.Extensions {
 
 		public static T? ParseOrNull( [CanBeNull] String? value ) {
 			if ( String.IsNullOrEmpty( value ) ) {
-				return default;
+				return default( T? );
 			}
 
 			if ( SensitiveNames.TryGetValue( value, out var foundValue ) ) {
 				return foundValue;
 			}
 
-			return default;
+			return default( T? );
 		}
 
 		public static T? ParseOrNull( [CanBeNull] String? value, Boolean ignoreCase ) {
@@ -128,20 +128,20 @@ namespace Librainian.Extensions {
 			}
 
 			if ( String.IsNullOrEmpty( value ) ) {
-				return default;
+				return default( T? );
 			}
 
 			if ( InsensitiveNames.TryGetValue( value.ToUpperInvariant(), out var foundValue ) ) {
 				return foundValue;
 			}
 
-			return default;
+			return default( T? );
 		}
 
 		public static T SetFlags( [NotNull] IEnumerable<T> flags ) {
 			var combined = flags.Aggregate( default( Int32 ), ( current, flag ) => current | Convert.ToInt32( flag ) );
 
-			return Values.TryGetValue( combined, out var result ) ? result : default;
+			return Values.TryGetValue( combined, out var result ) ? result : default( T );
 		}
 
 		public static Boolean TryParse( [NotNull] String value, out T returnValue ) => SensitiveNames.TryGetValue( value, out returnValue );

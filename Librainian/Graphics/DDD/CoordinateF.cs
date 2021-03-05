@@ -112,31 +112,31 @@ namespace Librainian.Graphics.DDD {
 			}
 
 			if ( left is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.X < right.X ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.X > right.X ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Y < right.Y ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Y > right.Y ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Z < right.Z ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return !( left.Z > right.Z );

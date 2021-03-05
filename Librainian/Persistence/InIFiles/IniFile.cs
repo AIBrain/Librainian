@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -106,18 +106,18 @@ namespace Librainian.Persistence.InIFiles {
 			[CanBeNull]
 			get {
 				if ( String.IsNullOrEmpty( section ) ) {
-					return default;
+					return default( IniSection? );
 				}
 
 				if ( !this.Data.ContainsKey( section ) ) {
-					return default;
+					return default( IniSection? );
 				}
 
 				if ( this.Data.TryGetValue( section, out var result ) ) {
 					return result;
 				}
 
-				return default;
+				return default( IniSection? );
 			}
 
 			set {
@@ -142,15 +142,15 @@ namespace Librainian.Persistence.InIFiles {
 			[CanBeNull]
 			get {
 				if ( String.IsNullOrEmpty( section ) ) {
-					return default;
+					return default( String? );
 				}
 
 				if ( String.IsNullOrEmpty( key ) ) {
-					return default;
+					return default( String? );
 				}
 
 				if ( !this.Data.ContainsKey( section ) ) {
-					return default;
+					return default( String? );
 				}
 
 				return this.Data[ section ].FirstOrDefault( line => line.Key.Like( key ) )?.Value;
@@ -196,7 +196,7 @@ namespace Librainian.Persistence.InIFiles {
 
 		private Boolean FoundComment( [NotNull] String? line, [NotNull] String section ) {
 			if ( String.IsNullOrWhiteSpace( line ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( String.IsNullOrWhiteSpace( section ) ) {
@@ -207,7 +207,7 @@ namespace Librainian.Persistence.InIFiles {
 				return true;
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
@@ -301,7 +301,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			if ( !this.Data.TryGetValue( section, out var dict ) ) {
-				return default; //section not found
+				return default( Boolean ); //section not found
 			}
 
 			try {
@@ -321,7 +321,7 @@ namespace Librainian.Persistence.InIFiles {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section ) {
@@ -335,7 +335,7 @@ namespace Librainian.Persistence.InIFiles {
 
 			try {
 				if ( !this.Data.TryGetValue( section, out var dict ) ) {
-					return default; //section not found
+					return default( Boolean ); //section not found
 				}
 
 				await using var writer = File.AppendText( document.FullPath );
@@ -352,7 +352,7 @@ namespace Librainian.Persistence.InIFiles {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		public Boolean Add( [CanBeNull] String? section, [NotNull] String key, [CanBeNull] String? value ) {
@@ -372,7 +372,7 @@ namespace Librainian.Persistence.InIFiles {
 
 				var found = dataSection.FirstOrDefault( line => line!.Key.Like( k ) );
 
-				if ( found == default ) {
+				if ( found == default( Object ) ) {
 					dataSection.Add( k!, value );
 
 					return true;
@@ -391,7 +391,7 @@ namespace Librainian.Persistence.InIFiles {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[DebuggerStepThrough]
@@ -529,7 +529,7 @@ namespace Librainian.Persistence.InIFiles {
 					document.Delete();
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 
@@ -554,7 +554,7 @@ namespace Librainian.Persistence.InIFiles {
 					document.Delete();
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 
@@ -562,7 +562,7 @@ namespace Librainian.Persistence.InIFiles {
 				await this.WriteSectionAsync( document, section ).ConfigureAwait( false );
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[DebuggerStepThrough]
@@ -588,7 +588,7 @@ namespace Librainian.Persistence.InIFiles {
 				return this.Data[ section ]!.Remove( key );
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 	}

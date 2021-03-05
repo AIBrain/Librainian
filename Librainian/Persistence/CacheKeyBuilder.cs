@@ -53,7 +53,7 @@ namespace Librainian.Persistence {
 
 			var parts = things.Select( o => {
 				if ( o is IEnumerable<SqlParameter> parameters ) {
-					var kvp = parameters.Where( parameter => parameter != default ).Select( parameter => new {
+					var kvp = parameters.Where( parameter => parameter != default( Object ) ).Select( parameter => new {
 						parameter.ParameterName, parameter.Value
 					} );
 
@@ -87,7 +87,7 @@ namespace Librainian.Persistence {
 
 			var parts = things.Where( o => o != null ).Select( o => {
 				if ( o is IEnumerable<SqlParameter> collection ) {
-					var kvp = collection.Where( parameter => parameter != default ).Select( parameter => new {
+					var kvp = collection.Where( parameter => parameter != default( Object ) ).Select( parameter => new {
 						parameter.ParameterName, parameter.Value, parameter
 					} );
 

@@ -25,46 +25,62 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IQuantityOfTime.cs" last formatted on 2020-11-28.
+// File "ExampleUsingABetterClassDispose.cs" last formatted on 2020-11-07.
 
 #nullable enable
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Tests {
     using System;
     using System.Diagnostics;
-    using System.Runtime.CompilerServices;
+    using System.IO;
     using JetBrains.Annotations;
+    using Utilities;
 
-    public interface IQuantityOfTime {
+    public class ExampleUsingABetterClassDispose : ABetterClassDispose {
+        private MemoryStream? _memoryStream = new();
 
-        /// <summary>
-        ///     Example: Hours to Minutes.
-        /// </summary>
-        /// <returns></returns>
-        [DebuggerStepThrough]
-        [Pure]
-        IQuantityOfTime ToFinerGranularity();
+        private SysComObject? _sysComObject = new();
 
-        [DebuggerStepThrough]
-        [Pure]
-        PlanckTimes ToPlanckTimes();
+        public ExampleUsingABetterClassDispose() => this._sysComObject?.ReserveMemory();
 
-        [DebuggerStepThrough]
-        [Pure]
-        Seconds ToSeconds();
+        public override void DisposeManaged() {
+            using ( this._memoryStream ) {
+                this._memoryStream = null;
+            }
 
-        /// <summary>
-        ///     Example: Seconds to Minutes.
-        /// </summary>
-        /// <returns></returns>
-        [DebuggerStepThrough]
-        [Pure]
-        IQuantityOfTime ToCoarserGranularity();
+            base.DisposeManaged();
+        }
 
+        public override void DisposeNative() {
+            this._sysComObject?.ReleaseMemory();
+            this._sysComObject = null;
+            base.DisposeNative();
+        }
+    }
 
-        [DebuggerStepThrough]
-        [MethodImpl( MethodImplOptions.AggressiveInlining )]
-        [Pure]
-        TimeSpan ToTimeSpan();
+    /// <summary>
+    ///     A fake COM interface object.
+    /// </summary>
+    public class SysComObject {
+
+	    [NotNull]
+	    private static readonly Random RNG = new();
+
+	    [CanBeNull]
+	    private Byte[]? fakeInternalMemoryAllocation;
+
+	    public SysComObject() => this.fakeInternalMemoryAllocation = null;
+
+	    public void ReleaseMemory() {
+	        Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
+	        this.fakeInternalMemoryAllocation = null;
+	        Debug.Assert( this.fakeInternalMemoryAllocation == null, "" );
+	    }
+
+		public void ReserveMemory() {
+			this.fakeInternalMemoryAllocation = new Byte[RNG.Next( 128, 256 )];
+			Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
+			Debug.WriteLine( $"{this.fakeInternalMemoryAllocation.Length} bytes allocated to fake COM object." );
+		}
     }
 }

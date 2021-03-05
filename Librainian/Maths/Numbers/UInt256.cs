@@ -46,7 +46,7 @@ namespace Librainian.Maths.Numbers {
 
 		private readonly UInt64 _part4; // parts are big-endian
 
-		public static UInt256 Zero { get; } = new UInt256( new Byte[0] );
+		public static UInt256 Zero { get; } = new( new Byte[0] );
 
 		private UInt256( UInt64 part1, UInt64 part2, UInt64 part3, UInt64 part4 ) {
 			this._part1 = part1;
@@ -128,33 +128,33 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		public static implicit operator UInt256( Byte value ) => new UInt256( value );
+		public static implicit operator UInt256( Byte value ) => new( value );
 
-		public static implicit operator UInt256( Int32 value ) => new UInt256( value );
+		public static implicit operator UInt256( Int32 value ) => new( value );
 
-		public static implicit operator UInt256( Int64 value ) => new UInt256( value );
+		public static implicit operator UInt256( Int64 value ) => new( value );
 
-		public static implicit operator UInt256( SByte value ) => new UInt256( value );
+		public static implicit operator UInt256( SByte value ) => new( value );
 
-		public static implicit operator UInt256( Int16 value ) => new UInt256( value );
+		public static implicit operator UInt256( Int16 value ) => new( value );
 
-		public static implicit operator UInt256( UInt32 value ) => new UInt256( value );
+		public static implicit operator UInt256( UInt32 value ) => new( value );
 
-		public static implicit operator UInt256( UInt64 value ) => new UInt256( value );
+		public static implicit operator UInt256( UInt64 value ) => new( value );
 
-		public static implicit operator UInt256( UInt16 value ) => new UInt256( value );
+		public static implicit operator UInt256( UInt16 value ) => new( value );
 
 		public static Double Log( UInt256 value, Double baseValue ) => BigInteger.Log( value.ToBigInteger(), baseValue );
 
 		public static Boolean operator !=( UInt256 left, UInt256 right ) => !( left == right );
 
-		public static UInt256 operator %( UInt256 dividend, UInt256 divisor ) => new UInt256( dividend.ToBigInteger() % divisor.ToBigInteger() );
+		public static UInt256 operator %( UInt256 dividend, UInt256 divisor ) => new( dividend.ToBigInteger() % divisor.ToBigInteger() );
 
-		public static UInt256 operator *( UInt256 left, UInt256 right ) => new UInt256( left.ToBigInteger() * right.ToBigInteger() );
+		public static UInt256 operator *( UInt256 left, UInt256 right ) => new( left.ToBigInteger() * right.ToBigInteger() );
 
-		public static UInt256 operator /( UInt256 dividend, UInt256 divisor ) => new UInt256( dividend.ToBigInteger() / divisor.ToBigInteger() );
+		public static UInt256 operator /( UInt256 dividend, UInt256 divisor ) => new( dividend.ToBigInteger() / divisor.ToBigInteger() );
 
-		public static UInt256 operator ~( UInt256 value ) => new UInt256( ~value._part1, ~value._part2, ~value._part3, ~value._part4 );
+		public static UInt256 operator ~( UInt256 value ) => new( ~value._part1, ~value._part2, ~value._part3, ~value._part4 );
 
 		public static Boolean operator <( UInt256 left, UInt256 right ) {
 			if ( left._part1 < right._part1 ) {
@@ -231,19 +231,19 @@ namespace Librainian.Maths.Numbers {
 			return left == right;
 		}
 
-		public static UInt256 operator >>( UInt256 value, Int32 shift ) => new UInt256( value.ToBigInteger() >> shift );
+		public static UInt256 operator >>( UInt256 value, Int32 shift ) => new( value.ToBigInteger() >> shift );
 
-		public static UInt256 Parse( [CanBeNull] String? value ) => new UInt256( BigInteger.Parse( "0" + value ).ToByteArray() );
+		public static UInt256 Parse( [CanBeNull] String? value ) => new( BigInteger.Parse( "0" + value ).ToByteArray() );
 
 		public static UInt256 Parse( [CanBeNull] String? value, [CanBeNull] IFormatProvider provider ) =>
-			new UInt256( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
+			new( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style ) => new UInt256( BigInteger.Parse( "0" + value, style ).ToByteArray() );
+		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style ) => new( BigInteger.Parse( "0" + value, style ).ToByteArray() );
 
 		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style, [CanBeNull] IFormatProvider provider ) =>
-			new UInt256( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
+			new( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
 
-		public static UInt256 Pow( UInt256 value, Int32 exponent ) => new UInt256( BigInteger.Pow( value.ToBigInteger(), exponent ) );
+		public static UInt256 Pow( UInt256 value, Int32 exponent ) => new( BigInteger.Pow( value.ToBigInteger(), exponent ) );
 
 		public Int32 CompareTo( UInt256 other ) {
 			if ( this == other ) {
@@ -266,13 +266,13 @@ namespace Librainian.Maths.Numbers {
 				return other._part1 == this._part1 && other._part2 == this._part2 && other._part3 == this._part3 && other._part4 == this._part4;
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[Pure]
 		public override Int32 GetHashCode() => this._hashCode;
 
-		public BigInteger ToBigInteger() => new BigInteger( this.ToByteArray().Concat( 0 ) );
+		public BigInteger ToBigInteger() => new( this.ToByteArray().Concat( 0 ) );
 
 		[NotNull]
 		public Byte[] ToByteArray() {

@@ -657,7 +657,7 @@ namespace Librainian.Maths {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Boolean IsNumber( this Double value ) {
 			if ( Double.IsNaN( value ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return !Double.IsInfinity( value );
@@ -1312,25 +1312,25 @@ namespace Librainian.Maths {
 			result = Rational.Zero;
 
 			if ( null == numberString ) {
-				return default;
+				return default( Boolean );
 			}
 
 			numberString = numberString.Trim();
 
 			if ( numberString.IsNullOrEmpty() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var parts = numberString.Split( '/' ).ToList();
 
 			if ( parts.Count != 2 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var top = parts.TakeFirst();
 
 			if ( String.IsNullOrWhiteSpace( top ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			top = top.Trim();
@@ -1338,11 +1338,11 @@ namespace Librainian.Maths {
 			var bottom = parts.TakeLast();
 
 			if ( String.IsNullOrWhiteSpace( bottom ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( parts.Count > 0 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( BigInteger.TryParse( top, out var numerator ) ) {

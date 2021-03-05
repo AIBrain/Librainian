@@ -28,6 +28,7 @@ namespace Librainian.Financial.Currency.BTC {
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
 	using Denominations;
@@ -193,7 +194,7 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 
 			var actionBlock = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ),
-																			Blocks.ManyProducers.ConsumeSensible( default ) );
+																			Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
 
 			Parallel.ForEach( sourceAmounts ?? Enumerable.Empty<KeyValuePair<ICoin, UInt64>>(), pair => actionBlock.Post( pair ) );
 			actionBlock.Complete();
@@ -282,7 +283,7 @@ namespace Librainian.Financial.Currency.BTC {
 				throw new ArgumentNullException( nameof( coinWallet ) );
 			}
 
-			var bsfasd = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible( default ) );
+			var bsfasd = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ), Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
 			bsfasd.Complete();
 
 			return bsfasd.Completion;

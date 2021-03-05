@@ -44,7 +44,7 @@ namespace Librainian.OperatingSystem.Storage {
 
 			if ( hDrive.IsInvalid ) {
 				//Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			var ioctlStorageQueryProperty = CTL_CODE( NativeMethods.IOCTL_STORAGE_BASE, 0x500, NativeMethods.METHOD_BUFFERED,
@@ -64,7 +64,7 @@ namespace Librainian.OperatingSystem.Storage {
 
 			if ( !querySeekPenaltyResult ) {
 				//Debug.WriteLine( "DeviceIoControl failed: " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			return querySeekPenaltyDesc.IncursSeekPenalty;
@@ -85,7 +85,7 @@ namespace Librainian.OperatingSystem.Storage {
 				return true;
 			}
 
-			return default; //could not determine
+			return default( Boolean? ); //could not determine
 		}
 
 		/// <summary>Method for nominal media rotation rate (Administrative privilege is required)</summary>
@@ -99,7 +99,7 @@ namespace Librainian.OperatingSystem.Storage {
 
 			if ( hDrive.IsInvalid ) {
 				//Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			var ioctlAtaPassThrough = CTL_CODE( NativeMethods.IOCTL_SCSI_BASE, 0x040b, NativeMethods.METHOD_BUFFERED,
@@ -125,7 +125,7 @@ namespace Librainian.OperatingSystem.Storage {
 
 			if ( !result ) {
 				//Debug.WriteLine( "DeviceIoControl failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
-				return default;
+				return default( Boolean? );
 			}
 
 			// Word index of nominal media rotation rate
@@ -134,7 +134,7 @@ namespace Librainian.OperatingSystem.Storage {
 
 			if ( idQuery.data[kNominalMediaRotRateWordIndex] == nonRotateDevice ) {
 				//Debug.WriteLine( $"The disk #{diskNumber} is a NON-ROTATE device." );
-				return default;
+				return default( Boolean? );
 			}
 
 			//Debug.WriteLine( "This disk is ROTATE device." );

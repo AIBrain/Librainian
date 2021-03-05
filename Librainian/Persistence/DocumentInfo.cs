@@ -107,11 +107,11 @@ namespace Librainian.Persistence {
 			}
 
 			if ( !left.Length.HasValue || !right.Length.HasValue ) {
-				return default;
+				return default( Boolean? );
 			}
 
 			if ( !left.CreationTimeUtc.HasValue || !right.CreationTimeUtc.HasValue || !left.LastWriteTimeUtc.HasValue || !right.LastWriteTimeUtc.HasValue ) {
-				return default;
+				return default( Boolean? );
 			}
 
 			if ( left.Length.Value != right.Length.Value ) {
@@ -130,7 +130,7 @@ namespace Librainian.Persistence {
 				return true;
 			}
 
-			return default;
+			return default( Boolean? );
 		}
 
 		[NotNull]
@@ -153,23 +153,23 @@ namespace Librainian.Persistence {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.LastScanned is null || right.LastScanned is null ) {
-				return default; //the files need to be ran through Update() before we can compare them.
+				return default( Boolean ); //the files need to be ran through Update() before we can compare them.
 			}
 
 			if ( !left.Length.HasValue || !right.Length.HasValue || left.Length.Value != right.Length.Value ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !left.AddHash.HasValue || !right.AddHash.HasValue || left.AddHash.Value != right.AddHash.Value ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !left.CRC32.HasValue || !right.CRC32.HasValue || left.CRC32.Value != right.CRC32.Value ) {
-				return default;
+				return default( Boolean );
 			}
 
 			//Okay, we've compared by 3 different hashes. File should be unique by now.

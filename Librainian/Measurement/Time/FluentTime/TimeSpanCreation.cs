@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -69,7 +69,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
 		public static TimeSpan Millisecond( this Int32 i, TimeSpan otherTime ) => Milliseconds( ( Double )i, otherTime );
 
-		public static TimeSpan Milliseconds( this Double i ) => new TimeSpan( ( Int64 )( TimeSpan.TicksPerMillisecond * i ) );
+		public static TimeSpan Milliseconds( this Double i ) => new( ( Int64 )( TimeSpan.TicksPerMillisecond * i ) );
 
 		public static TimeSpan Milliseconds( this Double i, TimeSpan otherTime ) => Milliseconds( i ) + otherTime;
 
@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
 		public static VariableTimeSpan Month( this Int32 m, VariableTimeSpan otherTime ) => Months( m ) + otherTime;
 
-		public static VariableTimeSpan Months( this Int32 m ) => new VariableTimeSpan( 0, m );
+		public static VariableTimeSpan Months( this Int32 m ) => new( 0, m );
 
 		public static VariableTimeSpan Months( this Int32 m, VariableTimeSpan otherTime ) => Months( m ) + otherTime;
 
@@ -153,7 +153,7 @@ namespace Librainian.Measurement.Time.FluentTime {
 
 		public static VariableTimeSpan Year( this Int32 y, VariableTimeSpan otherTime ) => Years( y ) + otherTime;
 
-		public static VariableTimeSpan Years( this Int32 y ) => new VariableTimeSpan( y, 0 );
+		public static VariableTimeSpan Years( this Int32 y ) => new( y, 0 );
 
 		public static VariableTimeSpan Years( this Int32 y, VariableTimeSpan otherTime ) => Years( y ) + otherTime;
 

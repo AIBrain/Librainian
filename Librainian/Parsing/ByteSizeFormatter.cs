@@ -63,7 +63,7 @@ namespace Librainian.Parsing {
 			bytes = 0;
 
 			if ( !match.Success ) {
-				return default;
+				return default( Boolean );
 			}
 
 			Int64 mult = 1;

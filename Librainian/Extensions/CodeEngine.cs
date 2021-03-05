@@ -131,7 +131,7 @@ namespace Coding
 				if ( results.Errors?.HasErrors == true ) {
 					"Errors".Break();
 
-					return default;
+					return default( Boolean );
 				}
 
 				if ( results.Errors?.HasWarnings == true ) {
@@ -145,7 +145,7 @@ namespace Coding
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return default;
+				return default( Boolean );
 			}
 		}
 
@@ -159,7 +159,7 @@ namespace Coding
 			catch ( Exception exception ) {
 				exception.Log();
 
-				return default;
+				return default( Boolean );
 			}
 		}
 
@@ -173,13 +173,13 @@ namespace Coding
 				}
 
 				if ( null == this._compilerResults ) {
-					return default;
+					return default( Object );
 				}
 
 				if ( this._compilerResults.Errors?.HasErrors == true ) {
 					"".Break();
 
-					return default;
+					return default( Object );
 				}
 
 				if ( this._compilerResults.Errors?.HasWarnings == true ) {
@@ -192,7 +192,7 @@ namespace Coding
 				if ( loObject is null ) {
 					"".Break();
 
-					return default;
+					return default( Object );
 				}
 
 				try {
@@ -203,7 +203,7 @@ namespace Coding
 				catch ( Exception exception ) {
 					exception.Log();
 
-					return default;
+					return default( Object );
 				}
 			}
 		}

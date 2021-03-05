@@ -38,7 +38,7 @@ namespace Librainian.Maths.Numbers {
 	public class VotallyD : ICloneable {
 
 		/// <summary>No vote for either.</summary>
-		public static readonly VotallyD Zero = new VotallyD();
+		public static readonly VotallyD Zero = new();
 
 		/// <summary>ONLY used in the getter and setter.</summary>
 		[JsonProperty]
@@ -165,7 +165,7 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		[NotNull]
-		public VotallyD Clone() => new VotallyD( this.A, this.B );
+		public VotallyD Clone() => new( this.A, this.B );
 
 	}
 

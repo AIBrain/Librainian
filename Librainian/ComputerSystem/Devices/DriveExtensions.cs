@@ -36,12 +36,12 @@ namespace Librainian.ComputerSystem.Devices {
 			FixedDriveTypes.TrimExcess();
 		}
 
-		public static List<DriveType> FixedDriveTypes { get; } = new List<DriveType>( new[] {
+		public static List<DriveType> FixedDriveTypes { get; } = new( new[] {
 			DriveType.Fixed
 		} );
 
 		/// <summary>Drives that have "disks" able to be "removed".</summary>
-		public static List<DriveType> FleetingDriveTypes { get; } = new List<DriveType>( new[] {
+		public static List<DriveType> FleetingDriveTypes { get; } = new( new[] {
 			DriveType.Ram, DriveType.Network, DriveType.CDRom, DriveType.Removable
 		} );
 

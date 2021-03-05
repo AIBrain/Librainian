@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -89,23 +89,23 @@ namespace Librainian.Measurement.Time {
 			this.Microseconds = totalMilliseconds * MicrosecondsPerMillisecond;
 		}
 
-		public static Duration FromDays( Double value ) => new Duration( new Days( ( Rational )value ) );
+		public static Duration FromDays( Double value ) => new( new Days( ( Rational )value ) );
 
-		public static Duration FromHours( Double value ) => new Duration( new Hours( ( Rational )value ) );
+		public static Duration FromHours( Double value ) => new( new Hours( ( Rational )value ) );
 
-		public static Duration FromMicroseconds( Double value ) => new Duration( new Microseconds( ( Rational )value ) );
+		public static Duration FromMicroseconds( Double value ) => new( new Microseconds( ( Rational )value ) );
 
-		public static Duration FromMilliseconds( Double value ) => new Duration( new Milliseconds( value ) );
+		public static Duration FromMilliseconds( Double value ) => new( new Milliseconds( value ) );
 
-		public static Duration FromMinutes( Double value ) => new Duration( new Minutes( ( Rational )value ) );
+		public static Duration FromMinutes( Double value ) => new( new Minutes( ( Rational )value ) );
 
-		public static Duration FromSeconds( Double value ) => new Duration( new Seconds( ( Rational )value ) );
+		public static Duration FromSeconds( Double value ) => new( new Seconds( ( Rational )value ) );
 
-		public static Duration FromTicks( Int64 value ) => new Duration( value );
+		public static Duration FromTicks( Int64 value ) => new( value );
 
-		public static Duration FromWeeks( Double value ) => new Duration( new Weeks( ( Rational )value ) );
+		public static Duration FromWeeks( Double value ) => new( new Weeks( ( Rational )value ) );
 
-		public static Duration FromYears( Double value ) => new Duration( new Years( ( Rational )value ) );
+		public static Duration FromYears( Double value ) => new( new Years( ( Rational )value ) );
 
 		/// <summary>
 		///     <para>Compares <see cref="Microseconds" /></para>

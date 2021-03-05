@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -36,7 +36,7 @@ namespace Librainian.Measurement.Time {
 	[Immutable]
 	public struct Time {
 
-		public static Time Zero = new Time( Hour.Minimum, Minute.Minimum, Second.Minimum, Millisecond.Minimum );
+		public static Time Zero = new( Hour.Minimum, Minute.Minimum, Second.Minimum, Millisecond.Minimum );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -82,13 +82,13 @@ namespace Librainian.Measurement.Time {
 													 ( Int16 )spanOfTime.Milliseconds.Value, ( Int16 )spanOfTime.Microseconds.Value ) { }
 
 		public static explicit operator Time( DateTime dateTime ) =>
-			new Time( ( SByte )dateTime.Hour, ( SByte )dateTime.Minute, ( SByte )dateTime.Second, ( Int16 )dateTime.Millisecond );
+			new( ( SByte )dateTime.Hour, ( SByte )dateTime.Minute, ( SByte )dateTime.Second, ( Int16 )dateTime.Millisecond );
 
 		/// <summary></summary>
 		/// <param name="date"></param>
 		/// <returns></returns>
 		public static implicit operator DateTime( Time date ) =>
-			new DateTime( DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value, date.Second.Value,
+			new( DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value, date.Second.Value,
 						  date.Millisecond.Value );
 
 		/// <summary>Get the local system's computer time.</summary>

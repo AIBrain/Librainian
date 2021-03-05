@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -55,7 +55,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary></summary>
 		[NotNull]
-		private Timer Timer { get; } = new Timer( ( Double )Milliseconds.One.Value ) {
+		private Timer Timer { get; } = new( ( Double )Milliseconds.One.Value ) {
 			AutoReset = false
 		};
 
@@ -109,7 +109,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public Boolean IsPm() => this.Hour >= 12;
 
-		public Time Time() => new Time( this.Hour, this.Minute, this.Second, this.Millisecond );
+		public Time Time() => new( this.Hour, this.Minute, this.Second, this.Millisecond );
 
 		private Boolean DaysTocked( Boolean fireEvents ) {
 			this.Day = this.Day.Next( out var tocked );
@@ -301,9 +301,9 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 		}
 
-		public Date Date() => new Date( this.Year, this.Month, this.Day );
+		public Date Date() => new( this.Year, this.Month, this.Day );
 
-		public DateAndTime DateAndTime() => new DateAndTime( this.Date(), this.Time() );
+		public DateAndTime DateAndTime() => new( this.Date(), this.Time() );
 
 		public Boolean Pause() {
 			this.Timer.Stop();

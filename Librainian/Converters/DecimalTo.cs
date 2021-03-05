@@ -20,10 +20,9 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DecimalTo.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "DecimalTo.cs" last formatted on 2021-01-09 at 4:01 PM.
 
 namespace Librainian.Converters {
-
 	using System;
 	using System.Runtime.InteropServices;
 	using Maths;
@@ -35,8 +34,6 @@ namespace Librainian.Converters {
 		public Guid Guid { get; set; }
 
 		[FieldOffset( 0 )]
-
-		// ReSharper disable once FieldCanBeMadeReadOnly.Global
 		public Decimal Decimal;
 
 		/// <summary>Access the first four bytes.</summary>
@@ -48,5 +45,4 @@ namespace Librainian.Converters {
 		public EightBytes Bytes8;
 
 	}
-
 }

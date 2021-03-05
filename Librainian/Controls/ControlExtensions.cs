@@ -111,7 +111,7 @@ namespace Librainian.Controls {
 
 			Boolean? Target() {
 				if ( control.CheckState == CheckState.Indeterminate ) {
-					return default;
+					return default( Boolean? );
 				}
 
 				return control.Checked;
@@ -502,7 +502,7 @@ namespace Librainian.Controls {
 			}
 
 			if ( browser.Document == null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
@@ -619,8 +619,13 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String? Text( [NotNull] this Control control ) =>
-			control.InvokeRequired ? control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty : control.Text;
+		public static String? Text( [NotNull] this Control control ) {
+			if ( control.InvokeRequired ) {
+				return control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty;
+			}
+
+			return control.Text;
+		}
 
 		/// <summary>Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.</summary>
 		/// <param name="toolStripItem"></param>

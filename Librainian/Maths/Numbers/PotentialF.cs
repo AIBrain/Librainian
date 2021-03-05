@@ -80,7 +80,7 @@ namespace Librainian.Maths.Numbers {
 		public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
 
 		[NotNull]
-		public static PotentialF Parse( [NotNull] String value ) => new PotentialF( Single.Parse( value ) );
+		public static PotentialF Parse( [NotNull] String value ) => new( Single.Parse( value ) );
 
 		public void Add( Single amount ) => this.Value += amount;
 

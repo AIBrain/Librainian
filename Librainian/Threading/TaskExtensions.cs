@@ -796,7 +796,7 @@ namespace Librainian.Threading {
 			var completed = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
 			if ( completed != task ) {
-				return default;
+				return default( Boolean );
 			}
 
 			canceler.Cancel();
@@ -1011,7 +1011,7 @@ namespace Librainian.Threading {
 			private Func<CancellationToken, Task<T>> _loader { get; }
 
 			[NotNull]
-			private Object _lock { get; } = new Object();
+			private Object _lock { get; } = new();
 
 			[NotNull]
 			private SemaphoreSlim _semaphore { get; }
@@ -1023,18 +1023,18 @@ namespace Librainian.Threading {
 			public Int32 MaxConcurrency { get; }
 
 			[NotNull]
-			public Task<T> GetAsync( CancellationToken cancelToken = new CancellationToken() ) {
+			public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
 				lock ( this._lock ) {
 					return this.WaitAndLoadAsync( cancelToken );
 				}
 			}
 
-			public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new CancellationToken() ) {
+			public Boolean TryGet( [CanBeNull] out Task<T> resource, CancellationToken cancelToken = new() ) {
 				lock ( this._lock ) {
 					if ( this._semaphore.CurrentCount == 0 ) {
 						resource = null;
 
-						return default;
+						return default( Boolean );
 					}
 
 					resource = this.WaitAndLoadAsync( cancelToken );

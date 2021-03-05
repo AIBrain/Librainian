@@ -138,7 +138,7 @@ namespace Librainian.OperatingSystem.Compression {
 		// Reads the end-of-central-directory record
 		private Boolean ReadFileInfo() {
 			if ( this._zipFileStream.Length < 22 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
@@ -159,7 +159,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 						// check if comment field is the very last data in file
 						if ( this._zipFileStream.Position + commentSize != this._zipFileStream.Length ) {
-							return default;
+							return default( Boolean );
 						}
 
 						// Copy entire central directory to a memory buffer
@@ -179,7 +179,7 @@ namespace Librainian.OperatingSystem.Compression {
 				// ignored
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		// Copies all source file into storage file
@@ -417,7 +417,7 @@ namespace Librainian.OperatingSystem.Compression {
 				zip = Open( zip._fileName, zip._access );
 			}
 			catch {
-				return default;
+				return default( Boolean );
 			}
 			finally {
 				if ( File.Exists( tempZipName ) ) {
@@ -581,7 +581,7 @@ namespace Librainian.OperatingSystem.Compression {
 			this._zipFileStream.Read( signature, 0, 4 );
 
 			if ( BitConverter.ToUInt32( signature, 0 ) != 0x04034b50 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			// Select input stream for inflating or just reading
@@ -598,7 +598,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 					break;
 
-				default: return default;
+				default: return default( Boolean );
 			}
 
 			// Buffered copy

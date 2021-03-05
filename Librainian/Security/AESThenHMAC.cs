@@ -93,7 +93,7 @@ namespace Librainian.Security {
 
 			//if message length is to small just return null
 			if ( encryptedMessage.Length < sentTag.Length + nonSecretPayloadLength + ivLength ) {
-				return default;
+				return default( Byte[]? );
 			}
 
 			//Grab Sent Tag
@@ -108,7 +108,7 @@ namespace Librainian.Security {
 
 			//if message doesn't authenticate return null
 			if ( compare != 0 ) {
-				return default;
+				return default( Byte[]? );
 			}
 
 			using var aes = new AesManaged {

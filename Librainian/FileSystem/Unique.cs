@@ -103,7 +103,7 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
@@ -126,7 +126,7 @@ namespace Librainian.FileSystem {
 
 			unique = Empty;
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>If the <paramref name="uri" /> is parsed, then <paramref name="unique" /> will never be null.</summary>
@@ -137,7 +137,7 @@ namespace Librainian.FileSystem {
 			if ( uri is null ) {
 				unique = Empty;
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( uri.IsAbsoluteUri ) {
@@ -148,7 +148,7 @@ namespace Librainian.FileSystem {
 
 			unique = Empty;
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
@@ -316,7 +316,7 @@ namespace Librainian.FileSystem {
 				exception.Log();
 			}
 
-			return default;
+			return default( DirectoryInfo? );
 		}
 
 		[CanBeNull]
@@ -330,7 +330,7 @@ namespace Librainian.FileSystem {
 				exception.Log();
 			}
 
-			return default;
+			return default( FileInfo? );
 		}
 
 		/// <summary>Returns a string that represents the current object.</summary>

@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -42,46 +42,46 @@ namespace Librainian.Measurement.Time {
 		public const UInt16 InOneMillisecond = 1000;
 
 		/// <summary>Ten <see cref="Microseconds" /> s.</summary>
-		public static Microseconds Fifteen { get; } = new Microseconds( 15 );
+		public static Microseconds Fifteen { get; } = new( 15 );
 
 		/// <summary>Five <see cref="Microseconds" /> s.</summary>
-		public static Microseconds Five { get; } = new Microseconds( 5 );
+		public static Microseconds Five { get; } = new( 5 );
 
 		/// <summary>Five Hundred <see cref="Microseconds" /> s.</summary>
-		public static Microseconds FiveHundred { get; } = new Microseconds( 500 );
+		public static Microseconds FiveHundred { get; } = new( 500 );
 
 		/// <summary>One <see cref="Microseconds" />.</summary>
-		public static Microseconds One { get; } = new Microseconds( 1 );
+		public static Microseconds One { get; } = new( 1 );
 
 		/// <summary>One Thousand Nine <see cref="Microseconds" /> (Prime).</summary>
-		public static Microseconds OneThousandNine { get; } = new Microseconds( 1009 );
+		public static Microseconds OneThousandNine { get; } = new( 1009 );
 
 		/// <summary>Sixteen <see cref="Microseconds" />.</summary>
-		public static Microseconds Sixteen { get; } = new Microseconds( 16 );
+		public static Microseconds Sixteen { get; } = new( 16 );
 
 		/// <summary>Ten <see cref="Microseconds" /> s.</summary>
-		public static Microseconds Ten { get; } = new Microseconds( 10 );
+		public static Microseconds Ten { get; } = new( 10 );
 
 		/// <summary>Three <see cref="Microseconds" /> s.</summary>
-		public static Microseconds Three { get; } = new Microseconds( 3 );
+		public static Microseconds Three { get; } = new( 3 );
 
 		/// <summary>Three Three Three <see cref="Microseconds" />.</summary>
-		public static Microseconds ThreeHundredThirtyThree { get; } = new Microseconds( 333 );
+		public static Microseconds ThreeHundredThirtyThree { get; } = new( 333 );
 
 		/// <summary>Two <see cref="Microseconds" /> s.</summary>
-		public static Microseconds Two { get; } = new Microseconds( 2 );
+		public static Microseconds Two { get; } = new( 2 );
 
 		/// <summary>Two Hundred <see cref="Microseconds" />.</summary>
-		public static Microseconds TwoHundred { get; } = new Microseconds( 200 );
+		public static Microseconds TwoHundred { get; } = new( 200 );
 
 		/// <summary>Two Hundred Eleven <see cref="Microseconds" /> (Prime).</summary>
-		public static Microseconds TwoHundredEleven { get; } = new Microseconds( 211 );
+		public static Microseconds TwoHundredEleven { get; } = new( 211 );
 
 		/// <summary>Two Thousand Three <see cref="Microseconds" /> (Prime).</summary>
-		public static Microseconds TwoThousandThree { get; } = new Microseconds( 2003 );
+		public static Microseconds TwoThousandThree { get; } = new( 2003 );
 
 		/// <summary>Zero <see cref="Microseconds" />.</summary>
-		public static Microseconds Zero { get; } = new Microseconds( 0 );
+		public static Microseconds Zero { get; } = new( 0 );
 
 		[JsonProperty]
 		public Rational Value { get; }
@@ -96,9 +96,9 @@ namespace Librainian.Measurement.Time {
 
 		public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
-		public static Microseconds Combine( Microseconds left, Rational microseconds ) => new Microseconds( left.Value + microseconds );
+		public static Microseconds Combine( Microseconds left, Rational microseconds ) => new( left.Value + microseconds );
 
-		public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new Microseconds( left.Value + microseconds );
+		public static Microseconds Combine( Microseconds left, BigInteger microseconds ) => new( left.Value + microseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -114,7 +114,7 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
 
-		public static Microseconds operator -( Microseconds milliseconds ) => new Microseconds( milliseconds.Value * -1 );
+		public static Microseconds operator -( Microseconds milliseconds ) => new( milliseconds.Value * -1 );
 
 		public static Microseconds operator -( Microseconds left, Microseconds right ) => Combine( left, -right );
 
@@ -152,27 +152,27 @@ namespace Librainian.Measurement.Time {
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public Milliseconds ToMilliseconds() => new Milliseconds( this.Value / InOneMillisecond );
+		public Milliseconds ToMilliseconds() => new( this.Value / InOneMillisecond );
 
-		public Nanoseconds ToNanoseconds() => new Nanoseconds( this.Value * Nanoseconds.InOneMicrosecond );
+		public Nanoseconds ToNanoseconds() => new( this.Value * Nanoseconds.InOneMicrosecond );
 
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMicrosecond * this.Value );
+		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneMicrosecond * this.Value );
 
-		public Seconds ToSeconds() => new Seconds( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
+		public Seconds ToSeconds() => new( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
 
 		public override String ToString() {
-			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
 				var whole = this.Value.WholePart;
 
-				return $"{whole} {whole.PluralOf( "µs" )}";
+				return $"{whole} {whole.PluralOf( "Âµs" )}";
 			}
 
 			var dec = ( Decimal )this.Value;
 
-			return $"{dec} {dec.PluralOf( "µs" )}";
+			return $"{dec} {dec.PluralOf( "Âµs" )}";
 		}
 
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
+		public TimeSpan? ToTimeSpan() => this.ToSeconds();
 
 	}
 

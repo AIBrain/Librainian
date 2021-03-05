@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -38,10 +38,10 @@ namespace Librainian.Measurement.Time.Clocks {
 		public const SByte MinValue = 1;
 
 		/// <summary>12</summary>
-		public static Month Maximum { get; } = new Month( MaxValue );
+		public static Month Maximum { get; } = new( MaxValue );
 
 		/// <summary>1</summary>
-		public static Month Minimum { get; } = new Month( MinValue );
+		public static Month Minimum { get; } = new( MinValue );
 
 		[JsonProperty]
 		public SByte Value { get; }
@@ -59,7 +59,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// <returns></returns>
 		public static explicit operator Byte( Month value ) => ( Byte )value.Value;
 
-		public static implicit operator Month( SByte value ) => new Month( value );
+		public static implicit operator Month( SByte value ) => new( value );
 
 		public Int32 CompareTo( Month other ) => this.Value.CompareTo( other.Value );
 

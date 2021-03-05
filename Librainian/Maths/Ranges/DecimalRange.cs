@@ -35,7 +35,7 @@ namespace Librainian.Maths.Ranges {
 	[JsonObject]
 	public class DecimalRange {
 
-		public static readonly DecimalRange ZeroToOne = new DecimalRange( 0.0M, 1.0M );
+		public static readonly DecimalRange ZeroToOne = new( 0.0M, 1.0M );
 
 		/// <summary>Maximum value</summary>
 		[JsonProperty]

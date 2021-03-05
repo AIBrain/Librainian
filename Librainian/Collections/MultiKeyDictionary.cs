@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -22,6 +22,8 @@
 // 
 // File "MultiKeyDictionary.cs" last formatted on 2020-08-14 at 8:31 PM.
 
+#nullable enable
+
 namespace Librainian.Collections {
 
 	using System;
@@ -35,11 +37,13 @@ namespace Librainian.Collections {
 	/// <typeparam name="TL">Sub Key Type</typeparam>
 	/// <typeparam name="TV">Value Type</typeparam>
 	/// <remarks>A relational database would be faster for large datasets..</remarks>
-	public class MultiKeyDictionary<TK, TL, TV> : ConcurrentDictionary<TK, TV> {
+	public class MultiKeyDictionary<TK, TL, TV> : ConcurrentDictionary<TK, TV> 
+		where TK : notnull
+		 {
 
-		internal ConcurrentDictionary<TK, TL> PrimaryToSubkeyMapping { get; } = new ConcurrentDictionary<TK, TL>();
+		internal ConcurrentDictionary<TK, TL> PrimaryToSubkeyMapping { get; } = new();
 
-		internal ConcurrentDictionary<TL, TK> SubDictionary { get; } = new ConcurrentDictionary<TL, TK>();
+		internal ConcurrentDictionary<TL, TK> SubDictionary { get; } = new();
 
 		[CanBeNull]
 		public TV this[ [NotNull] TL subKey ] {
@@ -48,7 +52,8 @@ namespace Librainian.Collections {
 					return item;
 				}
 
-				throw new KeyNotFoundException( $"sub key not found: {subKey}" ); //TODO I hate throwing exceptions in indexers..
+				return default( TV );
+				//throw new KeyNotFoundException( $"sub key not found: {subKey}" ); //TODO I hate throwing exceptions in indexers..
 			}
 		}
 
@@ -59,7 +64,8 @@ namespace Librainian.Collections {
 					return item;
 				}
 
-				throw new KeyNotFoundException( $"primary key not found: {primaryKey}" );
+				return default( TV );
+				//throw new KeyNotFoundException( $"primary key not found: {primaryKey}" );
 			}
 		}
 
@@ -100,7 +106,7 @@ namespace Librainian.Collections {
 		public new Boolean ContainsKey( [NotNull] TK primaryKey ) => this.TryGetValue( primaryKey, out _ );
 
 		public void Remove( [NotNull] TK primaryKey ) {
-			if ( Equals( primaryKey, default ) ) {
+			if ( Equals( primaryKey, default( Object? ) ) ) {
 				throw new InvalidOperationException( nameof( primaryKey ) );
 			}
 
@@ -118,7 +124,7 @@ namespace Librainian.Collections {
 		}
 
 		public Boolean TryGetValue( [NotNull] TL subKey, [CanBeNull] out TV val ) {
-			val = default;
+			val = default( TV );
 
 			return this.SubDictionary.TryGetValue( subKey, out var ep ) && this.TryGetValue( ep, out val );
 		}

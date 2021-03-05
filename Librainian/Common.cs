@@ -24,7 +24,7 @@
 
 #nullable enable
 
-// ReSharper disable once CheckNamespace
+
 namespace Librainian {
 
 	using System;
@@ -202,11 +202,11 @@ namespace Librainian {
 		[Pure]
 		public static UInt64 LengthReal( [CanBeNull]
 		                                 this String? s ) {
-			if ( String.IsNullOrEmpty( s! ) ) {
+			if ( String.IsNullOrEmpty( s ) ) {
 				return 0;
 			}
 
-			var stringInfo = new StringInfo( s! );
+			var stringInfo = new StringInfo( s );
 
 			return ( UInt64 )stringInfo.LengthInTextElements;
 		}
@@ -218,20 +218,21 @@ namespace Librainian {
 		/// <param name="bob"></param>
 		/// <returns></returns>
 		[Pure]
-		public static UInt64 MemoryUsed<T>( [NotNull] this T bob ) => JsonConvert.SerializeObject( bob!, Formatting.None ).LengthReal();
+		public static UInt64 MemoryUsed<T>( [NotNull] this T bob ) => JsonConvert.SerializeObject( bob, Formatting.None ).LengthReal();
 
 		/// <summary>
 		///     Create only 1 instance of <see cref="T" /> per thread. (only unique when using this class!)
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		[NotNull]
+		[UsedImplicitly]
 		public static class Cache<T> where T: notnull,new() {
 
 			[NotNull]
-			private static readonly ThreadLocal<T> LocalCache = new ThreadLocal<T>( () => new T(), false );
+			private static readonly ThreadLocal<T> LocalCache = new( () => new T(), false );
 
-			[NotNull]
-			public static T Instance { get; } = LocalCache.Value!;
+			[CanBeNull]
+			public static T? Instance { get; } = LocalCache.Value;
 
 		}
 
@@ -243,7 +244,7 @@ namespace Librainian {
 		public static class CacheGlobal<T> where T : notnull, new() {
 
 			[NotNull]
-			public static T Instance { get; } = new T();
+			public static T Instance { get; } = new();
 
 		}
 

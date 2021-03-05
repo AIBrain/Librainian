@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -58,12 +58,12 @@ namespace Librainian.Maths.Numbers {
 
 		/// <summary>Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.</summary>
 		[NotNull]
-		private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } = new ConcurrentDictionary<Byte, ReaderWriterLockSlim>( Environment.ProcessorCount, 1 );
+		private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } = new( Environment.ProcessorCount, 1 );
 
 		/// <summary>Count of each <see cref="TKey" />.</summary>
 		[JsonProperty]
 		[NotNull]
-		private ConcurrentDictionary<TKey, BigInteger> Dictionary { get; } = new ConcurrentDictionary<TKey, BigInteger>();
+		private ConcurrentDictionary<TKey, BigInteger> Dictionary { get; } = new();
 
 		[JsonProperty]
 		public Boolean IsReadOnly {
@@ -90,7 +90,7 @@ namespace Librainian.Maths.Numbers {
 
 				try {
 					if ( bucket.TryEnterReadLock( this.ReadTimeout ) ) {
-						return this.Dictionary.TryGetValue( key, out var result ) ? result : default;
+						return this.Dictionary.TryGetValue( key, out var result ) ? result : default( BigInteger );
 					}
 				}
 				finally {
@@ -99,7 +99,7 @@ namespace Librainian.Maths.Numbers {
 					}
 				}
 
-				return default;
+				return default( BigInteger? );
 			}
 
 			set {
@@ -168,7 +168,7 @@ namespace Librainian.Maths.Numbers {
 			}
 
 			if ( this.IsReadOnly ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var result = Parallel.ForEach( keys.AsParallel(), CPU.AllExceptOne, key => {
@@ -194,7 +194,7 @@ namespace Librainian.Maths.Numbers {
 			}
 
 			if ( this.IsReadOnly ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var bucket = this.Bucket( key );
@@ -216,7 +216,7 @@ namespace Librainian.Maths.Numbers {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
@@ -242,7 +242,7 @@ namespace Librainian.Maths.Numbers {
 			}
 
 			if ( this.IsReadOnly ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var bucket = this.Bucket( key );
@@ -264,7 +264,7 @@ namespace Librainian.Maths.Numbers {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Return the sum of all values.</summary>

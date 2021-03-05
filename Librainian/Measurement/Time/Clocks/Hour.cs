@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -42,9 +42,9 @@ namespace Librainian.Measurement.Time.Clocks {
 		[JsonProperty]
 		public readonly SByte Value;
 
-		public static Hour Maximum { get; } = new Hour( MaxValue );
+		public static Hour Maximum { get; } = new( MaxValue );
 
-		public static Hour Minimum { get; } = new Hour( MinValue );
+		public static Hour Minimum { get; } = new( MinValue );
 
 		public Hour( SByte value ) {
 			if ( value < MinValue || value > MaxValue ) {
@@ -56,7 +56,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public static explicit operator Byte( Hour value ) => ( Byte )value.Value;
 
-		public static implicit operator Hour( Byte value ) => new Hour( ( SByte )value );
+		public static implicit operator Hour( Byte value ) => new( ( SByte )value );
 
 		public static implicit operator SByte( Hour value ) => value.Value;
 

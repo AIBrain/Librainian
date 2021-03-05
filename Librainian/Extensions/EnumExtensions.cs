@@ -74,7 +74,7 @@ namespace Librainian.Extensions {
 			var memberInfo = type.GetMember( element.ToString() );
 
 			if ( !memberInfo.Any() ) {
-				return default; //element.ToString();
+				return default( String? ); //element.ToString();
 			}
 
 			var attributes = memberInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false );
@@ -148,7 +148,7 @@ namespace Librainian.Extensions {
 			this T e
 		) where T : IConvertible {
 			if ( e is not Enum ) {
-				return default;
+				return default( String? );
 			}
 
 			var type = e.GetType();
@@ -167,7 +167,7 @@ namespace Librainian.Extensions {
 				}
 			}
 
-			return default;
+			return default( String? );
 		}
 
 		[NotNull]

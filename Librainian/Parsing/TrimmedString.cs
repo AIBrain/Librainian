@@ -45,7 +45,7 @@ namespace Librainian.Parsing {
 	public struct TrimmedString : IConvertible, IEquatable<TrimmedString>, IComparable<TrimmedString>, IComparable<String> {
 
 		/// <summary>An immutable empty <see cref="TrimmedString" /> ( our version of <see cref="String.Empty" />).</summary>
-		public static TrimmedString Empty { get; } = new TrimmedString( String.Empty );
+		public static TrimmedString Empty { get; } = new( String.Empty );
 
 		[field: JsonProperty]
 		[NotNull]
@@ -125,7 +125,7 @@ namespace Librainian.Parsing {
 		[NotNull]
 		public static implicit operator String( TrimmedString value ) => value.Value;
 
-		public static implicit operator TrimmedString( [CanBeNull] String? value ) => new TrimmedString( value );
+		public static implicit operator TrimmedString( [CanBeNull] String? value ) => new( value );
 
 		public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.CurrentCulture );
 

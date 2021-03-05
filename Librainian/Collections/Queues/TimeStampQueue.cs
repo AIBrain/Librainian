@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -40,7 +40,7 @@ namespace Librainian.Collections.Queues {
 		public IEnumerable<T> Items => this.Queue.Select( item => item.Item );
 
 		[JsonProperty]
-		public ConcurrentQueue<WithTime<T>> Queue { get; } = new ConcurrentQueue<WithTime<T>>();
+		public ConcurrentQueue<WithTime<T>> Queue { get; } = new();
 
 		public IEnumerator<WithTime<T>> GetEnumerator() => this.Queue.GetEnumerator();
 
@@ -51,7 +51,7 @@ namespace Librainian.Collections.Queues {
 		/// <returns>Returns the DateTime the data was queued.</returns>
 		public DateTime Add( [CanBeNull] T item ) {
 			if ( null == item ) {
-				return default;
+				return default( DateTime );
 			}
 
 			this.Queue.Enqueue( new WithTime<T>( item ) );
@@ -84,7 +84,7 @@ namespace Librainian.Collections.Queues {
 		/// <summary>Returns the next Object in the <see cref="Queue" /> or null.</summary>
 		/// <returns></returns>
 		[CanBeNull]
-		public WithTime<T> Pull() => this.Queue.TryDequeue( out var temp ) ? temp : default;
+		public WithTime<T> Pull() => this.Queue.TryDequeue( out var temp ) ? temp : default( WithTime<T> );
 
 	}
 

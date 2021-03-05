@@ -36,7 +36,7 @@ namespace Librainian.Controls {
 		public IntPtr Handle { get; }
 
 		[NotNull]
-		public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new WindowWrapper( handle );
+		public static WindowWrapper CreateWindowWrapper( IntPtr handle ) => new( handle );
 
 	}
 

@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -87,20 +87,20 @@ namespace Librainian.Internet {
 				return JsonConvert.DeserializeObject<T>( response );
 			}
 
-			return default;
+			return default( T );
 		}
 
 		[ItemCanBeNull]
 		public static async Task<T> DoRequestJsonAsync<T>( [NotNull] Uri uri ) {
 			var reader = await DoRequestAsync( uri ).ConfigureAwait( false );
 
-			if ( reader != default ) {
+			if ( reader != default( Object ) ) {
 				var response = await reader.ReadToEndAsync().ConfigureAwait( false );
 
 				return JsonConvert.DeserializeObject<T>( response );
 			}
 
-			return default;
+			return default( T );
 		}
 
 		/// <summary>Convert network bytes to a string</summary>
@@ -158,12 +158,12 @@ namespace Librainian.Internet {
 				$"Unable to connect to {url}.".Error();
 			}
 
-			return default;
+			return default( String );
 		}
 
 		public static Boolean IsValidIp( this String ip ) {
 			if ( !Regex.IsMatch( ip, "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}" ) ) {
-				return default; //TODO precompile this regex
+				return default( Boolean ); //TODO precompile this regex
 			}
 
 			var ips = ip.Split( '.' );
@@ -172,7 +172,7 @@ namespace Librainian.Internet {
 				return Int32.Parse( ips[0] ) < 256 && ( Int32.Parse( ips[1] ) < 256 ) & ( Int32.Parse( ips[2] ) < 256 ) & ( Int32.Parse( ips[3] ) < 256 );
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );

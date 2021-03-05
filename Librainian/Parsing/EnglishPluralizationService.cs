@@ -438,7 +438,7 @@ namespace Librainian.Parsing {
 		/// <summary>
 		///     this list contains all the plural words that being treated as singluar form, for example, "they" -> "they"
 		/// </summary>
-		private readonly List<String> _knownConflictingPluralList = new List<String> {
+		private readonly List<String> _knownConflictingPluralList = new() {
 			"they",
 			"them",
 			"their",
@@ -500,7 +500,7 @@ namespace Librainian.Parsing {
 			}
 		};
 
-		private readonly List<String> _pronounList = new List<String> {
+		private readonly List<String> _pronounList = new() {
 			"I",
 			"we",
 			"you",
@@ -898,7 +898,7 @@ namespace Librainian.Parsing {
 		public static PluralizationService Default { get; } = new EnglishPluralizationService( new CultureInfo( "en" ) );
 
 		[JetBrains.Annotations.NotNull]
-		private BidirectionalDictionary<String, String> _userDictionary { get; } = new BidirectionalDictionary<String, String>();
+		private BidirectionalDictionary<String, String> _userDictionary { get; } = new();
 
 		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary _irregularPluralsPluralizationService { get; }
@@ -934,7 +934,7 @@ namespace Librainian.Parsing {
 		private IList<String> _knownPluralWords { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private Lazy<Regex> alpaLazy { get; } = new Lazy<Regex>( () => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ) );
+		private Lazy<Regex> alpaLazy { get; } = new( () => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ) );
 
 		public override Boolean IsPlural( String word ) {
 

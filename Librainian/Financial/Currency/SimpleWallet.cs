@@ -105,7 +105,7 @@ namespace Librainian.Financial.Currency {
 					}
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 			finally {
@@ -135,7 +135,7 @@ namespace Librainian.Financial.Currency {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleWallet intoWallet ) {
@@ -144,14 +144,14 @@ namespace Librainian.Financial.Currency {
 			}
 
 			if ( amount <= Decimal.Zero ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
 				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
 					try {
 						if ( this._balance < amount ) {
-							return default;
+							return default( Boolean );
 						}
 
 						this._balance -= amount;
@@ -165,7 +165,7 @@ namespace Librainian.Financial.Currency {
 					}
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 			finally {
@@ -192,7 +192,7 @@ namespace Librainian.Financial.Currency {
 					}
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 			finally {
@@ -210,14 +210,14 @@ namespace Librainian.Financial.Currency {
 		/// <returns></returns>
 		public Boolean TryWithdraw( Decimal amount ) {
 			if ( amount <= Decimal.Zero ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
 				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
 					try {
 						if ( this._balance < amount ) {
-							return default;
+							return default( Boolean );
 						}
 
 						this._balance -= amount;
@@ -229,7 +229,7 @@ namespace Librainian.Financial.Currency {
 					}
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 			finally {
@@ -260,7 +260,7 @@ namespace Librainian.Financial.Currency {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Balance == right.Balance;

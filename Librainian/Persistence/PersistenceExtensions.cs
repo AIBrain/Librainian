@@ -97,7 +97,7 @@ namespace Librainian.Persistence {
 				exception.Log();
 			}
 
-			return default!;
+			return default( TType )!;
 		}
 
 		public static Boolean DeserializeDictionary<TKey, TValue>(
@@ -112,7 +112,7 @@ namespace Librainian.Persistence {
 				var stopwatch = Stopwatch.StartNew();
 
 				if ( folder?.Exists() != true ) {
-					return default;
+					return default( Boolean );
 				}
 
 				var fileCount = UInt64.MinValue;
@@ -165,7 +165,7 @@ namespace Librainian.Persistence {
 			//finally {
 			//    //Report.Exit();
 			//}
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>See also <see cref="Serializer" />.</summary>
@@ -174,8 +174,8 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		[CanBeNull]
 		public static T Deserializer<T>( [CanBeNull] this Byte[] bytes ) {
-			if ( bytes == default ) {
-				return default;
+			if ( bytes == default( Object ) ) {
+				return default( T );
 			}
 
 			using var memoryStream = new MemoryStream( bytes );
@@ -227,7 +227,7 @@ namespace Librainian.Persistence {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
@@ -249,7 +249,7 @@ namespace Librainian.Persistence {
 		[CanBeNull]
 		public static TKey FromJSON<TKey>( [CanBeNull] this String? data ) {
 			if ( String.IsNullOrWhiteSpace( data ) ) {
-				return default!;
+				return default( TKey )!;
 			}
 
 			return JsonConvert.DeserializeObject<TKey>( data, Jss.Value! );
@@ -283,7 +283,7 @@ namespace Librainian.Persistence {
 				exception.Log();
 			}
 
-			return default;
+			return default( String? );
 		}
 
 		/// <summary>
@@ -306,7 +306,7 @@ namespace Librainian.Persistence {
 		) where TKey : IComparable<TKey> {
 
 			if ( !dictionary.Any() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
@@ -372,7 +372,7 @@ namespace Librainian.Persistence {
 			//finally {
 			//    //Report.Exit();
 			//}
-			return default;
+			return default( Boolean );
 		}
 
 		/*

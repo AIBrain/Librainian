@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -72,19 +72,19 @@ namespace Librainian.Graphics.Imaging {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Checksum != right.Checksum ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.LineCount != right.LineCount ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left.Lines.LongLength != right.Lines.LongLength ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Lines.SequenceEqual( right.Lines );
@@ -117,7 +117,7 @@ namespace Librainian.Graphics.Imaging {
 		///     <see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same
 		///     value; otherwise, <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( [CanBeNull] Object? obj ) => Object.Equals( this, obj is Frame frame ? frame : default );
+		public override Boolean Equals( [CanBeNull] Object? obj ) => Object.Equals( this, obj is Frame frame ? frame : default( Frame ) );
 
 		/// <summary>Returns the hash code for this instance.</summary>
 		/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>

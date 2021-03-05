@@ -117,7 +117,7 @@ namespace Librainian.Persistence {
 
 				var key = CacheKeyBuilder.BuildKey( keys );
 
-				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
+				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default( String );
 			}
 
 			set {
@@ -156,7 +156,7 @@ namespace Librainian.Persistence {
 					throw new ArgumentNullException( nameof( key ) );
 				}
 
-				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default;
+				return this.Dictionary.TryGetValue( key, out var storedValue ) ? storedValue.FromCompressedBase64() : default( String );
 			}
 
 			set {
@@ -192,7 +192,7 @@ namespace Librainian.Persistence {
 				return this.Dictionary.Contains( asItem );
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		public Boolean ContainsKey( String key ) => this.Dictionary.ContainsKey( key );
@@ -244,7 +244,7 @@ namespace Librainian.Persistence {
 				throw new ArgumentNullException( nameof( key ) );
 			}
 
-			value = default;
+			value = default( String );
 
 			if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
 				value = storedValue.FromCompressedBase64();
@@ -252,7 +252,7 @@ namespace Librainian.Persistence {
 				return true;
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Returns an enumerator that iterates through a collection.</summary>
@@ -276,7 +276,7 @@ namespace Librainian.Persistence {
 			}
 			catch { }
 
-			return default;
+			return default( Boolean );
 		}
 
 		public void Add( (String key, String value) kvp ) => this[kvp.key] = kvp.value;

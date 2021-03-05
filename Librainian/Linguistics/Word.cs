@@ -69,7 +69,7 @@ namespace Librainian.Linguistics {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.value.Is( right.value );

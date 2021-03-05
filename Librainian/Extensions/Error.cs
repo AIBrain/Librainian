@@ -22,7 +22,7 @@
 // 
 // File "Error.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-// ReSharper disable once CheckNamespace
+
 
 namespace System {
 
@@ -58,7 +58,7 @@ namespace System {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Wrap an each action with a try/catch.</summary>
@@ -72,7 +72,7 @@ namespace System {
 						throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
 					}
 
-					return default;
+					return default( Boolean );
 				}
 
 				foreach ( var action in actions ) {
@@ -85,7 +85,7 @@ namespace System {
 				exception.Log();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Wrap a function with a try/catch.</summary>
@@ -100,7 +100,7 @@ namespace System {
 					throw new ArgumentNullException( nameof( func ) );
 				}
 
-				return default;
+				return default( T );
 			}
 
 			try {
@@ -118,7 +118,7 @@ namespace System {
 				}
 			}
 
-			return default;
+			return default( T );
 		}
 
 		/// <summary>Wrap a function with a try/catch.</summary>
@@ -144,11 +144,11 @@ namespace System {
 
 				exception = new ArgumentNullException( nameof( func ) );
 
-				return default;
+				return default( R );
 			}
 
 			try {
-				exception = default;
+				exception = default( Exception );
 
 				return func( argument );
 			}
@@ -173,7 +173,7 @@ namespace System {
 				}
 			}
 
-			return default;
+			return default( R );
 		}
 
 	}

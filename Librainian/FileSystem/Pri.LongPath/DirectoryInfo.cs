@@ -35,7 +35,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public DirectoryInfo( [NotNull] String path ) : base( path.GetFullPath() ) => this.Name = path.Length != 2 || path[1] != ':' ? GetDirName( this.FullPath ) : ".";
 
 		[NotNull]
-		private System.IO.DirectoryInfo SysDirectoryInfo => new System.IO.DirectoryInfo( this.FullPath );
+		private System.IO.DirectoryInfo SysDirectoryInfo => new( this.FullPath );
 
 		public override Boolean Exists {
 			get {

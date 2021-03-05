@@ -51,7 +51,7 @@ namespace Librainian.Databases {
 	public static class DatabaseExtensions {
 
 		[NotNull]
-		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new Dictionary<Type, IList<PropertyInfo>>();
+		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new();
 
 		/// <summary>Return a dictionary of fields and their index.</summary>
 		/// <param name="reader"></param>
@@ -210,7 +210,7 @@ namespace Librainian.Databases {
 				throw new InvalidOperationException( "No usable connection string." );
 			}
 
-			return default;
+			return default( String? );
 		}
 
 		/// <summary>Method returns the correct SQL namespace to use to detect SQL Server instances.</summary>
@@ -392,13 +392,13 @@ namespace Librainian.Databases {
 			}
 
 			if ( sqlServer.Status != Status.Success ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var connectionStringBuilder = sqlServer.ConnectionStringBuilder;
 
 			if ( connectionStringBuilder == null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			var connectionString = connectionStringBuilder.ConnectionString;
@@ -543,7 +543,7 @@ namespace Librainian.Databases {
 				var dr = table.NewRow();
 
 				foreach ( var p in columns ) {
-					dr[p.Name] = p.GetValue( record, default ) ?? DBNull.Value;
+					dr[p.Name] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
 				}
 
 				table.Rows.Add( dr );
@@ -618,7 +618,7 @@ namespace Librainian.Databases {
 
 		[NotNull]
 		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [CanBeNull] String? parameterName, Int32 size ) =>
-			new SqlParameter( parameterName, sqlDbType, size );
+			new( parameterName, sqlDbType, size );
 
 		/*
                 private static List<T> MapList<T>( DataTable dt ) {
@@ -771,7 +771,7 @@ namespace Librainian.Databases {
 
 			"Failed connecting to server.".Break();
 
-			return default;
+			return default( SqlServer? );
 		}
 
 		/*

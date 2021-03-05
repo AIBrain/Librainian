@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -55,23 +55,24 @@ namespace Librainian.Maths {
 		///     A Double-sized byte buffer per-thread.
 		/// </summary>
 		[NotNull]
-		private static readonly ThreadLocal<Byte[]> ThreadLocalByteBuffer = new ThreadLocal<Byte[]>( () => new Byte[sizeof( Double )], true );
+		private static readonly ThreadLocal<Byte[]> ThreadLocalByteBuffer = new( () => new Byte[sizeof( Double )], true );
 
-		[NotNull] internal static ConcurrentStack<Int32> PollResponses { get; } = new ConcurrentStack<Int32>();
+		[NotNull] internal static ConcurrentStack<Int32> PollResponses { get; } = new();
 
-		[NotNull] public static ConcurrentDictionary<Type, String[]> EnumDictionary { get; } = new ConcurrentDictionary<Type, String[]>();
+		[NotNull] public static ConcurrentDictionary<Type, String[]> EnumDictionary { get; } = new();
 
 		/// <summary>
 		///     <para>More cryptographically strong than <see cref="Random" />.</para>
 		/// </summary>
 		[NotNull]
-		public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new ThreadLocal<RandomNumberGenerator>( () => new RNGCryptoServiceProvider(), true );
+		public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new( () => new RNGCryptoServiceProvider(), true );
 
 		/// <summary>
 		///     Provide to each thread its own <see cref="Random" /> with a random seed.
 		/// </summary>
 		[NotNull]
-		public static ThreadLocal<Random> ThreadSafeRandom { get; } = new ThreadLocal<Random>( () => new Random( DateTime.UtcNow.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() ) );
+		public static ThreadLocal<Random> ThreadSafeRandom { get; } =
+			new( () => new Random( DateTime.UtcNow.GetHashCode() ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() ) );
 
 		/// <summary>Chooses a random element in the given collection <paramref name="items" />.</summary>
 		/// <typeparam name="T">The Type of element.</typeparam>
@@ -85,9 +86,7 @@ namespace Librainian.Maths {
 		/// <param name="a">The first item.</param>
 		/// <returns>A randomly chosen element in the given set of items.</returns>
 		[CanBeNull]
-		public static T Choose<T>( [CanBeNull]
-		                           this T a ) =>
-			a;
+		public static T Choose<T>( [CanBeNull] this T a ) => a;
 
 		/// <summary>Chooses a random element in the given set of items.</summary>
 		/// <typeparam name="T">The Type of element.</typeparam>
@@ -477,14 +476,14 @@ namespace Librainian.Maths {
 
 			var buffer = new Byte[numberOfDigits];
 
-			RNG.Value!.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
+			RNG.Value.GetBytes( buffer ); //BUG is this correct? I think it is, but http://stackoverflow.com/questions/2965707/c-sharp-a-random-bigint-generator suggests a "numberOfDigits/8" here.
 
 			return new BigInteger( buffer );
 		}
 
-		public static Boolean NextBoolean() => Instance().NextDouble() >= 0.5;
+		public static Boolean NextBooleanAlt() => Instance().NextDouble() >= 0.5;
 
-		public static Boolean NextBooleanFast() => Instance().Next( 2 ).Any();
+		public static Boolean NextBoolean() => Instance().Next( 0, 2 ) == 1;
 
 		/// <summary>
 		///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
@@ -605,24 +604,25 @@ namespace Librainian.Maths {
 		public static Decimal NextDecimalFullRange() {
 			do {
 				try {
-					return new Decimal( NextInt32(), NextInt32(), NextInt32(), NextBoolean(), ( Byte )0.Next( 29 ) );
+					return new Decimal( 0.Random(), 0.Random(), 0.Random(), NextBoolean(), ( Byte )0.Next( 29 ) );
 				}
 				catch ( ArgumentOutOfRangeException ) { }
 			} while ( true );
 		}
 
-		public static Degrees NextDegrees() => new Degrees( NextSingle( Degrees.MinimumValue, Degrees.MaximumValue ) );
+		public static Degrees NextDegrees() => new( NextSingle( Degrees.MinimumValue, Degrees.MaximumValue ) );
 
 		/// <summary>
 		///     <para>Returns a random digit between 0 and 9.</para>
 		/// </summary>
+		/// <note>10 mod 10 is 0.</note>
+		/// <note>255 mod 10 is 5.</note>
 		/// <returns></returns>
-		public static Byte NextDigit() {
-			var result = NextByte();
-			result %= 10; //TODO bug check, is modulo inclusive?
-
-			return result;
+		public static Digit NextDigit() {
+			Byte n = ( Byte )(NextByte() % 10);
+			return ( Digit )( n );
 		}
+
 
 		/// <summary>Returns a random digit (0,1,2,3,4,5,6,7,8,9) between <paramref name="min" /> and <paramref name="max" />.</summary>
 		/// <param name="min"></param>
@@ -637,20 +637,21 @@ namespace Librainian.Maths {
 				Byte result;
 
 				do {
-					result = NextByte();
-					result %= 10; //reduce the number of loops
+					result = NextDigit();
 				} while ( result < min || result > max );
 
 				return new Digit( result );
 			}
 		}
 
+		/*
 		/// <summary>
 		///     <para>Returns a random Double between <paramref name="range.Min" /> and <paramref name="range.Max" />.</para>
 		/// </summary>
 		/// <param name="range"></param>
 		/// <returns></returns>
 		public static Double NextDouble( this DoubleRange range ) => range.Min + Instance().NextDouble() * range.Length;
+		*/
 
 		//public static Double NextDouble( this PairOfDoubles variance ) => NextDouble( variance.Low, variance.High );
 
@@ -697,16 +698,16 @@ namespace Librainian.Maths {
 			return result;
 		}
 
-		///// <summary>Returns a random Double between 0 and 1</summary>
-		///// <returns></returns>
-		//public static Double NextDouble() => Instance().NextDouble();
+		/// <summary>Returns a random Double between 0 and 1</summary>
+		/// <returns></returns>
+		public static Double NextDouble() => Instance().NextDouble();
 
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
 		public static T NextEnum<T>() where T : struct {
 			if ( !typeof( T ).IsEnum ) {
-				return default;
+				return default( T );
 			}
 
 			var vals = GetNames<T>();
@@ -732,9 +733,29 @@ namespace Librainian.Maths {
 
 		public static Guid NextGuid() => Guid.NewGuid();
 
-		/// <summary>Gets a non-negetive random whole number less than the specified <paramref cref="maximum" />.</summary>
+		public static Int64 Random( this Int64 number, Int64 min = Int64.MinValue, Int64 max = Int64.MaxValue ) => ( Int64 )( min + Instance().NextDouble() * ( max - min ) );
+		
+		
+
+		public static Int16 Random( this Int16 number, Int16 min = Int16.MinValue, Int16 max = Int16.MaxValue ) => ( Int16 )( min + Instance().NextDouble() * ( max - min ) );
+		public static Single Random( this Single number, Single min = Single.MinValue, Single max = Single.MaxValue ) => ( Single )( min + Instance().NextDouble() * ( max - min ) );
+		public static Double Random( this Double number, Double min = Double.MinValue, Double max = Double.MaxValue ) => ( Double )( min + Instance().NextDouble() * ( max - min ) );
+		public static Guid Random( this Guid guid ) => Guid.NewGuid();
+
+		/// <summary>Return a random number somewhere in the full range of <see cref="Int32" />.</summary>
+		/// <returns></returns>
+		public static Int32 Random( this Int32 number, Int32 min = Int32.MinValue, Int32 max = Int32.MaxValue ) {
+			var firstBits = Instance().Next( 0, 1 << 4 ) << 28;
+			var lastBits = Instance().Next( 0, 1 << 28 );
+			var result = min + ( firstBits | lastBits ) * ( max - min );
+
+			return result;
+		}
+
+
+		/// <summary>Gets a non-negative random whole number less than the specified <paramref cref="maximum" />.</summary>
 		/// <param name="maximum">The exclusive upper bound the random number to be generated.</param>
-		/// <returns>A non-negetive random whole number less than the specified <paramref cref="maximum" />.</returns>
+		/// <returns>A non-negative random whole number less than the specified <paramref cref="maximum" />.</returns>
 		public static Int32 NextInt( this Int32 maximum ) => Instance().Next( maximum );
 
 		/// <summary>Gets a random number within a specified range.</summary>
@@ -747,21 +768,15 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 )( min + Instance().NextDouble() * ( max - min ) );
 
-		/// <summary>Return a random number somewhere in the full range of <see cref="Int32" />.</summary>
-		/// <returns></returns>
-		public static Int32 NextInt32() {
-			var firstBits = Instance().Next( 0, 1 << 4 ) << 28;
-			var lastBits = Instance().Next( 0, 1 << 28 );
 
-			return firstBits | lastBits;
-		}
-
+		/*
 		public static Int64 NextInt64() {
 			var buffer = new Byte[sizeof( Int64 )];
 			Instance().NextBytes( buffer );
 
 			return BitConverter.ToInt64( buffer, 0 );
 		}
+		*/
 
 		/// <summary>Returns a random Single between <paramref name="min" /> and <paramref name="max" />.</summary>
 		/// <param name="min"></param>
@@ -854,7 +869,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <returns></returns>
 		[NotNull]
-		private static Random Instance() => ThreadSafeRandom.Value!.Value!;
+		private static Random Instance() => ThreadSafeRandom.Value;
 
 		[NotNull]
 		public static String ToBinaryString( this Int32 length ) {

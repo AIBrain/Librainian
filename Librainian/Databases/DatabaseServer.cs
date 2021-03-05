@@ -94,7 +94,7 @@ namespace Librainian.Databases {
 				}
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		/// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
@@ -121,7 +121,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
@@ -153,7 +153,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
-			return default;
+			return default( Int32? );
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -196,7 +196,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <param name="query">      </param>
@@ -236,7 +236,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
-			return default;
+			return default( DataTableReader? );
 		}
 
 		[Pure]
@@ -540,7 +540,7 @@ namespace Librainian.Databases {
 
 			using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
 
-			return reader != null ? await reader.ConfigureAwait( false ) : default;
+			return reader != null ? await reader.ConfigureAwait( false ) : default( SqlDataReader );
 		}
 
 		/// <summary>Returns a <see cref="DataTable" /></summary>
@@ -576,7 +576,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
-			return default;
+			return default( IEnumerable<TResult>? );
 		}
 
 		public void UseDatabase( [NotNull] String dbName ) {
@@ -602,7 +602,7 @@ namespace Librainian.Databases {
 
 		/// <summary>The parameter collection for this database connection.</summary>
 		[NotNull]
-		internal ConcurrentHashset<SqlParameter> ParameterSet { get; } = new ConcurrentHashset<SqlParameter>();
+		internal ConcurrentHashset<SqlParameter> ParameterSet { get; } = new();
 
 		/// <summary>
 		///     <para>Create a database object to the specified server.</para>
@@ -663,7 +663,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
-			return default;
+			return default( DataTableReader? );
 		}
 
 #if VERBOSE
@@ -708,7 +708,7 @@ namespace Librainian.Databases {
 				}
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[NotNull]

@@ -58,7 +58,7 @@ namespace Librainian.ComputerSystem {
 
 		private const Int32 STD_OUTPUT_HANDLE = -11;
 
-		private static readonly IntPtr InvalidHandleValue = new IntPtr( -1 );
+		private static readonly IntPtr InvalidHandleValue = new( -1 );
 
 		public static Boolean IsConsoleVisible { get; set; }
 
@@ -134,7 +134,7 @@ namespace Librainian.ComputerSystem {
 			var outStream = Console.OpenStandardOutput();
 			var errStream = Console.OpenStandardError();
 			var encoding = Encoding.GetEncoding( MY_CODE_PAGE );
-			StreamWriter standardOutput = new StreamWriter( outStream, encoding ), standardError = new StreamWriter( errStream, encoding );
+			StreamWriter standardOutput = new( outStream, encoding ), standardError = new( errStream, encoding );
 
 			try {
 				standardOutput.AutoFlush = true;

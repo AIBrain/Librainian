@@ -41,16 +41,16 @@ namespace Librainian.Threading {
 	/// <see cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
 	public class PriorityScheduler : TaskScheduler, IDisposable {
 
-		public static PriorityScheduler AboveNormal { get; } = new PriorityScheduler( ThreadPriority.AboveNormal );
+		public static PriorityScheduler AboveNormal { get; } = new( ThreadPriority.AboveNormal );
 
-		public static PriorityScheduler BelowNormal { get; } = new PriorityScheduler( ThreadPriority.BelowNormal );
+		public static PriorityScheduler BelowNormal { get; } = new( ThreadPriority.BelowNormal );
 
-		public static PriorityScheduler Lowest { get; } = new PriorityScheduler( ThreadPriority.Lowest );
+		public static PriorityScheduler Lowest { get; } = new( ThreadPriority.Lowest );
 
 		private readonly ThreadPriority _priority;
 
 		[NotNull]
-		private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
+		private readonly BlockingCollection<Task> _tasks = new();
 
 		[CanBeNull]
 		private Thread[]? _threads;

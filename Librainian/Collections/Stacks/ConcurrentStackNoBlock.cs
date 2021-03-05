@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -37,7 +37,7 @@ namespace Librainian.Collections.Stacks {
 		[CanBeNull]
 		private volatile Node? _head;
 
-		public ConcurrentNoBlockStackL() => this._head = new Node( default, this._head );
+		public ConcurrentNoBlockStackL() => this._head = new Node( default( T ), this._head );
 
 		[CanBeNull]
 		public T Pop() {
@@ -87,7 +87,7 @@ namespace Librainian.Collections.Stacks {
 
 		private Node? _head;
 
-		public ConcurrentStackNoBlock() => this._head = new Node( default, this._head );
+		public ConcurrentStackNoBlock() => this._head = new Node( default( T ), this._head );
 
 		public Int32 Count { get; private set; }
 
@@ -100,7 +100,7 @@ namespace Librainian.Collections.Stacks {
 		public Int64 LongCount() => this.Count;
 
 		public void Push( [CanBeNull] T item ) {
-			if ( Equals( default, item ) ) {
+			if ( Equals( default( Object? ), item ) ) {
 				return;
 			}
 
@@ -117,7 +117,7 @@ namespace Librainian.Collections.Stacks {
 		}
 
 		public Boolean TryPop( [CanBeNull] out T result ) {
-			result = default!;
+			result = default( T )!;
 
 			Node? ret;
 
@@ -126,14 +126,14 @@ namespace Librainian.Collections.Stacks {
 
 				if ( ret?.Next is null ) {
 					//throw new IndexOutOfRangeException( "Stack is empty" );
-					return default;
+					return default( Boolean );
 				}
 			} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
 
 			--this.Count;
 			result = ret.Item;
 
-			return !Equals( result, default );
+			return !Equals( result, default( Object? ) );
 		}
 
 		/// <summary>Attempt two <see cref="TryPop" /></summary>
@@ -142,15 +142,15 @@ namespace Librainian.Collections.Stacks {
 		/// <returns></returns>
 		public Boolean TryPopPop( [CanBeNull] out T itemOne, [CanBeNull] out T itemTwo ) {
 			if ( !this.TryPop( out itemOne ) ) {
-				itemTwo = default;
+				itemTwo = default( T );
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !this.TryPop( out itemTwo ) ) {
 				this.Push( itemOne );
 
-				return default;
+				return default( Boolean );
 			}
 
 			return true;

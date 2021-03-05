@@ -70,13 +70,13 @@ namespace Librainian.Maths.Numbers {
 		///     Returns a new <see cref="Minus1To1D" /> with the value of <paramref name="value1" /> moved closer to the value
 		///     of <paramref name="value2" /> .
 		/// </returns>
-		public static Minus1To1D Combine( Minus1To1D value1, Minus1To1D value2 ) => new Minus1To1D( ( value1 + value2 ) / 2D );
+		public static Minus1To1D Combine( Minus1To1D value1, Minus1To1D value2 ) => new( ( value1 + value2 ) / 2D );
 
 		public static implicit operator Double( Minus1To1D special ) => special.Value;
 
-		public static implicit operator Minus1To1D( Double value ) => new Minus1To1D( value );
+		public static implicit operator Minus1To1D( Double value ) => new( value );
 
-		public static Minus1To1D Parse( [NotNull] String value ) => new Minus1To1D( Double.Parse( value ) );
+		public static Minus1To1D Parse( [NotNull] String value ) => new( Double.Parse( value ) );
 
 		[NotNull]
 		public override String ToString() => $"{this.Value:P}";

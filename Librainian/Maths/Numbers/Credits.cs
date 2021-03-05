@@ -38,7 +38,7 @@ namespace Librainian.Maths.Numbers {
 	public class Credits {
 
 		/// <summary>No credits.</summary>
-		public static readonly Credits Zero = new Credits();
+		public static readonly Credits Zero = new();
 
 		/// <summary>ONLY used in the getter and setter.</summary>
 		[JsonProperty]
@@ -84,7 +84,7 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		[NotNull]
-		public Credits Clone() => new Credits( this.CurrentCredits, this.LifetimeCredits );
+		public Credits Clone() => new( this.CurrentCredits, this.LifetimeCredits );
 
 		public void SubtractCredits( UInt64 credits = 1 ) {
 			var currentcredits = ( Int64 )this.CurrentCredits;

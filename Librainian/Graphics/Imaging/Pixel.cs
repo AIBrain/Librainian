@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -154,7 +154,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( "Blank input line" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			var openParent = line.IndexOf( "(", StringComparison.OrdinalIgnoreCase );
@@ -164,7 +164,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to find a '(' in {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
@@ -172,7 +172,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			var closeParent = line.IndexOf( ")", StringComparison.OrdinalIgnoreCase );
@@ -182,7 +182,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to find a ')' in {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] {
@@ -194,7 +194,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Color from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !Byte.TryParse( argb[0], out var alpha ) ) {
@@ -202,7 +202,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !Byte.TryParse( argb[1], out var red ) ) {
@@ -210,7 +210,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !Byte.TryParse( argb[2], out var green ) ) {
@@ -218,7 +218,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !Byte.TryParse( argb[3], out var blue ) ) {
@@ -226,7 +226,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			var at = line.IndexOf( "@", StringComparison.OrdinalIgnoreCase );
@@ -236,7 +236,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to find an '@' in {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			var xandy = line.Substring( at + 1 ).Split( new[] {
@@ -248,7 +248,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse X & Y from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !UInt32.TryParse( xandy[0], out var x ) ) {
@@ -256,7 +256,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			if ( !UInt32.TryParse( xandy[0], out var y ) ) {
@@ -264,7 +264,7 @@ namespace Librainian.Graphics.Imaging {
 					await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
 				}
 
-				return default;
+				return default( Pixel? );
 			}
 
 			var pixel = new Pixel( alpha, red, green, blue, x, y );
@@ -284,7 +284,7 @@ namespace Librainian.Graphics.Imaging {
 		///     <see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same
 		///     value; otherwise, <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as Pixel? ?? default );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as Pixel? ?? default( Pixel ) );
 
 	}
 

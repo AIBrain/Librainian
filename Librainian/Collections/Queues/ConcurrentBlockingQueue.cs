@@ -39,9 +39,9 @@ namespace Librainian.Collections.Queues {
 
 		private Boolean _isCompleteAdding;
 
-		private ConcurrentQueue<T> Queue { get; } = new ConcurrentQueue<T>();
+		private ConcurrentQueue<T> Queue { get; } = new();
 
-		private AutoResetEvent WorkEvent { get; } = new AutoResetEvent( false );
+		private AutoResetEvent WorkEvent { get; } = new( false );
 
 		/// <summary>Adds the item to the queue.</summary>
 		/// <param name="item">The item to be added.</param>

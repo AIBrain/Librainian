@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -73,7 +73,7 @@ namespace Librainian.ComputerSystem.Devices {
 			Int32 index,
 			Int32 disknum = -1
 		) =>
-			new Device( deviceClass, deviceInfoData, path, index, disknum );
+			new( deviceClass, deviceInfoData, path, index, disknum );
 
 		internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
 			var sb = new StringBuilder( 1024 );
@@ -187,7 +187,7 @@ namespace Librainian.ComputerSystem.Devices {
 				var interfaceData = new NativeMethods.SP_DEVICE_INTERFACE_DATA();
 				interfaceData.cbSize = ( UInt32 )Marshal.SizeOf( interfaceData );
 
-				if ( !NativeMethods.SetupDiEnumDeviceInterfaces( this._deviceInfoSet, default, ref this._classGuid, index, interfaceData ) ) {
+				if ( !NativeMethods.SetupDiEnumDeviceInterfaces( this._deviceInfoSet, default( NativeMethods.SP_DEVINFO_DATA ), ref this._classGuid, index, interfaceData ) ) {
 					var error = Marshal.GetLastWin32Error();
 
 					if ( error != NativeMethods.ERROR_NO_MORE_ITEMS ) {
@@ -260,7 +260,8 @@ namespace Librainian.ComputerSystem.Devices {
 					}
 
 					if ( bytesReturned > 0 ) {
-						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER )Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
+						var bob = Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
+						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER )(bob ?? throw new InvalidOperationException());
 					}
 					else {
 						disknum = new NativeMethods.STORAGE_DEVICE_NUMBER {

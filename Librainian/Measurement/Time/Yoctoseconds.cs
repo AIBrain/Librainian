@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -46,31 +46,31 @@ namespace Librainian.Measurement.Time {
 		public const UInt16 InOneZeptosecond = 1000;
 
 		/// <summary><see cref="Five" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Five = new Yoctoseconds( 5 );
+		public static Yoctoseconds Five = new( 5 );
 
 		/// <summary><see cref="One" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds One = new Yoctoseconds( 1 );
+		public static Yoctoseconds One = new( 1 );
 
 		/// <summary><see cref="Seven" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Seven = new Yoctoseconds( 7 );
+		public static Yoctoseconds Seven = new( 7 );
 
 		/// <summary><see cref="Ten" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Ten = new Yoctoseconds( 10 );
+		public static Yoctoseconds Ten = new( 10 );
 
 		/// <summary><see cref="Thirteen" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Thirteen = new Yoctoseconds( 13 );
+		public static Yoctoseconds Thirteen = new( 13 );
 
 		/// <summary><see cref="Thirty" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Thirty = new Yoctoseconds( 30 );
+		public static Yoctoseconds Thirty = new( 30 );
 
 		/// <summary><see cref="Three" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Three = new Yoctoseconds( 3 );
+		public static Yoctoseconds Three = new( 3 );
 
 		/// <summary><see cref="Two" /><see cref="Yoctoseconds" />.</summary>
-		public static Yoctoseconds Two = new Yoctoseconds( 2 );
+		public static Yoctoseconds Two = new( 2 );
 
 		/// <summary></summary>
-		public static Yoctoseconds Zero = new Yoctoseconds( 0 );
+		public static Yoctoseconds Zero = new( 0 );
 
 		public static Rational InOneSecond { get; } = new BigInteger( 10E24 );
 
@@ -87,7 +87,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
 
-		public static Yoctoseconds Combine( Yoctoseconds left, Rational yoctoseconds ) => new Yoctoseconds( left.Value + yoctoseconds );
+		public static Yoctoseconds Combine( Yoctoseconds left, Rational yoctoseconds ) => new( left.Value + yoctoseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -102,14 +102,14 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
-		public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new SpanOfTime( yoctoseconds );
+		public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new( yoctoseconds );
 
 		/// <summary>Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.</summary>
 		/// <param name="yoctoseconds"></param>
 		/// <returns></returns>
 		public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
 
-		public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new Yoctoseconds( yoctoseconds.Value * -1 );
+		public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new( yoctoseconds.Value * -1 );
 
 		public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left, -right );
 
@@ -127,7 +127,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-		public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new PlanckTimes( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+		public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new( yoctoseconds.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
 		public Int32 CompareTo( Yoctoseconds other ) => this.Value.CompareTo( other.Value );
 
@@ -143,12 +143,12 @@ namespace Librainian.Measurement.Time {
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
+		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational )PlanckTimes.InOneYoctosecond );
 
-		public Seconds ToSeconds() => new Seconds( this.Value * InOneSecond );
+		public Seconds ToSeconds() => new( this.Value * InOneSecond );
 
 		public override String ToString() {
-			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
 				var whole = this.Value.WholePart;
 
 				return $"{whole} {whole.PluralOf( "ys" )}";
@@ -159,9 +159,9 @@ namespace Librainian.Measurement.Time {
 			return $"{dec} {dec.PluralOf( "ys" )}";
 		}
 
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
+		public TimeSpan? ToTimeSpan() => this.ToSeconds();
 
-		public Zeptoseconds ToZeptoseconds() => new Zeptoseconds( this.Value / InOneZeptosecond );
+		public Zeptoseconds ToZeptoseconds() => new( this.Value / InOneZeptosecond );
 
 	}
 

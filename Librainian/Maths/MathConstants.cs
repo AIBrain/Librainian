@@ -44,7 +44,7 @@ namespace Librainian.Maths {
 
 		public const Boolean Yes = true;
 
-		public static readonly Rational DecimalMaxValueAsBigRational = ( Rational )Decimal.MaxValue;
+		public static readonly Rational MaxiumDecimalValue = ( Rational )Decimal.MaxValue;
 
 		[NotNull]
 		public static readonly Double[] Logfactorialtable = {
@@ -86,14 +86,14 @@ namespace Librainian.Maths {
 			1134.045231790853000, 1139.570684729984800, 1145.100113817496100, 1150.633503306223700, 1156.170837573242400
 		};
 
-		public static readonly Rational MinusOneOverTwo = new Rational( -1, 2 );
+		public static readonly Rational MinusOneOverTwo = new( -1, 2 );
 
-		public static readonly Rational OneOverTwo = new Rational( 1, 2 );
+		public static readonly Rational OneOverTwo = new( 1, 2 );
 
-		public static readonly Rational ThreeOverTwo = new Rational( 3, 2 );
+		public static readonly Rational ThreeOverTwo = new( 3, 2 );
 
 		/// <summary>Precalculated -3/2.</summary>
-		public static Rational NegativeThreeOverTwo { get; } = new Rational( -3, 2 );
+		public static Rational NegativeThreeOverTwo { get; } = new( -3, 2 );
 
 		public static class Sizes {
 

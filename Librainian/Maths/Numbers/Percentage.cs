@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -88,7 +88,7 @@ namespace Librainian.Maths.Numbers {
 		/// <returns></returns>
 		[NotNull]
 		public static Percentage Combine( [NotNull] Percentage left, [NotNull] Percentage right ) =>
-			new Percentage( ( left.Quotient + right.Quotient ) / ( Rational.One + Rational.One ) );
+			new( ( left.Quotient + right.Quotient ) / ( Rational.One + Rational.One ) );
 
 		/// <summary>static comparison</summary>
 		/// <param name="left"></param>
@@ -109,16 +109,16 @@ namespace Librainian.Maths.Numbers {
 		public static explicit operator Double( [NotNull] Percentage special ) => ( Double )special.Quotient;
 
 		[NotNull]
-		public static implicit operator Percentage( Single value ) => new Percentage( ( Rational )value );
+		public static implicit operator Percentage( Single value ) => new( ( Rational )value );
 
 		[NotNull]
-		public static implicit operator Percentage( Double value ) => new Percentage( ( Rational )value );
+		public static implicit operator Percentage( Double value ) => new( ( Rational )value );
 
 		[NotNull]
-		public static implicit operator Percentage( Decimal value ) => new Percentage( ( Rational )value );
+		public static implicit operator Percentage( Decimal value ) => new( ( Rational )value );
 
 		[NotNull]
-		public static implicit operator Percentage( Int32 value ) => new Percentage( value );
+		public static implicit operator Percentage( Int32 value ) => new( value );
 
 		/// <summary>
 		///     Returns a value that indicates whether two <see cref="T:Librainian.Maths.Numbers.Percentage" /> objects have
@@ -158,7 +158,7 @@ namespace Librainian.Maths.Numbers {
 				return new Percentage( ( Rational )dob );
 			}
 
-			return default;
+			return default( Percentage );
 		}
 
 		public static Boolean TryParse( [NotNull] String numberString, [CanBeNull] out Percentage result ) {
@@ -174,9 +174,9 @@ namespace Librainian.Maths.Numbers {
 				return true;
 			}
 
-			result = default;
+			result = default( Percentage );
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>

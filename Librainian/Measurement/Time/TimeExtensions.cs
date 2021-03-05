@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -52,7 +52,7 @@ namespace Librainian.Measurement.Time {
 
 		private static TimeSpan? AverageTimePrecision;
 
-		public static DateTime StarDateOrigin { get; } = new DateTime( 2318, 7, 5, 12, 0, 0, DateTimeKind.Utc );
+		public static DateTime StarDateOrigin { get; } = new( 2318, 7, 5, 12, 0, 0, DateTimeKind.Utc );
 
 		/// <summary>Return how many years old the person is in <see cref="Years" />.</summary>
 		/// <param name="dateOfBirth"></param>
@@ -170,7 +170,7 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Returns the Start of the given <paramref name="date" />.</summary>
 		/// <param name="date"></param>
 		/// <returns></returns>
-		public static DateTime BeginningOfDay( this DateTime date ) => new DateTime( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
+		public static DateTime BeginningOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
 
 		/// <summary>Example: Console.WriteLine( 3.Days().FromNow() );</summary>
 		/// <param name="days"></param>
@@ -208,7 +208,7 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="date"></param>
 		/// <returns></returns>
-		public static DateTime EndOfDay( this DateTime date ) => new DateTime( date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind );
+		public static DateTime EndOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind );
 
 		/// <summary>Return a quick estimation of the time remaining [on a download for example].</summary>
 		/// <param name="timeElapsed">Time elapsed so far.</param>
@@ -238,7 +238,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns>given <see cref="DateTime" /> with the day part set to the first day in that month.</returns>
 		public static DateTime FirstDayOfMonth( this DateTime current ) => current.SetDay( 1 );
 
-		public static DateTime FirstDayOfTheMonth( this DateTime date ) => new DateTime( date.Year, date.Month, 1 );
+		public static DateTime FirstDayOfTheMonth( this DateTime date ) => new( date.Year, date.Month, 1 );
 
 		/// <summary>Returns a DateTime adjusted to the beginning of the week.</summary>
 		/// <param name="dateTime">The DateTime to adjust</param>
@@ -360,7 +360,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns>given <see cref="DateTime" /> with the day part set to the last day in that month.</returns>
 		public static DateTime LastDayOfMonth( this DateTime current ) => current.SetDay( DateTime.DaysInMonth( current.Year, current.Month ) );
 
-		public static DateTime LastDayOfTheMonth( this DateTime date ) => new DateTime( date.Year, date.Month, DateTime.DaysInMonth( date.Year, date.Month ) );
+		public static DateTime LastDayOfTheMonth( this DateTime date ) => new( date.Year, date.Month, DateTime.DaysInMonth( date.Year, date.Month ) );
 
 		/// <summary>
 		///     Returns the last day of the week keeping the time component intact. Eg, 2011-12-24T06:40:20.005 =&gt;
@@ -651,47 +651,47 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Year part.</summary>
 		public static DateTime SetDate( this DateTime value, Int32 year ) =>
-			new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Year and Month part.</summary>
 		public static DateTime SetDate( this DateTime value, Int32 year, Int32 month ) =>
-			new DateTime( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Year, Month and Day part.</summary>
 		public static DateTime SetDate( this DateTime value, Int32 year, Int32 month, Int32 day ) =>
-			new DateTime( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Day part.</summary>
 		public static DateTime SetDay( this DateTime value, Int32 day ) =>
-			new DateTime( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Hour part.</summary>
 		public static DateTime SetHour( this DateTime originalDate, Int32 hour ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond,
+			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond,
 						  originalDate.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Millisecond part.</summary>
 		public static DateTime SetMillisecond( this DateTime originalDate, Int32 millisecond ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, originalDate.Second, millisecond,
+			new( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, originalDate.Second, millisecond,
 						  originalDate.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Minute part.</summary>
 		public static DateTime SetMinute( this DateTime originalDate, Int32 minute ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, minute, originalDate.Second, originalDate.Millisecond,
+			new( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, minute, originalDate.Second, originalDate.Millisecond,
 						  originalDate.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Month part.</summary>
 		public static DateTime SetMonth( this DateTime value, Int32 month ) =>
-			new DateTime( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Second part.</summary>
 		public static DateTime SetSecond( this DateTime originalDate, Int32 second ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond,
+			new( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond,
 						  originalDate.Kind );
 
 		/// <summary>Returns the original <see cref="DateTime" /> with Hour part changed to supplied hour parameter.</summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond,
+			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond,
 						  originalDate.Kind );
 
 		/// <summary>
@@ -699,25 +699,25 @@ namespace Librainian.Measurement.Time {
 		///     parameters.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
 
 		/// <summary>
 		///     Returns the original <see cref="DateTime" /> with Hour, Minute and Second parts changed to supplied hour,
 		///     minute and second parameters.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
+			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
 
 		/// <summary>
 		///     Returns the original <see cref="DateTime" /> with Hour, Minute, Second and Millisecond parts changed to
 		///     supplied hour, minute, second and millisecond parameters.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) =>
-			new DateTime( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
+			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
 
 		/// <summary>Returns <see cref="DateTime" /> with changed Year part.</summary>
 		public static DateTime SetYear( this DateTime value, Int32 year ) =>
-			new DateTime( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
 
 		/// <summary>Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".</summary>
 		/// <param name="timeSpan"></param>

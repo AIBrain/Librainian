@@ -1,0 +1,2 @@
+[*.cs]
+csharp_prefer_simple_default_expression = false

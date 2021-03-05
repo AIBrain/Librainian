@@ -44,7 +44,7 @@ namespace Librainian.Threading {
 		private Thread? thread;
 
 		[NotNull]
-		private BlockingCollection<T> MessageQueue { get; } = new BlockingCollection<T>();
+		private BlockingCollection<T> MessageQueue { get; } = new();
 
 		private CancellationToken Token { get; set; }
 

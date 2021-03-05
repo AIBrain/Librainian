@@ -46,10 +46,10 @@ namespace Librainian.Threading {
 		private Task<Releaser> _readerReleaser { get; }
 
 		[NotNull]
-		private TaskCompletionSource<Releaser> _waitingReader { get; set; } = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
+		private TaskCompletionSource<Releaser> _waitingReader { get; set; } = new( TaskCreationOptions.RunContinuationsAsynchronously );
 
 		[NotNull]
-		private Queue<TaskCompletionSource<Releaser>> _waitingWriters { get; } = new Queue<TaskCompletionSource<Releaser>>();
+		private Queue<TaskCompletionSource<Releaser>> _waitingWriters { get; } = new();
 
 		[NotNull]
 		private Task<Releaser> _writerReleaser { get; }

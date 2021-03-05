@@ -43,7 +43,7 @@ namespace Librainian.Maths.Numbers {
 		/// <summary>Hex32s the specified i.</summary>
 		/// <param name="i">The i.</param>
 		/// <returns></returns>
-		public static implicit operator Hex32( Int32 i ) => new Hex32( i );
+		public static implicit operator Hex32( Int32 i ) => new( i );
 
 		/// <summary>Int32s the specified h.</summary>
 		/// <param name="h">The h.</param>
@@ -54,7 +54,7 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="h1">The h1.</param>
 		/// <param name="h2">The h2.</param>
 		/// <returns></returns>
-		public static Hex32 operator -( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value - h2.Value );
+		public static Hex32 operator -( Hex32 h1, Hex32 h2 ) => new( h1.Value - h2.Value );
 
 		/// <summary>Checks if h1 is not equal to h2</summary>
 		/// <param name="h1">The h1.</param>
@@ -66,19 +66,19 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="h1">The h1.</param>
 		/// <param name="h2">The h2.</param>
 		/// <returns></returns>
-		public static Hex32 operator *( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value * h2.Value );
+		public static Hex32 operator *( Hex32 h1, Hex32 h2 ) => new( h1.Value * h2.Value );
 
 		/// <summary>/s the specified h1.</summary>
 		/// <param name="h1">The h1.</param>
 		/// <param name="h2">The h2.</param>
 		/// <returns></returns>
-		public static Hex32 operator /( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value / h2.Value );
+		public static Hex32 operator /( Hex32 h1, Hex32 h2 ) => new( h1.Value / h2.Value );
 
 		/// <summary>+s the specified h1.</summary>
 		/// <param name="h1">The h1.</param>
 		/// <param name="h2">The h2.</param>
 		/// <returns></returns>
-		public static Hex32 operator +( Hex32 h1, Hex32 h2 ) => new Hex32( h1.Value + h2.Value );
+		public static Hex32 operator +( Hex32 h1, Hex32 h2 ) => new( h1.Value + h2.Value );
 
 		/// <summary>Checks if h1 is smaller than h2</summary>
 		/// <param name="h1">The h1.</param>

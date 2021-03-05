@@ -67,7 +67,7 @@ namespace Librainian.FileSystem {
 
 		public Boolean Add( [CanBeNull] String? folderpath ) {
 			if ( null == folderpath ) {
-				return default;
+				return default( Boolean );
 			}
 
 			this.FoundAnotherFolder( new Folder( folderpath ) );
@@ -105,7 +105,7 @@ namespace Librainian.FileSystem {
 
 			var existingNode = this.Roots.Find( node => FolderBagNode.Equals( node, currentNode ) ); // look for an existing root node
 
-			if ( !FolderBagNode.Equals( existingNode, default ) ) {
+			if ( !FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
 				// use existing node
 				currentNode = existingNode;
 			}
@@ -119,7 +119,7 @@ namespace Librainian.FileSystem {
 				var nextNode = new FolderBagNode( pathPart, currentNode );
 				existingNode = currentNode.SubFolders.Find( node => FolderBagNode.Equals( node, nextNode ) );
 
-				if ( !FolderBagNode.Equals( existingNode, default ) ) {
+				if ( !FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
 					nextNode = existingNode; // already there? don't need to add it.
 				}
 				else {

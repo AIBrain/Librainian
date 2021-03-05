@@ -34,7 +34,7 @@ namespace Librainian.Parsing.Validation {
 		public StringAlphaNumeric( String value ) : base( value, "^[a-zA-Z0-9]*$" ) { }
 
 		[NotNull]
-		public static explicit operator StringAlphaNumeric( [NotNull] String str ) => new StringAlphaNumeric( str );
+		public static explicit operator StringAlphaNumeric( [NotNull] String str ) => new( str );
 
 	}
 

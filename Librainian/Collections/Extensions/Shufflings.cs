@@ -112,39 +112,40 @@ namespace Librainian.Collections.Extensions {
 
 		/// <summary>Take a buffer and scramble.</summary>
 		/// <param name="buffer"></param>
-		/// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
+		/// <remarks>Fisher-Yates shuffle</remarks>
 		public static void Shuffle<T>( [NotNull] this T[] buffer ) {
-			if ( buffer is null ) {
-				throw new ArgumentNullException( nameof( buffer ) );
-			}
-
 			var length = buffer.Length;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
-				var a = 0.Next( length );
-				var b = 0.Next( length );
-				( var v1, var v2 ) = ( buffer[a], buffer[b] );
-				buffer[a] = v2;
-				buffer[b] = v1;
+				retry:
+				var indexa = 0.Next( length );
+				var indexb = 0.Next( length );
+				if ( indexa == indexb ) {
+					goto retry;
+				}
+				( var a, var b ) = ( buffer[indexa], buffer[indexb] );
+				buffer[indexa] = b;
+				buffer[indexb] = a;
 			}
 		}
 
 		/// <summary>Take a list and scramble the order of its items.</summary>
 		/// <param name="list"></param>
-		/// <remarks>Isn't this just the Fisher-Yates shuffle??</remarks>
+		/// <remarks>Fisher-Yates shuffle</remarks>
 		public static void Shuffle<T>( [NotNull] this IList<T> list ) {
-			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
-			}
 
 			var length = list.Count;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
-				var a = 0.Next( length );
-				var b = 0.Next( length );
-				( var v1, var v2 ) = ( list[a], list[b] );
-				list[a] = v2;
-				list[b] = v1;
+				retry:
+				var indexa = 0.Next( length );
+				var indexb = 0.Next( length );
+				if ( indexa == indexb ) {
+					goto retry;
+				}
+				( var a, var b ) = ( list[indexa], list[indexb] );
+				list[indexa] = b;
+				list[indexb] = a;
 			}
 		}
 
@@ -226,40 +227,48 @@ namespace Librainian.Collections.Extensions {
 				throw new ArgumentNullException( nameof( list ) );
 			}
 
-			var bag = new ConcurrentBag<T>( list.AsParallel() );
-
-			if ( iterations <= 1 ) {
-				list.Clear();
-				list.AddRange( bag.AsParallel() );
-
+			if ( iterations < 1 ) {
 				return;
 			}
+
+			var bag = new ConcurrentBag<T>( list.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
+				.WithExecutionMode( ParallelExecutionMode.ForceParallelism ).WithMergeOptions( ParallelMergeOptions.AutoBuffered ) );
+
 
 			while ( iterations.Any() ) {
 				iterations--;
 
 				list.Clear();
-				list.AddRange( bag.AsParallel().AsUnordered() );
+				list.AddRange( bag.AsRandom() );
 
 				if ( iterations.Any() ) {
-					bag.RemoveAll();
+					bag = new ConcurrentBag<T>( list.AsRandom() );
 				}
 			}
 		}
+
+		/// <summary>
+		/// Not a true random. Just enough to supposedly throw the <paramref name="sequence"/> out of strict order.
+		/// </summary>
+		/// <param name="sequence"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		[NotNull]
+		public static IEnumerable<T> AsRandom<T>( [NotNull] this IEnumerable<T> sequence ) =>
+			sequence.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+				.WithMergeOptions( ParallelMergeOptions.AutoBuffered );
 
 		public static void ShuffleByGuid<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
 
-			var l = new List<T>( list.Count );
 
 			while ( iterations.Any() ) {
 				iterations--;
-				l.Clear();
-				l.AddRange( list.AsParallel().AsUnordered().OrderBy( arg => Guid.NewGuid() ).AsUnordered() );
-
-				//TODO this is not finished
+				var temp = new List<T>( list.AsRandom().OrderBy( _ => Guid.NewGuid() ).AsRandom() );
+				list.Clear();
+				list.AddRange( temp.AsRandom().OrderBy( _ => Guid.NewGuid() ).AsRandom() );
 			}
 		}
 

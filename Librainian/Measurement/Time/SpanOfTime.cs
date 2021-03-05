@@ -29,6 +29,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.Linq;
 	using System.Numerics;
 	using Extensions;
 	using JetBrains.Annotations;
@@ -48,17 +49,16 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject( MemberSerialization.Fields )]
 	[Immutable]
-	public struct SpanOfTime : IEquatable<SpanOfTime>, IComparable<SpanOfTime>, IComparable<TimeSpan> {
+	public record SpanOfTime : IEquatable<SpanOfTime>, IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
 		/// <summary></summary>
 		/// <summary>
 		///     <para>1 of each measure of time</para>
 		/// </summary>
-		public static SpanOfTime Identity = new SpanOfTime( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-															1, 1, 1, 1, 1, 1 );
+		public static SpanOfTime Identity { get; } = new( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
 
 		/// <summary></summary>
-		public static SpanOfTime Zero = new SpanOfTime( 0 );
+		public static SpanOfTime Zero { get; } = new( 0 );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -425,13 +425,13 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="span"></param>
 		/// <returns></returns>
-		public static explicit operator SpanOfTime( TimeSpan span ) => new SpanOfTime( span );
+		public static explicit operator SpanOfTime( TimeSpan span ) => new( span );
 
 		/// <summary>Allow an automatic cast to <see cref="TimeSpan" />.</summary>
 		/// <param name="spanOfTime"></param>
 		/// <returns></returns>
 		public static implicit operator TimeSpan( SpanOfTime spanOfTime ) =>
-			new TimeSpan( ( Int32 )spanOfTime.Days.Value, ( Int32 )spanOfTime.Hours.Value, ( Int32 )spanOfTime.Minutes.Value, ( Int32 )spanOfTime.Seconds.Value,
+			new( ( Int32 )spanOfTime.Days.Value, ( Int32 )spanOfTime.Hours.Value, ( Int32 )spanOfTime.Minutes.Value, ( Int32 )spanOfTime.Seconds.Value,
 						  ( Int32 )spanOfTime.Milliseconds.Value );
 
 		/// <summary>
@@ -545,18 +545,13 @@ namespace Librainian.Measurement.Time {
 			return Zero;
 		}
 
-		public PlanckTimes CalcTotalPlanckTimes() {
-			var sum = new[] {
+		public PlanckTimes CalcTotalPlanckTimes() =>
+			new[] {
 				this.PlanckTimes.ToPlanckTimes(), this.Yoctoseconds.ToPlanckTimes(), this.Zeptoseconds.ToPlanckTimes(), this.Attoseconds.ToPlanckTimes(),
 				this.Femtoseconds.ToPlanckTimes(), this.Picoseconds.ToPlanckTimes(), this.Nanoseconds.ToPlanckTimes(), this.Microseconds.ToPlanckTimes(),
 				this.Milliseconds.ToPlanckTimes(), this.Seconds.ToPlanckTimes(), this.Minutes.ToPlanckTimes(), this.Hours.ToPlanckTimes(), this.Days.ToPlanckTimes(),
 				this.Weeks.ToPlanckTimes(), this.Months.ToPlanckTimes(), this.Years.ToPlanckTimes()
-			};
-
-			return sum.SumS();
-
-			//return sum.Aggregate( PlanckTimes.Zero, ( current, timese ) => current + timese );
-		}
+			}.SumS();
 
 		public Int32 CompareTo( SpanOfTime other ) => CompareTo( this, other );
 
@@ -569,13 +564,7 @@ namespace Librainian.Measurement.Time {
 		/// </returns>
 		/// <param name="obj">Another object to compare to.</param>
 		/// <filterpriority>2</filterpriority>
-		public override Boolean Equals( [CanBeNull] Object? obj ) {
-			if ( obj is null ) {
-				return default;
-			}
-
-			return obj is SpanOfTime span && Equals( this, span );
-		}
+		public override Boolean Equals( [CanBeNull] Object? obj ) => obj is SpanOfTime span && Equals( this, span );
 
 		public Boolean Equals( SpanOfTime obj ) => Equals( this, obj );
 

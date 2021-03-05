@@ -32,7 +32,7 @@ namespace Librainian.Parsing {
 	public class Sequence<TType> {
 
 		[JsonProperty]
-		public readonly List<TType> Tokens = new List<TType>();
+		public readonly List<TType> Tokens = new();
 
 		public void Enqueue( [NotNull] TType token ) => this.Tokens.Add( token );
 

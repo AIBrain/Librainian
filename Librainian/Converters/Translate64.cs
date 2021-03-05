@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -54,37 +54,37 @@ namespace Librainian.Converters {
 		public Int32 SignedHigh;
 
 		public Translate64( Int32 signedHigh, Int32 signedLow ) {
-			this.UnsignedValue = default;
-			this.SignedValue = default;
-			this.UnsignedLow = default;
-			this.UnsignedHigh = default;
+			this.UnsignedValue = default( UInt64 );
+			this.SignedValue = default( Int64 );
+			this.UnsignedLow = default( UInt32 );
+			this.UnsignedHigh = default( UInt32 );
 			this.SignedLow = signedLow;
 			this.SignedHigh = signedHigh;
 		}
 
 		public Translate64( UInt64 unsignedValue ) {
-			this.SignedValue = default;
-			this.SignedHigh = default;
-			this.SignedLow = default;
-			this.UnsignedLow = default;
-			this.UnsignedHigh = default;
+			this.SignedValue = default( Int64 );
+			this.SignedHigh = default( Int32 );
+			this.SignedLow = default( Int32 );
+			this.UnsignedLow = default( UInt32 );
+			this.UnsignedHigh = default( UInt32 );
 			this.UnsignedValue = unsignedValue;
 		}
 
 		public Translate64( Int64 signedValue ) {
-			this.UnsignedValue = default;
-			this.UnsignedLow = default;
-			this.UnsignedHigh = default;
-			this.SignedLow = default;
-			this.SignedHigh = default;
+			this.UnsignedValue = default( UInt64 );
+			this.UnsignedLow = default( UInt32 );
+			this.UnsignedHigh = default( UInt32 );
+			this.SignedLow = default( Int32 );
+			this.SignedHigh = default( Int32 );
 			this.SignedValue = signedValue;
 		}
 
 		public Translate64( UInt32 unsignedLow, UInt32 unsignedHigh ) {
-			this.UnsignedValue = default;
-			this.SignedValue = default;
-			this.SignedLow = default;
-			this.SignedHigh = default;
+			this.UnsignedValue = default( UInt64 );
+			this.SignedValue = default( Int64 );
+			this.SignedLow = default( Int32 );
+			this.SignedHigh = default( Int32 );
 			this.UnsignedLow = unsignedLow;
 			this.UnsignedHigh = unsignedHigh;
 		}

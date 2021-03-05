@@ -109,7 +109,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					var error = Marshal.GetLastWin32Error();
 
 					if ( error == ERROR_NOT_A_REPARSE_POINT ) {
-						return default;
+						return default( String? );
 					}
 
 					ThrowLastWin32Error( "Unable to get information about junction point." );
@@ -118,7 +118,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				var reparseDataBuffer = ( REPARSE_DATA_BUFFER )Marshal.PtrToStructure( outBuffer, typeof( REPARSE_DATA_BUFFER ) )!;
 
 				if ( reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_MOUNT_POINT ) {
-					return default;
+					return default( String? );
 				}
 
 				var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );

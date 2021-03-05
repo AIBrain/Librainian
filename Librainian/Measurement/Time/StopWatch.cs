@@ -54,7 +54,7 @@ namespace Librainian.Measurement.Time {
 
 		public const Int64 TicksPerMillisecond = 10000;
 
-		public TimeSpan Elapsed => new TimeSpan( this.GetElapsedTicks() );
+		public TimeSpan Elapsed => new( this.GetElapsedTicks() );
 
 		public Int64 ElapsedMicroseconds => this.GetElapsedTicks() / TicksPerMicrosecond;
 

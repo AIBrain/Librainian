@@ -52,7 +52,7 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		[NotNull]
-		protected internal SortedDictionary<String, String> LogicalDrives { get; } = new SortedDictionary<String, String>();
+		protected internal SortedDictionary<String, String> LogicalDrives { get; } = new();
 
 		protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
 			new Volume( deviceClass, deviceInfoData, path, index );

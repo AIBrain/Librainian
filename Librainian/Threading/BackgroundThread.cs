@@ -78,7 +78,7 @@ namespace Librainian.Threading {
 		public Boolean RunningLoop { get; private set; }
 
 		[NotNull]
-		public AutoResetEvent Signal { get; } = new AutoResetEvent( true );
+		public AutoResetEvent Signal { get; } = new( true );
 
 		private CancellationToken Token => this.CTS.Token;
 

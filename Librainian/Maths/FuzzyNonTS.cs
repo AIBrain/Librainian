@@ -44,11 +44,11 @@ namespace Librainian.Maths {
 
 		public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
-		public static FuzzyNonTs Falser { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
+		public static FuzzyNonTs Falser { get; } = new( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
 
-		public static FuzzyNonTs Truer { get; } = new FuzzyNonTs( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
+		public static FuzzyNonTs Truer { get; } = new( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
 
-		public static FuzzyNonTs Undecided { get; } = new FuzzyNonTs( 0.5D );
+		public static FuzzyNonTs Undecided { get; } = new( 0.5D );
 
 		public Double Value {
 			get => this._value;
@@ -68,13 +68,13 @@ namespace Librainian.Maths {
 		}
 
 		[NotNull]
-		public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+		public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new( ( value1 + value2 ) / 2D );
 
 		[NotNull]
-		public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+		public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new( ( value1 + value2 ) / 2D );
 
 		[NotNull]
-		public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new FuzzyNonTs( ( value1 + value2 ) / 2D );
+		public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new( ( value1 + value2 ) / 2D );
 
 		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
@@ -87,7 +87,7 @@ namespace Librainian.Maths {
 		public static Boolean IsUndecided( [CanBeNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
 		[NotNull]
-		public static FuzzyNonTs Parse( [NotNull] String value ) => new FuzzyNonTs( Double.Parse( value ) );
+		public static FuzzyNonTs Parse( [NotNull] String value ) => new( Double.Parse( value ) );
 
 		public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 

@@ -84,7 +84,7 @@ namespace Librainian.Financial.Currency.BTC {
 		public SimpleBitcoinWallet( Decimal btcbalance ) {
 			this._balance = btcbalance;
 			this.Timeout = Minutes.One;
-			this._hashcode = Randem.NextInt32();
+			this._hashcode = this._hashcode.Random();
 		}
 
 		public SimpleBitcoinWallet() : this( 0.0m ) { }
@@ -148,7 +148,7 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.Balance == right.Balance;
@@ -188,7 +188,7 @@ namespace Librainian.Financial.Currency.BTC {
 					return true;
 				}
 				else {
-					return default;
+					return default( Boolean );
 				}
 			}
 			finally {
@@ -209,13 +209,13 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <returns></returns>
 		public Boolean TryDeposit( Decimal amount ) {
 			if ( amount <= Decimal.Zero ) {
-				return default;
+				return default( Boolean );
 			}
 
 			this.OnBeforeDeposit?.Invoke( amount );
 
 			if ( !this.TryAdd( amount ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			this.OnAfterDeposit?.Invoke( amount );
@@ -225,16 +225,16 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleBitcoinWallet intoWallet ) {
 			if ( amount <= Decimal.Zero ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
 				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-					return default;
+					return default( Boolean );
 				}
 
 				if ( this._balance < amount ) {
-					return default;
+					return default( Boolean );
 				}
 
 				this._balance -= amount;
@@ -262,7 +262,7 @@ namespace Librainian.Financial.Currency.BTC {
 		public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
 			try {
 				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-					return default;
+					return default( Boolean );
 				}
 
 				this._balance = sanitize ? amount.Sanitize() : amount;
@@ -293,16 +293,16 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 
 			if ( amount <= Decimal.Zero ) {
-				return default;
+				return default( Boolean );
 			}
 
 			try {
 				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-					return default;
+					return default( Boolean );
 				}
 
 				if ( this._balance < amount ) {
-					return default;
+					return default( Boolean );
 				}
 
 				this._balance -= amount;

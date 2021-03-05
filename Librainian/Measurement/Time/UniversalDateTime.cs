@@ -40,25 +40,25 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "ToString()" )]
 	public struct UniversalDateTime : IComparable<UniversalDateTime> {
 
-		public static UniversalDateTime Now => new UniversalDateTime( DateTime.UtcNow );
+		public static UniversalDateTime Now => new( DateTime.UtcNow );
 
 		/// <summary>
 		///     <para>1 planck times</para>
 		/// </summary>
-		public static UniversalDateTime One { get; } = new UniversalDateTime( BigInteger.One );
+		public static UniversalDateTime One { get; } = new( BigInteger.One );
 
 		/// <summary>
 		///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
 		///     <para>430,000,000,000,000,000 seconds</para>
 		/// </summary>
-		public static PlanckTimes PlancksUpToMinDateTime { get; } = new PlanckTimes( new Seconds( 4.3E17m ) );
+		public static PlanckTimes PlancksUpToMinDateTime { get; } = new( new Seconds( 4.3E17m ) );
 
 		/// <summary>
 		///     <para>0 planck times</para>
 		/// </summary>
-		public static UniversalDateTime TheBeginning { get; } = new UniversalDateTime( BigInteger.Zero );
+		public static UniversalDateTime TheBeginning { get; } = new( BigInteger.Zero );
 
-		public static UniversalDateTime Unix { get; } = new UniversalDateTime( Epochs.Unix );
+		public static UniversalDateTime Unix { get; } = new( Epochs.Unix );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -93,7 +93,7 @@ namespace Librainian.Measurement.Time {
 			//this.Time = new Time();
 		}
 
-		private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new UniversalDateTime( left.Value + value );
+		private static UniversalDateTime Combine( UniversalDateTime left, BigInteger value ) => new( left.Value + value );
 
 		private static UniversalDateTime Combine( UniversalDateTime left, UniversalDateTime right ) => Combine( left, right.Value );
 
@@ -110,7 +110,7 @@ namespace Librainian.Measurement.Time {
 
 		public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) => Combine( left, -right );
 
-		public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new UniversalDateTime( universalDateTime.Value * -1 );
+		public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new( universalDateTime.Value * -1 );
 
 		public static Boolean operator <( UniversalDateTime left, UniversalDateTime right ) => left.Value < right.Value;
 

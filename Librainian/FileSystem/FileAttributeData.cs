@@ -60,7 +60,7 @@ namespace Librainian.FileSystem {
 			this.LastWriteTime = fileAttributeData.ftLastWriteTime.ToDateTime();
 			this.FileSize = ( ( UInt64 )fileAttributeData.nFileSizeHigh << 32 ) + fileAttributeData.nFileSizeLow;
 			this.Exists = true;
-			this.FileHashCode = default;
+			this.FileHashCode = default( Int64? );
 		}
 
 		/// <summary>Populates from a <see cref="NativeMethods.Win32FindData" /> struct.</summary>
@@ -73,7 +73,7 @@ namespace Librainian.FileSystem {
 			this.LastWriteTime = findData.ftLastWriteTime.ToDateTime();
 			this.FileSize = ( ( UInt64 )findData.nFileSizeHigh << 32 ) + findData.nFileSizeLow;
 			this.Exists = true;
-			this.FileHashCode = default;
+			this.FileHashCode = default( Int64? );
 		}
 
 		[DebuggerStepThrough]
@@ -84,7 +84,7 @@ namespace Librainian.FileSystem {
 			this.LastAccessTime = lastAccessTime;
 			this.LastWriteTime = lastWriteTime;
 			this.FileSize = fileSize;
-			this.FileHashCode = default;
+			this.FileHashCode = default( Int64? );
 		}
 
 		public Boolean Refresh( [NotNull] String fullPath, Boolean throwOnError = true ) {
@@ -103,7 +103,7 @@ namespace Librainian.FileSystem {
 				else {
 					this.Reset();
 
-					return default;
+					return default( Boolean );
 				}
 			}
 
@@ -114,7 +114,7 @@ namespace Librainian.FileSystem {
 			this.LastAccessTime = fileAttributeData.LastAccessTime;
 			this.LastWriteTime = fileAttributeData.LastWriteTime;
 			this.FileSize = fileAttributeData.FileSize;
-			this.FileHashCode = default;
+			this.FileHashCode = default( Int64? );
 
 			return true;
 		}
@@ -122,13 +122,13 @@ namespace Librainian.FileSystem {
 		/// <summary>Reset known information about file to defaults.</summary>
 		[DebuggerStepThrough]
 		public void Reset() {
-			this.Exists = default;
-			this.FileAttributes = default;
-			this.CreationTime = default;
-			this.LastAccessTime = default;
-			this.LastWriteTime = default;
-			this.FileSize = default;
-			this.FileHashCode = default;
+			this.Exists = default( Boolean? );
+			this.FileAttributes = default( FileAttributes? );
+			this.CreationTime = default( DateTime? );
+			this.LastAccessTime = default( DateTime? );
+			this.LastWriteTime = default( DateTime? );
+			this.FileSize = default( UInt64? );
+			this.FileHashCode = default( Int64? );
 		}
 
 		/*

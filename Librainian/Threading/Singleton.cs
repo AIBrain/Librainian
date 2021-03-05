@@ -39,7 +39,7 @@ namespace Librainian.Threading {
 
 			static SingletonCreator() { }
 
-			internal static T SingleInstance { get; } = new T();
+			internal static T SingleInstance { get; } = new();
 
 		}
 

@@ -50,11 +50,12 @@ namespace Librainian.FileSystem {
 				foreach ( var sourceFile in sourceFiles ) {
 
 					onEachComplete += tuple => {
-						this.SourceFilesToBeCopied[tuple.
+						//this.SourceFilesToBeCopied[tuple.
 					};
-					
-					this.SourceFilesToBeCopied[sourceFile] = new ValueTuple<PooledValueTask, Status>( CreateCopyFileTask( sourceFile, destinationFolder, overwriteDestination,
-						 documentProgressChanged, onEachComplete, cancellationToken ) , Status.Unknown );
+
+					this.SourceFilesToBeCopied[sourceFile] =
+						( CreateCopyFileTask( sourceFile, destinationFolder, overwriteDestination, documentProgressChanged, onEachComplete, cancellationToken ),
+							Status.Unknown );
 				}
 			}, cancellationToken ).ConfigureAwait(false);
 			
@@ -63,7 +64,7 @@ namespace Librainian.FileSystem {
 		}
 
 		private static async PooledValueTask CreateCopyFileTask( Document sourceFile, IFolder destinationFolder, Boolean overwriteDestination,
-			Action<(IDocument destination, UInt64, UInt64, Document)> documentProgressChanged, Action<(IDocument destination, Exception? Error)> onEachComplete, CancellationToken cancellationToken ) {
+			IProgress<(IDocument source,IDocument destination, UInt64, UInt64, Document)> documentProgressChanged, Action<(IDocument destination, Exception? Error)> onEachComplete, CancellationToken cancellationToken ) {
 
 			var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
 
@@ -71,17 +72,18 @@ namespace Librainian.FileSystem {
 				await destinationDocument.TryDeleting( Seconds.Seven, cancellationToken ).ConfigureAwait(false);
 			}
 
-			var fileData = new FileCopyData(){
+			var fileData = new FileCopyData {
 				Source = sourceFile,
 				Destination = destinationDocument,
 				Exceptions = null,
 				CopyTask = null,
-				DataCopied = ,
-				OnCompleted = ,
-				SourceSize = default,
+				DataCopied = null,
+				OnCompleted = null,
+				SourceSize = default( UInt64 ),
 				WhenCompleted = null,
 				WhenStarted = null
-			}
+			};
+
 			var copy = sourceFile.Copy( destinationDocument, documentProgressChanged, onEachComplete, cancellationToken );
 
 

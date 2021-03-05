@@ -892,7 +892,7 @@ namespace Librainian.FileSystem {
 		[Pure]
 		public async PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken token ) {
 			if ( right is null || !this.Exists() || !right.Exists() || this.Size() != right.Size() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( !this.IsBufferLoaded ) {
@@ -930,7 +930,7 @@ namespace Librainian.FileSystem {
 				this.OpenWriter();
 
 				if ( this.Writer is null ) {
-					return default;
+					return default( StreamWriter? );
 				}
 
 				return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.UTF8, ( Int32 )bufferSize, false );
@@ -941,7 +941,7 @@ namespace Librainian.FileSystem {
 
 			this.ReleaseWriterStream();
 
-			return default;
+			return default( StreamWriter? );
 		}
 
 		/// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
@@ -1036,7 +1036,7 @@ namespace Librainian.FileSystem {
 				if ( !this.Exists() ) {
 					progress?.Report( 1 );
 
-					return ( Status.Bad, default );
+					return ( Status.Bad, default( T? ) );
 				}
 
 				progress?.Report( ++i / maxsteps );
@@ -1066,7 +1066,7 @@ namespace Librainian.FileSystem {
 				exception.Log();
 			}
 
-			return ( Status.Exception, default );
+			return ( Status.Exception, default( T? ) );
 		}
 
 		[NotNull]
@@ -1102,18 +1102,19 @@ namespace Librainian.FileSystem {
 
 				var downloadException = ( Exception? )null;
 
-				using var webClient = new WebClient {
-					DownloadProgressChanged += ( _, args ) => fileData.DataCopied?.Report( ( UInt64 )args.BytesReceived ),
-					DownloadFileCompleted += ( _, args ) => {
-						if ( args.Error is null ) {
-							fileData.WhenCompleted = DateTime.UtcNow;
-							fileData.OnCompleted?.Invoke( fileData );
-						}
-						else {
-							downloadException = args.Error;
-						}
+				using var webClient = new WebClient();
+
+				webClient.DownloadFileCompleted += ( _, args ) => {
+					if ( args.Error is null ) {
+						fileData.WhenCompleted = DateTime.UtcNow;
+						fileData.OnCompleted?.Invoke( fileData );
+					}
+					else {
+						downloadException = args.Error;
 					}
 				};
+
+				webClient.DownloadProgressChanged += ( _, args ) => fileData.DataCopied?.Report( ( UInt64 )args.BytesReceived );
 
 				await webClient.DownloadFileTaskAsync( uri, fileData.Destination.FullPath ).ConfigureAwait( false );
 
@@ -1138,7 +1139,7 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() {
-			this.Buffer = default;
+			this.Buffer = default( Byte[]? );
 
 			this.ReleaseWriterStream();
 
@@ -1544,7 +1545,7 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.FullPath.Is( right.FullPath ); //&& left.Size() == right.Size();

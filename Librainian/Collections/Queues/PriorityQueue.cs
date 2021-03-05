@@ -38,7 +38,7 @@ namespace Librainian.Collections.Queues {
 
 		[JsonProperty]
 		[NotNull]
-		private ConcurrentDictionary<Single, TValue> Dictionary { get; } = new ConcurrentDictionary<Single, TValue>( Environment.ProcessorCount, 1 );
+		private ConcurrentDictionary<Single, TValue> Dictionary { get; } = new( Environment.ProcessorCount, 1 );
 
 		/// <summary>Returns an enumerator that iterates through a collection.</summary>
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>

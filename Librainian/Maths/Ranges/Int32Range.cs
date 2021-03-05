@@ -32,7 +32,7 @@ namespace Librainian.Maths.Ranges {
 	[JsonObject]
 	public struct Int32Range {
 
-		public static readonly Int32Range ZeroAndOne = new Int32Range( 0, 1 );
+		public static readonly Int32Range ZeroAndOne = new( 0, 1 );
 
 		/// <summary>Length of the range (difference between maximum and minimum values)</summary>
 		[JsonProperty]

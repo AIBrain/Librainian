@@ -910,7 +910,7 @@ namespace Librainian.OperatingSystem {
 			}
 			catch ( ArgumentOutOfRangeException ) {
 				//return DateTime.FromFileTimeUtc( 0xFFFFFFFF ); //shouldn't this actually be null or something?
-				return default;
+				return default( DateTime? );
 			}
 		}
 
@@ -1265,7 +1265,7 @@ namespace Librainian.OperatingSystem {
 				}
 
 				if ( !this.InternalReleaseHandle() ) {
-					return default;
+					return default( Boolean );
 				}
 
 				this.handle = IntPtr.Zero;
@@ -1288,7 +1288,7 @@ namespace Librainian.OperatingSystem {
 				}
 
 				if ( left is null || right is null ) {
-					return default;
+					return default( Boolean );
 				}
 
 				return left.handle == right.handle;

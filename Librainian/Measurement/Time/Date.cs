@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -35,7 +35,7 @@ namespace Librainian.Measurement.Time {
 	[JsonObject]
 	public struct Date {
 
-		public static readonly Date Zero = new Date( Year.Zero, Month.MinValue, Day.MinValue );
+		public static readonly Date Zero = new( Year.Zero, Month.MinValue, Day.MinValue );
 
 		/// <summary>
 		///     <para>The day of the month. (valid range is 1 to 31)</para>
@@ -56,9 +56,9 @@ namespace Librainian.Measurement.Time {
 		[JsonProperty]
 		public Year Year { get; }
 
-		public static Date Now => new Date( DateTime.Now );
+		public static Date Now => new( DateTime.Now );
 
-		public static Date UtcNow => new Date( DateTime.UtcNow );
+		public static Date UtcNow => new( DateTime.UtcNow );
 
 		public Date( BigInteger year, SByte month, SByte day ) {
 			while ( day > Day.Maximum ) {

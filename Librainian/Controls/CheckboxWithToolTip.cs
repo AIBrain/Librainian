@@ -50,7 +50,7 @@ namespace Librainian.Controls {
 			this.MouseLeave += ( sender, args ) => this.Tt.Hide( this.Parent );
 		}
 
-		private ToolTip Tt { get; } = new ToolTip();
+		private ToolTip Tt { get; } = new();
 
 		public String TooltipText { get; set; }
 

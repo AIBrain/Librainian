@@ -31,8 +31,8 @@ namespace Librainian.Maths {
 	public struct Union {
 
 		public Union( UInt64 value ) {
-			this.High = default;
-			this.Low = default;
+			this.High = default( UInt32 );
+			this.Low = default( UInt32 );
 			this.Value = value;
 		}
 

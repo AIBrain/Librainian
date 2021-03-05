@@ -83,7 +83,7 @@ namespace Librainian.Logging {
 				exception.Log();
 			}
 
-			return default;
+			return default( Object );
 		}
 
 	}

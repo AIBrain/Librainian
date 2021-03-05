@@ -117,7 +117,7 @@ namespace Librainian.Collections.Lists {
 		Boolean ICollection<T>.Remove( T item ) {
 			this.ThrowNotMutable();
 
-			return default;
+			return default( Boolean );
 		}
 
 		/// <summary>This method is unsupported on this type, because it is immutable.</summary>
@@ -147,7 +147,7 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Returns a new, cleared (empty) immutable list.</summary>
 		/// <returns>A modified copy of this list.</returns>
 		[NotNull]
-		public ImmutableList<T> CopyAndClear() => new ImmutableList<T>( new T[0] );
+		public ImmutableList<T> CopyAndClear() => new( new T[0] );
 
 		/// <summary>Copies the list and inserts a particular element.</summary>
 		/// <param name="index">The index at which to insert an element.</param>

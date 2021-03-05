@@ -35,7 +35,7 @@ namespace Librainian.Maths.Ranges {
 	[JsonObject]
 	public struct UInt64Range {
 
-		public static readonly UInt64Range MinMax = new UInt64Range( UInt64.MinValue, UInt64.MaxValue );
+		public static readonly UInt64Range MinMax = new( UInt64.MinValue, UInt64.MaxValue );
 
 		/// <summary>Length of the range (difference between maximum and minimum values)</summary>
 		[JsonProperty]

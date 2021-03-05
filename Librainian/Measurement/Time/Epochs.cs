@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -30,13 +30,13 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary></summary>
 		/// <see cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
-		public static readonly WhenRange Before1PlanckTime = new WhenRange( UniversalDateTime.TheBeginning, UniversalDateTime.One );
+		public static readonly WhenRange Before1PlanckTime = new( UniversalDateTime.TheBeginning, UniversalDateTime.One );
 
 		/// <summary>1927</summary>
-		public static readonly DateTime BigBangModelFormulated = new DateTime( 1927, 1, 1, 0, 0, 0, DateTimeKind.Utc );
+		public static readonly DateTime BigBangModelFormulated = new( 1927, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 
 		/// <summary>January 1st, 1970, zero seconds.</summary>
-		public static readonly DateTime Unix = new DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
+		public static readonly DateTime Unix = new( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 
 	}
 

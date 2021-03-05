@@ -150,31 +150,31 @@ namespace Librainian.Maths {
 
 		public static Boolean Equals( ByteSize left, ByteSize right ) => left.Bits == right.Bits;
 
-		public static ByteSize FromBits( Int64 value ) => new ByteSize( value / ( Double )BitsInByte );
+		public static ByteSize FromBits( Int64 value ) => new( value / ( Double )BitsInByte );
 
-		public static ByteSize FromBytes( Double value ) => new ByteSize( value );
+		public static ByteSize FromBytes( Double value ) => new( value );
 
-		public static ByteSize FromGigaBytes( Double value ) => new ByteSize( value * BytesInGigaByte );
+		public static ByteSize FromGigaBytes( Double value ) => new( value * BytesInGigaByte );
 
-		public static ByteSize FromKiloBytes( Double value ) => new ByteSize( value * BytesInKiloByte );
+		public static ByteSize FromKiloBytes( Double value ) => new( value * BytesInKiloByte );
 
-		public static ByteSize FromMegaBytes( Double value ) => new ByteSize( value * BytesInMegaByte );
+		public static ByteSize FromMegaBytes( Double value ) => new( value * BytesInMegaByte );
 
-		public static ByteSize FromPetaBytes( Double value ) => new ByteSize( value * BytesInPetaByte );
+		public static ByteSize FromPetaBytes( Double value ) => new( value * BytesInPetaByte );
 
-		public static ByteSize FromTeraBytes( Double value ) => new ByteSize( value * BytesInTeraByte );
+		public static ByteSize FromTeraBytes( Double value ) => new( value * BytesInTeraByte );
 
-		public static ByteSize operator -( ByteSize b ) => new ByteSize( -b.Bytes );
+		public static ByteSize operator -( ByteSize b ) => new( -b.Bytes );
 
-		public static ByteSize operator -( ByteSize b1, ByteSize b2 ) => new ByteSize( b1.Bytes - b2.Bytes );
+		public static ByteSize operator -( ByteSize b1, ByteSize b2 ) => new( b1.Bytes - b2.Bytes );
 
-		public static ByteSize operator --( ByteSize b ) => new ByteSize( b.Bytes - 1 );
+		public static ByteSize operator --( ByteSize b ) => new( b.Bytes - 1 );
 
 		public static Boolean operator !=( ByteSize b1, ByteSize b2 ) => b1.Bits != b2.Bits;
 
-		public static ByteSize operator +( ByteSize b1, ByteSize b2 ) => new ByteSize( b1.Bytes + b2.Bytes );
+		public static ByteSize operator +( ByteSize b1, ByteSize b2 ) => new( b1.Bytes + b2.Bytes );
 
-		public static ByteSize operator ++( ByteSize b ) => new ByteSize( b.Bytes + 1 );
+		public static ByteSize operator ++( ByteSize b ) => new( b.Bytes + 1 );
 
 		public static Boolean operator <( ByteSize b1, ByteSize b2 ) => b1.Bits < b2.Bits;
 
@@ -276,11 +276,11 @@ namespace Librainian.Maths {
 			catch {
 				result = new ByteSize();
 
-				return default;
+				return default( Boolean );
 			}
 		}
 
-		public ByteSize Add( ByteSize bs ) => new ByteSize( this.Bytes + bs.Bytes );
+		public ByteSize Add( ByteSize bs ) => new( this.Bytes + bs.Bytes );
 
 		public ByteSize AddBits( Int64 value ) => this + FromBits( value );
 
@@ -298,13 +298,13 @@ namespace Librainian.Maths {
 
 		public Int32 CompareTo( ByteSize other ) => this.Bits.CompareTo( other.Bits );
 
-		public override Boolean Equals( Object? value ) => Equals( this, value is ByteSize size ? size : default );
+		public override Boolean Equals( Object? value ) => Equals( this, value is ByteSize size ? size : default( ByteSize ) );
 
 		public Boolean Equals( ByteSize value ) => Equals( this, value );
 
 		public override Int32 GetHashCode() => this.Bits.GetHashCode();
 
-		public ByteSize Subtract( ByteSize bs ) => new ByteSize( this.Bytes - bs.Bytes );
+		public ByteSize Subtract( ByteSize bs ) => new( this.Bytes - bs.Bytes );
 
 		/// <summary>
 		///     Converts the value of the current ByteSize object to a string. The metric prefix symbol (bit, byte, kilo, mega,

@@ -40,13 +40,13 @@ namespace Librainian.Maths {
 	public class Versus {
 
 		/// <summary>One failure.</summary>
-		public static readonly Versus Failured = new Versus( 0, 1 );
+		public static readonly Versus Failured = new( 0, 1 );
 
 		/// <summary>One success.</summary>
-		public static readonly Versus Successed = new Versus( 1 );
+		public static readonly Versus Successed = new( 1 );
 
 		/// <summary>None for either.</summary>
-		public static readonly Versus Zero = new Versus();
+		public static readonly Versus Zero = new();
 
 		/// <summary>ONLY used in the getter and setter.</summary>
 		[JsonProperty]
@@ -76,7 +76,7 @@ namespace Librainian.Maths {
 		public Int64 Total => this.Successes + this.Failures;
 
 		[NotNull]
-		public Versus Clone() => new Versus( this.Successes, this.Failures );
+		public Versus Clone() => new( this.Successes, this.Failures );
 
 		/// <summary>
 		///     <para>Increments the <see cref="Failures" /> count by <paramref name="amount" />.</para>

@@ -73,7 +73,7 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( left is null || right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return String.Equals( left.Data, right.Data, StringComparison.Ordinal );

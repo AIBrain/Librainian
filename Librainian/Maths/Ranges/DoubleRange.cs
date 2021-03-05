@@ -32,7 +32,7 @@ namespace Librainian.Maths.Ranges {
 	[JsonObject]
 	public struct DoubleRange {
 
-		public static readonly DoubleRange ZeroToOne = new DoubleRange( 0, 1 );
+		public static readonly DoubleRange ZeroToOne = new( 0, 1 );
 
 		/// <summary>Length of the range (difference between maximum and minimum values)</summary>
 		[JsonProperty]

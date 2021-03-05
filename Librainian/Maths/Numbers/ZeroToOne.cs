@@ -32,12 +32,15 @@ namespace Librainian.Maths.Numbers {
 
 	/// <summary>
 	///     Restricts the value to between 0.0 and 1.0
-	///     <para>Uses the <see cref="float" /> type.</para>
 	/// </summary>
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
-	public class ZeroToOne {
+	[JsonObject]
+	public record ZeroToOne( Single Value )  {
+
+		public ZeroToOne() : this(Value:) {
+			this.Value = this.Value.Clamp( MinValue, MaxValue );
+		}
 
 		public const Single MaxValue = 1f;
 
@@ -45,49 +48,18 @@ namespace Librainian.Maths.Numbers {
 
 		public const Single NeutralValue = MaxValue / 2.0f;
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty( "v" )]
-		private volatile Single _value;
-
-		private ZeroToOne( Double value ) {
-			if ( value >= MaxValue ) {
-				this.Value = MaxValue;
-			}
-			else {
-				if ( value >= MinValue ) {
-					this.Value = ( Single )value;
-				}
-				else {
-					this.Value = MinValue;
-				}
-			}
-		}
-
 		/// <summary>
 		///     <para>Restricts the value to between 0.0 and 1.0.</para>
-		/// </summary>
-		/// <param name="value"></param>
-		public ZeroToOne( Single value ) => this.Value = value;
-
-		/// <summary>
-		///     <para>Restricts the value to between 0.0 and 1.0.</para>
-		///     <para>If <paramref name="randomValue" /> is true then a random value (between 0.0 and 1.0) will be assigned.</para>
+		///     <para>If <paramref name="useRandomValue" /> is true then a random value between 0 and 1 will be assigned.</para>
 		///     <para>Else <see cref="MinValue" /> will be assigned.</para>
 		/// </summary>
-		/// <param name="randomValue"></param>
-		public ZeroToOne( Boolean randomValue ) => this.Value = randomValue ? Randem.NextSingle() : MinValue;
+		/// <param name="useRandomValue"></param>
+		public ZeroToOne( Boolean useRandomValue ) : this( useRandomValue ? Randem.NextSingle() : MinValue )  { }
 
 		public Single Value {
-			get => this._value;
+			get => this.Value;
 
-			set {
-				if ( value >= MaxValue ) {
-					this._value = MaxValue;
-				}
-				else {
-					this._value = value >= MinValue ? value : MinValue;
-				}
-			}
+			init => this.Value = value.Clamp( MinValue, MaxValue );
 		}
 
 		/// <summary>
@@ -101,20 +73,20 @@ namespace Librainian.Maths.Numbers {
 		///     of <paramref name="value2" /> .
 		/// </returns>
 		[NotNull]
-		public static ZeroToOne Combine( [CanBeNull] ZeroToOne value1, [CanBeNull] ZeroToOne value2 ) => new ZeroToOne( ( value1 + value2 ) / 2f );
+		public static ZeroToOne Combine( [CanBeNull] ZeroToOne value1, [CanBeNull] ZeroToOne value2 ) => new( ( value1 + value2 ) / 2f );
 
 		public static implicit operator Double( [NotNull] ZeroToOne value ) => value.Value;
 
 		public static implicit operator Single( [NotNull] ZeroToOne value ) => value.Value;
 
 		[NotNull]
-		public static implicit operator ZeroToOne( Single value ) => new ZeroToOne( value );
+		public static implicit operator ZeroToOne( Single value ) => new( value );
 
 		[NotNull]
-		public static implicit operator ZeroToOne( Double value ) => new ZeroToOne( value );
+		public static implicit operator ZeroToOne( Double value ) => new( (Single)value );
 
 		[NotNull]
-		public static ZeroToOne Parse( [NotNull] String value ) => new ZeroToOne( Single.Parse( value ) );
+		public static ZeroToOne Parse( [NotNull] String value ) => new( Single.Parse( value ) );
 
 		/// <summary>Attempt to parse <paramref name="value" />, otherwise return <see cref="MinValue" />.</summary>
 		/// <param name="value"></param>

@@ -30,6 +30,7 @@ namespace Librainian.Financial.Currency.BTC {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks.Dataflow;
 	using Collections.Extensions;
 	using Containers.Wallets;
@@ -70,7 +71,7 @@ namespace Librainian.Financial.Currency.BTC {
 
 					default: throw new ArgumentOutOfRangeException();
 				}
-			}, Blocks.ManyProducers.ConsumeSerial( default ) );
+			}, Blocks.ManyProducers.ConsumeSerial( default( CancellationToken? ) ) );
 		}
 
 		[CanBeNull]
@@ -128,12 +129,12 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 
 			if ( quantity <= 0 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			lock ( this._coins ) {
 				if ( !this._coins.ContainsKey( coin ) || this._coins[coin] < quantity ) {
-					return default; //no coins to withdraw!
+					return default( Boolean ); //no coins to withdraw!
 				}
 
 				this._coins[coin] -= quantity;
@@ -211,13 +212,13 @@ namespace Librainian.Financial.Currency.BTC {
 			var possibleCoins = this._coins.Where( pair => pair.Value > 0 ).ToList();
 
 			if ( !possibleCoins.Any() ) {
-				return default;
+				return default( ICoin );
 			}
 
 			possibleCoins.Shuffle();
 			var coin = possibleCoins.First();
 
-			return this.TryWithdraw( coin.Key ?? throw new InvalidOperationException(), 1 ) ? coin.Key : default;
+			return this.TryWithdraw( coin.Key ?? throw new InvalidOperationException(), 1 ) ? coin.Key : default( ICoin );
 		}
 
 		[CanBeNull]
@@ -226,7 +227,7 @@ namespace Librainian.Financial.Currency.BTC {
 
 			//if ( coin == default( ICoin ) ) { return default; }   //wtf?
 
-			return this.TryWithdraw( coin, 1 ) ? coin : default;
+			return this.TryWithdraw( coin, 1 ) ? coin : default( ICoin? );
 		}
 
 	}

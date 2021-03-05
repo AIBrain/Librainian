@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -22,6 +22,8 @@
 // 
 // File "Months.cs" last formatted on 2020-08-14 at 8:38 PM.
 
+#nullable enable
+
 namespace Librainian.Measurement.Time {
 
 	using System;
@@ -36,61 +38,42 @@ namespace Librainian.Measurement.Time {
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
-	public struct Months : IComparable<Months>, IQuantityOfTime {
+	public record Months(Rational Value) : IQuantityOfTime,IComparable<Months> {
 
 		/// <summary>12</summary>
 		public const Byte InOneCommonYear = 12;
 
 		/// <summary>One <see cref="Months" /> .</summary>
-		public static readonly Months One = new Months( 1 );
+		public static Months One { get; } = new( 1 );
 
 		/// <summary></summary>
-		public static readonly Months Ten = new Months( 10 );
+		public static Months Ten { get; } = new( 10 );
 
 		/// <summary></summary>
-		public static readonly Months Thousand = new Months( 1000 );
+		public static Months Thousand { get; } = new( 1000 );
 
 		/// <summary>Zero <see cref="Months" /></summary>
-		public static readonly Months Zero = new Months( 0 );
+		public static Months Zero { get; } = new( 0 );
 
 		[JsonProperty]
-		public Rational Value { get; }
-
-		private Months( Int32 value ) => this.Value = value;
-
-		public Months( Decimal value ) => this.Value = ( Rational )value;
-
-		public Months( Rational value ) => this.Value = value;
-
-		public Months( BigInteger value ) => this.Value = value;
-
-		public Months( Byte value ) => this.Value = value;
+		public Rational Value { get; init; }
 
 		public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
 
-		public static Months Combine( Months left, Rational months ) => new Months( left.Value + months );
+		public static Months Combine( Months left, Rational months ) => new( left.Value + months );
 
-		public static Months Combine( Months left, BigInteger months ) => new Months( left.Value + months );
+		public static Months Combine( Months left, BigInteger months ) => new( left.Value + months );
 
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( Months left, Months right ) => left.Value == right.Value;
 
-		public static implicit operator SpanOfTime( Months months ) => new SpanOfTime( months: months );
+		public static implicit operator SpanOfTime( Months months ) => new( months: months );
 
 		public static implicit operator Weeks( Months months ) => months.ToWeeks();
 
-		public static Months operator -( Months days ) => new Months( days.Value * -1 );
+		public static Months operator -( Months days ) => new( days.Value * -1 );
 
 		public static Months operator -( Months left, Months right ) => Combine( left, -right );
 
 		public static Months operator -( Months left, Decimal months ) => Combine( left, ( Rational )( -months ) );
-
-		public static Boolean operator !=( Months left, Months right ) => !Equals( left, right );
 
 		public static Months operator +( Months left, Months right ) => Combine( left, right );
 
@@ -98,45 +81,30 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
 
-		public static Boolean operator ==( Months left, Months right ) => Equals( left, right );
-
 		public static Boolean operator >( Months left, Months right ) => left.Value > right.Value;
 
-		public Int32 CompareTo( Months other ) => this.Value.CompareTo( other.Value );
-
-		public Boolean Equals( Months other ) => Equals( this, other );
-
-		public override Boolean Equals( Object obj ) {
-			if ( obj is null ) {
-				return default;
+		public Int32 CompareTo( Months? other ) {
+			if ( other is null ) {
+				throw new ArgumentNullException( nameof( other ) );
 			}
-
-			return obj is Months months && this.Equals( months );
+			return this.Value.CompareTo( other.Value );
 		}
+
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMonth * this.Value );
+		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneMonth * this.Value );
 
-		public Seconds ToSeconds() => new Seconds( this.Value * Seconds.InOneMonth );
+		public Seconds ToSeconds() => new( this.Value * Seconds.InOneMonth );
+		public Years ToYears() => new( this.Value / InOneCommonYear );
 
-		public override String ToString() {
-			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
-				var whole = this.Value.WholePart;
+		public override String ToString() => this.Value.IsOne ? $"{this.Value} month" : $"{this.Value} months";
 
-				return $"{whole} {whole.PluralOf( "month" )}";
-			}
+		public TimeSpan? ToTimeSpan() => this.ToSeconds();
 
-			var dec = ( Decimal )this.Value;
+		public static implicit operator Years( Months months ) => months.ToYears();
 
-			return $"{dec} {dec.PluralOf( "month" )}";
-		}
-
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-		//public static implicit operator Years( Months months ) => months.ToYears();
-
-		public Weeks ToWeeks() => new Weeks( this.Value * ( Rational )Weeks.InOneMonth );
+		public Weeks ToWeeks() => new( this.Value * ( Rational )Weeks.InOneMonth );
 
 	}
 

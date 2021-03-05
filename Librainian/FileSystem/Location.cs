@@ -90,11 +90,11 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( left != null && right is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left is null ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return left.HashCode == right.HashCode;

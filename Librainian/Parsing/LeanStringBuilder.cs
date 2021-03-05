@@ -22,7 +22,7 @@
 // 
 // File "LeanStringBuilder.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-// ReSharper disable once CheckNamespace
+
 
 #nullable enable
 
@@ -80,7 +80,7 @@ namespace Librainian.Parsing {
 		///     <para>Won't throw exceptions on null or empty strings being added.</para>
 		/// </summary>
 		[NotNull]
-		public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new LeanStringBuilder( initialCapacity );
+		public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new( initialCapacity );
 
 		/// <summary>
 		///     static comparison of <paramref name="left" /> <see cref="LeanStringBuilder" /> vs <paramref name="right" />
@@ -95,7 +95,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( left is null || right is null || left._charCount != right._charCount || left._parts.Count != right._parts.Count ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( left._compiled != null && right._compiled != null ) {

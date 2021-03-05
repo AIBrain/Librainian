@@ -277,7 +277,7 @@ namespace Librainian.FileSystem {
 				stopwatch.Stop();
 			}
 
-			return default;
+			return default( Boolean? );
 		}
 
 	}

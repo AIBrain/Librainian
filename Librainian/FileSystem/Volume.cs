@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -145,7 +145,7 @@ namespace Librainian.FileSystem {
 
 			if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 )sb.Capacity ) ) {
 				// throw new Win32Exception(Marshal.GetLastWin32Error());
-				return default;
+				return default( String? );
 			}
 
 			return sb.ToString();

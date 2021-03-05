@@ -45,7 +45,7 @@ namespace Librainian.Persistence {
 		public static Boolean TryGet( [CanBeNull] String? key, [CanBeNull] out String? value ) {
 			value = null;
 
-			return default;
+			return default( Boolean );
 		}
 
 		public interface IResourceSource {
@@ -136,7 +136,7 @@ namespace Librainian.Persistence {
 					LocalDiscoveryTimeTracker.Finished = DateTime.UtcNow;
 				}
 
-				return default;
+				return default( Boolean );
 			}
 
 			private static Boolean DiscoverRemoteResources() {
@@ -154,7 +154,7 @@ namespace Librainian.Persistence {
 					RemoteResourceDiscoveryTimeTracker.Finished = DateTime.UtcNow;
 				}
 
-				return default;
+				return default( Boolean );
 			}
 
 			[NotNull]

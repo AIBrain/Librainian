@@ -98,7 +98,7 @@ namespace Librainian.Internet {
 				reportProgress?.Report( ZeroToOne.MaxValue );
 			}
 
-			return default;
+			return default( IDocument );
 		}
 
 		[ItemNotNull]

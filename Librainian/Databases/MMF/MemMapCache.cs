@@ -44,13 +44,13 @@ namespace Librainian.Databases.MMF {
 		private NetworkStream _networkStream;
 
 		[NotNull]
-		private BinaryFormatter _formatter { get; } = new BinaryFormatter();
+		private BinaryFormatter _formatter { get; } = new();
 
 		[NotNull]
-		private Dictionary<String, DateTime> _keyExpirations { get; } = new Dictionary<String, DateTime>();
+		private Dictionary<String, DateTime> _keyExpirations { get; } = new();
 
 		[NotNull]
-		private TcpClient _tcpClient { get; } = new TcpClient();
+		private TcpClient _tcpClient { get; } = new();
 
 		public static Int32 MaxKeyLength => 4096 - 32;
 
@@ -82,7 +82,7 @@ namespace Librainian.Databases.MMF {
 			}
 
 			if ( !this.IsConnected ) {
-				return default;
+				return default( T );
 			}
 
 			try {
@@ -90,7 +90,7 @@ namespace Librainian.Databases.MMF {
 					if ( DateTime.UtcNow >= this._keyExpirations[key] ) {
 						this._keyExpirations.Remove( key );
 
-						return default;
+						return default( T );
 					}
 				}
 
@@ -100,18 +100,18 @@ namespace Librainian.Databases.MMF {
 
 				var o = this._formatter.Deserialize( viewStream );
 
-				return o is T o1 ? o1 : default;
+				return o is T o1 ? o1 : default( T );
 			}
 			catch ( SerializationException ) {
 				//throw;
-				return default;
+				return default( T );
 			}
 			catch ( Exception ) {
 				if ( this._keyExpirations.ContainsKey( key ) ) {
 					this._keyExpirations.Remove( key );
 				}
 
-				return default;
+				return default( T );
 			}
 		}
 

@@ -80,7 +80,7 @@ namespace Librainian.FileSystem {
 				return path[3].IsDirectorySeparator();
 			}
 
-			return default;
+			return default( Boolean );
 		}
 
 		[Pure]
@@ -101,7 +101,7 @@ namespace Librainian.FileSystem {
 					return !path[1].IsDirectorySeparator();
 				}
 
-				return default;
+				return default( Boolean );
 			}
 
 			if ( path.Length >= 3 && path[1] == Path.VolumeSeparatorChar && path[2].IsDirectorySeparator() ) {

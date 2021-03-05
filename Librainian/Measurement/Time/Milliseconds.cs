@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -22,6 +22,8 @@
 // 
 // File "Milliseconds.cs" last formatted on 2020-08-14 at 8:38 PM.
 
+#nullable enable
+
 namespace Librainian.Measurement.Time {
 
 	using System;
@@ -37,82 +39,67 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public struct Milliseconds : IComparable<Milliseconds>, IQuantityOfTime {
+	public record Milliseconds( Rational Value ) : IQuantityOfTime, IComparable<Milliseconds> {
 
 		/// <summary>1000</summary>
 		public const UInt16 InOneSecond = 1000;
 
-		public static Milliseconds Default { get; } = new Milliseconds( default );
 
 		/// <summary>Ten <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds Fifteen { get; } = new Milliseconds( 15 );
+		public static Milliseconds Fifteen { get; } = new( 15 );
 
 		/// <summary>Five <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds Five { get; } = new Milliseconds( 5 );
+		public static Milliseconds Five { get; } = new( 5 );
 
 		/// <summary>Five Hundred <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds FiveHundred { get; } = new Milliseconds( 500 );
+		public static Milliseconds FiveHundred { get; } = new( 500 );
 
 		/// <summary>111. 1 Hertz (9 <see cref="Milliseconds" />).</summary>
-		public static Milliseconds Hertz111 { get; } = new Milliseconds( 9 );
+		public static Milliseconds Hertz111 { get; } = new( 9 );
 
 		/// <summary>97 <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds NinetySeven { get; } = new Milliseconds( 97 );
+		public static Milliseconds NinetySeven { get; } = new( 97 );
 
 		/// <summary>One <see cref="Milliseconds" />.</summary>
-		public static Milliseconds One { get; } = new Milliseconds( 1 );
+		public static Milliseconds One { get; } = new( 1 );
 
 		/// <summary>One <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds OneHundred { get; } = new Milliseconds( 100 );
+		public static Milliseconds OneHundred { get; } = new( 100 );
 
 		/// <summary>One Thousand Nine <see cref="Milliseconds" /> (Prime).</summary>
-		public static Milliseconds OneThousandNine { get; } = new Milliseconds( 1009 );
+		public static Milliseconds OneThousandNine { get; } = new( 1009 );
 
 		/// <summary>Sixteen <see cref="Milliseconds" />.</summary>
-		public static Milliseconds Sixteen { get; } = new Milliseconds( 16 );
+		public static Milliseconds Sixteen { get; } = new( 16 );
 
 		/// <summary>Ten <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds Ten { get; } = new Milliseconds( 10 );
+		public static Milliseconds Ten { get; } = new( 10 );
 
 		/// <summary>Three <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds Three { get; } = new Milliseconds( 3 );
+		public static Milliseconds Three { get; } = new( 3 );
 
 		/// <summary>Three Three Three <see cref="Milliseconds" />.</summary>
-		public static Milliseconds ThreeHundredThirtyThree { get; } = new Milliseconds( 333 );
+		public static Milliseconds ThreeHundredThirtyThree { get; } = new( 333 );
 
 		/// <summary>Two <see cref="Milliseconds" /> s.</summary>
-		public static Milliseconds Two { get; } = new Milliseconds( 2 );
+		public static Milliseconds Two { get; } = new( 2 );
 
 		/// <summary>Two Hundred <see cref="Milliseconds" />.</summary>
-		public static Milliseconds TwoHundred { get; } = new Milliseconds( 200 );
+		public static Milliseconds TwoHundred { get; } = new( 200 );
 
 		/// <summary>Two Hundred Eleven <see cref="Milliseconds" /> (Prime).</summary>
-		public static Milliseconds TwoHundredEleven { get; } = new Milliseconds( 211 );
+		public static Milliseconds TwoHundredEleven { get; } = new( 211 );
 
 		/// <summary>Two Thousand Three <see cref="Milliseconds" /> (Prime).</summary>
-		public static Milliseconds TwoThousandThree { get; } = new Milliseconds( 2003 );
+		public static Milliseconds TwoThousandThree { get; } = new( 2003 );
 
 		//faster WPM than a female (~240wpm)
 		/// <summary>Zero <see cref="Milliseconds" />.</summary>
-		public static Milliseconds Zero { get; } = new Milliseconds( 0 );
+		public static Milliseconds Zero { get; } = new( 0 );
 
-		[JsonProperty]
-		public Rational Value { get; }
+		public static Milliseconds Combine( Milliseconds left, Rational milliseconds ) => new( left.Value + milliseconds );
 
-		//faster WPM than a female (~240wpm)
-		public Milliseconds( Decimal value ) => this.Value = ( Rational )value;
-
-		public Milliseconds( Rational value ) => this.Value = value;
-
-		public Milliseconds( Int64 value ) => this.Value = value;
-
-		public Milliseconds( BigInteger value ) => this.Value = value;
-
-		public Milliseconds( Double value ) => this.Value = ( Rational )value;
-
-		public static Milliseconds Combine( Milliseconds left, Rational milliseconds ) => new Milliseconds( left.Value + milliseconds );
-
-		public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new Milliseconds( left.Value + milliseconds );
+		public static Milliseconds Combine( Milliseconds left, BigInteger milliseconds ) => new( left.Value + milliseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -133,17 +120,16 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Seconds( Milliseconds milliseconds ) => milliseconds.ToSeconds();
 
-		public static implicit operator SpanOfTime( Milliseconds milliseconds ) => new SpanOfTime( milliseconds );
+		public static implicit operator SpanOfTime( Milliseconds milliseconds ) => new( milliseconds );
 
 		public static implicit operator TimeSpan( Milliseconds milliseconds ) => TimeSpan.FromMilliseconds( ( Double )milliseconds.Value );
 
-		public static Milliseconds operator -( Milliseconds milliseconds ) => new Milliseconds( milliseconds.Value * -1 );
+		public static Milliseconds operator -( Milliseconds milliseconds ) => new( milliseconds.Value * -1 );
 
 		public static Milliseconds operator -( Milliseconds left, Milliseconds right ) => Combine( left, -right.Value );
 
 		public static Milliseconds operator -( Milliseconds left, Decimal milliseconds ) => Combine( left, ( Rational )( -milliseconds ) );
 
-		public static Boolean operator !=( Milliseconds left, Milliseconds right ) => !Equals( left, right );
 
 		public static Milliseconds operator +( Milliseconds left, Milliseconds right ) => Combine( left, right.Value );
 
@@ -151,33 +137,30 @@ namespace Librainian.Measurement.Time {
 
 		public static Milliseconds operator +( Milliseconds left, BigInteger milliseconds ) => Combine( left, milliseconds );
 
-		public static Boolean operator <( Milliseconds left, Milliseconds right ) => left.Value < right.Value;
+		public static Boolean operator <( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Milliseconds left, Seconds right ) => ( Seconds )left < right;
+		public static Boolean operator <( [NotNull] Milliseconds left, [NotNull] Seconds right ) => ( Seconds )left < right;
 
-		public static Boolean operator ==( Milliseconds left, Milliseconds right ) => Equals( left, right );
 
-		public static Boolean operator >( Milliseconds left, Milliseconds right ) => left.Value > right.Value;
+		public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) => left.Value > right.Value;
 
 		[Pure]
-		public static Boolean operator >( Milliseconds left, Seconds right ) => ( Seconds )left > right;
+		public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Seconds right ) => ( Seconds )left > right;
 
-		public Int32 CompareTo( Milliseconds other ) => this.Value.CompareTo( other.Value );
+		public Int32 CompareTo( [NotNull] Milliseconds other ) => this.Value.CompareTo( other.Value );
 
-		public Boolean Equals( Milliseconds other ) => Equals( this, other );
 
-		public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as Milliseconds? );
+		public Microseconds ToMicroseconds() => new( this.Value * Microseconds.InOneMillisecond );
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+		public IQuantityOfTime ToFinerGranularity() => this.ToMicroseconds();
 
-		public Microseconds ToMicroseconds() => new Microseconds( this.Value * Microseconds.InOneMillisecond );
+		public PlanckTimes ToPlanckTimes() => new( ( Rational )PlanckTimes.InOneMillisecond * this.Value );
 
-		public PlanckTimes ToPlanckTimes() => new PlanckTimes( ( Rational )PlanckTimes.InOneMillisecond * this.Value );
-
-		public Seconds ToSeconds() => new Seconds( this.Value / InOneSecond );
+		public Seconds ToSeconds() => new( this.Value / InOneSecond );
+		public IQuantityOfTime ToCoarserGranularity() => this.ToSeconds();
 
 		public override String ToString() {
-			if ( this.Value > MathConstants.DecimalMaxValueAsBigRational ) {
+			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
 				var whole = this.Value.WholePart;
 
 				return $"{whole} {whole.PluralOf( "millisecond" )}";
@@ -188,7 +171,7 @@ namespace Librainian.Measurement.Time {
 			return $"{dec} {dec.PluralOf( "millisecond" )}";
 		}
 
-		public TimeSpan ToTimeSpan() => this;
+		public TimeSpan? ToTimeSpan() => this;
 
 	}
 

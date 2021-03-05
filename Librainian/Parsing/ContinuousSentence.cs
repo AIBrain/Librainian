@@ -50,7 +50,7 @@ namespace Librainian.Parsing {
 
 		[JsonIgnore]
 		[NotNull]
-		private ReaderWriterLockSlim AccessInputBuffer { get; } = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		private ReaderWriterLockSlim AccessInputBuffer { get; } = new( LockRecursionPolicy.SupportsRecursion );
 
 		public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] {
 			".", "?", "!"
@@ -101,7 +101,7 @@ namespace Librainian.Parsing {
 
 		[NotNull]
 		public String PeekNextChar() =>
-			new String( new[] {
+			new( new[] {
 				this.CurrentBuffer.FirstOrDefault()
 			} );
 

@@ -91,7 +91,7 @@ namespace Librainian.Collections.Lists {
 		public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
 
 		[NotNull]
-		private ConcurrentQueue<T> InputBuffer { get; } = new ConcurrentQueue<T>();
+		private ConcurrentQueue<T> InputBuffer { get; } = new();
 
 		[JsonIgnore]
 		[NotNull]
@@ -102,7 +102,7 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		[NotNull]
 		[JsonProperty]
-		private List<T> TheList { get; } = new List<T>();
+		private List<T> TheList { get; } = new();
 
 		/// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
 		public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
@@ -160,7 +160,7 @@ namespace Librainian.Collections.Lists {
 					if ( this.IsReadOnly ) {
 						this.ThrowWhenDisallowedModifications();
 
-						return default;
+						return default( Boolean );
 					}
 
 					try {
@@ -172,7 +172,7 @@ namespace Librainian.Collections.Lists {
 						this.ThrowWhenOutOfRange( index );
 					}
 
-					return default;
+					return default( Boolean );
 				} );
 			}
 		}
@@ -273,7 +273,7 @@ namespace Librainian.Collections.Lists {
 				catch ( ArgumentOutOfRangeException ) {
 					this.ThrowWhenOutOfRange( index );
 
-					return default;
+					return default( Boolean );
 				}
 			} );
 		}
@@ -283,7 +283,7 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		public Boolean Remove( T item ) => this.Remove( item, default );
+		public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
 
 		public void RemoveAt( Int32 index ) {
 			if ( index < 0 ) {
@@ -311,7 +311,7 @@ namespace Librainian.Collections.Lists {
 					this.ThrowWhenOutOfRange( index );
 				}
 
-				return default;
+				return default( Boolean );
 			} );
 		}
 
@@ -351,7 +351,7 @@ namespace Librainian.Collections.Lists {
 			}
 
 			if ( this.ThrowWhenDisposed() ) {
-				return default!;
+				return default( TFuncResult )!;
 			}
 
 			/*
@@ -376,7 +376,7 @@ namespace Librainian.Collections.Lists {
 				throw new TimeoutException( CouldNotObtainReadLock );
 			}
 
-			return default!;
+			return default( TFuncResult )!;
 		}
 
 		private void ResetCount( Int32 toCount = default ) => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) + toCount );
@@ -438,7 +438,7 @@ namespace Librainian.Collections.Lists {
 				throw new ArgumentOutOfRangeException( nameof( index ), index, message );
 			}
 
-			return default!;
+			return default( T )!;
 		}
 
 		/// <summary>
@@ -458,7 +458,7 @@ namespace Librainian.Collections.Lists {
 			}
 
 			if ( this.ThrowWhenDisposed() || this.ThrowWhenReadOnly() ) {
-				return default!;
+				return default( TResult )!;
 			}
 
 			if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
@@ -474,7 +474,7 @@ namespace Librainian.Collections.Lists {
 
 			this.ThrowWhenNoWriteLock();
 
-			return default!;
+			return default( TResult )!;
 		}
 
 		private void ThrowWhenNoWriteLock() {
@@ -501,13 +501,13 @@ namespace Librainian.Collections.Lists {
 		/// <returns></returns>
 		public Boolean Add( [CanBeNull] T item, [CanBeNull] Action? afterAdd ) {
 			if ( this.ThrowWhenDisposed() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( this.IsReadOnly ) {
 				this.ThrowWhenDisallowedModifications();
 
-				return default;
+				return default( Boolean );
 			}
 
 			return this.Write( () => {
@@ -675,13 +675,13 @@ namespace Librainian.Collections.Lists {
 		/// <returns></returns>
 		public Boolean Remove( [CanBeNull] T item, [CanBeNull] Action? afterRemoval ) {
 			if ( this.ThrowWhenDisposed() ) {
-				return default;
+				return default( Boolean );
 			}
 
 			if ( this.IsReadOnly ) {
 				this.ThrowWhenDisallowedModifications();
 
-				return default;
+				return default( Boolean );
 			}
 
 			return this.Write( () => {
@@ -743,14 +743,14 @@ namespace Librainian.Collections.Lists {
 		/// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
 		public Boolean TryGet( Int32 index, [CanBeNull] Action<T>? afterGet ) {
 			if ( index < 0 ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return this.Read( () => {
 				if ( index >= this.TheList.Count ) {
 					this.ThrowWhenOutOfRange( index );
 
-					return default;
+					return default( Boolean );
 				}
 
 				var result = this.TheList[index];

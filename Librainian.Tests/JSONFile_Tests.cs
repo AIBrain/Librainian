@@ -47,10 +47,10 @@ data33   =   3
 ";
 
 		[NotNull]
-		public IniFile Ini { get; } = new IniFile();
+		public IniFile Ini { get; } = new();
 
 		[NotNull]
-		public JSONFile Json { get; } = new JSONFile();
+		public JSONFile Json { get; } = new();
 
 		[Fact]
 		public async Task test_load_from_string() {

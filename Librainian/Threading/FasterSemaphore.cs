@@ -31,7 +31,7 @@ namespace Librainian.Threading {
 	public sealed class FasterSemaphore {
 
 		[NotNull]
-		private Object locker { get; } = new Object();
+		private Object locker { get; } = new();
 
 		public void Release() {
 			lock ( this.locker ) {

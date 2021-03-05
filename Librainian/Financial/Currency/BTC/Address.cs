@@ -142,7 +142,7 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public override Boolean Equals( Object obj ) {
 			if ( !( obj is Address ) ) {
-				return default;
+				return default( Boolean );
 			}
 
 			return this.EitherHash.HashBytes.SequenceEqual( ( ( Address )obj ).EitherHash.HashBytes );

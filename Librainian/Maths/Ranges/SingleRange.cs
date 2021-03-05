@@ -31,7 +31,7 @@ namespace Librainian.Maths.Ranges {
 	[JsonObject( MemberSerialization.Fields )]
 	public struct SingleRange {
 
-		public static readonly SingleRange ZeroToOne = new SingleRange( 0, 1 );
+		public static readonly SingleRange ZeroToOne = new( 0, 1 );
 
 		/// <summary>Length of the range (difference between maximum and minimum values)</summary>
 		[JsonProperty]

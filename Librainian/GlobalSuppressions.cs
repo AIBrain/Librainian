@@ -57,3 +57,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage( "Style", "IDE0046:Convert to conditional expression", Justification = "I'll effing simplify when I want to." )]
 [assembly: SuppressMessage( "Style", "IDE0058:Expression value is never used" )]
 [assembly: SuppressMessage( "Style", "CA2000:grr." )]
+[assembly: SuppressMessage( "Style", "IDE1006:Naming Styles" )]

@@ -33,20 +33,17 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 
-	public struct FileCopyData {
-		[NotNull]
-		public IDocument Source { get; set; }
-
-		[NotNull]
-		public IDocument Destination { get; set; }
+	public record FileCopyData( IDocument Source, IDocument Destination ) {
 
 		[CanBeNull]
-		public DateTime? WhenStarted { get; set; }
+		public DateTime? WhenStarted { get; init; }
 
 		public UInt64 SourceSize { get; set; }
+		
+		public UInt64? BytesCopied { get; set; }
 
 		[CanBeNull]
-		public IProgress<UInt64>? DataCopied { get; set; }
+		public IProgress<FileCopyData>? DataCopied { get; set; }
 
 		[CanBeNull]
 		public Action<FileCopyData>? OnCompleted { get; set; }
