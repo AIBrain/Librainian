@@ -52,6 +52,7 @@ namespace Librainian.Maths {
 		/// A Double-sized byte buffer per-thread.
 		/// </summary>
 		[NotNull]
+		[ItemNotNull]
 		private static readonly ThreadLocal<Byte[]> ThreadLocalByteBuffer = new( () => new Byte[ sizeof( Double ) ], true );
 
 		[NotNull]
@@ -705,8 +706,8 @@ namespace Librainian.Maths {
 			}
 
 			do {
-				Instance().NextBytes( ThreadLocalByteBuffer.Value );
-				result = BitConverter.ToDouble( ThreadLocalByteBuffer.Value, 0 );
+				Instance().NextBytes( ThreadLocalByteBuffer.Value! );
+				result = BitConverter.ToDouble( ThreadLocalByteBuffer.Value!, 0 );
 			} while ( Double.IsInfinity( result ) || Double.IsNaN( result ) );
 
 			//result.Should().BeInRange( minimumValue: min, maximumValue: max );

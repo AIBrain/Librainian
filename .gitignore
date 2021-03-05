@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs/Librainian/v16
+/LibrainianUnitTests/obj/Debug
+/LibrainianUnitTests/obj
+/LibrainianUnitTests/bin
+/LibrainianOld.Tests/obj
+/LibrainianOld.Tests/bin

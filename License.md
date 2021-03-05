@@ -1,4 +1,4 @@
-Copyright © 2020 Protiguous. All Rights Reserved.
+Copyright © 2021 Protiguous. All Rights Reserved.
 
 This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 
@@ -23,5 +23,5 @@ Disclaimer:  Usage of the source code or binaries is AS-IS.
 Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 For business inquiries, please contact me at Protiguous@Protiguous.com.
 
-Our software can be found at "https://Protiguous.Software/"
+Our software can be found at "https://Protiguous.com/Software/"
 Our GitHub address is "https://github.com/Protiguous".
