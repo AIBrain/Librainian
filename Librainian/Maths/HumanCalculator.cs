@@ -85,22 +85,27 @@ namespace Librainian.Maths {
                     term = term.PadLeft( s.Length, '0' );
                 }
 
-                while ( term.Any() ) {
-                    var l = Byte.Parse( s.Last().ToString() );
-                    s = s.Substring( 0, s.Length - 1 );
+                while ( term?.Any() == true ) {
+	                if ( s is null ) {
+						//BUG This won't work.
+		                break;
+	                }
 
-                    var m = Byte.Parse( term.Last().ToString() );
-                    term = term.Substring( 0, term.Length - 1 );
+	                var l = Byte.Parse( s.Last().ToString() );
+	                s = s[ ..^1 ];
 
-                    var t = ( l + m ).ToString();
-                    var c = Byte.Parse( t.Last().ToString() );
+	                var m = Byte.Parse( term.Last().ToString() );
+	                term = term[ ..^1 ];
 
-                    if ( 2 == t.Length ) {
-                        result = "1" + c;
-                    }
-                    else {
-                        result += c;
-                    }
+	                var t = ( l + m ).ToString();
+	                var c = Byte.Parse( t.Last().ToString() );
+
+	                if ( 2 == t.Length ) {
+		                result = "1" + c;
+	                }
+	                else {
+		                result += c;
+	                }
                 }
 
                 total += BigInteger.Parse( result );
@@ -119,7 +124,7 @@ namespace Librainian.Maths {
 				Operation.Subtraction => Subtract( terms ),
 				Operation.Multiplication => Multiply( terms ),
 				Operation.Division => Divide( terms ),
-				_ => throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" )
+				var _ => throw new ArgumentOutOfRangeException( nameof( operation ), operation, $"Unknown operation {operation}" )
 			};
 		}
 

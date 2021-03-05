@@ -239,7 +239,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var xandy = line.Substring( at + 1 ).Split( new[] {
+			var xandy = line[ ( at + 1 ).. ].Split( new[] {
 				','
 			}, StringSplitOptions.RemoveEmptyEntries );
 

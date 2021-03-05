@@ -1372,7 +1372,7 @@ namespace Librainian.Parsing {
 				var sb = new StringBuilder( result.Length );
 
 				sb.Append( Char.ToUpperInvariant( result[0] ) );
-				sb.Append( result.Substring( 1 ) );
+				sb.Append( result[ 1.. ] );
 
 				return sb.ToString();
 			}
@@ -1391,7 +1391,7 @@ namespace Librainian.Parsing {
 			var lastSpaceIndex = word.LastIndexOf( ' ' );
 			prefixWord = word.Substring( 0, lastSpaceIndex + 1 );
 
-			return word.Substring( lastSpaceIndex + 1 );
+			return word[ ( lastSpaceIndex + 1 ).. ];
 
 			// 
 		}

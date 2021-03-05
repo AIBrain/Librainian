@@ -110,7 +110,7 @@ namespace Librainian.Maths {
 		public static T Choose<T>( [CanBeNull] this T a, [CanBeNull] T b ) =>
 			2.NextInt() switch {
 				0 => a,
-				_ => b
+				var _ => b
 			};
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace Librainian.Maths {
 			3.NextInt() switch {
 				0 => a,
 				1 => b,
-				_ => c
+				var _ => c
 			};
 
 		/// <summary>
@@ -144,7 +144,7 @@ namespace Librainian.Maths {
 				0 => a,
 				1 => b,
 				2 => c,
-				_ => d
+				var _ => d
 			};
 
 		/// <summary>
@@ -164,7 +164,7 @@ namespace Librainian.Maths {
 				1 => b,
 				2 => c,
 				3 => d,
-				_ => e
+				var _ => e
 			};
 
 		/// <summary>
@@ -188,7 +188,7 @@ namespace Librainian.Maths {
 				2 => c,
 				3 => d,
 				4 => e,
-				_ => f
+				var _ => f
 			};
 		}
 
@@ -215,7 +215,7 @@ namespace Librainian.Maths {
 				3 => d,
 				4 => e,
 				5 => f,
-				_ => g
+				var _ => g
 			};
 		}
 
@@ -245,7 +245,7 @@ namespace Librainian.Maths {
 				4 => e,
 				5 => f,
 				6 => g,
-				_ => h
+				var _ => h
 			};
 		}
 
@@ -262,19 +262,19 @@ namespace Librainian.Maths {
 
 		[NotNull]
 		public static IEnumerable<Int32> GenerateRandom( Int32 count, Int32 min, Int32 max ) {
-			if ( count < 1 ) {
+			if ( !count.Any() ) {
 				throw new ArgumentOutOfRangeException( $"{nameof( count )} is out of range ({count.DoubleQuote()} is less than 1)." );
 			}
 
 			if ( max < min ) {
-				throw new ArgumentOutOfRangeException( $"Range {min} to {max} ({(Int64)max - min} values)." );
+				Common.Swap( ref min, ref max);
 			}
 
-			if ( count > max - min && max - min > 0 ) {
+			if ( count > max - min && (max - min).Any() ) {
 				throw new ArgumentOutOfRangeException( $"Count {count} is out of range." );
 			}
 
-			return Enumerable.Range( min, count ).Select( i => min.Next( max ) );
+			return Enumerable.Range( min, count ).Select( _ => min.Next( max ) );
 		}
 
 		public static Char GetChar( [NotNull] this RandomNumberGenerator rng ) {
@@ -678,11 +678,11 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		public static Double NextDouble( Double min = 0.0, Double max = 1.0 ) {
 			if ( Double.IsNaN( min ) ) {
-				throw new ArgumentOutOfRangeException( $"{nameof( min )} is a NaN." );
+				throw new ArgumentOutOfRangeException( nameof( min ), $"{nameof( min )} is a NaN." );
 			}
 
 			if ( Double.IsNaN( max ) ) {
-				throw new ArgumentOutOfRangeException( $"{nameof( max )} is a NaN." );
+				throw new ArgumentOutOfRangeException( nameof( max ), $"{nameof( max )} is a NaN." );
 			}
 
 			if ( min > max ) {
@@ -692,7 +692,7 @@ namespace Librainian.Maths {
 			var range = max - min;
 
 			if ( Double.IsNaN( range ) ) {
-				throw new ArgumentOutOfRangeException( $"{nameof( max )}-{nameof( min )} produced a NaN." );
+				throw new ArgumentOutOfRangeException( nameof(range) ,$"{nameof( max )}-{nameof( min )} produced a NaN." );
 			}
 
 			Double result;

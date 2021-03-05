@@ -85,7 +85,7 @@ namespace Librainian.FileSystem.FileHistory {
 				return false;
 			}
 
-			var datepart = value.Substring( posA + 1, posB - ( posA + 1 ) );
+			var datepart = value[ ( posA + 1 )..posB ];
 
 			var parts = datepart.Split( new[] {
 				' '
@@ -102,7 +102,7 @@ namespace Librainian.FileSystem.FileHistory {
 					posA = 1;
 				}
 
-				filename = $"{value.Substring( 0, posA - "(".Length )}{value.Substring( posB + "UTC)".Length )}{extension}";
+				filename = $"{value.Substring( 0, posA - "(".Length )}{value[ ( posB + "UTC)".Length ).. ]}{extension}";
 
 				return true;
 			}

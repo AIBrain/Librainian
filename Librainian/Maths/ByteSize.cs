@@ -218,7 +218,7 @@ namespace Librainian.Maths {
 
 			// Cut the input string in half
 			var numberPart = s.Substring( 0, lastNumber ).Trim();
-			var sizePart = s.Substring( lastNumber, s.Length - lastNumber ).Trim();
+			var sizePart = s[ lastNumber.. ].Trim();
 
 			// Get the numeric part
 			if ( !Double.TryParse( numberPart, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.CurrentInfo, out var number ) ) {

@@ -76,7 +76,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			// http://msdn.microsoft.com/en-us/library/aa365247.aspx
-			return path.StartsWith(@"\\") ? $"{UNCLongPathPrefix}{path.Substring(2)}" : $"{LongPathPrefix}{path}";
+			return path.StartsWith(@"\\") ? $"{UNCLongPathPrefix}{path[ 2.. ]}" : $"{LongPathPrefix}{path}";
 		}
 
 		[return: NotNullIfNotNull("filename")]
@@ -236,7 +236,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return path.Substring(0, length);
 			}
 
-			path = path.Substring(basePath.Length + 1);
+			path = path[ ( basePath.Length + 1 ).. ];
 			length = length - basePath.Length - 1;
 
 			if (length < 0) {
@@ -411,8 +411,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			return path.StartsWith(UNCLongPathPrefix, StringComparison.Ordinal)
-				? $@"\\{path.Substring(UNCLongPathPrefix.Length)}"
-				: path.Substring(LongPathPrefix.Length);
+				? $@"\\{path[ UNCLongPathPrefix.Length.. ]}"
+				: path[ LongPathPrefix.Length.. ];
 		}
 
 		public static Boolean TryNormalizeLongPath([JetBrains.Annotations.NotNull] this String path, [CanBeNull] out String? result) {

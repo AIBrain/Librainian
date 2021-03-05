@@ -224,7 +224,7 @@ namespace Librainian.Persistence.InIFiles {
 				var key = line.Substring( 0, pos ).Trimmed();
 
 				if ( !String.IsNullOrEmpty( key ) ) {
-					var value = line.Substring( pos + IniLine.PairSeparator.Length ).Trimmed();
+					var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
 
 					if ( this.Add( section, key, value ) ) {
 						counter++;
@@ -474,7 +474,7 @@ namespace Librainian.Persistence.InIFiles {
 						var key = line.Substring( 0, pos ).Trimmed();
 
 						if ( !String.IsNullOrEmpty( key ) ) {
-							var value = line.Substring( pos + IniLine.PairSeparator.Length ).Trimmed();
+							var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
 
 							this.Add( currentSection, key, value );
 						}

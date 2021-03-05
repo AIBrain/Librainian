@@ -344,7 +344,7 @@ namespace Librainian.Parsing {
                 return self;
             }
 
-            return self.Substring( self.IndexOf( splitter, comparison ) + splitter!.Length );
+            return self[ ( self.IndexOf( splitter, comparison ) + splitter!.Length ).. ];
         }
 
         [NotNull]
@@ -679,7 +679,7 @@ namespace Librainian.Parsing {
             var builder = new StringBuilder();
             builder.Append( toBeFormatted[0] );
             builder.Append( "." );
-            builder.Append( toBeFormatted.Substring( 1, numberOfDigits - 1 ) );
+            builder.Append( toBeFormatted[ 1..numberOfDigits ] );
 
             return builder.ToString();
         }
@@ -739,7 +739,7 @@ namespace Librainian.Parsing {
             // then i remove repeating characters
             //result = repeating.Replace(result, "$1");
             //var result = new Regex( @"(\d)\1*D?\1+" ).Replace( coded.ToString(), "$1" ).Substring( 1 );
-            var result = SoundExPart1.Value.Replace( coded.ToString(), "$1" ).Substring( 1 );
+            var result = SoundExPart1.Value.Replace( coded.ToString(), "$1" )[ 1.. ];
 
             // now i need to remove any characters coded as D from the front of the String because they're not really valid as the first code because they don't have an actual soundex code value
             //result = new Regex( "^D+" ).Replace( result, Empty );
@@ -1146,7 +1146,7 @@ namespace Librainian.Parsing {
         public static String RemoveSurroundingQuotes( this String input ) {
             if ( input.StartsWith( "\"", StringComparison.Ordinal ) && input.EndsWith( "\"", StringComparison.Ordinal ) ) {
                 // remove leading/trailing quotes
-                input = input.Substring( 1, input.Length - 2 );
+                input = input[ 1..^1 ];
             }
 
             return input;
@@ -1212,7 +1212,7 @@ namespace Librainian.Parsing {
             Int32 pos;
 
             while ( ( pos = haystack!.IndexOf( needle, StringComparison.Ordinal ) ) > 0 ) {
-                haystack = $"{haystack.Substring( 0, pos )}{replacement}{haystack.Substring( pos + needle.Length )}";
+                haystack = $"{haystack.Substring( 0, pos )}{replacement}{haystack[ ( pos + needle.Length ).. ]}";
             }
 
             return haystack;
@@ -1227,7 +1227,7 @@ namespace Librainian.Parsing {
                 return haystack;
             }
 
-            return $"{haystack.Substring( 0, pos )}{replacement}{haystack.Substring( pos + needle.Length )}";
+            return $"{haystack.Substring( 0, pos )}{replacement}{haystack[ ( pos + needle.Length ).. ]}";
         }
 
         [NotNull]
@@ -1736,7 +1736,7 @@ namespace Librainian.Parsing {
                     sb.Append( Char.ToUpper( w[0], cultureInfo ?? CultureInfo.CurrentCulture ) );
 
                     if ( l > 1 ) {
-                        sb.Append( w.Substring( 1 ) );
+                        sb.Append( w[ 1.. ] );
                     }
                 }
             }
@@ -2048,7 +2048,7 @@ namespace Librainian.Parsing {
                 return Char.ToUpper( text[0], CultureInfo.CurrentCulture ).ToString();
             }
 
-            return Char.ToUpper( text[0], CultureInfo.CurrentCulture ) + text.Substring( 1 );
+            return Char.ToUpper( text[0], CultureInfo.CurrentCulture ) + text[ 1.. ];
         }
 
         [DebuggerStepThrough]
@@ -2148,7 +2148,7 @@ namespace Librainian.Parsing {
             self = self.Trimmed();
 
             while ( self?.StartsWith( startingChar, comparison ) == true ) {
-                self = self.Substring( startingChar.Length ).TrimStart();
+                self = self[ startingChar.Length.. ].TrimStart();
             }
 
             return self;

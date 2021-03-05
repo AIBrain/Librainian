@@ -159,7 +159,7 @@ namespace Librainian.Parsing {
 
 				if ( !String.IsNullOrWhiteSpace( sentence ) ) {
 					var position = this._inputBuffer.IndexOf( sentence, StringComparison.Ordinal );
-					this.CurrentBuffer = this._inputBuffer.Substring( position + sentence.Length );
+					this.CurrentBuffer = this._inputBuffer[ ( position + sentence.Length ).. ];
 
 					return sentence;
 				}

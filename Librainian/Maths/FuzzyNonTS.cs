@@ -101,7 +101,7 @@ namespace Librainian.Maths {
 				LowMiddleHigh.Low => Randem.NextDouble() / 10,
 				LowMiddleHigh.Middle => ( 1 - Randem.NextDouble() / 10 ) / 2,
 				LowMiddleHigh.High => 1 - Randem.NextDouble() / 10,
-				_ => Randem.NextDouble()
+				var _ => Randem.NextDouble()
 			};
 		}
 

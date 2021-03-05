@@ -624,7 +624,7 @@ namespace Librainian.Security {
 				p.Start();
 				p.WaitForExit();
 				var output = p.StandardOutput.ReadToEnd();
-				md5 = output.Split( ' ' )[0].Substring( 1 ).ToUpper();
+				md5 = output.Split( ' ' )[0][ 1.. ].ToUpper();
 
 				return !String.IsNullOrWhiteSpace( md5 ) && md5.Length == 32;
 			}

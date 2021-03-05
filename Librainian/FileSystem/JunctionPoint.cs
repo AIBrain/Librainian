@@ -157,7 +157,7 @@ namespace Librainian.FileSystem {
 				var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
 
 				if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
-					targetDir = targetDir.Substring( NonInterpretedPathPrefix.Length );
+					targetDir = targetDir[ NonInterpretedPathPrefix.Length.. ];
 				}
 
 				return targetDir;

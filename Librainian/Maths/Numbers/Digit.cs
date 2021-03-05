@@ -156,7 +156,7 @@ namespace Librainian.Maths.Numbers {
 				7 => nameof(Seven),
 				8 => nameof(Eight),
 				9 => nameof(Nine),
-				_ => throw new ArgumentOutOfRangeException(nameof(this.Value), "Invalid internal value!")
+				var _ => throw new ArgumentOutOfRangeException(nameof(this.Value), "Invalid internal value!")
 			};
 		}
 
