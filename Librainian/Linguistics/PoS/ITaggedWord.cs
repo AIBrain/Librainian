@@ -24,6 +24,6 @@
 
 namespace Librainian.Linguistics.PoS {
 
-	public interface ITaggedWord : IIHasPartOfSpeech { }
+	public interface ITaggedWord : IHasPartOfSpeech { }
 
 }

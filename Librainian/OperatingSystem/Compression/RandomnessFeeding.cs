@@ -31,8 +31,8 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.Linq;
 	using System.Numerics;
 	using JetBrains.Annotations;
-	using Librainian.Extensions;
-	using Librainian.FileSystem;
+	using Extensions;
+	using FileSystem;
 	using Rationals;
 	using Utilities;
 

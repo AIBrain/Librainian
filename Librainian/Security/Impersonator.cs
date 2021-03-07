@@ -53,15 +53,15 @@ namespace Librainian.Security {
             var tokenDuplicate = IntPtr.Zero;
 
             try {
-                if ( !NativeMethods.RevertToSelf() ) {
+                if ( !PriNativeMethods.RevertToSelf() ) {
                     throw new Win32Exception( Marshal.GetLastWin32Error() );
                 }
                 else {
-                    if ( NativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
+                    if ( PriNativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
                         throw new Win32Exception( Marshal.GetLastWin32Error() );
                     }
                     else {
-                        if ( NativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
+                        if ( PriNativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
                             throw new Win32Exception( Marshal.GetLastWin32Error() );
                         }
                         else {

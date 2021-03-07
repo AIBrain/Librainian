@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -20,49 +20,22 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Base58CheckString.cs" last formatted on 2020-08-14 at 8:41 PM.
+// File "ItemCategory.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Parsing {
+namespace Librainian.Financial.Containers.Shopping {
 
-	using System;
-	using System.Linq;
-	using System.Security.Cryptography;
-	using JetBrains.Annotations;
+	/// <summary>
+	///     Obviously there are thousands of real categories that should be loaded from a json document. But this is just
+	///     a sample/experimental class.
+	/// </summary>
+	public enum ItemCategory {
 
-	public static class Base58CheckString {
-
-		[NotNull]
-		public static String FromByteArray( Byte[] b, Byte version ) {
-			using SHA256 sha256 = new SHA256Managed();
-
-			b = new[] {
-				version
-			}.Concat( b ).ToArray();
-
-			var hash = sha256.ComputeHash( sha256.ComputeHash( b ) ).Take( 4 ).ToArray();
-
-			return b.Concat( hash ).ToArray().FromByteArray();
-		}
-
-		[NotNull]
-		public static Byte[] ToByteArray( [NotNull] String s, out Byte version ) {
-			var b = s.ToByteArray();
-
-			using SHA256 sha256 = new SHA256Managed();
-
-			var hash = sha256.ComputeHash( sha256.ComputeHash( b.Take( b.Length - 4 ).ToArray() ) );
-
-			if ( !hash.Take( 4 ).SequenceEqual( b.Skip( b.Length - 4 ).Take( 4 ) ) ) {
-				throw new ArgumentException( "Invalid Base58Check String" );
-			}
-
-			version = b.First();
-
-			return b.Skip( 1 ).Take( b.Length - 5 ).ToArray();
-		}
-
-		[NotNull]
-		public static Byte[] ToByteArray( [NotNull] String s ) => ToByteArray( s, out var b );
+		Invalid = -1,
+		Other,
+		Book,
+		Food,
+		Medical,
+		Import
 
 	}
 

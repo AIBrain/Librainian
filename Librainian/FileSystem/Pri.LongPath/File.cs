@@ -124,7 +124,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var normalizedSourcePath = sourcePath.ThrowIfBlank().NormalizeLongPath( "sourcePath" );
 			var normalizedDestinationPath = destinationPath.ThrowIfBlank().NormalizeLongPath( "destinationPath" );
 
-			if ( !NativeMethods.CopyFile( normalizedSourcePath, normalizedDestinationPath, !overwrite ) ) {
+			if ( !PriNativeMethods.CopyFile( normalizedSourcePath, normalizedDestinationPath, !overwrite ) ) {
 				throw Common.GetExceptionFromLastWin32Error();
 			}
 		}
@@ -181,13 +181,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var fullPath = path.ThrowIfBlank().GetFullPath();
 			var normalizedPath = fullPath.NormalizeLongPath();
 
-			if ( NativeMethods.DecryptFile( normalizedPath, 0 ) ) {
+			if ( PriNativeMethods.DecryptFile( normalizedPath, 0 ) ) {
 				return;
 			}
 
-			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
+			var errorCode = ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-			if ( errorCode == NativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
+			if ( errorCode == PriNativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
 				var di = new DriveInfo( normalizedPath.GetPathRoot() );
 
 				if ( !String.Equals( "NTFS", di.DriveFormat, StringComparison.Ordinal ) ) {
@@ -236,7 +236,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return;
 			}
 
-			if ( !NativeMethods.DeleteFile( path ) ) {
+			if ( !PriNativeMethods.DeleteFile( path ) ) {
 				throw Common.GetExceptionFromLastWin32Error();
 			}
 		}
@@ -245,13 +245,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var fullPath = path.GetFullPath();
 			var normalizedPath = fullPath.NormalizeLongPath();
 
-			if ( NativeMethods.EncryptFile( normalizedPath ) ) {
+			if ( PriNativeMethods.EncryptFile( normalizedPath ) ) {
 				return;
 			}
 
-			var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
+			var errorCode = ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 
-			if ( errorCode == NativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
+			if ( errorCode == PriNativeMethods.ERROR.ERROR_ACCESS_DENIED ) {
 				var di = new DriveInfo( normalizedPath.GetPathRoot() );
 
 				if ( !String.Equals( "NTFS", di.DriveFormat, StringComparison.Ordinal ) ) {
@@ -295,7 +295,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			var underlyingAccess = GetUnderlyingAccess( access );
 
-			var handle = NativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 )share, IntPtr.Zero, ( UInt32 )mode, ( UInt32 )options,
+			var handle = PriNativeMethods.CreateFile( normalizedPath.ThrowIfBlank(), underlyingAccess, ( UInt32 )share, IntPtr.Zero, ( UInt32 )mode, ( UInt32 )options,
 				IntPtr.Zero );
 
 			if ( handle.IsInvalid ) {
@@ -307,7 +307,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			if ( append ) {
-				NativeMethods.SetFilePointer( handle, SeekOrigin.End, 0 );
+				PriNativeMethods.SetFilePointer( handle, SeekOrigin.End, 0 );
 			}
 
 			return handle;
@@ -321,11 +321,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public static DateTime GetLastWriteTimeUtc( [NotNull] this String path ) => new FileInfo( path.ThrowIfBlank() ).LastWriteTimeUtc;
 
-		public static NativeMethods.EFileAccess GetUnderlyingAccess( FileAccess access ) {
+		public static PriNativeMethods.EFileAccess GetUnderlyingAccess( FileAccess access ) {
 			return access switch {
-				FileAccess.Read => NativeMethods.EFileAccess.GenericRead,
-				FileAccess.Write => NativeMethods.EFileAccess.GenericWrite,
-				FileAccess.ReadWrite => NativeMethods.EFileAccess.GenericRead | NativeMethods.EFileAccess.GenericWrite,
+				FileAccess.Read => PriNativeMethods.EFileAccess.GenericRead,
+				FileAccess.Write => PriNativeMethods.EFileAccess.GenericWrite,
+				FileAccess.ReadWrite => PriNativeMethods.EFileAccess.GenericRead | PriNativeMethods.EFileAccess.GenericWrite,
 				_ => throw new ArgumentOutOfRangeException( nameof( access ) )
 			};
 		}
@@ -370,7 +370,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var normalizedSourcePath = sourcePath.ThrowIfBlank().NormalizeLongPath( "sourcePath" );
 			var normalizedDestinationPath = destinationPath.ThrowIfBlank().NormalizeLongPath( "destinationPath" );
 
-			if ( !NativeMethods.MoveFile( normalizedSourcePath, normalizedDestinationPath ) ) {
+			if ( !PriNativeMethods.MoveFile( normalizedSourcePath, normalizedDestinationPath ) ) {
 				throw Common.GetExceptionFromLastWin32Error();
 			}
 		}
@@ -630,16 +630,16 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var fullDestPath = destinationFileName.ThrowIfBlank().GetFullPath().NormalizeLongPath();
 			var fullBackupPath = destinationBackupFileName.ThrowIfBlank().GetFullPath().NormalizeLongPath();
 
-			var flags = NativeMethods.REPLACEFILE_WRITE_THROUGH;
+			var flags = PriNativeMethods.REPLACEFILE_WRITE_THROUGH;
 
 			if ( ignoreMetadataErrors ) {
-				flags |= NativeMethods.REPLACEFILE_IGNORE_MERGE_ERRORS;
+				flags |= PriNativeMethods.REPLACEFILE_IGNORE_MERGE_ERRORS;
 			}
 
-			var r = NativeMethods.ReplaceFile( fullDestPath, fullSrcPath, fullBackupPath, flags, IntPtr.Zero, IntPtr.Zero );
+			var r = PriNativeMethods.ReplaceFile( fullDestPath, fullSrcPath, fullBackupPath, flags, IntPtr.Zero, IntPtr.Zero );
 
 			if ( !r ) {
-				Common.ThrowIOError( ( NativeMethods.ERROR )Marshal.GetLastWin32Error(), String.Empty );
+				Common.ThrowIOError( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), String.Empty );
 			}
 		}
 
@@ -653,10 +653,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
 
 			var fileTime = new FILE_TIME( creationTimeUtc.ToFileTimeUtc() );
-			var r = NativeMethods.SetFileTime( handle, &fileTime, null, null );
+			var r = PriNativeMethods.SetFileTime( handle, &fileTime, null, null );
 
 			if ( !r ) {
-				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
+				var errorCode = ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -670,10 +670,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
 
 			var fileTime = new FILE_TIME( lastAccessTimeUtc.ToFileTimeUtc() );
-			var r = NativeMethods.SetFileTime( handle, null, &fileTime, null );
+			var r = PriNativeMethods.SetFileTime( handle, null, &fileTime, null );
 
 			if ( !r ) {
-				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
+				var errorCode = ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}
@@ -687,10 +687,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			using var handle = GetFileHandle( normalizedPath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite, FileOptions.None );
 
 			var fileTime = new FILE_TIME( lastWriteTimeUtc.ToFileTimeUtc() );
-			var r = NativeMethods.SetFileTime( handle, null, null, &fileTime );
+			var r = PriNativeMethods.SetFileTime( handle, null, null, &fileTime );
 
 			if ( !r ) {
-				var errorCode = ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
+				var errorCode = ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 				Common.ThrowIOError( errorCode, path );
 			}
 		}

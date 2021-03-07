@@ -50,24 +50,28 @@ namespace Librainian.Threading {
 		/// <param name="options">      The options to use for processing the loop.</param>
 		/// <param name="body">         The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
-		public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] ParallelOptions options, [NotNull] Func<Int32, TResult> body ) {
+		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] ParallelOptions options, [NotNull] Func<Int32, TResult> body ) {
 			// Validate parameters; the Parallel.For we delegate to will validate the rest
 			if ( body is null ) {
 				throw new ArgumentNullException( nameof( body ) );
 			}
 
 			// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
-			Object result = null;
+			Object? result = null;
 
 			// Run all bodies in parallel, stopping as soon as one has completed.
 			Parallel.For( fromInclusive, toExclusive, options, ( i, loopState ) => {
 				// Run an iteration. When it completes, store (box) the result, and cancel the rest
 				Interlocked.CompareExchange( ref result, body( i ), null );
-				loopState.Stop();
+				loopState?.Stop();
 			} );
 
 			// Return the computed result
-			return ( TResult )result;
+			if ( result != null ) {
+				return ( TResult ) result;
+			}
+
+			throw new InvalidOperationException();
 		}
 
 		/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
@@ -108,7 +112,11 @@ namespace Librainian.Threading {
 			} );
 
 			// Return the computed result
-			return ( TResult )result;
+			if ( result != null ) {
+				return ( TResult ) result;
+			}
+
+			throw new InvalidOperationException();
 		}
 
 		/// <summary>

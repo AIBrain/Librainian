@@ -81,9 +81,8 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>
 		///     <para>Returns True when there is enough data to calculate the ETA.</para>
-		///     <para>Returns False if the ETA is still calculating.</para>
 		/// </summary>
-		public Boolean DoWeHaveAnEta() => this._datapoints.Any();
+		public Boolean CanWeHaveAnEta() => this._datapoints.Any();
 
 		/// <summary>
 		///     <para>Calculates the Estimated Time of Completion</para>
@@ -94,9 +93,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		[NotNull]
 		public IEnumerable<TimeProgression> GetDataPoints() =>
-			this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression {
-				MillisecondsPassed = pair.Key.TotalMilliseconds, Progress = pair.Value
-			} );
+			this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression( pair.Key.TotalMilliseconds, pair.Value ) );
 
 		public void Reset( TimeSpan samplingPeriod ) {
 			using ( this._timer ) {
@@ -114,8 +111,8 @@ namespace Librainian.Measurement.Time {
 				Interval = samplingPeriod.TotalMilliseconds, AutoReset = true
 			};
 
-			this._timer.Elapsed += ( sender, args ) => this.Update();
-			this._timer.Start();
+			this._timer.Elapsed += ( _, _ ) => this.Update();
+			this._timer?.Start();
 		}
 
 		/// <summary>

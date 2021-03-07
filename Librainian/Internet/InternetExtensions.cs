@@ -48,14 +48,11 @@ namespace Librainian.Internet {
 				throw new ArgumentNullException( nameof( request ) );
 			}
 
-			var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( ( HttpWebRequest )state ).BeginGetResponse( asyncCallback, state ),
+			var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( state as HttpWebRequest ).BeginGetResponse( asyncCallback, state ),
 													   asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request )
 								   .ConfigureAwait( false );
 
-#if NET5_0_OR_GREATER
-			await
-#endif
-				using var stream = result.GetResponseStream();
+			await using var stream = result.GetResponseStream();
 
 			return new StreamReader( stream );
 		}
@@ -131,7 +128,7 @@ namespace Librainian.Internet {
 		}
 
 		[ItemCanBeNull]
-		public static async Task<String> GetWebPageAsync( [NotNull] this Uri url ) {
+		public static async Task<String?> GetWebPageAsync( [NotNull] this Uri url ) {
 			if ( url is null ) {
 				throw new ArgumentNullException( nameof( url ) );
 			}
@@ -141,24 +138,24 @@ namespace Librainian.Internet {
 				request.Proxy = null;
 				request.Credentials = CredentialCache.DefaultCredentials;
 
+				//TODO CancellationTokenSource cts = new( Seconds.Seven ); var token = cts.Token;
+
 				using var response = await request.GetResponseAsync().ConfigureAwait( false );
 
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var dataStream = response.GetResponseStream();
+				await using var dataStream = response.GetResponseStream();
 
-				using var reader = new StreamReader( dataStream );
+				using var reader = new StreamReader( dataStream! );
 
 				var responseFromServer = await reader.ReadToEndAsync().ConfigureAwait( false );
 
 				return responseFromServer;
+
 			}
 			catch {
 				$"Unable to connect to {url}.".Error();
 			}
 
-			return default( String );
+			return default( String? );
 		}
 
 		public static Boolean IsValidIp( this String ip ) {
@@ -168,8 +165,8 @@ namespace Librainian.Internet {
 
 			var ips = ip.Split( '.' );
 
-			if ( ips.Length is 4 or 6) {
-				return Int32.Parse( ips[0] ) < 256 && ( Int32.Parse( ips[1] ) < 256 ) & ( Int32.Parse( ips[2] ) < 256 ) & ( Int32.Parse( ips[3] ) < 256 );
+			if ( ips.Length is 4 or 6 ) {
+				return Int32.Parse( ips[ 0 ] ) < 256 && ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 );
 			}
 
 			return false;
@@ -187,11 +184,12 @@ namespace Librainian.Internet {
 			}
 
 			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
-				var value = match.Groups[1].Value;
+				var value = match.Groups[ 1 ].Value;
 				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
 				var i = new UriLinkItem {
-					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri, m2.Success ? m2.Groups[1].Value : String.Empty )
+					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
+					Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
 				};
 
 				yield return i;

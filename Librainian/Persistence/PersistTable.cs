@@ -61,7 +61,7 @@ namespace Librainian.Persistence {
     [JsonObject]
     public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue?> where TKey : IComparable<TKey> {
 
-        private PersistTable() => throw new NotImplementedException();
+        
 
         public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
 
@@ -82,7 +82,7 @@ namespace Librainian.Persistence {
                 }
 
                 var customConfig = new DatabaseConfig {
-                    CreatePathIfNotExist = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On, DefragmentSequentialBTrees = true
+	                CreatePathIfNotExist = true, DefragmentSequentialBTrees = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On
                 };
 
                 this.Dictionary = new PersistentDictionary<TKey, String?>( this.Folder.FullPath, customConfig );

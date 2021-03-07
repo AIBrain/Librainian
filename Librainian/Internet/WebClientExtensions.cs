@@ -26,14 +26,11 @@ namespace Librainian.Internet {
 
 	using System;
 	using System.ComponentModel;
-	using System.IO;
 	using System.Net;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Exceptions.Warnings;
 	using JetBrains.Annotations;
 	using Logging;
-	using Parsing;
 
 	/// <summary>
 	///     <para>Extension methods for working with WebClient asynchronously.</para>
@@ -43,7 +40,7 @@ namespace Librainian.Internet {
 
 		/// <summary>
 		///     <para>Provide to each thread its own <see cref="WebClient" />.</para>
-		///     <para>Do NOT use Dispose on these clients. You've been warned.</para>
+		///     <para>Do NOT use Dispose on these clients.</para>
 		/// </summary>
 		[NotNull]
 		public static ThreadLocal<Lazy<WebClient>> ThreadSafeWebClients { get; } =
@@ -73,7 +70,7 @@ namespace Librainian.Internet {
 		/// <param name="token"></param>
 		/// <returns>A Task that contains the downloaded data.</returns>
 		[NotNull]
-		public static Task<Byte[]> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken token ) {
+		public static Task<Byte[]?> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken token ) {
 			if ( webClient is null ) {
 				throw new ArgumentNullException( nameof( webClient ) );
 			}
@@ -89,7 +86,7 @@ namespace Librainian.Internet {
 		/// <param name="webClient">The WebClient.</param>
 		/// <param name="address">The URI from which to download data.</param>
 		/// <returns>A Task that contains the downloaded data.</returns>
-		public static async Task<Byte[]> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
+		public static async Task<Byte[]?> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
 			if ( webClient is null ) {
 				throw new ArgumentNullException( nameof( webClient ) );
 			}
@@ -132,9 +129,9 @@ namespace Librainian.Internet {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
 			}
 
-			var tcs = new TaskCompletionSource<Object>( address, TaskCreationOptions.RunContinuationsAsynchronously );
+			var tcs = new TaskCompletionSource<Object?>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
-			void CompletedHandler( Object cs, AsyncCompletedEventArgs ce ) {
+			void CompletedHandler( Object? cs, AsyncCompletedEventArgs ce ) {
 				if ( ce.UserState != tcs ) {
 					return;
 				}
@@ -152,7 +149,7 @@ namespace Librainian.Internet {
 
 			void ProgressChangedHandler( Object ps, DownloadProgressChangedEventArgs pe ) {
 				if ( pe.UserState == tcs ) {
-					progress.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
+					progress?.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
 				}
 			}
 
@@ -170,109 +167,10 @@ namespace Librainian.Internet {
 
 		/// <summary>
 		///     A thread-local (threadsafe) <see cref="WebClient" />.
-		///     <para>Do NOT use Dispose on these clients. You've been warned.</para>
+		///     <para>Do NOT use Dispose on these clients.</para>
 		/// </summary>
 		[NotNull]
-		public static WebClient Instance() => ThreadSafeWebClients.Value.Value;
-
-		/// <summary>Opens a readable stream for the data downloaded from a resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI for which the stream should be opened.</param>
-		/// <returns>A Task that contains the opened stream.</returns>
-		[CanBeNull]
-		public static Task<Stream> OpenReadTask( [NotNull] this WebClient webClient, TrimmedString address ) {
-			if ( webClient is null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( address.IsEmpty() ) {
-				throw new ArgumentEmptyException( "Value cannot be null or whitespace.", nameof( address ) );
-			}
-
-			return OpenReadTaskAsync( webClient, new Uri( address ) );
-		}
-
-		/// <summary>Opens a readable stream for the data downloaded from a resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI for which the stream should be opened.</param>
-		/// <returns>A Task that contains the opened stream.</returns>
-		[CanBeNull]
-		public static Task<Stream> OpenReadTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
-			if ( webClient is null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
-			}
-
-			var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
-
-			void Handler( Object sender, OpenReadCompletedEventArgs e ) =>
-				taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenReadCompleted -= Handler );
-
-			webClient.OpenReadCompleted += Handler;
-
-			try {
-				webClient.OpenReadAsync( address, taskCompletionSource );
-			}
-			catch ( Exception exception ) {
-				webClient.OpenReadCompleted -= Handler;
-				taskCompletionSource.TrySetException( exception );
-			}
-
-			return taskCompletionSource.Task;
-		}
-
-		/// <summary>Opens a writeable stream for uploading data to a resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI for which the stream should be opened.</param>
-		/// <param name="method">The HTTP method that should be used to open the stream.</param>
-		/// <returns>A Task that contains the opened stream.</returns>
-		[CanBeNull]
-		public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, TrimmedString address, TrimmedString method ) =>
-			OpenWriteTask( webClient, new Uri( address ), method );
-
-		/// <summary>Opens a writeable stream for uploading data to a resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI for which the stream should be opened.</param>
-		/// <param name="method">The HTTP method that should be used to open the stream.</param>
-		/// <returns>A Task that contains the opened stream.</returns>
-		[CanBeNull]
-		public static Task<Stream> OpenWriteTask( [NotNull] this WebClient webClient, [NotNull] Uri address, TrimmedString method ) {
-			if ( webClient is null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
-			}
-
-			if ( method.IsEmpty() ) {
-				throw new ArgumentEmptyException( "Value cannot be empty.", nameof( method ) );
-			}
-
-			var taskCompletionSource = new TaskCompletionSource<Stream>( address, TaskCreationOptions.RunContinuationsAsynchronously );
-
-			void Handler( Object sender, OpenWriteCompletedEventArgs e ) =>
-				taskCompletionSource.HandleCompletion( e, () => e.Result, () => webClient.OpenWriteCompleted -= Handler );
-
-			webClient.OpenWriteCompleted += Handler;
-
-			// Start the async work
-			try {
-				webClient.OpenWriteAsync( address, method, taskCompletionSource );
-			}
-			catch ( Exception exc ) {
-				// If something goes wrong kicking off the async work, unregister the callback and
-				// cancel the created task
-				webClient.OpenWriteCompleted -= Handler;
-				taskCompletionSource.TrySetException( exc );
-			}
-
-			// Return the task that represents the async operation
-			return taskCompletionSource.Task;
-		}
+		public static WebClient Instance() => ThreadSafeWebClients.Value!.Value;
 
 		/// <summary>
 		///     <para>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</para>
@@ -306,228 +204,6 @@ namespace Librainian.Internet {
 
 			return client.Add( token ).SetTimeout( timeout );
 		}
-
-		/// <summary>Uploads data to the specified resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI to which the data should be uploaded.</param>
-		/// <param name="method">The HTTP method that should be used to upload the data.</param>
-		/// <param name="data">The data to upload.</param>
-		/// <returns>A Task containing the data in the response from the upload.</returns>
-		[CanBeNull]
-		public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] Byte[] data ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( data == null ) {
-				throw new ArgumentNullException( nameof( data ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( address ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( method ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
-			}
-
-			return UploadDataTask( webClient, new Uri( address ), method, data );
-		}
-
-		/// <summary>Uploads data to the specified resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI to which the data should be uploaded.</param>
-		/// <param name="method">The HTTP method that should be used to upload the data.</param>
-		/// <param name="data">The data to upload.</param>
-		/// <returns>A Task containing the data in the response from the upload.</returns>
-		[CanBeNull]
-		public static Task<Byte[]> UploadDataTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] Byte[] data ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( address == null ) {
-				throw new ArgumentNullException( nameof( address ) );
-			}
-
-			if ( data == null ) {
-				throw new ArgumentNullException( nameof( data ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( method ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
-			}
-
-			// Create the task to be returned
-			var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
-
-			// Setup the callback event handler
-			void Handler( Object sender, UploadDataCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Result, () => webClient.UploadDataCompleted -= Handler );
-
-			webClient.UploadDataCompleted += Handler;
-
-			// Start the async work
-			try {
-				webClient.UploadDataAsync( address, method, data, tcs );
-			}
-			catch ( Exception exc ) {
-				// If something goes wrong kicking off the async work, unregister the callback and
-				// cancel the created task
-				webClient.UploadDataCompleted -= Handler;
-				tcs.TrySetException( exc );
-			}
-
-			// Return the task that represents the async operation
-			return tcs.Task;
-		}
-
-		/// <summary>Uploads a file to the specified resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI to which the file should be uploaded.</param>
-		/// <param name="method">The HTTP method that should be used to upload the file.</param>
-		/// <param name="fileName">A path to the file to upload.</param>
-		/// <returns>A Task containing the data in the response from the upload.</returns>
-		[CanBeNull]
-		public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] String fileName ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( address ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( method ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( fileName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
-			}
-
-			return UploadFileTask( webClient, new Uri( address ), method, fileName );
-		}
-
-		/// <summary>Uploads a file to the specified resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI to which the file should be uploaded.</param>
-		/// <param name="method">The HTTP method that should be used to upload the file.</param>
-		/// <param name="fileName">A path to the file to upload.</param>
-		/// <returns>A Task containing the data in the response from the upload.</returns>
-		[CanBeNull]
-		public static Task<Byte[]> UploadFileTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] String fileName ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( address == null ) {
-				throw new ArgumentNullException( nameof( address ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( method ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( fileName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
-			}
-
-			// Create the task to be returned
-			var tcs = new TaskCompletionSource<Byte[]>( address, TaskCreationOptions.RunContinuationsAsynchronously );
-
-			// Setup the callback event handler
-			void Handler( Object sender, UploadFileCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Result, () => webClient.UploadFileCompleted -= Handler );
-
-			webClient.UploadFileCompleted += Handler;
-
-			// Start the async work
-			try {
-				webClient.UploadFileAsync( address, method, fileName, tcs );
-			}
-			catch ( Exception exc ) {
-				// If something goes wrong kicking off the async work, unregister the callback and
-				// cancel the created task
-				webClient.UploadFileCompleted -= Handler;
-				tcs.TrySetException( exc );
-			}
-
-			// Return the task that represents the async operation
-			return tcs.Task;
-		}
-
-		/// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI to which the data should be uploaded.</param>
-		/// <param name="method">The HTTP method that should be used to upload the data.</param>
-		/// <param name="data">The data to upload.</param>
-		/// <returns>A Task containing the data in the response from the upload.</returns>
-		[CanBeNull]
-		public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] String address, [NotNull] String method, [NotNull] String data ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( data == null ) {
-				throw new ArgumentNullException( nameof( data ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( address ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( method ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
-			}
-
-			return UploadStringTask( webClient, new Uri( address ), method, data );
-		}
-
-		/// <summary>Uploads data in a String to the specified resource, asynchronously.</summary>
-		/// <param name="webClient">The WebClient.</param>
-		/// <param name="address">The URI to which the data should be uploaded.</param>
-		/// <param name="method">The HTTP method that should be used to upload the data.</param>
-		/// <param name="data">The data to upload.</param>
-		/// <returns>A Task containing the data in the response from the upload.</returns>
-		[CanBeNull]
-		public static Task<String> UploadStringTask( [NotNull] this WebClient webClient, [NotNull] Uri address, [NotNull] String method, [NotNull] String data ) {
-			if ( webClient == null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
-			}
-
-			if ( address == null ) {
-				throw new ArgumentNullException( nameof( address ) );
-			}
-
-			if ( data == null ) {
-				throw new ArgumentNullException( nameof( data ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( method ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( method ) );
-			}
-
-			// Create the task to be returned
-			var tcs = new TaskCompletionSource<String>( address, TaskCreationOptions.RunContinuationsAsynchronously );
-
-			// Setup the callback event handler
-			void Handler( Object sender, UploadStringCompletedEventArgs e ) => tcs.HandleCompletion( e, () => e.Result, () => webClient.UploadStringCompleted -= Handler );
-
-			webClient.UploadStringCompleted += Handler;
-
-			// Start the async work
-			try {
-				webClient.UploadStringAsync( address, method, data, tcs );
-			}
-			catch ( WebException exception ) {
-				// If something goes wrong kicking off the async work, unregister the callback and cancel the created task
-				webClient.UploadStringCompleted -= Handler;
-				tcs.TrySetException( exception );
-			}
-
-			// Return the task that represents the async operation
-			return tcs.Task;
-		}
-
 	}
 
 }

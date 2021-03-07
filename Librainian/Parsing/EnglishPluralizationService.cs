@@ -866,19 +866,19 @@ namespace Librainian.Parsing {
 		public EnglishPluralizationService( CultureInfo cultureInfo ) : base( cultureInfo ) {
 			this.Culture = cultureInfo;
 
-			this._irregularPluralsPluralizationService = new StringBidirectionalDictionary( this._irregularPluralsDictionary );
-			this._assimilatedClassicalInflectionPluralizationService = new StringBidirectionalDictionary( this._assimilatedClassicalInflectionDictionary );
-			this._oSuffixPluralizationService = new StringBidirectionalDictionary( this._oSuffixDictionary );
-			this._classicalInflectionPluralizationService = new StringBidirectionalDictionary( this._classicalInflectionDictionary );
-			this._wordsEndingWithSePluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithSeDictionary );
-			this._wordsEndingWithSisPluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithSisDictionary );
-			this._wordsEndingWithSusPluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithSusDictionary );
-			this._wordsEndingWithInxAnxYnxPluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithInxAnxYnxDictionary );
+			this.IrregularPluralsPluralizationService = new StringBidirectionalDictionary( this._irregularPluralsDictionary );
+			this.AssimilatedClassicalInflectionPluralizationService = new StringBidirectionalDictionary( this._assimilatedClassicalInflectionDictionary );
+			this.OSuffixPluralizationService = new StringBidirectionalDictionary( this._oSuffixDictionary );
+			this.ClassicalInflectionPluralizationService = new StringBidirectionalDictionary( this._classicalInflectionDictionary );
+			this.WordsEndingWithSePluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithSeDictionary );
+			this.WordsEndingWithSisPluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithSisDictionary );
+			this.WordsEndingWithSusPluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithSusDictionary );
+			this.WordsEndingWithInxAnxYnxPluralizationService = new StringBidirectionalDictionary( this._wordsEndingWithInxAnxYnxDictionary );
 
 			// verb
-			this._irregularVerbPluralizationService = new StringBidirectionalDictionary( this._irregularVerbList );
+			this.IrregularVerbPluralizationService = new StringBidirectionalDictionary( this._irregularVerbList );
 
-			this._knownSingluarWords = new List<String>( this._irregularPluralsDictionary.Keys.Concat( this._assimilatedClassicalInflectionDictionary.Keys )
+			this.KnownSingluarWords = new List<String>( this._irregularPluralsDictionary.Keys.Concat( this._assimilatedClassicalInflectionDictionary.Keys )
 			                                                 .Concat( this._oSuffixDictionary.Keys ).Concat( this._classicalInflectionDictionary.Keys )
 			                                                 .Concat( this._irregularVerbList.Keys ).Concat( this._irregularPluralsDictionary.Keys )
 			                                                 .Concat( this._wordsEndingWithSeDictionary.Keys ).Concat( this._wordsEndingWithSisDictionary.Keys )
@@ -886,7 +886,7 @@ namespace Librainian.Parsing {
 			                                                 .Concat( this._uninflectiveWordList )
 			                                                 .Except( this._knownConflictingPluralList ) ); // see the _knowConflictingPluralList comment above
 
-			this._knownPluralWords = new List<String>( this._irregularPluralsDictionary.Values.Concat( this._assimilatedClassicalInflectionDictionary.Values )
+			this.KnownPluralWords = new List<String>( this._irregularPluralsDictionary.Values.Concat( this._assimilatedClassicalInflectionDictionary.Values )
 			                                               .Concat( this._oSuffixDictionary.Values ).Concat( this._classicalInflectionDictionary.Values )
 			                                               .Concat( this._irregularVerbList.Values ).Concat( this._irregularPluralsDictionary.Values )
 			                                               .Concat( this._wordsEndingWithSeDictionary.Values ).Concat( this._wordsEndingWithSisDictionary.Values )
@@ -898,55 +898,55 @@ namespace Librainian.Parsing {
 		public static PluralizationService Default { get; } = new EnglishPluralizationService( new CultureInfo( "en" ) );
 
 		[JetBrains.Annotations.NotNull]
-		private BidirectionalDictionary<String, String> _userDictionary { get; } = new();
+		private BidirectionalDictionary<String, String> UserDictionary { get; } = new();
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _irregularPluralsPluralizationService { get; }
+		private StringBidirectionalDictionary IrregularPluralsPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _assimilatedClassicalInflectionPluralizationService { get; }
+		private StringBidirectionalDictionary AssimilatedClassicalInflectionPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _oSuffixPluralizationService { get; }
+		private StringBidirectionalDictionary OSuffixPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _classicalInflectionPluralizationService { get; }
+		private StringBidirectionalDictionary ClassicalInflectionPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _irregularVerbPluralizationService { get; }
+		private StringBidirectionalDictionary IrregularVerbPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _wordsEndingWithSePluralizationService { get; }
+		private StringBidirectionalDictionary WordsEndingWithSePluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _wordsEndingWithSisPluralizationService { get; }
+		private StringBidirectionalDictionary WordsEndingWithSisPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _wordsEndingWithSusPluralizationService { get; }
+		private StringBidirectionalDictionary WordsEndingWithSusPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private StringBidirectionalDictionary _wordsEndingWithInxAnxYnxPluralizationService { get; }
+		private StringBidirectionalDictionary WordsEndingWithInxAnxYnxPluralizationService { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private IList<String> _knownSingluarWords { get; }
+		private IList<String> KnownSingluarWords { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private IList<String> _knownPluralWords { get; }
+		private IList<String> KnownPluralWords { get; }
 
 		[JetBrains.Annotations.NotNull]
-		private Lazy<Regex> alpaLazy { get; } = new( () => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ) );
+		private Lazy<Regex> AlpaLazy { get; } = new( () => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ) );
 
 		public override Boolean IsPlural( String word ) {
 
-			if ( this._userDictionary.ExistsInPlural( word ) ) {
+			if ( this.UserDictionary.ExistsInPlural( word ) ) {
 				return true;
 			}
 
-			if ( this._userDictionary.ExistsInSingle( word ) ) {
+			if ( this.UserDictionary.ExistsInSingle( word ) ) {
 				return false;
 			}
 
-			if ( this.IsUninflective( word ) || this._knownPluralWords.Contains( word.ToLower( this.Culture ) ) ) {
+			if ( this.IsUninflective( word ) || this.KnownPluralWords.Contains( word.ToLower( this.Culture ) ) ) {
 				return true;
 			}
 
@@ -956,15 +956,15 @@ namespace Librainian.Parsing {
 
 		public override Boolean IsSingular( String word ) {
 
-			if ( this._userDictionary.ExistsInSingle( word ) ) {
+			if ( this.UserDictionary.ExistsInSingle( word ) ) {
 				return true;
 			}
 
-			if ( this._userDictionary.ExistsInPlural( word ) ) {
+			if ( this.UserDictionary.ExistsInPlural( word ) ) {
 				return false;
 			}
 
-			if ( this.IsUninflective( word ) || this._knownSingluarWords.Contains( word.ToLower( this.Culture ) ) ) {
+			if ( this.IsUninflective( word ) || this.KnownSingluarWords.Contains( word.ToLower( this.Culture ) ) ) {
 				return true;
 			}
 
@@ -975,7 +975,7 @@ namespace Librainian.Parsing {
 
 		private String InternalPluralize( String word ) {
 
-			var plural = this._userDictionary.GetPlural( word );
+			var plural = this.UserDictionary.GetPlural( word );
 			if (plural != null) {
 				return plural;
 			}
@@ -997,67 +997,67 @@ namespace Librainian.Parsing {
 			}
 
 			// if word is one of the known plural forms, then just return
-			if ( this._knownPluralWords.Contains( suffixWord.ToLowerInvariant() ) || this.IsPlural( suffixWord ) ) {
+			if ( this.KnownPluralWords.Contains( suffixWord.ToLowerInvariant() ) || this.IsPlural( suffixWord ) ) {
 				return prefixWord + suffixWord;
 			}
 
 			// handle irregular plurals, e.g. "ox" -> "oxen"
-			if ( this._irregularPluralsPluralizationService.ExistsInSingle( suffixWord ) ) {
-				return prefixWord + this._irregularPluralsPluralizationService.GetPlural( suffixWord );
+			if ( this.IrregularPluralsPluralizationService.ExistsInSingle( suffixWord ) ) {
+				return prefixWord + this.IrregularPluralsPluralizationService.GetPlural( suffixWord );
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"man"
-			}, s => s.Remove( s.Length - 2, 2 ) + "en", this.Culture, out var newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 2, 2 ) + "en", this.Culture, out var newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			// handle irregular inflections for common suffixes, e.g. "mouse" -> "mice"
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"louse", "mouse"
-			}, s => s.Remove( s.Length - 4, 4 ) + "ice", this.Culture, out newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 4, 4 ) + "ice", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"tooth"
-			}, s => s.Remove( s.Length - 4, 4 ) + "eeth", this.Culture, out newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 4, 4 ) + "eeth", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"goose"
-			}, s => s.Remove( s.Length - 4, 4 ) + "eese", this.Culture, out newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 4, 4 ) + "eese", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"foot"
-			}, s => s.Remove( s.Length - 3, 3 ) + "eet", this.Culture, out newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 3, 3 ) + "eet", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"zoon"
-			}, s => s.Remove( s.Length - 3, 3 ) + "oa", this.Culture, out newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 3, 3 ) + "oa", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"cis", "sis", "xis"
-			}, s => s.Remove( s.Length - 2, 2 ) + "es", this.Culture, out newSuffixWord ) ) {
+			}, s => s?.Remove( s.Length - 2, 2 ) + "es", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			// handle assimilated classical inflections, e.g. vertebra -> vertebrae
-			if ( this._assimilatedClassicalInflectionPluralizationService.ExistsInSingle( suffixWord ) ) {
-				return prefixWord + this._assimilatedClassicalInflectionPluralizationService.GetPlural( suffixWord );
+			if ( this.AssimilatedClassicalInflectionPluralizationService.ExistsInSingle( suffixWord ) ) {
+				return prefixWord + this.AssimilatedClassicalInflectionPluralizationService.GetPlural( suffixWord );
 			}
 
 			// Handle the classical variants of modern inflections
 			// 
-			if ( this._classicalInflectionPluralizationService.ExistsInSingle( suffixWord ) ) {
-				return prefixWord + this._classicalInflectionPluralizationService.GetPlural( suffixWord );
+			if ( this.ClassicalInflectionPluralizationService.ExistsInSingle( suffixWord ) ) {
+				return prefixWord + this.ClassicalInflectionPluralizationService.GetPlural( suffixWord );
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
@@ -1072,8 +1072,8 @@ namespace Librainian.Parsing {
 				return prefixWord + newSuffixWord;
 			}
 
-			if ( this._wordsEndingWithInxAnxYnxPluralizationService.ExistsInSingle( suffixWord ) ) {
-				return prefixWord + this._wordsEndingWithInxAnxYnxPluralizationService.GetPlural( suffixWord );
+			if ( this.WordsEndingWithInxAnxYnxPluralizationService.ExistsInSingle( suffixWord ) ) {
+				return prefixWord + this.WordsEndingWithInxAnxYnxPluralizationService.GetPlural( suffixWord );
 			}
 
 			// [cs]h and ss that take es as plural form
@@ -1116,8 +1116,8 @@ namespace Librainian.Parsing {
 			}
 
 			// handle some of the words o -> os, and [vowel]o -> os, and the rest are o->oes
-			if ( this._oSuffixPluralizationService.ExistsInSingle( suffixWord ) ) {
-				return prefixWord + this._oSuffixPluralizationService.GetPlural( suffixWord );
+			if ( this.OSuffixPluralizationService.ExistsInSingle( suffixWord ) ) {
+				return prefixWord + this.OSuffixPluralizationService.GetPlural( suffixWord );
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
@@ -1151,7 +1151,7 @@ namespace Librainian.Parsing {
 		private String InternalSingularize( String word ) {
 			// words that we know of
 
-			var single = this._userDictionary.GetSingle( word );
+			var single = this.UserDictionary.GetSingle( word );
 
 			if ( single != null ) {
 				return single;
@@ -1174,34 +1174,34 @@ namespace Librainian.Parsing {
 
 			// if word is one of the known singular words, then just return
 
-			if ( this._knownSingluarWords.Contains( suffixWord.ToLowerInvariant() ) ) {
+			if ( this.KnownSingluarWords.Contains( suffixWord.ToLowerInvariant() ) ) {
 				return prefixWord + suffixWord;
 			}
 
 			// handle simple irregular verbs, e.g. was -> were
-			if ( this._irregularVerbPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._irregularVerbPluralizationService.GetSingle( suffixWord );
+			if ( this.IrregularVerbPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.IrregularVerbPluralizationService.GetSingle( suffixWord );
 			}
 
 			// handle irregular plurals, e.g. "ox" -> "oxen"
-			if ( this._irregularPluralsPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._irregularPluralsPluralizationService.GetSingle( suffixWord );
+			if ( this.IrregularPluralsPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.IrregularPluralsPluralizationService.GetSingle( suffixWord );
 			}
 
 			// handle singluarization for words ending with sis and pluralized to ses, 
 			// e.g. "ses" -> "sis"
-			if ( this._wordsEndingWithSisPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._wordsEndingWithSisPluralizationService.GetSingle( suffixWord );
+			if ( this.WordsEndingWithSisPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.WordsEndingWithSisPluralizationService.GetSingle( suffixWord );
 			}
 
 			// handle words ending with se, e.g. "ses" -> "se"
-			if ( this._wordsEndingWithSePluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._wordsEndingWithSePluralizationService.GetSingle( suffixWord );
+			if ( this.WordsEndingWithSePluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.WordsEndingWithSePluralizationService.GetSingle( suffixWord );
 			}
 
 			// handle words ending with sus, e.g. "suses" -> "sus"
-			if ( this._wordsEndingWithSusPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._wordsEndingWithSusPluralizationService.GetSingle( suffixWord );
+			if ( this.WordsEndingWithSusPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.WordsEndingWithSusPluralizationService.GetSingle( suffixWord );
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
@@ -1249,14 +1249,14 @@ namespace Librainian.Parsing {
 			}
 
 			// handle assimilated classical inflections, e.g. vertebra -> vertebrae
-			if ( this._assimilatedClassicalInflectionPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._assimilatedClassicalInflectionPluralizationService.GetSingle( suffixWord );
+			if ( this.AssimilatedClassicalInflectionPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.AssimilatedClassicalInflectionPluralizationService.GetSingle( suffixWord );
 			}
 
 			// Handle the classical variants of modern inflections
 			// 
-			if ( this._classicalInflectionPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._classicalInflectionPluralizationService.GetSingle( suffixWord );
+			if ( this.ClassicalInflectionPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.ClassicalInflectionPluralizationService.GetSingle( suffixWord );
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
@@ -1271,8 +1271,8 @@ namespace Librainian.Parsing {
 				return prefixWord + newSuffixWord;
 			}
 
-			if ( this._wordsEndingWithInxAnxYnxPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._wordsEndingWithInxAnxYnxPluralizationService.GetSingle( suffixWord );
+			if ( this.WordsEndingWithInxAnxYnxPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.WordsEndingWithInxAnxYnxPluralizationService.GetSingle( suffixWord );
 			}
 
 			// f, fe that take ves as plural form
@@ -1310,8 +1310,8 @@ namespace Librainian.Parsing {
 			}
 
 			// handle some of the words o -> os, and [vowel]o -> os, and the rest are o->oes
-			if ( this._oSuffixPluralizationService.ExistsInPlural( suffixWord ) ) {
-				return prefixWord + this._oSuffixPluralizationService.GetSingle( suffixWord );
+			if ( this.OSuffixPluralizationService.ExistsInPlural( suffixWord ) ) {
+				return prefixWord + this.OSuffixPluralizationService.GetSingle( suffixWord );
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
@@ -1401,7 +1401,7 @@ namespace Librainian.Parsing {
 		private Boolean IsAlphabets( String word ) {
 			// return false when the word is "[\s]*" or leading or tailing with spaces
 			// or contains non alphabetical characters
-			if ( String.IsNullOrEmpty( word.Trim() ) || !word.Equals(word.Trim(), StringComparison.Ordinal) || this.alpaLazy.Value.IsMatch( word ) ) {
+			if ( String.IsNullOrEmpty( word.Trim() ) || !word.Equals(word.Trim(), StringComparison.Ordinal) || this.AlpaLazy.Value.IsMatch( word ) ) {
 				return false;
 			}
 
@@ -1428,15 +1428,15 @@ namespace Librainian.Parsing {
 		/// <param name="plural"></param>
 		public void AddWord( String singular, String plural ) {
 
-			if ( this._userDictionary.ExistsInPlural( plural ) ) {
+			if ( this.UserDictionary.ExistsInPlural( plural ) ) {
 				throw new ArgumentException( $"Duplicate entry in user dictionary {plural}" );
 			}
 
-			if ( this._userDictionary.ExistsInSingle( singular ) ) {
+			if ( this.UserDictionary.ExistsInSingle( singular ) ) {
 				throw new ArgumentException( $"Duplicate entry in user dictionary {singular}" );
 			}
 
-			this._userDictionary.AddValue( singular, plural );
+			this.UserDictionary.AddValue( singular, plural );
 		}
 
 	}

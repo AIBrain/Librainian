@@ -26,6 +26,7 @@ namespace Librainian.Graphics.Imaging {
 
 	using System;
 	using System.Collections.Concurrent;
+	using System.Drawing.Imaging;
 	using System.Threading.Tasks;
 	using Collections.Sets;
 	using JetBrains.Annotations;

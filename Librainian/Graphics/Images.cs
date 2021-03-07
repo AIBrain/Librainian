@@ -30,9 +30,9 @@ namespace Librainian.Graphics {
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Drawing.Imaging;
     using System.Globalization;
     using System.Text;
-    using Imaging;
     using JetBrains.Annotations;
 
     public static class Images {

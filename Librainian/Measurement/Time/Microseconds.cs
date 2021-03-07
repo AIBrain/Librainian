@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,16 +23,15 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Microseconds.cs" last formatted on 2020-08-14 at 8:38 PM.
+// File "Microseconds.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Measurement.Time {
-
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
-    using JetBrains.Annotations;
-    using Maths;
+	using JetBrains.Annotations;
+	using Maths;
 	using Newtonsoft.Json;
 	using Parsing;
 	using Rationals;
@@ -38,7 +40,6 @@ namespace Librainian.Measurement.Time {
 	[JsonObject]
 	[Immutable]
 	public record Microseconds( Rational Value ) : IComparable<Microseconds>, IQuantityOfTime {
-
 		/// <summary>1000</summary>
 		public const UInt16 InOneMillisecond = 1000;
 
@@ -83,7 +84,24 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Zero <see cref="Microseconds" />.</summary>
 		public static Microseconds Zero { get; } = new( 0 );
-		
+
+		public Int32 CompareTo( [NotNull] Microseconds? other ) {
+			if ( other == null ) {
+				throw new ArgumentNullException( nameof( other ) );
+			}
+
+			return this.Value.CompareTo( other.Value );
+		}
+
+		public IQuantityOfTime ToFinerGranularity() => throw new NotImplementedException();
+
+		public PlanckTimes ToPlanckTimes() => new( ( ( Rational ) PlanckTimes.InOneMicrosecond * this.Value ).WholePart );
+
+		public Seconds ToSeconds() => new( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
+
+		public IQuantityOfTime ToCoarserGranularity() => this.ToMilliseconds();
+
+		TimeSpan IQuantityOfTime.ToTimeSpan() => TimeSpan.FromMilliseconds( ( Double ) ( this.Value / InOneMillisecond ) );
 
 		public static Microseconds Combine( Microseconds left, Microseconds right ) => Combine( left, right.Value );
 
@@ -103,70 +121,46 @@ namespace Librainian.Measurement.Time {
 
 		public static implicit operator Nanoseconds( Microseconds microseconds ) => microseconds.ToNanoseconds();
 
-		public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double )microseconds.Value );
+		public static implicit operator TimeSpan( Microseconds microseconds ) => TimeSpan.FromMilliseconds( ( Double ) microseconds.Value );
 
 		public static Microseconds operator -( Microseconds milliseconds ) => new( milliseconds.Value * -1 );
 
 		public static Microseconds operator -( Microseconds left, Microseconds right ) => Combine( left, -right );
 
-		public static Microseconds operator -( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational )( -microseconds ) );
-
-		
+		public static Microseconds operator -( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational ) ( -microseconds ) );
 
 		public static Microseconds operator +( Microseconds left, Microseconds right ) => Combine( left, right );
 
-		public static Microseconds operator +( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational )microseconds );
+		public static Microseconds operator +( Microseconds left, Decimal microseconds ) => Combine( left, ( Rational ) microseconds );
 
 		public static Microseconds operator +( Microseconds left, BigInteger microseconds ) => Combine( left, microseconds );
 
 		public static Boolean operator <( Microseconds left, Microseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds )left < right;
-
-		
+		public static Boolean operator <( Microseconds left, Milliseconds right ) => ( Milliseconds ) left < right;
 
 		public static Boolean operator >( Microseconds left, Microseconds right ) => left.Value > right.Value;
 
 		public static Boolean operator >( Microseconds left, Milliseconds right ) => left.Value > right.Value;
 
-		public Int32 CompareTo( [NotNull] Microseconds? other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
-
-            return this.Value.CompareTo( other.Value );
-        }
-
-        public override Int32 GetHashCode() => this.Value.GetHashCode();
+		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
 		public Milliseconds ToMilliseconds() => new( this.Value / InOneMillisecond );
 
 		public Nanoseconds ToNanoseconds() => new( this.Value * Nanoseconds.InOneMicrosecond );
 
-        public IQuantityOfTime ToFinerGranularity() => throw new NotImplementedException();
-
-        public PlanckTimes ToPlanckTimes() => new( (( Rational )PlanckTimes.InOneMicrosecond * this.Value).WholePart );
-
-		public Seconds ToSeconds() => new( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
-
-        public IQuantityOfTime ToCoarserGranularity() => this.ToMilliseconds();
-
-        TimeSpan IQuantityOfTime.ToTimeSpan() => TimeSpan.FromMilliseconds( ( Double )(this.Value / InOneMillisecond) );
-
-        public override String ToString() {
+		public override String ToString() {
 			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
 				var whole = this.Value.WholePart;
 
 				return $"{whole} {whole.PluralOf( "µs" )}";
 			}
 
-			var dec = ( Decimal )this.Value;
+			var dec = ( Decimal ) this.Value;
 
 			return $"{dec} {dec.PluralOf( "µs" )}";
 		}
 
 		public TimeSpan? ToTimeSpan() => this.ToSeconds();
-
 	}
-
 }

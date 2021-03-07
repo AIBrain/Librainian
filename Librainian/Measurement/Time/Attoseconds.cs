@@ -6,32 +6,30 @@
 // 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Attoseconds.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Measurement.Time {
-
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -41,15 +39,15 @@ namespace Librainian.Measurement.Time {
 	[JsonObject]
 	[Immutable]
 	public record Attoseconds( Rational Value ) : IQuantityOfTime {
-
 		/// <summary>1000</summary>
 		/// <see cref="Femtoseconds" />
 		public const UInt16 InOneFemtosecond = 1000;
 
-		public Attoseconds( Int64 value ) : this( ( Rational )value ) { }
-		public Attoseconds( UInt64 value ) : this( ( Rational )value ) { }
+		public Attoseconds( Int64 value ) : this( ( Rational ) value ) { }
 
-		public Attoseconds( BigInteger value ) : this( ( Rational )value ) { }
+		public Attoseconds( UInt64 value ) : this( ( Rational ) value ) { }
+
+		public Attoseconds( BigInteger value ) : this( ( Rational ) value ) { }
 
 		/// <summary>Ten <see cref="Attoseconds" /> s.</summary>
 		public static Attoseconds Fifteen { get; } = new( 15 );
@@ -121,21 +119,19 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Zero <see cref="Attoseconds" />.</summary>
 		public static Attoseconds Zero { get; } = new( 0 );
 
-		
-
 		public IQuantityOfTime ToFinerGranularity() => this.ToZeptoseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational )PlanckTimes.InOneAttosecond);
+		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational ) PlanckTimes.InOneAttosecond );
 
-		public Seconds ToSeconds() => new( ( Rational )this.ToTimeSpan().TotalSeconds );
+		public Seconds ToSeconds() => new( ( Rational ) this.ToTimeSpan().TotalSeconds );
 
 		public IQuantityOfTime ToCoarserGranularity() => this.ToFemtoseconds();
 
-		public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.ToSeconds().Value );
+		public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.ToSeconds().Value );
 
 		public static Attoseconds Combine( Attoseconds left, Attoseconds right ) => new( left.Value + right.Value );
 
-		public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new( left.Value + ( Rational )attoseconds );
+		public static Attoseconds Combine( Attoseconds left, Decimal attoseconds ) => new( left.Value + ( Rational ) attoseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -146,9 +142,13 @@ namespace Librainian.Measurement.Time {
 		public static Boolean Equals( Attoseconds left, Attoseconds right ) => left.Value == right.Value;
 
 		public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
+
 		public static implicit operator SpanOfTime( Attoseconds attoseconds ) => new( attoseconds.ToPlanckTimes().Value );
+
 		public static implicit operator Zeptoseconds( Attoseconds attoseconds ) => attoseconds.ToZeptoseconds();
+
 		public static Attoseconds operator -( Attoseconds left, Decimal attoseconds ) => Combine( left, -attoseconds );
+
 		public static Attoseconds operator +( Attoseconds left, Attoseconds right ) => Combine( left, right );
 
 		public static Attoseconds operator +( Attoseconds left, Decimal attoseconds ) => Combine( left, attoseconds );
@@ -156,53 +156,6 @@ namespace Librainian.Measurement.Time {
 		public static Boolean operator <( Attoseconds left, Attoseconds right ) => left.Value < right.Value;
 
 		public static Boolean operator >( Attoseconds left, Attoseconds right ) => left.Value > right.Value;
-
-		public Int32 CompareTo( Attoseconds other ) => this.Value.CompareTo( other.Value );
-
-		/// <summary>
-		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-		///     the current instance precedes, follows, or occurs in the
-		///     same position in the sort order as the other object.
-		/// </summary>
-		/// <param name="other">An object to compare with this instance. </param>
-		/// <returns>
-		///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-		///     Meaning Less than zero This instance precedes
-		///     <paramref name="other" /> in the sort order.  Zero This instance occurs in the same position in the sort order as
-		///     <paramref name="other" />. Greater than zero This instance
-		///     follows <paramref name="other" /> in the sort order.
-		/// </returns>
-		public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
-			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
-			}
-
-			return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
-		}
-
-		/// <summary>
-		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-		///     the current instance precedes, follows, or occurs in the
-		///     same position in the sort order as the other object.
-		/// </summary>
-		/// <param name="obj">An object to compare with this instance. </param>
-		/// <returns>
-		///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-		///     Meaning Less than zero This instance precedes
-		///     <paramref name="obj" /> in the sort order. Zero This instance occurs in the same position in the sort order as
-		///     <paramref name="obj" />. Greater than zero This instance follows
-		///     <paramref name="obj" /> in the sort order.
-		/// </returns>
-		/// <exception cref="ArgumentException"><paramref name="obj" /> is not the same type as this instance.</exception>
-		public Int32 CompareTo( [CanBeNull] Object? obj ) {
-			if ( obj is null ) {
-				return 1;
-			}
-
-			return obj is Attoseconds other ? this.CompareTo( other ) : throw new ArgumentException( $"Object must be of type {nameof( Attoseconds )}" );
-		}
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
 		/// <summary>Convert to a larger unit.</summary>
 		/// <returns></returns>
@@ -223,7 +176,5 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Convert to a smaller unit.</summary>
 		/// <returns></returns>
 		public Zeptoseconds ToZeptoseconds() => new( this.Value * Zeptoseconds.InOneAttosecond );
-
 	}
-
 }

@@ -27,7 +27,6 @@
 namespace Librainian.Persistence {
 
 	using System;
-	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
@@ -46,7 +45,7 @@ namespace Librainian.Persistence {
 	using SectionType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>>;
 
 	/// <summary>Persist a document to and from a JSON formatted text document.</summary>
-	/// TODO Needs testing.
+	/// TODO Needs testing. A lot of testing.
 	[JsonObject]
 	public class JSONFile {
 
@@ -120,7 +119,7 @@ namespace Librainian.Persistence {
 					return default(String?);
 				}
 
-				return this.Data[section].TryGetValue(key, out var value) ? value : null;
+				return this.Data[section]!.TryGetValue(key, out var value) ? value : null;
 			}
 
 			[DebuggerStepThrough]
@@ -149,24 +148,30 @@ namespace Librainian.Persistence {
 		public async Task<Boolean> Read(CancellationToken token) {
 			var document = this.Document;
 
-			if (document is null || !document.Exists()) {
+			if (document?.Exists() != true) {
 				return false;
 			}
 
 			try {
-				(var status, var data) = await document.LoadJSON<ConcurrentDictionary<String, DataType>>(null, null);
+				(var status, var data) = await document.LoadJSON<SectionType>(null, null);
 
 				if (!status.IsGood()) {
 					return false;
 				}
 
-				var result = Parallel.ForEach(data.Keys.AsParallel(),
-					section => {
-						Parallel.ForEach(data[section].Keys.AsParallel().AsUnordered(),
-							key => this.Add(section, new KeyValuePair<String, String>(key, data[section][key])));
-					});
+				if ( data != null ) {
+					var result = Parallel.ForEach( data.Keys.AsParallel(), section => {
+						if ( data[section!] != null ) {
+							Parallel.ForEach( data[section]!.Keys.AsParallel().AsUnordered(), key => {
+								if ( !String.IsNullOrEmpty( key ) ) {
+									this.Add( section, new KeyValuePair<String, String?>( key, data[section][key] ) );
+								}
+							} );
+						}
+					} );
 
-				return result.IsCompleted;
+					return result.IsCompleted;
+				}
 			}
 			catch (JsonException exception) {
 				exception.Log();

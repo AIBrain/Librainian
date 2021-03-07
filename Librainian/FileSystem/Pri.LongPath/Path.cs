@@ -93,7 +93,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return path;
 			}
 
-			var maxPathLimit = NativeMethods.MAX_PATH;
+			var maxPathLimit = PriNativeMethods.MAX_PATH;
 
 			if (Uri.TryCreate(path.ThrowIfBlank(), UriKind.Absolute, out var uri) && uri.IsUnc) {
 				// What's going on here?  Empirical evidence shows that Windows has trouble dealing with UNC paths
@@ -373,16 +373,16 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return path.CheckAddLongPathPrefix();
 			}
 
-			var buffer = new StringBuilder(NativeMethods.MAX_LONG_PATH + 1); // Add 1 for NULL
-			var length = NativeMethods.GetFullPathNameW(path, (UInt32)buffer.Capacity, buffer, IntPtr.Zero);
+			var buffer = new StringBuilder(PriNativeMethods.MAX_LONG_PATH + 1); // Add 1 for NULL
+			var length = PriNativeMethods.GetFullPathNameW(path, (UInt32)buffer.Capacity, buffer, IntPtr.Zero);
 
 			switch (length) {
 				case 0: {
 						throw Common.GetExceptionFromLastWin32Error(parameterName);
 					}
 
-				case > NativeMethods.MAX_LONG_PATH: {
-						throw Common.GetExceptionFromWin32Error(NativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE, parameterName);
+				case > PriNativeMethods.MAX_LONG_PATH: {
+						throw Common.GetExceptionFromWin32Error(PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE, parameterName);
 					}
 
 				case > 1 when buffer[0].IsDirectorySeparator() && buffer[1].IsDirectorySeparator(): {

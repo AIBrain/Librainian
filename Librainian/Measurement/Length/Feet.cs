@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,10 +23,9 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Feet.cs" last formatted on 2020-08-14 at 8:37 PM.
+// File "Feet.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Measurement.Length {
-
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
@@ -31,6 +33,7 @@ namespace Librainian.Measurement.Length {
 	using Newtonsoft.Json;
 	using Parsing;
 	using Rationals;
+	using Time;
 
 	/// <summary>
 	///     <para>A foot (plural: feet) is a unit of length.</para>
@@ -41,46 +44,55 @@ namespace Librainian.Measurement.Length {
 	/// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public struct Feet : IComparable<Feet>, IQuantityOfDistance {
-
+	public record Feet : IQuantityOfDistance, IComparable<Feet>  {
 		/// <summary>60</summary>
 		public const Byte InOneYard = 3;
 
-		/// <summary><see cref="Five" /> .</summary>
-		public static readonly Feet Five = new( 5 );
-
-		/// <summary><see cref="One" /> .</summary>
-		public static readonly Feet One = new( 1 );
-
-		/// <summary><see cref="Seven" /> .</summary>
-		public static readonly Feet Seven = new( 7 );
-
-		/// <summary><see cref="Ten" /> .</summary>
-		public static readonly Feet Ten = new( 10 );
-
-		/// <summary><see cref="Thirteen" /> .</summary>
-		public static readonly Feet Thirteen = new( 13 );
-
-		/// <summary><see cref="Thirty" /> .</summary>
-		public static readonly Feet Thirty = new( 30 );
-
-		/// <summary><see cref="Three" /> .</summary>
-		public static readonly Feet Three = new( 3 );
-
-		/// <summary><see cref="Two" /> .</summary>
-		public static readonly Feet Two = new( 2 );
-
-		/// <summary></summary>
-		public static readonly Feet Zero = new( 0 );
-
-		[JsonProperty]
-		public readonly Rational Value;
+		public const Decimal FeetPerMeter = 3.28084m;
 
 		public Feet( Rational value ) => this.Value = value;
 
 		public Feet( Int64 value ) => this.Value = value;
 
 		public Feet( BigInteger value ) => this.Value = value;
+
+		/// <summary><see cref="Five" /> .</summary>
+		public static Feet Five { get; } = new( 5 );
+
+		/// <summary><see cref="One" /> .</summary>
+		public static Feet One { get; } = new( 1 );
+
+		/// <summary><see cref="Seven" /> .</summary>
+		public static Feet Seven { get; } = new( 7 );
+
+		/// <summary><see cref="Ten" /> .</summary>
+		public static Feet Ten { get; } = new( 10 );
+
+		/// <summary><see cref="Thirteen" /> .</summary>
+		public static Feet Thirteen { get; } = new( 13 );
+
+		/// <summary><see cref="Thirty" /> .</summary>
+		public static Feet Thirty { get; } = new( 30 );
+
+		/// <summary><see cref="Three" /> .</summary>
+		public static Feet Three { get; } = new( 3 );
+
+		/// <summary><see cref="Two" /> .</summary>
+		public static Feet Two { get; } = new( 2 );
+
+		/// <summary></summary>
+		public static Feet Zero { get; } = new( 0 );
+
+		[JsonProperty]
+		public Rational Value { get; init; }
+
+		[Pure]
+		public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+		public Rational ToMeters() => this.Value / ( Rational ) FeetPerMeter;
+
+		[NotNull]
+		public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
 
 		public static Feet Combine( Feet left, Rational feet ) => new( left.Value + feet );
 
@@ -98,42 +110,28 @@ namespace Librainian.Measurement.Length {
 
 		public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
-		public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
-
-		public static Boolean operator !=( Feet left, Feet right ) => !Equals( left, right );
+		public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
 
 		public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
 
-		public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational )seconds );
+		public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational ) seconds );
 
 		public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
 
 		public static Boolean operator <( Feet left, Feet right ) => left.Value < right.Value;
 
-		public static Boolean operator ==( Feet left, Feet right ) => Equals( left, right );
-
 		public static Boolean operator >( Feet left, Feet right ) => left.Value > right.Value;
 
-		public Int32 CompareTo( Feet other ) => this.Value.CompareTo( other.Value );
-
-		public Boolean Equals( Feet other ) => Equals( this, other );
-
-		public override Boolean Equals( Object? obj ) {
-			if ( obj is null ) {
-				return false;
+		public Int32 CompareTo( Feet? other ) {
+			if ( ReferenceEquals( this, other ) ) {
+				return Order.Same;
 			}
 
-			return obj is Feet feet && this.Equals( feet );
+			if ( other is null ) {
+				return Order.After;
+			}
+
+			return this.Value.CompareTo( other.Value );
 		}
-
-		[Pure]
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public Rational ToMeters() => throw new NotImplementedException();
-
-		[NotNull]
-		public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
-
 	}
-
 }

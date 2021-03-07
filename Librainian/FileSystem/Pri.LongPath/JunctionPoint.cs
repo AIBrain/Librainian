@@ -34,6 +34,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using JetBrains.Annotations;
 	using Librainian.FileSystem.Pri.LongPath;
 	using Microsoft.Win32.SafeHandles;
+	using OperatingSystem;
 	using Directory = Librainian.FileSystem.Pri.LongPath.Directory;
 	using File = System.IO.File;
 

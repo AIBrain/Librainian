@@ -933,7 +933,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <returns></returns>
 		public static Int32 RandomInt32() {
-			var buffer = new Byte[ 4 ];
+			var buffer = new Byte[ sizeof(Int32) ];
 			Instance().NextBytes( buffer );
 			return BitConverter.ToInt32( buffer, 0 );
 		}
@@ -943,11 +943,11 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <returns></returns>
 		public static Int32 RandomInt32Alt( Int32 min = Int32.MinValue, Int32 max = Int32.MaxValue ) {
-			var buffer = new Byte[ 4 ];
+			var buffer = new Byte[ sizeof(Int32) ];
 			Instance().NextBytes( buffer );
 
 			//TODO This needs tested/confirmed.
-			var sample = 1d / BitConverter.ToInt32( buffer, 0 );
+			var sample = 1.0d / BitConverter.ToInt32( buffer, 0 );
 			var range = (Int64)max - min;
 			return (Int32)( sample * range + min );
 		}
@@ -997,7 +997,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="pool"></param>
 		/// <returns></returns>
-		public static String Randomize( this String pool ) {
+		public static String RandomString( this String pool ) {
 			var result = new StringBuilder( pool.Length );
 
 			foreach ( var c in pool.OrderBy( r => Next() ) ) {
@@ -1008,21 +1008,20 @@ namespace Librainian.Maths {
 		}
 
 		/// <summary>
-		/// Given the <paramref name="pool" />, return in a random order (shuffle).
+		/// Return the <paramref name="enumerable" /> in a random order (shuffle).
 		/// </summary>
-		/// <param name="pool"></param>
+		/// <param name="enumerable"></param>
 		/// <returns></returns>
-		public static IEnumerable<T> Randomize<T>( this IEnumerable<T> pool ) => pool.OrderBy( r => Next() );
+		public static IEnumerable<T> Randomize<T>( this IEnumerable<T> enumerable ) => enumerable.OrderBy( _ => Next() );
 
-		public static IEnumerable<Boolean> Randomly() {
+		public static IEnumerable<Boolean> RandomBooleans() {
 			do {
 				yield return NextBoolean();
 			} while ( true );
-
-			// ReSharper disable once FunctionNeverReturns ReSharper disable once IteratorNeverReturns
+			// ReSharper disable once IteratorNeverReturns
 		}
 
-		public static IEnumerable<Boolean> Randomly( Int32 iterations ) => 0.To( iterations ).Select( i => NextBoolean() );
+		public static IEnumerable<Boolean> RandomBooleans( Int32 iterations ) => Enumerable.Range( 0, iterations ).Select( _ => NextBoolean() );
 
 		/// <summary>
 		/// Generate a pronounceable pseudorandom string.

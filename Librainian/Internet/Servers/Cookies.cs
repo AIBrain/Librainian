@@ -106,7 +106,7 @@ namespace Librainian.Internet.Servers {
         public String GetValue( [NotNull] String name ) {
 			var cookie = this.Get( name );
 
-			return cookie is null ? String.Empty : cookie.Value;
+			return cookie?.Value ?? String.Empty;
 		}
 
 		/// <summary>

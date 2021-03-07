@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "3CsgSvf2xFgy3wPgJKdAShX7JHACUT5EA8Nmq3SBFF3L442MhnrtGDRyFbBuOUTqUZiGCuI+Zioh+I75mQFcGg==",
+  "dgSpecHash": "lDjCBUeTveWiDQNX/rYrPtfh4JImEMl77ER+vO97LgTyl8TnMZe7Uu90a5/eGX+peErr3zwmPqNY3ieDnFcraQ==",
   "success": true,
   "projectFilePath": "P:\\Programming\\Projects 2021\\Librainian\\Librainian\\Librainian.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,7 @@
     "C:\\Users\\Rick\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\microsoft.data.sqlclient\\2.1.2\\microsoft.data.sqlclient.2.1.2.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\2.1.1\\microsoft.data.sqlclient.sni.runtime.2.1.1.nupkg.sha512",
+    "C:\\Users\\Rick\\.nuget\\packages\\microsoft.database.managedesent\\2.0.1\\microsoft.database.managedesent.2.0.1.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\microsoft.identity.client\\4.21.1\\microsoft.identity.client.4.21.1.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\6.8.0\\microsoft.identitymodel.jsonwebtokens.6.8.0.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\microsoft.identitymodel.logging\\6.8.0\\microsoft.identitymodel.logging.6.8.0.nupkg.sha512",

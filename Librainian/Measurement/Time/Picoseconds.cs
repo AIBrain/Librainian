@@ -6,147 +6,141 @@
 // 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Picoseconds.cs" last formatted on 2020-04-03.
+// File "Picoseconds.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Measurement.Time {
+	using System;
+	using System.Diagnostics;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Maths;
+	using Newtonsoft.Json;
+	using Parsing;
+	using Rationals;
 
-    using System;
-    using System.Diagnostics;
-    using Extensions;
-    using JetBrains.Annotations;
-    using Maths;
-    using Newtonsoft.Json;
-    using Parsing;
-    using Rationals;
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[JsonObject]
+	[Immutable]
+	public record Picoseconds( Rational Value ) : IQuantityOfTime, IComparable<Picoseconds> {
+		/// <summary>1000</summary>
+		public const UInt16 InOneNanosecond = 1000;
 
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject]
-    [Immutable]
-    public record Picoseconds( Rational Value ) : IQuantityOfTime, IComparable<Picoseconds> {
+		/// <summary>Ten <see cref="Picoseconds" /> s.</summary>
+		public static Picoseconds Fifteen { get; } = new( 15 );
 
-        /// <summary>1000</summary>
-        public const UInt16 InOneNanosecond = 1000;
+		/// <summary>Five <see cref="Picoseconds" /> s.</summary>
+		public static Picoseconds Five { get; } = new( 5 );
 
-        /// <summary>Ten <see cref="Picoseconds" /> s.</summary>
-        public static Picoseconds Fifteen { get; } = new( 15 );
+		/// <summary>Five Hundred <see cref="Picoseconds" /> s.</summary>
+		public static Picoseconds FiveHundred { get; } = new( 500 );
 
-        /// <summary>Five <see cref="Picoseconds" /> s.</summary>
-        public static Picoseconds Five { get; } = new( 5 );
+		/// <summary>One <see cref="Picoseconds" />.</summary>
+		public static Picoseconds One { get; } = new( 1 );
 
-        /// <summary>Five Hundred <see cref="Picoseconds" /> s.</summary>
-        public static Picoseconds FiveHundred { get; } = new( 500 );
+		/// <summary>One Thousand Nine <see cref="Picoseconds" /> (Prime).</summary>
+		public static Picoseconds OneThousandNine { get; } = new( 1009 );
 
-        /// <summary>One <see cref="Picoseconds" />.</summary>
-        public static Picoseconds One { get; } = new( 1 );
+		/// <summary>Sixteen <see cref="Picoseconds" />.</summary>
+		public static Picoseconds Sixteen { get; } = new( 16 );
 
-        /// <summary>One Thousand Nine <see cref="Picoseconds" /> (Prime).</summary>
-        public static Picoseconds OneThousandNine { get; } = new( 1009 );
+		/// <summary>Ten <see cref="Picoseconds" /> s.</summary>
+		public static Picoseconds Ten { get; } = new( 10 );
 
-        /// <summary>Sixteen <see cref="Picoseconds" />.</summary>
-        public static Picoseconds Sixteen { get; } = new( 16 );
+		/// <summary>Three <see cref="Picoseconds" /> s.</summary>
+		public static Picoseconds Three { get; } = new( 3 );
 
-        /// <summary>Ten <see cref="Picoseconds" /> s.</summary>
-        public static Picoseconds Ten { get; } = new( 10 );
+		/// <summary>Three Three Three <see cref="Picoseconds" />.</summary>
+		public static Picoseconds ThreeHundredThirtyThree { get; } = new( 333 );
 
-        /// <summary>Three <see cref="Picoseconds" /> s.</summary>
-        public static Picoseconds Three { get; } = new( 3 );
+		/// <summary>Two <see cref="Picoseconds" /> s.</summary>
+		public static Picoseconds Two { get; } = new( 2 );
 
-        /// <summary>Three Three Three <see cref="Picoseconds" />.</summary>
-        public static Picoseconds ThreeHundredThirtyThree { get; } = new( 333 );
+		/// <summary>Two Hundred <see cref="Picoseconds" />.</summary>
+		public static Picoseconds TwoHundred { get; } = new( 200 );
 
-        /// <summary>Two <see cref="Picoseconds" /> s.</summary>
-        public static Picoseconds Two { get; } = new( 2 );
+		/// <summary>Two Hundred Eleven <see cref="Picoseconds" /> (Prime).</summary>
+		public static Picoseconds TwoHundredEleven { get; } = new( 211 );
 
-        /// <summary>Two Hundred <see cref="Picoseconds" />.</summary>
-        public static Picoseconds TwoHundred { get; } = new( 200 );
+		/// <summary>Two Thousand Three <see cref="Picoseconds" /> (Prime).</summary>
+		public static Picoseconds TwoThousandThree { get; } = new( 2003 );
 
-        /// <summary>Two Hundred Eleven <see cref="Picoseconds" /> (Prime).</summary>
-        public static Picoseconds TwoHundredEleven { get; } = new( 211 );
+		/// <summary>Zero <see cref="Picoseconds" />.</summary>
+		public static Picoseconds Zero { get; } = new( 0 );
 
-        /// <summary>Two Thousand Three <see cref="Picoseconds" /> (Prime).</summary>
-        public static Picoseconds TwoThousandThree { get; } = new( 2003 );
+		public Int32 CompareTo( [CanBeNull] Picoseconds? other ) {
+			if ( other == null ) {
+				throw new ArgumentNullException( nameof( other ) );
+			}
 
-        /// <summary>Zero <see cref="Picoseconds" />.</summary>
-        public static Picoseconds Zero { get; } = new( 0 );
+			return this.Value.CompareTo( other.Value );
+		}
 
-        public Int32 CompareTo( [CanBeNull] Picoseconds? other ) {
-            if ( other == null ) {
-                throw new ArgumentNullException( nameof( other ) );
-            }
+		public IQuantityOfTime ToFinerGranularity() => this.ToFemtoseconds();
 
-            return this.Value.CompareTo( other.Value );
-        }
+		public PlanckTimes ToPlanckTimes() => new( ( this.Value * ( Rational ) PlanckTimes.InOnePicosecond ).WholePart );
 
-        public IQuantityOfTime ToFinerGranularity() => this.ToFemtoseconds();
+		public Seconds ToSeconds() => this.ToNanoseconds().ToSeconds();
+		public IQuantityOfTime ToCoarserGranularity() => this.ToNanoseconds();
 
-        public PlanckTimes ToPlanckTimes() => new( ( this.Value * ( Rational )PlanckTimes.InOnePicosecond ).WholePart );
+		public TimeSpan ToTimeSpan() => this.ToSeconds();
 
-        public Seconds ToSeconds() => this.ToNanoseconds().ToSeconds();
-        public IQuantityOfTime ToCoarserGranularity() => this.ToNanoseconds();
+		public static Picoseconds Combine( Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
 
-        public TimeSpan ToTimeSpan() => this.ToSeconds();
+		public static Picoseconds Combine( Picoseconds left, Rational picoseconds ) => new( left.Value + picoseconds );
 
-        public static Picoseconds Combine( Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
+		public static implicit operator Femtoseconds( Picoseconds picoseconds ) => picoseconds.ToFemtoseconds();
 
-        public static Picoseconds Combine( Picoseconds left, Rational picoseconds ) => new( left.Value + picoseconds );
+		public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
 
-        public static implicit operator Femtoseconds( Picoseconds picoseconds ) => picoseconds.ToFemtoseconds();
+		public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new( picoseconds: picoseconds );
 
-        public static implicit operator Nanoseconds( Picoseconds picoseconds ) => picoseconds.ToNanoseconds();
+		public static Picoseconds operator -( Picoseconds left, Picoseconds right ) => Combine( left, -right.Value );
 
-        public static implicit operator SpanOfTime( Picoseconds picoseconds ) => new( picoseconds: picoseconds );
+		public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) ( -nanoseconds ) );
 
-        public static Picoseconds operator -( Picoseconds left, Picoseconds right ) => Combine( left, -right.Value );
+		public static Picoseconds operator +( Picoseconds left, Picoseconds right ) => Combine( left, right );
 
-        public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )( -nanoseconds ) );
+		public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) nanoseconds );
 
-        public static Picoseconds operator +( Picoseconds left, Picoseconds right ) => Combine( left, right );
+		public static Boolean operator <( Picoseconds left, Picoseconds right ) => left.Value < right.Value;
 
-        public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational )nanoseconds );
+		public static Boolean operator >( Picoseconds left, Picoseconds right ) => left.Value > right.Value;
 
-        public static Boolean operator <( Picoseconds left, Picoseconds right ) => left.Value < right.Value;
+		/// <summary>Convert to a smaller unit.</summary>
+		/// <returns></returns>
+		public Femtoseconds ToFemtoseconds() => new( this.Value * Femtoseconds.InOnePicosecond );
 
-        public static Boolean operator >( Picoseconds left, Picoseconds right ) => left.Value > right.Value;
+		/// <summary>Convert to a greater unit.</summary>
+		/// <returns></returns>
+		public Nanoseconds ToNanoseconds() => new( this.Value / InOneNanosecond );
 
-        /// <summary>Convert to a smaller unit.</summary>
-        /// <returns></returns>
-        public Femtoseconds ToFemtoseconds() => new( this.Value * Femtoseconds.InOnePicosecond );
+		public override String ToString() {
+			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
+				var whole = this.Value.WholePart;
 
-        /// <summary>Convert to a greater unit.</summary>
-        /// <returns></returns>
-        public Nanoseconds ToNanoseconds() => new( this.Value / InOneNanosecond );
+				return $"{whole} {whole.PluralOf( "ps" )}";
+			}
 
-        public override String ToString() {
-            if ( this.Value > MathConstants.MaxiumDecimalValue ) {
-                var whole = this.Value.WholePart;
+			var dec = ( Decimal ) this.Value;
 
-                return $"{whole} {whole.PluralOf( "ps" )}";
-            }
-
-            var dec = ( Decimal )this.Value;
-
-            return $"{dec} {dec.PluralOf( "ps" )}";
-        }
-
-    }
-
+			return $"{dec} {dec.PluralOf( "ps" )}";
+		}
+	}
 }

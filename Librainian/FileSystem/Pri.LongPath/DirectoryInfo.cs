@@ -55,7 +55,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				var fullPath = this.FullPath;
 
 				if ( fullPath.Length > 3 && fullPath.EndsWith( Path.DirectorySeparatorChar ) ) {
-					fullPath = this.FullPath[ 0..^1 ];
+					fullPath = this.FullPath[ ..^1 ];
 				}
 
 				var directoryName = fullPath.GetDirectoryName();
@@ -88,7 +88,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var s = fullPath;
 
 			if ( s.EndsWith( Path.DirectorySeparatorChar ) ) {
-				s = s[ 0..^1 ];
+				s = s[ ..^1 ];
 			}
 
 			return s.GetFileName();

@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,10 +23,9 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Book.cs" last formatted on 2020-08-14 at 8:35 PM.
+// File "Book.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Linguistics {
-
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -41,7 +43,6 @@ namespace Librainian.Linguistics {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	[Serializable]
 	public class Book : IEquatable<Book>, IEnumerable<(Int32, Page)> {
-
 		private Book() { }
 
 		public Book( [ItemNotNull] [NotNull] IEnumerable<Page> pages, [ItemNotNull] [CanBeNull] IEnumerable<Author>? authors = null ) {
@@ -56,15 +57,13 @@ namespace Librainian.Linguistics {
 			}
 
 			if ( null != authors ) {
-                //TODO Can there be different Authors per Chapter and/or page?
+			
 				this.Authors.AddRange( authors );
 			}
 		}
 
-
 		[NotNull]
 		[JsonProperty]
-		//TODO Can there be different Authors per Chapter and/or page?
 		private HashSet<Author> Authors { get; } = new();
 
 		[NotNull]
@@ -79,7 +78,7 @@ namespace Librainian.Linguistics {
 
 		/// <summary>Returns an enumerator that iterates through a collection.</summary>
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Pages ).GetEnumerator();
 
 		public Boolean Equals( [CanBeNull] Book? other ) => Equals( this, other );
 
@@ -116,7 +115,5 @@ namespace Librainian.Linguistics {
 
 		[NotNull]
 		public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( pair => ( pair.Key, pair.Value ) );
-
 	}
-
 }

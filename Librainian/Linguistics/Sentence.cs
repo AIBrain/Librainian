@@ -6,149 +6,152 @@
 // 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Sentence.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 #nullable enable
 
 namespace Librainian.Linguistics {
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.Linq;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using Parsing;
 
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Parsing;
+	/// <summary>A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .</summary>
+	/// <see cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></see>
+	/// <see cref="Paragraph"></see>
+	[JsonObject]
+	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+	[Serializable]
+	public class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence>, IHasCitations {
+		static Sentence() => Empty = Parse( $"{StartOfSentence}{String.Empty}{EndOfSentence}" );
 
-    /// <summary>A <see cref="Sentence" /> is an ordered sequence of <see cref="Word" /> .</summary>
-    /// <see cref="http://wikipedia.org/wiki/Sentence_(linguistics)"></see>
-    /// <see cref="Paragraph"></see>
-    [JsonObject]
-    [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-    [Serializable]
-    public class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence> {
+		private Sentence() => throw new InvalidOperationException();
 
-        static Sentence() => Empty = Parse( $"{StartOfSentence}{String.Empty}{EndOfSentence}" );
+		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
+		/// <param name="sentence"></param>
+		private Sentence( [NotNull] String sentence ) : this( sentence.ToWords() ) { }
 
-        private Sentence() => throw new InvalidOperationException();
+		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
+		/// <param name="words"></param>
+		public Sentence( [NotNull] IEnumerable<Word> words ) {
+			foreach ( var word in words ) {
+				this.Words.Add( word );
+			}
+		}
 
-        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
-        /// <param name="sentence"></param>
-        private Sentence( [NotNull] String sentence ) : this( sentence.ToWords() ) { }
+		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
+		/// <param name="words"></param>
+		public Sentence( [NotNull] IEnumerable<String> words ) {
+			var sentence = words.ToStrings( ParsingConstants.Singlespace );
 
-        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
-        /// <param name="words"></param>
-        public Sentence( [NotNull] IEnumerable<Word> words ) {
-            foreach ( var word in words ) {
-                this.Words.Add( word );
-            }
-        }
+			foreach ( var word in sentence.ToWords() ) {
+				this.Words.Add( word );
+			}
+		}
 
-        /// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
-        /// <param name="words"></param>
-        public Sentence( [NotNull] IEnumerable<String> words ) {
-            var sentence = words.ToStrings( ParsingConstants.Singlespace );
+		/// <summary></summary>
+		[NotNull]
+		[JsonProperty]
+		[ItemNotNull]
+		private List<Word> Words { get; } = new();
 
-            foreach ( var word in sentence.ToWords() ) {
-                this.Words.Add( word );
-            }
-        }
+		[NotNull]
+		public static Sentence Empty { get; }
 
-        /// <summary></summary>
-        [NotNull]
-        [JsonProperty]
-        [ItemNotNull]
-        private List<Word> Words { get; } = new();
+		[NotNull]
+		public static String EndOfSentence { get; } = new( Char.MaxValue, 2 );
 
-        [NotNull]
-        public static Sentence Empty { get; }
+		[NotNull]
+		public static String StartOfSentence { get; } = new( Char.MinValue, 2 );
 
-        [NotNull]
-        public static String EndOfSentence { get; } = new( Char.MaxValue, 2 );
+		public Int32 CompareTo( [CanBeNull] Sentence? other ) => String.Compare( this.ToString(), other?.ToString(), StringComparison.Ordinal );
 
-        [NotNull]
-        public static String StartOfSentence { get; } = new( Char.MinValue, 2 );
+		public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
 
-        public Int32 CompareTo( [CanBeNull] Sentence? other ) => String.Compare( this.ToString(), other?.ToString(), StringComparison.Ordinal );
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
+		public Boolean Equals( [CanBeNull] Sentence? other ) => Equals( this, other );
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		//[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 
-        public Boolean Equals( [CanBeNull] Sentence? other ) => Equals( this, other );
 
-        public static Int32 Compare( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return 0;
-            }
+		[NotNull]
+		public IEnumerable<ICitation> GetCitations() => this.Citations.Value;
 
-            if ( left is null ) {
-                return 1; //TODO needs tested
-            }
 
-            if ( right is null ) {
-                return -1; //TODO needs tested
-            }
+		public static Int32 Compare( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
+			if ( ReferenceEquals( left, right ) ) {
+				return 0;
+			}
 
-            return left.CompareTo( right );
-        }
+			if ( left is null ) {
+				return 1; //TODO needs tested
+			}
 
-        public static Boolean Equals( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
+			if ( right is null ) {
+				return -1; //TODO needs tested
+			}
 
-            if ( left is null || right is null ) {
-                return false;
-            }
+			return left.CompareTo( right );
+		}
 
-            return left.Words.SequenceEqual( right.Words );
-        }
+		public static Boolean Equals( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
+			if ( ReferenceEquals( left, right ) ) {
+				return true;
+			}
 
-        public static Boolean operator !=( [CanBeNull] Sentence? left, [CanBeNull] Sentence right ) => !Equals( left, right );
+			if ( left is null || right is null ) {
+				return false;
+			}
 
-        public static Boolean operator <( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) < 0;
+			return left.Words.SequenceEqual( right.Words );
+		}
 
-        public static Boolean operator ==( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Equals( left, right );
+		public static Boolean operator !=( [CanBeNull] Sentence? left, [CanBeNull] Sentence right ) => !Equals( left, right );
 
-        public static Boolean operator >( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) > 0;
+		public static Boolean operator <( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) < 0;
 
-        [NotNull]
-        public static Sentence Parse( String sentence ) => new( sentence );
+		public static Boolean operator ==( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Equals( left, right );
 
-        /// <summary>Determines whether the specified object is equal to the current object.</summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>
-        ///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-        ///     <see langword="false" />.
-        /// </returns>
-        public override Boolean Equals( [CanBeNull] Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
+		public static Boolean operator >( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) > 0;
 
-        public override Int32 GetHashCode() => this.Words.GetHashCode();
+		[NotNull]
+		public static Sentence Parse( String sentence ) => new( sentence );
 
-        [NotNull]
-        public override String ToString() => this.Words.ToStrings( ParsingConstants.Singlespace );
+		/// <summary>Determines whether the specified object is equal to the current object.</summary>
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns>
+		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
+		public override Boolean Equals( [CanBeNull] Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
 
-        //[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
+		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-    }
+		[NotNull]
+		public override String ToString() => this.Words.ToStrings( ParsingConstants.Singlespace );
 
+		public Lazy<HashSet<ICitation>?>? Citations { get; set; }
+	}
 }

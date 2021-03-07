@@ -30,6 +30,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.Security;
 	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
+	using OperatingSystem;
 
 	public class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid {
 

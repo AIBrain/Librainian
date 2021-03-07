@@ -71,11 +71,11 @@ namespace Librainian.Security {
 		[CanBeNull]
 		public static Byte[]? SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 			//Basic Usage Error Checks
-			if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
+			if ( cryptKey?.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
 			}
 
-			if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
+			if ( authKey?.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"AuthKey needs to be {KeyBitSize} bit!", nameof( authKey ) );
 			}
 
@@ -238,11 +238,11 @@ namespace Librainian.Security {
 		[NotNull]
 		public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 			//User Error Checks
-			if ( cryptKey is null || cryptKey.Length != KeyBitSize / 8 ) {
+			if ( cryptKey?.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
 			}
 
-			if ( authKey is null || authKey.Length != KeyBitSize / 8 ) {
+			if ( authKey?.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( authKey ) );
 			}
 

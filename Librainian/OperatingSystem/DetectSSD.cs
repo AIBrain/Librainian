@@ -40,7 +40,7 @@ namespace Librainian.OperatingSystem {
 													NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
 			if ( hDrive.IsInvalid ) {
-				//Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+				//Debug.WriteLine( "CreateFile failed. " + PriNativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
 				return default( Boolean? );
 			}
 
@@ -61,7 +61,7 @@ namespace Librainian.OperatingSystem {
 			hDrive.Close();
 
 			if ( !querySeekPenaltyResult ) {
-				//Debug.WriteLine( "DeviceIoControl failed: " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+				//Debug.WriteLine( "DeviceIoControl failed: " + PriNativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
 				return default( Boolean? );
 			}
 
@@ -78,7 +78,7 @@ namespace Librainian.OperatingSystem {
 													NativeMethods.FILE_ATTRIBUTE_NORMAL, IntPtr.Zero );
 
 			if ( hDrive.IsInvalid ) {
-				//Debug.WriteLine( "CreateFile failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+				//Debug.WriteLine( "CreateFile failed. " + PriNativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
 				return default( Boolean? );
 			}
 
@@ -104,7 +104,7 @@ namespace Librainian.OperatingSystem {
 			hDrive.Close();
 
 			if ( !result ) {
-				//Debug.WriteLine( "DeviceIoControl failed. " + NativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
+				//Debug.WriteLine( "DeviceIoControl failed. " + PriNativeMethods.GetErrorMessage( Marshal.GetLastWin32Error() ) );
 				return default( Boolean? );
 			}
 

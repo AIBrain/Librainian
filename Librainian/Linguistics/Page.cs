@@ -44,6 +44,13 @@ namespace Librainian.Linguistics {
     [Serializable]
     public class Page : IEquatable<Page>, IEnumerable<Paragraph> {
 
+	    [NotNull]
+	    public IEnumerable<Author> GetAuthors() => this.Authors;
+
+	    [NotNull]
+	    [JsonProperty]
+	    private HashSet<Author> Authors { get; } = new();
+
         private Page() { }
 
         public Page( [NotNull] [ItemNotNull] IEnumerable<Paragraph> paragraphs ) {

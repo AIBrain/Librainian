@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,24 +23,22 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Alpha.cs" last formatted on 2020-08-26 at 4:47 AM.
+// File "Alpha.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 #nullable enable
-namespace Librainian.Persistence {
 
+namespace Librainian.Persistence {
 	using System;
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using ComputerSystem;
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
 	using Parsing;
 
-	/// <summary>The last data storage class your program should ever need. Hah, I wish.</summary>
+	/// <summary>The *last* data storage class your program will ever need. Haha, I wish.</summary>
 	public static class Alpha {
-
 		/// <summary>Pull the value out of the either.</summary>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
@@ -49,9 +50,7 @@ namespace Librainian.Persistence {
 		}
 
 		public interface IResourceSource {
-
 			Task<TimeTracker> DiscoveryTask { get; set; }
-
 		}
 
 		/*
@@ -83,7 +82,6 @@ namespace Librainian.Persistence {
 */
 
 		public static class Storage {
-
 			static Storage() {
 				if ( !RootPath.Exists() ) {
 					RootPath.Create();
@@ -96,15 +94,20 @@ namespace Librainian.Persistence {
 				Root = new PersistTable<String, String>( RootPath );
 			}
 
-			[NotNull] private static TimeTracker InitializeTimeTracker { get; } = new();
+			[NotNull]
+			private static TimeTracker InitializeTimeTracker { get; } = new();
 
-			[CanBeNull] private static Task? LocalDiscoveryTask { get; set; }
+			[CanBeNull]
+			private static Task? LocalDiscoveryTask { get; set; }
 
-			[NotNull] private static TimeTracker LocalDiscoveryTimeTracker { get; } = new();
+			[NotNull]
+			private static TimeTracker LocalDiscoveryTimeTracker { get; } = new();
 
-			[CanBeNull] private static Task? RemoteDiscoveryTask { get; set; }
+			[CanBeNull]
+			private static Task? RemoteDiscoveryTask { get; set; }
 
-			[NotNull] private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new();
+			[NotNull]
+			private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new();
 
 			public static CancellationToken LocalDiscoveryCancellationToken { get; set; }
 
@@ -122,7 +125,7 @@ namespace Librainian.Persistence {
 					//make this a task
 					LocalDiscoveryTimeTracker.Started = DateTime.UtcNow;
 
-					var computer = new Computer();
+					//var computer = new Computer();
 
 					//var drives = new DeviceClass(
 
@@ -189,19 +192,6 @@ namespace Librainian.Persistence {
 					InitializeTimeTracker.Finished = DateTime.UtcNow;
 				}
 			}
-
 		}
-
 	}
-
-	public record TimeTracker {
-
-		/// <summary>Null? Hasn't finished yet.</summary>
-		public DateTime? Finished { get; set; }
-
-		/// <summary>Null? Hasn't been started yet.</summary>
-		public DateTime? Started { get; set; }
-
-	}
-
 }

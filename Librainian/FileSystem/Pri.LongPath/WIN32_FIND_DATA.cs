@@ -49,11 +49,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public readonly Int32 dwReserved1;
 
-		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = NativeMethods.MAX_PATH )]
+		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_PATH )]
 		[NotNull]
 		public readonly String cFileName;
 
-		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = NativeMethods.MAX_ALTERNATE )]
+		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_ALTERNATE )]
 		[CanBeNull]
 		public readonly String cAlternate;
 

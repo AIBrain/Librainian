@@ -26,7 +26,6 @@ namespace Librainian.Measurement.Time.FluentTime {
 
 	using System;
 
-	/// <summary>Copyright 2011 ThoughtWorks, Inc. See LICENSE.txt for licensing info.</summary>
 	public static class Last {
 
 		private static DateTime GetLastOfDay( DayOfWeek dayOfWeek ) {

@@ -63,12 +63,15 @@ namespace Librainian.Internet {
 			if ( ret == 0 ) {
 				do {
 					// Retrieve the adapter info from the memory address
-					var entry = ( IPHelperInvoke.IPAdapterInfo )Marshal.PtrToStructure( pEntry, typeof( IPHelperInvoke.IPAdapterInfo ) );
+					var toStructure = Marshal.PtrToStructure( pEntry, typeof( IPHelperInvoke.IPAdapterInfo ) );
+					if ( toStructure != null ) {
+						var entry = ( IPHelperInvoke.IPAdapterInfo ) toStructure;
 
-					result.Add( entry );
+						result.Add( entry );
 
-					// Get next adapter (if any)
-					pEntry = entry.Next;
+						// Get next adapter (if any)
+						pEntry = entry.Next;
+					}
 				} while ( pEntry != IntPtr.Zero );
 			}
 

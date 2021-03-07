@@ -140,10 +140,10 @@ namespace Librainian.OperatingSystem.Compression {
 		private UInt32 GetFileOffset( UInt32 headerOffset ) {
 			var buffer = new Byte[2];
 
-			_zipFileStream.Seek( headerOffset + 26, SeekOrigin.Begin );
-			_zipFileStream.Read( buffer, 0, 2 );
+			this._zipFileStream.Seek( headerOffset + 26, SeekOrigin.Begin );
+			this._zipFileStream.Read( buffer, 0, 2 );
 			var filenameSize = BitConverter.ToUInt16( buffer, 0 );
-			_zipFileStream.Read( buffer, 0, 2 );
+			this._zipFileStream.Read( buffer, 0, 2 );
 			var extraSize = BitConverter.ToUInt16( buffer, 0 );
 
 			return ( UInt32 )( 30 + filenameSize + extraSize + headerOffset );
@@ -155,20 +155,20 @@ namespace Librainian.OperatingSystem.Compression {
 				return false;
 			}
 
-			if ( _zipFileStream.Length < 22 ) {
+			if ( this._zipFileStream.Length < 22 ) {
 				return false;
 			}
 
 			try {
-				_zipFileStream.Seek( -17, SeekOrigin.End );
-				var br = new BinaryReader( _zipFileStream );
+				this._zipFileStream.Seek( -17, SeekOrigin.End );
+				var br = new BinaryReader( this._zipFileStream );
 
 				do {
-					_zipFileStream.Seek( -5, SeekOrigin.Current );
+					this._zipFileStream.Seek( -5, SeekOrigin.Current );
 					var sig = br.ReadUInt32();
 
 					if ( sig == 0x06054b50 ) {
-						_zipFileStream.Seek( 6, SeekOrigin.Current );
+						this._zipFileStream.Seek( 6, SeekOrigin.Current );
 
 						var entries = br.ReadUInt16();
 						var centralSize = br.ReadInt32();
@@ -176,22 +176,22 @@ namespace Librainian.OperatingSystem.Compression {
 						var commentSize = br.ReadUInt16();
 
 						// check if comment field is the very last data in file
-						if ( _zipFileStream.Position + commentSize != _zipFileStream.Length ) {
+						if ( this._zipFileStream.Position + commentSize != this._zipFileStream.Length ) {
 							return false;
 						}
 
 						// Copy entire central directory to a memory buffer
-						_existingFiles = entries;
-						_centralDirImage = new Byte[centralSize];
-						_zipFileStream.Seek( centralDirOffset, SeekOrigin.Begin );
-						_zipFileStream.Read( _centralDirImage, 0, centralSize );
+						this._existingFiles = entries;
+						this._centralDirImage = new Byte[centralSize];
+						this._zipFileStream.Seek( centralDirOffset, SeekOrigin.Begin );
+						this._zipFileStream.Read( this._centralDirImage, 0, centralSize );
 
 						// Leave the pointer at the beginning of central dir, to append new files
-						_zipFileStream.Seek( centralDirOffset, SeekOrigin.Begin );
+						this._zipFileStream.Seek( centralDirOffset, SeekOrigin.Begin );
 
 						return true;
 					}
-				} while ( _zipFileStream.Position > 0 );
+				} while ( this._zipFileStream.Position > 0 );
 			}
 			catch {
 				// ignored
@@ -206,10 +206,10 @@ namespace Librainian.OperatingSystem.Compression {
 			Int32 bytesRead;
 			UInt32 totalRead = 0;
 
-			var posStart = _zipFileStream.Position;
+			var posStart = this._zipFileStream.Position;
 			var sourceStart = source.Position;
 
-			var outStream = zfe.Method == Compression.Store ? _zipFileStream : new DeflateStream( _zipFileStream, CompressionMode.Compress, true );
+			var outStream = zfe.Method == Compression.Store ? this._zipFileStream : new DeflateStream( this._zipFileStream, CompressionMode.Compress, true );
 
 			zfe.Crc32 = 0 ^ 0xffffffff;
 
@@ -234,31 +234,31 @@ namespace Librainian.OperatingSystem.Compression {
 
 			zfe.Crc32 ^= 0xffffffff;
 			zfe.FileSize = totalRead;
-			zfe.CompressedSize = ( UInt32 )( _zipFileStream.Position - posStart );
+			zfe.CompressedSize = ( UInt32 )( this._zipFileStream.Position - posStart );
 
 			// Verify for real compression
-			if ( zfe.Method == Compression.Deflate && !ForceDeflating && source.CanSeek && zfe.CompressedSize > zfe.FileSize ) {
+			if ( zfe.Method == Compression.Deflate && !this.ForceDeflating && source.CanSeek && zfe.CompressedSize > zfe.FileSize ) {
 				// Start operation again with Store algorithm
 				zfe.Method = Compression.Store;
-				_zipFileStream.Position = posStart;
-				_zipFileStream.SetLength( posStart );
+				this._zipFileStream.Position = posStart;
+				this._zipFileStream.SetLength( posStart );
 				source.Position = sourceStart;
 				this.Store( ref zfe, source );
 			}
 		}
 
 		private void UpdateCrcAndSizes( ref ZipFileEntry zfe ) {
-			var lastPos = _zipFileStream.Position; // remember position
+			var lastPos = this._zipFileStream.Position; // remember position
 
-			_zipFileStream.Position = zfe.HeaderOffset + 8;
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )zfe.Method ), 0, 2 ); // zipping method
+			this._zipFileStream.Position = zfe.HeaderOffset + 8;
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )zfe.Method ), 0, 2 ); // zipping method
 
-			_zipFileStream.Position = zfe.HeaderOffset + 14;
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.Crc32 ), 0, 4 ); // Update CRC
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.CompressedSize ), 0, 4 ); // Compressed size
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.FileSize ), 0, 4 ); // Uncompressed size
+			this._zipFileStream.Position = zfe.HeaderOffset + 14;
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.Crc32 ), 0, 4 ); // Update CRC
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.CompressedSize ), 0, 4 ); // Compressed size
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.FileSize ), 0, 4 ); // Uncompressed size
 
-			_zipFileStream.Position = lastPos; // restore position
+			this._zipFileStream.Position = lastPos; // restore position
 		}
 
 		private void WriteCentralDirRecord( ZipFileEntry zfe ) {
@@ -266,71 +266,71 @@ namespace Librainian.OperatingSystem.Compression {
 			var encodedFilename = encoder.GetBytes( zfe.FilenameInZip );
 			var encodedComment = encoder.GetBytes( zfe.Comment );
 
-			_zipFileStream.Write( new Byte[] {
+			this._zipFileStream.Write( new Byte[] {
 				80, 75, 1, 2, 23, 0xB, 20, 0
 			}, 0, 8 );
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )( zfe.EncodeUtf8 ? 0x0800 : 0 ) ), 0, 2 ); // filename and comment encoding
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )( zfe.EncodeUtf8 ? 0x0800 : 0 ) ), 0, 2 ); // filename and comment encoding
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )zfe.Method ), 0, 2 ); // zipping method
-			_zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 ); // zipping date and time
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.Crc32 ), 0, 4 ); // file CRC
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.CompressedSize ), 0, 4 ); // compressed file size
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.FileSize ), 0, 4 ); // uncompressed file size
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedFilename.Length ), 0, 2 ); // Filename in zip
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // extra length
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedComment.Length ), 0, 2 );
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )zfe.Method ), 0, 2 ); // zipping method
+			this._zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 ); // zipping date and time
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.Crc32 ), 0, 4 ); // file CRC
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.CompressedSize ), 0, 4 ); // compressed file size
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.FileSize ), 0, 4 ); // uncompressed file size
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedFilename.Length ), 0, 2 ); // Filename in zip
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // extra length
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedComment.Length ), 0, 2 );
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // disk=0
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // file type: binary
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // Internal file attributes
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0x8100 ), 0, 2 ); // External file attributes (normal/readable)
-			_zipFileStream.Write( BitConverter.GetBytes( zfe.HeaderOffset ), 0, 4 ); // Offset of header
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // disk=0
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // file type: binary
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // Internal file attributes
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0x8100 ), 0, 2 ); // External file attributes (normal/readable)
+			this._zipFileStream.Write( BitConverter.GetBytes( zfe.HeaderOffset ), 0, 4 ); // Offset of header
 
-			_zipFileStream.Write( encodedFilename, 0, encodedFilename.Length );
-			_zipFileStream.Write( encodedComment, 0, encodedComment.Length );
+			this._zipFileStream.Write( encodedFilename, 0, encodedFilename.Length );
+			this._zipFileStream.Write( encodedComment, 0, encodedComment.Length );
 		}
 
 		private void WriteEndRecord( UInt32 size, UInt32 offset ) {
-			var encoder = EncodeUtf8 ? Encoding.UTF8 : DefaultEncoding;
-			var encodedComment = encoder.GetBytes( _comment );
+			var encoder = this.EncodeUtf8 ? Encoding.UTF8 : DefaultEncoding;
+			var encodedComment = encoder.GetBytes( this._comment );
 
-			_zipFileStream.Write( new Byte[] {
+			this._zipFileStream.Write( new Byte[] {
 				80, 75, 5, 6, 0, 0, 0, 0
 			}, 0, 8 );
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )_files.Count + _existingFiles ), 0, 2 );
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )_files.Count + _existingFiles ), 0, 2 );
-			_zipFileStream.Write( BitConverter.GetBytes( size ), 0, 4 );
-			_zipFileStream.Write( BitConverter.GetBytes( offset ), 0, 4 );
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedComment.Length ), 0, 2 );
-			_zipFileStream.Write( encodedComment, 0, encodedComment.Length );
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) this._files.Count + this._existingFiles ), 0, 2 );
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 ) this._files.Count + this._existingFiles ), 0, 2 );
+			this._zipFileStream.Write( BitConverter.GetBytes( size ), 0, 4 );
+			this._zipFileStream.Write( BitConverter.GetBytes( offset ), 0, 4 );
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedComment.Length ), 0, 2 );
+			this._zipFileStream.Write( encodedComment, 0, encodedComment.Length );
 		}
 
 		private void WriteLocalHeader( ref ZipFileEntry zfe ) {
-			var pos = _zipFileStream.Position;
+			var pos = this._zipFileStream.Position;
 			var encoder = zfe.EncodeUtf8 ? Encoding.UTF8 : DefaultEncoding;
 			var encodedFilename = encoder.GetBytes( zfe.FilenameInZip );
 
-			_zipFileStream.Write( new Byte[] {
+			this._zipFileStream.Write( new Byte[] {
 				80, 75, 3, 4, 20, 0
 			}, 0, 6 ); // No extra header
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )( zfe.EncodeUtf8 ? 0x0800 : 0 ) ), 0, 2 ); // filename and comment encoding
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )( zfe.EncodeUtf8 ? 0x0800 : 0 ) ), 0, 2 ); // filename and comment encoding
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )zfe.Method ), 0, 2 ); // zipping method
-			_zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 ); // zipping date and time
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )zfe.Method ), 0, 2 ); // zipping method
+			this._zipFileStream.Write( BitConverter.GetBytes( DateTimeToDosTime( zfe.ModifyTime ) ), 0, 4 ); // zipping date and time
 
-			_zipFileStream.Write( new Byte[] {
+			this._zipFileStream.Write( new Byte[] {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0
 			}, 0, 12 ); // unused CRC, un/compressed size, updated later
 
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedFilename.Length ), 0, 2 ); // filename length
-			_zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // extra length
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )encodedFilename.Length ), 0, 2 ); // filename length
+			this._zipFileStream.Write( BitConverter.GetBytes( ( UInt16 )0 ), 0, 2 ); // extra length
 
-			_zipFileStream.Write( encodedFilename, 0, encodedFilename.Length );
-			zfe.HeaderSize = ( UInt32 )( _zipFileStream.Position - pos );
+			this._zipFileStream.Write( encodedFilename, 0, encodedFilename.Length );
+			zfe.HeaderSize = ( UInt32 )( this._zipFileStream.Position - pos );
 		}
 
 		/// <summary>
@@ -471,7 +471,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
 		/// <param name="comment">      Comment for stored file</param>
 		public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String? comment ) {
-			if ( _access == FileAccess.Read ) {
+			if ( this._access == FileAccess.Read ) {
 				throw new InvalidOperationException( "Writing is not allowed" );
 			}
 
@@ -489,7 +489,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="modTime">      Modification time of the data to store</param>
 		/// <param name="comment">      Comment for stored file</param>
 		public void AddStream( Compression method, [NotNull] String filenameInZip, [NotNull] Stream source, DateTime modTime, [CanBeNull] String? comment ) {
-			if ( _access == FileAccess.Read ) {
+			if ( this._access == FileAccess.Read ) {
 				throw new InvalidOperationException( "Writing is not allowed" );
 			}
 
@@ -506,11 +506,11 @@ namespace Librainian.OperatingSystem.Compression {
 			// Prepare the fileinfo
 			var zfe = new ZipFileEntry {
 				Method = method,
-				EncodeUtf8 = EncodeUtf8,
+				EncodeUtf8 = this.EncodeUtf8,
 				FilenameInZip = NormalizedFilename( filenameInZip ),
 				Comment = comment ?? "",
 				Crc32 = 0,
-				HeaderOffset = ( UInt32 )_zipFileStream.Position,
+				HeaderOffset = ( UInt32 ) this._zipFileStream.Position,
 				ModifyTime = modTime
 			};
 
@@ -519,7 +519,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 			// Write local header
 			this.WriteLocalHeader( ref zfe );
-			zfe.FileOffset = ( UInt32 )_zipFileStream.Position;
+			zfe.FileOffset = ( UInt32 ) this._zipFileStream.Position;
 
 			// Write file to zip (store)
 			this.Store( ref zfe, source );
@@ -527,7 +527,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 			this.UpdateCrcAndSizes( ref zfe );
 
-			_files.Add( zfe );
+			this._files.Add( zfe );
 		}
 
 		/// <summary>
@@ -535,35 +535,35 @@ namespace Librainian.OperatingSystem.Compression {
 		/// </summary>
 		/// <remarks>This is a required step, unless automatic dispose is used</remarks>
 		public void Close() {
-			if ( _access != FileAccess.Read ) {
-				var centralOffset = ( UInt32 )_zipFileStream.Position;
+			if ( this._access != FileAccess.Read ) {
+				var centralOffset = ( UInt32 ) this._zipFileStream.Position;
 				UInt32 centralSize = 0;
 
-				if ( _centralDirImage != null ) {
-					_zipFileStream.Write( _centralDirImage, 0, _centralDirImage.Length );
+				if ( this._centralDirImage != null ) {
+					this._zipFileStream.Write( this._centralDirImage, 0, this._centralDirImage.Length );
 				}
 
-				foreach ( var t in _files ) {
-					var pos = _zipFileStream.Position;
+				foreach ( var t in this._files ) {
+					var pos = this._zipFileStream.Position;
 					this.WriteCentralDirRecord( t );
-					centralSize += ( UInt32 )( _zipFileStream.Position - pos );
+					centralSize += ( UInt32 )( this._zipFileStream.Position - pos );
 				}
 
-				if ( _centralDirImage != null ) {
-					this.WriteEndRecord( centralSize + ( UInt32 )_centralDirImage.Length, centralOffset );
+				if ( this._centralDirImage != null ) {
+					this.WriteEndRecord( centralSize + ( UInt32 ) this._centralDirImage.Length, centralOffset );
 				}
 				else {
 					this.WriteEndRecord( centralSize, centralOffset );
 				}
 			}
 
-			if ( _zipFileStream is null ) {
+			if ( this._zipFileStream is null ) {
 				return;
 			}
 
-			_zipFileStream.Flush();
-			_zipFileStream.Dispose();
-			_zipFileStream = null;
+			this._zipFileStream.Flush();
+			this._zipFileStream.Dispose();
+			this._zipFileStream = null;
 		}
 
 		/// <summary>
@@ -625,8 +625,8 @@ namespace Librainian.OperatingSystem.Compression {
 
 			// check signature
 			var signature = new Byte[4];
-			_zipFileStream.Seek( zfe.HeaderOffset, SeekOrigin.Begin );
-			_zipFileStream.Read( signature, 0, 4 );
+			this._zipFileStream.Seek( zfe.HeaderOffset, SeekOrigin.Begin );
+			this._zipFileStream.Read( signature, 0, 4 );
 
 			if ( BitConverter.ToUInt32( signature, 0 ) != 0x04034b50 ) {
 				return false;
@@ -637,12 +637,12 @@ namespace Librainian.OperatingSystem.Compression {
 
 			switch ( zfe.Method ) {
 				case Compression.Store:
-					inStream = _zipFileStream;
+					inStream = this._zipFileStream;
 
 					break;
 
 				case Compression.Deflate:
-					inStream = new DeflateStream( _zipFileStream, CompressionMode.Decompress, true );
+					inStream = new DeflateStream( this._zipFileStream, CompressionMode.Decompress, true );
 
 					break;
 
@@ -651,7 +651,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 			// Buffered copy
 			var buffer = new Byte[16384];
-			_zipFileStream.Seek( zfe.FileOffset, SeekOrigin.Begin );
+			this._zipFileStream.Seek( zfe.FileOffset, SeekOrigin.Begin );
 			var bytesPending = zfe.FileSize;
 
 			while ( bytesPending > 0 ) {
@@ -675,36 +675,36 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <returns>List of all entries in directory</returns>
 		[NotNull]
 		public List<ZipFileEntry> ReadCentralDir() {
-			if ( _centralDirImage is null ) {
+			if ( this._centralDirImage is null ) {
 				throw new InvalidOperationException( "Central directory currently does not exist" );
 			}
 
 			var result = new List<ZipFileEntry>();
 
-			for ( var pointer = 0; pointer < _centralDirImage.Length; ) {
-				var signature = BitConverter.ToUInt32( _centralDirImage, pointer );
+			for ( var pointer = 0; pointer < this._centralDirImage.Length; ) {
+				var signature = BitConverter.ToUInt32( this._centralDirImage, pointer );
 
 				if ( signature != 0x02014b50 ) {
 					break;
 				}
 
-				var encodeUtf8 = ( BitConverter.ToUInt16( _centralDirImage, pointer + 8 ) & 0x0800 ) != 0;
-				var method = BitConverter.ToUInt16( _centralDirImage, pointer + 10 );
-				var modifyTime = BitConverter.ToUInt32( _centralDirImage, pointer + 12 );
-				var crc32 = BitConverter.ToUInt32( _centralDirImage, pointer + 16 );
-				var comprSize = BitConverter.ToUInt32( _centralDirImage, pointer + 20 );
-				var fileSize = BitConverter.ToUInt32( _centralDirImage, pointer + 24 );
-				var filenameSize = BitConverter.ToUInt16( _centralDirImage, pointer + 28 );
-				var extraSize = BitConverter.ToUInt16( _centralDirImage, pointer + 30 );
-				var commentSize = BitConverter.ToUInt16( _centralDirImage, pointer + 32 );
-				var headerOffset = BitConverter.ToUInt32( _centralDirImage, pointer + 42 );
+				var encodeUtf8 = ( BitConverter.ToUInt16( this._centralDirImage, pointer + 8 ) & 0x0800 ) != 0;
+				var method = BitConverter.ToUInt16( this._centralDirImage, pointer + 10 );
+				var modifyTime = BitConverter.ToUInt32( this._centralDirImage, pointer + 12 );
+				var crc32 = BitConverter.ToUInt32( this._centralDirImage, pointer + 16 );
+				var comprSize = BitConverter.ToUInt32( this._centralDirImage, pointer + 20 );
+				var fileSize = BitConverter.ToUInt32( this._centralDirImage, pointer + 24 );
+				var filenameSize = BitConverter.ToUInt16( this._centralDirImage, pointer + 28 );
+				var extraSize = BitConverter.ToUInt16( this._centralDirImage, pointer + 30 );
+				var commentSize = BitConverter.ToUInt16( this._centralDirImage, pointer + 32 );
+				var headerOffset = BitConverter.ToUInt32( this._centralDirImage, pointer + 42 );
 				var headerSize = ( UInt32 )( 46 + filenameSize + extraSize + commentSize );
 
 				var encoder = encodeUtf8 ? Encoding.UTF8 : DefaultEncoding;
 
 				var zfe = new ZipFileEntry {
 					Method = ( Compression )method,
-					FilenameInZip = encoder.GetString( _centralDirImage, pointer + 46, filenameSize ),
+					FilenameInZip = encoder.GetString( this._centralDirImage, pointer + 46, filenameSize ),
 					FileOffset = this.GetFileOffset( headerOffset ),
 					FileSize = fileSize,
 					CompressedSize = comprSize,
@@ -715,7 +715,7 @@ namespace Librainian.OperatingSystem.Compression {
 				};
 
 				if ( commentSize > 0 ) {
-					zfe.Comment = encoder.GetString( _centralDirImage, pointer + 46 + filenameSize + extraSize, commentSize );
+					zfe.Comment = encoder.GetString( this._centralDirImage, pointer + 46 + filenameSize + extraSize, commentSize );
 				}
 
 				result.Add( zfe );
@@ -790,7 +790,7 @@ namespace Librainian.OperatingSystem.Compression {
 			/// </summary>
 			/// <returns>Filename in Zip</returns>
 			[NotNull]
-			public override String ToString() => FilenameInZip;
+			public override String ToString() => this.FilenameInZip;
 
 		}
 

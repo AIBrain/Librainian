@@ -105,6 +105,15 @@
           }
         }
       },
+      "Microsoft.Database.ManagedEsent/2.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Esent.Interop.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Esent.Interop.dll": {}
+        }
+      },
       "Microsoft.Identity.Client/4.21.1": {
         "type": "package",
         "compile": {
@@ -1874,6 +1883,20 @@
         "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll",
         "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll",
         "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll"
+      ]
+    },
+    "Microsoft.Database.ManagedEsent/2.0.1": {
+      "sha512": "n99MRO0glNbD3RWj4hVES+nYn5851fCzMZxDG2irjxLC8aESiPJVueH3BgwdQaVpSN0fSD9x5wn8daHuQU6WTQ==",
+      "type": "package",
+      "path": "microsoft.database.managedesent/2.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Esent.Interop.dll",
+        "lib/netstandard2.0/Esent.Interop.pdb",
+        "lib/netstandard2.0/Esent.Interop.xml",
+        "microsoft.database.managedesent.2.0.1.nupkg.sha512",
+        "microsoft.database.managedesent.nuspec"
       ]
     },
     "Microsoft.Identity.Client/4.21.1": {
@@ -5946,6 +5969,7 @@
       "JetBrains.Annotations >= 2020.3.0",
       "LinqFaster.SIMD >= 1.0.3",
       "Microsoft.Data.SqlClient >= 2.1.2",
+      "Microsoft.Database.ManagedEsent >= 2.0.1",
       "Newtonsoft.Json >= 12.0.3",
       "PooledAwait >= 1.0.49",
       "Rationals >= 1.4.0",
@@ -6020,6 +6044,10 @@
             "target": "Package",
             "version": "[2.1.2, )"
           },
+          "Microsoft.Database.ManagedEsent": {
+            "target": "Package",
+            "version": "[2.0.1, )"
+          },
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[12.0.3, )"
@@ -6059,7 +6087,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.200-preview.21077.7\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-preview.1.21103.13\\RuntimeIdentifierGraph.json"
       }
     }
   }

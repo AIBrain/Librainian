@@ -69,13 +69,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public override String Name { get; }
 
 		[NotNull]
-		public System.IO.FileInfo SysFileInfo => new System.IO.FileInfo( this.FullPath );
+		public System.IO.FileInfo SysFileInfo => new( this.FullPath );
 
 		[NotNull]
 		public override System.IO.FileSystemInfo SystemInfo => this.SysFileInfo;
 
 		[NotNull]
-		public DirectoryInfo Directory => new DirectoryInfo( this.DirectoryName );
+		public DirectoryInfo Directory => new( this.DirectoryName );
 
 		private Int64 GetFileLength() {
 			if ( this.state == State.Uninitialized ) {

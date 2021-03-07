@@ -31,7 +31,6 @@ namespace Librainian.Internet.RandomOrg {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
-	using Measurement.Time;
 
 	public static class RandomDotOrg {
 
@@ -59,7 +58,7 @@ namespace Librainian.Internet.RandomOrg {
 
 			var url = new Uri( "https" + "://random.org/sequences/?min=" + minValue + "&max=" + maxValue + "&col=1&base=10&format=plain&rnd=new", UriKind.Absolute );
 
-			var task = url.GetWebPageAsync( Seconds.Seven );
+			var task = url.GetWebPageAsync(  );
 
 			if ( task is null ) {
 				throw new InvalidOperationException( "Unable to pull any data from random.org." );
@@ -124,7 +123,8 @@ namespace Librainian.Internet.RandomOrg {
 					throw new ArgumentOutOfRangeException( nameof( inbase ), "The base must be 2, 8, 10, or 16." );
 				}
 
-				var job = $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new".GetWebPageAsync( Minutes.One );
+				Uri address = new( $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new");
+				var job = address.GetWebPageAsync();
 
 				if ( job == null ) {
 					throw new InvalidOperationException( "Unable to pull random numbers from Random.Org." );

@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -17,13 +20,13 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Seconds.cs" last formatted on 2021-02-03 at 3:29 PM.
+// File "Seconds.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Measurement.Time {
+
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
@@ -64,46 +67,68 @@ namespace Librainian.Measurement.Time {
 		/// <summary>604800</summary>
 		public const UInt32 InOneWeek = 604800;
 
-		public Seconds( Double value ) : this( ( Rational )value ) { }
+		public Seconds( Double value ) : this( ( Rational ) value ) { }
 
 		/// <summary><see cref="Five" /><see cref="Seconds" />.</summary>
-		public static Seconds Five { get; } = new( ( Rational )5 );
+		public static Seconds Five { get; } = new( ( Rational ) 5 );
 
 		/// <summary><see cref="One" /><see cref="Seconds" />.</summary>
-		public static Seconds One { get; } = new( ( Rational )1 );
+		public static Seconds One { get; } = new( ( Rational ) 1 );
 
 		/// <summary><see cref="Seven" /><see cref="Seconds" />.</summary>
-		public static Seconds Seven { get; } = new( ( Rational )7 );
+		public static Seconds Seven { get; } = new( ( Rational ) 7 );
 
 		/// <summary><see cref="Ten" /><see cref="Seconds" />.</summary>
-		public static Seconds Ten { get; } = new( ( Rational )10 );
+		public static Seconds Ten { get; } = new( ( Rational ) 10 );
 
 		/// <summary><see cref="Thirteen" /><see cref="Seconds" />.</summary>
-		public static Seconds Thirteen { get; } = new( ( Rational )13 );
+		public static Seconds Thirteen { get; } = new( ( Rational ) 13 );
 
 		/// <summary><see cref="Thirty" /><see cref="Seconds" />.</summary>
-		public static Seconds Thirty { get; } = new( ( Rational )30 );
+		public static Seconds Thirty { get; } = new( ( Rational ) 30 );
 
 		/// <summary><see cref="Three" /><see cref="Seconds" />.</summary>
-		public static Seconds Three { get; } = new( ( Rational )3 );
+		public static Seconds Three { get; } = new( ( Rational ) 3 );
 
 		/// <summary><see cref="Twenty" /><see cref="Seconds" />.</summary>
-		public static Seconds Twenty { get; } = new( ( Rational )20 );
+		public static Seconds Twenty { get; } = new( ( Rational ) 20 );
 
 		/// <summary><see cref="Two" /><see cref="Seconds" />.</summary>
-		public static Seconds Two { get; } = new( ( Rational )2 );
+		public static Seconds Two { get; } = new( ( Rational ) 2 );
 
 		/// <summary></summary>
-		public static Seconds Zero { get; } = new( ( Rational )0 );
+		public static Seconds Zero { get; } = new( ( Rational ) 0 );
 
-		public IQuantityOfTime ToFinerGranularity() => ToMilliseconds();
+		public IQuantityOfTime ToFinerGranularity() => this.ToMilliseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational )PlanckTimes.InOneSecond );
+		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational ) PlanckTimes.InOneSecond );
 
 		public Seconds ToSeconds() => new( this.Value );
-		public IQuantityOfTime ToCoarserGranularity() => ToMinutes();
 
-		public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double )this.Value );
+		public IQuantityOfTime ToCoarserGranularity() => this.ToMinutes();
+
+		public TimeSpan ToTimeSpan() => TimeSpan.FromSeconds( ( Double ) this.Value );
+
+		/// <summary>
+		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
+		///     the current instance precedes, follows, or occurs in the
+		///     same position in the sort order as the other object.
+		/// </summary>
+		/// <param name="other">An object to compare with this instance. </param>
+		/// <returns>
+		///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
+		///     Meaning Less than zero This instance precedes
+		///     <paramref name="other" /> in the sort order.  Zero This instance occurs in the same position in the sort order as
+		///     <paramref name="other" />. Greater than zero This instance
+		///     follows <paramref name="other" /> in the sort order.
+		/// </returns>
+		public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
+			if ( other is null ) {
+				throw new ArgumentNullException( nameof( other ) );
+			}
+
+			return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
+		}
 
 		[Pure]
 		public static Seconds Combine( Seconds left, Seconds right ) => Combine( left, right.Value );
@@ -135,61 +160,40 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Returns a <see cref="TimeSpan" /></summary>
 		/// <param name="seconds"></param>
 		public static implicit operator TimeSpan( Seconds seconds ) {
-			if ( seconds.Value >= ( Int64 )TimeSpan.MaxValue.TotalSeconds ) {
+			if ( seconds.Value >= ( Int64 ) TimeSpan.MaxValue.TotalSeconds ) {
 				return TimeSpan.MaxValue;
 			}
 
-			if ( seconds.Value <= ( Int64 )TimeSpan.MinValue.TotalSeconds ) {
+			if ( seconds.Value <= ( Int64 ) TimeSpan.MinValue.TotalSeconds ) {
 				return TimeSpan.MinValue;
 			}
 
-			return TimeSpan.FromSeconds( ( Double )seconds.Value );
+			return TimeSpan.FromSeconds( ( Double ) seconds.Value );
 		}
 
 		public static Seconds operator -( Seconds seconds ) => new( seconds.Value * -1 );
 
 		public static Seconds operator -( Seconds left, Seconds right ) => Combine( left, -right );
 
-		public static Seconds operator -( Seconds left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
+		public static Seconds operator -( Seconds left, Decimal seconds ) => Combine( left, ( Rational ) ( -seconds ) );
 
 		public static Seconds operator +( Seconds left, Seconds right ) => Combine( left, right );
 
-		public static Seconds operator +( Seconds left, Decimal seconds ) => Combine( left, ( Rational )seconds );
+		public static Seconds operator +( Seconds left, Decimal seconds ) => Combine( left, ( Rational ) seconds );
 
 		public static Seconds operator +( Seconds left, BigInteger seconds ) => Combine( left, seconds );
 
 		public static Boolean operator <( Seconds left, Seconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds )right;
+		public static Boolean operator <( Seconds left, Milliseconds right ) => left < ( Seconds ) right;
 
-		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes )left < right;
+		public static Boolean operator <( Seconds left, Minutes right ) => ( Minutes ) left < right;
 
-		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes )left > right;
+		public static Boolean operator >( Seconds left, Minutes right ) => ( Minutes ) left > right;
 
 		public static Boolean operator >( Seconds left, Seconds right ) => left.Value > right.Value;
 
-		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds )right;
-
-		/// <summary>
-		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
-		///     the current instance precedes, follows, or occurs in the
-		///     same position in the sort order as the other object.
-		/// </summary>
-		/// <param name="other">An object to compare with this instance. </param>
-		/// <returns>
-		///     A value that indicates the relative order of the objects being compared. The return value has these meanings: Value
-		///     Meaning Less than zero This instance precedes
-		///     <paramref name="other" /> in the sort order.  Zero This instance occurs in the same position in the sort order as
-		///     <paramref name="other" />. Greater than zero This instance
-		///     follows <paramref name="other" /> in the sort order.
-		/// </returns>
-		public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
-			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
-			}
-
-			return ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
-		}
+		public static Boolean operator >( Seconds left, Milliseconds right ) => left > ( Seconds ) right;
 
 		public Milliseconds ToMilliseconds() => new( this.Value * Milliseconds.InOneSecond );
 
@@ -202,7 +206,7 @@ namespace Librainian.Measurement.Time {
 				return $"{whole} {whole.PluralOf( "second" )}";
 			}
 
-			var dec = ( Decimal )this.Value;
+			var dec = ( Decimal ) this.Value;
 
 			return $"{dec} {dec.PluralOf( "second" )}";
 		}
@@ -212,4 +216,5 @@ namespace Librainian.Measurement.Time {
 		public Years ToYears() => new( this.Value / InOneCommonYear );
 
 	}
+
 }

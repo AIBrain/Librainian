@@ -51,10 +51,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public const Int32 SUCCESS = 0;
 
 		[NotNull]
-		private static String GetMessageFromErrorCode( NativeMethods.ERROR errorCode ) {
+		private static String GetMessageFromErrorCode( PriNativeMethods.ERROR errorCode ) {
 			var buffer = new StringBuilder( 1024 );
 
-			var _ = NativeMethods.FormatMessage( NativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS | NativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | NativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY,
+			var _ = PriNativeMethods.FormatMessage( PriNativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS | PriNativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | PriNativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY,
 										 IntPtr.Zero, ( Int32 )errorCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
 
 			return buffer.ToString();
@@ -69,7 +69,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				if ( !String.IsNullOrWhiteSpace( normalizedPath ) ) {
 					var errorCode = TryGetFileAttributes( normalizedPath, out var attributes );
 
-					if ( errorCode == 0 && ( Int32 )attributes != NativeMethods.INVALID_FILE_ATTRIBUTES ) {
+					if ( errorCode == 0 && ( Int32 )attributes != PriNativeMethods.INVALID_FILE_ATTRIBUTES ) {
 						isDirectory = attributes.IsDirectory();
 
 						return true;
@@ -87,14 +87,14 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
 
-			if ( errorCode != ( Int32 )NativeMethods.ERROR.ERROR_SUCCESS ) {
+			if ( errorCode != ( Int32 )PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 				throw GetExceptionFromWin32Error( errorCode );
 			}
 
 			return fileAttributes;
 		}
 
-		public static FileAttributes GetAttributes( [NotNull] this String path, out NativeMethods.ERROR errorCode ) {
+		public static FileAttributes GetAttributes( [NotNull] this String path, out PriNativeMethods.ERROR errorCode ) {
 			var normalizedPath = path.NormalizeLongPath();
 
 			errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
@@ -106,24 +106,24 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static Exception GetExceptionFromLastWin32Error() => GetExceptionFromLastWin32Error( "path" );
 
 		[NotNull]
-		public static Exception GetExceptionFromLastWin32Error( [NotNull] String parameterName ) => GetExceptionFromWin32Error( ( NativeMethods.ERROR )Marshal.GetLastWin32Error(), parameterName );
+		public static Exception GetExceptionFromLastWin32Error( [NotNull] String parameterName ) => GetExceptionFromWin32Error( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), parameterName );
 
 		[NotNull]
-		public static Exception GetExceptionFromWin32Error( NativeMethods.ERROR errorCode ) => GetExceptionFromWin32Error( errorCode, "path" );
+		public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode ) => GetExceptionFromWin32Error( errorCode, "path" );
 
 		[NotNull]
-		public static Exception GetExceptionFromWin32Error( NativeMethods.ERROR errorCode, [NotNull] String parameterName ) {
+		public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode, [NotNull] String parameterName ) {
 			var message = GetMessageFromErrorCode( errorCode );
 
 			return errorCode switch {
-				NativeMethods.ERROR.ERROR_FILE_NOT_FOUND => new FileNotFoundException( message ),
-				NativeMethods.ERROR.ERROR_PATH_NOT_FOUND => new DirectoryNotFoundException( message ),
-				NativeMethods.ERROR.ERROR_ACCESS_DENIED => new UnauthorizedAccessException( message ),
-				NativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE => new PathTooLongException( message ),
-				NativeMethods.ERROR.ERROR_INVALID_DRIVE => new DriveNotFoundException( message ),
-				NativeMethods.ERROR.ERROR_OPERATION_ABORTED => new OperationCanceledException( message ),
-				NativeMethods.ERROR.ERROR_INVALID_NAME => new ArgumentException( message, parameterName ),
-				_ => new IOException( message, NativeMethods.MakeHRFromErrorCode( errorCode ) )
+				PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND => new FileNotFoundException( message ),
+				PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND => new DirectoryNotFoundException( message ),
+				PriNativeMethods.ERROR.ERROR_ACCESS_DENIED => new UnauthorizedAccessException( message ),
+				PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE => new PathTooLongException( message ),
+				PriNativeMethods.ERROR.ERROR_INVALID_DRIVE => new DriveNotFoundException( message ),
+				PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED => new OperationCanceledException( message ),
+				PriNativeMethods.ERROR.ERROR_INVALID_NAME => new ArgumentException( message, parameterName ),
+				_ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( errorCode ) )
 			};
 		}
 
@@ -132,7 +132,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			var errorCode = TryGetFileAttributes( normalizedPath, out var fileAttributes );
 
-			if ( errorCode != ( Int32 )NativeMethods.ERROR.ERROR_SUCCESS ) {
+			if ( errorCode != ( Int32 )PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 				throw GetExceptionFromWin32Error( errorCode );
 			}
 
@@ -178,7 +178,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static void SetAttributes( [NotNull] this String path, FileAttributes fileAttributes ) {
 			var normalizedPath = path.NormalizeLongPath();
 
-			if ( !NativeMethods.SetFileAttributes( normalizedPath, fileAttributes ) ) {
+			if ( !PriNativeMethods.SetFileAttributes( normalizedPath, fileAttributes ) ) {
 				throw GetExceptionFromLastWin32Error();
 			}
 		}
@@ -257,20 +257,20 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					}
 				}
 
-				errorCode = ( Int32 )NativeMethods.SetSecurityInfoByName( name, ( UInt32 )type, ( UInt32 )securityInformation, OwnerBinary, GroupBinary, DaclBinary,
+				errorCode = ( Int32 )PriNativeMethods.SetSecurityInfoByName( name, ( UInt32 )type, ( UInt32 )securityInformation, OwnerBinary, GroupBinary, DaclBinary,
 																		  SaclBinary );
 
 				switch ( errorCode ) {
-					case NativeMethods.ERROR_NOT_ALL_ASSIGNED:
-					case NativeMethods.ERROR_PRIVILEGE_NOT_HELD:
+					case PriNativeMethods.ERROR_NOT_ALL_ASSIGNED:
+					case PriNativeMethods.ERROR_PRIVILEGE_NOT_HELD:
 						throw new PrivilegeNotHeldException( Privilege.Security );
 
-					case NativeMethods.ERROR_ACCESS_DENIED:
-					case NativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
+					case PriNativeMethods.ERROR_ACCESS_DENIED:
+					case PriNativeMethods.ERROR_CANT_OPEN_ANONYMOUS:
 						throw new UnauthorizedAccessException();
 				}
 
-				if ( errorCode != NativeMethods.ERROR_SUCCESS ) {
+				if ( errorCode != PriNativeMethods.ERROR_SUCCESS ) {
 					goto Error;
 				}
 			}
@@ -288,7 +288,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			Error:
 
-			if ( errorCode == NativeMethods.ERROR_NOT_ENOUGH_MEMORY ) {
+			if ( errorCode == PriNativeMethods.ERROR_NOT_ENOUGH_MEMORY ) {
 				throw new OutOfMemoryException();
 			}
 
@@ -321,8 +321,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		}
 
-		public static void ThrowIfError( NativeMethods.ERROR errorCode, IntPtr byteArray ) {
-			if ( errorCode == NativeMethods.ERROR.ERROR_SUCCESS ) {
+		public static void ThrowIfError( PriNativeMethods.ERROR errorCode, IntPtr byteArray ) {
+			if ( errorCode == PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 				if ( IntPtr.Zero.Equals( byteArray ) ) {
 					//
 					// This means that the object doesn't have a security descriptor. And thus we throw
@@ -333,40 +333,40 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 			else {
 				switch ( errorCode ) {
-					case NativeMethods.ERROR.ERROR_NOT_ALL_ASSIGNED:
-					case NativeMethods.ERROR.ERROR_PRIVILEGE_NOT_HELD:
+					case PriNativeMethods.ERROR.ERROR_NOT_ALL_ASSIGNED:
+					case PriNativeMethods.ERROR.ERROR_PRIVILEGE_NOT_HELD:
 						throw new SecurityException( "PrivilegeNotHeldException.SeSecurityPrivilege" );
 
-					case NativeMethods.ERROR.ERROR_ACCESS_DENIED:
-					case NativeMethods.ERROR.ERROR_CANT_OPEN_ANONYMOUS:
-					case NativeMethods.ERROR.ERROR_LOGON_FAILURE:
+					case PriNativeMethods.ERROR.ERROR_ACCESS_DENIED:
+					case PriNativeMethods.ERROR.ERROR_CANT_OPEN_ANONYMOUS:
+					case PriNativeMethods.ERROR.ERROR_LOGON_FAILURE:
 						throw new UnauthorizedAccessException();
 
-					case NativeMethods.ERROR.ERROR_BAD_NETPATH:
-						throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
-					case NativeMethods.ERROR.ERROR_NETNAME_DELETED:
-						throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
+					case PriNativeMethods.ERROR.ERROR_BAD_NETPATH:
+						throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+					case PriNativeMethods.ERROR.ERROR_NETNAME_DELETED:
+						throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-					case NativeMethods.ERROR.ERROR_NOT_ENOUGH_MEMORY:
+					case PriNativeMethods.ERROR.ERROR_NOT_ENOUGH_MEMORY:
 						throw new OutOfMemoryException();
 
 					default:
-						throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
+						throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 				}
 			}
 		}
 
-		public static void ThrowIOError( NativeMethods.ERROR errorCode, [NotNull] String maybeFullPath ) {
+		public static void ThrowIOError( PriNativeMethods.ERROR errorCode, [NotNull] String maybeFullPath ) {
 			if ( String.IsNullOrWhiteSpace( maybeFullPath ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( maybeFullPath ) );
 			}
 
 			// This doesn't have to be perfect, but is a perf optimization.
-			var isInvalidPath = errorCode is NativeMethods.ERROR.ERROR_INVALID_NAME or NativeMethods.ERROR.ERROR_BAD_PATHNAME;
+			var isInvalidPath = errorCode is PriNativeMethods.ERROR.ERROR_INVALID_NAME or PriNativeMethods.ERROR.ERROR_BAD_PATHNAME;
 			var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
 			switch ( errorCode ) {
-				case NativeMethods.ERROR.ERROR_FILE_NOT_FOUND:
+				case PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND:
 
 					if ( str.Length == 0 ) {
 						throw new FileNotFoundException( "Empty filename" );
@@ -375,7 +375,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						throw new FileNotFoundException( $"File {str} not found", str );
 					}
 
-				case NativeMethods.ERROR.ERROR_PATH_NOT_FOUND:
+				case PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND:
 
 					if ( str.Length == 0 ) {
 						throw new DirectoryNotFoundException( "Empty directory" );
@@ -384,7 +384,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						throw new DirectoryNotFoundException( $"Directory {str} not found" );
 					}
 
-				case NativeMethods.ERROR.ERROR_ACCESS_DENIED:
+				case PriNativeMethods.ERROR.ERROR_ACCESS_DENIED:
 
 					if ( str.Length == 0 ) {
 						throw new UnauthorizedAccessException( "Empty path" );
@@ -393,40 +393,40 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						throw new UnauthorizedAccessException( $"Access denied accessing {str}" );
 					}
 
-				case NativeMethods.ERROR.ERROR_ALREADY_EXISTS:
+				case PriNativeMethods.ERROR.ERROR_ALREADY_EXISTS:
 
 					if ( str.Length == 0 ) {
 						goto default;
 					}
 
-					throw new IOException( $"File {str}", NativeMethods.MakeHRFromErrorCode( errorCode ) );
+					throw new IOException( $"File {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case NativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE: throw new PathTooLongException( "Path too long" );
+				case PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE: throw new PathTooLongException( "Path too long" );
 
-				case NativeMethods.ERROR.ERROR_INVALID_DRIVE: throw new DriveNotFoundException( $"Drive {str} not found" );
+				case PriNativeMethods.ERROR.ERROR_INVALID_DRIVE: throw new DriveNotFoundException( $"Drive {str} not found" );
 
-				case NativeMethods.ERROR.ERROR_INVALID_PARAMETER: throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
+				case PriNativeMethods.ERROR.ERROR_INVALID_PARAMETER: throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case NativeMethods.ERROR.ERROR_SHARING_VIOLATION:
+				case PriNativeMethods.ERROR.ERROR_SHARING_VIOLATION:
 
 					if ( str.Length == 0 ) {
-						throw new IOException( "Sharing violation with empty filename", NativeMethods.MakeHRFromErrorCode( errorCode ) );
+						throw new IOException( "Sharing violation with empty filename", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 					}
 					else {
-						throw new IOException( $"Sharing violation: {str}", NativeMethods.MakeHRFromErrorCode( errorCode ) );
+						throw new IOException( $"Sharing violation: {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 					}
 
-				case NativeMethods.ERROR.ERROR_FILE_EXISTS:
+				case PriNativeMethods.ERROR.ERROR_FILE_EXISTS:
 
 					if ( str.Length == 0 ) {
 						goto default;
 					}
 
-					throw new IOException( $"File exists {str}", NativeMethods.MakeHRFromErrorCode( errorCode ) );
+					throw new IOException( $"File exists {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case NativeMethods.ERROR.ERROR_OPERATION_ABORTED: throw new OperationCanceledException();
+				case PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED: throw new OperationCanceledException();
 
-				default: throw new IOException( NativeMethods.GetMessage( errorCode ), NativeMethods.MakeHRFromErrorCode( errorCode ) );
+				default: throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 			}
 		}
 
@@ -454,28 +454,28 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 		*/
 
-		public static NativeMethods.ERROR TryGetDirectoryAttributes( [NotNull] this String normalizedPath, out FileAttributes attributes ) =>
+		public static PriNativeMethods.ERROR TryGetDirectoryAttributes( [NotNull] this String normalizedPath, out FileAttributes attributes ) =>
 			TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
 
-		public static NativeMethods.ERROR TryGetFileAttributes( [NotNull] String normalizedPath, out FileAttributes attributes ) {
+		public static PriNativeMethods.ERROR TryGetFileAttributes( [NotNull] String normalizedPath, out FileAttributes attributes ) {
 			var data = new WIN32_FILE_ATTRIBUTE_DATA();
 
-			var errorMode = NativeMethods.SetErrorMode( 1 );
+			var errorMode = PriNativeMethods.SetErrorMode( 1 );
 
 			try {
-				if ( NativeMethods.GetFileAttributesEx( normalizedPath.ThrowIfBlank(), 0, ref data ) ) {
+				if ( PriNativeMethods.GetFileAttributesEx( normalizedPath.ThrowIfBlank(), 0, ref data ) ) {
 					attributes = data.fileAttributes;
 
 					return SUCCESS;
 				}
 			}
 			finally {
-				NativeMethods.SetErrorMode( errorMode );
+				PriNativeMethods.SetErrorMode( errorMode );
 			}
 
-			attributes = ( FileAttributes )NativeMethods.INVALID_FILE_ATTRIBUTES;
+			attributes = ( FileAttributes )PriNativeMethods.INVALID_FILE_ATTRIBUTES;
 
-			return ( NativeMethods.ERROR )Marshal.GetLastWin32Error();
+			return ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 		}
 
 	}

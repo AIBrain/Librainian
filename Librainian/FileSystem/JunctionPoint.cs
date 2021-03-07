@@ -25,6 +25,7 @@
 namespace Librainian.FileSystem {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Text;
@@ -130,7 +131,7 @@ namespace Librainian.FileSystem {
 		private const String NonInterpretedPathPrefix = @"\??\";
 
 		[CanBeNull]
-		private static String? InternalGetTarget( [NotNull] SafeHandle handle ) {
+		private static String? InternalGetTarget( [JetBrains.Annotations.NotNull] SafeHandle handle ) {
 			var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
 			var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -148,26 +149,33 @@ namespace Librainian.FileSystem {
 					ThrowLastWin32Error( "Unable to get information about junction point." );
 				}
 
-				var reparseDataBuffer = ( ReparseDataBuffer )Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
-
-				if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
-					return default( String? );
+				var toStructure = Marshal.PtrToStructure( outBuffer, typeof( ReparseDataBuffer ) );
+				if ( toStructure == null ) {
+					ThrowLastWin32Error( $"Unable to {nameof( Marshal )}.{nameof( Marshal.PtrToStructure )}" );
+					throw new InvalidOperationException();
 				}
+				else {
+					var reparseDataBuffer = ( ReparseDataBuffer ) toStructure;
 
-				var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
+					if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
+						return default( String? );
+					}
 
-				if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
-					targetDir = targetDir[ NonInterpretedPathPrefix.Length.. ];
+					var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
+
+					if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
+						targetDir = targetDir[NonInterpretedPathPrefix.Length..];
+					}
+
+					return targetDir;
 				}
-
-				return targetDir;
 			}
 			finally {
 				Marshal.FreeHGlobal( outBuffer );
 			}
 		}
 
-		[NotNull]
+		[JetBrains.Annotations.NotNull]
 		private static SafeFileHandle OpenReparsePoint( [CanBeNull] String? reparsePoint, FileAccess accessMode ) {
 			var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open,
 												FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
@@ -181,6 +189,7 @@ namespace Librainian.FileSystem {
 			return reparsePointHandle;
 		}
 
+		[DoesNotReturn]
 		private static void ThrowLastWin32Error( String message ) => throw new IOException( message, Marshal.GetExceptionForHR( Marshal.GetHRForLastWin32Error() ) );
 
 		/// <summary>Creates a junction point from the specified directory to the specified target directory.</summary>
@@ -192,7 +201,7 @@ namespace Librainian.FileSystem {
 		///     Thrown when the junction point could not be created or when an existing directory was
 		///     found and <paramref name="overwrite" /> if false
 		/// </exception>
-		public static void Create( [NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
+		public static void Create( [JetBrains.Annotations.NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
 			targetDir = Path.GetFullPath( targetDir );
 
 			if ( !Directory.Exists( targetDir ) ) {
@@ -306,7 +315,7 @@ namespace Librainian.FileSystem {
 		///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
 		///     some other error occurs
 		/// </exception>
-		[NotNull]
+		[JetBrains.Annotations.NotNull]
 		public static String GetTarget( [CanBeNull] String? junctionPoint ) {
 			using var handle = OpenReparsePoint( junctionPoint, FileAccess.Read );
 

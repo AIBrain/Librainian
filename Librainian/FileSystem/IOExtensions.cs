@@ -329,9 +329,9 @@ namespace Librainian.FileSystem {
 		public static List<FileInformation> FastFind( String path, String searchPattern, Boolean getFile, Boolean getDirectories, Boolean recurse, Int32? depth,
 			Boolean parallel, Boolean suppressErrors, Boolean largeFetch, Boolean getHidden, Boolean getSystem, Boolean getReadOnly, Boolean getCompressed, Boolean getArchive,
 			Boolean getReparsePoint, String filterMode ) {
-			NativeMethods.FINDEX_ADDITIONAL_FLAGS additionalFlags = 0;
+			PriNativeMethods.FINDEX_ADDITIONAL_FLAGS additionalFlags = 0;
 			if ( largeFetch ) {
-				additionalFlags = NativeMethods.FINDEX_ADDITIONAL_FLAGS.FindFirstExLargeFetch;
+				additionalFlags = PriNativeMethods.FINDEX_ADDITIONAL_FLAGS.FindFirstExLargeFetch;
 			}
 
 			// add prefix to allow for maximum path of up to 32,767 characters
@@ -343,8 +343,8 @@ namespace Librainian.FileSystem {
 				prefixedPath = Path.LongPathPrefix + path;
 			}
 
-			var handle = NativeMethods.FindFirstFileExW( prefixedPath + @"\*", NativeMethods.FINDEX_INFO_LEVELS.FindExInfoBasic, out var lpFindFileData,
-				NativeMethods.FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags );
+			var handle = PriNativeMethods.FindFirstFileExW( prefixedPath + @"\*", PriNativeMethods.FINDEX_INFO_LEVELS.FindExInfoBasic, out var lpFindFileData,
+				PriNativeMethods.FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags );
 
 			var resultList = new ConcurrentHashset<FileInformation>();
 			var subDirectoryList = new ConcurrentHashset<PathInformation>();
@@ -387,7 +387,7 @@ namespace Librainian.FileSystem {
 
 						resultList.Add( item );
 					}
-				} while ( NativeMethods.FindNextFile( handle, out lpFindFileData ) );
+				} while ( PriNativeMethods.FindNextFile( handle, out lpFindFileData ) );
 
 				// close the file handle
 				handle.Dispose();
@@ -1060,7 +1060,7 @@ namespace Librainian.FileSystem {
 
 			bufferSize ??= 65536;
 
-			while ( fileMissingRetries.HasValue && fileMissingRetries.Value > 0 ) {
+			while ( fileMissingRetries > 0 ) {
 				if ( File.Exists( filePath ) ) {
 					break;
 				}

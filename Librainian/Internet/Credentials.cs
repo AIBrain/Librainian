@@ -26,7 +26,7 @@ namespace Librainian.Internet {
 
 	using System;
 	using System.Diagnostics;
-	using Exceptions;
+	using Exceptions.Warnings;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -50,11 +50,11 @@ namespace Librainian.Internet {
 		/// <param name="password">Accepts Base64 encoded strings.</param>
 		public Credentials( [NotNull] String username, [NotNull] String password ) {
 			if ( String.IsNullOrWhiteSpace( username ) ) {
-				throw new MissingTextException( nameof( username ) );
+				throw new ArgumentEmptyException( nameof( username ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( password ) ) {
-				throw new MissingTextException( nameof( password ) );
+				throw new ArgumentEmptyException( nameof( password ) );
 			}
 
 			this.Username = username.EndsWith( "=" ) ? username.FromBase64() : username;

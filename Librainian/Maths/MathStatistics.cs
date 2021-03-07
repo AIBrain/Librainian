@@ -102,6 +102,20 @@ namespace Librainian.Maths {
 			return data.Average( d => d.Progress ) - slope * data.Average( d => d.MillisecondsPassed );
 		}
 
+		public static Double Slope( [NotNull] this List<TimeProgression> data ) {
+			if ( data is null ) {
+				throw new ArgumentNullException( nameof( data ) );
+			}
+
+			var averageX = data.Average( d => d.MillisecondsPassed );
+			var averageY = data.Average( d => d.Progress );
+
+			var a = data.Sum( d => ( d.MillisecondsPassed - averageX ) * ( d.Progress - averageY ) );
+			var b = data.Sum( d => Math.Pow( d.MillisecondsPassed - averageX, 2 ) );
+
+			return a / b;
+		}
+
 		public static Double MeanGeometric( [NotNull] this IEnumerable<Double> numbers ) {
 			var enumerable = numbers as IList<Double> ?? numbers.ToList();
 
@@ -323,7 +337,6 @@ namespace Librainian.Maths {
 
 			return ( Decimal )Math.Sqrt( decimals.Average( v => Math.Pow( ( Double )( v - avg ), 2 ) ) );
 		}
-
 	}
 
 }

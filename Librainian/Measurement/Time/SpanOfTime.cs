@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Time {
 
 	/// <summary>
 	///     <para>
-	///         <see cref="SpanOfTime" /> represents the smallest <see cref="PlanckTimes" /> to an absurd huge(!) duration of
+	///         <see cref="SpanOfTime" /> represents the smallest <see cref="PlanckTimes" /> to an absurd huge(memory!) duration of
 	///         time.
 	///     </para>
 	/// </summary>
@@ -67,19 +67,19 @@ namespace Librainian.Measurement.Time {
 
 			this.Milliseconds = new Milliseconds( PlanckTimes.InOneMillisecond.PullPlancks( ref planckTimes ) );
 
-			this.Microseconds = new Microseconds( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
+			this.Microseconds = new( PlanckTimes.InOneMicrosecond.PullPlancks( ref planckTimes ) );
 
-			this.Nanoseconds = new Nanoseconds( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
+			this.Nanoseconds = new( PlanckTimes.InOneNanosecond.PullPlancks( ref planckTimes ) );
 
-			this.Picoseconds = new Picoseconds( PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ) );
+			this.Picoseconds = new( PlanckTimes.InOnePicosecond.PullPlancks( ref planckTimes ) );
 
-			this.Femtoseconds = new Femtoseconds( PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ) );
+			this.Femtoseconds = new( PlanckTimes.InOneFemtosecond.PullPlancks( ref planckTimes ) );
 
-			this.Attoseconds = new Attoseconds( PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ) );
+			this.Attoseconds = new( PlanckTimes.InOneAttosecond.PullPlancks( ref planckTimes ) );
 
-			this.Zeptoseconds = new Zeptoseconds( PlanckTimes.InOneZeptosecond.PullPlancks( ref planckTimes ) );
+			this.Zeptoseconds = new( PlanckTimes.InOneZeptosecond.PullPlancks( ref planckTimes ) );
 
-			this.Yoctoseconds = new Yoctoseconds( PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ) );
+			this.Yoctoseconds = new( PlanckTimes.InOneYoctosecond.PullPlancks( ref planckTimes ) );
 
 			this.PlanckTimes = new PlanckTimes( planckTimes );
 		}
