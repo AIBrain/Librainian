@@ -3,7 +3,7 @@
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Platforms>x64</Platforms>
-		<ApplicationIcon>Librainian.ico</ApplicationIcon>
+		<ApplicationIcon>P:\Programming\Projects 2021\Librainian\Librainian.ico</ApplicationIcon>
 		<RootNamespace>Librainian</RootNamespace>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<PackageId>Librainian</PackageId>
@@ -11,7 +11,7 @@
 		<Authors>Protiguous</Authors>
 		<Company>Protiguous</Company>
 		<Product>Librainian Library</Product>
-		<Description>A collection of classes, structs, and extensions we've collected or created over the years that we use in our various projects.</Description>
+		<Description>A collection of classes, structs, records, and extensions we've created over the years that we use in our various projects.</Description>
 		<Copyright>Copyright © Protiguous. All rights reserved.</Copyright>
 		<PackageProjectUrl>https://github.com/Protiguous/Librainian</PackageProjectUrl>
 		<PackageIcon>Librainian.png</PackageIcon>
@@ -20,7 +20,7 @@
 		<UserSecretsId>46013adb-36bf-4982-9a1a-6755470fdccc</UserSecretsId>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<PackageLicenseFile>License.md</PackageLicenseFile>
+		<PackageLicenseFile>P:\Programming\Projects 2021\Librainian\License.md</PackageLicenseFile>
 		<AssemblyVersion>2020.9.7.4</AssemblyVersion>
 		<FileVersion>2020.9.7.4</FileVersion>
 		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
@@ -29,6 +29,7 @@
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<OutputType>Library</OutputType>
 		<Nullable>enable</Nullable>
+		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -42,6 +43,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DefineConstants />
 		<WarningLevel>1</WarningLevel>
+		<WarningsAsErrors>NU1605</WarningsAsErrors>
 	</PropertyGroup>
 	<Choose>
 		<When Condition="'$(Configuration)'=='Debug'">
