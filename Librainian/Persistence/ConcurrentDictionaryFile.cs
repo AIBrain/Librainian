@@ -1,208 +1,181 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
-// This source code contained in "ConcurrentDictionaryFile.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-// 
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-// 
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-// 
-// =========================================================
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-// 
-// Our website can be found at "https://Protiguous.com/"
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
 // 
-// Project: "Librainian", "ConcurrentDictionaryFile.cs" was last formatted by Protiguous on 2019/10/06 at 6:10 AM.
+// File "ConcurrentDictionaryFile.cs" last formatted on 2020-08-14 at 8:44 PM.
+
+#nullable enable
 
 namespace Librainian.Persistence {
 
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using JetBrains.Annotations;
-    using Logging;
-    using Measurement.Time;
-    using Newtonsoft.Json;
-    using OperatingSystem.FileSystem;
-    using Threading;
+	using System;
+	using System.Collections.Concurrent;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using FileSystem;
+	using JetBrains.Annotations;
+	using Logging;
+	using Maths.Numbers;
+	using Measurement.Time;
+	using Newtonsoft.Json;
+	using PooledAwait;
 
-    /// <summary>
-    ///     Persist a dictionary to and from a JSON formatted text document.
-    /// </summary>
-    [JsonObject]
-    public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable {
+	/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
+	[JsonObject]
+	public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable where TKey:notnull {
 
-        public void Dispose() => this.Dispose( releaseManaged: true );
+		private volatile Boolean _isLoading;
 
-        private volatile Boolean _isLoading;
+		
+		private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
-        public Boolean IsLoading {
-            get => this._isLoading;
-            set => this._isLoading = value;
-        }
+		/// <summary>Disallow constructor without a document/filename</summary>
+		/// <summary></summary>
+		/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
+		/// <param name="document"></param>
+		/// <param name="progress"></param>
+		/// <param name="preload"> </param>
+		public ConcurrentDictionaryFile( [NotNull] Document document, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) {
+			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-        [JsonProperty]
-        [NotNull]
-        public Document Document { get; }
+			if ( !this.Document.ContainingingFolder().Exists() ) {
+				this.Document.ContainingingFolder().Create();
+			}
 
-        public CancellationTokenSource MainCTS { get; } = new CancellationTokenSource();
+			if ( preload ) {
+#pragma warning disable 4014
+				this.Load( progress );
+#pragma warning restore 4014
+			}
+		}
 
-        /// <summary>
-        ///     Disallow constructor without a document/filename
-        /// </summary>
-        /// <summary>
-        /// </summary>
-        // ReSharper disable once NotNullMemberIsNotInitialized
-        private ConcurrentDictionaryFile() => throw new NotImplementedException();
+		/// <summary>
+		///     Persist a dictionary to and from a JSON formatted text document.
+		///     <para>Defaults to user\appdata\Local\productname\filename</para>
+		/// </summary>
+		/// <param name="filename"></param>
+		/// <param name="progress"></param>
+		/// <param name="preload"> </param>
+		public ConcurrentDictionaryFile( [NotNull] String filename, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) : this( new Document( filename ), progress, preload ) { }
 
-        /// <summary>
-        ///     Persist a dictionary to and from a JSON formatted text document.
-        /// </summary>
-        /// <param name="document"></param>
-        /// <param name="preload"> </param>
-        public ConcurrentDictionaryFile( [NotNull] Document document, Boolean preload = false ) {
-            this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+		[JsonProperty]
+		[NotNull]
+		public Document Document { get; }
 
-            if ( !this.Document.ContainingingFolder().Exists() ) {
-                this.Document.ContainingingFolder().Create();
-            }
+		public Boolean IsLoading {
+			get => this._isLoading;
+			set => this._isLoading = value;
+		}
 
-            if ( preload ) {
-                this.Load().Consume();
-            }
-        }
+		public CancellationTokenSource MainCTS { get; } = new();
 
-        /// <summary>
-        ///     Persist a dictionary to and from a JSON formatted text document.
-        ///     <para>Defaults to user\appdata\Local\productname\filename</para>
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="preload"> </param>
-        public ConcurrentDictionaryFile( [NotNull] String filename, Boolean preload = false ) : this( document: new Document( filename ), preload: preload ) { }
+		public void Dispose() {
+			this.Dispose( true );
+			GC.SuppressFinalize( this );
+		}
 
-        protected virtual void Dispose( Boolean releaseManaged ) {
-            if ( releaseManaged ) {
-                this.Save().Wait( timeout: Minutes.One );
-            }
+		protected virtual void Dispose( Boolean releaseManaged ) {
+			if ( releaseManaged ) {
+				this.Save().AsValueTask().AsTask().Wait( Minutes.One );
+			}
+			
+			GC.SuppressFinalize( this );
+		}
 
-            GC.SuppressFinalize( this );
-        }
+		public async PooledValueTask<Boolean> Flush( CancellationToken token ) {
+			var document = this.Document;
 
-        public async Task<Boolean> Load( CancellationToken token = default ) {
-            var document = this.Document;
+			if ( !document.ContainingingFolder().Exists() ) {
+				document.ContainingingFolder().Create();
+			}
 
-            if ( document.Exists() == false ) {
-                return false;
-            }
+			var json = this.ToJSON( Formatting.Indented );
+			await document.TryDeleting( Seconds.One, token ).ConfigureAwait(false);
+			document.AppendText( json );
 
-            try {
-                this.IsLoading = true;
+			return true;
+		}
 
-                if ( token == default ) {
-                    token = this.MainCTS.Token;
-                }
+		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress, CancellationToken token = default ) {
+			var document = this.Document;
 
-                var dictionary = document.LoadJSONAsync<ConcurrentDictionary<TKey, TValue>>( token );
+			if ( document.Exists() == false ) {
+				return default( Status );
+			}
 
-                await Task.WhenAll( dictionary /*add other tasks as needed*/ ).ConfigureAwait( false );
+			try {
+				this.IsLoading = true;
 
-                if ( dictionary.IsDone() ) {
-                    var result = Parallel.ForEach( source: dictionary.Result.Keys.AsParallel(), body: key => this[ key ] = dictionary.Result[ key ],
-                        parallelOptions: new ParallelOptions {
-                            CancellationToken = token
-                        } );
+				if ( token == default( CancellationToken ) ) {
+					token = this.MainCTS.Token;
+				}
 
-                    return result.IsCompleted;
-                }
-            }
-            catch ( JsonException exception ) {
-                exception.Log();
-            }
-            catch ( IOException exception ) {
+				var result = await document.LoadJSON<ConcurrentDictionary<TKey, TValue>>( progress, token ).ConfigureAwait( false );
 
-                //file in use by another app
-                exception.Log();
-            }
-            catch ( OutOfMemoryException exception ) {
+				if ( result.status.IsGood() ) {
+					var options = new ParallelOptions {
+						CancellationToken = token,
+						MaxDegreeOfParallelism = Environment.ProcessorCount - 1
+					};
 
-                //file is huge (too big to load into memory).
-                exception.Log();
-            }
-            finally {
-                this.IsLoading = false;
-            }
+					var dictionary = result.obj;
+					var r = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: options );
 
-            return false;
-        }
+					return r.IsCompleted.ToStatus();
+				}
+			}
+			catch ( JsonException exception ) {
+				exception.Log();
+			}
+			catch ( IOException exception ) {
+				//file in use by another app
+				exception.Log();
+			}
+			catch ( OutOfMemoryException exception ) {
+				//file is huge (too big to load into memory).
+				exception.Log();
+			}
+			finally {
+				this.IsLoading = false;
+			}
 
-        /// <summary>
-        ///     Saves the data to the <see cref="Document" />.
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        [NotNull]
-        public Task<Boolean> Save( CancellationToken token = default ) {
-            if ( token == default ) {
-                token = this.MainCTS.Token;
-            }
-            return Task.Run( this.Flush, cancellationToken: token );
-        }
+			return Status.Failure;
+		}
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
+		/// <summary>Saves the data to the <see cref="Document" />.</summary>
+		/// <param name="token"></param>
+		/// <returns></returns>
+		public PooledValueTask<Boolean> Save( CancellationToken? token = null ) => this.Flush( token ?? this.MainCTS.Token );
 
-        [DebuggerStepThrough]
-        public Boolean TryRemove( [CanBeNull] TKey key ) => key != null && this.TryRemove( key, out _ );
+		/// <summary>Returns a string that represents the current object.</summary>
+		/// <returns>A string that represents the current object.</returns>
+		[NotNull]
+		public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
-        public Boolean Flush() {
-            var document = this.Document;
+		[DebuggerStepThrough]
+		public Boolean TryRemove( [CanBeNull] TKey key ) => this.TryRemove( key, out _ );
 
-            if ( !document.ContainingingFolder().Exists() ) {
-                document.ContainingingFolder().Create();
-            }
-
-            IDictionary<TKey, TValue> me = new Dictionary<TKey, TValue>( this.Count );
-
-            foreach ( var pair in this ) {
-                me[ pair.Key ] = pair.Value;
-            }
-
-            return me.TrySave( document: document, overwrite: true, formatting: Formatting.Indented );
-        }
-
-    }
+	}
 
 }

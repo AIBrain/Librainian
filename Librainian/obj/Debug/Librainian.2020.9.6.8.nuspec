@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Librainian</id>
+    <version>2020.9.6.8</version>
+    <authors>Protiguous</authors>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <license type="file">License.md</license>
+    <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
+    <icon>Librainian.png</icon>
+    <projectUrl>https://github.com/Protiguous/Librainian</projectUrl>
+    <description>A collection of classes, structs, and extensions we've collected or created over the years that we use in our various projects.</description>
+    <copyright>Copyright © Protiguous. All rights reserved.</copyright>
+    <repository type="git" url="https://github.com/Protiguous/Librainian" />
+    <dependencies>
+      <group targetFramework="net5.0-windows7.0">
+        <dependency id="CommandLineParser" version="2.8.0" exclude="Build,Analyzers" />
+        <dependency id="FluentAssertions" version="5.10.3" exclude="Build,Analyzers" />
+        <dependency id="JetBrains.Annotations" version="2020.3.0" exclude="Build,Analyzers" />
+        <dependency id="LinqFaster.SIMD" version="1.0.3" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Data.SqlClient" version="2.1.1" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="12.0.3" exclude="Build,Analyzers" />
+        <dependency id="PooledAwait" version="1.0.49" exclude="Build,Analyzers" />
+        <dependency id="Rationals" version="1.4.0" exclude="Build,Analyzers" />
+        <dependency id="System.Linq.Async" version="5.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Management" version="5.0.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net5.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WindowsForms" />
+      </group>
+    </frameworkReferences>
+    <contentFiles>
+      <files include="any/net5.0-windows7.0/../Librainian.png" buildAction="None" />
+    </contentFiles>
+  </metadata>
+  <files>
+    <file src="P:\Programming\Projects 2021\Librainian\Librainian\bin\x64\Debug\net5.0-windows\Librainian.dll" target="lib\net5.0-windows7.0\Librainian.dll" />
+    <file src="P:\Programming\Projects 2021\Librainian\Librainian.png" target="content\..\Librainian.png" />
+    <file src="P:\Programming\Projects 2021\Librainian\Librainian.png" target="contentFiles\any\net5.0-windows7.0\..\Librainian.png" />
+    <file src="P:\Programming\Projects 2021\Librainian\License.md" target="License.md" />
+  </files>
+</package>

@@ -1,43 +1,31 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Shufflings.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// 
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-//
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
-// Our software can be found at "https://Protiguous.Software/"
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Shufflings.cs" was last formatted by Protiguous on 2019/08/08 at 6:31 AM.
+
+#nullable enable
 
 namespace Librainian.Collections.Extensions {
 
@@ -64,7 +52,7 @@ namespace Librainian.Collections.Extensions {
         /// <example>Deck.Shuffle( 7 );</example>
         [Obsolete( "Broken and untested. Just an idea to learn with. Meant to work with large arrays. See also Shuffle<List>()" )]
         public static void Shuffle<T>( [NotNull] this T[] array, Int32 iterations = 1 ) {
-            if ( array == null ) {
+            if ( array is null ) {
                 throw new ArgumentNullException( nameof( array ) );
             }
 
@@ -127,45 +115,46 @@ namespace Librainian.Collections.Extensions {
         }
         */
 
-        /// <summary>
-        ///     Take a buffer and scramble.
-        /// </summary>
+        /// <summary>Take a buffer and scramble.</summary>
         /// <param name="buffer"></param>
-        /// <remarks>Isn't this just a really good (Fisher-Yates) shuffle??</remarks>
+        /// <remarks>Fisher-Yates shuffle</remarks>
         public static void Shuffle<T>( [NotNull] this T[] buffer ) {
-            if ( buffer == null ) {
-                throw new ArgumentNullException( paramName: nameof( buffer ) );
-            }
-
             var length = buffer.Length;
 
             for ( var i = length - 1; i >= 0; i-- ) {
-                var a = 0.Next( length );
-                var b = 0.Next( length );
-                var (v1, v2) = ( buffer[ a ], buffer[ b ] );
-                buffer[ a ] = v2;
-                buffer[ b ] = v1;
+                retry:
+                var indexa = 0.Next( length );
+                var indexb = 0.Next( length );
+
+                if ( indexa == indexb ) {
+                    goto retry;
+                }
+
+                var (a, b) = ( buffer[indexa], buffer[indexb] );
+                buffer[indexa] = b;
+                buffer[indexb] = a;
             }
         }
 
-        /// <summary>
-        ///     Take a list and scramble the order of its items.
-        /// </summary>
+        /// <summary>Take a list and scramble the order of its items.</summary>
         /// <param name="list"></param>
-        /// <remarks>Isn't this just the Fisher-Yates shuffle??</remarks>
+        /// <remarks>Fisher-Yates shuffle</remarks>
         public static void Shuffle<T>( [NotNull] this IList<T> list ) {
-            if ( list == null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
-            }
 
             var length = list.Count;
 
             for ( var i = length - 1; i >= 0; i-- ) {
-                var a = 0.Next( length );
-                var b = 0.Next( length );
-                var (v1, v2) = ( list[ a ], list[ b ] );
-                list[ a ] = v2;
-                list[ b ] = v1;
+                retry:
+                var indexa = 0.Next( length );
+                var indexb = 0.Next( length );
+
+                if ( indexa == indexb ) {
+                    goto retry;
+                }
+
+                var (a, b) = ( list[indexa], list[indexb] );
+                list[indexa] = b;
+                list[indexb] = a;
             }
         }
 
@@ -181,7 +170,7 @@ namespace Librainian.Collections.Extensions {
         /// <example>Deck.Shuffle( 7 );</example>
         public static void Shuffle<T>( [NotNull] this List<T> list, UInt32 iterations = 1, ShufflingType shufflingType = ShufflingType.BestChoice, TimeSpan? forHowLong = null,
             CancellationToken? token = null ) {
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
 
@@ -196,31 +185,31 @@ namespace Librainian.Collections.Extensions {
 
                 switch ( shufflingType ) {
                     case ShufflingType.ByGuid: {
-                        ShuffleByGuid( list: ref list, iterations: iterations );
+                        ShuffleByGuid( ref list, iterations );
 
                         break;
                     }
 
                     case ShufflingType.ByRandom: {
-                        ShuffleByRandomThenByRandom( list: ref list, iterations: iterations );
+                        ShuffleByRandomThenByRandom( ref list, iterations );
 
                         break;
                     }
 
                     case ShufflingType.ByHarker: {
-                        ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, token: token );
+                        ShuffleByHarker( list, iterations, forHowLong, token );
 
                         break;
                     }
 
                     case ShufflingType.ByBags: {
-                        ShuffleByBags( list: ref list, iterations: iterations );
+                        ShuffleByBags( ref list, iterations );
 
                         break;
                     }
 
                     case ShufflingType.BestChoice: {
-                        ShuffleByHarker( list: list, iterations: iterations, forHowLong: forHowLong, token: token );
+                        ShuffleByHarker( list, iterations, forHowLong, token );
 
                         break;
                     }
@@ -233,67 +222,72 @@ namespace Librainian.Collections.Extensions {
             }
         }
 
-        /// <summary>
-        ///     Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.
-        /// </summary>
+        /// <summary>Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list">         </param>
         /// <param name="iterations">   </param>
         public static void ShuffleByBags<T>( [NotNull] ref List<T> list, UInt32 iterations ) {
-            if ( list == null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
+            if ( list is null ) {
+                throw new ArgumentNullException( nameof( list ) );
             }
 
-            var bag = new ConcurrentBag<T>( list.AsParallel() );
-
-            if ( iterations <= 1 ) {
-                list.Clear();
-                list.AddRange( bag.AsParallel() );
-
+            if ( iterations < 1 ) {
                 return;
             }
+
+            var bag = new ConcurrentBag<T>( list.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
+                .WithExecutionMode( ParallelExecutionMode.ForceParallelism ).WithMergeOptions( ParallelMergeOptions.AutoBuffered ) );
 
             while ( iterations.Any() ) {
                 iterations--;
 
                 list.Clear();
-                list.AddRange( bag.AsParallel() );
-                if (iterations.Any()) {
-                    bag.RemoveAll();
+                list.AddRange( bag.AsRandom() );
+
+                if ( iterations.Any() ) {
+                    bag = new ConcurrentBag<T>( list.AsRandom() );
                 }
             }
         }
 
-        public static void ShuffleByGuid<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
-            if ( list == null ) {
-                throw new ArgumentNullException( paramName: nameof( list ) );
-            }
+        /// <summary>
+        ///     Not a true random. Just enough to supposedly throw the <paramref name="sequence" /> out of strict order.
+        /// </summary>
+        /// <param name="sequence"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        [NotNull]
+        public static IEnumerable<T> AsRandom<T>( [NotNull] this IEnumerable<T> sequence ) =>
+            sequence.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+                .WithMergeOptions( ParallelMergeOptions.AutoBuffered );
 
-            var l = new List<T>( list.Count );
+        public static void ShuffleByGuid<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
+            if ( list is null ) {
+                throw new ArgumentNullException( nameof( list ) );
+            }
 
             while ( iterations.Any() ) {
                 iterations--;
-                l.Clear();
-                l.AddRange( list.AsParallel().OrderBy( keySelector: arg => Guid.NewGuid() ).AsUnordered() );
-
-                //TODO this is not finished
+                var temp = new List<T>( list.AsRandom().OrderBy( _ => Guid.NewGuid() ).AsRandom() );
+                list.Clear();
+                list.AddRange( temp.AsRandom().OrderBy( _ => Guid.NewGuid() ).AsRandom() );
             }
         }
 
         /* ignore this. just some latenight mind-think stuff
-		[NotNull]
-		private static readonly Type[] EmptyTypeArray = new Type[0];
+        [NotNull]
+        private static readonly Type[] EmptyTypeArray = new Type[0];
 
-		[NotNull]
-		[Pure]
-		public static Func<X> InstanceCreator<X>() {
-			var type = typeof( X );
-			var constructor = type.GetConstructor( EmptyTypeArray );
-			var @new = Expression.New( constructor ?? throw new InvalidOperationException() );
-			var lambda = Expression.Lambda<Func<X>>( @new ) ;
-			return lambda.Compile();
-		}
-		*/
+        [NotNull]
+        [Pure]
+        public static Func<X> InstanceCreator<X>() {
+            var type = typeof( X );
+            var constructor = type.GetConstructor( EmptyTypeArray );
+            var @new = Expression.New( constructor ?? throw new InvalidOperationException() );
+            var lambda = Expression.Lambda<Func<X>>( @new ) ;
+            return lambda.Compile();
+        }
+        */
 
         /// <summary>
         ///     Not cryptographically guaranteed or tested to be the most performant, but it *should* shuffle *well enough* in
@@ -305,19 +299,17 @@ namespace Librainian.Collections.Extensions {
         /// <param name="forHowLong">Or for how long to run.</param>
         /// <param name="token">Or until cancelled.</param>
         public static void ShuffleByHarker<T>( [NotNull] IList<T> list, UInt32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? token = null ) {
-            if ( list == null ) {
+            if ( list is null ) {
                 throw new ArgumentNullException( nameof( list ) );
             }
 
-            Stopwatch started = null;
+            Stopwatch? started = null;
 
             if ( forHowLong.HasValue ) {
                 started = Stopwatch.StartNew(); //don't allocate/start a stopwatch unless we're waiting for time to pass.
             }
 
-            if ( !token.HasValue ) {
-                token = CancellationToken.None;
-            }
+            token ??= CancellationToken.None;
 
             do {
                 list.Shuffle();
@@ -327,28 +319,30 @@ namespace Librainian.Collections.Extensions {
                 }
 
                 if ( forHowLong.HasValue ) {
-                    if ( started.Elapsed > forHowLong.Value ) {
+                    if ( started != null && started.Elapsed > forHowLong.Value ) {
                         return;
                     }
 
                     iterations++; //we're waiting for time. increment the counter.
-
                 }
-
-            } while ( (--iterations).Any() );
+            } while ( ( --iterations ).Any() );
         }
 
-        /// <summary>
-        ///     Shuffle the whole list using OrderBy and ThenBy.
-        /// </summary>
+        /// <summary>Shuffle the whole list using OrderBy and ThenBy.</summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
         /// <param name="iterations"></param>
-        public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt32 iterations = 1 ) {
+        public static void ShuffleByRandomThenByRandom<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
+            if ( list == null ) {
+                throw new ArgumentNullException( nameof( list ) );
+            }
+
             while ( iterations.Any() ) {
                 iterations--;
-                list = list.OrderBy( keySelector: o => Randem.Next() ).ThenBy( keySelector: o => Randem.Next() ).ToList();
+                list = list.OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
             }
         }
+
     }
+
 }

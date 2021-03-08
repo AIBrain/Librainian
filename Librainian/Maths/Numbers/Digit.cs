@@ -1,174 +1,165 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved. This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or
+// source code (directly or derived) from our binaries, libraries, projects, solutions, or applications. All source code belongs to Protiguous@Protiguous.com unless otherwise
+// specified or the original license has been overwritten by formatting. Any unmodified portions of source code gleaned from other sources still retain their original license
+// and our thanks goes to those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper
+// license and/or copyright(s). If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
-// This source code contained in "Digit.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
+// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do With Our Code. We are
+// NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
 //
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please contact me at Protiguous@Protiguous.com.
 //
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
+// Our software can be found at "https://Protiguous.com/Software" Our GitHub address is "https://github.com/Protiguous".
 //
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
-// =========================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-//
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Digit.cs" was last formatted by Protiguous on 2019/08/08 at 8:28 AM.
+// File "Digit.cs" last formatted on 2021-02-10 at 10:55 AM.
+
+#nullable enable
 
 namespace Librainian.Maths.Numbers {
 
-    using System;
-    using Extensions;
-    using JetBrains.Annotations;
+	using Extensions;
+	using JetBrains.Annotations;
+	using System;
+	using System.Runtime.CompilerServices;
 
-    /// <summary>
-    ///     Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-    /// </summary>
-    /// <remarks>All functions should be atomic.</remarks>
-    [Immutable]
-    public struct Digit : IComparable<Digit> {
+	/// <summary>
+	/// Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
+	/// </summary>
+	[Immutable]
+	public record Digit : IComparable<Digit> {
+		public const Byte MaximumValue = 9;
 
-        public const Byte Maximum = 9;
+		public const Byte MinimumValue = 0;
 
-        public const Byte Minimum = 0;
+		public Digit(Byte value) {
+			if (value > MaximumValue) {
+				throw new ArgumentOutOfRangeException(nameof(value), "Out of range");
+			}
 
-        public static Digit Eight { get; } = new Digit( 8 );
+			this.Value = value;
+		}
 
-        public static Digit Five { get; } = new Digit( 5 );
+		[NotNull]
+		public static Digit[] AllDigits { get; } = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-        public static Digit Four { get; } = new Digit( 4 );
+		[NotNull]
+		public static Digit Eight { get; } = new(8);
 
-        public static Digit Nine { get; } = new Digit( 9 );
+		[NotNull]
+		public static Digit Five { get; } = new(5);
 
-        public static Digit One { get; } = new Digit( 1 );
+		[NotNull]
+		public static Digit Four { get; } = new(4);
 
-        public static Digit Seven { get; } = new Digit( 7 );
+		[NotNull]
+		public static Digit Nine { get; } = new(9);
 
-        public static Digit Six { get; } = new Digit( 6 );
+		[NotNull]
+		public static Digit One { get; } = new(1);
 
-        public static Digit Three { get; } = new Digit( 3 );
+		[NotNull]
+		public static Digit Seven { get; } = new(7);
 
-        public static Digit Two { get; } = new Digit( 2 );
+		[NotNull]
+		public static Digit Six { get; } = new(6);
 
-        public static Digit Zero { get; } = new Digit( 0 );
+		[NotNull]
+		public static Digit Three { get; } = new(3);
 
-        public Byte Value { get; }
+		[NotNull]
+		public static Digit Two { get; } = new(2);
 
-        public Digit( SByte value ) {
-            if ( value < Minimum || value > Maximum ) {
-                throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
-            }
+		[NotNull]
+		public static Digit Zero { get; } = new(0);
 
-            this.Value = ( Byte ) value;
-        }
+		public Byte Value { get; init; }
 
-        public Digit( Byte value ) : this( ( SByte ) value ) { }
+		public Int32 CompareTo(Digit? other) => this.Value.CompareTo(other?.Value);
 
-        public static implicit operator Byte( Digit digit ) => digit.Value;
+		public virtual Boolean Equals(Digit? other) {
+			if (other is null) {
+				return false;
+			}
 
-        public static Boolean operator <( Digit left, Digit right ) => left.Value < right.Value;
+			if (ReferenceEquals(this, other)) {
+				return true;
+			}
 
-        public static Boolean operator <( Digit left, SByte right ) => left.Value < right;
+			return this.Value == other.Value;
+		}
 
-        public static Boolean operator <( Digit left, Byte right ) => left.Value < right;
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Boolean Equals(Digit left, Digit right) => left.Value == right.Value;
 
-        public static Boolean operator <( Byte left, Digit right ) => left < right.Value;
+		public static explicit operator Byte(Digit digit) => digit.Value;
 
-        public static Boolean operator <( SByte left, Digit right ) => left < right.Value;
+		public static implicit operator Digit(Byte value) => new(value);
 
-        public static Boolean operator <=( Digit left, Digit right ) => left.Value <= right.Value;
+		public static Boolean operator <(Digit left, Digit right) => left.Value < right.Value;
 
-        public static Boolean operator <=( Digit left, SByte right ) => left.Value <= right;
+		public static Boolean operator <(Digit left, SByte right) => left.Value < right;
 
-        public static Boolean operator <=( Digit left, Byte right ) => left.Value <= right;
+		public static Boolean operator <(Digit left, Byte right) => left.Value < right;
 
-        public static Boolean operator <=( Byte left, Digit right ) => left <= right.Value;
+		public static Boolean operator <(Byte left, Digit right) => left < right.Value;
 
-        public static Boolean operator <=( SByte left, Digit right ) => left <= right.Value;
+		public static Boolean operator <(SByte left, Digit right) => left < right.Value;
 
-        public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
+		public static Boolean operator <=(Digit left, Digit right) => left.Value <= right.Value;
 
-        public static Boolean operator >( Digit left, SByte right ) => left.Value > right;
+		public static Boolean operator <=(Digit left, SByte right) => left.Value <= right;
 
-        public static Boolean operator >( Digit left, Byte right ) => left.Value > right;
+		public static Boolean operator <=(Digit left, Byte right) => left.Value <= right;
 
-        public static Boolean operator >( Byte left, Digit right ) => left > right.Value;
+		public static Boolean operator <=(Byte left, Digit right) => left <= right.Value;
 
-        public static Boolean operator >( SByte left, Digit right ) => left > right.Value;
+		public static Boolean operator <=(SByte left, Digit right) => left <= right.Value;
 
-        public static Boolean operator >=( Digit left, Digit right ) => left.Value >= right.Value;
+		public static Boolean operator >(Digit left, Digit right) => left.Value > right.Value;
 
-        public static Boolean operator >=( Digit left, SByte right ) => left.Value >= right;
+		public static Boolean operator >(Digit left, SByte right) => left.Value > right;
 
-        public static Boolean operator >=( Digit left, Byte right ) => left.Value >= right;
+		public static Boolean operator >(Digit left, Byte right) => left.Value > right;
 
-        public static Boolean operator >=( Byte left, Digit right ) => left >= right.Value;
+		public static Boolean operator >(Byte left, Digit right) => left > right.Value;
 
-        public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
+		public static Boolean operator >(SByte left, Digit right) => left > right.Value;
 
-        /// <summary>
-        ///     Compares the current object with another object of the same type.
-        /// </summary>
-        /// <returns>
-        ///     A value that indicates the relative order of the objects being compared. The return value has the following
-        ///     meanings: Value Meaning Less than zero This object is less than the <paramref name="other" /> parameter.Zero This
-        ///     object is equal to <paramref name="other" />. Greater than zero This object is greater than
-        ///     <paramref name="other" />.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
-        public Int32 CompareTo( Digit other ) => this.Value.CompareTo( other.Value );
+		public static Boolean operator >=(Digit left, Digit right) => left.Value >= right.Value;
 
-        [NotNull]
-        public String Number() => this.Value.ToString();
+		public static Boolean operator >=(Digit left, SByte right) => left.Value >= right;
 
-        public override String ToString() {
-            switch ( this.Value ) {
-                case 0: return nameof( Zero );
+		public static Boolean operator >=(Digit left, Byte right) => left.Value >= right;
 
-                case 1: return nameof( One );
+		public static Boolean operator >=(Byte left, Digit right) => left >= right.Value;
 
-                case 2: return nameof( Two );
+		public static Boolean operator >=(SByte left, Digit right) => left >= right.Value;
 
-                case 3: return nameof( Three );
+		public Boolean Equals(Byte other) => this.Value.Equals(other);
 
-                case 4: return nameof( Four );
+		[NotNull]
+		public String Number() => this.Value.ToString();
 
-                case 5: return nameof( Five );
+		[NotNull]
+		public override String ToString() {
+			return this.Value switch {
+				0 => nameof(Zero),
+				1 => nameof(One),
+				2 => nameof(Two),
+				3 => nameof(Three),
+				4 => nameof(Four),
+				5 => nameof(Five),
+				6 => nameof(Six),
+				7 => nameof(Seven),
+				8 => nameof(Eight),
+				9 => nameof(Nine),
+				var _ => throw new ArgumentOutOfRangeException(nameof(this.Value), "Invalid internal value!")
+			};
+		}
 
-                case 6: return nameof( Six );
-
-                case 7: return nameof( Seven );
-
-                case 8: return nameof( Eight );
-
-                case 9: return nameof( Nine );
-
-                default: return String.Empty;
-            }
-        }
-    }
+		public override Int32 GetHashCode() => this.Value.GetHashCode();
+	}
 }
