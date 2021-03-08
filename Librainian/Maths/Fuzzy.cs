@@ -1,206 +1,188 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Fuzzy.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
-// =========================================================
+// Copyright Â© Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-//
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Fuzzy.cs" was last formatted by Protiguous on 2019/08/08 at 8:18 AM.
+// 
+// File "Fuzzy.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
 
-    using System;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
-    using Numbers;
+	using System;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using Numbers;
 
-    public enum LowMiddleHigh {
+	public enum LowMiddleHigh {
 
-        Low,
+		Low,
+		Middle,
+		High
 
-        Middle,
+	}
 
-        High
-    }
+	/// <summary>A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked</summary>
+	[JsonObject]
+	public class Fuzzy : ICloneable {
 
-    /// <summary>
-    ///     A Double number, constrained between 0 and 1. Kinda thread-safe by Interlocked
-    /// </summary>
-    [JsonObject]
-    public struct Fuzzy : ICloneable {
+		public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
 
-        /// <summary>
-        ///     ONLY used in the getter and setter.
-        /// </summary>
-        [JsonProperty]
-        private AtomicDouble _value;
+		/// <summary>1</summary>
+		public const Double MaxValue = 1D;
 
-        public const Double HalfValue = ( MinValue + MaxValue ) / 2D;
+		/// <summary>0</summary>
+		public const Double MinValue = 0D;
 
-        /// <summary>
-        ///     1
-        /// </summary>
-        public const Double MaxValue = 1D;
+		/// <summary>ONLY used in the getter and setter.</summary>
+		[JsonProperty]
+		private AtomicDouble _value;
 
-        /// <summary>
-        ///     0
-        /// </summary>
-        public const Double MinValue = 0D;
+		/// <summary>If <paramref name="value" /> is null, then Initializes to a random number between 0 and 1.</summary>
+		public Fuzzy( Double? value = null ) {
+			if ( value.HasValue ) {
+				this.Value = value.Value;
+			}
+			else {
+				this.Randomize();
+			}
+		}
 
-        /// <summary>
-        ///     ~25 to 75% probability.
-        /// </summary>
-        private static PairOfDoubles Undecided { get; } = new PairOfDoubles( low: Combine( MinValue, HalfValue ), high: Combine( HalfValue, MaxValue ) );
+		/// <summary>~25 to 75% probability.</summary>
+		private static PairOfDoubles Undecided { get; } = new( Combine( MinValue, HalfValue ), Combine( HalfValue, MaxValue ) );
 
-        public static Fuzzy Empty { get; }
+		public static Fuzzy Empty { get; }
 
-        public Double Value {
-            get => this._value;
+		public Double Value {
+			get => this._value;
 
-            set {
-                if ( value > MaxValue ) {
-                    value = MaxValue;
-                }
-                else if ( value < MinValue ) {
-                    value = MinValue;
-                }
+			set {
+				if ( value > MaxValue ) {
+					value = MaxValue;
+				}
+				else if ( value < MinValue ) {
+					value = MinValue;
+				}
 
-                this._value.Value = value;
-            }
-        }
+				this._value.Value = value;
+			}
+		}
 
-        //private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
-        //private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
-        //private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
-        //private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
-        /// <summary>
-        ///     Initializes a random number between 0 and 1
-        /// </summary>
-        public Fuzzy( Double? value = null ) : this() {
-            if ( value.HasValue ) {
-                this.Value = value.Value;
-            }
-            else {
-                this.Randomize();
-            }
-        }
+		public Object Clone() => new Fuzzy( this.Value );
 
-        public static Double Combine( Double left, Double rhs ) {
-            if ( !left.IsNumber() ) {
-                throw new ArgumentOutOfRangeException( nameof( left ) );
-            }
+		//private static readonly Fuzzy Truer = Fuzzy.Combine( Undecided, MaxValue );
+		//private static readonly Fuzzy Falser = Fuzzy.Combine( Undecided, MinValue );
+		//private static readonly Fuzzy UndecidedUpper = Combine( Undecided, Truer);
+		//private static readonly Fuzzy UndecidedLower = Combine( Undecided, Falser );
+		public static Double Combine( Double left, Double right ) {
+			if ( !left.IsNumber() ) {
+				throw new ArgumentOutOfRangeException( nameof( left ) );
+			}
 
-            if ( !rhs.IsNumber() ) {
-                throw new ArgumentOutOfRangeException( nameof( rhs ) );
-            }
+			if ( !right.IsNumber() ) {
+				throw new ArgumentOutOfRangeException( nameof( right ) );
+			}
 
-            return ( left + rhs ) / 2D;
-        }
+			return ( left + right ) / 2D;
+		}
 
-        public static Fuzzy Parse( [CanBeNull] String value ) {
-            if ( String.IsNullOrWhiteSpace( value ) ) {
-                throw new ArgumentNullException( nameof( value ) );
-            }
+		[CanBeNull]
+		public static Fuzzy? Parse( [CanBeNull] String? value ) {
+			if ( String.IsNullOrWhiteSpace( value ) ) {
+				throw new ArgumentNullException( nameof( value ) );
+			}
 
-            if ( Double.TryParse( value, out var result ) ) {
-                return new Fuzzy( result );
-            }
+			if ( Double.TryParse( value, out var result ) ) {
+				return new Fuzzy( result );
+			}
 
-            return Empty;
-        }
+			return default( Fuzzy? );
+		}
 
-        public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
+		public static Boolean TryParse( [CanBeNull] String? value, [CanBeNull] out Fuzzy result ) {
+			if ( String.IsNullOrWhiteSpace( value ) ) {
+				throw new ArgumentNullException( nameof( value ) );
+			}
 
-        public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
+			result = Double.TryParse( value, out var d ) ? new Fuzzy( d ) : null;
 
-        public Object Clone() => new Fuzzy( this.Value );
+			return result != null;
+		}
 
-        //public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
-        public Boolean IsFalseish() => this.Value < Undecided.Low;
+		public void AdjustTowardsMax() => this.Value = ( this.Value + MaxValue ) / 2D;
 
-        public Boolean IsTrueish() => this.Value > Undecided.High;
+		public void AdjustTowardsMin() => this.Value = ( this.Value + MinValue ) / 2D;
 
-        public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
+		//public Boolean IsUndecided( Fuzzy anotherFuzzy ) { return !IsTruer( anotherFuzzy ) && !IsFalser( anotherFuzzy ); }
+		public Boolean IsFalseish() => this.Value < Undecided.Low;
 
-        /// <summary>
-        ///     Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)
-        /// </summary>
-        public void Randomize( LowMiddleHigh? lmh = LowMiddleHigh.Middle ) {
-            switch ( lmh ) {
-                case null:
-                    this.Value = Randem.NextDouble();
+		public Boolean IsTrueish() => this.Value > Undecided.High;
 
-                    break;
+		public Boolean IsUndecided() => !this.IsTrueish() && !this.IsFalseish();
 
-                default:
+		/// <summary>Initializes a random number between 0 and 1 within a range, defaulting to Middle range (~0.50)</summary>
+		public void Randomize( LowMiddleHigh? lmh = LowMiddleHigh.Middle ) {
+			switch ( lmh ) {
+				case null:
+					this.Value = Randem.NextDouble();
 
-                    switch ( lmh.Value ) {
-                        case LowMiddleHigh.Low:
+					break;
 
-                            do {
-                                this.Value = Randem.NextDouble( 0.0D, 0.25D );
-                            } while ( this.Value < MinValue || this.Value > 0.25D );
+				default:
 
-                            break;
+					switch ( lmh.Value ) {
+						case LowMiddleHigh.Low:
 
-                        case LowMiddleHigh.Middle:
+							do {
+								this.Value = Randem.NextDouble( 0.0D, 0.25D );
+							} while ( this.Value is < MinValue or > 0.25D);
 
-                            do {
-                                this.Value = Randem.NextDouble( 0.25D, 0.75D );
-                            } while ( this.Value < 0.25D || this.Value > 0.75D );
+							break;
 
-                            break;
+						case LowMiddleHigh.Middle:
 
-                        case LowMiddleHigh.High:
+							do {
+								this.Value = Randem.NextDouble( 0.25D, 0.75D );
+							} while ( this.Value is < 0.25D or > 0.75D);
 
-                            do {
-                                this.Value = Randem.NextDouble();
-                            } while ( this.Value < 0.75D || this.Value > MaxValue );
+							break;
 
-                            break;
+						case LowMiddleHigh.High:
 
-                        default:
-                            this.Value = Randem.NextDouble();
+							do {
+								this.Value = Randem.NextDouble();
+							} while ( this.Value is < 0.75D or > MaxValue);
 
-                            break;
-                    }
+							break;
 
-                    break;
-            }
-        }
+						default:
+							this.Value = Randem.NextDouble();
 
-        public override String ToString() => $"{this.Value:R}";
-    }
+							break;
+					}
+
+					break;
+			}
+		}
+
+		[NotNull]
+		public override String ToString() => $"{this.Value:R}";
+
+	}
+
 }

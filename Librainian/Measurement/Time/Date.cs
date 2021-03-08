@@ -1,131 +1,87 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "Date.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
-// =========================================================
+// Copyright Â© Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-//
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
-// Our software can be found at "https://Protiguous.Software/"
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// 
+// Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "Date.cs" was last formatted by Protiguous on 2019/08/08 at 8:59 AM.
+// 
+// File "Date.cs" last formatted on 2021-02-03 at 3:18 PM.
 
 namespace Librainian.Measurement.Time {
+	using System;
+	using System.Numerics;
+	using Clocks;
+	using Extensions;
+	using Newtonsoft.Json;
 
-    using System;
-    using System.Numerics;
-    using Clocks;
-    using Extensions;
-    using Newtonsoft.Json;
+	/// <summary>
+	///     <see cref="Year" />, <see cref="Month" />, and <see cref="Day" />.
+	/// </summary>
+	[Immutable]
+	[JsonObject]
+	public record Date( Year Year, Month Month, Day Day ) {
 
-    /// <summary><see cref="Year" />, <see cref="Month" />, and <see cref="Day" />.</summary>
-    [Immutable]
-    [JsonObject]
-    public struct Date {
+		public static readonly Date Zero = new( Year.Zero, Month.MinimumValue, Day.MinimumValue );
 
-        public static readonly Date Zero = new Date( Year.Zero, Month.MinValue, Day.MinValue );
+		public Date( BigInteger year, Byte month, Byte day ) : this( new Year( year ), new Month( month ), new Day( day ) ) {
+			while ( day > Day.Maximum ) {
+				day -= Day.MaximumValue;
+				month++;
 
-        /// <summary>
-        ///     <para>The day of the month. (valid range is 1 to 31)</para>
-        /// </summary>
-        [JsonProperty]
-        public Day Day { get; }
+				while ( month > Month.MaximumValue ) {
+					month -= Month.MaximumValue;
+					year++;
+				}
+			}
 
-        /// <summary>
-        ///     <para>The number of the month. (valid range is 1-12)</para>
-        ///     <para>12 months makes 1 year.</para>
-        /// </summary>
-        [JsonProperty]
-        public Month Month { get; }
+			this.Day = new Day( day );
 
-        /// <summary>
-        ///     <para><see cref="Year" /> can be a positive or negative <see cref="BigInteger" />.</para>
-        /// </summary>
-        [JsonProperty]
-        public Year Year { get; }
+			while ( month > Month.MaximumValue ) {
+				month -= Month.MaximumValue;
+				year++;
+			}
 
-        public static Date Now => new Date( DateTime.Now );
+			this.Month = new Month( month );
 
-        public static Date UtcNow => new Date( DateTime.UtcNow );
+			this.Year = new Year( year );
+		}
 
-        public Date( BigInteger year, SByte month, SByte day ) {
-            while ( day > Day.Maximum ) {
-                day -= Day.MaxValue;
-                month++;
+		public Date( DateTime dateTime ) : this( dateTime.Year, ( Byte )dateTime.Month, ( Byte )dateTime.Day ) { }
 
-                while ( month > Month.MaxValue ) {
-                    month -= Month.MaxValue;
-                    year++;
-                }
-            }
+		public Date( SpanOfTime spanOfTime ) : this( new Year( spanOfTime.GetWholeYears() ), new Month( ( Byte )spanOfTime.Months.Value ),
+			new Day( ( Byte )spanOfTime.Days.Value ) ) { }
 
-            this.Day = new Day( day );
+		public static Date Now => new( DateTime.Now );
 
-            while ( month > Month.MaxValue ) {
-                month -= Month.MaxValue;
-                year++;
-            }
+		public static Date UtcNow => new( DateTime.UtcNow );
 
-            this.Month = new Month( month );
+		public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default( DateTime? );
 
-            this.Year = new Year( year );
-        }
+		public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-        public Date( Year year, Month month, Day day ) {
-            this.Year = year;
-            this.Month = month;
-            this.Day = day;
-        }
+		public static Boolean operator <=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() <= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-        public Date( DateTime dateTime ) : this( year: dateTime.Year, month: ( SByte ) dateTime.Month, day: ( SByte ) dateTime.Day ) { }
+		public static Boolean operator >( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() > right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-        public Date( SpanOfTime spanOfTime ) {
-            this.Year = new Year( spanOfTime.GetWholeYears() );
+		public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-            this.Month = spanOfTime.Months.Value < Month.Minimum.Value ? new Month( Month.MinValue ) : new Month( ( SByte ) spanOfTime.Months.Value );
+		public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
 
-            this.Day = spanOfTime.Days.Value < Day.Minimum.Value ? new Day( Day.Minimum ) : new Day( ( SByte ) spanOfTime.Days.Value );
-        }
-
-        public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default;
-
-        public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
-
-        public static Boolean operator <=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() <= right.ToSpanOfTime().CalcTotalPlanckTimes();
-
-        public static Boolean operator >( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() > right.ToSpanOfTime().CalcTotalPlanckTimes();
-
-        public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
-
-        public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
-    }
+	}
 }

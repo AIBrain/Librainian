@@ -1,267 +1,255 @@
-﻿// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "TickingClock.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're always looking into other solutions.. Any ideas?)
-//
-// =========================================================
+﻿// Copyright © Protiguous. All Rights Reserved.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-//
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we make available.
-//
-// Project: "Librainian", "TickingClock.cs" was last formatted by Protiguous on 2019/08/08 at 8:58 AM.
+// 
+// File "TickingClock.cs" last formatted on 2020-08-27 at 7:45 PM.
+
+#nullable enable
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using System;
-    using System.Timers;
-    using JetBrains.Annotations;
-    using Newtonsoft.Json;
+	using System;
+	using System.Timers;
+	using JetBrains.Annotations;
+	using Newtonsoft.Json;
+	using Utilities;
 
-    /// <summary>
-    ///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
-    ///     <para>Should be threadsafe.</para>
-    ///     <para>
-    ///         Settable events are:
-    ///         <para>
-    ///             <see cref="OnHourTick" />
-    ///         </para>
-    ///         <para>
-    ///             <see cref="OnMinuteTick" />
-    ///         </para>
-    ///         <para>
-    ///             <see cref="OnSecondTick" />
-    ///         </para>
-    ///         <para>
-    ///             <see cref="OnMillisecondTick" />
-    ///         </para>
-    ///     </para>
-    /// </summary>
-    [JsonObject]
-    public class TickingClock : IStandardClock {
+	/// <summary>
+	///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
+	///     <para>Should be threadsafe.</para>
+	///     <para>
+	///         Settable events are:
+	///         <para>
+	///             <see cref="OnHourTick" />
+	///         </para>
+	///         <para>
+	///             <see cref="OnMinuteTick" />
+	///         </para>
+	///         <para>
+	///             <see cref="OnSecondTick" />
+	///         </para>
+	///         <para>
+	///             <see cref="OnMillisecondTick" />
+	///         </para>
+	///     </para>
+	/// </summary>
+	[JsonObject]
+	public class TickingClock : ABetterClassDispose, IStandardClock {
 
-        public enum Granularity {
+		public enum Granularity {
 
-            Microseconds,
+			Microseconds,
+			Milliseconds,
+			Seconds,
+			Minutes,
+			Hours
 
-            Milliseconds,
+		}
 
-            Seconds,
+		/// <summary></summary>
+		[CanBeNull]
+		private Timer? _timer;
 
-            Minutes,
+		public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
+			this.Hour = ( ClockHour )time.Hour;
+			this.Minute = ( ClockMinute )time.Minute;
+			this.Second = ( ClockSecond )time.Second;
+			this.Millisecond = ( ClockMillisecond )time.Millisecond;
+			this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
+			this.ResetTimer( granularity );
+		}
 
-            Hours
-        }
+		public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
+			this.Hour = time.Hour;
+			this.Minute = time.Minute;
+			this.Second = time.Second;
+			this.Millisecond = time.Millisecond;
+			this.Microsecond = time.Microsecond;
+			this.ResetTimer( granularity );
+		}
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Hour Hour { get; private set; }
+		[JsonProperty]
+		public ClockMicrosecond Microsecond { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Millisecond Millisecond { get; private set; }
+		[CanBeNull]
+		[JsonProperty]
+		public Action<ClockHour>? OnHourTick { get; set; }
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Minute Minute { get; private set; }
+		[CanBeNull]
+		[JsonProperty]
+		public Action? OnMillisecondTick { get; set; }
 
-        /// <summary>
-        /// </summary>
-        [JsonProperty]
-        public Second Second { get; private set; }
+		[CanBeNull]
+		[JsonProperty]
+		public Action? OnMinuteTick { get; set; }
 
-        public Boolean IsAm() => !this.IsPm();
+		[CanBeNull]
+		[JsonProperty]
+		public Action? OnSecondTick { get; set; }
 
-        public Boolean IsPm() => this.Hour.Value >= 12;
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockHour Hour { get; private set; }
 
-        public Time Time() {
-            try {
-                this._timer?.Stop(); //stop the timer so the seconds don't tick while we get the values.
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockMillisecond Millisecond { get; private set; }
 
-                return new Time( hour: this.Hour.Value, minute: this.Minute.Value, second: this.Second.Value );
-            }
-            finally {
-                this._timer?.Start();
-            }
-        }
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockMinute Minute { get; private set; }
 
-        /// <summary>
-        /// </summary>
-        [CanBeNull]
-        private Timer _timer;
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockSecond Second { get; private set; }
 
-        [JsonProperty]
-        public Microsecond Microsecond { get; private set; }
+		public Boolean IsAm() => !this.IsPm();
 
-        [CanBeNull]
-        [JsonProperty]
-        public Action<Hour> OnHourTick { get; set; }
+		public Boolean IsPm() => this.Hour.Value >= 12;
 
-        [CanBeNull]
-        [JsonProperty]
-        public Action OnMillisecondTick { get; set; }
+		public Time Time() {
+			try {
+				this._timer?.Stop(); //stop the timer so the seconds don't tick while we get the values.
 
-        [CanBeNull]
-        [JsonProperty]
-        public Action OnMinuteTick { get; set; }
+				return new Time( this.Hour.Value, this.Minute.Value, this.Second.Value );
+			}
+			finally {
+				this._timer?.Start();
+			}
+		}
 
-        [CanBeNull]
-        [JsonProperty]
-        public Action OnSecondTick { get; set; }
+		private void OnHourElapsed( [CanBeNull]
+		                            Object? sender, [CanBeNull]
+		                            ElapsedEventArgs? e ) {
+			this.Hour = this.Hour.Next( out var tocked );
 
-        public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = ( Hour ) time.Hour;
-            this.Minute = ( Minute ) time.Minute;
-            this.Second = ( Second ) time.Second;
-            this.Millisecond = ( Millisecond ) time.Millisecond;
-            this.Microsecond = 0; //TODO can we get using DateTime.Ticks vs StopWatch.TicksPer/Frequency stuff?
-            this.ResetTimer( granularity );
-        }
+			if ( tocked ) {
+				this.OnHourTick?.Invoke( this.Hour );
+			}
 
-        public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
-            this.Hour = time.Hour;
-            this.Minute = time.Minute;
-            this.Second = time.Second;
-            this.Millisecond = time.Millisecond;
-            this.Microsecond = time.Microsecond;
-            this.ResetTimer( granularity );
-        }
+		}
 
-        private void OnHourElapsed( Object sender, ElapsedEventArgs e ) {
+		private void OnMillisecondElapsed( [CanBeNull]
+		                                   Object? sender, [CanBeNull]
+		                                   ElapsedEventArgs e ) {
+			this.Millisecond = this.Millisecond.Next( out var tocked );
 
-            this.Hour = this.Hour.Next( out var ticked );
+			if ( tocked ) {
+				this.OnMillisecondTick?.Invoke();
 
-            if ( !ticked ) {
-                return;
-            }
+				this.OnSecondElapsed( sender, e );
+			}
 
-            this.OnHourTick?.Invoke( this.Hour );
-        }
+		}
 
-        private void OnMillisecondElapsed( Object sender, ElapsedEventArgs e ) {
+		private void OnMinuteElapsed( [CanBeNull]
+		                              Object? sender, [CanBeNull]
+		                              ElapsedEventArgs e ) {
+			this.Minute = this.Minute.Next( out var tocked );
 
-            this.Millisecond = this.Millisecond.Next( out var ticked );
+			if ( tocked ) {
+				this.OnMinuteTick?.Invoke();
 
-            if ( !ticked ) {
-                return;
-            }
+				this.OnHourElapsed( sender, e );
+			}
 
-            this.OnMillisecondTick?.Invoke();
+		}
 
-            this.OnSecondElapsed( sender, e );
-        }
+		private void OnSecondElapsed( [CanBeNull]
+		                              Object? sender, [CanBeNull]
+		                              ElapsedEventArgs e ) {
+			this.Second = this.Second.Next( out var tocked );
 
-        private void OnMinuteElapsed( Object sender, ElapsedEventArgs e ) {
+			if ( tocked ) {
+				this.OnSecondTick?.Invoke();
 
-            this.Minute = this.Minute.Next( out var ticked );
+				this.OnMinuteElapsed( sender, e );
+			}
 
-            if ( !ticked ) {
-                return;
-            }
+		}
 
-            this.OnMinuteTick?.Invoke();
+		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+		public override void DisposeManaged() {
+			using ( this._timer ) {
+				this._timer?.Stop();
+			}
+		}
 
-            this.OnHourElapsed( sender, e );
-        }
+		public void ResetTimer( Granularity granularity ) {
+			using ( this._timer ) {
+				this._timer?.Stop();
+			}
 
-        private void OnSecondElapsed( Object sender, ElapsedEventArgs e ) {
+			switch ( granularity ) {
+				case Granularity.Milliseconds:
 
-            this.Second = this.Second.Next( out var ticked );
+					
+					this._timer = new Timer( ( Double )Milliseconds.One.Value ) {
+						AutoReset = true
+					};
 
-            if ( !ticked ) {
-                return;
-            }
+					this._timer.Elapsed += this.OnMillisecondElapsed;
 
-            this.OnSecondTick?.Invoke();
+					break;
 
-            this.OnMinuteElapsed( sender, e );
-        }
+				case Granularity.Seconds:
 
-        public void ResetTimer( Granularity granularity ) {
-            using ( this._timer ) {
-                this._timer?.Stop();
-            }
+					
+					this._timer = new Timer( ( Double )Seconds.One.Value ) {
+						AutoReset = true
+					};
 
-            switch ( granularity ) {
-                case Granularity.Milliseconds:
+					this._timer.Elapsed += this.OnSecondElapsed;
 
-                    // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Milliseconds.One.Value ) {
-                        AutoReset = true
-                    };
+					break;
 
-                    this._timer.Elapsed += this.OnMillisecondElapsed;
+				case Granularity.Minutes:
 
-                    break;
+					
+					this._timer = new Timer( ( Double )Minutes.One.Value ) {
+						AutoReset = true
+					};
 
-                case Granularity.Seconds:
+					this._timer.Elapsed += this.OnMinuteElapsed;
 
-                    // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Seconds.One.Value ) {
-                        AutoReset = true
-                    };
+					break;
 
-                    this._timer.Elapsed += this.OnSecondElapsed;
+				case Granularity.Hours:
 
-                    break;
+					
+					this._timer = new Timer( ( Double )Hours.One.Value ) {
+						AutoReset = true
+					};
 
-                case Granularity.Minutes:
+					this._timer.Elapsed += this.OnHourElapsed;
 
-                    // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Minutes.One.Value ) {
-                        AutoReset = true
-                    };
+					break;
 
-                    this._timer.Elapsed += this.OnMinuteElapsed;
+				default:
+					throw new ArgumentOutOfRangeException( nameof( granularity ) );
+			}
 
-                    break;
+			this._timer.Start();
+		}
 
-                case Granularity.Hours:
+	}
 
-                    // ReSharper disable once UseObjectOrCollectionInitializer
-                    this._timer = new Timer( interval: ( Double ) Hours.One.Value ) {
-                        AutoReset = true
-                    };
-
-                    this._timer.Elapsed += this.OnHourElapsed;
-
-                    break;
-
-                default: throw new ArgumentOutOfRangeException( nameof( granularity ) );
-            }
-
-            this._timer.Start();
-        }
-    }
 }
