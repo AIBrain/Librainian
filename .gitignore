@@ -517,3 +517,10 @@ MigrationBackup/
 .ionide/
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains,visualstudio,rider,visualstudiocode
+Librainian/obj/x64/Debug/net5.0-windows/Librainian.AssemblyInfo.cs
+Librainian/obj/x64/Debug/net5.0-windows/Librainian.AssemblyInfoInputs.cache
+Librainian/obj/x64/Debug/net5.0-windows/Librainian.csproj.CoreCompileInputs.cache
+Librainian/obj/x64/Debug/net5.0-windows/Librainian.csprojAssemblyReference.cache
+Librainian/obj/x64/Release/net5.0-windows/Librainian.AssemblyInfo.cs
+Librainian/obj/x64/Release/net5.0-windows/Librainian.AssemblyInfoInputs.cache
+Librainian/obj/x64/Release/net5.0-windows/Librainian.csprojAssemblyReference.cache
