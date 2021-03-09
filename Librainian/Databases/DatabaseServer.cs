@@ -28,13 +28,16 @@
 #nullable enable
 
 namespace Librainian.Databases {
+
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
 	using System.Data.Common;
+	using System.Data.SqlTypes;
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Threading;
+	using System.Xml;
 	using Collections.Sets;
 	using Converters;
 	using Exceptions.Warnings;
@@ -44,11 +47,13 @@ namespace Librainian.Databases {
 	using Maths;
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
+	using Microsoft.Data.SqlClient.Server;
 	using Parsing;
 	using PooledAwait;
 	using Utilities;
 
 	public class DatabaseServer : ABetterClassDispose, IDatabase {
+
 		/// <summary>
 		///     <para>Create a database object to the specified server.</para>
 		/// </summary>
@@ -110,7 +115,10 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand {
-					Connection = this.OpenConnection(), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = commandType, CommandText = query
+					Connection = this.OpenConnection(),
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+					CommandType = commandType,
+					CommandText = query
 				};
 
 				return command.PopulateParameters( parameters ).ExecuteNonQuery();
@@ -156,7 +164,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				return command.PopulateParameters( parameters ).ExecuteNonQuery();
@@ -185,7 +194,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
@@ -223,7 +233,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = CommandType.StoredProcedure,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
@@ -261,7 +272,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = CommandType.StoredProcedure,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
@@ -301,7 +313,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var bob = command.PopulateParameters( parameters ).ExecuteReader();
@@ -342,7 +355,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
@@ -384,7 +398,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
@@ -426,7 +441,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				var sqlCommand = command.PopulateParameters( parameters );
@@ -466,7 +482,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var scalar = command.PopulateParameters( parameters ).ExecuteScalarAsync( this.Token );
@@ -561,7 +578,7 @@ namespace Librainian.Databases {
 			await using var command = new SqlCommand {
 				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
 				CommandType = commandType,
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
 				CommandText = sproc
 			};
 
@@ -584,7 +601,10 @@ namespace Librainian.Databases {
 			this.Sproc = $"Executing AdHoc SQL: {sql.DoubleQuote()}.";
 
 			using var command = new SqlCommand {
-				Connection = this.OpenConnection(), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
+				Connection = this.OpenConnection(),
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+				CommandType = CommandType.Text,
+				CommandText = sql
 			};
 
 			using var reader = command.PopulateParameters( parameters ).ExecuteReader();
@@ -602,7 +622,7 @@ namespace Librainian.Databases {
 
 			await using var command = new SqlCommand {
 				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
 				CommandType = CommandType.Text,
 				CommandText = sql
 			};
@@ -628,7 +648,7 @@ namespace Librainian.Databases {
 
 			await using var command = new SqlCommand {
 				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
 				CommandType = CommandType.Text,
 				CommandText = sql
 			};
@@ -663,7 +683,7 @@ namespace Librainian.Databases {
 			await using var command = new SqlCommand {
 				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
 				CommandType = commandType,
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
 				CommandText = sproc
 			};
 
@@ -690,7 +710,7 @@ namespace Librainian.Databases {
 			await using var command = new SqlCommand {
 				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
 				CommandType = CommandType.StoredProcedure,
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
 				CommandText = sproc
 			};
 
@@ -715,7 +735,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				var reader = command.PopulateParameters( parameters ).ExecuteReader();
@@ -774,7 +795,8 @@ namespace Librainian.Databases {
 				this.Sproc = sproc ?? throw new ArgumentNullException( nameof( sproc ) );
 
 				using var command = new SqlCommand( sproc, this.OpenConnection() ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = CommandType.StoredProcedure,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				return command.PopulateParameters( parameters ).ExecuteNonQuery();
@@ -830,7 +852,8 @@ namespace Librainian.Databases {
 
 			try {
 				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = CommandType.StoredProcedure,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var scalar = command.PopulateParameters( parameters ).ExecuteScalarAsync( this.Token );
@@ -874,7 +897,8 @@ namespace Librainian.Databases {
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
+					CommandType = commandType,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 				};
 
 				using var reader = command.PopulateParameters( parameters ).ExecuteReader( CommandBehavior.CloseConnection );
@@ -946,7 +970,8 @@ namespace Librainian.Databases {
 			[NotNull] String serverName,
 			[NotNull] String instanceName,
 			TimeSpan connectTimeout,
-			[CanBeNull] Credentials? credentials = default
+			[CanBeNull] Credentials? credentials = default,
+			Int32 packetSize = 4096
 		) {
 			if ( String.IsNullOrWhiteSpace( serverName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( serverName ) );
@@ -958,13 +983,13 @@ namespace Librainian.Databases {
 
 			var builder = new SqlConnectionStringBuilder {
 				DataSource = $@"{serverName}\{instanceName}",
-				
+
 				//AsynchronousProcessing = true,
 				ApplicationIntent = ApplicationIntent.ReadWrite,
 				ConnectRetryCount = 3,
-				ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
+				ConnectTimeout = ( Int32 )connectTimeout.TotalSeconds,
 				ConnectRetryInterval = 1,
-				PacketSize = 4096,
+				PacketSize = packetSize,
 				Pooling = true
 			};
 
@@ -1023,5 +1048,113 @@ namespace Librainian.Databases {
             } ).ConfigureAwait( false );
         }
         */
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T">The type of the data in <paramref name="rows"/>.</typeparam>
+		/// <param name="sproc">The fully qualified name of the stored procedure to execute.</param>
+		/// <param name="useDataTable"></param>
+		/// <param name="columnName"></param>
+		/// <param name="tableVariableTypeName">Example: dbo.PageViewTableType</param>
+		/// <param name="rows"></param>
+		public void ExecuteProcedure<T>( String sproc, Boolean useDataTable, [NotNull] String columnName, [NotNull] String tableVariableTypeName, IEnumerable<T> rows ) {
+			if ( String.IsNullOrWhiteSpace( columnName ) ) {
+				throw new ArgumentEmptyException( nameof( columnName ) );
+			}
+
+			if ( String.IsNullOrWhiteSpace( tableVariableTypeName ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( tableVariableTypeName ) );
+			}
+
+			using var command = new SqlCommand( sproc, this.OpenConnection() ) {
+				CommandType = CommandType.StoredProcedure,
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+			};
+
+			if ( columnName.Left( 1 ) != "@" ) {
+				columnName = $"@{columnName}";
+			}
+
+			SqlParameter? parameter;
+			if ( useDataTable ) {
+				parameter = command.Parameters?.AddWithValue( columnName, CreateDataTable( columnName, rows ) );
+			}
+			else {
+				var dbType = TranslateToSqlDbType( typeof( T ) );
+				parameter = command.Parameters?.AddWithValue( columnName, CreateSqlDataRecords( columnName, dbType, rows ) );
+			}
+
+			if ( parameter is null ) {
+				throw new SqlTypeException( $"Unknown data type. Unable to create {nameof(SqlParameter)}." );
+			}
+
+			parameter.SqlDbType = SqlDbType.Structured;
+			parameter.TypeName = tableVariableTypeName;
+
+			command.ExecuteNonQuery();
+		}
+
+		/// <summary>
+		/// Try a best guess for the <see cref="SqlDbType"/> of <paramref name="type"/>.
+		/// <para>
+		/// <remarks>Try <paramref name="type"/> ?? SqlDbType.Variant</remarks>
+		/// </para>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static SqlDbType TranslateToSqlDbType<T>( T type ) {
+			return type switch {
+				String s => s.Length.Between( 1, 4000 ) ? SqlDbType.NVarChar : SqlDbType.NText,
+				UInt64 => SqlDbType.BigInt,
+				Int64 => SqlDbType.BigInt,
+				Int32 => SqlDbType.Int,
+				UInt32 => SqlDbType.Int,
+				Byte[] bytes => bytes.Length.Between( 1, 8000 ) ? SqlDbType.VarBinary : SqlDbType.Image,
+				Boolean => SqlDbType.Bit,
+				Char => SqlDbType.NChar,
+				DateTime => SqlDbType.DateTime2,
+				Decimal => SqlDbType.Decimal,
+				Single => SqlDbType.Float,
+				Guid => SqlDbType.UniqueIdentifier,
+				Byte => SqlDbType.TinyInt,
+				Int16 => SqlDbType.SmallInt,
+				XmlDocument => SqlDbType.Xml,
+				Date => SqlDbType.Date,
+				TimeSpan => SqlDbType.Time,
+				Time => SqlDbType.Time,
+				DateTimeOffset => SqlDbType.DateTimeOffset,
+				_ => SqlDbType.Variant
+			};
+		}
+
+		internal static DataTable CreateDataTable<T>( [NotNull] String columnName, IEnumerable<T> rows ) {
+			if ( String.IsNullOrWhiteSpace( columnName ) ) {
+				throw new ArgumentEmptyException( nameof( columnName ) );
+			}
+
+			DataTable table = new();
+			table.Columns.Add( columnName, typeof( T ) );
+			foreach ( var row in rows ) {
+				table.Rows.Add( row );
+			}
+
+			return table;
+		}
+
+		internal static IEnumerable<SqlDataRecord> CreateSqlDataRecords<T>( [NotNull] String columnName, SqlDbType sqlDbType, IEnumerable<T> rows ) {
+			SqlMetaData[] metaData = new SqlMetaData[ 1 ];
+			metaData[ 0 ] = new SqlMetaData( columnName, sqlDbType );
+			SqlDataRecord record = new( metaData );
+			foreach ( var row in rows ) {
+				if ( row is not null ) {
+					record.SetValue( 0, row );
+				}
+
+				yield return record;
+			}
+		}
 	}
+
 }
