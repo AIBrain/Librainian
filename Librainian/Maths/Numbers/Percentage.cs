@@ -29,6 +29,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Diagnostics;
 	using Extensions;
 	using JetBrains.Annotations;
+	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Rationals;
 
@@ -38,49 +39,54 @@ namespace Librainian.Maths.Numbers {
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
-	public class Percentage : IComparable<Percentage>, IComparable<Double>, IEquatable<Percentage>, IComparable<Decimal> {
+	public record Percentage : IComparable<Percentage>, IComparable<Double>, IComparable<Decimal> {
 
-		/// <summary></summary>
-		/// <param name="numerator">
-		///     The part of a fraction that is above the line and signifies the number to be divided by the
-		///     denominator.
-		/// </param>
-		/// <param name="denominator">
-		///     The part of a fraction that is below the line and that functions as the divisor of the
-		///     numerator.
-		/// </param>
-		public Percentage( Rational numerator, Rational denominator ) => this.Quotient = numerator / denominator;
+		public Percentage( Rational numerator, Rational denominator ) : this( ( Decimal )Rational.Divide( numerator, denominator ) ) { }
+		public Percentage( Rational value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Rational value ) : this( value, Rational.One ) { }
+		public Percentage( Single value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Single value ) : this( ( Rational )value ) { }
+		public Percentage( Double value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Double value ) : this( ( Rational )value ) { }
+		public Percentage( Decimal value ) => this.Value = value;
 
-		public Percentage( Decimal value ) : this( ( Rational )value ) { }
+		public Percentage( Int32 value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Int32 value ) : this( ( Rational )value ) { }
+		public const Decimal MinimumValue = 0m;
+		public const Decimal MaximumValue = 1m;
+
+		private readonly Decimal _value;
 
 		/// <summary>The number resulting from the division of one number by another.</summary>
 		[JsonProperty]
-		public Rational Quotient { get; }
+		public Decimal Value {
+			get => this._value;
+
+			init {
+				this._value = value switch {
+					< MinimumValue => MinimumValue,
+					> MaximumValue => MaximumValue,
+					var _ => value
+				};
+			}
+		}
 
 		[Pure]
-		public Int32 CompareTo( Decimal other ) => this.Quotient.CompareTo( other );
+		public Int32 CompareTo( Decimal other ) => this.Value.CompareTo( other );
 
 		[Pure]
-		public Int32 CompareTo( Double other ) => this.Quotient.CompareTo( other );
+		public Int32 CompareTo( Double other ) => this.Value.CompareTo( other );
 
 		[Pure]
 		public Int32 CompareTo( [CanBeNull] Percentage? other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				return Order.Before;
 			}
 
-			return this.Quotient.CompareTo( other.Quotient );
+			return this.Value.CompareTo( other.Value );
 		}
 
-		public Boolean Equals( [CanBeNull] Percentage? other ) => Equals( this, other );
+		//public Boolean Equals( [CanBeNull] Percentage? other ) => Equals( this, other );
 
 		/// <summary>Lerp?</summary>
 		/// <param name="left"></param>
@@ -88,7 +94,7 @@ namespace Librainian.Maths.Numbers {
 		/// <returns></returns>
 		[NotNull]
 		public static Percentage Combine( [NotNull] Percentage left, [NotNull] Percentage right ) =>
-			new( ( left.Quotient + right.Quotient ) / ( Rational.One + Rational.One ) );
+			new( ( left.Value + right.Value ) / 2m );
 
 		/// <summary>static comparison</summary>
 		/// <param name="left"></param>
@@ -103,23 +109,25 @@ namespace Librainian.Maths.Numbers {
 				return false;
 			}
 
-			return left.Quotient == right.Quotient;
+			return left.Value == right.Value;
 		}
 
-		public static explicit operator Double( [NotNull] Percentage special ) => ( Double )special.Quotient;
+		public static explicit operator Double( [NotNull] Percentage special ) => ( Double )special.Value;
+		public static explicit operator Single( [NotNull] Percentage special ) => ( Single)special.Value;
 
 		[NotNull]
-		public static implicit operator Percentage( Single value ) => new( ( Rational )value );
+		public static implicit operator Percentage( Single value ) => new( value );
 
 		[NotNull]
-		public static implicit operator Percentage( Double value ) => new( ( Rational )value );
+		public static implicit operator Percentage( Double value ) => new( value );
 
 		[NotNull]
-		public static implicit operator Percentage( Decimal value ) => new( ( Rational )value );
+		public static implicit operator Percentage( Decimal value ) => new( value );
 
 		[NotNull]
 		public static implicit operator Percentage( Int32 value ) => new( value );
 
+		/*
 		/// <summary>
 		///     Returns a value that indicates whether two <see cref="T:Librainian.Maths.Numbers.Percentage" /> objects have
 		///     different values.
@@ -128,10 +136,12 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="right">The second value to compare.</param>
 		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
 		public static Boolean operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
+		*/
 
 		[NotNull]
 		public static Percentage operator +( [NotNull] Percentage left, [NotNull] Percentage right ) => Combine( left, right );
 
+		/*
 		/// <summary>
 		///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Maths.Numbers.Percentage" />
 		///     objects are equal.
@@ -143,33 +153,43 @@ namespace Librainian.Maths.Numbers {
 		///     false.
 		/// </returns>
 		public static Boolean operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
+		*/
 
 		[CanBeNull]
-		public static Percentage Parse( [NotNull] String value ) {
+		public static Percentage? Parse( [NotNull] String value ) {
 			if ( value is null ) {
 				throw new ArgumentNullException( nameof( value ) );
 			}
 
 			if ( Decimal.TryParse( value, out var dec ) ) {
-				return new Percentage( ( Rational )dec );
+				return new Percentage( dec );
+			}
+
+			if ( Rational.TryParse( value, out var rational ) ) {
+				return new Percentage( rational );
 			}
 
 			if ( Double.TryParse( value, out var dob ) ) {
-				return new Percentage( ( Rational )dob );
+				return new Percentage( dob );
 			}
 
 			return default( Percentage );
 		}
 
-		public static Boolean TryParse( [NotNull] String numberString, [CanBeNull] out Percentage result ) {
+		public static Boolean TryParse( [NotNull] String numberString, [CanBeNull] out Percentage? result ) {
 			if ( Decimal.TryParse( numberString, out var dec ) ) {
-				result = new Percentage( ( Rational )dec );
+				result = new Percentage( dec );
+
+				return true;
+			}
+			if ( Rational.TryParse( numberString, out var rational ) ) {
+				result = new Percentage( rational );
 
 				return true;
 			}
 
 			if ( Double.TryParse( numberString, out var dob ) ) {
-				result = new Percentage( ( Rational )dob );
+				result = new Percentage( dob );
 
 				return true;
 			}
@@ -179,6 +199,7 @@ namespace Librainian.Maths.Numbers {
 			return false;
 		}
 
+		/*
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>
 		/// <param name="obj">The object to compare with the current object.</param>
 		/// <returns>
@@ -186,13 +207,32 @@ namespace Librainian.Maths.Numbers {
 		///     <see langword="false" />.
 		/// </returns>
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as Percentage );
+		*/
 
+		/*
 		/// <summary>Serves as the default hash function.</summary>
 		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Quotient.GetHashCode();
+		public override Int32 GetHashCode() => this.Value.GetHashCode();
+		*/
 
+		/*
 		[NotNull]
-		public override String ToString() => $"{this.Quotient.ToString()}";
+		public override String ToString() => $"{this.Value.ToString()}";
+		*/
+
+		public virtual Boolean Equals( Percentage? other ) {
+			if ( other is null ) {
+				return false;
+			}
+
+			if ( ReferenceEquals( this, other ) ) {
+				return true;
+			}
+
+			return this.Value == other.Value;
+		}
+
+		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
 	}
 
