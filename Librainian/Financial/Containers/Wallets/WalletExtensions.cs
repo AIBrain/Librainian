@@ -70,7 +70,7 @@ namespace Librainian.Financial.Containers.Wallets {
             return message.Denomination switch {
                 IBankNote bankNote => wallet.Deposit( bankNote, message.Quantity ),
                 ICoin coin => wallet.Deposit( coin, message.Quantity ) > Decimal.Zero,
-                _ => throw new InvalidOperationException( $"Unknown denomination {message.Denomination}" )
+                var _ => throw new InvalidOperationException( $"Unknown denomination {message.Denomination}" )
             };
 
         }

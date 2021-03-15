@@ -216,7 +216,7 @@ namespace Librainian.Persistence {
 				return false;
 			}
 
-			return this.Data[section].TryRemove(key, out _);
+			return this.Data[section].TryRemove(key, out var _);
 		}
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>

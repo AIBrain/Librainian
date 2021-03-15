@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Platforms>x64</Platforms>
 		<ApplicationIcon>P:\Programming\Projects 2021\Librainian\Librainian.ico</ApplicationIcon>

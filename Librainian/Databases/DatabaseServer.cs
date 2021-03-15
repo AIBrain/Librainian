@@ -1125,7 +1125,7 @@ namespace Librainian.Databases {
 				TimeSpan => SqlDbType.Time,
 				Time => SqlDbType.Time,
 				DateTimeOffset => SqlDbType.DateTimeOffset,
-				_ => SqlDbType.Variant
+				var _ => SqlDbType.Variant
 			};
 		}
 

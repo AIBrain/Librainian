@@ -368,7 +368,7 @@ namespace Librainian.Financial.Containers.Wallets {
 	        return denomination switch {
 		        IBankNote asBankNote => this.TryWithdraw( asBankNote, quantity ),
 		        ICoin asCoin => this.TryWithdraw( asCoin, quantity ),
-		        _ => throw new WalletException( $"Unknown denomination {denomination}" )
+		        var _ => throw new WalletException( $"Unknown denomination {denomination}" )
 	        };
         }
 
@@ -380,7 +380,7 @@ namespace Librainian.Financial.Containers.Wallets {
 	        return message.Denomination switch {
 		        IBankNote asBankNote => this.TryWithdraw( asBankNote, message.Quantity ),
 		        ICoin asCoin => this.TryWithdraw( asCoin, message.Quantity ),
-		        _ => throw new WalletException( $"Unknown denomination {message.Denomination}" )
+		        var _ => throw new WalletException( $"Unknown denomination {message.Denomination}" )
 	        };
         }
 

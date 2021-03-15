@@ -159,7 +159,7 @@ namespace Librainian.Threading {
 		}
 
 		public static Int32 GetMaximumActiveWorkerThreads() {
-			ThreadPool.GetMaxThreads( out _, out var maxPortThreads );
+			ThreadPool.GetMaxThreads( out var _, out var maxPortThreads );
 
 			return maxPortThreads;
 		}
@@ -181,7 +181,7 @@ namespace Librainian.Threading {
 				Decimal => sizeof( Decimal ),
 				String s => sizeof( Char ) * s.Length,
 				{ } => sizeof( Int32 ),	//BUG 4 ?? 8. sizeof(Pointer)
-				_ => 0
+				var _ => 0
 			} );
 
 		/// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>

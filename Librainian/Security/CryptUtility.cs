@@ -46,7 +46,7 @@ namespace Librainian.Security {
 				0 => pixelColor.R,
 				1 => pixelColor.G,
 				2 => pixelColor.B,
-				_ => 0
+				var _ => 0
 			};
 
 			return returnValue;
@@ -117,7 +117,7 @@ namespace Librainian.Security {
 				0 => Color.FromArgb( newValue, pixelColor.G, pixelColor.B ),
 				1 => Color.FromArgb( pixelColor.R, newValue, pixelColor.B ),
 				2 => Color.FromArgb( pixelColor.R, pixelColor.G, newValue ),
-				_ => pixelColor
+				var _ => pixelColor
 			};
 		}
 

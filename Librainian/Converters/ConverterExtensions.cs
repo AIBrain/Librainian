@@ -637,7 +637,7 @@ namespace Librainian.Converters {
                 null => default( String? ),
                 DBNull _ => default( String? ),
                 String s => s.Trimmed(),
-                _ => Equals( self, DBNull.Value ) ? default( String? ) : self.ToString().Trimmed()
+                var _ => Equals( self, DBNull.Value ) ? default( String? ) : self.ToString().Trimmed()
             };
 
         /// <summary>Returns a trimmed string from <paramref name="value" />, or throws <see cref="FormatException" />.</summary>

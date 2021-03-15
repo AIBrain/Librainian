@@ -88,7 +88,7 @@ namespace Librainian.Persistence.InIFiles {
 				}
 
 				if (value is null && this.AutoCleanup) {
-					this.Data.TryRemove(key, out _); //a little cleanup
+					this.Data.TryRemove(key, out var _); //a little cleanup
 				}
 				else {
 					this.Data[key] = value;

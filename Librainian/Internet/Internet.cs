@@ -146,7 +146,7 @@ namespace Librainian.Internet {
 						exception.Log();
 					}
 					finally {
-						DownloadRequests.TryRemove( this.Id, out _ );
+						DownloadRequests.TryRemove( this.Id, out var _ );
 					}
 				};
 

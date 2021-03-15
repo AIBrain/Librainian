@@ -79,7 +79,7 @@ namespace Librainian.Extensions {
 				SeekOrigin.Begin => offset,
 				SeekOrigin.Current => this.Position + offset,
 				SeekOrigin.End => this.Length + offset,
-				_ => this.Position
+				var _ => this.Position
 			};
 
 			if ( newPosition < 0 ) {

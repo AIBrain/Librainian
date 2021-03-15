@@ -169,7 +169,7 @@ namespace Librainian.Threading {
 			type switch {
 				null     => false,
 				String _ => true,
-				_        => type.GetType().IsPrimitive
+				var _        => type.GetType().IsPrimitive
 			};
 
 	}

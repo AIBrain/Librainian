@@ -326,7 +326,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				FileAccess.Read => PriNativeMethods.EFileAccess.GenericRead,
 				FileAccess.Write => PriNativeMethods.EFileAccess.GenericWrite,
 				FileAccess.ReadWrite => PriNativeMethods.EFileAccess.GenericRead | PriNativeMethods.EFileAccess.GenericWrite,
-				_ => throw new ArgumentOutOfRangeException( nameof( access ) )
+				var _ => throw new ArgumentOutOfRangeException( nameof( access ) )
 			};
 		}
 

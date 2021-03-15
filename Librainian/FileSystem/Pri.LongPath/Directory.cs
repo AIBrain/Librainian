@@ -193,7 +193,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			[NotNull] String normalizedSearchPattern
 		) {
 			// First check whether the specified path refers to a directory and exists
-			var errorCode = normalizedPath.TryGetDirectoryAttributes( out _ );
+			var errorCode = normalizedPath.TryGetDirectoryAttributes( out var _ );
 
 			if ( errorCode != 0 ) {
 				throw Common.GetExceptionFromWin32Error( errorCode );

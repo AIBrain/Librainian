@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Time {
 
 		static HighResolutionDateTime() {
 			try {
-				NativeMethods.GetSystemTimePreciseAsFileTime( out _ );
+				NativeMethods.GetSystemTimePreciseAsFileTime( out var _ );
 				IsAvailable = true;
 			}
 			catch ( EntryPointNotFoundException ) {

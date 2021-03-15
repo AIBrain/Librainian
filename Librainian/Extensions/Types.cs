@@ -476,7 +476,7 @@ namespace Librainian.Extensions {
 				TypeCode.UInt64 => typeof( UInt64 ),
 				TypeCode.Empty => typeof( Object ),
 				TypeCode.Object => typeof( Object ),
-				_ => typeof( Object )
+				var _ => typeof( Object )
 			};
 
 		public static Boolean TryCast<T>( this Object value, [CanBeNull] out T result ) {
@@ -498,7 +498,7 @@ namespace Librainian.Extensions {
 					value = value switch {
 						String s => new Guid( s ),
 						Byte[] bytes => new Guid( bytes ),
-						_ => value
+						var _ => value
 					};
 				}
 

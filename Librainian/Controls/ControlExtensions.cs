@@ -701,7 +701,7 @@ namespace Librainian.Controls {
 		/// <param name="s"></param>
 		/// <returns></returns>
 		public static CheckState ToCheckState( [NotNull] this String s ) =>
-			!String.IsNullOrWhiteSpace( s ) ? s.ToBoolean() ? CheckState.Checked : Boolean.TryParse( s, out _ ) ? CheckState.Checked : CheckState.Unchecked :
+			!String.IsNullOrWhiteSpace( s ) ? s.ToBoolean() ? CheckState.Checked : Boolean.TryParse( s, out var _ ) ? CheckState.Checked : CheckState.Unchecked :
 				CheckState.Unchecked;
 
 		public static Int32 ToRgb( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;

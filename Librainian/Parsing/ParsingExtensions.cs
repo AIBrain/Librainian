@@ -270,7 +270,7 @@ namespace Librainian.Parsing {
 			self switch {
 				String s => s.Trim().NullIfEmpty(),
 				null => null,
-				_ => self.ToString()?.Trim().NullIfEmpty()
+				var _ => self.ToString()?.Trim().NullIfEmpty()
 			};
 
 		[DebuggerStepThrough]
@@ -371,11 +371,11 @@ namespace Librainian.Parsing {
 				13 => $"{number}th",
 				12 => $"{number}th",
 				11 => $"{number}th",
-				_ => ( number % 10 ) switch {
+				var _ => ( number % 10 ) switch {
 					1 => $"{number}st",
 					2 => $"{number}nd",
 					3 => $"{number}rd",
-					_ => $"{number}th"
+					var _ => $"{number}th"
 				}
 			};
 
@@ -836,7 +836,7 @@ namespace Librainian.Parsing {
 
 		[Pure]
 		public static Boolean IsJustNumbers( [CanBeNull] this String? text ) =>
-			!( text is null ) && ( text.All( Char.IsNumber ) || Decimal.TryParse( text, out _ ) || Double.TryParse( text, out _ ) );
+			!( text is null ) && ( text.All( Char.IsNumber ) || Decimal.TryParse( text, out var _ ) || Double.TryParse( text, out var _ ) );
 
 		[DebuggerStepThrough]
 		[Pure]

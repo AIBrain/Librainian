@@ -456,13 +456,13 @@ namespace Librainian.Databases {
 					SerializationFormat.Binary => SerializationFormat.Binary,
 					SerializationFormat.Xml => SerializationFormat.Xml,
 					null => SerializationFormat.Xml,
-					_ => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.RemotingFormat )}." )
+					var _ => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.RemotingFormat )}." )
 				},
 				SchemaSerializationMode = exampleSet?.SchemaSerializationMode switch {
 					SchemaSerializationMode.ExcludeSchema => SchemaSerializationMode.ExcludeSchema,
 					SchemaSerializationMode.IncludeSchema => SchemaSerializationMode.IncludeSchema,
 					null => SchemaSerializationMode.IncludeSchema,
-					_ => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.SchemaSerializationMode )}." )
+					var _ => throw new ArgumentOutOfRangeException( $"Invalid {nameof( exampleSet.SchemaSerializationMode )}." )
 				},
 				Site = exampleSet?.Site
 			};

@@ -219,9 +219,9 @@ namespace Librainian.Collections.Sets {
 
 		public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
 
-		public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out _ );
+		public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out var _ );
 
-		public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out _ );
+		public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out var _ );
 
 		public Boolean TryTakeAny( [CanBeNull] out T item ) {
 			foreach ( var pair in this.Dictionary ) {

@@ -129,7 +129,7 @@ namespace Librainian.Persistence.InIFiles {
 				LineTypes.Text => $"{this.Key}{PairSeparator}{this.Value}",
 				LineTypes.Comment => $"{this.LineHeader} {this.Key}",
 				LineTypes.Empty => $"{String.Empty}",
-				_ => throw new ArgumentOutOfRangeException()
+				var _ => throw new ArgumentOutOfRangeException()
 			};
 
 	}

@@ -151,7 +151,7 @@ namespace Librainian.Persistence {
 				var keys = this.Dictionary.Keys;
 				return keys switch {
 					null => ( ICollection<String> )Enumerable.Empty<String>(),
-					_ => keys
+					var _ => keys
 				};
 			}
 		}
@@ -161,7 +161,7 @@ namespace Librainian.Persistence {
 				var values = this.Dictionary.Values;
 				return values switch {
 					null => ( ICollection<String?> )Enumerable.Empty<String>(),
-					_ => ( ICollection<String?> )values.Select( value => value?.FromCompressedBase64() )
+					var _ => ( ICollection<String?> )values.Select( value => value?.FromCompressedBase64() )
 				};
 			}
 		}

@@ -96,13 +96,13 @@ namespace Librainian.Collections {
 				return false;
 			}
 
-			return this.Words.TryGetValue( word, out _ );
+			return this.Words.TryGetValue( word, out var _ );
 		}
 
 		/// <summary>Returns true if the guid is contained in the collection.</summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out _ );
+		public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out var _ );
 
 		[NotNull]
 		public ICollection<UInt64> EachInt() => this.Ints.Keys;

@@ -88,7 +88,7 @@ namespace Librainian.Logging {
 				LoggingLevel.Diagnostic   => ( Color.Green, Color.White ),
 				LoggingLevel.Debug        => ( Color.DarkSeaGreen, Color.White ),
 				LoggingLevel.Exception    => ( Color.DarkOliveGreen, Color.AntiqueWhite ),
-				_                         => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
+				var _                         => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 			};
 
 		/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
@@ -124,7 +124,7 @@ namespace Librainian.Logging {
 				LoggingLevel.Fatal        => nameof( LoggingLevel.Fatal ),
 				LoggingLevel.SubspaceTear => nameof( LoggingLevel.SubspaceTear ),
 				LoggingLevel.Divine       => nameof( LoggingLevel.Divine ),
-				_                         => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
+				var _                         => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 			};
 
 		/// <summary>Prefix <paramref name="message" /> with the datetime and write out to the attached debugger and/or trace.</summary>

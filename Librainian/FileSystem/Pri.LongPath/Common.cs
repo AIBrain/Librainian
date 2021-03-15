@@ -123,7 +123,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				PriNativeMethods.ERROR.ERROR_INVALID_DRIVE => new DriveNotFoundException( message ),
 				PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED => new OperationCanceledException( message ),
 				PriNativeMethods.ERROR.ERROR_INVALID_NAME => new ArgumentException( message, parameterName ),
-				_ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( errorCode ) )
+				var _ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( errorCode ) )
 			};
 		}
 

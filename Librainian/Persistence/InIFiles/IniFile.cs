@@ -571,7 +571,7 @@ namespace Librainian.Persistence.InIFiles {
 				throw new ArgumentNullException( nameof( section ) );
 			}
 
-			return this.Data.TryRemove( section, out _ );
+			return this.Data.TryRemove( section, out var _ );
 		}
 
 		[DebuggerStepThrough]

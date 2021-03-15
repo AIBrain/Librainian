@@ -174,7 +174,7 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( [CanBeNull] TKey key ) => this.TryRemove( key, out _ );
+		public Boolean TryRemove( [CanBeNull] TKey key ) => this.TryRemove( key, out var _ );
 
 	}
 

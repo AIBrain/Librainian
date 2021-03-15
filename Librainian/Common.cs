@@ -53,7 +53,7 @@ namespace Librainian {
 
 			return startInclusive.CompareTo( endInclusive ) switch {
 				1 => t2sI <= 0 && target.CompareTo( endInclusive ) >= 0,
-				_ => t2sI >= 0 && target.CompareTo( endInclusive ) <= 0
+				var _ => t2sI >= 0 && target.CompareTo( endInclusive ) <= 0
 			};
 		}
 

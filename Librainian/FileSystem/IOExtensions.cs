@@ -495,7 +495,7 @@ namespace Librainian.FileSystem {
 					"Exclude" => false,
 					"Strict" when fileAttributes == filterAttributes => true,
 					"Strict" => false,
-					_ => false
+					var _ => false
 				};
 			}
 
@@ -764,7 +764,7 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		/// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
 		public static UInt64? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
-			var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullPath, out var sectorsPerCluster, out var bytesPerSector, out _, out _ );
+			var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullPath, out var sectorsPerCluster, out var bytesPerSector, out var _, out var _ );
 
 			if ( result == 0 ) {
 				throw new Win32Exception();
@@ -980,7 +980,7 @@ namespace Librainian.FileSystem {
 
 			return proc switch {
 				null => false,
-				_ => proc.Responding
+				var _ => proc.Responding
 			};
 		}
 
@@ -1001,7 +1001,7 @@ namespace Librainian.FileSystem {
 
 			return proc switch {
 				null => false,
-				_ => proc.Responding
+				var _ => proc.Responding
 			};
 		}
 
@@ -1021,7 +1021,7 @@ namespace Librainian.FileSystem {
 
 			return proc switch {
 				null => false,
-				_ => proc.Responding
+				var _ => proc.Responding
 			};
 		}
 

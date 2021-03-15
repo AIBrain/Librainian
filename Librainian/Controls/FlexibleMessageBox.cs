@@ -311,7 +311,7 @@ namespace Librainian.Controls {
 			/// <summary>Handles the LinkClicked event of the richTextBoxMessage control.</summary>
 			/// <param name="sender">The source of the event.</param>
 			/// <param name="e">     The <see cref="LinkClickedEventArgs" /> instance containing the event data.</param>
-			private static void richTextBoxMessage_LinkClicked( [CanBeNull] Object sender, [JetBrains.Annotations.NotNull] LinkClickedEventArgs e ) {
+			private static void richTextBoxMessage_LinkClicked( [CanBeNull] Object? sender, [JetBrains.Annotations.NotNull] LinkClickedEventArgs e ) {
 				try {
 					Cursor.Current = Cursors.WaitCursor;
 

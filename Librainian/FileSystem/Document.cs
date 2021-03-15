@@ -831,7 +831,7 @@ namespace Librainian.FileSystem {
 
             return size switch {
                 >= MaximumBufferSize => MaximumBufferSize,
-                _ => ( Int32 )( size ?? 4096 )
+                var _ => ( Int32 )( size ?? 4096 )
             };
         }
 
