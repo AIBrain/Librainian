@@ -14,8 +14,8 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Protiguous")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © Protiguous. All rights reserved.")]
-[assembly: System.Reflection.AssemblyDescriptionAttribute("A collection of classes, structs, and extensions we\'ve collected or created over " +
-    "the years that we use in our various projects.")]
+[assembly: System.Reflection.AssemblyDescriptionAttribute("A collection of classes, structs, records, and extensions we\'ve created over the " +
+    "years that we use in our various projects.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2020.9.7.4")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("2020.9.6.8")]
 [assembly: System.Reflection.AssemblyProductAttribute("Librainian Library")]

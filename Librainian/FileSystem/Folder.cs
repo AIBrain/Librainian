@@ -40,6 +40,7 @@ namespace Librainian.FileSystem {
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
+	using Microsoft.Isam.Esent.Interop;
 	using Newtonsoft.Json;
 	using OperatingSystem;
 	using Parsing;
@@ -47,110 +48,6 @@ namespace Librainian.FileSystem {
 	using FileSystemInfo = Pri.LongPath.FileSystemInfo;
 	using NativeMethods = OperatingSystem.NativeMethods;
 	using Path = Pri.LongPath.Path;
-
-	public interface IFolder : IEquatable<IFolder> {
-
-		[NotNull]
-		String FullPath { get; }
-
-		/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
-		[NotNull]
-		DirectoryInfo Info { get; }
-
-		[NotNull]
-		String Name { get; }
-
-		/// <summary></summary>
-		/// <param name="searchPattern"></param>
-		/// <param name="randomize">    </param>
-		/// <returns></returns>
-		[NotNull]
-		IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String? searchPattern = "*", Boolean randomize = false );
-
-		/// <summary>Return a list of all <see cref="IFolder" /> matching the <paramref name="searchPattern" />.</summary>
-		/// <param name="token"></param>
-		/// <param name="searchPattern"></param>
-		/// <param name="randomize">Return the folders in random order.</param>
-		/// <returns></returns>
-		[NotNull]
-		Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String? searchPattern = "*", Boolean randomize = true );
-
-		/// <summary>Returns a copy of the folder instance.</summary>
-		/// <returns></returns>
-		[NotNull]
-		IFolder Clone();
-
-		/// <summary>
-		///     <para>Returns True if the folder exists.</para>
-		/// </summary>
-		/// <returns></returns>
-		/// See also:
-		/// <see cref="Delete"></see>
-		Boolean Create();
-
-		/// <summary>
-		///     <para>Returns True if the folder no longer exists.</para>
-		/// </summary>
-		/// <returns></returns>
-		/// <see cref="Create"></see>
-		Boolean Delete();
-
-		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
-		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="System.IO.PathTooLongException"></exception>
-		Boolean Exists();
-
-		/// <summary>Free space available to the current user.</summary>
-		/// <returns></returns>
-		UInt64 GetAvailableFreeSpace();
-
-		/// <summary>
-		///     <para>Returns an enumerable collection of <see cref="Document" /> in the current directory.</para>
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		IEnumerable<Document> GetDocuments();
-
-		[NotNull]
-		IEnumerable<Document> GetDocuments( [NotNull] String searchPattern );
-
-		[NotNull]
-		IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns );
-
-		[NotNull]
-		Disk GetDrive();
-
-		[NotNull]
-		IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
-
-		Int32 GetHashCode();
-
-		[CanBeNull]
-		IFolder GetParent();
-
-		/// <summary>
-		///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
-		/// </summary>
-		/// <returns></returns>
-		Boolean IsEmpty();
-
-		void OpenWithExplorer();
-
-		void Refresh();
-
-		/// <summary>
-		///     <para>Shorten the full path with "..."</para>
-		/// </summary>
-		/// <returns></returns>
-		String ToCompactFormat();
-
-		/// <summary>Returns a String that represents the current object.</summary>
-		/// <returns>A String that represents the current object.</returns>
-		[NotNull]
-		String ToString();
-
-	}
 
 	/// <summary>//TODO add in long name (unc) support. Like 'ZedLongPaths' does</summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
@@ -307,10 +204,8 @@ namespace Librainian.FileSystem {
 			}
 			else {
 				foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern ) ) {
-                    if ( fileInfo != null ) {
-                        yield return new Folder( fileInfo.FullPath );
-                    }
-                }
+					yield return new Folder( fileInfo.FullPath );
+				}
 			}
 		}
 
@@ -388,7 +283,7 @@ namespace Librainian.FileSystem {
 			return false;
 		}
 
-		public Boolean Equals( IFolder other ) => Equals( this, other );
+		public Boolean Equals( IFolder? other ) => Equals( this, other );
 
 		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
 		/// <exception cref="IOException"></exception>
@@ -445,10 +340,8 @@ namespace Librainian.FileSystem {
 			}
 
 			foreach ( var fileInfo in this.Info.BetterEnumerateDirectories( searchPattern, searchOption ) ) {
-                if ( fileInfo != null ) {
-                    yield return new Folder( fileInfo.FullPath );
-                }
-            }
+				yield return new Folder( fileInfo.FullPath );
+			}
 		}
 
 		public override Int32 GetHashCode() => this.FullPath.GetHashCode();
@@ -500,7 +393,13 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( fullpath ) );
 			}
 
-			return RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
+			var path = RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim() ?? String.Empty;
+
+			while ( path.Right(1) == FolderSeparator ) {
+				path = path.Left( path.Length - 1 );
+			}
+
+			return path;
 		}
 
 		///// <summary>
@@ -571,7 +470,7 @@ namespace Librainian.FileSystem {
 			Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullPath}\"" );
 		}
 
-		public static Boolean TryParse( [CanBeNull] String? path, [CanBeNull] out IFolder folder ) {
+		public static Boolean TryParse( [CanBeNull] String? path, [CanBeNull] out IFolder? folder ) {
 			folder = null;
 
 			try {
@@ -612,6 +511,18 @@ namespace Librainian.FileSystem {
 
 		[NotNull]
 		public DirectoryInfo ToDirectoryInfo() => this;
+
+		private Byte? _levelsDeep;
+
+		/// <summary>
+		/// Return how many [sub]folders are in this folder's path.
+		/// </summary>
+		/// <returns></returns>
+		public Byte LevelsDeep() {
+			this._levelsDeep ??= ( Byte? ) this.FullPath.Count( c => c == FolderSeparatorChar );
+
+			return this._levelsDeep.Value;
+		}
 
 	}
 

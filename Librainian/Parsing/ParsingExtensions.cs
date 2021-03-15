@@ -118,7 +118,10 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[NotNull]
 		[Pure]
-		public static IEnumerable<Char> AllLetters() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter );
+		public static IEnumerable<Char> AllLetters() => AllPossibleLetters.Value!;
+
+		private static Lazy<ParallelQuery<Char>?> AllPossibleLetters { get; } =
+			new( () => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter ) );
 
 		/// <summary>
 		///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
@@ -129,29 +132,47 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[CanBeNull]
 		[Pure]
-		public static String? Limit( [CanBeNull] this String? self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) );
+		public static String? LimitLength( [CanBeNull] this String? self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) );
 
+		/// <summary>
+		/// Returns the <paramref name="count"/> from the beginning of the string.
+		/// <para><code>"abc123".Left(3) == "abc"</code></para>
+		/// <para>Does not Trim().</para>
+		/// <para>Null returns <see cref="String.Empty"/></para>
+		/// </summary>
 		[CanBeNull]
 		[Pure]
-		public static String? Left( [CanBeNull] this String? self, Int32 count ) => self?.Substring( 0, Math.Min( count, self.Length ) );
+		public static String Left( [CanBeNull] this String? self, Int32 count ) {
+			if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
+				return String.Empty;
+			}
+			return self.Substring( 0, Math.Min( count, self.Length ) );
+		}
 
-		/// <summary>Does not Trim().</summary>
+		/// <summary>
+		/// Returns the <paramref name="count"/> from the end of the string.
+		/// <para><code>"abc123".Right(3) == "123"</code></para>
+		/// <para><remarks>If <paramref name="count"/> is greater then the length, the full string is returned.</remarks></para>
+		/// <para>Does not Trim().</para>
+		/// <para>Null returns <see cref="String.Empty"/></para>
+		/// </summary>
 		/// <param name="self"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[CanBeNull]
 		[Pure]
-		public static String? Right( [CanBeNull] this String? self, Int32 count ) {
-			if ( self is null ) {
-				return null;
-			}
+		public static String Right( [CanBeNull] this String? self, Int32 count ) {
 
 			if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
 				return String.Empty;
 			}
 
 			var startIndex = self.Length - count;
+
+			if ( startIndex < 0 ) {
+				return self;
+			}
 
 			return self.Substring( startIndex, count );
 		}

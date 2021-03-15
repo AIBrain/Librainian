@@ -35,6 +35,7 @@ namespace Librainian.FileSystem {
     using System.Threading;
 	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
+	using Exceptions.Warnings;
 	using JetBrains.Annotations;
     using Logging;
     using Parsing;
@@ -116,24 +117,25 @@ namespace Librainian.FileSystem {
 
 				var fileCopyData = await sourceFileTask.ConfigureAwait( false );
 
-				var dcs = new DocumentCopyStatistics() {
-					DestinationDocument = fileCopyData.Destination,
-					DestinationDocumentCRC64 = default( String? ),
-					SourceDocument = fileCopyData.Source,
-					SourceDocumentCRC64 = default( String? )
-                };
+				if ( fileCopyData is not null ) {
+					var dcs = new DocumentCopyStatistics() {
+						DestinationDocument = fileCopyData.Destination,
+						DestinationDocumentCRC64 = default( String? ),
+						SourceDocument = fileCopyData.Source,
+						SourceDocumentCRC64 = default( String? )
+					};
 
-                if ( fileCopyData.WhenCompleted != null && fileCopyData.WhenStarted != null ) {
-                    dcs.TimeTaken = fileCopyData.WhenCompleted.Value - fileCopyData.WhenStarted.Value;
-                }
+					if ( fileCopyData.WhenCompleted != null && fileCopyData.WhenStarted != null ) {
+						dcs.TimeTaken = fileCopyData.WhenCompleted.Value - fileCopyData.WhenStarted.Value;
+					}
 
-                if ( fileCopyData.BytesCopied != null ) {
-					dcs.BytesCopied = fileCopyData.BytesCopied.Value;
+					if ( fileCopyData.BytesCopied != null ) {
+						dcs.BytesCopied = fileCopyData.BytesCopied.Value;
+					}
+
+					documentCopyStatistics[fileCopyData.Source] = dcs;
 				}
-
-                documentCopyStatistics[fileCopyData.Source] = dcs;
-
-            }
+			}
 
 			//        Parallel.ForEach( sourceFiles.AsParallel(), CPU.HalfOfCPU /*disk != cpu*/, async sourceDocument => {
 			//if ( sourceDocument is null ) {
@@ -239,10 +241,10 @@ namespace Librainian.FileSystem {
 		[NotNull]
 		public static IEnumerable<String> SplitPath( [NotNull] String path ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+				throw new ArgumentEmptyException( nameof( path ) );
 			}
 
-			return path.Split( Folder.FolderSeparatorChar ).Where( s => !String.IsNullOrWhiteSpace( s ) );
+			return path.Split( Folder.FolderSeparatorChar, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 		}
 
 		/// <summary><see cref="PathSplitter" />.</summary>
