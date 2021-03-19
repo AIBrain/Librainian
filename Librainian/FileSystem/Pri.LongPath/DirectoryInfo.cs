@@ -32,18 +32,28 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 	public class DirectoryInfo : FileSystemInfo {
 
-		public DirectoryInfo( [NotNull] String path ) : base( path.GetFullPath() ) => this.Name = path.Length != 2 || path[1] != ':' ? GetDirName( this.FullPath ) : ".";
+		public DirectoryInfo( [NotNull] String path ) : base( path.GetFullPath() ) {
+			if ( path.Length != 2 ) {
+				this.Name = GetDirName( this.FullPath );
+			}
+			else if ( path[1] != ':' ) {
+				this.Name = GetDirName( this.FullPath );
+			}
+			else {
+				this.Name = ".";
+			}
+		}
 
 		[NotNull]
 		private System.IO.DirectoryInfo SysDirectoryInfo => new( this.FullPath );
 
 		public override Boolean Exists {
 			get {
-				if ( this.state == State.Uninitialized ) {
+				if ( this.state == State.Uninitialized || this.Data is null ) {
 					this.Refresh();
 				}
 
-				return this.state == State.Initialized && this.data?.fileAttributes.HasFlag( FileAttributes.Directory ) == true;
+				return this.state == State.Initialized && this.Data?.FileAttributes.HasFlag( FileAttributes.Directory ) == true;
 			}
 		}
 
@@ -58,7 +68,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					fullPath = this.FullPath[ ..^1 ];
 				}
 
-				var directoryName = fullPath.GetDirectoryName();
+				var directoryName = fullPath!.GetDirectoryName();
 
 				return new DirectoryInfo( directoryName );
 			}
@@ -91,14 +101,14 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				s = s[ ..^1 ];
 			}
 
-			return s.GetFileName();
+			return s!.GetFileName();
 		}
 
 		public void Create() => this.FullPath.CreateDirectory();
 
 		[NotNull]
 		public DirectoryInfo CreateSubdirectory( [NotNull] String path ) {
-			var newDir = this.FullPath.Combine( path );
+			var newDir = this.FullPath.CombineWith( path );
 			var newFullPath = newDir.GetFullPath();
 
 			if ( String.Compare( this.FullPath, 0, newFullPath, 0, this.FullPath.Length, StringComparison.OrdinalIgnoreCase ) != 0 ) {

@@ -60,6 +60,9 @@ namespace Librainian.FileSystem {
 			}
 
 			await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ) ) {
+				if ( sourceFile is null ) {
+					continue;
+				}
 
 				var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
 
@@ -77,12 +80,12 @@ namespace Librainian.FileSystem {
 
             static async PooledValueTask<FileCopyData> CreateCopyFileTask( FileCopyData fileCopyData, Boolean overwriteDestination, CancellationToken cancellationToken ) {
 
-                if ( overwriteDestination && fileCopyData.Destination.Exists() ) {
+                if ( overwriteDestination && await fileCopyData.Destination.Exists().ConfigureAwait( false ) ) {
                     $"Deleting destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
                     await fileCopyData.Destination.TryDeleting( Seconds.Seven, cancellationToken ).ConfigureAwait( false );
                 }
 
-                await fileCopyData.Source.Copy( fileCopyData, cancellationToken );
+				await fileCopyData.Source.Copy( fileCopyData, cancellationToken ).ConfigureAwait( false );
 
                 return fileCopyData;
 

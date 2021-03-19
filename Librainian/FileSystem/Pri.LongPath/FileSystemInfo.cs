@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,17 +23,18 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "FileSystemInfo.cs" last formatted on 2020-08-14 at 8:39 PM.
+// File "FileSystemInfo.cs" last touched on 2021-03-07 at 9:52 AM by Protiguous.
 
 #nullable enable
+
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
 	using System.IO;
 	using System.Runtime.InteropServices;
+	using System.Runtime.InteropServices.ComTypes;
 	using System.Runtime.Serialization;
 	using JetBrains.Annotations;
-	using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 	public abstract class FileSystemInfo {
 
@@ -38,9 +42,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public readonly String FullPath;
 
 		[CanBeNull]
-		protected FileAttributeData? data;
+		protected FileAttributeData? Data;
 
-		protected PriNativeMethods.ERROR errorCode;
+		protected PriNativeMethods.ERROR ErrorCode;
 
 		protected State state;
 
@@ -70,6 +74,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		//     System.IO.FileSystemInfo.Refresh() cannot initialize the data.
 		public FileAttributes Attributes {
 			get => this.FullPath.GetAttributes();
+
 			set => this.FullPath.SetAttributes( value );
 		}
 
@@ -121,15 +126,15 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		//     The caller attempts to set an invalid access time.
 		public DateTime CreationTimeUtc {
 			get {
-				if ( this.state == State.Uninitialized ) {
+				if ( this.state == State.Uninitialized || this.Data is null ) {
 					this.Refresh();
 				}
 
 				if ( this.state == State.Error ) {
-					Common.ThrowIOError( this.errorCode, this.FullPath );
+					Common.ThrowIOError( this.ErrorCode, this.FullPath );
 				}
 
-				var fileTime = ( ( Int64 )this.data.ftCreationTime.dwHighDateTime << 32 ) | ( this.data.ftCreationTime.dwLowDateTime & 0xffffffff );
+				var fileTime = ( ( Int64 ) this.Data!.CreationTime.dwHighDateTime << 32 ) | ( this.Data.CreationTime.dwLowDateTime & 0xffffffff );
 
 				return DateTime.FromFileTimeUtc( fileTime );
 			}
@@ -153,20 +158,21 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public DateTime LastAccessTime {
 			get => this.LastAccessTimeUtc.ToLocalTime();
+
 			set => this.LastAccessTimeUtc = value.ToUniversalTime();
 		}
 
 		public DateTime LastAccessTimeUtc {
 			get {
-				if ( this.state == State.Uninitialized ) {
+				if ( this.state == State.Uninitialized || this.Data is null ) {
 					this.Refresh();
 				}
 
 				if ( this.state == State.Error ) {
-					Common.ThrowIOError( this.errorCode, this.FullPath );
+					Common.ThrowIOError( this.ErrorCode, this.FullPath );
 				}
 
-				var fileTime = ( ( Int64 )this.data.ftLastAccessTime.dwHighDateTime << 32 ) | ( this.data.ftLastAccessTime.dwLowDateTime & 0xffffffff );
+				var fileTime = ( ( Int64 ) this.Data!.LastAccessTime.dwHighDateTime << 32 ) | ( this.Data.LastAccessTime.dwLowDateTime & 0xffffffff );
 
 				return DateTime.FromFileTimeUtc( fileTime );
 			}
@@ -185,20 +191,21 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public DateTime LastWriteTime {
 			get => this.LastWriteTimeUtc.ToLocalTime();
+
 			set => this.LastWriteTimeUtc = value.ToUniversalTime();
 		}
 
 		public DateTime LastWriteTimeUtc {
 			get {
-				if ( this.state == State.Uninitialized ) {
+				if ( this.state == State.Uninitialized || this.Data is null ) {
 					this.Refresh();
 				}
 
 				if ( this.state == State.Error ) {
-					ThrowLastWriteTimeUtcIOError( this.errorCode, this.FullPath );
+					ThrowLastWriteTimeUtcIOError( this.ErrorCode, this.FullPath );
 				}
 
-				var fileTime = ( ( Int64 )this.data.ftLastWriteTime.dwHighDateTime << 32 ) | ( this.data.ftLastWriteTime.dwLowDateTime & 0xffffffff );
+				var fileTime = ( ( Int64 ) this.Data!.LastWriteTime.dwHighDateTime << 32 ) | ( this.Data.LastWriteTime.dwLowDateTime & 0xffffffff );
 
 				return DateTime.FromFileTimeUtc( fileTime );
 			}
@@ -225,9 +232,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
 			switch ( errorCode ) {
-				case PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND: break;
+				case PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND:
+					break;
 
-				case PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND: break;
+				case PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND:
+					break;
 
 				case PriNativeMethods.ERROR.ERROR_ACCESS_DENIED:
 
@@ -246,11 +255,14 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 					throw new IOException( $"File {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE: throw new PathTooLongException( "Path too long" );
+				case PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE:
+					throw new PathTooLongException( "Path too long" );
 
-				case PriNativeMethods.ERROR.ERROR_INVALID_DRIVE: throw new DriveNotFoundException( $"Drive {str} not found" );
+				case PriNativeMethods.ERROR.ERROR_INVALID_DRIVE:
+					throw new DriveNotFoundException( $"Drive {str} not found" );
 
-				case PriNativeMethods.ERROR.ERROR_INVALID_PARAMETER: throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				case PriNativeMethods.ERROR.ERROR_INVALID_PARAMETER:
+					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
 				case PriNativeMethods.ERROR.ERROR_SHARING_VIOLATION:
 
@@ -269,38 +281,39 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 					throw new IOException( $"File exists {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED: throw new OperationCanceledException();
+				case PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED:
+					throw new OperationCanceledException();
 
-				default: throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				default:
+					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 			}
 		}
 
 		public abstract void Delete();
 
-		// ReSharper disable once UnusedParameter.Global
 		public virtual void GetObjectData( [NotNull] SerializationInfo info, StreamingContext context ) =>
 			info.AddValue( nameof( this.FullPath ), this.FullPath, typeof( String ) );
 
 		public void Refresh() {
 			try {
-				this.data = default( FileAttributeData? );
+				this.Data = null;
 
-				// TODO: BeginFind fails on "\\?\c:\"
+				//BUG BeginFind fails on "\\?\c:\"
 
 				var normalizedPathWithSearchPattern = this.FullPath.NormalizeLongPath();
 
 				using var handle = Directory.BeginFind( normalizedPathWithSearchPattern, out var findData );
 
-				this.data = new FileAttributeData( findData );
+				this.Data = new FileAttributeData( findData );
 				this.state = State.Initialized;
 			}
 			catch ( DirectoryNotFoundException ) {
 				this.state = State.Error;
-				this.errorCode = PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND;
+				this.ErrorCode = PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND;
 			}
 			catch ( Exception ) {
 				if ( this.state != State.Error ) {
-					Common.ThrowIOError( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), this.FullPath );
+					Common.ThrowIOError( ( PriNativeMethods.ERROR ) Marshal.GetLastWin32Error(), this.FullPath );
 				}
 			}
 		}
@@ -308,35 +321,37 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		protected enum State {
 
 			Uninitialized,
+
 			Initialized,
+
 			Error
 
 		}
 
 		protected class FileAttributeData {
 
-			public readonly FileAttributes fileAttributes;
+			public readonly FileAttributes FileAttributes;
 
-			public readonly Int32 fileSizeHigh;
+			public readonly Int32 FileSizeHigh;
 
-			public readonly Int32 fileSizeLow;
+			public readonly Int32 FileSizeLow;
 
-			public FILETIME ftCreationTime;
+			public FILETIME CreationTime;
 
-			public FILETIME ftLastAccessTime;
+			public FILETIME LastAccessTime;
 
-			public FILETIME ftLastWriteTime;
+			public FILETIME LastWriteTime;
 
 			public FileAttributeData( WIN32_FIND_DATA findData ) {
-				this.fileAttributes = findData.dwFileAttributes;
-				this.ftCreationTime = findData.ftCreationTime;
-				this.ftLastAccessTime = findData.ftLastAccessTime;
-				this.ftLastWriteTime = findData.ftLastWriteTime;
-				this.fileSizeHigh = findData.nFileSizeHigh;
-				this.fileSizeLow = findData.nFileSizeLow;
+				this.FileAttributes = findData.dwFileAttributes;
+				this.CreationTime = findData.ftCreationTime;
+				this.LastAccessTime = findData.ftLastAccessTime;
+				this.LastWriteTime = findData.ftLastWriteTime;
+				this.FileSizeHigh = findData.nFileSizeHigh;
+				this.FileSizeLow = findData.nFileSizeLow;
 			}
 
-			public FileAttributeData() { }
+			private FileAttributeData() { }
 
 		}
 

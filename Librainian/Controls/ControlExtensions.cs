@@ -251,13 +251,13 @@ namespace Librainian.Controls {
 
 		[NotNull]
 		[DebuggerStepThrough]
-		public static Task FlashWhileBlank( [NotNull] this Control input, [NotNull] Control control, CancellationToken token ) =>
+		public static Task FlashWhileBlank( [NotNull] this Control input, [NotNull] Control control,  CancellationToken cancellationToken  ) =>
 			Seconds.Five.Then( async () => {
 				if ( String.IsNullOrWhiteSpace( input.Text() ) ) {
 					control.Flash( Seconds.One );
-					await input.FlashWhileBlank( control, token ).ConfigureAwait( true );
+					await input.FlashWhileBlank( control, cancellationToken ).ConfigureAwait( true );
 				}
-			}, token );
+			}, cancellationToken );
 
 		/// <summary>Set <see cref="Control.Focus" /> across threads.</summary>
 		/// <param name="control"></param>

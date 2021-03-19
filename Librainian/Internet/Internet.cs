@@ -98,7 +98,7 @@ namespace Librainian.Internet {
 			/// <exception cref="ObjectDisposedException"></exception>
 			/// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
 			/// <exception cref="Exception"></exception>
-			Boolean Wait( TimeSpan forHowLong, CancellationToken token );
+			Boolean Wait( TimeSpan forHowLong,  CancellationToken cancellationToken  );
 
 		}
 
@@ -112,7 +112,7 @@ namespace Librainian.Internet {
 			///     <see cref="InvalidOperationException" /> will be thrown.
 			/// </param>
 			/// <param name="timeout">Time to wait before a download is cancelled.</param>
-			/// <param name="token"></param>
+			/// <param name="cancellationToken"></param>
 			/// <param name="autoStart">If true, the download will begin now.</param>
 			/// <param name="credentials">Username and password, if needed otherwise null.</param>
 			public FileDownloader(
@@ -120,10 +120,10 @@ namespace Librainian.Internet {
 				[NotNull] Document destination,
 				Boolean waitifBusy,
 				TimeSpan timeout,
-				CancellationToken token,
+				 CancellationToken cancellationToken ,
 				Boolean autoStart = true,
 				[CanBeNull] ICredentials? credentials = null
-			) : base( source, destination, waitifBusy, timeout, token, credentials ) {
+			) : base( source, destination, waitifBusy, timeout, cancellationToken, credentials ) {
 				$"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
 				DownloadRequests[this.Id] = this;
@@ -166,7 +166,7 @@ namespace Librainian.Internet {
 			/// <param name="destination"></param>
 			/// <param name="waitIfBusy"></param>
 			/// <param name="timeout"></param>
-			/// <param name="token"></param>
+			/// <param name="cancellationToken"></param>
 			/// <param name="credentials"></param>
 			/// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
 			protected UnderlyingDownloader(
@@ -174,14 +174,14 @@ namespace Librainian.Internet {
 				[NotNull] Document destination,
 				Boolean waitIfBusy,
 				TimeSpan timeout,
-				CancellationToken token,
+				 CancellationToken cancellationToken ,
 				[CanBeNull] ICredentials? credentials = null
 			) {
 				var web = WebClients.Value;
 
 				if ( web.IsBusy ) {
 					if ( waitIfBusy ) {
-						this.Wait( timeout, token );
+						this.Wait( timeout, cancellationToken );
 					}
 					else {
 						throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
@@ -277,13 +277,13 @@ namespace Librainian.Internet {
 			/// <exception cref="ObjectDisposedException"></exception>
 			/// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
 			/// <exception cref="Exception"></exception>
-			public Boolean Wait( TimeSpan forHowLong, CancellationToken token ) {
+			public Boolean Wait( TimeSpan forHowLong,  CancellationToken cancellationToken  ) {
 				try {
 					if ( forHowLong < Forever ) {
 						forHowLong = Forever;
 					}
 
-					return this.Downloaded.Wait( forHowLong, token );
+					return this.Downloaded.Wait( forHowLong, cancellationToken );
 				}
 				catch ( Exception exception ) {
 					switch ( exception ) {

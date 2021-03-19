@@ -82,23 +82,23 @@ namespace Librainian.Internet.RandomOrg {
 			private const Int32 NumMin = 1;
 			private Int32 _index;
 
-			public IntegerGenerator( CancellationToken token ) => this.Init( NumMax, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
+			public IntegerGenerator(  CancellationToken cancellationToken  ) => this.Init( NumMax, Min, Max, ColDefault, BaseDefault, cancellationToken ).Wait( cancellationToken );
 
-			public IntegerGenerator( Int32 num, CancellationToken token ) => this.Init( num, Min, Max, ColDefault, BaseDefault, token ).Wait( token );
+			public IntegerGenerator( Int32 num,  CancellationToken cancellationToken  ) => this.Init( num, Min, Max, ColDefault, BaseDefault, cancellationToken ).Wait( cancellationToken );
 
-			public IntegerGenerator( Int32 num, Int32 min, CancellationToken token ) => this.Init( num, min, Max, ColDefault, BaseDefault, token ).Wait( token );
+			public IntegerGenerator( Int32 num, Int32 min,  CancellationToken cancellationToken  ) => this.Init( num, min, Max, ColDefault, BaseDefault, cancellationToken ).Wait( cancellationToken );
 
-			public IntegerGenerator( Int32 num, Int32 min, Int32 max, CancellationToken token ) => this.Init( num, min, max, ColDefault, BaseDefault, token ).Wait( token );
+			public IntegerGenerator( Int32 num, Int32 min, Int32 max,  CancellationToken cancellationToken  ) => this.Init( num, min, max, ColDefault, BaseDefault, cancellationToken ).Wait( cancellationToken );
 
-			public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, CancellationToken token ) =>
-				this.Init( num, min, max, col, BaseDefault, token ).Wait( token );
+			public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col,  CancellationToken cancellationToken  ) =>
+				this.Init( num, min, max, col, BaseDefault, cancellationToken ).Wait( cancellationToken );
 
-			public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase, CancellationToken token ) =>
-				this.Init( num, min, max, col, inbase, token ).Wait( token );
+			public IntegerGenerator( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase,  CancellationToken cancellationToken  ) =>
+				this.Init( num, min, max, col, inbase, cancellationToken ).Wait( cancellationToken );
 
 			private List<Int32> Ints { get; } = new();
 
-			private async Task Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase, CancellationToken token ) {
+			private async Task Init( Int32 num, Int32 min, Int32 max, Int32 col, Int32 inbase,  CancellationToken cancellationToken  ) {
 				if ( num is < NumMin or > NumMax) {
 					throw new ArgumentOutOfRangeException( nameof( num ), "The number of random numbers to generate must be between 1 and 10000." );
 				}

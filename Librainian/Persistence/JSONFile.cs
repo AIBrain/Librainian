@@ -51,12 +51,12 @@ namespace Librainian.Persistence {
 
 		/// <summary></summary>
 		/// <param name="document"></param>
-		public JSONFile([CanBeNull] Document document, CancellationToken token) : this() {
+		public JSONFile([CanBeNull] Document document,  CancellationToken cancellationToken ) : this() {
 			this.Document = document;
 
 			this.Document?.ContainingingFolder().Create();
 
-			this.Read( token ).Wait();
+			this.Read( cancellationToken ).Wait();
 		}
 
 		public JSONFile() { }
@@ -138,14 +138,14 @@ namespace Librainian.Persistence {
 
 		/// <summary>Removes all data from all sections.</summary>
 		/// <returns></returns>
-		public Boolean Clear( CancellationToken token) {
-			Parallel.ForEach(this.Data.Keys.TakeWhile( _ => !token.IsCancellationRequested ), section => this.TryRemove(section));
+		public Boolean Clear(  CancellationToken cancellationToken ) {
+			Parallel.ForEach(this.Data.Keys.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), section => this.TryRemove(section));
 
 			return !this.Data.Keys.Any();
 		}
 
 		[NotNull]
-		public async Task<Boolean> Read(CancellationToken token) {
+		public async Task<Boolean> Read( CancellationToken cancellationToken ) {
 			var document = this.Document;
 
 			if (document?.Exists() != true) {
@@ -222,11 +222,11 @@ namespace Librainian.Persistence {
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
 		/// <returns></returns>
 		[NotNull]
-		public async Task<Boolean> Write(CancellationToken token) {
+		public async Task<Boolean> Write( CancellationToken cancellationToken ) {
 			var document = this.Document;
 
 			if (document is not null) {
-				await document.TryDeleting(Seconds.Seven, token).ConfigureAwait(false);
+				await document.TryDeleting(Seconds.Seven, cancellationToken).ConfigureAwait(false);
 
 				var bob = this.Data.ToJSON(Formatting.Indented);
 				if (bob != null) {

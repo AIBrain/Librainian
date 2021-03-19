@@ -181,10 +181,10 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <param name="source"></param>
         /// <param name="target"></param>
         [NotNull]
-        public static Task StartTransfer( [NotNull] this Wallet source, [NotNull] Wallet target, CancellationToken token ) =>
+        public static Task StartTransfer( [NotNull] this Wallet source, [NotNull] Wallet target,  CancellationToken cancellationToken  ) =>
             Task.Run( () => {
                 foreach ( var (denomination, quantity) in source ) {
-                    if ( token.IsCancellationRequested ) {
+                    if ( cancellationToken.IsCancellationRequested ) {
                         break;
                     }
 
@@ -192,7 +192,7 @@ namespace Librainian.Financial.Containers.Wallets {
                         target.Deposit( denomination, quantity );
                     }
                 }
-            }, token );
+            }, cancellationToken );
 
         /// <summary>
         ///     Given the <paramref name="amount" />, return the optimal amount of <see cref="IBankNote" /> and

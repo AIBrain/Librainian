@@ -125,18 +125,18 @@ namespace Librainian.Persistence.InIFiles {
 		/// <summary>Remove any key where there is no value.</summary>
 		/// <returns></returns>
 		[NotNull]
-		public Task CleanupAsync(CancellationToken token) =>
+		public Task CleanupAsync( CancellationToken cancellationToken ) =>
 			Task.Run(() => {
 				//TODO Unit test this.
 				foreach (var key in this.Keys) {
-					if (token.IsCancellationRequested) {
+					if (cancellationToken.IsCancellationRequested) {
 						return;
 					}
 					if (this.Data.TryRemove(key, out var value) && !String.IsNullOrEmpty(value)) {
 						this[key] = value; //whoops, re-add value. Cause: other threads.
 					}
 				}
-			}, token);
+			}, cancellationToken);
 
 		public override Boolean Equals([CanBeNull] Object? obj) => Equals(this, obj as Section);
 
@@ -146,7 +146,7 @@ namespace Librainian.Persistence.InIFiles {
 		/// <param name="reader"></param>
 		/// <returns></returns>
 		[NotNull]
-		public async Task<Boolean> ReadAsync([NotNull] TextReader reader, CancellationToken token) {
+		public async Task<Boolean> ReadAsync([NotNull] TextReader reader,  CancellationToken cancellationToken ) {
 			if (reader is null) {
 				throw new ArgumentNullException(nameof(reader));
 			}
@@ -155,7 +155,7 @@ namespace Librainian.Persistence.InIFiles {
 				var that = await reader.ReadLineAsync().ConfigureAwait(false);
 
 				if (that != null && JsonConvert.DeserializeObject(that, this.Data.GetType()) is DataType other) {
-					Parallel.ForEach(other.TakeWhile( _ => !token.IsCancellationRequested ), pair => {
+					Parallel.ForEach(other.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), pair => {
 						var (key, value) = pair;
 						this[key] = value;
 					} );

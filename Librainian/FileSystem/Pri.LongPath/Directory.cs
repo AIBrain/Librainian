@@ -101,7 +101,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			var path = normalizedPath.IsPathUnc() ? normalizedPath : normalizedPath.RemoveLongPathPrefix();
 
-			using var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData );
+			using var handle = BeginFind( normalizedPath.CombineWith( normalizedSearchPattern ), out var findData );
 
 			do {
 				if ( findData.dwFileAttributes.IsDirectory() ) {
@@ -110,12 +110,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					}
 
 					if ( includeDirectories ) {
-						yield return path.RemoveLongPathPrefix().Combine( findData.cFileName );
+						yield return path.RemoveLongPathPrefix().CombineWith( findData.cFileName );
 					}
 				}
 				else {
 					if ( includeFiles ) {
-						yield return path.RemoveLongPathPrefix().Combine( findData.cFileName );
+						yield return path.RemoveLongPathPrefix().CombineWith( findData.cFileName );
 					}
 				}
 			} while ( handle.FindNextFile( out findData ) );
@@ -151,10 +151,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 				var path = normalizedPath.IsPathUnc() ? normalizedPath : normalizedPath.RemoveLongPathPrefix();
 
-				using var handle = BeginFind( normalizedPath.Combine( normalizedSearchPattern ), out var findData );
+				using var handle = BeginFind( normalizedPath.CombineWith( normalizedSearchPattern ), out var findData );
 
 				do {
-					var fullPath = path.Combine( findData.cFileName );
+					var fullPath = path.CombineWith( findData.cFileName );
 
 					if ( findData.dwFileAttributes.IsDirectory() ) {
 						if ( findData.cFileName.IsCurrentOrParentDirectory() ) {

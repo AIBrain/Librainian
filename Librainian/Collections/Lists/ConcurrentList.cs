@@ -574,7 +574,7 @@ namespace Librainian.Collections.Lists {
 
 		/// <summary>Returns a hot task that needs to be awaited.</summary>
 		/// <param name="items"></param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="afterEachAdd"></param>
 		/// <param name="afterRangeAdded"></param>
 		/// <param name="useParallelism"></param>
@@ -582,7 +582,7 @@ namespace Librainian.Collections.Lists {
 		[NotNull]
 		public Task AddRangeAsync(
 			[CanBeNull] IEnumerable<T>? items,
-			CancellationToken token,
+			 CancellationToken cancellationToken ,
 			[CanBeNull] Action? afterEachAdd = null,
 			[CanBeNull] Action? afterRangeAdded = null,
 			Byte useParallelism = 0
@@ -593,7 +593,7 @@ namespace Librainian.Collections.Lists {
 				if ( items != null ) {
 					this.AddRange( items, useParallelism, afterEachAdd, afterRangeAdded );
 				}
-			}, token );
+			}, cancellationToken );
 
 		/// <summary>
 		///     Returns true if any items have not been added to the list yet.
@@ -772,8 +772,8 @@ namespace Librainian.Collections.Lists {
         /// <typeparam name="T"></typeparam>
         /// <param name="iterations">At least 1 iterations to be done over the whole list.</param>
         /// <param name="forHowLong">Or for how long to run.</param>
-        /// <param name="token">Or until cancelled.</param>
-        public void ShuffleByHarker( Int32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? token = null ) =>
+        /// <param name="cancellationToken">Or until cancelled.</param>
+        public void ShuffleByHarker( Int32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? cancellationToken = null ) =>
             this.Write( () => {
 
                 Stopwatch started = null;
@@ -796,12 +796,12 @@ namespace Librainian.Collections.Lists {
                     rightTracker[ i ] = new ReaderWriterLockSlim();
                 }
 
-                if ( !token.HasValue ) {
-                    token = CancellationToken.None;
+                if ( !cancellationToken.HasValue ) {
+                    cancellationToken = CancellationToken.None;
                 }
 
                 var parallelOptions = new ParallelOptions {
-                    CancellationToken = token.Value, MaxDegreeOfParallelism = Environment.ProcessorCount
+                    CancellationToken = cancellationToken.Value, MaxDegreeOfParallelism = Environment.ProcessorCount
                 };
 
                 var left = new TranslateBytesToInt32 {
@@ -839,7 +839,7 @@ namespace Librainian.Collections.Lists {
 
                     --iterations;
 
-                    if ( token.Value.IsCancellationRequested ) {
+                    if ( cancellationToken.Value.IsCancellationRequested ) {
                         return true;
                     }
 

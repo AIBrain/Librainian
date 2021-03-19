@@ -222,7 +222,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			if ( !document.Exists() ) {
+			if ( !await document.Exists().ConfigureAwait( false ) ) {
 				return false;
 			}
 

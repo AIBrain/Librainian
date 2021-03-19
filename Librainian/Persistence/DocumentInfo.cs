@@ -26,6 +26,7 @@
 namespace Librainian.Persistence {
 	using System;
 	using System.Diagnostics;
+	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using FileSystem;
@@ -50,7 +51,7 @@ namespace Librainian.Persistence {
 
 			this.AbsolutePath = document.FullPath;
 
-			this.Length = document.Length;
+			this.Length = document.GetLength();
 			this.CreationTimeUtc = document.CreationTimeUtc;
 			this.LastWriteTimeUtc = document.LastWriteTimeUtc;
 
@@ -126,9 +127,7 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		[NotNull]
-		public static Task<Int32> CalcHarkerHashInt32Async( [NotNull] Document document, CancellationToken token ) => Task.Run( () => document.CalcHashInt32(), token );
-
+		
 		/// <summary>
 		///     <para>Static comparison test. Compares file lengths and hashes.</para>
 		///     <para>
@@ -182,18 +181,18 @@ namespace Librainian.Persistence {
 		///     Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
 		/// </summary>
 		/// <param name="document"></param>
-		/// <param name="token">   </param>
+		/// <param name="cancellationToken">   </param>
 		/// <returns></returns>
-		public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
+		public async Task GetHashesAsync( [NotNull] Document document,  CancellationToken cancellationToken  ) {
 			if ( document is null ) {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
 			$"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
-			var addHash = Task.Run( document.CalculateHarkerHashInt32, token );
-			var crc32 = document.CRC32( token ).AsValueTask().AsTask();
-			var crc64 = document.CRC64( token ).AsValueTask().AsTask();
+			var addHash = document.HarkerHash32(cancellationToken);
+			var crc32 = document.CRC32( cancellationToken ).AsValueTask().AsTask();
+			var crc64 = document.CRC64( cancellationToken ).AsValueTask().AsTask();
 
 			await Task.WhenAll( crc32, crc64, addHash ).ConfigureAwait( false );
 
@@ -225,7 +224,7 @@ namespace Librainian.Persistence {
 		///     Looks at the entire document.
 		/// </summary>
 		/// <returns></returns>
-		public async Task ScanAsync( CancellationToken token ) {
+		public async Task ScanAsync(  CancellationToken cancellationToken  ) {
 			try {
 				var record = MainDocumentTable.DocumentInfos[this.AbsolutePath];
 
@@ -234,11 +233,11 @@ namespace Librainian.Persistence {
 				if ( needScanned == true ) {
 					var document = new Document( this.AbsolutePath );
 
-					this.Length = document.Length;
+					this.Length = document.Length();
 					this.CreationTimeUtc = document.CreationTimeUtc;
 					this.LastWriteTimeUtc = document.LastWriteTimeUtc;
 
-					await this.GetHashesAsync( document, token ).ConfigureAwait( false );
+					await this.GetHashesAsync( document, cancellationToken ).ConfigureAwait( false );
 
 					this.LastScanned = DateTime.UtcNow;
 

@@ -77,7 +77,7 @@ namespace Librainian.Databases {
 
 			if ( !String.IsNullOrWhiteSpace( useDatabase ) ) {
 				var builder = new SqlConnectionStringBuilder( connectionString ) {
-					InitialCatalog = useDatabase.SmartBracket()
+					InitialCatalog = useDatabase.SmartBraces()
 				};
 
 				this.ConnectionString = builder.ConnectionString;
@@ -760,7 +760,7 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( dbName ) );
 			}
 
-			using var _ = this.QueryAdHoc( $"USE {dbName.SmartBracket()};" );
+			using var _ = this.QueryAdHoc( $"USE {dbName.SmartBraces()};" );
 		}
 
 		public async PooledValueTask UseDatabaseAsync( [NotNull] String dbName ) {
@@ -768,7 +768,7 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( dbName ) );
 			}
 
-			await using var _ = await this.QueryAdhocReaderAsync( $"USE {dbName.SmartBracket()};" ).ConfigureAwait( false );
+			await using var _ = await this.QueryAdhocReaderAsync( $"USE {dbName.SmartBraces()};" ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -952,7 +952,7 @@ namespace Librainian.Databases {
 			try {
 				using var db = new DatabaseServer( connectionString, "master" );
 
-				await db.QueryAdhocReaderAsync( $"create database {databaseName.SmartBracket()};" ).ConfigureAwait( false );
+				await db.QueryAdhocReaderAsync( $"create database {databaseName.SmartBraces()};" ).ConfigureAwait( false );
 
 				return true;
 			}

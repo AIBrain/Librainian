@@ -103,7 +103,7 @@ namespace Librainian.Persistence {
 			GC.SuppressFinalize( this );
 		}
 
-		public async PooledValueTask<Boolean> Flush( CancellationToken token ) {
+		public async PooledValueTask<Boolean> Flush(  CancellationToken cancellationToken  ) {
 			var document = this.Document;
 
 			if ( !document.ContainingingFolder().Exists() ) {
@@ -111,13 +111,13 @@ namespace Librainian.Persistence {
 			}
 
 			var json = this.ToJSON( Formatting.Indented );
-			await document.TryDeleting( Seconds.One, token ).ConfigureAwait(false);
+			await document.TryDeleting( Seconds.One, cancellationToken ).ConfigureAwait(false);
 			document.AppendText( json );
 
 			return true;
 		}
 
-		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress, CancellationToken token = default ) {
+		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress,  CancellationToken cancellationToken  = default ) {
 			var document = this.Document;
 
 			if ( document.Exists() == false ) {
@@ -127,15 +127,15 @@ namespace Librainian.Persistence {
 			try {
 				this.IsLoading = true;
 
-				if ( token == default( CancellationToken ) ) {
-					token = this.MainCTS.Token;
+				if ( cancellationToken == default( CancellationToken ) ) {
+					cancellationToken = this.MainCTS.Token;
 				}
 
-				var result = await document.LoadJSON<ConcurrentDictionary<TKey, TValue>>( progress, token ).ConfigureAwait( false );
+				var result = await document.LoadJSON<ConcurrentDictionary<TKey, TValue>>( progress, cancellationToken ).ConfigureAwait( false );
 
 				if ( result.status.IsGood() ) {
 					var options = new ParallelOptions {
-						CancellationToken = token,
+						CancellationToken = cancellationToken,
 						MaxDegreeOfParallelism = Environment.ProcessorCount - 1
 					};
 
@@ -164,9 +164,9 @@ namespace Librainian.Persistence {
 		}
 
 		/// <summary>Saves the data to the <see cref="Document" />.</summary>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public PooledValueTask<Boolean> Save( CancellationToken? token = null ) => this.Flush( token ?? this.MainCTS.Token );
+		public PooledValueTask<Boolean> Save( CancellationToken? cancellationToken = null ) => this.Flush( cancellationToken ?? this.MainCTS.Token );
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>

@@ -64,8 +64,8 @@ namespace Librainian.Threading {
 
 	public class Idler : ABetterClassDispose, IIdler {
 
-		public Idler( CancellationToken token ) {
-			this.Token = token;
+		public Idler(  CancellationToken cancellationToken  ) {
+			this.Token = cancellationToken;
 
 			//this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
 			this.AddHandler();

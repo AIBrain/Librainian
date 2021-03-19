@@ -99,7 +99,7 @@ namespace Librainian.Linguistics.PoS {
 
 		[Pure]
 		[NotNull]
-		public override String ToString() => this.Tokens.ToStrings( ParsingConstants.Singlespace );
+		public override String ToString() => this.Tokens.ToStrings( ParsingConstants.Strings.Singlespace );
 
 	}
 

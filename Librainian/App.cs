@@ -127,22 +127,25 @@ namespace Librainian {
 			Debug.AutoFlush = true;
 			Trace.AutoFlush = true;
 
-			AppDomain.CurrentDomain.UnhandledException += ( sender, e ) => ( e.ExceptionObject as Exception )?.Log();
+			AppDomain.CurrentDomain.UnhandledException += ( _, e ) => ( e.ExceptionObject as Exception )?.Log();
 
 			ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
-
 			ProfileOptimization.StartProfile( Application.ExecutablePath );
+
 			Application.ThreadException += ( sender, e ) => e.Exception.Log();
 
 			try {
+				var highDpiMode = Application.SetHighDpiMode( HighDpiMode.SystemAware );
+				if ( highDpiMode ) {
+					$"{nameof(Application.SetHighDpiMode)} has been set.".TraceLine();	
+				}
+			
 				Application.SetCompatibleTextRenderingDefault( false );
+				Application.EnableVisualStyles();
 			}
 			catch ( InvalidOperationException exception ) {
 				exception.Log();
 			}
-
-			Application.SetHighDpiMode( HighDpiMode.SystemAware );
-			Application.EnableVisualStyles();
 
 			try {
 				Thread.CurrentThread.Name = "UI";

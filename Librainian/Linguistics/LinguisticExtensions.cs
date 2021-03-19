@@ -76,7 +76,7 @@ namespace Librainian.Linguistics {
                 previous = word;
             }
 
-            return result.ToStrings( ParsingConstants.Singlespace );
+            return result.ToStrings( ParsingConstants.Strings.Singlespace );
         }
 
     }

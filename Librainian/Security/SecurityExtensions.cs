@@ -22,6 +22,8 @@
 // 
 // File "SecurityExtensions.cs" last formatted on 2020-08-14 at 8:46 PM.
 
+#nullable enable
+
 namespace Librainian.Security {
 
 	using System;
@@ -44,9 +46,9 @@ namespace Librainian.Security {
 
 	public static class SecurityExtensions {
 
-		private const String _iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
+		private const String Iv = "Ez!an5hzr&W6RTU$Zcmd3ru7dc#zTQdE3HXN6w9^rKhn$7hkjfQzyX^qB^&9FG4YQ&&CrVY!^j!T$BfrwC9aXWzc799w%pa2DQr";
 
-		private const String _key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
+		private const String Key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
 
 		public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
 
@@ -119,8 +121,8 @@ namespace Librainian.Security {
 			}
 
 			try {
-				var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
-				var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
+				var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? Iv.Substring( 0, 8 ) );
+				var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? Key.Substring( 0, 8 ) );
 				var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
 
 				using var des = new DESCryptoServiceProvider();
@@ -251,8 +253,8 @@ namespace Librainian.Security {
 			}
 
 			try {
-				var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? _iv.Substring( 0, 8 ) );
-				var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? _key.Substring( 0, 8 ) );
+				var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? Iv.Substring( 0, 8 ) );
+				var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? Key.Substring( 0, 8 ) );
 				var inputbyteArray = Encoding.UTF8.GetBytes( value );
 
 				using var des = new DESCryptoServiceProvider();
@@ -640,33 +642,33 @@ namespace Librainian.Security {
 		/// <param name="output">           </param>
 		/// <param name="key">              Must be between 1 and 32767 bytes.</param>
 		/// <param name="reportProgress">   </param>
-		/// <param name="exceptions">       List of exceptions encountered.</param>
 		/// <param name="salt">             </param>
 		/// <param name="reportEveryXBytes"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns>Returns true if all is successful</returns>
-		public static Boolean TryDecryptFile(
+		public static async Task<(Status status, List<Exception> exceptions)> TryDecryptFile(
 			[NotNull] this Document input,
 			[NotNull] Document output,
 			[NotNull] String key,
 			Int32 salt,
 			UInt64 reportEveryXBytes,
-			[CanBeNull] Action<Single>? reportProgress,
-			[NotNull] out List<Exception> exceptions
+			[CanBeNull] Action<Single>? reportProgress, CancellationToken cancellationToken
+			
 		) {
-			exceptions = new List<Exception>( 1 );
+			var exceptions = new List<Exception>( 1 );
 
 			if ( input.Exists() == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
-			var size = input.Size();
+			var size = await input.Size().ConfigureAwait( false );
 
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
 			var inputFileSize = ( Single )size.Value;
@@ -674,22 +676,22 @@ namespace Librainian.Security {
 			if ( output.Exists() ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
 			try {
 				var containingingFolder = output.ContainingingFolder();
 
-				if ( !containingingFolder.Create() ) {
+				if ( !await containingingFolder.Create(cancellationToken ).ConfigureAwait( false ) ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return false;
+					return (Status.Exception,exceptions);
 				}
 
 				using var aes = new AesCryptoServiceProvider();
@@ -702,13 +704,13 @@ namespace Librainian.Security {
 				aes.IV = rgb.GetBytes( aes.BlockSize >> 3 );
 				aes.Mode = CipherMode.CBC;
 
-				using var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
+				await using var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
 
 				using var decryptor = aes.CreateDecryptor();
 
 				var inputStream = new FileStream( input.FullPath, FileMode.Open, FileAccess.Read );
 
-				using var cs = new CryptoStream( inputStream, decryptor, CryptoStreamMode.Read );
+				await using var cs = new CryptoStream( inputStream, decryptor, CryptoStreamMode.Read );
 
 				Int32 data;
 
@@ -725,17 +727,17 @@ namespace Librainian.Security {
 					outputStream.WriteByte( ( Byte )data );
 				}
 
-				return output.Exists();
+				return ( output.Exists() ? Status.Go : Status.Stop, exceptions );
 			}
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 		}
 
@@ -746,57 +748,61 @@ namespace Librainian.Security {
 		/// <param name="salt">             </param>
 		/// <param name="reportEveryXBytes"></param>
 		/// <param name="reportProgress">   Reports progress every X bytes</param>
-		/// <param name="exceptions">       List of exceptions encountered.</param>
+		/// <param name="cancellationToken"></param>
 		/// <returns>Returns true if all is successful</returns>
-		public static Boolean TryEncryptFile(
-			[CanBeNull] this Document? input,
-			[CanBeNull] Document output,
-			[CanBeNull] String? key,
+		public static async Task<(Status status,List<Exception> exceptions)> TryEncryptFile(
+			this Document input,
+			[NotNull] Document output,
+			[NotNull] String key,
 			Int32 salt,
 			UInt64? reportEveryXBytes,
-			[CanBeNull] Action<Single> reportProgress,
-			[NotNull] out List<Exception> exceptions
+			[CanBeNull] Action<Single> reportProgress, CancellationToken cancellationToken
+			
 		) {
-			exceptions = new List<Exception>( 1 );
+			if ( String.IsNullOrWhiteSpace( key ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+			}
 
-			if ( input is null ) {
+			var exceptions = new List<Exception>( 1 );
+
+			if ( input == null ) {
 				exceptions.Add( new ArgumentNullException( nameof( input ) ) );
 
-				return false;
+				return (Status.Exception,exceptions);
+			}
+
+			if ( output?.Exists() == true ) {
+				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
+
+				return (Status.Stop,exceptions);
 			}
 
 			if ( input.Exists() == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
-			var size = input.Size();
+			var size = await input.Size().ConfigureAwait( false );
 
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
 			var inputFileSize = ( Single )size.Value;
 
-			if ( output.Exists() ) {
-				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
-
-				return false;
-			}
-
 			if ( key is null ) {
 				exceptions.Add( new ArgumentNullException( nameof( key ) ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 
 			try {
@@ -804,10 +810,10 @@ namespace Librainian.Security {
 
 				var containingingFolder = output.ContainingingFolder();
 
-				if ( !containingingFolder.Create() ) {
+				if ( !await containingingFolder.Create(cancellationToken).ConfigureAwait( false ) ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return false;
+					return (Status.Exception,exceptions);
 				}
 
 				using var aes = new AesCryptoServiceProvider {
@@ -817,24 +823,24 @@ namespace Librainian.Security {
 				aes.Key = rgb.GetBytes( aes.KeySize >> 3 );
 				aes.IV = rgb.GetBytes( aes.BlockSize >> 3 );
 
-				using var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
+				await using var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
 
 				if ( !outputStream.CanWrite ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath}." ) );
 
-					return false;
+					return (Status.Exception,exceptions);
 				}
 
 				using var encryptor = aes.CreateEncryptor();
 
-				using var cryptoStream = new CryptoStream( outputStream, encryptor, CryptoStreamMode.Write );
+				await using var cryptoStream = new CryptoStream( outputStream, encryptor, CryptoStreamMode.Write );
 
-				using var inputStream = new FileStream( input.FullPath, FileMode.Open, FileAccess.Read );
+				await using var inputStream = new FileStream( input.FullPath, FileMode.Open, FileAccess.Read );
 
 				if ( !inputStream.CanRead || !inputStream.CanSeek ) {
 					exceptions.Add( new IOException( $"Unable to read from {input.FullPath}." ) );
 
-					return false;
+					return (Status.Exception,exceptions);
 				}
 
 				inputStream.Seek( 0, SeekOrigin.Begin );
@@ -854,7 +860,7 @@ namespace Librainian.Security {
 					cryptoStream.WriteByte( ( Byte )data );
 				}
 
-				return output.Exists();
+				return ( output.Exists() ? Status.Go : Status.Stop, exceptions );
 			}
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );

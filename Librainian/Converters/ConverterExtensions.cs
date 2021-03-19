@@ -597,12 +597,12 @@ namespace Librainian.Converters {
             var a = guid.ToByteArray();
 
             if ( reversed ) {
-                return Path.Combine( a[15].ToString()!, a[14].ToString()!, a[13].ToString()!, a[12].ToString()!, a[11].ToString()!, a[10].ToString()!, a[9].ToString()!,
+                return Path.CombineWith( a[15].ToString()!, a[14].ToString()!, a[13].ToString()!, a[12].ToString()!, a[11].ToString()!, a[10].ToString()!, a[9].ToString()!,
                     a[8].ToString()!, a[7].ToString()!, a[6].ToString()!, a[5].ToString()!, a[4].ToString()!, a[3].ToString()!, a[2].ToString()!, a[1].ToString()!,
                     a[0].ToString()! );
             }
 
-            return Path.Combine( a[0].ToString()!, a[1].ToString()!, a[2].ToString()!, a[3].ToString()!, a[4].ToString()!, a[5].ToString()!, a[6].ToString()!,
+            return Path.CombineWith( a[0].ToString()!, a[1].ToString()!, a[2].ToString()!, a[3].ToString()!, a[4].ToString()!, a[5].ToString()!, a[6].ToString()!,
                 a[7].ToString()!, a[8].ToString()!, a[9].ToString()!, a[10].ToString()!, a[11].ToString()!, a[12].ToString()!, a[13].ToString()!, a[14].ToString()!,
                 a[15].ToString()! );
         }

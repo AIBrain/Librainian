@@ -156,8 +156,8 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken token ) {
-			using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
+		public IEnumerable<Byte> AsBytes( TimeSpan timeout,  CancellationToken cancellationToken  ) {
+			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 			using var stream = client.OpenRead( this.U );
 
@@ -174,8 +174,8 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken token ) {
-			using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
+		public IEnumerable<Int32> AsInt16( TimeSpan timeout,  CancellationToken cancellationToken  ) {
+			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 			using var stream = client.OpenRead( this.U );
 
@@ -204,8 +204,8 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken token ) {
-			using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
+		public IEnumerable<Int32> AsInt32( TimeSpan timeout,  CancellationToken cancellationToken  ) {
+			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 			using var stream = client.OpenRead( this.U );
 
@@ -273,12 +273,12 @@ namespace Librainian.FileSystem {
 		///     <para>Gets the size in bytes of the location.</para>
 		///     <para>A value of -1 indicates an error, timeout, or exception.</para>
 		/// </summary>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="timeout"></param>
 		/// <returns></returns>
-		public async Task<Int64> Length( CancellationToken token, TimeSpan timeout ) {
+		public async Task<Int64> Length(  CancellationToken cancellationToken , TimeSpan timeout ) {
 			try {
-				using var client = new WebClient().SetTimeoutAndCancel( timeout, token );
+				using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 				try {
 					await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );

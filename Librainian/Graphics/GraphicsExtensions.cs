@@ -94,7 +94,7 @@ namespace Librainian.Graphics {
 		}
 
 		[NotNull]
-		public static Task<Erg> TryConvertToERG( [NotNull] this Document document, CancellationToken token ) {
+		public static Task<Erg> TryConvertToERG( [NotNull] this Document document,  CancellationToken cancellationToken  ) {
 			if ( document == null ) {
 				throw new ArgumentNullException( nameof( document ) );
 			}
@@ -106,11 +106,11 @@ namespace Librainian.Graphics {
 				//load file, checking checksums along the way.. (skip frames/lines with bad checksums?)
 				//erg.TryAdd( document, Span.Zero,
 				return erg;
-			}, token );
+			}, cancellationToken );
 		}
 
 		[NotNull]
-		public static Task<Boolean> TrySave( [NotNull] this Erg erg, [NotNull] Document document, CancellationToken token ) {
+		public static Task<Boolean> TrySave( [NotNull] this Erg erg, [NotNull] Document document,  CancellationToken cancellationToken  ) {
 			if ( erg == null ) {
 				throw new ArgumentNullException( nameof( erg ) );
 			}
@@ -126,11 +126,11 @@ namespace Librainian.Graphics {
 				//TODO recalc the checksums
 				//write out to file
 				return false;
-			}, token );
+			}, cancellationToken );
 		}
 
 		[NotNull]
-		public static Task<Boolean> TrySave( [NotNull] this Efv efv, [NotNull] Document document, CancellationToken token ) {
+		public static Task<Boolean> TrySave( [NotNull] this Efv efv, [NotNull] Document document,  CancellationToken cancellationToken  ) {
 			if ( efv == null ) {
 				throw new ArgumentNullException( nameof( efv ) );
 			}
@@ -147,7 +147,7 @@ namespace Librainian.Graphics {
 
 				//bob.Serialize(
 				return false;
-			}, token );
+			}, cancellationToken );
 		}
 
 		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]

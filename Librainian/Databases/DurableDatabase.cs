@@ -83,12 +83,12 @@ namespace Librainian.Databases {
 		[CanBeNull]
 		private SqlConnection? OpenConnection() {
 			var sqlConnectionsValue = this.SqlConnections.Value;
-			if ( sqlConnectionsValue?.State == ConnectionState.Open ) {
+			if ( sqlConnectionsValue!.State == ConnectionState.Open ) {
 				return this.SqlConnections.Value;
 			}
 
 			try {
-				this.SqlConnections.Value?.Open();
+				this.SqlConnections.Value!.Open();
 
 				return this.SqlConnections.Value;
 			}

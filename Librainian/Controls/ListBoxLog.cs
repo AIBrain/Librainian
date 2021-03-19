@@ -205,8 +205,8 @@ namespace Librainian.Controls {
 
 				using var font = new Font( "Hack", 8.25f, FontStyle.Regular );
 
-				e.Graphics?.FillRectangle( solidBrush, e.Bounds );
-				e.Graphics?.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), font, brush, e.Bounds );
+				e.Graphics.FillRectangle( solidBrush, e.Bounds );
+				e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), font, brush, e.Bounds );
 			}
 			else {
 				String.Empty.Break();

@@ -65,7 +65,7 @@ namespace Librainian.Parsing.Markov {
 					var randomChain = this.Nexts( word ).Where( w => !String.IsNullOrEmpty( w ) ).OrderBy( o => Randem.Next() );
 
 					foreach ( var w in randomChain ) {
-						corpus.Append( $"{w}{ParsingConstants.Singlespace}" );
+						corpus.Append( $"{w}{ParsingConstants.Strings.Singlespace}" );
 
 						word = w;
 					}

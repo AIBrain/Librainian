@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lDjCBUeTveWiDQNX/rYrPtfh4JImEMl77ER+vO97LgTyl8TnMZe7Uu90a5/eGX+peErr3zwmPqNY3ieDnFcraQ==",
+  "dgSpecHash": "kGQjDpVvIN91nSSAHIC2pgQYAlux+X0ivRkj0gmVC3axjPz5WvcY58hoWdelCjRobtZ3uljkSwB2ew/bx6EpeA==",
   "success": true,
   "projectFilePath": "P:\\Programming\\Projects 2021\\Librainian\\Librainian\\Librainian.csproj",
   "expectedPackageFiles": [
@@ -109,7 +109,8 @@
     "C:\\Users\\Rick\\.nuget\\packages\\system.threading.timer\\4.3.0\\system.threading.timer.4.3.0.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\system.windows.extensions\\4.7.0\\system.windows.extensions.4.7.0.nupkg.sha512",
     "C:\\Users\\Rick\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
-    "C:\\Users\\Rick\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
+    "C:\\Users\\Rick\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
+    "C:\\Users\\Rick\\.nuget\\packages\\xunit.assert\\2.4.1\\xunit.assert.2.4.1.nupkg.sha512"
   ],
   "logs": []
 }

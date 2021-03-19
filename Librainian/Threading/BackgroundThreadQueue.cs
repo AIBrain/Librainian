@@ -93,13 +93,13 @@ namespace Librainian.Threading {
 
 		/// <summary></summary>
 		/// <param name="each">Action to perform (poke into <see cref="MessageQueue" />).</param>
-		/// <param name="token"></param>
-		public void Start( [NotNull] Action<T> each, CancellationToken token ) {
+		/// <param name="cancellationToken"></param>
+		public void Start( [NotNull] Action<T> each,  CancellationToken cancellationToken  ) {
 			if ( each is null ) {
 				throw new ArgumentNullException( nameof( each ) );
 			}
 
-			this.Token = token;
+			this.Token = cancellationToken;
 
 			this.thread = new Thread( () => this.ProcessQueue( each ) ) {
 				IsBackground = true

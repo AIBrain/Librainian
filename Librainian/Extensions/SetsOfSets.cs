@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Combiner.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "SetsOfSets.cs" last touched on 2021-03-07 at 6:02 AM by Protiguous.
 
 #nullable enable
 
@@ -31,10 +34,25 @@ namespace Librainian.Extensions {
 	using System.Linq;
 	using JetBrains.Annotations;
 
-	public static class Combiner {
+	public static class SetsOfSets {
 
+		/// <summary>
+		/// Merge two sets, order a, then order b. No distinct is done. No nulls are removed.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull][ItemCanBeNull] this IEnumerable<T> a, [NotNull][ItemCanBeNull] IEnumerable<T> b ) {
+		public static IEnumerable<T> Append<T>( [NotNull] [ItemCanBeNull] this IEnumerable<T> a, [NotNull] [ItemCanBeNull] IEnumerable<T> b ) {
+			if ( a == null ) {
+				throw new ArgumentNullException( nameof( a ) );
+			}
+
+			if ( b == null ) {
+				throw new ArgumentNullException( nameof( b ) );
+			}
+
 			foreach ( var item in a ) {
 				yield return item;
 			}
@@ -50,7 +68,7 @@ namespace Librainian.Extensions {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull] this T a, [ItemCanBeNull][NotNull] IEnumerable<T> b ) {
+		public static IEnumerable<T> Append<T>( [NotNull] this T a, [ItemCanBeNull] [NotNull] IEnumerable<T> b ) {
 			yield return a;
 
 			foreach ( var item in b ) {
@@ -82,11 +100,11 @@ namespace Librainian.Extensions {
 				var enumerable = sequence as IList<T> ?? sequence.ToList();
 
 				return from accseq in accumulator
-					   from item in enumerable
-					   where accseq?.Contains( item ) == false
-					   select accseq.Concat( new[] {
-						   item
-					   } );
+				       from item in enumerable
+				       where !accseq.Contains( item )
+				       select accseq.Concat( new[] {
+					       item
+				       } );
 			} );
 		}
 
@@ -94,7 +112,7 @@ namespace Librainian.Extensions {
 		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( [CanBeNull] params IEnumerable<T>[]? input ) {
 			IEnumerable<IEnumerable<T>> result = Array.Empty<T[]>();
 
-			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
+			return input?.Aggregate( result, ( current, item ) => current!.Combine( item.Combinations() ) );
 		}
 
 		[NotNull]
@@ -104,25 +122,25 @@ namespace Librainian.Extensions {
 			} );
 
 		[ItemNotNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>(
-			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?> setA,
-			[NotNull][ItemCanBeNull] IEnumerable<IEnumerable<T>?> setB
+		public static IEnumerable<IEnumerable<T>> Combine<T>(
+			[NotNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>?> setA,
+			[NotNull] [ItemCanBeNull] IEnumerable<IEnumerable<T>?> setB
 		) {
 			var found = false;
 
 			var eachB = setB as IEnumerable<T>[] ?? setB.ToArray();
 
 			foreach ( var a in setA ) {
-				if ( a != null ) {
-                    found = true;
+				if ( a is not null ) {
+					var subA = a.ToList();
+
+					found = true;
 
 					foreach ( var b in eachB ) {
-
-                        // ReSharper disable once PossibleMultipleEnumeration
-                        if ( b != null ) {
-                            yield return a.Append( b );
-                        }
-                    }
+						if ( b is not null ) {
+							yield return subA.Append( b );
+						}
+					}
 				}
 			}
 
@@ -131,36 +149,36 @@ namespace Librainian.Extensions {
 			}
 
 			foreach ( var b in eachB ) {
-                if ( b != null ) {
-                    yield return b;
-                }
-            }
+				if ( b != null ) {
+					yield return b;
+				}
+			}
 		}
 
 		[ItemNotNull]
-        [CanBeNull]
+		[CanBeNull]
 		public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this IEnumerable<T>? setA, [NotNull] IEnumerable<IEnumerable<T>?>? setB ) {
 			var found = false;
 
-            if ( setB != null ) {
-                foreach ( var b in setB ) {
-                    found = true;
+			if ( setB != null ) {
+				foreach ( var b in setB ) {
+					found = true;
 
-                    if ( setA != null ) {
-                        // ReSharper disable once PossibleMultipleEnumeration
-                        if ( b != null ) {
-                            yield return setA.Append( b );
-                        }
-                    }
-                }
-            }
+					if ( setA != null ) {
+						// ReSharper disable once PossibleMultipleEnumeration
+						if ( b != null ) {
+							yield return setA.Append( b );
+						}
+					}
+				}
+			}
 
-            if ( !found ) {
-                if ( setA != null ) {
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    yield return setA;
-                }
-            }
+			if ( !found ) {
+				if ( setA != null ) {
+					// ReSharper disable once PossibleMultipleEnumeration
+					yield return setA;
+				}
+			}
 		}
 
 		[ItemCanBeNull]
@@ -171,21 +189,16 @@ namespace Librainian.Extensions {
 		) {
 			var found = false;
 
-			foreach ( var a in setA ) {
-                found = true;
+			var b = setB.ToList();
 
-                if ( setB != null ) {
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    yield return a.Append( setB );
-                }
-            }
+			foreach ( var a in setA ) {
+				found = true;
+				yield return a.Append( b );
+			}
 
 			if ( !found ) {
-                if ( setB != null ) {
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    yield return setB;
-                }
-            }
+				yield return b;
+			}
 		}
 
 		[CanBeNull]
@@ -207,8 +220,8 @@ namespace Librainian.Extensions {
 		}
 
 		[CanBeNull]
-        [ItemNotNull]
-        public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] [ItemNotNull] this IEnumerable<IEnumerable<T>> setA, [NotNull] T b ) {
+		[ItemNotNull]
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] [ItemNotNull] this IEnumerable<IEnumerable<T>> setA, [NotNull] T b ) {
 			var found = false;
 
 			foreach ( var aGroup in setA ) {
@@ -226,25 +239,25 @@ namespace Librainian.Extensions {
 
 		[NotNull]
 		public static T[][] FastPowerSet<T>( [NotNull] this T[] array ) {
-			var powerSet = new T[ 1 << array.Length ][];
-			powerSet[ 0 ] = Array.Empty<T>();
+			var powerSet = new T[1 << array.Length][];
+			powerSet[0] = Array.Empty<T>();
 
 			for ( var i = 0; i < array.Length; i++ ) {
-				var cur = array[ i ];
+				var cur = array[i];
 				var count = 1 << i;
 
 				for ( var j = 0; j < count; j++ ) {
-					var source = powerSet[ j ];
+					var source = powerSet[j];
 
 					var sourceLength = source.Length;
 
-					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
+					var destination = powerSet[count + j] = new T[sourceLength + 1];
 
 					for ( var q = 0; q < sourceLength; q++ ) {
-						destination[ q ] = source[ q ];
+						destination[q] = source[q];
 					}
 
-					destination[ sourceLength ] = cur;
+					destination[sourceLength] = cur;
 				}
 			}
 

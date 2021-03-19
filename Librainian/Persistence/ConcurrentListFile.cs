@@ -71,18 +71,18 @@ namespace Librainian.Persistence {
         [NotNull]
         public Document Document { get; set; }
 
-        public async Task<Boolean> Read( CancellationToken token = default ) {
+        public async Task<Boolean> Read(  CancellationToken cancellationToken  = default ) {
             if ( this.Document.Exists() == false ) {
                 return false;
             }
 
             try {
                 var progress = new Progress<ZeroToOne>( pro => { } );
-                var result = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, token );
+                var result = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken );
 
                 if ( result.status.IsGood() ) {
                     var data = result.obj;
-                    await this.AddRangeAsync( data, token ).ConfigureAwait( false );
+                    await this.AddRangeAsync( data, cancellationToken ).ConfigureAwait( false );
 
                     return true;
                 }

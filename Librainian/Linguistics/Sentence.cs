@@ -63,7 +63,7 @@ namespace Librainian.Linguistics {
 		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
 		/// <param name="words"></param>
 		public Sentence( [NotNull] IEnumerable<String> words ) {
-			var sentence = words.ToStrings( ParsingConstants.Singlespace );
+			var sentence = words.ToStrings( ParsingConstants.Strings.Singlespace );
 
 			foreach ( var word in sentence.ToWords() ) {
 				this.Words.Add( word );
@@ -150,7 +150,7 @@ namespace Librainian.Linguistics {
 		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
 		[NotNull]
-		public override String ToString() => this.Words.ToStrings( ParsingConstants.Singlespace );
+		public override String ToString() => this.Words.ToStrings( ParsingConstants.Strings.Singlespace );
 
 		public Lazy<HashSet<ICitation>?>? Citations { get; set; }
 	}

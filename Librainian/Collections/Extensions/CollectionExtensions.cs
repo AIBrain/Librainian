@@ -120,11 +120,7 @@ namespace Librainian.Collections.Extensions {
 		}
 
 		public static Task ClearAsync<T>( [NotNull] this ConcurrentBag<T> bag ) =>
-			Task.Run( () => {
-				while ( !bag.IsEmpty ) {
-					bag.TryTake( out var _ );
-				}
-			} );
+			Task.Run( bag.Clear );
 
         /*
 		/// <summary>

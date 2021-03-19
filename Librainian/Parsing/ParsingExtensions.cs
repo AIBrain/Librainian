@@ -23,11 +23,12 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ParsingExtensions.cs" last formatted on 2021-01-01 at 9:38 AM.
+// File "ParsingExtensions.cs" last touched on 2021-03-07 at 5:57 AM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.Parsing {
+
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
@@ -52,6 +53,7 @@ namespace Librainian.Parsing {
 	using Threading;
 
 	public static class ParsingExtensions {
+
 		[NotNull]
 		[ItemNotNull]
 		public static readonly Lazy<Regex> RegexJustNumbers = new( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
@@ -83,7 +85,7 @@ namespace Librainian.Parsing {
 
 		[NotNull]
 		public static Char[] SplitBySpace { get; } = {
-			ParsingConstants.Singlespace[0]
+			ParsingConstants.Strings.Singlespace[0]
 		};
 
 		/// <summary>WHY?? For fun?</summary>
@@ -135,10 +137,12 @@ namespace Librainian.Parsing {
 		public static String? LimitLength( [CanBeNull] this String? self, Int32 maxlength ) => self?.Substring( 0, Math.Min( maxlength, self.Length ) );
 
 		/// <summary>
-		/// Returns the <paramref name="count"/> from the beginning of the string.
-		/// <para><code>"abc123".Left(3) == "abc"</code></para>
-		/// <para>Does not Trim().</para>
-		/// <para>Null returns <see cref="String.Empty"/></para>
+		///     Returns the <paramref name="count" /> from the beginning of the string.
+		///     <para>
+		///         <code>"abc123".Left(3) == "abc"</code>
+		///     </para>
+		///     <para>Does not Trim().</para>
+		///     <para>Null returns <see cref="String.Empty" /></para>
 		/// </summary>
 		[CanBeNull]
 		[Pure]
@@ -146,15 +150,20 @@ namespace Librainian.Parsing {
 			if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
 				return String.Empty;
 			}
+
 			return self.Substring( 0, Math.Min( count, self.Length ) );
 		}
 
 		/// <summary>
-		/// Returns the <paramref name="count"/> from the end of the string.
-		/// <para><code>"abc123".Right(3) == "123"</code></para>
-		/// <para><remarks>If <paramref name="count"/> is greater then the length, the full string is returned.</remarks></para>
-		/// <para>Does not Trim().</para>
-		/// <para>Null returns <see cref="String.Empty"/></para>
+		///     Returns the <paramref name="count" /> from the end of the string.
+		///     <para>
+		///         <code>"abc123".Right(3) == "123"</code>
+		///     </para>
+		///     <para>
+		///         <remarks>If <paramref name="count" /> is greater then the length, the full string is returned.</remarks>
+		///     </para>
+		///     <para>Does not Trim().</para>
+		///     <para>Null returns <see cref="String.Empty" /></para>
 		/// </summary>
 		/// <param name="self"></param>
 		/// <param name="count"></param>
@@ -163,7 +172,6 @@ namespace Librainian.Parsing {
 		[CanBeNull]
 		[Pure]
 		public static String Right( [CanBeNull] this String? self, Int32 count ) {
-
 			if ( String.IsNullOrEmpty( self ) || count <= 0 ) {
 				return String.Empty;
 			}
@@ -192,7 +200,7 @@ namespace Librainian.Parsing {
 		[DebuggerStepThrough]
 		[NotNull]
 		[Pure]
-		public static String SingleQuote( [CanBeNull] this String? self ) => $"{ParsingConstants.SingleQuote}{self.Trimmed()}{ParsingConstants.SingleQuote}";
+		public static String SingleQuote( [CanBeNull] this String? self ) => $"{ParsingConstants.Strings.SingleQuote}{self.Trimmed()}{ParsingConstants.Strings.SingleQuote}";
 
 		/// <summary>
 		///     Add the left [ and right ] brackets if they're not already on the string.
@@ -207,7 +215,7 @@ namespace Librainian.Parsing {
 			self = self.Trimmed();
 
 			return String.IsNullOrEmpty( self ) ? String.Empty :
-				$"{( self!.StartsWith( "[", StringComparison.Ordinal ) ? String.Empty : "[" )}{self}{( self.EndsWith( "]", StringComparison.Ordinal ) ? String.Empty : "]" )}";
+				$"{( self!.StartsWith( ParsingConstants.Chars.LeftBrace ) ? String.Empty : ParsingConstants.Chars.LeftBrace )}{self}{( self.EndsWith( ParsingConstants.Chars.RightBrace ) ? String.Empty : ParsingConstants.Chars.RightBrace )}";
 		}
 
 		/// <summary>
@@ -220,22 +228,62 @@ namespace Librainian.Parsing {
 		[DebuggerStepThrough]
 		[NotNull]
 		[Pure]
-		public static String SmartBracket( [NotNull] this String? self ) {
+		public static String SmartBraces( [NotNull] this String? self ) {
 			self = self.Trimmed();
 
 			if ( String.IsNullOrEmpty( self ) ) {
 				throw new ArgumentEmptyException( nameof( self ) );
 			}
 
-			if ( self.StartsWith( "[", StringComparison.Ordinal ) && self.EndsWith( "]", StringComparison.Ordinal ) ) {
-				self = self[1..^1]?.Trim();
-			}
+			return self.StartsWith( ParsingConstants.Chars.LeftBrace ) || self.EndsWith( ParsingConstants.Chars.RightBrace ) ? self :
+				$"{ParsingConstants.Chars.LeftBrace}{self}{ParsingConstants.Chars.RightBrace}";
+		}
+
+		/// <summary>
+		///     Remove the first char and the last char.
+		///     <para>Does not perform any length or range checks.</para>
+		///     <para>Will return null if empty.</para>
+		/// </summary>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public static String? TrimLeftAndRight( this String self ) => self[1..^1]?.Trimmed();
+
+		/// <summary>
+		///     Add the left ` and/or right ” brackets if they're not already on the string.
+		///     <para>An empty or whitepsace string throws <see cref="ArgumentEmptyException" />.</para>
+		/// </summary>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentEmptyException"></exception>
+		[DebuggerStepThrough]
+		[NotNull]
+		[Pure]
+		public static String SmartQuote( [NotNull] this String? self ) {
+			self = self.Trimmed();
 
 			if ( String.IsNullOrEmpty( self ) ) {
 				throw new ArgumentEmptyException( nameof( self ) );
 			}
 
-			return $"{'['}{self}{']'}";
+			if ( self.Length < 2 ) {
+				return $"{ParsingConstants.Chars.DoubleQuote}{self}{ParsingConstants.Chars.DoubleQuote}";
+			}
+
+			var starts = self[0];
+			var ends = self[^1];
+
+			if ( starts == ParsingConstants.Chars.SingleQuote && ends == ParsingConstants.Chars.SingleQuote ) {
+				return $"{ParsingConstants.Chars.DoubleQuote}{self}{ParsingConstants.Chars.DoubleQuote}";
+			}
+
+			if ( starts == ParsingConstants.Chars.LeftSingleQuote && ends == ParsingConstants.Chars.RightSingleQuote ) {
+				return $"{ParsingConstants.Chars.LeftDoubleQuote}{self}{ParsingConstants.Chars.RightDoubleQuote}";
+			}
+
+			//TODO There are many more cases of how something needs to be properly quoted, such as quotes within quotes. And lefts or rights.
+
+			return $"{ParsingConstants.Chars.LeftDoubleQuote}{self}{ParsingConstants.Chars.RightDoubleQuote}";
 		}
 
 		/// <summary>Trim the ToString() of the object; returning null if null, empty, or whitespace.</summary>
@@ -273,10 +321,23 @@ namespace Librainian.Parsing {
 				var _ => self.ToString()?.Trim().NullIfEmpty()
 			};
 
+		/// <summary>
+		///     Returns a double quoted (") prefix and suffix (if the <paramref name="self" /> is not already double quoted).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="self"></param>
+		/// <returns></returns>
 		[DebuggerStepThrough]
 		[NotNull]
 		[Pure]
-		public static String DoubleQuote<T>( [CanBeNull] this T self ) => $"{ParsingConstants.DoubleQuote}{self.Trimmed()}{ParsingConstants.DoubleQuote}";
+		public static String DoubleQuote<T>( [CanBeNull] this T self ) {
+			var value = self.Trimmed();
+			if ( value?.StartsWith( ParsingConstants.Strings.DoubleQuote ) == true && value.EndsWith( ParsingConstants.Strings.DoubleQuote ) ) {
+				return value;
+			}
+
+			return $"{ParsingConstants.Strings.DoubleQuote}{value}{ParsingConstants.Strings.DoubleQuote}";
+		}
 
 		/// <summary>
 		///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
@@ -309,7 +370,7 @@ namespace Librainian.Parsing {
 
 			foreach ( var c in word ) {
 				if ( Char.IsUpper( c ) ) {
-					sb.Append( ParsingConstants.Space );
+					sb.Append( ParsingConstants.Chars.Space );
 				}
 
 				sb.Append( c );
@@ -948,11 +1009,17 @@ namespace Librainian.Parsing {
 
 		[Flags]
 		public enum CompareOptions {
+
 			NullsAreNotEqual = 0b1,
+
 			NullAreEqual = 0b10,
+
 			IgnoreLeadingWhitespace = 0b100,
+
 			IgnoreTrailingWhitespace = 0b1000,
+
 			IgnoreAllWhitespace = 0b10000
+
 		}
 
 		[Pure]
@@ -1697,7 +1764,7 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[NotNull]
 		[Pure]
-		public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + ParsingConstants.Singlespace + when.ToLongTimeString();
+		public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + ParsingConstants.Strings.Singlespace + when.ToLongTimeString();
 
 		/// <summary>Converts a String to camel case</summary>
 		/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
@@ -1733,7 +1800,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( removeUnderscores ) {
-				text = text!.Replace( Symbols.Underscore, ParsingConstants.Singlespace, false, cultureInfo ?? CultureInfo.CurrentCulture );
+				text = text!.Replace( Symbols.Underscore, ParsingConstants.Strings.Singlespace, false, cultureInfo ?? CultureInfo.CurrentCulture );
 			}
 
 			if ( String.IsNullOrEmpty( text = text.Trimmed() ) ) {
@@ -1762,7 +1829,7 @@ namespace Librainian.Parsing {
 			var start = 0;
 
 			while ( start < value.Length ) {
-				if ( Char.IsWhiteSpace( value[start] ) || value[start] == ParsingConstants.NullChar ) {
+				if ( Char.IsWhiteSpace( value[start] ) || value[start] == ParsingConstants.Chars.NullChar ) {
 					start++;
 				}
 				else {
@@ -1773,7 +1840,7 @@ namespace Librainian.Parsing {
 			var end = value.Length - 1;
 
 			while ( end >= start ) {
-				if ( Char.IsWhiteSpace( value[end] ) || value[end] == ParsingConstants.NullChar ) {
+				if ( Char.IsWhiteSpace( value[end] ) || value[end] == ParsingConstants.Chars.NullChar ) {
 					end--;
 				}
 				else {
@@ -1793,24 +1860,24 @@ namespace Librainian.Parsing {
 				return String.Empty;
 			}
 
-			while ( s.Contains( ParsingConstants.CR, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.CR, ParsingConstants.Singlespace );
+			while ( s.Contains( ParsingConstants.Chars.CR, StringComparison.OrdinalIgnoreCase ) ) {
+				s = s.Replace( ParsingConstants.Strings.CarriageReturn, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
 			}
 
-			while ( s.Contains( ParsingConstants.LF, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.LF, ParsingConstants.Singlespace );
+			while ( s.Contains( ParsingConstants.Chars.LF, StringComparison.OrdinalIgnoreCase ) ) {
+				s = s.Replace( ParsingConstants.Chars.LF.ToString(), ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
 			}
 
-			while ( s.Contains( ParsingConstants.Tab, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.Tab, ParsingConstants.Singlespace );
+			while ( s.Contains( ParsingConstants.Strings.Tab, StringComparison.OrdinalIgnoreCase ) ) {
+				s = s.Replace( ParsingConstants.Strings.Tab, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
 			}
 
-			while ( s.Contains( ParsingConstants.Doublespace, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.Doublespace, ParsingConstants.Singlespace );
+			while ( s.Contains( ParsingConstants.Strings.Doublespace, StringComparison.OrdinalIgnoreCase ) ) {
+				s = s.Replace( ParsingConstants.Strings.Doublespace, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
 			}
 
-			while ( s.Contains( ParsingConstants.Doublespace ) ) {
-				s = s.Replace( ParsingConstants.Doublespace, ParsingConstants.Singlespace );
+			while ( s.Contains( ParsingConstants.Strings.Doublespace ) ) {
+				s = s.Replace( ParsingConstants.Strings.Doublespace, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
 			}
 
 			return s;
@@ -1825,8 +1892,8 @@ namespace Librainian.Parsing {
 			}
 
 			paragraph = paragraph.Cleanup();
-			paragraph = paragraph.Replace( ParsingConstants.CR, Environment.NewLine );
-			paragraph = paragraph.Replace( ParsingConstants.LF, Environment.NewLine );
+			paragraph = paragraph.Replace( ParsingConstants.Chars.CR.ToString(), Environment.NewLine );
+			paragraph = paragraph.Replace( ParsingConstants.Chars.LF.ToString(), Environment.NewLine );
 
 			return RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trimmed() ?? String.Empty )
 			                                   .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) ).Select( Sentence.Parse );
@@ -1943,8 +2010,8 @@ namespace Librainian.Parsing {
 		[ItemNotNull]
 		[Pure]
 		public static IEnumerable<String> ToSplit( [CanBeNull] this String? sentence ) =>
-			RegexByWordBreak.Value.Split( $"{ParsingConstants.Singlespace}{sentence}{ParsingConstants.Singlespace}" ).ToStrings( ParsingConstants.Singlespace )
-			                .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+			RegexByWordBreak.Value.Split( $"{ParsingConstants.Strings.Singlespace}{sentence}{ParsingConstants.Strings.Singlespace}" )
+			                .ToStrings( ParsingConstants.Strings.Singlespace ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
 		[NotNull]
 		[ItemNotNull]
@@ -2265,5 +2332,7 @@ namespace Librainian.Parsing {
 		[CanBeNull]
 		public static String? OnlyLettersAndNumbers( [CanBeNull] String? input ) =>
 			input == default( String? ) ? default( String? ) : String.Concat( input!.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ) );
+
 	}
+
 }

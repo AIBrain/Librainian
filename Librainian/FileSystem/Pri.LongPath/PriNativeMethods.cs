@@ -347,7 +347,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			[JetBrains.Annotations.NotNull] String lpFileName,
 			DWORD nBufferLength,
 			StringBuilder lpBuffer,
-			IntPtr lpFilePart = default
+			IntPtr lpFilePart = default( IntPtr )
 		);
 
 		[JetBrains.Annotations.NotNull]

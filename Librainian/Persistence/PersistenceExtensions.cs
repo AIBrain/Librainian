@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,9 +23,10 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "PersistenceExtensions.cs" last formatted on 2020-08-14 at 8:44 PM.
+// File "PersistenceExtensions.cs" last touched on 2021-03-07 at 5:23 PM by Protiguous.
 
 #nullable enable
+
 namespace Librainian.Persistence {
 
 	using System;
@@ -70,14 +74,16 @@ namespace Librainian.Persistence {
 			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
-		public static readonly ThreadLocal<StreamingContext> StreamingContexts =
-			new( () => new StreamingContext( StreamingContextStates.All ), true );
+		public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
 
 		[NotNull]
 		public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
 			//ContractResolver = new MyContractResolver(),
-			TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+			TypeNameHandling = TypeNameHandling.Auto,
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
 		/// <summary></summary>
@@ -101,8 +107,7 @@ namespace Librainian.Persistence {
 		}
 
 		public static Boolean DeserializeDictionary<TKey, TValue>(
-			[NotNull]
-			this ConcurrentDictionary<TKey, TValue> toDictionary,
+			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary,
 			[CanBeNull] Folder? folder,
 			[CanBeNull] String? calledWhat,
 			[CanBeNull] String? extension = ".xml"
@@ -119,7 +124,7 @@ namespace Librainian.Persistence {
 				var before = toDictionary.LongCount();
 
 				//enumerate all the files with the wildcard *.extension
-				var documents = folder.GetDocuments( $"*{extension}" );
+				var documents = folder.EnumerateDocuments( ( String? ) "*.*", ( CancellationToken ) $"*{extension}" );
 
 				foreach ( var document in documents ) {
 					var length = document.Length;
@@ -134,9 +139,10 @@ namespace Librainian.Persistence {
 
 						lines.ForAll( line => {
 							try {
-								if ( String.IsNullOrWhiteSpace(line) ) {
+								if ( String.IsNullOrWhiteSpace( line ) ) {
 									return;
 								}
+
 								var tuple = line.Deserialize<Tuple<TKey, TValue>>();
 
 								toDictionary[tuple.Item1] = tuple.Item2;
@@ -179,7 +185,7 @@ namespace Librainian.Persistence {
 
 			var binaryFormatter = new BinaryFormatter();
 
-			return ( T )binaryFormatter.Deserialize( memoryStream );
+			return ( T ) binaryFormatter.Deserialize( memoryStream );
 		}
 
 		/// <summary>Can the file be read from at this moment in time ?</summary>
@@ -301,7 +307,6 @@ namespace Librainian.Persistence {
 			[CanBeNull] IProgress<Single>? progress = null,
 			[CanBeNull] String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
-
 			if ( !dictionary.Any() ) {
 				return false;
 			}
@@ -314,7 +319,7 @@ namespace Librainian.Persistence {
 					throw new DirectoryNotFoundException( folder.FullPath );
 				}
 
-				var itemCount = ( UInt64 )dictionary.LongCount();
+				var itemCount = ( UInt64 ) dictionary.LongCount();
 
 				String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
@@ -416,7 +421,6 @@ namespace Librainian.Persistence {
 
 			try
 			{
-
 				var json = objectToSerialize.ToJSON();
 
 				if (json.IsNullOrWhiteSpace()) { return default; }
@@ -442,17 +446,15 @@ namespace Librainian.Persistence {
 		/// <param name="formatting"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String? ToJSON<T>( [CanBeNull]
-			this T self, Formatting formatting = Formatting.None ) {
+		public static String? ToJSON<T>( [CanBeNull] this T self, Formatting formatting = Formatting.None ) {
+			if ( self is null ) {
+				return default( String? );
+			}
 
-            if ( self is null ) {
-                return default(String?);
-            }
+			return JsonConvert.SerializeObject( self, formatting, Jss.Value );
+		}
 
-            return JsonConvert.SerializeObject( self, formatting, Jss.Value );
-        }
-
-        /*
+		/*
 
 		/// <summary>
 		///     <para>

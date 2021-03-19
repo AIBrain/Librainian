@@ -139,12 +139,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return fileAttributes;
 		}
 
-		public static Boolean IsPathDots( [NotNull] this String path ) {
-			path = path.ThrowIfBlank();
+		public static Boolean IsPathDots( [NotNull] this String path ) => path is "." or "..";
 
-			return path is "." or "..";
-		}
-
+		/// <summary>
+		/// Checks if <paramref name="path"/> starts with \\?\UNC\
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
 		public static Boolean IsPathUnc( [NotNull] this String path ) {
 			path = path.ThrowIfBlank();
 

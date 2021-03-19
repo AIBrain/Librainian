@@ -71,13 +71,13 @@ namespace Librainian.Databases {
 		}
 
 		[NotNull]
-		public static T? Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? token = null ) {
+		public static T? Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken? cancellationToken = null ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, token: token );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken );
 
 				return db.ExecuteScalar<T>( command, CommandType.Text );
 			}
@@ -88,13 +88,13 @@ namespace Librainian.Databases {
 			}
 		}
 
-		public static async PooledValueTask<T?> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken token ) {
+		public static async PooledValueTask<T?> AdhocAsync<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command,  CancellationToken cancellationToken  ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, token: token );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken );
 
 				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 			}
@@ -316,7 +316,7 @@ namespace Librainian.Databases {
 		public static async ValueTask<Status> InitializeDatabaseConnection(
 			[NotNull] ConcurrentDictionaryFile<String, String> file,
 			[NotNull] Credentials credentials,
-			CancellationToken token
+			 CancellationToken cancellationToken 
 		) {
 			if ( file is null ) {
 				throw new ArgumentNullException( nameof( file ) );
@@ -332,7 +332,7 @@ namespace Librainian.Databases {
 				if ( !String.IsNullOrWhiteSpace( primeConnectionString ) ) {
 					var builder = new SqlConnectionStringBuilder( primeConnectionString );
 
-					var sqlServer = await builder.TryGetResponse( token ).ConfigureAwait( false );
+					var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( false );
 
 					if ( sqlServer?.Status == Status.Success ) {
 						if ( sqlServer.ConnectionStringBuilder != null ) {
@@ -759,16 +759,16 @@ namespace Librainian.Databases {
 		///     Performs two adhoc selects on the database. <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
 		/// </summary>
 		/// <param name="test"></param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static async ValueTask<SqlServer?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken token ) {
+		public static async ValueTask<SqlServer?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test,  CancellationToken cancellationToken  ) {
 			if ( test is null ) {
 				throw new ArgumentNullException( nameof( test ) );
 			}
 
 			try {
-				var version = await test.AdhocAsync<String>( "select @@version;", token ).ConfigureAwait( false );
+				var version = await test.AdhocAsync<String>( "select @@version;", cancellationToken ).ConfigureAwait( false );
 
 				if ( String.IsNullOrWhiteSpace( version ) ) {
 					$"Failed connecting to server {test.DataSource}.".Break();
@@ -776,7 +776,7 @@ namespace Librainian.Databases {
 					return default( SqlServer? );
 				}
 
-				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", token ).ConfigureAwait( false );
+				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", cancellationToken ).ConfigureAwait( false );
 
 				if ( !getdate.HasValue ) {
 					$"Failed connecting to server {test.DataSource}.".Break();

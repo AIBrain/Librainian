@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IFolder.cs" last touched on 2021-03-10 at 4:40 AM by Protiguous.
+// File "IFolder.cs" last touched on 2021-03-10 at 3:48 AM by Protiguous.
 
 namespace Librainian.FileSystem {
 
@@ -35,6 +35,7 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
 	using JetBrains.Annotations;
+	using PooledAwait;
 	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
 
 	public interface IFolder : IEquatable<IFolder> {
@@ -42,32 +43,12 @@ namespace Librainian.FileSystem {
 		[NotNull]
 		String FullPath { get; }
 
-		/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
+		/// <summary>The <see cref="IFolder" /> class is built around <see cref="Pri.LongPath.DirectoryInfo" />.</summary>
 		[NotNull]
 		DirectoryInfo Info { get; }
 
 		[NotNull]
 		String Name { get; }
-
-		/// <summary></summary>
-		/// <param name="searchPattern"></param>
-		/// <param name="randomize">    </param>
-		/// <returns></returns>
-		[NotNull]
-		IEnumerable<IFolder> BetterGetFolders( [CanBeNull] String? searchPattern = "*", Boolean randomize = false );
-
-		/// <summary>Return a list of all <see cref="IFolder" /> matching the <paramref name="searchPattern" />.</summary>
-		/// <param name="token"></param>
-		/// <param name="searchPattern"></param>
-		/// <param name="randomize">Return the folders in random order.</param>
-		/// <returns></returns>
-		[NotNull]
-		Task<List<Folder>> BetterGetFoldersAsync( CancellationToken token, [CanBeNull] String? searchPattern = "*", Boolean randomize = true );
-
-		/// <summary>Returns a copy of the folder instance.</summary>
-		/// <returns></returns>
-		[NotNull]
-		IFolder Clone();
 
 		/// <summary>
 		///     <para>Returns True if the folder exists.</para>
@@ -75,58 +56,52 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		/// See also:
 		/// <see cref="Delete"></see>
-		Boolean Create();
+		PooledValueTask<Boolean> Create( CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>Returns True if the folder no longer exists.</para>
 		/// </summary>
 		/// <returns></returns>
 		/// <see cref="Create"></see>
-		Boolean Delete();
+		PooledValueTask<Boolean> Delete( CancellationToken cancellationToken );
 
 		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="System.IO.PathTooLongException"></exception>
-		Boolean Exists();
+		PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
 
 		/// <summary>Free space available to the current user.</summary>
 		/// <returns></returns>
-		UInt64 GetAvailableFreeSpace();
-
-		/// <summary>
-		///     <para>Returns an enumerable collection of <see cref="Document" /> in the current directory.</para>
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		IEnumerable<Document> GetDocuments();
+		PooledValueTask<UInt64> GetAvailableFreeSpace();
 
 		[NotNull]
-		IEnumerable<Document> GetDocuments( [NotNull] String searchPattern );
+		IAsyncEnumerable<Document> EnumerateDocuments( [NotNull] IEnumerable<String> searchPatterns, CancellationToken cancellationToken );
 
 		[NotNull]
-		IEnumerable<Document> GetDocuments( [NotNull] IEnumerable<String> searchPatterns );
+		IAsyncEnumerable<Document> EnumerateDocuments( [CanBeNull] String? searchPattern, CancellationToken cancellationToken );
+
+		[NotNull]
+		IAsyncEnumerable<Folder> EnumerateFolders( [CanBeNull] String? searchPattern, SearchOption searchOption, CancellationToken cancellationToken );
 
 		[NotNull]
 		Disk GetDrive();
 
-		[NotNull]
-		IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern, SearchOption searchOption = SearchOption.AllDirectories );
+		/// <summary>
+		///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		PooledValueTask<Boolean> IsEmpty( CancellationToken cancellationToken );
 
 		Int32 GetHashCode();
 
 		[CanBeNull]
 		IFolder GetParent();
 
-		/// <summary>
-		///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
-		/// </summary>
-		/// <returns></returns>
-		Boolean IsEmpty();
-
 		void OpenWithExplorer();
 
-		void Refresh();
+		ValueTask Refresh( CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>Shorten the full path with "..."</para>

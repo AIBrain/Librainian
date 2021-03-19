@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,17 +23,18 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "WIN32_FIND_DATA.cs" last formatted on 2020-08-14 at 8:39 PM.
+// File "WIN32_FIND_DATA.cs" last touched on 2021-03-07 at 6:33 PM by Protiguous.
 
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
 	using System.IO;
 	using System.Runtime.InteropServices;
+	using System.Runtime.InteropServices.ComTypes;
 	using JetBrains.Annotations;
-	using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+	// ReSharper disable once InconsistentNaming
 	public struct WIN32_FIND_DATA {
 
 		public readonly FileAttributes dwFileAttributes;
@@ -50,6 +54,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public readonly Int32 dwReserved1;
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_PATH )]
+		//BUG Is PriNativeMethods.MAX_PATH correct here? How to handle really long folder names?
 		[NotNull]
 		public readonly String cFileName;
 

@@ -113,7 +113,7 @@ namespace Librainian.OperatingSystem {
 				}
 			}
 
-			foreach ( var pair in pathsData.Where( pair => !pair.Value.GetFolders( "*" ).Any() && !pair.Value.GetDocuments().Any() ) ) {
+			foreach ( var pair in pathsData.Where( pair => !pair.Value.GetFolders( "*" ).Any() && !pair.Value.EnumerateDocuments().Any() ) ) {
 				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
 					$"Removing empty folder {dummy.FullPath} from PATH".Info();
 				}
@@ -133,7 +133,7 @@ namespace Librainian.OperatingSystem {
 		}
 
 		[NotNull]
-		public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String? arguments ) =>
+		public static Task<Process?> ExecuteCommandPromptAsync( [CanBeNull] String? arguments ) =>
 			Task.Run( () => {
 				try {
 					var proc = new ProcessStartInfo {
@@ -161,7 +161,7 @@ namespace Librainian.OperatingSystem {
 						UseShellExecute = false,
 
 						//WorkingDirectory = PowerShellFolder.Value.FullPath,
-						FileName = "powershell.exe", Verb = elevated ? "runas" : null, //demand elevated permissions?
+						FileName = "powershell.exe", Verb = elevated ? "runas" : String.Empty, //demand elevated permissions?
 						Arguments = $"-EncodedCommand {arguments.ToBase64()}", CreateNoWindow = false, ErrorDialog = true, WindowStyle = ProcessWindowStyle.Normal
 					};
 
@@ -252,17 +252,17 @@ namespace Librainian.OperatingSystem {
 
 			var mainFolder = new Folder( fullname );
 
-			if ( !mainFolder.Exists() ) {
-				errorMessage.Error();
+			if ( mainFolder.Exists() ) {
+				if ( !String.IsNullOrEmpty( okayMessage ) ) {
+					okayMessage.Info();
+				}
 
-				return default( Folder? );
+				return mainFolder;
 			}
 
-			if ( !String.IsNullOrEmpty( okayMessage ) ) {
-				okayMessage.Info();
-			}
+			errorMessage.Error();
 
-			return mainFolder;
+			return default( Folder? );
 		}
 
 		[NotNull]

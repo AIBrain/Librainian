@@ -821,7 +821,7 @@ namespace Librainian.Maths {
 		/// <param name="lowers"> <see cref="ParsingConstants.English.Alphabet.Lowercase" /></param>
 		/// <param name="uppers"> <see cref="ParsingConstants.English.Alphabet.Uppercase" /></param>
 		/// <param name="numbers"><see cref="ParsingConstants.English.Numbers" /></param>
-		/// <param name="symbols"><see cref="ParsingConstants.Symbols" /></param>
+		/// <param name="symbols"><see cref="ParsingConstants.Strings.Symbols" /></param>
 		/// <returns></returns>
 		[NotNull]
 		public static String NextString( Int32 length, Boolean lowers = true, Boolean uppers = false, Boolean numbers = false, Boolean symbols = false ) {
@@ -830,7 +830,7 @@ namespace Librainian.Maths {
 			}
 
 			var toParseLength = ( lowers ? ParsingConstants.English.Alphabet.Lowercase.Length : 0 ) + ( uppers ? ParsingConstants.English.Alphabet.Uppercase.Length : 0 ) +
-								( numbers ? ParsingConstants.English.Numbers.Length : 0 ) + ( symbols ? ParsingConstants.Symbols.Length : 0 );
+								( numbers ? ParsingConstants.English.Numbers.Length : 0 ) + ( symbols ? ParsingConstants.Strings.Symbols.Length : 0 );
 
 			var sb = new StringBuilder( toParseLength, toParseLength );
 
@@ -847,7 +847,7 @@ namespace Librainian.Maths {
 			}
 
 			if ( symbols ) {
-				sb.Append( ParsingConstants.Symbols );
+				sb.Append( ParsingConstants.Strings.Symbols );
 			}
 
 			var charPool = sb.ToString();
@@ -1089,7 +1089,7 @@ namespace Librainian.Maths {
 		public static String RandomString( Int32 length = 16, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
 			var charPool = String.Concat( lowerCase ? ParsingConstants.English.Alphabet.Lowercase : String.Empty,
 				upperCase ? ParsingConstants.English.Alphabet.Uppercase : String.Empty, numbers ? ParsingConstants.English.Numbers : String.Empty,
-				symbols ? ParsingConstants.Symbols : String.Empty );
+				symbols ? ParsingConstants.Strings.Symbols : String.Empty );
 
 			var poolLength = charPool.Length;
 

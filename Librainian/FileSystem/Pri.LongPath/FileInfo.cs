@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "FileInfo.cs" last formatted on 2020-08-14 at 8:39 PM.
+// File "FileInfo.cs" last touched on 2021-03-07 at 9:52 AM by Protiguous.
 
 namespace Librainian.FileSystem.Pri.LongPath {
 
@@ -42,10 +45,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					this.Refresh();
 				}
 
-				var fileAttributeData = this.data;
+				var fileAttributeData = this.Data;
 
 				return fileAttributeData != null && this.state == State.Initialized &&
-					   ( fileAttributeData.fileAttributes & FileAttributes.Directory ) != FileAttributes.Directory;
+				       ( fileAttributeData.FileAttributes & FileAttributes.Directory ) != FileAttributes.Directory;
 			}
 		}
 
@@ -82,15 +85,15 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				this.Refresh();
 			}
 
-			if ( this.data is null ) {
+			if ( this.Data is null ) {
 				throw new IOException( $"Unable to obtain {nameof( FileAttributeData )} on {this.FullPath}." );
 			}
 
 			if ( this.state == State.Error ) {
-				Common.ThrowIOError( this.errorCode, this.FullPath );
+				Common.ThrowIOError( this.ErrorCode, this.FullPath );
 			}
 
-			return ( ( Int64 )this.data.fileSizeHigh << 32 ) | ( this.data.fileSizeLow & 0xFFFFFFFFL );
+			return ( ( Int64 ) this.Data.FileSizeHigh << 32 ) | ( this.Data.FileSizeLow & 0xFFFFFFFFL );
 		}
 
 		[NotNull]

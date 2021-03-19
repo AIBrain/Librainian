@@ -45,6 +45,9 @@ namespace Librainian.FileSystem {
 	using Measurement.Time;
 	using OperatingSystem;
 	using Parsing;
+	using PooledAwait;
+	using Pri.LongPath;
+	using Common = Common;
 	using Directory = Pri.LongPath.Directory;
 	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
 	using File = Pri.LongPath.File;
@@ -222,107 +225,88 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>
-		///     No guarantee of return order. Also, because of the way the operating system works (random-access), a directory
-		///     may be created or deleted after a search.
+		///     No guarantee of return order. Also, because of the way the operating system works (random-access), a directory can be created or deleted after a search.
 		/// </summary>
 		/// <param name="target">       </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="searchPattern"></param>
 		/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
 		/// <returns></returns>
 		[NotNull]
-		[ItemNotNull]
-		public static IEnumerable<DirectoryInfo> BetterEnumerateDirectories( [NotNull] this DirectoryInfo target, [CanBeNull] String? searchPattern = "*",
+		public static async IAsyncEnumerable<Folder> BetterEnumerateDirectories( [NotNull] this DirectoryInfo target, [EnumeratorCancellation] CancellationToken cancellationToken, [CanBeNull] String? searchPattern = "*",
 			SearchOption searchOption = SearchOption.AllDirectories ) {
 
 			searchPattern ??= "*";
 
-			var searchPath = Path.Combine( target.FullPath, searchPattern );
+			var searchPath = target.FullPath.CombineWith( searchPattern );
 
-			using var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData );
+			var findData = default( WIN32_FIND_DATA );
+			
+			var hFindFile = default( NativeMethods.SafeFindHandle );
+
+			try {
+				hFindFile = await Task.Run( () => PriNativeMethods.FindFirstFile( searchPath, out findData ), cancellationToken ).ConfigureAwait( false );
+			}
+			catch ( Exception exception) {
+				exception.Log();
+			}
+
+			var more = false;
 
 			do {
-				if ( hFindFile == null || hFindFile.IsInvalid ) {
+				if ( cancellationToken.IsCancellationRequested ) {
 					break;
 				}
 
-				if ( !findData.IsDirectory() ) {
+				if ( hFindFile?.IsInvalid != false ) {	//BUG or == true ?
+					break;
+				}
+
+				if ( !findData.IsDirectory() || findData.IsParentOrCurrent() || findData.IsReparsePoint() || findData.IsIgnoreFolder() ) {
 					continue;
 				}
 
-				if ( findData.IsParentOrCurrent() ) {
-					continue;
-				}
+				if ( findData.cFileName != null ) {
 
-				if ( findData.IsReparsePoint() ) {
-					continue;
-				}
+					// Fix with @"\\?\" +System.IO.PathTooLongException?
+					if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
+						$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".BreakIfDebug( "poor man's debug" );
+						//continue; //BUG Needs unit tested for long paths.
+					}
+					
+					var subFolder = target.FullPath.CombineWith( findData.cFileName );
 
-				if ( findData.IsIgnoreFolder() ) {
-					continue;
-				}
+					yield return new Folder( subFolder );
 
-				var subFolder = Path.Combine( target.FullPath, findData.cFileName );
+					switch ( searchOption ) {
+						case SearchOption.AllDirectories: {
 
-				// Fix with @"\\?\" +System.IO.PathTooLongException?
-				if ( subFolder.Length >= 260 ) {
-					continue; //HACK
-				}
+							var subInfo = new DirectoryInfo( subFolder );
 
-				var subInfo = new DirectoryInfo( subFolder );
+							await foreach ( var info in subInfo.BetterEnumerateDirectories( cancellationToken, searchPattern ) ) {
+								yield return info;
+							}
 
-				yield return subInfo;
-
-				switch ( searchOption ) {
-					case SearchOption.AllDirectories: {
-
-						foreach ( var info in subInfo.BetterEnumerateDirectories( searchPattern ) ) {
-							yield return info;
+							break;
 						}
 
-						break;
-					}
-
-					case SearchOption.TopDirectoryOnly: {
-						break;
-					}
-					default: {
-						break;
+						case SearchOption.TopDirectoryOnly: {
+							break;
+						}
+						default: {
+							throw new ArgumentOutOfRangeException( nameof( searchOption ), searchOption, null );
+						}
 					}
 				}
-			} while ( NativeMethods.FindNextFile( hFindFile, out findData ) );
-		}
 
-		[NotNull]
-		[ItemNotNull]
-		public static IEnumerable<FileInfo> BetterEnumerateFiles( [NotNull] this DirectoryInfo target, [CanBeNull] String? searchPattern = "*.*" ) {
-
-			searchPattern = searchPattern.NullIfEmptyOrWhiteSpace() ?? "*.*";
-
-			var searchPath = Path.Combine( target.FullPath, searchPattern );
-
-			using var hFindFile = NativeMethods.FindFirstFile( searchPath, out var findData );
-
-			do {
-				if ( hFindFile?.IsInvalid == true ) {
-					continue;
+				try {
+					more = await Task.Run( () => hFindFile.FindNextFile( out findData ), cancellationToken ).ConfigureAwait( false );
+				}
+				catch ( Exception exception ) {
+					exception.Log( false );
 				}
 
-				if ( findData.IsParentOrCurrent() ) {
-					continue;
-				}
-
-				if ( findData.IsReparsePoint() ) {
-					continue;
-				}
-
-				if ( !findData.IsFile() ) {
-					continue;
-				}
-
-				var newfName = Path.Combine( target.FullPath, findData.cFileName );
-
-				yield return new FileInfo( newfName );
-			} while ( hFindFile is not null && NativeMethods.FindNextFile( hFindFile, out findData ) );
+			} while ( more );
 		}
 
 		/*
@@ -546,7 +530,7 @@ namespace Librainian.FileSystem {
 
 			var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase );
 			var fileName = $"{now}{withExtension ?? info.Extension}";
-			var path = Path.Combine( info.FullPath, fileName );
+			var path = info.FullPath.CombineWith( fileName );
 
 			return new FileInfo( path );
 		}
@@ -575,7 +559,7 @@ namespace Librainian.FileSystem {
 				}
 
 				if ( requestWriteAccess.HasValue ) {
-					var temp = Path.Combine( directoryInfo.FullPath, Path.GetRandomFileName() );
+					var temp = directoryInfo.FullPath.CombineWith( Path.GetRandomFileName() );
 					File.WriteAllText( temp, "Delete Me!" );
 					File.Delete( temp );
 					directoryInfo.Refresh();
@@ -600,7 +584,7 @@ namespace Librainian.FileSystem {
 			}
 
 			var now = defaultValue.Value;
-			var fName = Path.GetFileNameWithoutExtension( info.Name );
+			var fName = info.Name.GetFileNameWithoutExtension();
 
 			if ( String.IsNullOrWhiteSpace( fName ) ) {
 				return now;
@@ -631,11 +615,11 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="startingFolder">    The folder to start the search.</param>
 		/// <param name="fileSearchPatterns">List of patterns to search for.</param>
-		/// <param name="token">      </param>
+		/// <param name="cancelToken">      </param>
 		/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
 		/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
 		/// <param name="searchStyle">       </param>
-		public static void FindFiles( [NotNull] this DirectoryInfo startingFolder, [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken token,
+		public static async Task FindFiles( [NotNull] this DirectoryInfo startingFolder, [NotNull] IEnumerable<String> fileSearchPatterns, CancellationToken cancelToken,
 			[CanBeNull] Action<FileInfo>? onFindFile = null, [CanBeNull] Action<DirectoryInfo>? onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
 			if ( fileSearchPatterns is null ) {
 				throw new ArgumentNullException( nameof( fileSearchPatterns ) );
@@ -649,7 +633,7 @@ namespace Librainian.FileSystem {
 				var searchPatterns = fileSearchPatterns as IList<String> ?? fileSearchPatterns.ToList();
 
 				searchPatterns.AsParallel().ForAll( searchPattern => {
-					if ( token.IsCancellationRequested ) {
+					if ( cancelToken.IsCancellationRequested ) {
 						return;
 					}
 
@@ -658,14 +642,18 @@ namespace Librainian.FileSystem {
 					}
 
 					try {
-						var folders = startingFolder.BetterEnumerateDirectories(  /*, SearchOption.TopDirectoryOnly*/ );
+						var folders = startingFolder.BetterEnumerateDirectories( cancelToken  );
 
-						folders.AsParallel().ForAll( folder => {
-							if ( token.IsCancellationRequested ) {
+						await foreach ( var folder in folders ) {
+
+						}
+
+						folders.AsParallel().ForAll( async folder => {
+							if ( cancelToken.IsCancellationRequested ) {
 								return;
 							}
 
-                            try {
+							try {
 								onEachDirectory?.Invoke( folder );
 							}
 							catch ( Exception exception ) {
@@ -673,13 +661,13 @@ namespace Librainian.FileSystem {
 							}
 
 							if ( searchStyle == SearchStyle.FoldersFirst ) {
-								folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, SearchStyle.FoldersFirst ); //recurse
+								folder.FindFiles( searchPatterns, cancelToken, onFindFile, onEachDirectory, SearchStyle.FoldersFirst ); //recurse
 							}
 
 							try {
-								foreach ( var file in folder.BetterEnumerateFiles( searchPattern ) ) {
+								await foreach ( var file in folder.BetterEnumerateFiles( searchPattern ) ) {
 									try {
-										if ( !token.IsCancellationRequested ) {
+										if ( !cancelToken.IsCancellationRequested ) {
 											onFindFile?.Invoke( file );
 										}
 									}
@@ -708,7 +696,7 @@ namespace Librainian.FileSystem {
 								} );
 							}
 
-							folder.FindFiles( searchPatterns, token, onFindFile, onEachDirectory, searchStyle ); //recurse
+							folder.FindFiles( searchPatterns, cancelToken, onFindFile, onEachDirectory, searchStyle ); //recurse
 						} );
 					}
 					catch ( UnauthorizedAccessException ) { }
@@ -799,7 +787,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( searchPattern ) );
 			}
 
-			if ( !Directory.Exists( path ) ) {
+			if ( !path.Exists() ) {
 				return String.Empty;
 			}
 
@@ -822,9 +810,9 @@ namespace Librainian.FileSystem {
 		/// <summary>Warning, this could OOM on a large folder structure.</summary>
 		/// <param name="startingFolder"></param>
 		/// <param name="foldersFound">  Warning, this could OOM on a *large* folder structure.</param>
-		/// <param name="token">  </param>
+		/// <param name="cancellationToken">  </param>
 		/// <returns></returns>
-		public static Boolean GrabAllFolders( [NotNull] this Folder startingFolder, [NotNull] ConcurrentBag<String> foldersFound, CancellationToken token ) {
+		public static Boolean GrabAllFolders( [NotNull] this Folder startingFolder, [NotNull] ConcurrentBag<String> foldersFound,  CancellationToken cancellationToken  ) {
 			if ( startingFolder is null ) {
 				throw new ArgumentNullException( nameof( startingFolder ) );
 			}
@@ -834,7 +822,7 @@ namespace Librainian.FileSystem {
 			}
 
 			try {
-				if ( token.IsCancellationRequested ) {
+				if ( cancellationToken.IsCancellationRequested ) {
 					return false;
 				}
 
@@ -861,7 +849,7 @@ namespace Librainian.FileSystem {
 
 				//foldersFound.Add( startingFolder.FullPath );
 
-				//Parallel.ForEach( startingFolder.Info.BetterEnumerateDirectories().AsParallel(), ThreadingExtensions.CPUIntensive, info => GrabAllFolders( new Folder( info.FullPath ), foldersFound, cancellation ) );
+				//Parallel.ForEach( startingFolder.Info.EnumerateFolders().AsParallel(), ThreadingExtensions.CPUIntensive, info => GrabAllFolders( new Folder( info.FullPath ), foldersFound, cancellation ) );
 				foreach ( var info in startingFolder.Info.EnumerateDirectories( "*.*", SearchOption.AllDirectories ) ) {
 					//GrabAllFolders( new Folder( info.FullPath ), foldersFound, cancellation );
 					foldersFound.Add( info.FullPath );
@@ -949,12 +937,18 @@ namespace Librainian.FileSystem {
 		[Pure]
 		public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
 
+		[Pure]
+		public static Boolean IsDirectory( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
+
+		[Pure]
+		public static Boolean IsFile( this WIN32_FIND_DATA data ) => !IsDirectory( data );
+
 		/// <summary>Hard coded folders to skip.</summary>
 		/// <param name="data"></param>
 		/// <returns></returns>
 		[Pure]
 		public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
-			data.cFileName.EndsLike( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ ||
+			data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ ||
 			data.cFileName.Like( "System Volume Information" );
 
 		[Pure]
@@ -962,6 +956,20 @@ namespace Librainian.FileSystem {
 
 		[Pure]
 		public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
+
+		/// <summary>Hard coded folders to skip.</summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
+		[Pure]
+		public static Boolean IsIgnoreFolder( this WIN32_FIND_DATA data ) =>
+			data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ ||
+			data.cFileName.Like( "System Volume Information" );
+
+		[Pure]
+		public static Boolean IsParentOrCurrent( this WIN32_FIND_DATA data ) => data.cFileName is "." or "..";
+
+		[Pure]
+		public static Boolean IsReparsePoint( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
 
 		/// <summary>Open with Explorer.exe</summary>
 		/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
@@ -976,11 +984,11 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var proc = Process.Start( $@"{Path.Combine( windows.FullPath, "explorer.exe" )}", $" /separate /select,{folder.FullPath.DoubleQuote()} " );
+			var process = Process.Start( $@"{windows.FullPath.CombineWith( "explorer.exe" )}", $" /separate /select,{folder.FullPath.DoubleQuote()} " );
 
-			return proc switch {
+			return process switch {
 				null => false,
-				var _ => proc.Responding
+				var _ => process.Responding
 			};
 		}
 
@@ -997,7 +1005,7 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var proc = Process.Start( $@"{Path.Combine( windows.FullPath, "explorer.exe" )}", $" /separate /select,{folder.FullPath.DoubleQuote()} " );
+			var proc = Process.Start( $@"{windows.FullPath.CombineWith( "explorer.exe" )}", $" /separate /select,{folder.FullPath.DoubleQuote()} " );
 
 			return proc switch {
 				null => false,
@@ -1017,7 +1025,7 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var proc = Process.Start( $@"{Path.Combine( windows.FullPath, "explorer.exe" )}", $" /separate /select,{document.FullPath.DoubleQuote()} " );
+			var proc = Process.Start( $@"{windows.FullPath.CombineWith( "explorer.exe" )}", $" /separate /select,{document.FullPath.DoubleQuote()} " );
 
 			return proc switch {
 				null => false,
@@ -1040,8 +1048,8 @@ namespace Librainian.FileSystem {
 			}
 
 			var now = Convert.ToString( DateTime.UtcNow.ToBinary(), 16 );
-			var formatted = $"{Path.GetFileNameWithoutExtension( info.Name )} {now}{newExtension ?? info.Extension}";
-			var path = Path.Combine( info.Directory.FullPath, formatted );
+			var formatted = $"{info.Name.GetFileNameWithoutExtension()} {now}{newExtension ?? info.Extension}";
+			var path = info.Directory.FullPath.CombineWith( formatted );
 
 			return new FileInfo( path );
 		}
@@ -1097,15 +1105,15 @@ namespace Librainian.FileSystem {
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="ioFunction"></param>
 		/// <param name="tryFor">    </param>
-		/// <param name="token">     </param>
+		/// <param name="cancellationToken">     </param>
 		/// <returns></returns>
 		/// <exception cref="IOException"></exception>
 		[CanBeNull]
-		public static TResult? ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken token ) where TResult : class {
+		public static TResult? ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor,  CancellationToken cancellationToken  ) where TResult : class {
 			var stopwatch = Stopwatch.StartNew();
 			TryAgain:
 
-			if ( token.IsCancellationRequested ) {
+			if ( cancellationToken.IsCancellationRequested ) {
 				return default( TResult? );
 			}
 
@@ -1128,14 +1136,14 @@ namespace Librainian.FileSystem {
 		/// <param name="ioFunction"></param>
 		/// <param name="tryFor">    </param>
 		/// <param name="result"></param>
-		/// <param name="token">     </param>
+		/// <param name="cancellationToken">     </param>
 		/// <returns></returns>
 		/// <exception cref="IOException"></exception>
-		public static Boolean ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result, CancellationToken token ) where TResult : struct {
+		public static Boolean ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result,  CancellationToken cancellationToken  ) where TResult : struct {
 			var stopwatch = Stopwatch.StartNew();
 			TryAgain:
 
-			if ( token.IsCancellationRequested ) {
+			if ( cancellationToken.IsCancellationRequested ) {
 				result = null;
 				return false;
 			}
@@ -1252,7 +1260,7 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var leftLength = left.Length;
+			var leftLength = left.Length();
 
 			if ( !leftLength.HasValue ) {
 				return false;
@@ -1313,7 +1321,7 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var leftLength = right.Length;
+			var leftLength = right.Length();
 
 			if ( !leftLength.HasValue ) {
 				return false;
@@ -1324,11 +1332,11 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Search all possible drives for any files matching the <paramref name="fileSearchPatterns" /> .</summary>
 		/// <param name="fileSearchPatterns">List of patterns to search for.</param>
-		/// <param name="token">      </param>
+		/// <param name="cancellationToken">      </param>
 		/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
 		/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
 		/// <param name="searchStyle">       </param>
-		public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns, CancellationToken token, [CanBeNull] Action<FileInfo>? onFindFile = null,
+		public static void SearchAllDrives( [NotNull] this IEnumerable<String> fileSearchPatterns,  CancellationToken cancellationToken , [CanBeNull] Action<FileInfo>? onFindFile = null,
 			[CanBeNull] Action<DirectoryInfo>? onEachDirectory = null, SearchStyle searchStyle = SearchStyle.FilesFirst ) {
 			if ( fileSearchPatterns is null ) {
 				throw new ArgumentNullException( nameof( fileSearchPatterns ) );
@@ -1342,7 +1350,7 @@ namespace Librainian.FileSystem {
 
 					$"Scanning [{drive.VolumeLabel}]".Info();
 					var root = new DirectoryInfo( drive.RootDirectory.FullName );
-					root.FindFiles( fileSearchPatterns, token, onFindFile, onEachDirectory, searchStyle );
+					root.FindFiles( fileSearchPatterns, cancellationToken, onFindFile, onEachDirectory, searchStyle );
 				} );
 			}
 			catch ( UnauthorizedAccessException ) { }
@@ -1373,16 +1381,16 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			var fileNameWithoutExtension = Path.GetFileNameWithoutExtension( document.FileName );
+			var fileNameWithoutExtension = document.FileName.GetFileNameWithoutExtension();
 
 			TryAgain:
 
 			//check for a double extension (image.jpg.tif),
 			//remove the fake .tif extension?
 			//OR remove the fake .jpg extension?
-			if ( !Path.GetExtension( fileNameWithoutExtension ).IsNullOrEmpty() ) {
+			if ( !fileNameWithoutExtension.GetExtension().IsNullOrEmpty() ) {
 				// ReSharper disable once AssignNullToNotNullAttribute
-				fileNameWithoutExtension = Path.GetFileNameWithoutExtension( fileNameWithoutExtension );
+				fileNameWithoutExtension = fileNameWithoutExtension.GetFileNameWithoutExtension();
 
 				goto TryAgain;
 			}
@@ -1634,7 +1642,7 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		[NotNull]
 		public static DirectoryInfo WithShortDatePath( [NotNull] this DirectoryInfo basePath, DateTime d ) {
-			var path = Path.Combine( basePath.FullPath, d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
+			var path = basePath.FullPath.CombineWith( d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
 
 			return new DirectoryInfo( path );
 		}

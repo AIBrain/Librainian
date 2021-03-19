@@ -29,6 +29,9 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Globalization;
 	using System.IO;
 	using System.Linq;
+	using System.Runtime.CompilerServices;
+	using System.Threading;
+	using System.Threading.Tasks;
 	using Extensions;
 	using FileSystem;
 	using JetBrains.Annotations;
@@ -69,7 +72,13 @@ namespace Librainian.ComputerSystem.Devices {
 		public String RootDirectory => this.Info.RootDirectory.Name;
 
 		[NotNull]
-		public static IEnumerable<Disk> GetDrives() => DriveInfo.GetDrives().Select( drive => new Disk( drive ) );
+		public static async IAsyncEnumerable<Disk> GetDrives( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			await foreach ( var driveInfo in DriveInfo.GetDrives().ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {
+				if ( driveInfo != null ) {
+					yield return new Disk( driveInfo );
+				}
+			}
+		}
 
 		/// <summary></summary>
 		/// <returns></returns>
@@ -78,10 +87,10 @@ namespace Librainian.ComputerSystem.Devices {
 		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
 
 		[NotNull]
-		public IEnumerable<IFolder> GetFolders( [CanBeNull] String? searchPattern = "*" ) {
+		public IAsyncEnumerable<IFolder> EnumerateFolders( CancellationToken cancellationToken, [CanBeNull] String? searchPattern = "*" ) {
 			var root = new Folder( this.Info.RootDirectory.FullName );
 
-			return root.GetFolders( searchPattern );
+			return root.EnumerateFolders( searchPattern, SearchOption.TopDirectoryOnly ,cancellationToken );
 		}
 
 		[NotNull]

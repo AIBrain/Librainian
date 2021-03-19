@@ -37,6 +37,7 @@ namespace Librainian.Databases {
 	using Logging;
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
+	using PooledAwait;
 	using Utilities;
 
 	public class LocalDb : ABetterClassDispose {
@@ -56,12 +57,8 @@ namespace Librainian.Databases {
 			this.WriteTimeout = timeoutForWrites.GetValueOrDefault( this.ReadTimeout + Seconds.Thirty );
 
 			this.DatabaseName = databaseName;
-
 			this.DatabaseLocation = databaseLocation;
-
-			if ( !this.DatabaseLocation.Exists() ) {
-				this.DatabaseLocation.Create();
-			}
+			this.DatabaseLocation.FullPath.CreateDirectory();
 
 			"Building SQL connection string...".Info();
 
@@ -70,8 +67,14 @@ namespace Librainian.Databases {
 
 			this.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog=master;Integrated Security=True;";
 
-			if ( this.DatabaseMdf.Exists() == false ) {
-				using var connection = new SqlConnection( this.ConnectionString );
+			var _ = this.Initialize();
+		}
+
+		private async FireAndForget Initialize() {
+			var exists = await this.DatabaseMdf.Exists().ConfigureAwait( false );
+
+			if ( !exists ) {
+				await using var connection = new SqlConnection( this.ConnectionString );
 
 				connection.Open();
 				var command = connection.CreateCommand();
@@ -82,14 +85,13 @@ namespace Librainian.Databases {
 
 				command.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdf.FullPath );
 
-				command.ExecuteNonQuery();
+				await command.ExecuteNonQueryAsync().ConfigureAwait( false );
 			}
 
-			this.ConnectionString =
-				$@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPath};";
+			this.ConnectionString = $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPath};";
 
 			this.Connection = new SqlConnection( this.ConnectionString );
-			this.Connection.InfoMessage += ( _, args ) => args.Message.Info();
+			this.Connection.InfoMessage += ( _, args ) => args?.Message.Info();
 			this.Connection.StateChange += ( _, args ) => $"{args.OriginalState} -> {args.CurrentState}".Info();
 			this.Connection.Disposed += ( _, args ) => $"Disposing SQL connection {args}".Info();
 
@@ -100,10 +102,10 @@ namespace Librainian.Databases {
 		}
 
 		[NotNull]
-		public SqlConnection Connection { get; }
+		public SqlConnection Connection { get; set; }
 
 		[NotNull]
-		public String ConnectionString { get; }
+		public String ConnectionString { get; set; }
 
 		[NotNull]
 		public Folder DatabaseLocation { get; }

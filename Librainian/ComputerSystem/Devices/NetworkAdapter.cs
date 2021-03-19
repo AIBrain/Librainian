@@ -108,7 +108,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 		/// <summary>Enable Or Disable The NetworkAdapter</summary>
 		/// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
-		public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( [NotNull] String strOperation, CancellationToken token ) {
+		public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( [NotNull] String strOperation,  CancellationToken cancellationToken  ) {
 			if ( String.IsNullOrWhiteSpace( strOperation ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( strOperation ) );
 			}
@@ -128,13 +128,13 @@ namespace Librainian.ComputerSystem.Devices {
 						crtNetworkAdapter = networkAdapter;
 					}
 
-					crtNetworkAdapter?.InvokeMethod( strOperation, null );
+					crtNetworkAdapter?.InvokeMethod( strOperation, Array.Empty<Object>() );
 
-					await Task.Delay( Milliseconds.OneHundred, token );
+					await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
 
 					while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled :
 														  ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
-						await Task.Delay( Milliseconds.OneHundred, token );
+						await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
 					}
 
 					resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Success;

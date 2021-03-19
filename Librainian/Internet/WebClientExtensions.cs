@@ -48,18 +48,18 @@ namespace Librainian.Internet {
 
 		/// <summary>
 		///     <para>Register to cancel the <paramref name="client" /> with a <see cref="CancellationToken" />.</para>
-		///     <para>if a token is not passed in, then nothing happens with the <paramref name="client" />.</para>
+		///     <para>if a cancellationToken is not passed in, then nothing happens with the <paramref name="client" />.</para>
 		/// </summary>
 		/// <param name="client"></param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
-		public static WebClient Add( [NotNull] this WebClient client, CancellationToken token ) {
+		public static WebClient Add( [NotNull] this WebClient client,  CancellationToken cancellationToken  ) {
 			if ( client is null ) {
 				throw new ArgumentNullException( nameof( client ) );
 			}
 
-			token.Register( client.CancelAsync );
+			cancellationToken.Register( client.CancelAsync );
 
 			return client;
 		}
@@ -67,10 +67,10 @@ namespace Librainian.Internet {
 		/// <summary>Downloads the resource with the specified URI as a byte array, asynchronously.</summary>
 		/// <param name="webClient">The WebClient.</param>
 		/// <param name="address">The URI from which to download data.</param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns>A Task that contains the downloaded data.</returns>
 		[NotNull]
-		public static Task<Byte[]?> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken token ) {
+		public static Task<Byte[]?> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address,  CancellationToken cancellationToken  ) {
 			if ( webClient is null ) {
 				throw new ArgumentNullException( nameof( webClient ) );
 			}
@@ -79,7 +79,7 @@ namespace Librainian.Internet {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( address ) );
 			}
 
-			return DownloadDataTaskAsync( webClient.Add( token ), new Uri( address ) );
+			return DownloadDataTaskAsync( webClient.Add( cancellationToken ), new Uri( address ) );
 		}
 
 		/// <summary>Downloads the resource with the specified URI as a byte array, asynchronously.</summary>
@@ -194,15 +194,15 @@ namespace Librainian.Internet {
 		/// <summary>Register to cancel the <paramref name="client" /> after a <paramref name="timeout" />.</summary>
 		/// <param name="client"></param>
 		/// <param name="timeout"></param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <copyright>Protiguous</copyright>
 		[NotNull]
-		public static WebClient SetTimeoutAndCancel( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken token ) {
+		public static WebClient SetTimeoutAndCancel( [NotNull] this WebClient client, TimeSpan timeout,  CancellationToken cancellationToken  ) {
 			if ( client is null ) {
 				throw new ArgumentNullException( nameof( client ) );
 			}
 
-			return client.Add( token ).SetTimeout( timeout );
+			return client.Add( cancellationToken ).SetTimeout( timeout );
 		}
 	}
 
