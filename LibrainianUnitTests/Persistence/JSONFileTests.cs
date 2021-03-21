@@ -31,11 +31,12 @@ namespace LibrainianUnitTests.Persistence {
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Librainian.FileSystem;
+	using Librainian.Measurement.Time;
 	using Librainian.Persistence;
 	using Librainian.Persistence.InIFiles;
 	using Xunit;
 
-	public class JSONFile_Tests {
+	public class JSONFileTests {
 
 		public const String ini_test_data = @"
 [ Section 1  ]
@@ -79,6 +80,9 @@ data33   =   3
 
 		[Fact]
 		public async Task test_load_from_string() {
+
+			var cancellationTokenSource = new CancellationTokenSource( Seconds.Thirty );
+
 			this.Ini.Add( ini_test_data );
 
 			//TODO needs testing
@@ -88,8 +92,8 @@ data33   =   3
 
 			this.Json.Document = ( Document )Document.GetTempDocument( "config" );
 
-			if ( await this.Json.Write( CancellationToken.None ).ConfigureAwait( false ) ) {
-				this.Json.Document?.Delete();
+			if ( await this.Json.Write( cancellationTokenSource.Token ).ConfigureAwait( false ) ) {
+				await this.Json.Document.Delete(cancellationTokenSource.Token ).ConfigureAwait( false );
 			}
 		}
 

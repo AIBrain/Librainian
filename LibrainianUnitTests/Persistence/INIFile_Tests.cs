@@ -27,13 +27,17 @@
 
 namespace LibrainianUnitTests.Persistence {
 	using System;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using FluentAssertions;
 	using Librainian.FileSystem;
+	using Librainian.Measurement.Time;
 	using Librainian.Persistence.InIFiles;
 	using Xunit;
 
-	public static class IniFileTests {
+	public class IniFileTests {
 
-        public const String IniTestData = @"
+		public const String IniTestData = @"
 [ Section 1  ]
 ;This is a comment
 data1=value1
@@ -67,28 +71,43 @@ data33   =   3
 
 ";
 
-        private static IniFile Ini1;
+		private static IniFile _ini1;
 
-        private static IniFile Ini2;
+		private static IniFile Ini2;
 
-        private static IniFile Ini3;
+		private static IniFile Ini3;
 
-        [Fact]
-        public static void test_load_from_file() {
+		[Fact]
+		public async Task test_load_from_file() {
 
-            //prepare file
-            var config = Document.GetTempDocument( "config" );
-            var _ = config.AppendText( IniTestData );
+			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
 
-            Ini2 = new IniFile { [ "Greetings", "Hello" ] = "world1!", [ "Greetings", "Hello" ] = "world2!" };
-            //Ini2[ "Greetings", "Hello" ].Should().Be( "world2!" );
-        }
+			//prepare file
+			var config = Document.GetTempDocument( "config" );
+			var doc = await config.AppendText( IniTestData, cancellationTokenSource.Token ).ConfigureAwait( false );
 
-        
-        [Fact]
-        public static void test_load_from_string() {
-            Ini1 = new IniFile( IniTestData );
-            var _ = Ini1.Save( Document.GetTempDocument( "config" ) );
-        }
-    }
+			_ = doc.Should()?.Be( config );
+
+			Ini2 = new IniFile {
+				[ "Greetings", "Hello" ] = "world",
+				[ "Greeting", "Hello" ] = "world",
+				[ "Greetings", "Hello" ] = "World!"
+			};
+
+
+			var test = Ini2[ "Greetings", "Hello" ];
+
+			_ = test.Should()?.Be( "World2!" );
+		}
+
+
+		[Fact]
+		public static void test_load_from_string() {
+			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
+
+			_ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
+			var temp = Document.GetTempDocument( "config" );
+			var _ = _ini1.Save( temp, cancellationTokenSource.Token );
+		}
+	}
 }
