@@ -130,7 +130,7 @@ namespace Librainian.Collections.Extensions {
                     goto retry;
                 }
 
-                var (a, b) = ( buffer[indexa], buffer[indexb] );
+                ( var a, var b ) = ( buffer[indexa], buffer[indexb] );
                 buffer[indexa] = b;
                 buffer[indexb] = a;
             }
@@ -152,7 +152,7 @@ namespace Librainian.Collections.Extensions {
                     goto retry;
                 }
 
-                var (a, b) = ( list[indexa], list[indexb] );
+                ( var a, var b ) = ( list[indexa], list[indexb] );
                 list[indexa] = b;
                 list[indexb] = a;
             }

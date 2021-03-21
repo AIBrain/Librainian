@@ -30,8 +30,8 @@ namespace Librainian.Security {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
+	using System.Globalization;
+	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Security;
 	using System.Security.Cryptography;
@@ -41,6 +41,7 @@ namespace Librainian.Security {
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
+	using Maths;
 	using File = FileSystem.Pri.LongPath.File;
 	using FileInfo = FileSystem.Pri.LongPath.FileInfo;
 
@@ -88,10 +89,10 @@ namespace Librainian.Security {
 
 		[NotNull]
 		private static Byte[] Uid( [NotNull] String s ) {
-			var numArray = new Byte[s.Length];
+			var numArray = new Byte[ s.Length ];
 
 			for ( var i = 0; i < s.Length; i++ ) {
-				numArray[i] = ( Byte )( s[i] & '\u007F' );
+				numArray[ i ] = ( Byte )( s[ i ] & '\u007F' );
 			}
 
 			return numArray;
@@ -216,7 +217,8 @@ namespace Librainian.Security {
 			// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
 			// - 13 would indicate DSA provider
 			var csp = new CspParameters( 1 ) {
-				KeyContainerName = privateKey, ProviderName = "Microsoft Strong Cryptographic Provider"
+				KeyContainerName = privateKey,
+				ProviderName = "Microsoft Strong Cryptographic Provider"
 			};
 
 			// Registry key name containing the RSA private/public key
@@ -321,7 +323,7 @@ namespace Librainian.Security {
 			var stringBuilder = new StringBuilder();
 
 			for ( var i = 0; i <= iterations; i++ ) {
-				var tempBytes = new Byte[dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i];
+				var tempBytes = new Byte[ dataLength - maxLength * i > maxLength ? maxLength : dataLength - maxLength * i ];
 				Buffer.BlockCopy( bytes, maxLength * i, tempBytes, 0, tempBytes.Length );
 				var encryptedBytes = rsaCryptoServiceProvider.Encrypt( tempBytes, true );
 
@@ -355,7 +357,8 @@ namespace Librainian.Security {
 			// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
 			// - 13 would indicate DSA provider
 			var csp = new CspParameters( 1 ) {
-				KeyContainerName = publicKey, ProviderName = "Microsoft Strong Cryptographic Provider"
+				KeyContainerName = publicKey,
+				ProviderName = "Microsoft Strong Cryptographic Provider"
 			};
 
 			// Registry key name containing the RSA private/public key
@@ -390,7 +393,7 @@ namespace Librainian.Security {
 			var s = String.Empty;
 
 			for ( var i = 0; i < bt.Count; i++ ) {
-				var b = bt[i];
+				var b = bt[ i ];
 				Int32 n = b;
 				var n1 = n & 15;
 				var n2 = ( n >> 4 ) & 15;
@@ -447,27 +450,27 @@ namespace Librainian.Security {
 
 			var output = process.StandardOutput.ReadToEnd();
 
-            if ( String.IsNullOrWhiteSpace(output) ) {
-                return default( String? );
-            }
+			if ( String.IsNullOrWhiteSpace( output ) ) {
+				return default( String? );
+			}
 
-            var split = output.Split( ' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+			var split = output.Split( ' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
-            var first = split[0];
+			var first = split[ 0 ];
 
-            if ( String.IsNullOrWhiteSpace( first ) ) {
-                return default( String? );
-            }
+			if ( String.IsNullOrWhiteSpace( first ) ) {
+				return default( String? );
+			}
 
-			var s = first[1..];
+			var s = first[ 1.. ];
 
-            if ( String.IsNullOrWhiteSpace( s ) ) {
-                return default( String? );
-            }
+			if ( String.IsNullOrWhiteSpace( s ) ) {
+				return default( String? );
+			}
 
-            return s.ToUpper( CultureInfo.InvariantCulture );
-            
-        }
+			return s.ToUpper( CultureInfo.InvariantCulture );
+
+		}
 
 		[NotNull]
 		public static Byte[] Sha256( [NotNull] this Byte[] input ) {
@@ -475,9 +478,9 @@ namespace Librainian.Security {
 				throw new ArgumentNullException( nameof( input ) );
 			}
 
-            if ( SHA256ThreadLocals.Value is null) {
-                throw new NullReferenceException( nameof( SHA256ThreadLocals ) + " is null." );
-            }
+			if ( SHA256ThreadLocals.Value is null ) {
+				throw new NullReferenceException( nameof( SHA256ThreadLocals ) + " is null." );
+			}
 
 			return SHA256ThreadLocals.Value.ComputeHash( input, 0, input.Length );
 		}
@@ -524,9 +527,9 @@ namespace Librainian.Security {
 				throw new ArgumentNullException( nameof( input ) );
 			}
 
-            if ( SHA384ThreadLocals.Value is null) {
-                throw new NullReferenceException( nameof( SHA384ThreadLocals ) );
-            }
+			if ( SHA384ThreadLocals.Value is null ) {
+				throw new NullReferenceException( nameof( SHA384ThreadLocals ) );
+			}
 
 			return SHA384ThreadLocals.Value.ComputeHash( input, 0, input.Length );
 		}
@@ -555,9 +558,9 @@ namespace Librainian.Security {
 				throw new ArgumentNullException( nameof( input ) );
 			}
 
-            if ( SHA512ThreadLocals.Value is null ) {
-                throw new NullReferenceException( nameof( SHA384ThreadLocals ) );
-            }
+			if ( SHA512ThreadLocals.Value is null ) {
+				throw new NullReferenceException( nameof( SHA384ThreadLocals ) );
+			}
 
 			return SHA512ThreadLocals.Value.ComputeHash( input, 0, input.Length );
 		}
@@ -609,11 +612,11 @@ namespace Librainian.Security {
 			return secure;
 		}
 
-		public static Boolean TryComputeMd5ForFile( [CanBeNull] this Document? document, [CanBeNull] out String md5 ) {
+		public static Boolean TryComputeMd5ForFile( [CanBeNull] this Document? document, [CanBeNull] out String? md5 ) {
 			md5 = null;
 
 			try {
-				if ( document is null || !File.Exists( "md5sum.exe" ) || document.Exists() == false ) {
+				if ( document is null || !File.Exists( "md5sum.exe" ) || document.GetExists() == false ) {
 					return false;
 				}
 
@@ -626,7 +629,7 @@ namespace Librainian.Security {
 				p.Start();
 				p.WaitForExit();
 				var output = p.StandardOutput.ReadToEnd();
-				md5 = output.Split( ' ' )[0][ 1.. ].ToUpper();
+				md5 = output.Split( ' ' )[ 0 ][ 1.. ].ToUpper();
 
 				return !String.IsNullOrWhiteSpace( md5 ) && md5.Length == 32;
 			}
@@ -653,45 +656,45 @@ namespace Librainian.Security {
 			Int32 salt,
 			UInt64 reportEveryXBytes,
 			[CanBeNull] Action<Single>? reportProgress, CancellationToken cancellationToken
-			
+
 		) {
 			var exceptions = new List<Exception>( 1 );
 
-			if ( input.Exists() == false ) {
+			if ( await input.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
-			var size = await input.Size().ConfigureAwait( false );
+			var size = await input.Size( cancellationToken ).ConfigureAwait( false );
 
-			if ( !size.HasValue || size <= 0 ) {
+			if ( !size.Any() ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
-			var inputFileSize = ( Single )size.Value;
+			var inputFileSize = ( Single )size!.Value;
 
-			if ( output.Exists() ) {
+			if ( await output.Exists( cancellationToken).ConfigureAwait( false ) ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
 			try {
 				var containingingFolder = output.ContainingingFolder();
 
-				if ( !await containingingFolder.Create(cancellationToken ).ConfigureAwait( false ) ) {
+				if ( !await containingingFolder.Create( cancellationToken ).ConfigureAwait( false ) ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return (Status.Exception,exceptions);
+					return (Status.Exception, exceptions);
 				}
 
 				using var aes = new AesCryptoServiceProvider();
@@ -727,17 +730,17 @@ namespace Librainian.Security {
 					outputStream.WriteByte( ( Byte )data );
 				}
 
-				return ( output.Exists() ? Status.Go : Status.Stop, exceptions );
+				return (await output.Exists( cancellationToken).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
 			}
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 		}
 
@@ -750,14 +753,14 @@ namespace Librainian.Security {
 		/// <param name="reportProgress">   Reports progress every X bytes</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns>Returns true if all is successful</returns>
-		public static async Task<(Status status,List<Exception> exceptions)> TryEncryptFile(
+		public static async Task<(Status status, IList<Exception> exceptions)> TryEncryptFile(
 			this Document input,
 			[NotNull] Document output,
 			[NotNull] String key,
 			Int32 salt,
 			UInt64? reportEveryXBytes,
 			[CanBeNull] Action<Single> reportProgress, CancellationToken cancellationToken
-			
+
 		) {
 			if ( String.IsNullOrWhiteSpace( key ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
@@ -768,41 +771,35 @@ namespace Librainian.Security {
 			if ( input == null ) {
 				exceptions.Add( new ArgumentNullException( nameof( input ) ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
-			if ( output?.Exists() == true ) {
+			if ( await output.Exists( cancellationToken).ConfigureAwait( false ) ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
-				return (Status.Stop,exceptions);
+				return (Status.Stop, exceptions);
 			}
 
-			if ( input.Exists() == false ) {
+			if ( await input.Exists(cancellationToken).ConfigureAwait( false ) == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
-			var size = await input.Size().ConfigureAwait( false );
+			var size = await input.Size( cancellationToken).ConfigureAwait( false );
 
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
 			var inputFileSize = ( Single )size.Value;
 
-			if ( key is null ) {
-				exceptions.Add( new ArgumentNullException( nameof( key ) ) );
-
-				return (Status.Exception,exceptions);
-			}
-
 			if ( !key.Length.Between( 1, Int16.MaxValue ) ) {
 				exceptions.Add( new ArgumentOutOfRangeException( nameof( key ) ) );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 
 			try {
@@ -810,14 +807,16 @@ namespace Librainian.Security {
 
 				var containingingFolder = output.ContainingingFolder();
 
-				if ( !await containingingFolder.Create(cancellationToken).ConfigureAwait( false ) ) {
+				if ( !await containingingFolder.Create( cancellationToken ).ConfigureAwait( false ) ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath} because folder {containingingFolder} does not exist." ) );
 
-					return (Status.Exception,exceptions);
+					return (Status.Exception, exceptions);
 				}
 
 				using var aes = new AesCryptoServiceProvider {
-					BlockSize = 128, KeySize = 256, Mode = CipherMode.CBC
+					BlockSize = 128,
+					KeySize = 256,
+					Mode = CipherMode.CBC
 				};
 
 				aes.Key = rgb.GetBytes( aes.KeySize >> 3 );
@@ -828,7 +827,7 @@ namespace Librainian.Security {
 				if ( !outputStream.CanWrite ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath}." ) );
 
-					return (Status.Exception,exceptions);
+					return (Status.Exception, exceptions);
 				}
 
 				using var encryptor = aes.CreateEncryptor();
@@ -840,7 +839,7 @@ namespace Librainian.Security {
 				if ( !inputStream.CanRead || !inputStream.CanSeek ) {
 					exceptions.Add( new IOException( $"Unable to read from {input.FullPath}." ) );
 
-					return (Status.Exception,exceptions);
+					return (Status.Exception, exceptions);
 				}
 
 				inputStream.Seek( 0, SeekOrigin.Begin );
@@ -860,17 +859,17 @@ namespace Librainian.Security {
 					cryptoStream.WriteByte( ( Byte )data );
 				}
 
-				return ( output.Exists() ? Status.Go : Status.Stop, exceptions );
+				return (await output.Exists( cancellationToken).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
 			}
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return false;
+				return (Status.Exception,exceptions);
 			}
 		}
 

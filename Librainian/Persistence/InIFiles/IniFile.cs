@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,9 +23,10 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IniFile.cs" last formatted on 2020-08-17 at 10:26 AM.
+// File "IniFile.cs" last touched on 2021-03-07 at 4:38 AM by Protiguous.
 
 #nullable enable
+
 namespace Librainian.Persistence.InIFiles {
 
 	using System;
@@ -31,6 +35,7 @@ namespace Librainian.Persistence.InIFiles {
 	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FileSystem;
 	using JetBrains.Annotations;
@@ -38,6 +43,7 @@ namespace Librainian.Persistence.InIFiles {
 	using Maths;
 	using Newtonsoft.Json;
 	using Parsing;
+	using PooledAwait;
 
 	/// <summary>
 	///     A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common
@@ -52,8 +58,11 @@ namespace Librainian.Persistence.InIFiles {
 		public enum LineType {
 
 			Unknown,
+
 			Comment,
+
 			Section,
+
 			KVP
 
 		}
@@ -68,10 +77,10 @@ namespace Librainian.Persistence.InIFiles {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			this.Add( document );
+			var _ = this.Add( document, CancellationToken.None );
 		}
 
-		public IniFile( [NotNull] String data ) {
+		public IniFile( [NotNull] String data, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( data ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( data ) );
 			}
@@ -80,11 +89,11 @@ namespace Librainian.Persistence.InIFiles {
 			var document = Document.GetTempDocument();
 
 			try {
-				document.AppendText( data );
-				this.Add( document );
+				var _ = document.AppendText( data, cancellationToken );
+				var __ = this.Add( document, cancellationToken );
 			}
 			finally {
-				document.Delete();
+				document.Delete( cancellationToken );
 			}
 		}
 
@@ -127,12 +136,12 @@ namespace Librainian.Persistence.InIFiles {
 
 				if ( this.Data.ContainsKey( section ) ) {
 					//TODO merge, not overwrite
-					this.Data[ section ] = value;
+					this.Data[section] = value;
 
 					return;
 				}
 
-				this.Data[ section ] = value;
+				this.Data[section] = value;
 			}
 		}
 
@@ -153,7 +162,7 @@ namespace Librainian.Persistence.InIFiles {
 					return default( String? );
 				}
 
-				return this.Data[ section ].FirstOrDefault( line => line.Key.Like( key ) )?.Value;
+				return this.Data[section].FirstOrDefault( line => line.Key.Like( key ) )?.Value;
 			}
 
 			[CanBeNull]
@@ -187,10 +196,10 @@ namespace Librainian.Persistence.InIFiles {
 
 			lock ( this.Data ) {
 				if ( !this.Data.ContainsKey( section ) ) {
-					this.Data[ section ] = new IniSection();
+					this.Data[section] = new IniSection();
 				}
 
-				return this.Data[ section ]!;
+				return this.Data[section]!;
 			}
 		}
 
@@ -224,7 +233,7 @@ namespace Librainian.Persistence.InIFiles {
 				var key = line.Substring( 0, pos ).Trimmed();
 
 				if ( !String.IsNullOrEmpty( key ) ) {
-					var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
+					var value = line[( pos + IniLine.PairSeparator.Length )..].Trimmed();
 
 					if ( this.Add( section, key, value ) ) {
 						counter++;
@@ -324,7 +333,7 @@ namespace Librainian.Persistence.InIFiles {
 			return false;
 		}
 
-		private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section ) {
+		private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section, CancellationToken cancellationToken ) {
 			if ( document is null ) {
 				throw new ArgumentNullException( nameof( document ) );
 			}
@@ -395,12 +404,12 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		[DebuggerStepThrough]
-		public Boolean Add( [NotNull] IDocument document ) {
+		public async PooledValueTask<Boolean> Add( [NotNull] IDocument document, CancellationToken cancellationToken ) {
 			if ( document is null ) {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			if ( document.Exists() == false ) {
+			if ( await document.Exists( cancellationToken ) == false ) {
 				return false;
 			}
 
@@ -474,7 +483,7 @@ namespace Librainian.Persistence.InIFiles {
 						var key = line.Substring( 0, pos ).Trimmed();
 
 						if ( !String.IsNullOrEmpty( key ) ) {
-							var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
+							var value = line[( pos + IniLine.PairSeparator.Length )..].Trimmed();
 
 							this.Add( currentSection, key, value );
 						}
@@ -483,7 +492,7 @@ namespace Librainian.Persistence.InIFiles {
 					}
 
 					default:
-						throw new ArgumentOutOfRangeException();
+						throw new ArgumentOutOfRangeException( nameof( lines ) );
 				}
 			}
 		}
@@ -517,16 +526,17 @@ namespace Librainian.Persistence.InIFiles {
 
 		/// <summary>Save the data to the specified document, overwriting it by default.</summary>
 		/// <param name="document"> </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="overwrite"></param>
 		/// <returns></returns>
-		public Boolean Save( [NotNull] IDocument document, Boolean overwrite = true ) {
+		public async Task<Boolean> Save( [NotNull] IDocument document, CancellationToken cancellationToken, Boolean overwrite = true ) {
 			if ( document is null ) {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			if ( document.Exists() ) {
+			if ( await document.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 				if ( overwrite ) {
-					document.Delete();
+					await document.Delete( cancellationToken ).ConfigureAwait( false );
 				}
 				else {
 					return false;
@@ -534,35 +544,10 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) {
-				this.WriteSection( document, section );
+				await this.WriteSectionAsync( document, section, cancellationToken ).ConfigureAwait( false );
 			}
 
 			return true;
-		}
-
-		/// <summary>Save the data to the specified document, overwriting it by default.</summary>
-		/// <param name="document"> </param>
-		/// <param name="overwrite"></param>
-		/// <returns></returns>
-		public async Task<Boolean> SaveAsync( [NotNull] IDocument document, Boolean overwrite = true ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
-			}
-
-			if ( document.Exists() ) {
-				if ( overwrite ) {
-					document.Delete();
-				}
-				else {
-					return false;
-				}
-			}
-
-			foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) {
-				await this.WriteSectionAsync( document, section ).ConfigureAwait( false );
-			}
-
-			return false;
 		}
 
 		[DebuggerStepThrough]
@@ -585,7 +570,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			if ( this.Data.ContainsKey( section ) ) {
-				return this.Data[ section ]!.Remove( key );
+				return this.Data[section]!.Remove( key );
 			}
 
 			return false;

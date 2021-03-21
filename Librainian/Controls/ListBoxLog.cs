@@ -197,7 +197,7 @@ namespace Librainian.Controls {
 
 				var logEvent = listboxItem is LogEvent item ? item : new LogEvent( LoggingLevel.Critical, listboxItem.ToString() );
 
-				var (fore, back) = logEvent.LoggingLevel.Colors();
+				( var fore, var back ) = logEvent.LoggingLevel.Colors();
 
 				using var solidBrush = new SolidBrush( back );
 

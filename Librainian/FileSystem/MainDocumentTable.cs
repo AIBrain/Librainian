@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MasterDocumentTable.cs" last formatted on 2020-08-14 at 8:40 PM.
+// File "MainDocumentTable.cs" last touched on 2021-03-07 at 11:00 PM by Protiguous.
 
 #nullable enable
 
@@ -29,7 +32,6 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Diagnostics;
 	using System.IO;
-	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
@@ -41,41 +43,37 @@ namespace Librainian.FileSystem {
 		public static CancellationTokenSource CTS { get; } = new();
 
 		/// <summary>DocumentInfos[StringPath]=DocumentInfo</summary>
-		public static PersistTable<String, DocumentInfo?> DocumentInfos { get; } =
-			new( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
+		public static PersistTable<String, DocumentInfo?> DocumentInfos { get; } = new( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
 
 		/// <summary>Documents[StringPath]=Document</summary>
 		public static PersistTable<String, Document> Documents { get; } = new( Environment.SpecialFolder.CommonApplicationData,
-																											  Path.GetFileNameWithoutExtension(
-																												  Process.GetCurrentProcess().ProcessName ),
-																											  nameof( Documents ) );
+			Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( Documents ) );
 
 		public static StringKVPTable Settings { get; } = new( Environment.SpecialFolder.LocalApplicationData,
-																			 Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ),
-																			 nameof( MainDocumentTable ) );
+			Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( MainDocumentTable ) );
 
 		/// <summary>Start searching in the givin <paramref name="folder" />, and update our "MFT" with found documents.</summary>
 		/// <param name="folder"></param>
 		/// <param name="folders"></param>
-		/// <param name="ReportDocument"></param>
+		/// <param name="reportDocument"></param>
 		/// <returns></returns>
 		[NotNull]
 		public static async Task SearchAsync(
 			[NotNull] IFolder folder,
 			[CanBeNull] IProgress<IFolder>? folders = null,
-			[CanBeNull] IProgress<Document>? ReportDocument = null
+			[CanBeNull] IProgress<Document>? reportDocument = null
 		) {
 			if ( CTS.IsCancellationRequested ) {
 				return;
 			}
 
 			//Update the MFT
-			foreach ( var document in folder.GetDocuments( "*.*" ) ) {
+			await foreach ( var document in folder.EnumerateDocuments( "*.*", CTS.Token ) ) {
 				if ( CTS.IsCancellationRequested ) {
 					return;
 				}
 
-				ReportDocument?.Report( document );
+				reportDocument?.Report( document );
 				Documents[document.FullPath] = document;
 
 				var docinfo = new DocumentInfo( document );
@@ -88,9 +86,13 @@ namespace Librainian.FileSystem {
 			}
 
 			//And then scan down into any subfolders.
-			foreach ( var subFolder in folder.BetterGetFolders( "*.*" ).TakeWhile( _ => !CTS.IsCancellationRequested ) ) {
+			await foreach ( var subFolder in folder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CTS.Token ) ) {
+				if ( CTS.IsCancellationRequested ) {
+					return;
+				}
+
 				folders?.Report( subFolder );
-				await SearchAsync( subFolder, folders, ReportDocument ).ConfigureAwait( false );
+				await SearchAsync( subFolder, folders, reportDocument ).ConfigureAwait( false );
 			}
 		}
 

@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -6,55 +6,61 @@
 // 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "FileCopyManager.cs" last touched on 2021-03-07 at 3:21 AM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.FileSystem {
+
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-    using System.Linq;
+	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
-    using Logging;
-    using Measurement.Time;
-    using Parsing;
-    using PooledAwait;
+	using Logging;
+	using Measurement.Time;
+	using Parsing;
+	using PooledAwait;
 
 	public class FileCopyManager {
 
 		private ConcurrentDictionary<Document, PooledValueTask<FileCopyData>> SourceFilesToBeCopied { get; } = new();
 
-        public IAsyncEnumerable<PooledValueTask<FileCopyData>> FilesToBeCopied() => this.SourceFilesToBeCopied.Values.ToAsyncEnumerable();
+		public IAsyncEnumerable<PooledValueTask<FileCopyData>> FilesToBeCopied() => this.SourceFilesToBeCopied.Values.ToAsyncEnumerable();
 
-        /// <summary>
-		/// Each <see cref="SourceFilesToBeCopied"/> still needs to be awaited.
+		/// <summary>
+		///     Each <see cref="SourceFilesToBeCopied" /> still needs to be awaited.
 		/// </summary>
 		/// <param name="sourceFiles"></param>
 		/// <param name="destinationFolder"></param>
 		/// <param name="overwriteDestination"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public async Task LoadFilesToBeCopied( [NotNull] IAsyncEnumerable<Document> sourceFiles, IFolder destinationFolder, Boolean overwriteDestination, CancellationToken cancellationToken ) {
+		public async Task LoadFilesToBeCopied(
+			[NotNull] IAsyncEnumerable<Document> sourceFiles,
+			IFolder destinationFolder,
+			Boolean overwriteDestination,
+			CancellationToken cancellationToken
+		) {
 			if ( sourceFiles == null ) {
 				throw new ArgumentNullException( nameof( sourceFiles ) );
 			}
@@ -75,23 +81,21 @@ namespace Librainian.FileSystem {
 					WhenStarted = null
 				};
 
-				this.SourceFilesToBeCopied[ sourceFile ] = CreateCopyFileTask( fileCopyData, overwriteDestination, cancellationToken );
+				this.SourceFilesToBeCopied[sourceFile] = CreateCopyFileTask( fileCopyData, overwriteDestination, cancellationToken );
 			}
 
-            static async PooledValueTask<FileCopyData> CreateCopyFileTask( FileCopyData fileCopyData, Boolean overwriteDestination, CancellationToken cancellationToken ) {
-
-                if ( overwriteDestination && await fileCopyData.Destination.Exists().ConfigureAwait( false ) ) {
-                    $"Deleting destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
-                    await fileCopyData.Destination.TryDeleting( Seconds.Seven, cancellationToken ).ConfigureAwait( false );
-                }
+			static async PooledValueTask<FileCopyData> CreateCopyFileTask( FileCopyData fileCopyData, Boolean overwriteDestination, CancellationToken cancellationToken ) {
+				if ( overwriteDestination && await fileCopyData.Destination.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+					$"Deleting destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
+					await fileCopyData.Destination.TryDeleting( Seconds.Seven, cancellationToken ).ConfigureAwait( false );
+				}
 
 				await fileCopyData.Source.Copy( fileCopyData, cancellationToken ).ConfigureAwait( false );
 
-                return fileCopyData;
-
-            }
+				return fileCopyData;
+			}
 		}
 
-		
 	}
+
 }

@@ -26,7 +26,6 @@
 namespace Librainian.Persistence {
 	using System;
 	using System.Diagnostics;
-	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using FileSystem;
@@ -188,13 +187,16 @@ namespace Librainian.Persistence {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
+			var watch = Stopwatch.StartNew();
 			$"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
-			var addHash = document.HarkerHash32(cancellationToken);
+			var total = 3 * await document.Size( cancellationToken).ConfigureAwait( false );
+
+			var addHash = document.HarkerHash32(cancellationToken).AsValueTask().AsTask();
 			var crc32 = document.CRC32( cancellationToken ).AsValueTask().AsTask();
 			var crc64 = document.CRC64( cancellationToken ).AsValueTask().AsTask();
 
-			await Task.WhenAll( crc32, crc64, addHash ).ConfigureAwait( false );
+			await Task.WhenAll( addHash, crc32, crc64 ).ConfigureAwait( false );
 
 			this.AddHash = addHash.Result;
 
@@ -202,7 +204,10 @@ namespace Librainian.Persistence {
 
 			this.CRC64 = crc64.Result;
 
-			$"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}...".Verbose();
+			watch.Stop();
+
+			var per = total / ( Decimal ) watch.ElapsedMilliseconds;
+			$"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}...at {per:F} bytes per millisecond.".Verbose();
 		}
 
 		/// <summary>
@@ -233,7 +238,7 @@ namespace Librainian.Persistence {
 				if ( needScanned == true ) {
 					var document = new Document( this.AbsolutePath );
 
-					this.Length = document.Length();
+					this.Length = await document.Length( cancellationToken).ConfigureAwait( false );
 					this.CreationTimeUtc = document.CreationTimeUtc;
 					this.LastWriteTimeUtc = document.LastWriteTimeUtc;
 
@@ -241,14 +246,14 @@ namespace Librainian.Persistence {
 
 					this.LastScanned = DateTime.UtcNow;
 
-					var copy = new DocumentInfo( document ) {
+					var documentInfo = new DocumentInfo( document ) {
 						LastScanned = this.LastScanned,
 						CRC32 = this.CRC32,
 						CRC64 = this.CRC64,
 						AddHash = this.AddHash
 					};
 
-					MainDocumentTable.DocumentInfos[this.AbsolutePath] = copy;
+					MainDocumentTable.DocumentInfos[this.AbsolutePath] = documentInfo;
 				}
 			}
 			catch ( Exception exception ) {

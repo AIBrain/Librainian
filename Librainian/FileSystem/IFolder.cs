@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IFolder.cs" last touched on 2021-03-10 at 3:48 AM by Protiguous.
+// File "IFolder.cs" last touched on 2021-03-10 at 12:59 AM by Protiguous.
 
 namespace Librainian.FileSystem {
 
@@ -32,7 +32,6 @@ namespace Librainian.FileSystem {
 	using System.IO;
 	using System.Security;
 	using System.Threading;
-	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
 	using JetBrains.Annotations;
 	using PooledAwait;
@@ -71,6 +70,12 @@ namespace Librainian.FileSystem {
 		/// <exception cref="System.IO.PathTooLongException"></exception>
 		PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
 
+		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="SecurityException"></exception>
+		/// <exception cref="System.IO.PathTooLongException"></exception>
+		Boolean ExistsSync();
+
 		/// <summary>Free space available to the current user.</summary>
 		/// <returns></returns>
 		PooledValueTask<UInt64> GetAvailableFreeSpace();
@@ -101,7 +106,7 @@ namespace Librainian.FileSystem {
 
 		void OpenWithExplorer();
 
-		ValueTask Refresh( CancellationToken cancellationToken );
+		PooledValueTask<DirectoryInfo> Refresh( CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>Shorten the full path with "..."</para>
@@ -113,6 +118,12 @@ namespace Librainian.FileSystem {
 		/// <returns>A String that represents the current object.</returns>
 		[NotNull]
 		String ToString();
+
+		/// <summary>
+		/// Sync version
+		/// </summary>
+		/// <returns></returns>
+		Boolean GetExists();
 
 	}
 

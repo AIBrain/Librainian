@@ -96,7 +96,7 @@ namespace Librainian.Parsing.Markov {
 			Task.Run( () => {
 				var words = corpus.ToWords().ToList();
 
-				foreach ( var (word, index) in words.Select( ( word, i ) => ( word, i ) ) ) {
+				foreach ( ( var word, var index ) in words.Select( ( word, i ) => ( word, i ) ) ) {
 					var chain = words.Skip( index + 1 ).Take( level );
 					this._markovChains.TryAdd( word, chain.ToList() );
 

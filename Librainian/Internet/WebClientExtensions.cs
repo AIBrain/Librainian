@@ -115,7 +115,7 @@ namespace Librainian.Internet {
 			[NotNull] this WebClient webClient,
 			[NotNull] Uri address,
 			[NotNull] String fileName,
-			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)> progress
+			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
 		) {
 			if ( webClient is null ) {
 				throw new ArgumentNullException( nameof( webClient ) );

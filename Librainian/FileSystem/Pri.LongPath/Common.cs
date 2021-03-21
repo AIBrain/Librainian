@@ -146,6 +146,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static Boolean IsPathUnc( [NotNull] this String path ) {
 			path = path.ThrowIfBlank();
 

@@ -86,13 +86,13 @@ namespace Librainian.Financial.Containers.Wallets {
             }
 
             if ( bankNotes != null ) {
-                foreach ( var (bankNote, quantity) in bankNotes ) {
+                foreach ( ( var bankNote, var quantity ) in bankNotes ) {
                     wallet.Deposit( bankNote, quantity );
                 }
             }
 
             if ( coins != null ) {
-                foreach ( var (coin, quantity) in coins ) {
+                foreach ( ( var coin, var quantity ) in coins ) {
                     wallet.Deposit( coin, quantity );
                 }
             }
@@ -183,7 +183,7 @@ namespace Librainian.Financial.Containers.Wallets {
         [NotNull]
         public static Task StartTransfer( [NotNull] this Wallet source, [NotNull] Wallet target,  CancellationToken cancellationToken  ) =>
             Task.Run( () => {
-                foreach ( var (denomination, quantity) in source ) {
+                foreach ( ( var denomination, var quantity ) in source ) {
                     if ( cancellationToken.IsCancellationRequested ) {
                         break;
                     }
@@ -272,7 +272,7 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
-            var (denomination, quantity) = denominationAndAmount;
+            ( var denomination, var quantity ) = denominationAndAmount;
 
             return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
         }
@@ -286,7 +286,7 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
-            var (denomination, quantity) = denominationAndAmount;
+            ( var denomination, var quantity ) = denominationAndAmount;
 
             return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
         }
@@ -300,7 +300,7 @@ namespace Librainian.Financial.Containers.Wallets {
                 throw new ArgumentNullException( nameof( target ) );
             }
 
-            var (denomination, quantity) = denominationAndAmount;
+            ( var denomination, var quantity ) = denominationAndAmount;
 
             return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity ) > 0m;
         }

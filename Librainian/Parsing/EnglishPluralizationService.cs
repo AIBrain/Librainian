@@ -1008,44 +1008,44 @@ namespace Librainian.Parsing {
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"man"
-			}, s => s?.Remove( s.Length - 2, 2 ) + "en", this.Culture, out var newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 2, 2 ) + "en", this.Culture, out var newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			// handle irregular inflections for common suffixes, e.g. "mouse" -> "mice"
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"louse", "mouse"
-			}, s => s?.Remove( s.Length - 4, 4 ) + "ice", this.Culture, out newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 4, 4 ) + "ice", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"tooth"
-			}, s => s?.Remove( s.Length - 4, 4 ) + "eeth", this.Culture, out newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 4, 4 ) + "eeth", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"goose"
-			}, s => s?.Remove( s.Length - 4, 4 ) + "eese", this.Culture, out newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 4, 4 ) + "eese", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"foot"
-			}, s => s?.Remove( s.Length - 3, 3 ) + "eet", this.Culture, out newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 3, 3 ) + "eet", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"zoon"
-			}, s => s?.Remove( s.Length - 3, 3 ) + "oa", this.Culture, out newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 3, 3 ) + "oa", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 
 			if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
 				"cis", "sis", "xis"
-			}, s => s?.Remove( s.Length - 2, 2 ) + "es", this.Culture, out newSuffixWord ) ) {
+			}, s => s.Remove( s.Length - 2, 2 ) + "es", this.Culture, out newSuffixWord ) ) {
 				return prefixWord + newSuffixWord;
 			}
 

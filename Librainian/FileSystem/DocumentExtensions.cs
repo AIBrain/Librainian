@@ -28,7 +28,6 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Diagnostics;
 	using System.IO;
-	using System.Linq;
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
@@ -37,19 +36,6 @@ namespace Librainian.FileSystem {
 
 	public static class DocumentExtensions {
 
-		/// <summary>
-		///     16mb
-		/// </summary>
-		public static UInt32 BufferSize { get; } = 0x1000000;
-
-		/*
-
-        /// <summary>
-        /// The characters not allowed in file names.
-        /// </summary>
-        [NotNull]
-        public static Char[] InvalidFileNameChars { get; } = Path.GetInvalidFileNameChars();
-        */
 
 		private static async Task InternalCopyWithProgress( [NotNull] IDocument source, [NotNull] IDocument destination, [CanBeNull] IProgress<Decimal> progress,
 			[CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Decimal bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
@@ -215,48 +201,6 @@ namespace Librainian.FileSystem {
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
-
-		[NotNull]
-		public static async Task<Boolean> IsAll( [NotNull] Document document, Byte number ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
-			}
-
-			if ( !await document.Exists().ConfigureAwait( false ) ) {
-				return false;
-			}
-
-#if NET5_0_OR_GREATER
-			await
-#endif
-				using var stream = new FileStream( document.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte,
-					FileOptions.SequentialScan );
-
-			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {document.FullPath}" );
-			}
-
-			var buffer = new Byte[MathConstants.Sizes.OneGigaByte];
-
-#if NET5_0_OR_GREATER
-			await
-#endif
-				using var buffered = new BufferedStream( stream );
-
-			Int32 bytesRead;
-
-			do {
-				var readTask = buffered.ReadAsync( buffer, 0, buffer.Length );
-
-				bytesRead = await readTask.ConfigureAwait( false );
-
-				if ( !bytesRead.Any() || buffer.Any( b => b != number ) ) {
-					return false;
-				}
-			} while ( bytesRead.Any() );
-
-			return true;
-		}
 
 	}
 }

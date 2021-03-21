@@ -197,7 +197,9 @@ namespace Librainian.Internet {
 
 				this.Client.Credentials = this.Credentials;
 				this.Client.CachePolicy = DefaultCachePolicy;
-				this.DestinationBuffer = destination.AsBytes() as Byte[]; //can we do this??
+				
+				//TODO what???
+				//this.DestinationBuffer = destination.AsBytes(cancellationToken).ToArrayAsync(cancellationToken); //can we do this??
 			}
 
 			public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );

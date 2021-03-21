@@ -23,17 +23,19 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IDocument.cs" last touched on 2021-03-07 at 8:52 AM by Protiguous.
+// File "IDocument.cs" last touched on 2021-03-07 at 3:17 AM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.FileSystem {
 
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Net;
+	using System.Runtime.Serialization;
 	using System.Security;
 	using System.Text;
 	using System.Threading;
@@ -46,47 +48,39 @@ namespace Librainian.FileSystem {
 
 	public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
-		[NotNull]
-		String FullPath { get; }
-
-		/*
-
-        /// <summary>
-        ///     Gets or sets the <see cref="System.IO.FileAttributes" /> for <see cref="FullPath" />.
-        /// </summary>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="DirectoryNotFoundException"></exception>
-        /// <exception cref="IOException"></exception>
-        FileAttributes? FileAttributes { get; set; }
-        */
+		/// <summary>
+		///     Largest amount of memory that will be allocated for file reads.
+		/// </summary>
+		/// <remarks>About 1.8GB (90% of 2GB)</remarks>
+		const Int32 MaximumBufferSize = ( Int32 ) ( Int32.MaxValue * 0.9 );
 
 		/// <summary>Local file creation <see cref="DateTime" />.</summary>
-		DateTime? CreationTime { get; set; }
+		public DateTime? CreationTime { get; set; }
 
 		/// <summary>Gets or sets the file creation time, in coordinated universal time (UTC).</summary>
-		DateTime? CreationTimeUtc { get; set; }
+		public DateTime? CreationTimeUtc { get; set; }
 
 		//FileAttributeData FileAttributeData { get; }
 
 		/// <summary>Gets or sets the time the current file was last accessed.</summary>
-		DateTime? LastAccessTime { get; set; }
+		public DateTime? LastAccessTime { get; set; }
 
 		/// <summary>Gets or sets the UTC time the file was last accessed.</summary>
-		DateTime? LastAccessTimeUtc { get; set; }
+		public DateTime? LastAccessTimeUtc { get; set; }
 
 		/// <summary>Gets or sets the time when the current file or directory was last written to.</summary>
-		DateTime? LastWriteTime { get; set; }
+		public DateTime? LastWriteTime { get; set; }
 
 		/// <summary>Gets or sets the UTC datetime when the file was last written to.</summary>
-		DateTime? LastWriteTimeUtc { get; set; }
+		public DateTime? LastWriteTimeUtc { get; set; }
 
-		PathTypeAttributes PathTypeAttributes { get; }
+		public PathTypeAttributes PathTypeAttributes { get; }
 
 		/// <summary>Anything that can be temp stored can go in this. Not serialized. Defaults to be used for internal locking.</summary>
 		[CanBeNull]
-		Object? Tag { get; set; }
+		public Object? Tag { get; set; }
 
-		Boolean DeleteAfterClose { get; set; }
+		public Boolean DeleteAfterClose { get; set; }
 
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
@@ -96,53 +90,68 @@ namespace Librainian.FileSystem {
 		/// </example>
 		/// <see cref="Pri.LongPath.Path.GetFileName" />
 		[NotNull]
-		String FileName { get; }
+		public String FileName { get; }
 
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
 		/// <see cref="Pri.LongPath.Path.GetFileNameWithoutExtension" />
 		[NotNull]
-		String Name { get; }
+		public String Name { get; }
+
+		/// <summary>
+		///     Represents the fully qualified path of the file.
+		///     <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
+		/// </summary>
+		[NotNull]
+		public String FullPath { get; }
+
+		Byte[]? Buffer { get; set; }
+
+		Boolean IsBufferLoaded { get; }
+
+		FileStream? Writer { get; set; }
+
+		StreamWriter? WriterStream { get; set; }
 
 		/// <summary>Returns the length of the file (if it exists).</summary>
-		PooledValueTask<UInt64?> Length();
+		public PooledValueTask<UInt64?> Length( CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		IAsyncEnumerable<Byte> AsBytes( CancellationToken cancellationToken );
+		public IAsyncEnumerable<Byte> AsBytes( CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		/// <returns></returns>
-		IAsyncEnumerable<Int32> AsInt32( CancellationToken cancellationToken );
+		public IAsyncEnumerable<Int32> AsInt32( CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		/// <returns></returns>
-		IAsyncEnumerable<Int64> AsInt64( CancellationToken cancellationToken );
+		public IAsyncEnumerable<Int64> AsInt64( CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Guid" />.</summary>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		/// <returns></returns>
 		[NotNull]
-		IAsyncEnumerable<Guid> AsGuids( CancellationToken cancellationToken );
+		public IAsyncEnumerable<Guid> AsGuids( CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="UInt64" />.</summary>
 		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		IAsyncEnumerable<UInt64> AsUInt64( CancellationToken cancellationToken );
+		public IAsyncEnumerable<UInt64> AsUInt64( CancellationToken cancellationToken );
 
 		/// <summary>Deletes the file.</summary>
-		PooledValueTask Delete();
+		public PooledValueTask Delete( CancellationToken cancellationToken );
 
 		/// <summary>Returns whether the file exists.</summary>
 		[Pure]
-		PooledValueTask<Boolean> Exists();
+		public PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
 
-		IFolder ContainingingFolder();
+		public IFolder ContainingingFolder();
 
 		/// <summary>
 		///     <para>Clone the entire document to the <paramref name="destination" /> as quickly as possible.</para>
@@ -153,7 +162,7 @@ namespace Librainian.FileSystem {
 		/// <param name="eta">        </param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
+		public PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
 			[NotNull] IDocument destination,
 			[NotNull] IProgress<Single> progress,
 			[NotNull] IProgress<TimeSpan> eta,
@@ -170,17 +179,17 @@ namespace Librainian.FileSystem {
             [NotNull] Action<(IDocument, UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress, [NotNull] Action onCompleted );
         */
 
-		PooledValueTask<Int32?> CRC32( CancellationToken cancellationToken );
+		public PooledValueTask<Int32?> CRC32( CancellationToken cancellationToken );
 
 		/// <summary>Returns a lowercase hex-string of the hash.</summary>
 		/// <returns></returns>
-		PooledValueTask<String?> CRC32Hex( CancellationToken cancellationToken );
+		public PooledValueTask<String?> CRC32Hex( CancellationToken cancellationToken );
 
-		PooledValueTask<Int64?> CRC64( CancellationToken cancellationToken );
+		public PooledValueTask<Int64?> CRC64( CancellationToken cancellationToken );
 
 		/// <summary>Returns a lowercase hex-string of the hash.</summary>
 		/// <returns></returns>
-		PooledValueTask<String?> CRC64Hex( CancellationToken cancellationToken );
+		public PooledValueTask<String?> CRC64Hex( CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>Downloads (replaces) the local document with the specified <paramref name="source" />.</para>
@@ -188,17 +197,20 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( [NotNull] Uri source );
+		public PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( [NotNull] Uri source );
 
 		/// <summary>
 		///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
 		/// </summary>
 		[NotNull]
-		String Extension();
+		public String Extension();
 
 		/// <summary>Returns the size of the file, if it exists.</summary>
 		/// <returns></returns>
-		PooledValueTask<UInt64?> Size();
+		public PooledValueTask<UInt64?> Size( CancellationToken cancellationToken );
+
+		//TODO PooledValueTask<UInt64?> RealSizeOnDisk( CancellationToken cancellationToken );
+		//TODO PooledValueTask<UInt64?> AllocatedSizeOnDisk( CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>If the file does not exist, it is created.</para>
@@ -206,22 +218,22 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <param name="cancellationToken"></param>
-		PooledValueTask<IDocument> AppendText( [NotNull] String text, CancellationToken cancellationToken );
+		public PooledValueTask<IDocument> AppendText( [NotNull] String text, CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		Boolean Equals( Object other );
+		public Boolean Equals( Object other );
 
 		/// <summary>(file name, not contents)</summary>
 		/// <returns></returns>
-		Int32 GetHashCode();
+		public Int32 GetHashCode();
 
 		/// <summary>Returns the filename, without the extension.</summary>
 		/// <returns></returns>
-		String JustName();
+		public String JustName();
 
 		/// <summary>
 		///     <para>
@@ -229,14 +241,14 @@ namespace Librainian.FileSystem {
 		///     </para>
 		///     <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
 		/// </summary>
-		PooledValueTask<Int32?> GetOptimalBufferSize();
+		public PooledValueTask<Int32?> GetOptimalBufferSize( CancellationToken cancellationToken );
 
 		/// <summary>Attempt to start the process.</summary>
 		/// <param name="arguments"></param>
 		/// <param name="verb">     "runas" is elevated</param>
 		/// <param name="useShell"></param>
 		/// <returns></returns>
-		PooledValueTask<Process?> Launch( [CanBeNull] String? arguments = null, String verb = "runas", Boolean useShell = false );
+		public PooledValueTask<Process?> Launch( [CanBeNull] String? arguments = null, String verb = "runas", Boolean useShell = false );
 
 		/// <summary>
 		///     Attempt to return an object Deserialized from a JSON text file.
@@ -245,9 +257,9 @@ namespace Librainian.FileSystem {
 		/// <param name="progress"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		PooledValueTask<(Status status, T? obj)> LoadJSON<T>( IProgress<ZeroToOne>? progress = null, CancellationToken? cancellationToken = null );
+		public PooledValueTask<(Status status, T? obj)> LoadJSON<T>( IProgress<ZeroToOne>? progress, CancellationToken cancellationToken );
 
-		PooledValueTask<String> ReadStringAsync();
+		public PooledValueTask<String> ReadStringAsync();
 
 		/// <summary>
 		///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
@@ -264,15 +276,43 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken cancellationToken );
+		public PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken cancellationToken );
 
-		/// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
+		/*
+		 *	//TODO Move: copy to dest under guid.guid, delete old dest, rename new dest, delete source
+		 *	//TODO PooledValueTask<FileCopyData> Move( FileCopyData fileData, CancellationToken cancellationToken );
+		 */
+
+		/// <summary>
+		///     Opens an existing file or creates a new file for writing.
+		///     <para>Should be able to read and write from <see cref="FileStream" />.</para>
+		///     <para>If there is any error opening or creating the file, <see cref="Document.Writer" /> will be null.</para>
+		/// </summary>
+		/// <returns></returns>
+		public PooledValueTask<FileStream?> OpenWriter( Boolean deleteIfAlreadyExists, CancellationToken cancellationToken, FileShare sharingOptions = FileShare.None );
+
+		/// <summary>
+		///     Releases the <see cref="FileStream" /> opened by <see cref="OpenWriter" />.
+		/// </summary>
+		public void ReleaseWriter();
+
+		/// <summary>HarkerHash (hash-by-addition)</summary>
+		/// <returns></returns>
+		PooledValueTask<Int32> HarkerHash32( CancellationToken cancellationToken );
+
+		PooledValueTask<Boolean> IsAll( Byte number, CancellationToken cancellationToken );
+
+		/// <summary>Open the file for reading and return a <see cref="Document.StreamReader" />.</summary>
 		/// <returns></returns>
 		StreamReader StreamReader();
 
-		/// <summary>Open the file for writing and return a <see cref="StreamWriter" />.</summary>
+		/// <summary>
+		///     Open the file for writing and return a <see cref="Document.StreamWriter" />.
+		///     <para>Optional <paramref name="encoding" />. Defaults to <see cref="Encoding.Unicode" />.</para>
+		///     <para>Optional buffersize. Defaults to 1 MB.</para>
+		/// </summary>
 		/// <returns></returns>
-		Task<StreamWriter?> StreamWriter( [CanBeNull] Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
+		Task<StreamWriter?> StreamWriter( CancellationToken cancellationToken, [CanBeNull] Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
 
 		/// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
 		/// <returns></returns>
@@ -283,7 +323,7 @@ namespace Librainian.FileSystem {
 		String ToString();
 
 		/// <summary>
-		///     <para>Returns true if the <see cref="IDocument" /> no longer seems to exist.</para>
+		///     <para>Returns true if this <see cref="Document" /> no longer seems to exist.</para>
 		/// </summary>
 		/// <param name="delayBetweenRetries"></param>
 		/// <param name="cancellationToken"></param>
@@ -295,22 +335,66 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( [NotNull] Uri destination );
 
-		PooledValueTask<Boolean> IsAll( Byte number, CancellationToken cancellationToken );
-
 		/// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="Document.FullPath" />.</summary>
 		/// <see cref="Document.op_Implicit" />
+		/// <see cref="Document.ToFileInfo" />
 		/// <returns></returns>
-		PooledValueTask<FileInfo> GetFreshInfo();
+		PooledValueTask<FileInfo> GetFreshInfo( CancellationToken cancellationToken );
 
-		PooledValueTask<FileCopyData> Copy( FileCopyData fileData, CancellationToken cancellationToken );
+		PooledValueTask<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken );
 
-		//copy to dest under guid.guid, delete old dest, rename new dest, delete source
-
-		//TODO PooledValueTask<FileCopyData> Move( FileCopyData fileData, CancellationToken cancellationToken );
-
-		PooledValueTask<Int32> HarkerHash32( CancellationToken cancellationToken );
 		PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken );
+
+		/// <summary>"poor mans Decimal hash"</summary>
+		/// <returns></returns>
 		PooledValueTask<Decimal> HarkerHashDecimal( CancellationToken cancellationToken );
+
+		/// <summary>Returns an enumerator that iterates through the collection.</summary>
+		/// <returns>A <see cref="IEnumerator" /> that can be used to iterate through the collection.</returns>
+		IAsyncEnumerator<Byte> GetEnumerator();
+
+		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+		void DisposeManaged();
+
+		/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
+		/// <returns></returns>
+		PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken cancellationToken );
+
+		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
+		/// <param name="cancellationToken"></param>
+		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
+		/// <returns></returns>
+		IAsyncEnumerable<Decimal> AsDecimal( CancellationToken cancellationToken );
+
+		/// <summary>
+		///     <para>If the file does not exist, return <see cref="Status.Error" />.</para>
+		///     <para>If an exception happens, return <see cref="Status.Exception" />.</para>
+		///     <para>Otherwise, return <see cref="Status.Success" />.</para>
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		PooledValueTask<Status> SetReadOnly( Boolean value, CancellationToken cancellationToken );
+
+		PooledValueTask<Status> TurnOnReadonly( CancellationToken cancellationToken );
+
+		PooledValueTask<Status> TurnOffReadonly( CancellationToken cancellationToken );
+
+		void GetObjectData( [NotNull] SerializationInfo info, StreamingContext context );
+
+		IAsyncEnumerable<String> ReadLines( CancellationToken cancellationToken );
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		/// <returns></returns>
+		UInt64? GetLength();
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		/// <returns></returns>
+		Boolean GetExists();
 
 	}
 

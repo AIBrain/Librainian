@@ -159,7 +159,7 @@ namespace Librainian.Financial.Containers.Wallets {
         public void Deposit( Decimal amount, out Decimal leftOver ) {
             var money = amount.ToOptimal( out leftOver );
 
-            foreach ( var (key, value) in money ) {
+            foreach ( ( var key, var value ) in money ) {
                 this.Deposit( key, value );
             }
         }
@@ -252,11 +252,11 @@ namespace Librainian.Financial.Containers.Wallets {
         /// <summary>Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.</summary>
         [NotNull]
         public IEnumerable<(IDenomination, UInt64)> GetGroups() {
-            foreach ( var (key, value) in this.BankNotes ) {
+            foreach ( ( var key, var value ) in this.BankNotes ) {
                 yield return ( key, value );
             }
 
-            foreach ( var (key, value) in this.Coins ) {
+            foreach ( ( var key, var value ) in this.Coins ) {
                 yield return ( key, value );
             }
         }

@@ -121,7 +121,7 @@ namespace Librainian.OperatingSystem {
 			return true;
 		}
 
-		public static Boolean? IsDiskSSD( this Byte diskNumber ) => diskNumber.IncursSeekPenalty() == false ? ( Boolean? )true : null;
+		public static Boolean? IsDiskSSD( this Byte diskNumber ) => diskNumber.IncursSeekPenalty() == false ? true : null;
 
 		private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
 			( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;

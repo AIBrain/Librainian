@@ -31,7 +31,6 @@ namespace Librainian.Persistence {
 	using System.IO;
 	using System.Linq;
 	using System.Threading;
-	using System.Threading.Tasks;
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
@@ -42,6 +41,8 @@ namespace Librainian.Persistence {
 	using Microsoft.Isam.Esent.Interop.Windows81;
 	using Newtonsoft.Json;
 	using OperatingSystem.Compression;
+	using Parsing;
+	using PooledAwait;
 	using Utilities;
 
 	/// <summary>
@@ -70,7 +71,7 @@ namespace Librainian.Persistence {
 		public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this(
 			Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
 
-		public StringKVPTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
+		public StringKVPTable( [NotNull] Folder folder ) {
 			if ( folder is null ) {
 				throw new ArgumentNullException( nameof( folder ) );
 			}
@@ -78,8 +79,11 @@ namespace Librainian.Persistence {
 			try {
 				this.Folder = folder;
 
-				if ( !this.Folder.Create() ) {
-					throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
+				this.Folder.Info.Create();
+				this.Folder.Info.Refresh();
+
+				if ( !this.Folder.Info.Exists ) {
+					throw new DirectoryNotFoundException( $"Unable to find or create the folder {this.Folder.FullPath.SmartQuote()}." );
 				}
 
 				var customConfig = new DatabaseConfig {
@@ -90,9 +94,6 @@ namespace Librainian.Persistence {
 
 				this.Dictionary = new PersistentDictionary<String, String?>( this.Folder.FullPath, customConfig );
 
-				if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
-					throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
-				}
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -211,7 +212,7 @@ namespace Librainian.Persistence {
 		}
 
 		public void Add( KeyValuePair<String, String?> item ) {
-			var (key, value) = item;
+			( var key, var value ) = item;
 			if ( key is not null ) {
 				this[key] = value;
 			}
@@ -220,7 +221,7 @@ namespace Librainian.Persistence {
 		public void Clear() => this.Dictionary.Clear();
 
 		public Boolean Contains( KeyValuePair<String, String?> item ) {
-			var (key, s) = item;
+			( var key, var s ) = item;
 			var value = s?.ToJSON()?.ToCompressedBase64();
 
 			var asItem = new KeyValuePair<String, String?>( key, value );
@@ -262,7 +263,7 @@ namespace Librainian.Persistence {
 		/// <param name="item">The object to remove from the <see cref="ICollection" /> .</param>
 		/// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
 		public Boolean Remove( KeyValuePair<String, String?> item ) {
-			var (key, s) = item;
+			( var key, var s ) = item;
 			var value = s.ToJSON()?.ToCompressedBase64();
 			var asItem = new KeyValuePair<String, String?>( key, value );
 
@@ -308,18 +309,16 @@ namespace Librainian.Persistence {
 		///     Return true if we can read/write in the <see cref="Folder" /> .
 		/// </summary>
 		/// <returns></returns>
-		private async Task<Boolean> TestForReadWriteAccess() {
+		private async PooledValueTask<Boolean> TestForReadWriteAccess( CancellationToken cancellationToken ) {
 			try {
 				var document = this.Folder.TryGetTempDocument();
 
 				var text = Randem.NextString( 64, true, true, true, true );
-				document.AppendText( text );
+				await document.AppendText( text, cancellationToken ).ConfigureAwait( false );
 
-				using var cancel = new CancellationTokenSource( Seconds.Ten );
+				await document.TryDeleting( Seconds.One, cancellationToken ).ConfigureAwait( false );
 
-				await document.TryDeleting( Seconds.One, cancel.Token ).ConfigureAwait( false );
-
-				return !document.Exists();
+				return !await document.Exists( cancellationToken).ConfigureAwait( false );
 			}
 			catch { }
 
@@ -344,10 +343,19 @@ namespace Librainian.Persistence {
 		/// </summary>
 		public void Flush() => this.Dictionary.Flush();
 
-		public void Initialize() {
+		public async PooledValueTask<Status> Initialize( CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( this.Dictionary.Database?.ToString() ) ) {
-				throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
+				new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." ).Log();
+				return Status.Exception;
 			}
+
+			
+			if ( await this.TestForReadWriteAccess( cancellationToken ).ConfigureAwait( false ) ) {
+				new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." ).Log();
+				return Status.Exception;
+			}
+
+			return Status.Good;
 		}
 
 		/// <summary>

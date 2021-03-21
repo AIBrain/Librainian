@@ -29,276 +29,282 @@
 
 namespace Librainian.Persistence {
 
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using FileSystem;
-    using JetBrains.Annotations;
-    using Logging;
-    using Maths;
-    using Measurement.Time;
-    using Microsoft.Database.Isam.Config;
-    using Microsoft.Isam.Esent.Collections.Generic;
-    using Microsoft.Isam.Esent.Interop.Windows81;
-    using Newtonsoft.Json;
-    using OperatingSystem.Compression;
-    using Utilities;
-
-    /// <summary>
-    ///     <para>
-    ///         Allows the <see cref="PersistentDictionary{TKey,TValue}" /> class to persist almost any object by using
-    ///         Newtonsoft.Json.
-    ///     </para>
-    /// </summary>
-    /// <see cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
-    /// <remarks>//TODO This class is in severe need of unit testing.</remarks>
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject]
-    public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue?> where TKey : IComparable<TKey> {
-
-        
-
-        public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
-
-        public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, subFolder,
-            tableName ) ) { }
-
-        public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
-
-        public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) :
-            this( Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
-
-        public PersistTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
-            try {
-                this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
-
-                if ( !this.Folder.Create() ) {
-                    throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
-                }
-
-                var customConfig = new DatabaseConfig {
-	                CreatePathIfNotExist = true, DefragmentSequentialBTrees = true, EnableShrinkDatabase = ShrinkDatabaseGrbit.On
-                };
-
-                this.Dictionary = new PersistentDictionary<TKey, String?>( this.Folder.FullPath, customConfig );
-
-                if ( testForReadWriteAccess && !this.TestForReadWriteAccess().Result ) {
-                    throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
-                }
-            }
-            catch ( Exception exception ) {
-                exception.Log();
-
-                throw;
-            }
-        }
-
-        public PersistTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
-
-        [JsonProperty]
-        [NotNull]
-        private PersistentDictionary<TKey, String?> Dictionary { get; }
-
-        /// <summary>No path given?</summary>
-        [NotNull]
-        public Folder Folder { get; }
-
-        public Int32 Count => this.Dictionary.Count;
-
-        public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
-
-        public ICollection<TKey> Keys => this.Dictionary.Keys ?? throw new InvalidOperationException();
-
-        /// <summary>This deserializes the list of values.. I have a feeling this cannot be very fast.</summary>
-        public ICollection<TValue?> Values =>
-            ( ICollection<TValue?> )( this.Dictionary.Values ?? throw new InvalidOperationException() ).Select( value => {
-	            if ( value != null ) {
-		            return value.FromCompressedBase64().FromJSON<TValue>();
-	            }
-
-	            return default(TValue?);	//BUG is this intended?
-            } );
-
-        /// <summary></summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [CanBeNull]
-        public TValue? this[ [CanBeNull] TKey? key ] {
-            [CanBeNull]
-            get {
-                if ( key is null ) {
-                    return default( TValue? );	//intended. null key returns default
-                }
+	using System;
+	using System.Collections;
+	using System.Collections.Generic;
+	using System.Diagnostics;
+	using System.IO;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using FileSystem;
+	using JetBrains.Annotations;
+	using Logging;
+	using Maths;
+	using Measurement.Time;
+	using Microsoft.Database.Isam.Config;
+	using Microsoft.Isam.Esent.Collections.Generic;
+	using Microsoft.Isam.Esent.Interop.Windows81;
+	using Newtonsoft.Json;
+	using OperatingSystem.Compression;
+	using Parsing;
+	using Utilities;
+
+	/// <summary>
+	///     <para>
+	///         Allows the <see cref="PersistentDictionary{TKey,TValue}" /> class to persist almost any object by using
+	///         Newtonsoft.Json.
+	///     </para>
+	/// </summary>
+	/// <see cref="http://managedesent.codeplex.com/wikipage?title=PersistentDictionaryDocumentation" />
+	/// <remarks>//TODO This class is in severe need of unit testing.</remarks>
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[JsonObject]
+	public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue?> where TKey : IComparable<TKey> {
+
+
+
+		public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
+
+		public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, subFolder,
+			tableName ) ) { }
+
+		public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
+
+		public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) :
+			this( Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
+
+		public PersistTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
+			try {
+				this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
+
+				this.Folder.Info.Create();
+				this.Folder.Info.Refresh();
+
+				if ( !this.Folder.Info.Exists ) {
+					throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
+				}
+
+				var customConfig = new DatabaseConfig {
+					CreatePathIfNotExist = true,
+					DefragmentSequentialBTrees = true,
+					EnableShrinkDatabase = ShrinkDatabaseGrbit.On
+				};
+
+				this.Dictionary = new PersistentDictionary<TKey, String?>( this.Folder.FullPath, customConfig );
 
-                if ( this.Dictionary.TryGetValue( key, out var storedValue ) && storedValue != null ) {
-                    return storedValue.FromCompressedBase64().FromJSON<TValue>();
-                }
+				if ( testForReadWriteAccess && !this.TestForReadWriteAccess( CancellationToken.None ).Result ) {
+					throw new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." );
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+
+				throw;
+			}
+		}
+
+		public PersistTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
+
+		[JsonProperty]
+		[NotNull]
+		private PersistentDictionary<TKey, String?> Dictionary { get; }
+
+		/// <summary>No path given?</summary>
+		[NotNull]
+		public Folder Folder { get; }
+
+		public Int32 Count => this.Dictionary.Count;
+
+		public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
+
+		public ICollection<TKey> Keys => this.Dictionary.Keys ?? throw new InvalidOperationException();
+
+		/// <summary>This deserializes the list of values.. I have a feeling this cannot be very fast.</summary>
+		public ICollection<TValue?> Values =>
+			( ICollection<TValue?> )( this.Dictionary.Values ?? throw new InvalidOperationException() ).Select( value => {
+				if ( value != null ) {
+					return value.FromCompressedBase64().FromJSON<TValue>();
+				}
+
+				return default( TValue? );  //BUG is this intended?
+			} );
+
+		/// <summary></summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		[CanBeNull]
+		public TValue? this[ [CanBeNull] TKey? key ] {
+			[CanBeNull]
+			get {
+				if ( key is null ) {
+					return default( TValue? );  //intended. null key returns default
+				}
 
-                return default( TValue? );
-            }
+				if ( this.Dictionary.TryGetValue( key, out var storedValue ) && storedValue != null ) {
+					return storedValue.FromCompressedBase64().FromJSON<TValue>();
+				}
 
-            set {
-                if ( key is null ) {
-                    return;	//doesn't actually get stored
-                }
+				return default( TValue? );
+			}
 
-                if ( value is null ) {
-                    this.Dictionary.Remove( key );
+			set {
+				if ( key is null ) {
+					return; //doesn't actually get stored
+				}
 
-                    return;
-                }
+				if ( value is null ) {
+					this.Dictionary.Remove( key );
 
-                this.Dictionary[key] = value.ToJSON()?.ToCompressedBase64();
-            }
-        }
+					return;
+				}
 
-        public void Add( TKey key, [CanBeNull] TValue? value ) => this[key] = value;
+				this.Dictionary[ key ] = value.ToJSON()?.ToCompressedBase64();
+			}
+		}
 
-        public void Add( KeyValuePair<TKey, TValue?> item ) => this[item.Key] = item.Value;
+		public void Add( TKey key, [CanBeNull] TValue? value ) => this[ key ] = value;
 
-        public void Clear() => this.Dictionary.Clear();
+		public void Add( KeyValuePair<TKey, TValue?> item ) => this[ item.Key ] = item.Value;
 
-        public Boolean Contains( KeyValuePair<TKey, TValue?> item ) {
-            var (key, value) = item;
-            var compressedBase64 = value.ToJSON()?.ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String?>( key, compressedBase64 );
+		public void Clear() => this.Dictionary.Clear();
 
-            return this.Dictionary.Contains( asItem );
-        }
+		public Boolean Contains( KeyValuePair<TKey, TValue?> item ) {
+			( var key, var value ) = item;
+			var compressedBase64 = value.ToJSON()?.ToCompressedBase64();
+			var asItem = new KeyValuePair<TKey, String?>( key, compressedBase64 );
 
-        public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
+			return this.Dictionary.Contains( asItem );
+		}
 
-        public void CopyTo( KeyValuePair<TKey, TValue?>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
+		public Boolean ContainsKey( TKey key ) => this.Dictionary.ContainsKey( key );
 
-        public IEnumerator<KeyValuePair<TKey, TValue?>> GetEnumerator() => this.Items().GetEnumerator();
+		public void CopyTo( KeyValuePair<TKey, TValue?>[] array, Int32 arrayIndex ) => throw new NotImplementedException(); //this.Dictionary.CopyTo( array, arrayIndex ); ??
 
-        public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
+		public IEnumerator<KeyValuePair<TKey, TValue?>> GetEnumerator() => this.Items().GetEnumerator();
 
-        public Boolean Remove( KeyValuePair<TKey, TValue?> item ) {
-            var value = item.Value.ToJSON()?.ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String?>( item.Key, value );
+		public Boolean Remove( TKey key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
-            return this.Dictionary.Remove( asItem );
-        }
+		public Boolean Remove( KeyValuePair<TKey, TValue?> item ) {
+			var value = item.Value.ToJSON()?.ToCompressedBase64();
+			var asItem = new KeyValuePair<TKey, String?>( item.Key, value );
 
-        /// <summary>Gets the value associated with the specified key.</summary>
-        /// <returns>
-        ///     true if the object that implements <see cref="IDictionary" /> contains an element with the specified key;
-        ///     otherwise, false.
-        /// </returns>
-        /// <param name="key">  The key whose value to get.</param>
-        /// <param name="value">
-        ///     When this method returns, the value associated with the specified key, if the key is found; otherwise, the default
-        ///     value for the type of the
-        ///     <paramref name="value" /> parameter. This parameter is passed uninitialized.
-        /// </param>
-        /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-        public Boolean TryGetValue( [NotNull] TKey key, out TValue? value ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( nameof( key ) );
-            }
+			return this.Dictionary.Remove( asItem );
+		}
 
-            value = default( TValue );
+		/// <summary>Gets the value associated with the specified key.</summary>
+		/// <returns>
+		///     true if the object that implements <see cref="IDictionary" /> contains an element with the specified key;
+		///     otherwise, false.
+		/// </returns>
+		/// <param name="key">  The key whose value to get.</param>
+		/// <param name="value">
+		///     When this method returns, the value associated with the specified key, if the key is found; otherwise, the default
+		///     value for the type of the
+		///     <paramref name="value" /> parameter. This parameter is passed uninitialized.
+		/// </param>
+		/// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
+		public Boolean TryGetValue( [NotNull] TKey key, out TValue? value ) {
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
 
-            if ( this.Dictionary.TryGetValue( key, out var storedValue ) && storedValue != null ) {
-                value = storedValue.FromCompressedBase64().FromJSON<TValue>();
+			value = default( TValue );
 
-                return true;
-            }
+			if ( this.Dictionary.TryGetValue( key, out var storedValue ) && storedValue != null ) {
+				value = storedValue.FromCompressedBase64().FromJSON<TValue>();
 
-            return false;
+				return true;
+			}
 
-        }
+			return false;
 
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		}
 
-        public Boolean Contains( (TKey, TValue) item ) {
-            var (key, value) = item;
-            var compressedBase64 = value.ToJSON()?.ToCompressedBase64();
-            var asItem = new KeyValuePair<TKey, String?>( key, compressedBase64 );
+		/// <summary>Returns an enumerator that iterates through a collection.</summary>
+		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-            return this.Dictionary.Contains( asItem );
-        }
+		public Boolean Contains( (TKey, TValue) item ) {
+			( var key, var value ) = item;
+			var compressedBase64 = value.ToJSON()?.ToCompressedBase64();
+			var asItem = new KeyValuePair<TKey, String?>( key, compressedBase64 );
 
-        /// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
-        /// <returns></returns>
-        private async Task<Boolean> TestForReadWriteAccess() {
-            try {
-                using var document = this.Folder.TryGetTempDocument();
+			return this.Dictionary.Contains( asItem );
+		}
 
-                var text = Randem.NextString( 64, true, true, true, true );
-                document.AppendText( text );
+		/// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
+		/// <returns></returns>
+		private async Task<Boolean> TestForReadWriteAccess( CancellationToken cancellationToken ) {
+			try {
+				using var document = this.Folder.TryGetTempDocument();
 
-                await document.TryDeleting( Seconds.Ten, CancellationToken.None ).ConfigureAwait( false );
+				var text = Randem.NextString( 64, true, true, true, true );
+				await document.AppendText( text, cancellationToken ).ConfigureAwait( false );
 
-                return true;
-            }
-            catch { }
+				await document.TryDeleting( Seconds.Ten, cancellationToken ).ConfigureAwait( false );
 
-            return false;
-        }
+				return true;
+			}
+			catch { }
 
-        /// <summary>Dispose any disposable managed fields or properties.</summary>
-        public override void DisposeManaged() {
-            Trace.Write( $"Disposing of {nameof( this.Dictionary )}..." );
+			return false;
+		}
 
-            using ( this.Dictionary ) { }
+		/// <summary>Dispose any disposable managed fields or properties.</summary>
+		public override void DisposeManaged() {
+			Trace.Write( $"Disposing of {nameof( this.Dictionary )}..." );
 
-            Trace.WriteLine( "done." );
-        }
+			using ( this.Dictionary ) { }
 
-        public void Flush() => this.Dictionary.Flush();
+			Trace.WriteLine( "done." );
+		}
 
-        public void Initialize() {
-            if ( !this.Folder.Create() ) {
-                throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
-            }
-        }
+		public void Flush() => this.Dictionary.Flush();
 
-        /// <summary>All <see cref="KeyValuePair{TKey,TValue}" /> , with the <see cref="TValue" /> deserialized.</summary>
-        /// <returns></returns>
-        [NotNull]
-        public IEnumerable<KeyValuePair<TKey, TValue?>> Items() {
-            foreach ( var pair in this.Dictionary ) {
-                if ( pair.Value != null ) {
-                    var keyValuePair = new KeyValuePair<TKey, TValue?>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue?>() );
+		public async Task Initialize( CancellationToken cancellationToken ) {
+			if ( !await this.Folder.Create( cancellationToken ).ConfigureAwait( false ) ) {
+				throw new DirectoryNotFoundException( $"Unable to find or create the folder {this.Folder.FullPath.SmartQuote()}." );
+			}
+		}
 
-                    yield return keyValuePair;
-                }
+		/// <summary>All <see cref="KeyValuePair{TKey,TValue}" /> , with the <see cref="TValue" /> deserialized.</summary>
+		/// <returns></returns>
+		[NotNull]
+		public IEnumerable<KeyValuePair<TKey, TValue?>> Items() {
+			foreach ( var pair in this.Dictionary ) {
+				if ( pair.Value != null ) {
+					var keyValuePair = new KeyValuePair<TKey, TValue?>( pair.Key, pair.Value.FromCompressedBase64().FromJSON<TValue?>() );
 
-            }
-        }
+					yield return keyValuePair;
+				}
 
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
-        [NotNull]
-        public override String ToString() => $"{this.Count} items";
+			}
+		}
 
-        public void TryAdd( [NotNull] TKey key, [CanBeNull] TValue value ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( nameof( key ) );
-            }
+		/// <summary>Returns a string that represents the current object.</summary>
+		/// <returns>A string that represents the current object.</returns>
+		[NotNull]
+		public override String ToString() => $"{this.Count} items";
 
-            if ( !this.Dictionary.ContainsKey( key ) ) {
-                this[key] = value;
-            }
-        }
+		public void TryAdd( [NotNull] TKey key, [CanBeNull] TValue value ) {
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
 
-        public Boolean TryRemove( [NotNull] TKey key ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( nameof( key ) );
-            }
+			if ( !this.Dictionary.ContainsKey( key ) ) {
+				this[ key ] = value;
+			}
+		}
 
-            return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
-        }
+		public Boolean TryRemove( [NotNull] TKey key ) {
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
 
-    }
+			return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
+		}
+
+	}
 
 }

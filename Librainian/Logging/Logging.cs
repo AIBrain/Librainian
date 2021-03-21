@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Logging.cs" last touched on 2021-03-07 at 5:22 PM by Protiguous.
+// File "Logging.cs" last touched on 2021-03-07 at 12:36 AM by Protiguous.
 
 #nullable enable
 
@@ -41,7 +41,7 @@ namespace Librainian.Logging {
 
 		[DebuggerStepThrough]
 		[Conditional( "DEBUG" )]
-		public static void BreakIfDebug<T>( [CanBeNull] this T _, [CanBeNull] String? breakReason = null ) {
+		public static void BreakIfDebug<T>( [CanBeNull] this T discard, [CanBeNull] String? breakReason = null ) {
 			if ( Debugger.IsAttached ) {
 				if ( breakReason is not null ) {
 					$"Break reason: {breakReason}".DebugLine();
@@ -153,13 +153,13 @@ namespace Librainian.Logging {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[NotNull]
-		public static Exception Log( [NotNull] this Exception exception, Boolean? breakinto = default ) {
+		public static Exception? Log( [CanBeNull] this Exception? exception, Boolean? breakinto = default ) {
 			if ( !breakinto.HasValue && Debugger.IsAttached ) {
 				breakinto = true;
 			}
 
 			//var _ = exception.ToStringDemystified().Log( breakinto );
-			exception.ToString().Log( breakinto );
+			exception?.ToString().Log( breakinto );
 
 			return exception;
 		}

@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Folder.cs" last touched on 2021-03-07 at 1:50 AM by Protiguous.
+// File "Folder.cs" last touched on 2021-03-07 at 1:00 AM by Protiguous.
 
 namespace Librainian.FileSystem {
 
@@ -202,7 +202,7 @@ namespace Librainian.FileSystem {
 				try {
 					var parent = new Folder( this.Info.Parent.FullPath );
 
-					if ( !await parent.Exists( cancellationToken ) ) {
+					if ( !await parent.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 						await parent.Create( cancellationToken ).ConfigureAwait( false );
 					}
 				}
@@ -212,7 +212,7 @@ namespace Librainian.FileSystem {
 
 				this.Info.Create();
 
-				return await this.Exists( cancellationToken );
+				return await this.Exists( cancellationToken ).ConfigureAwait( false );
 			}
 			catch ( IOException ) {
 				return false;
@@ -249,9 +249,19 @@ namespace Librainian.FileSystem {
 			return this.Info.Exists;
 		}
 
+		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
+		/// <exception cref="IOException"></exception>
+		/// <exception cref="SecurityException"></exception>
+		/// <exception cref="PathTooLongException"></exception>
+		public Boolean ExistsSync() {
+			this.Info.Refresh();
+
+			return this.Info.Exists;
+		}
+
 		/// <summary>Free space available to the current user.</summary>
 		/// <returns></returns>
-		public PooledValueTask<UInt64> GetAvailableFreeSpace() => new( ( UInt64 )new DriveInfo( this.GetDrive().ToString() ).AvailableFreeSpace );
+		public PooledValueTask<UInt64> GetAvailableFreeSpace() => new( ( UInt64 ) new DriveInfo( this.GetDrive().ToString() ).AvailableFreeSpace );
 
 		/// <summary>
 		///     <para>Returns an enumerable collection of <see cref="Document" /> in the current directory.</para>
@@ -334,7 +344,10 @@ namespace Librainian.FileSystem {
 			using var _ = Windows.OpenWithExplorer( this.FullPath );
 		}
 
-		public ValueTask Refresh( CancellationToken cancellationToken ) => this.Info.Refresh();
+		public PooledValueTask<DirectoryInfo> Refresh( CancellationToken cancellationToken ) {
+			this.Info.Refresh();
+			return new PooledValueTask<DirectoryInfo>( this.Info );
+		}
 
 		/// <summary>
 		///     <para>Shorten the full path with "..."</para>
@@ -355,7 +368,7 @@ namespace Librainian.FileSystem {
 		public override String ToString() => this.FullPath;
 
 		/// <summary>
-		///     No guarantee of return order. Also, because of the way the operating system works (random-access), a directory can
+		///     No guarantee of return order. Also, because of the way the operating system works, a <see cref="Folder"/> can
 		///     be created or deleted after a search.
 		/// </summary>
 		/// <param name="searchPattern"></param>
@@ -459,6 +472,15 @@ namespace Librainian.FileSystem {
 			}
 
 			return path ?? String.Empty;
+		}
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		/// <returns></returns>
+		public Boolean GetExists() {
+			this.Info.Refresh();
+			return this.Info.Exists;
 		}
 
 		///// <summary>
@@ -568,6 +590,10 @@ namespace Librainian.FileSystem {
 
 		public Boolean Explore() => this.Info.OpenWithExplorer();
 
+		/// <summary>
+		/// <see cref="op_Implicit"/>
+		/// </summary>
+		/// <returns></returns>
 		[NotNull]
 		public DirectoryInfo ToDirectoryInfo() => this;
 
@@ -576,7 +602,7 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <returns></returns>
 		public Byte LevelsDeep() {
-			this._levelsDeep ??= ( Byte? )this.FullPath.Count( c => c == FolderSeparatorChar );
+			this._levelsDeep ??= ( Byte? ) this.FullPath.Count( c => c == FolderSeparatorChar );
 
 			return this._levelsDeep.Value;
 		}

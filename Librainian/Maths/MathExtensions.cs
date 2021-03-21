@@ -1288,7 +1288,7 @@ namespace Librainian.Maths {
 			return s;
 		}
 
-		public static UInt64? ToUInt64( [CanBeNull] this String? text ) => UInt64.TryParse( text, out var result ) ? ( UInt64? ) result : null;
+		public static UInt64? ToUInt64( [CanBeNull] this String? text ) => UInt64.TryParse( text, out var result ) ? result : null;
 
 		public static UInt64 ToUInt64( [NotNull] this Byte[] bytes, Int32 pos ) =>
 			( UInt64 ) ( bytes[pos++] | ( bytes[pos++] << 8 ) | ( bytes[pos++] << 16 ) | ( bytes[pos] << 24 ) );

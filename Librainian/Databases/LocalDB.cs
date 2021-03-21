@@ -30,6 +30,7 @@ namespace Librainian.Databases {
 	using System.Data;
 	using System.Data.Common;
 	using System.Reflection;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FileSystem;
 	using FileSystem.Pri.LongPath;
@@ -67,16 +68,16 @@ namespace Librainian.Databases {
 
 			this.ConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog=master;Integrated Security=True;";
 
-			var _ = this.Initialize();
+			var _ = this.Initialize( new CancellationTokenSource( Minutes.One ).Token );
 		}
 
-		private async FireAndForget Initialize() {
-			var exists = await this.DatabaseMdf.Exists().ConfigureAwait( false );
+		private async FireAndForget Initialize(CancellationToken cancellationToken) {
+			var exists = await this.DatabaseMdf.Exists(cancellationToken).ConfigureAwait( false );
 
 			if ( !exists ) {
 				await using var connection = new SqlConnection( this.ConnectionString );
 
-				connection.Open();
+				await connection.OpenAsync( cancellationToken ).ConfigureAwait( false );
 				var command = connection.CreateCommand();
 
 				if ( command is null ) {
@@ -85,7 +86,7 @@ namespace Librainian.Databases {
 
 				command.CommandText = String.Format( "CREATE DATABASE {0} ON (NAME = N'{0}', FILENAME = '{1}')", this.DatabaseName, this.DatabaseMdf.FullPath );
 
-				await command.ExecuteNonQueryAsync().ConfigureAwait( false );
+				await command.ExecuteNonQueryAsync( cancellationToken ).ConfigureAwait( false );
 			}
 
 			this.ConnectionString = $@"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Initial Catalog={this.DatabaseName};AttachDBFileName={this.DatabaseMdf.FullPath};";
@@ -96,7 +97,7 @@ namespace Librainian.Databases {
 			this.Connection.Disposed += ( _, args ) => $"Disposing SQL connection {args}".Info();
 
 			$"Attempting connection to {this.DatabaseMdf}...".Info();
-			this.Connection.Open();
+			await this.Connection.OpenAsync( cancellationToken ).ConfigureAwait( false );
 			this.Connection.ServerVersion.Info();
 			this.Connection.Close();
 		}

@@ -42,6 +42,7 @@ namespace Librainian.Persistence {
 	using System.Runtime.Serialization.Formatters.Binary;
 	using System.Text;
 	using System.Threading;
+	using System.Threading.Tasks;
 	using Converters;
 	using FileSystem;
 	using JetBrains.Annotations;
@@ -49,6 +50,7 @@ namespace Librainian.Persistence {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Newtonsoft.Json.Serialization;
+	using Xunit;
 	using File = FileSystem.Pri.LongPath.File;
 
 	public static class PersistenceExtensions {
@@ -62,8 +64,8 @@ namespace Librainian.Persistence {
 		public static readonly Lazy<Folder> LocalDataFolder = new( () => {
 			var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
-			if ( !folder.Exists() ) {
-				folder.Create();
+			if ( !folder.Info.Exists ) {
+				folder.Info.Create();
 			}
 
 			return folder;
@@ -78,7 +80,8 @@ namespace Librainian.Persistence {
 
 		[NotNull]
 		public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
-			//ContractResolver = new MyContractResolver(),
+			//TODO ContractResolver needs testing
+			ContractResolver = new MyContractResolver(),
 			TypeNameHandling = TypeNameHandling.Auto,
 			NullValueHandling = NullValueHandling.Ignore,
 			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
@@ -106,17 +109,25 @@ namespace Librainian.Persistence {
 			return default( T? );
 		}
 
-		public static Boolean DeserializeDictionary<TKey, TValue>(
-			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary,
-			[CanBeNull] Folder? folder,
+		public static async Task<Boolean> DeserializeDictionary<TKey, TValue>(
+			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary, CancellationToken cancellationToken,
+			[NotNull] Folder folder,
 			[CanBeNull] String? calledWhat,
 			[CanBeNull] String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
+			Assert.NotNull( nameof( folder ) );
+
+			if ( folder == null ) {
+				throw new ArgumentNullException( nameof( folder ) );
+			}
+
 			try {
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( folder?.Exists() != true ) {
+				var exists = await folder.Exists( cancellationToken ).ConfigureAwait(false);
+
+				if ( exists != true ) {
 					return false;
 				}
 
@@ -124,10 +135,9 @@ namespace Librainian.Persistence {
 				var before = toDictionary.LongCount();
 
 				//enumerate all the files with the wildcard *.extension
-				var documents = folder.EnumerateDocuments( ( String? ) "*.*", ( CancellationToken ) $"*{extension}" );
 
-				foreach ( var document in documents ) {
-					var length = document.Length;
+				await foreach ( var document in folder.EnumerateDocuments(  $"*.{extension}", cancellationToken ) ) {
+					var length = await document.Length(cancellationToken).ConfigureAwait( false );
 
 					if ( length < 1 ) {
 						continue;
@@ -143,9 +153,9 @@ namespace Librainian.Persistence {
 									return;
 								}
 
-								var tuple = line.Deserialize<Tuple<TKey, TValue>>();
+								( var key, var value ) = line.Deserialize<(TKey, TValue)>();
 
-								toDictionary[tuple.Item1] = tuple.Item2;
+								toDictionary[key] = value;
 							}
 							catch ( Exception lineexception ) {
 								lineexception.Log();
@@ -297,13 +307,14 @@ namespace Librainian.Persistence {
 		/// <param name="dictionary"></param>
 		/// <param name="folder">    </param>
 		/// <param name="calledWhat"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="progress">  </param>
 		/// <param name="extension"> </param>
 		/// <returns></returns>
-		public static Boolean SerializeDictionary<TKey, TValue>(
+		public static async Task<Boolean> SerializeDictionary<TKey, TValue>(
 			[NotNull] this IDictionary<TKey, TValue> dictionary,
 			[NotNull] Folder folder,
-			[CanBeNull] String? calledWhat,
+			[CanBeNull] String? calledWhat, CancellationToken cancellationToken,
 			[CanBeNull] IProgress<Single>? progress = null,
 			[CanBeNull] String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
@@ -315,7 +326,7 @@ namespace Librainian.Persistence {
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( !folder.Create() ) {
+				if ( await folder.Create(cancellationToken).ConfigureAwait(false) == false ) {
 					throw new DirectoryNotFoundException( folder.FullPath );
 				}
 
@@ -348,7 +359,7 @@ namespace Librainian.Persistence {
 							progress.Report( soFar );
 						}
 
-						using ( writer ) { }
+						await using ( writer ) { }
 
 						fileName = $"{hereNow}.xml"; //let the file name change over time so we don't have bigHuge monolithic files.
 						using var newdocument = new Document( folder, fileName );
@@ -357,10 +368,10 @@ namespace Librainian.Persistence {
 						backThen = DateTime.UtcNow.ToGuid();
 					}
 
-					writer.WriteLine( data );
+					await writer.WriteLineAsync( data ).ConfigureAwait( false );
 				}
 
-				using ( writer ) { }
+				await using ( writer ) { }
 
 				stopwatch.Stop();
 				String.Format( "Serialized {1} {3} in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount, calledWhat ).Info();

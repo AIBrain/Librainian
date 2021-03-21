@@ -51,18 +51,19 @@ namespace Librainian.Persistence {
 
 		/// <summary></summary>
 		/// <param name="document"></param>
-		public JSONFile([CanBeNull] Document document,  CancellationToken cancellationToken ) : this() {
+		/// <param name="cancellationToken"></param>
+		public JSONFile( [CanBeNull] Document document, CancellationToken cancellationToken ) : this() {
 			this.Document = document;
 
-			this.Document?.ContainingingFolder().Create();
+			this.Document?.ContainingingFolder().Create( cancellationToken );
 
-			this.Read( cancellationToken ).Wait();
+			this.Read( cancellationToken ).Wait( cancellationToken );
 		}
 
 		public JSONFile() { }
 
 		[NotNull]
-		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[section].Keys );
+		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[ section ].Keys );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -80,16 +81,16 @@ namespace Librainian.Persistence {
 		} = new();
 
 		[CanBeNull]
-		public ReadOnlyDataType? this[[CanBeNull] String? section] {
+		public ReadOnlyDataType? this[ [CanBeNull] String? section ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
-				if (String.IsNullOrEmpty(section)) {
+				if ( String.IsNullOrEmpty( section ) ) {
 					return default( ReadOnlyDataType );
 				}
 
-				if (this.Data.ContainsKey(section)) {
-					if (this.Data.TryGetValue(section, out var result)) {
+				if ( this.Data.ContainsKey( section ) ) {
+					if ( this.Data.TryGetValue( section, out var result ) ) {
 						return result;
 					}
 				}
@@ -103,43 +104,43 @@ namespace Librainian.Persistence {
 		/// <param name="key"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public String? this[[CanBeNull] String? section, [CanBeNull] String? key] {
+		public String? this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
-				if (String.IsNullOrEmpty(section)) {
-					return default(String?);
+				if ( String.IsNullOrEmpty( section ) ) {
+					return default( String? );
 				}
 
-				if (String.IsNullOrEmpty(key)) {
-					return default(String?);
+				if ( String.IsNullOrEmpty( key ) ) {
+					return default( String? );
 				}
 
-				if (!this.Data.ContainsKey(section)) {
-					return default(String?);
+				if ( !this.Data.ContainsKey( section ) ) {
+					return default( String? );
 				}
 
-				return this.Data[section]!.TryGetValue(key, out var value) ? value : null;
+				return this.Data[ section ]!.TryGetValue( key, out var value ) ? value : null;
 			}
 
 			[DebuggerStepThrough]
 			set {
-				if (String.IsNullOrEmpty(section)) {
+				if ( String.IsNullOrEmpty( section ) ) {
 					return;
 				}
 
-				if (String.IsNullOrEmpty(key)) {
+				if ( String.IsNullOrEmpty( key ) ) {
 					return;
 				}
 
-				this.Add(section, (key, value));
+				this.Add( section, (key, value) );
 			}
 		}
 
 		/// <summary>Removes all data from all sections.</summary>
 		/// <returns></returns>
-		public Boolean Clear(  CancellationToken cancellationToken ) {
-			Parallel.ForEach(this.Data.Keys.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), section => this.TryRemove(section));
+		public Boolean Clear( CancellationToken cancellationToken ) {
+			Parallel.ForEach( this.Data.Keys.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), section => this.TryRemove( section ) );
 
 			return !this.Data.Keys.Any();
 		}
@@ -148,23 +149,30 @@ namespace Librainian.Persistence {
 		public async Task<Boolean> Read( CancellationToken cancellationToken ) {
 			var document = this.Document;
 
-			if (document?.Exists() != true) {
+			if ( document is null ) {
 				return false;
 			}
 
-			try {
-				(var status, var data) = await document.LoadJSON<SectionType>(null, null);
+			var exists = await document.Exists( cancellationToken ).ConfigureAwait( false );
 
-				if (!status.IsGood()) {
+			if ( exists != true ) {
+				return false;
+			}
+
+
+			try {
+				(var status, var data) = await document.LoadJSON<SectionType>( null, cancellationToken );
+
+				if ( !status.IsGood() ) {
 					return false;
 				}
 
 				if ( data != null ) {
 					var result = Parallel.ForEach( data.Keys.AsParallel(), section => {
-						if ( data[section!] != null ) {
-							Parallel.ForEach( data[section]!.Keys.AsParallel().AsUnordered(), key => {
+						if ( data[ section! ] != null ) {
+							Parallel.ForEach( data[ section ]!.Keys.AsParallel().AsUnordered(), key => {
 								if ( !String.IsNullOrEmpty( key ) ) {
-									this.Add( section, new KeyValuePair<String, String?>( key, data[section][key] ) );
+									this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
 								}
 							} );
 						}
@@ -173,14 +181,14 @@ namespace Librainian.Persistence {
 					return result.IsCompleted;
 				}
 			}
-			catch (JsonException exception) {
+			catch ( JsonException exception ) {
 				exception.Log();
 			}
-			catch (IOException exception) {
+			catch ( IOException exception ) {
 				//file in use by another app
 				exception.Log();
 			}
-			catch (OutOfMemoryException exception) {
+			catch ( OutOfMemoryException exception ) {
 				//file is huge
 				exception.Log();
 			}
@@ -195,28 +203,28 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.Sections.Count()} sections, {this.AllKeys.Count()} keys";
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove(String section) {
-			if (section == null) {
-				throw new ArgumentNullException(nameof(section));
+		public Boolean TryRemove( String section ) {
+			if ( section == null ) {
+				throw new ArgumentNullException( nameof( section ) );
 			}
 
-			return this.Data.TryRemove(section, out var dict);
+			return this.Data.TryRemove( section, out var _ );
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove(String section, [CanBeNull] String? key) {
-			if (section == null) {
-				throw new ArgumentNullException(nameof(section));
+		public Boolean TryRemove( String section, [CanBeNull] String? key ) {
+			if ( section == null ) {
+				throw new ArgumentNullException( nameof( section ) );
 			}
 
-			if (key is null) {
+			if ( key is null ) {
 				return false;
 			}
-			if (!this.Data.ContainsKey(section)) {
+			if ( !this.Data.ContainsKey( section ) ) {
 				return false;
 			}
 
-			return this.Data[section].TryRemove(key, out var _);
+			return this.Data[ section ].TryRemove( key, out var _ );
 		}
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
@@ -225,50 +233,54 @@ namespace Librainian.Persistence {
 		public async Task<Boolean> Write( CancellationToken cancellationToken ) {
 			var document = this.Document;
 
-			if (document is not null) {
-				await document.TryDeleting(Seconds.Seven, cancellationToken).ConfigureAwait(false);
-
-				var bob = this.Data.ToJSON(Formatting.Indented);
-				if (bob != null) {
-					document.AppendText(bob);
-				}
+			if ( document is null ) {
+				return false;
 			}
 
+			await document.TryDeleting( Seconds.One, cancellationToken ).ConfigureAwait( false );
+
+			var json = this.Data.ToJSON( Formatting.Indented );
+			if ( json is null ) {
+				return false;
+			}
+
+			await document.AppendText( json, cancellationToken ).ConfigureAwait( false );
 			return true;
+
 		}
 
 		/// <summary>(Trims whitespaces from section and key)</summary>
 		/// <param name="section"></param>
 		/// <param name="pair"></param>
 		/// <returns></returns>
-		public Boolean Add(String section, KeyValuePair<String, String?> pair) {
-			if (String.IsNullOrWhiteSpace(section)) {
-				throw new ArgumentException("Argument is null or whitespace", nameof(section));
+		public Boolean Add( String section, KeyValuePair<String, String?> pair ) {
+			if ( String.IsNullOrWhiteSpace( section ) ) {
+				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
 			}
 
 			section = section.Trim();
 
-			if (String.IsNullOrWhiteSpace(section)) {
-				throw new ArgumentException("Argument is null or whitespace", nameof(section));
+			if ( String.IsNullOrWhiteSpace( section ) ) {
+				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
 			}
 
 			var retries = 10;
-		TryAgain:
+			TryAgain:
 
-			if (!this.Data.ContainsKey(section)) {
-				this.Data.TryAdd(section, new DataType());
+			if ( !this.Data.ContainsKey( section ) ) {
+				this.Data.TryAdd( section, new DataType() );
 			}
 
 			try {
-				var (key, value) = pair;
-				this.Data[section][key.Trim()] = value;
+				( var key, var value ) = pair;
+				this.Data[ section ][ key.Trim() ] = value;
 
 				return true;
 			}
-			catch (KeyNotFoundException exception) {
+			catch ( KeyNotFoundException exception ) {
 				retries--;
 
-				if (retries.Any()) {
+				if ( retries.Any() ) {
 					goto TryAgain;
 				}
 
@@ -277,39 +289,39 @@ namespace Librainian.Persistence {
 
 			return false;
 		}
-		
+
 		/// <summary>(Trims whitespaces from section and key)</summary>
 		/// <param name="section"></param>
 		/// <param name="pair"></param>
 		/// <returns></returns>
-		public Boolean Add(String section, (String k, String? v) tuple) {
-			if (String.IsNullOrWhiteSpace(section)) {
-				throw new ArgumentException("Argument is null or whitespace", nameof(section));
+		public Boolean Add( String section, (String k, String? v) tuple ) {
+			if ( String.IsNullOrWhiteSpace( section ) ) {
+				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
 			}
 
 			section = section.Trim();
 
-			if (String.IsNullOrWhiteSpace(section)) {
-				throw new ArgumentException("Argument is null or whitespace", nameof(section));
+			if ( String.IsNullOrWhiteSpace( section ) ) {
+				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
 			}
 
 			var retries = 10;
-		TryAgain:
+			TryAgain:
 
-			if (!this.Data.ContainsKey(section)) {
+			if ( !this.Data.ContainsKey( section ) ) {
 				this.Data.TryAdd( section, new DataType() );
 			}
 
 			try {
-				var (key, value) = tuple;
-				this.Data[section][key.Trim()] = value;
+				( var key, var value ) = tuple;
+				this.Data[ section ][ key.Trim() ] = value;
 
 				return true;
 			}
-			catch (KeyNotFoundException exception) {
+			catch ( KeyNotFoundException exception ) {
 				retries--;
 
-				if (retries.Any()) {
+				if ( retries.Any() ) {
 					goto TryAgain;
 				}
 

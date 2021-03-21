@@ -83,10 +83,10 @@ namespace Librainian.Persistence {
 
 		public static class Storage {
 			static Storage() {
-				if ( !RootPath.Exists() ) {
-					RootPath.Create();
-
-					if ( !RootPath.Exists() ) {
+				if ( !RootPath.Info.Exists ) {
+					RootPath.Info.Create();
+					RootPath.Info.Refresh();
+					if ( !RootPath.Info.Exists ) {
 						throw new DirectoryNotFoundException( RootPath.FullPath );
 					}
 				}

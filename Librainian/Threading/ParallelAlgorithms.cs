@@ -63,7 +63,7 @@ namespace Librainian.Threading {
 			Parallel.For( fromInclusive, toExclusive, options, ( i, loopState ) => {
 				// Run an iteration. When it completes, store (box) the result, and cancel the rest
 				Interlocked.CompareExchange( ref result, body( i ), null );
-				loopState?.Stop();
+				loopState.Stop();
 			} );
 
 			// Return the computed result

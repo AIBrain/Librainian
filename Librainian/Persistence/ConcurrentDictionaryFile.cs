@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ConcurrentDictionaryFile.cs" last formatted on 2020-08-14 at 8:44 PM.
+// File "ConcurrentDictionaryFile.cs" last touched on 2021-03-07 at 4:22 AM by Protiguous.
 
 #nullable enable
 
@@ -43,11 +46,10 @@ namespace Librainian.Persistence {
 
 	/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
 	[JsonObject]
-	public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable where TKey:notnull {
+	public class ConcurrentDictionaryFile<TKey, TValue> : ConcurrentDictionary<TKey, TValue>, IDisposable where TKey : notnull {
 
 		private volatile Boolean _isLoading;
 
-		
 		private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
 		/// <summary>Disallow constructor without a document/filename</summary>
@@ -59,14 +61,12 @@ namespace Librainian.Persistence {
 		public ConcurrentDictionaryFile( [NotNull] Document document, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) {
 			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
 
-			if ( !this.Document.ContainingingFolder().Exists() ) {
-				this.Document.ContainingingFolder().Create();
+			if ( !this.Document.ContainingingFolder().Info.Exists ) {
+				this.Document.ContainingingFolder().Info.Create();
 			}
 
 			if ( preload ) {
-#pragma warning disable 4014
-				this.Load( progress );
-#pragma warning restore 4014
+				var _ = this.Load( progress );
 			}
 		}
 
@@ -77,7 +77,8 @@ namespace Librainian.Persistence {
 		/// <param name="filename"></param>
 		/// <param name="progress"></param>
 		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] String filename, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) : this( new Document( filename ), progress, preload ) { }
+		public ConcurrentDictionaryFile( [NotNull] String filename, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) : this( new Document( filename ),
+			progress, preload ) { }
 
 		[JsonProperty]
 		[NotNull]
@@ -85,6 +86,7 @@ namespace Librainian.Persistence {
 
 		public Boolean IsLoading {
 			get => this._isLoading;
+
 			set => this._isLoading = value;
 		}
 
@@ -99,50 +101,53 @@ namespace Librainian.Persistence {
 			if ( releaseManaged ) {
 				this.Save().AsValueTask().AsTask().Wait( Minutes.One );
 			}
-			
+
 			GC.SuppressFinalize( this );
 		}
 
-		public async PooledValueTask<Boolean> Flush(  CancellationToken cancellationToken  ) {
+		public async PooledValueTask<Boolean> Flush( CancellationToken cancellationToken ) {
 			var document = this.Document;
 
-			if ( !document.ContainingingFolder().Exists() ) {
-				document.ContainingingFolder().Create();
+			if ( !await document.ContainingingFolder().Exists( cancellationToken ).ConfigureAwait( false ) ) {
+				await document.ContainingingFolder().Create( cancellationToken ).ConfigureAwait( false );
 			}
 
+			await document.TryDeleting( Seconds.One, cancellationToken ).ConfigureAwait( false );
+
 			var json = this.ToJSON( Formatting.Indented );
-			await document.TryDeleting( Seconds.One, cancellationToken ).ConfigureAwait(false);
-			document.AppendText( json );
+			if ( json != null ) {
+				await document.AppendText( json, cancellationToken ).ConfigureAwait( false );
+			}
 
 			return true;
 		}
 
-		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress,  CancellationToken cancellationToken  = default ) {
-			var document = this.Document;
-
-			if ( document.Exists() == false ) {
-				return default( Status );
-			}
-
+		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress, CancellationToken cancellationToken = default ) {
 			try {
 				this.IsLoading = true;
+
+				var document = this.Document;
+
+				if ( await document.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
+					return default( Status );
+				}
 
 				if ( cancellationToken == default( CancellationToken ) ) {
 					cancellationToken = this.MainCTS.Token;
 				}
 
-				var result = await document.LoadJSON<ConcurrentDictionary<TKey, TValue>>( progress, cancellationToken ).ConfigureAwait( false );
+				( var status, var dictionary ) = await document.LoadJSON<ConcurrentDictionary<TKey, TValue>>( progress, cancellationToken ).ConfigureAwait( false );
 
-				if ( result.status.IsGood() ) {
+				if ( status.IsGood() ) {
 					var options = new ParallelOptions {
-						CancellationToken = cancellationToken,
-						MaxDegreeOfParallelism = Environment.ProcessorCount - 1
+						CancellationToken = cancellationToken, MaxDegreeOfParallelism = Environment.ProcessorCount - 1
 					};
 
-					var dictionary = result.obj;
-					var r = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: options );
+					if ( dictionary != null ) {
+						var r = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[key] = dictionary[key], parallelOptions: options );
 
-					return r.IsCompleted.ToStatus();
+						return r.IsCompleted.ToStatus();
+					}
 				}
 			}
 			catch ( JsonException exception ) {

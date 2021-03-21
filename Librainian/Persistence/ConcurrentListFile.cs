@@ -38,6 +38,7 @@ namespace Librainian.Persistence {
     using Logging;
     using Maths.Numbers;
     using Newtonsoft.Json;
+    using PooledAwait;
 
     /// <summary>Persist a list to and from a JSON formatted text document.</summary>
     [JsonObject]
@@ -52,7 +53,7 @@ namespace Librainian.Persistence {
                 throw new ArgumentNullException( nameof( document ) );
             }
 
-            document.ContainingingFolder().Create();
+            document.ContainingingFolder().Info.Create();
 
             this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
             this.Read().Wait(); //TODO I don't like this Wait being here.
@@ -72,17 +73,16 @@ namespace Librainian.Persistence {
         public Document Document { get; set; }
 
         public async Task<Boolean> Read(  CancellationToken cancellationToken  = default ) {
-            if ( this.Document.Exists() == false ) {
+            if ( await this.Document.Exists(cancellationToken).ConfigureAwait( false ) == false ) {
                 return false;
             }
 
             try {
                 var progress = new Progress<ZeroToOne>( pro => { } );
-                var result = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken );
+                ( var status, var data ) = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken );
 
-                if ( result.status.IsGood() ) {
-                    var data = result.obj;
-                    await this.AddRangeAsync( data, cancellationToken ).ConfigureAwait( false );
+                if ( status.IsGood() ) {
+	                await this.AddRangeAsync( data, cancellationToken ).ConfigureAwait( false );
 
                     return true;
                 }
@@ -108,18 +108,21 @@ namespace Librainian.Persistence {
 
         /// <summary>Saves the data to the <see cref="Document" />.</summary>
         /// <returns></returns>
-        public Boolean Write() {
+        public async PooledValueTask<Boolean> Write() {
             var document = this.Document;
 
-            if ( !document.ContainingingFolder().Exists() ) {
-                document.ContainingingFolder().Create();
+            if ( document.ContainingingFolder().Info.Exists == false) {
+                document.ContainingingFolder().Info.Create();
             }
 
-            if ( document.Exists() ) {
-                document.Delete();
+            if ( await document.Exists(CancellationToken.None).ConfigureAwait(false) ) {
+				await document.Delete( CancellationToken.None).ConfigureAwait( false );
             }
 
-            document.AppendText( this.ToJSON( Formatting.Indented ) );
+            var json = this.ToJSON( Formatting.Indented );
+            if ( json != null ) {
+	            await document.AppendText( json, CancellationToken.None ).ConfigureAwait( false );
+            }
 
             return true;
         }

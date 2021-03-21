@@ -2303,6 +2303,13 @@ namespace Librainian.Parsing {
 			return String.IsNullOrEmpty( atTheEnd ) ? joined : $"{joined}{separator}{atTheEnd}";
 		}
 
+		/// <summary>
+		/// Returns a <see cref="Status"/> if <paramref name="value"/> starts with any of <paramref name="ofThese"/>.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="ofThese"></param>
+		/// <param name="comparison"></param>
+		/// <returns></returns>
 		public static (Status status, String? start) StartsWith(
 			this String value,
 			IEnumerable<String> ofThese,

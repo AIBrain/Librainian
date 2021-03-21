@@ -31,6 +31,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics;
 	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Linq;
@@ -75,6 +76,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <returns></returns>
 		[return: NotNullIfNotNull( "path" )]
 		[JetBrains.Annotations.NotNull]
+		[DebuggerStepThrough]
 		public static String AddLongPathPrefix( [JetBrains.Annotations.NotNull] this String path ) {
 			path = path.ThrowIfBlank();
 
@@ -83,11 +85,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			// http://msdn.microsoft.com/en-us/library/aa365247.aspx
-			return path.StartsWith( @"\\", StringComparison.OrdinalIgnoreCase  ) ? $"{UNCLongPathPrefix}{path[ 2.. ]}" : $"{LongPathPrefix}{path}";
+			return path.StartsWith( @"\\", StringComparison.OrdinalIgnoreCase ) ? $"{UNCLongPathPrefix}{path[ 2.. ]}" : $"{LongPathPrefix}{path}";
 		}
 
 		[return: NotNullIfNotNull( "filename" )]
 		[JetBrains.Annotations.NotNull]
+		[DebuggerStepThrough]
 		public static String ChangeExtension( [JetBrains.Annotations.NotNull] this String filename, [CanBeNull] String? extension ) =>
 			System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
 
@@ -276,12 +279,15 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <returns></returns>
 		[return: NotNullIfNotNull( "path" )]
 		[JetBrains.Annotations.NotNull]
+		[DebuggerStepThrough]
 		public static String GetFullPath( [JetBrains.Annotations.NotNull] this String path ) => path.IsPathUnc() ? path : path.NormalizeLongPath().RemoveLongPathPrefix();
 
 		[JetBrains.Annotations.NotNull]
+		[DebuggerStepThrough]
 		public static IEnumerable<Char> GetInvalidFileNameChars() => InvalidFileNameChars;
 
 		[JetBrains.Annotations.NotNull]
+		[DebuggerStepThrough]
 		public static IEnumerable<Char> GetInvalidPathChars() => InvalidPathChars;
 
 		[return: NotNullIfNotNull( "path" )]
@@ -359,12 +365,15 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[JetBrains.Annotations.NotNull]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
 		public static String GetTempPath() => System.IO.Path.GetTempPath().ThrowIfBlank();
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
 		public static Boolean HasExtension( [JetBrains.Annotations.NotNull] this String path ) => System.IO.Path.HasExtension( path.ThrowIfBlank() );
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
 		public static Boolean HasIllegalCharacters( [JetBrains.Annotations.NotNull] this String? path ) {
 			Common.ThrowIfBlank( ref path );
 			return path.Any( InvalidPathChars.Contains );
@@ -372,10 +381,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
 		public static Boolean IsDirectorySeparator( this Char c ) => c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
 		public static Boolean IsPathRooted( [JetBrains.Annotations.NotNull] this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
 
 		/// <summary>Normalizes path (can be longer than MAX_PATH) and adds \\?\ long path prefix.
@@ -445,7 +456,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return String.Empty;
 			}
 
-			if ( !path.StartsWith( LongPathPrefix, StringComparison.OrdinalIgnoreCase  ) ) { // \\?\
+			if ( !path.StartsWith( LongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) { // \\?\
 				return path;
 			}
 

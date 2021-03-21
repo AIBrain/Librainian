@@ -62,8 +62,8 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentNullException( nameof( value ) );
 			}
 
-			if ( value.Length > 32 && !( value.Length == 33 && value[32] == 0 ) ) {
-				throw new ArgumentOutOfRangeException();
+			if ( value[32] is > 32 and not ( 33 and 0 ) ) {
+				throw new ArgumentOutOfRangeException( nameof(value) );
 			}
 
 			if ( value.Length < 32 ) {
@@ -81,13 +81,13 @@ namespace Librainian.Maths.Numbers {
 
 		public UInt256( Int32 value ) : this( value.GetBytes() ) {
 			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException( nameof(value));
 			}
 		}
 
 		public UInt256( Int64 value ) : this( value.GetBytes() ) {
 			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException( nameof(value));
 			}
 		}
 
@@ -97,7 +97,7 @@ namespace Librainian.Maths.Numbers {
 
 		public UInt256( BigInteger value ) : this( value.ToByteArray() ) {
 			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException( nameof(value));
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace Librainian.Maths.Numbers {
 		public static UInt256 FromByteArray( [NotNull] Byte[] buffer ) {
 			unchecked {
 				if ( buffer.Length != 32 ) {
-					throw new ArgumentException();
+					throw new ArgumentException( nameof(buffer));
 				}
 
 				var part1 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );

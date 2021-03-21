@@ -156,7 +156,7 @@ namespace Librainian.Persistence.InIFiles {
 
 				if (that != null && JsonConvert.DeserializeObject(that, this.Data.GetType()) is DataType other) {
 					Parallel.ForEach(other.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), pair => {
-						var (key, value) = pair;
+						( var key, var value ) = pair;
 						this[key] = value;
 					} );
 
