@@ -29,6 +29,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.IO;
 	using System.Linq;
 	using JetBrains.Annotations;
+	using Logging;
 
 	public class DirectoryInfo : FileSystemInfo {
 
@@ -53,7 +54,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					this.Refresh();
 				}
 
-				return this.state == State.Initialized && this.Data?.FileAttributes.HasFlag( FileAttributes.Directory ) == true;
+				#if DEBUG
+				if ( this.state != State.Initialized ) {
+					new InvalidOperationException( $"Error initializing {nameof( FileInfo )}." ).Log( true );
+				}
+				#endif
+
+				return this.state == State.Initialized && this.Data?.FileAttributes.HasFlag( FileAttributes.Directory ) == true && this.Data?.Exists == true;
 			}
 		}
 

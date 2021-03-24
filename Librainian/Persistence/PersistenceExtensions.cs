@@ -73,7 +73,8 @@ namespace Librainian.Persistence {
 
 		[NotNull]
 		public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
 		public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
@@ -89,7 +90,7 @@ namespace Librainian.Persistence {
 			PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
-		/// <summary></summary>
+		/// <summary>Bascially just calls <see cref="FromJSON{T}"/>.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="storedAsString"></param>
 		/// <returns></returns>
@@ -125,7 +126,7 @@ namespace Librainian.Persistence {
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				var exists = await folder.Exists( cancellationToken ).ConfigureAwait(false);
+				var exists = await folder.Exists( cancellationToken ).ConfigureAwait( false );
 
 				if ( exists != true ) {
 					return false;
@@ -136,8 +137,8 @@ namespace Librainian.Persistence {
 
 				//enumerate all the files with the wildcard *.extension
 
-				await foreach ( var document in folder.EnumerateDocuments(  $"*.{extension}", cancellationToken ) ) {
-					var length = await document.Length(cancellationToken).ConfigureAwait( false );
+				await foreach ( var document in folder.EnumerateDocuments( $"*.{extension}", cancellationToken ) ) {
+					var length = await document.Length( cancellationToken ).ConfigureAwait( false );
 
 					if ( length < 1 ) {
 						continue;
@@ -153,9 +154,9 @@ namespace Librainian.Persistence {
 									return;
 								}
 
-								( var key, var value ) = line.Deserialize<(TKey, TValue)>();
+								(var key, var value) = line.Deserialize<(TKey, TValue)>();
 
-								toDictionary[key] = value;
+								toDictionary[ key ] = value;
 							}
 							catch ( Exception lineexception ) {
 								lineexception.Log();
@@ -195,7 +196,7 @@ namespace Librainian.Persistence {
 
 			var binaryFormatter = new BinaryFormatter();
 
-			return ( T ) binaryFormatter.Deserialize( memoryStream );
+			return ( T )binaryFormatter.Deserialize( memoryStream );
 		}
 
 		/// <summary>Can the file be read from at this moment in time ?</summary>
@@ -268,7 +269,7 @@ namespace Librainian.Persistence {
 			return JsonConvert.DeserializeObject<T>( data, Jss.Value );
 		}
 
-		/// <summary></summary>
+		/// <summary>Basically just calls <see cref="ToJSON{T}"/>.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
 		/// <returns></returns>
@@ -282,7 +283,7 @@ namespace Librainian.Persistence {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[CanBeNull]
 		public static String? Serialize<T>( [NotNull] this T self ) {
-			if ( Equals( self, null ) ) {
+			if ( self is null ) {
 				throw new ArgumentNullException( nameof( self ) );
 			}
 
@@ -326,11 +327,11 @@ namespace Librainian.Persistence {
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( await folder.Create(cancellationToken).ConfigureAwait(false) == false ) {
+				if ( await folder.Create( cancellationToken ).ConfigureAwait( false ) == false ) {
 					throw new DirectoryNotFoundException( folder.FullPath );
 				}
 
-				var itemCount = ( UInt64 ) dictionary.LongCount();
+				var itemCount = ( UInt64 )dictionary.LongCount();
 
 				String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
@@ -349,7 +350,7 @@ namespace Librainian.Persistence {
 				foreach ( var pair in dictionary ) {
 					currentLine++;
 
-					var data = ( pair.Key, pair.Value ).Serialize();
+					var data = (pair.Key, pair.Value).Serialize();
 
 					var hereNow = DateTime.UtcNow.ToGuid();
 

@@ -306,6 +306,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 				this.Data = new FileAttributeData( findData );
 				this.state = State.Initialized;
+
+				
 			}
 			catch ( DirectoryNotFoundException ) {
 				this.state = State.Error;
@@ -342,6 +344,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			public FILETIME LastWriteTime;
 
+			public Boolean? Exists { get; }
+			
+
 			public FileAttributeData( WIN32_FIND_DATA findData ) {
 				this.FileAttributes = findData.dwFileAttributes;
 				this.CreationTime = findData.ftCreationTime;
@@ -349,6 +354,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				this.LastWriteTime = findData.ftLastWriteTime;
 				this.FileSizeHigh = findData.nFileSizeHigh;
 				this.FileSizeLow = findData.nFileSizeLow;
+				this.Exists = findData.Exists;
 			}
 
 			private FileAttributeData() { }

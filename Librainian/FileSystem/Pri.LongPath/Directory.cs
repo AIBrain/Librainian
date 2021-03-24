@@ -32,6 +32,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.Runtime.InteropServices;
 	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
+	using OperatingSystem;
 
 	public static class Directory {
 
@@ -215,21 +216,29 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 		[CanBeNull]
-		public static Librainian.OperatingSystem.NativeMethods.SafeFindHandle BeginFind( [NotNull] String normalizedPathWithSearchPattern, out WIN32_FIND_DATA findData ) {
+		public static NativeMethods.SafeFindHandle? BeginFind( [NotNull] String normalizedPathWithSearchPattern, out WIN32_FIND_DATA findData ) {
 			normalizedPathWithSearchPattern = normalizedPathWithSearchPattern.TrimEnd( '\\' ).ThrowIfBlank();
 			var handle = PriNativeMethods.FindFirstFile( normalizedPathWithSearchPattern, out findData );
 
-			if ( !handle.IsInvalid ) {
-				return handle;
+			if ( handle.IsInvalid ) {
+				
+
+				var errorCode = ( PriNativeMethods.ERROR ) Marshal.GetLastWin32Error();
+
+				if ( errorCode is PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND || errorCode is PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND ) {
+					findData.Exists = false;	
+				}
+
+				if ( errorCode is not PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND and not PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND and not PriNativeMethods.ERROR
+					.ERROR_NOT_READY ) {
+					throw Common.GetExceptionFromWin32Error( errorCode );
+				}
+
+				return default( NativeMethods.SafeFindHandle );
 			}
 
-			var errorCode = ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
-
-			if ( errorCode is not PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND and not PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND and not PriNativeMethods.ERROR.ERROR_NOT_READY) {
-				throw Common.GetExceptionFromWin32Error( errorCode );
-			}
-
-			return default( Librainian.OperatingSystem.NativeMethods.SafeFindHandle );
+			findData.Exists = true;
+			return handle;
 		}
 
 		/// <summary>Creates the specified directory.</summary>

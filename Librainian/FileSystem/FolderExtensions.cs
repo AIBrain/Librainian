@@ -270,7 +270,7 @@ namespace Librainian.FileSystem {
 			TryAgain:
 
 			try {
-				if ( !await folder.Exists( cancellationToken) ) {
+				if ( !await folder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 					return true;
 				}
 

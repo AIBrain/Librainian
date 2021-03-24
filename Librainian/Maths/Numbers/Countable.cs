@@ -6,285 +6,267 @@
 // 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Countable.cs" last touched on 2021-03-07 at 2:00 PM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.Maths.Numbers {
 
-    using System;
-    using System.Collections;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Numerics;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using JetBrains.Annotations;
-    using Measurement.Time;
-    using Newtonsoft.Json;
-    using Threading;
-    using Utilities;
+	using System;
+	using System.Collections;
+	using System.Collections.Concurrent;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Numerics;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
+	using Measurement.Time;
+	using Newtonsoft.Json;
+	using Threading;
+	using Threadsafe;
+	using Utilities;
 
-    /// <summary>
-    ///     <para>Threadsafe dictionary for LARGE numbers ( <see cref="BigInteger" />).</para>
-    ///     <para>Some methods have a <see cref="ReadTimeout" /> or <see cref="WriteTimeout" />.</para>
-    ///     <para>Call <see cref="Complete" /> as soon as possible.</para>
-    /// </summary>
-    /// <typeparam name="TKey"></typeparam>
-    [JsonObject]
-    public class Countable<TKey> : ABetterClassDispose, IEnumerable<Tuple<TKey, BigInteger>> where TKey: notnull {
+	/// <summary>
+	///     <para>Threadsafe dictionary for LARGE numbers ( <see cref="BigInteger" />).</para>
+	///     <para>Some methods have a <see cref="ReadTimeout" /> or <see cref="WriteTimeout" />.</para>
+	///     <para>Call <see cref="Complete" /> as soon as possible.</para>
+	/// </summary>
+	/// <typeparam name="TKey"></typeparam>
+	[JsonObject]
+	public class Countable<TKey> : ABetterClassDispose, IEnumerable<(TKey, BigInteger)> where TKey : notnull {
 
-        private volatile Boolean _isReadOnly;
+		public Countable() : this( Minutes.One, Minutes.One ) { }
 
-        public Countable() : this( Minutes.One, Minutes.One ) { }
+		public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) {
+			this.ReadTimeout = readTimeout;
+			this.WriteTimeout = writeTimeout;
+		}
 
-        public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) {
-            this.ReadTimeout = readTimeout;
-            this.WriteTimeout = writeTimeout;
-        }
+		/// <summary>Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.</summary>
+		[NotNull]
+		private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } = new( Environment.ProcessorCount, 1 );
 
-        /// <summary>Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.</summary>
-        [NotNull]
-        private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } = new( Environment.ProcessorCount, 1 );
+		/// <summary>Count of each <see cref="TKey" />.</summary>
+		[JsonProperty]
+		[NotNull]
+		private ConcurrentDictionary<TKey, BigInteger> Dictionary { get; } = new();
 
-        /// <summary>Count of each <see cref="TKey" />.</summary>
-        [JsonProperty]
-        [NotNull]
-        private ConcurrentDictionary<TKey, BigInteger> Dictionary { get; } = new();
+		[JsonProperty]
+		public VolatileBoolean IsReadOnly { get; set; }
 
-        [JsonProperty]
-        public Boolean IsReadOnly {
-            get => this._isReadOnly;
+		[JsonProperty]
+		public TimeSpan ReadTimeout { get; set; }
 
-            private set => this._isReadOnly = value;
-        }
+		[JsonProperty]
+		public TimeSpan WriteTimeout { get; set; }
 
-        [JsonProperty]
-        public TimeSpan ReadTimeout { get; set; }
+		[CanBeNull]
+		[JsonProperty]
+		public BigInteger? this[ [NotNull] TKey key ] {
+			get {
+				if ( key is null ) {
+					throw new ArgumentNullException( nameof( key ) );
+				}
 
-        [JsonProperty]
-        public TimeSpan WriteTimeout { get; set; }
+				var bucket = this.Bucket( key );
 
-        [CanBeNull]
-        [JsonProperty]
-        public BigInteger? this[ [NotNull] TKey key ] {
-            get {
-                if ( key is null ) {
-                    throw new ArgumentNullException( nameof( key ) );
-                }
+				if ( bucket.TryEnterReadLock( this.ReadTimeout ) ) {
+					try {
+						return this.Dictionary.TryGetValue( key, out var result ) ? result : default( BigInteger );
+					}
+					finally {
+						bucket.ExitReadLock();
+					}
+				}
 
-                var bucket = this.Bucket( key );
+				return default( BigInteger? );
+			}
 
-                try {
-                    if ( bucket.TryEnterReadLock( this.ReadTimeout ) ) {
-                        return this.Dictionary.TryGetValue( key, out var result ) ? result : default( BigInteger );
-                    }
-                }
-                finally {
-                    if ( bucket.IsReadLockHeld ) {
-                        bucket.ExitReadLock();
-                    }
-                }
+			set {
+				if ( key is null ) {
+					throw new ArgumentNullException( nameof( key ) );
+				}
 
-                return default( BigInteger? );
-            }
+				if ( this.IsReadOnly ) {
+					return;
+				}
 
-            set {
-                if ( key is null ) {
-                    throw new ArgumentNullException( nameof( key ) );
-                }
+				if ( !value.HasValue ) {
+					return;
+				}
 
-                if ( this.IsReadOnly ) {
-                    return;
-                }
+				var bucket = this.Bucket( key );
 
-                if ( !value.HasValue ) {
-                    return;
-                }
+				if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
+					try {
+						this.Dictionary.TryAdd( key, value.Value );
+					}
+					finally {
+						bucket.ExitWriteLock();
+					}
+				}
+			}
+		}
 
-                var bucket = this.Bucket( key );
+		/// <summary>Returns an enumerator that iterates through a collection.</summary>
+		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
+		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
-                try {
-                    if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
-                        this.Dictionary.TryAdd( key, value.Value );
-                    }
-                }
-                finally {
-                    if ( bucket.IsWriteLockHeld ) {
-                        bucket.ExitWriteLock();
-                    }
-                }
-            }
-        }
+		/// <summary>Returns an enumerator that iterates through the collection.</summary>
+		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
+		IEnumerator<(TKey, BigInteger)> IEnumerable<(TKey, BigInteger)>.GetEnumerator() => ( IEnumerator<(TKey, BigInteger)> )this.GetEnumerator();
 
-        /// <summary>Returns an enumerator that iterates through a collection.</summary>
-        /// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
-        public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
+		private static Byte Hash( [NotNull] TKey key ) => ( Byte )key.GetHashCode();
 
-        /// <summary>Returns an enumerator that iterates through the collection.</summary>
-        /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        IEnumerator<Tuple<TKey, BigInteger>> IEnumerable<Tuple<TKey, BigInteger>>.GetEnumerator() => ( IEnumerator<Tuple<TKey, BigInteger>> )this.GetEnumerator();
+		[NotNull]
+		private ReaderWriterLockSlim Bucket( [NotNull] TKey key ) {
+			var hash = Hash( key );
 
-        private static Byte Hash( [NotNull] TKey key ) => ( Byte )key.GetHashCode();
+			TryAgain:
 
-        [NotNull]
-        private ReaderWriterLockSlim Bucket( [NotNull] TKey key ) {
-            var hash = Hash( key );
+			if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
+				return bucket;
+			}
 
-            TryAgain:
+			bucket = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-            if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
-                return bucket;
-            }
+			if ( this.Buckets.TryAdd( hash, bucket ) ) {
+				return bucket;
+			}
 
-            bucket = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+			goto TryAgain;
+		}
 
-            if ( this.Buckets.TryAdd( hash, bucket ) ) {
-                return bucket;
-            }
+		[NotNull]
+		private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
 
-            goto TryAgain;
-        }
+		public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
+			if ( keys is null ) {
+				throw new ArgumentNullException( nameof( keys ) );
+			}
 
-        [NotNull]
-        private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
+			if ( this.IsReadOnly ) {
+				return false;
+			}
 
-        public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
-            if ( keys is null ) {
-                throw new ArgumentNullException( nameof( keys ) );
-            }
+			var result = Parallel.ForEach( keys.AsParallel(), CPU.AllExceptOne, key => this.Add( key ) );
 
-            if ( this.IsReadOnly ) {
-                return false;
-            }
+			return result.IsCompleted;
+		}
 
-            var result = Parallel.ForEach( keys.AsParallel(), CPU.AllExceptOne, key => this.Add( key ) );
+		public Boolean Add( [NotNull] TKey key ) {
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
 
-            return result.IsCompleted;
-        }
+			return this.Add( key, BigInteger.One );
+		}
 
-        public Boolean Add( [NotNull] TKey key ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( nameof( key ) );
-            }
+		public Boolean Add( [NotNull] TKey key, BigInteger amount ) {
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
 
-            return this.Add( key, BigInteger.One );
-        }
+			if ( this.IsReadOnly ) {
+				return false;
+			}
 
-        public Boolean Add( [NotNull] TKey key, BigInteger amount ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( nameof( key ) );
-            }
+			var bucket = this.Bucket( key );
 
-            if ( this.IsReadOnly ) {
-                return false;
-            }
+			if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
+				try {
+					if ( !this.Dictionary.ContainsKey( key ) ) {
+						this.Dictionary.TryAdd( key, BigInteger.Zero );
+					}
 
-            var bucket = this.Bucket( key );
+					this.Dictionary[ key ] += amount;
 
-            try {
-                if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
-                    if ( !this.Dictionary.ContainsKey( key ) ) {
-                        this.Dictionary.TryAdd( key, BigInteger.Zero );
-                    }
+					return true;
+				}
+				finally {
+					bucket.ExitWriteLock();
+				}
+			}
 
-                    this.Dictionary[key] += amount;
+			return false;
+		}
 
-                    return true;
-                }
-            }
-            finally {
-                if ( bucket.IsWriteLockHeld ) {
-                    bucket.ExitWriteLock();
-                }
-            }
+		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
+		/// <returns></returns>
+		public Boolean Complete() {
+			this.IsReadOnly = true;
+			this.Trim();
 
-            return false;
-        }
+			return this.IsReadOnly;
+		}
 
-        /// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
-        /// <returns></returns>
-        public Boolean Complete() {
-            this.IsReadOnly = true;
-            this.Trim();
+		public override void DisposeManaged() {
+			this.Complete();
 
-            return this.IsReadOnly;
-        }
+			foreach ( var pair in this.Buckets ) {
+				using ( pair.Value ) { }
+			}
+		}
 
-        public override void DisposeManaged() {
-            this.Complete();
+		public Boolean Subtract( [NotNull] TKey key, BigInteger amount ) {
+			if ( key is null ) {
+				throw new ArgumentNullException( nameof( key ) );
+			}
 
-            foreach ( var pair in this.Buckets ) {
-                using ( pair.Value ) { }
-            }
-        }
+			if ( this.IsReadOnly ) {
+				return false;
+			}
 
-        public Boolean Subtract( [NotNull] TKey key, BigInteger amount ) {
-            if ( key is null ) {
-                throw new ArgumentNullException( nameof( key ) );
-            }
+			var bucket = this.Bucket( key );
 
-            if ( this.IsReadOnly ) {
-                return false;
-            }
+			if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
+				try {
+					if ( !this.Dictionary.ContainsKey( key ) ) {
+						this.Dictionary.TryAdd( key, BigInteger.Zero );
+					}
 
-            var bucket = this.Bucket( key );
+					this.Dictionary[ key ] -= amount;
 
-            try {
-                if ( bucket.TryEnterWriteLock( this.WriteTimeout ) ) {
-                    if ( !this.Dictionary.ContainsKey( key ) ) {
-                        this.Dictionary.TryAdd( key, BigInteger.Zero );
-                    }
+					return true;
+				}
+				finally {
+					bucket.ExitWriteLock();
+				}
+			}
 
-                    this.Dictionary[key] -= amount;
+			return false;
+		}
 
-                    return true;
-                }
-            }
-            finally {
-                if ( bucket.IsWriteLockHeld ) {
-                    bucket.ExitWriteLock();
-                }
-            }
+		/// <summary>Return the sum of all values.</summary>
+		/// <returns></returns>
+		public BigInteger Sum() => this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
 
-            return false;
-        }
+		public void Trim() =>
+			Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), CPU.AllExceptOne,
+				pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
 
-        /// <summary>Return the sum of all values.</summary>
-        /// <returns></returns>
-        public BigInteger Sum() => this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
+		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
+		/// <returns></returns>
+		public Boolean UnComplete() => !( this.IsReadOnly = false );
 
-        public void Trim() =>
-            Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), CPU.AllExceptOne,
-                pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
-
-        /// <summary>Mark that this container will now become UnReadOnly/immutable. Allow more adds and subtracts.</summary>
-        /// <returns></returns>
-        public Boolean UnComplete() {
-            this.IsReadOnly = false;
-            this.Trim();
-
-            return !this.IsReadOnly;
-        }
-
-    }
+	}
 
 }

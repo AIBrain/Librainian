@@ -161,7 +161,7 @@ namespace Librainian.Persistence {
 
 
 			try {
-				(var status, var data) = await document.LoadJSON<SectionType>( null, cancellationToken );
+				(var status, var data) = await document.LoadJSON<SectionType>( null, cancellationToken ).ConfigureAwait( false );
 
 				if ( !status.IsGood() ) {
 					return false;

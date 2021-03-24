@@ -409,7 +409,7 @@ namespace Librainian.Persistence.InIFiles {
 				throw new ArgumentNullException( nameof( document ) );
 			}
 
-			if ( await document.Exists( cancellationToken ) == false ) {
+			if ( await document.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
 				return false;
 			}
 

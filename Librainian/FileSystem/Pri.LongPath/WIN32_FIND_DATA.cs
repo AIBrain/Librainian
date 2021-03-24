@@ -28,13 +28,14 @@
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Runtime.InteropServices.ComTypes;
 	using JetBrains.Annotations;
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	// ReSharper disable once InconsistentNaming
+	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
 	public struct WIN32_FIND_DATA {
 
 		public readonly FileAttributes dwFileAttributes;
@@ -55,12 +56,14 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_PATH )]
 		//BUG Is PriNativeMethods.MAX_PATH correct here? How to handle really long folder names?
-		[NotNull]
+		[JetBrains.Annotations.NotNull]
 		public readonly String cFileName;
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_ALTERNATE )]
 		[CanBeNull]
 		public readonly String cAlternate;
+
+		public Boolean? Exists { get; set; } 
 
 	}
 

@@ -118,9 +118,9 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		public static async PooledTask<TimeSpan> AwaitContextSwitch() {
 			var stopwatch = Stopwatch.StartNew();
-#pragma warning disable AsyncFixer02 // Long-running or blocking operations inside an async method
-			await Task.Run( () => Task.Delay( 1 ).Wait() );
-#pragma warning restore AsyncFixer02 // Long-running or blocking operations inside an async method
+
+			await Task.Run( () => Task.Delay( 1 ).Wait() ).ConfigureAwait( false );
+
 
 			return stopwatch.Elapsed;
 		}
@@ -988,10 +988,6 @@ namespace Librainian.Measurement.Time {
 			return stopwatch.Elapsed;
 		}
 
-		//    if ( value > Constants.MaximumUsefulDecimal ) {
-		//        throw new OverflowException( Constants.ValueIsTooHigh );
-		//    }
-		//}
 		/// <summary>
 		///     Increase a <see cref="TimeSpan" /> by a <paramref name="scalar" /> amount.
 		/// </summary>

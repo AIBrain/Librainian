@@ -93,9 +93,14 @@ namespace Librainian.Measurement.Time {
 			return this.Value.CompareTo( other.Value );
 		}
 
-		public IQuantityOfTime ToFinerGranularity() => throw new NotImplementedException();
+		public IQuantityOfTime ToFinerGranularity() => this.ToNanoseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( ( ( Rational ) PlanckTimes.InOneMicrosecond * this.Value ).WholePart );
+		/// <summary>
+		/// Optimization
+		/// </summary>
+		private readonly Lazy<Rational> _lazyPlancksInOneMicrosecond  = new( () => ( Rational )PlanckTimes.InOneMicrosecond , true );
+
+		public PlanckTimes ToPlanckTimes() => new( ( this.Value * this._lazyPlancksInOneMicrosecond.Value ).WholePart );
 
 		public Seconds ToSeconds() => new( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
 

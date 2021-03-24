@@ -125,7 +125,12 @@ namespace Librainian.Measurement.Time {
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToPicoseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational ) PlanckTimes.InOneNanosecond );
+		/// <summary>
+		/// Optimization
+		/// </summary>
+		private readonly Lazy<Rational> _lazyPlancksInOneNanosecond = new( () => ( Rational )PlanckTimes.InOneNanosecond, true );
+
+		public PlanckTimes ToPlanckTimes() => new( this.Value * this._lazyPlancksInOneNanosecond.Value );
 
 		public Seconds ToSeconds() => this.ToMicroseconds().ToSeconds();
 		public IQuantityOfTime ToCoarserGranularity() => this.ToMicroseconds();

@@ -79,7 +79,7 @@ namespace Librainian.Persistence {
 
             try {
                 var progress = new Progress<ZeroToOne>( pro => { } );
-                ( var status, var data ) = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken );
+                ( var status, var data ) = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken ).ConfigureAwait( false );
 
                 if ( status.IsGood() ) {
 	                await this.AddRangeAsync( data, cancellationToken ).ConfigureAwait( false );

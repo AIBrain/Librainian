@@ -28,12 +28,14 @@
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
 	using JetBrains.Annotations;
 
 	public class FileInfo : FileSystemInfo {
 
+		[DebuggerStepThrough]
 		public FileInfo( [NotNull] String fileName ) : base( fileName.GetFullPath() ) => this.Name = this.FullPath.GetFileName();
 
 		[NotNull]
@@ -45,10 +47,21 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					this.Refresh();
 				}
 
+#if DEBUG
+				if ( this.state != State.Initialized ) {
+					throw new InvalidOperationException( $"Error initializing {nameof( FileInfo )}." );
+				}
+#endif
+
+				return this.state == State.Initialized &&
+					   ( this.Data?.FileAttributes & FileAttributes.Directory ) != FileAttributes.Directory && this.Data?.Exists == true;
+
+				/*
 				var fileAttributeData = this.Data;
 
 				return fileAttributeData != null && this.state == State.Initialized &&
 				       ( fileAttributeData.FileAttributes & FileAttributes.Directory ) != FileAttributes.Directory;
+				*/
 			}
 		}
 
@@ -93,7 +106,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				Common.ThrowIOError( this.ErrorCode, this.FullPath );
 			}
 
-			return ( ( Int64 ) this.Data.FileSizeHigh << 32 ) | ( this.Data.FileSizeLow & 0xFFFFFFFFL );
+			return ( ( Int64 )this.Data.FileSizeHigh << 32 ) | ( this.Data.FileSizeLow & 0xFFFFFFFFL );
 		}
 
 		[NotNull]
