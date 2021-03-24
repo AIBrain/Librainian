@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 //
@@ -6,40 +6,37 @@
 //
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
+//     No warranties are expressed, implied, or given.
+//     We are NOT responsible for Anything You Do With Our Code.
+//     We are NOT responsible for Anything You Do With Our Executables.
+//     We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
+//
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "JSONFileTests.cs" last touched on 2021-03-07 at 12:10 PM by Protiguous.
-
-#nullable enable
 
 namespace LibrainianUnitTests.Persistence {
 
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using FluentAssertions;
 	using Librainian.FileSystem;
 	using Librainian.Measurement.Time;
-	using Librainian.Persistence;
 	using Librainian.Persistence.InIFiles;
 	using Xunit;
 
-	public class JSONFileTests {
+	public class IniFileTests {
 
 		public const String IniTestData = @"
 [ Section 1  ]
@@ -75,57 +72,40 @@ data33   =   3
 
 ";
 
-		[NotNull]
-		public IniFile Ini { get; } = new();
+		private static IniFile _ini1;
 
-		[NotNull]
-		public JSONFile Json { get; } = new();
+		private static IniFile Ini2;
 
-		[CanBeNull]
-		private CancellationTokenSource? CancellationTokenSource { get; set; }
-
-		public CancellationTokenSource CreateCancelToken() {
-			if ( this.CancellationTokenSource is null ) {
-				this.CancellationTokenSource = new CancellationTokenSource( Minutes.Ten );
-			}
-
-			Assert.NotNull( this.CancellationTokenSource );
-			return this.CancellationTokenSource;
-		}
-
-		private CancellationToken GetCancellationToken() => this.CreateCancelToken().Token;
+		private static IniFile Ini3;
 
 		[Fact]
-		public void Test_load_from_string() {
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
+		public async Task test_load_from_file() {
+			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
+
+			//prepare file
+			var config = Document.GetTempDocument( "config" );
+			var doc = await config.AppendText( IniTestData, cancellationTokenSource.Token ).ConfigureAwait( false );
+
+			_ = doc.Should()?.Be( config );
+
+			Ini2 = new IniFile {
+				[ "Greetings", "Hello" ] = "world",
+				[ "Greeting", "Hello" ] = "world",
+				[ "Greetings", "Hello" ] = "World!"
+			};
+
+			var test = Ini2[ "Greetings", "Hello" ];
+
+			_ = test.Should()?.Be( "World2!" );
 		}
 
 		[Fact]
-		public async Task Test_load_from_string_and_save_temp() {
-			this.Test_load_from_string();
+		public static void test_load_from_string() {
+			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
 
-			this.Json.Document = await this.CreateTempDocument().ConfigureAwait( false );
-			Assert.True( !await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
-
-			if ( await this.Json.Write( this.GetCancellationToken() ).ConfigureAwait( false ) ) {
-				Assert.True( await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
-			}
-
-			await this.Json.Document.Delete( this.GetCancellationToken() ).ConfigureAwait( false );
-			Assert.True( !await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
-		}
-
-		public async Task<Document> CreateTempDocument() {
+			_ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
 			var temp = Document.GetTempDocument( "config" );
-			if ( await temp.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) ) {
-				throw new InvalidOperationException();
-			}
-
-			return ( Document )temp;
+			var _ = _ini1.Save( temp, cancellationTokenSource.Token );
 		}
 	}
 }

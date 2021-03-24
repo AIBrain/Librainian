@@ -7,7 +7,27 @@
     <IsPackable>false</IsPackable>
 
     <Platforms>x64</Platforms>
+
+    <ApplicationIcon />
+
+    <OutputType>Library</OutputType>
+
+    <StartupObject />
+
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Rick\.nuget\packages\microsoft.testplatform.testhost\16.9.1\build\netcoreapp2.1\x64\Microsoft.TestPlatform.PlatformAbstractions.dll" />
+    <Content Remove="C:\Users\Rick\.nuget\packages\microsoft.testplatform.testhost\16.9.1\build\netcoreapp2.1\x64\testhost.dll" />
+    <Content Remove="C:\Users\Rick\.nuget\packages\microsoft.testplatform.testhost\16.9.1\build\netcoreapp2.1\x64\testhost.exe" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Rick\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.reporters.netcoreapp10.dll" />
+    <None Remove="C:\Users\Rick\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.utility.netcoreapp10.dll" />
+    <None Remove="C:\Users\Rick\.nuget\packages\xunit.runner.visualstudio\2.4.3\build\netcoreapp2.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
@@ -24,6 +44,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Librainian\Librainian.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
