@@ -1,43 +1,29 @@
-// Copyright © Rick@AIBrain.org and Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible
-// in any binaries, libraries, repositories, and source code (directly or derived) from
-// our binaries, libraries, projects, or solutions.
-//
-// This source code contained in "FolderBagTests.cs" belongs to Protiguous@Protiguous.com and
-// Rick@AIBrain.org unless otherwise specified or the original license has
-// been overwritten by formatting.
-// (We try to avoid it from happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other projects still retain their original
-// license and our thanks goes to those Authors. If you find your code in this source code, please
-// let us know so we can properly attribute you and include the proper license and/or copyright.
-//
-// If you want to use any of our code, you must contact Protiguous@Protiguous.com or
-// Sales@AIBrain.org for permission and a quote.
-//
-// Donations are accepted (for now) via
-//     bitcoin:1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2
-//     PayPal:Protiguous@Protiguous.com
-//     (We're still looking into other solutions! Any ideas?)
-//
-// =========================================================
+// Copyright © Protiguous. All Rights Reserved.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
+// Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
+// 
+// ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//    No warranties are expressed, implied, or given.
-//    We are NOT responsible for Anything You Do With Our Code.
-//    We are NOT responsible for Anything You Do With Our Executables.
-//    We are NOT responsible for Anything You Do With Your Computer.
-// =========================================================
-//
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com
-//
-// Our website can be found at "https://Protiguous.com/"
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// Feel free to browse any source code we *might* make available.
-//
-// Project: "LibrainianTests", "FolderBagTests.cs" was last formatted by Protiguous on 2019/03/17 at 11:06 AM.
+// 
+// File "FolderBagTests.cs" last touched on 2021-03-07 at 7:28 AM by Protiguous.
 
 namespace LibrainianUnitTests {
 
@@ -48,7 +34,6 @@ namespace LibrainianUnitTests {
 	using System.Management;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FluentAssertions;
 	using Librainian.ComputerSystem.Devices;
 	using Librainian.FileSystem;
 	using Librainian.Measurement.Time;
@@ -64,24 +49,25 @@ namespace LibrainianUnitTests {
 
 			foreach ( var o in searcher.Get() ) {
 				var managementObject = ( ManagementObject )o;
-				Console.WriteLine( $"RAM #{ram}:" );
+				Debug.WriteLine( $"RAM #{ram}:" );
 
-				foreach ( var property in managementObject.Properties ) {
-					//if (property.Value != null) {
-					Console.WriteLine( $"{property.Name} = {property.Value}" );
-
-					//}
+				if ( managementObject != null ) {
+					foreach ( var property in managementObject.Properties ) {
+						if ( property != null ) {
+							Debug.WriteLine( $"{property.Name} = {property.Value}" );
+						}
+					}
 				}
 
-				Console.WriteLine( "---------------------------------" );
-				Console.WriteLine();
+				Debug.WriteLine( "---------------------------------" );
+				Debug.WriteLine( Environment.NewLine );
 
 				ram++; // Increment our ram chip count
 			}
 		}
 
 		[Fact]
-		public static void TestRAMInfo() => OutputRamInformation();
+		public static void TestRamInfo() => OutputRamInformation();
 
 		[Fact]
 		public static async Task TestStorageAndRetrieval() {
@@ -89,14 +75,11 @@ namespace LibrainianUnitTests {
 			var watch = Stopwatch.StartNew();
 			var pathTree = new FolderBag();
 
-			await foreach ( var drive in Disk.GetDrives( CancellationToken.None).Where( drive => drive?.Info.IsReady == true ) ) {
-				if ( drive is null ) {
-					continue;
-				}
-
+			await foreach ( var drive in Disk.GetDrives( CancellationToken.None ) ) {
 				var root = new Folder( $"{drive.DriveLetter}:{Path.DirectorySeparatorChar}" );
+				Debug.WriteLine( root );
 
-				await foreach ( var folder in root.EnumerateFolders("*.*", SearchOption.AllDirectories, CancellationToken.None) ) {
+				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.AllDirectories, CancellationToken.None ) ) {
 					pathTree.FoundAnotherFolder( folder );
 					counter++;
 				}
@@ -105,12 +88,14 @@ namespace LibrainianUnitTests {
 			var allPaths = pathTree.ToList();
 			watch.Stop();
 
-			counter.Should()!.Be( allPaths.LongCount() );
-			Console.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
+			Assert.True( counter == allPaths.LongCount() );
+			Debug.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
 
 			var temp = Document.GetTempDocument().ContainingingFolder();
 
 			await File.WriteAllLinesAsync( $@"{temp}\allLines.txt", allPaths.Select( folder => folder?.FullPath ) ).ConfigureAwait( false );
 		}
+
 	}
+
 }
