@@ -58,13 +58,13 @@ namespace Librainian {
 						Negative = No - 1,
 
 							[Description( Symbols.Fail )]
-							No = Bad - 1,
+							No = -Yes,
 
 								[Description( Symbols.Fail )]
-								Bad = Failure - 1,
+								Bad = -Good,
 
 									[Description( Symbols.BlackStar )]
-									Failure = -1,
+									Failure = -Success,
 
 										[Description( Symbols.Unknown )]
 										Unknown = 0,
@@ -89,6 +89,9 @@ namespace Librainian {
 
 				[Description( Symbols.CheckMark )]
 				Go = Continue + 1,
+
+				[Description( Symbols.CheckMark )]
+				Start = Go,
 
 			[Description( Symbols.CheckMark )]
 			Proceed = Go + 1,

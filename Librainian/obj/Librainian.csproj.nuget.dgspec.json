@@ -46,6 +46,10 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "dependencies": {
+            "Ben.Demystifier": {
+              "target": "Package",
+              "version": "[0.3.0, )"
+            },
             "CommandLineParser": {
               "target": "Package",
               "version": "[2.8.0, )"
@@ -72,7 +76,7 @@
             },
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[12.0.3, )"
+              "version": "[13.0.1, )"
             },
             "PooledAwait": {
               "target": "Package",

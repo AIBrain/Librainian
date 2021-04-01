@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Disk.cs" last formatted on 2020-08-14 at 8:31 PM.
+// File "Disk.cs" last touched on 2021-03-07 at 3:46 PM by Protiguous.
 
 namespace Librainian.ComputerSystem.Devices {
 
@@ -43,25 +46,28 @@ namespace Librainian.ComputerSystem.Devices {
 	[Immutable]
 	public class Disk {
 
-		public Disk( [NotNull] Document document ) : this( document.FullPath[0] ) { }
+		public Disk( [NotNull] Document document ) : this( document.FullPath[ 0 ] ) { }
 
-		public Disk( [NotNull] Folder folder ) : this( folder.FullPath[0] ) { }
+		public Disk( [NotNull] Folder folder ) : this( folder.FullPath[ 0 ] ) { }
 
-		public Disk( [NotNull] String fullpath ) : this( fullpath[0] ) { }
+		public Disk( [NotNull] String fullpath ) : this( fullpath[ 0 ] ) { }
 
-		public Disk( [NotNull] DriveInfo info ) : this( new Folder( info.RootDirectory.FullName ) ) => this.Info = info ?? throw new ArgumentNullException( nameof( info ) );
+		public Disk( [NotNull] DriveInfo info ) : this( info.RootDirectory.FullName[ 0 ] ) { }
 
 		public Disk( Char driveLetter ) {
 			this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
 
-			if ( this.DriveLetter is < 'A' or > 'Z') {
+			if ( this.DriveLetter is < 'A' or > 'Z' ) {
 				throw new ArgumentOutOfRangeException( nameof( driveLetter ), driveLetter, $"The specified drive \"{driveLetter}\" is outside of the range A through Z." );
 			}
 
 			this.Info = new DriveInfo( this.DriveLetter.ToString() );
 		}
 
-		public Disk() : this( Environment.CurrentDirectory ) { }
+		/// <summary>
+		///     Assume <see cref="Environment.CurrentDirectory" />.
+		/// </summary>
+		public Disk() : this( Environment.CurrentDirectory[ 0 ] ) { }
 
 		public Char DriveLetter { get; }
 
@@ -90,7 +96,7 @@ namespace Librainian.ComputerSystem.Devices {
 		public IAsyncEnumerable<IFolder> EnumerateFolders( CancellationToken cancellationToken, [CanBeNull] String? searchPattern = "*" ) {
 			var root = new Folder( this.Info.RootDirectory.FullName );
 
-			return root.EnumerateFolders( searchPattern, SearchOption.TopDirectoryOnly ,cancellationToken );
+			return root.EnumerateFolders( searchPattern, SearchOption.TopDirectoryOnly, cancellationToken );
 		}
 
 		[NotNull]

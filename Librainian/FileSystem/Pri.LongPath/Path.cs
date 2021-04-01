@@ -36,7 +36,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.IO;
 	using System.Linq;
 	using System.Runtime.CompilerServices;
-	using System.Text;
 	using JetBrains.Annotations;
 	using Xunit;
 
@@ -97,6 +96,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <summary>
 		/// <para>Throws if blank.</para>
 		/// <para>Checks if the <paramref name="path"/> starts with \\?\</para>
+		/// <para>If it doesn't, it calls <see cref="AddLongPathPrefix"/>.</para>
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
@@ -376,7 +376,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DebuggerStepThrough]
 		public static Boolean HasIllegalCharacters( [JetBrains.Annotations.NotNull] this String? path ) {
 			Common.ThrowIfBlank( ref path );
-			return path.Any( InvalidPathChars.Contains );
+			return path?.Any( InvalidPathChars.Contains ) == true;
 		}
 
 		[Pure]
@@ -389,7 +389,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DebuggerStepThrough]
 		public static Boolean IsPathRooted( [JetBrains.Annotations.NotNull] this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
 
-		/// <summary>Normalizes path (can be longer than MAX_PATH) and adds \\?\ long path prefix.
+		/// <summary>Normalizes path and adds the \\?\ long path prefix.
 		/// <para><remarks>Makes a DLL call to kernel32.dll.GetFullPathNameW.</remarks></para>
 		/// </summary>
 		/// <param name="path"></param>
@@ -397,11 +397,15 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <returns></returns>
 		[return: NotNullIfNotNull( "path" )]
 		[JetBrains.Annotations.NotNull]
-		public static String NormalizeLongPath( [JetBrains.Annotations.NotNull] this String path, [JetBrains.Annotations.NotNull] String parameterName = "path" ) {
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static String NormalizeLongPath( [JetBrains.Annotations.NotNull] this String path, [JetBrains.Annotations.NotNull] String parameterName = "path" ) => path.CheckAddLongPathPrefix();
+
+		/*
 			if ( path.IsPathUnc() ) {
 				return path.CheckAddLongPathPrefix();
 			}
-
+			*/
+		/*
 			var buffer = new StringBuilder( PriNativeMethods.MAX_LONG_PATH + 1 ); // Add 1 for NULL
 			var length = PriNativeMethods.GetFullPathNameW( path, ( UInt32 )buffer.Capacity, buffer, IntPtr.Zero );
 
@@ -428,10 +432,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					break;
 				}
 			}
-
-			return buffer.ToString().AddLongPathPrefix();
-		}
-
+			*/
+		/*
+			return path.AddLongPathPrefix();
+			*/
 		/// <summary>
 		/// <para>Trim whitespace from the <paramref name="path"/>.</para>
 		/// <para>If the <paramref name="path"/> is null, empty or whitespace then return <see cref="String.Empty"/>.</para>

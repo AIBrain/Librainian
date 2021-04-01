@@ -65,7 +65,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public Folder( String fullPath ) {
+		public Folder( String? fullPath ) {
 			if ( String.IsNullOrWhiteSpace( fullPath ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
 			}
@@ -468,7 +468,7 @@ namespace Librainian.FileSystem {
 			var path = RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
 
 			while ( path.Right( 1 ) == FolderSeparator ) {
-				path = path?.Left( path.Length - 1 );
+				path = path?.Left( ( UInt32 )(path.Length - 1) );
 			}
 
 			return path ?? String.Empty;

@@ -33,7 +33,6 @@ namespace Librainian.Measurement.Length {
 	using Newtonsoft.Json;
 	using Parsing;
 	using Rationals;
-	using Time;
 
 	/// <summary>
 	///     <para>A foot (plural: feet) is a unit of length.</para>

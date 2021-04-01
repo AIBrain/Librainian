@@ -29,7 +29,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Diagnostics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Measurement.Time;
+	using Measurement;
 	using Newtonsoft.Json;
 	using Rationals;
 

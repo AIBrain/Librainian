@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Logging.cs" last touched on 2021-03-07 at 12:36 AM by Protiguous.
+//
+// File "Logging.cs" last touched on 2021-03-07 at 7:56 AM by Protiguous.
 
 #nullable enable
 
@@ -41,12 +41,12 @@ namespace Librainian.Logging {
 
 		[DebuggerStepThrough]
 		[Conditional( "DEBUG" )]
-		public static void BreakIfDebug<T>( [CanBeNull] this T discard, [CanBeNull] String? breakReason = null ) {
-			if ( Debugger.IsAttached ) {
-				if ( breakReason is not null ) {
-					$"Break reason: {breakReason}".DebugLine();
-				}
+		public static void BreakIfDebug<T>( [CanBeNull] this T? _, [CanBeNull] String? breakReason = null ) {
+			if ( breakReason is not null ) {
+				$"Break reason: {breakReason}".DebugLine();
+			}
 
+			if ( Debugger.IsAttached ) {
 				Debugger.Break();
 			}
 		}
@@ -71,6 +71,20 @@ namespace Librainian.Logging {
 		}
 
 		[DebuggerStepThrough]
+		public static void BreakIf( this Boolean condition, [CanBeNull] String? message = null ) {
+			if ( condition ) {
+				message.Break();
+			}
+		}
+
+		[DebuggerStepThrough]
+		public static void BreakIfTrue( this Boolean condition, [CanBeNull] String? message = null ) {
+			if ( condition ) {
+				message.Break();
+			}
+		}
+
+		[DebuggerStepThrough]
 		public static void BreakIfFalse( this Boolean condition, [CanBeNull] String? message = null ) {
 			if ( !condition ) {
 				message.Break();
@@ -80,15 +94,15 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static (Color fore, Color back) Colors( this LoggingLevel loggingLevel ) =>
 			loggingLevel switch {
-				LoggingLevel.Divine => ( Color.Blue, Color.Aqua ),
-				LoggingLevel.SubspaceTear => ( Color.HotPink, Color.Aqua ), //hotpink might actually look okay..
-				LoggingLevel.Fatal => ( Color.DarkRed, Color.Aqua ),
-				LoggingLevel.Critical => ( Color.Red, Color.Aqua ),
-				LoggingLevel.Error => ( Color.Red, Color.White ),
-				LoggingLevel.Warning => ( Color.Goldenrod, Color.White ),
-				LoggingLevel.Diagnostic => ( Color.Green, Color.White ),
-				LoggingLevel.Debug => ( Color.DarkSeaGreen, Color.White ),
-				LoggingLevel.Exception => ( Color.DarkOliveGreen, Color.AntiqueWhite ),
+				LoggingLevel.Divine => (Color.Blue, Color.Aqua),
+				LoggingLevel.SubspaceTear => (Color.HotPink, Color.Aqua), //hotpink might actually look okay..
+				LoggingLevel.Fatal => (Color.DarkRed, Color.Aqua),
+				LoggingLevel.Critical => (Color.Red, Color.Aqua),
+				LoggingLevel.Error => (Color.Red, Color.White),
+				LoggingLevel.Warning => (Color.Goldenrod, Color.White),
+				LoggingLevel.Diagnostic => (Color.Green, Color.White),
+				LoggingLevel.Debug => (Color.DarkSeaGreen, Color.White),
+				LoggingLevel.Exception => (Color.DarkOliveGreen, Color.AntiqueWhite),
 				var _ => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 			};
 
@@ -153,13 +167,13 @@ namespace Librainian.Logging {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[NotNull]
-		public static Exception? Log( [CanBeNull] this Exception? exception, Boolean? breakinto = default ) {
+		public static Exception? Log<TE>( [CanBeNull] this TE? exception, Boolean? breakinto = default ) where TE : Exception{
 			if ( !breakinto.HasValue && Debugger.IsAttached ) {
 				breakinto = true;
 			}
 
-			//var _ = exception.ToStringDemystified().Log( breakinto );
-			exception?.ToString().Log( breakinto );
+			var _ = exception?.ToStringDemystified().Log( breakinto );
+			//exception?.ToString().Log( breakinto );
 
 			return exception;
 		}
@@ -192,18 +206,15 @@ namespace Librainian.Logging {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[CanBeNull]
-		public static TT Log<TT, TM>( [CanBeNull] this TT self, [CanBeNull] TM more ) {
+		public static TT? Log<TT, TM>( [CanBeNull] this TT? self, [CanBeNull] TM? more ) {
 			var o = $"{self.ToJSON()}";
+			o.DebugLine();
 
-			if ( more is null ) {
-				o.DebugLine();
-
-				$"Error={self.DoubleQuote()}".BreakIfDebug();
+			if ( more is not null ) {
+				$"Error={self.SmartQuote()}; {more.ToJSON()}".BreakIfDebug();
 			}
 			else {
-				$"{o}".DebugLine();
-
-				$"Error={self.DoubleQuote()}; {more.ToJSON()}".BreakIfDebug();
+				$"Error={self.SmartQuote()}".BreakIfDebug();
 			}
 
 			return self;
@@ -254,7 +265,5 @@ namespace Librainian.Logging {
 				message.Trace();
 			}
 		}
-
 	}
-
 }

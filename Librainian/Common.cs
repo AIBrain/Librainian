@@ -29,6 +29,7 @@ namespace Librainian {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading;
+	using Measurement;
 
 	public static class Common {
 
@@ -47,14 +48,18 @@ namespace Librainian {
 		/// <example>5.Between(10, 6) == false</example>
 		/// <example>5.Between(5, 5))</example>
 		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, [NotNull] T endInclusive ) where T : IComparable {
-			var t2sI = target.CompareTo( startInclusive );
+			
+			if ( startInclusive.CompareTo( endInclusive ) is Order.After ) {
+				return target.CompareTo( startInclusive ) <= Order.Same && target.CompareTo( endInclusive ) >= Order.Same;
+			}
 
-			return startInclusive.CompareTo( endInclusive ) switch {
-				1 => t2sI <= 0 && target.CompareTo( endInclusive ) >= 0,
-				var _ => t2sI >= 0 && target.CompareTo( endInclusive ) <= 0
-			};
+			if ( target.CompareTo( startInclusive ) >= Order.Same ) {
+				return target.CompareTo( endInclusive ) <= Order.Same;
+			}
+
+			return false;
+
 		}
 
 		/// <summary>
@@ -158,16 +163,7 @@ namespace Librainian {
 		}
 
 		[Pure]
-		public static UInt64 LengthReal( [CanBeNull]
-										 this String? s ) {
-			if ( String.IsNullOrEmpty( s ) ) {
-				return 0;
-			}
-
-			var stringInfo = new StringInfo( s );
-
-			return (UInt64)stringInfo.LengthInTextElements;
-		}
+		public static UInt64 LengthReal( [CanBeNull] this String? s ) => s is null ? 0 : ( UInt64 )new StringInfo( s ).LengthInTextElements;
 
 		/// <summary>
 		/// Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using <see cref="Newtonsoft.Json.JsonConvert" /> .

@@ -33,7 +33,7 @@ namespace Librainian.Graphics.DDD {
 	using JetBrains.Annotations;
 	using Maths;
 	using Maths.Ranges;
-	using Measurement.Time;
+	using Measurement;
 	using Newtonsoft.Json;
 
 	/// <summary>

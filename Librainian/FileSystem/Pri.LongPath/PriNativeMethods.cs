@@ -321,6 +321,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
 		public static extern Boolean GetFileAttributesEx( [JetBrains.Annotations.NotNull] String name, Int32 fileInfoLevel, ref WIN32_FILE_ATTRIBUTE_DATA lpFileInformation );
 
+		/*
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern DWORD GetFullPathName(
 			[JetBrains.Annotations.NotNull] String lpFileName,
@@ -328,7 +329,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			[JetBrains.Annotations.NotNull] StringBuilder lpBuffer,
 			IntPtr mustBeNull = default
 		);
+		*/
 
+		/*
 		/// <summary></summary>
 		/// <param name="lpFileName"></param>
 		/// <param name="nBufferLength"></param>
@@ -340,6 +343,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		///     </para>
 		///     <para>This parameter can be NULL.</para>
 		///     <para>If lpBuffer refers to a directory and not a file, lpFilePart receives zero.</para>
+		/// <para>uses the current drive and directory. Not really useful!!</para>
 		/// </param>
 		/// <returns></returns>
 		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true )]
@@ -349,6 +353,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			StringBuilder lpBuffer,
 			IntPtr lpFilePart = default( IntPtr )
 		);
+		*/
 
 		[JetBrains.Annotations.NotNull]
 		public static String GetMessage( ERROR errorCode ) {

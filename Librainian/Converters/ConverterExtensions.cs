@@ -255,7 +255,7 @@ namespace Librainian.Converters {
         }
 
         public static Boolean ToBooleanOrThrow<T>( [CanBeNull] this T value ) =>
-            value.ToBooleanOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a boolean value." );
+            value.ToBooleanOrNull() ?? throw new FormatException( $"Unable to convert {nameof( value ).SmartQuote()} [{value}] to a boolean value." );
 
         [DebuggerStepThrough]
         [Pure]
@@ -265,7 +265,7 @@ namespace Librainian.Converters {
                     return default( Byte? );
                 }
 
-                var s = value.ToString().Trim();
+                var s = value.ToString()?.Trim();
 
                 if ( String.IsNullOrWhiteSpace( s ) ) {
                     return default( Byte? );

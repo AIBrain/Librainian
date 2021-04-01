@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Document.cs" last touched on 2021-03-07 at 3:17 AM by Protiguous.
+// File "Document.cs" last touched on 2021-03-07 at 8:46 AM by Protiguous.
 
 #nullable enable
 
@@ -92,6 +92,7 @@ namespace Librainian.FileSystem {
 			}
 
 			this.FullPath = Path.CombineWith( Path.GetFullPath( fullPath ), Path.GetFileName( fullPath ) ).TrimAndThrowIfBlank();
+			//TODO What about just keeping the full path along with the long path UNC prefix?
 
 			if ( Uri.TryCreate( fullPath, UriKind.Absolute, out var uri ) ) {
 				if ( uri.IsFile ) {
@@ -126,8 +127,7 @@ namespace Librainian.FileSystem {
 
 			if ( watchFile ) {
 				this.Watcher = new Lazy<FileSystemWatcher>( () => new FileSystemWatcher( this.ContainingingFolder().FullPath, this.FileName ) {
-					IncludeSubdirectories = false,
-					EnableRaisingEvents = true
+					IncludeSubdirectories = false, EnableRaisingEvents = true
 				} );
 
 				this.WatchEvents = new Lazy<FileWatchingEvents>( () => new FileWatchingEvents(), false );
@@ -169,8 +169,7 @@ namespace Librainian.FileSystem {
 
 		[NotNull]
 		private ThreadLocal<JsonSerializer> JsonSerializers { get; } = new( () => new JsonSerializer {
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-			PreserveReferencesHandling = PreserveReferencesHandling.All
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
 		} );
 
 		/// <summary>
@@ -494,16 +493,16 @@ namespace Librainian.FileSystem {
 
 						await client.DownloadFileTaskAsync( sourceAddress, destination.FullPath ).ConfigureAwait( false );
 
-						return (Status.Success, stopwatch.Elapsed);
+						return ( Status.Success, stopwatch.Elapsed );
 					}
 				}
 			}
 			catch ( WebException exception ) {
 				exception.Log();
-				return (Status.Exception, stopwatch.Elapsed);
+				return ( Status.Exception, stopwatch.Elapsed );
 			}
 
-			return (Status.Failure, stopwatch.Elapsed);
+			return ( Status.Failure, stopwatch.Elapsed );
 		}
 
 		[Pure]
@@ -716,17 +715,17 @@ namespace Librainian.FileSystem {
 
 			try {
 				if ( !source.IsWellFormedOriginalString() ) {
-					return (new Exception( $"Could not use source Uri '{source}'." ), null);
+					return ( new Exception( $"Could not use source Uri '{source}'." ), null );
 				}
 
 				using var webClient = new WebClient(); //from what I've read, Dispose should NOT be being called on a WebClient???
 
 				await webClient.DownloadFileTaskAsync( source, this.FullPath ).ConfigureAwait( false );
 
-				return (null, webClient.ResponseHeaders);
+				return ( null, webClient.ResponseHeaders );
 			}
 			catch ( Exception exception ) {
-				return (exception, null);
+				return ( exception, null );
 			}
 		}
 
@@ -826,9 +825,7 @@ namespace Librainian.FileSystem {
 		public PooledValueTask<Process?> Launch( [CanBeNull] String? arguments = null, [CanBeNull] String? verb = "runas", Boolean useShell = false ) {
 			try {
 				var info = new ProcessStartInfo( this.FullPath ) {
-					Arguments = arguments ?? String.Empty,
-					UseShellExecute = useShell,
-					Verb = verb ?? String.Empty
+					Arguments = arguments ?? String.Empty, UseShellExecute = useShell, Verb = verb ?? String.Empty
 				};
 
 				var process = Process.Start( info );
@@ -983,7 +980,7 @@ namespace Librainian.FileSystem {
 			}
 
 			if ( !destination.IsWellFormedOriginalString() ) {
-				return (new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null);
+				return ( new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null );
 			}
 
 			try {
@@ -991,10 +988,10 @@ namespace Librainian.FileSystem {
 
 				await webClient.UploadFileTaskAsync( destination, this.FullPath ).ConfigureAwait( false );
 
-				return (null, webClient.ResponseHeaders);
+				return ( null, webClient.ResponseHeaders );
 			}
 			catch ( Exception exception ) {
-				return (exception, null);
+				return ( exception, null );
 			}
 		}
 
@@ -1018,9 +1015,9 @@ namespace Librainian.FileSystem {
 				progress?.Report( ++i / maxsteps );
 
 				if ( !await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
-					progress?.Report( 1 );
+					progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 
-					return (Status.Bad, default( T? ));
+					return ( Status.Bad, default( T? ) );
 				}
 
 				progress?.Report( ++i / maxsteps );
@@ -1036,21 +1033,21 @@ namespace Librainian.FileSystem {
 
 					progress?.Report( ++i / maxsteps );
 
-					return (Status.Success, run);
+					return ( Status.Success, run );
 				}
 				finally {
 					progress?.Report( ++i / maxsteps );
 				}
 			}
 			catch ( TaskCanceledException ) {
-				progress?.Report( 1 );
+				progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 			}
 			catch ( Exception exception ) {
-				progress?.Report( 1 );
+				progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 				exception.Log();
 			}
 
-			return (Status.Exception, default( T? ));
+			return ( Status.Exception, default( T? ) );
 		}
 
 		[NotNull]
@@ -1083,7 +1080,7 @@ namespace Librainian.FileSystem {
 					};
 				}
 
-				(var exists, var size) = await CheckSourceSize().ConfigureAwait( false );
+				( var exists, var size ) = await CheckSourceSize().ConfigureAwait( false );
 
 				if ( exists is false || size is null ) {
 					return fileCopyData with {
@@ -1145,12 +1142,12 @@ namespace Librainian.FileSystem {
 				var size = await fileCopyData.Source.Size( cancellationToken ).ConfigureAwait( false );
 
 				if ( size is > 0 ) {
-					return (true, size);
+					return ( true, size );
 				}
 
 				RecordException( new FileNotFoundException( "Empty file.", fileCopyData.Source.FullPath ) );
 
-				return (false, default( UInt64? ));
+				return ( false, default( UInt64? ) );
 			}
 
 			async Task<Boolean> DidDownloadWork() {
@@ -1447,16 +1444,6 @@ namespace Librainian.FileSystem {
 			info.Refresh();
 			return info.Exists ? ( UInt64 )info.Length : null;
 		}
-		
-		/// <summary>
-		///     Synchronous version.
-		/// </summary>
-		/// <returns></returns>
-		public UInt64? GetSize() {
-			var info = new FileInfo( this.FullPath );
-			info.Refresh();
-			return ( UInt64? ) info.Length;
-		}
 
 		/// <summary>
 		///     Synchronous version.
@@ -1466,6 +1453,16 @@ namespace Librainian.FileSystem {
 			var info = new FileInfo( this.FullPath );
 			info.Refresh();
 			return info.Exists;
+		}
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		/// <returns></returns>
+		public UInt64? GetSize() {
+			var info = new FileInfo( this.FullPath );
+			info.Refresh();
+			return ( UInt64? )info.Length;
 		}
 
 		private async PooledValueTask ThrowIfNotExists() {
@@ -1602,7 +1599,7 @@ namespace Librainian.FileSystem {
 
 			void ProgressChangedHandler( Object? ps, DownloadProgressChangedEventArgs? pe ) {
 				if ( pe?.UserState == tcs ) {
-					progress?.Report( (pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive) );
+					progress?.Report( ( pe.BytesReceived, pe.ProgressPercentage, pe.TotalBytesToReceive ) );
 				}
 			}
 

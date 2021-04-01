@@ -32,6 +32,7 @@ namespace Librainian.Internet {
 	using System.Net.Http;
 	using System.Text;
 	using System.Text.RegularExpressions;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Logging;
@@ -48,13 +49,31 @@ namespace Librainian.Internet {
 				throw new ArgumentNullException( nameof( request ) );
 			}
 
-			var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( state as HttpWebRequest ).BeginGetResponse( asyncCallback, state ),
-													   asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request )
-								   .ConfigureAwait( false );
+			var result = await request.GetResponseAsync().ConfigureAwait( false );
+
+			//var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => BeginGetResponse( state, asyncCallback ), EndGetResponse, request ).ConfigureAwait( false );
 
 			await using var stream = result.GetResponseStream();
 
 			return new StreamReader( stream );
+
+			/*
+			static IAsyncResult BeginGetResponse( Object? state, AsyncCallback asyncCallback ) {
+				if ( state is HttpWebRequest httpWebRequest ) {
+					
+					return httpWebRequest.BeginGetResponse( asyncCallback, state );
+				}
+
+				throw new InvalidOperationException( $"Invalid {nameof( state )} object." );
+			}
+
+			static WebResponse EndGetResponse( IAsyncResult asyncResult ) {
+				if ( asyncResult.AsyncState is HttpWebRequest httpWebRequest ) {
+					return httpWebRequest.EndGetResponse( asyncResult );
+				}
+				throw new InvalidOperationException( $"Invalid {nameof( HttpWebRequest )} result." );
+			}
+			*/
 		}
 
 		[ItemCanBeNull]
@@ -206,6 +225,22 @@ namespace Librainian.Internet {
 			return BitConverter.GetBytes( len ).Concat( bytes );
 		}
 
+
+		public static async Task<String> GetString( [NotNull] this HttpClient httpClient, Uri url, TimeSpan timeout, IDictionary<String, String>? headers = null ) {
+			if ( httpClient == null ) {
+				throw new ArgumentNullException( nameof( httpClient ) );
+			}
+
+			if ( headers?.Any() == true ) {
+				foreach ( var item in headers ) {
+					httpClient.DefaultRequestHeaders.TryAddWithoutValidation( item.Key, item.Value );
+				}
+			}
+
+			using var cts = new CancellationTokenSource( timeout );
+			var response = await httpClient.GetAsync( url, cts.Token ).ConfigureAwait( false );
+			return await response.Content.ReadAsStringAsync( cts.Token ).ConfigureAwait( false );
+		}
 	}
 
 }
