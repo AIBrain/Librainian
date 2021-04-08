@@ -34,20 +34,20 @@ namespace Librainian.Threading {
 		private DateTime _nextTime;
 
 		public Throttle( TimeSpan interval ) {
-			this._interval = interval;
+			this.Interval = interval;
 			this._nextTime = DateTime.UtcNow.Subtract( interval );
 		}
 
-		private TimeSpan _interval { get; }
+		private TimeSpan Interval { get; }
 
 		[NotNull]
-		private Object _lock { get; } = new();
+		private Object Lock { get; } = new();
 
 		public Task WaitAsync() {
-			lock ( this._lock ) {
+			lock ( this.Lock ) {
 				var now = DateTime.UtcNow;
 
-				this._nextTime = this._nextTime.Add( this._interval );
+				this._nextTime = this._nextTime.Add( this.Interval );
 
 				if ( this._nextTime > now ) {
 					var delay = this._nextTime - now;

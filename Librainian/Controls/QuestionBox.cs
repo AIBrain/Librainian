@@ -31,14 +31,14 @@ namespace Librainian.Controls {
 	using System;
 	using System.Windows.Forms;
 
-	public partial class QuestionBox : Form {
+	public class QuestionBox : Form {
 
-		public String Question { get; set; }
+		public String Question { get; }
 		public String? Response { get; set; }
 
 		public QuestionBox( String question ) {
 			this.Question = question;
-			//this.InitializeComponent();
+			this.InitializeComponent();
 			this.AddControls();
 		}
 
@@ -52,10 +52,9 @@ namespace Librainian.Controls {
 
 			AddCancelButton();
 
-			var OkayButton = new Button {
-				Text = "OK", Dock = DockStyle.Right
-			};
-			flow.Controls.Add( OkayButton );
+			flow.Controls.Add( new Button {
+				Text = "Okay", Dock = DockStyle.Right
+			} );
 
 			AddOkayLabel();
 
@@ -90,12 +89,16 @@ namespace Librainian.Controls {
 					Text = String.Empty, Dock = DockStyle.Bottom
 				};
 
-				OkayButton.MouseClick += ( sender, args ) => {
+				new Button {
+					Text = "OK", Dock = DockStyle.Right
+				}.MouseClick += ( sender, args ) => {
 					this.Response = input.Text();
 					this.Close();
 				};
 
-				OkayButton.KeyPress += ( sender, args ) => {
+				new Button {
+					Text = "OK", Dock = DockStyle.Right
+				}.KeyPress += ( sender, args ) => {
 					this.Response = input.Text();
 					this.DialogResult = DialogResult.OK;
 					this.Close();
@@ -104,6 +107,17 @@ namespace Librainian.Controls {
 				input.Fokus();
 			}
 
+
+		}
+
+		private void InitializeComponent() {
+			this.SuspendLayout();
+			// 
+			// QuestionBox
+			// 
+			this.ClientSize = new System.Drawing.Size(1014, 315);
+			this.Name = "QuestionBox";
+			this.ResumeLayout(false);
 
 		}
 

@@ -37,29 +37,8 @@ namespace Librainian.Extensions {
 
 	/// <summary>Pulled from <see cref="http://stackoverflow.com/a/944352/956364" /></summary>
 	public static class EnumExtensions {
-		/// <summary>
-		///     Determines whether the enum value contains a specific value. The enum itself must be decorated with the
-		///     FlagsAttribute.
-		/// </summary>
-		/// <param name="value">  The value.</param>
-		/// <param name="request">The request.</param>
-		/// <returns><c>true</c> if value contains the specified value; otherwise, <c>false</c>.</returns>
-		/// <example>
-		///     <code>
-		/// EnumExample dummy = EnumExample.Combi;
-		/// if (dummy.Contains/\EnumExample/\(EnumExample.ValueA))
-		/// {
-		///     Console.WriteLine("dummy contains EnumExample.ValueA");
-		/// }
-		/// </code>
-		/// </example>
-		public static Boolean Contains<T>( [CanBeNull] this Enum value, [CanBeNull] T request ) {
-			var valueAsInt = Convert.ToInt32( value );
-			var requestAsInt = Convert.ToInt32( request );
 
-			return requestAsInt == ( valueAsInt & requestAsInt ); //TODO what??
-		}
-
+		
 		/// <summary>Returns the text of the [Description("text")] attribute on an enum. Or null if not found.</summary>
 		/// <param name="element"></param>
 		/// <returns></returns>
@@ -83,19 +62,6 @@ namespace Librainian.Extensions {
 		}
 
 		/// <summary>Gets all combined items from an enum value.</summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="value">The value.</param>
-		/// <returns></returns>
-		/// <example>
-		///     Displays ValueA and ValueB.
-		///     <code>
-		/// EnumExample dummy = EnumExample.Combi;
-		/// foreach (var item in dummy.GetAllSelectedItems /\EnumExample/\())
-		/// {
-		///    Console.WriteLine(item);
-		/// }
-		/// </code>
-		/// </example>
 		[NotNull]
 		public static IEnumerable<T> GetAllSelectedItems<T>( [CanBeNull] this Enum value ) {
 			var valueAsInt = Convert.ToInt32( value );

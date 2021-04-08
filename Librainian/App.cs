@@ -132,7 +132,7 @@ namespace Librainian {
 			ProfileOptimization.SetProfileRoot( Application.ExecutablePath );
 			ProfileOptimization.StartProfile( Application.ExecutablePath );
 
-			Application.ThreadException += ( sender, e ) => e.Exception.Log();
+			Application.ThreadException += ( _, e ) => e.Exception.Log();
 
 			try {
 				var highDpiMode = Application.SetHighDpiMode( HighDpiMode.SystemAware );

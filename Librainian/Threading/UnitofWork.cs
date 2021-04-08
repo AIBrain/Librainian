@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UnitofWork.cs" last formatted on 2020-08-14 at 8:47 PM.
+// File "UnitofWork.cs" last touched on 2021-03-07 at 1:44 PM by Protiguous.
 
 #nullable enable
 namespace Librainian.Threading {
@@ -70,14 +73,14 @@ namespace Librainian.Threading {
 		///     The <paramref name="creationOptions" /> argument specifies an invalid
 		///     value for <see cref="TaskCreationOptions" />.
 		/// </exception>
-		public UnitofWork( [NotNull] Action action, TaskCreationOptions creationOptions, CancellationToken cancellationToken ) : base(
-			action, cancellationToken, creationOptions ) { }
+		public UnitofWork( [NotNull] Action action, TaskCreationOptions creationOptions, CancellationToken cancellationToken ) : base( action, cancellationToken,
+			creationOptions ) { }
 
 		/// <summary>Initializes a new <see cref="Task" /> with the specified action and state.</summary>
 		/// <param name="action">The delegate that represents the code to execute in the task.</param>
 		/// <param name="state">An object representing data to be used by the action.</param>
 		/// <exception cref="ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
-		public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state ) : base( action, state ) { }
+		public UnitofWork( [CanBeNull] Action<Object?> action, [CanBeNull] Object? state ) : base( action, state ) { }
 
 		/// <summary>Initializes a new <see cref="Task" /> with the specified action, state, and options.</summary>
 		/// <param name="action">The delegate that represents the code to execute in the task.</param>
@@ -88,7 +91,7 @@ namespace Librainian.Threading {
 		///     <paramref name="cancellationToken" /> has already been disposed.
 		/// </exception>
 		/// <exception cref="ArgumentNullException">The <paramref name="action" /> argument is null.</exception>
-		public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state, CancellationToken cancellationToken ) : base( action, state, cancellationToken ) { }
+		public UnitofWork( [NotNull] Action<Object?> action, [CanBeNull] Object? state, CancellationToken cancellationToken ) : base( action, state, cancellationToken ) { }
 
 		/// <summary>Initializes a new <see cref="Task" /> with the specified action, state, and options.</summary>
 		/// <param name="action">The delegate that represents the code to execute in the task.</param>
@@ -99,7 +102,7 @@ namespace Librainian.Threading {
 		///     The <paramref name="creationOptions" /> argument specifies an invalid
 		///     value for <see cref="TaskCreationOptions" />.
 		/// </exception>
-		public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state, TaskCreationOptions creationOptions ) : base( action, state, creationOptions ) { }
+		public UnitofWork( [NotNull] Action<Object?> action, [CanBeNull] Object? state, TaskCreationOptions creationOptions ) : base( action, state, creationOptions ) { }
 
 		/// <summary>Initializes a new <see cref="Task" /> with the specified action, state, and options.</summary>
 		/// <param name="action">The delegate that represents the code to execute in the task.</param>
@@ -115,7 +118,7 @@ namespace Librainian.Threading {
 		///     The <paramref name="creationOptions" /> argument specifies an invalid
 		///     value for <see cref="TaskCreationOptions" />.
 		/// </exception>
-		public UnitofWork( [NotNull] Action<Object> action, [CanBeNull] Object? state, TaskCreationOptions creationOptions, CancellationToken cancellationToken ) : base(
+		public UnitofWork( [NotNull] Action<Object?> action, [CanBeNull] Object? state, TaskCreationOptions creationOptions, CancellationToken cancellationToken ) : base(
 			action, state, cancellationToken, creationOptions ) { }
 
 		[DllImport( "user32.dll", ExactSpelling = true, CharSet = CharSet.Auto )]

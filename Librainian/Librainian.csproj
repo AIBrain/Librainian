@@ -29,7 +29,6 @@
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<OutputType>Library</OutputType>
 		<Nullable>enable</Nullable>
-		<NoWin32Manifest>true</NoWin32Manifest>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>

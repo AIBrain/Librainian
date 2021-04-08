@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BackgroundThread.cs" last formatted on 2020-08-14 at 8:46 PM.
+// File "BackgroundThread.cs" last touched on 2021-03-07 at 3:20 AM by Protiguous.
 
 namespace Librainian.Threading {
 
@@ -33,30 +36,30 @@ namespace Librainian.Threading {
 	using Utilities;
 
 	/// <summary>
-	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="_signal" /> is Set (<see cref="Poke"/>).
+	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (<see cref="Poke" />
+	///     ).
 	/// </summary>
 	public class BackgroundThread : ABetterClassDispose {
 
 		//I don't like using "threads".. is this a good use case for them? Would a BackGroundWorker be more suited?
 
 		/// <summary></summary>
-		/// <param name="actionToPerform">Action to perform on each <see cref="_signal" />.</param>
+		/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
 		/// <param name="autoStart"></param>
-		/// <param name="cancellationTokenSource"></param>
+		/// <param name="cancellationToken"></param>
 		public BackgroundThread( [NotNull] Action actionToPerform, Boolean autoStart, CancellationToken cancellationToken ) {
-			
-			this._actionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
-			this._cancellationToken = cancellationToken;
+			this.actionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
+			this.cancellationToken = cancellationToken;
 
 			this.thread = new Thread( () => {
-				while ( !this._cancellationToken.IsCancellationRequested ) {
-					if ( this._signal.WaitOne( Seconds.One ) ) {
+				while ( !this.cancellationToken.IsCancellationRequested ) {
+					if ( this.signal.WaitOne( Seconds.One ) ) {
 						try {
 							this.RunningAction = true;
 							try {
-								this._actionToPerform();
+								this.actionToPerform();
 							}
-							catch ( Exception exception) {
+							catch ( Exception exception ) {
 								exception.Log();
 							}
 						}
@@ -74,22 +77,21 @@ namespace Librainian.Threading {
 			}
 		}
 
-		
-
 		[NotNull]
 		private Thread thread { get; }
 
-		private CancellationToken _cancellationToken { get; }
+		private CancellationToken cancellationToken { get; }
 
 		[NotNull]
-		private Action _actionToPerform { get; }
-
+		private Action actionToPerform { get; }
 
 		/// <summary>True if the loop is currently running.</summary>
-		public VolatileBoolean RunningAction { get; private set; }
+		private VolatileBoolean RunningAction { get; set; }
+
+		public Boolean IsRunningAction() => this.RunningAction;
 
 		[NotNull]
-		private AutoResetEvent _signal { get; } = new( true );
+		private AutoResetEvent signal { get; } = new( true );
 
 		private void Start() {
 			if ( this.thread.ThreadState != ThreadState.Running ) {
@@ -101,12 +103,13 @@ namespace Librainian.Threading {
 		public virtual void Initialize() { }
 
 		/// <summary>Set the signal.</summary>
-		public void Poke() => this._signal.Set();
+		public void Poke() => this.signal.Set();
 
 		public override void DisposeManaged() {
 			if ( this.thread.ThreadState == ThreadState.Running ) {
 				this.thread.Join( Seconds.Seven );
 			}
+
 			base.DisposeManaged();
 		}
 

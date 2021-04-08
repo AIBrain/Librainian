@@ -1213,34 +1213,30 @@ namespace Librainian.Maths {
 		[Pure]
 		public static TimeSpan TendTo( this TimeSpan time, TimeSpan goal ) => ( time + goal ).Half();
 
-		public static Int32 ThreeFourths( this Int32 x ) {
-			var result = 3.0 * x / 4.0;
+		[DebuggerStepThrough]
+		[Pure]
+		public static Int32 ThreeFourths( this Int32 x ) => ( Int32 )( 3.0 * x / 4.0 );
 
-			return result < 1.0 ? 1 : ( Int32 ) result;
-		}
-
+		[DebuggerStepThrough]
+		[Pure]
 		public static UInt64 ThreeQuarters( this UInt64 x ) => 3 * x / 4;
 
+		[DebuggerStepThrough]
+		[Pure]
 		public static Single ThreeQuarters( this Single x ) => 3.0f * x / 4.0f;
 
+		[DebuggerStepThrough]
+		[Pure]
 		public static Double ThreeQuarters( this Double x ) => 3.0d * x / 4.0d;
 
+		[DebuggerStepThrough]
 		[Pure]
+
 		public static TimeSpan Thrice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
 
+		[DebuggerStepThrough]
+		[Pure]
 		public static Int64 Thrice( this Int64 number ) => number * 3L;
-
-		///// <summary>
-		/////     Creates an enumerable that iterates the range [fromInclusive, toExclusive).
-		///// </summary>
-		///// <param name="fromInclusive">The lower bound, inclusive.</param>
-		///// <param name="toExclusive">The upper bound, exclusive.</param>
-		///// <returns>The enumerable of the range.</returns>
-		//public static IEnumerable<BigInteger> To( this BigInteger fromInclusive, BigInteger toExclusive ) {
-		//    for ( var i = fromInclusive; i < toExclusive; i++ ) {
-		//        yield return i;
-		//    }
-		//}
 
 		/// <summary>
 		///     <see

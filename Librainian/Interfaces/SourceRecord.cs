@@ -23,10 +23,16 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "SourceRecord.cs" last touched on 2021-03-30 at 8:27 AM by Protiguous.
+// File "SourceRecord.cs" last touched on 2021-03-30 at 11:56 AM by Protiguous.
 
 namespace Librainian.Interfaces {
 
-	public record SourceRecord( Sources Source, SourcePosition Position ) { }
+	using System;
+
+	public record SourceRecord( Sources Source, SourcePosition Position ) {
+
+		public override String ToString() => $"{this.Source}.{this.Position}";
+
+	}
 
 }

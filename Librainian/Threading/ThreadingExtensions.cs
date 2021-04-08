@@ -31,6 +31,7 @@ namespace Librainian.Threading {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Reflection;
+	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
@@ -325,43 +326,46 @@ namespace Librainian.Threading {
 			}
 		}
 
-		/*
+		
+		
+		
 
-				/// <summary>
-				/// Creates a new Task that mirrors the supplied task but that will be canceled after the specified timeout.
-				/// </summary>
-				/// <typeparam name="TResult">Specifies the type of data contained in the task.</typeparam>
-				/// <param name="task">   The task.</param>
-				/// <param name="timeout">The timeout.</param>
-				/// <returns>The new Task that may time out.</returns>
-				/// <see cref="http://stackoverflow.com/a/20639723/956364"/>
-				public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
-					var result = new TaskCompletionSource<TResult>( task.AsyncState );
-					var timer = new Timer( state =>
-									( ( TaskCompletionSource<TResult> )state ).TrySetCanceled(),
-									result, timeout, TimeSpan.FromMilliseconds( -1 ) );
-					task.ContinueWith( t => {
-						timer.Dispose();
-						result.TrySetFromTask( t );
-					}, TaskContinuationOptions.ExecuteSynchronously );
-					return result.Task;
-				}
-		*/
-		/*
+		public static TaskAwaiter<Int32> GetAwaiter(this Process process)
+		{
+			var tcs = new TaskCompletionSource<Int32>();
+			process.EnableRaisingEvents = true;
+			process.Exited += ( _, _ ) => tcs.TrySetResult( process.ExitCode );
+			if (process.HasExited) {
+				tcs.TrySetResult(process.ExitCode);
+			}
 
-				/// <summary>
-				/// a fire-and-forget wrapper for an <see cref="Action"/>.
-				/// </summary>
-				/// <param name="action"></param>
-				/// <param name="next">  </param>
-				/// <returns></returns>
-				public static void Then( this Action action, Action next ) {
-					if ( action is null ) {
-						throw new ArgumentNullException( "action" );
-					}
-					action.Spawn(); //does this even make sense?
-					next.Spawn();
-				}
-		*/
+			return tcs.Task.GetAwaiter();
+		}
+
+		/// <summary>
+		/// Asynchronously wait until cancellation is requested.
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public static TaskAwaiter GetAwaiter(this CancellationToken cancellationToken)
+		{
+			var tcs = new TaskCompletionSource<Boolean>();
+			Task t = tcs.Task;
+			if (cancellationToken.IsCancellationRequested) {
+				tcs.SetResult(true);
+			}
+			else {
+				cancellationToken.Register(s => (s as TaskCompletionSource<Boolean>)?.SetResult(true), tcs);
+			}
+
+			return t.GetAwaiter();
+		}
+
+		public static TaskAwaiter GetAwaiter(this IEnumerable<Task> tasks) => Task.WhenAll(tasks).GetAwaiter();
+
+		
+
+		public static TaskAwaiter GetAwaiter(this TimeSpan timeSpan) => Task.Delay(timeSpan).GetAwaiter();
+
 	}
 }

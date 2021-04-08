@@ -25,13 +25,11 @@
 namespace Librainian.Controls {
 
 	using System;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Runtime.InteropServices;
 	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>Pulled from https://stackoverflow.com/a/24040827/956364</summary>
-	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
 	public static class ConsoleWindow {
 
 		private const Int32 ATTACH_PARENT_PROCESS = -1;
