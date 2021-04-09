@@ -105,7 +105,7 @@ namespace Librainian.Security {
 			}
 
 			String outStr;                 // Encrypted string to return
-			RijndaelManaged aesAlg = null; // RijndaelManaged object used to encrypt the data.
+			RijndaelManaged? aesAlg = null; // RijndaelManaged object used to encrypt the data.
 
 			try {
 				// generate the key from the shared secret and the salt

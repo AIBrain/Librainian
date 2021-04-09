@@ -33,7 +33,7 @@ namespace Librainian.Threading {
 	/// <see cref="http://stackoverflow.com/a/4749401/956364" />
 	public sealed class AbandonableTask {
 
-		private AbandonableTask( CancellationToken cancellationToken, [CanBeNull] Action beginWork, [NotNull] Action blockingWork, [CanBeNull] Action<Task> afterComplete ) {
+		private AbandonableTask( CancellationToken cancellationToken, [CanBeNull] Action? beginWork, [NotNull] Action blockingWork, [CanBeNull] Action<Task>? afterComplete ) {
 			this._cancellationToken = cancellationToken;
 			this._beginWork = beginWork;
 			this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );
@@ -44,7 +44,7 @@ namespace Librainian.Threading {
 		private Action? _beginWork { get; }
 
 		[CanBeNull]
-		private Action? _blockingWork { get; }
+		private Action _blockingWork { get; }
 
 		private CancellationToken _cancellationToken { get; }
 
@@ -68,8 +68,8 @@ namespace Librainian.Threading {
 		public static Task Start(
 			CancellationToken cancellationToken,
 			[NotNull] Action blockingWork,
-			[CanBeNull] Action beginWork = null,
-			[CanBeNull] Action<Task> afterComplete = null
+			[CanBeNull] Action? beginWork = null,
+			[CanBeNull] Action<Task>? afterComplete = null
 		) {
 			if ( blockingWork is null ) {
 				throw new ArgumentNullException( nameof( blockingWork ) );

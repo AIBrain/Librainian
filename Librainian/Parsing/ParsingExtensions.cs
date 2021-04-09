@@ -750,7 +750,7 @@ namespace Librainian.Parsing {
 			var toBeFormatted = bigInteger.ToString();
 			var builder = new StringBuilder();
 			builder.Append( toBeFormatted[ 0 ] );
-			builder.Append( "." );
+			builder.Append( '.' );
 			builder.Append( toBeFormatted[ 1..numberOfDigits ] );
 
 			return builder.ToString();

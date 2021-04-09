@@ -45,7 +45,7 @@ namespace Librainian.Databases.MMF {
 
 		private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
 			sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
-			sb.Append( "{" );
+			sb.Append( '{' );
 
 			sb.Append( @"
                 fixed (byte* srcPtr = &bytes[0])
@@ -77,13 +77,13 @@ namespace Librainian.Databases.MMF {
 			var interfaceType = typeof( ISerializeDeserialize<T> );
 
 			sb.Append( $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
-			sb.Append( "{" );
+			sb.Append( '{' );
 			sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
 
 			this.ObjectToBytesCode( sb, typeFullName );
 			BytesToObjectCode( sb, typeFullName );
 
-			sb.Append( "}" );
+			sb.Append( '}' );
 
 			return sb.ToString();
 		}
@@ -113,7 +113,7 @@ namespace Librainian.Databases.MMF {
 
 		private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
 			sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
-			sb.Append( "{" );
+			sb.Append( '{' );
 			sb.Append( $"byte[] buffer = new byte[{this._size}];" );
 
 			sb.Append( @"
