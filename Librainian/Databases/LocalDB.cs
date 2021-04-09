@@ -59,7 +59,8 @@ namespace Librainian.Databases {
 
 			this.DatabaseName = databaseName;
 			this.DatabaseLocation = databaseLocation;
-			this.DatabaseLocation.FullPath.CreateDirectory();
+
+			this.DatabaseLocation.Create( new CancellationTokenSource( Seconds.Ten ).Token ).AsValueTask().AsTask().Wait( Seconds.Ten );
 
 			"Building SQL connection string...".Info();
 

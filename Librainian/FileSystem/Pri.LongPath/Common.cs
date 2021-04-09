@@ -62,26 +62,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public static Boolean EndsWith( [CanBeNull] this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[^1] == value;
 
-		public static Boolean Exists( [NotNull] this String path, out Boolean isDirectory ) {
-			path = path.ThrowIfBlank();
-
-			if ( path.TryNormalizeLongPath( out var normalizedPath ) || path.IsPathUnc() ) {
-				if ( !String.IsNullOrWhiteSpace( normalizedPath ) ) {
-					var errorCode = TryGetFileAttributes( normalizedPath, out var attributes );
-
-					if ( errorCode == 0 && ( Int32 )attributes != PriNativeMethods.INVALID_FILE_ATTRIBUTES ) {
-						isDirectory = attributes.IsDirectory();
-
-						return true;
-					}
-				}
-			}
-
-			isDirectory = false;
-
-			return false;
-		}
-
 		public static FileAttributes GetAttributes( [NotNull] this String path ) {
 			var normalizedPath = path.NormalizeLongPath();
 

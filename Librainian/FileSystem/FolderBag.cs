@@ -29,10 +29,11 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Linq;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
-	using Pri.LongPath;
+	
 
 	/// <summary>
 	///     <para>A bag of folders, stored somewhat efficiently ?memory-wise? than a list.</para>

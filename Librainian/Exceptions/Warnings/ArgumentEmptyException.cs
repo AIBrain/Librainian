@@ -40,20 +40,19 @@ namespace Librainian.Exceptions.Warnings {
 
 		protected ArgumentEmptyException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public ArgumentEmptyException( [CanBeNull] String? paramName ) : base( Combine( paramName ) ) {
-			this.Parameter = paramName;
-			Combine( this.Parameter ).Break();
+		public ArgumentEmptyException( [CanBeNull] String? paramName ) {
+			//this.Parameter = paramName;
+			Generic( paramName ).Break();
 		}
 
-		public ArgumentEmptyException( [CanBeNull] String? paramName, [CanBeNull] Exception? innerException ) : base( Combine( paramName ), innerException ) {
-			this.Parameter = paramName;
-			Combine( paramName ).Break();
+		public ArgumentEmptyException( [CanBeNull] String? paramName, [CanBeNull] Exception? innerException ) : base( Generic( paramName ), innerException ) {
+			//this.Parameter = paramName;
+			Generic( paramName ).Break();
 		}
 
-		[CanBeNull]
-		public String? Parameter { get; }
+		//[CanBeNull] public String? Parameter { get; }
 
-		private static String Combine( [CanBeNull] String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
+		private static String Generic( [CanBeNull] String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
 
 	}
 }

@@ -1,6 +1,9 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright � Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ConsoleWindow.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "ConsoleWindow.cs" last touched on 2021-03-07 at 1:30 PM by Protiguous.
 
 namespace Librainian.Controls {
 
@@ -42,8 +45,19 @@ namespace Librainian.Controls {
 
 		private const Int32 SW_SHOW = 5;
 
+		private static IntPtr TheConsoleWindowHandle { get; set; }
+
 		[DllImport( DLL.Kernel32, SetLastError = true, ExactSpelling = false )]
 		private static extern Boolean AllocConsole();
+
+		public static Boolean AllocateWindow() {
+			try {
+				return AllocConsole();
+			}
+			finally {
+				TheConsoleWindowHandle = GetConsoleWindow();
+			}
+		}
 
 		[DllImport( DLL.Kernel32, ExactSpelling = false )]
 		private static extern Boolean AttachConsole( Int32 dwProcessId );
@@ -53,6 +67,8 @@ namespace Librainian.Controls {
 
 		[DllImport( DLL.Kernel32, ExactSpelling = false )]
 		private static extern IntPtr GetConsoleWindow();
+
+		public static IntPtr GetWindow() => TheConsoleWindowHandle = GetConsoleWindow();
 
 		[DllImport( "user32.dll", ExactSpelling = false )]
 		private static extern IntPtr GetSystemMenu( IntPtr hWnd, Boolean bRevert );
@@ -70,38 +86,30 @@ namespace Librainian.Controls {
 		public static void AttachConsoleWindow() => AttachConsole( ATTACH_PARENT_PROCESS );
 
 		public static void DisableCloseButton() {
-			var handle = GetConsoleWindow();
+			var systemMenu = GetSystemMenu( GetWindow(), false );
 
-			var hmenu = GetSystemMenu( handle, false );
-
-			EnableMenuItem( hmenu, SC_CLOSE, MF_GRAYED );
+			EnableMenuItem( systemMenu, SC_CLOSE, MF_GRAYED );
 		}
 
 		public static void HideWindow() {
-			var handle = GetConsoleWindow();
-
-			ShowWindow( handle, SW_HIDE );
+			ShowWindow( GetWindow(), SW_HIDE );
 		}
 
-		public static void SetText( [CanBeNull] String? text ) {
-			var handle = GetConsoleWindow();
-
-			SetWindowText( handle, text );
+		public static void SetTitle( [CanBeNull] String? text ) {
+			SetWindowText( GetWindow(), text );
 		}
 
 		public static void ShowWindow() {
-			var handle = GetConsoleWindow();
+			GetWindow();
 
-			if ( handle == IntPtr.Zero ) {
-				AllocConsole();
+			if ( TheConsoleWindowHandle == IntPtr.Zero ) {
+				AllocateWindow();
 			}
 			else {
-				ShowWindow( handle, SW_SHOW );
+				ShowWindow( TheConsoleWindowHandle, SW_SHOW );
 			}
 		}
 
 	}
-
-	
 
 }

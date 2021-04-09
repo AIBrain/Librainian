@@ -32,6 +32,7 @@ namespace Librainian.Converters {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Security.Cryptography;
@@ -40,7 +41,6 @@ namespace Librainian.Converters {
     using Collections.Extensions;
     using Extensions;
     using FileSystem;
-    using FileSystem.Pri.LongPath;
     using JetBrains.Annotations;
     using Logging;
     using Maths;
@@ -48,6 +48,7 @@ namespace Librainian.Converters {
     using Microsoft.Data.SqlClient;
     using Parsing;
     using Security;
+    
 
     public static class ConverterExtensions {
 
@@ -597,12 +598,12 @@ namespace Librainian.Converters {
             var a = guid.ToByteArray();
 
             if ( reversed ) {
-                return Path.CombineWith( a[15].ToString()!, a[14].ToString()!, a[13].ToString()!, a[12].ToString()!, a[11].ToString()!, a[10].ToString()!, a[9].ToString()!,
+                return Path.Combine( a[15].ToString()!, a[14].ToString()!, a[13].ToString()!, a[12].ToString()!, a[11].ToString()!, a[10].ToString()!, a[9].ToString()!,
                     a[8].ToString()!, a[7].ToString()!, a[6].ToString()!, a[5].ToString()!, a[4].ToString()!, a[3].ToString()!, a[2].ToString()!, a[1].ToString()!,
                     a[0].ToString()! );
             }
 
-            return Path.CombineWith( a[0].ToString()!, a[1].ToString()!, a[2].ToString()!, a[3].ToString()!, a[4].ToString()!, a[5].ToString()!, a[6].ToString()!,
+            return Path.Combine( a[0].ToString()!, a[1].ToString()!, a[2].ToString()!, a[3].ToString()!, a[4].ToString()!, a[5].ToString()!, a[6].ToString()!,
                 a[7].ToString()!, a[8].ToString()!, a[9].ToString()!, a[10].ToString()!, a[11].ToString()!, a[12].ToString()!, a[13].ToString()!, a[14].ToString()!,
                 a[15].ToString()! );
         }
@@ -615,7 +616,7 @@ namespace Librainian.Converters {
                 throw new ArgumentNullException( nameof( directoryInfo ) );
             }
 
-            return directoryInfo.FullPath.Split( new[] {
+            return directoryInfo.FullName.Split( new[] {
                 Path.DirectorySeparatorChar
             }, StringSplitOptions.RemoveEmptyEntries );
         }

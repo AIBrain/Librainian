@@ -36,8 +36,6 @@ namespace Librainian.FileSystem {
 	using Logging;
 	using Newtonsoft.Json;
 	using Parsing;
-	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-	using FileInfo = Pri.LongPath.FileInfo;
 
 	/// <summary>
 	///     <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>

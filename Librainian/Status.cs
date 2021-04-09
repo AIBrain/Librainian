@@ -52,7 +52,10 @@ namespace Librainian {
 				Stop = Halt - 1,
 
 					[Description( Symbols.StopSign )]
-					Halt = Negative - 1,
+					Halt = Done - 1,
+
+						[Description( Symbols.StopSign )]
+						Done = Negative - 1,
 
 						[Description( Symbols.FailBig )]
 						Negative = No - 1,

@@ -42,8 +42,8 @@ namespace Librainian.Security {
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
-	using File = FileSystem.Pri.LongPath.File;
-	using FileInfo = FileSystem.Pri.LongPath.FileInfo;
+	
+	
 
 	public static class SecurityExtensions {
 
@@ -441,7 +441,7 @@ namespace Librainian.Security {
 
 			using var process = new Process {
 				StartInfo = {
-					FileName = "md5sum.exe", Arguments = file.FullPath, UseShellExecute = false, RedirectStandardOutput = true
+					FileName = "md5sum.exe", Arguments = file.FullName, UseShellExecute = false, RedirectStandardOutput = true
 				}
 			};
 

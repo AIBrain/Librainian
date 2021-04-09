@@ -154,7 +154,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[return: NotNullIfNotNull( "path1" )]
 		[JetBrains.Annotations.NotNull]
-		public static String CombineWith( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2 ) {
+		public static String CombinePaths( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2 ) {
 			ThrowIfInvalidPathChars( ref path1 );
 			ThrowIfInvalidPathChars( ref path2 );
 
@@ -176,17 +176,17 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 		[JetBrains.Annotations.NotNull]
-		public static String CombineWith( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2,
-			[JetBrains.Annotations.NotNull] String path3 ) => CombineWith( path1, path2 ).CombineWith( path3 );
+		public static String CombinePaths( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2,
+			[JetBrains.Annotations.NotNull] String path3 ) => CombinePaths( path1, path2 ).CombinePaths( path3 );
 
 		[JetBrains.Annotations.NotNull]
-		public static String CombineWith( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2,
+		public static String CombinePaths( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2,
 			[JetBrains.Annotations.NotNull] String path3, [JetBrains.Annotations.NotNull] String path4 ) =>
-			CombineWith( path1.CombineWith( path2 ), path3 ).CombineWith( path4 );
+			CombinePaths( path1.CombinePaths( path2 ), path3 ).CombinePaths( path4 );
 
 		[return: NotNullIfNotNull( "paths" )]
 		[JetBrains.Annotations.NotNull]
-		public static String CombineWith( [JetBrains.Annotations.NotNull][ItemNotNull] params String[] paths ) {
+		public static String CombinePaths( [JetBrains.Annotations.NotNull][ItemNotNull] params String[] paths ) {
 			if ( paths == null ) {
 				throw new ArgumentNullException( nameof( paths ) );
 			}
@@ -215,7 +215,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 					var path = z.ThrowIfInvalidPathChars().ThrowIfBlank();
 
 					for ( var i = 1; i < paths.Length; ++i ) {
-						path = path.CombineWith( paths[ i ] );
+						path = path.CombinePaths( paths[ i ] );
 					}
 
 					return path;

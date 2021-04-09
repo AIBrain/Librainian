@@ -35,14 +35,14 @@ namespace Librainian.FileSystem {
 	using ComputerSystem.Devices;
 	using JetBrains.Annotations;
 	using PooledAwait;
-	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+	
 
 	public interface IFolder : IEquatable<IFolder> {
 
 		[NotNull]
 		String FullPath { get; }
 
-		/// <summary>The <see cref="IFolder" /> class is built around <see cref="Pri.LongPath.DirectoryInfo" />.</summary>
+		/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
 		[NotNull]
 		DirectoryInfo Info { get; }
 

@@ -40,16 +40,29 @@ namespace Librainian.Exceptions.Warnings {
 	///     <para>This should be handled, but allow program to continue.</para>
 	/// </summary>
 	[Serializable]
-	public class Warning : Exception {
+	public abstract class Warning : Exception {
 
 		protected Warning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public Warning() => String.Empty.Break();
+		protected Warning() {
+			//String.Empty.Break();
+		}
 
-		public Warning( String? message ) : base( message ) => message.Break();
+		protected Warning( String? message ) : base( message ) {
+			//message.Break();
+		}
 
-		public Warning( String? message, [CanBeNull] Exception? inner ) : base( message, inner ) =>
-			message.Break();
+		protected Warning( String? message, [CanBeNull] Exception? inner ) : base( message, inner ) {
+			//message.Break();
+		}
 
 	}
+
+	public class UnknownWarning : Warning {
+
+		public UnknownWarning( String? message ) : base( message ) {
+			message.Break();
+		}
+	}
+
 }

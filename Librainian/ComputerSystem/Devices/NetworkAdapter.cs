@@ -128,7 +128,7 @@ namespace Librainian.ComputerSystem.Devices {
 						crtNetworkAdapter = networkAdapter;
 					}
 
-					crtNetworkAdapter?.InvokeMethod( strOperation, Array.Empty<Object>() );
+					crtNetworkAdapter.InvokeMethod( strOperation, Array.Empty<Object>() );
 
 					await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
 

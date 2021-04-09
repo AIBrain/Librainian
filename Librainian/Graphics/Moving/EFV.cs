@@ -74,7 +74,7 @@ namespace Librainian.Graphics.Moving {
 			var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
 
 			foreach ( var pair in rgbMatchesJustNotTimestamp ) {
-				this.Dopples[pixelyx.Timestamp] ??= new List<UInt64>();
+				//TODO this.Dopples[pixelyx.Timestamp] ??= new List<UInt64>();
 
 				this.Dopples[pixelyx.Timestamp].Add( pair.Value.Timestamp );
 			}

@@ -44,7 +44,7 @@ namespace Librainian.FileSystem {
 	using Maths;
 	using Maths.Numbers;
 	using PooledAwait;
-	using FileInfo = Pri.LongPath.FileInfo;
+	
 
 	public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 

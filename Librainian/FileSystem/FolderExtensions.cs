@@ -41,9 +41,9 @@ namespace Librainian.FileSystem {
     using Logging;
     using Parsing;
 	using PooledAwait;
-	using Directory = Pri.LongPath.Directory;
-	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-	using Path = Pri.LongPath.Path;
+	
+	
+	
 
 	public static class FolderExtensions {
 
@@ -199,7 +199,7 @@ namespace Librainian.FileSystem {
 			var found = false;
 
 			await foreach ( var drive in Disk.GetDrives( cancellationToken ) ) {
-				var path = Path.CombineWith( drive.RootDirectory, folderName );
+				var path = Path.Combine( drive.RootDirectory, folderName );
 				var asFolder = new Folder( path );
 
 				if ( await asFolder.Exists(cancellationToken).ConfigureAwait(false) ) {
@@ -251,7 +251,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( info ) );
 			}
 
-			return SplitPath( info.FullPath );
+			return SplitPath( info.FullName);
 		}
 
 		/// <summary>

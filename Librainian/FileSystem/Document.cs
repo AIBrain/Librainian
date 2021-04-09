@@ -57,11 +57,11 @@ namespace Librainian.FileSystem {
 	using Security;
 	using Threading;
 	using Utilities;
-	using Directory = Pri.LongPath.Directory;
-	using File = Pri.LongPath.File;
-	using FileInfo = Pri.LongPath.FileInfo;
-	using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-	using Path = Pri.LongPath.Path;
+	
+	
+	
+	
+	
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
@@ -91,7 +91,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
 			}
 
-			this.FullPath = Path.CombineWith( Path.GetFullPath( fullPath ), Path.GetFileName( fullPath ) ).TrimAndThrowIfBlank();
+			this.FullPath = Path.Combine( Path.GetFullPath( fullPath ), Path.GetFileName( fullPath ) ).TrimAndThrowIfBlank();
 			//TODO What about just keeping the full path along with the long path UNC prefix?
 
 			if ( Uri.TryCreate( fullPath, UriKind.Absolute, out var uri ) ) {
@@ -144,15 +144,15 @@ namespace Librainian.FileSystem {
 
 		private Document() => throw new NotAllowedWarning( "Private contructor is not allowed." );
 
-		public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( Path.CombineWith( justPath, filename ),
+		public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ),
 			deleteAfterClose ) { }
 
-		public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullPath, deleteAfterClose ) { }
+		public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName, deleteAfterClose ) { }
 
 		public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
 
 		public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
-			Path.CombineWith( folder.FullPath, document.FileName ), deleteAfterClose ) { }
+			Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) { }
 
 		[CanBeNull]
 		private Lazy<FileSystemWatcher>? Watcher { get; }
@@ -161,7 +161,7 @@ namespace Librainian.FileSystem {
 		private Lazy<FileWatchingEvents>? WatchEvents { get; }
 
 		[NotNull]
-		public static String InvalidFileNameCharacters { get; } = new( Path.InvalidFileNameChars );
+		public static String InvalidFileNameCharacters { get; } = new( Path.GetInvalidFileNameChars() );
 
 		[NotNull]
 		public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new( () =>
@@ -278,7 +278,7 @@ namespace Librainian.FileSystem {
 		public async PooledValueTask<UInt64?> Length( CancellationToken cancellationToken ) {
 			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
-			return info?.Exists == true ? ( UInt64? )info.Length : default( UInt64? );
+			return info.Exists ? ( UInt64? )info.Length : default( UInt64? );
 		}
 
 		/// <summary>Anything that can be temp stored can go in this. Not serialized. Defaults to be used for internal locking.</summary>
@@ -444,15 +444,13 @@ namespace Librainian.FileSystem {
 		public async PooledValueTask Delete( CancellationToken cancellationToken ) {
 			var fileInfo = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
-			if ( fileInfo?.Exists != true ) {
-				return;
-			}
+			if ( fileInfo.Exists ) {
+				if ( fileInfo.IsReadOnly ) {
+					fileInfo.IsReadOnly = false;
+				}
 
-			if ( fileInfo.IsReadOnly ) {
-				fileInfo.IsReadOnly = false;
+				fileInfo.Delete();
 			}
-
-			fileInfo.Delete();
 		}
 
 		/// <summary>Returns whether the file exists.</summary>
@@ -460,7 +458,7 @@ namespace Librainian.FileSystem {
 		[Pure]
 		public async PooledValueTask<Boolean> Exists( CancellationToken cancellationToken ) {
 			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
-			return info?.Exists == true;
+			return info.Exists;
 		}
 
 		/// <summary>
@@ -768,7 +766,7 @@ namespace Librainian.FileSystem {
 
 			await this.SetReadOnly( false, cancellationToken ).ConfigureAwait( false );
 
-			File.AppendAllText( this.FullPath, text );
+			await File.AppendAllTextAsync( this.FullPath, text, cancellationToken ).ConfigureAwait(false);
 
 			return this;
 		}
@@ -1185,14 +1183,14 @@ namespace Librainian.FileSystem {
 				var destinationSize = await fileCopyData.Destination.Size( cancellationToken ).ConfigureAwait( false );
 
 				if ( destinationSize is null ) {
-					RecordException( new Warning(
+					RecordException( new UnknownWarning(
 						$"Unknown error occurred copying file {fileCopyData.Source.FullPath.DoubleQuote()} to {fileCopyData.Destination.ContainingingFolder().FullPath}." ) );
 
 					return false;
 				}
 
 				if ( destinationSize != fileCopyData.SourceSize ) {
-					RecordException( new Warning(
+					RecordException( new UnknownWarning(
 						$"Unknown error occurred copying file {fileCopyData.Source.FullPath.DoubleQuote()} to {fileCopyData.Destination.ContainingingFolder().FullPath}." ) );
 
 					return false;
@@ -1382,7 +1380,7 @@ namespace Librainian.FileSystem {
 		public async PooledValueTask<Status> SetReadOnly( Boolean value, CancellationToken cancellationToken ) {
 			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
-			if ( info?.Exists != true ) {
+			if ( info.Exists != true ) {
 				return Status.Error;
 			}
 

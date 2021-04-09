@@ -27,9 +27,9 @@
 namespace Librainian.Threading {
 
 	using System;
+	using System.IO;
 	using System.Threading;
 	using FileSystem;
-	using FileSystem.Pri.LongPath;
 	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
@@ -55,7 +55,7 @@ namespace Librainian.Threading {
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
-		public SingleAccess( [NotNull] FileSystemInfo name, TimeSpan? timeout = null ) : this( name.FullPath, timeout ) { }
+		public SingleAccess( [NotNull] FileSystemInfo name, TimeSpan? timeout = null ) : this( name.FullName, timeout ) { }
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>

@@ -263,7 +263,7 @@ namespace Librainian.ComputerSystem.Devices {
 					if ( bytesReturned > 0 ) {
 						var toStructure = Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
 
-						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER? ) toStructure ?? throw new Warning($"Unable to {nameof(Marshal)}.{nameof(Marshal.PtrToStructure)} for device.");
+						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER? ) toStructure ?? throw new UnknownWarning($"Unable to {nameof(Marshal)}.{nameof(Marshal.PtrToStructure)} for device.");
 					}
 					else {
 						disknum = new NativeMethods.STORAGE_DEVICE_NUMBER {

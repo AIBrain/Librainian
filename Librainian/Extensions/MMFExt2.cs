@@ -28,7 +28,7 @@ namespace Librainian.Extensions {
 	using System.IO;
 	using System.IO.MemoryMappedFiles;
 	using JetBrains.Annotations;
-	using FileInfo = FileSystem.Pri.LongPath.FileInfo;
+	
 
 	public static class MmfExt2 {
 
@@ -50,8 +50,8 @@ namespace Librainian.Extensions {
 				}
 			}
 
-			// ReSharper disable once UnusedVariable
-			using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullPath, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) { }
+			
+			using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) { }
 
 			return false;
 		}

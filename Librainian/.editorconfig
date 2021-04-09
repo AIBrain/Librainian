@@ -296,6 +296,9 @@ resharper_void_method_with_must_use_return_value_attribute_highlighting = error
 # IDE0051: Remove unused private members
 dotnet_diagnostic.IDE0051.severity = none
 
+# IDE0034: Simplify 'default' expression
+dotnet_diagnostic.IDE0034.severity = none
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab
