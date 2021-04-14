@@ -299,6 +299,9 @@ dotnet_diagnostic.IDE0051.severity = none
 # IDE0034: Simplify 'default' expression
 dotnet_diagnostic.IDE0034.severity = none
 
+# CA1068: CancellationToken parameters must come last
+dotnet_diagnostic.CA1068.severity = warning
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab
