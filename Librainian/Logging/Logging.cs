@@ -153,10 +153,10 @@ namespace Librainian.Logging {
 		[Conditional( "DEBUG" )]
 		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
-		public static void Log( [CanBeNull] this String? message, Boolean breakinto = false ) {
+		public static void Log( [CanBeNull] this String? message, BreakOrDontBreak breakinto = BreakOrDontBreak.DontBreak ) {
 			$"[{DateTime.Now:t}] {message ?? Symbols.Null}".DebugLine();
 
-			if ( breakinto && Debugger.IsAttached ) {
+			if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
 				Debugger.Break();
 			}
 		}
@@ -180,9 +180,9 @@ namespace Librainian.Logging {
 
 		[DebuggerStepThrough]
 		[CanBeNull]
-		public static T Log<T>( [CanBeNull] this T message, Boolean breakinto ) {
+		public static T Log<T>( [CanBeNull] this T message, BreakOrDontBreak breakinto ) {
 			if ( message is null ) {
-				if ( breakinto && Debugger.IsAttached ) {
+				if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
 					Debugger.Break();
 				}
 			}
@@ -266,4 +266,5 @@ namespace Librainian.Logging {
 			}
 		}
 	}
+
 }

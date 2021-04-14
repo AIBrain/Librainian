@@ -30,7 +30,7 @@ namespace Librainian.FileSystem {
 	using System.Net;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using Internet;
 	using JetBrains.Annotations;
 	using Logging;

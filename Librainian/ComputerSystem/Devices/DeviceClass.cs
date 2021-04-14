@@ -74,7 +74,7 @@ namespace Librainian.ComputerSystem.Devices {
 			Int32 index,
 			Int32 disknum = -1
 		) =>
-			new( deviceClass, deviceInfoData, path, index, disknum );
+			new(deviceClass, deviceInfoData, path, index, disknum);
 
 		internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
 			var sb = new StringBuilder( 1024 );

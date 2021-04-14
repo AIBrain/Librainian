@@ -75,7 +75,7 @@ namespace Librainian.Collections.Sets {
 		//         return true;
 		//     }
 		//}
-		public Boolean Contains( T item ) => !( item is null ) && this.Dictionary.ContainsKey( item );
+		public Boolean Contains( T item ) => item is not null && this.Dictionary.ContainsKey( item );
 
 		/// <summary>
 		///     Copies the elements of the <see cref="ICollection" /> to an <see cref="Array" />, starting at a particular
@@ -166,7 +166,7 @@ namespace Librainian.Collections.Sets {
 		/// </returns>
 		/// <param name="item">The object to remove from the <see cref="ICollection" />.</param>
 		/// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
-		public Boolean Remove( T item ) => !( item is null ) && this.TryRemove( item );
+		public Boolean Remove( T item ) => item is not null && this.TryRemove( item );
 
 		/// <summary>Determines whether the current set and the specified collection contain the same elements.</summary>
 		/// <returns>true if the current set is equal to <paramref name="other" />; otherwise, false.</returns>
@@ -203,7 +203,7 @@ namespace Librainian.Collections.Sets {
 		/// <exception cref="NotSupportedException">The <see cref="ICollection" /> is read-only.</exception>
 		/// <exception cref="ArgumentException"></exception>
 		void ICollection<T>.Add( T item ) {
-			if ( !( item is null ) && !this.Add( item ) ) {
+			if ( item is not null && !this.Add( item ) ) {
 				throw new ArgumentException( "Item already exists in set." );
 			}
 		}

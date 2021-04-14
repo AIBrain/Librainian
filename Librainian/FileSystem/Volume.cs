@@ -112,7 +112,7 @@ namespace Librainian.FileSystem {
 			using var disks = new DiskDeviceClass();
 
 			foreach ( var device in disks.GetDevices() ) {
-				if ( !( device is null ) ) {
+				if ( device is not null ) {
 					foreach ( var _ in this.GetDiskNumbers().Where( index => device.DiskNumber == index ) ) {
 						yield return device;
 					}

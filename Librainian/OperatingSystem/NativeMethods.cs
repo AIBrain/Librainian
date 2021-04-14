@@ -1552,7 +1552,7 @@ namespace Librainian.OperatingSystem {
 			/// <param name="h1">The first handle.</param>
 			/// <param name="h2">The second handle.</param>
 			/// <returns>The result of the operator.</returns>
-			public static Boolean operator ==( [CanBeNull] HANDLE? h1, [CanBeNull] HANDLE? h2 ) => !( h1 is null ) && !( h2 is null ) && h1.Equals( h2 );
+			public static Boolean operator ==( [CanBeNull] HANDLE? h1, [CanBeNull] HANDLE? h2 ) => h1 is not null && h2 is not null && h1.Equals( h2 );
 
 			/// <summary>Determines whether the specified <see cref="Object" />, is equal to this instance.</summary>
 			/// <param name="obj">The <see cref="Object" /> to compare with this instance.</param>

@@ -31,7 +31,7 @@ namespace Librainian.Parsing {
 	using System.Globalization;
 	using System.Linq;
 	using System.Runtime.CompilerServices;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;

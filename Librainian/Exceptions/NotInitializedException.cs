@@ -49,7 +49,7 @@ namespace Librainian.Exceptions {
 		/// </param>
 		/// <remarks>This constructor overload is provided in order to adhere to custom exception design best practice guidelines.</remarks>
 		protected NotInitializedException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
-			//$"{nameof( NotInitializedException )} serialization exception.".Log( true );
+			//$"{nameof( NotInitializedException )} serialization exception.".Log( Logging.BreakOrNot.Break );
 		}
 
 		public NotInitializedException( [CanBeNull]

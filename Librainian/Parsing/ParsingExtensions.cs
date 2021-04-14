@@ -42,7 +42,7 @@ namespace Librainian.Parsing {
 	using System.Text;
 	using System.Text.RegularExpressions;
 	using Collections.Extensions;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Linguistics;
 	using Logging;
@@ -908,7 +908,7 @@ namespace Librainian.Parsing {
 
 		[Pure]
 		public static Boolean IsJustNumbers( [CanBeNull] this String? text ) =>
-			!( text is null ) && ( text.All( Char.IsNumber ) || Decimal.TryParse( text, out var _ ) || Double.TryParse( text, out var _ ) );
+			text is not null && ( text.All( Char.IsNumber ) || Decimal.TryParse( text, out var _ ) || Double.TryParse( text, out var _ ) );
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -2268,6 +2268,23 @@ namespace Librainian.Parsing {
 		[NotNull]
 		[Pure]
 		public static String ToStrings( [NotNull] this IEnumerable<Object> list, Char separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
+			if ( list is null ) {
+				throw new ArgumentNullException( nameof( list ) );
+			}
+
+			var joined = String.Join( separator, list );
+
+			if ( trimEnd == true ) {
+				return String.IsNullOrEmpty( atTheEnd ) ? joined.TrimEnd() : $"{joined.TrimEnd()}{separator}{atTheEnd}".TrimEnd();
+			}
+
+			return String.IsNullOrEmpty( atTheEnd ) ? joined : $"{joined}{separator}{atTheEnd}";
+		}
+
+
+		[NotNull]
+		[Pure]
+		public static String ToStrings( [NotNull] this IEnumerable<Object> list, String separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}

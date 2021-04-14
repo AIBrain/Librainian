@@ -30,7 +30,7 @@ namespace Librainian.Databases {
 	using JetBrains.Annotations;
 	using Microsoft.Data.SqlClient;
 
-	public class SqlServer {
+	public class SqlServerInfo {
 
 		[CanBeNull]
 		public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }

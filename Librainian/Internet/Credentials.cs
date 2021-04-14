@@ -26,7 +26,7 @@ namespace Librainian.Internet {
 
 	using System;
 	using System.Diagnostics;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;

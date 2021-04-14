@@ -68,16 +68,23 @@
 	<ItemGroup>
 		<PackageReference Include="Ben.Demystifier" Version="0.3.0" />
 		<PackageReference Include="CommandLineParser" Version="2.8.0" />
-		<PackageReference Include="FluentAssertions" Version="5.10.3" />
 		<PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
 		<PackageReference Include="LinqFaster.SIMD" Version="1.0.3" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
 		<PackageReference Include="Microsoft.Database.ManagedEsent" Version="2.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+		<PackageReference Include="Microsoft.SqlServer.SqlManagementObjects" Version="161.46041.41" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="PooledAwait" Version="1.0.49" />
 		<PackageReference Include="Rationals" Version="1.4.0" />
+		<PackageReference Include="ReactiveUI" Version="13.2.18" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 		<PackageReference Include="System.Management" Version="5.0.0" />
+		<PackageReference Include="System.ServiceProcess.ServiceController" Version="5.0.0" />
 		<PackageReference Include="xunit.assert" Version="2.4.1" />
 	</ItemGroup>
 	<ItemGroup>

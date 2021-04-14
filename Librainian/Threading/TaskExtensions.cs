@@ -36,7 +36,7 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;

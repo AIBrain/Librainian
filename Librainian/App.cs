@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "App.cs" last touched on 2021-03-07 at 12:56 PM by Protiguous.
+// File "App.cs" last touched on 2021-03-07 at 1:42 PM by Protiguous.
 
 #nullable enable
 
@@ -42,89 +42,9 @@ namespace Librainian {
 	using JetBrains.Annotations;
 	using Logging;
 	using Parsing;
-
+	using Error = CommandLine.Error;
 
 	public static class App {
-
-		/// <summary>
-		/// <para>Creates a console window.</para>
-		///     <para>Adds program-wide exception handlers.</para>
-		///     <para>Optimizes program startup.</para>
-		///     <para>Starts logging, Debug and Trace.</para>
-		///     <para>Performs a garbage cleanup.</para>
-		/// <para>And then runs the <see cref="Action"/> <paramref name="runMe"/>.</para>
-		/// </summary>
-		public static Status Run<TOpts>( [NotNull] Action<TOpts> runMe, params String[] arguments )
-			where TOpts : IOptions {
-
-			if ( runMe is null ) {
-				throw new ArgumentNullException( nameof( runMe ) );
-			}
-
-			if ( arguments is null ) {
-				throw new ArgumentNullException( nameof( arguments ) );
-			}
-
-			try {
-				ConsoleWindow.ShowWindow();
-				ConsoleWindow.AttachConsoleWindow();
-
-				ConsoleWindow.SetTitle( "Loading.." );
-				RunInternalCommon();
-
-				ConsoleWindow.SetTitle( $"Parsing {nameof( arguments )}.." );
-				var parsed = Parser.Default?.ParseArguments<TOpts>( arguments );
-
-				if ( parsed is null ) {
-					return TellError();
-				}
-
-				var result = parsed.WithNotParsed( HandleParseErrors );
-				if ( result == null || result.Tag == ParserResultType.NotParsed ) {
-					return TellError();
-				}
-
-				parsed.WithParsed( runMe );
-
-				ConsoleWindow.SetTitle( "Exiting.." );
-
-				return Status.Done;
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-
-				return Status.Exception;
-			}
-
-			static void HandleParseErrors( IEnumerable<CommandLine.Error?>? errors ) {
-				try {
-					if ( errors is null ) {
-						//"Unknown error.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
-						//                Logging.Logging.BreakIfDebug();
-
-						return;
-					}
-
-					var message = errors.Select( error => error?.ToString() ).ToStrings( Environment.NewLine );
-
-					if ( Debugger.IsAttached ) {
-						message.Break();
-					}
-					else {
-						$"Error parsing command line options.{Environment.NewLine}{message}".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
-					}
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-			}
-
-			static Status TellError() {
-				"Error parsing command line.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
-
-				return Status.Failure;
-			}
-		}
 
 		private static void RunInternalCommon() {
 			Debug.AutoFlush = true;
@@ -167,6 +87,85 @@ namespace Librainian {
 			}
 		}
 
+		/// <summary>
+		///     <para>Creates a console window.</para>
+		///     <para>Adds program-wide exception handlers.</para>
+		///     <para>Optimizes program startup.</para>
+		///     <para>Starts logging, Debug and Trace.</para>
+		///     <para>Performs a garbage cleanup.</para>
+		///     <para>And then runs the <see cref="Action" /><paramref name="runMe" />.</para>
+		/// </summary>
+		public static Status Run<TOpts>( [NotNull] Action<TOpts> runMe, params String[] arguments ) where TOpts : IOptions {
+			if ( runMe is null ) {
+				throw new ArgumentNullException( nameof( runMe ) );
+			}
+
+			if ( arguments is null ) {
+				throw new ArgumentNullException( nameof( arguments ) );
+			}
+
+			try {
+				ConsoleWindow.ShowWindow();
+
+				ConsoleWindow.SetTitle( "Loading.." );
+				RunInternalCommon();
+
+				ConsoleWindow.SetTitle( $"Parsing {nameof( arguments )}.." );
+				var parsed = Parser.Default?.ParseArguments<TOpts>( arguments );
+
+				if ( parsed is null ) {
+					return TellError();
+				}
+
+				var result = parsed.WithNotParsed( HandleParseErrors );
+				if ( result == null || result.Tag == ParserResultType.NotParsed ) {
+					return TellError();
+				}
+
+				parsed.WithParsed( runMe );
+
+				ConsoleWindow.SetTitle( "Exiting.." );
+
+				ConsoleWindow.HideWindow();
+
+				return Status.Done;
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+
+				return Status.Exception;
+			}
+
+			static void HandleParseErrors( IEnumerable<Error?>? errors ) {
+				try {
+					if ( errors is null ) {
+						//"Unknown error.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
+						//                Logging.Logging.BreakIfDebug();
+
+						return;
+					}
+
+					var message = errors.Select( error => error?.ToString() ).ToStrings( Environment.NewLine );
+
+					if ( Debugger.IsAttached ) {
+						message.Break();
+					}
+					else {
+						$"Error parsing command line options.{Environment.NewLine}{message}".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
+					}
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+			}
+
+			static Status TellError() {
+				"Error parsing command line.".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
+
+				return Status.Failure;
+			}
+		}
+
 		public static void Run<TForm>( [CanBeNull] IEnumerable<String>? arguments ) where TForm : Form, new() {
 			RunInternalCommon();
 
@@ -179,6 +178,7 @@ namespace Librainian {
 			form.SuspendLayout();
 			form.WindowState = FormWindowState.Normal;
 			form.StartPosition = FormStartPosition.WindowsDefaultBounds;
+
 			//form.LoadLocation();
 			//form.LoadSize();
 

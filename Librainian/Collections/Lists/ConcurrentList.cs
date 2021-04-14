@@ -83,7 +83,7 @@ namespace Librainian.Collections.Lists {
 			this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
 			this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
 
-			if ( !( enumerable is null ) ) {
+			if ( enumerable is not null ) {
 				this.AddRange( enumerable );
 			}
 		}

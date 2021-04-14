@@ -46,7 +46,7 @@ namespace Librainian.Persistence {
     using System.Windows.Forms;
     using Collections.Extensions;
     using Converters;
-    using Exceptions.Warnings;
+    using Exceptions;
     using JetBrains.Annotations;
     using Logging;
     using Microsoft.Win32;

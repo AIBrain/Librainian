@@ -45,7 +45,7 @@ namespace Librainian.Controls {
 
 		private const Int32 SW_SHOW = 5;
 
-		private static IntPtr TheConsoleWindowHandle { get; set; }
+		public static IntPtr TheConsoleWindowHandle { get; set; }
 
 		[DllImport( DLL.Kernel32, SetLastError = true, ExactSpelling = false )]
 		private static extern Boolean AllocConsole();
