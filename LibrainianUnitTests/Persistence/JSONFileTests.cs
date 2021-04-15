@@ -85,9 +85,7 @@ data33   =   3
 		private CancellationTokenSource? CancellationTokenSource { get; set; }
 
 		public CancellationTokenSource CreateCancelToken() {
-			if ( this.CancellationTokenSource is null ) {
-				this.CancellationTokenSource = new CancellationTokenSource( Minutes.Ten );
-			}
+			this.CancellationTokenSource ??= new CancellationTokenSource( Minutes.Ten );
 
 			Assert.NotNull( this.CancellationTokenSource );
 			return this.CancellationTokenSource;
