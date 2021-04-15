@@ -251,9 +251,7 @@ namespace Librainian.Security {
 			}
 
 			//non-secret payload optional
-			if ( nonSecretPayload == null ) {
-				nonSecretPayload = Array.Empty<Byte>();
-			}
+			nonSecretPayload ??= Array.Empty<Byte>();
 
 			Byte[] cipherText;
 

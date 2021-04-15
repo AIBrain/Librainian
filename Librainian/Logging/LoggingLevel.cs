@@ -24,7 +24,8 @@
 
 namespace Librainian.Logging {
 
-	public enum LoggingLevel {
+	/*
+	public enum LoggingLevel  {
 
 		/// <summary>The bare minimum logging level.</summary>
 		Diagnostic,
@@ -55,5 +56,6 @@ namespace Librainian.Logging {
 		Divine
 
 	}
+	*/
 
 }

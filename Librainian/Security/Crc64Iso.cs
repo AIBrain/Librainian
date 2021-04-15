@@ -45,9 +45,7 @@ namespace Librainian.Security {
 		public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
 		public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
-			if ( Table is null ) {
-				Table = CreateTable( Iso3309Polynomial );
-			}
+			Table ??= CreateTable( Iso3309Polynomial );
 
 			return CalculateHash( seed, Table, buffer, 0, buffer.Length );
 		}

@@ -26,6 +26,7 @@ namespace Librainian.Measurement {
 
 	using System;
 	using System.Diagnostics;
+	using System.Runtime;
 	using System.Threading;
 	using JetBrains.Annotations;
 	using Logging;
@@ -49,14 +50,15 @@ namespace Librainian.Measurement {
 
 		/// <summary>For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.</summary>
 		/// <param name="method"></param>
-		/// <param name="runFor"></param>
+		/// <param name="runFor">Defaults to 5 seconds.</param>
 		/// <returns>Returns how many rounds are ran in the time given.</returns>
-		public static UInt64 GetBenchmark( [NotNull] this Action method, TimeSpan? runFor ) {
+		public static UInt64 GetBenchmark( [NotNull] Action method, TimeSpan? runFor ) {
 			if ( method is null ) {
 				throw new ArgumentNullException( nameof( method ) );
 			}
 
-			GC.Collect();
+			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true );
 
 			var oldPriorityClass = Process.GetCurrentProcess().PriorityClass;
 			Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
@@ -64,9 +66,7 @@ namespace Librainian.Measurement {
 			var oldPriority = Thread.CurrentThread.Priority;
 			Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-			if ( runFor is null ) {
-				runFor = Seconds.One;
-			}
+			runFor ??= Seconds.Five;
 
 			try {
 				try {
@@ -85,10 +85,13 @@ namespace Librainian.Measurement {
 						method.Invoke();
 					}
 					catch ( Exception exception ) {
-						exception.Log();
+						var again = exception.Log( BreakOrDontBreak.Break );
+						if ( again is not null ) {
+							throw again;
+						}
 					}
 					finally {
-						rounds++;
+						++rounds;
 					}
 				}
 
@@ -100,6 +103,13 @@ namespace Librainian.Measurement {
 			}
 		}
 
+		/// <summary>
+		/// A quick primitive test for which method runs more times in the given timespan.
+		/// </summary>
+		/// <param name="methodA"></param>
+		/// <param name="methodB"></param>
+		/// <param name="runfor">Defaults to 5 seconds.</param>
+		/// <returns></returns>
 		public static AorB WhichIsFaster( [NotNull] Action methodA, [NotNull] Action methodB, TimeSpan? runfor = null ) {
 			if ( methodA is null ) {
 				throw new ArgumentNullException( nameof( methodA ) );
@@ -109,23 +119,13 @@ namespace Librainian.Measurement {
 				throw new ArgumentNullException( nameof( methodB ) );
 			}
 
-			if ( null == runfor ) {
-				runfor = Seconds.One;
-			}
+			runfor ??= Seconds.Five;
 
-			var a = methodA.GetBenchmark( runfor );
+			var a = GetBenchmark( methodA, runfor );
 
-			var b = methodB.GetBenchmark( runfor );
+			var b = GetBenchmark( methodB, runfor );
 
-			if ( a > b ) {
-				return AorB.MethodA;
-			}
-
-			if ( b > a ) {
-				return AorB.MethodB;
-			}
-
-			return AorB.Same;
+			return a > b ? AorB.MethodA : b > a ? AorB.MethodB : AorB.Same;
 		}
 
 	}

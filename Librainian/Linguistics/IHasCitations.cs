@@ -36,9 +36,7 @@ namespace Librainian.Linguistics {
 		public Lazy<HashSet<ICitation>?>? Citations { get; set; }
 
 		public Boolean AddCitation( ICitation citation ) {
-			if ( this.Citations is null ) {
-				this.Citations = new Lazy<HashSet<ICitation>?>( () => new HashSet<ICitation>() );
-			}
+			this.Citations ??= new Lazy<HashSet<ICitation>?>( () => new HashSet<ICitation>() );
 
 			return this.Citations.Value?.Add( citation ) == true;
 		}

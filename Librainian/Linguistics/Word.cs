@@ -36,7 +36,7 @@ namespace Librainian.Linguistics {
     using Newtonsoft.Json;
     using Parsing;
 
-    /// <summary>One word. Case-sensitive <see cref="Equals(Word,Word)" /></summary>
+    /// <summary>One word. Should be case-sensitive? <see cref="Equals(Word,Word)" /></summary>
     /// <see cref="Sentence"></see>
     [JsonObject]
     [Immutable]
@@ -61,7 +61,9 @@ namespace Librainian.Linguistics {
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public virtual Boolean Equals( Word? other ) => String.Equals( this.Value, other?.Value, StringComparison.Ordinal );
+        public static Boolean Equals( Word? left, Word? right ) => String.Equals( left?.Value, right?.Value, StringComparison.Ordinal );
+
+        //public virtual Boolean Equals( Word? other ) => String.Equals( this.Value, other?.Value, StringComparison.Ordinal );
 
         [NotNull]
         public static implicit operator String( [NotNull] Word word ) => word.Value;
@@ -70,6 +72,8 @@ namespace Librainian.Linguistics {
         public override String ToString() => this.Value;
 
         //[NotNull]public Char[][] Possibles() => this.Chars.ToArray().FastPowerSet();
+
+        protected virtual Type EqualityContract { get; }
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 

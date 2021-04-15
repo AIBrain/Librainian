@@ -424,7 +424,7 @@ namespace Librainian.Databases {
 			this.Sproc = query;
 
 			try {
-				await this.CreateAsyncConnection<T>().ConfigureAwait( false );
+				await this.CreateAsyncConnection().ConfigureAwait( false );
 
 				await using var command = new SqlCommand( query, this.Connection.Value ) {
 					CommandType = commandType, CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds

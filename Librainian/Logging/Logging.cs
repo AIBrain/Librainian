@@ -34,10 +34,15 @@ namespace Librainian.Logging {
 	using System.Drawing;
 	using System.Threading;
 	using JetBrains.Annotations;
+	using Microsoft.Extensions.Logging;
 	using Parsing;
 	using Persistence;
 
 	public static class Logging {
+
+		//See Also: Microsoft.Extensions.Logging.Console
+
+		//private static readonly ILogger<Type>? _logger;
 
 		[DebuggerStepThrough]
 		[Conditional( "DEBUG" )]
@@ -92,17 +97,15 @@ namespace Librainian.Logging {
 		}
 
 		[DebuggerStepThrough]
-		public static (Color fore, Color back) Colors( this LoggingLevel loggingLevel ) =>
+		public static (Color fore, Color back) Colors( this LogLevel loggingLevel ) =>
 			loggingLevel switch {
-				LoggingLevel.Divine => (Color.Blue, Color.Aqua),
-				LoggingLevel.SubspaceTear => (Color.HotPink, Color.Aqua), //hotpink might actually look okay..
-				LoggingLevel.Fatal => (Color.DarkRed, Color.Aqua),
-				LoggingLevel.Critical => (Color.Red, Color.Aqua),
-				LoggingLevel.Error => (Color.Red, Color.White),
-				LoggingLevel.Warning => (Color.Goldenrod, Color.White),
-				LoggingLevel.Diagnostic => (Color.Green, Color.White),
-				LoggingLevel.Debug => (Color.DarkSeaGreen, Color.White),
-				LoggingLevel.Exception => (Color.DarkOliveGreen, Color.AntiqueWhite),
+				LogLevel.Trace => (Color.Green, Color.White),
+				LogLevel.Debug => (Color.DarkSeaGreen, Color.White),
+				LogLevel.Information => (Color.Green, Color.White),
+				LogLevel.Warning => (Color.Goldenrod, Color.White),
+				LogLevel.Error => (Color.Red, Color.White),
+				LogLevel.Critical => (Color.DarkRed, Color.Aqua),
+				LogLevel.None => (Color.White, Color.DarkBlue),
 				var _ => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 			};
 
@@ -133,17 +136,15 @@ namespace Librainian.Logging {
 
 		[DebuggerStepThrough]
 		[NotNull]
-		public static String LevelName( this LoggingLevel loggingLevel ) =>
+		public static String LevelName( this LogLevel loggingLevel ) =>
 			loggingLevel switch {
-				LoggingLevel.Diagnostic => nameof( LoggingLevel.Diagnostic ),
-				LoggingLevel.Debug => nameof( LoggingLevel.Debug ),
-				LoggingLevel.Warning => nameof( LoggingLevel.Warning ),
-				LoggingLevel.Error => nameof( LoggingLevel.Error ),
-				LoggingLevel.Exception => nameof( LoggingLevel.Exception ),
-				LoggingLevel.Critical => nameof( LoggingLevel.Critical ),
-				LoggingLevel.Fatal => nameof( LoggingLevel.Fatal ),
-				LoggingLevel.SubspaceTear => nameof( LoggingLevel.SubspaceTear ),
-				LoggingLevel.Divine => nameof( LoggingLevel.Divine ),
+				LogLevel.Trace => nameof(   LogLevel.Trace  ),
+				LogLevel.Debug => nameof(    LogLevel.Debug ),
+				LogLevel.Information => nameof(   LogLevel.Information  ),
+				LogLevel.Warning => nameof(    LogLevel.Warning ),
+				LogLevel.Error => nameof(   LogLevel.Error  ),
+				LogLevel.Critical => nameof(   LogLevel.Critical  ),
+				LogLevel.None => nameof(   LogLevel.None  ),
 				var _ => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 			};
 
@@ -153,44 +154,32 @@ namespace Librainian.Logging {
 		[Conditional( "DEBUG" )]
 		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
-		public static void Log( [CanBeNull] this String? message, BreakOrDontBreak breakinto = BreakOrDontBreak.DontBreak ) {
+		public static void LogTimeMessage( [CanBeNull] this String? message, BreakOrDontBreak breakinto = BreakOrDontBreak.DontBreak ) {
 			$"[{DateTime.Now:t}] {message ?? Symbols.Null}".DebugLine();
-
+			
 			if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
 				Debugger.Break();
 			}
 		}
 
-		/// <summary></summary>
-		/// <param name="exception"></param>
-		/// <param name="breakinto"></param>
-		/// <returns></returns>
-		[DebuggerStepThrough]
-		[NotNull]
-		public static Exception? Log<TE>( [CanBeNull] this TE? exception, Boolean? breakinto = default ) where TE : Exception{
-			if ( !breakinto.HasValue && Debugger.IsAttached ) {
-				breakinto = true;
-			}
-
-			var _ = exception?.ToStringDemystified().Log( breakinto );
-			//exception?.ToString().Log( breakinto );
-
-			return exception;
-		}
-
 		[DebuggerStepThrough]
 		[CanBeNull]
-		public static T Log<T>( [CanBeNull] this T message, BreakOrDontBreak breakinto ) {
+		public static Exception Log<T>( [CanBeNull] this T? message, BreakOrDontBreak breakinto = BreakOrDontBreak.Break ) {
 			if ( message is null ) {
 				if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
 					Debugger.Break();
 				}
 			}
 			else {
-				message.ToString().Log( breakinto );
+				if ( message is Exception exception) {
+					exception.ToStringDemystified().LogTimeMessage( breakinto );
+					return exception;
+				}
+
+				message.ToString().LogTimeMessage( breakinto );
 			}
 
-			return message;
+			return new Exception( message?.ToString() );
 		}
 
 		/// <summary>

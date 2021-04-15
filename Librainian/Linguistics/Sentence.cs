@@ -96,8 +96,8 @@ namespace Librainian.Linguistics {
 		//[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 
 
-		[NotNull]
-		public IEnumerable<ICitation> GetCitations() => this.Citations.Value;
+		[CanBeNull]
+		public IEnumerable<ICitation>? GetCitations() => this.Citations?.Value;
 
 
 		public static Int32 Compare( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {

@@ -592,9 +592,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( info ) );
 			}
 
-			if ( null == defaultValue ) {
-				defaultValue = DateTime.MinValue;
-			}
+			defaultValue ??= DateTime.MinValue;
 
 			var now = defaultValue.Value;
 			var fName = info.Name.GetFileNameWithoutExtension();

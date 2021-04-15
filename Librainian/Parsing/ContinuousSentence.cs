@@ -85,9 +85,7 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[NotNull]
 		public ContinuousSentence Add( [CanBeNull] String? text ) {
-			if ( text is null ) {
-				text = String.Empty;
-			}
+			text ??= String.Empty;
 
 			this.CurrentBuffer += text;
 
