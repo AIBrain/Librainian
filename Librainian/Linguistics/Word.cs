@@ -73,8 +73,6 @@ namespace Librainian.Linguistics {
 
         //[NotNull]public Char[][] Possibles() => this.Chars.ToArray().FastPowerSet();
 
-        protected virtual Type EqualityContract { get; }
-
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 
     }
