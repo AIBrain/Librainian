@@ -44,21 +44,18 @@ namespace Librainian.Extensions {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull] [ItemCanBeNull] this IEnumerable<T> a, [NotNull] [ItemCanBeNull] IEnumerable<T> b ) {
-			if ( a == null ) {
-				throw new ArgumentNullException( nameof( a ) );
+		public static IEnumerable<T?> Append<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<T?>? a, [CanBeNull][ItemCanBeNull] IEnumerable<T?>? b ) {
+
+			if ( a is not null ) {
+				foreach ( var item in a ) {
+					yield return item;
+				}
 			}
 
-			if ( b == null ) {
-				throw new ArgumentNullException( nameof( b ) );
-			}
-
-			foreach ( var item in a ) {
-				yield return item;
-			}
-
-			foreach ( var item in b ) {
-				yield return item;
+			if ( b is not null ) {
+				foreach ( var item in b ) {
+					yield return item;
+				}
 			}
 		}
 
@@ -68,11 +65,15 @@ namespace Librainian.Extensions {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull] this T a, [ItemCanBeNull] [NotNull] IEnumerable<T> b ) {
-			yield return a;
+		public static IEnumerable<T?> Append<T>( [CanBeNull] this T? a, [ItemCanBeNull][NotNull] IEnumerable<T?>? b ) {
+			if ( a is not null ) {
+				yield return a;
+			}
 
-			foreach ( var item in b ) {
-				yield return item;
+			if ( b is not null ) {
+				foreach ( var item in b ) {
+					yield return item;
+				}
 			}
 		}
 
@@ -82,49 +83,57 @@ namespace Librainian.Extensions {
 		/// <param name="b"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static IEnumerable<T> Append<T>( [NotNull] this IEnumerable<T> a, [CanBeNull] T b ) {
-			foreach ( var item in a ) {
-				yield return item;
+		public static IEnumerable<T?> Append<T>( [CanBeNull] this IEnumerable<T?>? a, [CanBeNull] T? b ) {
+			if ( a is not null ) {
+				foreach ( var item in a ) {
+					yield return item;
+				}
 			}
 
 			yield return b;
 		}
 
-		[NotNull]
-		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [NotNull] this IEnumerable<IEnumerable<T>> sequences ) {
+		[NotNull][ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? sequences ) {
 			IEnumerable<IEnumerable<T>> emptyProduct = new[] {
 				Enumerable.Empty<T>()
 			};
+			if ( sequences is null ) {
+				return emptyProduct;
+			}
 
 			return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
-				var enumerable = sequence as IList<T> ?? sequence.ToList();
+				var enumerable = sequence as IList<T> ?? sequence?.ToList() ?? Enumerable.Empty<T>();
+
 
 				return from accseq in accumulator
-				       from item in enumerable
-				       where !accseq.Contains( item )
-				       select accseq.Concat( new[] {
-					       item
-				       } );
+					   from item in enumerable
+					   where !accseq.Contains( item )
+					   select accseq.Concat( new[] {
+							   item
+						   } );
+
 			} );
 		}
 
-		[CanBeNull]
-		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( [CanBeNull] params IEnumerable<T>[]? input ) {
+		[CanBeNull][ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( [CanBeNull][ItemCanBeNull] params IEnumerable<T?>[]? input ) {
 			IEnumerable<IEnumerable<T>> result = Array.Empty<T[]>();
-
-			return input?.Aggregate( result, ( current, item ) => current!.Combine( item.Combinations() ) );
+			
+			//TODO Don't know what to do with nulls in Combinations()..
+			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
 		}
 
-		[NotNull]
-		public static IEnumerable<IEnumerable<T>> Combinations<T>( [NotNull] this IEnumerable<T> input ) =>
+		[CanBeNull][ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T?>?> Combinations<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<T?> input ) =>
 			input.Select( item => new[] {
 				item
 			} );
 
-		[ItemNotNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>(
-			[NotNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>?> setA,
-			[NotNull] [ItemCanBeNull] IEnumerable<IEnumerable<T>?> setB
+		[NotNull][ItemCanBeNull]
+		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
+			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T?>?> setA,
+			[NotNull][ItemCanBeNull] IEnumerable<IEnumerable<T?>?> setB
 		) {
 			var found = false;
 
@@ -149,22 +158,22 @@ namespace Librainian.Extensions {
 			}
 
 			foreach ( var b in eachB ) {
-				if ( b != null ) {
+				if ( b is not null ) {
 					yield return b;
 				}
 			}
 		}
 
-		[ItemNotNull]
+		[ItemCanBeNull]
 		[CanBeNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [CanBeNull] this IEnumerable<T>? setA, [NotNull] IEnumerable<IEnumerable<T>?>? setB ) {
+		public static IEnumerable<IEnumerable<T?>?> Combine<T>( [CanBeNull] this IEnumerable<T?>? setA, [NotNull] IEnumerable<IEnumerable<T?>?>? setB ) {
 			var found = false;
 
 			if ( setB != null ) {
 				foreach ( var b in setB ) {
 					found = true;
 
-					if ( setA != null ) {
+					if ( setA is not null ) {
 						// ReSharper disable once PossibleMultipleEnumeration
 						if ( b != null ) {
 							yield return setA.Append( b );
@@ -174,7 +183,7 @@ namespace Librainian.Extensions {
 			}
 
 			if ( !found ) {
-				if ( setA != null ) {
+				if ( setA is not null ) {
 					// ReSharper disable once PossibleMultipleEnumeration
 					yield return setA;
 				}
@@ -183,9 +192,9 @@ namespace Librainian.Extensions {
 
 		[ItemCanBeNull]
 		[CanBeNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>(
-			[NotNull] [ItemCanBeNull] this IEnumerable<IEnumerable<T>> setA,
-			[NotNull] [ItemCanBeNull] IEnumerable<T> setB
+		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
+			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T?>?> setA,
+			[NotNull][ItemCanBeNull] IEnumerable<T?> setB
 		) {
 			var found = false;
 
@@ -203,7 +212,7 @@ namespace Librainian.Extensions {
 
 		[CanBeNull]
 		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this T a, [NotNull] [ItemNotNull] IEnumerable<IEnumerable<T>> setB ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this T a, [NotNull][ItemNotNull] IEnumerable<IEnumerable<T>> setB ) {
 			var found = false;
 
 			foreach ( var bGroup in setB ) {
@@ -221,7 +230,7 @@ namespace Librainian.Extensions {
 
 		[CanBeNull]
 		[ItemNotNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] [ItemNotNull] this IEnumerable<IEnumerable<T>> setA, [NotNull] T b ) {
+		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull][ItemNotNull] this IEnumerable<IEnumerable<T>> setA, [NotNull] T b ) {
 			var found = false;
 
 			foreach ( var aGroup in setA ) {
@@ -237,27 +246,71 @@ namespace Librainian.Extensions {
 			}
 		}
 
+		/// <summary>
+		/// <para>The power set of a set <paramref name="s"/> is the set of all subsets of <paramref name="s"/>, including the empty set and <paramref name="s"/> itself.</para>
+		/// <para>(Return a jagged array of every possible combination of the <paramref name="s"/>.)</para>
+		/// <para>Note: Does not exclude duplicates.</para>
+		/// </summary>
+		/// <returns></returns>
 		[NotNull]
-		public static T[][] FastPowerSet<T>( [NotNull] this T[] array ) {
-			var powerSet = new T[1 << array.Length][];
-			powerSet[0] = Array.Empty<T>();
+		public static T[][] PowerSet<T>( [NotNull] this T[] s ) {
+			var arrayLength = s.Length;
 
-			for ( var i = 0; i < array.Length; i++ ) {
-				var cur = array[i];
+			var powerSet = new T[ 1 << arrayLength ][];
+			powerSet[ 0 ] = Array.Empty<T>();
+
+			for ( var i = 0; i < arrayLength; i++ ) {
+				var current = s[ i ];
 				var count = 1 << i;
 
 				for ( var j = 0; j < count; j++ ) {
-					var source = powerSet[j];
+					var source = powerSet[ j ];
 
 					var sourceLength = source.Length;
 
-					var destination = powerSet[count + j] = new T[sourceLength + 1];
+					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
 
 					for ( var q = 0; q < sourceLength; q++ ) {
-						destination[q] = source[q];
+						destination[ q ] = source[ q ];
 					}
 
-					destination[sourceLength] = cur;
+					destination[ sourceLength ] = current;
+				}
+			}
+
+			return powerSet;
+		}
+
+		/// <summary>
+		/// <para>The power set of a set <paramref name="s"/> is the set of all subsets of <paramref name="s"/>, including the empty set and <paramref name="s"/> itself.</para>
+		/// <para>(Return a jagged array of every possible combination of the <paramref name="s"/>.)</para>
+		/// <para>Note: Does not exclude duplicates.</para>
+		/// </summary>
+		/// <returns></returns>
+		[NotNull]
+		public static T[][] PowerSet<T>( [NotNull] this IEnumerable<T> list ) {
+			var enumerable = list as T[] ?? list.ToArray();
+			var length = enumerable.Length;
+
+			var powerSet = new T[ 1 << length ][];
+			powerSet[ 0 ] = Array.Empty<T>();
+
+			for ( var i = 0; i < length; i++ ) {
+				var current = enumerable[ i ];
+				var count = 1 << i;
+
+				for ( var j = 0; j < count; j++ ) {
+					var source = powerSet[ j ];
+
+					var sourceLength = source.Length;
+
+					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
+
+					for ( var q = 0; q < sourceLength; q++ ) {
+						destination[ q ] = source[ q ];
+					}
+
+					destination[ sourceLength ] = current;
 				}
 			}
 
@@ -265,10 +318,11 @@ namespace Librainian.Extensions {
 		}
 
 		[ItemCanBeNull]
-		public static IEnumerable<T> Group<T>( [NotNull] this T a, [NotNull] T b ) {
+		public static IEnumerable<T?> Group<T>( [CanBeNull] this T? a, [CanBeNull] T? b ) {
 			yield return a;
 			yield return b;
 		}
+
 
 	}
 
