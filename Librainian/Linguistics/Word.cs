@@ -31,6 +31,7 @@ namespace Librainian.Linguistics {
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using Extensions;
     using JetBrains.Annotations;
     using Newtonsoft.Json;
@@ -59,11 +60,11 @@ namespace Librainian.Linguistics {
 
         public IEnumerator<Char> GetEnumerator() => this.Value.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.Value.GetEnumerator();
 
         public static Boolean Equals( Word? left, Word? right ) => String.Equals( left?.Value, right?.Value, StringComparison.Ordinal );
 
-        //public virtual Boolean Equals( Word? other ) => String.Equals( this.Value, other?.Value, StringComparison.Ordinal );
+        public virtual Boolean Equals( Word? other ) => Equals( this, other );
 
         [NotNull]
         public static implicit operator String( [NotNull] Word word ) => word.Value;
@@ -71,7 +72,11 @@ namespace Librainian.Linguistics {
         [NotNull]
         public override String ToString() => this.Value;
 
-        //[NotNull]public Char[][] Possibles() => this.Chars.ToArray().FastPowerSet();
+		/// <summary>
+		/// Return a jagged array of every possible combination of the array. Does not exclude duplicates.
+		/// </summary>
+		/// <returns></returns>
+        [NotNull]public Char[][] Possibles() => this.Value.ToArray().PowerSet();
 
         public override Int32 GetHashCode() => this.Value.GetHashCode();
 

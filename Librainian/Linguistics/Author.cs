@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+ï»¿// Copyright ï¿½ Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,13 +23,17 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Author.cs" last formatted on 2021-03-05 at 1:24 PM.
+// File "Author.cs" last touched on 2021-03-07 at 3:58 PM by Protiguous.
 
 namespace Librainian.Linguistics {
+
 	using System;
 	using JetBrains.Annotations;
 
-	public class Author : Person {
+	public record Author : Person {
+
 		public Author( [NotNull] String fullName ) : base( fullName ) { }
+
 	}
+
 }

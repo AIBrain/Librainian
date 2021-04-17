@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,9 +23,10 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Book.cs" last formatted on 2021-01-01 at 9:38 AM.
+// File "Book.cs" last touched on 2021-03-07 at 3:59 PM by Protiguous.
 
 namespace Librainian.Linguistics {
+
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -42,7 +43,8 @@ namespace Librainian.Linguistics {
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	[Serializable]
-	public class Book : IEquatable<Book>, IEnumerable<(Int32, Page)> {
+	public record Book : IEnumerable<(Int32 pageid, Page page)>, IHasAuthors {
+
 		private Book() { }
 
 		public Book( [ItemNotNull] [NotNull] IEnumerable<Page> pages, [ItemNotNull] [CanBeNull] IEnumerable<Author>? authors = null ) {
@@ -53,18 +55,17 @@ namespace Librainian.Linguistics {
 			var pageNumber = 0;
 
 			foreach ( var page in pages ) {
-				this.Pages[pageNumber++] = page;
+				this.Pages[ pageNumber++ ] = page;
 			}
 
 			if ( null != authors ) {
-			
 				this.Authors.AddRange( authors );
 			}
 		}
 
 		[NotNull]
 		[JsonProperty]
-		private HashSet<Author> Authors { get; } = new();
+		public HashSet<Author> Authors { get; } = new();
 
 		[NotNull]
 		[JsonProperty]
@@ -72,19 +73,23 @@ namespace Librainian.Linguistics {
 
 		public static Book Empty { get; } = new();
 
-		/// <summary>Returns an enumerator that iterates through the collection.</summary>
+		/// <summary>
+		///     Returns an enumerator that iterates through the collection.
+		/// </summary>
 		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
 		public IEnumerator<(Int32, Page)> GetEnumerator() => this.GetPages().GetEnumerator();
 
-		/// <summary>Returns an enumerator that iterates through a collection.</summary>
+		/// <summary>
+		///     Returns an enumerator that iterates through a collection.
+		/// </summary>
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable ) this.Pages ).GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Pages ).GetEnumerator();
 
-		public Boolean Equals( [CanBeNull] Book? other ) => Equals( this, other );
-
-		/// <summary>static equality test, compare sequence of Pages</summary>
-		/// <param name="left"></param>
-		/// <param name="right"> </param>
+		/// <summary>
+		///     static equality test, compare sequence of Pages
+		/// </summary>
+		/// <param name="left"> </param>
+		/// <param name="right"></param>
 		/// <returns></returns>
 		public static Boolean Equals( [CanBeNull] Book? left, [CanBeNull] Book? right ) {
 			if ( ReferenceEquals( left, right ) ) {
@@ -98,22 +103,12 @@ namespace Librainian.Linguistics {
 			return left.SequenceEqual( right ); //no authors?? No authors.
 		}
 
-		/// <summary>Determines whether the specified object is equal to the current object.</summary>
-		/// <param name="obj">The object to compare with the current object.</param>
-		/// <returns>
-		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as Book );
-
 		[NotNull]
 		public IEnumerable<Author> GetAuthors() => this.Authors;
 
-		/// <summary>Serves as the default hash function.</summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Pages.GetHashCode();
-
 		[NotNull]
 		public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( pair => ( pair.Key, pair.Value ) );
+
 	}
+
 }

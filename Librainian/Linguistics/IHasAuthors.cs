@@ -1,4 +1,4 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,28 +23,24 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Person.cs" last touched on 2021-03-07 at 3:56 PM by Protiguous.
+// File "IHasAuthors.cs" last touched on 2021-04-17 at 4:00 PM by Protiguous.
 
 namespace Librainian.Linguistics {
 
-	using System;
-	using Exceptions;
+	using System.Collections.Generic;
 	using JetBrains.Annotations;
+	using Newtonsoft.Json;
 
-	public record Person {
+	public interface IHasAuthors {
 
 		[NotNull]
-		public String FullName { get; }
+		public IEnumerable<Author> GetAuthors() => this.Authors;
 
-		protected Person([NotNull] String fullName) {
-			if ( String.IsNullOrWhiteSpace( fullName ) ) {
-				throw new ArgumentEmptyException( nameof( fullName ) );
-			}
+		[NotNull]
+		[JsonProperty]
+		public HashSet<Author> Authors { get; } 
 
-			this.FullName = fullName;
-		}
+
 	}
-
-
 
 }

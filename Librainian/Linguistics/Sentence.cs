@@ -34,6 +34,7 @@ namespace Librainian.Linguistics {
 	using System.Diagnostics;
 	using System.Linq;
 	using JetBrains.Annotations;
+	using Measurement;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -102,15 +103,11 @@ namespace Librainian.Linguistics {
 
 		public static Int32 Compare( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
 			if ( ReferenceEquals( left, right ) ) {
-				return 0;
+				return Order.Same;
 			}
 
-			if ( left is null ) {
-				return 1; //TODO needs tested
-			}
-
-			if ( right is null ) {
-				return -1; //TODO needs tested
+			if ( left is null || right is null) {
+				return Order.Before; //TODO needs tested
 			}
 
 			return left.CompareTo( right );

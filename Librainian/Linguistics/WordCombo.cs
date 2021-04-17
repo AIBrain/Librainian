@@ -25,6 +25,6 @@
 namespace Librainian.Linguistics {
 
 	/// <summary>more than 1 word, but not a sentence?</summary>
-	public class WordCombo { }
+	public record WordCombo;
 
 }
