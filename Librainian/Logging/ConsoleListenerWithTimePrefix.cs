@@ -42,7 +42,7 @@ namespace Librainian.Logging {
 		/// </summary>
 		/// <param name="message">      A message to emit.</param>
 		/// <param name="detailMessage">A detailed message to emit.</param>
-		public override void Fail( String message, String detailMessage ) {
+		public override void Fail( String? message, String? detailMessage ) {
 			base.Fail( message, detailMessage );
 			this.Flush();
 		}
@@ -50,7 +50,7 @@ namespace Librainian.Logging {
 		/// <summary>Writes a message to this instance's <see cref="TextWriterTraceListener.Writer" />.</summary>
 		/// <param name="message">A message to write.</param>
 		[DebuggerStepThrough]
-		public override void Write( String message ) {
+		public override void Write( String? message ) {
 			Console.Write( message );
 			this.Flush();
 		}
@@ -62,7 +62,7 @@ namespace Librainian.Logging {
 		/// </summary>
 		/// <param name="message">A message to write.</param>
 		[DebuggerStepThrough]
-		public override void WriteLine( String message ) {
+		public override void WriteLine( String? message ) {
 			Console.WriteLine( message );
 			this.Flush();
 		}
