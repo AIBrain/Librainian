@@ -628,21 +628,17 @@ namespace Librainian.Controls {
 		/// <returns></returns>
 		[CanBeNull]
 		public static String? Text( [CanBeNull] this Control? control ) {
-			if ( control is null ) {
-				return default( String? );
+			if ( control?.InvokeRequired == true ) {
+				return control.Invoke( new Func<String?>( () => control.Text ) ) as String;
 			}
 
-			if ( control.InvokeRequired ) {
-				return control.Invoke( new Func<String>( () => control.Text ) ) as String ?? String.Empty;
-			}
-
-			return control.Text;
+			return control?.Text;
 		}
 
 		/// <summary>Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.</summary>
 		/// <param name="toolStripItem"></param>
 		/// <param name="value">        </param>
-		public static void Text( [NotNull] this ToolStripItem toolStripItem, [CanBeNull] String? value ) {
+		public static void Text( [CanBeNull] this ToolStripItem? toolStripItem, [CanBeNull] String? value ) {
 			void Action() {
 				if ( toolStripItem.IsDisposed ) {
 					return;
@@ -652,7 +648,7 @@ namespace Librainian.Controls {
 				toolStripItem.Invalidate();
 			}
 
-			toolStripItem.GetCurrentParent()?.InvokeAction( Action );
+			toolStripItem?.GetCurrentParent()?.InvokeAction( Action );
 		}
 
 		/// <summary>

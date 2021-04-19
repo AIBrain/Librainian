@@ -46,7 +46,7 @@ namespace Librainian.Maths.Numbers {
 
 		private readonly UInt64 _part4; // parts are big-endian
 
-		public static UInt256 Zero { get; } = new( new Byte[0] );
+		public static UInt256 Zero { get; } = new( Array.Empty<Byte>() );
 
 		private UInt256( UInt64 part1, UInt64 part2, UInt64 part3, UInt64 part4 ) {
 			this._part1 = part1;

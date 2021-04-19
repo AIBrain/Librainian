@@ -41,7 +41,7 @@ namespace Librainian.Collections.Lists {
 	public sealed class ImmutableList<T> : IList<T>, IPossibleThrowable {
 
 		/// <summary>Create a new list.</summary>
-		public ImmutableList() => this.Array = new T[0];
+		public ImmutableList() => this.Array = System.Array.Empty<T>();
 
 		/// <summary>Create a new list, copying elements from the specified array.</summary>
 		/// <param name="arrayToCopy">An array whose contents will be copied.</param>
@@ -147,7 +147,7 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Returns a new, cleared (empty) immutable list.</summary>
 		/// <returns>A modified copy of this list.</returns>
 		[NotNull]
-		public ImmutableList<T> CopyAndClear() => new( new T[0] );
+		public ImmutableList<T> CopyAndClear() => new( System.Array.Empty<T>() );
 
 		/// <summary>Copies the list and inserts a particular element.</summary>
 		/// <param name="index">The index at which to insert an element.</param>
