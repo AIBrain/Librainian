@@ -625,15 +625,15 @@ namespace Librainian.OperatingSystem.Compression {
 
 			// check signature
 			var signature = new Byte[4];
-			this._zipFileStream.Seek( zfe.HeaderOffset, SeekOrigin.Begin );
-			this._zipFileStream.Read( signature, 0, 4 );
+			this._zipFileStream?.Seek( zfe.HeaderOffset, SeekOrigin.Begin );
+			this._zipFileStream?.Read( signature, 0, 4 );
 
 			if ( BitConverter.ToUInt32( signature, 0 ) != 0x04034b50 ) {
 				return false;
 			}
 
 			// Select input stream for inflating or just reading
-			Stream inStream;
+			Stream? inStream;
 
 			switch ( zfe.Method ) {
 				case Compression.Store:

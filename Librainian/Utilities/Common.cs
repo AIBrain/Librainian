@@ -18,6 +18,7 @@
 
 #nullable enable
 
+// ReSharper disable once CheckNamespace
 namespace Librainian {
 
 	using JetBrains.Annotations;
@@ -30,6 +31,7 @@ namespace Librainian {
 	using System.Text;
 	using System.Threading;
 	using Measurement;
+	using Parsing;
 
 	public static class Common {
 
@@ -199,7 +201,7 @@ namespace Librainian {
 		/// <returns></returns>
 		[CanBeNull]
 		[DebuggerStepThrough]
-		public static T? NullIf<T>( [CanBeNull] this T left, [CanBeNull] T right ) where T : class => Comparer<T>.Default.Compare( left, right ) == 0 ? null : left;
+		public static T? NullIf<T>( [CanBeNull] this T? left, [CanBeNull] T? right ) where T : class => Comparer<T>.Default.Compare( left, right ) == 0 ? null : left;
 
 		/// <summary>
 		/// Swap <paramref name="left" /> with <paramref name="right" />.
@@ -207,11 +209,7 @@ namespace Librainian {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		public static void Swap<T>( [CanBeNull] ref T left, [CanBeNull] ref T right ) {
-			var temp = left;
-			left = right;
-			right = temp;
-		}
+		public static void Swap<T>( [CanBeNull] ref T left, [CanBeNull] ref T right ) => ( left, right ) = ( right, left );
 
 		/// <summary>
 		/// Given (T left, T right), Return (T right, T left).
@@ -221,7 +219,9 @@ namespace Librainian {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		[Pure]
-		public static (T right, T left) Swap<T>( [CanBeNull] this T left, [CanBeNull] T right ) => (right, left);
+		public static (T? right, T? left) Swapped<T>( [CanBeNull] this T? left, [CanBeNull] T? right ) => (right, left);
+
+		public static (T? right, T? left) Swapped<T>( ( T? left, T? right ) tuple ) => (tuple.right, tuple.left);
 
 		/// <summary>
 		/// Create only 1 instance of <see cref="T" /> per thread. (only unique when using this class!)
@@ -247,6 +247,13 @@ namespace Librainian {
 
 			[NotNull]
 			public static T Instance { get; } = new();
+		}
+
+		public static Boolean IsDevelopmentEnviroment() {
+			var devEnvironmentVariable = Environment.GetEnvironmentVariable( "NETCORE_ENVIRONMENT" );
+
+			var isDevelopment = String.IsNullOrEmpty( devEnvironmentVariable ) || devEnvironmentVariable.Like( "development" );
+			return isDevelopment;
 		}
 	}
 }

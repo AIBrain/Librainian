@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Minutes.cs" last touched on 2021-03-07 at 5:02 AM by Protiguous.
+// File "Minutes.cs" last touched on 2021-03-07 at 3:05 PM by Protiguous.
 
 namespace Librainian.Measurement.Time {
 
@@ -42,37 +42,50 @@ namespace Librainian.Measurement.Time {
 	[Immutable]
 	public record Minutes( Rational Value ) : IQuantityOfTime, IComparable<Minutes> {
 
-		/// <summary>60</summary>
+		/// <summary>
+		///     60
+		/// </summary>
 		public const Byte InOneHour = 60;
 
 		/// <summary>
 		///     Optimization
 		/// </summary>
-		private readonly Lazy<Rational> _lazyPlancksInOneMinute = new( () => ( Rational )PlanckTimes.InOneMinute, true );
+		private readonly Lazy<Rational> _lazyPlancksInOneMinute = new(() => new Rational( new BigInteger( PlanckTimes.InOneMinute ) ), true);
 
-		/// <summary>15</summary>
+		/// <summary>
+		///     15
+		/// </summary>
 		[NotNull]
-		public static Minutes Fifteen { get; } = new( 15 );
+		public static Minutes Fifteen { get; } = new(15);
 
-		/// <summary>One <see cref="Minutes" /> .</summary>
+		/// <summary>
+		///     One <see cref="Minutes" /> .
+		/// </summary>
 		[NotNull]
-		public static Minutes One { get; } = new( 1 );
+		public static Minutes One { get; } = new(1);
 
-		/// <summary>10</summary>
+		/// <summary>
+		///     10
+		/// </summary>
 		[NotNull]
-		public static Minutes Ten { get; } = new( 10 );
+		public static Minutes Ten { get; } = new(10);
 
-		/// <summary>30</summary>
+		/// <summary>
+		///     30
+		/// </summary>
 		[NotNull]
-		public static Minutes Thirty { get; } = new( 30 );
+		public static Minutes Thirty { get; } = new(30);
 
-		/// <summary></summary>
+		/// <summary>
+		/// </summary>
 		[NotNull]
-		public static Minutes Thousand { get; } = new( 1000 );
+		public static Minutes Thousand { get; } = new(1000);
 
-		/// <summary>Zero <see cref="Minutes" /></summary>
+		/// <summary>
+		///     Zero <see cref="Minutes" />
+		/// </summary>
 		[NotNull]
-		public static Minutes Zero { get; } = new( 0 );
+		public static Minutes Zero { get; } = new(0);
 
 		public Int32 CompareTo( [CanBeNull] Minutes? other ) {
 			if ( other == null ) {
@@ -84,10 +97,10 @@ namespace Librainian.Measurement.Time {
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToSeconds();
 
-		public PlanckTimes ToPlanckTimes() => new( ( this.Value * this._lazyPlancksInOneMinute.Value ).WholePart );
+		public PlanckTimes ToPlanckTimes() => new(( this.Value * this._lazyPlancksInOneMinute.Value ).WholePart);
 
 		[Pure]
-		public Seconds ToSeconds() => new( this.Value * Seconds.InOneMinute );
+		public Seconds ToSeconds() => new(this.Value * Seconds.InOneMinute);
 
 		public IQuantityOfTime ToCoarserGranularity() => this.ToHours();
 
@@ -95,9 +108,9 @@ namespace Librainian.Measurement.Time {
 
 		public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
 
-		public static Minutes Combine( Minutes left, Rational minutes ) => new( left.Value + minutes );
+		public static Minutes Combine( Minutes left, Rational minutes ) => new(left.Value + minutes);
 
-		public static Minutes Combine( Minutes left, BigInteger minutes ) => new( left.Value + minutes );
+		public static Minutes Combine( Minutes left, BigInteger minutes ) => new(left.Value + minutes);
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -107,24 +120,30 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
-		/// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.</summary>
+		/// <summary>
+		///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.
+		/// </summary>
 		/// <param name="minutes"></param>
 		/// <returns></returns>
 		public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
 
-		/// <summary>Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.</summary>
+		/// <summary>
+		///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.
+		/// </summary>
 		/// <param name="minutes"></param>
 		/// <returns></returns>
 		public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
-		/// <summary>Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.</summary>
+		/// <summary>
+		///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.
+		/// </summary>
 		/// <param name="minutes"></param>
 		/// <returns></returns>
-		public static implicit operator SpanOfTime( Minutes minutes ) => new( minutes );
+		public static implicit operator SpanOfTime( Minutes minutes ) => new(minutes);
 
 		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
 
-		public static Minutes operator -( Minutes minutes ) => new( minutes.Value * -1 );
+		public static Minutes operator -( Minutes minutes ) => new(minutes.Value * -1);
 
 		public static Minutes operator -( Minutes left, Minutes right ) => Combine( left, -right );
 
@@ -148,7 +167,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
 
-		public Hours ToHours() => new( this.Value / InOneHour );
+		public Hours ToHours() => new(this.Value / InOneHour);
 
 		public override String ToString() {
 			if ( this.Value > MathConstants.MaxiumDecimalValue ) {

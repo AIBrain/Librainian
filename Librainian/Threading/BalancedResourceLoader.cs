@@ -58,7 +58,7 @@ namespace Librainian.Threading {
 
 		public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
 			lock ( this._lock ) {
-				this.GetOrQueue( out var resource, cancelToken, true );
+				this.GetOrQueue( out var resource, true, cancelToken );
 
 				return resource;
 			}
@@ -66,11 +66,11 @@ namespace Librainian.Threading {
 
 		public Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default ) {
 			lock ( this._lock ) {
-				return this.GetOrQueue( out resource, cancelToken, false );
+				return this.GetOrQueue( out resource, false, cancelToken );
 			}
 		}
 
-		private Boolean GetOrQueue( [CanBeNull] out Task<T> resource, CancellationToken cancelToken, Boolean queueOnFailure ) {
+		private Boolean GetOrQueue( [CanBeNull] out Task<T> resource, Boolean queueOnFailure, CancellationToken cancelToken ) {
 			var i = this._index;
 
 			while ( true ) {
@@ -120,7 +120,7 @@ namespace Librainian.Threading {
 
 				_tuple = this._queue.Peek();
 
-				if ( !this.GetOrQueue( out _resource, _tuple.Item2, false ) ) {
+				if ( !this.GetOrQueue( out _resource, false, _tuple.Item2 ) ) {
 					return;
 				}
 

@@ -20,55 +20,64 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "PlanckExtensions.cs" last formatted on 2020-08-14 at 8:38 PM.
+// File "StatusExtensions.cs" last formatted on 2020-08-28 at 1:38 AM.
 
-namespace Librainian.Measurement.Time {
+// ReSharper disable once CheckNamespace
+namespace Librainian {
 
 	using System;
-	using System.Numerics;
-	using Rationals;
+	using System.Runtime.CompilerServices;
+	using Extensions;
+	using JetBrains.Annotations;
+	using Parsing;
 
-	public static class PlanckExtensions {
+	public static class StatusExtensions {
 
-		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
-		/// <param name="constant"></param>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
-			var integer = BigInteger.Divide( planckTimes, constant );
-			planckTimes -= BigInteger.Multiply( integer, constant );
+		static StatusExtensions() {
+			if ( Status.Good.IsBad() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
 
-			return integer;
+			if ( Status.Failure.IsGood() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
+
+			if ( Status.Success.IsBad() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
+
+			if ( !Status.Unknown.IsUnknown() ) {
+				throw new InvalidOperationException( "Someone blinked." );
+			}
 		}
 
-		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
-		/// <param name="constant"></param>
-		/// <param name="planckTimes"></param>
-		/// <returns></returns>
-		public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
-			var right = new Rational ( new BigInteger( constant ));
-			var plancks = Rational.Divide( planckTimes, right );
-			planckTimes -= ( plancks * right ).WholePart;
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Failed( this Status status ) => status <= Status.Failure;
 
-			return plancks.WholePart;
-		}
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean IsBad( this Status status ) => status.Failed();
 
-		/*
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || !status.IsBad() && !status.IsGood();
 
-        /// <summary>
-        ///     Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.
-        /// </summary>
-        /// <param name="constant"></param>
-        /// <param name="planckTimes"></param>
-        /// <returns></returns>
-        public static BigInteger PullPlancks( this Double constant, ref BigInteger planckTimes ) {
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean Succeeded( this Status status ) => status >= Status.Success;
 
-            var pullPlancks = Rational.Divide( planckTimes, constant );
-            planckTimes -= ( BigInteger )Rational.Multiply( pullPlancks, constant );
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean IsGood( this Status status ) => status.Succeeded();
 
-            return ( BigInteger )pullPlancks;
-        }
-        */
+		[Pure]
+		[NotNull]
+		public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
+
+		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Status ToStatus( this Boolean status ) => status ? Status.Success : Status.Failure;
 
 	}
 

@@ -1437,38 +1437,7 @@ namespace Librainian.FileSystem {
 			return memoryStream;
 		}
 
-		[DebuggerStepThrough]
-		public static Boolean TryGetFolderFromPath( this TrimmedString path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) =>
-			TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
-
-		[DebuggerStepThrough]
-		public static Boolean TryGetFolderFromPath( [CanBeNull] this String? path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) {
-			directoryInfo = null;
-			uri = null;
-
-			try {
-				if ( String.IsNullOrWhiteSpace( path ) ) {
-					return false;
-				}
-
-				if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
-					directoryInfo = new DirectoryInfo( uri.LocalPath );
-
-					return true;
-				}
-
-				directoryInfo = new DirectoryInfo( path ); //try it anyways
-
-				return true;
-			}
-			catch ( ArgumentException ) { }
-			catch ( UriFormatException ) { }
-			catch ( SecurityException ) { }
-			catch ( PathTooLongException ) { }
-			catch ( InvalidOperationException ) { }
-
-			return false;
-		}
+		
 
 		/// <summary>Returns a temporary <see cref="Document" /> (but does not create the file in the file system).</summary>
 		/// <param name="folder">   </param>

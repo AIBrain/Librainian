@@ -341,7 +341,7 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		PooledValueTask<FileInfo> GetFreshInfo( CancellationToken cancellationToken );
 
-		PooledValueTask<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken );
+		Task<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken );
 
 		PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken );
 

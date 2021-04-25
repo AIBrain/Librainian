@@ -30,6 +30,7 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
+	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -97,11 +98,18 @@ namespace Librainian.Measurement.Time {
 		[JsonProperty]
 		public Rational Value { get; }
 
-		public Int32 CompareTo( Femtoseconds? other ) => throw new NotImplementedException();
+		public Int32 CompareTo( [CanBeNull] Femtoseconds? other ) {
+			if ( other == null ) {
+				throw new ArgumentNullException( nameof( other ) );
+			}
+
+			return this.Value.CompareTo( other.Value );
+		}
+
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToAttoseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( this.Value * ( Rational ) PlanckTimes.InOneFemtosecond );
+		public PlanckTimes ToPlanckTimes() => new( this.Value * new Rational ( new BigInteger( PlanckTimes.InOneFemtosecond )));
 
 		public Seconds ToSeconds() => this.ToPicoseconds().ToSeconds();
 

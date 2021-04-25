@@ -322,7 +322,7 @@ namespace Librainian.Converters {
         [DebuggerStepThrough]
         public static DateTime? ToDateTimeOrNull<T>( [CanBeNull] this T value ) {
             try {
-                if ( DateTime.TryParse( value?.ToString().Trim(), out var result ) ) {
+                if ( DateTime.TryParse( value.Trimmed(), out var result ) ) {
                     return result;
                 }
             }

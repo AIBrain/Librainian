@@ -55,6 +55,38 @@ namespace Librainian.FileSystem {
 	[Serializable]
 	public class Folder : IFolder {
 
+		[DebuggerStepThrough]
+		public static Boolean TryGetFolderFromPath( TrimmedString path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) => TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
+
+		[DebuggerStepThrough]
+		public static Boolean TryGetFolderFromPath( [CanBeNull] String? path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) {
+			directoryInfo = null;
+			uri = null;
+
+			try {
+				if ( String.IsNullOrWhiteSpace( path ) ) {
+					return false;
+				}
+
+				if ( Uri.TryCreate( path, UriKind.Absolute, out uri ) ) {
+					directoryInfo = new DirectoryInfo( uri.LocalPath );
+
+					return true;
+				}
+
+				directoryInfo = new DirectoryInfo( path ); //try it anyways
+
+				return true;
+			}
+			catch ( ArgumentException ) { }
+			catch ( UriFormatException ) { }
+			catch ( SecurityException ) { }
+			catch ( PathTooLongException ) { }
+			catch ( InvalidOperationException ) { }
+
+			return false;
+		}
+
 		private Byte? _levelsDeep;
 
 		/// <summary></summary>
@@ -72,9 +104,13 @@ namespace Librainian.FileSystem {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
 			}
 
-			if ( !fullPath.TryGetFolderFromPath( out var directoryInfo, out var _ ) ) {
+			/*
+			if ( !TryGetFolderFromPath( fullPath, out DirectoryInfo? directoryInfo, out var _ ) ) {
 				throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
 			}
+			*/
+
+			var directoryInfo = new DirectoryInfo( fullPath );
 
 			this.Info = directoryInfo ?? throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
 		}
@@ -394,7 +430,7 @@ namespace Librainian.FileSystem {
 				exception.Log();
 			}
 
-			var more = false;
+			var more = true;
 
 			do {
 				if ( cancellationToken.IsCancellationRequested ) {
@@ -406,35 +442,33 @@ namespace Librainian.FileSystem {
 					break;
 				}
 
-				if ( !findData.IsDirectory() || findData.IsParentOrCurrent() || findData.IsReparsePoint() || findData.IsIgnoreFolder() ) {
-					continue;
-				}
+				if ( findData.IsDirectory() && !findData.IsParentOrCurrent() && !findData.IsReparsePoint() && !findData.IsIgnoreFolder() ) {
+					if ( findData.cFileName != null ) {
+						// Fix with @"\\?\" +System.IO.PathTooLongException?
+						if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
+							$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".BreakIfDebug( "poor man's debug" );
+							//continue; //BUG Needs unit tested for long paths.
+						}
 
-				if ( findData.cFileName != null ) {
-					// Fix with @"\\?\" +System.IO.PathTooLongException?
-					if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
-						$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".BreakIfDebug( "poor man's debug" );
-						//continue; //BUG Needs unit tested for long paths.
-					}
+						var subFolder = new Folder( this, findData.cFileName );
 
-					var subFolder = new Folder( this, findData.cFileName );
+						yield return subFolder;
 
-					yield return subFolder;
+						switch ( searchOption ) {
+							case SearchOption.AllDirectories: {
+								await foreach ( var info in subFolder.EnumerateFolders( searchPattern, searchOption, cancellationToken ) ) {
+									yield return info;
+								}
 
-					switch ( searchOption ) {
-						case SearchOption.AllDirectories: {
-							await foreach ( var info in subFolder.EnumerateFolders( searchPattern, searchOption, cancellationToken ) ) {
-								yield return info;
+								break;
 							}
 
-							break;
-						}
-
-						case SearchOption.TopDirectoryOnly: {
-							break;
-						}
-						default: {
-							throw new ArgumentOutOfRangeException( nameof( searchOption ), searchOption, null );
+							case SearchOption.TopDirectoryOnly: {
+								break;
+							}
+							default: {
+								throw new ArgumentOutOfRangeException( nameof( searchOption ), searchOption, null );
+							}
 						}
 					}
 				}
@@ -474,11 +508,13 @@ namespace Librainian.FileSystem {
 
 			var path = RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
 
+			/*
 			while ( path.Right( 1 ) == FolderSeparator ) {
 				path = path?.Left( ( UInt32 )( path.Length - 1 ) );
 			}
+			*/
 
-			return path ?? String.Empty;
+			return path;
 		}
 
 		///// <summary>

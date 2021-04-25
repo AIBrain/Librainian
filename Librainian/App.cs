@@ -36,13 +36,8 @@ namespace Librainian {
 	using System.Runtime;
 	using System.Threading;
 	using System.Windows.Forms;
-	using CommandLine;
-	using Controls;
-	using Extensions;
 	using JetBrains.Annotations;
 	using Logging;
-	using Parsing;
-	using Error = CommandLine.Error;
 
 	public static class App {
 
@@ -77,9 +72,9 @@ namespace Librainian {
 				exception.Log();
 			}
 
-			Compact();
-			Thread.Yield();
-			Compact();
+			//Compact();
+			//Thread.Yield();
+			//Compact();
 
 			static void Compact() {
 				GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
@@ -87,6 +82,7 @@ namespace Librainian {
 			}
 		}
 
+		/*
 		/// <summary>
 		///     <para>Creates a console window.</para>
 		///     <para>Adds program-wide exception handlers.</para>
@@ -165,6 +161,7 @@ namespace Librainian {
 				return Status.Failure;
 			}
 		}
+		*/
 
 		public static void Run<TForm>( [CanBeNull] IEnumerable<String>? arguments ) where TForm : Form, new() {
 			RunInternalCommon();
@@ -197,6 +194,7 @@ namespace Librainian {
 
 			Application.Run( form );
 		}
+
 
 	}
 

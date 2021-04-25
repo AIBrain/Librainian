@@ -91,14 +91,14 @@ namespace Librainian.Controls {
 
 				new Button {
 					Text = "OK", Dock = DockStyle.Right
-				}.MouseClick += ( sender, args ) => {
+				}.MouseClick += ( _, _ ) => {
 					this.Response = input.Text();
 					this.Close();
 				};
 
 				new Button {
 					Text = "OK", Dock = DockStyle.Right
-				}.KeyPress += ( sender, args ) => {
+				}.KeyPress += ( _, _ ) => {
 					this.Response = input.Text();
 					this.DialogResult = DialogResult.OK;
 					this.Close();

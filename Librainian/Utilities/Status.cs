@@ -22,6 +22,7 @@
 // 
 // File "Status.cs" last formatted on 2020-08-21 at 3:38 PM.
 
+// ReSharper disable once CheckNamespace
 namespace Librainian {
 
 	using System;

@@ -735,7 +735,7 @@ namespace Librainian.Collections.Extensions {
 				throw new ArgumentNullException( nameof( specificItem ) );
 			}
 
-			var sanity = collection.LongCount() * 2;
+			var sanity = collection.Count * 2;
 
 			while ( sanity.Any() && collection.Contains( specificItem ) ) {
 				--sanity;

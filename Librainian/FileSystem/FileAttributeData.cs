@@ -96,7 +96,7 @@ namespace Librainian.FileSystem {
 
 			var handle = NativeMethods.FindFirstFile( fullPath, out var data );
 
-			if ( handle.IsInvalid ) {
+			if ( handle?.IsInvalid == true ) {
 				if ( throwOnError ) {
 					NativeMethods.HandleLastError( fullPath );
 				}

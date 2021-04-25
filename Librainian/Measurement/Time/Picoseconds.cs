@@ -28,6 +28,7 @@
 namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
+	using System.Numerics;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;
@@ -97,7 +98,7 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// Optimization
 		/// </summary>
-		private readonly Lazy<Rational> _lazyPlancksInOnePicosecond = new( () => ( Rational )PlanckTimes.InOnePicosecond, true );
+		private readonly Lazy<Rational> _lazyPlancksInOnePicosecond = new( () => new Rational (new BigInteger( PlanckTimes.InOnePicosecond )), true );
 
 		public PlanckTimes ToPlanckTimes() => new( ( this.Value * this._lazyPlancksInOnePicosecond.Value ).WholePart );
 

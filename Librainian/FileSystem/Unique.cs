@@ -271,10 +271,10 @@ namespace Librainian.FileSystem {
 		///     <para>Gets the size in bytes of the location.</para>
 		///     <para>A value of -1 indicates an error, timeout, or exception.</para>
 		/// </summary>
-		/// <param name="cancellationToken"></param>
 		/// <param name="timeout"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		public async Task<Int64> Length(  CancellationToken cancellationToken , TimeSpan timeout ) {
+		public async Task<Int64> Length( TimeSpan timeout, CancellationToken cancellationToken ) {
 			try {
 				using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 

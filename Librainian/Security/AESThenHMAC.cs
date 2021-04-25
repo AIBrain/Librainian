@@ -164,7 +164,7 @@ namespace Librainian.Security {
 		/// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
 		/// <remarks>Significantly less secure than using random binary keys.</remarks>
 		[CanBeNull]
-		public static String SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+		public static String? SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 			}

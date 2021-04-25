@@ -1066,8 +1066,8 @@ namespace Librainian.FileSystem {
 		}
 
 		[Pure]
-		public async PooledValueTask<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken ) {
-			if ( !Uri.TryCreate( fileCopyData.Source.FullPath, UriKind.RelativeOrAbsolute, out var uri ) || uri is null ) {
+		public async Task<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken ) {
+			if ( !Uri.TryCreate( fileCopyData.Source.FullPath, UriKind.RelativeOrAbsolute, out var uri ) ) {
 				throw new UriFormatException( $"Unable to parse {this.FullPath.DoubleQuote()} into a Uri." );
 			}
 
@@ -1096,7 +1096,7 @@ namespace Librainian.FileSystem {
 				var estimatedTimeToCopy = TimeSpan.FromSeconds( guessSeconds * 2 );
 
 				//TODO Add in capability to pause/resume?
-				await DidDownloadWork().WithTimeout( estimatedTimeToCopy, cancellationToken ).ConfigureAwait( false );
+				await DownloadAndVerifySize().WithTimeout( estimatedTimeToCopy, fileCopyData.CancellationTokenSource.Token ).ConfigureAwait( false );
 			}
 			catch ( TaskCanceledException exception ) {
 				//what is thrown when a Task<T> times out or is cancelled? TaskCanceledException or OperationCanceledException?
@@ -1148,7 +1148,7 @@ namespace Librainian.FileSystem {
 				return ( false, default( UInt64? ) );
 			}
 
-			async Task<Boolean> DidDownloadWork() {
+			async Task<Boolean> DownloadAndVerifySize() {
 				using var webClient = new WebClient();
 				$"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} instantiated.".Verbose();
 
@@ -1579,7 +1579,7 @@ namespace Librainian.FileSystem {
 
 			var tcs = new TaskCompletionSource<Object?>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
-			void CompletedHandler( Object cs, AsyncCompletedEventArgs ce ) {
+			void CompletedHandler( Object? cs, AsyncCompletedEventArgs ce ) {
 				if ( ce.UserState != tcs ) {
 					return;
 				}

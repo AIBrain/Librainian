@@ -94,7 +94,7 @@ namespace Librainian.Databases {
 		public static async PooledValueTask<T?> AdhocAsync<T>(
 			[NotNull] this SqlConnectionStringBuilder builderToTest,
 			[NotNull] String command,
-			CancellationToken cancellationToken
+			CancellationToken? cancellationToken
 		) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
@@ -422,7 +422,7 @@ namespace Librainian.Databases {
 			[NotNull] String connectionString,
 
 			//Credentials getCredentials,
-			CancellationToken cancellationToken
+			CancellationToken? cancellationToken
 		) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
@@ -434,7 +434,7 @@ namespace Librainian.Databases {
 					//UserID = getCredentials.UserID, Password = getCredentials.Password
 				};
 
-				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( false );
+				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( true );
 
 				if ( sqlServer?.Status.IsGood() == true ) {
 					if ( sqlServer.ConnectionStringBuilder != null ) {
@@ -801,7 +801,7 @@ namespace Librainian.Databases {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static async ValueTask<SqlServerInfo?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken cancellationToken ) {
+		public static async ValueTask<SqlServerInfo?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken? cancellationToken ) {
 			if ( test is null ) {
 				throw new ArgumentNullException( nameof( test ) );
 			}

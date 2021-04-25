@@ -22,11 +22,12 @@
 // 
 // File "ContinuousSentence.cs" last formatted on 2020-08-14 at 8:41 PM.
 
+#nullable enable
+
 namespace Librainian.Parsing {
 
 	using System;
 	using System.Collections.Generic;
-	using System.IO;
 	using System.Linq;
 	using System.Threading;
 	using JetBrains.Annotations;
@@ -34,8 +35,7 @@ namespace Librainian.Parsing {
 	using Utilities;
 
 	/// <summary>
-	///     A thread-safe object to contain a moving target of sentences. I'd like to make this act like a
-	///     <see cref="Stream" /> if possible?
+	///     A thread-safe object to contain a moving target of sentences. 
 	/// </summary>
 	[JsonObject]
 	public class ContinuousSentence : ABetterClassDispose {
@@ -119,9 +119,9 @@ namespace Librainian.Parsing {
 
 		[NotNull]
 		public String PeekNextWord() {
-			var word = this.CurrentBuffer.FirstWord();
+			var word = this.CurrentBuffer.ToWords().FirstOrDefault();
 
-			return String.IsNullOrEmpty( word ) ? String.Empty : word;
+			return word ?? String.Empty;
 		}
 
 		[NotNull]

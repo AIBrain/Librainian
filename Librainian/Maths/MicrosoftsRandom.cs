@@ -46,7 +46,7 @@ namespace Librainian.Maths {
 		private static Int32 inextp;
 
 		[ThreadStatic]
-		private static Int32[] SeedArray;
+		private static Int32[]? SeedArray;
 
 		private MicrosoftsRandom() : this( Middle ) { }
 
@@ -80,7 +80,7 @@ namespace Librainian.Maths {
 
 		public static void Seed( Int32 seed ) {
 			unchecked {
-				if ( SeedArray.Length != SpecialLength ) {
+				if ( SeedArray is not {Length: SpecialLength} ) {
 					SeedArray = new Int32[SpecialLength];
 				}
 

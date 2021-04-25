@@ -38,6 +38,25 @@ namespace Librainian.Logging {
 	using Parsing;
 	using Persistence;
 
+	public interface IMessageWriter {
+		void Write( String message );
+		void WriteLine( String message, params Object[] args );
+	}
+
+
+	public class LoggingMessageWriter : IMessageWriter {
+		private readonly ILogger<LoggingMessageWriter> _logger;
+
+		public LoggingMessageWriter( ILogger<LoggingMessageWriter> logger ) => this._logger = logger;
+
+		public void Write( String message ) => this._logger.LogInformation( message );
+
+		public void WriteLine( String message, params Object[] args ) {
+			this._logger.LogInformation( message, args );
+		}
+
+	}
+
 	public static class Logging {
 
 		//See Also: Microsoft.Extensions.Logging.Console
@@ -138,13 +157,13 @@ namespace Librainian.Logging {
 		[NotNull]
 		public static String LevelName( this LogLevel loggingLevel ) =>
 			loggingLevel switch {
-				LogLevel.Trace => nameof(   LogLevel.Trace  ),
-				LogLevel.Debug => nameof(    LogLevel.Debug ),
-				LogLevel.Information => nameof(   LogLevel.Information  ),
-				LogLevel.Warning => nameof(    LogLevel.Warning ),
-				LogLevel.Error => nameof(   LogLevel.Error  ),
-				LogLevel.Critical => nameof(   LogLevel.Critical  ),
-				LogLevel.None => nameof(   LogLevel.None  ),
+				LogLevel.Trace => nameof( LogLevel.Trace ),
+				LogLevel.Debug => nameof( LogLevel.Debug ),
+				LogLevel.Information => nameof( LogLevel.Information ),
+				LogLevel.Warning => nameof( LogLevel.Warning ),
+				LogLevel.Error => nameof( LogLevel.Error ),
+				LogLevel.Critical => nameof( LogLevel.Critical ),
+				LogLevel.None => nameof( LogLevel.None ),
 				var _ => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 			};
 
@@ -156,7 +175,7 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void LogTimeMessage( [CanBeNull] this String? message, BreakOrDontBreak breakinto = BreakOrDontBreak.DontBreak ) {
 			$"[{DateTime.Now:t}] {message ?? Symbols.Null}".DebugLine();
-			
+
 			if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
 				Debugger.Break();
 			}
@@ -171,7 +190,7 @@ namespace Librainian.Logging {
 				}
 			}
 			else {
-				if ( message is Exception exception) {
+				if ( message is Exception exception ) {
 					exception.ToStringDemystified().LogTimeMessage( breakinto );
 					return exception;
 				}

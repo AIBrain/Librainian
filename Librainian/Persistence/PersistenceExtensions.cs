@@ -111,10 +111,11 @@ namespace Librainian.Persistence {
 		}
 
 		public static async Task<Boolean> DeserializeDictionary<TKey, TValue>(
-			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary, CancellationToken cancellationToken,
+			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary,
 			[NotNull] Folder folder,
 			[CanBeNull] String? calledWhat,
-			[CanBeNull] String? extension = ".xml"
+			[CanBeNull] String? extension,
+			CancellationToken cancellationToken
 		) where TKey : IComparable<TKey> {
 			Assert.NotNull( nameof( folder ) );
 
@@ -126,6 +127,8 @@ namespace Librainian.Persistence {
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
+				extension ??= ".xml";
+
 				var exists = await folder.Exists( cancellationToken ).ConfigureAwait( false );
 
 				if ( exists != true ) {
@@ -133,7 +136,7 @@ namespace Librainian.Persistence {
 				}
 
 				var fileCount = UInt64.MinValue;
-				var before = toDictionary.LongCount();
+				var before = toDictionary.Count;
 
 				//enumerate all the files with the wildcard *.extension
 
@@ -168,7 +171,7 @@ namespace Librainian.Persistence {
 					}
 				}
 
-				var after = toDictionary.LongCount();
+				var after = toDictionary.Count;
 
 				stopwatch.Stop();
 				String.Format( "Deserialized {0} {3} from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler(), calledWhat ).Info();
@@ -331,7 +334,7 @@ namespace Librainian.Persistence {
 					throw new DirectoryNotFoundException( folder.FullPath );
 				}
 
-				var itemCount = ( UInt64 )dictionary.LongCount();
+				var itemCount = ( UInt64 )dictionary.Count;
 
 				String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 

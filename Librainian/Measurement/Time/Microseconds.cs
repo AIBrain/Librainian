@@ -85,7 +85,7 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Zero <see cref="Microseconds" />.</summary>
 		public static Microseconds Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( [NotNull] Microseconds? other ) {
+		public Int32 CompareTo( [CanBeNull] Microseconds? other ) {
 			if ( other == null ) {
 				throw new ArgumentNullException( nameof( other ) );
 			}
@@ -98,7 +98,7 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// Optimization
 		/// </summary>
-		private readonly Lazy<Rational> _lazyPlancksInOneMicrosecond  = new( () => ( Rational )PlanckTimes.InOneMicrosecond , true );
+		private readonly Lazy<Rational> _lazyPlancksInOneMicrosecond  = new( () => new Rational (new BigInteger( PlanckTimes.InOneMicrosecond )) , true );
 
 		public PlanckTimes ToPlanckTimes() => new( ( this.Value * this._lazyPlancksInOneMicrosecond.Value ).WholePart );
 

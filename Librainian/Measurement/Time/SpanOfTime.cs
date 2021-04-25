@@ -244,7 +244,7 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     <para>1 of each measure of time</para>
 		/// </summary>
-		public static SpanOfTime Identity { get; } = new( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 );
+		public static SpanOfTime Identity { get; } = new(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 		/// <summary>
 		/// </summary>
@@ -360,8 +360,6 @@ namespace Librainian.Measurement.Time {
 		public Int32 CompareTo( SpanOfTime? other ) => CompareTo( this, other );
 
 		public Int32 CompareTo( TimeSpan other ) => CompareTo( this, new SpanOfTime( other ) );
-
-		Boolean IEquatable<SpanOfTime>.Equals( SpanOfTime other ) => this.Equals( other );
 
 		/// <summary>
 		///     <para>Given the <paramref name="left" /><see cref="SpanOfTime" />,</para>
