@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librainian", "Librainian\Li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianUnitTests", "LibrainianUnitTests\LibrainianUnitTests.csproj", "{76F8EE64-B920-4CBC-8869-B686950A2D90}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F5E9FDE1-7F47-4034-A45F-E26507D4FFD4}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -25,7 +30,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 		BuildVersion_StartDate = 2000/1/1
+		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 	EndGlobalSection
 EndGlobal

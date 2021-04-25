@@ -54,7 +54,7 @@ namespace LibrainianUnitTests.Linguistics {
 
 			var seq = sentence.ToArray();
 
-			var bob = seq.FastPowerSet();
+			var bob = seq.PowerSet();
 
 			bob.SelectMany( words => words ).Count().Should()?.Be( 2304 ); //is 2304 correct?
 		}
