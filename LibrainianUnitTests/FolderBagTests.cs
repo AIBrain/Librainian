@@ -23,15 +23,13 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "FolderBagTests.cs" last touched on 2021-03-07 at 7:28 AM by Protiguous.
+// File "FolderBagTests.cs" last touched on 2021-04-30 at 11:34 AM by Protiguous.
 
 namespace LibrainianUnitTests {
 
-	using System;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
-	using System.Management;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Librainian.ComputerSystem.Devices;
@@ -42,44 +40,16 @@ namespace LibrainianUnitTests {
 	public static class FolderBagTests {
 
 		[Fact]
-		public static void OutputRamInformation() {
-			var searcher = new ManagementObjectSearcher( "select * from Win32_PhysicalMemory" );
-
-			var ram = 1;
-
-			foreach ( var o in searcher.Get() ) {
-				var managementObject = ( ManagementObject )o;
-				Debug.WriteLine( $"RAM #{ram}:" );
-
-				if ( managementObject != null ) {
-					foreach ( var property in managementObject.Properties ) {
-						if ( property != null ) {
-							Debug.WriteLine( $"{property.Name} = {property.Value}" );
-						}
-					}
-				}
-
-				Debug.WriteLine( "---------------------------------" );
-				Debug.WriteLine( Environment.NewLine );
-
-				ram++; // Increment our ram chip count
-			}
-		}
-
-		[Fact]
-		public static void TestRamInfo() => OutputRamInformation();
-
-		[Fact]
 		public static async Task TestStorageAndRetrieval() {
 			var counter = 0L;
 			var watch = Stopwatch.StartNew();
 			var pathTree = new FolderBag();
 
-			await foreach ( var drive in Disk.GetDrives( CancellationToken.None ) ) {
+			await foreach ( var drive in Disk.GetDrives( CancellationToken.None ).Take( 2 ) ) {
 				var root = new Folder( $"{drive.DriveLetter}:{Path.DirectorySeparatorChar}" );
 				Debug.WriteLine( root );
 
-				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.AllDirectories, CancellationToken.None ) ) {
+				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.AllDirectories, CancellationToken.None ).Take( 2 ) ) {
 					pathTree.FoundAnotherFolder( folder );
 					counter++;
 				}

@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright ï¿½ Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -59,9 +59,6 @@ namespace LibrainianUnitTests.Maths {
 
 		[Fact]
 		public static void SecondTest() => Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
-
-		//[OneTimeSetUp]
-		public static void Setup() { }
 
 		[Fact]
 		public static void ShouldReturnCorrectHomesteadDate_WhenSending_April_6_2378() {

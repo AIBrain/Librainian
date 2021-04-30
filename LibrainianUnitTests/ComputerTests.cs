@@ -1,4 +1,4 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,39 +23,40 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BenchmarkTests.cs" last touched on 2021-04-30 at 11:21 AM by Protiguous.
+// File "ComputerTests.cs" last touched on 2021-04-30 at 11:34 AM by Protiguous.
 
 namespace LibrainianUnitTests {
 
-	using System.Threading;
-	using FluentAssertions;
-	using Librainian.Measurement;
+	using System;
+	using System.Diagnostics;
+	using System.Management;
 	using Xunit;
 
-	public static class BenchmarkTests {
+	public static class ComputerTests {
 
 		[Fact]
-		public static void TestBenchmarking_MethodA() {
-			static void a() => Thread.Sleep( 10 );
-			static void b() => Thread.Sleep( 20 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
-		}
+		public static void OutputRamInformation() {
+			var searcher = new ManagementObjectSearcher( "select * from Win32_PhysicalMemory" );
 
-		[Fact]
-		public static void TestBenchmarking_MethodB() {
-			static void a() => Thread.Sleep( 20 );
-			static void b() => Thread.Sleep( 10 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
-		}
+			var ram = 1;
 
-		[Fact]
-		public static void TestBenchmarking_Same() {
-			static void a() => Thread.Sleep( 1 );
-			static void b() => Thread.Sleep( 1 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.Same );
+			foreach ( var o in searcher.Get() ) {
+				var managementObject = ( ManagementObject )o;
+				Debug.WriteLine( $"RAM #{ram}:" );
+
+				if ( managementObject != null ) {
+					foreach ( var property in managementObject.Properties ) {
+						if ( property != null ) {
+							Debug.WriteLine( $"{property.Name} = {property.Value}" );
+						}
+					}
+				}
+
+				Debug.WriteLine( "---------------------------------" );
+				Debug.WriteLine( Environment.NewLine );
+
+				ram++; // Increment our ram chip count
+			}
 		}
 
 	}
