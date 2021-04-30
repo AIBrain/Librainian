@@ -66,7 +66,7 @@ namespace Librainian.Measurement {
 			var oldPriority = Thread.CurrentThread.Priority;
 			Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-			runFor ??= Seconds.Five;
+			runFor ??= Seconds.One;
 
 			try {
 				try {
@@ -119,7 +119,7 @@ namespace Librainian.Measurement {
 				throw new ArgumentNullException( nameof( methodB ) );
 			}
 
-			runfor ??= Seconds.Five;
+			runfor ??= Seconds.One;
 
 			var a = GetBenchmark( methodA, runfor );
 

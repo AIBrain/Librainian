@@ -32,6 +32,7 @@ namespace Librainian.Databases {
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
+	using System.Threading;
 	using JetBrains.Annotations;
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
@@ -40,19 +41,20 @@ namespace Librainian.Databases {
 
 		TimeSpan CommandTimeout { get; set; }
 
-		String? Sproc { get; set; }
+		[CanBeNull]
+		AsyncLocal<String?>? Query { get; set; }
 
 		/// <summary>
 		///     Opens and then closes a <see cref="SqlConnection" />.
 		/// </summary>
 		/// <returns></returns>
-		Int32? ExecuteNonQuery( String sproc, CommandType commandType, params SqlParameter[] parameters );
+		Int32? ExecuteNonQuery( String query, CommandType commandType, params SqlParameter[] parameters );
 
-		Int32? ExecuteNonQuery( String sproc, Int32 retries, CommandType commandType, params SqlParameter[] parameters );
+		Int32? ExecuteNonQuery( String query, Int32 retries, CommandType commandType, params SqlParameter[] parameters );
 
-		PooledValueTask<Int32?> ExecuteNonQueryAsync( String sproc, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, params SqlParameter[] parameters );
 
-		PooledValueTask<Int32?> ExecuteNonQueryAsync( String sproc, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     Returns a <see cref="DataTable" />
@@ -100,40 +102,40 @@ namespace Librainian.Databases {
 		PooledValueTask<TResult?> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
 		/// <summary>
-		///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="sproc" />.
-		///     <para>Note: Include the parameters after the sproc.</para>
-		///     <para>Can throw exceptions on connecting or executing the sproc.</para>
+		///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="query" />.
+		///     <para>Note: Include the parameters after the query.</para>
+		///     <para>Can throw exceptions on connecting or executing the query.</para>
 		/// </summary>
-		/// <param name="sproc">      </param>
+		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
-		PooledValueTask<Boolean> FillTableAsync( [NotNull] String sproc, CommandType commandType, [NotNull] DataTable table, params SqlParameter[] parameters );
+		PooledValueTask<Boolean> FillTableAsync( [NotNull] String query, CommandType commandType, [NotNull] DataTable table, params SqlParameter[] parameters );
 
-		DataTableReader? QueryAdHoc( [NotNull] String sql, params SqlParameter[] parameters );
+		DataTableReader? QueryAdHoc( [NotNull] String query, params SqlParameter[] parameters );
 
 		PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters );
 
-		PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( [NotNull] String sql, params SqlParameter[] parameters );
+		PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( [NotNull] String query, params SqlParameter[] parameters );
 
 		/// <summary>
-		///     <para>Connect and then run <paramref name="sproc" />.</para>
+		///     <para>Connect and then run <paramref name="query" />.</para>
 		/// </summary>
-		/// <param name="sproc">     </param>
+		/// <param name="query">     </param>
 		/// <param name="parameters"></param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String sproc, params SqlParameter[] parameters );
+		PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, params SqlParameter[] parameters );
 
 		/// <summary>
-		///     <para>Connect and then run <paramref name="sproc" />.</para>
+		///     <para>Connect and then run <paramref name="query" />.</para>
 		/// </summary>
-		/// <param name="sproc">      </param>
+		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String sproc, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     Returns a <see cref="IEnumerable{T}" />
@@ -144,7 +146,7 @@ namespace Librainian.Databases {
 		/// <returns></returns>
 		IEnumerable<TResult>? QueryList<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
 
-		PooledValueTask<Int32?> RunSprocAsync( String sproc, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> RunSprocAsync( String query, params SqlParameter[] parameters );
 
 		void UseDatabase( [NotNull] String databaseName );
 

@@ -518,11 +518,11 @@ namespace Librainian.Controls {
 		/// <param name="afterClick"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static FluentTimer Push( this Button control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
-			return ( delay ?? Milliseconds.One ).CreateTimer( () => control.InvokeAction( () => {
-				control.PerformClick();
-				afterClick?.Invoke();
-			} ) )
+		public static FluentTimer Push( [CanBeNull] this Button? control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
+			return ( delay ?? Milliseconds.One ).CreateTimer( () => control?.InvokeAction( () => {
+				                                    control.PerformClick();
+				                                    afterClick?.Invoke();
+			                                    } ) )
 												.Start();
 		}
 

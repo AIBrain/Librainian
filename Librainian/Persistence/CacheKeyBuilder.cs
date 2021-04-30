@@ -83,7 +83,7 @@ namespace Librainian.Persistence {
 		[DebuggerStepThrough]
 		public static String BuildKey( [NotNull] params Object[] things ) {
 			if ( things is null ) {
-				throw new ArgumentNullException( nameof( things ) ).Log( BreakOrDontBreak.Break );
+				throw new ArgumentNullException( nameof( things ) ).Log( BreakOrDontBreak.Break )!;
 			}
 
 			if ( !things.Any() ) {

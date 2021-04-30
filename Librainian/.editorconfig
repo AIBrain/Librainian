@@ -308,6 +308,9 @@ dotnet_diagnostic.CA1825.severity = error
 # CA1829: Use Length/Count property instead of Count() when available
 dotnet_diagnostic.CA1829.severity = error
 
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = silent
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab

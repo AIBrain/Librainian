@@ -80,7 +80,7 @@ namespace Librainian.Databases {
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken, cancellationToken );
 
 				return db.ExecuteScalar<T>( command, CommandType.Text );
 			}
@@ -94,14 +94,14 @@ namespace Librainian.Databases {
 		public static async PooledValueTask<T?> AdhocAsync<T>(
 			[NotNull] this SqlConnectionStringBuilder builderToTest,
 			[NotNull] String command,
-			CancellationToken? cancellationToken
+			CancellationToken cancellationToken
 		) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken, cancellationToken );
 
 				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
 			}
@@ -394,12 +394,12 @@ namespace Librainian.Databases {
 		[Pure]
 		[NotNull]
 		public static SqlCommand PopulateParameters( [NotNull] this SqlCommand command, IEnumerable<SqlParameter?>? parameters ) {
-			if ( command.Parameters is not null && parameters is not null ) {
-				foreach ( var parameter in parameters ) {
-					if ( parameter != null ) {
-						command.Parameters.Add( parameter );
-					}
-				}
+			if ( command.Parameters is null || parameters is null ) {
+				return command;
+			}
+
+			foreach ( var parameter in parameters.Where( parameter => parameter is not null ) ) {
+				command.Parameters.Add( parameter! );
 			}
 
 			return command;
@@ -422,7 +422,7 @@ namespace Librainian.Databases {
 			[NotNull] String connectionString,
 
 			//Credentials getCredentials,
-			CancellationToken? cancellationToken
+			CancellationToken cancellationToken
 		) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
@@ -801,7 +801,7 @@ namespace Librainian.Databases {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static async ValueTask<SqlServerInfo?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken? cancellationToken ) {
+		public static async ValueTask<SqlServerInfo?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken cancellationToken ) {
 			if ( test is null ) {
 				throw new ArgumentNullException( nameof( test ) );
 			}
@@ -810,7 +810,7 @@ namespace Librainian.Databases {
 				var version = await test.AdhocAsync<String>( "select @@version;", cancellationToken ).ConfigureAwait( false );
 
 				if ( String.IsNullOrWhiteSpace( version ) ) {
-					$"Failed connecting to server {test.DataSource}.".Break();
+					$"Failed connecting to server {test.DataSource}.".Verbose();
 
 					return default( SqlServerInfo? );
 				}
@@ -818,7 +818,7 @@ namespace Librainian.Databases {
 				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", cancellationToken ).ConfigureAwait( false );
 
 				if ( !getdate.HasValue ) {
-					$"Failed connecting to server {test.DataSource}.".Break();
+					$"Failed connecting to server {test.DataSource}.".Verbose();
 
 					return default( SqlServerInfo? );
 				}

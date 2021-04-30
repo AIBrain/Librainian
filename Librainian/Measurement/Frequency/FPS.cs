@@ -62,7 +62,7 @@ namespace Librainian.Measurement.Frequency {
         /// <summary>Fifteen <see cref="Fps" /> s.</summary>
         public static Fps Fifteen { get; } = new( 15 );
 
-        /// <summary>59. 9 <see cref="Fps" />.</summary>
+        /// <summary>59.9 <see cref="Fps" />.</summary>
         public static Fps FiftyNinePointNine { get; } = new( 59.9 );
 
         /// <summary>Five <see cref="Fps" /> s.</summary>
@@ -71,7 +71,7 @@ namespace Librainian.Measurement.Frequency {
         /// <summary>Five Hundred <see cref="Fps" /> s.</summary>
         public static Fps FiveHundred { get; } = new( 500 );
 
-        /// <summary>111. 1 <see cref="Fps" />.</summary>
+        /// <summary>111.1 <see cref="Fps" />.</summary>
         public static Fps Hertz111 { get; } = new( 111.1 );
 
         /// <summary>One <see cref="Fps" />.</summary>

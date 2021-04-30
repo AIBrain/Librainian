@@ -45,7 +45,9 @@ namespace Librainian.Databases {
 		/// <param name="connectionString"></param>
 		/// <param name="retries">         </param>
 		/// <exception cref="InvalidOperationException"></exception>
-		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.</remarks>
+		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.
+		/// It probably doesn't help, as experience shows a database connection should be as short as possible.
+		/// </remarks>
 		public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
@@ -88,9 +90,9 @@ namespace Librainian.Databases {
 			}
 
 			try {
-				this.SqlConnections.Value!.Open();
+				sqlConnectionsValue.Open();
 
-				return this.SqlConnections.Value;
+				return sqlConnectionsValue;
 			}
 			catch ( Exception exception ) {
 				exception.Log();
