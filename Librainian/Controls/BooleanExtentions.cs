@@ -23,36 +23,29 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "QuestionBox.cs" last touched on 2021-04-25 at 4:18 PM by Protiguous.
-
-#nullable enable
+// File "BooleanExtentions.cs" last touched on 2021-05-02 at 11:12 AM by Protiguous.
 
 namespace Librainian.Controls {
 
 	using System;
-	using System.Windows.Forms;
-	using Exceptions;
-	using JetBrains.Annotations;
 
-	public partial class QuestionBox : Form {
+	[Obsolete("Don't actually use these lol.")]
+	public static class BooleanExtentions {
 
-		public QuestionBox( [NotNull] String question ) {
-			if ( String.IsNullOrWhiteSpace( question ) ) {
-				throw new ArgumentEmptyException( nameof( question ) );
-			}
+		/// <summary>
+		/// Ignores the <paramref name="value"/> and returns true.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Boolean True( this Boolean value ) => true;
 
-			this.InitializeComponent();
-			this.Question = question;
-			this.Response = default( String? );
-		}
+		/// <summary>
+		/// Ignores the <paramref name="value"/> and returns false.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static Boolean False( this Boolean value ) => false;
 
-		public String Question { get; }
-
-		public String? Response { get; set; }
-
-		private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
-
-		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = ( sender as TextBox ).Text();
 
 	}
 

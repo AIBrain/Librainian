@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "State.cs" last touched on 2021-04-25 at 1:54 AM by Protiguous.
+// File "State.cs" last touched on 2021-04-25 at 11:02 AM by Protiguous.
 
 namespace Librainian.Controls {
 

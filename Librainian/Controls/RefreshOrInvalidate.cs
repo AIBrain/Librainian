@@ -23,36 +23,22 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "QuestionBox.cs" last touched on 2021-04-25 at 4:18 PM by Protiguous.
-
-#nullable enable
+// File "RefreshOrInvalidate.cs" last touched on 2021-05-02 at 11:02 AM by Protiguous.
 
 namespace Librainian.Controls {
 
 	using System;
-	using System.Windows.Forms;
-	using Exceptions;
-	using JetBrains.Annotations;
 
-	public partial class QuestionBox : Form {
+	[Flags]
+	public enum RefreshOrInvalidate {
 
-		public QuestionBox( [NotNull] String question ) {
-			if ( String.IsNullOrWhiteSpace( question ) ) {
-				throw new ArgumentEmptyException( nameof( question ) );
-			}
+		Neither = 0b1,
 
-			this.InitializeComponent();
-			this.Question = question;
-			this.Response = default( String? );
-		}
+		Invalidate = 0b10,
 
-		public String Question { get; }
+		Refresh = 0b100,
 
-		public String? Response { get; set; }
-
-		private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
-
-		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = ( sender as TextBox ).Text();
+		Both = 0b110
 
 	}
 
