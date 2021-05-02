@@ -48,6 +48,21 @@ namespace Librainian.Threading {
 	/// </summary>
 	public static class TaskExtensions {
 
+		/// <summary>
+		/// Throws <see cref="OperationCanceledException"></see> if any tokens that have been cancelled.
+		/// </summary>
+		/// <param name="tokens"></param>
+		/// <exception cref="OperationCanceledException"></exception>
+		public static void ThrowAnyCancelledTokens( [NotNull] params CancellationToken[] tokens ) {
+			if ( tokens == null ) {
+				throw new ArgumentNullException( nameof( tokens ) );
+			}
+
+			foreach ( var cancellationToken in tokens ) {
+				cancellationToken.ThrowIfCancellationRequested();
+			}
+		}
+
 		/// <summary>Quietly consume the <paramref name="task" /> on a background thread. Fire & forget.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>

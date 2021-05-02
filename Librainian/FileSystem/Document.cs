@@ -1013,6 +1013,7 @@ namespace Librainian.FileSystem {
 				progress?.Report( ++i / maxsteps );
 
 				if ( !await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+					ZeroToOne bob;
 					progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 
 					return ( Status.Bad, default( T? ) );

@@ -1,25 +1,29 @@
 ﻿// Copyright � Protiguous. All Rights Reserved.
-//
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our
-// binaries, libraries, projects, solutions, or applications.
-//
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from
-// happening, but it does accidentally happen.)
-//
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find your code
-// unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you want to use any of our code
-// in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
+// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do With Our Code. We are
-// NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
-//
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please contact me at
-// Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
-//
-// File "DatabaseExtensions.cs" last touched on 2021-03-07 at 8:33 AM by Protiguous.
+// Disclaimer:  Usage of the source code or binaries is AS-IS.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
+// ====================================================================
+// 
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
+// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Our software can be found at "https://Protiguous.Software/"
+// Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "DatabaseExtensions.cs" last touched on 2021-04-25 at 8:32 AM by Protiguous.
 
 #nullable enable
 
@@ -56,7 +60,7 @@ namespace Librainian.Databases {
 		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new();
 
 		/// <summary>
-		/// Return a dictionary of fields and their index.
+		///     Return a dictionary of fields and their index.
 		/// </summary>
 		/// <param name="reader"></param>
 		/// <returns></returns>
@@ -93,17 +97,17 @@ namespace Librainian.Databases {
 
 		public static async PooledValueTask<T?> AdhocAsync<T>(
 			[NotNull] this SqlConnectionStringBuilder builderToTest,
-			[NotNull] String command,
+			[NotNull] String query,
 			CancellationToken cancellationToken
 		) {
-			if ( String.IsNullOrWhiteSpace( command ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
+			if ( String.IsNullOrWhiteSpace( query ) ) {
+				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			try {
 				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken, cancellationToken );
 
-				return await db.ExecuteScalarAsync<T>( command, CommandType.Text ).ConfigureAwait( false );
+				return await db.ExecuteScalarAsync<T>( query, CommandType.Text ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -152,7 +156,7 @@ namespace Librainian.Databases {
 		*/
 
 		/// <summary>
-		/// Enumerates all SQL Server instances on the machine.
+		///     Enumerates all SQL Server instances on the machine.
 		/// </summary>
 		/// <returns></returns>
 		[ItemNotNull]
@@ -191,8 +195,9 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given <paramref name="key" />.
-		/// <para>Returns the key.</para>
+		///     Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given
+		///     <paramref name="key" />.
+		///     <para>Returns the key.</para>
 		/// </summary>
 		/// <param name="file">            </param>
 		/// <param name="connectionString"></param>
@@ -282,7 +287,7 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// Method returns the correct SQL namespace to use to detect SQL Server instances.
+		///     Method returns the correct SQL namespace to use to detect SQL Server instances.
 		/// </summary>
 		/// <returns>namespace to use to detect SQL Server instances</returns>
 		[ItemNotNull]
@@ -293,7 +298,6 @@ namespace Librainian.Databases {
 			var namespaces = new List<String>();
 
 			try {
-
 				// Enumerate all WMI instances of __namespace WMI class.
 				var objectGetOptions = new ObjectGetOptions {
 					Timeout = Seconds.Ten
@@ -329,7 +333,7 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// method extracts the instance name from the service name
+		///     method extracts the instance name from the service name
 		/// </summary>
 		/// <param name="serviceName"></param>
 		/// <returns></returns>
@@ -359,7 +363,7 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// Returns the WMI property value for a given property name for a particular SQL Server service Name
+		///     Returns the WMI property value for a given property name for a particular SQL Server service Name
 		/// </summary>
 		/// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
 		/// <param name="wmiNamespace">The wmi namespace to connect to</param>
@@ -406,7 +410,6 @@ namespace Librainian.Databases {
 		}
 
 		public static Boolean PossibleTimeout( [NotNull] this SqlException exception ) {
-
 			// ugh.
 
 			if ( exception is null ) {
@@ -414,8 +417,8 @@ namespace Librainian.Databases {
 			}
 
 			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
-				   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
-				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase );
+			       exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
+			       exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase );
 		}
 
 		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString(
@@ -429,16 +432,13 @@ namespace Librainian.Databases {
 			}
 
 			try {
-				var builder = new SqlConnectionStringBuilder( connectionString ) {
-
-					//UserID = getCredentials.UserID, Password = getCredentials.Password
-				};
+				var builder = new SqlConnectionStringBuilder( connectionString );
 
 				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( true );
 
 				if ( sqlServer?.Status.IsGood() == true ) {
 					if ( sqlServer.ConnectionStringBuilder != null ) {
-						return (sqlServer.Status, sqlServer.ConnectionStringBuilder.ConnectionString);
+						return ( sqlServer.Status, sqlServer.ConnectionStringBuilder.ConnectionString );
 					}
 				}
 			}
@@ -455,11 +455,11 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return (Status.Failure, default( String? ));
+			return ( Status.Failure, default( String? ) );
 		}
 
 		/// <summary>
-		/// Convert our IList to a DataSet
+		///     Convert our IList to a DataSet
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list">      </param>
@@ -527,7 +527,7 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.
+		///     To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.
 		/// </summary>
 		/// <param name="dataReader"></param>
 		/// <returns></returns>
@@ -542,8 +542,8 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// <para>Warning: Untested and possibly buggy.</para>
-		/// Convert our <paramref name="list" /> to a <see cref="DataTable" />.
+		///     <para>Warning: Untested and possibly buggy.</para>
+		///     Convert our <paramref name="list" /> to a <see cref="DataTable" />.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
@@ -581,7 +581,7 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		/// Warning: Untested.
+		///     Warning: Untested.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
@@ -688,7 +688,7 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( parameterName ) );
 			}
 
-			return new( parameterName, sqlDbType, size );
+			return new(parameterName, sqlDbType, size);
 		}
 
 		/*
@@ -794,8 +794,8 @@ namespace Librainian.Databases {
         */
 
 		/// <summary>
-		/// Performs two adhoc selects on the database.
-		/// <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
+		///     Performs two adhoc selects on the database.
+		///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
 		/// </summary>
 		/// <param name="test">             </param>
 		/// <param name="cancellationToken"></param>
@@ -833,10 +833,7 @@ namespace Librainian.Databases {
 					var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
 					return new SqlServerInfo {
-						Status = Status.Success,
-						ConnectionStringBuilder = connectionStringBuilder,
-						Version = version,
-						UTCDateTime = serverDateTime
+						Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
 					};
 				}
 			}
@@ -899,5 +896,7 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
+
 	}
+
 }

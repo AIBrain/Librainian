@@ -64,13 +64,14 @@ namespace Librainian.Databases {
 		/// <summary>
 		///     The number of sql connections open across ALL threads.
 		/// </summary>
-		private Int64 ConnectionCounter;
+		private AsyncLocal<Int64> ConnectionCounter { get; } = new();
 
 		/// <summary>
 		/// </summary>
 		/// <param name="connectionString"> </param>
 		/// <param name="useDatabase">      </param>
-		/// <param name="cancellationToken"></param>
+		/// <param name="openCancellationToken"></param>
+		/// <param name="executeCancellationToken"></param>
 		/// <exception cref="InvalidOperationException"></exception>
 		public DatabaseServer( String connectionString, [CanBeNull] String? useDatabase, CancellationToken openCancellationToken, CancellationToken executeCancellationToken ) {
 			$"New {nameof( DatabaseServer )} on thread {Thread.CurrentThread.ManagedThreadId}.".Verbose();
@@ -885,7 +886,7 @@ namespace Librainian.Databases {
 				}
 
 				if ( this._connection.Value.State.In( ConnectionState.Connecting, ConnectionState.Open, ConnectionState.Executing, ConnectionState.Fetching ) ) {
-					Interlocked.Increment( ref this.ConnectionCounter );
+					--this.ConnectionCounter.Value;
 				}
 				else {
 					throw new InvalidOperationException( $"Connection state is {this._connection.Value.State}" );
@@ -919,19 +920,19 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>
-		///     A count of every SQL connection that has had Open() called.
+		///     A count of every SQL connection that has had Open() called per thread.
 		///     <para>Each call to Close() will decrement this counter.</para>
 		/// </summary>
 		/// <returns></returns>
-		public Int64 GetConnectionCounter() => Interlocked.Read( ref this.ConnectionCounter );
+		public Int64 GetConnectionCounter() => this.ConnectionCounter.Value;
 
 		private void CloseAsyncConnection() {
 			var connection = this._connection;
 			if ( connection?.Value is not null ) {
 				if ( this.GetConnectionCounter().Any() ) {
 					connection.Value.Close();
-					Interlocked.Decrement( ref this.ConnectionCounter );
-					Assert.True( this.ConnectionCounter >= 0 );
+					--this.ConnectionCounter.Value;
+					Assert.True( this.ConnectionCounter.Value >= 0 );
 				}
 
 				connection.Value = default( SqlConnection? );
@@ -997,7 +998,7 @@ namespace Librainian.Databases {
 			}
 
 			connection.Close();
-			Interlocked.Decrement( ref this.ConnectionCounter );
+			--this.ConnectionCounter.Value;
 		}
 
 		[Pure]
@@ -1014,7 +1015,7 @@ namespace Librainian.Databases {
 
 				var connection = new SqlConnection( this._connectionString );
 				connection.Open();
-				Interlocked.Increment( ref this.ConnectionCounter );
+				++this.ConnectionCounter.Value;
 
 				return connection;
 			}
@@ -1101,7 +1102,7 @@ namespace Librainian.Databases {
 		///     Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.
 		/// </summary>
 		public override void DisposeManaged() {
-			var connectionsStillOpen = Interlocked.Read( ref this.ConnectionCounter );
+			var connectionsStillOpen = this.ConnectionCounter.Value;
 
 			if ( connectionsStillOpen.Any() ) {
 				$"Warning: We have an unclosed DatabaseServer() connection somewhere. Last Query={this.Query.DoubleQuote()}".Log( BreakOrDontBreak.Break );
@@ -1350,6 +1351,8 @@ namespace Librainian.Databases {
 				yield return record;
 			}
 		}
+
+		public String? GetConnectionString() => this._connectionString;
 
 	}
 
