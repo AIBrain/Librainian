@@ -32,7 +32,6 @@ namespace Librainian.Databases {
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
-	using System.Threading;
 	using JetBrains.Annotations;
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
@@ -42,7 +41,7 @@ namespace Librainian.Databases {
 		TimeSpan CommandTimeout { get; set; }
 
 		[CanBeNull]
-		AsyncLocal<String?>? Query { get; set; }
+		String? Query { get; set; }
 
 		/// <summary>
 		///     Opens and then closes a <see cref="SqlConnection" />.
@@ -114,7 +113,7 @@ namespace Librainian.Databases {
 
 		DataTableReader? QueryAdHoc( [NotNull] String query, params SqlParameter[] parameters );
 
-		PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters );
+		PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters );
 
 		PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( [NotNull] String query, params SqlParameter[] parameters );
 

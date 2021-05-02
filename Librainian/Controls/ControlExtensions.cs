@@ -261,7 +261,7 @@ namespace Librainian.Controls {
 			Seconds.Five.Then( async () => {
 				if ( String.IsNullOrWhiteSpace( input.Text() ) ) {
 					control.Flash( Seconds.One );
-					await input.FlashWhileBlank( control, cancellationToken ).ConfigureAwait( true );
+					await input.FlashWhileBlank( control, cancellationToken ).ConfigureAwait( false );
 				}
 			}, cancellationToken );
 

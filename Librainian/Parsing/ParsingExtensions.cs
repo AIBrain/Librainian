@@ -255,22 +255,23 @@ namespace Librainian.Parsing {
 		[DebuggerStepThrough]
 		[NotNull]
 		[Pure]
-		public static String? SmartQuote<T>( [CanBeNull] this T self ) {
+		public static String SmartQuote<T>( [CanBeNull] this T self ) {
+
 			var trimmed = self?.ToString().Trimmed();
 
 			if ( String.IsNullOrEmpty( trimmed ) ) {
-				throw new ArgumentEmptyException( nameof( trimmed ) );
+				trimmed = Symbols.Null;
 			}
 
 			if ( trimmed.Length < 2 ) {
-				return $"{ParsingConstants.Chars.DoubleQuote}{trimmed}{ParsingConstants.Chars.DoubleQuote}";
+				return $"{ParsingConstants.Chars.LeftDoubleQuote}{trimmed}{ParsingConstants.Chars.DoubleQuote}";
 			}
 
 			var starts = trimmed[ 0 ];
 			var ends = trimmed[ ^1 ];
 
 			if ( starts == ParsingConstants.Chars.SingleQuote && ends == ParsingConstants.Chars.SingleQuote ) {
-				return $"{ParsingConstants.Chars.DoubleQuote}{trimmed}{ParsingConstants.Chars.DoubleQuote}";
+				return $"{ParsingConstants.Chars.LeftDoubleQuote}{trimmed}{ParsingConstants.Chars.RightDoubleQuote}";
 			}
 
 			if ( starts == ParsingConstants.Chars.LeftSingleQuote && ends == ParsingConstants.Chars.RightSingleQuote ) {

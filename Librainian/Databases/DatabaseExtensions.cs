@@ -434,7 +434,7 @@ namespace Librainian.Databases {
 			try {
 				var builder = new SqlConnectionStringBuilder( connectionString );
 
-				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( true );
+				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( false );
 
 				if ( sqlServer?.Status.IsGood() == true ) {
 					if ( sqlServer.ConnectionStringBuilder != null ) {
