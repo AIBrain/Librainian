@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,17 +14,18 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ConcurrentHashset.cs" last formatted on 2020-09-29 at 2:56 AM.
 
 #nullable enable
 
 namespace Librainian.Collections.Sets {
+
 	using System;
 	using System.Collections;
 	using System.Collections.Concurrent;
@@ -45,14 +46,6 @@ namespace Librainian.Collections.Sets {
 	[Serializable]
 	[JsonObject]
 	public class ConcurrentHashset<T> : IEnumerable<T> where T : notnull {
-		[DebuggerStepThrough]
-		public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) => this.AddRange( list );
-
-		[DebuggerStepThrough]
-		public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object?>( concurrency, capacity );
-
-		[DebuggerStepThrough]
-		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object?>();
 
 		[JsonProperty]
 		[NotNull]
@@ -85,12 +78,17 @@ namespace Librainian.Collections.Sets {
 			}
 		}
 
-		public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		[DebuggerStepThrough]
+		public ConcurrentHashset( [NotNull] IEnumerable<T> list ) : this( Environment.ProcessorCount ) => this.AddRange( list );
 
 		[DebuggerStepThrough]
-		public void Add( [NotNull] T item ) => this.Set[item] = null;
+		public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object?>( concurrency, capacity );
+
+		[DebuggerStepThrough]
+		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object?>();
+
+		[DebuggerStepThrough]
+		public void Add( [NotNull] T item ) => this.Set[ item ] = null;
 
 		[DebuggerStepThrough]
 		public void AddRange( [NotNull] IEnumerable<T> items ) {
@@ -106,6 +104,8 @@ namespace Librainian.Collections.Sets {
 
 		[DebuggerStepThrough]
 		public Boolean Contains( [NotNull] T item ) => this.Set.ContainsKey( item );
+
+		public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
 
 		[DebuggerStepThrough]
 		public Boolean Remove( [NotNull] T item ) => this.Set.TryRemove( item, out var _ );
@@ -127,7 +127,7 @@ namespace Librainian.Collections.Sets {
 		/// <param name="tag"></param>
 		/// <returns></returns>
 		public Boolean Tag( [NotNull] T item, [CanBeNull] Object? tag ) {
-			this.Set[item] = tag;
+			this.Set[ item ] = tag;
 
 			return true;
 		}
@@ -141,5 +141,7 @@ namespace Librainian.Collections.Sets {
 
 			return tag;
 		}
+
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
 }

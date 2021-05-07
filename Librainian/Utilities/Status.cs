@@ -32,7 +32,7 @@ namespace Librainian {
 	public enum Status : Int16 {
 
 		[Description( Symbols.SkullAndCrossbones )]
-		Fatal = Exception - 1,
+		Fatal = -Flawless,
 
 		[Description( Symbols.Exception )]
 		Exception = Error - 1,
@@ -43,65 +43,68 @@ namespace Librainian {
 		[Description( Symbols.Warning )]
 		Warning = Skip - 1,
 
-		[Description( Symbols.Fail )]
-		Skip = Timeout - 1,
+			[Description( Symbols.Fail )]
+			Skip = -Continue,
 
-			[Description( Symbols.Timeout )]
-			Timeout = Stop - 1,
-
-				[Description( Symbols.StopSign )]
-				Stop = Halt - 1,
-
-					[Description( Symbols.StopSign )]
-					Halt = Done - 1,
+					[Description( Symbols.Timeout )]
+					Timeout = Stop - 1,
 
 						[Description( Symbols.StopSign )]
-						Done = Negative - 1,
+						Stop = -Start,
 
-						[Description( Symbols.FailBig )]
-						Negative = No - 1,
+							[Description( Symbols.StopSign )]
+							Halt = -Proceed,
 
-							[Description( Symbols.Fail )]
-							No = -Yes,
+								[Description( Symbols.StopSign )]
+								Done = Negative - 1,
 
-								[Description( Symbols.Fail )]
-								Bad = -Good,
+								[Description( Symbols.FailBig )]
+								Negative = No - 1,
 
-									[Description( Symbols.BlackStar )]
-									Failure = -Success,
+									[Description( Symbols.Fail )]
+									No = -Yes,
 
-										[Description( Symbols.Unknown )]
-										Unknown = 0,
+										[Description( Symbols.Fail )]
+										Bad = -Good,
 
-									[Description( Symbols.WhiteStar )]
-									Success = 1,
+											[Description( Symbols.BlackStar )]
+											Failure = -Success,
 
-									[Description( Symbols.WhiteStar )]
-									Okay = Success,
+												[Description( Symbols.Unknown )]
+												Unknown = 0,
+
+												[Description( Symbols.Unknown )]
+												None = Unknown,
+
+											[Description( Symbols.WhiteStar )]
+											Success = 1,
+
+											[Description( Symbols.WhiteStar )]
+											Okay = Success+1,
+
+										[Description( Symbols.CheckMark )]
+										Good = Okay + 1,
+
+									[Description( Symbols.CheckMark )]
+									Yes = Good + 1,
 
 								[Description( Symbols.CheckMark )]
-								Good = Success + 1,
+								Positive = Yes + 1,
 
 							[Description( Symbols.CheckMark )]
-							Yes = Good + 1,
+							Continue = Positive + 1,
 
 						[Description( Symbols.CheckMark )]
-						Positive = Yes + 1,
+						Go = Continue + 1,
 
 					[Description( Symbols.CheckMark )]
-					Continue = Positive + 1,
+					Start = Go + 1,
 
 				[Description( Symbols.CheckMark )]
-				Go = Continue + 1,
-
-				[Description( Symbols.CheckMark )]
-				Start = Go,
+				Proceed = Start + 1,
 
 			[Description( Symbols.CheckMark )]
-			Proceed = Go + 1,
-
-		[Description( Symbols.CheckMark )]
-		Advance = Proceed + 1,
+			Advance = Proceed + 1,
 
 		[Description( Symbols.CheckMark )]
 		Flawless = Advance + 1

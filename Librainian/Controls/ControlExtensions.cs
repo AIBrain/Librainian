@@ -339,16 +339,7 @@ namespace Librainian.Controls {
 				return;
 			}
 
-			if ( control.InvokeRequired ) {
-				control.BeginInvoke( action );
-				control.InvokeAction( MaybeRedraw, RefreshOrInvalidate.Neither );
-			}
-			else {
-				action();
-				MaybeRedraw();
-			}
-
-			void MaybeRedraw() {
+			void Action() {
 				if ( redraw.HasFlag( RefreshOrInvalidate.Invalidate ) ) {
 					control.Invalidate();
 				}
@@ -356,6 +347,15 @@ namespace Librainian.Controls {
 				if ( redraw.HasFlag( RefreshOrInvalidate.Refresh ) ) {
 					control.Refresh();
 				}
+			}
+
+			if ( control.InvokeRequired ) {
+				control.Invoke( action );
+				control.Invoke( ( Action )Action );
+			}
+			else {
+				action();
+				Action();
 			}
 		}
 
@@ -488,7 +488,11 @@ namespace Librainian.Controls {
 		/// <param name="delay">  </param>
 		/// <returns></returns>
 		/// <see cref="Push" />
-		public static void PerformClick( [NotNull] this Button control, TimeSpan? delay = null ) => control.Push( delay );
+		public static async Task PerformClick( [NotNull] this Button control, TimeSpan? delay = null ) {
+			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
+
+			control.InvokeAction( control.PerformClick, RefreshOrInvalidate.Neither );
+		}
 
 		/// <summary>
 		///     Threadsafe <see cref="Button.PerformClick" />.
@@ -503,13 +507,10 @@ namespace Librainian.Controls {
 		/// <param name="delay">     </param>
 		/// <param name="afterClick"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static FluentTimer Push( [CanBeNull] this Button? control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
-			return ( delay ?? Milliseconds.One ).CreateTimer( () => control?.InvokeAction( () => {
-				                                    control.PerformClick();
-				                                    afterClick?.Invoke();
-			                                    } ) )
-			                                    .Start();
+		public static async ValueTask Push( [CanBeNull] this Button? control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
+			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
+
+			control.InvokeAction( control!.PerformClick, RefreshOrInvalidate.Neither );
 		}
 
 		/// <summary>

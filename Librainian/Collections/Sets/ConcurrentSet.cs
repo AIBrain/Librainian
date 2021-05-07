@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ConcurrentSet.cs" last formatted on 2020-08-14 at 8:31 PM.
 
 namespace Librainian.Collections.Sets {
@@ -39,18 +39,9 @@ namespace Librainian.Collections.Sets {
 	[JsonObject]
 	public class ConcurrentSet<T> : ISet<T> {
 
-		public ConcurrentSet() { }
-
-		public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( items );
-
-		public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( items );
-
 		/// <summary>Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}" />.</summary>
 		[JsonProperty]
 		private ConcurrentDictionary<T, Object> Dictionary { get; } = new( Environment.ProcessorCount, 7 );
-
-		/// <summary>Gets a value that indicates if the set is empty.</summary>
-		public Boolean IsEmpty => this.Dictionary.IsEmpty;
 
 		/// <summary>Gets a value indicating whether the <see cref="ICollection" /> is read-only.</summary>
 		/// <returns>true if the <see cref="ICollection" /> is read-only; otherwise, false.</returns>
@@ -58,6 +49,15 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Gets the number of elements in the set.</summary>
 		public Int32 Count => this.Dictionary.Count;
+
+		/// <summary>Gets a value that indicates if the set is empty.</summary>
+		public Boolean IsEmpty => this.Dictionary.IsEmpty;
+
+		public ConcurrentSet() { }
+
+		public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( items );
+
+		public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( items );
 
 		/// <summary>Adds an element to the current set and returns a value to indicate if the element was successfully added.</summary>
 		/// <returns>true if the element is added to the set; false if the element is already in the set.</returns>
@@ -186,6 +186,29 @@ namespace Librainian.Collections.Sets {
 		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
 		public void SymmetricExceptWith( IEnumerable<T> other ) => throw new NotImplementedException();
 
+		/// <summary>Returns a copy of the items to an array.</summary>
+		/// <returns></returns>
+		[NotNull]
+		public T[] ToArray() => this.Dictionary.Keys.ToArray();
+
+		public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
+
+		public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out var _ );
+
+		public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out var _ );
+
+		public Boolean TryTakeAny( [CanBeNull] out T item ) {
+			foreach ( var pair in this.Dictionary ) {
+				item = pair.Key;
+
+				return true;
+			}
+
+			item = default( T );
+
+			return false;
+		}
+
 		/// <summary>
 		///     Modifies the current set so that it contains all elements that are present in both the current set and in the
 		///     specified collection.
@@ -211,30 +234,5 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Returns an enumerator that iterates through a collection.</summary>
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-		/// <summary>Returns a copy of the items to an array.</summary>
-		/// <returns></returns>
-		[NotNull]
-		public T[] ToArray() => this.Dictionary.Keys.ToArray();
-
-		public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
-
-		public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out var _ );
-
-		public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out var _ );
-
-		public Boolean TryTakeAny( [CanBeNull] out T item ) {
-			foreach ( var pair in this.Dictionary ) {
-				item = pair.Key;
-
-				return true;
-			}
-
-			item = default( T );
-
-			return false;
-		}
-
 	}
-
 }

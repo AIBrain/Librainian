@@ -790,21 +790,6 @@ namespace Librainian.Threading {
 		}
 
 		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) => task.ConfigureAwait( true );
-
-		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) => task.ConfigureAwait( true );
-
-		/// <summary>
 		///     Return each item in <paramref name="self" /> until <paramref name="timeSpan" />.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -813,13 +798,9 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[NotNull]
 		public static async IAsyncEnumerable<T> Until<T>( [NotNull] this IEnumerable<T> self, TimeSpan timeSpan ) {
-			var watch = new Lazy<Stopwatch>( Stopwatch.StartNew );
+			var watch = Stopwatch.StartNew();
 
-			await foreach ( var row in self.ToAsyncEnumerable() ) {
-				if ( watch.Value.Elapsed > timeSpan ) {
-					break;
-				}
-
+			await foreach ( var row in self.ToAsyncEnumerable().TakeWhile( _ => watch.Elapsed <= timeSpan ) ) {
 				yield return row;
 			}
 		}
@@ -832,7 +813,33 @@ namespace Librainian.Threading {
 		/// <param name="timeSpan"></param>
 		/// <returns></returns>
 		[NotNull]
+		public static async IAsyncEnumerable<T> Until<T>( [NotNull] this IAsyncEnumerable<T> self, TimeSpan timeSpan ) {
+			var watch = Stopwatch.StartNew();
+
+			await foreach ( var row in self.TakeWhile( _ => watch.Elapsed <= timeSpan ) ) {
+				yield return row;
+			}
+		}
+
+		/// <summary>
+		///     Return each item in <paramref name="self" /> until <paramref name="when" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="self">    </param>
+		/// <param name="when"></param>
+		/// <returns></returns>
+		[NotNull]
 		public static IAsyncEnumerable<T> Until<T>( [NotNull] this IEnumerable<T> self, DateTime when ) => self.ToAsyncEnumerable().TakeWhile( _ => DateTime.UtcNow < when );
+
+		/// <summary>
+		///     Return each item in <paramref name="self" /> until <paramref name="when" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="self">    </param>
+		/// <param name="when"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static IAsyncEnumerable<T> Until<T>( [NotNull] this IAsyncEnumerable<T> self, DateTime when ) => self.TakeWhile( _ => DateTime.UtcNow < when );
 
 		/// <summary>
 		///     Returns true if the task finished before the <paramref name="timeout" />.

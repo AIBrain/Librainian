@@ -54,7 +54,6 @@ namespace Librainian.Databases {
 	using PooledAwait;
 	using Threading;
 	using Utilities;
-	using Xunit;
 
 	public class DatabaseServer : ABetterClassDisposeReactive, IDatabase {
 
@@ -63,7 +62,7 @@ namespace Librainian.Databases {
 		/// <summary>
 		///     The number of sql connections open across ALL threads.
 		/// </summary>
-		private AsyncLocal<Int64> ConnectionCounter { get; } = new();
+		private Int64 ConnectionCounter { get; set; }
 
 		/// <summary>
 		/// </summary>
@@ -84,7 +83,7 @@ namespace Librainian.Databases {
 			var builder = new SqlConnectionStringBuilder( connectionString ) {
 				Pooling = true,
 				IntegratedSecurity = true,
-				MaxPoolSize = 1024 //wild guess
+				MaxPoolSize = 32767 //wild guess
 			};
 
 			if ( !String.IsNullOrEmpty( useDatabase ) ) {
@@ -96,9 +95,6 @@ namespace Librainian.Databases {
 			Debug.Assert( !String.IsNullOrWhiteSpace( this._connectionString ) );
 		}
 
-		//[CanBeNull]
-		//private AsyncLocal<SqlConnection?>? _connection { get; set; }
-		//private SqlConnection? _connection { get; set; }
 
 		[CanBeNull]
 		private String? _connectionString { get; }
@@ -120,17 +116,14 @@ namespace Librainian.Databases {
 			}
 
 			this.Query = query;
-
-			using var connection = this.OpenConnection();
-			if ( connection is null ) {
-				return default( Int32? );
-			}
+			var connection = default( SqlConnection? );
+			var Retry = DefaultRetries;
 
 			TryAgain:
 
 			try {
-				if ( retries.Any() ) {
-					--retries;
+				connection = this.OpenConnection();
+				if ( connection is not null ) {
 					using var command = new SqlCommand( query, connection ) {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
 						CommandType = commandType
@@ -140,20 +133,33 @@ namespace Librainian.Databases {
 				}
 			}
 			catch ( InvalidOperationException exception ) {
+				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
 				exception.Log( Rebuild( query, parameters ) );
-
-				goto TryAgain;
 			}
 			catch ( SqlException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
 
-				goto TryAgain;
 			}
 			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
 
-				goto TryAgain;
+				exception.Log( Rebuild( query, parameters ) );
 			}
+
 			finally {
 				this.CloseConnection( connection );
 			}
@@ -184,6 +190,10 @@ namespace Librainian.Databases {
 			this.Query = query;
 
 			var connection = default( SqlConnection? );
+
+			var Retry = DefaultRetries;
+
+			TryAgain:
 			try {
 				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
 
@@ -201,14 +211,34 @@ namespace Librainian.Databases {
 					}
 				}
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( query, parameters ) );
+			catch ( InvalidOperationException exception ) {
+				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
 				}
-			}
-			catch ( DbException exception ) {
 				exception.Log( Rebuild( query, parameters ) );
 			}
+			catch ( SqlException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
+				exception.Log( Rebuild( query, parameters ) );
+
+			}
+			catch ( DbException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
+				exception.Log( Rebuild( query, parameters ) );
+			}
+
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -257,6 +287,9 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
+			var Retry = DefaultRetries;
+
+			TryAgain:
 			table = new DataTable();
 
 			try {
@@ -286,12 +319,34 @@ namespace Librainian.Databases {
 					this.CloseConnection( connection );
 				}
 			}
-			catch ( SqlException exception ) {
+			catch ( InvalidOperationException exception ) {
+				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
 				exception.Log( Rebuild( query, parameters ) );
+			}
+			catch ( SqlException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
+				exception.Log( Rebuild( query, parameters ) );
+
 			}
 			catch ( DbException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
+
 
 			return false;
 		}
@@ -306,6 +361,9 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
+			var Retry = DefaultRetries;
+
+			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
 				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
@@ -329,10 +387,31 @@ namespace Librainian.Databases {
 					}
 				}
 			}
-			catch ( SqlException exception ) {
+			catch ( InvalidOperationException exception ) {
+				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
 				exception.Log( Rebuild( query, parameters ) );
 			}
+			catch ( SqlException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
+				exception.Log( Rebuild( query, parameters ) );
+
+			}
 			catch ( DbException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
@@ -415,33 +494,55 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
+			var Retry = DefaultRetries;
+
+			TryAgain:
+			var connection = default( SqlConnection? );
 			try {
-				using var connection = this.OpenConnection();
-				try {
-					if ( connection != null ) {
-						using var command = new SqlCommand( query, connection ) {
-							CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
-							CommandType = commandType
-						};
+				connection = this.OpenConnection();
 
-						var scalar = command.PopulateParameters( parameters ).ExecuteScalar();
+				if ( connection != null ) {
+					using var command = new SqlCommand( query, connection ) {
+						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+						CommandType = commandType
+					};
 
-						return scalar is null ? default( T? ) : scalar.Cast<Object, T>();
-					}
+					var scalar = command.PopulateParameters( parameters ).ExecuteScalar();
+
+					return scalar is null ? default( T? ) : scalar.Cast<Object, T>();
 				}
-				finally {
-					this.CloseConnection( connection );
+
+
+			}
+			catch ( InvalidOperationException exception ) {
+				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
 				}
+				exception.Log( Rebuild( query, parameters ) );
 			}
 			catch ( SqlException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
 
-				throw;
 			}
 			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
 
-				throw;
+				exception.Log( Rebuild( query, parameters ) );
+			}
+			finally {
+				this.CloseConnection( connection );
 			}
 
 			return default( T? );
@@ -461,12 +562,12 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
+			var Retry = DefaultRetries;
+
+			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
 				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -488,15 +589,32 @@ namespace Librainian.Databases {
 
 				throw;
 			}
+			catch ( InvalidOperationException exception ) {
+				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+				exception.Log( Rebuild( query, parameters ) );
+			}
 			catch ( SqlException exception ) {
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
 
-				throw;
 			}
 			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
 
-				throw;
+				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
 				this.CloseAsyncConnection( ref connection );
@@ -734,7 +852,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				this.CloseAsyncConnection(ref connection);
+				this.CloseAsyncConnection( ref connection );
 			}
 
 			return default( SqlDataReader? );
@@ -791,7 +909,7 @@ namespace Librainian.Databases {
 				throw;
 			}
 			finally {
-				this.CloseAsyncConnection(ref connection);
+				this.CloseAsyncConnection( ref connection );
 			}
 
 			return default( SqlDataReader? );
@@ -896,12 +1014,22 @@ namespace Librainian.Databases {
 					timer = Fps.Thirty.CreateTimer( () => progress.Report( (stopwatch.Elapsed, connection.State) ) );
 				}
 
-				var task = connection.OpenAsync( this._executeCancellationToken );
-				if ( task is not null ) {
-					await task.ConfigureAwait( false );
+				try {
+					await connection.OpenAsync( this._openCancellationToken )!.ConfigureAwait( false );
 				}
-				else {
-					throw new InvalidOperationException( $"Unable to call {nameof( connection.OpenAsync )}" ).Log( BreakOrDontBreak.Break )!;
+				catch ( InvalidOperationException exception ) {
+					if ( Retry.Any() ) {
+						"SQL Pool exhaustion. Trying open connection again in 1 second..".DebugLine();
+						await Task.Delay( Seconds.One, this._openCancellationToken ).ConfigureAwait( false );
+						goto TryAgain;
+					}
+				}
+				catch ( DbException exception ) {
+					if ( Retry.Any() && exception.ErrorCode == -2146232060 ) {
+						"SQL Pool error. Trying open connection again in 1 second..".DebugLine();
+						await Task.Delay( Seconds.One, this._openCancellationToken ).ConfigureAwait( false );
+						goto TryAgain;
+					}
 				}
 
 				//if ( this._connection.State.In( ConnectionState.Connecting, ConnectionState.Open, ConnectionState.Executing, ConnectionState.Fetching ) ) {
@@ -947,7 +1075,7 @@ namespace Librainian.Databases {
 		///     <para>Each call to Close() will decrement this counter.</para>
 		/// </summary>
 		/// <returns></returns>
-		public Int64 GetConnectionCounter() => this.ConnectionCounter.Value;
+		public Int64 GetConnectionCounter() => this.ConnectionCounter;
 
 		private void CloseAsyncConnection( ref SqlConnection? connection ) {
 			if ( connection == null ) {
@@ -958,8 +1086,8 @@ namespace Librainian.Databases {
 			//var connection = this._connection;
 			if ( this.GetConnectionCounter().Any() ) {
 				connection.Close();
-				--this.ConnectionCounter.Value;
-				Assert.True( this.ConnectionCounter.Value >= 0 );
+				--this.ConnectionCounter;
+				//Assert.True( this.ConnectionCounter >= 0 );
 			}
 
 			//connection.Value = default( SqlConnection? );
@@ -1023,7 +1151,7 @@ namespace Librainian.Databases {
 			}
 
 			connection.Close();
-			--this.ConnectionCounter.Value;
+			--this.ConnectionCounter;
 		}
 
 		[Pure]
@@ -1036,30 +1164,59 @@ namespace Librainian.Databases {
 			--Retry;
 
 			try {
-				$"Attempting to open sql connection. {Retry} attempts remaining..".Verbose();
+				//$"Attempting to open sql connection. {Retry} attempts remaining..".Verbose();
 
 				var connection = new SqlConnection( this._connectionString );
 				connection.Open();
-				++this.ConnectionCounter.Value;
+				++this.ConnectionCounter;
 
 				return connection;
 			}
 			catch ( InvalidOperationException exception ) {
+				//exception.Log( BreakOrDontBreak.Break );
+				if ( Retry.Any() ) {
+					--Retry;
+					--this.ConnectionCounter;
+					"SQL Pool exhaustion. Trying open connection again in 1 second..".DebugLine();
+					Thread.Yield();
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
+				}
 				exception.Log( BreakOrDontBreak.Break );
 			}
 			catch ( SqlException exception ) {
 				if ( exception.IsTransient && Retry.Any() ) {
 					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
+					--Retry;
+					--this.ConnectionCounter;
 					goto TryAgain;
 				}
 
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
 					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
+					--Retry;
+					--this.ConnectionCounter;
 					goto TryAgain;
 				}
 
 				exception.Log( BreakOrDontBreak.Break );
-				return default( SqlConnection? );
+			}
+			catch ( DbException exception ) {
+				if ( exception.IsTransient && Retry.Any() ) {
+					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
+				if ( exception.PossibleTimeout() && Retry.Any() ) {
+					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
+					--Retry;
+					--this.ConnectionCounter;
+					goto TryAgain;
+				}
+
+				exception.Log( BreakOrDontBreak.Break );
 			}
 
 			return default( SqlConnection? );
@@ -1126,9 +1283,7 @@ namespace Librainian.Databases {
 		///     Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.
 		/// </summary>
 		public override void DisposeManaged() {
-			var connectionsStillOpen = this.ConnectionCounter.Value;
-
-			if ( connectionsStillOpen.Any() ) {
+			if ( this.ConnectionCounter.Any() ) {
 				$"Warning: We have an unclosed DatabaseServer() connection somewhere. Last Query={this.Query.DoubleQuote()}".Log( BreakOrDontBreak.Break );
 			}
 		}

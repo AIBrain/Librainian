@@ -41,23 +41,23 @@ namespace Librainian.Threading {
 	/// </summary>
 	public class BackgroundThread : ABetterClassDispose {
 
-		//I don't like using "threads".. is this a good use case for them? Would a BackGroundWorker be more suited?
+		//I don't like using "Thread".. is this a good use case for them? Would a BackGroundWorker be more suited?
 
 		/// <summary></summary>
 		/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
 		/// <param name="autoStart"></param>
 		/// <param name="cancellationToken"></param>
 		public BackgroundThread( [NotNull] Action actionToPerform, Boolean autoStart, CancellationToken cancellationToken ) {
-			this.actionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
+			this.ActionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
 			this.cancellationToken = cancellationToken;
 
 			this.thread = new Thread( () => {
 				while ( !this.cancellationToken.IsCancellationRequested ) {
-					if ( this.signal.WaitOne( Seconds.One ) ) {
+					if ( this.signal.Wait( Seconds.One ) ) {
 						try {
 							this.RunningAction = true;
 							try {
-								this.actionToPerform();
+								this.ActionToPerform();
 							}
 							catch ( Exception exception ) {
 								exception.Log();
@@ -65,6 +65,7 @@ namespace Librainian.Threading {
 						}
 						finally {
 							this.RunningAction = false;
+							this.signal.Reset();
 						}
 					}
 				}
@@ -83,7 +84,7 @@ namespace Librainian.Threading {
 		private CancellationToken cancellationToken { get; }
 
 		[NotNull]
-		private Action actionToPerform { get; }
+		private Action ActionToPerform { get; }
 
 		/// <summary>True if the loop is currently running.</summary>
 		private VolatileBoolean RunningAction { get; set; }
@@ -91,7 +92,7 @@ namespace Librainian.Threading {
 		public Boolean IsRunningAction() => this.RunningAction;
 
 		[NotNull]
-		private AutoResetEvent signal { get; } = new( true );
+		private ManualResetEventSlim signal { get; } = new( false );
 
 		private void Start() {
 			if ( this.thread.ThreadState != ThreadState.Running ) {

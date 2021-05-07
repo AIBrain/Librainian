@@ -409,7 +409,7 @@ namespace Librainian.Databases {
 			return command;
 		}
 
-		public static Boolean PossibleTimeout( [NotNull] this SqlException exception ) {
+		public static Boolean PossibleTimeout( [NotNull] this DbException exception ) {
 			// ugh.
 
 			if ( exception is null ) {
@@ -419,6 +419,17 @@ namespace Librainian.Databases {
 			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
 			       exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
 			       exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase );
+		}
+
+		public static Boolean PossibleLossOfConnection( [CanBeNull] this InvalidOperationException exception ) {
+			// ugh.
+
+			if ( exception is null ) {
+				return false;
+			}
+
+			return exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase )
+				|| exception.HResult == -2146233079;
 		}
 
 		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString(

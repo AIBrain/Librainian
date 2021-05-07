@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "QuestionBox.cs" last touched on 2021-04-25 at 4:18 PM by Protiguous.
+// File "QuestionBox.cs" last touched on 2021-04-25 at 6:01 PM by Protiguous.
 
 #nullable enable
 
@@ -43,16 +43,27 @@ namespace Librainian.Controls {
 
 			this.InitializeComponent();
 			this.Question = question;
+			this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Both );
+
 			this.Response = default( String? );
+
+			this.Redraw();
+			this.textBoxUserInput?.Focus();
 		}
 
 		public String Question { get; }
 
 		public String? Response { get; set; }
 
-		private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
+		private void QuestionBox_Shown( Object sender, EventArgs e ) {
+			this.textBoxUserInput?.Focus();
+		}
 
-		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = ( sender as TextBox ).Text();
+		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = this.textBoxUserInput.Text();
+
+		private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) {
+			this.Response = this.textBoxUserInput.Text();
+		}
 
 	}
 
