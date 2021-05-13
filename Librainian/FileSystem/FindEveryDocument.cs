@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "FindEveryDocument.cs" last touched on 2021-03-07 at 5:15 AM by Protiguous.
 
 #nullable enable
@@ -51,51 +51,45 @@ namespace Librainian.FileSystem {
 	/// </summary>
 	public class FindEveryDocument : ABetterClassDispose {
 
-		public FindEveryDocument( [NotNull] IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
-			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ) );
-			documentsFound = new BufferBlock<IDocument>();
-			this.DocumentsFound = documentsFound;
-		}
-
-		private ActionBlock<Disk>? DrivesFound { get; set; }
-
-		private ActionBlock<IFolder>? FoldersFound { get; set; }
+		private VolatileBoolean _pauseScanning;
 
 		private CancellationTokenSource CancellationTokenSource { get; } = new();
-
-		public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
-
-		public IProgress<(Single counter, String message)> Progress { get; }
 
 		/// <summary>
 		///     A reference to the out parameter in the ctor.
 		/// </summary>
 		private BufferBlock<IDocument> DocumentsFound { get; }
 
-		private VolatileBoolean _pauseScanning;
+		private ActionBlock<Disk>? DrivesFound { get; set; }
 
-		public void StopScanning() {
-			this.CancellationTokenSource.Cancel( false );
-			this.DrivesFound.Complete();
-			this.FoldersFound.Complete();
-			this.ResumeScanning();
+		private ActionBlock<IFolder>? FoldersFound { get; set; }
+
+		[CanBeNull]
+		public String? CurrentStatus { get; private set; }
+
+		public IProgress<(Single counter, String message)> Progress { get; }
+
+		public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
+
+		public FindEveryDocument( [NotNull] IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
+			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ) );
+			documentsFound = new BufferBlock<IDocument>();
+			this.DocumentsFound = documentsFound;
 		}
 
-		public void PauseScanning() {
-			this._pauseScanning.Value = true;
-		}
-		public void ResumeScanning() {
-			this._pauseScanning.Value = false;
+		private void SetCurrentStatus( String? message ) {
+			this.CurrentStatus = message;
 		}
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() { }
 
-		[CanBeNull]
-		public String? CurrentStatus { get; private set; }
+		public void PauseScanning() {
+			this._pauseScanning.Value = true;
+		}
 
-		private void SetCurrentStatus( String? message ) {
-			this.CurrentStatus = message;
+		public void ResumeScanning() {
+			this._pauseScanning.Value = false;
 		}
 
 		[NotNull]
@@ -179,7 +173,7 @@ namespace Librainian.FileSystem {
 					this.FoldersFound?.Post( folder );
 
 					Interlocked.Increment( ref counter );
-					this.Progress.Report( ( counter, $"Found main folder {folder.FullPath.SmartQuote()}." ) );
+					this.Progress.Report( (counter, $"Found main folder {folder.FullPath.SmartQuote()}.") );
 				}
 			}
 
@@ -194,7 +188,7 @@ namespace Librainian.FileSystem {
 				this.FoldersFound?.Post( folder );
 
 				Interlocked.Increment( ref counter );
-				this.Progress.Report( ( counter, $"Found sub folder {folder.FullPath.SmartQuote()}." ) );
+				this.Progress.Report( (counter, $"Found sub folder {folder.FullPath.SmartQuote()}.") );
 			}
 
 			async Task AddFoundDocument( IDocument document ) {
@@ -208,11 +202,10 @@ namespace Librainian.FileSystem {
 
 				Interlocked.Increment( ref counter );
 
-				this.Progress.Report( ( counter, $"Found document {document.FullPath.SmartQuote()}." ) );
+				this.Progress.Report( (counter, $"Found document {document.FullPath.SmartQuote()}.") );
 			}
 
 			async Task PauseWhilePaused() {
-
 				if ( this._pauseScanning ) {
 					this.SetCurrentStatus( "Paused.." );
 
@@ -223,11 +216,15 @@ namespace Librainian.FileSystem {
 						catch ( TaskCanceledException ) { }
 					}
 					this.SetCurrentStatus( "Resuming.." );
-
 				}
 			}
 		}
 
+		public void StopScanning() {
+			this.CancellationTokenSource.Cancel( false );
+			this.DrivesFound.Complete();
+			this.FoldersFound.Complete();
+			this.ResumeScanning();
+		}
 	}
-
 }

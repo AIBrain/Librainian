@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Types.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 #nullable enable
@@ -47,33 +47,14 @@ namespace Librainian.Extensions {
 
 		public static ConcurrentDictionary<Type, IList<Type>> EnumerableOfTypeCache { get; } = new();
 
+		private delegate Object ObjectActivator();
+
 		public static Boolean CanAssignValue( [NotNull] this PropertyInfo p, [CanBeNull] Object? value ) {
 			if ( p is null ) {
 				throw new ArgumentNullException( nameof( p ) );
 			}
 
 			return value is null ? p.IsNullable() : p.PropertyType.IsInstanceOfType( value );
-		}
-
-		/// <summary>
-		/// only quickly/simply tested. Seems to work.. is it useful now that we have pattern matching?
-		/// </summary>
-		/// <typeparam name="TType"></typeparam>
-		/// <param name="_"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static Boolean IsDerivedFrom<TType>( this TType _, Type c ) {
-			var p = typeof( TType );
-
-			do {
-				if ( p == c ) {
-					return true;
-				}
-
-				p = p.BaseType;
-			} while ( p != null );
-
-			return false;
 		}
 
 		/// <summary>Creates a new <see cref="IList{T}" /> with a clone of each item.</summary>
@@ -356,6 +337,27 @@ namespace Librainian.Extensions {
 			return self.IsExplicitLayout || self.IsLayoutSequential;
 		}
 
+		/// <summary>
+		/// only quickly/simply tested. Seems to work.. is it useful now that we have pattern matching?
+		/// </summary>
+		/// <typeparam name="TType"></typeparam>
+		/// <param name="_"></param>
+		/// <param name="c"></param>
+		/// <returns></returns>
+		public static Boolean IsDerivedFrom<TType>( this TType _, Type c ) {
+			var p = typeof( TType );
+
+			do {
+				if ( p == c ) {
+					return true;
+				}
+
+				p = p.BaseType;
+			} while ( p != null );
+
+			return false;
+		}
+
 		public static Boolean IsNullable( [NotNull] this PropertyInfo p ) => p.PropertyType.IsNullable();
 
 		public static Boolean IsNullable( [NotNull] this Type t ) => !t.IsValueType || Nullable.GetUnderlyingType( t ) != null;
@@ -394,8 +396,7 @@ namespace Librainian.Extensions {
 		}
 
 		public static Boolean MergeDictionaries<TSource>( [NotNull][ItemCanBeNull] this IDictionary sourceValue, [NotNull] FieldInfo field, [CanBeNull] TSource destination ) {
-
-			if ( field.GetValue( destination ) is not IDictionary destAsDictionary) {
+			if ( field.GetValue( destination ) is not IDictionary destAsDictionary ) {
 				return false;
 			}
 
@@ -493,6 +494,7 @@ namespace Librainian.Extensions {
 			var underlyingType = Nullable.GetUnderlyingType( type ) ?? type;
 
 			try {
+
 				// Just one edge case you might want to handle.
 				if ( underlyingType == typeof( Guid ) ) {
 					value = value switch {
@@ -512,8 +514,6 @@ namespace Librainian.Extensions {
 				return false;
 			}
 		}
-
-		private delegate Object ObjectActivator();
 
 		/*
                 public static String GetName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
@@ -585,7 +585,5 @@ namespace Librainian.Extensions {
 		//            }
 		//    }
 		//}
-
 	}
-
 }

@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,29 +17,28 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Picoseconds.cs" last formatted on 2021-01-01 at 9:38 AM.
 
 namespace Librainian.Measurement.Time {
+
 	using System;
 	using System.Diagnostics;
-	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Maths;
 	using Newtonsoft.Json;
-	using Parsing;
-	using Rationals;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public record Picoseconds( Rational Value ) : IQuantityOfTime, IComparable<Picoseconds> {
+	public record Picoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Picoseconds> {
+
 		/// <summary>1000</summary>
 		public const UInt16 InOneNanosecond = 1000;
 
@@ -94,13 +93,9 @@ namespace Librainian.Measurement.Time {
 		}
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToFemtoseconds();
+		
 
-		/// <summary>
-		/// Optimization
-		/// </summary>
-		private readonly Lazy<Rational> _lazyPlancksInOnePicosecond = new( () => new Rational (new BigInteger( PlanckTimes.InOnePicosecond )), true );
-
-		public PlanckTimes ToPlanckTimes() => new( ( this.Value * this._lazyPlancksInOnePicosecond.Value ).WholePart );
+		public PlanckTimes ToPlanckTimes() => new(  this.Value * PlanckTimes.InOnePicosecond );
 
 		public Seconds ToSeconds() => this.ToNanoseconds().ToSeconds();
 		public IQuantityOfTime ToCoarserGranularity() => this.ToNanoseconds();
@@ -109,7 +104,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Picoseconds Combine( Picoseconds left, Picoseconds right ) => Combine( left, right.Value );
 
-		public static Picoseconds Combine( Picoseconds left, Rational picoseconds ) => new( left.Value + picoseconds );
+		public static Picoseconds Combine( Picoseconds left, BigDecimal picoseconds ) => new( left.Value + picoseconds );
 
 		public static implicit operator Femtoseconds( Picoseconds picoseconds ) => picoseconds.ToFemtoseconds();
 
@@ -119,11 +114,11 @@ namespace Librainian.Measurement.Time {
 
 		public static Picoseconds operator -( Picoseconds left, Picoseconds right ) => Combine( left, -right.Value );
 
-		public static Picoseconds operator -( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) ( -nanoseconds ) );
+		public static Picoseconds operator -( Picoseconds left, BigDecimal nanoseconds ) => Combine( left, -nanoseconds );
 
 		public static Picoseconds operator +( Picoseconds left, Picoseconds right ) => Combine( left, right );
 
-		public static Picoseconds operator +( Picoseconds left, Decimal nanoseconds ) => Combine( left, ( Rational ) nanoseconds );
+		public static Picoseconds operator +( Picoseconds left, BigDecimal nanoseconds ) => Combine( left, nanoseconds );
 
 		public static Boolean operator <( Picoseconds left, Picoseconds right ) => left.Value < right.Value;
 
@@ -137,16 +132,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public Nanoseconds ToNanoseconds() => new( this.Value / InOneNanosecond );
 
-		public override String ToString() {
-			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
-				var whole = this.Value.WholePart;
+		public override String ToString() => $"{this.Value} ps";
 
-				return $"{whole} {whole.PluralOf( "ps" )}";
-			}
-
-			var dec = ( Decimal ) this.Value;
-
-			return $"{dec} {dec.PluralOf( "ps" )}";
-		}
 	}
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "GpwData.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 namespace Librainian.Security {
@@ -32,25 +32,6 @@ namespace Librainian.Security {
 	/// </summary>
 	/// <remarks>https://readablepass.codeplex.com/SourceControl/latest#ReadablePasswordGenerator/GpwData.cs</remarks>
 	public static class GpwData {
-
-		static GpwData() {
-			Int32 c1;
-			Sigma = 0;
-
-			for ( c1 = 0; c1 < 26; c1++ ) {
-				Int32 c2;
-
-				for ( c2 = 0; c2 < 26; c2++ ) {
-					Int32 c3;
-
-					for ( c3 = 0; c3 < 26; c3++ ) {
-						Sigma += Get( c1, c2, c3 );
-					}
-				}
-			}
-
-			//Debug.WriteLine( Sigma );
-		}
 
 		/// <summary>letter / word frequencys as a catentated list of trigraphs.</summary>
 		private static Int16[] Tris { get; } = {
@@ -1816,8 +1797,25 @@ namespace Librainian.Security {
 
 		public static Int64 Sigma { get; }
 
-		public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) => Tris[i1 * 26 * 26 + i2 * 26 + i3];
+		static GpwData() {
+			Int32 c1;
+			Sigma = 0;
 
+			for ( c1 = 0; c1 < 26; c1++ ) {
+				Int32 c2;
+
+				for ( c2 = 0; c2 < 26; c2++ ) {
+					Int32 c3;
+
+					for ( c3 = 0; c3 < 26; c3++ ) {
+						Sigma += Get( c1, c2, c3 );
+					}
+				}
+			}
+
+			//Debug.WriteLine( Sigma );
+		}
+
+		public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) => Tris[ i1 * 26 * 26 + i2 * 26 + i3 ];
 	}
-
 }

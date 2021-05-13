@@ -9,6 +9,7 @@
 		<OutputType>Library</OutputType>
 		<StartupObject />
 		<EnableNETAnalyzers>false</EnableNETAnalyzers>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Librainian\Librainian.csproj" />
+		<ProjectReference Include="..\..\Librainian\Librainian.csproj" />
 	</ItemGroup>
 
 </Project>

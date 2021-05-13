@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ParsingExtensions.cs" last touched on 2021-03-07 at 10:13 AM by Protiguous.
 
 #nullable enable
@@ -256,7 +256,6 @@ namespace Librainian.Parsing {
 		[NotNull]
 		[Pure]
 		public static String SmartQuote<T>( [CanBeNull] this T self ) {
-
 			var trimmed = self?.ToString().Trimmed();
 
 			if ( String.IsNullOrEmpty( trimmed ) ) {
@@ -556,6 +555,7 @@ namespace Librainian.Parsing {
 			var jm1 = 0;
 
 			for ( var j = 1; j <= maxj; j++ ) {
+
 				// Rotate
 				var dSwap = dMinus2;
 				dMinus2 = dMinus1;
@@ -686,6 +686,7 @@ namespace Librainian.Parsing {
 		[NotNull]
 		[Pure]
 		public static Uri EscapeUriDataStringRfc3986( [NotNull] this String value ) {
+
 			// Start with RFC 2396 escaping by calling the .NET method to do the work. This MAY sometimes exhibit RFC 3986 behavior (according to the documentation). If it does, the escaping we do that follows it will be
 			// a no-op since the characters we search for to replace can't possibly exist in the String.
 			var escaped = new StringBuilder( Uri.EscapeDataString( value ) );
@@ -797,6 +798,7 @@ namespace Librainian.Parsing {
 		[NotNull]
 		[Pure]
 		public static String FullSoundex( this String s ) {
+
 			// the encoding information
 			//const String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			const String codes = "0123012D02245501262301D202";
@@ -1031,7 +1033,6 @@ namespace Librainian.Parsing {
 			IgnoreTrailingWhitespace = 0b1000,
 
 			IgnoreAllWhitespace = 0b10000
-
 		}
 
 		[Pure]
@@ -1234,6 +1235,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String RemoveSurroundingQuotes( this String input ) {
 			if ( input.StartsWith( "\"", StringComparison.Ordinal ) && input.EndsWith( "\"", StringComparison.Ordinal ) ) {
+
 				// remove leading/trailing quotes
 				input = input[ 1..^1 ];
 			}
@@ -1556,6 +1558,7 @@ namespace Librainian.Parsing {
 			similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
 			if ( stopwatch.Elapsed > timeout ) {
+
 				//TODO
 			}
 
@@ -1572,7 +1575,7 @@ namespace Librainian.Parsing {
 			}
 
 			return FullSoundex( s ).PadRight( length, '0' ) // soundex is no shorter than
-			                       .Substring( 0, length ); // and no longer than length
+								   .Substring( 0, length ); // and no longer than length
 		}
 
 		[NotNull]
@@ -1583,7 +1586,8 @@ namespace Librainian.Parsing {
 			}
 
 			var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-				index, ch = s[ index ]
+				index,
+				ch = s[ index ]
 			} ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 			return res;
@@ -1633,6 +1637,7 @@ namespace Librainian.Parsing {
 				var isAllowed = false;
 
 				foreach ( var allowedTag in allowedTags ) {
+
 					// Determine if it is an allowed tag "<tag>" , "<tag " and "</tag"
 					var offset = htmlTag.IndexOf( '<' + allowedTag + '>', StringComparison.Ordinal );
 
@@ -1908,7 +1913,7 @@ namespace Librainian.Parsing {
 			paragraph = paragraph.Replace( ParsingConstants.Chars.LF.ToString(), Environment.NewLine );
 
 			return RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trimmed() ?? String.Empty )
-			                                   .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) ).Select( Sentence.Parse );
+											   .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) ).Select( Sentence.Parse );
 		}
 
 		/// <summary>Returns the wording of a number.</summary>
@@ -2023,7 +2028,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static IEnumerable<String> ToSplit( [CanBeNull] this String? sentence ) =>
 			RegexByWordBreak.Value.Split( $"{ParsingConstants.Strings.Singlespace}{sentence}{ParsingConstants.Strings.Singlespace}" )
-			                .ToStrings( ParsingConstants.Strings.Singlespace ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+							.ToStrings( ParsingConstants.Strings.Singlespace ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
 
 		[NotNull]
 		[ItemNotNull]
@@ -2282,7 +2287,6 @@ namespace Librainian.Parsing {
 			return String.IsNullOrEmpty( atTheEnd ) ? joined : $"{joined}{separator}{atTheEnd}";
 		}
 
-
 		[NotNull]
 		[Pure]
 		public static String ToStrings( [NotNull] this IEnumerable<Object> list, String separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
@@ -2345,18 +2349,18 @@ namespace Librainian.Parsing {
 			StringComparison comparison = StringComparison.CurrentCulture
 		) {
 			foreach ( var start in ofThese.Where( s => value.StartsWith( s, comparison ) ) ) {
-				return ( true.ToStatus(), start );
+				return (true.ToStatus(), start);
 			}
 
-			return ( false.ToStatus(), default( String? ) );
+			return (false.ToStatus(), default( String? ));
 		}
 
 		public static (Status status, String? end) EndsWith( this String value, IEnumerable<String> ofThese, StringComparison comparison = StringComparison.CurrentCulture ) {
 			foreach ( var end in ofThese.Where( s => value.EndsWith( s, comparison ) ) ) {
-				return ( true.ToStatus(), end );
+				return (true.ToStatus(), end);
 			}
 
-			return ( false.ToStatus(), default( String? ) );
+			return (false.ToStatus(), default( String? ));
 		}
 
 		[CanBeNull]
@@ -2368,7 +2372,5 @@ namespace Librainian.Parsing {
 		[CanBeNull]
 		public static String? OnlyLettersAndNumbers( [CanBeNull] String? input ) =>
 			input == default( String? ) ? default( String? ) : String.Concat( input!.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ) );
-
 	}
-
 }

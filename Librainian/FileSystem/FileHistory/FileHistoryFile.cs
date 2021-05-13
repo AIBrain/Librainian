@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "FileHistoryFile.cs" last formatted on 2020-08-14 at 8:39 PM.
 
 namespace Librainian.FileSystem.FileHistory {
@@ -36,10 +36,12 @@ namespace Librainian.FileSystem.FileHistory {
 
 		private readonly DateTime? _when;
 
-		public FileHistoryFile( [NotNull] Document biglongpath ) {
-			this.OriginalPath = biglongpath;
-			this.IsFileHistoryFile = TryParseFileHistoryFile( biglongpath, out this._folder, out this._filename, out this._when );
-		}
+		/// <summary>(includes the extension)</summary>
+		[NotNull]
+		public String FileName => this._filename;
+
+		[NotNull]
+		public IFolder Folder => this._folder;
 
 		[NotNull]
 		public IDocument FullPathAndName => new Document( this.Folder, this.FileName );
@@ -50,12 +52,10 @@ namespace Librainian.FileSystem.FileHistory {
 
 		public DateTime? When => this._when;
 
-		/// <summary>(includes the extension)</summary>
-		[NotNull]
-		public String FileName => this._filename;
-
-		[NotNull]
-		public IFolder Folder => this._folder;
+		public FileHistoryFile( [NotNull] Document biglongpath ) {
+			this.OriginalPath = biglongpath;
+			this.IsFileHistoryFile = TryParseFileHistoryFile( biglongpath, out this._folder, out this._filename, out this._when );
+		}
 
 		/// <summary>Attempt to parse a filename into <see cref="FileHistoryFile" /> parts().</summary>
 		/// <param name="original"></param>
@@ -91,9 +91,9 @@ namespace Librainian.FileSystem.FileHistory {
 				' '
 			}, StringSplitOptions.RemoveEmptyEntries );
 
-			parts[0] = parts[0].Replace( '_', '/' );
-			parts[1] = parts[1].Replace( '_', ':' );
-			datepart = $"{parts[0]} {parts[1]}";
+			parts[ 0 ] = parts[ 0 ].Replace( '_', '/' );
+			parts[ 1 ] = parts[ 1 ].Replace( '_', ':' );
+			datepart = $"{parts[ 0 ]} {parts[ 1 ]}";
 
 			if ( DateTime.TryParse( datepart, out var result ) ) {
 				when = result;
@@ -111,7 +111,5 @@ namespace Librainian.FileSystem.FileHistory {
 
 			return false;
 		}
-
 	}
-
 }

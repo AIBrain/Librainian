@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +14,16 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Device.cs" last formatted on 2020-08-14 at 8:31 PM.
 
 #nullable enable
+
 namespace Librainian.ComputerSystem.Devices {
 
 	using System;
@@ -51,14 +52,6 @@ namespace Librainian.ComputerSystem.Devices {
 
 		private Boolean? isUsb;
 
-		public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA? deviceInfoData, [CanBeNull] String? path, Int32 index, Int32? diskNumber = null ) {
-			this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
-			this.Path = path; // may be null
-			this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
-			this.Index = index;
-			this.DiskNumber = diskNumber;
-		}
-
 		private NativeMethods.SP_DEVINFO_DATA DeviceInfoData { get; }
 
 		/// <summary>Gets the device's class instance.</summary>
@@ -73,6 +66,14 @@ namespace Librainian.ComputerSystem.Devices {
 		/// <summary>Gets the device's path.</summary>
 		[CanBeNull]
 		public String? Path { get; }
+
+		public Device( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA? deviceInfoData, [CanBeNull] String? path, Int32 index, Int32? diskNumber = null ) {
+			this.DeviceClass = deviceClass ?? throw new ArgumentNullException( nameof( deviceClass ) );
+			this.Path = path; // may be null
+			this.DeviceInfoData = deviceInfoData ?? throw new ArgumentNullException( nameof( deviceInfoData ) );
+			this.Index = index;
+			this.DiskNumber = diskNumber;
+		}
 
 		/// <summary>Compares the current instance with another object of the same type.</summary>
 		/// <param name="obj">An object to compare with this instance.</param>
@@ -188,7 +189,5 @@ namespace Librainian.ComputerSystem.Devices {
 
 			return this._parent;
 		}
-
 	}
-
 }

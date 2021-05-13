@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "IOExtensions.cs" last touched on 2021-03-07 at 12:41 AM by Protiguous.
 
 #nullable enable
@@ -59,6 +59,151 @@ namespace Librainian.FileSystem {
 
 		public const Int32 FsctlSetCompression = 0x9C040;
 
+		private static async Task FindEachDocument( [NotNull] IFolder folder, Action<Document>? onFindFile, String searchPattern, CancellationToken cancelToken ) {
+			if ( folder is null ) {
+				throw new ArgumentNullException( nameof( folder ) );
+			}
+
+			try {
+				await foreach ( var file in folder.EnumerateDocuments( searchPattern, cancelToken ) ) {
+					try {
+						onFindFile?.Invoke( file );
+					}
+					catch ( Exception exception ) {
+						exception.Log();
+					}
+				}
+			}
+			catch ( UnauthorizedAccessException ) { }
+			catch ( DirectoryNotFoundException ) { }
+			catch ( IOException ) { }
+			catch ( SecurityException ) { }
+			catch ( AggregateException aggregateException ) {
+				aggregateException.Handle( exception => {
+					switch ( exception ) {
+						case UnauthorizedAccessException _:
+						case DirectoryNotFoundException _:
+						case IOException _:
+						case SecurityException _:
+							return true;
+					}
+
+					exception!.Log();
+
+					return false;
+				} );
+			}
+		}
+
+		private static Boolean MatchesFilter(
+					FileAttributes fileAttributes,
+					String name,
+					String searchPattern,
+					Boolean aDirectory,
+					Boolean aHidden,
+					Boolean aSystem,
+					Boolean aReadOnly,
+					Boolean aCompressed,
+					Boolean aArchive,
+					Boolean aReparsePoint,
+					String filterMode
+				) {
+
+			// first make sure that the name matches the search pattern
+			if ( NativeMethods.PathMatchSpec( name, searchPattern ) ) {
+
+				// then we build our filter attributes enumeration
+				var filterAttributes = new FileAttributes();
+
+				if ( aDirectory ) {
+					filterAttributes |= FileAttributes.Directory;
+				}
+
+				if ( aHidden ) {
+					filterAttributes |= FileAttributes.Hidden;
+				}
+
+				if ( aSystem ) {
+					filterAttributes |= FileAttributes.System;
+				}
+
+				if ( aReadOnly ) {
+					filterAttributes |= FileAttributes.ReadOnly;
+				}
+
+				if ( aCompressed ) {
+					filterAttributes |= FileAttributes.Compressed;
+				}
+
+				if ( aReparsePoint ) {
+					filterAttributes |= FileAttributes.ReparsePoint;
+				}
+
+				if ( aArchive ) {
+					filterAttributes |= FileAttributes.Archive;
+				}
+
+				// based on the filtermode, we match the file with our filter attributes a bit differently
+				return filterMode switch {
+					"Include" when ( fileAttributes & filterAttributes ) == filterAttributes => true,
+					"Include" => false,
+					"Exclude" when ( fileAttributes & filterAttributes ) != filterAttributes => true,
+					"Exclude" => false,
+					"Strict" when fileAttributes == filterAttributes => true,
+					"Strict" => false,
+					var _ => false
+				};
+			}
+
+			return false;
+		}
+
+		private static async Task ScanForSubFolders(
+					IFolder startingFolder,
+					Action<Document>? onFindFile,
+					Action<Folder>? onEachDirectory,
+					SearchStyle searchStyle,
+					IReadOnlyCollection<String> searchPatterns,
+					CancellationToken cancelToken
+				) {
+			try {
+				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).WithCancellation( cancelToken ) ) {
+					if ( subFolder is null ) {
+						continue;
+					}
+
+					try {
+						onEachDirectory?.Invoke( subFolder );
+					}
+					catch ( Exception exception ) {
+						exception.Log();
+					}
+
+					//recurse into
+					await subFolder.FindFiles( searchPatterns, cancelToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
+				}
+			}
+			catch ( UnauthorizedAccessException ) { }
+			catch ( DirectoryNotFoundException ) { }
+			catch ( IOException ) { }
+			catch ( SecurityException ) { }
+			catch ( AggregateException aggregateException ) {
+				aggregateException.Handle( exception => {
+					switch ( exception ) {
+						case UnauthorizedAccessException _:
+						case DirectoryNotFoundException _:
+						case IOException _:
+						case SecurityException _:
+							return true;
+					}
+
+					exception!.Log();
+
+					return false;
+				} );
+			}
+		}
+
 		/// <summary>
 		///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait(); Example: await WriteTextAsync( fullPath:
 		///     fullPath, text: message );
@@ -83,31 +228,31 @@ namespace Librainian.FileSystem {
 
 				await sourceStream.FlushAsync().ConfigureAwait( false );
 
-				return ( Status.Success, default( Exception? ) );
+				return (Status.Success, default( Exception? ));
 			}
 			catch ( UnauthorizedAccessException exception ) {
 				exception.Log();
-				return ( Status.Exception, exception );
+				return (Status.Exception, exception);
 			}
 			catch ( ArgumentNullException exception ) {
 				exception.Log();
-				return ( Status.Exception, exception );
+				return (Status.Exception, exception);
 			}
 			catch ( DirectoryNotFoundException exception ) {
 				exception.Log();
-				return ( Status.Exception, exception );
+				return (Status.Exception, exception);
 			}
 			catch ( PathTooLongException exception ) {
 				exception.Log();
-				return ( Status.Exception, exception );
+				return (Status.Exception, exception);
 			}
 			catch ( SecurityException exception ) {
 				exception.Log();
-				return ( Status.Exception, exception );
+				return (Status.Exception, exception);
 			}
 			catch ( IOException exception ) {
 				exception.Log();
-				return ( Status.Exception, exception );
+				return (Status.Exception, exception);
 			}
 		}
 
@@ -144,7 +289,7 @@ namespace Librainian.FileSystem {
 					yield break;
 				}
 
-				yield return ( Byte ) b;
+				yield return ( Byte )b;
 			} while ( true );
 		}
 
@@ -180,7 +325,7 @@ namespace Librainian.FileSystem {
 						yield break;
 					}
 
-					yield return ( Byte ) b;
+					yield return ( Byte )b;
 				} while ( true );
 			}
 		}
@@ -189,6 +334,7 @@ namespace Librainian.FileSystem {
 		/// <param name="fileInfo"></param>
 		/// <returns></returns>
 		public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+
 			// TODO this needs a unit test for endianness
 			if ( fileInfo is null ) {
 				throw new ArgumentNullException( nameof( fileInfo ) );
@@ -219,12 +365,12 @@ namespace Librainian.FileSystem {
 			var high = buffered.ReadByte();
 
 			if ( high == -1 ) {
-				yield return ( ( Byte ) low ).CombineBytes( 0 );
+				yield return ( ( Byte )low ).CombineBytes( 0 );
 
 				yield break;
 			}
 
-			yield return ( ( Byte ) low ).CombineBytes( ( Byte ) high );
+			yield return ( ( Byte )low ).CombineBytes( ( Byte )high );
 		}
 
 		/// <summary>
@@ -266,6 +412,7 @@ namespace Librainian.FileSystem {
 				}
 
 				if ( hFindFile?.IsInvalid != false ) {
+
 					//BUG or == true ?
 					break;
 				}
@@ -275,9 +422,11 @@ namespace Librainian.FileSystem {
 				}
 
 				if ( findData.cFileName != null ) {
+
 					// Fix with @"\\?\" +System.IO.PathTooLongException?
 					if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
 						$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".BreakIfDebug( "poor man's debug" );
+
 						//continue; //BUG Needs unit tested for long paths.
 					}
 
@@ -340,6 +489,7 @@ namespace Librainian.FileSystem {
 
 			if ( !handle.IsInvalid ) {
 				do {
+
 					// skip "." and ".."
 					if ( lpFindFileData.cFileName == "." || lpFindFileData.cFileName == ".." ) {
 						continue;
@@ -347,6 +497,7 @@ namespace Librainian.FileSystem {
 
 					// if directory...
 					if ( getDirectories && recurse && ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory ) {
+
 						// ...and if we are performing a recursive search...
 						// ... populate the subdirectory list
 						var fullName = Path.Combine( path, lpFindFileData.cFileName );
@@ -383,6 +534,7 @@ namespace Librainian.FileSystem {
 
 				// handle recursive search
 				if ( recurse ) {
+
 					// handle depth of recursion
 					if ( depth > 0 ) {
 						if ( parallel ) {
@@ -430,6 +582,7 @@ namespace Librainian.FileSystem {
 			else if ( handle.IsInvalid && !suppressErrors ) {
 				Int32 hr = Marshal.GetLastWin32Error();
 				if ( hr != 2 && hr != 0x12 ) {
+
 					//throw new Win32Exception(hr);
 					Console.WriteLine( "{0}:  {1}", path, new Win32Exception( hr ).Message );
 				}
@@ -438,67 +591,6 @@ namespace Librainian.FileSystem {
 			return resultList;
 		}
 		*/
-
-		private static Boolean MatchesFilter(
-			FileAttributes fileAttributes,
-			String name,
-			String searchPattern,
-			Boolean aDirectory,
-			Boolean aHidden,
-			Boolean aSystem,
-			Boolean aReadOnly,
-			Boolean aCompressed,
-			Boolean aArchive,
-			Boolean aReparsePoint,
-			String filterMode
-		) {
-			// first make sure that the name matches the search pattern
-			if ( NativeMethods.PathMatchSpec( name, searchPattern ) ) {
-				// then we build our filter attributes enumeration
-				var filterAttributes = new FileAttributes();
-
-				if ( aDirectory ) {
-					filterAttributes |= FileAttributes.Directory;
-				}
-
-				if ( aHidden ) {
-					filterAttributes |= FileAttributes.Hidden;
-				}
-
-				if ( aSystem ) {
-					filterAttributes |= FileAttributes.System;
-				}
-
-				if ( aReadOnly ) {
-					filterAttributes |= FileAttributes.ReadOnly;
-				}
-
-				if ( aCompressed ) {
-					filterAttributes |= FileAttributes.Compressed;
-				}
-
-				if ( aReparsePoint ) {
-					filterAttributes |= FileAttributes.ReparsePoint;
-				}
-
-				if ( aArchive ) {
-					filterAttributes |= FileAttributes.Archive;
-				}
-
-				// based on the filtermode, we match the file with our filter attributes a bit differently
-				return filterMode switch {
-					"Include" when ( fileAttributes & filterAttributes ) == filterAttributes => true,
-					"Include" => false,
-					"Exclude" when ( fileAttributes & filterAttributes ) != filterAttributes => true,
-					"Exclude" => false,
-					"Strict" when fileAttributes == filterAttributes => true,
-					"Strict" => false,
-					var _ => false
-				};
-			}
-
-			return false;
-		}
 
 		// --------------------------- CopyStream ---------------------------
 		/// <summary>Copies data from a source stream to a target stream.</summary>
@@ -522,7 +614,7 @@ namespace Librainian.FileSystem {
 			}
 
 			const Int32 size = 0xffff;
-			var buffer = new Byte[size];
+			var buffer = new Byte[ size ];
 			Int32 bytesRead;
 
 			while ( ( bytesRead = source.Read( buffer, 0, size ) ) > 0 ) {
@@ -663,88 +755,6 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		private static async Task FindEachDocument( [NotNull] IFolder folder, Action<Document>? onFindFile, String searchPattern, CancellationToken cancelToken ) {
-			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
-			}
-
-			try {
-				await foreach ( var file in folder.EnumerateDocuments( searchPattern, cancelToken ) ) {
-					try {
-						onFindFile?.Invoke( file );
-					}
-					catch ( Exception exception ) {
-						exception.Log();
-					}
-				}
-			}
-			catch ( UnauthorizedAccessException ) { }
-			catch ( DirectoryNotFoundException ) { }
-			catch ( IOException ) { }
-			catch ( SecurityException ) { }
-			catch ( AggregateException aggregateException ) {
-				aggregateException.Handle( exception => {
-					switch ( exception ) {
-						case UnauthorizedAccessException _:
-						case DirectoryNotFoundException _:
-						case IOException _:
-						case SecurityException _:
-							return true;
-					}
-
-					exception!.Log();
-
-					return false;
-				} );
-			}
-		}
-
-		private static async Task ScanForSubFolders(
-			IFolder startingFolder,
-			Action<Document>? onFindFile,
-			Action<Folder>? onEachDirectory,
-			SearchStyle searchStyle,
-			IReadOnlyCollection<String> searchPatterns,
-			CancellationToken cancelToken
-		) {
-			try {
-				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).WithCancellation( cancelToken ) ) {
-					if ( subFolder is null ) {
-						continue;
-					}
-
-					try {
-						onEachDirectory?.Invoke( subFolder );
-					}
-					catch ( Exception exception ) {
-						exception.Log();
-					}
-
-					//recurse into
-					await subFolder.FindFiles( searchPatterns, cancelToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
-				}
-			}
-			catch ( UnauthorizedAccessException ) { }
-			catch ( DirectoryNotFoundException ) { }
-			catch ( IOException ) { }
-			catch ( SecurityException ) { }
-			catch ( AggregateException aggregateException ) {
-				aggregateException.Handle( exception => {
-					switch ( exception ) {
-						case UnauthorizedAccessException _:
-						case DirectoryNotFoundException _:
-						case IOException _:
-						case SecurityException _:
-							return true;
-					}
-
-					exception!.Log();
-
-					return false;
-				} );
-			}
-		}
-
 		/// <summary>
 		///     <para>
 		///         The code does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems as
@@ -764,9 +774,9 @@ namespace Librainian.FileSystem {
 
 			var clusterSize = sectorsPerCluster * bytesPerSector;
 			var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var sizeHigh );
-			var size = ( ( Int64 ) sizeHigh << 32 ) | losize;
+			var size = ( ( Int64 )sizeHigh << 32 ) | losize;
 
-			return ( UInt64 ) ( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
+			return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
 		}
 
 		[CanBeNull]
@@ -837,6 +847,7 @@ namespace Librainian.FileSystem {
 				if ( foldersFound.Add( startingFolder ) ) {
 					await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.AllDirectories, cancellationToken ) ) {
 						if ( foldersFound.Add( subFolder ) ) {
+
 							//recurse into
 							await GrabAllFolders( subFolder, foldersFound, cancellationToken ).ConfigureAwait( false );
 						}
@@ -856,6 +867,7 @@ namespace Librainian.FileSystem {
 		}
 
 		/*
+
 		/// <summary></summary>
 		/// <param name="startingFolder">        </param>
 		/// <param name="documentSearchPatterns"></param>
@@ -925,10 +937,16 @@ namespace Librainian.FileSystem {
 		public static Boolean IsDirectory( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
 
 		[Pure]
-		public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
+		public static Boolean IsDirectory( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
 
 		[Pure]
-		public static Boolean IsDirectory( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		public static Boolean IsExtended( [NotNull] this String path ) =>
+			path.Length >= 4 && path[ 0 ] == PathInternal.Constants.Backslash && ( path[ 1 ] == PathInternal.Constants.Backslash || path[ 1 ] == '?' ) && path[ 2 ] == '?' &&
+			path[ 3 ] == PathInternal.Constants.Backslash;
+
+		[Pure]
+		public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
 
 		[Pure]
 		public static Boolean IsFile( this WIN32_FIND_DATA data ) => !IsDirectory( data );
@@ -940,12 +958,6 @@ namespace Librainian.FileSystem {
 		public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
 			data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
 
-		[Pure]
-		public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName is "." or "..";
-
-		[Pure]
-		public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
-
 		/// <summary>Hard coded folders to skip.</summary>
 		/// <param name="data"></param>
 		/// <returns></returns>
@@ -954,7 +966,13 @@ namespace Librainian.FileSystem {
 			data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
 
 		[Pure]
+		public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName is "." or "..";
+
+		[Pure]
 		public static Boolean IsParentOrCurrent( this WIN32_FIND_DATA data ) => data.cFileName is "." or "..";
+
+		[Pure]
+		public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
 
 		[Pure]
 		public static Boolean IsReparsePoint( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
@@ -1068,7 +1086,7 @@ namespace Librainian.FileSystem {
 			if ( File.Exists( filePath ) ) {
 				try {
 					var sb = new StringBuilder( bufferSize.Value );
-					var buffer = new Byte[bufferSize.Value];
+					var buffer = new Byte[ bufferSize.Value ];
 
 					await using var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true );
 
@@ -1246,7 +1264,7 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var right = new Document( rightFile.FullName);
+			var right = new Document( rightFile.FullName );
 
 			return await left.SameContent( right, cancellationToken ).ConfigureAwait( false );
 		}
@@ -1271,7 +1289,7 @@ namespace Librainian.FileSystem {
 				return false;
 			}
 
-			var left = new Document( leftFile.FullName);
+			var left = new Document( leftFile.FullName );
 
 			return await left.SameContent( right, cancellationToken ).ConfigureAwait( false );
 		}
@@ -1340,6 +1358,7 @@ namespace Librainian.FileSystem {
 			//remove the fake .tif extension?
 			//OR remove the fake .jpg extension?
 			if ( !fileNameWithoutExtension.GetExtension().IsNullOrEmpty() ) {
+
 				// ReSharper disable once AssignNullToNotNullAttribute
 				fileNameWithoutExtension = fileNameWithoutExtension.GetFileNameWithoutExtension();
 
@@ -1415,7 +1434,7 @@ namespace Librainian.FileSystem {
 				if ( File.Exists( filePath ) ) {
 					using var fileStream = File.Open( filePath, fileMode, fileAccess, fileShare );
 
-					var length = ( Int32 ) fileStream.Length;
+					var length = ( Int32 )fileStream.Length;
 
 					if ( length > 0 ) {
 						fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
@@ -1424,6 +1443,7 @@ namespace Librainian.FileSystem {
 				}
 			}
 			catch ( IOException ) {
+
 				// IOExcception is thrown if the file is in use by another process.
 				if ( bePatient ) {
 					if ( !Thread.Yield() ) {
@@ -1436,8 +1456,6 @@ namespace Librainian.FileSystem {
 
 			return memoryStream;
 		}
-
-		
 
 		/// <summary>Returns a temporary <see cref="Document" /> (but does not create the file in the file system).</summary>
 		/// <param name="folder">   </param>
@@ -1472,11 +1490,13 @@ namespace Librainian.FileSystem {
 		/// </returns>
 		[CanBeNull]
 		public static FileStream? TryOpen( [CanBeNull] String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+
 			//TODO
 			try {
 				return File.Open( filePath, fileMode, fileAccess, fileShare );
 			}
 			catch ( IOException ) {
+
 				// IOExcception is thrown if the file is in use by another process.
 			}
 
@@ -1504,6 +1524,7 @@ namespace Librainian.FileSystem {
 				}
 			}
 			catch ( IOException ) {
+
 				// IOExcception is thrown if the file is in use by another process.
 				if ( !bePatient ) {
 					return default( FileStream? );
@@ -1526,11 +1547,13 @@ namespace Librainian.FileSystem {
 			FileAccess fileAccess = FileAccess.Write,
 			FileShare fileShare = FileShare.ReadWrite
 		) {
+
 			//TODO
 			try {
 				return File.Open( filePath, fileMode, fileAccess, fileShare );
 			}
 			catch ( IOException ) {
+
 				// IOExcception is thrown if the file is in use by another process.
 			}
 
@@ -1581,12 +1604,6 @@ namespace Librainian.FileSystem {
 			return new DirectoryInfo( path );
 		}
 
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsExtended( [NotNull] this String path ) =>
-			path.Length >= 4 && path[0] == PathInternal.Constants.Backslash && ( path[1] == PathInternal.Constants.Backslash || path[1] == '?' ) && path[2] == '?' &&
-			path[3] == PathInternal.Constants.Backslash;
-
 		[Serializable]
 		public class FileInformation {
 
@@ -1606,14 +1623,13 @@ namespace Librainian.FileSystem {
 			[NotNull]
 			public PathInformation Path;
 
+			[NotNull]
+			public String Name { get; }
+
 			public FileInformation( [NotNull] String name, [NotNull] PathInformation path ) {
 				this.Path = path;
 				this.Name = name;
 			}
-
-			[NotNull]
-			public String Name { get; }
-
 		}
 
 		[Serializable]
@@ -1630,13 +1646,10 @@ namespace Librainian.FileSystem {
 			[CanBeNull]
 			public PathInformation? Parent;
 
-			public PathInformation( [NotNull] String path ) => this.Path = path;
-
 			[NotNull]
 			public String Path { get; }
 
+			public PathInformation( [NotNull] String path ) => this.Path = path;
 		}
-
 	}
-
 }

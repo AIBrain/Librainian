@@ -5,9 +5,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -15,18 +15,19 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "TaskExtensions.cs" last formatted on 2021-02-23 at 10:56 PM.
 
 #nullable enable
 
 namespace Librainian.Threading {
+
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -127,7 +128,7 @@ namespace Librainian.Threading {
 		public static void Execute( [NotNull] this Action action, [CanBeNull] Object[]? args = default ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
-					if ( method.Target is ISynchronizeInvoke {InvokeRequired: true} syncInvoke ) {
+					if ( method.Target is ISynchronizeInvoke { InvokeRequired: true } syncInvoke ) {
 						syncInvoke.Invoke( method, args );
 					}
 					else {
@@ -149,7 +150,7 @@ namespace Librainian.Threading {
 		public static void Execute<T>( [NotNull] this Action<T> action, [CanBeNull] Object[]? args = null ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
-					if ( method.Target is ISynchronizeInvoke {InvokeRequired: true} syncInvoke ) {
+					if ( method.Target is ISynchronizeInvoke { InvokeRequired: true } syncInvoke ) {
 						syncInvoke.Invoke( method, args );
 					}
 					else {
@@ -221,6 +222,7 @@ namespace Librainian.Threading {
 				return await tcs.Task.ConfigureAwait( false );
 			}
 			finally {
+
 				// Unsubscribe from event.
 				unregisterDelegate( del );
 			}
@@ -252,7 +254,7 @@ namespace Librainian.Threading {
 
 			foreach ( var task in inputs ) {
 				task.ContinueWith( completed => {
-					var nextBox = boxes[Interlocked.Increment( ref currentIndex )];
+					var nextBox = boxes[ Interlocked.Increment( ref currentIndex ) ];
 					completed.PropagateResult( nextBox );
 				}, TaskContinuationOptions.ExecuteSynchronously );
 			}
@@ -279,12 +281,12 @@ namespace Librainian.Threading {
 			}
 
 			var inputTasks = tasks.ToList();
-			var buckets = new TaskCompletionSource<Task<T>>[inputTasks.Count];
-			var results = new Task<Task<T>>[buckets.Length];
+			var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
+			var results = new Task<Task<T>>[ buckets.Length ];
 
 			for ( var i = 0; i < buckets.Length; i++ ) {
-				buckets[i] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
-				results[i] = buckets[i].Task;
+				buckets[ i ] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
+				results[ i ] = buckets[ i ].Task;
 			}
 
 			var nextTaskIndex = -1;
@@ -294,7 +296,7 @@ namespace Librainian.Threading {
 					throw new ArgumentNullException( nameof( completed ) );
 				}
 
-				var bucket = buckets[Interlocked.Increment( ref nextTaskIndex )];
+				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
 				bucket.TrySetResult( completed );
 			}
 
@@ -411,7 +413,7 @@ namespace Librainian.Threading {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task Then( this TimeSpan delay, [NotNull] Action job,  CancellationToken cancellationToken  ) {
+		public static async Task Then( this TimeSpan delay, [NotNull] Action job, CancellationToken cancellationToken ) {
 			if ( job is null ) {
 				throw new ArgumentNullException( nameof( job ) );
 			}
@@ -464,7 +466,7 @@ namespace Librainian.Threading {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task Then( this SpanOfTime delay, [NotNull] Action job,  CancellationToken cancellationToken  ) {
+		public static async Task Then( this SpanOfTime delay, [NotNull] Action job, CancellationToken cancellationToken ) {
 			if ( job is null ) {
 				throw new ArgumentNullException( nameof( job ) );
 			}
@@ -481,7 +483,7 @@ namespace Librainian.Threading {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task Then( [NotNull] this IQuantityOfTime delay, [NotNull] Action job,  CancellationToken cancellationToken  ) {
+		public static async Task Then( [NotNull] this IQuantityOfTime delay, [NotNull] Action job, CancellationToken cancellationToken ) {
 			if ( delay is null ) {
 				throw new ArgumentNullException( nameof( delay ) );
 			}
@@ -771,7 +773,7 @@ namespace Librainian.Threading {
 		/// <param name="target"></param>
 		/// <param name="item">  </param>
 		/// <param name="cancellationToken"> </param>
-		public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, [CanBeNull] T item,  CancellationToken cancellationToken  ) {
+		public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, [CanBeNull] T item, CancellationToken cancellationToken ) {
 			if ( target is null ) {
 				throw new ArgumentNullException( nameof( target ) );
 			}
@@ -932,7 +934,7 @@ namespace Librainian.Threading {
 		/// <param name="cancellationToken"></param>
 		/// <param name="tasks"></param>
 		/// <returns></returns>
-		public static async PooledTask WhenCount( this Int32 count,  CancellationToken cancellationToken , [CanBeNull] params Task[]? tasks ) {
+		public static async PooledTask WhenCount( this Int32 count, CancellationToken cancellationToken, [CanBeNull] params Task[]? tasks ) {
 			if ( !count.Any() ) {
 				return;
 			}
@@ -963,7 +965,7 @@ namespace Librainian.Threading {
 		/// <exception cref="TaskCanceledException">thrown when the task was cancelled?</exception>
 		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
 		[ItemNotNull]
-		public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout,  CancellationToken cancellationToken  ) {
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
 			if ( task is null ) {
 				throw new ArgumentNullException( nameof( task ) );
 			}
@@ -986,7 +988,7 @@ namespace Librainian.Threading {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[ItemNotNull]
-		public static async Task<Task> With<T>( [NotNull] this Task<T> task,  CancellationToken cancellationToken  ) {
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, CancellationToken cancellationToken ) {
 			if ( task is null ) {
 				throw new ArgumentNullException( nameof( task ) );
 			}
@@ -1130,7 +1132,6 @@ namespace Librainian.Threading {
 			public void OnCompleted( [NotNull] Action continuation ) {
 				Task.Run( continuation );
 			}
-
 		}
 
 		public class ResourceLoader<T> : IResourceLoader<T> {
@@ -1187,8 +1188,6 @@ namespace Librainian.Threading {
 					return await this._loader( cancelToken ).ConfigureAwait( false );
 				}
 			}
-
 		}
-
 	}
 }

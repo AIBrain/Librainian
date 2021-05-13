@@ -1,15 +1,15 @@
 ﻿// Copyright � Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "DatabaseServer.cs" last touched on 2021-04-25 at 5:35 AM by Protiguous.
 
 #nullable enable
@@ -95,11 +95,11 @@ namespace Librainian.Databases {
 			Debug.Assert( !String.IsNullOrWhiteSpace( this._connectionString ) );
 		}
 
-
 		[CanBeNull]
 		private String? _connectionString { get; }
 
 		private CancellationToken _openCancellationToken { get; }
+
 		private CancellationToken _executeCancellationToken { get; }
 
 		/// <summary>
@@ -148,7 +148,6 @@ namespace Librainian.Databases {
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
-
 			}
 			catch ( DbException exception ) {
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
@@ -159,7 +158,6 @@ namespace Librainian.Databases {
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-
 			finally {
 				this.CloseConnection( connection );
 			}
@@ -227,7 +225,6 @@ namespace Librainian.Databases {
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
-
 			}
 			catch ( DbException exception ) {
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
@@ -238,7 +235,6 @@ namespace Librainian.Databases {
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -335,7 +331,6 @@ namespace Librainian.Databases {
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
-
 			}
 			catch ( DbException exception ) {
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
@@ -346,7 +341,6 @@ namespace Librainian.Databases {
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-
 
 			return false;
 		}
@@ -403,7 +397,6 @@ namespace Librainian.Databases {
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
-
 			}
 			catch ( DbException exception ) {
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
@@ -511,8 +504,6 @@ namespace Librainian.Databases {
 
 					return scalar is null ? default( T? ) : scalar.Cast<Object, T>();
 				}
-
-
 			}
 			catch ( InvalidOperationException exception ) {
 				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
@@ -530,7 +521,6 @@ namespace Librainian.Databases {
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
-
 			}
 			catch ( DbException exception ) {
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
@@ -584,6 +574,7 @@ namespace Librainian.Databases {
 				}
 			}
 			catch ( InvalidCastException exception ) {
+
 				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 				exception.Log( Rebuild( query, parameters ) );
 
@@ -605,7 +596,6 @@ namespace Librainian.Databases {
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
-
 			}
 			catch ( DbException exception ) {
 				if ( exception.PossibleTimeout() && Retry.Any() ) {
@@ -780,7 +770,6 @@ namespace Librainian.Databases {
 
 				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
 
-
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
@@ -830,7 +819,6 @@ namespace Librainian.Databases {
 
 				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
 
-
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
 						CommandType = commandType,
@@ -879,7 +867,6 @@ namespace Librainian.Databases {
 
 				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
 
-
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
 						CommandType = CommandType.StoredProcedure,
@@ -893,6 +880,7 @@ namespace Librainian.Databases {
 				}
 			}
 			catch ( InvalidCastException exception ) {
+
 				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 				exception.Log( Rebuild( query, parameters ) );
 
@@ -1003,11 +991,13 @@ namespace Librainian.Databases {
 			--Retry;
 
 			try {
+
 				//$"Attempting to open async sql connection. {Retry} attempts remaining..".Verbose();
 
 				FluentTimer? timer = null;
 
 				if ( progress is not null ) {
+
 					//SqlConnectionStringBuilder builder = new(this._connectionString);
 					//var timeToConnect = TimeSpan.FromSeconds( builder.ConnectTimeout );
 					var stopwatch = Stopwatch.StartNew();
@@ -1087,6 +1077,7 @@ namespace Librainian.Databases {
 			if ( this.GetConnectionCounter().Any() ) {
 				connection.Close();
 				--this.ConnectionCounter;
+
 				//Assert.True( this.ConnectionCounter >= 0 );
 			}
 
@@ -1164,6 +1155,7 @@ namespace Librainian.Databases {
 			--Retry;
 
 			try {
+
 				//$"Attempting to open sql connection. {Retry} attempts remaining..".Verbose();
 
 				var connection = new SqlConnection( this._connectionString );
@@ -1173,6 +1165,7 @@ namespace Librainian.Databases {
 				return connection;
 			}
 			catch ( InvalidOperationException exception ) {
+
 				//exception.Log( BreakOrDontBreak.Break );
 				if ( Retry.Any() ) {
 					--Retry;
@@ -1533,7 +1526,5 @@ namespace Librainian.Databases {
 		}
 
 		public String? GetConnectionString() => this._connectionString;
-
 	}
-
 }

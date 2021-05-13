@@ -1,4 +1,4 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,39 +23,56 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BenchmarkTests.cs" last touched on 2021-04-30 at 11:21 AM by Protiguous.
+// File "CountableIntegersTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
 namespace LibrainianUnitTests {
 
-	using System.Threading;
-	using FluentAssertions;
-	using Librainian.Measurement;
+	using System;
+	using System.Threading.Tasks;
+	using Librainian.Collections;
+	using Librainian.Maths;
+	using Librainian.Measurement.Time;
 	using Xunit;
 
-	public static class BenchmarkTests {
+	public static class CountableIntegersTests {
+
+		public static Countable<String> Countable { get; } = new( Seconds.One, Seconds.One );
+
+		//[Theory]
+		//public static void Setup() { }
 
 		[Fact]
-		public static void TestBenchmarking_MethodA() {
-			static void a() => Thread.Sleep( 10 );
-			static void b() => Thread.Sleep( 20 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
+		public static void TestAdding() {
+			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
+				var key = Randem.NextString( 2 );
+				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+			} ), () => Parallel.For( 0, 102400, l => {
+				var key = Randem.NextString( 2 );
+				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+			} ), () => Parallel.For( 0, 102400, l => {
+				var key = Randem.NextString( 2 );
+				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+			} ) ) );
+
+			TimeSpan timeTaken = bob.TimeStatement();
+			Console.WriteLine( timeTaken.Simpler() );
 		}
 
 		[Fact]
-		public static void TestBenchmarking_MethodB() {
-			static void a() => Thread.Sleep( 20 );
-			static void b() => Thread.Sleep( 10 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
-		}
+		public static void TestSubtracting() {
+			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
+				var key = Randem.NextString( 2 );
+				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+			} ), () => Parallel.For( 0, 102400, l => {
+				var key = Randem.NextString( 2 );
+				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+			} ), () => Parallel.For( 0, 102400, l => {
+				var key = Randem.NextString( 2 );
+				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+			} ) ) );
 
-		[Fact]
-		public static void TestBenchmarking_Same() {
-			static void a() => Thread.Sleep( 1 );
-			static void b() => Thread.Sleep( 1 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.Same );
+			TimeSpan timeTaken = bob.TimeStatement();
+			Console.WriteLine( timeTaken.Simpler() );
 		}
 
 	}

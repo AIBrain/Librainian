@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "GeometryEx.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics.DD {
@@ -31,19 +31,22 @@ namespace Librainian.Graphics.DD {
 
 		public static Intersection IntersectionOf( Line line, Polygon polygon ) {
 			switch ( polygon.Length ) {
-				case 0: return Intersection.None;
+				case 0:
+					return Intersection.None;
 
-				case 1: return IntersectionOf( polygon[0], line );
+				case 1:
+					return IntersectionOf( polygon[ 0 ], line );
 			}
 
 			var tangent = false;
 
 			for ( var index = 0; index < polygon.Length; index++ ) {
 				var index2 = ( index + 1 ) % polygon.Length;
-				var intersection = IntersectionOf( line, new Line( polygon[index], polygon[index2] ) );
+				var intersection = IntersectionOf( line, new Line( polygon[ index ], polygon[ index2 ] ) );
 
 				switch ( intersection ) {
-					case Intersection.Intersection: return intersection;
+					case Intersection.Intersection:
+						return intersection;
 
 					case Intersection.Tangent:
 						tangent = true;
@@ -76,6 +79,7 @@ namespace Librainian.Graphics.DD {
 		}
 
 		public static Intersection IntersectionOf( Line line1, Line line2 ) {
+
 			// Fail if either line segment is zero-length.
 			if ( Math.Abs( line1.X1 - line1.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line1.Y2 ) < Single.Epsilon ||
 				 Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) {
@@ -132,30 +136,32 @@ namespace Librainian.Graphics.DD {
 
 		public static Intersection IntersectionOf( PointF point, Polygon polygon ) {
 			switch ( polygon.Length ) {
-				case 0: return Intersection.None;
+				case 0:
+					return Intersection.None;
 
 				case 1:
 
-					if ( Math.Abs( polygon[0].X - point.X ) < Single.Epsilon && Math.Abs( polygon[0].Y - point.Y ) < Single.Epsilon ) {
+					if ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon && Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) {
 						return Intersection.Tangent;
 					}
 
 					return Intersection.None;
 
-				case 2: return IntersectionOf( point, new Line( polygon[0], polygon[1] ) );
+				case 2:
+					return IntersectionOf( point, new Line( polygon[ 0 ], polygon[ 1 ] ) );
 			}
 
 			var counter = 0;
 			Int32 i;
 			var n = polygon.Length;
-			var p1 = polygon[0];
+			var p1 = polygon[ 0 ];
 
 			if ( point == p1 ) {
 				return Intersection.Tangent;
 			}
 
 			for ( i = 1; i <= n; i++ ) {
-				var p2 = polygon[i % n];
+				var p2 = polygon[ i % n ];
 
 				if ( point == p2 ) {
 					return Intersection.Tangent;
@@ -180,7 +186,5 @@ namespace Librainian.Graphics.DD {
 
 			return counter % 2 == 1 ? Intersection.Containment : Intersection.None;
 		}
-
 	}
-
 }

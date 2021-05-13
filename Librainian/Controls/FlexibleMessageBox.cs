@@ -248,6 +248,12 @@ namespace Librainian.Controls {
 			[CanBeNull]
 			private IContainer? components;
 
+			/// <summary>The text that is been used for the heading.</summary>
+			public String? CaptionText { get; set; }
+
+			/// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
+			public String? MessageText { get; set; }
+
 			/// <summary>Initializes a new instance of the <see cref="FlexibleMessageBoxForm" /> class.</summary>
 			private FlexibleMessageBoxForm() {
 				this.InitializeComponent();
@@ -255,11 +261,24 @@ namespace Librainian.Controls {
 				this.KeyUp += this.FlexibleMessageBoxForm_KeyUp;
 			}
 
-			/// <summary>The text that is been used for the heading.</summary>
-			public String? CaptionText { get; set; }
+			//These are the possible buttons (in a standard MessageBox)
+			[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+			private enum ButtonID {
 
-			/// <summary>The text that is been used in the FlexibleMessageBoxForm.</summary>
-			public String? MessageText { get; set; }
+				OK = 0,
+
+				CANCEL,
+
+				YES,
+
+				NO,
+
+				ABORT,
+
+				RETRY,
+
+				IGNORE
+			}
 
 			/// <summary>Gets the button text for the CurrentUICulture language. Note: The fallback language is English</summary>
 			/// <param name="buttonID">The ID of the button.</param>
@@ -268,7 +287,7 @@ namespace Librainian.Controls {
 			private static String GetButtonText( ButtonID buttonID ) {
 				var buttonTextArrayIndex = Convert.ToInt32( buttonID );
 
-				return ButtonTextsEnglish[buttonTextArrayIndex];
+				return ButtonTextsEnglish[ buttonTextArrayIndex ];
 			}
 
 			/// <summary>
@@ -333,6 +352,7 @@ namespace Librainian.Controls {
 				MessageBoxButtons buttons,
 				MessageBoxDefaultButton defaultButton
 			) {
+
 				//Set the buttons visibilities and texts
 				switch ( buttons ) {
 					case MessageBoxButtons.AbortRetryIgnore:
@@ -490,6 +510,7 @@ namespace Librainian.Controls {
 					}
 
 					default: {
+
 						//When no icon is used: Correct placement and width of rich text box.
 						pictureBoxForIcon.Visible = false;
 						if ( flexibleMessageBoxForm._richTextBoxMessage != null ) {
@@ -514,6 +535,7 @@ namespace Librainian.Controls {
 				[CanBeNull] String? text,
 				[CanBeNull] String? caption
 			) {
+
 				//First set the bounds for the maximum dialog size
 				flexibleMessageBoxForm.MaximumSize = new Size( Convert.ToInt32( SystemInformation.WorkingArea.Width * GetCorrectedWorkingAreaFactor( MaxWidthFactor ) ),
 					Convert.ToInt32( SystemInformation.WorkingArea.Height * GetCorrectedWorkingAreaFactor( MaxHeightFactor ) ) );
@@ -548,6 +570,7 @@ namespace Librainian.Controls {
 			/// <param name="flexibleMessageBoxForm">The FlexibleMessageBox dialog.</param>
 			/// <param name="owner">                 The owner.</param>
 			private static void SetDialogStartPosition( [JetBrains.Annotations.NotNull] Form flexibleMessageBoxForm, [CanBeNull] IWin32Window? owner ) {
+
 				//If no owner given: Center on current screen
 				if ( owner is null ) {
 					var screen = Screen.FromPoint( Cursor.Position );
@@ -562,11 +585,12 @@ namespace Librainian.Controls {
 			/// <param name="sender">The source of the event.</param>
 			/// <param name="e">     The <see cref="KeyEventArgs" /> instance containing the event data.</param>
 			private void FlexibleMessageBoxForm_KeyUp( [CanBeNull] Object? sender, [CanBeNull] KeyEventArgs? e ) {
+
 				//Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
 				if ( e?.Control == true && ( e.KeyCode == Keys.C || e.KeyCode == Keys.Insert ) ) {
 					var buttonsTextLine = ( this._button1?.Visible == true ? this._button1.Text + StandardMessageboxSeparatorSpaces : String.Empty ) +
-					                      ( this._button2?.Visible == true ? this._button2.Text + StandardMessageboxSeparatorSpaces : String.Empty ) +
-					                      ( this._button3?.Visible == true ? this._button3.Text + StandardMessageboxSeparatorSpaces : String.Empty );
+										  ( this._button2?.Visible == true ? this._button2.Text + StandardMessageboxSeparatorSpaces : String.Empty ) +
+										  ( this._button3?.Visible == true ? this._button3.Text + StandardMessageboxSeparatorSpaces : String.Empty );
 
 					//Build same clipboard text like the standard .Net MessageBox
 					var textForClipboard =
@@ -581,6 +605,7 @@ namespace Librainian.Controls {
 			/// <param name="sender">The source of the event.</param>
 			/// <param name="e">     The <see cref="EventArgs" /> instance containing the event data.</param>
 			private void FlexibleMessageBoxForm_Shown( [CanBeNull] Object? sender, [CanBeNull] EventArgs? e ) {
+
 				//Set the default button...
 				var buttonIndexToFocus = this._defaultButton switch {
 					MessageBoxDefaultButton.Button1 => 1,
@@ -615,9 +640,9 @@ namespace Librainian.Controls {
 				var pictureBoxForIcon = new PictureBox();
 				this._button2 = new Button();
 				this._button3 = new Button();
-				( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource ).BeginInit();
+				( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource ).BeginInit();
 				this._panel1.SuspendLayout();
-				( ( ISupportInitialize ) pictureBoxForIcon ).BeginInit();
+				( ( ISupportInitialize )pictureBoxForIcon ).BeginInit();
 				this.SuspendLayout();
 
 				// button1
@@ -726,9 +751,9 @@ namespace Librainian.Controls {
 				this.StartPosition = FormStartPosition.CenterParent;
 				this.Text = "<Caption>";
 				this.Shown += this.FlexibleMessageBoxForm_Shown;
-				( ( ISupportInitialize ) this._flexibleMessageBoxFormBindingSource )?.EndInit();
+				( ( ISupportInitialize )this._flexibleMessageBoxFormBindingSource )?.EndInit();
 				this._panel1?.ResumeLayout( false );
-				( ( ISupportInitialize ) pictureBoxForIcon ).EndInit();
+				( ( ISupportInitialize )pictureBoxForIcon ).EndInit();
 				this.ResumeLayout( false );
 				this.PerformLayout();
 			}
@@ -758,9 +783,12 @@ namespace Librainian.Controls {
 				MessageBoxDefaultButton defaultButton
 			) {
 				var func = new Func<DialogResult?>( () => {
+
 					//Create a new instance of the FlexibleMessageBox form
 					var flexibleMessageBoxForm = new FlexibleMessageBoxForm {
-						ShowInTaskbar = false, CaptionText = caption, MessageText = text
+						ShowInTaskbar = false,
+						CaptionText = caption,
+						MessageText = text
 					};
 
 					if ( flexibleMessageBoxForm._flexibleMessageBoxFormBindingSource != null ) {
@@ -789,38 +817,15 @@ namespace Librainian.Controls {
 					return flexibleMessageBoxForm.ShowDialog( owner ?? throw new ArgumentNullException( nameof( owner ) ) );
 				} );
 
-				if ( owner is Control {InvokeRequired: true} control ) {
-					return ( DialogResult? ) control.Invoke( func );
+				if ( owner is Control { InvokeRequired: true } control ) {
+					return ( DialogResult? )control.Invoke( func );
 				}
 
 				return func();
 			}
 
-			//These are the possible buttons (in a standard MessageBox)
-			[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-			private enum ButtonID {
-
-				OK = 0,
-
-				CANCEL,
-
-				YES,
-
-				NO,
-
-				ABORT,
-
-				RETRY,
-
-				IGNORE
-
-			}
-
 			//These are the buttons texts for different languages.
 			//If you want to add a new language, add it here and in the GetButtonText-Function
-
 		}
-
 	}
-
 }

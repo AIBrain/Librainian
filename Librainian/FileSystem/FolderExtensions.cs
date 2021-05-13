@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "FolderExtensions.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 #nullable enable
@@ -29,7 +29,7 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-    using System.Diagnostics;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
 	using System.Runtime.CompilerServices;
@@ -38,15 +38,11 @@ namespace Librainian.FileSystem {
 	using ComputerSystem.Devices;
 	using Exceptions;
 	using JetBrains.Annotations;
-    using Logging;
-    using Parsing;
+	using Logging;
+	using Parsing;
 	using PooledAwait;
-	
-	
-	
 
 	public static class FolderExtensions {
-
 		/*
 		public static Char[] InvalidPathChars {
 			get;
@@ -82,14 +78,14 @@ namespace Librainian.FileSystem {
 		}
 		*/
 
-        /// <summary>Returns a list of all files copied.</summary>
-        /// <param name="sourceFolder">                 </param>
-        /// <param name="destinationFolder">            </param>
-        /// <param name="searchPatterns">               </param>
-        /// <param name="overwriteDestinationDocuments"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [NotNull]
+		/// <summary>Returns a list of all files copied.</summary>
+		/// <param name="sourceFolder">                 </param>
+		/// <param name="destinationFolder">            </param>
+		/// <param name="searchPatterns">               </param>
+		/// <param name="overwriteDestinationDocuments"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		[NotNull]
 		public static async Task<IEnumerable<DocumentCopyStatistics>> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
 			[CanBeNull] IEnumerable<String>? searchPatterns, Boolean overwriteDestinationDocuments,
 			CancellationToken cancellationToken ) {
@@ -103,8 +99,8 @@ namespace Librainian.FileSystem {
 
 			var documentCopyStatistics = new ConcurrentDictionary<IDocument, DocumentCopyStatistics>();
 
-            $"Searching for documents in {sourceFolder.FullPath.DoubleQuote()}.".Verbose();
-            var sourceFiles = sourceFolder.EnumerateDocuments( searchPatterns ?? new[] {"*.*"}, cancellationToken );
+			$"Searching for documents in {sourceFolder.FullPath.DoubleQuote()}.".Verbose();
+			var sourceFiles = sourceFolder.EnumerateDocuments( searchPatterns ?? new[] { "*.*" }, cancellationToken );
 
 			//TODO Create a better task manager instead of Parallel.ForEach.
 			//TODO Limit # of active copies happening (disk saturation, fragmentation, thrashing).
@@ -114,7 +110,6 @@ namespace Librainian.FileSystem {
 			await fileCopyManager.LoadFilesToBeCopied( sourceFiles, destinationFolder, overwriteDestinationDocuments, cancellationToken ).ConfigureAwait( false );
 
 			await foreach ( var sourceFileTask in fileCopyManager.FilesToBeCopied().WithCancellation( cancellationToken ) ) {
-
 				var fileCopyData = await sourceFileTask.ConfigureAwait( false );
 
 				if ( fileCopyData is not null ) {
@@ -133,7 +128,7 @@ namespace Librainian.FileSystem {
 						dcs.BytesCopied = fileCopyData.BytesCopied.Value;
 					}
 
-					documentCopyStatistics[fileCopyData.Source] = dcs;
+					documentCopyStatistics[ fileCopyData.Source ] = dcs;
 				}
 			}
 
@@ -202,7 +197,7 @@ namespace Librainian.FileSystem {
 				var path = Path.Combine( drive.RootDirectory, folderName );
 				var asFolder = new Folder( path );
 
-				if ( await asFolder.Exists(cancellationToken).ConfigureAwait(false) ) {
+				if ( await asFolder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 					found = true;
 
 					yield return asFolder;
@@ -215,8 +210,8 @@ namespace Librainian.FileSystem {
 
 			//Next, check subfolders, beginning with the first drive.
 
-			await foreach ( var drive in Disk.GetDrives( cancellationToken) ) {
-				await foreach ( var folder in drive.EnumerateFolders( cancellationToken) ) {
+			await foreach ( var drive in Disk.GetDrives( cancellationToken ) ) {
+				await foreach ( var folder in drive.EnumerateFolders( cancellationToken ) ) {
 					var parts = SplitPath( ( Folder )folder ); //TODO fix this
 
 					if ( parts.Any( s => s.Like( folderName ) ) ) {
@@ -251,7 +246,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( info ) );
 			}
 
-			return SplitPath( info.FullName);
+			return SplitPath( info.FullName );
 		}
 
 		/// <summary>
@@ -281,6 +276,7 @@ namespace Librainian.FileSystem {
 			catch ( DirectoryNotFoundException ) { }
 			catch ( PathTooLongException ) { }
 			catch ( IOException ) {
+
 				// IOExcception is thrown when the file is in use by any process.
 				if ( stopwatch.Elapsed <= tryFor ) {
 					Thread.Yield();
@@ -296,6 +292,5 @@ namespace Librainian.FileSystem {
 
 			return default( Boolean? );
 		}
-
 	}
 }

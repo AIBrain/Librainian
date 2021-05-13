@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +14,16 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Volume.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 #nullable enable
+
 namespace Librainian.FileSystem {
 
 	using System;
@@ -47,7 +48,7 @@ namespace Librainian.FileSystem {
 		/// <param name="obj">An object to compare with this instance.</param>
 		/// <returns>A 32-bit signed integer that indicates the relative order of the comparands.</returns>
 		public override Int32 CompareTo( Object obj ) {
-			if ( obj is not Volume device) {
+			if ( obj is not Volume device ) {
 				throw new ArgumentException();
 			}
 
@@ -82,6 +83,7 @@ namespace Librainian.FileSystem {
 				try {
 					if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0, buffer, size,
 														 out bytesReturned, IntPtr.Zero ) ) {
+
 						// do nothing here on purpose
 					}
 				}
@@ -144,6 +146,7 @@ namespace Librainian.FileSystem {
 			var sb = new StringBuilder( 1024 );
 
 			if ( !NativeMethods.GetVolumeNameForVolumeMountPoint( $@"{this.Path}\", sb, ( UInt32 )sb.Capacity ) ) {
+
 				// throw new Win32Exception(Marshal.GetLastWin32Error());
 				return default( String? );
 			}
@@ -153,7 +156,5 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Gets a value indicating whether this volume is a based on USB devices.</summary>
 		public override Boolean IsUsb() => this.GetDisks().Any( disk => disk.IsUsb() );
-
 	}
-
 }

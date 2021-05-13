@@ -5,9 +5,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -15,16 +15,17 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "DocumentExtensions.cs" last formatted on 2021-02-24 at 8:00 AM.
 
 namespace Librainian.FileSystem {
+
 	using System;
 	using System.Diagnostics;
 	using System.IO;
@@ -35,7 +36,6 @@ namespace Librainian.FileSystem {
 	using Measurement.Time;
 
 	public static class DocumentExtensions {
-
 
 		private static async Task InternalCopyWithProgress( [NotNull] IDocument source, [NotNull] IDocument destination, [CanBeNull] IProgress<Decimal> progress,
 			[CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Decimal bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
@@ -61,6 +61,7 @@ namespace Librainian.FileSystem {
 
 		[Pure]
 		public static Boolean BadlyNamedFile( this Document document, out BadlyNamedReason badlyNamedReason ) {
+
 			//TODO This actually needs fleshed out with a whole host of options to decide what constitutes a "bad" file name
 
 			var currentExtension = Path.GetExtension( document.FullPath );
@@ -201,6 +202,5 @@ namespace Librainian.FileSystem {
         public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
             await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
         */
-
 	}
 }

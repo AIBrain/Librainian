@@ -1,15 +1,15 @@
 ﻿// Copyright � Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MathExtensions.cs" last touched on 2021-04-25 at 10:23 AM by Protiguous.
 
 #nullable enable
@@ -39,11 +39,9 @@ namespace Librainian.Maths {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using Collections.Extensions;
-	using Exceptions;
+	using ExtendedNumerics;
 	using JetBrains.Annotations;
 	using Numbers;
-	using Parsing;
-	using Rationals;
 
 	public static class MathExtensions {
 
@@ -51,6 +49,11 @@ namespace Librainian.Maths {
 		///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
 		/// </summary>
 		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
+
+		/// <summary>
+		/// Fake!
+		/// </summary>
+		public const Decimal EpsilonBigDecimal = 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
 
 		// you may want to pass this and use generics to allow more or less bits
 		/// <summary>
@@ -315,9 +318,11 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		[Pure]
 		public static Decimal Epsilon( this Decimal _ ) => EpsilonDecimal;
+		public static BigDecimal BigEpsilon( this BigDecimal _ ) => EpsilonBigDecimal;
 
 		[Pure]
 		public static Double Erf( this Double x ) {
+
 			// constants
 			const Double a1 = 0.254829592;
 			const Double a2 = -0.284496736;
@@ -675,9 +680,10 @@ namespace Librainian.Maths {
 		[Pure]
 		public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
+
 		/// <summary>
 		///     <para>
-		///         If the <paramref name="number" /> is less than <see cref="Rational.Zero" />, then return
+		///         If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return
 		///         <see cref="Decimal.Zero" />.
 		///     </para>
 		///     <para>Otherwise return the <paramref name="number" />.</para>
@@ -686,26 +692,7 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
-		public static Rational IfLessThanZeroThenZero( this Rational number ) => number < Rational.Zero ? Rational.Zero : number;
-
-		/// <summary>
-		///     <para>
-		///         If the <paramref name="number" /> is less than <see cref="Rational.Zero" />, then return
-		///         <see cref="Decimal.Zero" />.
-		///     </para>
-		///     <para>Otherwise return the <paramref name="number" />.</para>
-		/// </summary>
-		/// <param name="number"></param>
-		/// <returns></returns>
-		[DebuggerStepThrough]
-		[Pure]
-		public static Rational IfLessThanZeroThenZero( this Rational? number ) {
-			if ( !number.HasValue || number <= Rational.Zero ) {
-				return Rational.Zero;
-			}
-
-			return number.Value;
-		}
+		public static BigDecimal IfLessThanZeroThenZero( [NotNull] this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -845,6 +832,7 @@ namespace Librainian.Maths {
 			}
 
 			if ( Math.Abs( x ) > 1e-4 ) {
+
 				// x is large enough that the obvious evaluation is OK
 				return Math.Log( 1.0 + x );
 			}
@@ -875,14 +863,14 @@ namespace Librainian.Maths {
 
 		[DebuggerStepThrough]
 		[Pure]
-		public static Boolean Near( this Rational number, Rational target ) {
+		public static Boolean Near( this BigDecimal number, BigDecimal target ) {
 			var difference = number - target;
 
-			if ( difference < Rational.Zero ) {
+			if ( difference < BigDecimal.Zero ) {
 				difference = -difference;
 			}
 
-			return difference <= ( Rational )EpsilonDecimal;
+			return difference <= EpsilonDecimal;
 		}
 
 		public static Boolean Near( this PointF here, PointF there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
@@ -986,6 +974,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double Phi( this Double x ) {
+
 			// constants
 			const Double a1 = 0.254829592;
 			const Double a2 = -0.284496736;
@@ -1210,7 +1199,7 @@ namespace Librainian.Maths {
 		public static Double SquareRootOfProducts( [NotNull] this IEnumerable<Double> data ) {
 			var sorted = new List<Double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
 
-			var aggregate = Rational.One;
+			var aggregate = BigDecimal.One;
 
 			while ( sorted.Any() ) {
 				sorted.TakeFirst( out var smallest );
@@ -1219,8 +1208,8 @@ namespace Librainian.Maths {
 					largest = 1;
 				}
 
-				aggregate *= ( Rational )smallest;
-				aggregate *= ( Rational )largest;
+				aggregate *= smallest;
+				aggregate *= largest;
 
 				//aggregate.Should().NotBe( Double.NaN );
 				//aggregate.Should().NotBe( Double.NegativeInfinity );
@@ -1364,6 +1353,7 @@ namespace Librainian.Maths {
 
 		public static Int64 Truncate( this Double number ) => ( Int64 )number;
 
+		/*
 		/// <summary>
 		///     <para>Attempt to parse a fraction from a String.</para>
 		/// </summary>
@@ -1371,8 +1361,8 @@ namespace Librainian.Maths {
 		/// <param name="numberString"></param>
 		/// <param name="result">      </param>
 		/// <returns></returns>
-		public static Boolean TryParse( [CanBeNull] this String? numberString, out Rational result ) {
-			result = Rational.Zero;
+		public static Boolean TryParse( [CanBeNull] this String? numberString, out BigDecimal result ) {
+			result = BigDecimal.Zero;
 
 			if ( null == numberString ) {
 				return false;
@@ -1410,7 +1400,7 @@ namespace Librainian.Maths {
 
 			if ( BigInteger.TryParse( top, out var numerator ) ) {
 				if ( BigInteger.TryParse( bottom, out var denominator ) ) {
-					result = new Rational( numerator, denominator );
+					result = new BigDecimal( numerator, denominator );
 
 					return true;
 				}
@@ -1420,9 +1410,10 @@ namespace Librainian.Maths {
 
 			throw new OutOfRangeException( "Couldn't parse numerator" );
 		}
+		*/
 
-		public static Boolean TrySplitDecimal( this Decimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
-			var theString = value.ToString( "R" );
+		public static Boolean TrySplitDecimal( this BigDecimal value, out BigInteger beforeDecimalPoint, out BigInteger afterDecimalPoint ) {
+			var theString = value.ToString();
 
 			if ( !theString.Contains( ".", StringComparison.CurrentCulture ) ) {
 				theString += ".0";
@@ -1465,7 +1456,5 @@ namespace Librainian.Maths {
 
 		[Pure]
 		public static Int64 Twice( this Int64 number ) => number * 2L;
-
 	}
-
 }

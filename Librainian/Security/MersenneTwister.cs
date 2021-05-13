@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MersenneTwister.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 #nullable enable
@@ -51,7 +51,7 @@ namespace Librainian.Security {
 			0x0, MatrixA
 		};
 
-		private readonly UInt32[] _mt = new UInt32[N]; /* the array for the state vector  */
+		private readonly UInt32[] _mt = new UInt32[ N ]; /* the array for the state vector  */
 
 		private Int16 _mti;
 
@@ -60,10 +60,10 @@ namespace Librainian.Security {
 			/* the generator Line 25 of Table 1 in          */
 			/* [KNUTH 1981, The Art of Computer Programming */
 			/*    Vol. 2 (2nd Ed.), pp102]                  */
-			this._mt[0] = seed & 0xffffffffU;
+			this._mt[ 0 ] = seed & 0xffffffffU;
 
 			for ( this._mti = 1; this._mti < N; ++this._mti ) {
-				this._mt[this._mti] = ( 69069 * this._mt[this._mti - 1] ) & 0xffffffffU;
+				this._mt[ this._mti ] = ( 69069 * this._mt[ this._mti - 1 ] ) & 0xffffffffU;
 			}
 		}
 
@@ -86,22 +86,22 @@ namespace Librainian.Security {
 				Int16 kk = 0;
 
 				for ( ; kk < N - M; ++kk ) {
-					y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
-					this._mt[kk] = this._mt[kk + M] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
+					y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
+					this._mt[ kk ] = this._mt[ kk + M ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
 				}
 
 				for ( ; kk < N - 1; ++kk ) {
-					y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
-					this._mt[kk] = this._mt[kk + ( M - N )] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
+					y = ( this._mt[ kk ] & UpperMask ) | ( this._mt[ kk + 1 ] & LowerMask );
+					this._mt[ kk ] = this._mt[ kk + ( M - N ) ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
 				}
 
-				y = ( this._mt[N - 1] & UpperMask ) | ( this._mt[0] & LowerMask );
-				this._mt[N - 1] = this._mt[M - 1] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
+				y = ( this._mt[ N - 1 ] & UpperMask ) | ( this._mt[ 0 ] & LowerMask );
+				this._mt[ N - 1 ] = this._mt[ M - 1 ] ^ ( y >> 1 ) ^ Mag01[ y & 0x1 ];
 
 				this._mti = 0;
 			}
 
-			y = this._mt[this._mti++];
+			y = this._mt[ this._mti++ ];
 			y ^= TEMPERING_SHIFT_U( y );
 			y ^= TEMPERING_SHIFT_S( y ) & TemperingMaskB;
 			y ^= TEMPERING_SHIFT_T( y ) & TemperingMaskC;
@@ -147,7 +147,7 @@ namespace Librainian.Security {
 			var bufLen = buffer.Length;
 
 			for ( var idx = 0; idx < bufLen; ++idx ) {
-				buffer[idx] = ( Byte )this.Next( 256 );
+				buffer[ idx ] = ( Byte )this.Next( 256 );
 			}
 		}
 
@@ -172,7 +172,5 @@ namespace Librainian.Security {
 		/* least significant r bits */
 		/* Tempering parameters */
 		/* initializing the array with a NONZERO seed */
-
 	}
-
 }

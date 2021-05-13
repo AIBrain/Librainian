@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "PotentialF.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths.Numbers {
@@ -38,6 +38,11 @@ namespace Librainian.Maths.Numbers {
 	[JsonObject]
 	public sealed class PotentialF {
 
+		/// <summary></summary>
+		/// <remarks>ONLY used in the getter and setter.</remarks>
+		[JsonProperty]
+		private Single _value = MinValue;
+
 		/// <summary>1</summary>
 		public const Single MaxValue = 1.0f;
 
@@ -47,10 +52,17 @@ namespace Librainian.Maths.Numbers {
 		/// </summary>
 		public const Single MinValue = 0.0f;
 
-		/// <summary></summary>
-		/// <remarks>ONLY used in the getter and setter.</remarks>
-		[JsonProperty]
-		private Single _value = MinValue;
+		/// <summary>
+		///     <para>Thread-safe getter and setter.</para>
+		/// </summary>
+		/// <remarks>
+		///     <para>Constrains the value to stay between <see cref="MinValue" /> and <see cref="MaxValue" /> .</para>
+		/// </remarks>
+		public Single Value {
+			get => Thread.VolatileRead( ref this._value );
+
+			private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
+		}
 
 		/// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
 		public PotentialF( Boolean randomValue ) {
@@ -64,18 +76,6 @@ namespace Librainian.Maths.Numbers {
 		public PotentialF( Single initialValue ) => this.Value = initialValue;
 
 		public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min, max ) ) { }
-
-		/// <summary>
-		///     <para>Thread-safe getter and setter.</para>
-		/// </summary>
-		/// <remarks>
-		///     <para>Constrains the value to stay between <see cref="MinValue" /> and <see cref="MaxValue" /> .</para>
-		/// </remarks>
-		public Single Value {
-			get => Thread.VolatileRead( ref this._value );
-
-			private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
-		}
 
 		public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
 
@@ -92,7 +92,5 @@ namespace Librainian.Maths.Numbers {
 
 		[NotNull]
 		public override String ToString() => $"{this.Value:P3}";
-
 	}
-
 }

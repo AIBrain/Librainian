@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "WeightObsolete.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
@@ -37,23 +37,16 @@ namespace Librainian.Maths {
 	[JsonObject]
 	public class WeightObsolete {
 
+		/// <summary>ONLY used in the getter and setter.</summary>
+		[JsonProperty]
+		private Double _value;
+
 		/// <summary>1 <see cref="MaxValue" /></summary>
 		public const Double MaxValue = +1D;
 
 		//public object Clone() { return new Weight( this ); }
 		/// <summary>- 1 <see cref="MinValue" /></summary>
 		public const Double MinValue = -1D;
-
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _value;
-
-		/// <summary>Initializes to a random number between 0.0 and 0.50D</summary>
-		public WeightObsolete() => this.Value = Randem.NextDouble() * 0.25 + Randem.NextDouble() * 0.25;
-
-		/// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
-		/// <param name="value"></param>
-		public WeightObsolete( Double value ) => this.Value = value;
 
 		public Double Value {
 			get => Interlocked.Exchange( ref this._value, this._value );
@@ -71,6 +64,13 @@ namespace Librainian.Maths {
 				Interlocked.Exchange( ref this._value, correctedvalue );
 			}
 		}
+
+		/// <summary>Initializes to a random number between 0.0 and 0.50D</summary>
+		public WeightObsolete() => this.Value = Randem.NextDouble() * 0.25 + Randem.NextDouble() * 0.25;
+
+		/// <summary>A Double number, constrained between <see cref="MinValue" /> and <see cref="MaxValue" />.</summary>
+		/// <param name="value"></param>
+		public WeightObsolete( Double value ) => this.Value = value;
 
 		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
@@ -97,7 +97,5 @@ namespace Librainian.Maths {
 
 		[NotNull]
 		public override String ToString() => $"{this.Value:R}";
-
 	}
-
 }

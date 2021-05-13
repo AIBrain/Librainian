@@ -21,8 +21,6 @@
 // ReSharper disable once CheckNamespace
 namespace Librainian {
 
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
@@ -30,12 +28,44 @@ namespace Librainian {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading;
+	using JetBrains.Annotations;
 	using Measurement;
+	using Newtonsoft.Json;
 	using Parsing;
 
 	public static class Common {
 
 		public static Encoding DefaultEncoding { get; } = Encoding.Unicode;
+
+		public static String Key<T>( [CanBeNull] this T? value, [NotNull] String className, [NotNull] String methodName, [NotNull] String argumentName ) {
+			if ( className == null ) {
+				throw new ArgumentNullException( nameof( className ) );
+			}
+
+			if ( methodName == null ) {
+				throw new ArgumentNullException( nameof( methodName ) );
+			}
+
+			if ( argumentName == null ) {
+				throw new ArgumentNullException( nameof( argumentName ) );
+			}
+
+			//using the reasoning that a string lookup will match sooner by having the most selective "key" first, which would be the value.
+			return $"{value}-{className}-{methodName}-{argumentName}";
+		}
+
+		public static String Key<T>( [CanBeNull] this T? value, [NotNull] String className, [NotNull] String methodName ) {
+			if ( className == null ) {
+				throw new ArgumentNullException( nameof( className ) );
+			}
+
+			if ( methodName == null ) {
+				throw new ArgumentNullException( nameof( methodName ) );
+			}
+
+			//using the reasoning that a string lookup will match sooner by having the most selective "key" first, which would be the value.
+			return $"{value}-{methodName}-{className}";
+		}
 
 		/// <summary>
 		/// Return true if an <see cref="IComparable" /> value is <see cref="Between{T}" /> two inclusive values.
@@ -51,7 +81,6 @@ namespace Librainian {
 		/// <example>5.Between(5, 5))</example>
 		[Pure]
 		public static Boolean Between<T>( [NotNull] this T target, [NotNull] T startInclusive, [NotNull] T endInclusive ) where T : IComparable {
-			
 			if ( startInclusive.CompareTo( endInclusive ) is Order.After ) {
 				return target.CompareTo( startInclusive ) <= Order.Same && target.CompareTo( endInclusive ) >= Order.Same;
 			}
@@ -61,7 +90,6 @@ namespace Librainian {
 			}
 
 			return false;
-
 		}
 
 		/// <summary>
@@ -164,6 +192,13 @@ namespace Librainian {
 			}
 		}
 
+		public static Boolean IsDevelopmentEnviroment() {
+			var devEnvironmentVariable = Environment.GetEnvironmentVariable( "NETCORE_ENVIRONMENT" );
+
+			var isDevelopment = String.IsNullOrEmpty( devEnvironmentVariable ) || devEnvironmentVariable.Like( "development" );
+			return isDevelopment;
+		}
+
 		[Pure]
 		public static UInt64 LengthReal( [CanBeNull] this String? s ) => s is null ? 0 : ( UInt64 )new StringInfo( s ).LengthInTextElements;
 
@@ -209,7 +244,7 @@ namespace Librainian {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		public static void Swap<T>( [CanBeNull] ref T left, [CanBeNull] ref T right ) => ( left, right ) = ( right, left );
+		public static void Swap<T>( [CanBeNull] ref T left, [CanBeNull] ref T right ) => (left, right) = (right, left);
 
 		/// <summary>
 		/// Given (T left, T right), Return (T right, T left).
@@ -221,7 +256,7 @@ namespace Librainian {
 		[Pure]
 		public static (T? right, T? left) Swapped<T>( [CanBeNull] this T? left, [CanBeNull] T? right ) => (right, left);
 
-		public static (T? right, T? left) Swapped<T>( ( T? left, T? right ) tuple ) => (tuple.right, tuple.left);
+		public static (T? right, T? left) Swapped<T>( (T? left, T? right) tuple ) => (tuple.right, tuple.left);
 
 		/// <summary>
 		/// Create only 1 instance of <see cref="T" /> per thread. (only unique when using this class!)
@@ -247,13 +282,6 @@ namespace Librainian {
 
 			[NotNull]
 			public static T Instance { get; } = new();
-		}
-
-		public static Boolean IsDevelopmentEnviroment() {
-			var devEnvironmentVariable = Environment.GetEnvironmentVariable( "NETCORE_ENVIRONMENT" );
-
-			var isDevelopment = String.IsNullOrEmpty( devEnvironmentVariable ) || devEnvironmentVariable.Like( "development" );
-			return isDevelopment;
 		}
 	}
 }

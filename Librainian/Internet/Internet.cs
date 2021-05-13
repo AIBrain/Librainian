@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Internet.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Internet {
@@ -56,7 +56,7 @@ namespace Librainian.Internet {
 
 			/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
 			[CanBeNull]
-            Stopwatch? Elasped { get; set; }
+			Stopwatch? Elasped { get; set; }
 
 			[CanBeNull]
 			Action? OnCancelled { get; set; }
@@ -98,8 +98,7 @@ namespace Librainian.Internet {
 			/// <exception cref="ObjectDisposedException"></exception>
 			/// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
 			/// <exception cref="Exception"></exception>
-			Boolean Wait( TimeSpan forHowLong,  CancellationToken cancellationToken  );
-
+			Boolean Wait( TimeSpan forHowLong, CancellationToken cancellationToken );
 		}
 
 		public class FileDownloader : UnderlyingDownloader {
@@ -120,13 +119,13 @@ namespace Librainian.Internet {
 				[NotNull] Document destination,
 				Boolean waitifBusy,
 				TimeSpan timeout,
-				 CancellationToken cancellationToken ,
+				 CancellationToken cancellationToken,
 				Boolean autoStart = true,
 				[CanBeNull] ICredentials? credentials = null
 			) : base( source, destination, waitifBusy, timeout, cancellationToken, credentials ) {
 				$"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
-				DownloadRequests[this.Id] = this;
+				DownloadRequests[ this.Id ] = this;
 
 				if ( autoStart ) {
 					this.Start();
@@ -156,51 +155,9 @@ namespace Librainian.Internet {
 
 				return base.Start();
 			}
-
 		}
 
 		public abstract class UnderlyingDownloader : IDownloader {
-
-			/// <summary>ctor</summary>
-			/// <param name="source"></param>
-			/// <param name="destination"></param>
-			/// <param name="waitIfBusy"></param>
-			/// <param name="timeout"></param>
-			/// <param name="cancellationToken"></param>
-			/// <param name="credentials"></param>
-			/// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
-			protected UnderlyingDownloader(
-				[NotNull] Uri source,
-				[NotNull] Document destination,
-				Boolean waitIfBusy,
-				TimeSpan timeout,
-				 CancellationToken cancellationToken ,
-				[CanBeNull] ICredentials? credentials = null
-			) {
-				var web = WebClients.Value;
-
-				if ( web.IsBusy ) {
-					if ( waitIfBusy ) {
-						this.Wait( timeout, cancellationToken );
-					}
-					else {
-						throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
-					}
-				}
-
-				this.Client = web;
-				this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
-				this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
-				this.Timeout = timeout;
-				this.Id = Guid.NewGuid();
-				this.Credentials = credentials;
-
-				this.Client.Credentials = this.Credentials;
-				this.Client.CachePolicy = DefaultCachePolicy;
-				
-				//TODO what???
-				//this.DestinationBuffer = destination.AsBytes(cancellationToken).ToArrayAsync(cancellationToken); //can we do this??
-			}
 
 			public static RequestCachePolicy DefaultCachePolicy { get; } = new HttpRequestCachePolicy( HttpRequestCacheLevel.Default );
 
@@ -209,11 +166,6 @@ namespace Librainian.Internet {
 
 			[NotNull]
 			public WebClientWithTimeout Client { get; }
-
-			public ManualResetEventSlim Downloaded { get; } = new( false );
-
-			/// <summary>The unique identifier assigned to this download.</summary>
-			public Guid Id { get; }
 
 			[CanBeNull]
 			public ICredentials? Credentials { get; set; }
@@ -224,9 +176,14 @@ namespace Librainian.Internet {
 			[NotNull]
 			public Document DestinationDocument { get; set; }
 
+			public ManualResetEventSlim Downloaded { get; } = new( false );
+
 			/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
 			[CanBeNull]
-            public Stopwatch? Elasped { get; set; }
+			public Stopwatch? Elasped { get; set; }
+
+			/// <summary>The unique identifier assigned to this download.</summary>
+			public Guid Id { get; }
 
 			[CanBeNull]
 			public Action? OnCancelled { get; set; }
@@ -252,6 +209,47 @@ namespace Librainian.Internet {
 			/// <summary>The UTC date & time when the download was started.</summary>
 			public DateTime WhenStarted { get; set; }
 
+			/// <summary>ctor</summary>
+			/// <param name="source"></param>
+			/// <param name="destination"></param>
+			/// <param name="waitIfBusy"></param>
+			/// <param name="timeout"></param>
+			/// <param name="cancellationToken"></param>
+			/// <param name="credentials"></param>
+			/// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
+			protected UnderlyingDownloader(
+				[NotNull] Uri source,
+				[NotNull] Document destination,
+				Boolean waitIfBusy,
+				TimeSpan timeout,
+				 CancellationToken cancellationToken,
+				[CanBeNull] ICredentials? credentials = null
+			) {
+				var web = WebClients.Value;
+
+				if ( web.IsBusy ) {
+					if ( waitIfBusy ) {
+						this.Wait( timeout, cancellationToken );
+					}
+					else {
+						throw new InvalidOperationException( $"WebClient is already being used. Unable to download \"{this.Source}\"." );
+					}
+				}
+
+				this.Client = web;
+				this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
+				this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
+				this.Timeout = timeout;
+				this.Id = Guid.NewGuid();
+				this.Credentials = credentials;
+
+				this.Client.Credentials = this.Credentials;
+				this.Client.CachePolicy = DefaultCachePolicy;
+
+				//TODO what???
+				//this.DestinationBuffer = destination.AsBytes(cancellationToken).ToArrayAsync(cancellationToken); //can we do this??
+			}
+
 			public virtual Boolean Cancel() {
 				try {
 					this.Client.CancelAsync();
@@ -261,6 +259,18 @@ namespace Librainian.Internet {
 				}
 
 				return this.IsBusy();
+			}
+
+			public (Status responseCode, Int64 fileLength) GetContentLength() {
+				if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
+					request.Method = "HEAD";
+
+					using var response = request.GetResponse();
+
+					return (Status.Success, response.ContentLength);
+				}
+
+				return (Status.Error, default( Int64 ));
 			}
 
 			/// <summary>Returns true if the web request is in progress.</summary>
@@ -279,7 +289,7 @@ namespace Librainian.Internet {
 			/// <exception cref="ObjectDisposedException"></exception>
 			/// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
 			/// <exception cref="Exception"></exception>
-			public Boolean Wait( TimeSpan forHowLong,  CancellationToken cancellationToken  ) {
+			public Boolean Wait( TimeSpan forHowLong, CancellationToken cancellationToken ) {
 				try {
 					if ( forHowLong < Forever ) {
 						forHowLong = Forever;
@@ -313,21 +323,6 @@ namespace Librainian.Internet {
 					}
 				}
 			}
-
-			public (Status responseCode, Int64 fileLength) GetContentLength() {
-				if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
-					request.Method = "HEAD";
-
-					using var response = request.GetResponse();
-
-					return ( Status.Success, response.ContentLength );
-				}
-
-				return ( Status.Error, default( Int64 ) );
-			}
-
 		}
-
 	}
-
 }

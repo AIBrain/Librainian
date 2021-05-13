@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+// Copyright Â© Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,30 +23,49 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DriveTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "ICountable.cs" last touched on 2021-05-08 at 8:21 AM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace Librainian.Collections {
 
-	using System.Diagnostics;
-	using Librainian.ComputerSystem.Devices;
-	using Librainian.Parsing;
-	using Xunit;
+	using System;
+	using System.Collections.Generic;
+	using System.Numerics;
+	using JetBrains.Annotations;
+	using Threadsafe;
 
-	public static class DriveTests {
+	public interface ICountable<in TKey> where TKey : notnull {
 
-		[Fact]
-		public static void TestAllDrives() {
-			var alphabet = ParsingConstants.English.Alphabet.Uppercase;
-			Debug.WriteLine( alphabet );
+		VolatileBoolean IsReadOnly { get; set; }
 
-			foreach ( var letter in alphabet ) {
-				var drive = new Disk( letter );
+		TimeSpan ReadTimeout { get; set; }
 
-				if ( drive.FreeSpace() > 0 ) {
-					Debug.WriteLine( $"{drive} {drive.FreeSpace()} " );
-				}
-			}
-		}
+		TimeSpan WriteTimeout { get; set; }
+
+
+		BigInteger? this[ [NotNull] TKey key ] { get; set; }
+
+		Boolean Add( [NotNull] IEnumerable<TKey> keys );
+
+		Boolean Add( [NotNull] TKey key );
+
+		Boolean Add( [NotNull] TKey key, BigInteger amount );
+
+		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
+		/// <returns></returns>
+		Boolean Complete();
+
+		Boolean Subtract( [NotNull] TKey key, BigInteger amount );
+
+		/// <summary>Return the sum of all values.</summary>
+		/// <returns></returns>
+		BigInteger Sum();
+
+		void Trim();
+
+		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
+		/// <returns></returns>
+		Boolean EnableMutable();
+
 
 	}
 

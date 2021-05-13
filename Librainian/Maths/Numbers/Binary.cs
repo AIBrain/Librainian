@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Binary.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 #nullable enable
@@ -38,6 +38,17 @@ namespace Librainian.Maths.Numbers {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	public class Binary : IEnumerable<Boolean> {
 
+		[NotNull]
+		public List<Boolean> Booleans { get; }
+
+		public Int32 Length => this.Booleans.Count;
+
+		public Boolean this[ Int32 index ] {
+			get => this.Booleans[ index ];
+
+			set => this.Booleans[ index ] = value;
+		}
+
 		public Binary( [NotNull] IReadOnlyCollection<Boolean> booleans ) {
 			this.Booleans = booleans.ToList();
 			this.Booleans.Capacity = this.Booleans.Count;
@@ -50,32 +61,17 @@ namespace Librainian.Maths.Numbers {
 		public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
 
 		[NotNull]
-		public List<Boolean> Booleans { get; }
-
-		public Int32 Length => this.Booleans.Count;
-
-		public Boolean this[ Int32 index ] {
-			get => this.Booleans[index];
-
-			set => this.Booleans[index] = value;
-		}
-
-		public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
-
-		IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
-
-		[NotNull]
 		public static Binary Concatenate( [NotNull] Binary a, [NotNull] Binary b ) {
-			var result = new Binary( new Boolean[a.Length + b.Length] );
+			var result = new Binary( new Boolean[ a.Length + b.Length ] );
 			var n = 0;
 
 			foreach ( var bit in a ) {
-				result[n] = bit;
+				result[ n ] = bit;
 				++n;
 			}
 
 			foreach ( var bit in b ) {
-				result[n] = bit;
+				result[ n ] = bit;
 				++n;
 			}
 
@@ -106,10 +102,10 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentException( "Binaries must have same length" );
 			}
 
-			var result = new Boolean[a.Length];
+			var result = new Boolean[ a.Length ];
 
 			for ( var i = 0; i < a.Length; i++ ) {
-				result[i] = a[i] & b[i];
+				result[ i ] = a[ i ] & b[ i ];
 			}
 
 			return new Binary( result );
@@ -123,10 +119,10 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentException( "Binaries must have same length" );
 			}
 
-			var result = new Boolean[a.Length];
+			var result = new Boolean[ a.Length ];
 
 			for ( var i = 0; i < a.Length; i++ ) {
-				result[i] = a[i] ^ b[i];
+				result[ i ] = a[ i ] ^ b[ i ];
 			}
 
 			return new Binary( result );
@@ -135,6 +131,8 @@ namespace Librainian.Maths.Numbers {
 		public Int32 CountOnes() => this.Booleans.Count( bit => bit );
 
 		public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
+
+		public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
 
 		[NotNull]
 		public override String ToString() {
@@ -147,6 +145,6 @@ namespace Librainian.Maths.Numbers {
 			return stringBuilder.ToString();
 		}
 
+		IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Pixel.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics.Imaging {
@@ -74,7 +74,7 @@ namespace Librainian.Graphics.Imaging {
 			this.Blue = blue;
 			this.X = x;
 			this.Y = y;
-			this.Checksum = ( Byte )( alpha, red, green, blue, x, y ).GetHashCode();
+			this.Checksum = ( Byte )(alpha, red, green, blue, x, y).GetHashCode();
 		}
 
 		public Pixel( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) {
@@ -84,7 +84,7 @@ namespace Librainian.Graphics.Imaging {
 			this.Blue = blue;
 			this.X = x;
 			this.Y = y;
-			this.Checksum = ( Byte )( alpha, red, green, blue, x, y ).GetHashCode();
+			this.Checksum = ( Byte )(alpha, red, green, blue, x, y).GetHashCode();
 		}
 
 		public Pixel( Color color, UInt32 x, UInt32 y ) {
@@ -94,7 +94,7 @@ namespace Librainian.Graphics.Imaging {
 			this.Blue = color.B;
 			this.X = x;
 			this.Y = y;
-			this.Checksum = ( Byte )( color.A, color.R, color.G, color.B, x, y ).GetHashCode();
+			this.Checksum = ( Byte )(color.A, color.R, color.G, color.B, x, y).GetHashCode();
 		}
 
 		//public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
@@ -197,7 +197,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[0], out var alpha ) ) {
+			if ( !Byte.TryParse( argb[ 0 ], out var alpha ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
 				}
@@ -205,7 +205,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[1], out var red ) ) {
+			if ( !Byte.TryParse( argb[ 1 ], out var red ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
 				}
@@ -213,7 +213,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[2], out var green ) ) {
+			if ( !Byte.TryParse( argb[ 2 ], out var green ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
 				}
@@ -221,7 +221,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[3], out var blue ) ) {
+			if ( !Byte.TryParse( argb[ 3 ], out var blue ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
 				}
@@ -251,7 +251,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !UInt32.TryParse( xandy[0], out var x ) ) {
+			if ( !UInt32.TryParse( xandy[ 0 ], out var x ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
 				}
@@ -259,7 +259,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !UInt32.TryParse( xandy[0], out var y ) ) {
+			if ( !UInt32.TryParse( xandy[ 0 ], out var y ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
 				}
@@ -285,7 +285,5 @@ namespace Librainian.Graphics.Imaging {
 		///     value; otherwise, <see langword="false" />.
 		/// </returns>
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as Pixel? ?? default( Pixel ) );
-
 	}
-
 }

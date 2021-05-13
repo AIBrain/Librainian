@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "PriorityScheduler.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 #nullable enable
@@ -41,12 +41,6 @@ namespace Librainian.Threading {
 	/// <see cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
 	public class PriorityScheduler : TaskScheduler, IDisposable {
 
-		public static PriorityScheduler AboveNormal { get; } = new( ThreadPriority.AboveNormal );
-
-		public static PriorityScheduler BelowNormal { get; } = new( ThreadPriority.BelowNormal );
-
-		public static PriorityScheduler Lowest { get; } = new( ThreadPriority.Lowest );
-
 		private readonly ThreadPriority _priority;
 
 		[NotNull]
@@ -55,11 +49,15 @@ namespace Librainian.Threading {
 		[CanBeNull]
 		private Thread[]? _threads;
 
-		public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
+		public static PriorityScheduler AboveNormal { get; } = new( ThreadPriority.AboveNormal );
+
+		public static PriorityScheduler BelowNormal { get; } = new( ThreadPriority.BelowNormal );
+
+		public static PriorityScheduler Lowest { get; } = new( ThreadPriority.Lowest );
 
 		public override Int32 MaximumConcurrencyLevel { get; } = Math.Max( 1, Environment.ProcessorCount );
 
-
+		public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
 
 		[NotNull]
 		protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
@@ -68,12 +66,12 @@ namespace Librainian.Threading {
 			this._tasks.Add( task );
 
 			if ( this._threads is null ) {
-				this._threads = new Thread[Math.Max( 1, Environment.ProcessorCount )];
+				this._threads = new Thread[ Math.Max( 1, Environment.ProcessorCount ) ];
 
 				var threads = this._threads;
 
 				for ( var i = 0; i < threads.Length; i++ ) {
-					threads[i] = new Thread( () => {
+					threads[ i ] = new Thread( () => {
 						foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
 							if ( t is null ) {
 								continue;
@@ -82,10 +80,12 @@ namespace Librainian.Threading {
 							this.TryExecuteTask( t );
 						}
 					} ) {
-						Name = $"PriorityScheduler: {i}", Priority = this._priority, IsBackground = true
+						Name = $"PriorityScheduler: {i}",
+						Priority = this._priority,
+						IsBackground = true
 					};
 
-					threads[i].Start();
+					threads[ i ].Start();
 				}
 			}
 		}
@@ -96,8 +96,5 @@ namespace Librainian.Threading {
 			this._tasks.Dispose();
 			GC.SuppressFinalize( this );
 		}
-
-
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "GenericPopulator.cs" last formatted on 2020-08-14 at 8:32 PM.
 
 namespace Librainian.Databases {
@@ -61,17 +61,19 @@ namespace Librainian.Databases {
 			var memberBindings = new List<MemberBinding>();
 
 			foreach ( var prop in typeof( T ).GetProperties() ) {
+
 				// determine the default value of the property
 				Object defaultValue = null;
 
 				if ( prop.PropertyType.IsValueType ) {
 					defaultValue = Activator.CreateInstance( prop.PropertyType );
 				}
-				else if (prop.PropertyType.Name.ToLower().Equals("string", StringComparison.Ordinal)) {
+				else if ( prop.PropertyType.Name.ToLower().Equals( "string", StringComparison.Ordinal ) ) {
 					defaultValue = String.Empty;
 				}
 
 				if ( readerColumns.Contains( prop.Name ) ) {
+
 					// build the Call expression to retrieve the data value from the reader
 					var indexExpression = Expression.Constant( reader.GetOrdinal( prop.Name ) );
 					var getValueExp = Expression.Call( readerParam, readerGetValue, indexExpression );
@@ -82,7 +84,7 @@ namespace Librainian.Databases {
 					var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
 
 					// create the actual Bind expression to bind the value from the reader to the property value
-					var mi = typeof( T ).GetMember( prop.Name )[0];
+					var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
 					MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
 					memberBindings.Add( mb );
 				}
@@ -97,7 +99,6 @@ namespace Librainian.Databases {
 
 			return ( Func<SqlDataReader, T> )resDelegate;
 		}
-
 	}
 
 	public static class GenericPopulatorExtensions {
@@ -113,7 +114,5 @@ namespace Librainian.Databases {
 
 			return results;
 		}
-
 	}
-
 }

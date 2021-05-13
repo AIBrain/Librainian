@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ShoppingCart.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Financial.Containers.Shopping {
@@ -52,19 +52,19 @@ namespace Librainian.Financial.Containers.Shopping {
 		}
 
 		public UInt32 AddItems( [CanBeNull] ShoppingItem? item, UInt32 quantity = 1 ) {
-            UInt32 added = 0;
+			UInt32 added = 0;
 
-            if ( item is not null ) {
-                while ( quantity.Any() ) {
-                    if ( this.Items.TryAdd( item ) ) {
-                        added++;
-                    }
+			if ( item is not null ) {
+				while ( quantity.Any() ) {
+					if ( this.Items.TryAdd( item ) ) {
+						added++;
+					}
 
-                    quantity--;
-                }
-            }
+					quantity--;
+				}
+			}
 
-            return added;
+			return added;
 		}
 
 		/// <summary>Dispose any disposable members.</summary>
@@ -82,20 +82,18 @@ namespace Librainian.Financial.Containers.Shopping {
 			var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 
 			foreach ( var shoppingItem in this.Items ) {
-                if ( shoppingItem is null ) {
-                    continue;
-                }
+				if ( shoppingItem is null ) {
+					continue;
+				}
 
-                if ( !items.ContainsKey( shoppingItem ) ) {
-                    items.TryAdd( shoppingItem, 0 );
-                }
+				if ( !items.ContainsKey( shoppingItem ) ) {
+					items.TryAdd( shoppingItem, 0 );
+				}
 
-                items[shoppingItem]++;
-            }
+				items[ shoppingItem ]++;
+			}
 
 			return items;
 		}
-
 	}
-
 }

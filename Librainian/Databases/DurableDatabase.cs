@@ -273,6 +273,7 @@ namespace Librainian.Databases {
 				return command.ExecuteNonQuery();
 			}
 			catch ( InvalidOperationException ) {
+
 				//timeout probably
 				retries--;
 
@@ -542,18 +543,18 @@ namespace Librainian.Databases {
 				var scalar = command.ExecuteScalar();
 
 				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return ( Status.Success, default( TResult ) )!;
+					return (Status.Success, default( TResult ))!;
 				}
 
 				if ( scalar is TResult result1 ) {
-					return ( Status.Success, result1 );
+					return (Status.Success, result1);
 				}
 
 				if ( scalar.TryCast<TResult>( out var result ) ) {
-					return ( Status.Success, result );
+					return (Status.Success, result);
 				}
 
-				return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
+				return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
 			}
 			catch ( SqlException exception ) {
 				exception.Log();
@@ -586,7 +587,8 @@ namespace Librainian.Databases {
 				await
 #endif
 					using var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType, CommandTimeout = 0
+						CommandType = commandType,
+						CommandTimeout = 0
 					};
 
 				if ( null != parameters ) {
@@ -608,20 +610,21 @@ namespace Librainian.Databases {
 				}
 
 				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return ( Status.Success, default( TResult ) )!;
+					return (Status.Success, default( TResult ))!;
 				}
 
 				if ( scalar is TResult scalarAsync ) {
-					return ( Status.Success, scalarAsync );
+					return (Status.Success, scalarAsync);
 				}
 
 				if ( scalar.TryCast<TResult>( out var result ) ) {
-					return ( Status.Success, result );
+					return (Status.Success, result);
 				}
 
-				return ( Status.Success, ( TResult ) Convert.ChangeType( scalar, typeof( TResult ) ) );
+				return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
 			}
 			catch ( InvalidCastException exception ) {
+
 				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 				exception.Log();
 			}
@@ -666,7 +669,5 @@ namespace Librainian.Databases {
 
 			return default( IEnumerable<TResult> );
 		}
-
 	}
-
 }

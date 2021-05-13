@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,26 +23,39 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MathsTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "BenchmarkTests.cs" last touched on 2021-04-30 at 11:21 AM by Protiguous.
 
-namespace LibrainianUnitTests.Maths {
+namespace LibrainianUnitTests {
 
-	using System.Numerics;
-	using Librainian.Maths;
+	using System.Threading;
+	using FluentAssertions;
+	using Librainian.Measurement;
 	using Xunit;
 
-	public static class MathsTests {
+	public static class BenchmarkTests {
 
 		[Fact]
-		public static void TestOperations() {
-			var test = new[] {
-				new BigInteger( 7 ), new BigInteger( 8 ), new BigInteger( 9 )
-			};
+		public static void TestBenchmarking_MethodA() {
+			static void a() => Thread.Sleep( 10 );
+			static void b() => Thread.Sleep( 20 );
+			var result = Benchmark.WhichIsFaster( a, b );
+			var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
+		}
 
-			var shouldBe = test.Sum();
+		[Fact]
+		public static void TestBenchmarking_MethodB() {
+			static void a() => Thread.Sleep( 20 );
+			static void b() => Thread.Sleep( 10 );
+			var result = Benchmark.WhichIsFaster( a, b );
+			var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
+		}
 
-			var result = HumanCalculator.Operate( HumanCalculator.Operation.Addition, test );
-			Assert.True( result == shouldBe );
+		[Fact]
+		public static void TestBenchmarking_Same() {
+			static void a() => Thread.Sleep( 111 );
+			static void b() => Thread.Sleep( 111 );
+			var result = Benchmark.WhichIsFaster( a, b );
+			var _ = result.Should()!.Be( Benchmark.AorB.Same );
 		}
 
 	}

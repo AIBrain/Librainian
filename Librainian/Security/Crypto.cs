@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Crypto.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 namespace Librainian.Security {
@@ -57,6 +57,7 @@ namespace Librainian.Security {
 			String plaintext;
 
 			try {
+
 				// generate the key from the shared secret and the salt
 				var key = new Rfc2898DeriveBytes( sharedSecret, Salt );
 
@@ -81,6 +82,7 @@ namespace Librainian.Security {
 				plaintext = srDecrypt.ReadToEnd();
 			}
 			finally {
+
 				// Clear the RijndaelManaged object.
 				aesAlg?.Clear();
 			}
@@ -108,6 +110,7 @@ namespace Librainian.Security {
 			RijndaelManaged? aesAlg = null; // RijndaelManaged object used to encrypt the data.
 
 			try {
+
 				// generate the key from the shared secret and the salt
 				var key = new Rfc2898DeriveBytes( sharedSecret, Salt );
 
@@ -128,6 +131,7 @@ namespace Librainian.Security {
 				var csEncrypt = new CryptoStream( msEncrypt, encryptor, CryptoStreamMode.Write );
 
 				using ( var swEncrypt = new StreamWriter( csEncrypt ) ) {
+
 					//Write all data to the stream.
 					swEncrypt.Write( plainText );
 				}
@@ -135,6 +139,7 @@ namespace Librainian.Security {
 				outStr = Convert.ToBase64String( msEncrypt.ToArray() );
 			}
 			finally {
+
 				// Clear the RijndaelManaged object.
 				aesAlg?.Clear();
 			}
@@ -145,13 +150,13 @@ namespace Librainian.Security {
 
 		[NotNull]
 		public static Byte[] ReadByteArray( [NotNull] this Stream s ) {
-			var rawLength = new Byte[sizeof( Int32 )];
+			var rawLength = new Byte[ sizeof( Int32 ) ];
 
 			if ( s.Read( rawLength, 0, rawLength.Length ) != rawLength.Length ) {
 				throw new SystemException( "Stream did not contain properly formatted byte array" );
 			}
 
-			var buffer = new Byte[BitConverter.ToInt32( rawLength, 0 )];
+			var buffer = new Byte[ BitConverter.ToInt32( rawLength, 0 ) ];
 
 			if ( s.Read( buffer, 0, buffer.Length ) != buffer.Length ) {
 				throw new SystemException( "Did not read byte array properly" );
@@ -159,7 +164,5 @@ namespace Librainian.Security {
 
 			return buffer;
 		}
-
 	}
-
 }

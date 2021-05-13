@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "SecurityExtensions.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 #nullable enable
@@ -42,8 +42,6 @@ namespace Librainian.Security {
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
-	
-	
 
 	public static class SecurityExtensions {
 
@@ -51,14 +49,14 @@ namespace Librainian.Security {
 
 		private const String Key = "S#KPxgy3a3ccUHzXf3tp2s2yQNP#t@s!X3GECese5sNhjt5h$hJAfmjg#UeQRb%tuUbrRJj*M&&tsRvkcDW6bhWfaTDJP*pZhbQ";
 
+		private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
+			new( () => new TripleDESCryptoServiceProvider(), false );
+
 		public const String EntropyPhrase1 = "ZuZgBzuvvtn98vmmmt4vn4v9vwcaSjUtOmSkrA8Wo3ATOlMp3qXQmRQOdWyFFgJU";
 
 		public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
 
 		public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
-
-		private static readonly ThreadLocal<TripleDESCryptoServiceProvider> _tripleDesCryptoServiceProvider =
-			new( () => new TripleDESCryptoServiceProvider(), false );
 
 		/// <summary></summary>
 		[NotNull]
@@ -168,6 +166,7 @@ namespace Librainian.Security {
 
 		[NotNull]
 		public static String DecryptRSA( [NotNull] this String inputString, Int32 keySize, [NotNull] String xmlString ) {
+
 			// TODO: Add Proper Exception Handlers
 			if ( inputString is null ) {
 				throw new ArgumentNullException( nameof( inputString ) );
@@ -203,6 +202,7 @@ namespace Librainian.Security {
 
 		[NotNull]
 		public static String DecryptStringUsingRegistryKey( [NotNull] this String decryptValue, [NotNull] String privateKey ) {
+
 			// this is the variable that will be returned to the user
 			if ( decryptValue is null ) {
 				throw new ArgumentNullException( nameof( decryptValue ) );
@@ -226,6 +226,7 @@ namespace Librainian.Security {
 			// Supply the provider name
 
 			try {
+
 				//Create new RSA object passing our key info
 				var rsa = new RSACryptoServiceProvider( csp );
 
@@ -301,6 +302,7 @@ namespace Librainian.Security {
 
 		[NotNull]
 		public static String EncryptRSA( [NotNull] this String inputString, Int32 dwKeySize, [NotNull] String xmlString ) {
+
 			// TODO: Add Proper Exception Handlers
 			if ( inputString is null ) {
 				throw new ArgumentNullException( nameof( inputString ) );
@@ -343,6 +345,7 @@ namespace Librainian.Security {
 
 		[NotNull]
 		public static String EncryptStringUsingRegistryKey( [NotNull] this String stringToEncrypt, [NotNull] String publicKey ) {
+
 			// this is the variable that will be returned to the user
 			if ( stringToEncrypt is null ) {
 				throw new ArgumentNullException( nameof( stringToEncrypt ) );
@@ -366,6 +369,7 @@ namespace Librainian.Security {
 			// Supply the provider name
 
 			try {
+
 				//Create new RSA object passing our key info
 				var rsa = new RSACryptoServiceProvider( csp );
 
@@ -469,7 +473,6 @@ namespace Librainian.Security {
 			}
 
 			return s.ToUpper( CultureInfo.InvariantCulture );
-
 		}
 
 		[NotNull]
@@ -676,7 +679,7 @@ namespace Librainian.Security {
 
 			var inputFileSize = ( Single )size!.Value;
 
-			if ( await output.Exists( cancellationToken).ConfigureAwait( false ) ) {
+			if ( await output.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
 				return (Status.Exception, exceptions);
@@ -730,7 +733,7 @@ namespace Librainian.Security {
 					outputStream.WriteByte( ( Byte )data );
 				}
 
-				return (await output.Exists( cancellationToken).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
+				return (await output.Exists( cancellationToken ).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
 			}
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
@@ -774,19 +777,19 @@ namespace Librainian.Security {
 				return (Status.Exception, exceptions);
 			}
 
-			if ( await output.Exists( cancellationToken).ConfigureAwait( false ) ) {
+			if ( await output.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 				exceptions.Add( new IOException( $"The output file {output.FullPath} already exists." ) );
 
 				return (Status.Stop, exceptions);
 			}
 
-			if ( await input.Exists(cancellationToken).ConfigureAwait( false ) == false ) {
+			if ( await input.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is not found." ) );
 
 				return (Status.Exception, exceptions);
 			}
 
-			var size = await input.Size( cancellationToken).ConfigureAwait( false );
+			var size = await input.Size( cancellationToken ).ConfigureAwait( false );
 
 			if ( !size.HasValue || size <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
@@ -859,20 +862,18 @@ namespace Librainian.Security {
 					cryptoStream.WriteByte( ( Byte )data );
 				}
 
-				return (await output.Exists( cancellationToken).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
+				return (await output.Exists( cancellationToken ).ConfigureAwait( false ) ? Status.Go : Status.Stop, exceptions);
 			}
 			catch ( AggregateException exceptionss ) {
 				exceptions.AddRange( exceptionss.InnerExceptions );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 			catch ( Exception exception ) {
 				exceptions.Add( exception );
 
-				return (Status.Exception,exceptions);
+				return (Status.Exception, exceptions);
 			}
 		}
-
 	}
-
 }

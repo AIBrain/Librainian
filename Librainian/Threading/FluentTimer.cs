@@ -1,4 +1,4 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "FluentTimer.cs" last touched on 2021-04-25 at 6:20 AM by Protiguous.
+// File "FluentTimer.cs" last touched on 2021-04-25 at 12:17 PM by Protiguous.
 
 #nullable enable
 
@@ -34,27 +34,19 @@ namespace Librainian.Threading {
 	using JetBrains.Annotations;
 	using Measurement.Frequency;
 	using Measurement.Time;
-	using Rationals;
 	using Utilities;
 
 	public static class FluentTimerExt {
 
 		/// <summary>
 		///     <para>Start the <paramref name="timer" />.</para>
+		///     <para>Same as <see cref="Begin" />.</para>
 		/// </summary>
 		/// <param name="timer"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		[NotNull]
-		public static FluentTimer AndStart( [NotNull] this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
-			}
-
-			timer.Timer.Start();
-
-			return timer;
-		}
+		public static FluentTimer AndStart( [NotNull] this FluentTimer timer ) => timer.Begin();
 
 		/// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
 		/// <param name="timer"></param>
@@ -105,13 +97,13 @@ namespace Librainian.Threading {
 				interval = Milliseconds.One;
 			}
 
-			var mills = interval.TotalMilliseconds;
+			var milliseconds = interval.TotalMilliseconds;
 
-			if ( mills <= 0 ) {
-				mills = 1;
+			if ( milliseconds <= 0 ) {
+				milliseconds = 1;
 			}
 
-			var create = new FluentTimer( mills ).Once();
+			var create = new FluentTimer( milliseconds ).Once();
 
 			create.Timer.Elapsed += ( sender, args ) => {
 				try {
@@ -139,21 +131,6 @@ namespace Librainian.Threading {
 			return timer;
 		}
 
-		/*
-
-		/// <summary>
-		///     <para>Make the <paramref name="timer" /> fire only once.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Timer Once( [NotNull] this Timer timer ) {
-			timer.AutoReset = false;
-
-			return timer;
-		}
-		*/
-
 		[NotNull]
 		public static FluentTimer Once( [NotNull] this FluentTimer timer ) {
 			timer.Timer.AutoReset = false;
@@ -168,15 +145,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		[NotNull]
-		public static FluentTimer Start( [NotNull] this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
-			}
-
-			timer.Timer.Start();
-
-			return timer;
-		}
+		public static FluentTimer Start( [NotNull] this FluentTimer timer ) => timer.Begin();
 
 		[NotNull]
 		public static FluentTimer Stop( [NotNull] this FluentTimer timer ) {
@@ -198,7 +167,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		public FluentTimer() : this( Milliseconds.One ) { }
 
-		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Rational )milliseconds ) ) { }
+		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Decimal )milliseconds ) ) { }
 
 		public FluentTimer( [NotNull] IQuantityOfTime quantityOfTime ) {
 			if ( quantityOfTime == null ) {

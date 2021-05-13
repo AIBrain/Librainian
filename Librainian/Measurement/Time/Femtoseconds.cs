@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,41 +17,40 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Femtoseconds.cs" last formatted on 2021-03-06 at 6:45 AM.
 
 namespace Librainian.Measurement.Time {
+
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Maths;
 	using Newtonsoft.Json;
-	using Parsing;
-	using Rationals;
 
 	/// <summary></summary>
 	/// <see cref="http://wikipedia.org/wiki/Femtosecond" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public record Femtoseconds : IQuantityOfTime, IComparable<Femtoseconds> {
+	public record Femtoseconds(BigDecimal Value) : IQuantityOfTime, IComparable<Femtoseconds> {
+
 		/// <summary>1000</summary>
 		public const UInt16 InOnePicosecond = 1000;
 
-		public Femtoseconds( Decimal value ) => this.Value = ( Rational ) value;
 
-		public Femtoseconds( Rational value ) => this.Value = value;
+		public Femtoseconds( Decimal value ) : this( (BigDecimal)value ) { }
+		public Femtoseconds( Int32 value ) : this( (BigDecimal)value ) { }
+		public Femtoseconds( Int64 value ) : this( (BigDecimal)value ) { }
 
-		public Femtoseconds( Int64 value ) => this.Value = value;
-
-		public Femtoseconds( BigInteger value ) => this.Value = value;
+		public Femtoseconds( BigInteger value ) : this( ( BigDecimal )value ) { }
 
 		/// <summary>Ten <see cref="Femtoseconds" /> s.</summary>
 		public static Femtoseconds Fifteen { get; } = new( 15 );
@@ -96,7 +95,7 @@ namespace Librainian.Measurement.Time {
 		public static Femtoseconds Zero { get; } = new( 0 );
 
 		[JsonProperty]
-		public Rational Value { get; }
+		public BigDecimal Value { get; }
 
 		public Int32 CompareTo( [CanBeNull] Femtoseconds? other ) {
 			if ( other == null ) {
@@ -106,10 +105,9 @@ namespace Librainian.Measurement.Time {
 			return this.Value.CompareTo( other.Value );
 		}
 
-
 		public IQuantityOfTime ToFinerGranularity() => this.ToAttoseconds();
 
-		public PlanckTimes ToPlanckTimes() => new( this.Value * new Rational ( new BigInteger( PlanckTimes.InOneFemtosecond )));
+		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneFemtosecond );
 
 		public Seconds ToSeconds() => this.ToPicoseconds().ToSeconds();
 
@@ -119,7 +117,7 @@ namespace Librainian.Measurement.Time {
 
 		public static Femtoseconds Combine( Femtoseconds left, Femtoseconds right ) => Combine( left, right.Value );
 
-		public static Femtoseconds Combine( Femtoseconds left, Rational femtoseconds ) => new( left.Value + femtoseconds );
+		public static Femtoseconds Combine( Femtoseconds left, BigDecimal femtoseconds ) => new( left.Value + femtoseconds );
 
 		/// <summary>
 		///     <para>static equality test</para>
@@ -139,11 +137,11 @@ namespace Librainian.Measurement.Time {
 
 		public static Femtoseconds operator -( Femtoseconds left, Femtoseconds right ) => Combine( left, -right );
 
-		public static Femtoseconds operator -( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational ) ( -femtoseconds ) );
+		public static Femtoseconds operator -( Femtoseconds left, BigDecimal femtoseconds ) => Combine( left, -femtoseconds );
 
 		public static Femtoseconds operator +( Femtoseconds left, Femtoseconds right ) => Combine( left, right );
 
-		public static Femtoseconds operator +( Femtoseconds left, Decimal femtoseconds ) => Combine( left, ( Rational ) femtoseconds );
+		public static Femtoseconds operator +( Femtoseconds left, BigDecimal femtoseconds ) => Combine( left, femtoseconds );
 
 		public static Boolean operator <( Femtoseconds left, Femtoseconds right ) => left.Value < right.Value;
 
@@ -157,16 +155,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public Picoseconds ToPicoseconds() => new( this.Value / InOnePicosecond );
 
-		public override String ToString() {
-			if ( this.Value > MathConstants.MaxiumDecimalValue ) {
-				var whole = this.Value.WholePart;
+		public override String ToString() => $"{this.Value} fs";
 
-				return $"{whole} {whole.PluralOf( "fs" )}";
-			}
-
-			var dec = ( Decimal ) this.Value;
-
-			return $"{dec} {dec.PluralOf( "fs" )}";
-		}
 	}
 }

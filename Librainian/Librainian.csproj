@@ -62,7 +62,6 @@
 	</Choose>
 	<ItemGroup>
 		<PackageReference Include="Ben.Demystifier" Version="0.4.1" />
-		<PackageReference Include="CommandLineParser" Version="2.8.0" />
 		<PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
 		<PackageReference Include="LinqFaster.SIMD" Version="1.0.3" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
@@ -101,6 +100,9 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="FileSystem\Pri.LongPath\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Addons\BigDecimal\BigDecimal.csproj" />
 	</ItemGroup>
 	<ProjectExtensions>
 		<VisualStudio>

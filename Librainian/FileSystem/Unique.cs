@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Unique.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 namespace Librainian.FileSystem {
@@ -50,14 +50,27 @@ namespace Librainian.FileSystem {
 
 		private const Int32 EOFMarker = -1;
 
-		/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
-		public static readonly Unique Empty = new();
-
 		[NotNull]
 		[JsonProperty]
 		private readonly Uri u;
 
+		/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
+		public static readonly Unique Empty = new();
+
 		//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
+
+		/// <summary>Just an easier to use mnemonic.</summary>
+		[NotNull]
+		[JsonIgnore]
+		public String AbsolutePath => this.U.AbsolutePath;
+
+		/// <summary>
+		///     The location/directory/path/file/name/whatever.ext
+		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
+		/// </summary>
+		[NotNull]
+		[JsonIgnore]
+		public Uri U => this.u;
 
 		/// <summary>What effect will this have down the road?</summary>
 		private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
@@ -78,21 +91,6 @@ namespace Librainian.FileSystem {
 				throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
 			}
 		}
-
-		/// <summary>
-		///     The location/directory/path/file/name/whatever.ext
-		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
-		/// </summary>
-		[NotNull]
-		[JsonIgnore]
-		public Uri U => this.u;
-
-		/// <summary>Just an easier to use mnemonic.</summary>
-		[NotNull]
-		[JsonIgnore]
-		public String AbsolutePath => this.U.AbsolutePath;
-
-		public Boolean Equals( Unique? other ) => Equals( this, other );
 
 		/// <summary>Static (Ordinal) comparison.</summary>
 		/// <param name="left"></param>
@@ -154,25 +152,25 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Byte> AsBytes( TimeSpan timeout,  CancellationToken cancellationToken  ) {
+		public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken cancellationToken ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 			using var stream = client.OpenRead( this.U );
 
-            while ( stream.CanRead ) {
-                var a = stream.ReadByte();
+			while ( stream.CanRead ) {
+				var a = stream.ReadByte();
 
-                if ( a == EOFMarker ) {
-                    yield break;
-                }
+				if ( a == EOFMarker ) {
+					yield break;
+				}
 
-                yield return ( Byte )a;
-            }
-        }
+				yield return ( Byte )a;
+			}
+		}
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt16( TimeSpan timeout,  CancellationToken cancellationToken  ) {
+		public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken cancellationToken ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 			using var stream = client.OpenRead( this.U );
@@ -202,7 +200,7 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
 		/// <returns></returns>
-		public IEnumerable<Int32> AsInt32( TimeSpan timeout,  CancellationToken cancellationToken  ) {
+		public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken cancellationToken ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
 			using var stream = client.OpenRead( this.U );
@@ -254,6 +252,8 @@ namespace Librainian.FileSystem {
 			}
 		}
 
+		public Boolean Equals( Unique? other ) => Equals( this, other );
+
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as Unique );
 
 		public override Int32 GetHashCode() => this.U.GetHashCode();
@@ -281,7 +281,7 @@ namespace Librainian.FileSystem {
 				try {
 					await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
 
-					var header = client.ResponseHeaders["Content-Length"];
+					var header = client.ResponseHeaders[ "Content-Length" ];
 
 					if ( Int64.TryParse( header, out var result ) ) {
 						return result;
@@ -330,7 +330,5 @@ namespace Librainian.FileSystem {
 		/// <returns>A string that represents the current object.</returns>
 		[NotNull]
 		public override String ToString() => $"{this.AbsolutePath}";
-
 	}
-
 }

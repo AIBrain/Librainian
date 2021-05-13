@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Surfer.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 namespace Librainian.Internet {
@@ -106,17 +106,19 @@ namespace Librainian.Internet {
 		}
 
 		public static IEnumerable<UriLinkItem> ParseLinks( [CanBeNull] Uri baseUri, [NotNull] String webpage ) {
+
 			// ReSharper disable LoopCanBeConvertedToQuery
 #pragma warning disable IDE0007 // Use implicit type
 			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
 #pragma warning restore IDE0007 // Use implicit type
 
 				// ReSharper restore LoopCanBeConvertedToQuery
-				var value = match.Groups[1].Value;
+				var value = match.Groups[ 1 ].Value;
 				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
 				var i = new UriLinkItem {
-					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri, m2.Success ? m2.Groups[1].Value : String.Empty )
+					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
+					Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
 				};
 
 				yield return i;
@@ -198,7 +200,5 @@ namespace Librainian.Internet {
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
-
 	}
-
 }

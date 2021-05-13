@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ListBoxLog.cs" last formatted on 2020-08-14 at 8:32 PM.
 
 #nullable enable
@@ -80,6 +80,7 @@ namespace Librainian.Controls {
 			}
 #endif
 #if NET50
+
 			//TODO add back in once NET50 has the contextmenu
 #endif
 
@@ -92,7 +93,6 @@ namespace Librainian.Controls {
 
 			this.CanAdd = listBox.IsHandleCreated;
 		}
-
 
 		[NotNull]
 		private ListBox Box { get; }
@@ -113,7 +113,7 @@ namespace Librainian.Controls {
 								  logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ),                                                 /* {2} */
 								  logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
 								  logEvent.EventTime.ToString( "HH:mm" ),                                                               /* {5} */
-								  logEvent.LogLevel.LevelName()[0],                                                                 /* {6} */
+								  logEvent.LogLevel.LevelName()[ 0 ],                                                                 /* {6} */
 								  logEvent.LogLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LogLevel, /* {8} */ message );
 		}
 
@@ -130,9 +130,9 @@ namespace Librainian.Controls {
 				return;
 			}
 
-			var currentText = items[^1] as String ?? String.Empty;
+			var currentText = items[ ^1 ] as String ?? String.Empty;
 			currentText += item as String ?? String.Empty;
-			this.Box.Items[items.Count - 1] = currentText;
+			this.Box.Items[ items.Count - 1 ] = currentText;
 		}
 
 		private void AddALogEntryLine( [NotNull] Object item ) {
@@ -194,11 +194,11 @@ namespace Librainian.Controls {
 				e.DrawBackground();
 				e.DrawFocusRectangle();
 
-				var listboxItem = listbox.Items[e.Index];
+				var listboxItem = listbox.Items[ e.Index ];
 
 				var logEvent = listboxItem is LogEvent item ? item : new LogEvent( LogLevel.Critical, listboxItem.ToString() );
 
-				( var fore, var back ) = logEvent.LogLevel.Colors();
+				(var fore, var back) = logEvent.LogLevel.Colors();
 
 				using var solidBrush = new SolidBrush( back );
 
@@ -287,9 +287,6 @@ namespace Librainian.Controls {
 
 			[CanBeNull]
 			public String? Message { get; }
-
 		}
-
 	}
-
 }

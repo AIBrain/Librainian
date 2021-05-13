@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "SetsOfSets.cs" last touched on 2021-03-07 at 6:02 AM by Protiguous.
 
 #nullable enable
@@ -45,7 +45,6 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		[ItemCanBeNull]
 		public static IEnumerable<T?> Append<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<T?>? a, [CanBeNull][ItemCanBeNull] IEnumerable<T?>? b ) {
-
 			if ( a is not null ) {
 				foreach ( var item in a ) {
 					yield return item;
@@ -93,7 +92,8 @@ namespace Librainian.Extensions {
 			yield return b;
 		}
 
-		[NotNull][ItemCanBeNull]
+		[NotNull]
+		[ItemCanBeNull]
 		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? sequences ) {
 			IEnumerable<IEnumerable<T>> emptyProduct = new[] {
 				Enumerable.Empty<T>()
@@ -105,32 +105,33 @@ namespace Librainian.Extensions {
 			return sequences.Aggregate( emptyProduct, ( accumulator, sequence ) => {
 				var enumerable = sequence as IList<T> ?? sequence?.ToList() ?? Enumerable.Empty<T>();
 
-
 				return from accseq in accumulator
 					   from item in enumerable
 					   where !accseq.Contains( item )
 					   select accseq.Concat( new[] {
 							   item
 						   } );
-
 			} );
 		}
 
-		[CanBeNull][ItemCanBeNull]
+		[CanBeNull]
+		[ItemCanBeNull]
 		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( [CanBeNull][ItemCanBeNull] params IEnumerable<T?>[]? input ) {
 			IEnumerable<IEnumerable<T>> result = Array.Empty<T[]>();
-			
+
 			//TODO Don't know what to do with nulls in Combinations()..
 			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
 		}
 
-		[CanBeNull][ItemCanBeNull]
+		[CanBeNull]
+		[ItemCanBeNull]
 		public static IEnumerable<IEnumerable<T?>?> Combinations<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<T?> input ) =>
 			input.Select( item => new[] {
 				item
 			} );
 
-		[NotNull][ItemCanBeNull]
+		[NotNull]
+		[ItemCanBeNull]
 		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
 			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T?>?> setA,
 			[NotNull][ItemCanBeNull] IEnumerable<IEnumerable<T?>?> setB
@@ -174,6 +175,7 @@ namespace Librainian.Extensions {
 					found = true;
 
 					if ( setA is not null ) {
+
 						// ReSharper disable once PossibleMultipleEnumeration
 						if ( b != null ) {
 							yield return setA.Append( b );
@@ -184,6 +186,7 @@ namespace Librainian.Extensions {
 
 			if ( !found ) {
 				if ( setA is not null ) {
+
 					// ReSharper disable once PossibleMultipleEnumeration
 					yield return setA;
 				}
@@ -244,6 +247,12 @@ namespace Librainian.Extensions {
 					b
 				};
 			}
+		}
+
+		[ItemCanBeNull]
+		public static IEnumerable<T?> Group<T>( [CanBeNull] this T? a, [CanBeNull] T? b ) {
+			yield return a;
+			yield return b;
 		}
 
 		/// <summary>
@@ -316,14 +325,5 @@ namespace Librainian.Extensions {
 
 			return powerSet;
 		}
-
-		[ItemCanBeNull]
-		public static IEnumerable<T?> Group<T>( [CanBeNull] this T? a, [CanBeNull] T? b ) {
-			yield return a;
-			yield return b;
-		}
-
-
 	}
-
 }

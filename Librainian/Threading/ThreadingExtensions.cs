@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,17 +14,18 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ThreadingExtensions.cs" last formatted on 2020-10-12 at 4:26 PM.
 
 #nullable enable
 
 namespace Librainian.Threading {
+
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -40,7 +41,7 @@ namespace Librainian.Threading {
 	using Maths;
 
 	public static class ThreadingExtensions {
-		
+
 		public static Boolean IsRunningFromNUnit { get; } =
 			AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName?.ToLowerInvariant().StartsWith( "nunit.framework" ) == true );
 
@@ -159,6 +160,39 @@ namespace Librainian.Threading {
 			Thread.EndCriticalRegion();
 		}
 
+		public static TaskAwaiter<Int32> GetAwaiter( this Process process ) {
+			var tcs = new TaskCompletionSource<Int32>();
+			process.EnableRaisingEvents = true;
+			process.Exited += ( _, _ ) => tcs.TrySetResult( process.ExitCode );
+			if ( process.HasExited ) {
+				tcs.TrySetResult( process.ExitCode );
+			}
+
+			return tcs.Task.GetAwaiter();
+		}
+
+		/// <summary>
+		/// Asynchronously wait until cancellation is requested.
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		public static TaskAwaiter GetAwaiter( this CancellationToken cancellationToken ) {
+			var tcs = new TaskCompletionSource<Boolean>();
+			Task t = tcs.Task;
+			if ( cancellationToken.IsCancellationRequested ) {
+				tcs.SetResult( true );
+			}
+			else {
+				cancellationToken.Register( s => ( s as TaskCompletionSource<Boolean> )?.SetResult( true ), tcs );
+			}
+
+			return t.GetAwaiter();
+		}
+
+		public static TaskAwaiter GetAwaiter( this IEnumerable<Task> tasks ) => Task.WhenAll( tasks ).GetAwaiter();
+
+		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
+
 		public static Int32 GetMaximumActiveWorkerThreads() {
 			ThreadPool.GetMaxThreads( out var _, out var maxPortThreads );
 
@@ -181,7 +215,7 @@ namespace Librainian.Threading {
 				Double => sizeof( Double ),
 				Decimal => sizeof( Decimal ),
 				String s => sizeof( Char ) * s.Length,
-				{ } => sizeof( Int32 ),	//BUG 4 ?? 8. sizeof(Pointer)
+				{ } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
 				var _ => 0
 			} );
 
@@ -315,6 +349,7 @@ namespace Librainian.Threading {
 		}
 
 		public sealed class ContextCallOnlyXTimes {
+
 			public Int64 CallsAllowed;
 
 			public ContextCallOnlyXTimes( Int64 times ) {
@@ -325,47 +360,5 @@ namespace Librainian.Threading {
 				this.CallsAllowed = times;
 			}
 		}
-
-		
-		
-		
-
-		public static TaskAwaiter<Int32> GetAwaiter(this Process process)
-		{
-			var tcs = new TaskCompletionSource<Int32>();
-			process.EnableRaisingEvents = true;
-			process.Exited += ( _, _ ) => tcs.TrySetResult( process.ExitCode );
-			if (process.HasExited) {
-				tcs.TrySetResult(process.ExitCode);
-			}
-
-			return tcs.Task.GetAwaiter();
-		}
-
-		/// <summary>
-		/// Asynchronously wait until cancellation is requested.
-		/// </summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		public static TaskAwaiter GetAwaiter(this CancellationToken cancellationToken)
-		{
-			var tcs = new TaskCompletionSource<Boolean>();
-			Task t = tcs.Task;
-			if (cancellationToken.IsCancellationRequested) {
-				tcs.SetResult(true);
-			}
-			else {
-				cancellationToken.Register(s => (s as TaskCompletionSource<Boolean>)?.SetResult(true), tcs);
-			}
-
-			return t.GetAwaiter();
-		}
-
-		public static TaskAwaiter GetAwaiter(this IEnumerable<Task> tasks) => Task.WhenAll(tasks).GetAwaiter();
-
-		
-
-		public static TaskAwaiter GetAwaiter(this TimeSpan timeSpan) => Task.Delay(timeSpan).GetAwaiter();
-
 	}
 }

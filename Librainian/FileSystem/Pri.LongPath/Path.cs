@@ -1,16 +1,16 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //     No warranties are expressed, implied, or given.
@@ -18,10 +18,10 @@
 //     We are NOT responsible for Anything You Do With Our Executables.
 //     We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
@@ -112,6 +112,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var maxPathLimit = PriNativeMethods.MAX_PATH;
 
 			if ( Uri.TryCreate( path, UriKind.Absolute, out var uri ) && uri.IsUnc ) {
+
 				// What's going on here?
 				// Empirical evidence shows that Windows has trouble dealing with UNC paths
 				// longer than MAX_PATH *minus* the length of the "\\hostname\" prefix.
@@ -123,33 +124,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			return path.Length < maxPathLimit ? path : path.AddLongPathPrefix();
-		}
-
-		/// <summary></summary>
-		/// <param name="path"></param>
-		/// <exception cref="ArgumentNullException">Thrown if any invalid chars found in path.</exception>
-		[return: NotNullIfNotNull( "path" )]
-		[JetBrains.Annotations.NotNull]
-		[Pure]
-		public static String ThrowIfInvalidPathChars( [JetBrains.Annotations.NotNull] this String path ) {
-			path = path.ThrowIfBlank();
-
-			if ( path.HasIllegalCharacters() ) {
-				throw new InvalidOperationException( $"Invalid characters in {nameof( path )}" );
-			}
-
-			return path;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="path"></param>
-		/// <exception cref="InvalidOperationException"></exception>
-		public static void ThrowIfInvalidPathChars( [JetBrains.Annotations.NotNull] ref String path ) {
-			if ( path.Any( InvalidPathChars.Contains ) ) {
-				throw new InvalidOperationException( $"Invalid characters in {nameof( path )}" );
-			}
 		}
 
 		[return: NotNullIfNotNull( "path1" )]
@@ -177,12 +151,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[JetBrains.Annotations.NotNull]
 		public static String CombinePaths( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2,
-			[JetBrains.Annotations.NotNull] String path3 ) => CombinePaths( path1, path2 ).CombinePaths( path3 );
+					[JetBrains.Annotations.NotNull] String path3 ) => CombinePaths( path1, path2 ).CombinePaths( path3 );
 
 		[JetBrains.Annotations.NotNull]
 		public static String CombinePaths( [JetBrains.Annotations.NotNull] this String path1, [JetBrains.Annotations.NotNull] String path2,
-			[JetBrains.Annotations.NotNull] String path3, [JetBrains.Annotations.NotNull] String path4 ) =>
-			CombinePaths( path1.CombinePaths( path2 ), path3 ).CombinePaths( path4 );
+					[JetBrains.Annotations.NotNull] String path3, [JetBrains.Annotations.NotNull] String path4 ) =>
+					CombinePaths( path1.CombinePaths( path2 ), path3 ).CombinePaths( path4 );
 
 		[return: NotNullIfNotNull( "paths" )]
 		[JetBrains.Annotations.NotNull]
@@ -400,42 +374,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static String NormalizeLongPath( [JetBrains.Annotations.NotNull] this String path, [JetBrains.Annotations.NotNull] String parameterName = "path" ) => path.CheckAddLongPathPrefix();
 
-		/*
-			if ( path.IsPathUnc() ) {
-				return path.CheckAddLongPathPrefix();
-			}
-			*/
-		/*
-			var buffer = new StringBuilder( PriNativeMethods.MAX_LONG_PATH + 1 ); // Add 1 for NULL
-			var length = PriNativeMethods.GetFullPathNameW( path, ( UInt32 )buffer.Capacity, buffer, IntPtr.Zero );
-
-			switch ( length ) {
-				case 0: {
-					throw Common.GetExceptionFromLastWin32Error( parameterName );
-				}
-
-				case > PriNativeMethods.MAX_LONG_PATH: {
-					throw Common.GetExceptionFromWin32Error( PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE, parameterName );
-				}
-
-				case > 1 when buffer[ 0 ].IsDirectorySeparator() && buffer[ 1 ].IsDirectorySeparator(): {
-					if ( length < 2 ) {
-						throw new ArgumentException( @"The UNC path should be of the form \\server\share." );
-					}
-
-					var parts = buffer.ToString().Split( DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries );
-
-					if ( parts.Length < 2 ) {
-						throw new ArgumentException( @"The UNC path should be of the form \\server\share." );
-					}
-
-					break;
-				}
-			}
-			*/
-		/*
-			return path.AddLongPathPrefix();
-			*/
 		/// <summary>
 		/// <para>Trim whitespace from the <paramref name="path"/>.</para>
 		/// <para>If the <paramref name="path"/> is null, empty or whitespace then return <see cref="String.Empty"/>.</para>
@@ -475,6 +413,70 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return path;
 		}
 
+		/// <summary></summary>
+		/// <param name="path"></param>
+		/// <exception cref="ArgumentNullException">Thrown if any invalid chars found in path.</exception>
+		[return: NotNullIfNotNull( "path" )]
+		[JetBrains.Annotations.NotNull]
+		[Pure]
+		public static String ThrowIfInvalidPathChars( [JetBrains.Annotations.NotNull] this String path ) {
+			path = path.ThrowIfBlank();
+
+			if ( path.HasIllegalCharacters() ) {
+				throw new InvalidOperationException( $"Invalid characters in {nameof( path )}" );
+			}
+
+			return path;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="path"></param>
+		/// <exception cref="InvalidOperationException"></exception>
+		public static void ThrowIfInvalidPathChars( [JetBrains.Annotations.NotNull] ref String path ) {
+			if ( path.Any( InvalidPathChars.Contains ) ) {
+				throw new InvalidOperationException( $"Invalid characters in {nameof( path )}" );
+			}
+		}
+
+		/*
+			if ( path.IsPathUnc() ) {
+				return path.CheckAddLongPathPrefix();
+			}
+			*/
+		/*
+			var buffer = new StringBuilder( PriNativeMethods.MAX_LONG_PATH + 1 ); // Add 1 for NULL
+			var length = PriNativeMethods.GetFullPathNameW( path, ( UInt32 )buffer.Capacity, buffer, IntPtr.Zero );
+
+			switch ( length ) {
+				case 0: {
+					throw Common.GetExceptionFromLastWin32Error( parameterName );
+				}
+
+				case > PriNativeMethods.MAX_LONG_PATH: {
+					throw Common.GetExceptionFromWin32Error( PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE, parameterName );
+				}
+
+				case > 1 when buffer[ 0 ].IsDirectorySeparator() && buffer[ 1 ].IsDirectorySeparator(): {
+					if ( length < 2 ) {
+						throw new ArgumentException( @"The UNC path should be of the form \\server\share." );
+					}
+
+					var parts = buffer.ToString().Split( DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries );
+
+					if ( parts.Length < 2 ) {
+						throw new ArgumentException( @"The UNC path should be of the form \\server\share." );
+					}
+
+					break;
+				}
+			}
+			*/
+		/*
+			return path.AddLongPathPrefix();
+			*/
+
 		public static Boolean TryNormalizeLongPath( [JetBrains.Annotations.NotNull] this String path, [CanBeNull] out String? result ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				result = null;
@@ -494,7 +496,5 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			return false;
 		}
-
 	}
-
 }
