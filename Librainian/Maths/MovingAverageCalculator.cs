@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MovingAverageCalculator.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
@@ -49,6 +49,14 @@ namespace Librainian.Maths {
 
 		private Int32 _valuesIn;
 
+		/// <summary>
+		///     Gets a value indicating whether enough values have been provided to fill the speicified window size. Values
+		///     returned from NextValue may still be used prior to IsMature
+		///     returning true, however such values are not subject to the intended smoothing effect of the moving average's window
+		///     size.
+		/// </summary>
+		public Boolean IsMature => this._valuesIn == this._windowSize;
+
 		/// <summary>Create a new moving average calculator.</summary>
 		/// <param name="windowSize">The maximum number of values to be considered by this moving average calculation.</param>
 		/// <exception cref="ArgumentOutOfRangeException">If windowSize less than one.</exception>
@@ -58,18 +66,10 @@ namespace Librainian.Maths {
 			}
 
 			this._windowSize = windowSize;
-			this._values = new Single[this._windowSize];
+			this._values = new Single[ this._windowSize ];
 
 			this.Reset();
 		}
-
-		/// <summary>
-		///     Gets a value indicating whether enough values have been provided to fill the speicified window size. Values
-		///     returned from NextValue may still be used prior to IsMature
-		///     returning true, however such values are not subject to the intended smoothing effect of the moving average's window
-		///     size.
-		/// </summary>
-		public Boolean IsMature => this._valuesIn == this._windowSize;
 
 		/// <summary>
 		///     Updates the moving average with its next value, and returns the updated average value. When IsMature is true and
@@ -88,16 +88,18 @@ namespace Librainian.Maths {
 			this._sum += nextValue;
 
 			if ( this._valuesIn < this._windowSize ) {
+
 				// we haven't yet filled our window
 				this._valuesIn++;
 			}
 			else {
+
 				// remove oldest value from sum
-				this._sum -= this._values[this._nextValueIndex];
+				this._sum -= this._values[ this._nextValueIndex ];
 			}
 
 			// store the value
-			this._values[this._nextValueIndex] = nextValue;
+			this._values[ this._nextValueIndex ] = nextValue;
 
 			// progress the next value index pointer
 			this._nextValueIndex++;
@@ -118,7 +120,5 @@ namespace Librainian.Maths {
 			this._sum = 0;
 			this._valuesIn = 0;
 		}
-
 	}
-
 }

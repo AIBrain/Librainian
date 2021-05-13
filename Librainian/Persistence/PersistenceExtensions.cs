@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +17,16 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "PersistenceExtensions.cs" last formatted on 2020-08-14 at 8:44 PM.
+//
+// File "PersistenceExtensions.cs" last touched on 2021-03-07 at 5:23 PM by Protiguous.
 
 #nullable enable
+
 namespace Librainian.Persistence {
 
 	using System;
@@ -38,6 +42,7 @@ namespace Librainian.Persistence {
 	using System.Runtime.Serialization.Formatters.Binary;
 	using System.Text;
 	using System.Threading;
+	using System.Threading.Tasks;
 	using Converters;
 	using FileSystem;
 	using JetBrains.Annotations;
@@ -45,7 +50,7 @@ namespace Librainian.Persistence {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Newtonsoft.Json.Serialization;
-	using File = FileSystem.Pri.LongPath.File;
+	using Xunit;
 
 	public static class PersistenceExtensions {
 
@@ -58,8 +63,8 @@ namespace Librainian.Persistence {
 		public static readonly Lazy<Folder> LocalDataFolder = new( () => {
 			var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
-			if ( !folder.Exists() ) {
-				folder.Create();
+			if ( !folder.Info.Exists ) {
+				folder.Info.Create();
 			}
 
 			return folder;
@@ -67,20 +72,25 @@ namespace Librainian.Persistence {
 
 		[NotNull]
 		public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
-		public static readonly ThreadLocal<StreamingContext> StreamingContexts =
-			new( () => new StreamingContext( StreamingContextStates.All ), true );
+		public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
 
 		[NotNull]
 		public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
-			//ContractResolver = new MyContractResolver(),
-			TypeNameHandling = TypeNameHandling.Auto, NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-			ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
+
+			//TODO ContractResolver needs testing
+			ContractResolver = new MyContractResolver(),
+			TypeNameHandling = TypeNameHandling.Auto,
+			NullValueHandling = NullValueHandling.Ignore,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			PreserveReferencesHandling = PreserveReferencesHandling.All
 		}, true );
 
-		/// <summary></summary>
+		/// <summary>Bascially just calls <see cref="FromJSON{T}"/>.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="storedAsString"></param>
 		/// <returns></returns>
@@ -100,29 +110,39 @@ namespace Librainian.Persistence {
 			return default( T? );
 		}
 
-		public static Boolean DeserializeDictionary<TKey, TValue>(
-			[NotNull]
-			this ConcurrentDictionary<TKey, TValue> toDictionary,
-			[CanBeNull] Folder? folder,
+		public static async Task<Boolean> DeserializeDictionary<TKey, TValue>(
+			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary,
+			[NotNull] Folder folder,
 			[CanBeNull] String? calledWhat,
-			[CanBeNull] String? extension = ".xml"
+			[CanBeNull] String? extension,
+			CancellationToken cancellationToken
 		) where TKey : IComparable<TKey> {
+			Assert.NotNull( nameof( folder ) );
+
+			if ( folder == null ) {
+				throw new ArgumentNullException( nameof( folder ) );
+			}
+
 			try {
+
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( folder?.Exists() != true ) {
+				extension ??= ".xml";
+
+				var exists = await folder.Exists( cancellationToken ).ConfigureAwait( false );
+
+				if ( exists != true ) {
 					return false;
 				}
 
 				var fileCount = UInt64.MinValue;
-				var before = toDictionary.LongCount();
+				var before = toDictionary.Count;
 
 				//enumerate all the files with the wildcard *.extension
-				var documents = folder.GetDocuments( $"*{extension}" );
 
-				foreach ( var document in documents ) {
-					var length = document.Length;
+				await foreach ( var document in folder.EnumerateDocuments( $"*.{extension}", cancellationToken ) ) {
+					var length = await document.Length( cancellationToken ).ConfigureAwait( false );
 
 					if ( length < 1 ) {
 						continue;
@@ -134,12 +154,13 @@ namespace Librainian.Persistence {
 
 						lines.ForAll( line => {
 							try {
-								if ( String.IsNullOrWhiteSpace(line) ) {
+								if ( String.IsNullOrWhiteSpace( line ) ) {
 									return;
 								}
-								var tuple = line.Deserialize<Tuple<TKey, TValue>>();
 
-								toDictionary[tuple.Item1] = tuple.Item2;
+								(var key, var value) = line.Deserialize<(TKey, TValue)>();
+
+								toDictionary[ key ] = value;
 							}
 							catch ( Exception lineexception ) {
 								lineexception.Log();
@@ -151,7 +172,7 @@ namespace Librainian.Persistence {
 					}
 				}
 
-				var after = toDictionary.LongCount();
+				var after = toDictionary.Count;
 
 				stopwatch.Stop();
 				String.Format( "Deserialized {0} {3} from {1} files in {2}.", after - before, fileCount, stopwatch.Elapsed.Simpler(), calledWhat ).Info();
@@ -252,7 +273,7 @@ namespace Librainian.Persistence {
 			return JsonConvert.DeserializeObject<T>( data, Jss.Value );
 		}
 
-		/// <summary></summary>
+		/// <summary>Basically just calls <see cref="ToJSON{T}"/>.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
 		/// <returns></returns>
@@ -266,7 +287,7 @@ namespace Librainian.Persistence {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[CanBeNull]
 		public static String? Serialize<T>( [NotNull] this T self ) {
-			if ( Equals( self, null ) ) {
+			if ( self is null ) {
 				throw new ArgumentNullException( nameof( self ) );
 			}
 
@@ -291,30 +312,31 @@ namespace Librainian.Persistence {
 		/// <param name="dictionary"></param>
 		/// <param name="folder">    </param>
 		/// <param name="calledWhat"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="progress">  </param>
 		/// <param name="extension"> </param>
 		/// <returns></returns>
-		public static Boolean SerializeDictionary<TKey, TValue>(
+		public static async Task<Boolean> SerializeDictionary<TKey, TValue>(
 			[NotNull] this IDictionary<TKey, TValue> dictionary,
 			[NotNull] Folder folder,
-			[CanBeNull] String? calledWhat,
+			[CanBeNull] String? calledWhat, CancellationToken cancellationToken,
 			[CanBeNull] IProgress<Single>? progress = null,
 			[CanBeNull] String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
-
 			if ( !dictionary.Any() ) {
 				return false;
 			}
 
 			try {
+
 				//Report.Enter();
 				var stopwatch = Stopwatch.StartNew();
 
-				if ( !folder.Create() ) {
+				if ( await folder.Create( cancellationToken ).ConfigureAwait( false ) == false ) {
 					throw new DirectoryNotFoundException( folder.FullPath );
 				}
 
-				var itemCount = ( UInt64 )dictionary.LongCount();
+				var itemCount = ( UInt64 )dictionary.Count;
 
 				String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
@@ -333,7 +355,7 @@ namespace Librainian.Persistence {
 				foreach ( var pair in dictionary ) {
 					currentLine++;
 
-					var data = ( pair.Key, pair.Value ).Serialize();
+					var data = (pair.Key, pair.Value).Serialize();
 
 					var hereNow = DateTime.UtcNow.ToGuid();
 
@@ -343,7 +365,7 @@ namespace Librainian.Persistence {
 							progress.Report( soFar );
 						}
 
-						using ( writer ) { }
+						await using ( writer ) { }
 
 						fileName = $"{hereNow}.xml"; //let the file name change over time so we don't have bigHuge monolithic files.
 						using var newdocument = new Document( folder, fileName );
@@ -352,10 +374,10 @@ namespace Librainian.Persistence {
 						backThen = DateTime.UtcNow.ToGuid();
 					}
 
-					writer.WriteLine( data );
+					await writer.WriteLineAsync( data ).ConfigureAwait( false );
 				}
 
-				using ( writer ) { }
+				await using ( writer ) { }
 
 				stopwatch.Stop();
 				String.Format( "Serialized {1} {3} in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount, calledWhat ).Info();
@@ -373,6 +395,7 @@ namespace Librainian.Persistence {
 		}
 
 		/*
+
 		/// <summary>See also <see cref="Deserializer{T}" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
@@ -400,6 +423,7 @@ namespace Librainian.Persistence {
 		*/
 
 		/*
+
 		/// <summary>
 		///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use
 		///     <see cref="TryLoad{TSource}" /> to load an object.
@@ -416,7 +440,6 @@ namespace Librainian.Persistence {
 
 			try
 			{
-
 				var json = objectToSerialize.ToJSON();
 
 				if (json.IsNullOrWhiteSpace()) { return default; }
@@ -442,17 +465,15 @@ namespace Librainian.Persistence {
 		/// <param name="formatting"></param>
 		/// <returns></returns>
 		[CanBeNull]
-		public static String? ToJSON<T>( [CanBeNull]
-			this T self, Formatting formatting = Formatting.None ) {
+		public static String? ToJSON<T>( [CanBeNull] this T self, Formatting formatting = Formatting.None ) {
+			if ( self is null ) {
+				return default( String? );
+			}
 
-            if ( self is null ) {
-                return default(String?);
-            }
+			return JsonConvert.SerializeObject( self, formatting, Jss.Value );
+		}
 
-            return JsonConvert.SerializeObject( self, formatting, Jss.Value );
-        }
-
-        /*
+		/*
 
 		/// <summary>
 		///     <para>
@@ -495,6 +516,7 @@ namespace Librainian.Persistence {
 		*/
 
 		/*
+
 		/// <summary>Persist the <paramref name="self" /> to a JSON text file.</summary>
 		/// <typeparam name="TKey"></typeparam>
 		/// <param name="self">    </param>
@@ -546,9 +568,6 @@ namespace Librainian.Persistence {
 
 				return list;
 			}
-
 		}
-
 	}
-
 }

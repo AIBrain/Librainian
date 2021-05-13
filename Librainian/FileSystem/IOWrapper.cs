@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "IOWrapper.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 #nullable enable
@@ -38,9 +38,29 @@ namespace Librainian.FileSystem {
 	/// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
 	public static class IOWrapper {
 
+		private const UInt32 ErrorInsufficientBuffer = 122;
+
+		private const UInt32 FileFlagNoBuffering = 0x20000000;
+
+		private const UInt32 FileReadAttributes = 0x0080;
+
+		private const UInt32 FileShareDelete = 0x00000004;
+
+		// CreateFile constants
+		private const UInt32 FileShareRead = 0x00000001;
+
+		private const UInt32 FileShareWrite = 0x00000002;
+
+		private const UInt32 FileWriteAttributes = 0x0100;
+
+		private const UInt32 GenericRead = 0x80000000;
+
+		private const UInt32 GenericWrite = 0x40000000;
+
+		private const UInt32 OpenExisting = 3;
+
 		/// <summary>Access flags.</summary>
 		[Flags]
-		
 		public enum ACCESS_MASK : UInt32 {
 
 			/// <summary>The right to delete the object.</summary>
@@ -104,13 +124,11 @@ namespace Librainian.FileSystem {
 
 			/// <summary>All possible access rights.</summary>
 			GENERIC_ALL = 0x10000000
-
 		}
 
 		/// <summary>Enumerates the that may apply to files.</summary>
 		/// <remarks>These flags may be passed to CreateFile.</remarks>
 		[Flags]
-		
 		public enum FileAccess : UInt32 {
 
 			/// <summary>Read access.</summary>
@@ -185,33 +203,15 @@ namespace Librainian.FileSystem {
 			FILE_WRITE_ATTRIBUTES = 0x0100, // all
 
 			SPECIFIC_RIGHTS_ALL = 0x00FFFF,
+
 			FILE_ALL_ACCESS = ACCESS_MASK.STANDARD_RIGHTS_REQUIRED | ACCESS_MASK.SYNCHRONIZE | 0x1FF,
+
 			FILE_GENERIC_READ = ACCESS_MASK.STANDARD_RIGHTS_READ | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | ACCESS_MASK.SYNCHRONIZE,
+
 			FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
+
 			FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE
-
 		}
-
-		private const UInt32 ErrorInsufficientBuffer = 122;
-
-		private const UInt32 FileFlagNoBuffering = 0x20000000;
-
-		private const UInt32 FileReadAttributes = 0x0080;
-
-		private const UInt32 FileShareDelete = 0x00000004;
-
-		// CreateFile constants
-		private const UInt32 FileShareRead = 0x00000001;
-
-		private const UInt32 FileShareWrite = 0x00000002;
-
-		private const UInt32 FileWriteAttributes = 0x0100;
-
-		private const UInt32 GenericRead = 0x80000000;
-
-		private const UInt32 GenericWrite = 0x40000000;
-
-		private const UInt32 OpenExisting = 3;
 
 		/// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
 		/// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
@@ -354,7 +354,7 @@ namespace Librainian.FileSystem {
 
 				var bitmapBegin = ( IntPtr )( ( Int64 )pDest + 8 );
 
-				var byteArr = new Byte[byteSize];
+				var byteArr = new Byte[ byteSize ];
 
 				Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
 
@@ -392,7 +392,10 @@ namespace Librainian.FileSystem {
 				hFile = OpenFile( path );
 
 				var mfd = new MoveFileData {
-					HFile = hFile, StartingVcn = vcn, StartingLcn = lcn, ClusterCount = count
+					HFile = hFile,
+					StartingVcn = vcn,
+					StartingLcn = lcn,
+					ClusterCount = count
 				};
 
 				var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
@@ -446,9 +449,6 @@ namespace Librainian.FileSystem {
 			public Int64 StartingLcn;
 
 			public Int64 StartingVcn;
-
 		}
-
 	}
-
 }

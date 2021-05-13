@@ -55,9 +55,7 @@ namespace Librainian.Linguistics {
 		*/
 
 		public Boolean AddPage( Int32 page ) {
-			if ( this.PagesOrIndexes is null ) {
-				this.PagesOrIndexes = new Lazy<HashSet<Int32>>( () => new HashSet<Int32>() );
-			}
+			this.PagesOrIndexes ??= new Lazy<HashSet<Int32>>( () => new HashSet<Int32>() );
 
 			return this.PagesOrIndexes.Value.Add( page );
 		}

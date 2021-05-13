@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +14,16 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Windows.cs" last formatted on 2020-08-14 at 8:41 PM.
 
 #nullable enable
+
 namespace Librainian.OperatingSystem {
 
 	using System;
@@ -64,17 +65,15 @@ namespace Librainian.OperatingSystem {
 		public static readonly Lazy<Folder?> WindowsSystem32Folder = new( () => FindFolder( Path.Combine( WindowsFolder.Value.FullPath, "System32" ) ), true );
 
 		[NotNull]
-		public static Lazy<Document?> CommandPrompt { get; } =
-			new( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
+		public static Lazy<Document?> CommandPrompt { get; } = new( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
 
 		[NotNull]
 		public static Lazy<Document?> IrfanView64 { get; } =
-			new( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ),
-								 true );
+			new( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ), true );
 
 		/// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
 		/// <returns></returns>
-		public static void CleanUpPath( Boolean reportToConsole = false ) {
+		public static async Task CleanUpPath( Boolean reportToConsole, CancellationToken cancellationToken ) {
 			if ( reportToConsole ) {
 				"Attempting to verify and fix the PATH environment.".Info();
 			}
@@ -100,22 +99,28 @@ namespace Librainian.OperatingSystem {
 			var pathsData = new ConcurrentDictionary<String, Folder>( Environment.ProcessorCount, justpaths.Count );
 
 			foreach ( var s in justpaths ) {
-				pathsData[s] = new Folder( s );
+				pathsData[ s ] = new Folder( s );
 			}
 
 			if ( reportToConsole ) {
 				"Examining entries...".Info();
 			}
 
-			foreach ( var pair in pathsData.Where( pair => !pair.Value.Exists() ) ) {
+			foreach ( var pair in pathsData.Where( pair => !pair.Value.ExistsSync() ) ) {
 				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
 					$"Removing nonexistent folder `{dummy.FullPath}` from PATH".Info();
 				}
 			}
 
-			foreach ( var pair in pathsData.Where( pair => !pair.Value.GetFolders( "*" ).Any() && !pair.Value.GetDocuments().Any() ) ) {
-				if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
-					$"Removing empty folder {dummy.FullPath} from PATH".Info();
+			foreach ( var pair in pathsData ) {
+				if ( pair.Value != null ) {
+					if ( !await pair.Value.EnumerateFolders( "*", SearchOption.TopDirectoryOnly, cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) ) {
+						if ( !await pair.Value.EnumerateDocuments( "*.*", cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) ) {
+							if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
+								$"Removing empty folder {dummy.FullPath} from PATH".Info();
+							}
+						}
+					}
 				}
 			}
 
@@ -133,13 +138,18 @@ namespace Librainian.OperatingSystem {
 		}
 
 		[NotNull]
-		public static Task<Process> ExecuteCommandPromptAsync( [CanBeNull] String? arguments ) =>
+		public static Task<Process?> ExecuteCommandPromptAsync( [CanBeNull] String? arguments ) =>
 			Task.Run( () => {
 				try {
 					var proc = new ProcessStartInfo {
-						UseShellExecute = false, WorkingDirectory = WindowsSystem32Folder.Value.FullPath, FileName = CommandPrompt.Value.FullPath,
+						UseShellExecute = false,
+						WorkingDirectory = WindowsSystem32Folder.Value.FullPath,
+						FileName = CommandPrompt.Value.FullPath,
 						Verb = "runas", //demand elevated permissions
-						Arguments = $"/C \"{arguments}\"", CreateNoWindow = false, ErrorDialog = true, WindowStyle = ProcessWindowStyle.Normal
+						Arguments = $"/C \"{arguments}\"",
+						CreateNoWindow = false,
+						ErrorDialog = true,
+						WindowStyle = ProcessWindowStyle.Normal
 					};
 
 					$"Running command '{proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
@@ -161,8 +171,12 @@ namespace Librainian.OperatingSystem {
 						UseShellExecute = false,
 
 						//WorkingDirectory = PowerShellFolder.Value.FullPath,
-						FileName = "powershell.exe", Verb = elevated ? "runas" : null, //demand elevated permissions?
-						Arguments = $"-EncodedCommand {arguments.ToBase64()}", CreateNoWindow = false, ErrorDialog = true, WindowStyle = ProcessWindowStyle.Normal
+						FileName = "powershell.exe",
+						Verb = elevated ? "runas" : String.Empty, //demand elevated permissions?
+						Arguments = $"-EncodedCommand {arguments.ToBase64()}",
+						CreateNoWindow = false,
+						ErrorDialog = true,
+						WindowStyle = ProcessWindowStyle.Normal
 					};
 
 					$"Running PowerShell command '{arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Green );
@@ -200,9 +214,14 @@ namespace Librainian.OperatingSystem {
 			return Task.Run( () => {
 				try {
 					var processStartInfo = new ProcessStartInfo {
-						UseShellExecute = false, WorkingDirectory = workingFolder.FullPath, FileName = filename.FullPath,
+						UseShellExecute = false,
+						WorkingDirectory = workingFolder.FullPath,
+						FileName = filename.FullPath,
 						Verb = elevate ? null : "runas", //demand elevated permissions
-						Arguments = arguments ?? String.Empty, CreateNoWindow = false, ErrorDialog = true, WindowStyle = ProcessWindowStyle.Normal
+						Arguments = arguments ?? String.Empty,
+						CreateNoWindow = false,
+						ErrorDialog = true,
+						WindowStyle = ProcessWindowStyle.Normal
 					};
 
 					$"Running process '{filename} {processStartInfo.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Blue );
@@ -229,7 +248,7 @@ namespace Librainian.OperatingSystem {
 
 			using var mainDocument = new Document( fullname );
 
-			if ( mainDocument.Exists() ) {
+			if ( mainDocument.GetExists() ) {
 				okayMessage.Info();
 
 				return mainDocument;
@@ -252,17 +271,17 @@ namespace Librainian.OperatingSystem {
 
 			var mainFolder = new Folder( fullname );
 
-			if ( !mainFolder.Exists() ) {
-				errorMessage.Error();
+			if ( mainFolder.GetExists() ) {
+				if ( !String.IsNullOrEmpty( okayMessage ) ) {
+					okayMessage.Info();
+				}
 
-				return default( Folder? );
+				return mainFolder;
 			}
 
-			if ( !String.IsNullOrEmpty( okayMessage ) ) {
-				okayMessage.Info();
-			}
+			errorMessage.Error();
 
-			return mainFolder;
+			return default( Folder? );
 		}
 
 		[NotNull]
@@ -279,10 +298,16 @@ namespace Librainian.OperatingSystem {
 		[CanBeNull]
 		public static Process? OpenWithExplorer( [CanBeNull] String? value ) {
 			try {
+
 				//Verb = "runas", //demand elevated permissions
 				var proc = new ProcessStartInfo {
-					UseShellExecute = false, WorkingDirectory = Environment.CurrentDirectory, FileName = Path.Combine( WindowsSystem32Folder.Value.FullPath, "explorer.exe" ),
-					Arguments = $" /separate /select,\"{value}\" ", CreateNoWindow = false, ErrorDialog = true, WindowStyle = ProcessWindowStyle.Normal
+					UseShellExecute = false,
+					WorkingDirectory = Environment.CurrentDirectory,
+					FileName = Path.Combine( WindowsSystem32Folder.Value.FullPath, "explorer.exe" ),
+					Arguments = $" /separate /select,\"{value}\" ",
+					CreateNoWindow = false,
+					ErrorDialog = true,
+					WindowStyle = ProcessWindowStyle.Normal
 				};
 
 				$"Running command '{proc.Arguments}'...".WriteLineColor( ConsoleColor.White, ConsoleColor.Cyan );
@@ -297,7 +322,7 @@ namespace Librainian.OperatingSystem {
 		}
 
 		[CanBeNull]
-		public static Task<Process?> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
+		public static async Task<Process?> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
 			if ( inDocument == null ) {
 				throw new ArgumentNullException( nameof( inDocument ) );
 			}
@@ -306,31 +331,39 @@ namespace Librainian.OperatingSystem {
 				throw new ArgumentNullException( nameof( outDocument ) );
 			}
 
-			return Task.Run( () => {
-				if ( IrfanView64.Value?.Exists() != true ) {
-					return default( Process? );
-				}
-
-				try {
-					var arguments = $" {inDocument.FullPath.Quoted()} /convert={outDocument.FullPath.Quoted()} ";
-
-					var proc = new ProcessStartInfo {
-						UseShellExecute = false, WorkingDirectory = Folder.GetTempFolder().FullPath, FileName = IrfanView64.Value.FullPath,
-
-						//Verb = "runas", //demand elevated permissions
-						Arguments = arguments, CreateNoWindow = true, ErrorDialog = false, WindowStyle = ProcessWindowStyle.Normal
-					};
-
-					$"Running irfanview command '{proc.Arguments}'...".Info();
-
-					return Process.Start( proc );
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-
+			var irfan = IrfanView64.Value;
+			if ( irfan is null ) {
 				return default( Process? );
-			} );
+			}
+
+			if ( await irfan.Exists( CancellationToken.None ).ConfigureAwait( false ) != true ) {
+				return default( Process? );
+			}
+
+			try {
+				var arguments = $" {inDocument.FullPath.Quoted()} /convert={outDocument.FullPath.Quoted()} ";
+
+				var proc = new ProcessStartInfo {
+					UseShellExecute = false,
+					WorkingDirectory = Folder.GetTempFolder().FullPath,
+					FileName = irfan.FullPath,
+
+					//Verb = "runas", //demand elevated permissions
+					Arguments = arguments,
+					CreateNoWindow = true,
+					ErrorDialog = false,
+					WindowStyle = ProcessWindowStyle.Normal
+				};
+
+				$"Running irfanview command '{proc.Arguments}'...".Info();
+
+				return Process.Start( proc );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+
+			return default( Process? );
 		}
 
 		public static void Yield() {
@@ -338,7 +371,5 @@ namespace Librainian.OperatingSystem {
 				Thread.Yield();
 			}
 		}
-
 	}
-
 }

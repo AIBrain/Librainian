@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "FolderExtensions.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 #nullable enable
@@ -29,22 +29,20 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-    using System.Diagnostics;
+	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
-    using System.Threading;
+	using System.Runtime.CompilerServices;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using JetBrains.Annotations;
-    using Logging;
-    using Parsing;
-	using Directory = Pri.LongPath.Directory;
-	using DirectoryInfo = Pri.LongPath.DirectoryInfo;
-	using Path = Pri.LongPath.Path;
+	using Logging;
+	using Parsing;
+	using PooledAwait;
 
 	public static class FolderExtensions {
-
 		/*
 		public static Char[] InvalidPathChars {
 			get;
@@ -80,17 +78,17 @@ namespace Librainian.FileSystem {
 		}
 		*/
 
-        /// <summary>Returns a list of all files copied.</summary>
-        /// <param name="sourceFolder">                 </param>
-        /// <param name="destinationFolder">            </param>
-        /// <param name="searchPatterns">               </param>
-        /// <param name="overwriteDestinationDocuments"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        [NotNull]
+		/// <summary>Returns a list of all files copied.</summary>
+		/// <param name="sourceFolder">                 </param>
+		/// <param name="destinationFolder">            </param>
+		/// <param name="searchPatterns">               </param>
+		/// <param name="overwriteDestinationDocuments"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		[NotNull]
 		public static async Task<IEnumerable<DocumentCopyStatistics>> CopyFiles( [NotNull] this Folder sourceFolder, [NotNull] Folder destinationFolder,
 			[CanBeNull] IEnumerable<String>? searchPatterns, Boolean overwriteDestinationDocuments,
-			CancellationToken token ) {
+			CancellationToken cancellationToken ) {
 			if ( sourceFolder is null ) {
 				throw new ArgumentNullException( nameof( sourceFolder ) );
 			}
@@ -101,20 +99,17 @@ namespace Librainian.FileSystem {
 
 			var documentCopyStatistics = new ConcurrentDictionary<IDocument, DocumentCopyStatistics>();
 
-            $"Searching for documents in {sourceFolder.FullPath.DoubleQuote()}.".Verbose();
-			var sourceFiles = sourceFolder.GetDocuments( searchPatterns ?? new[] {
-				"*.*"
-			} ).ToAsyncEnumerable();
+			$"Searching for documents in {sourceFolder.FullPath.DoubleQuote()}.".Verbose();
+			var sourceFiles = sourceFolder.EnumerateDocuments( searchPatterns ?? new[] { "*.*" }, cancellationToken );
 
 			//TODO Create a better task manager instead of Parallel.ForEach.
 			//TODO Limit # of active copies happening (disk saturation, fragmentation, thrashing).
 			//TODO Check for stalled/failed copies, etc..
 			var fileCopyManager = new FileCopyManager();
 
-			await fileCopyManager.LoadFilesToBeCopied( sourceFiles, destinationFolder, overwriteDestinationDocuments, token ).ConfigureAwait( false );
+			await fileCopyManager.LoadFilesToBeCopied( sourceFiles, destinationFolder, overwriteDestinationDocuments, cancellationToken ).ConfigureAwait( false );
 
-			await foreach ( var sourceFileTask in fileCopyManager.FilesToBeCopied().WithCancellation( token ) ) {
-
+			await foreach ( var sourceFileTask in fileCopyManager.FilesToBeCopied().WithCancellation( cancellationToken ) ) {
 				var fileCopyData = await sourceFileTask.ConfigureAwait( false );
 
 				if ( fileCopyData is not null ) {
@@ -133,7 +128,7 @@ namespace Librainian.FileSystem {
 						dcs.BytesCopied = fileCopyData.BytesCopied.Value;
 					}
 
-					documentCopyStatistics[fileCopyData.Source] = dcs;
+					documentCopyStatistics[ fileCopyData.Source ] = dcs;
 				}
 			}
 
@@ -190,8 +185,7 @@ namespace Librainian.FileSystem {
 			return documentCopyStatistics.Values;
 		}
 
-		[ItemNotNull]
-		public static IEnumerable<IFolder> FindFolder( [NotNull] this String folderName ) {
+		public static async IAsyncEnumerable<IFolder> FindFolder( [NotNull] this String folderName, [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			if ( folderName is null ) {
 				throw new ArgumentNullException( nameof( folderName ) );
 			}
@@ -199,12 +193,11 @@ namespace Librainian.FileSystem {
 			//First check across all known drives.
 			var found = false;
 
-			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var drive in DriveInfo.GetDrives() ) {
-				var path = Path.Combine( drive.RootDirectory.FullName, folderName );
+			await foreach ( var drive in Disk.GetDrives( cancellationToken ) ) {
+				var path = Path.Combine( drive.RootDirectory, folderName );
 				var asFolder = new Folder( path );
 
-				if ( asFolder.Exists() ) {
+				if ( await asFolder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 					found = true;
 
 					yield return asFolder;
@@ -216,13 +209,10 @@ namespace Librainian.FileSystem {
 			}
 
 			//Next, check subfolders, beginning with the first drive.
-			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var drive in Disk.GetDrives() ) {
-				var folders = drive.GetFolders();
 
-				// ReSharper disable once LoopCanBePartlyConvertedToQuery
-				foreach ( var folder in folders ) {
-					var parts = SplitPath( ( Folder )folder ); //TODO fix this cast
+			await foreach ( var drive in Disk.GetDrives( cancellationToken ) ) {
+				await foreach ( var folder in drive.EnumerateFolders( cancellationToken ) ) {
+					var parts = SplitPath( ( Folder )folder ); //TODO fix this
 
 					if ( parts.Any( s => s.Like( folderName ) ) ) {
 						found = true;
@@ -256,7 +246,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentNullException( nameof( info ) );
 			}
 
-			return SplitPath( info.FullPath );
+			return SplitPath( info.FullName );
 		}
 
 		/// <summary>
@@ -266,7 +256,7 @@ namespace Librainian.FileSystem {
 		/// <param name="folder"></param>
 		/// <param name="tryFor"></param>
 		/// <returns></returns>
-		public static Boolean? TryDeleting( [NotNull] this Folder folder, TimeSpan tryFor ) {
+		public static async PooledValueTask<Boolean?> TryDeleting( [NotNull] this Folder folder, TimeSpan tryFor, CancellationToken cancellationToken ) {
 			if ( folder == null ) {
 				throw new ArgumentNullException( nameof( folder ) );
 			}
@@ -275,7 +265,7 @@ namespace Librainian.FileSystem {
 			TryAgain:
 
 			try {
-				if ( !folder.Exists() ) {
+				if ( !await folder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 					return true;
 				}
 
@@ -286,6 +276,7 @@ namespace Librainian.FileSystem {
 			catch ( DirectoryNotFoundException ) { }
 			catch ( PathTooLongException ) { }
 			catch ( IOException ) {
+
 				// IOExcception is thrown when the file is in use by any process.
 				if ( stopwatch.Elapsed <= tryFor ) {
 					Thread.Yield();
@@ -301,6 +292,5 @@ namespace Librainian.FileSystem {
 
 			return default( Boolean? );
 		}
-
 	}
 }

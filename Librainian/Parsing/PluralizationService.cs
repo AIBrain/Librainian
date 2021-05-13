@@ -1,4 +1,5 @@
 ﻿#nullable enable
+
 namespace Librainian.Parsing {
 
 	using System;
@@ -7,24 +8,16 @@ namespace Librainian.Parsing {
 
 	public abstract class PluralizationService {
 
+		[NotNull]
+		public CultureInfo Culture { get; protected set; }
+
 		protected PluralizationService( CultureInfo cultureInfo ) {
 			if ( !cultureInfo.TwoLetterISOLanguageName.Like( "en" ) ) {
-				throw new NotImplementedException( $"Unsupported {nameof( cultureInfo )} for {nameof(PluralizationService)}." );
+				throw new NotImplementedException( $"Unsupported {nameof( cultureInfo )} for {nameof( PluralizationService )}." );
 			}
 
 			this.Culture = cultureInfo;
 		}
-
-		[NotNull]
-		public CultureInfo Culture { get; protected set; }
-
-		public abstract Boolean IsPlural( String word );
-
-		public abstract Boolean IsSingular( String word );
-
-		public abstract String Pluralize( String word );
-
-		public abstract String Singularize( String word );
 
 		/// <summary>
 		///     Factory method for PluralizationService. Only support english pluralization.
@@ -36,6 +29,12 @@ namespace Librainian.Parsing {
 		[NotNull]
 		public static PluralizationService CreateService( CultureInfo culture ) => new EnglishPluralizationService( culture );
 
-	}
+		public abstract Boolean IsPlural( String word );
 
+		public abstract Boolean IsSingular( String word );
+
+		public abstract String Pluralize( String word );
+
+		public abstract String Singularize( String word );
+	}
 }

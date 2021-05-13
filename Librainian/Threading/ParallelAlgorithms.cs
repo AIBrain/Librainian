@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ParallelAlgorithms.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 namespace Librainian.Threading {
@@ -51,6 +51,7 @@ namespace Librainian.Threading {
 		/// <param name="body">         The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
 		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] ParallelOptions options, [NotNull] Func<Int32, TResult> body ) {
+
 			// Validate parameters; the Parallel.For we delegate to will validate the rest
 			if ( body is null ) {
 				throw new ArgumentNullException( nameof( body ) );
@@ -61,14 +62,15 @@ namespace Librainian.Threading {
 
 			// Run all bodies in parallel, stopping as soon as one has completed.
 			Parallel.For( fromInclusive, toExclusive, options, ( i, loopState ) => {
+
 				// Run an iteration. When it completes, store (box) the result, and cancel the rest
 				Interlocked.CompareExchange( ref result, body( i ), null );
-				loopState?.Stop();
+				loopState.Stop();
 			} );
 
 			// Return the computed result
 			if ( result != null ) {
-				return ( TResult ) result;
+				return ( TResult )result;
 			}
 
 			throw new InvalidOperationException();
@@ -96,6 +98,7 @@ namespace Librainian.Threading {
 			[NotNull] ParallelOptions options,
 			[NotNull] Func<TSource, TResult> body
 		) {
+
 			// Validate parameters; the Parallel.ForEach we delegate to will validate the rest
 			if ( body is null ) {
 				throw new ArgumentNullException( nameof( body ) );
@@ -106,6 +109,7 @@ namespace Librainian.Threading {
 
 			// Run all bodies in parallel, stopping as soon as one has completed.
 			Parallel.ForEach( source, options, ( item, loopState ) => {
+
 				// Run an iteration. When it completes, store (box) the result, and cancel the rest
 				Interlocked.CompareExchange( ref result, body( item ), null );
 				loopState.Stop();
@@ -113,7 +117,7 @@ namespace Librainian.Threading {
 
 			// Return the computed result
 			if ( result != null ) {
-				return ( TResult ) result;
+				return ( TResult )result;
 			}
 
 			throw new InvalidOperationException();
@@ -139,6 +143,7 @@ namespace Librainian.Threading {
 		/// <returns>A result from executing one of the functions.</returns>
 		[CanBeNull]
 		public static T SpeculativeInvoke<T>( [NotNull] this ParallelOptions options, [NotNull] params Func<T>[] functions ) {
+
 			// Validate parameters
 			if ( options is null ) {
 				throw new ArgumentNullException( nameof( options ) );
@@ -168,6 +173,7 @@ namespace Librainian.Threading {
 			Int32 numBlocksPerRow,
 			Int32 numBlocksPerColumn
 		) {
+
 			// Validate parameters
 			if ( numRows <= 0 ) {
 				throw new ArgumentOutOfRangeException( nameof( numRows ) );
@@ -209,6 +215,7 @@ namespace Librainian.Threading {
 		/// <param name="numRows">             The number of rows in the matrix.</param>
 		/// <param name="numColumns">          The number of columns in the matrix.</param>
 		public static void Wavefront( [NotNull] this Action<Int32, Int32> processRowColumnCell, Int32 numRows, Int32 numColumns ) {
+
 			// Validate parameters
 			if ( numRows <= 0 ) {
 				throw new ArgumentOutOfRangeException( nameof( numRows ) );
@@ -223,15 +230,16 @@ namespace Librainian.Threading {
 			}
 
 			// Store the previous row of tasks as well as the previous task in the current row
-			var prevTaskRow = new Task[numColumns];
+			var prevTaskRow = new Task[ numColumns ];
 			Task prevTaskInCurrentRow = null;
-			var dependencies = new Task[2];
+			var dependencies = new Task[ 2 ];
 
 			// Create a task for each cell
 			for ( var row = 0; row < numRows; row++ ) {
 				prevTaskInCurrentRow = null;
 
 				for ( var column = 0; column < numColumns; column++ ) {
+
 					// In-scope locals for being captured in the task closures
 					Int32 j = row, i = column;
 
@@ -239,12 +247,14 @@ namespace Librainian.Threading {
 					Task curTask;
 
 					if ( row == 0 && column == 0 ) {
+
 						// Upper-left task kicks everything off, having no dependencies
 						curTask = Task.Run( () => processRowColumnCell( j, i ) );
 					}
 					else if ( row == 0 || column == 0 ) {
+
 						// Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only on the task to their left
-						var antecedent = column == 0 ? prevTaskRow[0] : prevTaskInCurrentRow;
+						var antecedent = column == 0 ? prevTaskRow[ 0 ] : prevTaskInCurrentRow;
 
 						curTask = antecedent?.ContinueWith( p => {
 							p.Wait(); // Necessary only to propagate exceptions
@@ -254,8 +264,8 @@ namespace Librainian.Threading {
 					else // row > 0 && column > 0
 					{
 						// All other tasks depend on both the tasks above and to the left
-						dependencies[0] = prevTaskInCurrentRow;
-						dependencies[1] = prevTaskRow[column];
+						dependencies[ 0 ] = prevTaskInCurrentRow;
+						dependencies[ 1 ] = prevTaskRow[ column ];
 
 						curTask = Task.Factory.ContinueWhenAll( dependencies, ps => {
 							Task.WaitAll( ps ); // Necessary only to propagate exceptions
@@ -264,14 +274,12 @@ namespace Librainian.Threading {
 					}
 
 					// Keep track of the task just created for future iterations
-					prevTaskRow[column] = prevTaskInCurrentRow = curTask;
+					prevTaskRow[ column ] = prevTaskInCurrentRow = curTask;
 				}
 			}
 
 			// Wait for the last task to be done.
 			prevTaskInCurrentRow?.Wait();
 		}
-
 	}
-
 }

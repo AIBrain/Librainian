@@ -3,14 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9FEA799F-34E3-4836-B9AF-CEE55C779A2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librainian", "Librainian\Librainian.csproj", "{F6AE4772-F013-4F7F-BED4-57737BDE5719}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F5E9FDE1-7F47-4034-A45F-E26507D4FFD4}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Librainian", "Librainian\Librainian.csproj", "{F6AE4772-F013-4F7F-BED4-57737BDE5719}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianUnitTests", "Tests\LibrainianUnitTests\LibrainianUnitTests.csproj", "{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibrainianUnitTests", "LibrainianUnitTests\LibrainianUnitTests.csproj", "{76F8EE64-B920-4CBC-8869-B686950A2D90}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FAD726C1-FDFC-4D12-B6D9-4667E6C20526}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{DB16FD72-5999-41C9-A5F9-01CC90DA4B1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigDecimal", "Addons\BigDecimal\BigDecimal.csproj", "{605269CA-1534-4362-81A2-725C4EB97BCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBigDecimal", "Tests\TestBigDecimal\TestBigDecimal.csproj", "{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,17 +34,39 @@ Global
 		{F6AE4772-F013-4F7F-BED4-57737BDE5719}.Release|Any CPU.ActiveCfg = Release|x64
 		{F6AE4772-F013-4F7F-BED4-57737BDE5719}.Release|x64.ActiveCfg = Release|x64
 		{F6AE4772-F013-4F7F-BED4-57737BDE5719}.Release|x64.Build.0 = Release|x64
-		{76F8EE64-B920-4CBC-8869-B686950A2D90}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{76F8EE64-B920-4CBC-8869-B686950A2D90}.Debug|x64.ActiveCfg = Debug|x64
-		{76F8EE64-B920-4CBC-8869-B686950A2D90}.Debug|x64.Build.0 = Debug|x64
-		{76F8EE64-B920-4CBC-8869-B686950A2D90}.Release|Any CPU.ActiveCfg = Release|x64
-		{76F8EE64-B920-4CBC-8869-B686950A2D90}.Release|x64.ActiveCfg = Release|x64
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Debug|x64.ActiveCfg = Debug|x64
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Debug|x64.Build.0 = Debug|x64
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Release|Any CPU.ActiveCfg = Release|x64
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Release|x64.ActiveCfg = Release|x64
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A}.Release|x64.Build.0 = Release|x64
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Debug|x64.Build.0 = Debug|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Release|x64.ActiveCfg = Release|Any CPU
+		{605269CA-1534-4362-81A2-725C4EB97BCC}.Release|x64.Build.0 = Release|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Debug|x64.Build.0 = Debug|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Release|x64.ActiveCfg = Release|Any CPU
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{22BF3CC5-ADA0-4824-9835-96A30D2BDB4A} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
+		{605269CA-1534-4362-81A2-725C4EB97BCC} = {DB16FD72-5999-41C9-A5F9-01CC90DA4B1C}
+		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 		BuildVersion_StartDate = 2000/1/1
+		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
 	EndGlobalSection
 EndGlobal

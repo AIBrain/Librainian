@@ -1,4 +1,8 @@
 ﻿[*.cs]
 
-# IDE0055: Fix formatting
-dotnet_diagnostic.IDE0055.severity = error
+# IDE0058: Expression value is never used
+dotnet_diagnostic.IDE0058.severity = suggestion
+
+
+# IDE0034: Simplify 'default' expression
+csharp_prefer_simple_default_expression = false

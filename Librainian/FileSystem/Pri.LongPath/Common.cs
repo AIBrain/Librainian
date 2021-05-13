@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +14,16 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Common.cs" last formatted on 2020-08-14 at 8:39 PM.
 
 #nullable enable
+
 namespace Librainian.FileSystem.Pri.LongPath {
 
 	using System;
@@ -60,27 +61,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return buffer.ToString();
 		}
 
-		public static Boolean EndsWith( [CanBeNull] this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[^1] == value;
-
-		public static Boolean Exists( [NotNull] this String path, out Boolean isDirectory ) {
-			path = path.ThrowIfBlank();
-
-			if ( path.TryNormalizeLongPath( out var normalizedPath ) || path.IsPathUnc() ) {
-				if ( !String.IsNullOrWhiteSpace( normalizedPath ) ) {
-					var errorCode = TryGetFileAttributes( normalizedPath, out var attributes );
-
-					if ( errorCode == 0 && ( Int32 )attributes != PriNativeMethods.INVALID_FILE_ATTRIBUTES ) {
-						isDirectory = attributes.IsDirectory();
-
-						return true;
-					}
-				}
-			}
-
-			isDirectory = false;
-
-			return false;
-		}
+		public static Boolean EndsWith( [CanBeNull] this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[ ^1 ] == value;
 
 		public static FileAttributes GetAttributes( [NotNull] this String path ) {
 			var normalizedPath = path.NormalizeLongPath();
@@ -123,7 +104,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				PriNativeMethods.ERROR.ERROR_INVALID_DRIVE => new DriveNotFoundException( message ),
 				PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED => new OperationCanceledException( message ),
 				PriNativeMethods.ERROR.ERROR_INVALID_NAME => new ArgumentException( message, parameterName ),
-				_ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( errorCode ) )
+				var _ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( errorCode ) )
 			};
 		}
 
@@ -139,12 +120,14 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return fileAttributes;
 		}
 
-		public static Boolean IsPathDots( [NotNull] this String path ) {
-			path = path.ThrowIfBlank();
+		public static Boolean IsPathDots( [NotNull] this String path ) => path is "." or "..";
 
-			return path is "." or "..";
-		}
-
+		/// <summary>
+		/// Checks if <paramref name="path"/> starts with \\?\UNC\
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		[DebuggerStepThrough]
 		public static Boolean IsPathUnc( [NotNull] this String path ) {
 			path = path.ThrowIfBlank();
 
@@ -238,6 +221,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 
 			if ( ( securityInformation & SecurityInfos.SystemAcl ) != 0 ) {
+
 				// Enable security privilege if trying to set a SACL.
 				// Note: even setting it by handle needs this privilege enabled!
 
@@ -253,6 +237,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						securityPrivilege.Enable();
 					}
 					catch ( PrivilegeNotHeldException ) {
+
 						// we will ignore this exception and press on just in case this is a remote resource
 					}
 				}
@@ -275,6 +260,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				}
 			}
 			catch {
+
 				// protection against exception filter-based luring attacks
 				securityPrivilege?.Revert();
 
@@ -318,12 +304,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			if ( String.IsNullOrEmpty( path?.Trim() ) ) {
 				throw new ArgumentNullException( nameof( path ), "Value cannot be null or whitespace." );
 			}
-
 		}
 
 		public static void ThrowIfError( PriNativeMethods.ERROR errorCode, IntPtr byteArray ) {
 			if ( errorCode == PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 				if ( IntPtr.Zero.Equals( byteArray ) ) {
+
 					//
 					// This means that the object doesn't have a security descriptor. And thus we throw
 					// a specific exception for the caller to catch and handle properly.
@@ -401,11 +387,14 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 					throw new IOException( $"File {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE: throw new PathTooLongException( "Path too long" );
+				case PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE:
+					throw new PathTooLongException( "Path too long" );
 
-				case PriNativeMethods.ERROR.ERROR_INVALID_DRIVE: throw new DriveNotFoundException( $"Drive {str} not found" );
+				case PriNativeMethods.ERROR.ERROR_INVALID_DRIVE:
+					throw new DriveNotFoundException( $"Drive {str} not found" );
 
-				case PriNativeMethods.ERROR.ERROR_INVALID_PARAMETER: throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				case PriNativeMethods.ERROR.ERROR_INVALID_PARAMETER:
+					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
 				case PriNativeMethods.ERROR.ERROR_SHARING_VIOLATION:
 
@@ -424,9 +413,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 					throw new IOException( $"File exists {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 
-				case PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED: throw new OperationCanceledException();
+				case PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED:
+					throw new OperationCanceledException();
 
-				default: throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				default:
+					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
 			}
 		}
 
@@ -477,7 +468,5 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			return ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 		}
-
 	}
-
 }

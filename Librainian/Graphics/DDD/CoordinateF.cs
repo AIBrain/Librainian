@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "CoordinateF.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 #nullable enable
@@ -33,7 +33,7 @@ namespace Librainian.Graphics.DDD {
 	using JetBrains.Annotations;
 	using Maths;
 	using Maths.Ranges;
-	using Measurement.Time;
+	using Measurement;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -44,24 +44,6 @@ namespace Librainian.Graphics.DDD {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject( MemberSerialization.Fields )]
 	public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
-
-		/// <summary>Initialize with a random point.</summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( Randem.NextFloat( x.Min, x.Max ), Randem.NextFloat( y.Min, y.Max ),
-																				  Randem.NextFloat( z.Min, z.Max ) ) { }
-
-		/// <summary></summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		public CoordinateF( Single x, Single y, Single z ) {
-			this.X = Math.Max( Single.Epsilon, Math.Min( 1, x ) );
-			this.Y = Math.Max( Single.Epsilon, Math.Min( 1, y ) );
-			this.Z = Math.Max( Single.Epsilon, Math.Min( 1, z ) );
-			this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
-		}
 
 		public static CoordinateF? Empty { get; } = new( Single.Epsilon, Single.Epsilon, Single.Epsilon );
 
@@ -81,24 +63,23 @@ namespace Librainian.Graphics.DDD {
 		[JsonProperty]
 		public Single Z { get; }
 
-		/// <summary>Compares the current object with another object of the same type.</summary>
-		/// <returns>
-		///     A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the
-		///     following meanings: Value Meaning Less than zero This
-		///     object is less than the <paramref name="other" /> parameter. Zero This object is equal to <paramref name="other" />
-		///     . Greater than zero This object is greater than
-		///     <paramref name="other" /> .
-		/// </returns>
-		/// <param name="other">An object to compare with this object.</param>
-		public Int32 CompareTo( [CanBeNull] CoordinateF? other ) {
-			if ( other is null ) {
-				return Order.Before;
-			}
+		/// <summary>Initialize with a random point.</summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( Randem.NextFloat( x.Min, x.Max ), Randem.NextFloat( y.Min, y.Max ),
+																				  Randem.NextFloat( z.Min, z.Max ) ) { }
 
-			return this.SquareLength.CompareTo( other.SquareLength );
+		/// <summary></summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		public CoordinateF( Single x, Single y, Single z ) {
+			this.X = Math.Max( Single.Epsilon, Math.Min( 1, x ) );
+			this.Y = Math.Max( Single.Epsilon, Math.Min( 1, y ) );
+			this.Z = Math.Max( Single.Epsilon, Math.Min( 1, z ) );
+			this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
 		}
-
-		public Boolean Equals( CoordinateF? other ) => Equals( this, other );
 
 		/// <summary>Calculates the distance between two Coordinates.</summary>
 		public static Single Distance( [NotNull] CoordinateF left, [NotNull] CoordinateF right ) {
@@ -171,6 +152,23 @@ namespace Librainian.Graphics.DDD {
 
 		public static Boolean operator ==( [CanBeNull] CoordinateF? left, [CanBeNull] CoordinateF? right ) => Equals( left, right );
 
+		/// <summary>Compares the current object with another object of the same type.</summary>
+		/// <returns>
+		///     A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has the
+		///     following meanings: Value Meaning Less than zero This
+		///     object is less than the <paramref name="other" /> parameter. Zero This object is equal to <paramref name="other" />
+		///     . Greater than zero This object is greater than
+		///     <paramref name="other" /> .
+		/// </returns>
+		/// <param name="other">An object to compare with this object.</param>
+		public Int32 CompareTo( [CanBeNull] CoordinateF? other ) {
+			if ( other is null ) {
+				return Order.Before;
+			}
+
+			return this.SquareLength.CompareTo( other.SquareLength );
+		}
+
 		public Double DistanceTo( [NotNull] CoordinateF to ) {
 			if ( this == to ) {
 				return 0;
@@ -183,13 +181,13 @@ namespace Librainian.Graphics.DDD {
 			return Math.Sqrt( dx * dx + dy * dy + dz * dz );
 		}
 
+		public Boolean Equals( CoordinateF? other ) => Equals( this, other );
+
 		public override Boolean Equals( Object? obj ) => obj is CoordinateF f && Equals( this, f );
 
-		public override Int32 GetHashCode() => ( this.X, this.Y, this.Z ).GetHashCode();
+		public override Int32 GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
 		[NotNull]
 		public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
-
 	}
-
 }

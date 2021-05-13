@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "InternetExtensions.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 namespace Librainian.Internet {
@@ -32,6 +32,7 @@ namespace Librainian.Internet {
 	using System.Net.Http;
 	using System.Text;
 	using System.Text.RegularExpressions;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Logging;
@@ -48,13 +49,30 @@ namespace Librainian.Internet {
 				throw new ArgumentNullException( nameof( request ) );
 			}
 
-			var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => ( state as HttpWebRequest ).BeginGetResponse( asyncCallback, state ),
-													   asyncResult => ( ( HttpWebRequest )asyncResult.AsyncState ).EndGetResponse( asyncResult ), request )
-								   .ConfigureAwait( false );
+			var result = await request.GetResponseAsync().ConfigureAwait( false );
+
+			//var result = await Task.Factory.FromAsync( ( asyncCallback, state ) => BeginGetResponse( state, asyncCallback ), EndGetResponse, request ).ConfigureAwait( false );
 
 			await using var stream = result.GetResponseStream();
 
 			return new StreamReader( stream );
+
+			/*
+			static IAsyncResult BeginGetResponse( Object? state, AsyncCallback asyncCallback ) {
+				if ( state is HttpWebRequest httpWebRequest ) {
+					return httpWebRequest.BeginGetResponse( asyncCallback, state );
+				}
+
+				throw new InvalidOperationException( $"Invalid {nameof( state )} object." );
+			}
+
+			static WebResponse EndGetResponse( IAsyncResult asyncResult ) {
+				if ( asyncResult.AsyncState is HttpWebRequest httpWebRequest ) {
+					return httpWebRequest.EndGetResponse( asyncResult );
+				}
+				throw new InvalidOperationException( $"Invalid {nameof( HttpWebRequest )} result." );
+			}
+			*/
 		}
 
 		[ItemCanBeNull]
@@ -127,6 +145,22 @@ namespace Librainian.Internet {
 			return JObject.Parse( content );
 		}
 
+		public static async Task<String> GetString( [NotNull] this HttpClient httpClient, Uri url, TimeSpan timeout, IDictionary<String, String>? headers = null ) {
+			if ( httpClient == null ) {
+				throw new ArgumentNullException( nameof( httpClient ) );
+			}
+
+			if ( headers?.Any() == true ) {
+				foreach ( var item in headers ) {
+					httpClient.DefaultRequestHeaders.TryAddWithoutValidation( item.Key, item.Value );
+				}
+			}
+
+			using var cts = new CancellationTokenSource( timeout );
+			var response = await httpClient.GetAsync( url, cts.Token ).ConfigureAwait( false );
+			return await response.Content.ReadAsStringAsync( cts.Token ).ConfigureAwait( false );
+		}
+
 		[ItemCanBeNull]
 		public static async Task<String?> GetWebPageAsync( [NotNull] this Uri url ) {
 			if ( url is null ) {
@@ -149,7 +183,6 @@ namespace Librainian.Internet {
 				var responseFromServer = await reader.ReadToEndAsync().ConfigureAwait( false );
 
 				return responseFromServer;
-
 			}
 			catch {
 				$"Unable to connect to {url}.".Error();
@@ -205,7 +238,5 @@ namespace Librainian.Internet {
 
 			return BitConverter.GetBytes( len ).Concat( bytes );
 		}
-
 	}
-
 }

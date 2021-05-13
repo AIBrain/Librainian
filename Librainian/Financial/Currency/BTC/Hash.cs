@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Hash.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Financial.Currency.BTC {
@@ -34,13 +34,13 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public readonly Byte[] HashBytes;
 
-		public Hash( [CanBeNull] Byte[] b ) => this.HashBytes = b;
-
 		public Byte this[ Int32 i ] {
-			get => this.HashBytes[i];
+			get => this.HashBytes[ i ];
 
-			set => this.HashBytes[i] = value;
+			set => this.HashBytes[ i ] = value;
 		}
+
+		public Hash( [CanBeNull] Byte[] b ) => this.HashBytes = b;
 
 		[CanBeNull]
 		public static implicit operator Byte[]( [NotNull] Hash hash ) => hash.HashBytes;
@@ -52,12 +52,10 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public override Int32 GetHashCode() {
 			if ( this.HashBytes.Length >= 4 ) {
-				return ( this.HashBytes[0] << 24 ) | ( this.HashBytes[1] << 16 ) | ( this.HashBytes[2] << 8 ) | ( this.HashBytes[3] << 0 );
+				return ( this.HashBytes[ 0 ] << 24 ) | ( this.HashBytes[ 1 ] << 16 ) | ( this.HashBytes[ 2 ] << 8 ) | ( this.HashBytes[ 3 ] << 0 );
 			}
 
 			return this.HashBytes.GetHashCode();
 		}
-
 	}
-
 }

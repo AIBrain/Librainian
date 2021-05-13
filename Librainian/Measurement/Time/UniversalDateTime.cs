@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "UniversalDateTime.cs" last formatted on 2020-08-14 at 8:38 PM.
 
 namespace Librainian.Measurement.Time {
@@ -29,9 +29,8 @@ namespace Librainian.Measurement.Time {
 	using System.Numerics;
 	using Extensions;
 	using Newtonsoft.Json;
-    using Rationals;
 
-    /// <summary>
+	/// <summary>
 	///     <para>Absolute universal date and time.</para>
 	///     <para><see cref="PlanckTimes" /> since the big bang of <i>this</i> universe.</para>
 	/// </summary>
@@ -39,27 +38,25 @@ namespace Librainian.Measurement.Time {
 	[Immutable]
 	[JsonObject]
 	[DebuggerDisplay( "ToString()" )]
-	public struct UniversalDateTime : IComparable<UniversalDateTime> {
-
-		public static UniversalDateTime Now() => new( DateTime.UtcNow );
+	public record UniversalDateTime : IComparable<UniversalDateTime> {
 
 		/// <summary>
 		///     <para>1 planck times</para>
 		/// </summary>
-		public static UniversalDateTime One { get; } = new( BigInteger.One );
+		public static UniversalDateTime One => new( BigInteger.One );
 
 		/// <summary>
 		///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
 		///     <para>430,000,000,000,000,000 seconds</para>
 		/// </summary>
-		public static PlanckTimes PlancksUpToMinDateTime { get; } = new( new Seconds( ( Rational )4.3E17m ).Value.WholePart );
+		public static PlanckTimes PlancksUpToMinDateTime =>  new( new Seconds( 4.3E17m ).Value );
 
 		/// <summary>
 		///     <para>0 planck times</para>
 		/// </summary>
-		public static UniversalDateTime TheBeginning { get; } = new( BigInteger.Zero );
+		public static UniversalDateTime TheBeginning => new( BigInteger.Zero );
 
-		public static UniversalDateTime Unix { get; } = new( Epochs.Unix );
+		public static UniversalDateTime Unix => new( Epochs.Unix );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -109,6 +106,8 @@ namespace Librainian.Measurement.Time {
 			return span;
 		}
 
+		public static UniversalDateTime Now() => new( DateTime.UtcNow );
+
 		public static UniversalDateTime operator -( UniversalDateTime left, UniversalDateTime right ) => Combine( left, -right );
 
 		public static UniversalDateTime operator -( UniversalDateTime universalDateTime ) => new( universalDateTime.Value * -1 );
@@ -120,7 +119,5 @@ namespace Librainian.Measurement.Time {
 		public Int32 CompareTo( UniversalDateTime other ) => this.Value.CompareTo( other.Value );
 
 		public override String ToString() => this.Value.ToString();
-
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "PauseableClock.cs" last formatted on 2020-08-14 at 8:37 PM.
 
 namespace Librainian.Measurement.Time.Clocks {
@@ -29,7 +29,6 @@ namespace Librainian.Measurement.Time.Clocks {
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
-	using Rationals;
 	using Threadsafe;
 
 	/// <summary>A 'pause-able' clock.</summary>
@@ -38,21 +37,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary></summary>
 		private VolatileBoolean _isPaused;
-
-		/// <summary>Default to year 0.</summary>
-		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Minimum ) { }
-
-		public PauseableClock( Date date, Time time ) {
-			this.Year = date.Year;
-			this.Month = date.Month;
-			this.Day = date.Day;
-			this.Hour = time.Hour;
-			this.Minute = time.Minute;
-			this.Second = time.Second;
-			this.Millisecond = time.Millisecond;
-			this.Timer.Elapsed += this.OnTimerElapsed;
-			this.Resume();
-		}
 
 		/// <summary></summary>
 		[NotNull]
@@ -64,12 +48,24 @@ namespace Librainian.Measurement.Time.Clocks {
 		[NotNull]
 		public Day Day { get; private set; }
 
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockHour Hour { get; private set; }
+
 		[JsonProperty]
 		public Boolean IsPaused {
 			get => this._isPaused;
 
 			private set => this._isPaused = value;
 		}
+
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockMillisecond Millisecond { get; private set; }
+
+		/// <summary></summary>
+		[JsonProperty]
+		public ClockMinute Minute { get; private set; }
 
 		[JsonProperty]
 		[CanBeNull]
@@ -96,31 +92,28 @@ namespace Librainian.Measurement.Time.Clocks {
 		[CanBeNull]
 		public Action<DateAndTime>? OnYear { get; set; }
 
-		[JsonProperty]
-		[CanBeNull]
-		public Year Year { get; private set; }
-
-		/// <summary></summary>
-		[JsonProperty]
-		public ClockHour Hour { get; private set; }
-
-		/// <summary></summary>
-		[JsonProperty]
-		public ClockMillisecond Millisecond { get; private set; }
-
-		/// <summary></summary>
-		[JsonProperty]
-		public ClockMinute Minute { get; private set; }
-
 		/// <summary></summary>
 		[JsonProperty]
 		public ClockSecond Second { get; private set; }
 
-		public Boolean IsAm() => !this.IsPm();
+		[JsonProperty]
+		[CanBeNull]
+		public Year Year { get; private set; }
 
-		public Boolean IsPm() => this.Hour >= 12;
+		/// <summary>Default to year 0.</summary>
+		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Minimum ) { }
 
-		public Time Time() => new( this.Hour, this.Minute, this.Second, this.Millisecond );
+		public PauseableClock( Date date, Time time ) {
+			this.Year = date.Year;
+			this.Month = date.Month;
+			this.Day = date.Day;
+			this.Hour = time.Hour;
+			this.Minute = time.Minute;
+			this.Second = time.Second;
+			this.Millisecond = time.Millisecond;
+			this.Timer.Elapsed += this.OnTimerElapsed;
+			this.Resume();
+		}
 
 		private Boolean DaysTocked( Boolean fireEvents ) {
 			this.Day = this.Day.Next( out var tocked );
@@ -300,7 +293,7 @@ namespace Librainian.Measurement.Time.Clocks {
 				this.Pause();
 				var right = amount.Value;
 
-				while ( right > Rational.Zero ) {
+				while ( right > Decimal.Zero ) {
 					this.TickTock( false );
 					right--;
 				}
@@ -315,6 +308,10 @@ namespace Librainian.Measurement.Time.Clocks {
 		public Date Date() => new( this.Year, this.Month, this.Day );
 
 		public DateAndTime DateAndTime() => new( this.Date(), this.Time() );
+
+		public Boolean IsAm() => !this.IsPm();
+
+		public Boolean IsPm() => this.Hour >= 12;
 
 		public Boolean Pause() {
 			this.Timer.Stop();
@@ -348,6 +345,6 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 		}
 
+		public Time Time() => new( this.Hour, this.Minute, this.Second, this.Millisecond );
 	}
-
 }

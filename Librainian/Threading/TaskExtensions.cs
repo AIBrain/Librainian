@@ -5,9 +5,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -15,18 +15,19 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "TaskExtensions.cs" last formatted on 2021-02-23 at 10:56 PM.
 
 #nullable enable
 
 namespace Librainian.Threading {
+
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -36,7 +37,7 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
@@ -47,6 +48,21 @@ namespace Librainian.Threading {
 	///     Remember: Tasks are born "hot" unless created with "var task=new Task();".
 	/// </summary>
 	public static class TaskExtensions {
+
+		/// <summary>
+		/// Throws <see cref="OperationCanceledException"></see> if any tokens that have been cancelled.
+		/// </summary>
+		/// <param name="tokens"></param>
+		/// <exception cref="OperationCanceledException"></exception>
+		public static void ThrowAnyCancelledTokens( [NotNull] params CancellationToken[] tokens ) {
+			if ( tokens == null ) {
+				throw new ArgumentNullException( nameof( tokens ) );
+			}
+
+			foreach ( var cancellationToken in tokens ) {
+				cancellationToken.ThrowIfCancellationRequested();
+			}
+		}
 
 		/// <summary>Quietly consume the <paramref name="task" /> on a background thread. Fire & forget.</summary>
 		/// <typeparam name="T"></typeparam>
@@ -112,7 +128,7 @@ namespace Librainian.Threading {
 		public static void Execute( [NotNull] this Action action, [CanBeNull] Object[]? args = default ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
-					if ( method.Target is ISynchronizeInvoke {InvokeRequired: true} syncInvoke ) {
+					if ( method.Target is ISynchronizeInvoke { InvokeRequired: true } syncInvoke ) {
 						syncInvoke.Invoke( method, args );
 					}
 					else {
@@ -134,7 +150,7 @@ namespace Librainian.Threading {
 		public static void Execute<T>( [NotNull] this Action<T> action, [CanBeNull] Object[]? args = null ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
-					if ( method.Target is ISynchronizeInvoke {InvokeRequired: true} syncInvoke ) {
+					if ( method.Target is ISynchronizeInvoke { InvokeRequired: true } syncInvoke ) {
 						syncInvoke.Invoke( method, args );
 					}
 					else {
@@ -206,6 +222,7 @@ namespace Librainian.Threading {
 				return await tcs.Task.ConfigureAwait( false );
 			}
 			finally {
+
 				// Unsubscribe from event.
 				unregisterDelegate( del );
 			}
@@ -237,7 +254,7 @@ namespace Librainian.Threading {
 
 			foreach ( var task in inputs ) {
 				task.ContinueWith( completed => {
-					var nextBox = boxes[Interlocked.Increment( ref currentIndex )];
+					var nextBox = boxes[ Interlocked.Increment( ref currentIndex ) ];
 					completed.PropagateResult( nextBox );
 				}, TaskContinuationOptions.ExecuteSynchronously );
 			}
@@ -264,12 +281,12 @@ namespace Librainian.Threading {
 			}
 
 			var inputTasks = tasks.ToList();
-			var buckets = new TaskCompletionSource<Task<T>>[inputTasks.Count];
-			var results = new Task<Task<T>>[buckets.Length];
+			var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
+			var results = new Task<Task<T>>[ buckets.Length ];
 
 			for ( var i = 0; i < buckets.Length; i++ ) {
-				buckets[i] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
-				results[i] = buckets[i].Task;
+				buckets[ i ] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
+				results[ i ] = buckets[ i ].Task;
 			}
 
 			var nextTaskIndex = -1;
@@ -279,7 +296,7 @@ namespace Librainian.Threading {
 					throw new ArgumentNullException( nameof( completed ) );
 				}
 
-				var bucket = buckets[Interlocked.Increment( ref nextTaskIndex )];
+				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
 				bucket.TrySetResult( completed );
 			}
 
@@ -393,16 +410,16 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task Then( this TimeSpan delay, [NotNull] Action job, CancellationToken token ) {
+		public static async Task Then( this TimeSpan delay, [NotNull] Action job, CancellationToken cancellationToken ) {
 			if ( job is null ) {
 				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay, token ).ConfigureAwait( false );
-			await new Task( job, token, TaskCreationOptions.PreferFairness | TaskCreationOptions.RunContinuationsAsynchronously ).ConfigureAwait( false );
+			await Task.Delay( delay, cancellationToken ).ConfigureAwait( false );
+			await new Task( job, cancellationToken, TaskCreationOptions.PreferFairness | TaskCreationOptions.RunContinuationsAsynchronously ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -446,16 +463,16 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task Then( this SpanOfTime delay, [NotNull] Action job, CancellationToken token ) {
+		public static async Task Then( this SpanOfTime delay, [NotNull] Action job, CancellationToken cancellationToken ) {
 			if ( job is null ) {
 				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay, token ).ConfigureAwait( false );
-			await Task.Run( job, token ).ConfigureAwait( false );
+			await Task.Delay( delay, cancellationToken ).ConfigureAwait( false );
+			await Task.Run( job, cancellationToken ).ConfigureAwait( false );
 		}
 
 		/// <summary>
@@ -463,10 +480,10 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[NotNull]
-		public static async Task Then( [NotNull] this IQuantityOfTime delay, [NotNull] Action job, CancellationToken token ) {
+		public static async Task Then( [NotNull] this IQuantityOfTime delay, [NotNull] Action job, CancellationToken cancellationToken ) {
 			if ( delay is null ) {
 				throw new ArgumentNullException( nameof( delay ) );
 			}
@@ -475,12 +492,12 @@ namespace Librainian.Threading {
 				throw new ArgumentNullException( nameof( job ) );
 			}
 
-			await Task.Delay( delay.ToTimeSpan(), token ).ConfigureAwait( false );
-			await Task.Run( job, token ).ConfigureAwait( false );
+			await Task.Delay( delay.ToTimeSpan(), cancellationToken ).ConfigureAwait( false );
+			await Task.Run( job, cancellationToken ).ConfigureAwait( false );
 		}
 
 		[NotNull]
-		public static Task Then( [NotNull] this Task first, [NotNull] Action next, CancellationToken? token ) {
+		public static Task Then( [NotNull] this Task first, [NotNull] Action next, CancellationToken? cancellationToken ) {
 			if ( first is null ) {
 				throw new ArgumentNullException( nameof( first ) );
 			}
@@ -509,7 +526,7 @@ namespace Librainian.Threading {
 						tcs.TrySetException( exception );
 					}
 				}
-			}, token ?? CancellationToken.None );
+			}, cancellationToken ?? CancellationToken.None );
 
 			return tcs.Task;
 		}
@@ -755,39 +772,24 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="target"></param>
 		/// <param name="item">  </param>
-		/// <param name="token"> </param>
-		public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, [CanBeNull] T item, CancellationToken token ) {
+		/// <param name="cancellationToken"> </param>
+		public static async Task TryPost<T>( [NotNull] this ITargetBlock<T> target, [CanBeNull] T item, CancellationToken cancellationToken ) {
 			if ( target is null ) {
 				throw new ArgumentNullException( nameof( target ) );
 			}
 
 			while ( true ) {
-				var task = target.SendAsync( item, token );
+				var task = target.SendAsync( item, cancellationToken );
 
 				await task.ConfigureAwait( false );
 
-				if ( task.IsDone() || token.IsCancellationRequested ) {
+				if ( task.IsDone() || cancellationToken.IsCancellationRequested ) {
 					break;
 				}
 
-				await Task.Delay( 0, token ).ConfigureAwait( false );
+				await Task.Delay( 0, cancellationToken ).ConfigureAwait( false );
 			}
 		}
-
-		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable UI( [NotNull] this Task task ) => task.ConfigureAwait( true );
-
-		/// <summary>
-		///     <para>Automatically apply <see cref="Task.ConfigureAwait" /> to the <paramref name="task" />.</para>
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="task"></param>
-		/// <returns></returns>
-		public static ConfiguredTaskAwaitable<T> UI<T>( [NotNull] this Task<T> task ) => task.ConfigureAwait( true );
 
 		/// <summary>
 		///     Return each item in <paramref name="self" /> until <paramref name="timeSpan" />.
@@ -798,13 +800,9 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		[NotNull]
 		public static async IAsyncEnumerable<T> Until<T>( [NotNull] this IEnumerable<T> self, TimeSpan timeSpan ) {
-			var watch = new Lazy<Stopwatch>( Stopwatch.StartNew );
+			var watch = Stopwatch.StartNew();
 
-			await foreach ( var row in self.ToAsyncEnumerable() ) {
-				if ( watch.Value.Elapsed > timeSpan ) {
-					break;
-				}
-
+			await foreach ( var row in self.ToAsyncEnumerable().TakeWhile( _ => watch.Elapsed <= timeSpan ) ) {
 				yield return row;
 			}
 		}
@@ -817,7 +815,33 @@ namespace Librainian.Threading {
 		/// <param name="timeSpan"></param>
 		/// <returns></returns>
 		[NotNull]
+		public static async IAsyncEnumerable<T> Until<T>( [NotNull] this IAsyncEnumerable<T> self, TimeSpan timeSpan ) {
+			var watch = Stopwatch.StartNew();
+
+			await foreach ( var row in self.TakeWhile( _ => watch.Elapsed <= timeSpan ) ) {
+				yield return row;
+			}
+		}
+
+		/// <summary>
+		///     Return each item in <paramref name="self" /> until <paramref name="when" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="self">    </param>
+		/// <param name="when"></param>
+		/// <returns></returns>
+		[NotNull]
 		public static IAsyncEnumerable<T> Until<T>( [NotNull] this IEnumerable<T> self, DateTime when ) => self.ToAsyncEnumerable().TakeWhile( _ => DateTime.UtcNow < when );
+
+		/// <summary>
+		///     Return each item in <paramref name="self" /> until <paramref name="when" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="self">    </param>
+		/// <param name="when"></param>
+		/// <returns></returns>
+		[NotNull]
+		public static IAsyncEnumerable<T> Until<T>( [NotNull] this IAsyncEnumerable<T> self, DateTime when ) => self.TakeWhile( _ => DateTime.UtcNow < when );
 
 		/// <summary>
 		///     Returns true if the task finished before the <paramref name="timeout" />.
@@ -907,10 +931,10 @@ namespace Librainian.Threading {
 		///     .
 		/// </summary>
 		/// <param name="count">How many tasks to complete before returning.</param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="tasks"></param>
 		/// <returns></returns>
-		public static async PooledTask WhenCount( this Int32 count, CancellationToken token, [CanBeNull] params Task[]? tasks ) {
+		public static async PooledTask WhenCount( this Int32 count, CancellationToken cancellationToken, [CanBeNull] params Task[]? tasks ) {
 			if ( !count.Any() ) {
 				return;
 			}
@@ -921,7 +945,7 @@ namespace Librainian.Threading {
 				}
 
 				while ( tasks.Count( task => task.IsDone() ) < count ) {
-					if ( token.IsCancellationRequested ) {
+					if ( cancellationToken.IsCancellationRequested ) {
 						return;
 					}
 
@@ -936,12 +960,12 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
-		/// <param name="token">  </param>
+		/// <param name="cancellationToken">  </param>
 		/// <returns></returns>
 		/// <exception cref="TaskCanceledException">thrown when the task was cancelled?</exception>
 		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
 		[ItemNotNull]
-		public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken token ) {
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
 			if ( task is null ) {
 				throw new ArgumentNullException( nameof( task ) );
 			}
@@ -950,7 +974,7 @@ namespace Librainian.Threading {
 				return task;
 			}
 
-			var delay = Task.Delay( timeout, token );
+			var delay = Task.Delay( timeout, cancellationToken );
 			var winning = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
 			return winning == task ? task : Task.FromException( new OperationCanceledException( "cancelled" ) );
@@ -961,10 +985,10 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"> </param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		[ItemNotNull]
-		public static async Task<Task> With<T>( [NotNull] this Task<T> task, CancellationToken token ) {
+		public static async Task<Task> With<T>( [NotNull] this Task<T> task, CancellationToken cancellationToken ) {
 			if ( task is null ) {
 				throw new ArgumentNullException( nameof( task ) );
 			}
@@ -973,7 +997,7 @@ namespace Librainian.Threading {
 				return task;
 			}
 
-			var delay = Task.Delay( TimeSpan.MaxValue, token );
+			var delay = Task.Delay( TimeSpan.MaxValue, cancellationToken );
 			var winning = await Task.WhenAny( task, delay ).ConfigureAwait( false );
 
 			return winning == task ? task : Task.FromException( new OperationCanceledException( "cancelled" ) );
@@ -1108,7 +1132,6 @@ namespace Librainian.Threading {
 			public void OnCompleted( [NotNull] Action continuation ) {
 				Task.Run( continuation );
 			}
-
 		}
 
 		public class ResourceLoader<T> : IResourceLoader<T> {
@@ -1165,8 +1188,6 @@ namespace Librainian.Threading {
 					return await this._loader( cancelToken ).ConfigureAwait( false );
 				}
 			}
-
 		}
-
 	}
 }

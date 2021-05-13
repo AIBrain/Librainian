@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ObjectExtensions.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 #nullable enable
@@ -77,7 +77,7 @@ namespace Librainian.Threading {
 			}
 
 			if ( visits.ContainsKey( originalObject ) ) {
-				return visits[originalObject];
+				return visits[ originalObject ];
 			}
 
 			if ( typeof( Delegate ).IsAssignableFrom( reflect ) ) {
@@ -90,6 +90,7 @@ namespace Librainian.Threading {
 				var elementsType = reflect.GetElementType();
 
 				if ( elementsType != null /*&& !elementsType.IsPrimitive()*/ ) {
+
 					//why skip primitives?
 					if ( copy is Array clonedArray ) {
 						for ( var index = 0; index < clonedArray.Length; index++ ) {
@@ -135,15 +136,15 @@ namespace Librainian.Threading {
 			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
 		}
 
+		[CanBeNull]
+		public static T? Copy<T>( [CanBeNull] this T original ) =>
+					( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
+
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
 		/// <returns></returns>
 		[CanBeNull]
 		public static Object? DeepCopy<T>( [CanBeNull] this T original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
-
-		[CanBeNull]
-		public static T? Copy<T>( [CanBeNull] this T original ) =>
-			( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
 
 		[CanBeNull]
 		public static Object? GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
@@ -167,11 +168,9 @@ namespace Librainian.Threading {
 
 		public static Boolean IsPrimitive<T>( [CanBeNull] this T type ) =>
 			type switch {
-				null     => false,
+				null => false,
 				String _ => true,
-				_        => type.GetType().IsPrimitive
+				var _ => type.GetType().IsPrimitive
 			};
-
 	}
-
 }

@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "FluentTimer.cs" last formatted on 2020-08-21 at 10:48 AM.
+// File "FluentTimer.cs" last touched on 2021-04-25 at 12:17 PM by Protiguous.
 
 #nullable enable
 
@@ -31,26 +34,19 @@ namespace Librainian.Threading {
 	using JetBrains.Annotations;
 	using Measurement.Frequency;
 	using Measurement.Time;
-    using Rationals;
+	using Utilities;
 
-    public static class FluentTimerExt {
+	public static class FluentTimerExt {
 
 		/// <summary>
 		///     <para>Start the <paramref name="timer" />.</para>
+		///     <para>Same as <see cref="Begin" />.</para>
 		/// </summary>
 		/// <param name="timer"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		[NotNull]
-		public static FluentTimer AndStart( [NotNull] this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
-			}
-
-			timer.Timer.Start();
-
-			return timer;
-		}
+		public static FluentTimer AndStart( [NotNull] this FluentTimer timer ) => timer.Begin();
 
 		/// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
 		/// <param name="timer"></param>
@@ -101,13 +97,13 @@ namespace Librainian.Threading {
 				interval = Milliseconds.One;
 			}
 
-			var mills = interval.TotalMilliseconds;
+			var milliseconds = interval.TotalMilliseconds;
 
-			if ( mills <= 0 ) {
-				mills = 1;
+			if ( milliseconds <= 0 ) {
+				milliseconds = 1;
 			}
 
-			var create = new FluentTimer( mills ).Once();
+			var create = new FluentTimer( milliseconds ).Once();
 
 			create.Timer.Elapsed += ( sender, args ) => {
 				try {
@@ -116,7 +112,7 @@ namespace Librainian.Threading {
 				}
 				finally {
 					if ( create.Timer.AutoReset ) {
-						create.Start();
+						_ = create.Start();
 					}
 				}
 			};
@@ -135,20 +131,6 @@ namespace Librainian.Threading {
 			return timer;
 		}
 
-		/*
-		/// <summary>
-		///     <para>Make the <paramref name="timer" /> fire only once.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Timer Once( [NotNull] this Timer timer ) {
-			timer.AutoReset = false;
-
-			return timer;
-		}
-		*/
-
 		[NotNull]
 		public static FluentTimer Once( [NotNull] this FluentTimer timer ) {
 			timer.Timer.AutoReset = false;
@@ -163,15 +145,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		[NotNull]
-		public static FluentTimer Start( [NotNull] this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
-			}
-
-			timer.Timer.Start();
-
-			return timer;
-		}
+		public static FluentTimer Start( [NotNull] this FluentTimer timer ) => timer.Begin();
 
 		[NotNull]
 		public static FluentTimer Stop( [NotNull] this FluentTimer timer ) {
@@ -186,16 +160,14 @@ namespace Librainian.Threading {
 
 	}
 
-	public class FluentTimer  {
-
-		internal Timer Timer { get; }
+	public class FluentTimer : ABetterClassDispose {
 
 		/// <summary>
 		///     Defaults to 1 millisecond.
 		/// </summary>
 		public FluentTimer() : this( Milliseconds.One ) { }
 
-		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Rational )milliseconds ) ) { }
+		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Decimal )milliseconds ) ) { }
 
 		public FluentTimer( [NotNull] IQuantityOfTime quantityOfTime ) {
 			if ( quantityOfTime == null ) {
@@ -203,6 +175,17 @@ namespace Librainian.Threading {
 			}
 
 			this.Timer = new Timer( quantityOfTime.ToTimeSpan().TotalMilliseconds );
+		}
+
+		[NotNull]
+		internal Timer Timer { get; }
+
+		public override void DisposeManaged() {
+			using ( this.Timer ) {
+				this.Timer.Stop();
+			}
+
+			base.DisposeManaged();
 		}
 
 	}

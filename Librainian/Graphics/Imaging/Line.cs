@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +14,16 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Line.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 #nullable enable
+
 namespace Librainian.Graphics.Imaging {
 
 	using System;
@@ -71,7 +72,7 @@ namespace Librainian.Graphics.Imaging {
 		/// <returns>A hash code for the current object.</returns>
 
 		// ReSharper disable 3 NonReadonlyMemberInGetHashCode
-		public override Int32 GetHashCode() => ( this.Count, this.Pixels, this._checksum ).GetHashCode();
+		public override Int32 GetHashCode() => (this.Count, this.Pixels, this._checksum).GetHashCode();
 
 		/// <summary>Returns a value that indicates whether the values of two <see cref="Line" /> objects are equal.</summary>
 		/// <param name="left">The first value to compare.</param>
@@ -104,7 +105,7 @@ namespace Librainian.Graphics.Imaging {
 		public Pixel? this[ UInt64 index ] {
 			get {
 				if ( index <= this.Count ) {
-					return this.Pixels[index];
+					return this.Pixels[ index ];
 				}
 
 				return default( Pixel? );
@@ -112,7 +113,7 @@ namespace Librainian.Graphics.Imaging {
 
 			set {
 				if ( value.HasValue && index <= this.Count ) {
-					this.Pixels[index] = value.Value;
+					this.Pixels[ index ] = value.Value;
 				}
 			}
 		}
@@ -173,7 +174,5 @@ namespace Librainian.Graphics.Imaging {
 
 			return left.Pixels.SequenceEqual( right.Pixels );
 		}
-
 	}
-
 }

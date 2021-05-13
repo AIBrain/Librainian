@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "TrimmedString.cs" last formatted on 2020-08-14 at 8:41 PM.
 
 #nullable enable
@@ -31,7 +31,7 @@ namespace Librainian.Parsing {
 	using System.Globalization;
 	using System.Linq;
 	using System.Runtime.CompilerServices;
-	using Exceptions.Warnings;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;
@@ -127,9 +127,13 @@ namespace Librainian.Parsing {
 
 		public static implicit operator TrimmedString( [CanBeNull] String? value ) => new( value );
 
-		public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal);
+		public static Boolean operator !=( TrimmedString left, TrimmedString right ) => !Equals( left, right );
 
-		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal);
+		public static Boolean operator ==( TrimmedString left, TrimmedString right ) => Equals( left, right );
+
+		public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal );
+
+		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
 
 		public Boolean Equals( TrimmedString other ) => Equals( this, other );
 
@@ -233,7 +237,6 @@ namespace Librainian.Parsing {
 			public const String Spaces = Replacements.Space + Replacements.Space;
 
 			public const String Tabs = Replacements.Tab + Replacements.Tab;
-
 		}
 
 		internal static class Replacements {
@@ -247,13 +250,6 @@ namespace Librainian.Parsing {
 			public const String Space = " ";
 
 			public const String Tab = "\t";
-
 		}
-
-		public static Boolean operator ==( TrimmedString left, TrimmedString right ) => Equals( left, right );
-
-		public static Boolean operator !=( TrimmedString left, TrimmedString right ) => !Equals( left, right );
-
 	}
-
 }

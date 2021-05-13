@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "EasierSemaphore.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 namespace Librainian.Threading {
@@ -31,21 +31,6 @@ namespace Librainian.Threading {
 	public static class EasierSemaphore {
 
 		/// <summary>Blocks the current thread until the current <see cref="WaitHandle" /> receives a signal.</summary>
-		/// <returns>
-		///     <see langword="true" /> if the current instance receives a signal. If the current instance is never signaled,
-		///     <see cref="WaitHandle.WaitOne(Int32,Boolean)" /> never
-		///     returns.
-		/// </returns>
-		/// <exception cref="ObjectDisposedException">The current instance has already been disposed. </exception>
-		/// <exception cref="AbandonedMutexException">
-		///     The wait completed because a thread exited without releasing a mutex. This exception is not thrown on Windows 98 or
-		///     Windows Millennium
-		///     Edition.
-		/// </exception>
-		/// <exception cref="InvalidOperationException">
-		///     The current instance is a transparent proxy for a <see cref="WaitHandle" />
-		///     in another application domain.
-		/// </exception>
 		public static Token WaitOneThenRelease( [NotNull] this Semaphore semaphore, TimeSpan? timeout = null ) {
 			if ( semaphore is null ) {
 				throw new ArgumentNullException( nameof( semaphore ) );
@@ -61,7 +46,7 @@ namespace Librainian.Threading {
 			return new Token( semaphore );
 		}
 
-		public struct Token : IDisposable {
+		public readonly struct Token : IDisposable {
 
 			[NotNull]
 			private readonly Semaphore _semaphore;
@@ -69,9 +54,6 @@ namespace Librainian.Threading {
 			public Token( [NotNull] Semaphore semaphore ) => this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
 
 			public void Dispose() => this._semaphore.Release();
-
 		}
-
 	}
-
 }
