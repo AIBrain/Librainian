@@ -31,32 +31,37 @@ namespace LibrainianUnitTests.Persistence {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Threading;
-	using Xunit;
 
+	//[TestFixture]
 	public static class MaxMemTests {
 
-		[Fact]
+		//[Test]
 		public static void test_max_ReaderWriterLockSlim() {
-			GC.Collect();
-			var list = new List<ReaderWriterLockSlim>( 134_217_728 + 10240 );
-			do {
+			GC.Collect( 2, GCCollectionMode.Forced, true, true );
+			GC.Collect( 2, GCCollectionMode.Forced, true, true );
+
+			const Int32 limit = Int32.MaxValue / 2;
+
+			var list = new List<ReaderWriterLockSlim>( limit );
+
+			for ( var i = 0; i < limit; i++ ) {
 				try {
 					list.Add( new ReaderWriterLockSlim() ); //134,217,728
 				}
-				/*
                 catch ( OutOfMemoryException ) {
                     Console.WriteLine( "Trimming list.." );
                     list.TrimExcess();
-                    Console.WriteLine( "Collecting garbage.." );
-                    GC.Collect();
+                    Console.Write( "Collecting garbage.." );
+                    GC.Collect( 2, GCCollectionMode.Forced, true, true );
+                    Console.WriteLine( "collected." );
                 }
-                */
 				catch ( Exception exception ) {
 					Debug.WriteLine( exception.ToString() );
 
 					break;
 				}
-			} while ( true );
+
+			}
 
 			Console.WriteLine( $"ReaderWriterLockSlim count={list.Count}." );
 		}

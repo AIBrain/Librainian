@@ -28,20 +28,18 @@
 namespace LibrainianUnitTests.OperatingSystem {
 
 	using System;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Globalization;
 	using Librainian.FileSystem;
 	using Librainian.FileSystem.FileHistory;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class FileHistoryFileTests {
 
 		public const String Example = @"S:\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
 
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
 
-		[Fact]
-		[SuppressMessage( "ReSharper", "UnusedVariable" )]
+		[Test]
 		public static void RunTests() {
 			var example = DateTime.Parse( "2015/09/04 16:15:01" );
 
@@ -55,7 +53,6 @@ namespace LibrainianUnitTests.OperatingSystem {
 			}
 		}
 
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
 
 	}
 

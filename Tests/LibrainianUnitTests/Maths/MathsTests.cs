@@ -29,11 +29,12 @@ namespace LibrainianUnitTests.Maths {
 
 	using System.Numerics;
 	using Librainian.Maths;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class MathsTests {
 
-		//[Fact]
+		//[Test]
 		public static void TestOperations() {
 			var test = new[] {
 				new BigInteger( 7 ), new BigInteger( 8 ), new BigInteger( 9 )

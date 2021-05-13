@@ -31,8 +31,12 @@ namespace LibrainianUnitTests.MMF {
 	using System.IO.MemoryMappedFiles;
 	using System.Text;
 	using JetBrains.Annotations;
+	using NUnit.Framework;
 
-	internal class MemoryMappedTests {
+	[TestFixture]
+	public class MemoryMappedTests {
+
+		//TODO any tests?
 
 		//private var localFilePath = "complete_path_to_large_file";
 

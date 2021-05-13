@@ -35,11 +35,13 @@ namespace LibrainianUnitTests {
 	using Librainian.ComputerSystem.Devices;
 	using Librainian.FileSystem;
 	using Librainian.Measurement.Time;
-	using Xunit;
+	using NUnit.Framework;
 
+
+	[TestFixture]
 	public static class FolderBagTests {
 
-		[Fact]
+		[Test]
 		public static async Task TestStorageAndRetrieval() {
 			var counter = 0L;
 			var watch = Stopwatch.StartNew();
@@ -49,7 +51,7 @@ namespace LibrainianUnitTests {
 				var root = new Folder( $"{drive.DriveLetter}:{Path.DirectorySeparatorChar}" );
 				Debug.WriteLine( root );
 
-				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.AllDirectories, CancellationToken.None ).Take( 2 ) ) {
+				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CancellationToken.None ).Take( 2 ) ) {
 					pathTree.FoundAnotherFolder( folder );
 					counter++;
 				}
@@ -63,7 +65,7 @@ namespace LibrainianUnitTests {
 
 			var temp = Document.GetTempDocument().ContainingingFolder();
 
-			await File.WriteAllLinesAsync( $@"{temp}\allLines.txt", allPaths.Select( folder => folder?.FullPath ) ).ConfigureAwait( false );
+			await File.WriteAllLinesAsync( $@"{temp}\allLines.txt", allPaths.Select( folder => folder.FullPath ) ).ConfigureAwait( false );
 		}
 
 	}

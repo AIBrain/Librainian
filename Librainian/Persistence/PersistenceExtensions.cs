@@ -50,7 +50,6 @@ namespace Librainian.Persistence {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Newtonsoft.Json.Serialization;
-	using Xunit;
 
 	public static class PersistenceExtensions {
 
@@ -117,7 +116,6 @@ namespace Librainian.Persistence {
 			[CanBeNull] String? extension,
 			CancellationToken cancellationToken
 		) where TKey : IComparable<TKey> {
-			Assert.NotNull( nameof( folder ) );
 
 			if ( folder == null ) {
 				throw new ArgumentNullException( nameof( folder ) );

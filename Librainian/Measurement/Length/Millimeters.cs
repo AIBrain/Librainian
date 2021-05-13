@@ -25,11 +25,11 @@
 namespace Librainian.Measurement.Length {
 
 	using System;
+	using ExtendedNumerics;
 	using Newtonsoft.Json;
-	using Rationals;
 
 	[JsonObject]
-	public struct Millimeters {
+	public record Millimeters( BigDecimal Value ) {
 		///// <summary>.</summary>
 		//public static readonly Millimeters MaxValue = new Millimeters( Decimal.MaxValue );
 
@@ -41,10 +41,7 @@ namespace Librainian.Measurement.Length {
 		/// <summary>Two <see cref="Millimeters" /> .</summary>
 		public static readonly Millimeters Two = new( 2 );
 
-		[JsonProperty]
-		public Rational Value { get; }
-
-		public Millimeters( Decimal millimeters ) => this.Value = ( Rational )millimeters;
+		public Millimeters( Decimal millimeters ) : this( ( BigDecimal )millimeters ) { }
 
 		//public Millimeters( Centimeters centimeters ) {
 		//    var val = centimeters.Value * Extensions.MillimetersInSingleCentimeter;
@@ -56,6 +53,6 @@ namespace Librainian.Measurement.Length {
 		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
 		//}
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+		//public override Int32 GetHashCode() => this.Value.GetHashCode();
 	}
 }

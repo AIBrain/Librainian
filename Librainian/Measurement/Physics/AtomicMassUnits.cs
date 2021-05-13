@@ -27,9 +27,9 @@ namespace Librainian.Measurement.Physics {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Rationals;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -37,7 +37,7 @@ namespace Librainian.Measurement.Physics {
 	/// <see cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
-	public struct AtomicMassUnits : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
+	public record AtomicMassUnits( BigDecimal Value ) : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
 		/// <summary></summary>
 		public const Decimal InOneElectronVolt = 0.000000001073544m;
@@ -72,12 +72,9 @@ namespace Librainian.Measurement.Physics {
 
 		public static readonly AtomicMassUnits Zero = new( 0m );
 
-		/// <summary></summary>
-		public Rational Value { get; }
 
-		public AtomicMassUnits( Decimal value ) : this() => this.Value = ( Rational )value;
+		public AtomicMassUnits( Decimal value ) : this( ( BigDecimal )value ) { }
 
-		public AtomicMassUnits( Rational aBigFraction ) => this.Value = aBigFraction;
 
 		public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new( -electronVolts.Value );
 
@@ -99,11 +96,11 @@ namespace Librainian.Measurement.Physics {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new( left.Value * ( Rational )right );
+		public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new( left.Value * right );
 
-		public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) => new( ( Rational )left * right.Value );
+		public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) => new( left * right.Value );
 
-		public static AtomicMassUnits operator *( Rational left, AtomicMassUnits right ) {
+		public static AtomicMassUnits operator *( BigDecimal left, AtomicMassUnits right ) {
 			var res = left * right.Value;
 
 			return new AtomicMassUnits( res );
@@ -117,7 +114,7 @@ namespace Librainian.Measurement.Physics {
 
 		public static AtomicMassUnits operator /( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value / right.Value );
 
-		public static AtomicMassUnits operator /( AtomicMassUnits left, Decimal right ) => new( left.Value / ( Rational )right );
+		public static AtomicMassUnits operator /( AtomicMassUnits left, Decimal right ) => new( left.Value / right );
 
 		public static MegaElectronVolts operator +( AtomicMassUnits left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
@@ -130,10 +127,10 @@ namespace Librainian.Measurement.Physics {
 		public static Boolean operator >( AtomicMassUnits left, AtomicMassUnits right ) => left.Value > right.Value;
 
 		[Pure]
-		public Int32 CompareTo( AtomicMassUnits other ) => this.Value.CompareTo( other.Value );
+		public Int32 CompareTo( AtomicMassUnits? other ) => this.Value.CompareTo( other?.Value );
 
 		[Pure]
-		public Int32 CompareTo( ElectronVolts other ) => this.ToElectronVolts().Value.CompareTo( other.Value );
+		public Int32 CompareTo( ElectronVolts? other ) => this.ToElectronVolts().Value.CompareTo( other?.Value );
 
 		public Int32 CompareTo( TeraElectronVolts other ) => this.ToTeraElectronVolts().Value.CompareTo( other.Value );
 
@@ -145,21 +142,21 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( MilliElectronVolts other ) => this.ToMilliElectronVolts().Value.CompareTo( other.Value );
 
-		public AtomicMassUnits ToElectronVolts() => new( this.Value * ( Rational )InOneElectronVolt );
+		public AtomicMassUnits ToElectronVolts() => new( this.Value * InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * ( Rational )InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * ( Rational )InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * ( Rational )InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * ( Rational )InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
 
 		/// <summary>Returns the fully qualified type name of this instance.</summary>
 		/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
 		[NotNull]
 		public override String ToString() => $"{this.Value} u";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * ( Rational )InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
 	}
 }

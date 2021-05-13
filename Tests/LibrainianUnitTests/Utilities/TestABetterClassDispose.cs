@@ -30,11 +30,12 @@ namespace LibrainianUnitTests.Utilities {
 	using System;
 	using System.Diagnostics;
 	using Librainian.Utilities;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class TestABetterClassDispose {
 
-		[Fact]
+		[Test]
 		public void TestMethod1() {
 			using var test1 = new Test( 1 );
 			using var test2 = new Test( 2 );

@@ -31,11 +31,12 @@ namespace LibrainianUnitTests {
 	using System.Diagnostics;
 	using Librainian.ComputerSystem.Devices;
 	using Librainian.Parsing;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class DriveTests {
 
-		[Fact]
+		[Test]
 		public static void TestAllDrives() {
 			const String alphabet = ParsingConstants.English.Alphabet.Uppercase;
 			Debug.WriteLine( alphabet );

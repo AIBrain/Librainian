@@ -26,17 +26,17 @@ namespace Librainian.Measurement.Physics {
 
 	using System;
 	using System.Diagnostics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths;
-	using Rationals;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 	/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
-	public struct ElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
+	public record ElectronVolts(BigDecimal Value) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
 		/// <summary>About 79228162514264337593543950335.</summary>
 		public static readonly ElectronVolts MaxValue = new( Decimal.MaxValue );
@@ -57,17 +57,14 @@ namespace Librainian.Measurement.Physics {
 
 		public static readonly ElectronVolts Zero = new( 0m );
 
-		public Rational Value { get; }
+		public ElectronVolts( Decimal value ) : this( ( BigDecimal )value ) { }
 
-		public ElectronVolts( Decimal value ) : this() => this.Value = ( Rational )value;
+		public ElectronVolts( Double value ) : this( ( BigDecimal )value ) { }
 
-		public ElectronVolts( Double value ) : this() => this.Value = ( Rational )value;
 
-		public ElectronVolts( Rational value ) : this() => this.Value = value;
+		public ElectronVolts( MegaElectronVolts megaElectronVolts ) : this( megaElectronVolts.ToElectronVolts() ) { }
 
-		public ElectronVolts( MegaElectronVolts megaElectronVolts ) => this.Value = megaElectronVolts.ToElectronVolts().Value;
-
-		public ElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToElectronVolts().Value;
+		public ElectronVolts( GigaElectronVolts gigaElectronVolts ) : this( gigaElectronVolts.ToElectronVolts() ) { }
 
 		public static implicit operator ElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToElectronVolts();
 
@@ -77,15 +74,15 @@ namespace Librainian.Measurement.Physics {
 
 		public static ElectronVolts operator *( ElectronVolts left, ElectronVolts right ) => new( left.Value * right.Value );
 
-		public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new( left.Value * ( Rational )right );
+		public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new( left.Value * right );
 
-		public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new( ( Rational )left * right.Value );
+		public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new( left * right.Value );
 
-		public static ElectronVolts operator *( Rational left, ElectronVolts right ) => new( left * right.Value );
+		public static ElectronVolts operator *( BigDecimal left, ElectronVolts right ) => new( left * right.Value );
 
 		public static ElectronVolts operator /( ElectronVolts left, ElectronVolts right ) => new( left.Value / right.Value );
 
-		public static ElectronVolts operator /( ElectronVolts left, Decimal right ) => new( left.Value / ( Rational )right );
+		public static ElectronVolts operator /( ElectronVolts left, Decimal right ) => new( left.Value / right );
 
 		public static MegaElectronVolts operator +( ElectronVolts left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
 
@@ -128,17 +125,17 @@ namespace Librainian.Measurement.Physics {
 
 		public static class InOne {
 
-			public static readonly Rational ElectronVolt = ( Rational )1E0m;
+			public static readonly BigDecimal ElectronVolt = 1E0m;
 
-			public static readonly Rational GigaElectronVolt = ( Rational )1E9m;
+			public static readonly BigDecimal GigaElectronVolt = 1E9m;
 
-			public static readonly Rational KiloElectronVolt = ( Rational )1E3m;
+			public static readonly BigDecimal KiloElectronVolt = 1E3m;
 
-			public static readonly Rational MegaElectronVolt = ( Rational )1E6m;
+			public static readonly BigDecimal MegaElectronVolt = 1E6m;
 
-			public static readonly Rational MilliElectronVolt = ( Rational )1E-3m;
+			public static readonly BigDecimal MilliElectronVolt = 1E-3m;
 
-			public static readonly Rational TeraElectronVolt = ( Rational )1E12m;
+			public static readonly BigDecimal TeraElectronVolt = 1E12m;
 		}
 	}
 }

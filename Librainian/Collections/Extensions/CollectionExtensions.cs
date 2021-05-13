@@ -300,6 +300,17 @@ namespace Librainian.Collections.Extensions {
 		}
 
 		/// <summary>
+		///     Return an empty set of type of <paramref name="self" />.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		[Pure]
+		public static async IAsyncEnumerable<T> EmptyAsync<T>( [NotNull] this T self ) {
+			yield break;
+		}
+
+		/// <summary>
 		///     Returns the first two items to in the source collection that satisfy the given
 		///     <paramref name="relationship" /> , or <c>null</c> if no match was found.
 		/// </summary>
@@ -345,7 +356,7 @@ namespace Librainian.Collections.Extensions {
 		[Pure]
 		[CanBeNull]
 		public static TValue GetOrAdd<[NotNull]TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [NotNull] Func<TKey, TValue> function,
-															  out Boolean added ) {
+															  out Boolean added ) where TKey: notnull {
 			if ( dictionary == null ) {
 				throw new ArgumentNullException( nameof( dictionary ) );
 			}

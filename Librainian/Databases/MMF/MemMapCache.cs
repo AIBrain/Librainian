@@ -60,16 +60,16 @@ namespace Librainian.Databases.MMF {
 
 		public static Int32 MaxKeyLength => 4096 - 32;
 
-		public Int64 ChunkSize { get; } = 1024 * 1024 * 30;
+		public Int64 ChunkSize => 1024 * 1024 * 30;
 
 		public Encoding Encoding { get; } = Encoding.Unicode;
 
 		public Boolean IsConnected => this._tcpClient.Connected;
 
-		public Int32 Port { get; } = 57742;
+		public Int32 Port => 57742;
 
 		[NotNull]
-		public String Server { get; } = "127.0.0.1";
+		public String Server => "127.0.0.1";
 
 		public void Connect() {
 			this._tcpClient.Connect( this.Server, this.Port );

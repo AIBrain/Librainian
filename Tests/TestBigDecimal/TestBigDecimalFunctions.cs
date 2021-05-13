@@ -4,12 +4,12 @@
 	using System.Diagnostics;
 	using System.Numerics;
 	using ExtendedNumerics;
-	using Microsoft.VisualStudio.TestTools.UnitTesting;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class TestBigDecimalFunctions {
 
-		[Fact]
+		[Test]
 		public void TestGCD() {
 			var expectedResult = BigDecimal.Parse( "10" );
 
@@ -20,8 +20,8 @@
 			Assert.AreEqual( expectedResult, result );
 		}
 
-		[TestProperty( "Basic", "Properties" )]
-		[Fact]
+		
+		[Test]
 		public void TestGetFractionalPart() {
 			var expectedResult = new BigDecimal( BigInteger.Parse( "9150201282920942551781108927727789384397020382853" ), -49 );
 			var value = new BigDecimal( BigInteger.Parse( "22685077023948547418271375393606809233149150201282920942551781108927727789384397020382853" ), -49 );
@@ -31,8 +31,8 @@
 			Assert.AreEqual( expectedResult, result );
 		}
 
-		[TestProperty( "Basic", "Properties" )]
-		[Fact]
+		
+		[Test]
 		public void TestGetLength() {
 			var expectedResult = BigDecimal.Parse( "2268507702394854741827137539360680923314" );
 			var value = new BigDecimal( BigInteger.Parse( "22685077023948547418271375393606809233149150201282920942551781108927727789384397020382853" ), -49 );
@@ -42,8 +42,8 @@
 			Assert.AreEqual( expectedResult, result );
 		}
 
-		[TestProperty( "Basic", "Properties" )]
-		[Fact]
+		
+		[Test]
 		public void TestGetSign() {
 			BigDecimal zero1 = 0;
 			var zero2 = new BigDecimal( 0 );
@@ -67,27 +67,27 @@
 			BigDecimal negative3 = BigInteger.Subtract( 0, 3 );
 			BigDecimal negative4 = 10 * -1;
 
-			Assert.AreEqual( 0, zero1.Sign, "0" );
-			Assert.AreEqual( 0, zero2.Sign, "new BigDecimal()" );
-			Assert.AreEqual( 0, zero3.Sign, "new BigDecimal(0);" );
-			Assert.AreEqual( 0, zero4.Sign, "new BigDecimal(BigInteger.Zero)" );
-			Assert.AreEqual( 0, zero5.Sign, "new BigDecimal(0, -1);" );
-			Assert.AreEqual( 0, zero6.Sign, "2/3  -1/3 - 1/3" );
-			Assert.AreEqual( 0, zero7.Sign, "1/10 - 1/10" );
-			Assert.AreEqual( 0, zero8.Sign, "1 + -1/10" );
-			Assert.AreEqual( 0, zero9.Sign, "0.0015274" );
+			Assert.AreEqual( 0, zero1.Sign );
+			Assert.AreEqual( 0, zero2.Sign);
+			Assert.AreEqual( 0, zero3.Sign);
+			Assert.AreEqual( 0, zero4.Sign);
+			Assert.AreEqual( 0, zero5.Sign );
+			Assert.AreEqual( 0, zero6.Sign );
+			Assert.AreEqual( 0, zero7.Sign );
+			Assert.AreEqual( 0, zero8.Sign );
+			Assert.AreEqual( 0, zero9.Sign );
 
-			Assert.AreEqual( 1, positive1.Sign, "1" );
-			Assert.AreEqual( 1, positive2.Sign, "-1 * 1" );
+			Assert.AreEqual( 1, positive1.Sign );
+			Assert.AreEqual( 1, positive2.Sign );
 
-			Assert.AreEqual( BigInteger.MinusOne, negative1.Sign, "1 * -1" );
-			Assert.AreEqual( BigInteger.MinusOne, negative2.Sign, "0 - 3" );
-			Assert.AreEqual( BigInteger.MinusOne, negative3.Sign, "BigInteger.Subtract(0, 3)" );
-			Assert.AreEqual( BigInteger.MinusOne, negative4.Sign, "10 * -1;" );
+			Assert.AreEqual( BigInteger.MinusOne, negative1.Sign );
+			Assert.AreEqual( BigInteger.MinusOne, negative2.Sign );
+			Assert.AreEqual( BigInteger.MinusOne, negative3.Sign );
+			Assert.AreEqual( BigInteger.MinusOne, negative4.Sign );
 		}
 
-		[TestProperty( "Basic", "Properties" )]
-		[Fact]
+		
+		[Test]
 		public void TestGetWholeValue() {
 			var expectedResult = BigDecimal.Parse( "2268507702394854741827137539360680923314" );
 			var value = new BigDecimal( BigInteger.Parse( "22685077023948547418271375393606809233149150201282920942551781108927727789384397020382853" ), -49 );
@@ -97,7 +97,7 @@
 			Assert.AreEqual( expectedResult.ToString(), result.ToString() );
 		}
 
-		[Fact]
+		[Test]
 		public void TestIrrational001() {
 			var goldenRatio = BigDecimal.Parse(
 				"1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374847540880753868917521266338622235369317931800607667263544333890865959395829056383226613199282902678806752087668925017116962070322210432162695486262963136144381497587012203408058879544547492461856953648644492" );
@@ -108,7 +108,7 @@
 			Debug.WriteLine( "" );
 		}
 
-		[Fact]
+		[Test]
 		public void TestIrrational002() {
 			var goldenRatio = BigDecimal.Parse(
 				"1.6180339887498948482045868343656381177203091798057628621354486227052604628189024497072072041893911374847540880753868917521266338622235369317931800607667263544333890865959395829056383226613199282902678806752087668925017116962070322210432162695486262963136144381497587012203408058879544547492461856953648644492" );
@@ -119,7 +119,7 @@
 			Debug.WriteLine( "" );
 		}
 
-		[Fact]
+		[Test]
 		public void TestLCD() {
 			var expectedResult = BigDecimal.Parse( "45319990731015" );
 
@@ -134,10 +134,9 @@
 			Assert.AreEqual( expectedResult, result );
 		}
 
-		[TestProperty( "Basic", "Operations" )]
-		[Fact]
+		[Test]
 		public void TestRounding() {
-			var bd = BigDecimal.Parse( "10000000000000000000000000000000000000000000000000001" );
+			var _ = BigDecimal.Parse( "10000000000000000000000000000000000000000000000000001" );
 
 			var up = BigDecimal.Parse( 0.50001 );
 			var down = BigDecimal.Parse( 0.49 );
@@ -171,8 +170,8 @@
 			Assert.AreEqual( -10, negTen );
 		}
 
-		[TestProperty( "Basic", "Properties" )]
-		[Fact]
+		
+		[Test]
 		public void TestSignifigantDigits() {
 			const Int32 expectedResult1 = 19;
 			const Int32 expectedResult2 = 9;

@@ -22,7 +22,7 @@
 //
 // File "GpwData.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Security {
+namespace Librainian.Parsing {
 
 	using System;
 

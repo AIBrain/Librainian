@@ -37,7 +37,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using JetBrains.Annotations;
-	using Xunit;
 
 	public static class Path {
 
@@ -386,7 +385,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[return: NotNullIfNotNull( "path" )]
 		[JetBrains.Annotations.NotNull]
 		public static String RemoveLongPathPrefix( [JetBrains.Annotations.NotNull] this String path ) {
-			Assert.NotNull( path );
 
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				return String.Empty;

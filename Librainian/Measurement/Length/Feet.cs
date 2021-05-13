@@ -30,10 +30,9 @@ namespace Librainian.Measurement.Length {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
-	using Parsing;
-	using Rationals;
 
 	/// <summary>
 	///     <para>A foot (plural: feet) is a unit of length.</para>
@@ -44,18 +43,17 @@ namespace Librainian.Measurement.Length {
 	/// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public record Feet : IQuantityOfDistance, IComparable<Feet> {
+	public record Feet(BigDecimal Value) : IQuantityOfDistance, IComparable<Feet> {
 
 		/// <summary>60</summary>
 		public const Byte InOneYard = 3;
 
 		public const Decimal FeetPerMeter = 3.28084m;
 
-		public Feet( Rational value ) => this.Value = value;
 
-		public Feet( Int64 value ) => this.Value = value;
+		public Feet( Int64 value ) : this( ( BigDecimal )value ) { }
 
-		public Feet( BigInteger value ) => this.Value = value;
+		public Feet( BigInteger value ) : this( ( BigDecimal )value ) { }
 
 		/// <summary><see cref="Five" /> .</summary>
 		public static Feet Five { get; } = new( 5 );
@@ -84,18 +82,12 @@ namespace Librainian.Measurement.Length {
 		/// <summary></summary>
 		public static Feet Zero { get; } = new( 0 );
 
-		[JsonProperty]
-		public Rational Value { get; init; }
-
-		[Pure]
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public Rational ToMeters() => this.Value / ( Rational )FeetPerMeter;
+		public BigDecimal ToMeters() => this.Value / FeetPerMeter;
 
 		[NotNull]
-		public override String ToString() => $"{this.Value} {this.Value.PluralOf( "foot" )}";
+		public override String ToString() => $"{this.Value} feet";
 
-		public static Feet Combine( Feet left, Rational feet ) => new( left.Value + feet );
+		public static Feet Combine( Feet left, BigDecimal feet ) => new( left.Value + feet );
 
 		public static Feet Combine( Feet left, BigInteger seconds ) => new( left.Value + seconds );
 
@@ -111,11 +103,11 @@ namespace Librainian.Measurement.Length {
 
 		public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
-		public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, ( Rational )( -seconds ) );
+		public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, -seconds );
 
 		public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
 
-		public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, ( Rational )seconds );
+		public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, seconds );
 
 		public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
 

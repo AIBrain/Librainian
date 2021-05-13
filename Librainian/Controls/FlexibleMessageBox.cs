@@ -96,7 +96,7 @@ namespace Librainian.Controls {
 		///     be at most half as high as the working area. 1.0 means: The FlexibleMessageBox can be as high as the working area.
 		///     Default is: 90% of the working area height.
 		/// </summary>
-		public static Double MaxHeightFactor { get; } = 0.9;
+		public static Double MaxHeightFactor => 0.9;
 
 		/// <summary>
 		///     Defines the maximum width for all FlexibleMessageBox instances in percent of the working area. Allowed values are
@@ -104,7 +104,7 @@ namespace Librainian.Controls {
 		///     be at most half as wide as the working area. 1.0 means: The FlexibleMessageBox can be as wide as the working area.
 		///     Default is: 70% of the working area width.
 		/// </summary>
-		public static Double MaxWidthFactor { get; } = 0.7;
+		public static Double MaxWidthFactor => 0.7;
 
 		/// <summary>Shows the specified message box.</summary>
 		/// <param name="text">The text.</param>

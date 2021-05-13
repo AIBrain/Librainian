@@ -28,20 +28,21 @@
 namespace LibrainianUnitTests.Threading {
 
 	using Librainian.Threadsafe;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class VolatileBooleanTests {
 
-		[Fact]
+		[Test]
 		public void DefaultCtorEqualsFalse() => Assert.False( new VolatileBoolean() );
 
-		[Fact]
+		[Test]
 		public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
 
-		[Fact]
+		[Test]
 		public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
 
-		[Fact]
+		[Test]
 		public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
 
 	}

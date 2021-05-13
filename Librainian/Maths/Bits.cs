@@ -31,7 +31,7 @@ namespace Librainian.Maths {
 
 	public static class Bits {
 
-		public static Boolean IsLittleEndian { get; } = BitConverter.IsLittleEndian;
+		public static Boolean IsLittleEndian => BitConverter.IsLittleEndian;
 
 		private static UInt64 ToUInt64( [NotNull] this Byte[] value, Int32 startIndex = 0 ) {
 			if ( value is null ) {

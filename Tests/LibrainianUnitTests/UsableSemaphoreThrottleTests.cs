@@ -31,7 +31,7 @@ namespace LibrainianUnitTests {
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Librainian.Threading;
-	using Xunit;
+	using NUnit.Framework;
 
 	public class UsableSemaphoreThrottleTests {
 
@@ -47,8 +47,8 @@ namespace LibrainianUnitTests {
 		}
 
 		[Theory]
-		[InlineData( 500, 100 )]
-		[InlineData( 100, 500 )]
+		[TestCase( 500, 100 )]
+		[TestCase( 100, 500 )]
 		public async Task WaitSemaphoreThrottleAsync( Int32 semaphoreMilliseconds, Int32 taskMilliseconds ) {
 			var semaphoreTimeSpan = TimeSpan.FromMilliseconds( semaphoreMilliseconds );
 			var taskTimeSpan = TimeSpan.FromMilliseconds( taskMilliseconds );

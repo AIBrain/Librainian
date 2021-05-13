@@ -3,12 +3,12 @@
 	using System;
 	using System.Numerics;
 	using ExtendedNumerics;
-	using Microsoft.VisualStudio.TestTools.UnitTesting;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class TestBigDecimalOperations {
 
-		[Fact]
+		[Test]
 		public void TestAddition() {
 			var number1 = BigDecimal.Parse( "1234567890" );
 			var expectedResult = BigDecimal.Parse( "3382051537" );
@@ -18,7 +18,7 @@
 			Assert.AreEqual( expectedResult, result );
 		}
 
-		[Fact]
+		[Test]
 		public void TestBigDecimalPow() {
 			var expectedResult = BigDecimal.Parse( "268637376395543538746286686601216000000000000" );
 
@@ -27,10 +27,10 @@
 			var number = BigDecimal.Parse( "5040" );
 			var result = BigDecimal.Pow( number, 12 );
 
-			Assert.AreEqual( expectedResult, result, "5040 ^ 12  =  268637376395543538746286686601216000000000000" );
+			Assert.AreEqual( expectedResult, result );
 		}
 
-		[Fact]
+		[Test]
 		public void TestCeiling001() {
 			const String expectedCeiling = "4";
 			const String expectedStart = "3.14159265";
@@ -43,10 +43,10 @@
 			var ceiling = BigDecimal.Ceiling( start );
 			var actualCeiling = ceiling.ToString();
 
-			Assert.AreEqual( expectedCeiling, actualCeiling, $"ceiling({expectedStart}) == {expectedCeiling}" );
+			Assert.AreEqual( expectedCeiling, actualCeiling );
 		}
 
-		[Fact]
+		[Test]
 		public void TestCeiling002() {
 			const String expectedCeiling = "-3";
 			const String expectedStart = "-3.14159265";
@@ -59,10 +59,10 @@
 			var ceiling = BigDecimal.Ceiling( start );
 			var actualCeiling = ceiling.ToString();
 
-			Assert.AreEqual( expectedCeiling, actualCeiling, $"ceiling({expectedStart}) == {expectedCeiling}" );
+			Assert.AreEqual( expectedCeiling, actualCeiling );
 		}
 
-		[Fact]
+		[Test]
 		public void TestCeiling003() {
 			const String expectedCeiling = "1";
 			const String expectedStart = "0.14159265";
@@ -75,10 +75,10 @@
 			var ceiling = BigDecimal.Ceiling( start );
 			var actualCeiling = ceiling.ToString();
 
-			Assert.AreEqual( expectedCeiling, actualCeiling, $"ceiling({expectedStart}) == {expectedCeiling}" );
+			Assert.AreEqual( expectedCeiling, actualCeiling );
 		}
 
-		[Fact]
+		[Test]
 		public void TestCeiling004() {
 			const String expectedCeiling = "0";
 			const String expectedStart = "-0.14159265";
@@ -91,10 +91,10 @@
 			var ceiling = BigDecimal.Ceiling( start );
 			var actualCeiling = ceiling.ToString();
 
-			Assert.AreEqual( expectedCeiling, actualCeiling, $"ceiling({expectedStart}) == {expectedCeiling}" );
+			Assert.AreEqual( expectedCeiling, actualCeiling );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide000() {
 			var expectedResult = BigDecimal.Parse( "7" );
 
@@ -109,7 +109,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide001() {
 			var expectedResult = BigDecimal.Parse( "40094690950920881030683735292761468389214899724061" );
 
@@ -124,7 +124,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide002() {
 			const String expectedResultDividend = "0.001";
 			const String expectedResultDivisor = "0.5";
@@ -150,9 +150,9 @@
 			Assert.AreEqual( expectedQuotientResult, actualQuotientResult );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide003() {
-			const String expected = "1.10367421348286";
+			const String expected = "1.1036742134828557";
 
 			var divisor = BigDecimal.Parse( "0.90606447789" );
 			var result = BigDecimal.Divide( BigDecimal.One, divisor );
@@ -163,7 +163,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide004() {
 			var expectedResult = BigDecimal.Parse( "0.05" );
 
@@ -177,7 +177,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide005A() {
 			var expectedResult3 = BigDecimal.Parse( "50" );
 
@@ -189,7 +189,7 @@
 			Assert.AreEqual( expected3, actual3 );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide005B() {
 			var expectedResult3 = BigDecimal.Parse( "5" );
 
@@ -201,7 +201,7 @@
 			Assert.AreEqual( expected3, actual3 );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide005C() {
 			var expectedResult3 = BigDecimal.Parse( "5" );
 
@@ -213,7 +213,7 @@
 			Assert.AreEqual( expected3, actual3 );
 		}
 
-		[Fact]
+		[Test]
 		public void TestDivide005D() {
 			var expectedResult3 = BigDecimal.Parse( "0.5" );
 
@@ -225,7 +225,7 @@
 			Assert.AreEqual( expected3, actual3 );
 		}
 
-		[Fact]
+		[Test]
 		public void TestFloor001() {
 			const String expectedFloor = "3";
 			const String expectedStart = "3.14159265";
@@ -238,10 +238,10 @@
 			var floor = BigDecimal.Floor( start );
 			var actualFloor = floor.ToString();
 
-			Assert.AreEqual( expectedFloor, actualFloor, $"ceiling({expectedStart}) == {expectedFloor}" );
+			Assert.AreEqual( expectedFloor, actualFloor );
 		}
 
-		[Fact]
+		[Test]
 		public void TestFloor002() {
 			const String expectedFloor = "-4";
 			const String expectedStart = "-3.14159265";
@@ -254,10 +254,10 @@
 			var floor = BigDecimal.Floor( start );
 			var actualFloor = floor.ToString();
 
-			Assert.AreEqual( expectedFloor, actualFloor, $"ceiling({expectedStart}) == {expectedFloor}" );
+			Assert.AreEqual( expectedFloor, actualFloor );
 		}
 
-		[Fact]
+		[Test]
 		public void TestFloor003() {
 			const String expectedFloor = "-1";
 			const String expectedStart = "-0.14159265";
@@ -270,10 +270,10 @@
 			var floor = BigDecimal.Floor( start );
 			var actualFloor = floor.ToString();
 
-			Assert.AreEqual( expectedFloor, actualFloor, $"ceiling({expectedStart}) == {expectedFloor}" );
+			Assert.AreEqual( expectedFloor, actualFloor );
 		}
 
-		[Fact]
+		[Test]
 		public void TestFloor004() {
 			const String expectedFloor = "0";
 			const String expectedStart = "0.14159265";
@@ -286,10 +286,10 @@
 			var floor = BigDecimal.Floor( start );
 			var actualFloor = floor.ToString();
 
-			Assert.AreEqual( expectedFloor, actualFloor, $"ceiling({expectedStart}) == {expectedFloor}" );
+			Assert.AreEqual( expectedFloor, actualFloor );
 		}
 
-		[Fact]
+		[Test]
 		public void TestMod() {
 			BigDecimal expectedResult1 = 12;
 			BigDecimal expectedResult2 = 0;
@@ -326,7 +326,7 @@
 			//Assert.AreEqual(expectedResult4, result4);
 		}
 
-		[Fact]
+		[Test]
 		public void TestMultiply() {
 			var expectedResult1 = BigDecimal.Parse( "35794234179725868774991807832568455403003778024228226193532908190484670252364677411513516111204504060317568667" );
 			var expectedResult2 = BigDecimal.Parse( "37484040009320200288159018961010536937973891182532366282540247408867702983313960194873589374267102044942786001" );
@@ -353,12 +353,12 @@
 			var matches2 = expectedResult2.Equals( result2 );
 			var matches3 = expectedResult3.ToString().Equals( result3.ToString().Replace( ".", "" ) );
 
-			Assert.IsTrue( matches1 );
-			Assert.IsTrue( matches2 );
-			Assert.IsTrue( matches3 );
+			Assert.True( matches1 );
+			Assert.True( matches2 );
+			Assert.True( matches3 );
 		}
 
-		[Fact]
+		[Test]
 		public void TestNegate() {
 			const String expected = "-1.375";
 
@@ -367,11 +367,11 @@
 			Assert.AreEqual( expected, result.ToString() );
 		}
 
-		[Fact]
+		[Test]
 		public void TestReciprocal001() {
 
 			// 1 / 3 = 0.333333333333333
-			var expectedResult = BigDecimal.Parse( "0.333333333333333" );
+			var expectedResult = BigDecimal.Parse( "0.3333333333333333" );
 
 			var dividend = new BigDecimal( 1 );
 			var divisor = new BigDecimal( 3 );
@@ -384,7 +384,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestReciprocal002() {
 
 			// 1/2 = 0.5
@@ -401,14 +401,14 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestReciprocal003() {
 
 			// 1/0.0833333333333333 == 12
 			var expectedResult = BigDecimal.Parse( "12" );
 
 			var dividend = new BigDecimal( 1 );
-			var divisor = BigDecimal.Parse( "0.0833333333333333" );
+			var divisor = BigDecimal.Parse( "0.08333333333333333" );
 
 			var result = BigDecimal.Divide( dividend, divisor );
 
@@ -418,7 +418,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestReciprocal004() {
 
 			// 2/0.63661977236758 == 3.1415926535898
@@ -435,7 +435,7 @@
 			Assert.AreEqual( expected, actual );
 		}
 
-		[Fact]
+		[Test]
 		public void TestSqrt() {
 			var expectedResult = BigInteger.Parse( "8145408529" );
 
@@ -445,10 +445,10 @@
 			var remainder = new BigInteger();
 			var result = squareNumber.NthRoot( 2, ref remainder );
 
-			Assert.AreEqual( expectedResult, result, "sqrt(66347680104305943841) = 8145408529" );
+			Assert.AreEqual( expectedResult, result );
 		}
 
-		[Fact]
+		[Test]
 		public void TestSubtraction() {
 			var number = BigDecimal.Parse( "4294967295" );
 			var expectedResult = BigDecimal.Parse( "2147483648" );

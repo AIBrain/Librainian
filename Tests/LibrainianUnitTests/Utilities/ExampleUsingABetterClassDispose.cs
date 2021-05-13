@@ -34,8 +34,9 @@ namespace LibrainianUnitTests.Utilities {
 	using System.IO;
 	using JetBrains.Annotations;
 	using Librainian.Utilities;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class ExampleUsingABetterClassDispose : ABetterClassDispose {
 
 		private MemoryStream? _memoryStream = new();
@@ -44,7 +45,7 @@ namespace LibrainianUnitTests.Utilities {
 
 		public ExampleUsingABetterClassDispose() => this._sysComObject?.ReserveMemory();
 
-		[Fact]
+		[Test]
 		public override void DisposeManaged() {
 			using ( this._memoryStream ) {
 				this._memoryStream = null;
@@ -53,7 +54,7 @@ namespace LibrainianUnitTests.Utilities {
 			base.DisposeManaged();
 		}
 
-		[Fact]
+		[Test]
 		public override void DisposeNative() {
 			this._sysComObject?.ReleaseMemory();
 			this._sysComObject = null;

@@ -26,9 +26,9 @@ namespace Librainian.Measurement.Physics {
 
 	using System;
 	using System.Diagnostics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Rationals;
 
 	/// <summary>Units of mass and energy in <see cref="GigaElectronVolts" />.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -36,7 +36,7 @@ namespace Librainian.Measurement.Physics {
 	/// <see cref="http://wikipedia.org/wiki/Giga-" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
-	public struct GigaElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
+	public record GigaElectronVolts(BigDecimal Value) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
 		public const Decimal InOneElectronVolt = 1E-9m;
 
@@ -56,18 +56,16 @@ namespace Librainian.Measurement.Physics {
 		/// <summary></summary>
 		public static readonly GigaElectronVolts Zero = new( Decimal.Zero );
 
-		/// <summary></summary>
-		public Rational Value { get; }
 
-		public GigaElectronVolts( Decimal units ) : this() => this.Value = ( Rational )units;
+		public GigaElectronVolts( Decimal units ) : this( ( BigDecimal )units ) { }
 
-		public GigaElectronVolts( Rational units ) : this() => this.Value = units;
+		public GigaElectronVolts( Double units ) : this( ( BigDecimal )units ) { }
 
-		public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this() => this.Value = megaElectronVolts.ToGigaElectronVolts().Value;
+		public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this( megaElectronVolts.ToGigaElectronVolts() ) { }
 
-		public static GigaElectronVolts operator *( GigaElectronVolts left, Rational right ) => new( left.Value * right );
+		public static GigaElectronVolts operator *( GigaElectronVolts left, BigDecimal right ) => new( left.Value * right );
 
-		public static GigaElectronVolts operator *( Rational left, GigaElectronVolts right ) => new( left * right.Value );
+		public static GigaElectronVolts operator *( BigDecimal left, GigaElectronVolts right ) => new( left * right.Value );
 
 		public static GigaElectronVolts operator +( MegaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( left ) + right;
 
@@ -79,27 +77,27 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
 
-		public Int32 CompareTo( GigaElectronVolts other ) => this.Value.CompareTo( other.Value );
+		public Int32 CompareTo( GigaElectronVolts? other ) => this.Value.CompareTo( other?.Value );
 
 		public Int32 CompareTo( MegaElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
 
 		public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToGigaElectronVolts().Value );
 
-		public ElectronVolts ToElectronVolts() => new( this.Value * ( Rational )InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new( this.Value * InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * ( Rational )InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * ( Rational )InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * ( Rational )InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * ( Rational )InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
 
 		/// <summary>Returns the fully qualified type name of this instance.</summary>
 		/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
 		[NotNull]
 		public override String ToString() => $"{this.Value} GeV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * ( Rational )InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
 	}
 }

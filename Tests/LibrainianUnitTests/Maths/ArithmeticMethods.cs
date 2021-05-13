@@ -23,139 +23,140 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ArithmeticMethods.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "ArithmeticMethods.cs" last touched on 2021-05-13 at 1:16 PM by Protiguous.
 
 namespace LibrainianUnitTests.Maths {
 
 	using Librainian.Maths;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class ArithmeticMethods {
 
-		[Fact]
+		[Test]
 		public void AddBitsMethod() {
 			var size = ByteSize.FromBytes( 1 ).AddBits( 8 );
 
-			//Assert.Equal( 2, size.Bytes );
-			//Assert.Equal( 16, size.Bits );
+			Assert.AreEqual( 2, size.Bytes );
+			Assert.AreEqual( 16, size.Bits );
 		}
 
-		[Fact]
+		[Test]
 		public void AddBytesMethod() {
 			var size = ByteSize.FromBytes( 1 ).AddBytes( 1 );
 
-			//Assert.Equal( 2, size.Bytes );
-			//Assert.Equal( 16, size.Bits );
+			Assert.AreEqual( 2, size.Bytes );
+			Assert.AreEqual( 16, size.Bits );
 		}
 
-		[Fact]
+		[Test]
 		public void AddGigaBytesMethod() {
 			var size = ByteSize.FromGigaBytes( 2 ).AddGigaBytes( 2 );
 
-			//Assert.Equal( 4d * 1024 * 1024 * 1024 * 8, size.Bits );
-			//Assert.Equal( 4d * 1024 * 1024 * 1024, size.Bytes );
-			//Assert.Equal( 4d * 1024 * 1024, size.KiloBytes );
-			//Assert.Equal( 4d * 1024, size.MegaBytes );
-			//Assert.Equal( 4d, size.GigaBytes );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024 * 8, size.Bits );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024, size.Bytes );
+			Assert.AreEqual( 4d * 1024 * 1024, size.KiloBytes );
+			Assert.AreEqual( 4d * 1024, size.MegaBytes );
+			Assert.AreEqual( 4d, size.GigaBytes );
 		}
 
-		[Fact]
+		[Test]
 		public void AddKiloBytesMethod() {
 			var size = ByteSize.FromKiloBytes( 2 ).AddKiloBytes( 2 );
 
-			//Assert.Equal( 4 * 1024 * 8, size.Bits );
-			//Assert.Equal( 4 * 1024, size.Bytes );
-			//Assert.Equal( 4, size.KiloBytes );
+			Assert.AreEqual( 4 * 1024 * 8, size.Bits );
+			Assert.AreEqual( 4 * 1024, size.Bytes );
+			Assert.AreEqual( 4, size.KiloBytes );
 		}
 
-		[Fact]
+		[Test]
 		public void AddMegaBytesMethod() {
 			var size = ByteSize.FromMegaBytes( 2 ).AddMegaBytes( 2 );
 
-			//Assert.Equal( 4 * 1024 * 1024 * 8, size.Bits );
-			//Assert.Equal( 4 * 1024 * 1024, size.Bytes );
-			//Assert.Equal( 4 * 1024, size.KiloBytes );
-			//Assert.Equal( 4, size.MegaBytes );
+			Assert.AreEqual( 4 * 1024 * 1024 * 8, size.Bits );
+			Assert.AreEqual( 4 * 1024 * 1024, size.Bytes );
+			Assert.AreEqual( 4 * 1024, size.KiloBytes );
+			Assert.AreEqual( 4, size.MegaBytes );
 		}
 
-		[Fact]
+		[Test]
 		public void AddMethod() {
 			var size1 = ByteSize.FromBytes( 1 );
 			var result = size1.Add( size1 );
 
-			//Assert.Equal( 2, result.Bytes );
-			//Assert.Equal( 16, result.Bits );
+			Assert.AreEqual( 2, result.Bytes );
+			Assert.AreEqual( 16, result.Bits );
 		}
 
-		[Fact]
+		[Test]
 		public void AddPetaBytesMethod() {
 			var size = ByteSize.FromPetaBytes( 2 ).AddPetaBytes( 2 );
 
-			//Assert.Equal( 4d * 1024 * 1024 * 1024 * 1024 * 1024 * 8, size.Bits );
-			//Assert.Equal( 4d * 1024 * 1024 * 1024 * 1024 * 1024, size.Bytes );
-			//Assert.Equal( 4d * 1024 * 1024 * 1024 * 1024, size.KiloBytes );
-			//Assert.Equal( 4d * 1024 * 1024 * 1024, size.MegaBytes );
-			//Assert.Equal( 4d * 1024 * 1024, size.GigaBytes );
-			//Assert.Equal( 4d * 1024, size.TeraBytes );
-			//Assert.Equal( 4d, size.PetaBytes );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024 * 1024 * 1024 * 8, size.Bits );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024 * 1024 * 1024, size.Bytes );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024 * 1024, size.KiloBytes );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024, size.MegaBytes );
+			Assert.AreEqual( 4d * 1024 * 1024, size.GigaBytes );
+			Assert.AreEqual( 4d * 1024, size.TeraBytes );
+			Assert.AreEqual( 4d, size.PetaBytes );
 		}
 
-		[Fact]
+		[Test]
 		public void AddTeraBytesMethod() {
 			var size = ByteSize.FromTeraBytes( 2 ).AddTeraBytes( 2 );
 
-			//Assert.Equal( 4d * 1024 * 1024 * 1024 * 1024 * 8, size.Bits );
-			//Assert.Equal( 4d * 1024 * 1024 * 1024 * 1024, size.Bytes );
-			//Assert.Equal( 4d * 1024 * 1024 * 1024, size.KiloBytes );
-			//Assert.Equal( 4d * 1024 * 1024, size.MegaBytes );
-			//Assert.Equal( 4d * 1024, size.GigaBytes );
-			//Assert.Equal( 4d, size.TeraBytes );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024 * 1024 * 8, size.Bits );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024 * 1024, size.Bytes );
+			Assert.AreEqual( 4d * 1024 * 1024 * 1024, size.KiloBytes );
+			Assert.AreEqual( 4d * 1024 * 1024, size.MegaBytes );
+			Assert.AreEqual( 4d * 1024, size.GigaBytes );
+			Assert.AreEqual( 4d, size.TeraBytes );
 		}
 
-		[Fact]
+		[Test]
 		public void DecrementOperator() {
 			var size = ByteSize.FromBytes( 2 );
 
-			//size--;
+			size--;
 
-			//Assert.Equal( 8, size.Bits );
-			//Assert.Equal( 1, size.Bytes );
+			Assert.AreEqual( 8, size.Bits );
+			Assert.AreEqual( 1, size.Bytes );
 		}
 
-		[Fact]
+		[Test]
 		public void IncrementOperator() {
 			var size = ByteSize.FromBytes( 2 );
 
-			//size++;
+			size++;
 
-			//Assert.Equal( 24, size.Bits );
-			//Assert.Equal( 3, size.Bytes );
+			Assert.AreEqual( 24, size.Bits );
+			Assert.AreEqual( 3, size.Bytes );
 		}
 
-		[Fact]
+		[Test]
 		public void MinusOperatorBinary() {
 			var size = ByteSize.FromBytes( 4 ) - ByteSize.FromBytes( 2 );
 
-			//Assert.Equal( 16, size.Bits );
-			//Assert.Equal( 2, size.Bytes );
+			Assert.AreEqual( 16, size.Bits );
+			Assert.AreEqual( 2, size.Bytes );
 		}
 
-		[Fact]
+		[Test]
 		public void MinusOperatorUnary() {
 			var size = ByteSize.FromBytes( 2 );
 
-			//size = -size;
+			size = -size;
 
-			//Assert.Equal( -16, size.Bits );
-			//Assert.Equal( -2, size.Bytes );
+			Assert.AreEqual( -16, size.Bits );
+			Assert.AreEqual( -2, size.Bytes );
 		}
 
-		[Fact]
+		[Test]
 		public void SubtractMethod() {
 			var size = ByteSize.FromBytes( 4 ).Subtract( ByteSize.FromBytes( 2 ) );
 
-			//Assert.Equal( 16, size.Bits );
-			//Assert.Equal( 2, size.Bytes );
+			Assert.AreEqual( 16, size.Bits );
+			Assert.AreEqual( 2, size.Bytes );
 		}
 
 	}

@@ -34,8 +34,9 @@ namespace LibrainianUnitTests.Persistence {
 	using Librainian.FileSystem;
 	using Librainian.Measurement.Time;
 	using Librainian.Persistence.InIFiles;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class IniFileTests {
 
 		public const String IniTestData = @"
@@ -72,13 +73,13 @@ data33   =   3
 
 ";
 
-		private static IniFile _ini1;
+		private static IniFile? Ini1;
 
 		private static IniFile Ini2;
 
 		private static IniFile Ini3;
 
-		[Fact]
+		[Test]
 		public async Task test_load_from_file() {
 			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
 
@@ -97,13 +98,13 @@ data33   =   3
 			_ = test.Should()?.Be( "World2!" );
 		}
 
-		[Fact]
+		[Test]
 		public static void test_load_from_string() {
 			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
 
-			_ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
+			Ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
 			var temp = Document.GetTempDocument( "config" );
-			var _ = _ini1.Save( temp, cancellationTokenSource.Token );
+			var _ = Ini1.Save( temp, cancellationTokenSource.Token );
 		}
 
 	}

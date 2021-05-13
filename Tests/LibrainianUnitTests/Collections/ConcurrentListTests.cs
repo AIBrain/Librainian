@@ -35,8 +35,9 @@ namespace LibrainianUnitTests.Collections {
 	using JetBrains.Annotations;
 	using Librainian.Collections.Lists;
 	using Librainian.Maths;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class ConcurrentListTests {
 
 		/// <summary>Environment.ProcessorCount * 10240 = 163840</summary>
@@ -71,7 +72,7 @@ namespace LibrainianUnitTests.Collections {
 		}
 
 		/*
-        [Fact]
+        [Test]
         public static void AddNameThreadSafetyTest() {
             var list = new ConcurrentList<String>();
 
@@ -85,12 +86,12 @@ namespace LibrainianUnitTests.Collections {
 
             Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
 
-            //Assert.Equal( expected: Threads * Threads, actual: list.Count );
+            //Assert.AreEqual( expected: Threads * Threads, actual: list.Count );
         }
         */
 
 		/*
-        [Fact]
+        [Test]
         public static async Task TestAFew() {
             var cancel = new CancellationTokenSource( Minutes.One );
             var token = cancel.Token;
@@ -135,7 +136,7 @@ namespace LibrainianUnitTests.Collections {
         }
         */
 
-		[Fact]
+		[Test]
 		public static void ThreadSafetyTestAddAndRemoves() {
 			var list1 = new ConcurrentList<String>();
 
@@ -144,15 +145,15 @@ namespace LibrainianUnitTests.Collections {
 			Parallel.ForEach( threads.AsParallel(), thread => {
 				AddManyProductsRemoveRandom( list1 );
 
-				thread?.Start();
+				thread.Start();
 			} );
 
-			Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
+			Parallel.ForEach( threads.AsParallel(), thread => thread.Join() );
 
-			Assert.NotEqual( Threads, list1.Count );
+			Assert.AreNotEqual( Threads, list1.Count );
 		}
 
-		[Fact]
+		[Test]
 		public static void ThreadSafetyTestEquals() {
 			var list1 = new ConcurrentList<String>();
 			var list2 = new ConcurrentList<String>();
@@ -166,10 +167,10 @@ namespace LibrainianUnitTests.Collections {
 			thread1.Join();
 			thread2.Join();
 
-			Assert.Equal( list1.Count, list2.Count );
+			Assert.AreEqual( list1.Count, list2.Count );
 		}
 
-		[Fact]
+		[Test]
 		public static void ThreadSafetyTestNotEquals() {
 			var list1 = new ConcurrentList<String>();
 			var list2 = new ConcurrentList<String>();
@@ -186,7 +187,7 @@ namespace LibrainianUnitTests.Collections {
 			thread2.Join();
 			thread3.Join();
 
-			Assert.NotEqual( list1, list2 );
+			Assert.AreNotEqual( list1, list2 );
 		}
 
 	}

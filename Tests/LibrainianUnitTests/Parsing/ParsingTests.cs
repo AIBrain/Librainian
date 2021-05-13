@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ParsingTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "ParsingTests.cs" last touched on 2021-05-13 at 1:09 PM by Protiguous.
 
 namespace LibrainianUnitTests.Parsing {
 
@@ -31,51 +31,66 @@ namespace LibrainianUnitTests.Parsing {
 	using System.Linq;
 	using FluentAssertions;
 	using Librainian.Parsing;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public class ParsingTests {
 
-		private String left;
-
-		private String right;
-
-		[Fact]
-		public void ConfirmStringNullLikeNull() {
-			this.left = "".Trim().NullIfBlank();
-			this.right = default;
-			this.left?.Like( this.right ).Should().BeTrue();
-		}
-
-		[Fact]
-		public void ConfirmStringEmptyStringNotLikeNull() {
-			this.left = default;
-			this.right = String.Empty;
-			this.right.Like( this.left ).Should().BeFalse();
-		}
-
-		[Fact]
-		public void ConfirmStringEmptyStringLikeEmptyString() {
-			this.left = String.Empty;
-			this.right = String.Empty;
-			this.left.Like( this.right ).Should().BeTrue();
-		}
-
-		[Fact]
+		[Test]
 		public void ConfirmcAtLikeCaT() {
-			this.left = "cAt";
-			this.right = "CaT";
-			this.left.Like( this.right ).Should().BeTrue();
+			const String? left = "cAt";
+			const String? right = "CaT";
+			left.Like( right ).Should().BeTrue();
 		}
 
-		[Fact]
+		[Test]
 		public void ConfirmcAtNotSameCaT() {
-			this.left = "cAt";
-			this.right = "CaT";
-			this.left.Same( this.right ).Should().BeFalse();
+			const String? left = "cAt";
+			const String? right = "CaT";
+			left.Same( right ).Should().BeFalse();
 		}
 
-		[Fact]
-		public void ConfirmStringLimitShorter() => ParsingConstants.English.Alphabet.Lowercase.Take( 6 ).ToString().Should().Be( "abcdef" );
+		[Test]
+		public void ConfirmStringEmptyStringLikeEmptyString() {
+			var left = String.Empty;
+			var right = String.Empty;
+			left.Like( right ).Should().BeTrue();
+		}
+
+		[Test]
+		public void ConfirmStringEmptyStringNotLikeNull() {
+			const String left = default( String? );
+			var right = String.Empty;
+			right.Like( left ).Should().BeFalse();
+		}
+
+		[Test]
+		public void ConfirmStringLimitShorter() {
+			var chars = ParsingConstants.English.Alphabet.Lowercase.Take( 6 ).ToArray();
+			var s = new String( chars );
+			s.Should().Be( "abcdef" );
+		}
+
+		[Test]
+		public void ConfirmStringLeft() {
+			var chars = ParsingConstants.English.Alphabet.Lowercase.Left( 6 );
+			var s = new String( chars );
+			s.Should().Be( "abcdef" );
+		}
+
+		[Test]
+		public void ConfirmStringRight() {
+			var chars = ParsingConstants.English.Alphabet.Lowercase.Right( 6 );
+			var s = new String( chars );
+			s.Should().Be( "uvwxyz" );
+		}
+
+		[Test]
+		public void ConfirmStringNullLikeNull() {
+			var left = "".Trim().NullIfBlank();
+			const String? right = default( String? );
+			left?.Like( right ).Should().BeTrue();
+		}
 
 	}
 

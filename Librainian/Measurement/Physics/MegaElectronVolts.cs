@@ -26,9 +26,9 @@ namespace Librainian.Measurement.Physics {
 
 	using System;
 	using System.Diagnostics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Rationals;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -36,8 +36,7 @@ namespace Librainian.Measurement.Physics {
 	/// <see cref="http://wikipedia.org/wiki/Mega-" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[Immutable]
-	public struct MegaElectronVolts : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
-
+	public record MegaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 		public const Decimal InOneElectronVolt = 1E-6m;
 
 		public const Decimal InOneGigaElectronVolt = 1E3m;
@@ -50,22 +49,17 @@ namespace Librainian.Measurement.Physics {
 
 		public const Decimal InOneTeraElectronVolt = 1E6m;
 
-		public static readonly MegaElectronVolts One = new( ( Rational )1 );
+		public static MegaElectronVolts One => new( Decimal.One );
 
-		/// <summary></summary>
-		public static readonly MegaElectronVolts Zero = new( ( Rational )0 );
+		public static MegaElectronVolts Zero => new( Decimal.Zero );
 
-		public Rational Value { get; }
+		public MegaElectronVolts( Decimal units ) : this( ( BigDecimal )units ) { }
 
-		public MegaElectronVolts( Rational units ) : this() => this.Value = units;
+		public MegaElectronVolts( Double units ) : this( ( BigDecimal )units ) { }
 
-		public MegaElectronVolts( Decimal units ) : this() => this.Value = ( Rational )units;
+		public MegaElectronVolts( GigaElectronVolts gigaElectronVolts ) : this( gigaElectronVolts.ToMegaElectronVolts() ) { }
 
-		public MegaElectronVolts( Double units ) : this() => this.Value = ( Rational )units;
-
-		public MegaElectronVolts( GigaElectronVolts gigaElectronVolts ) => this.Value = gigaElectronVolts.ToMegaElectronVolts().Value;
-
-		public MegaElectronVolts( KiloElectronVolts kiloElectronVolts ) => this.Value = kiloElectronVolts.ToMegaElectronVolts().Value;
+		public MegaElectronVolts( KiloElectronVolts kiloElectronVolts ) : this( kiloElectronVolts.ToMegaElectronVolts() ) { }
 
 		public static MegaElectronVolts operator +( MegaElectronVolts left, MegaElectronVolts right ) => new( left.Value + right.Value );
 
@@ -84,19 +78,19 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToMegaElectronVolts().Value );
 
-		public ElectronVolts ToElectronVolts() => new( this.Value * ( Rational )InOneElectronVolt );
+		public ElectronVolts ToElectronVolts() => new( this.Value * InOneElectronVolt );
 
-		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * ( Rational )InOneGigaElectronVolt );
+		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * ( Rational )InOneKiloElectronVolt );
+		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * ( Rational )InOneMegaElectronVolt );
+		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * ( Rational )InOneMilliElectronVolt );
+		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
 
 		[NotNull]
 		public override String ToString() => $"{this.Value} MeV";
 
-		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * ( Rational )InOneTeraElectronVolt );
+		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
 	}
 }

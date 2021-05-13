@@ -37,8 +37,10 @@ namespace LibrainianUnitTests.Persistence {
 	using Librainian.Measurement.Time;
 	using Librainian.Persistence;
 	using Librainian.Persistence.InIFiles;
-	using Xunit;
+	using NUnit.Framework;
 
+
+	[TestFixture]
 	public class JSONFileTests {
 
 		public const String IniTestData = @"
@@ -93,7 +95,7 @@ data33   =   3
 
 		private CancellationToken GetCancellationToken() => this.CreateCancelToken().Token;
 
-		[Fact]
+		[Test]
 		public void Test_load_from_string() {
 			this.Ini.Add( IniTestData );
 			this.Ini.Add( IniTestData );
@@ -102,7 +104,7 @@ data33   =   3
 			this.Ini.Add( IniTestData );
 		}
 
-		[Fact]
+		[Test]
 		public async Task Test_load_from_string_and_save_temp() {
 			this.Test_load_from_string();
 
