@@ -1,7 +1,7 @@
 ﻿namespace TestBigDecimal {
 
 	using System.Numerics;
-	using ExtendedNumerics;
+	using Librainian.Maths.Bigger;
 	using NUnit.Framework;
 
 	[TestFixture]

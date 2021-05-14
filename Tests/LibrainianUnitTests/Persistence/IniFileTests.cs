@@ -75,13 +75,13 @@ data33   =   3
 
 		private static IniFile? Ini1;
 
-		private static IniFile Ini2;
+		private static IniFile? Ini2;
 
-		private static IniFile Ini3;
+		private static IniFile? Ini3;
 
 		[Test]
 		public async Task test_load_from_file() {
-			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
+			var cancellationTokenSource = new CancellationTokenSource( Minutes.One );
 
 			//prepare file
 			var config = Document.GetTempDocument( "config" );
@@ -100,7 +100,7 @@ data33   =   3
 
 		[Test]
 		public static void test_load_from_string() {
-			var cancellationTokenSource = new CancellationTokenSource( Seconds.Seven );
+			var cancellationTokenSource = new CancellationTokenSource( Minutes.One );
 
 			Ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
 			var temp = Document.GetTempDocument( "config" );

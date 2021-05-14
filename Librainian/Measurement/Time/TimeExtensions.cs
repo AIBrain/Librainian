@@ -36,10 +36,10 @@ namespace Librainian.Measurement.Time {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using ExtendedNumerics;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
+	using Maths.Bigger;
 	using Parsing;
 	using PooledAwait;
 

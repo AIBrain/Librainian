@@ -32,8 +32,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using ExtendedNumerics;
 	using JetBrains.Annotations;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	// return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );

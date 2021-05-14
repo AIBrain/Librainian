@@ -53,7 +53,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) =>
+		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) =>
 			throw new NotImplementedException( "This stream doesn't support reading." );
 
 		public override void Flush() { }

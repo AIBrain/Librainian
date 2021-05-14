@@ -269,6 +269,11 @@ namespace Librainian.OperatingSystem {
 				$"Finding {fullname}...".Info();
 			}
 
+			var document = new Document( fullname );
+			if ( document.ContainingingFolder() is Folder folder ) {
+				return folder;
+			}
+
 			var mainFolder = new Folder( fullname );
 
 			if ( mainFolder.GetExists() ) {

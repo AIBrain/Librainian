@@ -37,7 +37,7 @@ namespace Librainian.Extensions {
 		public static Boolean HasValue( [CanBeNull] this String? input ) => !String.IsNullOrEmpty( input );
 
 		[CanBeNull]
-		public static String HtmlDecode( [CanBeNull] this String? input ) => WebUtility.HtmlDecode( input );
+		public static String? HtmlDecode( [CanBeNull] this String? input ) => WebUtility.HtmlDecode( input );
 
 		[CanBeNull]
 		public static String HtmlEncode( [NotNull] this String input ) => WebUtility.HtmlEncode( input );

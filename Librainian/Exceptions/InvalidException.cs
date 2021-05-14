@@ -23,40 +23,21 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UnknownException.cs" last touched on 2021-04-25 at 6:15 AM by Protiguous.
+// File "InvalidException.cs" last touched on 2021-05-14 at 6:27 AM by Protiguous.
 
 namespace Librainian.Exceptions {
 
 	using System;
-	using JetBrains.Annotations;
+	using System.Runtime.Serialization;
+	using Logging;
 
-	/// <inheritdoc />
-	/// <summary>
-	///     <para>Something should not have happened, but it did.</para>
-	/// </summary>
-	[Serializable]
-	public class UnknownException : Exception {
+	public class InvalidException : Exception {
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		public UnknownException() { }
+		protected InvalidException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		public UnknownException( [CanBeNull] String? message ) : base( message ) { }
-
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="innerException"></param>
-		public UnknownException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+		public InvalidException( String? additionalInfo = null ) {
+			$"Something 'invalid' happenned. {additionalInfo}".Break();
+		}
 
 	}
 

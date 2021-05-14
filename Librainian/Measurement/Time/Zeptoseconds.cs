@@ -28,8 +28,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using ExtendedNumerics;
 	using Extensions;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>

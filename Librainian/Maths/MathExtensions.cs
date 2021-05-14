@@ -1,15 +1,15 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "MathExtensions.cs" last touched on 2021-04-25 at 10:23 AM by Protiguous.
+// 
+// File "MathExtensions.cs" last touched on 2021-04-25 at 7:59 AM by Protiguous.
 
 #nullable enable
 
@@ -38,22 +38,23 @@ namespace Librainian.Maths {
 	using System.Numerics;
 	using System.Runtime.CompilerServices;
 	using System.Text;
+	using Bigger;
 	using Collections.Extensions;
-	using ExtendedNumerics;
 	using JetBrains.Annotations;
 	using Numbers;
 
 	public static class MathExtensions {
 
 		/// <summary>
+		///     Fake!
+		/// </summary>
+		public const Decimal EpsilonBigDecimal =
+			0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
+
+		/// <summary>
 		///     <para>Return the smallest possible value above <see cref="decimal.Zero" /> for a <see cref="decimal" />.</para>
 		/// </summary>
 		public const Decimal EpsilonDecimal = 0.0000000000000000000000000001m;
-
-		/// <summary>
-		/// Fake!
-		/// </summary>
-		public const Decimal EpsilonBigDecimal = 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
 
 		// you may want to pass this and use generics to allow more or less bits
 		/// <summary>
@@ -119,6 +120,8 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		[Pure]
 		public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
+
+		public static BigDecimal BigEpsilon( this BigDecimal _ ) => EpsilonBigDecimal;
 
 		/// <summary>
 		///     Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.
@@ -318,11 +321,9 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		[Pure]
 		public static Decimal Epsilon( this Decimal _ ) => EpsilonDecimal;
-		public static BigDecimal BigEpsilon( this BigDecimal _ ) => EpsilonBigDecimal;
 
 		[Pure]
 		public static Double Erf( this Double x ) {
-
 			// constants
 			const Double a1 = 0.254829592;
 			const Double a2 = -0.284496736;
@@ -680,7 +681,6 @@ namespace Librainian.Maths {
 		[Pure]
 		public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
-
 		/// <summary>
 		///     <para>
 		///         If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return
@@ -806,17 +806,19 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double LogFactorial( this Int32 n ) {
-			if ( n < 0 ) {
-				throw new ArgumentOutOfRangeException();
+			switch ( n ) {
+				case < 0: {
+					throw new ArgumentOutOfRangeException( nameof( n ) );
+				}
+				case <= 254: {
+					return MathConstants.Logfactorialtable[ n ];
+				}
+				default: {
+					var x = n + 1d;
+
+					return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
+				}
 			}
-
-			if ( n <= 254 ) {
-				return MathConstants.Logfactorialtable[ n ];
-			}
-
-			var x = n + 1d;
-
-			return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
 		}
 
 		/// <summary>
@@ -832,7 +834,6 @@ namespace Librainian.Maths {
 			}
 
 			if ( Math.Abs( x ) > 1e-4 ) {
-
 				// x is large enough that the obvious evaluation is OK
 				return Math.Log( 1.0 + x );
 			}
@@ -974,7 +975,6 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double Phi( this Double x ) {
-
 			// constants
 			const Double a1 = 0.254829592;
 			const Double a2 = -0.284496736;
@@ -1354,6 +1354,7 @@ namespace Librainian.Maths {
 		public static Int64 Truncate( this Double number ) => ( Int64 )number;
 
 		/*
+
 		/// <summary>
 		///     <para>Attempt to parse a fraction from a String.</para>
 		/// </summary>
@@ -1456,5 +1457,7 @@ namespace Librainian.Maths {
 
 		[Pure]
 		public static Int64 Twice( this Int64 number ) => number * 2L;
+
 	}
+
 }

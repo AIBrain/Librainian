@@ -29,8 +29,8 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using System.Runtime.CompilerServices;
-	using ExtendedNumerics;
 	using JetBrains.Annotations;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>

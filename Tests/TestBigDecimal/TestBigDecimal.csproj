@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Addons\BigDecimal\BigDecimal.csproj" />
+	  <ProjectReference Include="..\..\Librainian\Librainian.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

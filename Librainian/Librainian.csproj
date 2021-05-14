@@ -100,9 +100,6 @@
 	<ItemGroup>
 	  <Folder Include="FileSystem\Pri.LongPath\" />
 	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\Addons\BigDecimal\BigDecimal.csproj" />
-	</ItemGroup>
 	<ProjectExtensions>
 		<VisualStudio>
 			<UserProperties BuildVersion_StartDate="2000/1/1" />

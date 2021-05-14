@@ -2,7 +2,7 @@
 
 	using System;
 	using System.Diagnostics;
-	using ExtendedNumerics;
+	using Librainian.Maths.Bigger;
 	using NUnit.Framework;
 
 	[TestFixture]

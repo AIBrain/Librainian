@@ -26,9 +26,9 @@ namespace Librainian.Measurement.Physics {
 
 	using System;
 	using System.Diagnostics;
-	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
+	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />

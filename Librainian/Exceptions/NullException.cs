@@ -23,40 +23,27 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UnknownException.cs" last touched on 2021-04-25 at 6:15 AM by Protiguous.
+// File "NullException.cs" last touched on 2021-05-14 at 7:36 AM by Protiguous.
 
 namespace Librainian.Exceptions {
 
 	using System;
+	using System.Runtime.Serialization;
 	using JetBrains.Annotations;
+	using Logging;
+	using Parsing;
 
-	/// <inheritdoc />
-	/// <summary>
-	///     <para>Something should not have happened, but it did.</para>
-	/// </summary>
-	[Serializable]
-	public class UnknownException : Exception {
+	public class NullException : Exception {
 
-		/// <inheritdoc />
+		protected NullException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+
 		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
+		///     Don't pass in a null nameof(). But also don't throw an exception if they do.
 		/// </summary>
-		public UnknownException() { }
-
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		public UnknownException( [CanBeNull] String? message ) : base( message ) { }
-
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="innerException"></param>
-		public UnknownException( [CanBeNull] String? message, [CanBeNull] Exception innerException ) : base( message, innerException ) { }
+		/// <param name="nameOfObject"></param>
+		public NullException( [NotNull] String? nameOfObject ) {
+			$"{Errors.SomethingNullHappened}. Null {nameOfObject ?? Symbols.Null}.".Break();
+		}
 
 	}
 

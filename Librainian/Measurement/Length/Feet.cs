@@ -30,8 +30,8 @@ namespace Librainian.Measurement.Length {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using ExtendedNumerics;
 	using JetBrains.Annotations;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>
