@@ -21,8 +21,8 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageLicenseFile>P:\Programming\Projects 2021\Librainian\License.md</PackageLicenseFile>
-		<AssemblyVersion>2020.9.7.4</AssemblyVersion>
-		<FileVersion>2020.9.7.4</FileVersion>
+		<AssemblyVersion>2021.5.14.9</AssemblyVersion>
+		<FileVersion>2021.5.14.9</FileVersion>
 		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
 		<LangVersion>latest</LangVersion>
 		<AnalysisLevel>latest</AnalysisLevel>

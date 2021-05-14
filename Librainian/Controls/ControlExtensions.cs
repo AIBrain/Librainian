@@ -642,7 +642,11 @@ namespace Librainian.Controls {
 		/// <param name="value">        </param>
 		/// <param name="redraw"></param>
 		public static void Text( [CanBeNull] this ToolStripItem? toolStripItem, [CanBeNull] String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
-			toolStripItem?.GetCurrentParent()?.InvokeAction( Action );
+			if ( toolStripItem?.IsDisposed != false ) {
+				return;
+			}
+
+			toolStripItem.GetCurrentParent()?.InvokeAction( Action );
 
 			void Action() {
 				toolStripItem.Text = value;
