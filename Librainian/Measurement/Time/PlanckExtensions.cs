@@ -59,11 +59,10 @@ namespace Librainian.Measurement.Time {
 		/// <param name="planckTimes"></param>
 		/// <returns></returns>
 		public static BigInteger PullPlancks( this BigDecimal constant, ref BigInteger planckTimes ) {
-			var reduce = ( BigInteger )constant;
+			var times = BigDecimal.Divide( planckTimes, constant );
+			planckTimes -= BigInteger.Multiply( ( BigInteger )times, ( BigInteger )constant );
 
-			planckTimes -= reduce;
-
-			return reduce;
+			return ( BigInteger )times;
 		}
 
 		/*

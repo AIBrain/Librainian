@@ -1006,7 +1006,7 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="value"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean TryRemove<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [NotNull] TValue value ) {
+		public static Boolean TryRemove<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [NotNull] TValue value )  where TKey:notnull{
 			if ( dictionary is null ) {
 				throw new ArgumentNullException( nameof( dictionary ) );
 			}
@@ -1067,7 +1067,7 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="dictionary"></param>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
-		public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [CanBeNull] TValue value ) {
+		public static void Update<TKey, TValue>( [NotNull] this ConcurrentDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [CanBeNull] TValue value ) where TKey:notnull{
 			if ( dictionary is null ) {
 				throw new ArgumentNullException( nameof( dictionary ) );
 			}

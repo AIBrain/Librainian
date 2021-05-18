@@ -30,15 +30,33 @@ namespace TestBigDecimal {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using FluentAssertions;
+	using Librainian;
 	using Librainian.Maths.Bigger;
 	using NUnit.Framework;
 
 	[TestFixture]
 	public class TestBigDecimalFunctions {
 
+		//public TestContext? TestContext { get; set; }
+
+		[OneTimeSetUp]
+		public static void Initialize( ) {
+			1.Nop();
+			1.Nop();
+		}
+
+		[OneTimeTearDown]
+		public static void DeInitialize() {
+			1.Nop();
+			1.Nop();
+		}
+
 		[Test]
 		public void TestGCD() {
 			var expectedResult = BigDecimal.Parse( "10" );
+
+			TestContext.WriteLine( nameof( this.TestGCD ) );
 
 			BigDecimal result = BigIntegerHelper.GCD( new BigInteger[] {
 				20, 30, 210, 310, 360, 5040, 720720
@@ -49,7 +67,7 @@ namespace TestBigDecimal {
 
 		[Test]
 		public void TestGetFractionalPart() {
-			var expectedResult = new BigDecimal( BigInteger.Parse( "9150201282920942551781108927727789384397020382853" ), -49 );
+			var expectedResult = new BigDecimal( BigInteger.Parse(                                "9150201282920942551781108927727789384397020382853" ), -49 );
 			var value = new BigDecimal( BigInteger.Parse( "22685077023948547418271375393606809233149150201282920942551781108927727789384397020382853" ), -49 );
 
 			var result = value.GetFractionalPart();
@@ -104,10 +122,15 @@ namespace TestBigDecimal {
 			Assert.AreEqual( 1, positive1.Sign );
 			Assert.AreEqual( 1, positive2.Sign );
 
-			Assert.AreEqual( BigInteger.MinusOne, negative1.Sign );
-			Assert.AreEqual( BigInteger.MinusOne, negative2.Sign );
-			Assert.AreEqual( BigInteger.MinusOne, negative3.Sign );
-			Assert.AreEqual( BigInteger.MinusOne, negative4.Sign );
+			negative1.Sign.Should().Be( ( SByte )BigDecimal.MinusOne );
+			negative2.Sign.Should().Be( ( SByte )BigDecimal.MinusOne );
+			negative3.Sign.Should().Be( ( SByte )BigDecimal.MinusOne );
+			negative4.Sign.Should().Be( ( SByte )BigDecimal.MinusOne );
+
+			//Assert.AreEqual( -1, negative1.Sign );
+			//Assert.AreSame( -1, negative2.Sign );
+			//Assert.AreSame( -1, negative3.Sign );
+			//Assert.AreSame( -1, negative4.Sign );
 		}
 
 		[Test]
@@ -184,13 +207,13 @@ namespace TestBigDecimal {
 
 			Assert.AreEqual( BigInteger.One, one );
 			Assert.AreEqual( BigInteger.Zero, zero );
-			Assert.AreEqual( 2, two );
-			Assert.AreEqual( 3, three );
-			Assert.AreEqual( 4, four );
-			Assert.AreEqual( 6, six );
-			Assert.AreEqual( -8, negEight );
-			Assert.AreEqual( -9, negNine );
-			Assert.AreEqual( -10, negTen );
+			Assert.AreEqual( new BigInteger(2), two );
+			Assert.AreEqual( new BigInteger( 3 ), three );
+			Assert.AreEqual( new BigInteger( 4 ), four );
+			Assert.AreEqual( new BigInteger( 6 ), six );
+			Assert.AreEqual( new BigInteger( -8 ), negEight );
+			Assert.AreEqual( new BigInteger( -9 ), negNine );
+			Assert.AreEqual( new BigInteger( -10 ), negTen );
 		}
 
 		[Test]

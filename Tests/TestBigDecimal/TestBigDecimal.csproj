@@ -19,6 +19,7 @@
 	<ItemGroup>
 		<PackageReference Include="FluentAssertions" Version="5.10.3" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+		<PackageReference Include="Microsoft.TestPlatform" Version="16.9.4" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
 	</ItemGroup>
 

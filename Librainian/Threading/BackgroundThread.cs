@@ -52,7 +52,7 @@ namespace Librainian.Threading {
 		private VolatileBoolean RunningAction { get; set; }
 
 		[NotNull]
-		private ManualResetEventSlim signal { get; } = new( false );
+		private AutoResetEvent signal { get; } = new( true );
 
 		[NotNull]
 		private Thread thread { get; }
@@ -67,7 +67,7 @@ namespace Librainian.Threading {
 
 			this.thread = new Thread( () => {
 				while ( !this.cancellationToken.IsCancellationRequested ) {
-					if ( this.signal.Wait( Seconds.One ) ) {
+					if ( this.signal.WaitOne( Seconds.One ) ) {
 						try {
 							this.RunningAction = true;
 							try {

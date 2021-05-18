@@ -40,7 +40,14 @@ namespace Librainian.Maths.Bigger {
 	///     Based on code by Jan Christoph Bernack (http://stackoverflow.com/a/4524254 or jc.bernack at googlemail.com)
 	///     Modified and extended by Adam White https://csharpcodewhisperer.blogspot.com
 	/// </summary>
-	public record BigDecimal : IComparable, IComparable<BigDecimal>, ICloneable<BigDecimal> {
+	public readonly struct BigDecimal : IComparable, IComparable<BigDecimal>, ICloneable<BigDecimal> {
+
+		public Boolean Equals( BigDecimal other ) => this.Exponent == other.Exponent && this.Mantissa.Equals( other.Mantissa );
+		public static Boolean Equals( BigDecimal left,BigDecimal right ) => left.Exponent == right.Exponent && left.Mantissa.Equals( right.Mantissa );
+
+		public override Boolean Equals( Object? obj ) => obj is BigDecimal other && this.Equals( other );
+
+		public override Int32 GetHashCode() => HashCode.Combine( this.Exponent, this.Mantissa );
 
 		private const String NullString = "(␀)";
 
@@ -139,7 +146,7 @@ namespace Librainian.Maths.Bigger {
 		/// </summary>
 		public Boolean IsZero => this.Mantissa.IsZero;
 
-		public Int32 Sign => this.GetSign();
+		public SByte Sign => this.GetSign();
 
 		public BigDecimal Duplicate() => new(this.Mantissa, this.Exponent);
 
@@ -220,7 +227,7 @@ namespace Librainian.Maths.Bigger {
 
 				result = result.TrimEnd( '0' );
 				if ( result.Last().ToString() == formatProvider.NumberDecimalSeparator ) {
-					result = result.Substring( 0, result.Length - 1 );
+					result = result[ ..^1 ];
 				}
 			}
 			else {
@@ -239,7 +246,7 @@ namespace Librainian.Maths.Bigger {
 			return result;
 		}
 
-		private Int32 GetSign() {
+		private SByte GetSign() {
 			if ( this.Mantissa.IsZero ) {
 				return 0;
 			}
@@ -255,11 +262,14 @@ namespace Librainian.Maths.Bigger {
 			var mantissa = this.Mantissa.ToString();
 			var length = mantissa.Length + this.Exponent;
 			if ( length == 0 ) {
-				return Int32.TryParse( mantissa[ 0 ].ToString(), out var tenthsPlace ) ? tenthsPlace < 5 ? 0 :
-					1 : throw new InvalidOperationException( "Error parsing mantissa." );
+				if ( Int32.TryParse( mantissa[ 0 ].ToString(), out var tenthsPlace ) ) {
+					return tenthsPlace < 5 ? ( SByte )0 : ( SByte )1;
+				}
+
+				throw new InvalidOperationException( "Error parsing mantissa." );
 			}
 
-			return length > 0 ? 1 : 0;
+			return length > 0 ? ( SByte )1 : ( SByte )0;
 		}
 
 		/// <summary>
@@ -295,7 +305,7 @@ namespace Librainian.Maths.Bigger {
 				throw new DivideByZeroException();
 			}
 
-			if ( Abs( dividend ).Equals( 1 ) ) {
+			if ( Abs( dividend ).Equals( One ) ) {
 				var doubleDivisor = Double.Parse( divisor.ToString() );
 				doubleDivisor = 1d / doubleDivisor;
 
@@ -492,7 +502,7 @@ namespace Librainian.Maths.Bigger {
 
 		public static BigDecimal operator --( BigDecimal value ) => Subtract( value, 1 );
 
-		//public static Boolean operator !=( BigDecimal left, BigDecimal right ) => left.Exponent != right.Exponent || left.Mantissa != right.Mantissa;
+		public static Boolean operator !=( BigDecimal left, BigDecimal right ) => left.Exponent != right.Exponent || left.Mantissa != right.Mantissa;
 
 		public static BigDecimal operator *( BigDecimal left, BigDecimal right ) => Multiply( left, right );
 
@@ -510,7 +520,7 @@ namespace Librainian.Maths.Bigger {
 		public static Boolean operator <=( BigDecimal left, BigDecimal right ) =>
 			left.Exponent > right.Exponent ? AlignExponent( left, right ) <= right.Mantissa : left.Mantissa <= AlignExponent( right, left );
 
-		//public static Boolean operator ==( BigDecimal left, BigDecimal right ) => left.Exponent == right.Exponent && left.Mantissa == right.Mantissa;
+		public static Boolean operator ==( BigDecimal left, BigDecimal right ) => left.Exponent == right.Exponent && left.Mantissa == right.Mantissa;
 
 		public static Boolean operator >( BigDecimal left, BigDecimal right ) =>
 			left.Exponent > right.Exponent ? AlignExponent( left, right ) > right.Mantissa : left.Mantissa > AlignExponent( right, left );
@@ -534,8 +544,7 @@ namespace Librainian.Maths.Bigger {
 		/// <exception cref="ArgumentNullException"></exception>
 		public static BigDecimal Parse( String input ) {
 			if ( String.IsNullOrWhiteSpace( input ) ) {
-				//return default( BigDecimal? );
-				return Zero;
+				return new BigInteger( 0 );
 			}
 
 			var exponent = 0;
@@ -680,34 +689,45 @@ namespace Librainian.Maths.Bigger {
 		///     Gets the fractional part of the BigDecimal, setting everything left of the decimal point to zero.
 		/// </summary>
 		public BigDecimal GetFractionalPart() {
-			if ( this == null ) {
-				throw new TypeInitializationException( nameof( BigDecimal ), new NullReferenceException() );
-			}
-
+			var resultString = String.Empty;
 			var decimalString = this.ToString();
-			var valueSplit = decimalString.Split( '.' );
+			var valueSplit = decimalString.Split( '.', StringSplitOptions.None );
 
-			if ( valueSplit.Length == 0 ) {
-				return Zero;
+			switch ( valueSplit.Length ) {
+				case 1:
+					return Zero;
+				case 2:
+					resultString = valueSplit[ 1 ];
+					break;
 			}
 
-			if ( valueSplit.Length == 1 ) {
-				return Zero;
-			}
+			var newMantessa = BigInteger.Parse( resultString.TrimStart( '0' ) );
+			var result = new BigDecimal( newMantessa, 0 - resultString.Length );
+			return result;
 
-			if ( valueSplit.Length == 2 ) {
-				var resultString = valueSplit[ 1 ];
-				var part = Parse( "0." + resultString );
-				return new BigDecimal( part.Mantissa );
-			}
+			//if ( this == null ) {
+			//	throw new TypeInitializationException( nameof( BigDecimal ), new NullReferenceException() );
+			//}
 
-			//var newMantessa = BigInteger.Parse( resultString.TrimStart( '0' ) );
-			//var result = new BigDecimal( newMantessa, 0 - resultString.Length );
-			//return result;
-			throw new InvalidOperationException( $"bad logic parsing in {nameof( this.GetFractionalPart )}." );
+			//var valueSplit = this.ToString().Split( '.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+
+			//if ( valueSplit.Length == 0 || valueSplit.Length == 1 ) {
+			//	return Zero;
+			//}
+			//else if ( valueSplit.Length == 2 ) {
+			//	var resultString = valueSplit[ 1 ];
+			//	var part = Parse( "0." + resultString );
+			//	return new BigDecimal( part.Mantissa );
+			//}
+			//else {
+			//	//var newMantessa = BigInteger.Parse( resultString.TrimStart( '0' ) );
+			//	//var result = new BigDecimal( newMantessa, 0 - resultString.Length );
+			//	//return result;
+			//	throw new InvalidOperationException( $"bad logic parsing in {nameof( this.GetFractionalPart )}." );
+			//}
 		}
 
-		public override Int32 GetHashCode() => ( this.Mantissa, this.Exponent ).GetHashCode();
+		//public override Int32 GetHashCode() => ( this.Mantissa, this.Exponent ).GetHashCode();
 
 		/// <summary>
 		///     Returns the whole number integer part of the BigDecimal, dropping anything right of the decimal point. Essentially
@@ -718,7 +738,7 @@ namespace Librainian.Maths.Bigger {
 			var decimalString = ToString( this.Mantissa, this.Exponent, BigDecimalNumberFormatInfo );
 			var valueSplit = decimalString.Split( new[] {
 				BigDecimalNumberFormatInfo.NumberDecimalSeparator
-			}, StringSplitOptions.RemoveEmptyEntries );
+			}, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 			if ( valueSplit.Length > 0 ) {
 				resultString = valueSplit[ 0 ];
 			}
@@ -730,8 +750,17 @@ namespace Librainian.Maths.Bigger {
 
 		public String ToString( IFormatProvider provider ) => ToString( this.Mantissa, this.Exponent, provider );
 
+		public Int32 CompareTo( BigDecimal other ) {
+			var exponentComparison = this.Exponent.CompareTo( other.Exponent );
+			if ( exponentComparison != 0 ) {
+				return exponentComparison;
+			}
+
+			return this.Mantissa.CompareTo( other.Mantissa );
+		}
+
 	}
 
-	public static class BigDecimalExtensions { }
+	
 
 }

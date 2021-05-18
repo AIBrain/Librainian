@@ -692,7 +692,26 @@ namespace Librainian.Maths {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
-		public static BigDecimal IfLessThanZeroThenZero( [NotNull] this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
+		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
+
+		/// <summary>
+		///     <para>
+		///         If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return
+		///         <see cref="Decimal.Zero" />.
+		///     </para>
+		///     <para>Otherwise return the <paramref name="number" />.</para>
+		/// </summary>
+		/// <param name="number"></param>
+		/// <returns></returns>
+		[DebuggerStepThrough]
+		[Pure]
+		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal? number ) {
+			if ( number <= BigDecimal.Zero ) {
+				return BigDecimal.Zero;
+			}
+
+			return ( BigDecimal )number;
+		}
 
 		[DebuggerStepThrough]
 		[Pure]

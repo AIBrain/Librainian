@@ -48,8 +48,8 @@ namespace Librainian.Interfaces {
 		/// <summary>Guid assigned on message creation.</summary>
 		Guid ID { get; }
 
-		[CanBeNull]
-		String? Key { get; set; }
+		//[CanBeNull]
+		//String? Key { get; set; }
 
 		Boolean Processed { get; set; }
 

@@ -59,7 +59,7 @@ namespace LibrainianUnitTests.Parsing {
 
 		[Test]
 		public void ConfirmStringEmptyStringNotLikeNull() {
-			const String left = default( String? );
+			const String? left = default( String? );
 			var right = String.Empty;
 			right.Like( left ).Should().BeFalse();
 		}

@@ -83,17 +83,6 @@
 		}
 
 		[Test]
-		public void TestParse002() {
-			var result1 = BigDecimal.Parse( "" );
-			var result2 = BigDecimal.Parse( "0" );
-			var result3 = BigDecimal.Parse( "-0" );
-
-			Assert.AreEqual( result1, null );
-			Assert.AreEqual( result2, 0 );
-			Assert.AreEqual( result3, -0 );
-		}
-
-		[Test]
 		public void TestParse003() {
 			const String expected1 = "-123456789";
 			const String expected2 = "123456789";
@@ -114,11 +103,12 @@
 
 		[Test]
 		public void TestParse004() {
-			var result1 = BigDecimal.Parse( "0.125" );
-			var result2 = BigDecimal.Parse( "-0.0625" );
+			var a = BigDecimal.Parse( "0.125" );
+			var b = BigDecimal.Parse( "-1.000" );
+			var expected = BigDecimal.Parse( "-1.125" );
+			var test = b - a;
 
-			Assert.AreEqual( result1, 0.125 );
-			Assert.AreEqual( result2, -0.0625 );
+			Assert.AreEqual( test, expected );
 		}
 	}
 }

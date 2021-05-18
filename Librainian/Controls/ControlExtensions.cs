@@ -45,6 +45,7 @@ namespace Librainian.Controls {
 	using JetBrains.Annotations;
 	using Maths;
 	using Measurement.Time;
+	using PooledAwait;
 	using Threading;
 	using Color = System.Drawing.Color;
 
@@ -157,7 +158,9 @@ namespace Librainian.Controls {
 		/// <param name="delay">  </param>
 		/// <returns></returns>
 		/// <see cref="Push" />
-		public static void Click( [NotNull] this Button control, TimeSpan? delay = null ) => control.Push( delay );
+		public static void Click( [NotNull] this Button control, TimeSpan? delay = null ) {
+			var _ = control.Push( delay );	//swallow the async
+		}
 
 		/// <summary>
 		///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the
@@ -508,10 +511,11 @@ namespace Librainian.Controls {
 		/// <param name="delay">     </param>
 		/// <param name="afterClick"></param>
 		/// <returns></returns>
-		public static async ValueTask Push( [CanBeNull] this Button? control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
+		public static async FireAndForget Push( [CanBeNull] this Button? control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
 			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
 
 			control.InvokeAction( control!.PerformClick, RefreshOrInvalidate.Neither );
+			afterClick?.Invoke();
 		}
 
 		/// <summary>

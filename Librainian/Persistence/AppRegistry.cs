@@ -76,39 +76,28 @@ namespace Librainian.Persistence {
 		///     Registry key for the current user;
 		/// </summary>
 		[NotNull]
-		public static RegistryKey TheUser { get; } = Registry.CurrentUser ?? throw new InvalidOperationException();
+		public static RegistryKey TheUser { get; } = Registry.CurrentUser ?? throw new NullException(nameof(TheUser));
 
 		static AppRegistry() {
 			if ( TheUser is null ) {
-				throw new ArgumentEmptyException( $"Registry folder {nameof( Registry.CurrentUser )} is null!" );
+				throw new NullException( nameof( TheUser ) );
 			}
 
-			Software = TheUser.CreateSubKey( nameof( Software ), true ) ?? throw new InvalidOperationException();
-
-			if ( Software is null ) {
-				throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Software )} is null!" );
-			}
+			Software = TheUser.CreateSubKey( nameof( Software ), true ) ?? throw new NullException( nameof( Software ) );
 
 			var compName = Application.CompanyName.Trimmed();
 			if ( String.IsNullOrEmpty( compName ) ) {
-				throw new InvalidOperationException();
+				throw new NullException( nameof( Application.CompanyName ) );
 			}
-			TheCompany = Software.CreateSubKey( compName.Replace( "&", ParsingConstants.Strings.Singlespace ).Trim(), true ) ?? throw new InvalidOperationException();
 
-			if ( TheCompany is null ) {
-				throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.CompanyName )} is null!" );
-			}
+			TheCompany = Software.CreateSubKey( compName.Replace( "&", ParsingConstants.Strings.Singlespace ).Trim(), true ) ?? throw new NullException( nameof( TheCompany ) );
 
 			var product = Application.ProductName.Trimmed();
-
 			if ( String.IsNullOrEmpty( product ) ) {
-				throw new InvalidOperationException();
+				throw new NullException( nameof( Application.ProductName ) );
 			}
-			TheApplication = TheCompany.CreateSubKey( product, true ) ?? throw new InvalidOperationException();
 
-			if ( TheApplication is null ) {
-				throw new ArgumentEmptyException( $"Application {nameof( AppRegistry )} folder {nameof( Application.ProductName )} is null!" );
-			}
+			TheApplication = TheCompany.CreateSubKey( product, true ) ?? throw new NullException( nameof( TheApplication ) );
 		}
 
 		/// <summary>
@@ -129,7 +118,11 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				return registryKey?.GetValue( key );
+				if ( registryKey is null ) {
+					throw new NullException( nameof( registryKey ) );
+				}
+
+				return registryKey.GetValue( key );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -161,8 +154,16 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
-				return subKey?.GetValue( key );
+				if ( registryKey == null ) {
+					throw new NullException( nameof( registryKey ) );
+				}
+
+				using var subKey = registryKey.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
+				if ( subKey is null ) {
+					throw new NullException( nameof( subKey ) );
+				}
+
+				return subKey.GetValue( key );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -189,7 +190,11 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				return registryKey?.GetValue( key )?.ToBooleanOrNull();
+				if ( registryKey is null ) {
+					throw new NullException( nameof( registryKey ) );
+				}
+
+				return registryKey.GetValue( key )?.ToBooleanOrNull();
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -221,8 +226,16 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
-				return subKey?.GetValue( key )?.ToBooleanOrNull();
+				if ( registryKey is null ) {
+					throw new NullException( nameof( registryKey ) );
+				}
+
+				using var subKey = registryKey.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
+				if ( subKey is null ) {
+					throw new NullException( nameof( subKey ) );
+				}
+
+				return subKey.GetValue( key )?.ToBooleanOrNull();
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -249,7 +262,11 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				return registryKey?.GetValue( key )?.ToByteOrNull();
+				if ( registryKey != null ) {
+					return registryKey.GetValue( key )?.ToByteOrNull();
+				}
+
+				throw new NullException( nameof( registryKey ) );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -281,8 +298,16 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
-				return subKey?.GetValue( key )?.ToByteOrNull();
+				if ( registryKey != null ) {
+					using var subKey = registryKey.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
+					if ( subKey != null ) {
+						return subKey.GetValue( key )?.ToByteOrNull();
+					}
+
+					throw new NullException( nameof( subKey ) );
+				}
+
+				throw new NullException( nameof( registryKey ) );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -309,7 +334,11 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				return registryKey?.GetValue( key )?.ToIntOrNull();
+				if ( registryKey != null ) {
+					return registryKey.GetValue( key )?.ToIntOrNull();
+				}
+
+				throw new NullException( nameof( registryKey ) );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -340,9 +369,17 @@ namespace Librainian.Persistence {
 			}
 
 			try {
-				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
-				return subKey?.GetValue( key )?.ToIntOrNull();
+				using var registryKey = TheApplication.OpenSubKey( folder );
+				if ( registryKey is null ) {
+					throw new NullException( nameof( registryKey ) );
+				}
+
+				using var subKey = registryKey.OpenSubKey( subkey );
+				if ( subKey == null ) {
+					throw new NullException( nameof( subKey ) );
+				}
+
+				return subKey.GetValue( key ).ToIntOrNull();
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -369,8 +406,13 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				if ( Int64.TryParse( registryKey?.GetValue( key )?.ToString(), out var result ) ) {
-					return result;
+				if ( registryKey != null ) {
+					if ( Int64.TryParse( registryKey.GetValue( key )?.ToString(), out var result ) ) {
+						return result;
+					}
+				}
+				else {
+					throw new NullException( nameof( registryKey ) );
 				}
 			}
 			catch ( Exception exception ) {
@@ -403,9 +445,19 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
-				if ( Int64.TryParse( subKey?.GetValue( key )?.ToString(), out var result ) ) {
-					return result;
+				if ( registryKey != null ) {
+					using var subKey = registryKey.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
+					if ( subKey != null ) {
+						if ( Int64.TryParse( subKey.GetValue( key )?.ToString(), out var result ) ) {
+							return result;
+						}
+					}
+					else {
+						throw new NullException( nameof( subKey ) );
+					}
+				}
+				else {
+					throw new NullException( nameof( registryKey ) );
 				}
 			}
 			catch ( Exception exception ) {
@@ -434,7 +486,11 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				return registryKey?.GetValue( key )?.ToStringOrNull();
+				if ( registryKey != null ) {
+					return registryKey.GetValue( key )?.ToStringOrNull();
+				}
+
+				throw new NullException( nameof( registryKey ) );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -466,8 +522,16 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder, RegistryKeyPermissionCheck.ReadSubTree );
-				using var subKey = registryKey?.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
-				return subKey?.GetValue( key )?.ToStringOrNull();
+				if ( registryKey != null ) {
+					using var subKey = registryKey.OpenSubKey( subkey, RegistryKeyPermissionCheck.ReadSubTree );
+					if ( subKey != null ) {
+						return subKey.GetValue( key )?.ToStringOrNull();
+					}
+
+					throw new NullException( nameof( subKey ) );
+				}
+
+				throw new NullException( nameof( subkey ) );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
