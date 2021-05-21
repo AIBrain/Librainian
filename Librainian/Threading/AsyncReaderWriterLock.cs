@@ -70,7 +70,7 @@ namespace Librainian.Threading {
 		}
 
 		public void ReaderRelease() {
-			TaskCompletionSource<Releaser> toWake = null;
+			TaskCompletionSource<Releaser>? toWake = null;
 
 			lock ( this._waitingWriters ) {
 				--this._status;
@@ -101,7 +101,7 @@ namespace Librainian.Threading {
 		}
 
 		public void WriterRelease() {
-			TaskCompletionSource<Releaser> toWake = null;
+			TaskCompletionSource<Releaser>? toWake = null;
 			var toWakeIsWriter = false;
 
 			lock ( this._waitingWriters ) {

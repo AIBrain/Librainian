@@ -189,8 +189,24 @@ namespace Librainian.Threading {
 			return t.GetAwaiter();
 		}
 
+		/// <summary>
+		/// Asynchronously wait for all <paramref name="tasks"/>.
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
+		public static TaskAwaiter GetAwaiter( this Task[] tasks ) => Task.WhenAll( tasks ).GetAwaiter();
+
+		/// <summary>
+		/// Asynchronously wait for all <paramref name="tasks"/>.
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this IEnumerable<Task> tasks ) => Task.WhenAll( tasks ).GetAwaiter();
 
+		/// <summary>
+		/// Asynchronously wait a <see cref="TimeSpan"/>.
+		/// </summary>
+		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
 
 		public static Int32 GetMaximumActiveWorkerThreads() {

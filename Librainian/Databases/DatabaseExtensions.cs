@@ -1,15 +1,15 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "DatabaseExtensions.cs" last touched on 2021-04-25 at 8:32 AM by Protiguous.
+// 
+// File "DatabaseExtensions.cs" last touched on 2021-04-25 at 6:51 AM by Protiguous.
 
 #nullable enable
 
@@ -98,16 +98,17 @@ namespace Librainian.Databases {
 		public static async PooledValueTask<T?> AdhocAsync<T>(
 			[NotNull] this SqlConnectionStringBuilder builderToTest,
 			[NotNull] String query,
-			CancellationToken cancellationToken
+			CancellationToken connectCancellationToken,
+			CancellationToken executeCancellationToken
 		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken, cancellationToken );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, connectCancellationToken, executeCancellationToken );
 
-				return await db.ExecuteScalarAsync<T>( query, CommandType.Text ).ConfigureAwait( false );
+				return await db.ExecuteScalarAsync<T>( query, executeCancellationToken ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -298,7 +299,6 @@ namespace Librainian.Databases {
 			var namespaces = new List<String>();
 
 			try {
-
 				// Enumerate all WMI instances of __namespace WMI class.
 				var objectGetOptions = new ObjectGetOptions {
 					Timeout = Seconds.Ten
@@ -410,66 +410,52 @@ namespace Librainian.Databases {
 			return command;
 		}
 
-		public static Boolean PossibleLossOfConnection( [CanBeNull] this InvalidOperationException exception ) {
+		public static Boolean AttemptQueryAgain<T>( [NotNull] this T exception ) where T:Exception{
+			if ( exception is DbException {IsTransient: true} ) {
+				return true;
+			}
 
-			// ugh.
+			if ( exception is SqlException {IsTransient: true} ) {
+				return true;
+			}
 
-			if ( exception is null ) {
+			if ( exception is TaskCanceledException ) {
 				return false;
 			}
 
-			return exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase )
-				|| exception.HResult == -2146233079;
-		}
-
-		public static Boolean PossibleTimeout( [NotNull] this DbException exception ) {
-
-			// ugh.
-
-			if ( exception is null ) {
-				throw new ArgumentNullException( nameof( exception ) );
-			}
-
 			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
-				   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
-				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase );
+			       exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
+			       exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
+			       exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
 		}
 
-		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString(
-			[NotNull] String connectionString,
-
-			//Credentials getCredentials,
-			CancellationToken cancellationToken
-		) {
+		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString( [NotNull] String connectionString, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 			}
 
-			try {
-				var builder = new SqlConnectionStringBuilder( connectionString );
+			var builder = new SqlConnectionStringBuilder( connectionString );
 
-				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( false );
+			TryAgain:
+			try {
+				var sqlServer = await builder.TryGetResponse( cancellationToken, cancellationToken ).ConfigureAwait( false );
 
 				if ( sqlServer?.Status.IsGood() == true ) {
 					if ( sqlServer.ConnectionStringBuilder != null ) {
-						return (sqlServer.Status, sqlServer.ConnectionStringBuilder.ConnectionString);
+						return ( sqlServer.Status, sqlServer.ConnectionStringBuilder.ConnectionString );
 					}
 				}
 			}
-			catch ( TaskCanceledException exception ) {
-				exception.Log();
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
 			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() ) {
+					await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
 				exception.Log();
 			}
 
-			return (Status.Failure, default( String? ));
+			return ( Status.Failure, default( String? ) );
 		}
 
 		/// <summary>
@@ -702,7 +688,7 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( parameterName ) );
 			}
 
-			return new( parameterName, sqlDbType, size );
+			return new(parameterName, sqlDbType, size);
 		}
 
 		/*
@@ -812,16 +798,21 @@ namespace Librainian.Databases {
 		///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
 		/// </summary>
 		/// <param name="test">             </param>
-		/// <param name="cancellationToken"></param>
+		/// <param name="connectCancellationToken"></param>
+		/// <param name="executeCancellationToken"></param>
 		/// <returns></returns>
 		[ItemCanBeNull]
-		public static async ValueTask<SqlServerInfo?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken cancellationToken ) {
+		public static async ValueTask<SqlServerInfo?> TryGetResponse(
+			[NotNull] this SqlConnectionStringBuilder test,
+			CancellationToken connectCancellationToken,
+			CancellationToken executeCancellationToken
+		) {
 			if ( test is null ) {
 				throw new ArgumentNullException( nameof( test ) );
 			}
 
 			try {
-				var version = await test.AdhocAsync<String>( "select @@version;", cancellationToken ).ConfigureAwait( false );
+				var version = await test.AdhocAsync<String>( "select @@version;", connectCancellationToken, executeCancellationToken ).ConfigureAwait( false );
 
 				if ( String.IsNullOrWhiteSpace( version ) ) {
 					$"Failed connecting to server {test.DataSource}.".Verbose();
@@ -829,7 +820,7 @@ namespace Librainian.Databases {
 					return default( SqlServerInfo? );
 				}
 
-				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", cancellationToken ).ConfigureAwait( false );
+				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", connectCancellationToken, executeCancellationToken ).ConfigureAwait( false );
 
 				if ( !getdate.HasValue ) {
 					$"Failed connecting to server {test.DataSource}.".Verbose();
@@ -847,15 +838,12 @@ namespace Librainian.Databases {
 					var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
 					return new SqlServerInfo {
-						Status = Status.Success,
-						ConnectionStringBuilder = connectionStringBuilder,
-						Version = version,
-						UTCDateTime = serverDateTime
+						Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
 					};
 				}
 			}
-			catch ( Exception exception ) {
-				exception.Log();
+			catch ( TaskCanceledException exception ) {
+				exception.Log( BreakOrDontBreak.DontBreak );
 			}
 
 			"Failed connecting to server.".Break();
@@ -913,5 +901,7 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
+
 	}
+
 }

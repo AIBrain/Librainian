@@ -37,34 +37,34 @@ namespace Librainian {
 
 		public static Encoding DefaultEncoding { get; } = Encoding.Unicode;
 
-		public static String Key<T>( [CanBeNull] this T? value, [NotNull] String className, [NotNull] String methodName, [NotNull] String argumentName ) {
-			if ( className == null ) {
+		public static String ToKey<T>( [CanBeNull] this T? value, [NotNull] String className, [NotNull] String methodName, [NotNull] String argumentName ) {
+			if ( className is null ) {
 				throw new ArgumentNullException( nameof( className ) );
 			}
 
-			if ( methodName == null ) {
+			if ( methodName is null ) {
 				throw new ArgumentNullException( nameof( methodName ) );
 			}
 
-			if ( argumentName == null ) {
+			if ( argumentName is null ) {
 				throw new ArgumentNullException( nameof( argumentName ) );
 			}
 
 			//using the reasoning that a string lookup will match sooner by having the most selective "key" first, which would be the value.
-			return $"{value}-{className}-{methodName}-{argumentName}";
+			return $"{value}{Symbols.TripleTilde}{className}{Symbols.TripleTilde}{methodName}{Symbols.TripleTilde}{argumentName}";
 		}
 
-		public static String Key<T>( [CanBeNull] this T? value, [NotNull] String className, [NotNull] String methodName ) {
-			if ( className == null ) {
+		public static String ToKey<T>( [CanBeNull] this T? value, [NotNull] String className, [NotNull] String methodName ) {
+			if ( className is null ) {
 				throw new ArgumentNullException( nameof( className ) );
 			}
 
-			if ( methodName == null ) {
+			if ( methodName is null ) {
 				throw new ArgumentNullException( nameof( methodName ) );
 			}
 
 			//using the reasoning that a string lookup will match sooner by having the most selective "key" first, which would be the value.
-			return $"{value}-{methodName}-{className}";
+			return $"{value}{Symbols.TripleTilde}{methodName}{Symbols.TripleTilde}{className}";
 		}
 
 		/// <summary>

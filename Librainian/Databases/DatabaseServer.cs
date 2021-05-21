@@ -117,10 +117,8 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 			var connection = default( SqlConnection? );
-			var Retry = DefaultRetries;
 
 			TryAgain:
-
 			try {
 				connection = this.OpenConnection();
 				if ( connection is not null ) {
@@ -132,34 +130,18 @@ namespace Librainian.Databases {
 					return command.PopulateParameters( parameters ).ExecuteNonQuery();
 				}
 			}
-			catch ( InvalidOperationException exception ) {
-				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
 					goto TryAgain;
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				this.CloseConnection( connection );
+				this.CloseConnection( ref connection );
 			}
 
 			return default( Int32? );
@@ -179,21 +161,22 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) {
 			this.Query = query;
 
 			var connection = default( SqlConnection? );
 
-			var Retry = DefaultRetries;
+			var retries = DefaultRetries;
 
 			TryAgain:
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection is not null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -201,35 +184,15 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 					};
 
-					var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this._executeCancellationToken );
-					if ( task is not null ) {
-						var result = await task.ConfigureAwait( false );
+					return await command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this._executeCancellationToken ).ConfigureAwait( false );
 
-						return result;
-					}
 				}
 			}
-			catch ( InvalidOperationException exception ) {
-				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
 					goto TryAgain;
 				}
 
@@ -247,26 +210,40 @@ namespace Librainian.Databases {
 		///     <paramref name="parameters" />.
 		/// </summary>
 		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters ) =>
-			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, parameters ).ConfigureAwait( false );
+		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) =>
+			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		/// <summary>
-		///     Execute the stored procedure " <paramref name="query" />" with the optional parameters
-		///     <paramref name="parameters" />.
+		///     Execute the stored procedure " <paramref name="query" />" with the optional <paramref name="parameters" />.
 		/// </summary>
 		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> RunSprocAsync( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters ) =>
-			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, parameters ).ConfigureAwait( false );
+		public async FireAndForget FireOffQuery( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) =>
+			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
+
+		/// <summary>
+		///     Execute the stored procedure " <paramref name="query" />" with the optional <paramref name="parameters" />.
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="SqlException"></exception>
+		/// <exception cref="DbException"></exception>
+		public async PooledValueTask<Int32?> RunSprocAsync( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) =>
+			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		/// <summary>
 		///     Returns a <see cref="DataTable" />
@@ -283,63 +260,46 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
-			var Retry = DefaultRetries;
+			var retries = DefaultRetries;
 
 			TryAgain:
 			table = new DataTable();
 
+			var connection = default( SqlConnection? );
 			try {
-				using var connection = this.OpenConnection();
-				try {
-					if ( connection != null ) {
-						using var command = new SqlCommand( query, connection ) {
-							CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
-							CommandType = commandType
-						};
+				connection = this.OpenConnection();
 
-						using var bob = command.PopulateParameters( parameters ).ExecuteReader();
+				if ( connection != null ) {
+					using var command = new SqlCommand( query, connection ) {
+						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+						CommandType = commandType
+					};
 
-						if ( bob is null ) {
-							return false;
-						}
+					using var bob = command.PopulateParameters( parameters ).ExecuteReader();
 
-						table.BeginLoadData();
-						table.Load( bob );
+					if ( bob is null ) {
+						return false;
 					}
 
+					table.BeginLoadData();
+					table.Load( bob );
 					table.EndLoadData();
 
 					return true;
 				}
-				finally {
-					this.CloseConnection( connection );
-				}
 			}
-			catch ( InvalidOperationException exception ) {
-				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
 					goto TryAgain;
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-
-				exception.Log( Rebuild( query, parameters ) );
+			finally {
+				this.CloseConnection( ref connection );
 			}
 
 			return false;
@@ -347,22 +307,21 @@ namespace Librainian.Databases {
 
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		public async PooledValueTask<DataTableReader?> ExecuteReaderAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<DataTableReader?> ExecuteReaderAsync( [NotNull] String query, CommandType commandType, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			this.Query = query;
 
-			var Retry = DefaultRetries;
+			var retries = DefaultRetries;
 
 			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( this._openCancellationToken.LinkTo( cancellationToken ) ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -370,43 +329,25 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 					};
 
-					using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken );
+					await using var readerAsync = await command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken.LinkTo( cancellationToken ) ).ConfigureAwait( false );
 
-					if ( reader != null ) {
-						await using var readerAsync = await reader.ConfigureAwait( false );
+					using var table = readerAsync.ToDataTable();
 
-						using var table = readerAsync.ToDataTable();
+					return table.CreateDataReader();
 
-						return table.CreateDataReader();
-					}
 				}
 			}
-			catch ( InvalidOperationException exception ) {
-				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
 					goto TryAgain;
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
 
-				exception.Log( Rebuild( query, parameters ) );
-			}
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -414,16 +355,19 @@ namespace Librainian.Databases {
 			return default( DataTableReader? );
 		}
 
+		private Stopwatch TimeSinceLastConnectAttempt { get; } = Stopwatch.StartNew();
+
 		/// <summary>
 		///     Returns a <see cref="DataTable" />
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
 		public async PooledValueTask<DataTable> ExecuteReaderDataTableAsync(
 			[NotNull] String query,
-			CommandType commandType,
+			CommandType commandType, CancellationToken cancellationToken,
 			[CanBeNull] params SqlParameter?[]? parameters
 		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
@@ -432,13 +376,14 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
+			var retries = DefaultRetries;
+
+			TryAgain:
 			var table = new DataTable();
 
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -446,7 +391,7 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 					};
 
-					using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken );
+					using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken.LinkTo( cancellationToken ) );
 
 					if ( reader != null ) {
 						table.BeginLoadData();
@@ -455,13 +400,15 @@ namespace Librainian.Databases {
 					}
 				}
 			}
-			catch ( SqlException exception ) {
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
-				table.Clear();
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-				table.Clear();
 			}
 			finally {
 				this.CloseAsyncConnection( ref connection );
@@ -487,7 +434,7 @@ namespace Librainian.Databases {
 
 			this.Query = query;
 
-			var Retry = DefaultRetries;
+			var retries = DefaultRetries;
 
 			TryAgain:
 			var connection = default( SqlConnection? );
@@ -505,34 +452,19 @@ namespace Librainian.Databases {
 					return scalar is null ? default( T? ) : scalar.Cast<Object, T>();
 				}
 			}
-			catch ( InvalidOperationException exception ) {
-				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
 					goto TryAgain;
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
 
-				exception.Log( Rebuild( query, parameters ) );
-			}
 			finally {
-				this.CloseConnection( connection );
+				this.CloseConnection( ref connection );
 			}
 
 			return default( T? );
@@ -543,21 +475,22 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, CommandType commandType, CancellationToken cancellationToken, [CanBeNull] params SqlParameter[] parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentNullException( nameof( query ) );
 			}
 
 			this.Query = query;
 
-			var Retry = DefaultRetries;
+			var retries = DefaultRetries;
 
 			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -565,7 +498,7 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 					};
 
-					var task = command.PopulateParameters( parameters ).ExecuteScalarAsync( this._executeCancellationToken );
+					var task = command.PopulateParameters( parameters ).ExecuteScalarAsync( this._executeCancellationToken.LinkTo( cancellationToken ) );
 					if ( task is not null ) {
 						var result = await task.ConfigureAwait( false );
 
@@ -580,32 +513,17 @@ namespace Librainian.Databases {
 
 				throw;
 			}
-			catch ( InvalidOperationException exception ) {
-				if ( exception.PossibleLossOfConnection() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
 					goto TryAgain;
 				}
 
 				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
 
-				exception.Log( Rebuild( query, parameters ) );
-			}
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -621,11 +539,12 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		public async PooledValueTask<Boolean> FillTableAsync(
 			[NotNull] String query,
 			CommandType commandType,
-			[NotNull] DataTable table,
+			[NotNull] DataTable table, CancellationToken cancellationToken,
 			[CanBeNull] params SqlParameter?[]? parameters
 		) {
 			if ( table is null ) {
@@ -633,20 +552,18 @@ namespace Librainian.Databases {
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
+			TryAgain:
 			table.Clear();
 
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					using var dataAdapter = new SqlDataAdapter( query, connection ) {
@@ -664,6 +581,16 @@ namespace Librainian.Databases {
 					dataAdapter.Fill( table );
 				}
 			}
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
+				}
+
+				exception.Log( Rebuild( query, parameters ) );
+			}
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -678,9 +605,12 @@ namespace Librainian.Databases {
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
+			TryAgain:
+			var connection = default( SqlConnection? );
 			try {
-				using var connection = this.OpenConnection();
+				connection = this.OpenConnection();
 
 				try {
 					if ( connection != null ) {
@@ -697,34 +627,35 @@ namespace Librainian.Databases {
 					}
 				}
 				finally {
-					this.CloseConnection( connection );
+					this.CloseConnection( ref connection );
 				}
 			}
-			catch ( InvalidOperationException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
+				}
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
 
 			return default( DataTableReader? );
 		}
 
-		public async PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( [NotNull] String query, [CanBeNull] params SqlParameter[] parameters ) {
+		public async PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter[] parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
+			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -732,7 +663,7 @@ namespace Librainian.Databases {
 						CommandType = CommandType.Text
 					};
 
-					var task = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken );
+					var task = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken.LinkTo( cancellationToken ) );
 					if ( task is not null ) {
 						await using var reader = await task.ConfigureAwait( false );
 
@@ -742,14 +673,18 @@ namespace Librainian.Databases {
 					}
 				}
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
+
+					goto TryAgain;
 				}
-			}
-			catch ( DbException exception ) {
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
+
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -757,18 +692,18 @@ namespace Librainian.Databases {
 			return default( DataTableReader? );
 		}
 
-		public async PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
+			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -776,20 +711,24 @@ namespace Librainian.Databases {
 						CommandType = CommandType.Text
 					};
 
-					var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this._executeCancellationToken );
+					var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this._executeCancellationToken.LinkTo( cancellationToken ) );
 					if ( task is not null ) {
 						await task.ConfigureAwait( false );
 					}
 				}
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
+
+					goto TryAgain;
 				}
-			}
-			catch ( DbException exception ) {
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
+
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -803,21 +742,23 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, CommandType commandType, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
+
+			TryAgain:
 
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -825,20 +766,24 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 					};
 
-					var task = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken );
+					var task = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken.LinkTo( cancellationToken ) );
 					if ( task is not null ) {
 						return await task.ConfigureAwait( false );
 					}
 				}
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
+
+					goto TryAgain;
 				}
-			}
-			catch ( DbException exception ) {
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
+
 			finally {
 				this.CloseAsyncConnection( ref connection );
 			}
@@ -851,21 +796,22 @@ namespace Librainian.Databases {
 		///     <para>Connect and then run <paramref name="query" />.</para>
 		/// </summary>
 		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"></param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters ) {
+		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
+			TryAgain:
 			var connection = default( SqlConnection? );
 			try {
-				connection = await this.OpenConnectionAsync().ConfigureAwait( false );
-
-				//await using var connection = await this.OpenConnectionAsync().ConfigureAwait( false );
+				connection = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
 				if ( connection != null ) {
 					await using var command = new SqlCommand( query, connection ) {
@@ -873,10 +819,7 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
 					};
 
-					var task = command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken );
-					if ( task is not null ) {
-						return await task.ConfigureAwait( false );
-					}
+					return await command.PopulateParameters( parameters ).ExecuteReaderAsync( this._executeCancellationToken.LinkTo( cancellationToken ) ).ConfigureAwait( false );
 				}
 			}
 			catch ( InvalidCastException exception ) {
@@ -886,15 +829,16 @@ namespace Librainian.Databases {
 
 				throw;
 			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
 
-				throw;
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+					goto TryAgain;
+				}
 
-				throw;
+				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
 				this.CloseAsyncConnection( ref connection );
@@ -918,33 +862,40 @@ namespace Librainian.Databases {
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
+			TryAgain:
+			var connection = default( SqlConnection? );
 			try {
-				using var connection = this.OpenConnection();
+				connection = this.OpenConnection();
 
-				try {
-					if ( connection != null ) {
-						using var command = new SqlCommand( query, connection ) {
-							CommandType = commandType,
-							CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-						};
+				if ( connection != null ) {
+					using var command = new SqlCommand( query, connection ) {
+						CommandType = commandType,
+						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+					};
 
-						var reader = command.PopulateParameters( parameters ).ExecuteReader();
+					var reader = command.PopulateParameters( parameters ).ExecuteReader();
 
-						if ( reader != null ) {
-							return GenericPopulatorExtensions.CreateList<TResult>( reader );
-						}
+					if ( reader != null ) {
+						return GenericPopulatorExtensions.CreateList<TResult>( reader );
 					}
 				}
-				finally {
-					this.CloseConnection( connection );
+			}
+
+			catch ( Exception exception ) {
+				if ( retries.Any() && exception.AttemptQueryAgain() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
+
+					goto TryAgain;
 				}
-			}
-			catch ( SqlException exception ) {
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+			finally {
+				this.CloseConnection( ref connection );
 			}
 
 			return default( IEnumerable<TResult>? );
@@ -958,95 +909,82 @@ namespace Librainian.Databases {
 			using var _ = this.QueryAdHoc( $"USE {databaseName.SmartBraces()};" );
 		}
 
-		public async PooledValueTask UseDatabaseAsync( [NotNull] String databaseName ) {
+		public async PooledValueTask UseDatabaseAsync( [NotNull] String databaseName, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( databaseName ) );
 			}
 
-			await using var _ = await this.QueryAdhocReaderAsync( $"USE {databaseName.SmartBraces()};" ).ConfigureAwait( false );
+			await using var _ = await this.QueryAdhocReaderAsync( $"USE {databaseName.SmartBraces()};", cancellationToken ).ConfigureAwait( false );
 		}
 
 		/// <summary>
 		///     Create a sql server database connection, and then call OpenAsync and store it in an AynsLocal
 		/// </summary>
 		/// <returns></returns>
-		private async Task<SqlConnection?> OpenConnectionAsync( IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null ) {
+		private async Task<SqlConnection?> OpenConnectionAsync( CancellationToken cancellationToken, IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null ) {
 			Debug.Assert( !String.IsNullOrWhiteSpace( this._connectionString ) );
-
-			//if ( this._connection?.State.In( ConnectionState.Connecting, ConnectionState.Open ) == true ) {
-			//	"Reusing already-open connection object..".Verbose();
-			//	return this._connection;
-			//}
-
-			//Debug.Assert( this._connection is null );
-
-			//this._connection = new AsyncLocal<SqlConnection?>( ValueChangedHandler ) {Value = new SqlConnection( this._connectionString )};
-			//this._connection = new SqlConnection( this._connectionString );
 
 			var connection = new SqlConnection( this._connectionString );
 
-			var Retry = DefaultRetries;
+			var retriesleft = DefaultRetries;
 
 			TryAgain:
-			--Retry;
 
 			try {
-
-				//$"Attempting to open async sql connection. {Retry} attempts remaining..".Verbose();
-
 				FluentTimer? timer = null;
 
 				if ( progress is not null ) {
-
-					//SqlConnectionStringBuilder builder = new(this._connectionString);
-					//var timeToConnect = TimeSpan.FromSeconds( builder.ConnectTimeout );
 					var stopwatch = Stopwatch.StartNew();
 					timer = Fps.Thirty.CreateTimer( () => progress.Report( (stopwatch.Elapsed, connection.State) ) );
 				}
 
 				try {
-					await connection.OpenAsync( this._openCancellationToken )!.ConfigureAwait( false );
+					this.TimeSinceLastConnectAttempt.Restart();
+					await connection.OpenAsync( this._openCancellationToken.LinkTo( cancellationToken ) )!.ConfigureAwait( false );
 				}
-				catch ( InvalidOperationException exception ) {
-					if ( Retry.Any() ) {
-						"SQL Pool exhaustion. Trying open connection again in 1 second..".DebugLine();
-						await Task.Delay( Seconds.One, this._openCancellationToken ).ConfigureAwait( false );
+				catch ( Exception exception ) {
+					if ( exception.AttemptQueryAgain() ) {
+						await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
 						goto TryAgain;
 					}
-				}
-				catch ( DbException exception ) {
-					if ( Retry.Any() && exception.ErrorCode == -2146232060 ) {
-						"SQL Pool error. Trying open connection again in 1 second..".DebugLine();
-						await Task.Delay( Seconds.One, this._openCancellationToken ).ConfigureAwait( false );
-						goto TryAgain;
-					}
-				}
 
-				//if ( this._connection.State.In( ConnectionState.Connecting, ConnectionState.Open, ConnectionState.Executing, ConnectionState.Fetching ) ) {
-				//	--this.ConnectionCounter.Value;
-				//}
-				//else {
-				//	throw new InvalidOperationException( $"Connection state is {this._connection.State}" );
-				//}
+					exception.Log();
+				}
 
 				using ( timer ) { }
 			}
 			catch ( InvalidOperationException exception ) {
+
+				if ( retriesleft.Any() ) {
+					--retriesleft;
+					--this.ConnectionCounter;
+					"SQL Pool exhaustion. Trying open connection again in 1 second..".Verbose();
+					Thread.Yield();
+					await Task.Delay( Seconds.One, this._openCancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
 				exception.Log( BreakOrDontBreak.Break );
 			}
 			catch ( SqlException exception ) {
-				if ( exception.IsTransient && Retry.Any() ) {
-					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
-					goto TryAgain;
-				}
-
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					"Possible SQL timeout. Trying to open connection again..".DebugLine();
+				if ( exception.IsTransient && retriesleft.Any() ) {
+					$"Transient {nameof( SqlException )}. Trying open connection again..".Verbose();
+					--retriesleft;
+					--this.ConnectionCounter;
 					goto TryAgain;
 				}
 
 				exception.Log( BreakOrDontBreak.Break );
-				return default( SqlConnection? );
+			}
+			catch ( DbException exception ) {
+				if ( retriesleft.Any() ) {
+					if ( exception.IsTransient || exception.AttemptQueryAgain() ) {
+						$"Transient {nameof( SqlException )}. Trying open connection again..".Verbose();
+						--retriesleft;
+						--this.ConnectionCounter;
+						goto TryAgain;
+					}
+				}
+				exception.Log( BreakOrDontBreak.Break );
 			}
 			catch ( TaskCanceledException cancelled ) {
 				"Open database connection was cancelled.".Verbose();
@@ -1073,17 +1011,10 @@ namespace Librainian.Databases {
 				return;
 			}
 
-			//var connection = this._connection;
 			if ( this.GetConnectionCounter().Any() ) {
 				connection.Close();
 				--this.ConnectionCounter;
-
-				//Assert.True( this.ConnectionCounter >= 0 );
 			}
-
-			//connection.Value = default( SqlConnection? );
-
-			//this._connection = default( AsyncLocal<SqlConnection?> );
 		}
 
 		/// <summary>
@@ -1106,53 +1037,57 @@ namespace Librainian.Databases {
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
 		public Int32? RunStoredProcedure( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters ) {
+			this.Query = query;
+			var retries = DefaultRetries;
+
+			TryAgain:
+
+			var connection = this.OpenConnection();
 			try {
-				this.Query = query;
+				if ( connection != null ) {
+					using var command = new SqlCommand( query, connection ) {
+						CommandType = CommandType.StoredProcedure,
+						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+					};
 
-				using var connection = this.OpenConnection();
-				try {
-					if ( connection != null ) {
-						using var command = new SqlCommand( query, connection ) {
-							CommandType = CommandType.StoredProcedure,
-							CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-						};
-
-						return command.PopulateParameters( parameters ).ExecuteNonQuery();
-					}
-				}
-				finally {
-					this.CloseConnection( connection );
+					return command.PopulateParameters( parameters ).ExecuteNonQuery();
 				}
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( query!, parameters ) );
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
 				}
+
+				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query!, parameters ) );
+			finally {
+				this.CloseConnection( ref connection );
 			}
 
 			return default( Int32? );
 		}
 
-		private void CloseConnection( [CanBeNull] IDbConnection? connection ) {
+		private void CloseConnection( [CanBeNull] ref SqlConnection? connection ) {
 			if ( connection is null ) {
 				return;
 			}
 
-			connection.Close();
-			--this.ConnectionCounter;
+			using ( connection ) {
+				connection.Close();
+				--this.ConnectionCounter;
+			}
 		}
 
 		[Pure]
 		private SqlConnection? OpenConnection() {
 			Debug.Assert( !String.IsNullOrWhiteSpace( this._connectionString ) );
 
-			var Retry = DefaultRetries;
+			var retriesleft = DefaultRetries;
 
 			TryAgain:
-			--Retry;
 
 			try {
 
@@ -1166,11 +1101,10 @@ namespace Librainian.Databases {
 			}
 			catch ( InvalidOperationException exception ) {
 
-				//exception.Log( BreakOrDontBreak.Break );
-				if ( Retry.Any() ) {
-					--Retry;
+				if ( retriesleft.Any() ) {
+					--retriesleft;
 					--this.ConnectionCounter;
-					"SQL Pool exhaustion. Trying open connection again in 1 second..".DebugLine();
+					"SQL Pool exhaustion. Trying open connection again in 1 second..".Verbose();
 					Thread.Yield();
 					Thread.Sleep( Seconds.One );
 					goto TryAgain;
@@ -1178,16 +1112,9 @@ namespace Librainian.Databases {
 				exception.Log( BreakOrDontBreak.Break );
 			}
 			catch ( SqlException exception ) {
-				if ( exception.IsTransient && Retry.Any() ) {
-					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
-					--Retry;
+				if ( exception.IsTransient && retriesleft.Any() ) {
+					$"Transient {nameof( SqlException )}. Trying open connection again..".Verbose();
+					--retriesleft;
 					--this.ConnectionCounter;
 					goto TryAgain;
 				}
@@ -1195,20 +1122,14 @@ namespace Librainian.Databases {
 				exception.Log( BreakOrDontBreak.Break );
 			}
 			catch ( DbException exception ) {
-				if ( exception.IsTransient && Retry.Any() ) {
-					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
+				if ( retriesleft.Any() ) {
+					if ( exception.IsTransient || exception.AttemptQueryAgain() ) {
+						$"Transient {nameof( SqlException )}. Trying open connection again..".Verbose();
+						--retriesleft;
+						--this.ConnectionCounter;
+						goto TryAgain;
+					}
 				}
-
-				if ( exception.PossibleTimeout() && Retry.Any() ) {
-					$"Transient {nameof( SqlException )}. Trying open connection again..".DebugLine();
-					--Retry;
-					--this.ConnectionCounter;
-					goto TryAgain;
-				}
-
 				exception.Log( BreakOrDontBreak.Break );
 			}
 
@@ -1219,10 +1140,11 @@ namespace Librainian.Databases {
 		///     <para>Returns the first column of the first row.</para>
 		/// </summary>
 		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"></param>
 		/// <returns></returns>
-		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, [CanBeNull] params SqlParameter[] parameters ) =>
-			await this.ExecuteScalarAsync<T?>( query, CommandType.StoredProcedure, parameters ).ConfigureAwait( false );
+		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter[] parameters ) =>
+			await this.ExecuteScalarAsync<T?>( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		[CanBeNull]
 		public DataTableReader? ExecuteDataReader( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
@@ -1231,34 +1153,39 @@ namespace Librainian.Databases {
 			}
 
 			this.Query = query;
+			var retries = DefaultRetries;
 
+			TryAgain:
+			var connection = default( SqlConnection? );
 			try {
-				using var connection = this.OpenConnection();
+				connection = this.OpenConnection();
 
-				try {
-					if ( connection != null ) {
-						using var command = new SqlCommand( query, connection ) {
-							CommandType = commandType,
-							CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-						};
+				if ( connection != null ) {
+					using var command = new SqlCommand( query, connection ) {
+						CommandType = commandType,
+						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+					};
 
-						var task = command.PopulateParameters( parameters ).ExecuteReader( CommandBehavior.CloseConnection );
-						if ( task is not null ) {
-							using var table = task.ToDataTable();
+					var task = command.PopulateParameters( parameters ).ExecuteReader( CommandBehavior.CloseConnection );
+					if ( task is not null ) {
+						using var table = task.ToDataTable();
 
-							return table.CreateDataReader();
-						}
+						return table.CreateDataReader();
 					}
 				}
-				finally {
-					this.CloseConnection( connection );
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					this.CloseConnection( ref connection );
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
 				}
-			}
-			catch ( SqlException exception ) {
+
 				exception.Log( Rebuild( query, parameters ) );
 			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+			finally {
+				this.CloseConnection( ref connection );
 			}
 
 			return default( DataTableReader? );
@@ -1292,22 +1219,31 @@ namespace Librainian.Databases {
 				$"exec {query} {parameters.Where( parameter => parameter is not null ).Select( parameter => $"{parameter!.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings( ", " )}; ";
 		}
 
-		public static async PooledValueTask<Boolean> CreateDatabase( [NotNull] String databaseName, [NotNull] String connectionString ) {
+		public async PooledValueTask<Boolean> CreateDatabase( [NotNull] String databaseName, [NotNull] String connectionString, CancellationToken cancellationToken ) {
 			databaseName = databaseName.Trimmed() ?? throw new ArgumentEmptyException( nameof( databaseName ) );
 			connectionString = connectionString.Trimmed() ?? throw new ArgumentEmptyException( nameof( connectionString ) );
+
+			var retries = DefaultRetries;
+
+			TryAgain:
 
 			try {
 				using var db = new DatabaseServer( connectionString, "master", new CancellationTokenSource( Seconds.Ten ).Token, new CancellationTokenSource( Seconds.Thirty ).Token );
 
-				await db.QueryAdhocReaderAsync( $"create database {databaseName.SmartBraces()};" ).ConfigureAwait( false );
+				await db.QueryAdhocReaderAsync( $"create database {databaseName.SmartBraces()};", cancellationToken ).ConfigureAwait( false );
 
 				return true;
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log();
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() && retries.Any() ) {
+					--retries;
+					Thread.Sleep( Seconds.One );
+					goto TryAgain;
 				}
+
+				exception.Log( BreakOrDontBreak.Break );
 			}
+
 
 			return false;
 		}
