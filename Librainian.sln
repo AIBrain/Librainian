@@ -14,8 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibrainianUnitTests", "Test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FAD726C1-FDFC-4D12-B6D9-4667E6C20526}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{DB16FD72-5999-41C9-A5F9-01CC90DA4B1C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBigDecimal", "Tests\TestBigDecimal\TestBigDecimal.csproj", "{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F}"
 EndProject
 Global
@@ -45,7 +43,7 @@ Global
 		{45B2A2DE-FD1D-4AC2-920A-2FCC4574950F} = {FAD726C1-FDFC-4D12-B6D9-4667E6C20526}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_StartDate = 2000/1/1
 		SolutionGuid = {4901DD08-63EA-42A1-8899-C13553B21871}
+		BuildVersion_StartDate = 2000/1/1
 	EndGlobalSection
 EndGlobal
