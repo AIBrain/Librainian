@@ -2037,6 +2037,12 @@ namespace Librainian.Parsing {
 			return sentence.ToSplit().Select( s => new Word( s ) );
 		}
 
+		/// <summary>
+		/// Needs unit tests.
+		/// </summary>
+		/// <param name="s"></param>
+		/// <param name="maximumLength"></param>
+		/// <returns></returns>
 		[CanBeNull]
 		[Pure]
 		public static String? Truncate( [CanBeNull] this String? s, UInt32 maximumLength ) {
@@ -2044,7 +2050,7 @@ namespace Librainian.Parsing {
 				return s;
 			}
 
-			return ( UInt32 )s.Length <= maximumLength ? s : s.AsMemory().Slice( 0, ( Int32 )maximumLength ).ToString();
+			return ( UInt32 )s.Length <= maximumLength ? s : s.AsMemory()[ ..( Int32 )maximumLength ].ToString();
 		}
 
 		/// <summary>To convert a Byte Array of Unicode values (UTF-8 encoded) to a complete String.</summary>
@@ -2273,12 +2279,12 @@ namespace Librainian.Parsing {
 
 		[NotNull]
 		[Pure]
-		public static String ToStrings( [NotNull] this IEnumerable<Object> list, Char separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
+		public static String ToStrings( [NotNull] this IEnumerable<Object?> list, Char separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
 
-			var joined = String.Join( separator, list );
+			var joined = String.Join( separator, list.Where(o => o is not null) );
 
 			if ( trimEnd == true ) {
 				return String.IsNullOrEmpty( atTheEnd ) ? joined.TrimEnd() : $"{joined.TrimEnd()}{separator}{atTheEnd}".TrimEnd();
@@ -2289,12 +2295,12 @@ namespace Librainian.Parsing {
 
 		[NotNull]
 		[Pure]
-		public static String ToStrings( [NotNull] this IEnumerable<Object> list, String separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
+		public static String ToStrings( [NotNull] this IEnumerable<Object?> list, String separator, [CanBeNull] String? atTheEnd = null, Boolean? trimEnd = true ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
 
-			var joined = String.Join( separator, list );
+			var joined = String.Join( separator, list.Where( o => o is not null ) );
 
 			if ( trimEnd == true ) {
 				return String.IsNullOrEmpty( atTheEnd ) ? joined.TrimEnd() : $"{joined.TrimEnd()}{separator}{atTheEnd}".TrimEnd();
@@ -2327,7 +2333,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentNullException( nameof( list ) );
 			}
 
-			var joined = String.Join( separator, list );
+			var joined = String.Join( separator, list.Where( o => o is not null ) );
 
 			if ( trimEnd == true ) {
 				return String.IsNullOrEmpty( atTheEnd ) ? joined.TrimEnd() : $"{joined.TrimEnd()}{separator}{atTheEnd}".TrimEnd();

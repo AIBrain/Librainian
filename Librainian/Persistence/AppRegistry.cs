@@ -371,7 +371,8 @@ namespace Librainian.Persistence {
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder );
 				if ( registryKey is null ) {
-					throw new NullException( nameof( registryKey ) );
+					new NullException( nameof( registryKey ) ).Log(BreakOrDontBreak.Break);
+					return default( Int32? );
 				}
 
 				using var subKey = registryKey.OpenSubKey( subkey );
@@ -558,11 +559,6 @@ namespace Librainian.Persistence {
 			}
 
 			using var regFolder = TheApplication.CreateSubKey( folder, RegistryKeyPermissionCheck.ReadWriteSubTree );
-			if ( regFolder == null ) {
-				$"Error creating subkey {folder}".Break();
-
-				return false;
-			}
 
 			try {
 				if ( value is null ) {

@@ -220,10 +220,6 @@ namespace Librainian.Extensions {
 		/// <returns></returns>
 		[NotNull]
 		public static IEnumerable<FieldInfo> GetAllFields( [CanBeNull] this Type type ) {
-			if ( type == null ) {
-				return Enumerable.Empty<FieldInfo>();
-			}
-
 			const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			return type.GetFields( flags ).Union( type.BaseType?.GetAllFields() ?? Enumerable.Empty<FieldInfo>() );

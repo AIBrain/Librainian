@@ -115,7 +115,7 @@ namespace Librainian.Controls {
 				throw new InvalidOperationException( "Application registry not set up." );
 			}
 
-			$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
+			//$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
 
 			AppRegistry.Set( nameof( form.Location ), form.Name ?? throw new InvalidOperationException(), nameof( form.Location.X ),
 				form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.X, RegistryValueKind.DWord );

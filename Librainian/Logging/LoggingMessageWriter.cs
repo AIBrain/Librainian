@@ -29,6 +29,7 @@ namespace Librainian.Logging {
 
 	using System;
 	using Microsoft.Extensions.Logging;
+	using Utilities;
 
 	public class LoggingMessageWriter : IMessageWriter {
 

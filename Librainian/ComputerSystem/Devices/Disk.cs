@@ -80,9 +80,7 @@ namespace Librainian.ComputerSystem.Devices {
 		[NotNull]
 		public static async IAsyncEnumerable<Disk> GetDrives( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			await foreach ( var driveInfo in DriveInfo.GetDrives().ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {
-				if ( driveInfo != null ) {
-					yield return new Disk( driveInfo );
-				}
+				yield return new Disk( driveInfo );
 			}
 		}
 

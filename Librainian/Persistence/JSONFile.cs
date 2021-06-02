@@ -249,15 +249,11 @@ namespace Librainian.Persistence {
 				}
 
 				if ( data != null ) {
-					var result = Parallel.ForEach( data.Keys.AsParallel(), section => {
-						if ( data[ section! ] != null ) {
-							Parallel.ForEach( data[ section ]!.Keys.AsParallel().AsUnordered(), key => {
-								if ( !String.IsNullOrEmpty( key ) ) {
-									this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
-								}
-							} );
+					var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[ section ]!.Keys.AsParallel().AsUnordered(), key => {
+						if ( !String.IsNullOrEmpty( key ) ) {
+							this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
 						}
-					} );
+					} ) );
 
 					return result.IsCompleted;
 				}

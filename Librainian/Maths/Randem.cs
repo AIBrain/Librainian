@@ -51,7 +51,6 @@ namespace Librainian.Maths {
 		/// A Double-sized byte buffer per-thread.
 		/// </summary>
 		[NotNull]
-		[ItemNotNull]
 		private static readonly ThreadLocal<Byte[]> ThreadLocalByteBuffer = new( () => new Byte[ sizeof( Double ) ], true );
 
 		[NotNull]
@@ -454,7 +453,7 @@ namespace Librainian.Maths {
 		}
 
 		/// <summary>
-		/// Untested.
+		/// Needs unit tests.
 		/// </summary>
 		/// <param name="numberOfDigits"></param>
 		/// <returns></returns>
@@ -470,6 +469,7 @@ namespace Librainian.Maths {
 		}
 
 		/// <summary>
+		/// Needs unit tests.
 		/// </summary>
 		/// <param name="numberOfDigits"></param>
 		/// <returns></returns>
@@ -486,6 +486,11 @@ namespace Librainian.Maths {
 			return new BigInteger( buffer );
 		}
 
+		/// <summary>
+		/// Needs unit tests.
+		/// </summary>
+		/// <param name="numberOfDigits"></param>
+		/// <returns></returns>
 		public static BigInteger NextBigIntegerSecure( this UInt16 numberOfDigits ) {
 			if ( numberOfDigits <= 0 ) {
 				return BigInteger.Zero;
@@ -687,13 +692,21 @@ namespace Librainian.Maths {
 		/// <param name="min"></param>
 		/// <param name="max"></param>
 		/// <returns></returns>
-		public static Double NextDouble( Double min = 0.0, Double max = 1.0 ) {
+		public static Double NextDouble( Double min = 0, Double max = 1 ) {
 			if ( Double.IsNaN( min ) ) {
 				throw new ArgumentOutOfRangeException( nameof( min ), $"{nameof( min )} is a NaN." );
 			}
 
+			if ( Double.IsInfinity(min) ) {
+				throw new ArgumentOutOfRangeException( nameof( min ), $"{nameof( min )} is an Infinity." );
+			}
+
 			if ( Double.IsNaN( max ) ) {
 				throw new ArgumentOutOfRangeException( nameof( max ), $"{nameof( max )} is a NaN." );
+			}
+
+			if ( Double.IsInfinity( max ) ) {
+				throw new ArgumentOutOfRangeException( nameof( max ), $"{nameof( max )} is an Infinity." );
 			}
 
 			if ( min > max ) {
@@ -736,14 +749,13 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public static T NextEnum<T>() where T : struct {
+		public static T? NextEnum<T>() where T : struct {
 			if ( !typeof( T ).IsEnum ) {
-				return default( T );
+				return default( T? );
 			}
 
-			var vals = GetNames<T>();
-			var rand = Instance().Next( 0, vals.Length );
-			var picked = vals[ rand ];
+			var names = GetNames<T>();
+			var picked = names[ Instance().Next( 0, names.Length ) ];
 
 			return ( T )Enum.Parse( typeof( T ), picked );
 		}

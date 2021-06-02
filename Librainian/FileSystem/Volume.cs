@@ -114,10 +114,8 @@ namespace Librainian.FileSystem {
 			using var disks = new DiskDeviceClass();
 
 			foreach ( var device in disks.GetDevices() ) {
-				if ( device is not null ) {
-					foreach ( var _ in this.GetDiskNumbers().Where( index => device.DiskNumber == index ) ) {
-						yield return device;
-					}
+				foreach ( var _ in this.GetDiskNumbers().Where( index => device.DiskNumber == index ) ) {
+					yield return device;
 				}
 			}
 		}
@@ -126,7 +124,7 @@ namespace Librainian.FileSystem {
 		[CanBeNull]
 		public String? GetLogicalDrive() {
 			var volumeName = this.GetVolumeName();
-			String logicalDrive = null;
+			String? logicalDrive = null;
 
 			if ( volumeName != null ) {
 				( this.DeviceClass as VolumeDeviceClass )?.LogicalDrives.TryGetValue( volumeName, out logicalDrive );

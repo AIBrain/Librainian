@@ -82,10 +82,6 @@ namespace Librainian.Financial.Containers.Shopping {
 			var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 
 			foreach ( var shoppingItem in this.Items ) {
-				if ( shoppingItem is null ) {
-					continue;
-				}
-
 				if ( !items.ContainsKey( shoppingItem ) ) {
 					items.TryAdd( shoppingItem, 0 );
 				}

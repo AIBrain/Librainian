@@ -81,10 +81,10 @@ namespace Librainian.FileSystem {
 			catch ( AggregateException aggregateException ) {
 				aggregateException.Handle( exception => {
 					switch ( exception ) {
-						case UnauthorizedAccessException _:
-						case DirectoryNotFoundException _:
-						case IOException _:
-						case SecurityException _:
+						case UnauthorizedAccessException:
+						case DirectoryNotFoundException:
+						case IOException:
+						case SecurityException:
 							return true;
 					}
 
@@ -167,11 +167,7 @@ namespace Librainian.FileSystem {
 					CancellationToken cancelToken
 				) {
 			try {
-				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).WithCancellation( cancelToken ) ) {
-					if ( subFolder is null ) {
-						continue;
-					}
-
+				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ) ) {
 					try {
 						onEachDirectory?.Invoke( subFolder );
 					}

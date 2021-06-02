@@ -233,9 +233,7 @@ namespace Librainian.Persistence {
 
 		public void Add( KeyValuePair<String, String?> item ) {
 			(var key, var value) = item;
-			if ( key is not null ) {
-				this[ key ] = value;
-			}
+			this[ key ] = value;
 		}
 
 		public void Add( (String key, String value) kvp ) => this[ kvp.key ] = kvp.value;

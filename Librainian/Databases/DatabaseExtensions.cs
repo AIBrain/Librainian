@@ -108,7 +108,7 @@ namespace Librainian.Databases {
 			try {
 				using var db = new DatabaseServer( builderToTest.ConnectionString, null, connectCancellationToken, executeCancellationToken );
 
-				return await db.ExecuteScalarAsync<T>( query, executeCancellationToken ).ConfigureAwait( false );
+				return await db.ExecuteScalarAsync<T>( query, CommandType.Text, executeCancellationToken ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -410,13 +410,23 @@ namespace Librainian.Databases {
 			return command;
 		}
 
-		public static Boolean AttemptQueryAgain<T>( [NotNull] this T exception ) where T:Exception{
-			if ( exception is DbException {IsTransient: true} ) {
+		public static Boolean AttemptQueryAgain<T>( [NotNull] this T exception ) where T : Exception {
+			if ( exception is DbException { IsTransient: true } ) {
 				return true;
 			}
 
-			if ( exception is SqlException {IsTransient: true} ) {
+			if ( exception is SqlException { IsTransient: true } ) {
 				return true;
+			}
+
+			if ( exception is SqlException {
+				Errors: { }
+			} sqlxException ) {
+				foreach ( SqlError error in sqlxException.Errors ) {
+					if ( error.Message?.Contains( "Execution Timeout Expired", StringComparison.OrdinalIgnoreCase ) == true ) {
+						return true;
+					}
+				}
 			}
 
 			if ( exception is TaskCanceledException ) {
@@ -424,9 +434,9 @@ namespace Librainian.Databases {
 			}
 
 			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
-			       exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
-			       exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
-			       exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
+				   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
 		}
 
 		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString( [NotNull] String connectionString, CancellationToken cancellationToken ) {
@@ -442,7 +452,7 @@ namespace Librainian.Databases {
 
 				if ( sqlServer?.Status.IsGood() == true ) {
 					if ( sqlServer.ConnectionStringBuilder != null ) {
-						return ( sqlServer.Status, sqlServer.ConnectionStringBuilder.ConnectionString );
+						return (sqlServer.Status, sqlServer.ConnectionStringBuilder.ConnectionString);
 					}
 				}
 			}
@@ -455,7 +465,7 @@ namespace Librainian.Databases {
 				exception.Log();
 			}
 
-			return ( Status.Failure, default( String? ) );
+			return (Status.Failure, default( String? ));
 		}
 
 		/// <summary>
@@ -688,7 +698,7 @@ namespace Librainian.Databases {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( parameterName ) );
 			}
 
-			return new(parameterName, sqlDbType, size);
+			return new( parameterName, sqlDbType, size );
 		}
 
 		/*
@@ -838,7 +848,10 @@ namespace Librainian.Databases {
 					var connectionStringBuilder = new SqlConnectionStringBuilder( test.ConnectionString );
 
 					return new SqlServerInfo {
-						Status = Status.Success, ConnectionStringBuilder = connectionStringBuilder, Version = version, UTCDateTime = serverDateTime
+						Status = Status.Success,
+						ConnectionStringBuilder = connectionStringBuilder,
+						Version = version,
+						UTCDateTime = serverDateTime
 					};
 				}
 			}

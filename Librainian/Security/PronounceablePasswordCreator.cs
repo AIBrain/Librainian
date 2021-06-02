@@ -133,7 +133,7 @@ namespace Librainian.Security {
 				words.Add( word );
 			}
 
-			return String.Join( " ", words.ToArray() );
+			return String.Join( ParsingConstants.Chars.Space, words.ToArray() );
 		}
 	}
 }

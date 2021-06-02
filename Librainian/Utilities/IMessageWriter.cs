@@ -25,7 +25,7 @@
 //
 // File "IMessageWriter.cs" last touched on 2021-05-04 at 3:51 PM by Protiguous.
 
-namespace Librainian.Logging {
+namespace Librainian.Utilities {
 
 	using System;
 

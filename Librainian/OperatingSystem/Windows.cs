@@ -113,12 +113,10 @@ namespace Librainian.OperatingSystem {
 			}
 
 			foreach ( var pair in pathsData ) {
-				if ( pair.Value != null ) {
-					if ( !await pair.Value.EnumerateFolders( "*", SearchOption.TopDirectoryOnly, cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) ) {
-						if ( !await pair.Value.EnumerateDocuments( "*.*", cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) ) {
-							if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
-								$"Removing empty folder {dummy.FullPath} from PATH".Info();
-							}
+				if ( !await pair.Value.EnumerateFolders( "*", SearchOption.TopDirectoryOnly, cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) ) {
+					if ( !await pair.Value.EnumerateDocuments( "*.*", cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) ) {
+						if ( pathsData.TryRemove( pair.Key, out var dummy ) && reportToConsole ) {
+							$"Removing empty folder {dummy.FullPath} from PATH".Info();
 						}
 					}
 				}

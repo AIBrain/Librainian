@@ -73,10 +73,6 @@ namespace Librainian.Threading {
 				for ( var i = 0; i < threads.Length; i++ ) {
 					threads[ i ] = new Thread( () => {
 						foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
-							if ( t is null ) {
-								continue;
-							}
-
 							this.TryExecuteTask( t );
 						}
 					} ) {

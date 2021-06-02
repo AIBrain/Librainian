@@ -791,7 +791,7 @@ namespace Librainian.Security {
 
 			var size = await input.Size( cancellationToken ).ConfigureAwait( false );
 
-			if ( !size.HasValue || size <= 0 ) {
+			if ( size is null or <= 0 ) {
 				exceptions.Add( new FileNotFoundException( $"The input file {input.FullPath} is empty." ) );
 
 				return (Status.Exception, exceptions);

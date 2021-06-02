@@ -587,7 +587,7 @@ namespace Librainian.Controls {
 			private void FlexibleMessageBoxForm_KeyUp( [CanBeNull] Object? sender, [CanBeNull] KeyEventArgs? e ) {
 
 				//Handle standard key strikes for clipboard copy: "Ctrl + C" and "Ctrl + Insert"
-				if ( e?.Control == true && ( e.KeyCode == Keys.C || e.KeyCode == Keys.Insert ) ) {
+				if ( e?.Control == true && e.KeyCode is Keys.C or Keys.Insert ) {
 					var buttonsTextLine = ( this._button1?.Visible == true ? this._button1.Text + StandardMessageboxSeparatorSpaces : String.Empty ) +
 										  ( this._button2?.Visible == true ? this._button2.Text + StandardMessageboxSeparatorSpaces : String.Empty ) +
 										  ( this._button3?.Visible == true ? this._button3.Text + StandardMessageboxSeparatorSpaces : String.Empty );

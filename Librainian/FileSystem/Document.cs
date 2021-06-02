@@ -809,7 +809,7 @@ namespace Librainian.FileSystem {
 				null => null,
 				>= IDocument.MaximumBufferSize => IDocument.MaximumBufferSize,
 				var _ => size switch {
-					>= Int32.MaxValue => Int32.MaxValue,
+					>= Int32.MaxValue/2 => Int32.MaxValue/2,
 					{ } ul => ( Int32 )ul
 				}
 			};
@@ -845,7 +845,7 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
-		/// <see cref="Path.GetFileNameWithoutExtension" />
+		/// <see cref="Path.GetFileNameWithoutExtension(System.ReadOnlySpan{Char})" />
 		[NotNull]
 		public String Name => this.FileName;
 

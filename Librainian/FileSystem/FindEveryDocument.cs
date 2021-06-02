@@ -98,17 +98,9 @@ namespace Librainian.FileSystem {
 
 			this.SetCurrentStatus( "Creating ActionBlocks.." );
 
-			this.DrivesFound = new ActionBlock<Disk>( async disk => {
-				if ( disk != null ) {
-					await ScanDisk( disk ).ConfigureAwait( false );
-				}
-			} );
+			this.DrivesFound = new ActionBlock<Disk>( async disk => await ScanDisk( disk ).ConfigureAwait( false ) );
 
 			this.FoldersFound = new ActionBlock<IFolder>( async parent => {
-				if ( parent == null ) {
-					return;
-				}
-
 				await PauseWhilePaused().ConfigureAwait( false );
 
 				await foreach ( var folder in parent.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ) ) {
@@ -150,11 +142,9 @@ namespace Librainian.FileSystem {
 						return;
 					}
 
-					if ( drive != null ) {
-						this.SetCurrentStatus( $"Found drive {drive.DriveLetter.ToString().SmartQuote()}." );
+					this.SetCurrentStatus( $"Found drive {drive.DriveLetter.ToString().SmartQuote()}." );
 
-						this.DrivesFound?.Post( drive );
-					}
+					this.DrivesFound?.Post( drive );
 				}
 
 				this.DrivesFound?.Complete();

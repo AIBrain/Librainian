@@ -163,7 +163,7 @@ namespace Librainian.Parsing {
 
 		[DebuggerStepThrough]
 		public void ThrowIfEmpty() {
-			if ( this.Value is null || this.IsEmpty() ) {
+			if ( this.IsEmpty() ) {
 				throw new ArgumentEmptyException( "Value was empty." );
 			}
 		}

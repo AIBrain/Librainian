@@ -131,9 +131,23 @@ namespace Librainian.Databases {
 						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds, CommandType = commandType
 					};
 
-					return command.PopulateParameters( parameters ).ExecuteNonQuery();
+					_ = command.PopulateParameters( parameters );
+
+					IHateDeadlocks:
+					try {
+						return command.ExecuteNonQuery();
+					}
+					catch ( SqlException exception ) {
+						if ( exception.Message.Contains( "deadlocked", StringComparison.OrdinalIgnoreCase ) ) {
+							if ( exception.Message.Contains( "Rerun the transaction", StringComparison.OrdinalIgnoreCase ) ) {
+								Thread.Yield();
+								goto IHateDeadlocks;
+							}
+						}
+					}
 				}
 			}
+			
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain() && retries.Any() ) {
 					--retries;
@@ -935,8 +949,9 @@ namespace Librainian.Databases {
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async FireAndForget FireOffQuery( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) =>
-			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
+		public async FireAndForget FireOffQuery( [NotNull] String query, CancellationToken cancellationToken, [CanBeNull] params SqlParameter?[]? parameters ) {
+			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait(false);
+		}
 
 		/// <summary>
 		///     Create a sql server database connection, and then call OpenAsync and store it in an AynsLocal
