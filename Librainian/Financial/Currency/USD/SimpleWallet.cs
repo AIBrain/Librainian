@@ -34,7 +34,6 @@ namespace Librainian.Financial.Currency.USD {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
 
-		[NotNull]
 		private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
 		private Decimal _balance;
@@ -69,7 +68,6 @@ namespace Librainian.Financial.Currency.USD {
 		}
 
 		[UsedImplicitly]
-		[NotNull]
 		public String Formatted => this.ToString();
 
 		public Action<Decimal>? OnAfterDeposit { get; set; }
@@ -95,7 +93,6 @@ namespace Librainian.Financial.Currency.USD {
 			using ( this._access ) { }
 		}
 
-		[NotNull]
 		public override String ToString() => this.Balance.ToString( "C" );
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>

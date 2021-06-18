@@ -30,6 +30,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths.Bigger;
@@ -120,9 +121,9 @@ namespace Librainian.Measurement.Time {
 		///     <paramref name="other" />. Greater than zero This instance
 		///     follows <paramref name="other" /> in the sort order.
 		/// </returns>
-		public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
+		public Int32 CompareTo( IQuantityOfTime other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );

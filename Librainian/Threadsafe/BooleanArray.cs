@@ -31,7 +31,6 @@ namespace Librainian.Threadsafe {
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	/// <summary>A <see cref="Boolean" /> array that may be updated atomically</summary>
 	public class BooleanArray {
@@ -40,7 +39,6 @@ namespace Librainian.Threadsafe {
 
 		private const Byte True = 1;
 
-		[NotNull]
 		private Int32[] Array { get; }
 
 		/// <summary>Length of the array</summary>
@@ -61,7 +59,7 @@ namespace Librainian.Threadsafe {
 		///     array.
 		/// </summary>
 		/// <param name="array"></param>
-		public BooleanArray( [NotNull] IEnumerable<Boolean> array ) => this.Array = array.Select( ToInt ).ToArray();
+		public BooleanArray( IEnumerable<Boolean> array ) => this.Array = array.Select( ToInt ).ToArray();
 
 		private static Boolean ToBool( Int32 value ) => value > False;
 

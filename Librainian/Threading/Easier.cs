@@ -47,7 +47,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T">The reference type of the reference to be initialized.</typeparam>
 		/// <param name="target">The variable that need to be initialized</param>
 		/// <returns>The initialized variable</returns>
-		[JetBrains.Annotations.NotNull]
 		private static T EnsureInitializedCore<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicParameterlessConstructor )]
 		T>( [NotNull] ref T? target ) where T : class {
 			Interlocked.CompareExchange( ref target, Activator.CreateInstance<T>(), null );
@@ -85,7 +84,7 @@ namespace Librainian.Threading {
 		/// </param>
 		/// <returns>The initialized object.</returns>
 		private static T? EnsureInitializedCore<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicParameterlessConstructor )]
-		T>( [AllowNull] ref T? target, ref Boolean initialized, [NotNull] ref Object? syncLock ) {
+		T>( ref T? target, ref Boolean initialized, [NotNull] ref Object? syncLock ) {
 
 			// Lazily initialize the lock if necessary and then double check if initialization is still required.
 			lock ( EnsureLockInitialized( ref syncLock ) ) {
@@ -281,7 +280,7 @@ namespace Librainian.Threading {
 		/// </param>
 		/// <returns>The initialized value of type <typeparamref name="T" />.</returns>
 		public static T? EnsureInitialized<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicParameterlessConstructor )]
-		T>( [AllowNull] ref T? target, ref Boolean initialized, [NotNullIfNotNull( "syncLock" )] ref Object? syncLock ) {
+		T>( ref T? target, ref Boolean initialized, [NotNullIfNotNull( "syncLock" )] ref Object? syncLock ) {
 
 			// Fast path.
 			if ( Volatile.Read( ref initialized ) ) {

@@ -23,7 +23,6 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.Runtime.CompilerServices;
 	using Extensions;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	/// Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
@@ -42,37 +41,26 @@ namespace Librainian.Maths.Numbers {
 			this.Value = value;
 		}
 
-		[NotNull]
 		public static Digit[] AllDigits { get; } = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-		[NotNull]
 		public static Digit Eight { get; } = new( 8 );
 
-		[NotNull]
 		public static Digit Five { get; } = new( 5 );
 
-		[NotNull]
 		public static Digit Four { get; } = new( 4 );
 
-		[NotNull]
 		public static Digit Nine { get; } = new( 9 );
 
-		[NotNull]
 		public static Digit One { get; } = new( 1 );
 
-		[NotNull]
 		public static Digit Seven { get; } = new( 7 );
 
-		[NotNull]
 		public static Digit Six { get; } = new( 6 );
 
-		[NotNull]
 		public static Digit Three { get; } = new( 3 );
 
-		[NotNull]
 		public static Digit Two { get; } = new( 2 );
 
-		[NotNull]
 		public static Digit Zero { get; } = new( 0 );
 
 		public Byte Value { get; init; }
@@ -140,10 +128,8 @@ namespace Librainian.Maths.Numbers {
 
 		public Boolean Equals( Byte other ) => this.Value.Equals( other );
 
-		[NotNull]
 		public String Number() => this.Value.ToString();
 
-		[NotNull]
 		public override String ToString() {
 			return this.Value switch {
 				0 => nameof( Zero ),

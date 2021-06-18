@@ -30,8 +30,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 	using Newtonsoft.Json;
 
@@ -97,9 +97,9 @@ namespace Librainian.Measurement.Time {
 		[JsonProperty]
 		public BigDecimal Value { get; }
 
-		public Int32 CompareTo( [CanBeNull] Femtoseconds? other ) {
+		public Int32 CompareTo( Femtoseconds? other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

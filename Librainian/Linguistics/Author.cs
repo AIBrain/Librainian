@@ -28,9 +28,8 @@
 namespace Librainian.Linguistics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public record Author : Person {
-		public Author( [NotNull] String fullName ) : base( fullName ) { }
+		public Author( String fullName ) : base( fullName ) { }
 	}
 }

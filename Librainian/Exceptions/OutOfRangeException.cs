@@ -28,7 +28,6 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 	using Parsing;
 	using Warnings;
 
@@ -41,16 +40,13 @@ namespace Librainian.Exceptions {
 
 		protected OutOfRangeException( SerializationInfo serializationInfo, StreamingContext streamingContext ) => throw new NotImplementedException();
 
-		public OutOfRangeException( [CanBeNull]
-									String? message ) : base( message ) {
+		public OutOfRangeException( String? message ) : base( message ) {
 			if ( message.IsNullOrEmpty() ) {
 				throw new NotAllowedWarning( "A message must be provided." );
 			}
 		}
 
-		public OutOfRangeException( [CanBeNull]
-									String? message, [CanBeNull]
-									Exception inner ) : base( message, inner ) {
+		public OutOfRangeException( String? message, Exception? inner ) : base( message, inner ) {
 			if ( message.IsNullOrEmpty() ) {
 				throw new NotAllowedWarning( "A message must be provided." );
 			}

@@ -25,7 +25,7 @@
 namespace Librainian.Maths {
 
 	using System;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 	using Numbers;
 
@@ -100,10 +100,9 @@ namespace Librainian.Maths {
 			return ( left + right ) / 2D;
 		}
 
-		[CanBeNull]
-		public static Fuzzy? Parse( [CanBeNull] String? value ) {
+		public static Fuzzy? Parse( String? value ) {
 			if ( String.IsNullOrWhiteSpace( value ) ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			if ( Double.TryParse( value, out var result ) ) {
@@ -113,9 +112,9 @@ namespace Librainian.Maths {
 			return default( Fuzzy? );
 		}
 
-		public static Boolean TryParse( [CanBeNull] String? value, [CanBeNull] out Fuzzy result ) {
+		public static Boolean TryParse( String? value, out Fuzzy? result ) {
 			if ( String.IsNullOrWhiteSpace( value ) ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			result = Double.TryParse( value, out var d ) ? new Fuzzy( d ) : null;
@@ -181,7 +180,6 @@ namespace Librainian.Maths {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.Value:R}";
 	}
 }

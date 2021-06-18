@@ -27,7 +27,6 @@ namespace Librainian.Security {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Maths;
 	using Parsing;
 
@@ -44,13 +43,11 @@ namespace Librainian.Security {
 	/// <summary>Random Password Generator, see http://www.multicians.org/thvv/gpw.html</summary>
 	public static class PronounceablePasswordCreator {
 
-		[NotNull]
 		public static String EnglishAlphabetLowercase => "abcdefghijklmnopqrstuvwxyz";
 
 		/// <summary>create a prounouncable word of the required length using third-order approximation.</summary>
 		/// <param name="requiredLength"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static String Generate( Int32 requiredLength ) {
 			Int32 c1;
 			Int32 c2;
@@ -121,7 +118,6 @@ namespace Librainian.Security {
 		/// <param name="minWordLength"></param>
 		/// <param name="maxWordLength"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static String GeneratePhrase( Int32 minLength, Int32 minWordLength = 5, Int32 maxWordLength = 11 ) {
 			var words = new List<String>();
 			var passwordLength = 0;

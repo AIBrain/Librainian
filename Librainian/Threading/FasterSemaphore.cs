@@ -26,11 +26,9 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	public sealed class FasterSemaphore {
 
-		[NotNull]
 		private Object locker { get; } = new();
 
 		public void Release() {

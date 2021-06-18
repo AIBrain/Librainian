@@ -30,7 +30,6 @@ namespace Librainian.Internet.RandomOrg {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 
 	public static class RandomDotOrg {
 
@@ -38,8 +37,7 @@ namespace Librainian.Internet.RandomOrg {
 
 		public static CancellationTokenSource CancellationTokenSource { get; } = new();
 
-		[ItemNotNull]
-		public static async Task<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue ) {
+		public static async ValueTask<IEnumerable<Int32>> SequenceGenerator( this Int32 minValue, Int32 maxValue, CancellationToken cancellationToken ) {
 			if ( maxValue < minValue ) {
 				Common.Swap( ref minValue, ref maxValue );
 			}
@@ -58,15 +56,13 @@ namespace Librainian.Internet.RandomOrg {
 
 			var url = new Uri( "https" + "://random.org/sequences/?min=" + minValue + "&max=" + maxValue + "&col=1&base=10&format=plain&rnd=new", UriKind.Absolute );
 
-			var task = url.GetWebPageAsync();
+			var responseFromServer = await url.GetWebPageAsync( cancellationToken ).ConfigureAwait( false );
 
-			if ( task is null ) {
-				throw new InvalidOperationException( "Unable to pull any data from random.org." );
+			if ( responseFromServer is null ) {
+				return Enumerable.Empty<Int32>();
 			}
 
-			var responseFromServer = await task.ConfigureAwait( false );
-
-			return responseFromServer.Split( '\n' ).Where( s => s.Any() ).Select( Int32.Parse );
+			return responseFromServer.Split( '\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries ).Where( s => s.Any() ).Select( Int32.Parse );
 		}
 
 		/// <summary></summary>
@@ -131,7 +127,7 @@ namespace Librainian.Internet.RandomOrg {
 				}
 
 				Uri address = new( $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new" );
-				var job = address.GetWebPageAsync();
+				var job = address.GetWebPageAsync(cancellationToken);
 
 				if ( job == null ) {
 					throw new InvalidOperationException( "Unable to pull random numbers from Random.Org." );

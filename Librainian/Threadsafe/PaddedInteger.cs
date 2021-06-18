@@ -30,7 +30,6 @@ namespace Librainian.Threadsafe {
 	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	///     An integer value that may be updated atomically and is guaranteed to live on its own cache line (to prevent
@@ -122,7 +121,6 @@ namespace Librainian.Threadsafe {
 
 		/// <summary>Returns the String representation of the current value.</summary>
 		/// <returns>the String representation of the current value.</returns>
-		[NotNull]
 		public override String ToString() {
 			var value = this.ReadFullFence();
 

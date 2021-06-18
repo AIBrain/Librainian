@@ -30,26 +30,23 @@ namespace Librainian.Threading {
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary></summary>
 	/// <see cref="http://stackoverflow.com/a/4749401/956364" />
 	public sealed class AbandonableTask {
 
-		[CanBeNull]
 		private Action? _beginWork { get; }
 
-		[CanBeNull]
-		private Action _blockingWork { get; }
+		private Action? _blockingWork { get; }
 
 		private CancellationToken _cancellationToken { get; }
 
-		[CanBeNull]
 		public Action<Task>? AfterComplete { get; }
 
-		private AbandonableTask( [CanBeNull] Action? beginWork, [NotNull] Action blockingWork, [CanBeNull] Action<Task>? afterComplete, CancellationToken cancellationToken ) {
+		private AbandonableTask( Action? beginWork, Action blockingWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
 			this._beginWork = beginWork;
-			this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );
+			this._blockingWork = blockingWork ?? throw new ArgumentEmptyException( nameof( blockingWork ) );
 			this.AfterComplete = afterComplete;
 			this._cancellationToken = cancellationToken;
 		}
@@ -67,15 +64,14 @@ namespace Librainian.Threading {
 			}
 		}
 
-		[NotNull]
 		public static Task Start(
-			[NotNull] Action blockingWork,
-			[CanBeNull] Action? beginWork,
-			[CanBeNull] Action<Task>? afterComplete,
+			Action blockingWork,
+			Action? beginWork,
+			Action<Task>? afterComplete,
 			CancellationToken cancellationToken
 		) {
 			if ( blockingWork is null ) {
-				throw new ArgumentNullException( nameof( blockingWork ) );
+				throw new ArgumentEmptyException( nameof( blockingWork ) );
 			}
 
 			var worker = new AbandonableTask( beginWork, blockingWork, afterComplete, cancellationToken );

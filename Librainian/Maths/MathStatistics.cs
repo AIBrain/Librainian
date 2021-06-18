@@ -27,15 +27,15 @@ namespace Librainian.Maths {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Time;
 	using Rationals;
 
 	public static class MathStatistics {
 
-		public static Decimal CalcAvg( [NotNull] this IEnumerable<Decimal> values ) => values.DefaultIfEmpty().Average( arg => arg );
+		public static Decimal CalcAvg( this IEnumerable<Decimal> values ) => values.DefaultIfEmpty().Average( arg => arg );
 
-		public static Decimal CalcEma( [NotNull] this IEnumerable<Decimal> values, Decimal alpha ) =>
+		public static Decimal CalcEma( this IEnumerable<Decimal> values, Decimal alpha ) =>
 			values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace Librainian.Maths {
 		/// <param name="items"></param>
 		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-		public static Double GeometricMean( [NotNull] this IEnumerable<Double> data, Int32 items ) {
+		public static Double GeometricMean( this IEnumerable<Double> data, Int32 items ) {
 			var aggregate = data.Aggregate( 1.0, ( current, d ) => current * d );
 
 			return Math.Pow( aggregate, 1.0 / items );
@@ -68,7 +68,7 @@ namespace Librainian.Maths {
 		/// <param name="items"></param>
 		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-		public static Decimal GeometricMean( [NotNull] this IEnumerable<Decimal> data, Int32 items ) {
+		public static Decimal GeometricMean( this IEnumerable<Decimal> data, Int32 items ) {
 			var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
 
 			return ( Decimal )Math.Pow( ( Double )aggregate, ( Double )( 1.0m / items ) ); //BUG possible conversion errors here
@@ -86,15 +86,15 @@ namespace Librainian.Maths {
 		/// <param name="items"></param>
 		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
-		public static Rational GeometricMean( [NotNull] this IEnumerable<Rational> data, Int32 items ) {
+		public static Rational GeometricMean( this IEnumerable<Rational> data, Int32 items ) {
 			var aggregate = data.Aggregate( Rational.One, ( current, d ) => current * d );
 
 			return Rational.Pow( aggregate, ( Int32 )( 1.0 / items ) ); //BUG possible conversion errors here
 		}
 
-		public static Double Intercept( [NotNull] this List<TimeProgression> data ) {
+		public static Double Intercept( this List<TimeProgression> data ) {
 			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			var slope = data.Slope();
@@ -102,25 +102,25 @@ namespace Librainian.Maths {
 			return data.Average( d => d.Progress ) - slope * data.Average( d => d.MillisecondsPassed );
 		}
 
-		public static Double MeanGeometric( [NotNull] this IEnumerable<Double> numbers ) {
+		public static Double MeanGeometric( this IEnumerable<Double> numbers ) {
 			var enumerable = numbers as IList<Double> ?? numbers.ToList();
 
 			return Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
 		}
 
-		public static Int32 MeanGeometric( [NotNull] this IEnumerable<Int32> numbers ) {
+		public static Int32 MeanGeometric( this IEnumerable<Int32> numbers ) {
 			var enumerable = numbers as IList<Int32> ?? numbers.ToList();
 
 			return ( Int32 )Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
 		}
 
-		public static Single MeanGeometric( [NotNull] this IEnumerable<Single> numbers ) {
+		public static Single MeanGeometric( this IEnumerable<Single> numbers ) {
 			var enumerable = numbers as IList<Single> ?? numbers.ToList();
 
 			return ( Single )Math.Pow( enumerable.Aggregate( ( s, i ) => s * i ), 1.0 / enumerable.Count );
 		}
 
-		public static Decimal MeanGeometric( [NotNull] this IEnumerable<Decimal> numbers ) {
+		public static Decimal MeanGeometric( this IEnumerable<Decimal> numbers ) {
 			var enumerable = numbers as IList<Decimal> ?? numbers.ToList();
 			Decimal result = 0;
 			var first = true;
@@ -139,25 +139,25 @@ namespace Librainian.Maths {
 			return ( Decimal )Math.Pow( ( Double )result, 1.0 / enumerable.Count );
 		}
 
-		public static Double MeanHarmonic( [NotNull] this IEnumerable<Double> numbers ) {
+		public static Double MeanHarmonic( this IEnumerable<Double> numbers ) {
 			var enumerable = numbers as IList<Double> ?? numbers.ToList();
 
 			return enumerable.Count / enumerable.Sum( i => 1 / i );
 		}
 
-		public static Int32 MeanHarmonic( [NotNull] this IEnumerable<Int32> numbers ) {
+		public static Int32 MeanHarmonic( this IEnumerable<Int32> numbers ) {
 			var enumerable = numbers as IList<Int32> ?? numbers.ToList();
 
 			return enumerable.Count / enumerable.Sum( i => 1 / i );
 		}
 
-		public static Single MeanHarmonic( [NotNull] this IEnumerable<Single> numbers ) {
+		public static Single MeanHarmonic( this IEnumerable<Single> numbers ) {
 			var enumerable = numbers as IList<Single> ?? numbers.ToList();
 
 			return enumerable.Count / enumerable.Sum( i => 1 / i );
 		}
 
-		public static Decimal MeanHarmonic( [NotNull] this IEnumerable<Decimal> numbers ) {
+		public static Decimal MeanHarmonic( this IEnumerable<Decimal> numbers ) {
 			var enumerable = numbers as IList<Decimal> ?? numbers.ToList();
 
 			return enumerable.Count / enumerable.Sum( i => 1 / i );
@@ -302,9 +302,9 @@ namespace Librainian.Maths {
 			// a chance of 0.90 will return false
 		}
 
-		public static Double Slope( [NotNull] this List<TimeProgression> data ) {
+		public static Double Slope( this List<TimeProgression> data ) {
 			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			var averageX = data.Average( d => d.MillisecondsPassed );
@@ -316,9 +316,9 @@ namespace Librainian.Maths {
 			return a / b;
 		}
 
-		public static Double StandardDeviation( [NotNull] this IEnumerable<Double> values ) {
+		public static Double StandardDeviation( this IEnumerable<Double> values ) {
 			if ( values is null ) {
-				throw new ArgumentNullException( nameof( values ) );
+				throw new ArgumentEmptyException( nameof( values ) );
 			}
 
 			var doubles = values as Double[] ?? values.ToArray();
@@ -327,9 +327,9 @@ namespace Librainian.Maths {
 			return Math.Sqrt( doubles.Average( v => Math.Pow( v - avg, 2 ) ) );
 		}
 
-		public static Decimal StandardDeviation( [NotNull] this IEnumerable<Decimal> values ) {
+		public static Decimal StandardDeviation( this IEnumerable<Decimal> values ) {
 			if ( values is null ) {
-				throw new ArgumentNullException( nameof( values ) );
+				throw new ArgumentEmptyException( nameof( values ) );
 			}
 
 			var decimals = values as Decimal[] ?? values.ToArray();

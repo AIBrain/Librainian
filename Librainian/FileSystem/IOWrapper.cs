@@ -31,7 +31,6 @@ namespace Librainian.FileSystem {
 	using System.Diagnostics;
 	using System.IO;
 	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>defrag stuff</summary>
@@ -216,8 +215,7 @@ namespace Librainian.FileSystem {
 		/// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
 		/// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
 		/// <returns>An array of [virtual cluster, physical cluster]</returns>
-		[JetBrains.Annotations.NotNull]
-		public static Array GetFileMap( [CanBeNull] String? path ) {
+		public static Array GetFileMap( String? path ) {
 			var hFile = IntPtr.Zero;
 			var pAlloc = IntPtr.Zero;
 
@@ -300,8 +298,7 @@ namespace Librainian.FileSystem {
 		/// <summary>Get cluster usage for a device</summary>
 		/// <param name="deviceName">use "c:"</param>
 		/// <returns>a bitarray for each cluster</returns>
-		[JetBrains.Annotations.NotNull]
-		public static BitArray GetVolumeMap( [JetBrains.Annotations.NotNull] String deviceName ) {
+		public static BitArray GetVolumeMap( String deviceName ) {
 			if ( String.IsNullOrWhiteSpace( deviceName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( deviceName ) );
 			}
@@ -382,7 +379,7 @@ namespace Librainian.FileSystem {
 		/// <param name="vcn">cluster number in file to move</param>
 		/// <param name="lcn">cluster on disk to move to</param>
 		/// <param name="count">for how many clusters</param>
-		public static void MoveFile( [CanBeNull] String? deviceName, [CanBeNull] String? path, Int64 vcn, Int64 lcn, Int32 count ) {
+		public static void MoveFile( String? deviceName, String? path, Int64 vcn, Int64 lcn, Int32 count ) {
 			var hVol = IntPtr.Zero;
 			var hFile = IntPtr.Zero;
 
@@ -417,7 +414,7 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		public static IntPtr OpenFile( [CanBeNull] String? path ) {
+		public static IntPtr OpenFile( String? path ) {
 			var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
 												  FileMode.Open, 0, IntPtr.Zero );
 
@@ -428,7 +425,7 @@ namespace Librainian.FileSystem {
 			return hFile.DangerousGetHandle();
 		}
 
-		public static IntPtr OpenVolume( [CanBeNull] String? deviceName ) {
+		public static IntPtr OpenVolume( String? deviceName ) {
 			var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
 													IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 

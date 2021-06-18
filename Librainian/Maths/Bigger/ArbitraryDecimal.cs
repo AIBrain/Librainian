@@ -26,7 +26,6 @@ namespace Librainian.Maths.Bigger {
 
 	using System;
 	using System.Globalization;
-	using JetBrains.Annotations;
 
 	public class ArbitraryDecimal {
 
@@ -108,7 +107,6 @@ namespace Librainian.Maths.Bigger {
 		public void Shift( Int32 amount ) => this._decimalPoint += amount;
 
 		/// <summary>Converts the value to a proper System.Decimal String representation.</summary>
-		[NotNull]
 		public override String ToString() {
 			var digitString = new Char[ this._digits.Length ];
 

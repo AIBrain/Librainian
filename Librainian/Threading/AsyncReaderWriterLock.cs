@@ -28,7 +28,6 @@ namespace Librainian.Threading {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 
 	/// <summary></summary>
 	public class AsyncReaderWriterLock {
@@ -37,16 +36,12 @@ namespace Librainian.Threading {
 
 		private Int32 _status;
 
-		[NotNull]
 		private Task<Releaser> _readerReleaser { get; }
 
-		[NotNull]
 		private TaskCompletionSource<Releaser> _waitingReader { get; set; } = new( TaskCreationOptions.RunContinuationsAsynchronously );
 
-		[NotNull]
 		private Queue<TaskCompletionSource<Releaser>> _waitingWriters { get; } = new();
 
-		[NotNull]
 		private Task<Releaser> _writerReleaser { get; }
 
 		public AsyncReaderWriterLock() {
@@ -54,7 +49,6 @@ namespace Librainian.Threading {
 			this._writerReleaser = Task.FromResult( new Releaser( this, true ) );
 		}
 
-		[NotNull]
 		public Task<Releaser> ReaderLockAsync() {
 			lock ( this._waitingWriters ) {
 				if ( this._status >= 0 && !this._waitingWriters.Any() ) {
@@ -84,7 +78,6 @@ namespace Librainian.Threading {
 			toWake?.SetResult( new Releaser( this, true ) );
 		}
 
-		[NotNull]
 		public Task<Releaser> WriterLockAsync() {
 			lock ( this._waitingWriters ) {
 				if ( this._status == 0 ) {

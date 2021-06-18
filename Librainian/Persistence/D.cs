@@ -29,7 +29,7 @@ namespace Librainian.Persistence {
 	using System;
 	using System.Collections.Generic;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Microsoft.VisualBasic;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -47,12 +47,10 @@ namespace Librainian.Persistence {
 
 		/// <summary>The key.</summary>
 		[JsonProperty( IsReference = false, ItemIsReference = false )]
-		[NotNull]
 		public String K { get; }
 
 		/// <summary>The value.</summary>
 		[JsonProperty( IsReference = false, ItemIsReference = false )]
-		[CanBeNull]
 		public String? V { get; set; }
 
 		public D() {
@@ -60,16 +58,15 @@ namespace Librainian.Persistence {
 			this.V = null;
 		}
 
-		public D( [NotNull] String key ) => this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+		public D( String key ) => this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
 
-		public D( [NotNull] String key, [CanBeNull] String? value ) {
-			this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+		public D( String key, String? value ) {
+			this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
 			this.V = value;
 		}
 
 		public override Int32 GetHashCode() => this.K.GetHashCode();
 
-		[NotNull]
 		public override String ToString() {
 			String keypart;
 
@@ -108,7 +105,7 @@ namespace Librainian.Persistence {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] D? left, [CanBeNull] D? right ) {
+		public static Boolean Equals( D? left, D? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}

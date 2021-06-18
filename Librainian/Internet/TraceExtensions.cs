@@ -32,7 +32,6 @@ namespace Librainian.Internet {
 	using System.Net;
 	using System.Net.NetworkInformation;
 	using System.Net.Sockets;
-	using JetBrains.Annotations;
 
 	public static class TraceExtensions {
 
@@ -40,8 +39,7 @@ namespace Librainian.Internet {
 		/// <param name="address">The IP address of the destination.</param>
 		/// <param name="maxHops">Max hops to be returned.</param>
 		/// <param name="timeout"></param>
-		[ItemNotNull]
-		public static IEnumerable<TracertEntry> TraceRoute( [NotNull] this IPAddress address, Int32 maxHops, Int32 timeout ) {
+		public static IEnumerable<TracertEntry> TraceRoute( this IPAddress address, Int32 maxHops, Int32 timeout ) {
 
 			// Max hops should be at least one or else there won't be any data to return.
 			if ( maxHops < 1 ) {
@@ -110,7 +108,6 @@ namespace Librainian.Internet {
 			/// <summary>The reply time it took for the host to receive and reply to the request in milliseconds.</summary>
 			public Int64 ReplyTime { get; set; }
 
-			[NotNull]
 			public override String ToString() =>
 				$"{this.HopID} | {( String.IsNullOrEmpty( this.Hostname ) ? this.Address : this.Hostname + "[" + this.Address + "]" )} | {( this.ReplyStatus == IPStatus.TimedOut ? "Request Timed Out." : this.ReplyTime + " ms" )}";
 		}

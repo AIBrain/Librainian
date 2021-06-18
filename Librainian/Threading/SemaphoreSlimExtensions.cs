@@ -27,14 +27,13 @@ namespace Librainian.Threading {
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class SemaphoreSlimExtensions {
 
-		[ItemNotNull]
-		public static async Task<IDisposable> UseWaitAsync( [NotNull] this SemaphoreSlim semaphore, CancellationToken cancelToken = default ) {
+		public static async Task<IDisposable> UseWaitAsync( this SemaphoreSlim semaphore, CancellationToken cancelToken = default ) {
 			if ( semaphore is null ) {
-				throw new ArgumentNullException( nameof( semaphore ) );
+				throw new ArgumentEmptyException( nameof( semaphore ) );
 			}
 
 			await semaphore.WaitAsync( cancelToken ).ConfigureAwait( false );
@@ -44,10 +43,9 @@ namespace Librainian.Threading {
 
 		private class ReleaseWrapper : IDisposable {
 
-			[CanBeNull]
 			private SemaphoreSlim? _semaphore;
 
-			public ReleaseWrapper( [NotNull] SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
+			public ReleaseWrapper( SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
 
 			public void Dispose() {
 				using ( this._semaphore ) {

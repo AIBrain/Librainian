@@ -29,7 +29,6 @@ namespace Librainian.Interfaces {
 
 	using System;
 	using System.Drawing;
-	using JetBrains.Annotations;
 	using Utilities;
 
 	public class Message : ABetterClassDispose, IMessage {
@@ -38,14 +37,12 @@ namespace Librainian.Interfaces {
 		public Color? BackgroundColor { get; set; }
 
 		/// <summary>The data for this message. Usually a string.</summary>
-		[CanBeNull]
 		public String? Data { get; set; }
 
 		/// <summary>The UTC when this message was created.</summary>
 		public DateTime Date { get; }
 
 		/// <summary>The message's source id.. (like the user's name)</summary>
-		[CanBeNull]
 		public String? Description { get; set; }
 
 		/// <summary>Optional color to be used.</summary>
@@ -59,10 +56,8 @@ namespace Librainian.Interfaces {
 
 		public Boolean Processed { get; set; }
 
-		[CanBeNull]
 		public DateTime? ProcessingEnded { get; set; }
 
-		[CanBeNull]
 		public DateTime? ProcessingStarted { get; set; }
 
 		/// <summary>This message is in reference to.</summary>
@@ -70,14 +65,13 @@ namespace Librainian.Interfaces {
 
 		public SourceRecord Source { get; set; }
 
-		public Message( SourceRecord source, [CanBeNull] String? sourceID = null ) {
+		public Message( SourceRecord source, String? sourceID = null ) {
 			this.ID = Guid.NewGuid();
 			this.Date = DateTime.UtcNow;
 			this.Description = sourceID;
 			this.Source = source;
 		}
 
-		[CanBeNull]
 		public TimeSpan? ProcessingTime() => this.ProcessingEnded - this.ProcessingStarted;
 
 		/// <summary>

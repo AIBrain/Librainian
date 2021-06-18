@@ -35,13 +35,12 @@ namespace Librainian.FileSystem {
 	using System.Runtime.InteropServices;
 	using System.Text;
 	using ComputerSystem.Devices;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>A volume device.</summary>
 	public class Volume : Device {
 
-		internal Volume( [NotNull] DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, [CanBeNull] String? path, Int32 index ) : base(
+		internal Volume( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String? path, Int32 index ) : base(
 			deviceClass, deviceInfoData, path, index ) { }
 
 		/// <summary>Compares the current instance with another object of the same type.</summary>
@@ -63,7 +62,6 @@ namespace Librainian.FileSystem {
 			return String.Compare( this.GetLogicalDrive(), device.GetLogicalDrive(), StringComparison.Ordinal );
 		}
 
-		[NotNull]
 		public IEnumerable<Int32> GetDiskNumbers() {
 			var numbers = new List<Int32>();
 
@@ -92,13 +90,15 @@ namespace Librainian.FileSystem {
 				}
 
 				if ( bytesReturned > 0 ) {
-					var numberOfDiskExtents = ( Int32 )Marshal.PtrToStructure( buffer, typeof( Int32 ) )!;
+					var numberOfDiskExtents = ( Int32? )Marshal.PtrToStructure( buffer, typeof( Int32 ) );
 
 					for ( var i = 0; i < numberOfDiskExtents; i++ ) {
 						var extentPtr = new IntPtr( buffer.ToInt32() + Marshal.SizeOf( typeof( Int64 ) ) + i * Marshal.SizeOf( typeof( NativeMethods.DISK_EXTENT ) ) );
 
-						var extent = ( NativeMethods.DISK_EXTENT )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) )!;
-						numbers.Add( extent.DiskNumber );
+						var extent = ( NativeMethods.DISK_EXTENT? )Marshal.PtrToStructure( extentPtr, typeof( NativeMethods.DISK_EXTENT ) );
+						if ( extent != null ) {
+							numbers.Add( extent.Value.DiskNumber );
+						}
 					}
 				}
 
@@ -109,7 +109,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Gets a list of underlying disks for this volume.</summary>
-		[ItemNotNull]
 		public IEnumerable<Device> GetDisks() {
 			using var disks = new DiskDeviceClass();
 
@@ -121,7 +120,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Gets the volume's logical drive in the form [letter]:\</summary>
-		[CanBeNull]
 		public String? GetLogicalDrive() {
 			var volumeName = this.GetVolumeName();
 			String? logicalDrive = null;
@@ -134,12 +132,9 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Gets a list of removable devices for this volume.</summary>
-		[ItemNotNull]
-		[NotNull]
 		public override IEnumerable<Device> GetRemovableDevices() => this.GetDisks().SelectMany( disk => disk.GetRemovableDevices() );
 
 		/// <summary>Gets the volume's name.</summary>
-		[CanBeNull]
 		public String? GetVolumeName() {
 			var sb = new StringBuilder( 1024 );
 

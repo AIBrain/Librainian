@@ -29,7 +29,6 @@ namespace Librainian.Internet {
 	using System.Linq;
 	using System.Net;
 	using System.Net.NetworkInformation;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>http://pastebin.com/u9159Ys8</summary>
@@ -39,8 +38,7 @@ namespace Librainian.Internet {
 
 		static NetworkInterfaceHelper() => NetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces().ToDictionary( o => o.Id );
 
-		[CanBeNull]
-		public static NetworkInterface GetBestInterface( [NotNull] this IPAddress address ) {
+		public static NetworkInterface GetBestInterface( this IPAddress address ) {
 			var byteArray1 = address.GetAddressBytes();
 
 			var ipaddr = BitConverter.ToUInt32( byteArray1, 0 );

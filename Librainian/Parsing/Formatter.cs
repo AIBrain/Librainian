@@ -27,7 +27,6 @@ namespace Librainian.Parsing {
 
 	using System;
 	using System.Globalization;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Base class for expandable formatters.
@@ -39,14 +38,13 @@ namespace Librainian.Parsing {
 		///     Gets the culture.
 		/// </summary>
 		/// <value>The culture.</value>
-		[NotNull]
 		public CultureInfo Culture { get; }
 
 		/// <summary>
 		///     Initializes a new instance of the <see cref="Formatter" /> class.
 		/// </summary>
 		/// <param name="culture">The culture.</param>
-		protected Formatter( [CanBeNull] CultureInfo? culture = null ) => this.Culture = culture ?? CultureInfo.CurrentCulture;
+		protected Formatter( CultureInfo? culture = null ) => this.Culture = culture ?? CultureInfo.CurrentCulture;
 
 		/// <summary>
 		///     Helper method that can be used inside the Format method to handle unrecognized formats.
@@ -57,8 +55,7 @@ namespace Librainian.Parsing {
 		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
 		///     <paramref name="format" />.
 		/// </returns>
-		[NotNull]
-		protected String HandleOtherFormats( [CanBeNull] String? format, [CanBeNull] Object? arg ) =>
+		protected String HandleOtherFormats( String? format, Object? arg ) =>
 			( arg as IFormattable )?.ToString( format, this.Culture ) ?? arg?.ToString() ?? String.Empty;
 
 		/// <summary>
@@ -66,8 +63,7 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="culture">The culture.</param>
 		/// <returns>A composite formatter.</returns>
-		[NotNull]
-		public static Formatter Default( [CanBeNull] CultureInfo? culture = null ) => new CompositeFormatter( culture );
+		public static Formatter Default( CultureInfo? culture = null ) => new CompositeFormatter( culture );
 
 		/// <summary>
 		///     Converts the value of a specified object to an equivalent string representation using specified format and
@@ -80,7 +76,7 @@ namespace Librainian.Parsing {
 		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
 		///     <paramref name="format" /> and <paramref name="formatProvider" />.
 		/// </returns>
-		public abstract String Format( [CanBeNull] String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider );
+		public abstract String Format( String? format, Object? arg, IFormatProvider? formatProvider );
 
 		/// <summary>
 		///     Returns an object that provides formatting services for the specified type.
@@ -93,6 +89,6 @@ namespace Librainian.Parsing {
 		///         langword="null" />
 		///     .
 		/// </returns>
-		public virtual Object? GetFormat( [CanBeNull] Type? formatType ) => formatType == typeof( ICustomFormatter ) ? this : null;
+		public virtual Object? GetFormat( Type? formatType ) => formatType == typeof( ICustomFormatter ) ? this : null;
 	}
 }

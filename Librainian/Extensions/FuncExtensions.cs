@@ -25,8 +25,9 @@
 namespace Librainian.Extensions {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Runtime.CompilerServices;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Storage = System.Collections.Concurrent.ConcurrentDictionary<System.Object, System.Object>;
 
 	/// <summary>http://www.jaylee.org/post/2013/04/22/Immutable-Data-and-Memoization-in-CSharp-Part-2.aspx</summary>
@@ -35,35 +36,33 @@ namespace Librainian.Extensions {
 		public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new();
 
 		// Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
-		[CanBeNull]
 		public static TResult? ApplyMemoized<TSource, TResult, TParam>(
-			[NotNull] this TSource source,
-			[NotNull] Func<TSource, TParam, TResult> selector,
-			[NotNull] TParam param
+			[DisallowNull] this TSource source,
+			Func<TSource, TParam, TResult> selector,
+			[DisallowNull] TParam param
 		) {
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			if ( selector == null ) {
-				throw new ArgumentNullException( nameof( selector ) );
+				throw new ArgumentEmptyException( nameof( selector ) );
 			}
 
 			if ( param is null ) {
-				throw new ArgumentNullException( nameof( param ) );
+				throw new ArgumentEmptyException( nameof( param ) );
 			}
 
 			return selector.AsWeakMemoized( source )( param );
 		}
 
-		[NotNull]
-		public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( [NotNull] this Func<TSource, TParam, TResult> selector, [NotNull] TSource source ) {
+		public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, [DisallowNull] TSource source ) {
 			if ( selector == null ) {
-				throw new ArgumentNullException( nameof( selector ) );
+				throw new ArgumentEmptyException( nameof( selector ) );
 			}
 
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			return param => {

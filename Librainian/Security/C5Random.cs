@@ -27,7 +27,7 @@
 namespace Librainian.Security {
 
 	using System;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/*
         Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
@@ -101,9 +101,9 @@ namespace Librainian.Security {
 		///     The start state. Must be a collection of random bits given by an array of exactly 16
 		///     <see cref="UInt32" />.
 		/// </param>
-		public C5Random( [NotNull] UInt32[] array ) {
+		public C5Random( UInt32[] array ) {
 			if ( array is null ) {
-				throw new ArgumentNullException( nameof( array ) );
+				throw new ArgumentEmptyException( nameof( array ) );
 			}
 
 			if ( array.Length > 0 ) {
@@ -186,7 +186,7 @@ namespace Librainian.Security {
 		/// <param name="buffer">The array to fill</param>
 		public override void NextBytes( Byte[] buffer ) {
 			if ( buffer is null ) {
-				throw new ArgumentNullException( nameof( buffer ) );
+				throw new ArgumentEmptyException( nameof( buffer ) );
 			}
 
 			for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {

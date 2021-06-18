@@ -29,7 +29,6 @@ namespace Librainian.Graphics.Moving {
 
 	using System;
 	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -119,7 +118,7 @@ namespace Librainian.Graphics.Moving {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equal( [CanBeNull] Pixelyx? left, [CanBeNull] Pixelyx? right ) {
+		public static Boolean Equal( Pixelyx? left, Pixelyx? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}

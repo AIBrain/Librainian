@@ -32,6 +32,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Maths.Bigger;
 	using Newtonsoft.Json;
 
@@ -69,7 +70,7 @@ namespace Librainian.Measurement.Time {
 
 		public Int32 CompareTo( Weeks? other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

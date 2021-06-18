@@ -34,13 +34,11 @@ namespace Librainian.Threadsafe {
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	/// <summary>A reference array that may be updated atomically</summary>
 	public class ReferenceArray<T> where T : class {
 
-		[NotNull]
-		private T[] Array { get; }
+		private T?[] Array { get; }
 
 		public Int32 Length { get; }
 
@@ -58,21 +56,21 @@ namespace Librainian.Threadsafe {
 		///     array.
 		/// </summary>
 		/// <param name="array"></param>
-		public ReferenceArray( [NotNull] IEnumerable<T> array ) => this.Array = array.ToArray();
+		public ReferenceArray( IEnumerable<T> array ) => this.Array = array.ToArray();
 
 		/// <summary>Atomically set the value to the given updated value if the current value equals the comparand</summary>
 		/// <param name="newValue"> The new value</param>
 		/// <param name="comparand">The comparand (expected value)</param>
 		/// <param name="index">    The index.</param>
 		/// <returns>The original value</returns>
-		public Boolean AtomicCompareExchange( Int32 index, [CanBeNull] T newValue, [CanBeNull] T comparand ) =>
+		public Boolean AtomicCompareExchange( Int32 index, T? newValue, T? comparand ) =>
 			Interlocked.CompareExchange( ref this.Array[ index ], newValue, comparand ) == comparand;
 
 		/// <summary>Atomically set the value to the given updated value</summary>
 		/// <param name="newValue">The new value</param>
 		/// <param name="index">   The index.</param>
 		/// <returns>The original value</returns>
-		public T AtomicExchange( Int32 index, [CanBeNull] T newValue ) {
+		public T? AtomicExchange( Int32 index, T? newValue ) {
 			var result = Interlocked.Exchange( ref this.Array[ index ], newValue );
 
 			return result;
@@ -81,8 +79,7 @@ namespace Librainian.Threadsafe {
 		/// <summary>Read the value applying acquire fence semantic</summary>
 		/// <param name="index">The element index</param>
 		/// <returns>The current value</returns>
-		[CanBeNull]
-		public T ReadAcquireFence( Int32 index ) {
+		public T? ReadAcquireFence( Int32 index ) {
 			var value = this.Array[ index ];
 			Thread.MemoryBarrier();
 
@@ -93,14 +90,12 @@ namespace Librainian.Threadsafe {
 		/// <param name="index">The element index</param>
 		/// <returns>The current value</returns>
 		[MethodImpl( MethodImplOptions.NoOptimization )]
-		[CanBeNull]
-		public T ReadCompilerOnlyFence( Int32 index ) => this.Array[ index ];
+		public T? ReadCompilerOnlyFence( Int32 index ) => this.Array[ index ];
 
 		/// <summary>Read the value applying full fence semantic</summary>
 		/// <param name="index">The element index</param>
 		/// <returns>The current value</returns>
-		[CanBeNull]
-		public T ReadFullFence( Int32 index ) {
+		public T? ReadFullFence( Int32 index ) {
 			var value = this.Array[ index ];
 			Thread.MemoryBarrier();
 
@@ -110,19 +105,18 @@ namespace Librainian.Threadsafe {
 		/// <summary>Read the value without applying any fence</summary>
 		/// <param name="index">The index of the element.</param>
 		/// <returns>The current value.</returns>
-		[CanBeNull]
-		public T ReadUnfenced( Int32 index ) => this.Array[ index ];
+		public T? ReadUnfenced( Int32 index ) => this.Array[ index ];
 
 		/// <summary>Write the value applying a compiler fence only, no CPU fence is applied</summary>
 		/// <param name="index">   The element index</param>
 		/// <param name="newValue">The new value</param>
 		[MethodImpl( MethodImplOptions.NoOptimization )]
-		public void WriteCompilerOnlyFence( Int32 index, [CanBeNull] T newValue ) => this.Array[ index ] = newValue;
+		public void WriteCompilerOnlyFence( Int32 index, T? newValue ) => this.Array[ index ] = newValue;
 
 		/// <summary>Write the value applying full fence semantic</summary>
 		/// <param name="index">   The element index</param>
 		/// <param name="newValue">The new value</param>
-		public void WriteFullFence( Int32 index, [CanBeNull] T newValue ) {
+		public void WriteFullFence( Int32 index, T? newValue ) {
 			this.Array[ index ] = newValue;
 			Thread.MemoryBarrier();
 		}
@@ -130,7 +124,7 @@ namespace Librainian.Threadsafe {
 		/// <summary>Write the value applying release fence semantic</summary>
 		/// <param name="index">   The element index</param>
 		/// <param name="newValue">The new value</param>
-		public void WriteReleaseFence( Int32 index, [CanBeNull] T newValue ) {
+		public void WriteReleaseFence( Int32 index, T? newValue ) {
 			this.Array[ index ] = newValue;
 			Thread.MemoryBarrier();
 		}
@@ -138,6 +132,6 @@ namespace Librainian.Threadsafe {
 		/// <summary>Write without applying any fence</summary>
 		/// <param name="index">   The index.</param>
 		/// <param name="newValue">The new value</param>
-		public void WriteUnfenced( Int32 index, [CanBeNull] T newValue ) => this.Array[ index ] = newValue;
+		public void WriteUnfenced( Int32 index, T? newValue ) => this.Array[ index ] = newValue;
 	}
 }

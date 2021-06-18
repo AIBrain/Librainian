@@ -46,18 +46,16 @@ namespace Librainian.Financial.Currency.BTC {
 
 		Guid ID { get; }
 
-		[CanBeNull]
 		Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
 
-		[CanBeNull]
 		Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
 
 		/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
 		Decimal Total { get; }
 
-		Boolean Contains( [NotNull] ICoin coin );
+		Boolean Contains( ICoin coin );
 
-		UInt64 Count( [NotNull] ICoin coin );
+		UInt64 Count( ICoin coin );
 
 		IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
 
@@ -69,6 +67,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <param name="quantity"></param>
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
-		Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity );
+		Boolean TryWithdraw( ICoin coin, UInt64 quantity );
 	}
 }

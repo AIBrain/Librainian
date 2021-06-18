@@ -32,7 +32,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
 	using OperatingSystem;
 	using DWORD = System.UInt32;
@@ -235,17 +234,17 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean CopyFile(
-			[JetBrains.Annotations.NotNull] String src,
-			[JetBrains.Annotations.NotNull] String dst,
+			String src,
+			String dst,
 			[MarshalAs( UnmanagedType.Bool )] Boolean failIfExists
 		);
 
 		[DllImport( DLL.coredll, BestFitMapping = false, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean CopyFileEx(
-			[JetBrains.Annotations.NotNull] String lpExistingFileName,
-			[JetBrains.Annotations.NotNull] String lpNewFileName,
-			[CanBeNull] CopyProgressRoutine lpProgressRoutine,
+			String lpExistingFileName,
+			String lpNewFileName,
+			CopyProgressRoutine? lpProgressRoutine,
 			IntPtr lpData,
 			ref Int32 IsCancelled,
 			MoveFileFlags dwCopyFlags
@@ -277,11 +276,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean CreateDirectory( [JetBrains.Annotations.NotNull] this String lpPathName, IntPtr lpSecurityAttributes );
+		public static extern Boolean CreateDirectory( this String lpPathName, IntPtr lpSecurityAttributes );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern SafeFileHandle CreateFile(
-			[JetBrains.Annotations.NotNull] String lpFileName,
+			String lpFileName,
 			EFileAccess dwDesiredAccess,
 			DWORD dwShareMode,
 			IntPtr lpSecurityAttributes,
@@ -291,11 +290,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		);
 
 		[DllImport( DLL.advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
-		public static extern Boolean DecryptFile( [JetBrains.Annotations.NotNull] String path, Int32 reservedMustBeZero );
+		public static extern Boolean DecryptFile( String path, Int32 reservedMustBeZero );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean DeleteFile( [JetBrains.Annotations.NotNull] String lpFileName );
+		public static extern Boolean DeleteFile( String lpFileName );
 
 		/*
 		[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
@@ -311,18 +310,18 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		*/
 
 		[DllImport( DLL.advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
-		public static extern Boolean EncryptFile( [JetBrains.Annotations.NotNull] String path );
+		public static extern Boolean EncryptFile( String path );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean FindClose( IntPtr hFindFile );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern NativeMethods.SafeFindHandle FindFirstFile( [JetBrains.Annotations.NotNull] String lpFileName, out WIN32_FIND_DATA lpFindFileData );
+		public static extern NativeMethods.SafeFindHandle FindFirstFile( String lpFileName, out WIN32_FIND_DATA lpFindFileData );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean FindNextFile( [JetBrains.Annotations.NotNull] this NativeMethods.SafeFindHandle hFindFile, out WIN32_FIND_DATA lpFindFileData );
+		public static extern Boolean FindNextFile( this NativeMethods.SafeFindHandle hFindFile, out WIN32_FIND_DATA lpFindFileData );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern Int32 FormatMessage(
@@ -342,10 +341,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static extern IntPtr GetCurrentThread();
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
-		public static extern FileAttributes GetFileAttributes( [JetBrains.Annotations.NotNull] String lpFileName );
+		public static extern FileAttributes GetFileAttributes( String lpFileName );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
-		public static extern Boolean GetFileAttributesEx( [JetBrains.Annotations.NotNull] String name, Int32 fileInfoLevel, ref WIN32_FILE_ATTRIBUTE_DATA lpFileInformation );
+		public static extern Boolean GetFileAttributesEx( String name, Int32 fileInfoLevel, ref WIN32_FILE_ATTRIBUTE_DATA lpFileInformation );
 
 		/*
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
@@ -382,7 +381,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		);
 		*/
 
-		[JetBrains.Annotations.NotNull]
 		public static String GetMessage( ERROR errorCode ) {
 			var sb = new StringBuilder( 1024 );
 
@@ -400,7 +398,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "GetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
 			ExactSpelling = true, CharSet = CharSet.Unicode )]
 		public static extern DWORD GetSecurityInfoByName(
-			[JetBrains.Annotations.NotNull] String name,
+			String name,
 			DWORD objectType,
 			DWORD securityInformation,
 			out IntPtr sidOwner,
@@ -420,12 +418,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean MoveFile( [JetBrains.Annotations.NotNull] String lpPathNameFrom, [JetBrains.Annotations.NotNull] String lpPathNameTo );
+		public static extern Boolean MoveFile( String lpPathNameFrom, String lpPathNameTo );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 		public static extern Boolean MoveFileWithProgress(
-			[JetBrains.Annotations.NotNull] String lpExistingFileName,
-			[JetBrains.Annotations.NotNull] String lpNewFileName,
+			String lpExistingFileName,
+			String lpNewFileName,
 			CopyProgressRoutine lpProgressRoutine,
 			IntPtr lpData,
 			MoveFileFlags dwCopyFlags
@@ -450,13 +448,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean RemoveDirectory( [JetBrains.Annotations.NotNull] String lpPathName );
+		public static extern Boolean RemoveDirectory( String lpPathName );
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 		public static extern Boolean ReplaceFile(
-			[JetBrains.Annotations.NotNull] String replacedFileName,
-			[JetBrains.Annotations.NotNull] String replacementFileName,
-			[JetBrains.Annotations.NotNull] String backupFileName,
+			String replacedFileName,
+			String replacementFileName,
+			String backupFileName,
 			Int32 dwReplaceFlags,
 			IntPtr lpExclude,
 			IntPtr lpReserved
@@ -466,7 +464,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static extern Boolean RevertToSelf();
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
-		public static extern Boolean SetCurrentDirectory( [JetBrains.Annotations.NotNull] String path );
+		public static extern Boolean SetCurrentDirectory( String path );
 
 		public static Int32 SetErrorMode( Int32 newMode ) {
 			if ( Environment.OSVersion.Version < ThreadErrorModeMinOsVersion ) {
@@ -480,7 +478,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
-		public static extern Boolean SetFileAttributes( [JetBrains.Annotations.NotNull] String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFileAttributes );
+		public static extern Boolean SetFileAttributes( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFileAttributes );
 
 		/// <summary>
 		///     Calls <see cref="SetFilePointerEx" />.
@@ -491,7 +489,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="offset"></param>
 		/// <returns></returns>
 		/// <exception cref="IOException"></exception>
-		public static UInt64 SetFilePointer( [CanBeNull] SafeFileHandle handle, SeekOrigin origin, UInt64 offset ) {
+		public static UInt64 SetFilePointer( SafeFileHandle? handle, SeekOrigin origin, UInt64 offset ) {
 			var result = SetFilePointerEx( handle, offset, out var filePointer, origin );
 
 			if ( !result && Marshal.GetLastWin32Error() != 0 ) {
@@ -533,7 +531,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "SetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
 			ExactSpelling = true, CharSet = CharSet.Unicode )]
 		public static extern DWORD SetSecurityInfoByName(
-			[JetBrains.Annotations.NotNull] String name,
+			String name,
 			DWORD objectType,
 			DWORD securityInformation,
 			Byte[] owner,
@@ -551,9 +549,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="progress"></param>
 		/// <param name="isCancelled">I believe this becomes 1 if the file copy was cancelled, and 0 otherwise.</param>
 		public static void XCopy(
-			[JetBrains.Annotations.NotNull] this String oldFile,
-			[JetBrains.Annotations.NotNull] String newFile,
-			[CanBeNull] CopyProgressRoutine? progress,
+			this String oldFile,
+			String newFile,
+			CopyProgressRoutine? progress,
 			ref Int32 isCancelled
 		) {
 			if ( String.IsNullOrWhiteSpace( oldFile ) ) {

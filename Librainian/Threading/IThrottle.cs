@@ -28,12 +28,10 @@
 namespace Librainian.Threading {
 
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 
 	/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
 	public interface IThrottle {
 
-		[NotNull]
 		Task WaitAsync();
 	}
 }

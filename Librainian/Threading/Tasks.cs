@@ -32,7 +32,7 @@ namespace Librainian.Threading {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Measurement.Time;
 
@@ -43,7 +43,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="completedTask"></param>
 		/// <param name="completionSource"></param>
-		private static void PropagateResult<T>( Task<T> completedTask, [CanBeNull] TaskCompletionSource<T> completionSource ) {
+		private static void PropagateResult<T>( Task<T> completedTask, TaskCompletionSource<T>? completionSource ) {
 			switch ( completedTask.Status ) {
 				case TaskStatus.Canceled:
 					completionSource.TrySetCanceled();
@@ -71,7 +71,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
@@ -98,10 +97,9 @@ namespace Librainian.Threading {
 		///     Interleaved(tasks)) { var t = await bucket; int result = await t;
 		///     Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
-		[NotNull]
-		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
+		public static Task<Task<T>>[] Interleaved<T>( IEnumerable<Task<T>> tasks ) {
 			if ( tasks == null ) {
-				throw new ArgumentNullException( nameof( tasks ) );
+				throw new ArgumentEmptyException( nameof( tasks ) );
 			}
 
 			var inputTasks = tasks.ToList();
@@ -137,21 +135,20 @@ namespace Librainian.Threading {
 		///// <param name="priority"></param>
 		//public static void Spawn( [NotNull] this Action job, Span? delay = null, Single priority ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 		//    AddThenFireAndForget( job: job, delay: delay );
 		//}
 
-		[NotNull]
-		public static Task Multitude( [CanBeNull] params Action[] actions ) => Task.Run( () => Parallel.Invoke( actions ) );
+		public static Task Multitude( params Action[]? actions ) => Task.Run( () => Parallel.Invoke( actions ) );
 
 		/// <summary>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" /> .</summary>
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
+		public static async Task Then( this TimeSpan delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -165,9 +162,9 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
+		public static async Task Then( this Milliseconds delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -181,9 +178,9 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
+		public static async Task Then( this Seconds delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -197,9 +194,9 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
+		public static async Task Then( this Minutes delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -212,8 +209,7 @@ namespace Librainian.Threading {
 		/// <param name="pre"></param>
 		/// <param name="post"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static Action Wrap( [CanBeNull] this Action? action, [CanBeNull] Action? pre, [CanBeNull] Action? post ) =>
+		public static Action Wrap( this Action? action, Action? pre, Action? post ) =>
 			() => {
 				try {
 					pre?.Invoke();
@@ -273,7 +269,7 @@ namespace Librainian.Threading {
 		///// <returns> </returns>
 		//public static Task Start( Action job, TimeSpan? delay = null ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 
 		//    if ( delay.HasValue ) {
@@ -304,7 +300,7 @@ namespace Librainian.Threading {
 		//[Obsolete]
 		//public static Task Job( this  Action job ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 		//    var task = Factory.StartNew( action: job );
 		//    return task;
@@ -321,7 +317,7 @@ namespace Librainian.Threading {
 		///// <returns> </returns>
 		//public static async void Then( Action<Task> task, TimeSpan? delay = null ) {
 		//    if ( task == null ) {
-		//        throw new ArgumentNullException( "task" );
+		//        throw new ArgumentEmptyException( "task" );
 		//    }
 		//    if ( !delay.HasValue ) {
 		//        delay = Millisecond.One;
@@ -338,7 +334,7 @@ namespace Librainian.Threading {
 		///// <param name="delay"> </param>
 		//public static Task Then( this Action job, TimeSpan? delay = null ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 		//    if ( !delay.HasValue ) { delay = Millisecond.TwoHundredEleven; }
 

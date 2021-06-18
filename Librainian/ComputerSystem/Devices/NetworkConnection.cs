@@ -31,7 +31,6 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Net.NetworkInformation;
 	using System.Runtime.InteropServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
 	using OperatingSystem;
@@ -178,7 +177,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 		private String? NetworkName { get; }
 
-		public NetworkConnection( [CanBeNull] String? networkName, [JetBrains.Annotations.NotNull] NetworkCredential credentials ) {
+		public NetworkConnection( String? networkName, NetworkCredential credentials ) {
 			this.NetworkName = networkName;
 
 			var netResource = new NetResource {

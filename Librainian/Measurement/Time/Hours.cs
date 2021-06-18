@@ -32,8 +32,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 	using Newtonsoft.Json;
 
@@ -46,28 +46,23 @@ namespace Librainian.Measurement.Time {
 		public const Byte InOneDay = 24;
 
 		/// <summary>Eight <see cref="Hours" /> .</summary>
-		[NotNull]
 		public static Hours Eight { get; } = new( 8 );
 
 		/// <summary>One <see cref="Hours" /> .</summary>
-		[NotNull]
 		public static Hours One { get; } = new( 1 );
 
 		/// <summary></summary>
-		[NotNull]
 		public static Hours Ten { get; } = new( 10 );
 
 		/// <summary></summary>
-		[NotNull]
 		public static Hours Thousand { get; } = new( 1000 );
 
 		/// <summary>Zero <see cref="Hours" /></summary>
-		[NotNull]
 		public static Hours Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( [NotNull] Hours? other ) {
+		public Int32 CompareTo( Hours other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

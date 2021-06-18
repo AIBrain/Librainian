@@ -29,7 +29,6 @@ namespace Librainian.Threadsafe {
 	using System;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	/// <summary>A long value that may be updated atomically</summary>
 	public struct Long {
@@ -92,7 +91,6 @@ namespace Librainian.Threadsafe {
 
 		/// <summary>Returns the String representation of the current value.</summary>
 		/// <returns>the String representation of the current value.</returns>
-		[NotNull]
 		public override String ToString() {
 			var value = this.ReadFullFence();
 

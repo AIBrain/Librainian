@@ -28,16 +28,14 @@
 namespace Librainian.Threading {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public readonly struct Releaser : IDisposable {
 
-		[CanBeNull]
 		private AsyncReaderWriterLock? _toRelease { get; }
 
 		private Boolean _writer { get; }
 
-		internal Releaser( [CanBeNull] AsyncReaderWriterLock? toRelease, Boolean writer ) {
+		internal Releaser( AsyncReaderWriterLock? toRelease, Boolean writer ) {
 			this._toRelease = toRelease;
 			this._writer = writer;
 		}

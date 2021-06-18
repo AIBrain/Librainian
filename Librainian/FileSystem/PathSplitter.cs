@@ -30,29 +30,25 @@ namespace Librainian.FileSystem {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Parsing;
 
 	//using LanguageExt.Prelude;
 
 	public class PathSplitter {
 
-		[NotNull]
-		[ItemNotNull]
 		private List<String> Parts { get; } = new();
 
-		[NotNull]
 		public String FileName { get; }
 
 		/// <summary>Null when equal to (is) the root folder.</summary>
-		[CanBeNull]
 		public String? OriginalPath { get; }
 
-		public PathSplitter( [NotNull] IFolder folder ) : this( new Document( folder.FullPath ) ) { }
+		public PathSplitter( IFolder folder ) : this( new Document( folder.FullPath ) ) { }
 
-		public PathSplitter( [NotNull] IDocument document, String newExtension = default ) {
+		public PathSplitter( IDocument document, String newExtension = default ) {
 			if ( document == null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			newExtension = newExtension.Trimmed() ?? document.Extension();
@@ -74,8 +70,7 @@ namespace Librainian.FileSystem {
 			this.Parts.TrimExcess();
 		}
 
-		[NotNull]
-		private static IEnumerable<String> Split( [NotNull] String path ) {
+		private static IEnumerable<String> Split( String path ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 			}
@@ -85,7 +80,7 @@ namespace Librainian.FileSystem {
 			}, StringSplitOptions.RemoveEmptyEntries );
 		}
 
-		public Boolean AddSubFolder( [NotNull] String subfolder ) {
+		public Boolean AddSubFolder( String subfolder ) {
 			subfolder = Folder.CleanPath( subfolder.Trim() );
 
 			if ( String.IsNullOrWhiteSpace( subfolder ) ) {
@@ -98,9 +93,9 @@ namespace Librainian.FileSystem {
 		}
 
 		//[DebuggerStepThrough]
-		public Boolean InsertRoot( [NotNull] Folder path ) {
+		public Boolean InsertRoot( Folder path ) {
 			if ( path is null ) {
-				throw new ArgumentNullException( nameof( path ) );
+				throw new ArgumentEmptyException( nameof( path ) );
 			}
 
 			this.Parts.Insert( 1, path.FullPath );
@@ -114,7 +109,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns the reconstructed path and filename.</summary>
 		/// <returns></returns>
-		[NotNull]
 		[DebuggerStepThrough]
 		public Document Recombined() {
 			var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
@@ -127,7 +121,7 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 
 		//[DebuggerStepThrough]
-		public Boolean ReplacePath( [NotNull] IFolder replacement ) {
+		public Boolean ReplacePath( IFolder replacement ) {
 			this.Parts.Clear();
 			this.Parts.AddRange( Split( replacement.FullPath ) );
 			this.Parts.TrimExcess();

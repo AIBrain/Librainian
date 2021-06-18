@@ -29,7 +29,6 @@ namespace Librainian.Graphics.Moving {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary> Experimental Full Video </summary>
@@ -51,11 +50,9 @@ namespace Librainian.Graphics.Moving {
 		/// <summary>For each item here, draw them too.</summary>
 		/// <remarks>I need to stop coding while I'm asleep.</remarks>
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples = new();
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new();
 
 		/// <summary>Checksum guard</summary>
@@ -70,7 +67,7 @@ namespace Librainian.Graphics.Moving {
 
 		public Efv() => this.Checksum = UInt64.MaxValue;
 
-		public Boolean Add( [NotNull] Pixelyx pixelyx ) {
+		public Boolean Add( Pixelyx pixelyx ) {
 			var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
 
 			foreach ( var pair in rgbMatchesJustNotTimestamp ) {
@@ -97,7 +94,6 @@ namespace Librainian.Graphics.Moving {
 			return this.Pixels.Count + sum;
 		}
 
-		[NotNull]
 		public Task<UInt64> CalculateChecksumAsync() =>
 			Task.Run( () => {
 				unchecked {
@@ -105,11 +101,9 @@ namespace Librainian.Graphics.Moving {
 				}
 			} );
 
-		[CanBeNull]
-		public Pixelyx Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
+		public Pixelyx? Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
 
-		[CanBeNull]
-		public Pixelyx Get( UInt16 x, UInt16 y ) {
+		public Pixelyx? Get( UInt16 x, UInt16 y ) {
 			if ( x == 0 ) {
 				throw new ArgumentException( "x" );
 			}

@@ -29,7 +29,6 @@ namespace Librainian.Persistence {
 	using System.Dynamic;
 	using System.Runtime.Serialization;
 	using System.Security.Permissions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary></summary>
@@ -40,7 +39,7 @@ namespace Librainian.Persistence {
 
 		private Dictionary<String, Object> Context { get; } = new();
 
-		protected DynamicContext( [NotNull] SerializationInfo info, StreamingContext context ) {
+		protected DynamicContext( SerializationInfo info, StreamingContext context ) {
 
 			// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
 			foreach ( var entry in info ) {
@@ -51,15 +50,15 @@ namespace Librainian.Persistence {
 		public DynamicContext() { }
 
 		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
-		public virtual void GetObjectData( [CanBeNull] SerializationInfo info, StreamingContext context ) {
+		public virtual void GetObjectData( SerializationInfo? info, StreamingContext context ) {
 			foreach ( var kvp in this.Context ) {
 				info.AddValue( kvp.Key, kvp.Value );
 			}
 		}
 
-		public override Boolean TryGetMember( GetMemberBinder binder, [CanBeNull] out Object result ) => this.Context.TryGetValue( binder.Name, out result );
+		public override Boolean TryGetMember( GetMemberBinder binder, out Object? result ) => this.Context.TryGetValue( binder.Name, out result );
 
-		public override Boolean TrySetMember( SetMemberBinder binder, [CanBeNull] Object? value ) {
+		public override Boolean TrySetMember( SetMemberBinder binder, Object? value ) {
 			this.Context.Add( binder.Name, value );
 
 			return true;

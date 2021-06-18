@@ -29,8 +29,8 @@ namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>A simple type for a Year.</summary>
@@ -39,9 +39,9 @@ namespace Librainian.Measurement.Time.Clocks {
 	public record Year( BigInteger Value ) : IComparable<Year>, IClockPart {
 		public static Year Zero { get; } = new( BigInteger.Zero );
 
-		public Int32 CompareTo( [NotNull] Year? other ) {
+		public Int32 CompareTo( Year other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

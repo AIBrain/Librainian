@@ -34,8 +34,8 @@ namespace Librainian.Threading {
 	using System.Threading.Tasks;
 	using System.Windows.Forms;
 	using Collections.Sets;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Logging;
 	using Utilities;
 
@@ -56,7 +56,7 @@ namespace Librainian.Threading {
 		/// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
 		/// <param name="name"></param>
 		/// <param name="action"> </param>
-		void Add( [NotNull] String name, [NotNull] Action action );
+		void Add( String name, Action action );
 
 		Boolean Any();
 
@@ -77,10 +77,8 @@ namespace Librainian.Threading {
 			Application.Idle += this.OnIdle;
 		}
 
-		[NotNull]
 		private ConcurrentDictionary<String, Action> Jobs { get; } = new();
 
-		[NotNull]
 		private ConcurrentHashset<Task> Runners { get; } = new();
 
 		private CancellationToken Token { get; }
@@ -88,9 +86,9 @@ namespace Librainian.Threading {
 		/// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
 		/// <param name="name"></param>
 		/// <param name="action"> </param>
-		public void Add( [NotNull] String name, [NotNull] Action action ) {
+		public void Add( String name, Action action ) {
 			if ( action is null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( name ) ) {
@@ -138,7 +136,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		private void OnIdle( [CanBeNull] Object? sender, [CanBeNull] EventArgs? e ) => this.NextJob();
+		private void OnIdle( Object? sender, EventArgs? e ) => this.NextJob();
 
 		private void RemoveHandler() {
 			if ( !this.IsDisposed ) {

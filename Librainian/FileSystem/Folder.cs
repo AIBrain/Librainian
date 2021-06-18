@@ -39,8 +39,8 @@ namespace Librainian.FileSystem {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 	using OperatingSystem;
@@ -60,23 +60,19 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     String of invalid characters in a path or filename.
 		/// </summary>
-		[NotNull]
 		private static String InvalidPathCharacters { get; } = new( Path.GetInvalidPathChars() );
 
-		[NotNull]
 		private static Regex RegexForInvalidPathCharacters { get; } = new( $"[{Regex.Escape( InvalidPathCharacters )}]", RegexOptions.Compiled );
 
 		//BUG Will the '\0' create a partially null-string?
 		/// <summary>"/"</summary>
 		[JsonIgnore]
-		[NotNull]
 		public static String FolderAltSeparator { get; } = new( new[] {
 			Path.AltDirectorySeparatorChar
 		} );
 
 		/// <summary>"\"</summary>
 		[JsonIgnore]
-		[NotNull]
 		public static String FolderSeparator { get; } = new( new[] {
 			Path.DirectorySeparatorChar
 		} );
@@ -85,16 +81,13 @@ namespace Librainian.FileSystem {
 		public static Char FolderSeparatorChar { get; } = Path.DirectorySeparatorChar;
 
 		[JsonIgnore]
-		[NotNull]
 		public String FullPath => this.Info.FullName;
 
 		/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
 		[JsonProperty]
-		[NotNull]
 		public DirectoryInfo Info { get; }
 
 		[JsonIgnore]
-		[NotNull]
 		public String Name => this.Info.Name;
 
 		/// <summary></summary>
@@ -133,13 +126,13 @@ namespace Librainian.FileSystem {
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public Folder( Environment.SpecialFolder specialFolder, [NotNull] String subFolder ) : this( Environment.GetFolderPath( specialFolder ).CombinePaths( subFolder ) ) { }
+		public Folder( Environment.SpecialFolder specialFolder, String subFolder ) : this( Environment.GetFolderPath( specialFolder ).CombinePaths( subFolder ) ) { }
 
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String? applicationName, [NotNull] String subFolder ) : this(
+		public Folder( Environment.SpecialFolder specialFolder, String? applicationName, String subFolder ) : this(
 			Environment.GetFolderPath( specialFolder ).CombinePaths( applicationName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
 
 		/// <summary>
@@ -154,41 +147,41 @@ namespace Librainian.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[DebuggerStepThrough]
-		public Folder( Environment.SpecialFolder specialFolder, [CanBeNull] String? companyName, [CanBeNull] String? applicationName, [NotNull] params String[] subFolders ) :
+		public Folder( Environment.SpecialFolder specialFolder, String? companyName, String? applicationName, params String[] subFolders ) :
 			this( Environment.GetFolderPath( specialFolder ).CombinePaths( companyName ?? throw new InvalidOperationException( $"Empty {nameof( companyName )}." ),
 				applicationName ?? throw new InvalidOperationException( $"Empty {nameof( applicationName )}." ), subFolders.ToStrings( @"\" ) ) ) { }
 
 		[DebuggerStepThrough]
-		public Folder( Environment.SpecialFolder specialFolder, [NotNull] params String[] subFolders ) : this( Environment.GetFolderPath( specialFolder )
-			.CombinePaths( subFolders.Select( fullpath => CleanPath( fullpath ) ).ToStrings( FolderSeparatorChar ) ) ) { }
+		public Folder( Environment.SpecialFolder specialFolder, params String[] subFolders ) : this( Environment.GetFolderPath( specialFolder )
+		                                                                                                           .CombinePaths( subFolders.Select( fullpath => CleanPath( fullpath ) ).ToStrings( FolderSeparatorChar ) ) ) { }
 
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[DebuggerStepThrough]
-		public Folder( [NotNull] String fullPath, [NotNull] String subFolder ) : this( fullPath.CombinePaths( subFolder ) ) { }
+		public Folder( String fullPath, String subFolder ) : this( fullPath.CombinePaths( subFolder ) ) { }
 
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[DebuggerStepThrough]
-		public Folder( [NotNull] IFolder folder, [NotNull] String subFolder ) : this( folder.FullPath.CombinePaths( subFolder ) ) { }
+		public Folder( IFolder folder, String subFolder ) : this( folder.FullPath.CombinePaths( subFolder ) ) { }
 
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[DebuggerStepThrough]
-		public Folder( [NotNull] IDocument document, [NotNull] String subFolder ) : this( document.ContainingingFolder().FullPath.CombinePaths( subFolder ) ) { }
+		public Folder( IDocument document, String subFolder ) : this( document.ContainingingFolder().FullPath.CombinePaths( subFolder ) ) { }
 
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[DebuggerStepThrough]
-		public Folder( [NotNull] FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { }
+		public Folder( FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { }
 
 		/// <summary>
 		///     Returns the path with any invalid characters replaced with <paramref name="replacement" /> and then
@@ -199,10 +192,9 @@ namespace Librainian.FileSystem {
 		/// <param name="replacement"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		[NotNull]
-		public static String CleanPath( [NotNull] String fullpath, [CanBeNull] String? replacement = null ) {
+		public static String CleanPath( String fullpath, String? replacement = null ) {
 			if ( fullpath is null ) {
-				throw new ArgumentNullException( nameof( fullpath ) );
+				throw new ArgumentEmptyException( nameof( fullpath ) );
 			}
 
 			var path = RegexForInvalidPathCharacters.Replace( fullpath, replacement ?? String.Empty ).Trim();
@@ -253,7 +245,7 @@ namespace Librainian.FileSystem {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] IFolder? left, [CanBeNull] IFolder? right ) {
+		public static Boolean Equals( IFolder? left, IFolder? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -267,16 +259,14 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Throws Exception if unable to obtain the Temp path.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public static IFolder GetTempFolder() => new Folder( Path.GetTempPath() );
 
-		[NotNull]
-		public static implicit operator DirectoryInfo( [NotNull] Folder folder ) => folder.Info;
+		public static implicit operator DirectoryInfo( Folder folder ) => folder.Info;
 
 		/// <summary>Opens a folder in file explorer.</summary>
-		public static void OpenWithExplorer( [CanBeNull] IFolder folder ) {
+		public static void OpenWithExplorer( IFolder? folder ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var windowsFolder = Environment.GetFolderPath( Environment.SpecialFolder.Windows );
@@ -285,10 +275,10 @@ namespace Librainian.FileSystem {
 		}
 
 		[DebuggerStepThrough]
-		public static Boolean TryGetFolderFromPath( TrimmedString path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) => TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
+		public static Boolean TryGetFolderFromPath( TrimmedString path, out DirectoryInfo? directoryInfo, out Uri? uri ) => TryGetFolderFromPath( path.Value, out directoryInfo, out uri );
 
 		[DebuggerStepThrough]
-		public static Boolean TryGetFolderFromPath( [CanBeNull] String? path, [CanBeNull] out DirectoryInfo? directoryInfo, [CanBeNull] out Uri? uri ) {
+		public static Boolean TryGetFolderFromPath( String? path, out DirectoryInfo? directoryInfo, out Uri? uri ) {
 			directoryInfo = null;
 			uri = null;
 
@@ -316,7 +306,7 @@ namespace Librainian.FileSystem {
 			return false;
 		}
 
-		public static Boolean TryParse( [CanBeNull] String? path, [CanBeNull] out IFolder? folder ) {
+		public static Boolean TryParse( String? path, out IFolder? folder ) {
 			folder = null;
 
 			try {
@@ -409,8 +399,7 @@ namespace Librainian.FileSystem {
 		/// <param name="searchPattern"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		[NotNull]
-		public async IAsyncEnumerable<Document> EnumerateDocuments( [CanBeNull] String? searchPattern, [EnumeratorCancellation] CancellationToken cancellationToken ) {
+		public async IAsyncEnumerable<Document> EnumerateDocuments( String? searchPattern, [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			searchPattern = searchPattern.NullIfEmptyOrWhiteSpace() ?? "*.*";
 
 			var searchPath = this.FullPath.CombinePaths( searchPattern );
@@ -456,8 +445,7 @@ namespace Librainian.FileSystem {
 			} while ( more );
 		}
 
-		[NotNull]
-		public async IAsyncEnumerable<Document> EnumerateDocuments( [NotNull] IEnumerable<String> searchPatterns, [EnumeratorCancellation] CancellationToken cancelToken ) {
+		public async IAsyncEnumerable<Document> EnumerateDocuments( IEnumerable<String> searchPatterns, [EnumeratorCancellation] CancellationToken cancelToken ) {
 			foreach ( var searchPattern in searchPatterns ) {
 				await foreach ( var document in this.EnumerateDocuments( searchPattern, cancelToken ) ) {
 					yield return document;
@@ -473,9 +461,8 @@ namespace Librainian.FileSystem {
 		/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		[NotNull]
 		public async IAsyncEnumerable<Folder> EnumerateFolders(
-			[CanBeNull] String? searchPattern,
+			String? searchPattern,
 			SearchOption searchOption,
 			[EnumeratorCancellation] CancellationToken cancellationToken
 		) {
@@ -577,7 +564,6 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		public PooledValueTask<UInt64> GetAvailableFreeSpace() => new( ( UInt64 )new DriveInfo( this.GetDrive().ToString() ).AvailableFreeSpace );
 
-		[NotNull]
 		public Disk GetDrive() => new( this.Info.Root.FullName );
 
 		/// <summary>
@@ -591,7 +577,6 @@ namespace Librainian.FileSystem {
 
 		public override Int32 GetHashCode() => this.FullPath.GetHashCode();
 
-		[CanBeNull]
 		public IFolder GetParent() => new Folder( this.Info.Parent );
 
 		/// <summary>
@@ -625,7 +610,6 @@ namespace Librainian.FileSystem {
 		///     <para>Shorten the full path with "..."</para>
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
 		public String ToCompactFormat() {
 			var sb = new StringBuilder();
 
@@ -638,12 +622,10 @@ namespace Librainian.FileSystem {
 		///     <see cref="op_Implicit" />
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
 		public DirectoryInfo ToDirectoryInfo() => this;
 
 		/// <summary>Returns a String that represents the current object.</summary>
 		/// <returns>A String that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => this.FullPath;
 	}
 }

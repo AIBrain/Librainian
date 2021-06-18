@@ -28,7 +28,6 @@
 namespace Librainian.Maths.Numbers {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>Restricts the value to between -1.0 and 1.0</summary>
@@ -79,9 +78,8 @@ namespace Librainian.Maths.Numbers {
 
 		public static implicit operator Minus1To1D( Double value ) => new( value );
 
-		public static Minus1To1D Parse( [NotNull] String value ) => new( Double.Parse( value ) );
+		public static Minus1To1D Parse( String value ) => new( Double.Parse( value ) );
 
-		[NotNull]
 		public override String ToString() => $"{this.Value:P}";
 	}
 }

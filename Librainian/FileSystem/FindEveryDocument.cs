@@ -36,7 +36,7 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
 	using ComputerSystem.Devices;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Time;
 	using Parsing;
 	using Threadsafe;
@@ -64,15 +64,14 @@ namespace Librainian.FileSystem {
 
 		private ActionBlock<IFolder>? FoldersFound { get; set; }
 
-		[CanBeNull]
 		public String? CurrentStatus { get; private set; }
 
 		public IProgress<(Single counter, String message)> Progress { get; }
 
 		public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
 
-		public FindEveryDocument( [NotNull] IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
-			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ) );
+		public FindEveryDocument( IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
+			this.Progress = progress ?? throw new ArgumentEmptyException( nameof( progress ) );
 			documentsFound = new BufferBlock<IDocument>();
 			this.DocumentsFound = documentsFound;
 		}
@@ -92,7 +91,6 @@ namespace Librainian.FileSystem {
 			this._pauseScanning.Value = false;
 		}
 
-		[NotNull]
 		public async Task StartScanning() {
 			Int64 counter = 0;
 

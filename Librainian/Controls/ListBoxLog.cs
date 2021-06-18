@@ -31,7 +31,7 @@ namespace Librainian.Controls {
 	using System.Drawing;
 	using System.Text;
 	using System.Windows.Forms;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Maths;
 	using Microsoft.Extensions.Logging;
@@ -47,22 +47,22 @@ namespace Librainian.Controls {
 		/// </summary>
 		private const String DefaultMessageFormat = "{4}>{8}";
 
-		public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
 			if ( listBox is null ) {
-				throw new ArgumentNullException( nameof( listBox ) );
+				throw new ArgumentEmptyException( nameof( listBox ) );
 			}
 
 			if ( messageFormat is null ) {
-				throw new ArgumentNullException( nameof( messageFormat ) );
+				throw new ArgumentEmptyException( nameof( messageFormat ) );
 			}
 		}
 
-		public ListBoxLog( [NotNull] ListBox listBox, [NotNull] String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
 			if ( String.IsNullOrWhiteSpace( messageFormat ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( messageFormat ) );
 			}
 
-			this.Box = listBox ?? throw new ArgumentNullException( nameof( listBox ) );
+			this.Box = listBox ?? throw new ArgumentEmptyException( nameof( listBox ) );
 			this.Box.SelectionMode = SelectionMode.MultiExtended;
 
 			this.Box.HandleCreated += this.OnHandleCreated;
@@ -94,7 +94,6 @@ namespace Librainian.Controls {
 			this.CanAdd = listBox.IsHandleCreated;
 		}
 
-		[NotNull]
 		private ListBox Box { get; }
 
 		private Boolean CanAdd { get; set; }
@@ -105,8 +104,7 @@ namespace Librainian.Controls {
 
 		public Boolean Paused { get; }
 
-		[NotNull]
-		private static String FormatALogEventMessage( [NotNull] LogEvent logEvent, [NotNull] String messageFormat ) {
+		private static String FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
 			var message = logEvent.Message ?? "*null*";
 
 			return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ),                    /* {1} */
@@ -117,7 +115,7 @@ namespace Librainian.Controls {
 								  logEvent.LogLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LogLevel, /* {8} */ message );
 		}
 
-		private void AddALogEntry( [CanBeNull] Object? item ) {
+		private void AddALogEntry( Object? item ) {
 			if ( item == null ) {
 				return;
 			}
@@ -135,7 +133,7 @@ namespace Librainian.Controls {
 			this.Box.Items[ items.Count - 1 ] = currentText;
 		}
 
-		private void AddALogEntryLine( [NotNull] Object item ) {
+		private void AddALogEntryLine( Object item ) {
 			this.Box.Items.Add( item );
 
 			if ( this.Box.Items.Count > this.MaxEntriesInListBox ) {
@@ -147,9 +145,9 @@ namespace Librainian.Controls {
 			}
 		}
 
-		private void CopyMenuOnClickHandler( [CanBeNull] Object? sender, [CanBeNull] EventArgs? e ) => this.CopyToClipboard();
+		private void CopyMenuOnClickHandler( Object? sender, EventArgs? e ) => this.CopyToClipboard();
 
-		private void CopyMenuPopupHandler( [CanBeNull] Object? sender, [CanBeNull] EventArgs? e ) {
+		private void CopyMenuPopupHandler( Object? sender, EventArgs? e ) {
 #if NET48
 			if ( sender is ContextMenu menu ) {
 				menu.MenuItems[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
@@ -185,7 +183,7 @@ namespace Librainian.Controls {
 			}
 		}
 
-		private void DrawItemHandler( [CanBeNull] Object? sender, [NotNull] DrawItemEventArgs e ) {
+		private void DrawItemHandler( Object? sender, DrawItemEventArgs e ) {
 			if ( e.Index < 0 ) {
 				return;
 			}
@@ -214,23 +212,23 @@ namespace Librainian.Controls {
 			}
 		}
 
-		private void KeyDownHandler( [CanBeNull] Object? sender, [NotNull] KeyEventArgs e ) {
+		private void KeyDownHandler( Object? sender, KeyEventArgs e ) {
 			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) {
 				this.CopyToClipboard();
 			}
 		}
 
-		private void OnHandleCreated( [CanBeNull] Object? sender, [CanBeNull] EventArgs? e ) => this.CanAdd = true;
+		private void OnHandleCreated( Object? sender, EventArgs? e ) => this.CanAdd = true;
 
-		private void OnHandleDestroyed( [CanBeNull] Object? sender, [CanBeNull] EventArgs? e ) => this.CanAdd = false;
+		private void OnHandleDestroyed( Object? sender, EventArgs? e ) => this.CanAdd = false;
 
-		private void WriteEvent( [NotNull] LogEvent logEvent ) {
+		private void WriteEvent( LogEvent logEvent ) {
 			if ( this.CanAdd ) {
 				this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent );
 			}
 		}
 
-		private void WriteEventLine( [NotNull] LogEvent logEvent ) {
+		private void WriteEventLine( LogEvent logEvent ) {
 			if ( this.CanAdd ) {
 				this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent );
 			}
@@ -259,23 +257,23 @@ namespace Librainian.Controls {
 			}
 		}
 
-		public void Log( [CanBeNull] String? message ) => this.WriteEvent( new LogEvent( LogLevel.Critical, message ) );
+		public void Log( String? message ) => this.WriteEvent( new LogEvent( LogLevel.Critical, message ) );
 
-		public void LogLine( [CanBeNull] String? message ) => this.LogLine( LogLevel.Debug, message );
+		public void LogLine( String? message ) => this.LogLine( LogLevel.Debug, message );
 
-		public void LogLine( [CanBeNull] String? format, [NotNull] params Object[] args ) =>
+		public void LogLine( String? format, params Object[] args ) =>
 			this.LogLine( LogLevel.Debug, format is null ? null : String.Format( format, args ) );
 
-		public void LogLine( LogLevel loggingLevel, [CanBeNull] String? format, [NotNull] params Object[] args ) =>
+		public void LogLine( LogLevel loggingLevel, String? format, params Object[] args ) =>
 			this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
 
-		public void LogLine( LogLevel loggingLevel, [CanBeNull] String? message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
+		public void LogLine( LogLevel loggingLevel, String? message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
 
 		private delegate void AddALogEntryDelegate( Object item );
 
 		private class LogEvent {
 
-			public LogEvent( LogLevel loggingLevel, [CanBeNull] String? message ) {
+			public LogEvent( LogLevel loggingLevel, String? message ) {
 				this.EventTime = DateTime.Now;
 				this.LogLevel = loggingLevel;
 				this.Message = message;
@@ -285,7 +283,6 @@ namespace Librainian.Controls {
 
 			public LogLevel LogLevel { get; }
 
-			[CanBeNull]
 			public String? Message { get; }
 		}
 	}

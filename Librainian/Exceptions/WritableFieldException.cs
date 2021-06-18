@@ -30,25 +30,23 @@ namespace Librainian.Exceptions {
 	using System;
 	using System.Reflection;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 
 	[Serializable]
 	public class WritableFieldException : ImmutableFailureException {
 
-		public WritableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+		public WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
 			if ( serializationInfo is null ) {
-				throw new ArgumentNullException( nameof( serializationInfo ) );
+				throw new ArgumentEmptyException( nameof( serializationInfo ) );
 			}
 		}
 
-		public WritableFieldException( [NotNull] FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
+		public WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
 			if ( fieldInfo is null ) {
-				throw new ArgumentNullException( nameof( fieldInfo ) );
+				throw new ArgumentEmptyException( nameof( fieldInfo ) );
 			}
 		}
 
-		[NotNull]
-		internal static String FormatMessage( [NotNull] FieldInfo fieldInfo ) =>
+		internal static String FormatMessage( FieldInfo fieldInfo ) =>
 			$"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";
 	}
 }

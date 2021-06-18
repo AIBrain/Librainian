@@ -27,7 +27,6 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.Diagnostics;
 	using System.Text;
-	using JetBrains.Annotations;
 
 	/// <summary>Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/</summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
@@ -35,18 +34,16 @@ namespace Librainian.Maths.Numbers {
 
 		public Int32 ColumnAmount => this.Matrix.GetLength( 1 );
 
-		[NotNull]
 		public Boolean[,] Matrix { get; }
 
 		public Int32 RowAmount => this.Matrix.GetLength( 0 );
 
-		public BinaryMatrix( [NotNull] Boolean[,] matrix ) => this.Matrix = matrix;
+		public BinaryMatrix( Boolean[,] matrix ) => this.Matrix = matrix;
 
 		public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[ rowsAmount, columsAmount ];
 
 		public Boolean Get( Int32 row, Int32 column ) => this.Matrix[ row, column ];
 
-		[NotNull]
 		public Binary GetColumn( Int32 index ) {
 			var column = new Boolean[ this.RowAmount ];
 
@@ -57,7 +54,6 @@ namespace Librainian.Maths.Numbers {
 			return new Binary( column );
 		}
 
-		[NotNull]
 		public Binary GetRow( Int32 index ) {
 			var row = new Boolean[ this.ColumnAmount ];
 
@@ -70,7 +66,6 @@ namespace Librainian.Maths.Numbers {
 
 		public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[ row, column ] = value;
 
-		[NotNull]
 		public override String ToString() {
 			var stringBuilder = new StringBuilder( this.Matrix.Length );
 

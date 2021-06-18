@@ -30,7 +30,7 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -87,14 +87,13 @@ namespace Librainian.Maths.Numbers {
 			this.B = votesForB;
 		}
 
-		[NotNull]
-		public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
+		public static VotallyD Combine( VotallyD left, VotallyD right ) {
 			if ( left is null ) {
-				throw new ArgumentNullException( nameof( left ) );
+				throw new ArgumentEmptyException( nameof( left ) );
 			}
 
 			if ( right is null ) {
-				throw new ArgumentNullException( nameof( right ) );
+				throw new ArgumentEmptyException( nameof( right ) );
 			}
 
 			var result = left;
@@ -140,7 +139,6 @@ namespace Librainian.Maths.Numbers {
 
 		public Boolean IsTied() => this.A.Near( this.B );
 
-		[NotNull]
 		public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 
 		/// <summary>
@@ -165,7 +163,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
 		public VotallyD Clone() => new( this.A, this.B );
 
 		Object ICloneable.Clone() => this.Clone();

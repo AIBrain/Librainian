@@ -26,7 +26,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 	using System;
 	using System.Linq;
-	using JetBrains.Annotations;
 
 	/// <summary></summary>
 	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
@@ -40,15 +39,13 @@ namespace Librainian.Financial.Currency.BTC {
 			set => this.HashBytes[ i ] = value;
 		}
 
-		public Hash( [CanBeNull] Byte[] b ) => this.HashBytes = b;
+		public Hash( Byte[] b ) => this.HashBytes = b;
 
-		[CanBeNull]
-		public static implicit operator Byte[]( [NotNull] Hash hash ) => hash.HashBytes;
+		public static implicit operator Byte[]( Hash hash ) => hash.HashBytes;
 
-		[NotNull]
-		public static implicit operator Hash( [CanBeNull] Byte[] bytes ) => new( bytes );
+		public static implicit operator Hash( Byte[] bytes ) => new( bytes );
 
-		public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
+		public override Boolean Equals( Object? obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
 
 		public override Int32 GetHashCode() {
 			if ( this.HashBytes.Length >= 4 ) {

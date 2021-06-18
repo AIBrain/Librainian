@@ -28,7 +28,6 @@ namespace Librainian.Internet {
 	using System.Net;
 	using System.Threading;
 	using System.Threading.Tasks.Dataflow;
-	using JetBrains.Annotations;
 
 	[Obsolete( "Needs rewriting" )]
 	public class WwwManager {
@@ -50,7 +49,7 @@ namespace Librainian.Internet {
 			this.DownloadedStrings = new BufferBlock<Tuple<Uri, String>>();
 		}
 
-		private static void StartDownloadingString( [CanBeNull] String? address ) {
+		private static void StartDownloadingString( String? address ) {
 			if ( Uri.TryCreate( address, UriKind.Absolute, out var uri ) ) {
 				var webclient = WebClients.Value;
 				var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );

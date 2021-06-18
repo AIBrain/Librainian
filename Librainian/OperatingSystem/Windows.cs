@@ -34,7 +34,7 @@ namespace Librainian.OperatingSystem {
 	using System.Runtime;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Librainian.Extensions;
 	using Librainian.FileSystem;
 	using Logging;
@@ -50,7 +50,6 @@ namespace Librainian.OperatingSystem {
 			';'
 		};
 
-		[NotNull]
 		public static readonly Lazy<Folder> WindowsFolder = new( () => {
 			var folder = FindFolder( Environment.GetFolderPath( Environment.SpecialFolder.Windows ) );
 
@@ -61,13 +60,10 @@ namespace Librainian.OperatingSystem {
 			return folder;
 		}, true );
 
-		[NotNull]
 		public static readonly Lazy<Folder?> WindowsSystem32Folder = new( () => FindFolder( Path.Combine( WindowsFolder.Value.FullPath, "System32" ) ), true );
 
-		[NotNull]
 		public static Lazy<Document?> CommandPrompt { get; } = new( () => FindDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
 
-		[NotNull]
 		public static Lazy<Document?> IrfanView64 { get; } =
 			new( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ), true );
 
@@ -135,8 +131,7 @@ namespace Librainian.OperatingSystem {
 			Environment.SetEnvironmentVariable( PATH, rebuiltPath, EnvironmentVariableTarget.Machine );
 		}
 
-		[NotNull]
-		public static Task<Process?> ExecuteCommandPromptAsync( [CanBeNull] String? arguments ) =>
+		public static Task<Process?> ExecuteCommandPromptAsync( String? arguments ) =>
 			Task.Run( () => {
 				try {
 					var proc = new ProcessStartInfo {
@@ -161,8 +156,7 @@ namespace Librainian.OperatingSystem {
 				return default( Process? );
 			} );
 
-		[NotNull]
-		public static Task<Boolean> ExecutePowershellCommandAsync( [CanBeNull] String? arguments = null, Boolean elevated = false ) =>
+		public static Task<Boolean> ExecutePowershellCommandAsync( String? arguments = null, Boolean elevated = false ) =>
 			Task.Run( () => {
 				try {
 					var startInfo = new ProcessStartInfo {
@@ -199,14 +193,13 @@ namespace Librainian.OperatingSystem {
 				return false;
 			} );
 
-		[CanBeNull]
-		public static Task<Process?> ExecuteProcessAsync( [NotNull] Document filename, [NotNull] Folder workingFolder, [CanBeNull] String? arguments, Boolean elevate ) {
+		public static Task<Process?> ExecuteProcessAsync( Document filename, Folder workingFolder, String? arguments, Boolean elevate ) {
 			if ( filename == null ) {
-				throw new ArgumentNullException( nameof( filename ) );
+				throw new ArgumentEmptyException( nameof( filename ) );
 			}
 
 			if ( workingFolder == null ) {
-				throw new ArgumentNullException( nameof( workingFolder ) );
+				throw new ArgumentEmptyException( nameof( workingFolder ) );
 			}
 
 			return Task.Run( () => {
@@ -238,8 +231,7 @@ namespace Librainian.OperatingSystem {
 			} );
 		}
 
-		[CanBeNull]
-		public static Document? FindDocument( [NotNull] String fullname, [CanBeNull] String? okayMessage = null, [CanBeNull] String? errorMessage = null ) {
+		public static Document? FindDocument( String fullname, String? okayMessage = null, String? errorMessage = null ) {
 			if ( !String.IsNullOrEmpty( okayMessage ) ) {
 				$"Finding {fullname}...".Info();
 			}
@@ -257,8 +249,7 @@ namespace Librainian.OperatingSystem {
 			return default( Document? );
 		}
 
-		[CanBeNull]
-		public static Folder? FindFolder( [NotNull] String fullname, [CanBeNull] String? okayMessage = null, [CanBeNull] String? errorMessage = null ) {
+		public static Folder? FindFolder( String fullname, String? okayMessage = null, String? errorMessage = null ) {
 			if ( String.IsNullOrWhiteSpace( fullname ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullname ) );
 			}
@@ -287,19 +278,16 @@ namespace Librainian.OperatingSystem {
 			return default( Folder? );
 		}
 
-		[NotNull]
 		public static String GetCurrentPATH() => Environment.GetEnvironmentVariable( PATH, EnvironmentVariableTarget.Machine ) ?? String.Empty;
 
 		public static Boolean IsServer() => GCSettings.IsServerGC;
 
 		public static Boolean IsWorkStation() => !GCSettings.IsServerGC;
 
-		[NotNull]
-		public static Task<Boolean> MirrorFolderStructureAsync( [NotNull] Folder folder, [NotNull] Folder baseFolder ) =>
+		public static Task<Boolean> MirrorFolderStructureAsync( Folder folder, Folder baseFolder ) =>
 			ExecutePowershellCommandAsync( $"xcopy.exe \"{folder.FullPath}\" \"{baseFolder.FullPath}\" /E /T" );
 
-		[CanBeNull]
-		public static Process? OpenWithExplorer( [CanBeNull] String? value ) {
+		public static Process? OpenWithExplorer( String? value ) {
 			try {
 
 				//Verb = "runas", //demand elevated permissions
@@ -324,14 +312,13 @@ namespace Librainian.OperatingSystem {
 			return default( Process? );
 		}
 
-		[CanBeNull]
-		public static async Task<Process?> TryConvert_WithIrfanviewAsync( [NotNull] Document inDocument, [NotNull] Document outDocument ) {
+		public static async Task<Process?>? TryConvert_WithIrfanviewAsync( Document inDocument, Document outDocument ) {
 			if ( inDocument == null ) {
-				throw new ArgumentNullException( nameof( inDocument ) );
+				throw new ArgumentEmptyException( nameof( inDocument ) );
 			}
 
 			if ( outDocument == null ) {
-				throw new ArgumentNullException( nameof( outDocument ) );
+				throw new ArgumentEmptyException( nameof( outDocument ) );
 			}
 
 			var irfan = IrfanView64.Value;

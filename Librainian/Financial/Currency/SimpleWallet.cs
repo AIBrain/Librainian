@@ -30,7 +30,7 @@ namespace Librainian.Financial.Currency {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Utilities;
@@ -40,7 +40,6 @@ namespace Librainian.Financial.Currency {
 	[JsonObject]
 	public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
 
-		[NotNull]
 		private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
 		[JsonProperty]
@@ -61,19 +60,14 @@ namespace Librainian.Financial.Currency {
 			}
 		}
 
-		[CanBeNull]
 		public Action<Decimal>? OnAfterDeposit { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnAfterWithdraw { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnAnyUpdate { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnBeforeDeposit { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
 		//TODO add in support for automatic persisting?
@@ -96,7 +90,7 @@ namespace Librainian.Financial.Currency {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] SimpleWallet? left, [CanBeNull] SimpleWallet? right ) {
+		public static Boolean Equals( SimpleWallet? left, SimpleWallet? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -112,7 +106,7 @@ namespace Librainian.Financial.Currency {
 		/// <param name="left">The first value to compare.</param>
 		/// <param name="right">The second value to compare.</param>
 		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-		public static Boolean operator !=( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => !Equals( left, right );
+		public static Boolean operator !=( SimpleWallet? left, SimpleWallet? right ) => !Equals( left, right );
 
 		/// <summary>Returns a value that indicates whether the values of two <see cref="SimpleWallet" /> objects are equal.</summary>
 		/// <param name="left">The first value to compare.</param>
@@ -121,7 +115,7 @@ namespace Librainian.Financial.Currency {
 		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
 		///     false.
 		/// </returns>
-		public static Boolean operator ==( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => Equals( left, right );
+		public static Boolean operator ==( SimpleWallet? left, SimpleWallet? right ) => Equals( left, right );
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() {
@@ -144,7 +138,6 @@ namespace Librainian.Financial.Currency {
 		/// <returns>A hash code for the current object.</returns>
 		public override Int32 GetHashCode() => this._access.GetHashCode();
 
-		[NotNull]
 		public override String ToString() => $"{this.Balance:F8}";
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
@@ -173,7 +166,7 @@ namespace Librainian.Financial.Currency {
 
 		public Boolean TryAdd( SimpleWallet wallet ) {
 			if ( wallet is null ) {
-				throw new ArgumentNullException( nameof( wallet ) );
+				throw new ArgumentEmptyException( nameof( wallet ) );
 			}
 
 			return this.TryAdd( wallet.Balance );
@@ -196,7 +189,7 @@ namespace Librainian.Financial.Currency {
 			return false;
 		}
 
-		public Boolean TryTransfer( Decimal amount, [NotNull] ref SimpleWallet intoWallet ) {
+		public Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet ) {
 			if ( Equals( this, intoWallet ) ) {
 				throw new InvalidOperationException( "Cannot transfer amount into self-wallet." );
 			}
@@ -258,7 +251,7 @@ namespace Librainian.Financial.Currency {
 			}
 		}
 
-		public void TryUpdateBalance( [NotNull] SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
+		public void TryUpdateBalance( SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
 		/// <summary>
 		///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
@@ -298,7 +291,7 @@ namespace Librainian.Financial.Currency {
 
 		public Boolean TryWithdraw( SimpleWallet wallet ) {
 			if ( wallet is null ) {
-				throw new ArgumentNullException( nameof( wallet ) );
+				throw new ArgumentEmptyException( nameof( wallet ) );
 			}
 
 			return this.TryWithdraw( wallet.Balance );

@@ -28,12 +28,10 @@
 namespace Librainian.Interfaces {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public interface IMessage : IColored, IDisposable {
 
 		/// <summary>The data for this message. Usually a string.</summary>
-		[CanBeNull]
 		String? Data { get; set; }
 
 		/// <summary>The UTC when this message was created.</summary>
@@ -42,7 +40,6 @@ namespace Librainian.Interfaces {
 		/// <summary>
 		///     The message's source identifier.. (like the user's name)
 		/// </summary>
-		[CanBeNull]
 		String? Description { get; set; }
 
 		/// <summary>Guid assigned on message creation.</summary>
@@ -53,10 +50,8 @@ namespace Librainian.Interfaces {
 
 		Boolean Processed { get; set; }
 
-		[CanBeNull]
 		DateTime? ProcessingEnded { get; set; }
 
-		[CanBeNull]
 		DateTime? ProcessingStarted { get; set; }
 
 		/// <summary>This message is in reference to.</summary>
@@ -64,7 +59,6 @@ namespace Librainian.Interfaces {
 
 		SourceRecord Source { get; set; }
 
-		[CanBeNull]
 		TimeSpan? ProcessingTime() {
 			if ( this.ProcessingStarted is null || this.ProcessingEnded is null ) {
 				return default( TimeSpan? );

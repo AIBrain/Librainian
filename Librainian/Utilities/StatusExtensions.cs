@@ -72,7 +72,6 @@ namespace Librainian {
 		public static Boolean Succeeded( this Status status ) => status >= Status.Success;
 
 		[Pure]
-		[NotNull]
 		public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
 
 		[Pure]

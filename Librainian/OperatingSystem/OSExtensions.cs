@@ -26,20 +26,19 @@ namespace Librainian.OperatingSystem {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 
 	public static class OSExtensions {
 
 		/// <summary>Execute the <paramref name="command" /> in a CMD.EXE context.</summary>
 		/// <param name="command"></param>
+		/// <param name="createWindow"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static String CmdExecute( [CanBeNull] this String? command ) {
+		public static String? CmdExecute( String? command, Boolean createWindow = true ) {
 			using var process = Process.Start( new ProcessStartInfo( "cmd.exe", $"/c {command}" ) {
 				RedirectStandardOutput = true,
 				UseShellExecute = false,
 				RedirectStandardError = true,
-				CreateNoWindow = true
+				CreateNoWindow = !createWindow
 			} );
 
 			using var standardOutput = process?.StandardOutput;

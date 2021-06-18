@@ -28,16 +28,13 @@
 namespace Librainian.Interfaces {
 
 	using System.Drawing;
-	using JetBrains.Annotations;
 
 	public interface IColored {
 
 		/// <summary>Optional color to be used.</summary>
-		[CanBeNull]
 		Color? BackgroundColor { get; set; }
 
 		/// <summary>Optional color to be used.</summary>
-		[CanBeNull]
 		Color? ForegroundColor { get; set; }
 	}
 }

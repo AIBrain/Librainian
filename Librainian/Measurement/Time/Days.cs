@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Maths.Bigger;
 	using Newtonsoft.Json;
 
@@ -90,9 +90,9 @@ namespace Librainian.Measurement.Time {
 		///     instance follows <paramref name="other" /> in the sort order.
 		/// </returns>
 		/// <exception cref="ArgumentException"><paramref name="other" /> is not the same type as this instance.</exception>
-		public Int32 CompareTo( [CanBeNull] Days? other ) {
+		public Int32 CompareTo( Days? other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );
@@ -121,9 +121,9 @@ namespace Librainian.Measurement.Time {
 		///     <paramref name="other" />. Greater than zero This
 		///     instance follows <paramref name="other" /> in the sort order.
 		/// </returns>
-		public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
+		public Int32 CompareTo( IQuantityOfTime other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );

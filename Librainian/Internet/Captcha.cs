@@ -29,7 +29,6 @@ namespace Librainian.Internet {
 
 	using System;
 	using System.Collections.Concurrent;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -38,19 +37,15 @@ namespace Librainian.Internet {
 		[JsonProperty]
 		private CaptchaStatus _status;
 
-		[CanBeNull]
 		[JsonProperty]
 		public String? ChallengeElementID { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public String? FormID { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Uri? ImageUri { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public String? ResponseElementID { get; set; }
 
@@ -66,15 +61,12 @@ namespace Librainian.Internet {
 			}
 		}
 
-		[NotNull]
 		[JsonProperty]
 		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new();
 
-		[CanBeNull]
 		[JsonProperty]
 		public String? SubmitID { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Uri? Uri { get; set; }
 	}

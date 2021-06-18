@@ -33,16 +33,16 @@ namespace Librainian.Controls {
 	using System.Drawing;
 	using System.Linq;
 	using System.Windows.Forms;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Microsoft.Win32;
 	using Persistence;
 
 	public static class FormExtensions {
 
-		public static Boolean IsFullyVisibleOnAnyScreen( [NotNull] this Form form ) {
+		public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			var desktopBounds = form.DesktopBounds;
@@ -52,13 +52,13 @@ namespace Librainian.Controls {
 
 		public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
 
-		public static void LoadLocation( [NotNull] this Form form ) {
+		public static void LoadLocation( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( form.Name is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			var x = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.X ) );
@@ -73,13 +73,13 @@ namespace Librainian.Controls {
 		///     <seealso cref="SaveSize(Form)" />
 		/// </summary>
 		/// <param name="form"></param>
-		public static void LoadSize( [NotNull] this Form form ) {
+		public static void LoadSize( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( form.Name is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( AppRegistry.TheApplication is null ) {
@@ -98,17 +98,17 @@ namespace Librainian.Controls {
 
 		/// <summary>Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.</summary>
 		/// <remarks></remarks>
-		public static void Location( [NotNull] this Form form, Point location ) {
+		public static void Location( this Form form, Point location ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			form.InvokeAction( () => form.Location = new( location.X, location.Y ) );
 		}
 
-		public static void SaveLocation( [CanBeNull] this Form form ) {
+		public static void SaveLocation( this Form? form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( AppRegistry.TheApplication is null ) {
@@ -128,13 +128,13 @@ namespace Librainian.Controls {
 		///     <seealso cref="LoadSize(Form)" />
 		/// </summary>
 		/// <param name="form"></param>
-		public static void SaveSize( [NotNull] this Form form ) {
+		public static void SaveSize( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( form.Name is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( AppRegistry.TheApplication is null ) {
@@ -153,9 +153,9 @@ namespace Librainian.Controls {
 		/// <summary>Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.</summary>
 		/// <param name="form"></param>
 		/// <returns></returns>
-		public static Size Size( [NotNull] this Form form ) {
+		public static Size Size( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
@@ -163,9 +163,9 @@ namespace Librainian.Controls {
 
 		/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
 		/// <remarks></remarks>
-		public static void Size( [NotNull] this Form form, Size size ) {
+		public static void Size( this Form form, Size size ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			form.InvokeAction( () => form.Size = size );

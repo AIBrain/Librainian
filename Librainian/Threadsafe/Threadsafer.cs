@@ -39,10 +39,8 @@ namespace Librainian.Threadsafe {
 	[UsedImplicitly]
 	public static class Threadsafer<TFunc> where TFunc : notnull {
 
-		[NotNull]
 		private static ThreadLocal<Func<TFunc>> PerThreadCache { get; } = new();
 
-		[CanBeNull]
 		public static Func<TFunc>? Get() => PerThreadCache.Value;
 	}
 }

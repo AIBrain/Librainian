@@ -40,6 +40,7 @@ namespace Librainian.Maths {
 	using System.Text;
 	using Bigger;
 	using Collections.Extensions;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Numbers;
 
@@ -60,7 +61,6 @@ namespace Librainian.Maths {
 		/// <summary>
 		///     Store the complete list of values that will fit in a 32-bit unsigned integer without overflow.
 		/// </summary>
-		[NotNull]
 		private static UInt32[] FibonacciLookup { get; } = {
 			1, 1, 2, 3, 5, 8, 13, 21, 34, 55,
 			89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765,
@@ -172,8 +172,7 @@ namespace Librainian.Maths {
 		/// <param name="first"> </param>
 		/// <param name="second"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static Byte[] Concat( [NotNull] this Byte[] first, [NotNull] Byte[] second ) {
+		public static Byte[] Concat( this Byte[] first, Byte[] second ) {
 			var buffer = new Byte[ first.Length + second.Length ];
 			Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
 			Buffer.BlockCopy( second, 0, buffer, first.Length, second.Length );
@@ -188,8 +187,7 @@ namespace Librainian.Maths {
 		/// <param name="first"> </param>
 		/// <param name="second"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static Byte[] Concat( [NotNull] this Byte[] first, Byte second ) {
+		public static Byte[] Concat( this Byte[] first, Byte second ) {
 			var buffer = new Byte[ first.Length + 1 ];
 			Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
 			buffer[ ^1 ] = second;
@@ -204,7 +202,6 @@ namespace Librainian.Maths {
 		/// <param name="howManyBytes">   </param>
 		/// <returns></returns>
 		/// <see cref="http://github.com/mkadlec/ConvertBigIntToBcd/blob/master/ConvertBigIntToBcd.cs" />
-		[NotNull]
 		public static Byte[] ConvertBigIntToBcd( this Int64 numberToConvert, Int32 howManyBytes ) {
 			var convertedNumber = new Byte[ howManyBytes ];
 			var strNumber = numberToConvert.ToString();
@@ -280,7 +277,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="d"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static String Decimal2Packed( this Decimal d ) {
 			var output = new Boolean[ 10 ];
 			var input = new Boolean[ 12 ];
@@ -581,8 +577,7 @@ namespace Librainian.Maths {
 		/// <returns>The value of the bit</returns>
 		public static Boolean GetBit( this Byte b, Byte position ) => ( b & ( Byte )( 1 << position ) ) != 0;
 
-		[NotNull]
-		public static UInt16[] GetBitFields( UInt32 packedBits, [NotNull] Byte[] bitFields ) {
+		public static UInt16[] GetBitFields( UInt32 packedBits, Byte[] bitFields ) {
 			const Int32 maxBits = 32;
 			var fields = bitFields.Length - 1; // number of fields to unpack
 			var retArr = new UInt16[ fields + 1 ]; // init return array
@@ -976,9 +971,9 @@ namespace Librainian.Maths {
 		[Pure]
 		public static Single OneThird( this Single x ) => x / 3.0f;
 
-		public static UInt32 PackBitFields( [NotNull] UInt16[] values, [NotNull] Byte[] bitFields ) {
+		public static UInt32 PackBitFields( UInt16[] values, Byte[] bitFields ) {
 			if ( bitFields is null ) {
-				throw new ArgumentNullException( nameof( bitFields ) );
+				throw new ArgumentEmptyException( nameof( bitFields ) );
 			}
 
 			UInt32 retVal = values[ 0 ]; //we set the first value right away
@@ -1171,7 +1166,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static Tuple<Decimal, Decimal> Split( this Decimal value ) {
 			var parts = value.ToString( "R" ).Split( '.' );
 			var result = new Tuple<Decimal, Decimal>( Decimal.Parse( parts[ 0 ] ), Decimal.Parse( "0." + parts[ 1 ] ) );
@@ -1184,7 +1178,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static Tuple<Double, Double> Split( this Double value ) {
 			var parts = value.ToString( "R" ).Split( '.' );
 
@@ -1215,7 +1208,7 @@ namespace Librainian.Maths {
 		[Pure]
 		public static Decimal Squared( this Decimal number ) => number * number;
 
-		public static Double SquareRootOfProducts( [NotNull] this IEnumerable<Double> data ) {
+		public static Double SquareRootOfProducts( this IEnumerable<Double> data ) {
 			var sorted = new List<Double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
 
 			var aggregate = BigDecimal.One;
@@ -1239,7 +1232,7 @@ namespace Librainian.Maths {
 			return Math.Sqrt( ( Double )aggregate );
 		}
 
-		public static Decimal SquareRootOfProducts( [NotNull] this IEnumerable<Decimal> data ) {
+		public static Decimal SquareRootOfProducts( this IEnumerable<Decimal> data ) {
 			var aggregate = data.Aggregate( 1.0m, ( current, d ) => current * d );
 
 			return ( Decimal )Math.Sqrt( ( Double )aggregate );
@@ -1282,7 +1275,7 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="bigIntegers"></param>
 		/// <returns></returns>
-		public static BigInteger Sum( [NotNull] this IEnumerable<BigInteger> bigIntegers ) =>
+		public static BigInteger Sum( this IEnumerable<BigInteger> bigIntegers ) =>
 			bigIntegers.Aggregate( BigInteger.Zero, ( current, bigInteger ) => current + bigInteger );
 
 		[DebuggerStepThrough]
@@ -1325,7 +1318,6 @@ namespace Librainian.Maths {
 		/// <param name="base">     </param>
 		/// <param name="minDigits"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static String ToStringWithBase( this Int32 number, Int32 @base, Int32 minDigits = 1 ) {
 			if ( minDigits < 1 ) {
 				minDigits = 1;
@@ -1363,9 +1355,9 @@ namespace Librainian.Maths {
 			return s;
 		}
 
-		public static UInt64? ToUInt64( [CanBeNull] this String? text ) => UInt64.TryParse( text, out var result ) ? result : null;
+		public static UInt64? ToUInt64( this String? text ) => UInt64.TryParse( text, out var result ) ? result : null;
 
-		public static UInt64 ToUInt64( [NotNull] this Byte[] bytes, Int32 pos ) =>
+		public static UInt64 ToUInt64( this Byte[] bytes, Int32 pos ) =>
 			( UInt64 )( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );
 
 		public static Int64 Truncate( this Single number ) => ( Int64 )number;

@@ -25,7 +25,7 @@
 namespace Librainian.Parsing {
 
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
+	using System.Diagnostics.CodeAnalysis;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -34,6 +34,6 @@ namespace Librainian.Parsing {
 		[JsonProperty]
 		public readonly List<TType> Tokens = new();
 
-		public void Enqueue( [NotNull] TType token ) => this.Tokens.Add( token );
+		public void Enqueue( [DisallowNull] TType token ) => this.Tokens.Add( token );
 	}
 }

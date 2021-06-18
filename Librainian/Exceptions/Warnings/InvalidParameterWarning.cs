@@ -26,7 +26,6 @@ namespace Librainian.Exceptions.Warnings {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 	using Logging;
 
 	/// <summary>Use when a parameter is, well.. invalid.</summary>
@@ -37,12 +36,11 @@ namespace Librainian.Exceptions.Warnings {
 
 		protected InvalidParameterWarning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public InvalidParameterWarning( [NotNull] String message ) : base( message ) {
+		public InvalidParameterWarning( String message ) : base( message ) {
 			message.Break();
 		}
 
-		public InvalidParameterWarning( [NotNull] String message, [CanBeNull]
-										  Exception inner ) : base( message, inner ) {
+		public InvalidParameterWarning( String message, Exception? inner ) : base( message, inner ) {
 			message.Break();
 		}
 	}

@@ -29,20 +29,18 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 	using Logging;
-	using Parsing;
 
 	public class NullException : Exception {
 
 		protected NullException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
 		/// <summary>
-		///     Don't pass in a null nameof(). But also don't throw an exception if they do.
+		///     Don't pass in a null nameof() lol.
 		/// </summary>
 		/// <param name="nameOfObject"></param>
-		public NullException( [NotNull] String? nameOfObject ) {
-			$"{Errors.SomethingNullHappened}. Null {nameOfObject ?? Symbols.Null}.".Break();
+		public NullException( String nameOfObject ) {
+			$"{nameOfObject.CannotBeNull()}.".Break();
 		}
 
 	}

@@ -27,7 +27,7 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.ComponentModel;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>A Double number thread-safe by <see cref="Interlocked" />.</summary>
@@ -61,9 +61,9 @@ namespace Librainian.Maths.Numbers {
 			return a1;
 		}
 
-		public static AtomicDouble Parse( [NotNull] String value ) {
+		public static AtomicDouble Parse( String value ) {
 			if ( value is null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			return new AtomicDouble( Double.Parse( value ) );
@@ -76,7 +76,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.Value:R}";
 	}
 }

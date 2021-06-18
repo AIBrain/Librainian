@@ -37,11 +37,11 @@ namespace Librainian {
 	using System.Threading;
 	using System.Windows.Forms;
 	using Controls;
-	using JetBrains.Annotations;
 	using Logging;
 
 	public static class App {
 
+		[Obsolete( "use this.PersistPlacement(); instead for winforms" )]
 		private static void RunInternalCommon() {
 			Debug.AutoFlush = true;
 			Trace.AutoFlush = true;
@@ -95,11 +95,11 @@ namespace Librainian {
 		/// </summary>
 		public static Status Run<TOpts>( [NotNull] Action<TOpts> runMe, params String[] arguments ) where TOpts : IOptions {
 			if ( runMe is null ) {
-				throw new ArgumentNullException( nameof( runMe ) );
+				throw new ArgumentEmptyException( nameof( runMe ) );
 			}
 
 			if ( arguments is null ) {
-				throw new ArgumentNullException( nameof( arguments ) );
+				throw new ArgumentEmptyException( nameof( arguments ) );
 			}
 
 			try {
@@ -166,7 +166,8 @@ namespace Librainian {
 		}
 		*/
 
-		public static void Run<TForm>( [CanBeNull] IEnumerable<String>? arguments ) where TForm : Form, new() {
+		[Obsolete( "use this.PersistPlacement(); instead for winforms" )]
+		public static void Run<TForm>( IEnumerable<String>? arguments ) where TForm : Form, new() {
 			RunInternalCommon();
 
 			using var form = new TForm();

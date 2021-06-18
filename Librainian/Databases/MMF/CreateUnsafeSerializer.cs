@@ -27,7 +27,6 @@ namespace Librainian.Databases.MMF {
 	using System;
 	using System.Runtime.InteropServices;
 	using System.Text;
-	using JetBrains.Annotations;
 
 	/// <summary>Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).</summary>
 	/// <typeparam name="T"></typeparam>
@@ -43,7 +42,7 @@ namespace Librainian.Databases.MMF {
 
 		private Type Type { get; } = typeof( T );
 
-		private static void BytesToObjectCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
+		private static void BytesToObjectCode( StringBuilder sb, String? typeFullName ) {
 			sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
 			sb.Append( '{' );
 
@@ -66,7 +65,6 @@ namespace Librainian.Databases.MMF {
 			return true;
 		}
 
-		[NotNull]
 		private String GenerateCode() {
 			var typeFullName = this.Type.FullName.Replace( '+', '.' );
 
@@ -88,7 +86,7 @@ namespace Librainian.Databases.MMF {
 			return sb.ToString();
 		}
 
-		private void GenerateMethodBodyCode( [NotNull] StringBuilder sb ) {
+		private void GenerateMethodBodyCode( StringBuilder sb ) {
 			this._addCount = 0;
 			var length = this._size;
 
@@ -101,7 +99,7 @@ namespace Librainian.Databases.MMF {
 			} while ( length > 0 );
 		}
 
-		private void MovePointers( [CanBeNull] StringBuilder sb ) {
+		private void MovePointers( StringBuilder? sb ) {
 			var modifer = this._addCount / this._ptrSize;
 
 			if ( modifer >= this._ptrSize ) {
@@ -111,7 +109,7 @@ namespace Librainian.Databases.MMF {
 			}
 		}
 
-		private void ObjectToBytesCode( [NotNull] StringBuilder sb, [CanBeNull] String? typeFullName ) {
+		private void ObjectToBytesCode( StringBuilder sb, String? typeFullName ) {
 			sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
 			sb.Append( '{' );
 			sb.Append( $"byte[] buffer = new byte[{this._size}];" );

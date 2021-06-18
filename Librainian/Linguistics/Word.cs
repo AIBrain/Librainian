@@ -33,7 +33,6 @@ namespace Librainian.Linguistics {
 	using System.Diagnostics;
 	using System.Linq;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -46,16 +45,14 @@ namespace Librainian.Linguistics {
 	public record Word : IEnumerable<Char>, IComparable<Word> {
 		private Word() : this( String.Empty ) { }
 
-		public Word( [NotNull] String word ) => this.Value = word.Trimmed() ?? String.Empty;
+		public Word( String word ) => this.Value = word.Trimmed() ?? String.Empty;
 
-		[NotNull]
 		[JsonProperty]
 		private String Value { get; init; }
 
-		[NotNull]
 		public static Word Empty { get; } = new();
 
-		public Int32 CompareTo( [NotNull] Word? other ) => String.Compare( this.Value, other?.Value, StringComparison.Ordinal );
+		public Int32 CompareTo( Word? other ) => String.Compare( this.Value, other?.Value, StringComparison.Ordinal );
 
 		public IEnumerator<Char> GetEnumerator() => this.Value.GetEnumerator();
 
@@ -65,17 +62,15 @@ namespace Librainian.Linguistics {
 
 		public virtual Boolean Equals( Word? other ) => Equals( this, other );
 
-		[NotNull]
-		public static implicit operator String( [NotNull] Word word ) => word.Value;
+		public static implicit operator String( Word word ) => word.Value;
 
-		[NotNull]
 		public override String ToString() => this.Value;
 
 		/// <summary>
 		/// Return a jagged array of every possible combination of the array. Does not exclude duplicates.
 		/// </summary>
 		/// <returns></returns>
-		[NotNull] public Char[][] Possibles() => this.Value.ToArray().PowerSet();
+		public Char[][] Possibles() => this.Value.ToArray().PowerSet();
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 	}

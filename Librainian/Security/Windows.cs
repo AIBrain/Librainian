@@ -42,7 +42,7 @@ namespace Librainian.Security {
 				return windowsPrincipal.IsInRole( role );
 			}
 			catch ( SecurityException ) { }
-			catch ( ArgumentNullException ) { }
+			catch ( ArgumentEmptyException ) { }
 			catch ( ArgumentException ) { }
 
 			return default;

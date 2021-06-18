@@ -32,6 +32,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths.Bigger;
@@ -133,9 +134,9 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		public static Milliseconds Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( [NotNull] Milliseconds? other ) {
+		public Int32 CompareTo( Milliseconds other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );
@@ -192,14 +193,14 @@ namespace Librainian.Measurement.Time {
 
 		public static Milliseconds operator +( Milliseconds left, BigInteger milliseconds ) => Combine( left, milliseconds );
 
-		public static Boolean operator <( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) => left.Value < right.Value;
+		public static Boolean operator <( Milliseconds left, Milliseconds right ) => left.Value < right.Value;
 
-		public static Boolean operator <( [NotNull] Milliseconds left, [NotNull] Seconds right ) => ( Seconds )left < right;
+		public static Boolean operator <( Milliseconds left, Seconds right ) => ( Seconds )left < right;
 
-		public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Milliseconds right ) => left.Value > right.Value;
+		public static Boolean operator >( Milliseconds left, Milliseconds right ) => left.Value > right.Value;
 
 		[Pure]
-		public static Boolean operator >( [NotNull] Milliseconds left, [NotNull] Seconds right ) => ( Seconds )left > right;
+		public static Boolean operator >( Milliseconds left, Seconds right ) => ( Seconds )left > right;
 
 		public Microseconds ToMicroseconds() => new( this.Value * Microseconds.InOneMillisecond );
 

@@ -33,8 +33,8 @@ namespace Librainian.Persistence {
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Parsing;
 
@@ -50,7 +50,7 @@ namespace Librainian.Persistence {
 		/// <param name="key"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public static Boolean TryGet( [CanBeNull] String? key, [CanBeNull] out String? value ) {
+		public static Boolean TryGet( String? key, out String? value ) {
 			value = null;
 
 			return false;
@@ -86,19 +86,14 @@ namespace Librainian.Persistence {
 
 		public static class Storage {
 
-			[NotNull]
 			private static TimeTracker InitializeTimeTracker { get; } = new();
 
-			[CanBeNull]
 			private static Task? LocalDiscoveryTask { get; set; }
 
-			[NotNull]
 			private static TimeTracker LocalDiscoveryTimeTracker { get; } = new();
 
-			[CanBeNull]
 			private static Task? RemoteDiscoveryTask { get; set; }
 
-			[NotNull]
 			private static TimeTracker RemoteResourceDiscoveryTimeTracker { get; } = new();
 
 			public static CancellationToken LocalDiscoveryCancellationToken { get; set; }
@@ -166,10 +161,9 @@ namespace Librainian.Persistence {
 				return false;
 			}
 
-			[NotNull]
-			public static String BuildKey<T>( [NotNull] params T[] keys ) {
+			public static String BuildKey<T>( params T[] keys ) {
 				if ( keys is null ) {
-					throw new ArgumentNullException( nameof( keys ) );
+					throw new ArgumentEmptyException( nameof( keys ) );
 				}
 
 				return keys.ToStrings( Symbols.TriplePipes );

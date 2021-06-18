@@ -29,7 +29,6 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 	using Logging;
 
 	/// <summary>
@@ -42,15 +41,15 @@ namespace Librainian.Exceptions {
 
 		protected ArgumentEmptyException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public ArgumentEmptyException( [CanBeNull] String? paramName ) {
-			CannotBeEmpty( paramName ).Break();
+		public ArgumentEmptyException( String? paramName ) {
+			CannotBeEmpty( paramName ).Log(BreakOrDontBreak.Break);
 		}
 
-		public ArgumentEmptyException( [CanBeNull] String? paramName, [CanBeNull] Exception? innerException ) : base( CannotBeEmpty( paramName ), innerException ) {
-			CannotBeEmpty( paramName ).Break();
+		public ArgumentEmptyException( String? paramName, Exception? innerException ) : base( CannotBeEmpty( paramName ), innerException ) {
+			CannotBeEmpty( paramName ).Log(BreakOrDontBreak.Break);
 		}
 
-		private static String CannotBeEmpty( [CanBeNull] String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
+		private static String CannotBeEmpty( String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
 
 	}
 

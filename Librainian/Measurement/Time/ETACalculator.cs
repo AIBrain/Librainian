@@ -31,7 +31,6 @@ namespace Librainian.Measurement.Time {
 	using System.Linq;
 	using System.Timers;
 	using FluentTime;
-	using JetBrains.Annotations;
 	using Maths;
 	using Utilities;
 
@@ -48,7 +47,6 @@ namespace Librainian.Measurement.Time {
 
 		private volatile Single _progress;
 
-		[CanBeNull]
 		private Timer? _timer;
 
 		/// <summary>
@@ -91,7 +89,6 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Get the internal data points we have so far.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public IEnumerable<TimeProgression> GetDataPoints() =>
 			this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression( pair.Key.TotalMilliseconds, pair.Value ) );
 

@@ -27,7 +27,6 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Diagnostics;
 	using System.IO;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>Modern version of <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" />.</summary>
@@ -87,7 +86,7 @@ namespace Librainian.FileSystem {
 			this.FileHashCode = default( Int64? );
 		}
 
-		public Boolean Refresh( [NotNull] String fullPath, Boolean throwOnError = true ) {
+		public Boolean Refresh( String fullPath, Boolean throwOnError = true ) {
 			this.Reset();
 
 			if ( String.IsNullOrWhiteSpace( fullPath ) ) {

@@ -25,7 +25,6 @@
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	internal class Matrix4 : Matrix {
 
@@ -33,13 +32,12 @@ namespace Librainian.Graphics {
 
 		public Matrix4() : base( 4, 4 ) { }
 
-		public Matrix4( [NotNull] Single[,] matrix ) : base( matrix ) {
+		public Matrix4( Single[,] matrix ) : base( matrix ) {
 			if ( this.Rows != 4 || this.Cols != 4 ) {
 				throw new ArgumentException();
 			}
 		}
 
-		[NotNull]
 		public static Matrix4 NewI() =>
 			new( new[ , ] {
 				{
@@ -53,8 +51,7 @@ namespace Librainian.Graphics {
 				}
 			} );
 
-		[NotNull]
-		public static Matrix4 operator *( [NotNull] Matrix4 mat1, [NotNull] Matrix4 mat2 ) {
+		public static Matrix4 operator *( Matrix4 mat1, Matrix4 mat2 ) {
 			var m1 = mat1.matrix;
 			var m2 = mat2.matrix;
 			var m3 = new Single[ 4, 4 ];
@@ -78,7 +75,6 @@ namespace Librainian.Graphics {
 			return new Matrix4( m3 );
 		}
 
-		[NotNull]
-		public static Matrix4 operator *( [NotNull] Matrix4 m, Single scalar ) => new( Multiply( m, scalar ) );
+		public static Matrix4 operator *( Matrix4 m, Single scalar ) => new( Multiply( m, scalar ) );
 	}
 }

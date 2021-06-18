@@ -25,7 +25,6 @@
 namespace Librainian.Parsing.Validation {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>be a hexadecimal number (optional 0x or &amp;H prefix)</summary>
@@ -35,7 +34,6 @@ namespace Librainian.Parsing.Validation {
 
 		public StringHexPrefix( String value ) : base( value, "^(0x|&H)?[0-9a-fA-F]*$" ) { }
 
-		[NotNull]
-		public static explicit operator StringHexPrefix( [CanBeNull] String? str ) => new( str );
+		public static explicit operator StringHexPrefix( String? str ) => new( str );
 	}
 }

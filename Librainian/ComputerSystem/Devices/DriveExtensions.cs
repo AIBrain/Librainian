@@ -27,7 +27,7 @@ namespace Librainian.ComputerSystem.Devices {
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class DriveExtensions {
 
@@ -45,33 +45,33 @@ namespace Librainian.ComputerSystem.Devices {
 			FixedDriveTypes.TrimExcess();
 		}
 
-		public static Boolean IsFixed( [NotNull] this Disk disk ) {
+		public static Boolean IsFixed( this Disk disk ) {
 			if ( disk is null ) {
-				throw new ArgumentNullException( nameof( disk ) );
+				throw new ArgumentEmptyException( nameof( disk ) );
 			}
 
 			return FixedDriveTypes.Contains( disk.Info.DriveType );
 		}
 
-		public static Boolean IsFixed( [NotNull] this DriveInfo drive ) {
+		public static Boolean IsFixed( this DriveInfo drive ) {
 			if ( drive is null ) {
-				throw new ArgumentNullException( nameof( drive ) );
+				throw new ArgumentEmptyException( nameof( drive ) );
 			}
 
 			return FixedDriveTypes.Contains( drive.DriveType );
 		}
 
-		public static Boolean IsFleeting( [NotNull] this Disk disk ) {
+		public static Boolean IsFleeting( this Disk disk ) {
 			if ( disk is null ) {
-				throw new ArgumentNullException( nameof( disk ) );
+				throw new ArgumentEmptyException( nameof( disk ) );
 			}
 
 			return FleetingDriveTypes.Contains( disk.Info.DriveType );
 		}
 
-		public static Boolean IsFleeting( [NotNull] this DriveInfo drive ) {
+		public static Boolean IsFleeting( this DriveInfo drive ) {
 			if ( drive is null ) {
-				throw new ArgumentNullException( nameof( drive ) );
+				throw new ArgumentEmptyException( nameof( drive ) );
 			}
 
 			return FleetingDriveTypes.Contains( drive.DriveType );

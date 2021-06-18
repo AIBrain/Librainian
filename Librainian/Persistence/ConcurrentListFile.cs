@@ -33,8 +33,8 @@ namespace Librainian.Persistence {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Collections.Lists;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
 	using Newtonsoft.Json;
@@ -47,21 +47,20 @@ namespace Librainian.Persistence {
 		/// <summary>disallow constructor without a document/filename</summary>
 		/// <summary></summary>
 		[JsonProperty]
-		[NotNull]
 		public Document Document { get; set; }
 
 		private ConcurrentListFile() => throw new NotImplementedException();
 
 		/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
 		/// <param name="document"></param>
-		public ConcurrentListFile( [NotNull] Document document ) {
+		public ConcurrentListFile( Document document ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			document.ContainingingFolder().Info.Create();
 
-			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+			this.Document = document ?? throw new ArgumentEmptyException( nameof( document ) );
 			this.Read().Wait(); //TODO I don't like this Wait being here.
 		}
 
@@ -70,7 +69,7 @@ namespace Librainian.Persistence {
 		///     <para>Defaults to user\appdata\Local\productname\filename</para>
 		/// </summary>
 		/// <param name="filename"></param>
-		public ConcurrentListFile( [NotNull] String filename ) : this( new Document( filename ) ) { }
+		public ConcurrentListFile( String filename ) : this( new Document( filename ) ) { }
 
 		public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
 			if ( await this.Document.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {

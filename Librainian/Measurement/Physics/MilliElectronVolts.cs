@@ -32,7 +32,6 @@ namespace Librainian.Measurement.Physics {
 	using System.Diagnostics;
 	using System.Linq;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in Thousandths of <see cref="ElectronVolts" />.</summary>
@@ -77,7 +76,6 @@ namespace Librainian.Measurement.Physics {
 
 		public Int32 CompareTo( KiloElectronVolts other ) => this.ToKiloElectronVolts().Value.CompareTo( other.Value );
 
-		[NotNull]
 		public String Simpler() {
 			var list = new HashSet<String> {
 				this.ToTeraElectronVolts().ToString(),
@@ -100,7 +98,6 @@ namespace Librainian.Measurement.Physics {
 
 		public MilliElectronVolts ToMilliElectronVolts() => new(this.Value * InOneMilliElectronVolt);
 
-		[NotNull]
 		public override String ToString() => $"{this.Value} meV";
 
 		public TeraElectronVolts ToTeraElectronVolts() => new(this.Value * InOneTeraElectronVolt);

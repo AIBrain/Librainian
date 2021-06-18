@@ -37,7 +37,6 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Threading.Tasks;
 	using Extensions;
 	using FileSystem;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	///     <para>A Drive contains 1 or more <see cref="Disk" />.</para>
@@ -48,19 +47,17 @@ namespace Librainian.ComputerSystem.Devices {
 
 		public Char DriveLetter { get; }
 
-		[NotNull]
 		public DriveInfo Info { get; }
 
-		[NotNull]
 		public String RootDirectory => this.Info.RootDirectory.Name;
 
-		public Disk( [NotNull] Document document ) : this( document.FullPath[ 0 ] ) { }
+		public Disk( Document document ) : this( document.FullPath[ 0 ] ) { }
 
-		public Disk( [NotNull] Folder folder ) : this( folder.FullPath[ 0 ] ) { }
+		public Disk( Folder folder ) : this( folder.FullPath[ 0 ] ) { }
 
-		public Disk( [NotNull] String fullpath ) : this( fullpath[ 0 ] ) { }
+		public Disk( String fullpath ) : this( fullpath[ 0 ] ) { }
 
-		public Disk( [NotNull] DriveInfo info ) : this( info.RootDirectory.FullName[ 0 ] ) { }
+		public Disk( DriveInfo info ) : this( info.RootDirectory.FullName[ 0 ] ) { }
 
 		public Disk( Char driveLetter ) {
 			this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
@@ -77,15 +74,13 @@ namespace Librainian.ComputerSystem.Devices {
 		/// </summary>
 		public Disk() : this( Environment.CurrentDirectory[ 0 ] ) { }
 
-		[NotNull]
 		public static async IAsyncEnumerable<Disk> GetDrives( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			await foreach ( var driveInfo in DriveInfo.GetDrives().ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {
 				yield return new Disk( driveInfo );
 			}
 		}
 
-		[NotNull]
-		public IAsyncEnumerable<IFolder> EnumerateFolders( CancellationToken cancellationToken, [CanBeNull] String? searchPattern = "*" ) {
+		public IAsyncEnumerable<IFolder> EnumerateFolders( CancellationToken cancellationToken, String? searchPattern = "*" ) {
 			var root = new Folder( this.Info.RootDirectory.FullName );
 
 			return root.EnumerateFolders( searchPattern, SearchOption.TopDirectoryOnly, cancellationToken );
@@ -97,7 +92,6 @@ namespace Librainian.ComputerSystem.Devices {
 
 		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
 
-		[NotNull]
 		public override String ToString() => this.DriveLetter.ToString();
 	}
 }

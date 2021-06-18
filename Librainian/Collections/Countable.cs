@@ -37,7 +37,7 @@ namespace Librainian.Collections {
 	using System.Numerics;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Threading;
@@ -54,12 +54,10 @@ namespace Librainian.Collections {
 	public class Countable<TKey> : ABetterClassDispose, IEnumerable<(TKey, BigInteger)>, ICountable<TKey> where TKey : notnull {
 
 		/// <summary>Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.</summary>
-		[NotNull]
 		private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } = new( Environment.ProcessorCount, 1 );
 
 		/// <summary>Count of each <see cref="TKey" />.</summary>
 		[JsonProperty]
-		[NotNull]
 		private ConcurrentDictionary<TKey, BigInteger> Dictionary { get; } = new();
 
 		[JsonProperty]
@@ -71,12 +69,11 @@ namespace Librainian.Collections {
 		[JsonProperty]
 		public TimeSpan WriteTimeout { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
-		public BigInteger? this[ [NotNull] TKey key ] {
+		public BigInteger? this[ TKey key ] {
 			get {
 				if ( key is null ) {
-					throw new ArgumentNullException( nameof( key ) );
+					throw new ArgumentEmptyException( nameof( key ) );
 				}
 
 				var bucket = this.Bucket( key );
@@ -95,7 +92,7 @@ namespace Librainian.Collections {
 
 			set {
 				if ( key is null ) {
-					throw new ArgumentNullException( nameof( key ) );
+					throw new ArgumentEmptyException( nameof( key ) );
 				}
 
 				if ( this.IsReadOnly ) {
@@ -126,10 +123,9 @@ namespace Librainian.Collections {
 			this.WriteTimeout = writeTimeout;
 		}
 
-		private static Byte Hash( [NotNull] TKey key ) => ( Byte )key.GetHashCode();
+		private static Byte Hash( TKey key ) => ( Byte )key.GetHashCode();
 
-		[NotNull]
-		private ReaderWriterLockSlim Bucket( [NotNull] TKey key ) {
+		private ReaderWriterLockSlim Bucket( TKey key ) {
 			var hash = Hash( key );
 
 			TryAgain:
@@ -147,12 +143,11 @@ namespace Librainian.Collections {
 			goto TryAgain;
 		}
 
-		[NotNull]
 		private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
 
-		public Boolean Add( [NotNull] IEnumerable<TKey> keys ) {
+		public Boolean Add( IEnumerable<TKey> keys ) {
 			if ( keys is null ) {
-				throw new ArgumentNullException( nameof( keys ) );
+				throw new ArgumentEmptyException( nameof( keys ) );
 			}
 
 			if ( this.IsReadOnly ) {
@@ -164,17 +159,17 @@ namespace Librainian.Collections {
 			return result.IsCompleted;
 		}
 
-		public Boolean Add( [NotNull] TKey key ) {
+		public Boolean Add( TKey key ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			return this.Add( key, BigInteger.One );
 		}
 
-		public Boolean Add( [NotNull] TKey key, BigInteger amount ) {
+		public Boolean Add( TKey key, BigInteger amount ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			if ( this.IsReadOnly ) {
@@ -222,9 +217,9 @@ namespace Librainian.Collections {
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
-		public Boolean Subtract( [NotNull] TKey key, BigInteger amount ) {
+		public Boolean Subtract( TKey key, BigInteger amount ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			if ( this.IsReadOnly ) {

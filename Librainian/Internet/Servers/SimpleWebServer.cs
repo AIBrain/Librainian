@@ -56,11 +56,9 @@ namespace Librainian.Internet.Servers {
 	public class SimpleWebServer : ABetterClassDispose {
 
 		/// <summary></summary>
-		[NotNull]
 		private readonly HttpListener _httpListener = new();
 
 		/// <summary></summary>
-		[CanBeNull]
 		private readonly Func<HttpListenerRequest, String>? _responderMethod;
 
 		/// <summary></summary>
@@ -68,7 +66,7 @@ namespace Librainian.Internet.Servers {
 		/// <param name="method">  </param>
 		/// <exception cref="HttpListenerException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
-		public SimpleWebServer( [CanBeNull] ICollection<String>? prefixes, [CanBeNull] Func<HttpListenerRequest, String>? method ) {
+		public SimpleWebServer( ICollection<String>? prefixes, Func<HttpListenerRequest, String>? method ) {
 			this.ImNotReady( String.Empty );
 
 			if ( !HttpListener.IsSupported ) {
@@ -104,14 +102,13 @@ namespace Librainian.Internet.Servers {
 			}
 		}
 
-		public SimpleWebServer( [CanBeNull] Func<HttpListenerRequest, String> method, [CanBeNull] params String[] prefixes ) : this( prefixes, method ) { }
+		public SimpleWebServer( Func<HttpListenerRequest, String>? method, params String[]? prefixes ) : this( prefixes, method ) { }
 
 		public Boolean IsReadyForRequests { get; private set; }
 
-		[CanBeNull]
 		public String? NotReadyBecause { get; private set; }
 
-		private void ImNotReady( [CanBeNull] String? because ) {
+		private void ImNotReady( String? because ) {
 			this.IsReadyForRequests = false;
 			this.NotReadyBecause = because;
 		}
@@ -123,7 +120,6 @@ namespace Librainian.Internet.Servers {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		/// <see cref="Stop" />
-		[NotNull]
 		public async Task Run( CancellationToken cancellationToken ) {
 			"Webserver running...".Info();
 

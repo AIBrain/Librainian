@@ -29,7 +29,6 @@ namespace Librainian.Maths.Numbers {
 	using System.Linq;
 	using System.Text;
 	using Extensions;
-	using JetBrains.Annotations;
 
 	/// <summary>http://codereview.stackexchange.com/a/99085/26303</summary>
 	[Immutable]
@@ -37,12 +36,11 @@ namespace Librainian.Maths.Numbers {
 
 		public List<Int32> Integer { get; }
 
-		public BigInt( [NotNull] String number ) => this.Integer = CalculateBigInteger( number );
+		public BigInt( String number ) => this.Integer = CalculateBigInteger( number );
 
-		public BigInt( [CanBeNull] List<Int32> list ) => this.Integer = list;
+		public BigInt( List<Int32>? list ) => this.Integer = list;
 
-		[NotNull]
-		private static List<Int32> CalculateBigInteger( [NotNull] String number ) => number.Reverse().Select( chararcter => Int32.Parse( chararcter.ToString() ) ).ToList();
+		private static List<Int32> CalculateBigInteger( String number ) => number.Reverse().Select( chararcter => Int32.Parse( chararcter.ToString() ) ).ToList();
 
 		private static Int32 NumberAdd( Int32 value1, Int32 value2, ref Int32 carryOver ) {
 			var addResult = value1 + value2 + carryOver;
@@ -52,8 +50,7 @@ namespace Librainian.Maths.Numbers {
 			return addValue;
 		}
 
-		[NotNull]
-		public static BigInt Add( [NotNull] BigInt int1, [NotNull] BigInt int2 ) {
+		public static BigInt Add( BigInt int1, BigInt int2 ) {
 			var result = new List<Int32>();
 
 			var carryOver = 0;
@@ -82,7 +79,6 @@ namespace Librainian.Maths.Numbers {
 			return new BigInt( result );
 		}
 
-		[NotNull]
 		public override String ToString() {
 			var sb = new StringBuilder();
 

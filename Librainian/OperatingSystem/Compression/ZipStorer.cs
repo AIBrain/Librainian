@@ -32,7 +32,7 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.IO;
 	using System.IO.Compression;
 	using System.Text;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Utilities;
 
 	/// <summary>
@@ -124,8 +124,7 @@ namespace Librainian.OperatingSystem.Compression {
 				( Int32 )( dt & 31 ) * 2 );
 
 		// Replaces backslashes with slashes to store in zip header
-		[NotNull]
-		private static String NormalizedFilename( [NotNull] String _filename ) {
+		private static String NormalizedFilename( String _filename ) {
 			var filename = _filename.Replace( '\\', '/' );
 
 			var pos = filename.IndexOf( ':' );
@@ -203,7 +202,7 @@ namespace Librainian.OperatingSystem.Compression {
 		}
 
 		// Copies all source file into storage file
-		private void Store( ref ZipFileEntry zfe, [NotNull] Stream source ) {
+		private void Store( ref ZipFileEntry zfe, Stream source ) {
 			var buffer = new Byte[ 16384 ];
 			Int32 bytesRead;
 			UInt32 totalRead = 0;
@@ -342,8 +341,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="filename">Full path of Zip file to create</param>
 		/// <param name="comment"> General comment for Zip file</param>
 		/// <returns>A valid ZipStorer object</returns>
-		[NotNull]
-		public static ZipStorer Create( [NotNull] String filename, [CanBeNull] String? comment ) {
+		public static ZipStorer Create( String filename, String? comment ) {
 			Stream stream = new FileStream( filename, FileMode.Create, FileAccess.ReadWrite );
 
 			var zip = Create( stream, comment );
@@ -359,8 +357,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="stream"> </param>
 		/// <param name="comment"></param>
 		/// <returns>A valid ZipStorer object</returns>
-		[NotNull]
-		public static ZipStorer Create( [CanBeNull] Stream stream, [CanBeNull] String? comment ) {
+		public static ZipStorer Create( Stream? stream, String? comment ) {
 			var zip = new ZipStorer {
 				_comment = comment,
 				_zipFileStream = stream,
@@ -376,8 +373,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="filename">Full path of Zip file to open</param>
 		/// <param name="access">  File access mode as used in FileStream constructor</param>
 		/// <returns>A valid ZipStorer object</returns>
-		[NotNull]
-		public static ZipStorer Open( [NotNull] String filename, FileAccess access ) {
+		public static ZipStorer Open( String filename, FileAccess access ) {
 			var stream = new FileStream( filename, FileMode.Open, access == FileAccess.Read ? FileAccess.Read : FileAccess.ReadWrite ) as Stream;
 
 			var zip = Open( stream, access );
@@ -392,8 +388,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="stream">Already opened stream with zip contents</param>
 		/// <param name="access">File access mode for stream operations</param>
 		/// <returns>A valid ZipStorer object</returns>
-		[NotNull]
-		public static ZipStorer Open( [NotNull] Stream stream, FileAccess access ) {
+		public static ZipStorer Open( Stream stream, FileAccess access ) {
 			if ( !stream.CanSeek && access != FileAccess.Read ) {
 				throw new InvalidOperationException( "Stream cannot seek" );
 			}
@@ -419,7 +414,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="zfes">List of Entries to remove from storage</param>
 		/// <returns>True if success, false if not</returns>
 		/// <remarks>This method only works for storage of type FileStream</remarks>
-		public static Boolean RemoveEntries( [NotNull] ref ZipStorer zip, [CanBeNull] List<ZipFileEntry> zfes ) {
+		public static Boolean RemoveEntries( ref ZipStorer zip, List<ZipFileEntry>? zfes ) {
 			if ( zip._zipFileStream is not FileStream ) {
 				throw new InvalidOperationException( "RemoveEntries is allowed just over streams of type FileStream" );
 			}
@@ -473,7 +468,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="pathname">     Full path of file to add to Zip storage</param>
 		/// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
 		/// <param name="comment">      Comment for stored file</param>
-		public void AddFile( Compression method, [NotNull] String pathname, [NotNull] String filenameInZip, [CanBeNull] String? comment ) {
+		public void AddFile( Compression method, String pathname, String filenameInZip, String? comment ) {
 			if ( this._access == FileAccess.Read ) {
 				throw new InvalidOperationException( "Writing is not allowed" );
 			}
@@ -491,7 +486,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="source">       Stream object containing the data to store in Zip</param>
 		/// <param name="modTime">      Modification time of the data to store</param>
 		/// <param name="comment">      Comment for stored file</param>
-		public void AddStream( Compression method, [NotNull] String filenameInZip, [NotNull] Stream source, DateTime modTime, [CanBeNull] String? comment ) {
+		public void AddStream( Compression method, String filenameInZip, Stream source, DateTime modTime, String? comment ) {
 			if ( this._access == FileAccess.Read ) {
 				throw new InvalidOperationException( "Writing is not allowed" );
 			}
@@ -581,9 +576,9 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="filename">Name of file to store uncompressed data</param>
 		/// <returns>True if success, false if not.</returns>
 		/// <remarks>Unique compression methods are Store and Deflate</remarks>
-		public Boolean ExtractFile( ZipFileEntry zfe, [NotNull] String filename ) {
+		public Boolean ExtractFile( ZipFileEntry zfe, String filename ) {
 			if ( filename is null ) {
-				throw new ArgumentNullException( nameof( filename ) );
+				throw new ArgumentEmptyException( nameof( filename ) );
 			}
 
 			// Make sure the parent directory exists
@@ -621,7 +616,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <param name="stream">Stream to store the uncompressed data</param>
 		/// <returns>True if success, false if not.</returns>
 		/// <remarks>Unique compression methods are Store and Deflate</remarks>
-		public Boolean ExtractFile( ZipFileEntry zfe, [NotNull] Stream stream ) {
+		public Boolean ExtractFile( ZipFileEntry zfe, Stream stream ) {
 			if ( !stream.CanWrite ) {
 				throw new InvalidOperationException( "Stream cannot be written" );
 			}
@@ -677,7 +672,6 @@ namespace Librainian.OperatingSystem.Compression {
 		///     Read all the file records in the central directory
 		/// </summary>
 		/// <returns>List of all entries in directory</returns>
-		[NotNull]
 		public List<ZipFileEntry> ReadCentralDir() {
 			if ( this._centralDirImage is null ) {
 				throw new InvalidOperationException( "Central directory currently does not exist" );
@@ -793,7 +787,6 @@ namespace Librainian.OperatingSystem.Compression {
 			///     Overridden method
 			/// </summary>
 			/// <returns>Filename in Zip</returns>
-			[NotNull]
 			public override String ToString() => this.FilenameInZip;
 		}
 

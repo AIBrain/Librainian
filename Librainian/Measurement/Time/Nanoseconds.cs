@@ -30,8 +30,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 	using Newtonsoft.Json;
 
@@ -116,9 +116,9 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		public static Nanoseconds Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( [NotNull] Nanoseconds? other ) {
+		public Int32 CompareTo( Nanoseconds other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

@@ -31,8 +31,8 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Linq;
-	using JetBrains.Annotations;
 
 	public static class SetsOfSets {
 
@@ -43,8 +43,7 @@ namespace Librainian.Extensions {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		[ItemCanBeNull]
-		public static IEnumerable<T?> Append<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<T?>? a, [CanBeNull][ItemCanBeNull] IEnumerable<T?>? b ) {
+		public static IEnumerable<T?> Append<T>( this IEnumerable<T?>? a, IEnumerable<T?>? b ) {
 			if ( a is not null ) {
 				foreach ( var item in a ) {
 					yield return item;
@@ -63,8 +62,7 @@ namespace Librainian.Extensions {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		[ItemCanBeNull]
-		public static IEnumerable<T?> Append<T>( [CanBeNull] this T? a, [ItemCanBeNull][NotNull] IEnumerable<T?>? b ) {
+		public static IEnumerable<T?> Append<T>( this T? a, IEnumerable<T?>? b ) {
 			if ( a is not null ) {
 				yield return a;
 			}
@@ -81,8 +79,7 @@ namespace Librainian.Extensions {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		[ItemCanBeNull]
-		public static IEnumerable<T?> Append<T>( [CanBeNull] this IEnumerable<T?>? a, [CanBeNull] T? b ) {
+		public static IEnumerable<T?> Append<T>( this IEnumerable<T?>? a, T? b ) {
 			if ( a is not null ) {
 				foreach ( var item in a ) {
 					yield return item;
@@ -92,9 +89,7 @@ namespace Librainian.Extensions {
 			yield return b;
 		}
 
-		[NotNull]
-		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>> CartesianProduct<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<IEnumerable<T>?>? sequences ) {
+		public static IEnumerable<IEnumerable<T>?> CartesianProduct<T>( this IEnumerable<IEnumerable<T>?>? sequences ) {
 			IEnumerable<IEnumerable<T>> emptyProduct = new[] {
 				Enumerable.Empty<T>()
 			};
@@ -114,29 +109,27 @@ namespace Librainian.Extensions {
 			} );
 		}
 
-		[CanBeNull]
-		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( [CanBeNull][ItemCanBeNull] params IEnumerable<T?>[]? input ) {
+		public static IEnumerable<IEnumerable<T>?>? Combinations<T>( params IEnumerable<T?>?[]? input ) {
 			IEnumerable<IEnumerable<T>> result = Array.Empty<T[]>();
 
 			//TODO Don't know what to do with nulls in Combinations()..
 			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
 		}
 
-		[CanBeNull]
-		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T?>?> Combinations<T>( [CanBeNull][ItemCanBeNull] this IEnumerable<T?> input ) =>
+		public static IEnumerable<IEnumerable<T?>?> Combinations<T>( this IEnumerable<T?> input ) =>
 			input.Select( item => new[] {
 				item
 			} );
 
-		[NotNull]
-		[ItemCanBeNull]
 		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
-			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T?>?> setA,
-			[NotNull][ItemCanBeNull] IEnumerable<IEnumerable<T?>?> setB
+			this IEnumerable<IEnumerable<T?>?> setA,
+			IEnumerable<IEnumerable<T?>?>? setB
 		) {
 			var found = false;
+
+			if ( setB is null ) {
+				yield break;
+			}
 
 			var eachB = setB as IEnumerable<T>[] ?? setB.ToArray();
 
@@ -165,9 +158,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		[ItemCanBeNull]
-		[CanBeNull]
-		public static IEnumerable<IEnumerable<T?>?> Combine<T>( [CanBeNull] this IEnumerable<T?>? setA, [NotNull] IEnumerable<IEnumerable<T?>?>? setB ) {
+		public static IEnumerable<IEnumerable<T?>?>? Combine<T>( this IEnumerable<T?>? setA, IEnumerable<IEnumerable<T?>?>? setB ) {
 			var found = false;
 
 			if ( setB != null ) {
@@ -193,11 +184,9 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		[ItemCanBeNull]
-		[CanBeNull]
-		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
-			[NotNull][ItemCanBeNull] this IEnumerable<IEnumerable<T?>?> setA,
-			[NotNull][ItemCanBeNull] IEnumerable<T?> setB
+		public static IEnumerable<IEnumerable<T?>?>? Combine<T>(
+			this IEnumerable<IEnumerable<T?>?> setA,
+			IEnumerable<T?> setB
 		) {
 			var found = false;
 
@@ -213,9 +202,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		[CanBeNull]
-		[ItemCanBeNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull] this T a, [NotNull][ItemNotNull] IEnumerable<IEnumerable<T>> setB ) {
+		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [DisallowNull] this T a, IEnumerable<IEnumerable<T>> setB ) {
 			var found = false;
 
 			foreach ( var bGroup in setB ) {
@@ -231,9 +218,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		[CanBeNull]
-		[ItemNotNull]
-		public static IEnumerable<IEnumerable<T>> Combine<T>( [NotNull][ItemNotNull] this IEnumerable<IEnumerable<T>> setA, [NotNull] T b ) {
+		public static IEnumerable<IEnumerable<T>>? Combine<T>( this IEnumerable<IEnumerable<T>> setA, [DisallowNull] T b ) {
 			var found = false;
 
 			foreach ( var aGroup in setA ) {
@@ -249,8 +234,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		[ItemCanBeNull]
-		public static IEnumerable<T?> Group<T>( [CanBeNull] this T? a, [CanBeNull] T? b ) {
+		public static IEnumerable<T?> Group<T>( this T? a, T? b ) {
 			yield return a;
 			yield return b;
 		}
@@ -261,8 +245,7 @@ namespace Librainian.Extensions {
 		/// <para>Note: Does not exclude duplicates.</para>
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
-		public static T[][] PowerSet<T>( [NotNull] this T[] s ) {
+		public static T[][] PowerSet<T>( this T[] s ) {
 			var arrayLength = s.Length;
 
 			var powerSet = new T[ 1 << arrayLength ][];
@@ -296,8 +279,7 @@ namespace Librainian.Extensions {
 		/// <para>Note: Does not exclude duplicates.</para>
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
-		public static T[][] PowerSet<T>( [NotNull] this IEnumerable<T> list ) {
+		public static T[][] PowerSet<T>( this IEnumerable<T> list ) {
 			var enumerable = list as T[] ?? list.ToArray();
 			var length = enumerable.Length;
 

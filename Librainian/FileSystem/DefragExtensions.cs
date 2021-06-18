@@ -28,7 +28,6 @@ namespace Librainian.FileSystem {
 	using System.Diagnostics;
 	using System.IO;
 	using ComputerSystem.Devices;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	public static class DefragExtensions {
@@ -38,8 +37,7 @@ namespace Librainian.FileSystem {
 		///     priority and the spawned process DfrgNtfs is given 'Idle' priority
 		/// </summary>
 		/// <param name="disk">Drive to defrag - format is "c:" for example</param>
-		[NotNull]
-		private static String Defrag( [CanBeNull] Disk disk ) {
+		private static String Defrag( Disk? disk ) {
 			var path = Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "defrag.exe" );
 
 			var info = new ProcessStartInfo {

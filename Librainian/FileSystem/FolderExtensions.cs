@@ -40,7 +40,6 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using ComputerSystem.Devices;
 	using Exceptions;
-	using JetBrains.Annotations;
 	using Logging;
 	using Parsing;
 	using PooledAwait;
@@ -89,20 +88,19 @@ namespace Librainian.FileSystem {
 		/// <param name="overwriteDestinationDocuments"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static async Task<IEnumerable<DocumentCopyStatistics>> CopyFiles(
-			[NotNull] this Folder sourceFolder,
-			[NotNull] Folder destinationFolder,
-			[CanBeNull] IEnumerable<String>? searchPatterns,
+			this Folder sourceFolder,
+			Folder destinationFolder,
+			IEnumerable<String>? searchPatterns,
 			Boolean overwriteDestinationDocuments,
 			CancellationToken cancellationToken
 		) {
 			if ( sourceFolder is null ) {
-				throw new ArgumentNullException( nameof( sourceFolder ) );
+				throw new ArgumentEmptyException( nameof( sourceFolder ) );
 			}
 
 			if ( destinationFolder is null ) {
-				throw new ArgumentNullException( nameof( destinationFolder ) );
+				throw new ArgumentEmptyException( nameof( destinationFolder ) );
 			}
 
 			var documentCopyStatistics = new ConcurrentDictionary<IDocument, DocumentCopyStatistics>();
@@ -193,9 +191,9 @@ namespace Librainian.FileSystem {
 			return documentCopyStatistics.Values;
 		}
 
-		public static async IAsyncEnumerable<IFolder> FindFolder( [NotNull] this String folderName, [EnumeratorCancellation] CancellationToken cancellationToken ) {
+		public static async IAsyncEnumerable<IFolder> FindFolder( this String folderName, [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			if ( folderName is null ) {
-				throw new ArgumentNullException( nameof( folderName ) );
+				throw new ArgumentEmptyException( nameof( folderName ) );
 			}
 
 			//First check across all known drives.
@@ -236,8 +234,7 @@ namespace Librainian.FileSystem {
 		/// <summary><see cref="PathSplitter" />.</summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<String> SplitPath( [NotNull] String path ) {
+		public static IEnumerable<String> SplitPath( String path ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentEmptyException( nameof( path ) );
 			}
@@ -248,10 +245,9 @@ namespace Librainian.FileSystem {
 		/// <summary><see cref="PathSplitter" />.</summary>
 		/// <param name="info"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<String> SplitPath( [NotNull] this DirectoryInfo info ) {
+		public static IEnumerable<String> SplitPath( this DirectoryInfo info ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			return SplitPath( info.FullName );
@@ -264,9 +260,9 @@ namespace Librainian.FileSystem {
 		/// <param name="folder"></param>
 		/// <param name="tryFor"></param>
 		/// <returns></returns>
-		public static async PooledValueTask<Boolean?> TryDeleting( [NotNull] this Folder folder, TimeSpan tryFor, CancellationToken cancellationToken ) {
+		public static async PooledValueTask<Boolean?> TryDeleting( this Folder folder, TimeSpan tryFor, CancellationToken cancellationToken ) {
 			if ( folder == null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var stopwatch = Stopwatch.StartNew();
@@ -292,7 +288,7 @@ namespace Librainian.FileSystem {
 				}
 			}
 			catch ( UnauthorizedAccessException ) { }
-			catch ( ArgumentNullException ) { }
+			catch ( ArgumentEmptyException ) { }
 			finally {
 				stopwatch.Stop();
 			}

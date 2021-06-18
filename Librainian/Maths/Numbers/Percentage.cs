@@ -28,6 +28,7 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Diagnostics;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Measurement;
@@ -78,7 +79,7 @@ namespace Librainian.Maths.Numbers {
 		public Int32 CompareTo( Double other ) => this.Value.CompareTo( other );
 
 		[Pure]
-		public Int32 CompareTo( [CanBeNull] Percentage? other ) {
+		public Int32 CompareTo( Percentage? other ) {
 			if ( other is null ) {
 				return Order.Before;
 			}
@@ -92,15 +93,14 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static Percentage Combine( [NotNull] Percentage left, [NotNull] Percentage right ) =>
+		public static Percentage Combine( Percentage left, Percentage right ) =>
 			new( ( left.Value + right.Value ) / 2m );
 
 		/// <summary>static comparison</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) {
+		public static Boolean Equals( Percentage? left, Percentage? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -112,19 +112,15 @@ namespace Librainian.Maths.Numbers {
 			return left.Value == right.Value;
 		}
 
-		public static explicit operator Double( [NotNull] Percentage special ) => ( Double )special.Value;
-		public static explicit operator Single( [NotNull] Percentage special ) => ( Single )special.Value;
+		public static explicit operator Double( Percentage special ) => ( Double )special.Value;
+		public static explicit operator Single( Percentage special ) => ( Single )special.Value;
 
-		[NotNull]
 		public static implicit operator Percentage( Single value ) => new( value );
 
-		[NotNull]
 		public static implicit operator Percentage( Double value ) => new( value );
 
-		[NotNull]
 		public static implicit operator Percentage( Decimal value ) => new( value );
 
-		[NotNull]
 		public static implicit operator Percentage( Int32 value ) => new( value );
 
 		/*
@@ -139,8 +135,7 @@ namespace Librainian.Maths.Numbers {
 		public static Boolean operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
 		*/
 
-		[NotNull]
-		public static Percentage operator +( [NotNull] Percentage left, [NotNull] Percentage right ) => Combine( left, right );
+		public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
 
 		/*
 
@@ -157,10 +152,9 @@ namespace Librainian.Maths.Numbers {
 		public static Boolean operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
 		*/
 
-		[CanBeNull]
-		public static Percentage? Parse( [NotNull] String value ) {
+		public static Percentage? Parse( String value ) {
 			if ( value is null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			if ( Decimal.TryParse( value, out var dec ) ) {
@@ -178,7 +172,7 @@ namespace Librainian.Maths.Numbers {
 			return default( Percentage );
 		}
 
-		public static Boolean TryParse( [NotNull] String numberString, [CanBeNull] out Percentage? result ) {
+		public static Boolean TryParse( String numberString, out Percentage? result ) {
 			if ( Decimal.TryParse( numberString, out var dec ) ) {
 				result = new Percentage( dec );
 

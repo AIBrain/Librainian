@@ -25,7 +25,6 @@
 namespace Librainian.Maths {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>A Double number, constrained between 0 and 1. Not thread safe!</summary>
@@ -67,31 +66,27 @@ namespace Librainian.Maths {
 
 		public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
 
-		[NotNull]
-		public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, [CanBeNull] FuzzyNonTs value2 ) => new( ( value1 + value2 ) / 2D );
+		public static FuzzyNonTs Combine( FuzzyNonTs? value1, FuzzyNonTs? value2 ) => new( ( value1 + value2 ) / 2D );
 
-		[NotNull]
-		public static FuzzyNonTs Combine( [CanBeNull] FuzzyNonTs value1, Double value2 ) => new( ( value1 + value2 ) / 2D );
+		public static FuzzyNonTs Combine( FuzzyNonTs? value1, Double value2 ) => new( ( value1 + value2 ) / 2D );
 
-		[NotNull]
-		public static FuzzyNonTs Combine( Double value1, [CanBeNull] FuzzyNonTs value2 ) => new( ( value1 + value2 ) / 2D );
+		public static FuzzyNonTs Combine( Double value1, FuzzyNonTs? value2 ) => new( ( value1 + value2 ) / 2D );
 
 		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-		public static implicit operator Double( [NotNull] FuzzyNonTs special ) => special.Value;
+		public static implicit operator Double( FuzzyNonTs special ) => special.Value;
 
-		public static Boolean IsFalser( [NotNull] FuzzyNonTs special ) => special.Value <= Falser.Value;
+		public static Boolean IsFalser( FuzzyNonTs special ) => special.Value <= Falser.Value;
 
-		public static Boolean IsTruer( [NotNull] FuzzyNonTs special ) => special.Value >= Truer.Value;
+		public static Boolean IsTruer( FuzzyNonTs special ) => special.Value >= Truer.Value;
 
-		public static Boolean IsUndecided( [NotNull] FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
+		public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
 
-		[NotNull]
-		public static FuzzyNonTs Parse( [NotNull] String value ) => new( Double.Parse( value ) );
+		public static FuzzyNonTs Parse( String value ) => new( Double.Parse( value ) );
 
 		public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
 
-		public void MoreLikely( [CanBeNull] FuzzyNonTs? towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
+		public void MoreLikely( FuzzyNonTs? towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
 
 		public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
 
@@ -105,7 +100,6 @@ namespace Librainian.Maths {
 			};
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.Value:R}";
 	}
 }

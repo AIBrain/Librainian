@@ -31,22 +31,46 @@ namespace Librainian.Extensions {
 	using System.Linq;
 	using System.Security;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Logging;
 
 	public static class Utility {
 
-		[NotNull]
+		/// <summary>
+		/// Copy from one stream to another.
+		/// Example:
+		/// using(var stream = response.GetResponseStream())
+		/// using(var ms = new MemoryStream())
+		/// {
+		///     stream.CopyTo(ms);
+		///      // Do something with copied data
+		/// }
+		/// </summary>
+		/// <param name="fromStream">From stream.</param>
+		/// <param name="toStream">To stream.</param>
+		public static void CopyTo( this Stream fromStream, Stream toStream ) {
+			if ( fromStream == null ) {
+				throw new ArgumentNullException( nameof( fromStream ) );
+			}
+
+			if ( toStream == null ) {
+				throw new ArgumentNullException( nameof( toStream ) );
+			}
+
+			var bytes = new Byte[ 8192 ];
+			Int32 dataRead;
+			while ( ( dataRead = fromStream.Read( bytes, 0, bytes.Length ) ) > 0 ) {
+				toStream.Write( bytes, 0, dataRead );
+			}
+		}
+
 		private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new( LockRecursionPolicy.SupportsRecursion );
 
-		[NotNull]
 		private static DummyXMLResolver DummyXMLResolver { get; } = new();
 
 		/// <summary>Output the <paramref name="text" /> at the end of the current <see cref="Console" /> line.</summary>
 		/// <param name="text">   </param>
 		/// <param name="yOffset"></param>
 		public static void AtEndOfLine(
-			[CanBeNull]
 			this String? text,
 			Int32 yOffset = 0
 		) {
@@ -98,7 +122,6 @@ namespace Librainian.Extensions {
 		public static void OnSet<T>( this EventHandler<T> @event, Object sender, T e ) where T : EventArgs => throw new NotImplementedException();
 
 		public static void Spin(
-			[CanBeNull]
 			String? text
 		) {
 			var oldTop = Console.CursorTop;
@@ -108,7 +131,6 @@ namespace Librainian.Extensions {
 		}
 
 		public static void TopRight(
-			[CanBeNull]
 			String? text
 		) {
 			if ( String.IsNullOrEmpty( text ) ) {
@@ -138,11 +160,9 @@ namespace Librainian.Extensions {
 		}
 
 		public static void WriteColor(
-			[CanBeNull]
 			this String? text,
 			ConsoleColor foreColor = ConsoleColor.White,
 			ConsoleColor backColor = ConsoleColor.Black,
-			[CanBeNull]
 			params Object[]? parms
 		) {
 			lock ( ConsoleOutputSynch ) {
@@ -172,11 +192,9 @@ namespace Librainian.Extensions {
 		}
 
 		public static void WriteLineColor(
-			[CanBeNull]
 			this String? text,
 			ConsoleColor foreColor = ConsoleColor.White,
 			ConsoleColor backColor = ConsoleColor.Black,
-			[CanBeNull]
 			params Object[]? parms
 		) {
 			lock ( ConsoleOutputSynch ) {

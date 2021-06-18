@@ -23,20 +23,39 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CommandLineArguments.cs" last touched on 2021-05-17 at 12:25 PM by Protiguous.
+// File "CommandLineArguments.cs" last touched on 2021-06-09 at 5:53 AM by Protiguous.
 
 namespace Librainian.Utilities {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public class CommandLineArguments {
 
-		public CommandLineArguments( [CanBeNull] params String[]? args ) => this.Args = args;
+		public CommandLineArguments( params String[]? args ) => this.Args = args;
 
-		[CanBeNull]
 		public String[]? Args { get; }
 
+		/*
+		public Status ParseCommandLine( Action<IEnumerable<Error>> HandleErrors, Action<Object> HandleParsed ) {
+			var args = this.Args;
+			if ( args is null ) {
+				return Status.Continue;
+			}
+
+			var parser = Parser.Default?.ParseArguments( args );
+			if ( parser is null ) {
+				return Status.Failure;
+			}
+
+			if ( parser.WithNotParsed( HandleErrors ) is not null ) {
+				return Status.Error;
+			}
+
+			_ = parser.WithParsed( HandleParsed );
+			return Status.Continue;
+		}
+		*/
 	}
+
 
 }

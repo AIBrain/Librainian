@@ -25,14 +25,12 @@
 namespace Librainian.Financial.Currency {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public static class AltCoinExtensions {
 
 		/// <summary>Always have 8 decimal places showing, even the zeros.</summary>
 		/// <param name="amount"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static String Formatted( this Decimal amount ) => $"{amount:F8}";
 	}
 }

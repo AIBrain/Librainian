@@ -35,7 +35,7 @@ namespace Librainian.Collections.Extensions {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Maths;
 
@@ -52,7 +52,7 @@ namespace Librainian.Collections.Extensions {
         [Obsolete( "Broken and untested. Just an idea to learn with. Meant to work with large arrays. See also Shuffle<List>()" )]
         public static void Shuffle<T>( [NotNull] this T[] array, Int32 iterations = 1 ) {
             if ( array is null ) {
-                throw new ArgumentNullException( nameof( array ) );
+                throw new ArgumentEmptyException( nameof( array ) );
             }
 
             if ( iterations < 1 ) {
@@ -120,15 +120,14 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="sequence"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<T> AsRandom<T>( [NotNull] this IEnumerable<T> sequence ) =>
+		public static IEnumerable<T> AsRandom<T>( this IEnumerable<T> sequence ) =>
 			sequence.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism )
 				.WithMergeOptions( ParallelMergeOptions.AutoBuffered );
 
 		/// <summary>Take a buffer and scramble.</summary>
 		/// <param name="buffer"></param>
 		/// <remarks>Fisher-Yates shuffle</remarks>
-		public static void Shuffle<T>( [NotNull] this T[] buffer ) {
+		public static void Shuffle<T>( this T[] buffer ) {
 			var length = buffer.Length;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
@@ -149,7 +148,7 @@ namespace Librainian.Collections.Extensions {
 		/// <summary>Take a list and scramble the order of its items.</summary>
 		/// <param name="list"></param>
 		/// <remarks>Fisher-Yates shuffle</remarks>
-		public static void Shuffle<T>( [NotNull] this IList<T> list ) {
+		public static void Shuffle<T>( this IList<T> list ) {
 			var length = list.Count;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
@@ -177,10 +176,10 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="forHowLong">      </param>
 		/// <param name="token"></param>
 		/// <example>Deck.Shuffle( 7 );</example>
-		public static void Shuffle<T>( [NotNull] this List<T> list, UInt32 iterations = 1, ShufflingType shufflingType = ShufflingType.BestChoice, TimeSpan? forHowLong = null,
+		public static void Shuffle<T>( this List<T> list, UInt32 iterations = 1, ShufflingType shufflingType = ShufflingType.BestChoice, TimeSpan? forHowLong = null,
 			CancellationToken? token = null ) {
 			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			try {
@@ -236,9 +235,9 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list">         </param>
 		/// <param name="iterations">   </param>
-		public static void ShuffleByBags<T>( [NotNull] ref List<T> list, UInt32 iterations ) {
+		public static void ShuffleByBags<T>( ref List<T> list, UInt32 iterations ) {
 			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			if ( iterations < 1 ) {
@@ -260,9 +259,9 @@ namespace Librainian.Collections.Extensions {
 			}
 		}
 
-		public static void ShuffleByGuid<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
+		public static void ShuffleByGuid<T>( ref List<T> list, UInt32 iterations = 1 ) {
 			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			while ( iterations.Any() ) {
@@ -297,9 +296,9 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="iterations">At least 1 iterations to be done over the whole list.</param>
 		/// <param name="forHowLong">Or for how long to run.</param>
 		/// <param name="token">Or until cancelled.</param>
-		public static void ShuffleByHarker<T>( [NotNull] IList<T> list, UInt32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? token = null ) {
+		public static void ShuffleByHarker<T>( IList<T> list, UInt32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? token = null ) {
 			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			Stopwatch? started = null;
@@ -331,9 +330,9 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <param name="iterations"></param>
-		public static void ShuffleByRandomThenByRandom<T>( [NotNull] ref List<T> list, UInt32 iterations = 1 ) {
+		public static void ShuffleByRandomThenByRandom<T>( ref List<T> list, UInt32 iterations = 1 ) {
 			if ( list == null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			while ( iterations.Any() ) {

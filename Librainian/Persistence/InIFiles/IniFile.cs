@@ -37,6 +37,7 @@ namespace Librainian.Persistence.InIFiles {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
@@ -71,15 +72,15 @@ namespace Librainian.Persistence.InIFiles {
 		public const String SectionEnd = "]";
 
 		[DebuggerStepThrough]
-		public IniFile( [NotNull] IDocument document ) {
+		public IniFile( IDocument document ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			var _ = this.Add( document, CancellationToken.None );
 		}
 
-		public IniFile( [NotNull] String data, CancellationToken cancellationToken ) {
+		public IniFile( String data, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( data ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( data ) );
 			}
@@ -99,17 +100,14 @@ namespace Librainian.Persistence.InIFiles {
 		public IniFile() { }
 
 		[JsonProperty]
-		[NotNull]
 		private ConcurrentDictionary<String, IniSection> Data {
 			[DebuggerStepThrough]
 			get;
 		} = new();
 
-		[NotNull]
 		public IEnumerable<String> Sections => this.Data.Keys;
 
-		[CanBeNull]
-		public IniSection? this[ [CanBeNull] String? section ] {
+		public IniSection? this[ String? section ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -145,8 +143,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 		}
 
-		[CanBeNull]
-		public String? this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
+		public String? this[ String? section, String? key ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -180,16 +177,13 @@ namespace Librainian.Persistence.InIFiles {
 			}
 		}
 
-		[NotNull]
 		[DebuggerStepThrough]
-		private static String Encode( [NotNull] IniLine line ) => $"{line ?? throw new ArgumentNullException( nameof( line ) )}";
+		private static String Encode( IniLine line ) => $"{line ?? throw new ArgumentEmptyException( nameof( line ) )}";
 
-		[NotNull]
 		[DebuggerStepThrough]
-		private static String Encode( [NotNull] String section ) => $"{SectionBegin}{section.TrimStart()}{SectionEnd}";
+		private static String Encode( String section ) => $"{SectionBegin}{section.TrimStart()}{SectionEnd}";
 
-		[NotNull]
-		private IniSection EnsureDataSection( [NotNull] String section ) {
+		private IniSection EnsureDataSection( String section ) {
 			if ( section is null ) {
 				throw new ArgumentException( "Value cannot be null or empty.", nameof( section ) );
 			}
@@ -203,7 +197,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 		}
 
-		private Boolean FoundComment( [NotNull] String? line, [NotNull] String section ) {
+		private Boolean FoundComment( String line, String section ) {
 			if ( String.IsNullOrWhiteSpace( line ) ) {
 				return false;
 			}
@@ -219,9 +213,9 @@ namespace Librainian.Persistence.InIFiles {
 			return false;
 		}
 
-		private Int32 FindKVLine( [NotNull] String line, [NotNull] String section, Int32 counter ) {
+		private Int32 FindKVLine( String line, String section, Int32 counter ) {
 			if ( line is null ) {
-				throw new ArgumentNullException( nameof( line ) );
+				throw new ArgumentEmptyException( nameof( line ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( section ) ) {
@@ -300,13 +294,13 @@ namespace Librainian.Persistence.InIFiles {
 		}
 		*/
 
-		private Boolean WriteSection( [NotNull] IDocument document, [NotNull] String section ) {
+		private Boolean WriteSection( IDocument document, String section ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			if ( section is null ) {
-				throw new ArgumentNullException( nameof( section ) );
+				throw new ArgumentEmptyException( nameof( section ) );
 			}
 
 			if ( !this.Data.TryGetValue( section, out var dict ) ) {
@@ -333,13 +327,13 @@ namespace Librainian.Persistence.InIFiles {
 			return false;
 		}
 
-		private async Task<Boolean> WriteSectionAsync( [NotNull] IDocument document, [NotNull] String section, CancellationToken cancellationToken ) {
+		private async Task<Boolean> WriteSectionAsync( IDocument document, String section, CancellationToken cancellationToken ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			if ( section is null ) {
-				throw new ArgumentNullException( nameof( section ) );
+				throw new ArgumentEmptyException( nameof( section ) );
 			}
 
 			try {
@@ -364,7 +358,7 @@ namespace Librainian.Persistence.InIFiles {
 			return false;
 		}
 
-		public Boolean Add( [CanBeNull] String? section, [NotNull] String key, [CanBeNull] String? value ) {
+		public Boolean Add( String? section, String key, String? value ) {
 			var sect = section.Trimmed() ?? String.Empty;
 
 			var k = key.Trimmed();
@@ -404,9 +398,9 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		[DebuggerStepThrough]
-		public async PooledValueTask<Boolean> Add( [NotNull] IDocument document, CancellationToken cancellationToken ) {
+		public async PooledValueTask<Boolean> Add( IDocument document, CancellationToken cancellationToken ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			if ( await document.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
@@ -436,9 +430,9 @@ namespace Librainian.Persistence.InIFiles {
 			}
 		}
 
-		public void Add( [NotNull] String text ) {
+		public void Add( String text ) {
 			if ( text is null ) {
-				throw new ArgumentNullException( nameof( text ) );
+				throw new ArgumentEmptyException( nameof( text ) );
 			}
 
 			text = text.Replace( Environment.NewLine, "\n" );
@@ -452,9 +446,9 @@ namespace Librainian.Persistence.InIFiles {
 			this.Add( lines );
 		}
 
-		public void Add( [NotNull] IEnumerable<String> lines ) {
+		public void Add( IEnumerable<String> lines ) {
 			if ( lines is null ) {
-				throw new ArgumentNullException( nameof( lines ) );
+				throw new ArgumentEmptyException( nameof( lines ) );
 			}
 
 			String? currentSection = default;
@@ -502,7 +496,6 @@ namespace Librainian.Persistence.InIFiles {
 
 		/// <summary>Return the entire structure as a JSON formatted String.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public String AsJSON() {
 			var tempDocument = Document.GetTempDocument();
 
@@ -532,9 +525,9 @@ namespace Librainian.Persistence.InIFiles {
 		/// <param name="cancellationToken"></param>
 		/// <param name="overwrite"></param>
 		/// <returns></returns>
-		public async Task<Boolean> Save( [NotNull] IDocument document, CancellationToken cancellationToken, Boolean overwrite = true ) {
+		public async Task<Boolean> Save( IDocument document, CancellationToken cancellationToken, Boolean overwrite = true ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			if ( await document.Exists( cancellationToken ).ConfigureAwait( false ) ) {
@@ -554,16 +547,16 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( [NotNull] String section ) {
+		public Boolean TryRemove( String section ) {
 			if ( section is null ) {
-				throw new ArgumentNullException( nameof( section ) );
+				throw new ArgumentEmptyException( nameof( section ) );
 			}
 
 			return this.Data.TryRemove( section, out var _ );
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( [NotNull] String section, [NotNull] String key ) {
+		public Boolean TryRemove( String section, String key ) {
 			if ( String.IsNullOrWhiteSpace( section ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( section ) );
 			}

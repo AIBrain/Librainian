@@ -30,6 +30,7 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Maths.Bigger;
@@ -66,41 +67,35 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     15
 		/// </summary>
-		[NotNull]
 		public static Minutes Fifteen { get; } = new(15);
 
 		/// <summary>
 		///     One <see cref="Minutes" /> .
 		/// </summary>
-		[NotNull]
 		public static Minutes One { get; } = new(1);
 
 		/// <summary>
 		///     10
 		/// </summary>
-		[NotNull]
 		public static Minutes Ten { get; } = new(10);
 
 		/// <summary>
 		///     30
 		/// </summary>
-		[NotNull]
 		public static Minutes Thirty { get; } = new(30);
 
 		/// <summary>
 		/// </summary>
-		[NotNull]
 		public static Minutes Thousand { get; } = new(1000);
 
 		/// <summary>
 		///     Zero <see cref="Minutes" />
 		/// </summary>
-		[NotNull]
 		public static Minutes Zero { get; } = new(0);
 
-		public Int32 CompareTo( [CanBeNull] Minutes? other ) {
+		public Int32 CompareTo( Minutes? other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

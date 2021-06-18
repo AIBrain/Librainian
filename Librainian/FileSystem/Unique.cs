@@ -32,7 +32,6 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using Exceptions;
 	using Internet;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -50,7 +49,6 @@ namespace Librainian.FileSystem {
 
 		private const Int32 EOFMarker = -1;
 
-		[NotNull]
 		[JsonProperty]
 		private readonly Uri u;
 
@@ -60,7 +58,6 @@ namespace Librainian.FileSystem {
 		//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
 
 		/// <summary>Just an easier to use mnemonic.</summary>
-		[NotNull]
 		[JsonIgnore]
 		public String AbsolutePath => this.U.AbsolutePath;
 
@@ -68,7 +65,6 @@ namespace Librainian.FileSystem {
 		///     The location/directory/path/file/name/whatever.ext
 		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
 		/// </summary>
-		[NotNull]
 		[JsonIgnore]
 		public Uri U => this.u;
 
@@ -96,7 +92,7 @@ namespace Librainian.FileSystem {
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Unique? left, [CanBeNull] Unique? right ) {
+		public static Boolean Equals( Unique? left, Unique? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -108,18 +104,18 @@ namespace Librainian.FileSystem {
 			return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
 		}
 
-		public static Boolean operator !=( [CanBeNull] Unique left, [CanBeNull] Unique right ) => !Equals( left, right );
+		public static Boolean operator !=( Unique? left, Unique? right ) => !Equals( left, right );
 
-		public static Boolean operator ==( [CanBeNull] Unique left, [CanBeNull] Unique right ) => Equals( left, right );
+		public static Boolean operator ==( Unique? left, Unique? right ) => Equals( left, right );
 
-		public static Boolean TryCreate( TrimmedString location, [NotNull] out Unique unique ) {
+		public static Boolean TryCreate( TrimmedString location, out Unique unique ) {
 			if ( !location.IsEmpty() ) {
 				try {
 					unique = new Unique( location );
 
 					return true;
 				}
-				catch ( ArgumentNullException ) { }
+				catch ( ArgumentEmptyException ) { }
 				catch ( UriFormatException ) { }
 			}
 
@@ -132,7 +128,7 @@ namespace Librainian.FileSystem {
 		/// <param name="uri"></param>
 		/// <param name="unique"></param>
 		/// <returns></returns>
-		public static Boolean TryCreate( [CanBeNull] Uri? uri, [NotNull] out Unique unique ) {
+		public static Boolean TryCreate( Uri? uri, out Unique unique ) {
 			if ( uri is null ) {
 				unique = Empty;
 
@@ -298,7 +294,6 @@ namespace Librainian.FileSystem {
 			return -1;
 		}
 
-		[CanBeNull]
 		public DirectoryInfo? ToDirectoryInfo() {
 			try {
 				if ( this.U.IsFile ) {
@@ -312,7 +307,6 @@ namespace Librainian.FileSystem {
 			return default( DirectoryInfo? );
 		}
 
-		[CanBeNull]
 		public FileInfo? ToFileInfo() {
 			try {
 				if ( this.U.IsFile ) {
@@ -328,7 +322,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.AbsolutePath}";
 	}
 }

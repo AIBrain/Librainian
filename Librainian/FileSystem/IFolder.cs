@@ -33,19 +33,15 @@ namespace Librainian.FileSystem {
 	using System.Security;
 	using System.Threading;
 	using ComputerSystem.Devices;
-	using JetBrains.Annotations;
 	using PooledAwait;
 
 	public interface IFolder : IEquatable<IFolder> {
 
-		[NotNull]
 		String FullPath { get; }
 
 		/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
-		[NotNull]
 		DirectoryInfo Info { get; }
 
-		[NotNull]
 		String Name { get; }
 
 		/// <summary>
@@ -63,14 +59,11 @@ namespace Librainian.FileSystem {
 		/// <see cref="Create"></see>
 		PooledValueTask<Boolean> Delete( CancellationToken cancellationToken );
 
-		[NotNull]
-		IAsyncEnumerable<Document> EnumerateDocuments( [NotNull] IEnumerable<String> searchPatterns, CancellationToken cancellationToken );
+		IAsyncEnumerable<Document> EnumerateDocuments( IEnumerable<String> searchPatterns, CancellationToken cancellationToken );
 
-		[NotNull]
-		IAsyncEnumerable<Document> EnumerateDocuments( [CanBeNull] String? searchPattern, CancellationToken cancellationToken );
+		IAsyncEnumerable<Document> EnumerateDocuments( String? searchPattern, CancellationToken cancellationToken );
 
-		[NotNull]
-		IAsyncEnumerable<Folder> EnumerateFolders( [CanBeNull] String? searchPattern, SearchOption searchOption, CancellationToken cancellationToken );
+		IAsyncEnumerable<Folder> EnumerateFolders( String? searchPattern, SearchOption searchOption, CancellationToken cancellationToken );
 
 		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
 		/// <exception cref="System.IO.IOException"></exception>
@@ -88,7 +81,6 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		PooledValueTask<UInt64> GetAvailableFreeSpace();
 
-		[NotNull]
 		Disk GetDrive();
 
 		/// <summary>
@@ -99,8 +91,7 @@ namespace Librainian.FileSystem {
 
 		Int32 GetHashCode();
 
-		[CanBeNull]
-		IFolder GetParent();
+		IFolder? GetParent();
 
 		/// <summary>
 		///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
@@ -121,7 +112,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns a String that represents the current object.</summary>
 		/// <returns>A String that represents the current object.</returns>
-		[NotNull]
 		String ToString();
 	}
 }

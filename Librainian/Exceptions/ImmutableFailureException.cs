@@ -30,30 +30,28 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 
 	[Serializable]
 	public class ImmutableFailureException : Exception {
 
-		[CanBeNull]
 		public Type? Type { get; }
 
 		public ImmutableFailureException() { }
 
-		public ImmutableFailureException( [CanBeNull] String? message ) : base( message ) { }
+		public ImmutableFailureException( String? message ) : base( message ) { }
 
-		public ImmutableFailureException( [CanBeNull] String? message, [CanBeNull] Exception? innerException ) : base( message, innerException ) { }
+		public ImmutableFailureException( String? message, Exception? innerException ) : base( message, innerException ) { }
 
-		public ImmutableFailureException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+		public ImmutableFailureException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
 			if ( serializationInfo is null ) {
-				throw new ArgumentNullException( nameof( serializationInfo ) );
+				throw new ArgumentEmptyException( nameof( serializationInfo ) );
 			}
 		}
 
-		public ImmutableFailureException( [CanBeNull] Type? type, [CanBeNull] String? message, [CanBeNull] Exception? inner ) : base( message, inner ) =>
+		public ImmutableFailureException( Type? type, String? message, Exception? inner ) : base( message, inner ) =>
 			this.Type = type;
 
-		public ImmutableFailureException( [CanBeNull] Type? type, [CanBeNull] String? message ) : base( message ) =>
+		public ImmutableFailureException( Type? type, String? message ) : base( message ) =>
 			this.Type = type;
 	}
 }

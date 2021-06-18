@@ -30,7 +30,6 @@ namespace Librainian.Graphics.DDD {
 	using System.Diagnostics;
 	using System.Drawing;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths;
 	using Maths.Ranges;
 	using Measurement;
@@ -82,7 +81,7 @@ namespace Librainian.Graphics.DDD {
 		}
 
 		/// <summary>Calculates the distance between two Coordinates.</summary>
-		public static Single Distance( [NotNull] CoordinateF left, [NotNull] CoordinateF right ) {
+		public static Single Distance( CoordinateF left, CoordinateF right ) {
 			var num1 = left.X - right.X;
 			var num2 = left.Y - right.Y;
 			var num3 = left.Z - right.Z;
@@ -94,7 +93,7 @@ namespace Librainian.Graphics.DDD {
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] CoordinateF? left, [CanBeNull] CoordinateF? right ) {
+		public static Boolean Equals( CoordinateF? left, CoordinateF? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -130,27 +129,25 @@ namespace Librainian.Graphics.DDD {
 			return !( left.Z > right.Z );
 		}
 
-		public static implicit operator Point( [NotNull] CoordinateF coordinate ) => new( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
+		public static implicit operator Point( CoordinateF coordinate ) => new( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
 
-		public static implicit operator PointF( [NotNull] CoordinateF coordinate ) => new( coordinate.X, coordinate.Y );
+		public static implicit operator PointF( CoordinateF coordinate ) => new( coordinate.X, coordinate.Y );
 
 		/// <summary>
 		///     Returns a new Coordinate as a unit Coordinate. The result is a Coordinate one unit in length pointing in the
 		///     same direction as the original Coordinate.
 		/// </summary>
-		[NotNull]
-		public static CoordinateF Normalize( [NotNull] CoordinateF coordinate ) {
+		public static CoordinateF Normalize( CoordinateF coordinate ) {
 			var num = 1.0f / coordinate.SquareLength;
 
 			return new CoordinateF( coordinate.X * num, coordinate.Y * num, coordinate.Z * num );
 		}
 
-		[NotNull]
-		public static CoordinateF operator -( [NotNull] CoordinateF v1, [NotNull] CoordinateF v2 ) => new( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
+		public static CoordinateF operator -( CoordinateF v1, CoordinateF v2 ) => new( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
 
-		public static Boolean operator !=( [CanBeNull] CoordinateF? left, [CanBeNull] CoordinateF? right ) => !Equals( left, right );
+		public static Boolean operator !=( CoordinateF? left, CoordinateF? right ) => !Equals( left, right );
 
-		public static Boolean operator ==( [CanBeNull] CoordinateF? left, [CanBeNull] CoordinateF? right ) => Equals( left, right );
+		public static Boolean operator ==( CoordinateF? left, CoordinateF? right ) => Equals( left, right );
 
 		/// <summary>Compares the current object with another object of the same type.</summary>
 		/// <returns>
@@ -161,7 +158,7 @@ namespace Librainian.Graphics.DDD {
 		///     <paramref name="other" /> .
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		public Int32 CompareTo( [CanBeNull] CoordinateF? other ) {
+		public Int32 CompareTo( CoordinateF? other ) {
 			if ( other is null ) {
 				return Order.Before;
 			}
@@ -169,7 +166,7 @@ namespace Librainian.Graphics.DDD {
 			return this.SquareLength.CompareTo( other.SquareLength );
 		}
 
-		public Double DistanceTo( [NotNull] CoordinateF to ) {
+		public Double DistanceTo( CoordinateF to ) {
 			if ( this == to ) {
 				return 0;
 			}
@@ -187,7 +184,6 @@ namespace Librainian.Graphics.DDD {
 
 		public override Int32 GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
-		[NotNull]
 		public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
 	}
 }

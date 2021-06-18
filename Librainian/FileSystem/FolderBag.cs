@@ -31,7 +31,7 @@ namespace Librainian.FileSystem {
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -46,9 +46,9 @@ namespace Librainian.FileSystem {
 		[JsonProperty]
 		public List<FolderBagNode> Roots { get; } = new();
 
-		public Boolean Add( [NotNull] String folderpath ) {
+		public Boolean Add( String folderpath ) {
 			if ( folderpath == null ) {
-				throw new ArgumentNullException( nameof( folderpath ) );
+				throw new ArgumentEmptyException( nameof( folderpath ) );
 			}
 
 			this.FoundAnotherFolder( new Folder( folderpath ) );
@@ -56,9 +56,9 @@ namespace Librainian.FileSystem {
 			return true;
 		}
 
-		public UInt64 AddRange( [NotNull] IEnumerable<String> folderpaths ) {
+		public UInt64 AddRange( IEnumerable<String> folderpaths ) {
 			if ( folderpaths is null ) {
-				throw new ArgumentNullException( nameof( folderpaths ) );
+				throw new ArgumentEmptyException( nameof( folderpaths ) );
 			}
 
 			var counter = 0UL;
@@ -71,9 +71,9 @@ namespace Librainian.FileSystem {
 			return counter;
 		}
 
-		public void FoundAnotherFolder( [NotNull] IFolder folder ) {
+		public void FoundAnotherFolder( IFolder folder ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var pathParts = folder.Info.SplitPath().ToList();

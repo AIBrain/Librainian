@@ -29,7 +29,6 @@ namespace Librainian.Controls {
 
 	using System;
 	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>Pulled from https://stackoverflow.com/a/24040827/956364</summary>
@@ -95,7 +94,7 @@ namespace Librainian.Controls {
 			ShowWindow( GetWindow(), SW_HIDE );
 		}
 
-		public static void SetTitle( [CanBeNull] String? text ) {
+		public static void SetTitle( String? text ) {
 			SetWindowText( GetWindow(), text );
 		}
 

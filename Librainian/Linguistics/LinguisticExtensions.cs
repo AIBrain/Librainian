@@ -56,9 +56,8 @@ namespace Librainian.Linguistics {
 		/// <example>Example: "My cat cat likes likes to to to eat food." Should become "My cat likes to eat food."</example>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		[NotNull]
 		[Pure]
-		public static String RemoveDoubleWords( [CanBeNull] this String? s ) {
+		public static String RemoveDoubleWords( this String? s ) {
 			if ( String.IsNullOrEmpty( s ) ) {
 				return String.Empty;
 			}

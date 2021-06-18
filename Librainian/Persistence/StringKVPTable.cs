@@ -32,6 +32,7 @@ namespace Librainian.Persistence {
 	using System.IO;
 	using System.Linq;
 	using System.Threading;
+	using Exceptions;
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
@@ -58,13 +59,11 @@ namespace Librainian.Persistence {
 	public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, String?> {
 
 		[JsonProperty]
-		[NotNull]
 		private PersistentDictionary<String, String?> Dictionary { get; }
 
 		/// <summary>
 		///     No path given?
 		/// </summary>
-		[NotNull]
 		public Folder Folder { get; }
 
 		public ICollection<String> Keys {
@@ -91,12 +90,11 @@ namespace Librainian.Persistence {
 
 		public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
 
-		[CanBeNull]
-		public String? this[ [NotNull] params String[] keys ] {
+		public String? this[ params String[] keys ] {
 			[CanBeNull]
 			get {
 				if ( keys is null ) {
-					throw new ArgumentNullException( nameof( keys ) );
+					throw new ArgumentEmptyException( nameof( keys ) );
 				}
 
 				var key = CacheKeyBuilder.BuildKey( keys );
@@ -110,7 +108,7 @@ namespace Librainian.Persistence {
 
 			set {
 				if ( keys is null ) {
-					throw new ArgumentNullException( nameof( keys ) );
+					throw new ArgumentEmptyException( nameof( keys ) );
 				}
 
 				var key = CacheKeyBuilder.BuildKey( keys );
@@ -129,12 +127,11 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public String? this[ [NotNull] String key ] {
+		public String? this[ String key ] {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
-					throw new ArgumentNullException( nameof( key ) );
+					throw new ArgumentEmptyException( nameof( key ) );
 				}
 
 				if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
@@ -146,7 +143,7 @@ namespace Librainian.Persistence {
 
 			set {
 				if ( key is null ) {
-					throw new ArgumentNullException( nameof( key ) );
+					throw new ArgumentEmptyException( nameof( key ) );
 				}
 
 				if ( String.IsNullOrEmpty( value ) ) {
@@ -161,22 +158,22 @@ namespace Librainian.Persistence {
 
 		private StringKVPTable() => throw new NotImplementedException();
 
-		public StringKVPTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
+		public StringKVPTable( Environment.SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
 
-		public StringKVPTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder,
+		public StringKVPTable( Environment.SpecialFolder specialFolder, String? subFolder, String tableName ) : this( new Folder( specialFolder,
 			subFolder, tableName ) ) { }
 
-		public StringKVPTable( Byte specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( ( Environment.SpecialFolder )specialFolder,
+		public StringKVPTable( Byte specialFolder, String? subFolder, String tableName ) : this( new Folder( ( Environment.SpecialFolder )specialFolder,
 			subFolder, tableName ) ) { }
 
-		public StringKVPTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
+		public StringKVPTable( Folder folder, String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
 
-		public StringKVPTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) : this(
+		public StringKVPTable( Folder folder, String subFolder, String tableName ) : this(
 			Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
 
-		public StringKVPTable( [NotNull] Folder folder ) {
+		public StringKVPTable( Folder folder ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			try {
@@ -203,7 +200,7 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public StringKVPTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
+		public StringKVPTable( String fullpath ) : this( new Folder( fullpath ) ) { }
 
 		/// <summary>
 		///     Return true if we can read/write in the <see cref="Folder" /> .
@@ -225,7 +222,7 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public void Add( String key, [CanBeNull] String? value ) {
+		public void Add( String key, String? value ) {
 			if ( value is not null ) {
 				this[ key ] = value;
 			}
@@ -289,7 +286,6 @@ namespace Librainian.Persistence {
 		///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="String" /> deserialized.
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
 		public IEnumerable<KeyValuePair<String, String?>> Items() =>
 			this.Dictionary.Select( pair => new KeyValuePair<String, String?>( pair.Key, pair.Value?.FromCompressedBase64() ) );
 
@@ -304,7 +300,7 @@ namespace Librainian.Persistence {
 		///     .
 		/// </returns>
 		/// <param name="key">The key of the element to remove.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="key" /> is null.</exception>
 		/// <exception cref="NotSupportedException">The <see cref="IDictionary" /> is read-only.</exception>
 		public Boolean Remove( String key ) => this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );
 
@@ -334,13 +330,12 @@ namespace Librainian.Persistence {
 		///     Returns a string that represents the current object.
 		/// </summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.Count} items";
 
 		//should be all that's needed..
-		public void TryAdd( [NotNull] String key, [CanBeNull] String? value ) {
+		public void TryAdd( String key, String? value ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			if ( !this.Dictionary.ContainsKey( key ) ) {
@@ -360,10 +355,10 @@ namespace Librainian.Persistence {
 		///     When this method returns, the value associated with the specified key, if the key is found; otherwise, the default
 		///     value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.
 		/// </param>
-		/// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-		public Boolean TryGetValue( [NotNull] String key, [NotNull] out String value ) {
+		/// <exception cref="ArgumentEmptyException"><paramref name="key" /> is null.</exception>
+		public Boolean TryGetValue( String key, out String value ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			if ( this.Dictionary.TryGetValue( key, out var storedValue ) ) {
@@ -377,9 +372,9 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public Boolean TryRemove( [NotNull] String key ) {
+		public Boolean TryRemove( String key ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );

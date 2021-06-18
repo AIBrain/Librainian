@@ -31,7 +31,6 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Runtime.InteropServices;
 	using System.Text;
 	using Exceptions.Warnings;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 	using Utilities;
 
@@ -66,11 +65,10 @@ namespace Librainian.ComputerSystem.Devices {
 
 		protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
 
-		[NotNull]
 		protected virtual Device CreateDevice(
-			[NotNull] DeviceClass deviceClass,
+			DeviceClass deviceClass,
 			NativeMethods.SP_DEVINFO_DATA deviceInfoData,
-			[CanBeNull] String? path,
+			String? path,
 			Int32 index,
 			Int32 disknum = -1
 		) =>
@@ -94,8 +92,7 @@ namespace Librainian.ComputerSystem.Devices {
 			return devData;
 		}
 
-		[CanBeNull]
-		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String? defaultValue ) {
+		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, String? defaultValue ) {
 			const Int32 propertyBufferSize = 1024;
 
 			var propertyBuffer = new Byte[ propertyBufferSize ];
@@ -182,7 +179,6 @@ namespace Librainian.ComputerSystem.Devices {
 		/// <summary>Gets the list of devices of this device class.</summary>
 		/// <returns>The devices.</returns>
 		/// <exception cref="Win32Exception"></exception>
-		[NotNull]
 		public IEnumerable<Device> GetDevices() {
 			var devices = new HashSet<Device>();
 			var index = 0;

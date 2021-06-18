@@ -30,7 +30,6 @@ namespace Librainian.FileSystem {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -39,7 +38,6 @@ namespace Librainian.FileSystem {
 	public class FolderBagNode : IEquatable<FolderBagNode>, IComparable<FolderBagNode> {
 
 		[JsonProperty]
-		[CanBeNull]
 		public String? Data { get; }
 
 		public Boolean IsEmpty => !this.SubFolders.Any();
@@ -48,12 +46,11 @@ namespace Librainian.FileSystem {
 		public FolderBagNode? Parent { get; }
 
 		[JsonProperty]
-		[NotNull]
 		public List<FolderBagNode> SubFolders { get; } = new();
 
-		public FolderBagNode( [CanBeNull] String? data ) => this.Data = data;
+		public FolderBagNode( String? data ) => this.Data = data;
 
-		public FolderBagNode( [CanBeNull] String? data, [CanBeNull] FolderBagNode? parent ) {
+		public FolderBagNode( String? data, FolderBagNode? parent ) {
 			this.Data = data;
 			this.Parent = parent;
 		}
@@ -62,7 +59,7 @@ namespace Librainian.FileSystem {
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] FolderBagNode? left, [CanBeNull] FolderBagNode? right ) {
+		public static Boolean Equals( FolderBagNode? left, FolderBagNode? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -74,8 +71,7 @@ namespace Librainian.FileSystem {
 			return String.Equals( left.Data, right.Data, StringComparison.Ordinal );
 		}
 
-		public Int32 CompareTo( [CanBeNull]
-								FolderBagNode? other ) => String.Compare( this.Data, other?.Data, StringComparison.Ordinal );
+		public Int32 CompareTo( FolderBagNode? other ) => String.Compare( this.Data, other?.Data, StringComparison.Ordinal );
 
 		public Boolean Equals( FolderBagNode? other ) => Equals( this, other );
 
@@ -89,7 +85,6 @@ namespace Librainian.FileSystem {
 
 		public override Int32 GetHashCode() => this.Data?.GetHashCode() ?? 0;
 
-		[NotNull]
 		public override String ToString() => this.Data ?? Symbols.Null;
 	}
 }

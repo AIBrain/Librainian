@@ -32,7 +32,7 @@ namespace Librainian.Internet.FTP {
 	using System;
 	using System.IO;
 	using System.Net;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public class BasicFtpClient {
 
@@ -51,7 +51,7 @@ namespace Librainian.Internet.FTP {
 			this.Host = "";
 		}
 
-		public BasicFtpClient( [NotNull] String theUser, [NotNull] String thePassword, [NotNull] String theHost ) {
+		public BasicFtpClient( String theUser, String thePassword, String theHost ) {
 			if ( String.IsNullOrWhiteSpace( theUser ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( theUser ) );
 			}
@@ -70,8 +70,7 @@ namespace Librainian.Internet.FTP {
 			this.Port = 21;
 		}
 
-		[NotNull]
-		private Uri BuildServerUri( [NotNull] String path ) {
+		private Uri BuildServerUri( String path ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 			}
@@ -83,8 +82,7 @@ namespace Librainian.Internet.FTP {
 		///     This method downloads the given file name from the FTP Server and returns a byte array containing its contents.
 		///     Throws a WebException on encountering a network error.
 		/// </summary>
-		[NotNull]
-		public Byte[] DownloadData( [NotNull] String path ) {
+		public Byte[] DownloadData( String path ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 			}
@@ -102,7 +100,7 @@ namespace Librainian.Internet.FTP {
 		///     This method downloads the FTP file specified by "ftppath" and saves it to "destfile". Throws a WebException on
 		///     encountering a network error.
 		/// </summary>
-		public void DownloadFile( [NotNull] String ftppath, [NotNull] String destfile ) {
+		public void DownloadFile( String ftppath, String destfile ) {
 			if ( String.IsNullOrWhiteSpace( ftppath ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( ftppath ) );
 			}
@@ -128,14 +126,13 @@ namespace Librainian.Internet.FTP {
 		/// <param name="path">Path on the FTP Server (upload/myfile.txt)</param>
 		/// <param name="data">A byte[] containing the data to upload</param>
 		/// <returns>The Server response in a byte[]</returns>
-		[NotNull]
-		public Byte[] UploadData( [NotNull] String path, [NotNull] Byte[] data ) {
+		public Byte[] UploadData( String path, Byte[] data ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 			}
 
 			if ( data == null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			// Get the object used to communicate with the Server.
@@ -153,8 +150,7 @@ namespace Librainian.Internet.FTP {
 		/// <param name="ftppath">Path on the FTP Server (/upload/myfile.txt)</param>
 		/// <param name="srcfile">File on the local harddisk to upload</param>
 		/// <returns>The Server response in a byte[]</returns>
-		[NotNull]
-		public Byte[] UploadFile( [NotNull] String ftppath, [NotNull] String srcfile ) {
+		public Byte[] UploadFile( String ftppath, String srcfile ) {
 			if ( String.IsNullOrWhiteSpace( ftppath ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( ftppath ) );
 			}

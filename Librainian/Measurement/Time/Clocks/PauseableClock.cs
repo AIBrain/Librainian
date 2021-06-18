@@ -26,7 +26,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
 	using System.Timers;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 	using Threadsafe;
@@ -39,13 +38,11 @@ namespace Librainian.Measurement.Time.Clocks {
 		private VolatileBoolean _isPaused;
 
 		/// <summary></summary>
-		[NotNull]
 		private Timer Timer { get; } = new( ( Double )Milliseconds.One.Value ) {
 			AutoReset = false
 		};
 
 		[JsonProperty]
-		[NotNull]
 		public Day Day { get; private set; }
 
 		/// <summary></summary>
@@ -68,28 +65,20 @@ namespace Librainian.Measurement.Time.Clocks {
 		public ClockMinute Minute { get; private set; }
 
 		[JsonProperty]
-		[CanBeNull]
-		public Month Month { get; private set; }
+		public Month? Month { get; private set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnDay { get; set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnHour { get; set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnMillisecond { get; set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnMinute { get; set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnMonth { get; set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnSecond { get; set; }
 
-		[CanBeNull]
 		public Action<DateAndTime>? OnYear { get; set; }
 
 		/// <summary></summary>
@@ -97,8 +86,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		public ClockSecond Second { get; private set; }
 
 		[JsonProperty]
-		[CanBeNull]
-		public Year Year { get; private set; }
+		public Year? Year { get; private set; }
 
 		/// <summary>Default to year 0.</summary>
 		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Minimum ) { }
@@ -210,7 +198,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			return true;
 		}
 
-		private void OnTimerElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs elapsedEventArgs ) {
+		private void OnTimerElapsed( Object? sender, ElapsedEventArgs? elapsedEventArgs ) {
 			this.Pause();
 
 			try {

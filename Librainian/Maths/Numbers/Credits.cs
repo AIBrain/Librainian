@@ -27,7 +27,7 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -65,14 +65,13 @@ namespace Librainian.Maths.Numbers {
 			this.LifetimeCredits = lifetimeCredits;
 		}
 
-		[NotNull]
-		public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
+		public static Credits Combine( Credits left, Credits right ) {
 			if ( left is null ) {
-				throw new ArgumentNullException( nameof( left ) );
+				throw new ArgumentEmptyException( nameof( left ) );
 			}
 
 			if ( right is null ) {
-				throw new ArgumentNullException( nameof( right ) );
+				throw new ArgumentEmptyException( nameof( right ) );
 			}
 
 			return new Credits( left.CurrentCredits + right.CurrentCredits, left.LifetimeCredits + right.LifetimeCredits );
@@ -83,7 +82,6 @@ namespace Librainian.Maths.Numbers {
 			this.LifetimeCredits += credits;
 		}
 
-		[NotNull]
 		public Credits Clone() => new( this.CurrentCredits, this.LifetimeCredits );
 
 		public void SubtractCredits( UInt64 credits = 1 ) {
@@ -97,7 +95,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.CurrentCredits:N0} credits ({this.LifetimeCredits:N0} lifetime credits).";
 	}
 }

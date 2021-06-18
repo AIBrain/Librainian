@@ -31,7 +31,7 @@ namespace Librainian.Controls {
 	using System.Drawing;
 	using System.Threading.Tasks;
 	using System.Windows.Forms;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Maths;
 	using Measurement.Frequency;
 
@@ -59,10 +59,9 @@ namespace Librainian.Controls {
 		//disabled button status
 		public const Int32 SC_MINIMIZE = 0xF020;
 
-		[NotNull]
-		public static Task MoveCursor( [NotNull] this Form form, Int32 x, Int32 y, TimeSpan speed ) {
+		public static Task MoveCursor( this Form form, Int32 x, Int32 y, TimeSpan speed ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			return Task.Run( async () => {

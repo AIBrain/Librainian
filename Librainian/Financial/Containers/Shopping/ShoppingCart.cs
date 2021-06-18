@@ -29,7 +29,6 @@ namespace Librainian.Financial.Containers.Shopping {
 	using System.Collections.Generic;
 	using System.Linq;
 	using Collections.Lists;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Utilities;
@@ -41,9 +40,9 @@ namespace Librainian.Financial.Containers.Shopping {
 		[JsonProperty]
 		private ConcurrentList<ShoppingItem> Items { get; } = new(); //TODO make this a dictionary of Item.Counts
 
-		public Boolean AddItem( [NotNull] ShoppingItem item ) => this.Items.TryAdd( item );
+		public Boolean AddItem( ShoppingItem item ) => this.Items.TryAdd( item );
 
-		public UInt32 AddItems( [CanBeNull] params ShoppingItem[]? items ) {
+		public UInt32 AddItems( params ShoppingItem[]? items ) {
 			if ( items is null ) {
 				return 0;
 			}
@@ -51,7 +50,7 @@ namespace Librainian.Financial.Containers.Shopping {
 			return ( UInt32 )items.Count( this.AddItem );
 		}
 
-		public UInt32 AddItems( [CanBeNull] ShoppingItem? item, UInt32 quantity = 1 ) {
+		public UInt32 AddItems( ShoppingItem? item, UInt32 quantity = 1 ) {
 			UInt32 added = 0;
 
 			if ( item is not null ) {
@@ -75,9 +74,8 @@ namespace Librainian.Financial.Containers.Shopping {
 		/// <summary>Removes the first <paramref name="item" /> from the list.</summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		public Boolean RemoveItem( [CanBeNull] ShoppingItem item ) => this.Items.Remove( item );
+		public Boolean RemoveItem( ShoppingItem? item ) => this.Items.Remove( item );
 
-		[NotNull]
 		public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
 			var items = new ConcurrentDictionary<ShoppingItem, Int32>();
 

@@ -29,7 +29,7 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Measurement.Time;
 	using Utilities;
@@ -44,8 +44,8 @@ namespace Librainian.Threading {
 		/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
 		/// <param name="autoStart"></param>
 		/// <param name="cancellationToken"></param>
-		public BackgroundThread( [NotNull] Action actionToPerform, Boolean autoStart, CancellationToken cancellationToken ) {
-			this.ActionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
+		public BackgroundThread( Action actionToPerform, Boolean autoStart, CancellationToken cancellationToken ) {
+			this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
 			this.cancellationToken = cancellationToken;
 
 			this.thread = new Thread( ThreadStart ) {
@@ -78,15 +78,12 @@ namespace Librainian.Threading {
 			}
 		}
 
-		[NotNull]
 		private Action ActionToPerform { get; }
 
 		private CancellationToken cancellationToken { get; }
 
-		[NotNull]
 		private SemaphoreSlim signal { get; } = new(1, 1);
 
-		[NotNull]
 		private Thread thread { get; }
 
 		private void Start() {

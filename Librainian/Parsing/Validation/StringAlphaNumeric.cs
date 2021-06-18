@@ -27,14 +27,12 @@
 namespace Librainian.Parsing.Validation {
 
 	using System;
-	using JetBrains.Annotations;
 
 	/// <summary>contain only alphabetical (a-z) or numeric (0-9) characters</summary>
 	public class StringAlphaNumeric : RegexString {
 
 		public StringAlphaNumeric( String value ) : base( value, "^[a-zA-Z0-9]*$" ) { }
 
-		[NotNull]
-		public static explicit operator StringAlphaNumeric( [NotNull] String str ) => new( str );
+		public static explicit operator StringAlphaNumeric( String str ) => new( str );
 	}
 }

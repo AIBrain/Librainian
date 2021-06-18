@@ -26,7 +26,6 @@ namespace Librainian.Graphics.Video {
 
 	using System;
 	using System.Drawing;
-	using JetBrains.Annotations;
 	using Utilities;
 
 	public class BitmapInfo : ABetterClassDispose {
@@ -38,14 +37,12 @@ namespace Librainian.Graphics.Video {
 		public Int32 AviPosition;
 
 		//uncompressed image
-		[NotNull]
 		public Bitmap Bitmap;
 
 		//how many bytes will be hidden in this image
 		public Int64 MessageBytesToHide;
 
 		//path and name of the bitmap file
-		[NotNull]
 		public String SourceFileName;
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
@@ -53,7 +50,7 @@ namespace Librainian.Graphics.Video {
 			using ( this.Bitmap ) { }
 		}
 
-		public void LoadBitmap( [NotNull] String fileName ) {
+		public void LoadBitmap( String fileName ) {
 			if ( String.IsNullOrWhiteSpace( fileName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
 			}

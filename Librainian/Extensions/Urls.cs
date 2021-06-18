@@ -27,25 +27,22 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Net;
 	using System.Text;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class Urls {
 
 		/// <summary>Check that a String is not null or empty</summary>
 		/// <param name="input">String to check</param>
 		/// <returns>Boolean</returns>
-		public static Boolean HasValue( [CanBeNull] this String? input ) => !String.IsNullOrEmpty( input );
+		public static Boolean HasValue( this String? input ) => !String.IsNullOrEmpty( input );
 
-		[CanBeNull]
-		public static String? HtmlDecode( [CanBeNull] this String? input ) => WebUtility.HtmlDecode( input );
+		public static String? HtmlDecode( this String? input ) => WebUtility.HtmlDecode( input );
 
-		[CanBeNull]
-		public static String HtmlEncode( [NotNull] this String input ) => WebUtility.HtmlEncode( input );
+		public static String HtmlEncode( this String input ) => WebUtility.HtmlEncode( input );
 
-		public static Boolean IsNameOnlyQueryString( [CanBeNull] this String? res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
+		public static Boolean IsNameOnlyQueryString( this String? res ) => !String.IsNullOrEmpty( res ) && res[ 0 ] == '?';
 
-		[CanBeNull]
-		public static Uri UrlDecode( [NotNull] this String input ) {
+		public static Uri UrlDecode( this String input ) {
 			if ( String.IsNullOrWhiteSpace( input ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
 			}
@@ -57,10 +54,9 @@ namespace Librainian.Extensions {
 		///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
 		///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
 		/// </summary>
-		[NotNull]
-		public static Uri UrlEncode( [NotNull] this String input ) {
+		public static Uri UrlEncode( this String input ) {
 			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
+				throw new ArgumentEmptyException( nameof( input ) );
 			}
 
 			const Int32 maxLength = 32766;

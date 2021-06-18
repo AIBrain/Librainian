@@ -27,11 +27,9 @@ namespace Librainian.Maths {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using JetBrains.Annotations;
 
 	public static class PrimeNumbers {
 
-		[NotNull]
 		public static readonly HashSet<Int32> MemoizedPrimes = new();
 
 		public static Int64[][] GoldenPrimes { get; } = {
@@ -78,7 +76,6 @@ namespace Librainian.Maths {
 			return start;
 		}
 
-		[NotNull]
 		public static IEnumerable<Int32> PotentialPrimes() {
 			yield return 2;
 			yield return 3;
@@ -98,7 +95,6 @@ namespace Librainian.Maths {
 		/// <param name="lowEnd"></param>
 		/// <param name="highEnd"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static IEnumerable<Int32> PotentialPrimes( Int32 lowEnd, Int32 highEnd ) {
 			var k = lowEnd;
 

@@ -30,13 +30,11 @@ namespace Librainian.OperatingSystem {
 	using System;
 	using System.Management;
 	using Converters;
-	using JetBrains.Annotations;
 	using Parsing;
 
 	public static class WMIExtensions {
 
-		[NotNull]
-		public static String Identifier( [NotNull] String wmiClass, [NotNull] String wmiProperty, [NotNull] String wmiMustBeTrue ) {
+		public static String Identifier( String wmiClass, String wmiProperty, String wmiMustBeTrue ) {
 			if ( String.IsNullOrWhiteSpace( wmiClass ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiClass ) );
 			}
@@ -68,8 +66,7 @@ namespace Librainian.OperatingSystem {
 			return String.Empty;
 		}
 
-		[NotNull]
-		public static String Identifier( [NotNull] String wmiClass, [NotNull] String wmiProperty ) {
+		public static String Identifier( String wmiClass, String wmiProperty ) {
 			if ( String.IsNullOrWhiteSpace( wmiClass ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( wmiClass ) );
 			}
@@ -97,8 +94,7 @@ namespace Librainian.OperatingSystem {
 			return String.Empty;
 		}
 
-		[NotNull]
-		public static ManagementObjectCollection QueryWMI( [CanBeNull] String? machineName, [NotNull] String scope, [NotNull] String query ) {
+		public static ManagementObjectCollection QueryWMI( String? machineName, String scope, String query ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
@@ -120,8 +116,7 @@ namespace Librainian.OperatingSystem {
 			return moSearcher.Get();
 		}
 
-		[NotNull]
-		public static ManagementObjectCollection WmiQuery( [NotNull] this String query ) {
+		public static ManagementObjectCollection WmiQuery( this String query ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}

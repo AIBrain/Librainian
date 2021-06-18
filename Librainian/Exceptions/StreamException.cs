@@ -26,7 +26,6 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 
 	/// <inheritdoc />
 	/// <summary>
@@ -39,17 +38,14 @@ namespace Librainian.Exceptions {
 		/// <summary>Disallow no message.</summary>
 		private StreamException() { }
 
-		protected StreamException( [NotNull] SerializationInfo info, StreamingContext context ) : base( info, context ) {
+		protected StreamException( SerializationInfo info, StreamingContext context ) : base( info, context ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 		}
 
-		public StreamException( [CanBeNull]
-								String? message ) : base( message ) { }
+		public StreamException( String? message ) : base( message ) { }
 
-		public StreamException( [CanBeNull]
-								String? message, [CanBeNull]
-								Exception innerException ) : base( message, innerException ) { }
+		public StreamException( String? message, Exception? innerException ) : base( message, innerException ) { }
 	}
 }

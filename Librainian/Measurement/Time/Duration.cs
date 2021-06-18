@@ -83,7 +83,7 @@ namespace Librainian.Measurement.Time {
 
 		public Duration( TimeSpan time ) : this( time.Ticks ) { }
 
-		public Duration( [NotNull] params TimeSpan[] times ) : this( times.Where( span => span != default( TimeSpan ) ).Sum( timeSpan => timeSpan.TotalMilliseconds ) * MicrosecondsPerMillisecond ) {
+		public Duration( params TimeSpan[] times ) : this( times.Where( span => span != default( TimeSpan ) ).Sum( timeSpan => timeSpan.TotalMilliseconds ) * MicrosecondsPerMillisecond ) {
 			
 			
 		}
@@ -141,7 +141,6 @@ namespace Librainian.Measurement.Time {
 		public BigDecimal Seconds() => ( BigInteger )this.TotalMilliseconds() % Measurement.Time.Milliseconds.InOneSecond;
 
 		[Pure]
-		[NotNull]
 		public override String ToString() => this.Simpler();
 
 		[Pure]

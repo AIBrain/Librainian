@@ -23,29 +23,19 @@
 // File "FileSizeFormatProviderExtensions.cs" last formatted on 2020-08-14 at 8:39 PM.
 
 namespace Librainian.FileSystem {
-	/*
-	public static class FileSizeFormatProviderExtensions {
-		private static  FileSizeFormatProvider FormatProvider = new FileSizeFormatProvider();
 
-		/// <summary>
-		///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
-		/// </summary>
-		public static String ToFileSize( this Decimal bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
+	using System;
 
-		/// <summary>
-		///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
-		/// </summary>
-		public static String ToFileSize( this UInt64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
-
-		/// <summary>
-		///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
-		/// </summary>
-		public static String ToFileSize( this Int64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
-
-		/// <summary>
-		///     Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.
-		/// </summary>
-		public static String ToFileSize( this Int32 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
+	public static class FileSizeExtensions {
+		public static String ToFileSize( this Int64 size ) {
+			if ( size < 1024 ) { return size.ToString( "F0" ) + " bytes"; }
+			if ( size < Math.Pow( 1024, 2 ) ) { return ( size / 1024 ).ToString( "F0" ) + "KB"; }
+			if ( size < Math.Pow( 1024, 3 ) ) { return ( size / Math.Pow( 1024, 2 ) ).ToString( "F0" ) + "MB"; }
+			if ( size < Math.Pow( 1024, 4 ) ) { return ( size / Math.Pow( 1024, 3 ) ).ToString( "F0" ) + "GB"; }
+			if ( size < Math.Pow( 1024, 5 ) ) { return ( size / Math.Pow( 1024, 4 ) ).ToString( "F0" ) + "TB"; }
+			if ( size < Math.Pow( 1024, 6 ) ) { return ( size / Math.Pow( 1024, 5 ) ).ToString( "F0" ) + "PB"; }
+			return ( size / Math.Pow( 1024, 6 ) ).ToString( "F0" ) + "EB";
+		}
 	}
-	*/
+	
 }

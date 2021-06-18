@@ -34,7 +34,6 @@ namespace Librainian.Linguistics {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
-	using JetBrains.Annotations;
 	using Measurement;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -48,18 +47,13 @@ namespace Librainian.Linguistics {
 	public class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence>, IHasCitations {
 
 		/// <summary></summary>
-		[NotNull]
 		[JsonProperty]
-		[ItemNotNull]
 		private List<Word> Words { get; } = new();
 
-		[NotNull]
 		public static Sentence Empty { get; }
 
-		[NotNull]
 		public static String EndOfSentence { get; } = new( Char.MaxValue, 2 );
 
-		[NotNull]
 		public static String StartOfSentence { get; } = new( Char.MinValue, 2 );
 
 		public Lazy<HashSet<ICitation>?>? Citations { get; set; }
@@ -68,13 +62,13 @@ namespace Librainian.Linguistics {
 
 		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
 		/// <param name="sentence"></param>
-		private Sentence( [NotNull] String sentence ) : this( sentence.ToWords() ) { }
+		private Sentence( String sentence ) : this( sentence.ToWords() ) { }
 
 		static Sentence() => Empty = Parse( $"{StartOfSentence}{String.Empty}{EndOfSentence}" );
 
 		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
 		/// <param name="words"></param>
-		public Sentence( [NotNull] IEnumerable<Word> words ) {
+		public Sentence( IEnumerable<Word> words ) {
 			foreach ( var word in words ) {
 				this.Words.Add( word );
 			}
@@ -82,7 +76,7 @@ namespace Librainian.Linguistics {
 
 		/// <summary>A <see cref="Sentence" /> is an ordered sequence of words.</summary>
 		/// <param name="words"></param>
-		public Sentence( [NotNull] IEnumerable<String> words ) {
+		public Sentence( IEnumerable<String> words ) {
 			var sentence = words.ToStrings( ParsingConstants.Strings.Singlespace );
 
 			foreach ( var word in sentence.ToWords() ) {
@@ -90,7 +84,7 @@ namespace Librainian.Linguistics {
 			}
 		}
 
-		public static Int32 Compare( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
+		public static Int32 Compare( Sentence? left, Sentence? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return Order.Same;
 			}
@@ -102,7 +96,7 @@ namespace Librainian.Linguistics {
 			return left.CompareTo( right );
 		}
 
-		public static Boolean Equals( [CanBeNull] Sentence? left, [CanBeNull] Sentence? right ) {
+		public static Boolean Equals( Sentence? left, Sentence? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -114,20 +108,19 @@ namespace Librainian.Linguistics {
 			return left.Words.SequenceEqual( right.Words );
 		}
 
-		public static Boolean operator !=( [CanBeNull] Sentence? left, [CanBeNull] Sentence right ) => !Equals( left, right );
+		public static Boolean operator !=( Sentence? left, Sentence? right ) => !Equals( left, right );
 
-		public static Boolean operator <( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) < 0;
+		public static Boolean operator <( Sentence? left, Sentence? right ) => Compare( left, right ) < 0;
 
-		public static Boolean operator ==( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Equals( left, right );
+		public static Boolean operator ==( Sentence? left, Sentence? right ) => Equals( left, right );
 
-		public static Boolean operator >( [CanBeNull] Sentence left, [CanBeNull] Sentence right ) => Compare( left, right ) > 0;
+		public static Boolean operator >( Sentence? left, Sentence? right ) => Compare( left, right ) > 0;
 
-		[NotNull]
 		public static Sentence Parse( String sentence ) => new( sentence );
 
-		public Int32 CompareTo( [CanBeNull] Sentence? other ) => String.Compare( this.ToString(), other?.ToString(), StringComparison.Ordinal );
+		public Int32 CompareTo( Sentence? other ) => String.Compare( this.ToString(), other?.ToString(), StringComparison.Ordinal );
 
-		public Boolean Equals( [CanBeNull] Sentence? other ) => Equals( this, other );
+		public Boolean Equals( Sentence? other ) => Equals( this, other );
 
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>
 		/// <param name="obj">The object to compare with the current object.</param>
@@ -135,9 +128,8 @@ namespace Librainian.Linguistics {
 		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
 		///     <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( [CanBeNull] Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
+		public override Boolean Equals( Object? obj ) => ReferenceEquals( this, obj ) || obj is Sentence other && this.Equals( other );
 
-		[CanBeNull]
 		public IEnumerable<ICitation>? GetCitations() => this.Citations?.Value;
 
 		public IEnumerator<Word> GetEnumerator() => this.Words.GetEnumerator();
@@ -145,7 +137,6 @@ namespace Librainian.Linguistics {
 		//[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-		[NotNull]
 		public override String ToString() => this.Words.ToStrings( ParsingConstants.Strings.Singlespace );
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

@@ -33,6 +33,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.Runtime.InteropServices;
 	using System.Security;
 	using System.Text;
+	using Exceptions;
 	using JetBrains.Annotations;
 
 	public static class Common {
@@ -51,7 +52,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public const Int32 SUCCESS = 0;
 
-		[NotNull]
 		private static String GetMessageFromErrorCode( PriNativeMethods.ERROR errorCode ) {
 			var buffer = new StringBuilder( 1024 );
 
@@ -61,9 +61,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return buffer.ToString();
 		}
 
-		public static Boolean EndsWith( [CanBeNull] this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[ ^1 ] == value;
+		public static Boolean EndsWith( this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[ ^1 ] == value;
 
-		public static FileAttributes GetAttributes( [NotNull] this String path ) {
+		public static FileAttributes GetAttributes( this String path ) {
 			var normalizedPath = path.NormalizeLongPath();
 
 			var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
@@ -75,7 +75,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return fileAttributes;
 		}
 
-		public static FileAttributes GetAttributes( [NotNull] this String path, out PriNativeMethods.ERROR errorCode ) {
+		public static FileAttributes GetAttributes( this String path, out PriNativeMethods.ERROR errorCode ) {
 			var normalizedPath = path.NormalizeLongPath();
 
 			errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
@@ -83,17 +83,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return fileAttributes;
 		}
 
-		[NotNull]
 		public static Exception GetExceptionFromLastWin32Error() => GetExceptionFromLastWin32Error( "path" );
 
-		[NotNull]
-		public static Exception GetExceptionFromLastWin32Error( [NotNull] String parameterName ) => GetExceptionFromWin32Error( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), parameterName );
+		public static Exception GetExceptionFromLastWin32Error( String parameterName ) => GetExceptionFromWin32Error( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), parameterName );
 
-		[NotNull]
 		public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode ) => GetExceptionFromWin32Error( errorCode, "path" );
 
-		[NotNull]
-		public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode, [NotNull] String parameterName ) {
+		public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode, String parameterName ) {
 			var message = GetMessageFromErrorCode( errorCode );
 
 			return errorCode switch {
@@ -108,7 +104,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			};
 		}
 
-		public static FileAttributes GetFileAttributes( [NotNull] this String path ) {
+		public static FileAttributes GetFileAttributes( this String path ) {
 			var normalizedPath = path.NormalizeLongPath();
 
 			var errorCode = TryGetFileAttributes( normalizedPath, out var fileAttributes );
@@ -120,7 +116,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return fileAttributes;
 		}
 
-		public static Boolean IsPathDots( [NotNull] this String path ) => path is "." or "..";
+		public static Boolean IsPathDots( this String path ) => path is "." or "..";
 
 		/// <summary>
 		/// Checks if <paramref name="path"/> starts with \\?\UNC\
@@ -128,7 +124,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="path"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		public static Boolean IsPathUnc( [NotNull] this String path ) {
+		public static Boolean IsPathUnc( this String path ) {
 			path = path.ThrowIfBlank();
 
 			if ( path.StartsWith( Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
@@ -142,7 +138,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="path"></param>
 		/// <param name="uri"></param>
 		/// <returns></returns>
-		public static Boolean IsPathUnc( [NotNull] this String path, [CanBeNull] out Uri? uri ) {
+		public static Boolean IsPathUnc( this String path, out Uri? uri ) {
 			path = path.ThrowIfBlank();
 
 			if ( path.StartsWith( Path.UNCLongPathPrefix, StringComparison.Ordinal ) ) {
@@ -154,11 +150,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return Uri.TryCreate( path, UriKind.Absolute, out uri ) && uri.IsUnc;
 		}
 
-		[NotNull]
-		public static String NormalizeSearchPattern( [NotNull] this String searchPattern ) =>
+		public static String NormalizeSearchPattern( this String searchPattern ) =>
 			String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
 
-		public static void SetAttributes( [NotNull] this String path, FileAttributes fileAttributes ) {
+		public static void SetAttributes( this String path, FileAttributes fileAttributes ) {
 			var normalizedPath = path.NormalizeLongPath();
 
 			if ( !PriNativeMethods.SetFileAttributes( normalizedPath, fileAttributes ) ) {
@@ -282,17 +277,15 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 		*/
 
-		/// <summary>Returns the trimmed string or throws <see cref="ArgumentNullException" /> if null, whitespace, or empty.</summary>
+		/// <summary>Returns the trimmed string or throws <see cref="ArgumentEmptyException" /> if null, whitespace, or empty.</summary>
 		/// <param name="path"></param>
-		/// <exception cref="ArgumentNullException">Gets thrown if the <paramref name="path" /> is null, whitespace, or empty.</exception>
-		[return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull( "path" )]
+		/// <exception cref="ArgumentEmptyException">Gets thrown if the <paramref name="path" /> is null, whitespace, or empty.</exception>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[NotNull]
 		[Pure]
 		[DebuggerStepThrough]
-		public static String ThrowIfBlank( [CanBeNull] this String? path ) {
+		public static String ThrowIfBlank( this String? path ) {
 			if ( String.IsNullOrEmpty( path = path?.Trim() ) ) {
-				throw new ArgumentNullException( nameof( path ), "Value cannot be null or whitespace." );
+				throw new ArgumentEmptyException( nameof( path ) );
 			}
 
 			return path;
@@ -300,9 +293,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[DebuggerStepThrough]
-		public static void ThrowIfBlank( [CanBeNull] ref String? path ) {
+		public static void ThrowIfBlank( ref String? path ) {
 			if ( String.IsNullOrEmpty( path?.Trim() ) ) {
-				throw new ArgumentNullException( nameof( path ), "Value cannot be null or whitespace." );
+				throw new ArgumentEmptyException( nameof( path ) );
 			}
 		}
 
@@ -342,7 +335,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			}
 		}
 
-		public static void ThrowIOError( PriNativeMethods.ERROR errorCode, [NotNull] String maybeFullPath ) {
+		public static void ThrowIOError( PriNativeMethods.ERROR errorCode, String maybeFullPath ) {
 			if ( String.IsNullOrWhiteSpace( maybeFullPath ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( maybeFullPath ) );
 			}
@@ -445,10 +438,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 		*/
 
-		public static PriNativeMethods.ERROR TryGetDirectoryAttributes( [NotNull] this String normalizedPath, out FileAttributes attributes ) =>
+		public static PriNativeMethods.ERROR TryGetDirectoryAttributes( this String normalizedPath, out FileAttributes attributes ) =>
 			TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
 
-		public static PriNativeMethods.ERROR TryGetFileAttributes( [NotNull] String normalizedPath, out FileAttributes attributes ) {
+		public static PriNativeMethods.ERROR TryGetFileAttributes( String normalizedPath, out FileAttributes attributes ) {
 			var data = new WIN32_FILE_ATTRIBUTE_DATA();
 
 			var errorMode = PriNativeMethods.SetErrorMode( 1 );

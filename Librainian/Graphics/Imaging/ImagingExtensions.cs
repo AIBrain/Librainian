@@ -24,15 +24,14 @@
 
 namespace Librainian.Graphics.Imaging {
 
-	using System;
 	using System.Drawing;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class ImagingExtensions {
 
-		public static Color GetAverageColor( [NotNull] this Bitmap bitmap ) {
+		public static Color GetAverageColor( this Bitmap bitmap ) {
 			if ( bitmap is null ) {
-				throw new ArgumentNullException( nameof( bitmap ) );
+				throw new ArgumentEmptyException( nameof( bitmap ) );
 			}
 
 			var red = 0;

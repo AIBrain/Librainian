@@ -32,7 +32,7 @@ namespace Librainian.Linguistics {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -44,11 +44,9 @@ namespace Librainian.Linguistics {
 	[Serializable]
 	public class Page : IEquatable<Page>, IEnumerable<Paragraph> {
 
-		[NotNull]
 		[JsonProperty]
 		private HashSet<Author> Authors { get; } = new();
 
-		[NotNull]
 		[JsonProperty]
 		private List<Paragraph> Paragraphs { get; } = new();
 
@@ -56,9 +54,9 @@ namespace Librainian.Linguistics {
 
 		private Page() { }
 
-		public Page( [NotNull][ItemNotNull] IEnumerable<Paragraph> paragraphs ) {
+		public Page( IEnumerable<Paragraph> paragraphs ) {
 			if ( paragraphs is null ) {
-				throw new ArgumentNullException( nameof( paragraphs ) );
+				throw new ArgumentEmptyException( nameof( paragraphs ) );
 			}
 
 			this.Add( paragraphs );
@@ -72,7 +70,7 @@ namespace Librainian.Linguistics {
 			this.Paragraphs.AddRange( paragraphs );
 		}
 
-		public Boolean Equals( [CanBeNull] Page? other ) {
+		public Boolean Equals( Page? other ) {
 			if ( other is null ) {
 				return false;
 			}
@@ -80,7 +78,6 @@ namespace Librainian.Linguistics {
 			return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
 		}
 
-		[NotNull]
 		public IEnumerable<Author> GetAuthors() => this.Authors;
 
 		public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();

@@ -30,7 +30,6 @@ namespace Librainian.Persistence.InIFiles {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Linq;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -39,9 +38,7 @@ namespace Librainian.Persistence.InIFiles {
 	public class IniSection : IEnumerable<IniLine> {
 
 		[JsonProperty]
-		[NotNull]
-		[ItemNotNull]
-		private List<IniLine?> lines { get; } = new();
+		private List<IniLine> lines { get; } = new();
 
 		/// <summary>Gets the number of elements in the collection.</summary>
 		/// <returns>The number of elements in the collection. </returns>
@@ -50,8 +47,7 @@ namespace Librainian.Persistence.InIFiles {
 		/// <summary>Gets the element at the specified index in the read-only list.</summary>
 		/// <param name="index">The zero-based index of the element to get. </param>
 		/// <returns>The element at the specified index in the read-only list.</returns>
-		[CanBeNull]
-		public IniLine? this[ Int32 index ] {
+		public IniLine this[ Int32 index ] {
 			get {
 				if ( index <= 0 || index > this.Count ) {
 					throw new ArgumentOutOfRangeException( nameof( index ) );
@@ -61,7 +57,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 		}
 
-		public Boolean Add( [NotNull] String key, [CanBeNull] String? value ) {
+		public Boolean Add( String key, String? value ) {
 			if ( String.IsNullOrEmpty( key ) ) {
 				throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
 			}
@@ -71,11 +67,11 @@ namespace Librainian.Persistence.InIFiles {
 			return true;
 		}
 
-		public Boolean Exists( [NotNull] String key ) => !String.IsNullOrEmpty( key ) && this.lines.Any( pair => pair?.Key.Like( key ) == true );
+		public Boolean Exists( String key ) => !String.IsNullOrEmpty( key ) && this.lines.Any( pair => pair.Key.Like( key ) );
 
 		public IEnumerator<IniLine> GetEnumerator() => this.lines.GetEnumerator();
 
-		public Boolean Remove( [NotNull] String key ) => this.lines.RemoveAll( pair => pair?.Key.Like( key ) == true ).Any();
+		public Boolean Remove( String key ) => this.lines.RemoveAll( pair => pair.Key.Like( key ) ).Any();
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}

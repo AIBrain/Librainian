@@ -26,7 +26,6 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )</summary>
@@ -59,7 +58,6 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="newIdentity"></param>
 		public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 )newIdentity );
 
-		[NotNull]
 		public override String ToString() => $"{this.Identity}";
 	}
 }

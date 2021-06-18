@@ -29,8 +29,8 @@ namespace Librainian.Persistence {
 	using System.Diagnostics;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 
@@ -45,7 +45,6 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     "drive:\folder\file.ext"
 		/// </summary>
-		[NotNull]
 		[JsonProperty]
 		public String AbsolutePath { get; private set; }
 
@@ -81,9 +80,9 @@ namespace Librainian.Persistence {
 		[JsonProperty]
 		public UInt64? Length { get; private set; }
 
-		public DocumentInfo( [NotNull] Document document ) {
+		public DocumentInfo( Document document ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			this.Reset();
@@ -97,11 +96,7 @@ namespace Librainian.Persistence {
 			this.LastScanned = null;
 		}
 
-		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo? left, [NotNull] DocumentInfo? right ) {
-			if ( left is null || right is null ) {
-				return true;
-			}
-
+		public static Boolean? AreEitherDifferent( DocumentInfo left, DocumentInfo right ) {
 			if ( left.Length != right.Length ) {
 				return true;
 			}
@@ -136,7 +131,7 @@ namespace Librainian.Persistence {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] DocumentInfo? left, [CanBeNull] DocumentInfo? right ) {
+		public static Boolean Equals( DocumentInfo? left, DocumentInfo? right ) {
 			if ( left is null || right is null ) {
 				return false;
 			}
@@ -165,11 +160,11 @@ namespace Librainian.Persistence {
 			return left.CRC64 == right.CRC64; //Okay, we've compared by 3 different hashes. File should be unique by now.
 		}
 
-		public static Boolean operator !=( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => !Equals( left, right );
+		public static Boolean operator !=( DocumentInfo? left, DocumentInfo? right ) => !Equals( left, right );
 
-		public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
+		public static Boolean operator ==( DocumentInfo? left, DocumentInfo? right ) => Equals( left, right );
 
-		public Boolean Equals( [CanBeNull] DocumentInfo? other ) => Equals( this, other );
+		public Boolean Equals( DocumentInfo? other ) => Equals( this, other );
 
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as DocumentInfo );
 
@@ -182,9 +177,9 @@ namespace Librainian.Persistence {
 		/// <param name="document"></param>
 		/// <param name="cancellationToken">   </param>
 		/// <returns></returns>
-		public async Task GetHashesAsync( [NotNull] Document document, CancellationToken cancellationToken ) {
+		public async Task GetHashesAsync( Document document, CancellationToken cancellationToken ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			var watch = Stopwatch.StartNew();
@@ -261,7 +256,6 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
 	}
 }

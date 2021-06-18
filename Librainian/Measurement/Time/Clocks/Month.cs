@@ -28,8 +28,8 @@
 namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>A simple struct for a <see cref="Month" />.</summary>
@@ -57,9 +57,9 @@ namespace Librainian.Measurement.Time.Clocks {
 		[JsonProperty]
 		public Byte Value { get; init; }
 
-		public Int32 CompareTo( [NotNull] Month? other ) {
+		public Int32 CompareTo( Month other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

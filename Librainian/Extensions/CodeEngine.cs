@@ -30,36 +30,28 @@ namespace Librainian.Extensions {
 	using System.CodeDom.Compiler;
 	using System.IO;
 	using System.Reflection;
-	using JetBrains.Annotations;
 	using Logging;
 	using Microsoft.CSharp;
 
 	/// <summary>TODO this engine needs be revisted.</summary>
 	public class CodeEngine {
 
-		[CanBeNull]
 		private CompilerResults? _compilerResults;
 
-		[CanBeNull]
 		private String? _sourceCode = String.Empty;
 
-		[NotNull]
 		private Object _compileLock { get; } = new();
 
-		[NotNull]
 		private Object _sourceCodeLock { get; } = new();
 
-		[NotNull]
 		public static CSharpCodeProvider CSharpCodeProvider { get; } = new();
 
 		public Guid ID { get; private set; }
 
 		public Action<String>? Output { get; }
 
-		[CanBeNull]
 		public Object[]? Parameters { get; set; }
 
-		[CanBeNull]
 		public String? SourceCode {
 			get {
 				lock ( this._sourceCodeLock ) {
@@ -76,12 +68,11 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		[CanBeNull]
 		public String? SourcePath { get; }
 
-		public CodeEngine( [NotNull] String sourcePath, [CanBeNull] Action<String> output ) : this( Guid.NewGuid(), sourcePath, output ) { }
+		public CodeEngine( String sourcePath, Action<String>? output ) : this( Guid.NewGuid(), sourcePath, output ) { }
 
-		public CodeEngine( Guid id, [NotNull] String sourcePath, [CanBeNull] Action<String?>? output ) {
+		public CodeEngine( Guid id, String sourcePath, Action<String?>? output ) {
 			this.Output = output;
 
 			//if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
@@ -97,7 +88,6 @@ namespace Librainian.Extensions {
 			void Output();
 		}
 
-		[NotNull]
 		private static String DefaultCode() =>
 			@"
 using System;
@@ -155,7 +145,7 @@ namespace Coding
 			}
 		}
 
-		public static Boolean Test( [CanBeNull] Action<String> output ) {
+		public static Boolean Test( Action<String>? output ) {
 			try {
 				var test = new CodeEngine( Guid.Empty, Path.GetTempPath(), output );
 				test.Run();
@@ -171,8 +161,7 @@ namespace Coding
 
 		public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
 
-		[CanBeNull]
-		public Object Run() {
+		public Object? Run() {
 			lock ( this._compileLock ) {
 				if ( null == this._compilerResults ) {
 					this.Compile();

@@ -28,12 +28,10 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
-	using JetBrains.Annotations;
 	using Measurement.Time;
 
 	public static class Blocks {
 
-		[NotNull]
 		public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
 			var lastItem = DateTime.MinValue;
 
@@ -58,7 +56,6 @@ namespace Librainian.Threading {
 			///     Multiple producers consumed in smoothly ( <see cref="Environment.ProcessorCount" /> *
 			///     <see cref="Environment.ProcessorCount" /> ).
 			/// </summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeEverything( CancellationToken? token ) =>
 				new() {
 					SingleProducerConstrained = false,
@@ -68,7 +65,6 @@ namespace Librainian.Threading {
 				};
 
 			/// <summary>Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).</summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
 				new() {
 					SingleProducerConstrained = false,
@@ -78,7 +74,6 @@ namespace Librainian.Threading {
 				};
 
 			/// <summary>Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).</summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
 				new() {
 					SingleProducerConstrained = false,
@@ -93,7 +88,6 @@ namespace Librainian.Threading {
 			/// <summary>
 			///     <para>Single producer consumed in smoothly (Environment.ProcessorCount - 1).</para>
 			/// </summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
 				new() {
 					SingleProducerConstrained = false,
@@ -105,7 +99,6 @@ namespace Librainian.Threading {
 			/// <summary>
 			///     <para>Single producer consumed in serial (one at a time).</para>
 			/// </summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
 				new() {
 					SingleProducerConstrained = true,

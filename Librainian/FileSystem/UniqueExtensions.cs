@@ -25,13 +25,12 @@
 namespace Librainian.FileSystem {
 
 	using System;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Parsing;
 
 	public static class UniqueExtensions {
 
-		[NotNull]
-		public static Unique ToUnique( [NotNull] this String location ) {
+		public static Unique ToUnique( this String location ) {
 			if ( String.IsNullOrWhiteSpace( location ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
 			}
@@ -42,14 +41,12 @@ namespace Librainian.FileSystem {
 		/// <summary>Convert a <see cref="TrimmedString" /> to a <see cref="Unique" /> location.</summary>
 		/// <param name="location"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static Unique ToUnique( this TrimmedString location ) =>
 			Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
 
-		[NotNull]
-		public static Unique ToUnique( [NotNull] this Uri location ) {
+		public static Unique ToUnique( this Uri location ) {
 			if ( location is null ) {
-				throw new ArgumentNullException( nameof( location ) );
+				throw new ArgumentEmptyException( nameof( location ) );
 			}
 
 			return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );

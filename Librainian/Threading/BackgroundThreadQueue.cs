@@ -29,7 +29,7 @@ namespace Librainian.Threading {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Threadsafe;
 	using Utilities;
 
@@ -43,14 +43,13 @@ namespace Librainian.Threading {
 
 		private Thread? thread;
 
-		[NotNull]
 		private BlockingCollection<T> MessageQueue { get; } = new();
 
 		private CancellationToken Token { get; set; }
 
-		private void ProcessQueue( [NotNull] Action<T> action ) {
+		private void ProcessQueue( Action<T> action ) {
 			if ( action is null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			try {
@@ -78,7 +77,7 @@ namespace Librainian.Threading {
 
 		/// <summary>Same as <see cref="Enqueue" />.</summary>
 		/// <param name="message"></param>
-		public void Add( [CanBeNull] T message ) => this.MessageQueue.Add( message, this.Token );
+		public void Add( T? message ) => this.MessageQueue.Add( message, this.Token );
 
 		public void Cancel() {
 			this._quit = true;
@@ -89,14 +88,14 @@ namespace Librainian.Threading {
 
 		/// <summary>Same as <see cref="Add" />.</summary>
 		/// <param name="message"></param>
-		public void Enqueue( [CanBeNull] T message ) => this.MessageQueue.Add( message, this.Token );
+		public void Enqueue( T? message ) => this.MessageQueue.Add( message, this.Token );
 
 		/// <summary></summary>
 		/// <param name="each">Action to perform (poke into <see cref="MessageQueue" />).</param>
 		/// <param name="cancellationToken"></param>
-		public void Start( [NotNull] Action<T> each, CancellationToken cancellationToken ) {
+		public void Start( Action<T> each, CancellationToken cancellationToken ) {
 			if ( each is null ) {
-				throw new ArgumentNullException( nameof( each ) );
+				throw new ArgumentEmptyException( nameof( each ) );
 			}
 
 			this.Token = cancellationToken;

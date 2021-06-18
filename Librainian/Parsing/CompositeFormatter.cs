@@ -31,7 +31,7 @@ namespace Librainian.Parsing {
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>
 	///     Binds multiple formatters together.
@@ -40,8 +40,6 @@ namespace Librainian.Parsing {
 	/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara</remarks>
 	internal sealed class CompositeFormatter : Formatter {
 
-		[NotNull]
-		[ItemNotNull]
 		private List<Formatter> _formatters { get; }
 
 		/// <summary>
@@ -49,16 +47,16 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="culture">   The culture.</param>
 		/// <param name="formatters">The formatters.</param>
-		public CompositeFormatter( [CanBeNull] CultureInfo? culture = null, [NotNull] params Formatter[] formatters ) : base( culture ) =>
+		public CompositeFormatter( CultureInfo? culture = null, params Formatter[] formatters ) : base( culture ) =>
 			this._formatters = new List<Formatter>( formatters );
 
 		/// <summary>
 		///     Adds the specified formatter.
 		/// </summary>
 		/// <param name="formatter">The formatter.</param>
-		public void Add( [NotNull] Formatter formatter ) {
+		public void Add( Formatter formatter ) {
 			if ( formatter == null ) {
-				throw new ArgumentNullException( nameof( formatter ) );
+				throw new ArgumentEmptyException( nameof( formatter ) );
 			}
 
 			this._formatters.Add( formatter );
@@ -75,7 +73,7 @@ namespace Librainian.Parsing {
 		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
 		///     <paramref name="format" /> and <paramref name="formatProvider" />.
 		/// </returns>
-		public override String Format( [CanBeNull] String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider ) =>
+		public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) =>
 			this._formatters.Select( formatter => formatter.Format( format, arg, formatProvider ) ).First();
 	}
 }

@@ -29,8 +29,8 @@ namespace Librainian.Threading {
 	using System.Runtime.CompilerServices;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
 	using Measurement.Frequency;
@@ -51,7 +51,6 @@ namespace Librainian.Threading {
 		}
 
 		/// <summary>Set to cancel this job with the <see cref="MaxRunningTime" />.</summary>
-		[NotNull]
 		public CancellationTokenSource CTS { get; }
 
 		/// <summary>Query the <see cref="ETR" />.</summary>
@@ -61,7 +60,6 @@ namespace Librainian.Threading {
 
 		public IProgress<Single> Progress { get; }
 
-		[CanBeNull]
 		public T? Result { get; private set; }
 
 		private Stopwatch _stopwatch { get; }
@@ -74,7 +72,6 @@ namespace Librainian.Threading {
 
 
 		/// <summary>Call await on this task.</summary>
-		[NotNull]
 		public Task TheTask { get; } = null!;
 
 		/// <summary>
@@ -91,9 +88,9 @@ namespace Librainian.Threading {
 			
 		}
 
-		public Job( [NotNull] Func<T> func, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
+		public Job( Func<T> func, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
 			if ( func is null ) {
-				throw new ArgumentNullException( nameof( func ) );
+				throw new ArgumentEmptyException( nameof( func ) );
 			}
 
 			T? result = default;
@@ -102,26 +99,25 @@ namespace Librainian.Threading {
 				_ => this.Done( result ), TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
 		}
 
-		public Job( [NotNull] Action action, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
+		public Job( Action action, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
 			if ( action is null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			this.TheTask = new Task( () => action.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith(
 				_ => this.Done( default( T ) ), TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
 		}
 
-		private void Done( [CanBeNull] T? result ) {
+		private void Done( T? result ) {
 			this._stopwatch.Stop();
 			$"Job (Task.Id={this.TheTask.Id}) is done.".Verbose();
 
 			this.Result = result;
 		}
 
-		[NotNull]
-		public static implicit operator Task( [NotNull] Job<T> job ) {
+		public static implicit operator Task( Job<T> job ) {
 			if ( job is null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			return job.TheTask;

@@ -33,6 +33,7 @@ namespace Librainian.Maths.Bigger {
 	using System.Globalization;
 	using System.Linq;
 	using System.Numerics;
+	using Exceptions;
 
 	/// <summary>
 	///     Arbitrary precision decimal.
@@ -71,7 +72,7 @@ namespace Librainian.Maths.Bigger {
 		/// <param name="value"></param>
 		/// <exception cref="OverflowException"></exception>
 		/// <exception cref="NotFiniteNumberException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="FormatException"></exception>
 		public BigDecimal( Double value ) {
 			if ( Double.IsInfinity( value ) ) {
@@ -153,7 +154,7 @@ namespace Librainian.Maths.Bigger {
 		/// <summary>
 		///     Compares two BigDecimal values, returning an integer that indicates their relationship.
 		/// </summary>
-		public Int32 CompareTo( Object? obj ) => obj is BigDecimal @decimal ? this.CompareTo( @decimal ) : throw new ArgumentNullException( nameof( obj ) );
+		public Int32 CompareTo( Object? obj ) => obj is BigDecimal @decimal ? this.CompareTo( @decimal ) : throw new ArgumentEmptyException( nameof( obj ) );
 
 		/// <summary>
 		///     Compares two BigDecimal values, returning an integer that indicates their relationship.
@@ -198,7 +199,7 @@ namespace Librainian.Maths.Bigger {
 
 		private static String ToString( BigInteger mantissa, Int32 exponent, IFormatProvider provider ) {
 			if ( provider == null ) {
-				throw new ArgumentNullException( nameof( provider ) );
+				throw new ArgumentEmptyException( nameof( provider ) );
 			}
 
 			var formatProvider = NumberFormatInfo.GetInstance( provider );
@@ -541,7 +542,7 @@ namespace Librainian.Maths.Bigger {
 		/// <summary>
 		///     Converts the string representation of a decimal to the BigDecimal equivalent.
 		/// </summary>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		public static BigDecimal Parse( String input ) {
 			if ( String.IsNullOrWhiteSpace( input ) ) {
 				return new BigInteger( 0 );

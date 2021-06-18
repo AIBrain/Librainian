@@ -30,7 +30,6 @@ namespace Librainian.Measurement.Length {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 	using Newtonsoft.Json;
 
@@ -84,7 +83,6 @@ namespace Librainian.Measurement.Length {
 
 		public BigDecimal ToMeters() => this.Value / FeetPerMeter;
 
-		[NotNull]
 		public override String ToString() => $"{this.Value} feet";
 
 		public static Feet Combine( Feet left, BigDecimal feet ) => new( left.Value + feet );

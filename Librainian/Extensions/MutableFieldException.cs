@@ -28,29 +28,27 @@ namespace Librainian.Extensions {
 	using System.Reflection;
 	using System.Runtime.Serialization;
 	using Exceptions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
 	[Serializable]
 	internal class MutableFieldException : ImmutableFailureException {
 
-		protected MutableFieldException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+		protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
 			if ( serializationInfo is null ) {
-				throw new ArgumentNullException( nameof( serializationInfo ) );
+				throw new ArgumentEmptyException( nameof( serializationInfo ) );
 			}
 		}
 
-		internal MutableFieldException( [NotNull] FieldInfo fieldInfo, [CanBeNull] Exception inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
+		internal MutableFieldException( FieldInfo fieldInfo, Exception? inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
 			if ( fieldInfo is null ) {
-				throw new ArgumentNullException( nameof( fieldInfo ) );
+				throw new ArgumentEmptyException( nameof( fieldInfo ) );
 			}
 		}
 
-		[NotNull]
-		private static String FormatMessage( [NotNull] FieldInfo fieldInfo ) {
+		private static String FormatMessage( FieldInfo fieldInfo ) {
 			if ( fieldInfo is null ) {
-				throw new ArgumentNullException( nameof( fieldInfo ) );
+				throw new ArgumentEmptyException( nameof( fieldInfo ) );
 			}
 
 			return $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";

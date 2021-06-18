@@ -31,7 +31,7 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Timers;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Frequency;
 	using Measurement.Time;
 	using Utilities;
@@ -45,17 +45,15 @@ namespace Librainian.Threading {
 		/// <param name="timer"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		[NotNull]
-		public static FluentTimer AndStart( [NotNull] this FluentTimer timer ) => timer.Begin();
+		public static FluentTimer AndStart( this FluentTimer timer ) => timer.Begin();
 
 		/// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
 		/// <param name="timer"></param>
 		/// <param name="set"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static FluentTimer AutoReset( [NotNull] this FluentTimer timer, Boolean set = true ) {
+		public static FluentTimer AutoReset( this FluentTimer timer, Boolean set = true ) {
 			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
+				throw new ArgumentEmptyException( nameof( timer ) );
 			}
 
 			timer.Timer.AutoReset = set;
@@ -69,10 +67,9 @@ namespace Librainian.Threading {
 		/// <param name="timer"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		[NotNull]
-		public static FluentTimer Begin( [NotNull] this FluentTimer timer ) {
+		public static FluentTimer Begin( this FluentTimer timer ) {
 			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
+				throw new ArgumentEmptyException( nameof( timer ) );
 			}
 
 			timer.Timer.Start();
@@ -80,8 +77,7 @@ namespace Librainian.Threading {
 			return timer;
 		}
 
-		[NotNull]
-		public static FluentTimer CreateTimer( [NotNull] this Hertz frequency, [NotNull] Action onTick ) => CreateTimer( ( TimeSpan )frequency, onTick );
+		public static FluentTimer CreateTimer( this Hertz frequency, Action onTick ) => CreateTimer( ( TimeSpan )frequency, onTick );
 
 		/// <summary>
 		///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
@@ -91,8 +87,7 @@ namespace Librainian.Threading {
 		/// <param name="onTick"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
-		[NotNull]
-		public static FluentTimer CreateTimer( this TimeSpan interval, [CanBeNull] Action? onTick = null ) {
+		public static FluentTimer CreateTimer( this TimeSpan interval, Action? onTick = null ) {
 			if ( interval < Milliseconds.One ) {
 				interval = Milliseconds.One;
 			}
@@ -120,10 +115,9 @@ namespace Librainian.Threading {
 			return create;
 		}
 
-		[NotNull]
-		public static FluentTimer End( [NotNull] this FluentTimer timer ) {
+		public static FluentTimer End( this FluentTimer timer ) {
 			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
+				throw new ArgumentEmptyException( nameof( timer ) );
 			}
 
 			timer.Timer.Stop();
@@ -131,8 +125,7 @@ namespace Librainian.Threading {
 			return timer;
 		}
 
-		[NotNull]
-		public static FluentTimer Once( [NotNull] this FluentTimer timer ) {
+		public static FluentTimer Once( this FluentTimer timer ) {
 			timer.Timer.AutoReset = false;
 
 			return timer;
@@ -144,13 +137,11 @@ namespace Librainian.Threading {
 		/// <param name="timer"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		[NotNull]
-		public static FluentTimer Start( [NotNull] this FluentTimer timer ) => timer.Begin();
+		public static FluentTimer Start( this FluentTimer timer ) => timer.Begin();
 
-		[NotNull]
-		public static FluentTimer Stop( [NotNull] this FluentTimer timer ) {
+		public static FluentTimer Stop( this FluentTimer timer ) {
 			if ( timer is null ) {
-				throw new ArgumentNullException( nameof( timer ) );
+				throw new ArgumentEmptyException( nameof( timer ) );
 			}
 
 			timer.Timer.Stop();
@@ -169,15 +160,14 @@ namespace Librainian.Threading {
 
 		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Decimal )milliseconds ) ) { }
 
-		public FluentTimer( [NotNull] IQuantityOfTime quantityOfTime ) {
+		public FluentTimer( IQuantityOfTime quantityOfTime ) {
 			if ( quantityOfTime == null ) {
-				throw new ArgumentNullException( nameof( quantityOfTime ) );
+				throw new ArgumentEmptyException( nameof( quantityOfTime ) );
 			}
 
 			this.Timer = new Timer( quantityOfTime.ToTimeSpan().TotalMilliseconds );
 		}
 
-		[NotNull]
 		internal Timer Timer { get; }
 
 		public override void DisposeManaged() {

@@ -26,8 +26,8 @@ namespace Librainian.Collections {
 
 	using System;
 	using System.Collections.Generic;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Persistence;
 
@@ -35,17 +35,15 @@ namespace Librainian.Collections {
 	public class StringTable {
 
 		[JsonProperty]
-		[NotNull]
 		public PersistTable<UInt64, String> Ints { get; }
 
 		[JsonProperty]
-		[NotNull]
 		public PersistTable<String, UInt64> Words { get; }
 
 		/// <summary>Get or set the <paramref name="key" /> for this word.</summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		public UInt64 this[ [NotNull] String key ] {
+		public UInt64 this[ String key ] {
 			get => this.Words.TryGetValue( key, out var result ) ? result : default( UInt64 );
 
 			set {
@@ -61,7 +59,6 @@ namespace Librainian.Collections {
 		/// <summary>Get or set the word for this guid.</summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		[CanBeNull]
 		public String? this[ UInt64 key ] {
 			get => this.Ints[ key ];
 
@@ -74,9 +71,9 @@ namespace Librainian.Collections {
 			}
 		}
 
-		public StringTable( [NotNull] Folder commonName ) {
+		public StringTable( Folder commonName ) {
 			if ( commonName is null ) {
-				throw new ArgumentNullException( nameof( commonName ) );
+				throw new ArgumentEmptyException( nameof( commonName ) );
 			}
 
 			this.Ints = new PersistTable<UInt64, String>( new Folder( commonName, nameof( this.Ints ) ), true );
@@ -91,7 +88,7 @@ namespace Librainian.Collections {
 		/// <summary>Returns true if the word is contained in the collections.</summary>
 		/// <param name="word"></param>
 		/// <returns></returns>
-		public Boolean Contains( [CanBeNull] String? word ) {
+		public Boolean Contains( String? word ) {
 			if ( String.IsNullOrEmpty( word ) ) {
 				return false;
 			}
@@ -104,10 +101,8 @@ namespace Librainian.Collections {
 		/// <returns></returns>
 		public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out var _ );
 
-		[NotNull]
 		public ICollection<UInt64> EachInt() => this.Ints.Keys;
 
-		[NotNull]
 		public ICollection<String> EachWord() => this.Words.Keys;
 	}
 }

@@ -41,9 +41,8 @@ namespace Librainian.FileSystem {
 		private static extern UInt32 GetLongPathNameW( this String lpszShortPath, StringBuilder lpszLongPath, UInt32 cchBuffer );
 
 		[Pure]
-		[JetBrains.Annotations.NotNull]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static String EnsureExtendedPrefix( [JetBrains.Annotations.NotNull] this String path ) {
+		public static String EnsureExtendedPrefix( this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
 			if ( path.IsPartiallyQualified() || path.IsDevice() ) {
@@ -57,8 +56,7 @@ namespace Librainian.FileSystem {
 			return $"{Constants.ExtendedPathPrefix}{path}";
 		}
 
-		[JetBrains.Annotations.NotNull]
-		public static String GetLongPathName( [JetBrains.Annotations.NotNull] this String path ) {
+		public static String GetLongPathName( this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
 			var stringBuffer = new StringBuilder( Constants.MaxPathLength );
@@ -69,7 +67,7 @@ namespace Librainian.FileSystem {
 
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsDevice( [JetBrains.Annotations.NotNull] this String path ) {
+		public static Boolean IsDevice( this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
 			if ( path.IsExtended() ) {
@@ -113,7 +111,7 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns true if the path is too long</summary>
 		[DebuggerStepThrough]
-		public static Boolean IsPathTooLong( [JetBrains.Annotations.NotNull] this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
+		public static Boolean IsPathTooLong( this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -127,9 +125,8 @@ namespace Librainian.FileSystem {
 		/// <param name="path"></param>
 		/// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
 		[DebuggerStepThrough]
-		[JetBrains.Annotations.NotNull]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static String TrimAndThrowIfBlank( [CanBeNull] this String? path ) {
+		public static String TrimAndThrowIfBlank( this String? path ) {
 			path = path?.Trim();
 
 			if ( String.IsNullOrEmpty( path ) ) {
@@ -147,7 +144,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean TrimAndThrowIfBlank( [DoesNotReturnIf( true )][CanBeNull] ref String path ) {
+		public static Boolean TrimAndThrowIfBlank( [DoesNotReturnIf( true )] ref String? path ) {
 			path = path.Trim();
 
 			if ( !String.IsNullOrEmpty( path ) ) {

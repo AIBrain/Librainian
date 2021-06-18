@@ -28,8 +28,9 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Reflection;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>
 	///     Code pulled from
@@ -40,15 +41,15 @@ namespace Librainian.Threading {
 	/// </remarks>
 	public static class ObjectExtensions {
 
-		private static MethodInfo MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance )!;
+		private static MethodInfo MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
 		private static void CopyFields(
-			[NotNull] this Object original,
-			[NotNull] IDictionary<Object, Object> visited,
-			[NotNull] Object destination,
-			[NotNull] IReflect reflect,
+			this Object original,
+			IDictionary<Object, Object> visited,
+			Object destination,
+			IReflect reflect,
 			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-			[CanBeNull] Func<FieldInfo, Boolean>? filter = null
+			Func<FieldInfo, Boolean>? filter = null
 		) {
 			var fields = reflect.GetFields( bindingFlags );
 
@@ -64,8 +65,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		[CanBeNull]
-		private static Object? InternalCopy( [CanBeNull] Object? originalObject, [NotNull] IDictionary<Object, Object> visits ) {
+		private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object> visits ) {
 			if ( originalObject is null ) {
 				return null;
 			}
@@ -116,10 +116,10 @@ namespace Librainian.Threading {
 		}
 
 		private static void RecursiveCopyBaseTypePrivateFields(
-			[CanBeNull] Object? originalObject,
-			[CanBeNull] IDictionary<Object, Object> visited,
-			[CanBeNull] Object? destination,
-			[NotNull] Type typeToReflect
+			Object? originalObject,
+			IDictionary<Object, Object>? visited,
+			Object? destination,
+			Type typeToReflect
 		) {
 			if ( originalObject is null ) {
 				return;
@@ -136,20 +136,17 @@ namespace Librainian.Threading {
 			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
 		}
 
-		[CanBeNull]
-		public static T? Copy<T>( [CanBeNull] this T original ) =>
+		public static T? Copy<T>( this T? original ) =>
 					( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
 
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static Object? DeepCopy<T>( [CanBeNull] this T original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
 
-		[CanBeNull]
-		public static Object? GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
+		public static Object? GetPrivateFieldValue<T>( [DisallowNull] this T instance, String fieldName ) {
 			if ( instance is null ) {
-				throw new ArgumentNullException( nameof( instance ) );
+				throw new ArgumentEmptyException( nameof( instance ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( fieldName ) ) {
@@ -166,7 +163,7 @@ namespace Librainian.Threading {
 			return info.GetValue( instance );
 		}
 
-		public static Boolean IsPrimitive<T>( [CanBeNull] this T type ) =>
+		public static Boolean IsPrimitive<T>( this T? type ) =>
 			type switch {
 				null => false,
 				String _ => true,

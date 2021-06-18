@@ -35,13 +35,12 @@ namespace Librainian.FileSystem {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public class FileCopyManager {
 
 		private ConcurrentDictionary<Document, Task<FileCopyData>> SourceFilesToBeCopied { get; } = new();
 
-		[NotNull]
 		public IAsyncEnumerable<Task<FileCopyData>> FilesToBeCopied() => this.SourceFilesToBeCopied.Values.ToAsyncEnumerable();
 
 		/// <summary>
@@ -53,13 +52,13 @@ namespace Librainian.FileSystem {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		public async Task LoadFilesToBeCopied(
-			[NotNull] IAsyncEnumerable<Document> sourceFiles,
+			IAsyncEnumerable<Document> sourceFiles,
 			IFolder destinationFolder,
 			Boolean overwriteDestination,
 			CancellationToken cancellationToken
 		) {
 			if ( sourceFiles is null ) {
-				throw new ArgumentNullException( nameof( sourceFiles ) );
+				throw new ArgumentEmptyException( nameof( sourceFiles ) );
 			}
 
 			await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ) ) {

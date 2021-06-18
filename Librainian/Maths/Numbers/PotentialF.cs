@@ -26,7 +26,6 @@ namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -77,10 +76,9 @@ namespace Librainian.Maths.Numbers {
 
 		public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min, max ) ) { }
 
-		public static implicit operator Single( [NotNull] PotentialF special ) => special.Value;
+		public static implicit operator Single( PotentialF special ) => special.Value;
 
-		[NotNull]
-		public static PotentialF Parse( [NotNull] String value ) => new( Single.Parse( value ) );
+		public static PotentialF Parse( String value ) => new( Single.Parse( value ) );
 
 		public void Add( Single amount ) => this.Value += amount;
 
@@ -90,7 +88,6 @@ namespace Librainian.Maths.Numbers {
 
 		public void Multiply( Single amount ) => this.Value *= amount;
 
-		[NotNull]
 		public override String ToString() => $"{this.Value:P3}";
 	}
 }

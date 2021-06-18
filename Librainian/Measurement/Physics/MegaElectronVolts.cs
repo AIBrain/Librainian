@@ -27,7 +27,6 @@ namespace Librainian.Measurement.Physics {
 	using System;
 	using System.Diagnostics;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
@@ -88,7 +87,6 @@ namespace Librainian.Measurement.Physics {
 
 		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
 
-		[NotNull]
 		public override String ToString() => $"{this.Value} MeV";
 
 		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );

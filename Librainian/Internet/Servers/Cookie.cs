@@ -25,7 +25,6 @@
 namespace Librainian.Internet.Servers {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public class Cookie {
 
@@ -35,7 +34,7 @@ namespace Librainian.Internet.Servers {
 
 		public String Value;
 
-		public Cookie( [CanBeNull] String? name, [CanBeNull] String? value, TimeSpan expire ) {
+		public Cookie( String? name, String? value, TimeSpan expire ) {
 			this.Name = name;
 			this.Value = value;
 			this.Expire = expire;

@@ -42,7 +42,6 @@ namespace Librainian.OperatingSystem {
 	using ComputerSystem.Devices;
 	using FileSystem;
 	using Graphics;
-	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
 
 	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
@@ -749,7 +748,6 @@ namespace Librainian.OperatingSystem {
 		/// </returns>
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx" />
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
-		[CanBeNull]
 		public static extern SafeSearchHandle? FindFirstFile( String lpFileName, out Win32FindData lpFindData );
 
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
@@ -899,7 +897,7 @@ namespace Librainian.OperatingSystem {
 		[DllImport( "user32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern IntPtr GetWindowDC( IntPtr hwnd );
 
-		public static void HandleLastError( [JetBrains.Annotations.NotNull] String fullPath ) {
+		public static void HandleLastError( String fullPath ) {
 			var lastWin32Error = Marshal.GetLastWin32Error();
 
 			HandleLastError( fullPath, lastWin32Error );
@@ -1178,7 +1176,6 @@ namespace Librainian.OperatingSystem {
 			}
 		}
 
-		[CanBeNull]
 		[DebuggerStepThrough]
 		public static DateTime? ToDateTime( this FILETIME time ) {
 			try {
@@ -1283,7 +1280,6 @@ namespace Librainian.OperatingSystem {
 			IntPtr arguments
 		);
 
-		[JetBrains.Annotations.NotNull]
 		public static String GetErrorMessage( Int32 code ) {
 			var message = new StringBuilder( 255 );
 
@@ -1660,7 +1656,7 @@ namespace Librainian.OperatingSystem {
 			/// <param name="left"></param>
 			/// <param name="right"></param>
 			/// <returns></returns>
-			public static Boolean Equals( [CanBeNull] HANDLE? left, [CanBeNull] HANDLE? right ) {
+			public static Boolean Equals( HANDLE? left, HANDLE? right ) {
 				if ( ReferenceEquals( left, right ) ) {
 					return true;
 				}
@@ -1676,13 +1672,13 @@ namespace Librainian.OperatingSystem {
 			/// <param name="h1">The first handle.</param>
 			/// <param name="h2">The second handle.</param>
 			/// <returns>The result of the operator.</returns>
-			public static Boolean operator !=( [CanBeNull] HANDLE? h1, [CanBeNull] HANDLE? h2 ) => !( h1 == h2 );
+			public static Boolean operator !=( HANDLE? h1, HANDLE? h2 ) => !( h1 == h2 );
 
 			/// <summary>Implements the operator ==.</summary>
 			/// <param name="h1">The first handle.</param>
 			/// <param name="h2">The second handle.</param>
 			/// <returns>The result of the operator.</returns>
-			public static Boolean operator ==( [CanBeNull] HANDLE? h1, [CanBeNull] HANDLE? h2 ) => h1 is not null && h2 is not null && h1.Equals( h2 );
+			public static Boolean operator ==( HANDLE? h1, HANDLE? h2 ) => h1 is not null && h2 is not null && h1.Equals( h2 );
 
 			/// <summary>Determines whether the specified <see cref="Object" />, is equal to this instance.</summary>
 			/// <param name="obj">The <see cref="Object" /> to compare with this instance.</param>

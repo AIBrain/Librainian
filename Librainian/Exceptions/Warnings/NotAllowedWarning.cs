@@ -31,7 +31,6 @@ namespace Librainian.Exceptions.Warnings {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 
 	/// <summary><see cref="Warning" />: What the code just tried to do is <see cref="NotAllowedWarning" />.</summary>
 	[Serializable]
@@ -43,6 +42,6 @@ namespace Librainian.Exceptions.Warnings {
 
 		public NotAllowedWarning( String message ) : base( message ) { }
 
-		public NotAllowedWarning( String message, [CanBeNull] Exception inner ) : base( message, inner ) { }
+		public NotAllowedWarning( String message, Exception? inner ) : base( message, inner ) { }
 	}
 }

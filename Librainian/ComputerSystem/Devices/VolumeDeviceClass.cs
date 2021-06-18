@@ -28,7 +28,6 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Collections.Generic;
 	using System.Text;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>The device class for volume devices.</summary>
@@ -36,7 +35,6 @@ namespace Librainian.ComputerSystem.Devices {
 	/// <remarks>written by Simon Mourier &lt;email: simon [underscore] mourier [at] hotmail [dot] com&gt;</remarks>
 	public class VolumeDeviceClass : DeviceClass {
 
-		[NotNull]
 		protected internal SortedDictionary<String, String> LogicalDrives { get; } = new();
 
 		/// <summary>Initializes a new instance of the VolumeDeviceClass class.</summary>
@@ -54,7 +52,7 @@ namespace Librainian.ComputerSystem.Devices {
 			}
 		}
 
-		protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String path, Int32 index, Int32 disknum = -1 ) =>
+		protected override Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String? path, Int32 index, Int32 disknum = -1 ) =>
 			new Volume( deviceClass, deviceInfoData, path, index );
 	}
 }

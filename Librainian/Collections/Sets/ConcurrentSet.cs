@@ -33,7 +33,7 @@ namespace Librainian.Collections.Sets {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary></summary>
@@ -44,9 +44,9 @@ namespace Librainian.Collections.Sets {
 
 		public ConcurrentSet() { }
 
-		public ConcurrentSet( [NotNull] params T[] items ) => this.UnionWith( items );
+		public ConcurrentSet( params T[] items ) => this.UnionWith( items );
 
-		public ConcurrentSet( [NotNull] IEnumerable<T> items ) => this.UnionWith( items );
+		public ConcurrentSet( IEnumerable<T> items ) => this.UnionWith( items );
 
 		/// <summary>Here I'm using the already-built threadsafety in <see cref="ConcurrentDictionary{TKey,TValue}" />.</summary>
 		[JsonProperty]
@@ -91,7 +91,7 @@ namespace Librainian.Collections.Sets {
 		///     zero-based indexing.
 		/// </param>
 		/// <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="array" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="array" /> is null.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="arrayIndex" /> is less than 0.</exception>
 		/// <exception cref="ArgumentException">
 		///     <paramref name="array" /> is multidimensional.-or-The number of elements in the source <see cref="ICollection" />
@@ -104,7 +104,7 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Removes all elements in the specified collection from the current set.</summary>
 		/// <param name="other">The collection of items to remove from the set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public void ExceptWith( IEnumerable<T> other ) {
 			foreach ( var item in other ) {
 				this.TryRemove( item );
@@ -117,13 +117,13 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Modifies the current set so that it contains only elements that are also in a specified collection.</summary>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public void IntersectWith( IEnumerable<T> other ) => Parallel.ForEach( this.Where( item => !other.Contains( item ) ), item => this.TryRemove( item ) );
 
 		/// <summary>Determines whether the current set is a property (strict) subset of a specified collection.</summary>
 		/// <returns>true if the current set is a correct subset of <paramref name="other" />; otherwise, false.</returns>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public Boolean IsProperSubsetOf( IEnumerable<T> other ) {
 			var others = other as IList<T> ?? other.ToArray();
 
@@ -133,7 +133,7 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Determines whether the current set is a correct superset of a specified collection.</summary>
 		/// <returns>true if the set object is a correct superset of <paramref name="other" />; otherwise, false.</returns>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public Boolean IsProperSupersetOf( IEnumerable<T> other ) {
 			var list = other as IList<T> ?? other.ToArray();
 
@@ -143,7 +143,7 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Determines whether a set is a subset of a specified collection.</summary>
 		/// <returns>true if the current set is a subset of <paramref name="other" />; otherwise, false.</returns>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public Boolean IsSubsetOf( IEnumerable<T> other ) {
 			var list = other as IList<T> ?? other.ToArray();
 
@@ -153,13 +153,13 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Determines whether the current set is a superset of a specified collection.</summary>
 		/// <returns>true if the current set is a superset of <paramref name="other" />; otherwise, false.</returns>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public Boolean IsSupersetOf( IEnumerable<T> other ) => other.AsParallel().All( this.Contains );
 
 		/// <summary>Determines whether the current set overlaps with the specified collection.</summary>
 		/// <returns>true if the current set and <paramref name="other" /> share at least one common element; otherwise, false.</returns>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public Boolean Overlaps( IEnumerable<T> other ) => other.AsParallel().Any( this.Contains );
 
 		/// <summary>Removes the first occurrence of a specific object from the <see cref="ICollection" />.</summary>
@@ -175,7 +175,7 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Determines whether the current set and the specified collection contain the same elements.</summary>
 		/// <returns>true if the current set is equal to <paramref name="other" />; otherwise, false.</returns>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public Boolean SetEquals( IEnumerable<T> other ) {
 			var list = other as IList<T> ?? other.ToArray();
 
@@ -187,7 +187,7 @@ namespace Librainian.Collections.Sets {
 		///     the specified collection, but not both.
 		/// </summary>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public void SymmetricExceptWith( IEnumerable<T> other ) => throw new NotImplementedException();
 
 		/// <summary>
@@ -195,7 +195,7 @@ namespace Librainian.Collections.Sets {
 		///     specified collection.
 		/// </summary>
 		/// <param name="other">The collection to compare to the current set.</param>
-		/// <exception cref="ArgumentNullException"><paramref name="other" /> is null.</exception>
+		/// <exception cref="ArgumentEmptyException"><paramref name="other" /> is null.</exception>
 		public void UnionWith( IEnumerable<T> other ) {
 			foreach ( var item in other ) {
 				this.TryAdd( item );
@@ -220,16 +220,15 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Returns a copy of the items to an array.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public T[] ToArray() => this.Dictionary.Keys.ToArray();
 
-		public Boolean TryAdd( [NotNull] T item ) => this.Dictionary.TryAdd( item, null );
+		public Boolean TryAdd( T item ) => this.Dictionary.TryAdd( item, null );
 
-		public Boolean TryGet( [NotNull] T item ) => this.Dictionary.TryGetValue( item, out var _ );
+		public Boolean TryGet( T item ) => this.Dictionary.TryGetValue( item, out var _ );
 
-		public Boolean TryRemove( [NotNull] T item ) => this.Dictionary.TryRemove( item, out var _ );
+		public Boolean TryRemove( T item ) => this.Dictionary.TryRemove( item, out var _ );
 
-		public Boolean TryTakeAny( [CanBeNull] out T? item ) {
+		public Boolean TryTakeAny( out T? item ) {
 			foreach ( var pair in this.Dictionary ) {
 				item = pair.Key;
 

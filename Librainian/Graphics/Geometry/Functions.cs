@@ -27,7 +27,6 @@ namespace Librainian.Graphics.Geometry {
 	using System;
 	using System.Numerics;
 	using DDD;
-	using JetBrains.Annotations;
 	using Logging;
 
 	public static class Functions {
@@ -133,12 +132,12 @@ namespace Librainian.Graphics.Geometry {
 		/// </summary>
 		/// <returns></returns>
 		public static Boolean CalculateLineLineIntersection(
-			[CanBeNull] this CoordinateF line1Point1,
-			[CanBeNull] CoordinateF line1Point2,
-			[CanBeNull] CoordinateF line2Point1,
-			[CanBeNull] CoordinateF line2Point2,
-			[CanBeNull] out CoordinateF resultSegmentPoint1,
-			[CanBeNull] out CoordinateF resultSegmentPoint2
+			this CoordinateF? line1Point1,
+			CoordinateF? line1Point2,
+			CoordinateF? line2Point1,
+			CoordinateF? line2Point2,
+			out CoordinateF? resultSegmentPoint1,
+			out CoordinateF? resultSegmentPoint2
 		) {
 			"".Break();
 

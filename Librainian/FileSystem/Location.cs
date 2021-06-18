@@ -29,7 +29,6 @@ namespace Librainian.FileSystem {
 
 	using System;
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
 
 	/// <summary>Points to a local file, a directory, a LAN file, or an internet file.</summary>
 	/// <remarks>(Stored internally as a string)</remarks>
@@ -39,12 +38,11 @@ namespace Librainian.FileSystem {
 		private Int32 HashCode => this.Address.GetHashCode();
 
 		/// <summary>A local file, LAN, UNC, or a URI.</summary>
-		[NotNull]
 		public String Address { get; }
 
 		private Location() => this.Address = String.Empty;
 
-		public Location( [NotNull] String location ) {
+		public Location( String location ) {
 			if ( String.IsNullOrWhiteSpace( location ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
 			}
@@ -58,7 +56,7 @@ namespace Librainian.FileSystem {
 			this.Address = new Uri( location ).AbsoluteUri;
 		}
 
-		public static Boolean Equals( [CanBeNull] Location? left, [CanBeNull] Location? right ) {
+		public static Boolean Equals( Location? left, Location? right ) {
 			if ( left is null || right is null ) {
 				return false;
 			}
@@ -66,19 +64,19 @@ namespace Librainian.FileSystem {
 			return left.HashCode.Equals( right.HashCode ) && left.Address.Equals( right.Address, StringComparison.Ordinal );
 		}
 
-		public static Boolean operator !=( [CanBeNull] Location left, [CanBeNull] Location right ) => !Equals( left, right );
+		public static Boolean operator !=( Location? left, Location? right ) => !Equals( left, right );
 
-		public static Boolean operator <( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( left, right ) < 0;
+		public static Boolean operator <( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) < 0;
 
-		public static Boolean operator <=( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( left, right ) <= 0;
+		public static Boolean operator <=( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) <= 0;
 
-		public static Boolean operator ==( [CanBeNull] Location left, [CanBeNull] Location right ) => Equals( left, right );
+		public static Boolean operator ==( Location? left, Location? right ) => Equals( left, right );
 
-		public static Boolean operator >( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( left, right ) > 0;
+		public static Boolean operator >( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) > 0;
 
-		public static Boolean operator >=( [CanBeNull] Location left, [CanBeNull] Location right ) => Comparer<Location>.Default.Compare( left, right ) >= 0;
+		public static Boolean operator >=( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) >= 0;
 
-		public Int32 CompareTo( [CanBeNull] Object? obj ) {
+		public Int32 CompareTo( Object? obj ) {
 			if ( obj is null ) {
 				return 1;
 			}
@@ -94,7 +92,7 @@ namespace Librainian.FileSystem {
 			throw new ArgumentException( $"Object must be of type {nameof( Location )}" );
 		}
 
-		public Int32 CompareTo( [CanBeNull] Location? other ) {
+		public Int32 CompareTo( Location? other ) {
 			if ( ReferenceEquals( this, other ) ) {
 				return 0;
 			}

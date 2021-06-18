@@ -25,7 +25,6 @@
 namespace Librainian.Maths.Numbers {
 
 	using System;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 
@@ -59,11 +58,10 @@ namespace Librainian.Maths.Numbers {
 		//public static Double Combine( Double value1, Double value2 ) { return ( value1 + value2 ) / 2D; }
 		public Statistically( Double ups = 0d, Double downs = 0d ) => Reset( this, ups, downs );
 
-		[NotNull]
-		public static Statistically Combine( [NotNull] Statistically value1, [NotNull] Statistically value2 ) =>
+		public static Statistically Combine( Statistically value1, Statistically value2 ) =>
 			new( value1.Ups + value2.Ups, value1.Downs + value2.Downs );
 
-		public static void Reset( [NotNull] Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
+		public static void Reset( Statistically statistically, Double newUps = 0.0, Double newDowns = 0.0 ) {
 			statistically.Ups = 0d;
 			statistically.Downs = 0d;
 			statistically.Total = 0d;
@@ -71,12 +69,11 @@ namespace Librainian.Maths.Numbers {
 			statistically.IncrementDowns( newDowns );
 		}
 
-		public void Add( [NotNull] Statistically other ) {
+		public void Add( Statistically other ) {
 			this.IncrementUps( other.Ups );
 			this.IncrementDowns( other.Downs );
 		}
 
-		[NotNull]
 		public Statistically Clone() => new( this.Ups, this.Downs );
 
 		public void DecrementDowns( Double byAmount = 1d ) {
@@ -151,7 +148,6 @@ namespace Librainian.Maths.Numbers {
 			this.Total += byAmount;
 		}
 
-		[NotNull]
 		public override String ToString() => $"U:{this.Ups:f1} vs D:{this.Downs:f1} out of {this.Total:f1}";
 	}
 }

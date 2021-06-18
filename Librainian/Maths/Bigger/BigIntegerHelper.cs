@@ -4,6 +4,7 @@
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Numerics;
+	using Exceptions;
 
 	/// <summary>
 	///     Sqrt and NRoot acquired from http://mjs5.com/2016/01/20/c-biginteger-helper-constructors
@@ -14,7 +15,7 @@
 
 		public static BigInteger GCD( IEnumerable<BigInteger> numbers ) {
 			if ( numbers == null ) {
-				throw new ArgumentNullException( nameof( numbers ) );
+				throw new ArgumentEmptyException( nameof( numbers ) );
 			}
 
 			return numbers.Aggregate( GCD );
@@ -60,7 +61,7 @@
 
 		public static BigInteger LCM( IEnumerable<BigInteger> numbers ) {
 			if ( numbers == null ) {
-				throw new ArgumentNullException( nameof( numbers ) );
+				throw new ArgumentEmptyException( nameof( numbers ) );
 			}
 
 			return numbers.Aggregate( LCM );

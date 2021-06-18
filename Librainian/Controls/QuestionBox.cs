@@ -32,7 +32,6 @@ namespace Librainian.Controls {
 	using System;
 	using System.Windows.Forms;
 	using Exceptions;
-	using JetBrains.Annotations;
 
 	public partial class QuestionBox : Form {
 
@@ -40,7 +39,7 @@ namespace Librainian.Controls {
 
 		public String? Response { get; set; }
 
-		public QuestionBox( [NotNull] String question ) {
+		public QuestionBox( String question ) {
 			if ( String.IsNullOrWhiteSpace( question ) ) {
 				throw new ArgumentEmptyException( nameof( question ) );
 			}

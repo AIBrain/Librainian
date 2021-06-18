@@ -28,7 +28,6 @@ namespace Librainian.Measurement.Physics {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
@@ -129,7 +128,6 @@ namespace Librainian.Measurement.Physics {
 
 		/// <summary>Returns the fully qualified type name of this instance.</summary>
 		/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.Value} eV";
 
 		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );

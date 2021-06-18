@@ -31,7 +31,6 @@ namespace Librainian.Threading {
 	using System.Collections.Generic;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 
 	/// <summary></summary>
 	/// <example>
@@ -43,10 +42,8 @@ namespace Librainian.Threading {
 
 		private readonly ThreadPriority _priority;
 
-		[NotNull]
 		private readonly BlockingCollection<Task> _tasks = new();
 
-		[CanBeNull]
 		private Thread[]? _threads;
 
 		public static PriorityScheduler AboveNormal { get; } = new( ThreadPriority.AboveNormal );
@@ -59,10 +56,9 @@ namespace Librainian.Threading {
 
 		public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
 
-		[NotNull]
 		protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
 
-		protected override void QueueTask( [CanBeNull] Task task ) {
+		protected override void QueueTask( Task? task ) {
 			this._tasks.Add( task );
 
 			if ( this._threads is null ) {
@@ -86,7 +82,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		protected override Boolean TryExecuteTaskInline( [CanBeNull] Task task, Boolean taskWasPreviouslyQueued ) => false;
+		protected override Boolean TryExecuteTaskInline( Task? task, Boolean taskWasPreviouslyQueued ) => false;
 
 		public void Dispose() {
 			this._tasks.Dispose();

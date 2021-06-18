@@ -28,20 +28,16 @@ namespace Librainian.Persistence {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Measurement.Time;
 	using Threading;
 	using Utilities;
 
 	public sealed class DeserializeReportStats : ABetterClassDispose {
 
-		[NotNull]
 		private ThreadLocal<Int64> Gains { get; } = new( true );
 
-		[NotNull]
 		private Action<DeserializeReportStats> Handler { get; }
 
-		[NotNull]
 		private ThreadLocal<Int64> Losses { get; } = new( true );
 
 		public Boolean Enabled { get; set; }
@@ -50,7 +46,7 @@ namespace Librainian.Persistence {
 
 		public Int64 Total { get; set; }
 
-		public DeserializeReportStats( [CanBeNull] Action<DeserializeReportStats> handler, TimeSpan? timing = null ) {
+		public DeserializeReportStats( Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) {
 			this.Gains.Values.Clear();
 			this.Gains.Value = 0;
 
@@ -89,7 +85,6 @@ namespace Librainian.Persistence {
 
 		public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
 
-		[NotNull]
 		public Task StartReporting() {
 			this.Enabled = true;
 

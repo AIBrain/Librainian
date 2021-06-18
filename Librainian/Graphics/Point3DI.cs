@@ -25,7 +25,6 @@
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	/// <summary>Represents a location in 3D integer space.</summary>
 	/// <remarks>Culled from the file CPI.Plot3D.cs I don't know where that file came from otherwise I'd attribute it!</remarks>
@@ -108,7 +107,7 @@ namespace Librainian.Graphics {
 		/// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
 		/// <param name="obj">An object to compare with this instance.</param>
 		/// <returns>True if the object equals this instance; false otherwise.</returns>
-		public override Boolean Equals( Object obj ) => obj is Point3Di di && this.Equals( di );
+		public override Boolean Equals( Object? obj ) => obj is Point3Di di && this.Equals( di );
 
 		/// <summary>Returns a value indicating whether this instance is equal to a specified Point3D structure.</summary>
 		/// <param name="other">A Point3D structure to compare to this instance.</param>
@@ -121,7 +120,6 @@ namespace Librainian.Graphics {
 
 		/// <summary>Returns a String representation of the point in [X,Y,Z] format.</summary>
 		/// <returns>A String representing the point's XYZ coordinates.</returns>
-		[NotNull]
 		public override String ToString() => $"[{this.X}, {this.Y}, {this.Z}]";
 	}
 }

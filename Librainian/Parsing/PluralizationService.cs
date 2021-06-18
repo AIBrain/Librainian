@@ -4,11 +4,9 @@ namespace Librainian.Parsing {
 
 	using System;
 	using System.Globalization;
-	using JetBrains.Annotations;
 
 	public abstract class PluralizationService {
 
-		[NotNull]
 		public CultureInfo Culture { get; protected set; }
 
 		protected PluralizationService( CultureInfo cultureInfo ) {
@@ -26,7 +24,6 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="culture">CultureInfo</param>
 		/// <returns>PluralizationService</returns>
-		[NotNull]
 		public static PluralizationService CreateService( CultureInfo culture ) => new EnglishPluralizationService( culture );
 
 		public abstract Boolean IsPlural( String word );

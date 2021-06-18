@@ -57,25 +57,21 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Registry key for the user's software.
 		/// </summary>
-		[NotNull]
 		public static RegistryKey Software { get; }
 
 		/// <summary>
 		///     Registry key for the application.
 		/// </summary>
-		[NotNull]
 		public static RegistryKey TheApplication { get; }
 
 		/// <summary>
 		///     Registry key for the product's company.
 		/// </summary>
-		[NotNull]
 		public static RegistryKey TheCompany { get; }
 
 		/// <summary>
 		///     Registry key for the current user;
 		/// </summary>
-		[NotNull]
 		public static RegistryKey TheUser { get; } = Registry.CurrentUser ?? throw new NullException(nameof(TheUser));
 
 		static AppRegistry() {
@@ -106,7 +102,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		/// <returns></returns>
-		[CanBeNull]
 		public static Object? Get( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -138,7 +133,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
 		/// <returns></returns>
-		[CanBeNull]
 		public static Object? Get( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -178,7 +172,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		[Pure]
-		[CanBeNull]
 		public static Boolean? GetBoolean( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -210,7 +203,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
 		[Pure]
-		[CanBeNull]
 		public static Boolean? GetBoolean( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -250,7 +242,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		[Pure]
-		[CanBeNull]
 		public static Byte? GetByte( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -282,7 +273,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
 		[Pure]
-		[CanBeNull]
 		public static Byte? GetByte( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -322,7 +312,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		[Pure]
-		[CanBeNull]
 		public static Int32? GetInt32( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -354,7 +343,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
 		[Pure]
-		[CanBeNull]
 		public static Int32? GetInt32( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -370,17 +358,10 @@ namespace Librainian.Persistence {
 
 			try {
 				using var registryKey = TheApplication.OpenSubKey( folder );
-				if ( registryKey is null ) {
-					new NullException( nameof( registryKey ) ).Log(BreakOrDontBreak.Break);
-					return default( Int32? );
-				}
 
-				using var subKey = registryKey.OpenSubKey( subkey );
-				if ( subKey == null ) {
-					throw new NullException( nameof( subKey ) );
-				}
+				using var subKey = registryKey?.OpenSubKey( subkey );
 
-				return subKey.GetValue( key ).ToIntOrNull();
+				return subKey?.GetValue( key ).ToIntOrNull();
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -395,7 +376,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		[Pure]
-		[CanBeNull]
 		public static Int64? GetInt64( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -430,7 +410,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
 		[Pure]
-		[CanBeNull]
 		public static Int64? GetInt64( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -474,7 +453,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		[Pure]
-		[CanBeNull]
 		[DebuggerStepThrough]
 		public static String? GetString( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
@@ -491,7 +469,7 @@ namespace Librainian.Persistence {
 					return registryKey.GetValue( key )?.ToStringOrNull();
 				}
 
-				throw new NullException( nameof( registryKey ) );
+				//throw new NullException( nameof( registryKey ) );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -507,7 +485,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
 		[Pure]
-		[CanBeNull]
 		public static String? GetString( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -549,7 +526,7 @@ namespace Librainian.Persistence {
 		/// <param name="value"> </param>
 		/// <param name="kind">  </param>
 		/// <returns></returns>
-		public static Boolean Set( [NotNull] String folder, String key, [CanBeNull] Object? value, RegistryValueKind kind ) {
+		public static Boolean Set( String folder, String key, Object? value, RegistryValueKind kind ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
 			}
@@ -586,7 +563,7 @@ namespace Librainian.Persistence {
 		/// <param name="value"> </param>
 		/// <param name="kind">  </param>
 		/// <returns></returns>
-		public static Boolean Set<T>( [NotNull] String folder, [NotNull] String key, [NotNull] String subkey, [CanBeNull] T? value, RegistryValueKind kind ) {
+		public static Boolean Set<T>( String folder, String key, String subkey, T? value, RegistryValueKind kind ) {
 			if ( String.IsNullOrWhiteSpace( folder ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );
 			}
@@ -626,7 +603,7 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		/// <param name="value"> </param>
-		public static void Set( [NotNull] String folder, String key, String value ) => Set( folder, key, value, RegistryValueKind.String );
+		public static void Set( String folder, String key, String value ) => Set( folder, key, value, RegistryValueKind.String );
 
 		/// <summary>
 		///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>
@@ -634,7 +611,7 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		/// <param name="value"> </param>
-		public static void Set( [NotNull] String folder, String key, Int32 value ) => Set( folder, key, value, RegistryValueKind.DWord );
+		public static void Set( String folder, String key, Int32 value ) => Set( folder, key, value, RegistryValueKind.DWord );
 
 		/// <summary>
 		///     <para>Sets the <paramref name="value" /> of the current user's software's company's application's folder's key.</para>
@@ -642,6 +619,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		/// <param name="value"> </param>
-		public static void Set( [NotNull] String folder, String key, Int64 value ) => Set( folder, key, value, RegistryValueKind.QWord );
+		public static void Set( String folder, String key, Int64 value ) => Set( folder, key, value, RegistryValueKind.QWord );
 	}
 }

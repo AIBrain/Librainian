@@ -25,7 +25,6 @@
 namespace Librainian.Internet {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -35,9 +34,8 @@ namespace Librainian.Internet {
 		public CaptchaStatus CaptchaStatus { get; set; }
 
 		/// <summary>URI of the captcha.</summary>
-		[CanBeNull]
 		[JsonProperty]
-		public Uri Location { get; set; }
+		public Uri? Location { get; set; }
 
 		/// <summary>A count of the requests to scrape this captcha.</summary>
 		[JsonProperty]

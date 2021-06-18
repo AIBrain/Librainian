@@ -31,8 +31,8 @@ namespace Librainian.Internet {
 	using System.Net.Cache;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 
 	public static class Internet {
@@ -43,37 +43,27 @@ namespace Librainian.Internet {
 
 		public interface IDownloader {
 
-			[CanBeNull]
 			ICredentials? Credentials { get; }
 
 			/// <summary>When downloading data, this will be the destination.</summary>
-			[CanBeNull]
 			Byte[]? DestinationBuffer { get; }
 
 			/// <summary>When downloading a file, this will be the destination.</summary>
-			[CanBeNull]
 			Document? DestinationDocument { get; }
 
 			/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
-			[CanBeNull]
 			Stopwatch? Elasped { get; set; }
 
-			[CanBeNull]
 			Action? OnCancelled { get; set; }
 
-			[CanBeNull]
 			Action? OnCompleted { get; set; }
 
-			[CanBeNull]
 			Action? OnFailure { get; set; }
 
-			[CanBeNull]
 			Action? OnTimeout { get; set; }
 
-			[NotNull]
 			Uri Source { get; }
 
-			[CanBeNull]
 			Task? Task { get; set; }
 
 			/// <summary>
@@ -115,13 +105,13 @@ namespace Librainian.Internet {
 			/// <param name="autoStart">If true, the download will begin now.</param>
 			/// <param name="credentials">Username and password, if needed otherwise null.</param>
 			public FileDownloader(
-				[NotNull] Uri source,
-				[NotNull] Document destination,
+				Uri source,
+				Document destination,
 				Boolean waitifBusy,
 				TimeSpan timeout,
 				 CancellationToken cancellationToken,
 				Boolean autoStart = true,
-				[CanBeNull] ICredentials? credentials = null
+				ICredentials? credentials = null
 			) : base( source, destination, waitifBusy, timeout, cancellationToken, credentials ) {
 				$"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
@@ -164,43 +154,32 @@ namespace Librainian.Internet {
 			/// <summary>-1 milliseconds</summary>
 			public static TimeSpan Forever { get; } = TimeSpan.FromMilliseconds( -1 );
 
-			[NotNull]
 			public WebClientWithTimeout Client { get; }
 
-			[CanBeNull]
 			public ICredentials? Credentials { get; set; }
 
-			[CanBeNull]
 			public Byte[]? DestinationBuffer { get; set; }
 
-			[NotNull]
 			public Document DestinationDocument { get; set; }
 
 			public ManualResetEventSlim Downloaded { get; } = new( false );
 
 			/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
-			[CanBeNull]
 			public Stopwatch? Elasped { get; set; }
 
 			/// <summary>The unique identifier assigned to this download.</summary>
 			public Guid Id { get; }
 
-			[CanBeNull]
 			public Action? OnCancelled { get; set; }
 
-			[CanBeNull]
 			public Action? OnCompleted { get; set; }
 
-			[CanBeNull]
 			public Action? OnFailure { get; set; }
 
-			[CanBeNull]
 			public Action? OnTimeout { get; set; }
 
-			[NotNull]
 			public Uri Source { get; set; }
 
-			[CanBeNull]
 			public Task? Task { get; set; }
 
 			/// <summary>The length of time to wait before the download is cancelled. See also: <seealso cref="Forever" />.</summary>
@@ -218,12 +197,12 @@ namespace Librainian.Internet {
 			/// <param name="credentials"></param>
 			/// <exception cref="InvalidOperationException">Thrown when the <see cref="WebClient" /> is busy.</exception>
 			protected UnderlyingDownloader(
-				[NotNull] Uri source,
-				[NotNull] Document destination,
+				Uri source,
+				Document destination,
 				Boolean waitIfBusy,
 				TimeSpan timeout,
 				 CancellationToken cancellationToken,
-				[CanBeNull] ICredentials? credentials = null
+				ICredentials? credentials = null
 			) {
 				var web = WebClients.Value;
 
@@ -237,8 +216,8 @@ namespace Librainian.Internet {
 				}
 
 				this.Client = web;
-				this.Source = source ?? throw new ArgumentNullException( nameof( source ) );
-				this.DestinationDocument = destination ?? throw new ArgumentNullException( nameof( destination ) );
+				this.Source = source ?? throw new ArgumentEmptyException( nameof( source ) );
+				this.DestinationDocument = destination ?? throw new ArgumentEmptyException( nameof( destination ) );
 				this.Timeout = timeout;
 				this.Id = Guid.NewGuid();
 				this.Credentials = credentials;

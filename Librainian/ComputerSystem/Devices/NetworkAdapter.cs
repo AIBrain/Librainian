@@ -33,7 +33,6 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Converters;
-	using JetBrains.Annotations;
 	using Measurement.Time;
 	using OperatingSystem;
 
@@ -52,7 +51,7 @@ namespace Librainian.ComputerSystem.Devices {
 		/// <summary>The NetEnabled status of the NetworkAdapter</summary>
 		public Int32 NetEnabled { get; }
 
-		public NetworkAdapter( Int32 deviceId, [CanBeNull] String? name, Int32 netEnabled, Int32 netConnectionStatus ) {
+		public NetworkAdapter( Int32 deviceId, String? name, Int32 netEnabled, Int32 netConnectionStatus ) {
 			this.DeviceId = deviceId;
 			this.Name = name;
 			this.NetEnabled = netEnabled;
@@ -113,8 +112,6 @@ namespace Librainian.ComputerSystem.Devices {
 
 		/// <summary>List all the NetworkAdapters</summary>
 		/// <returns>The list of all NetworkAdapter of the machine</returns>
-		[NotNull]
-		[ItemNotNull]
 		public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
 			var networkAdapters =
 				"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'".WmiQuery();
@@ -130,7 +127,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 		/// <summary>Enable Or Disable The NetworkAdapter</summary>
 		/// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
-		public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( [NotNull] String strOperation, CancellationToken cancellationToken ) {
+		public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( String strOperation, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( strOperation ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( strOperation ) );
 			}
