@@ -31,6 +31,7 @@ namespace Librainian.Threading {
 	using System.Diagnostics.CodeAnalysis;
 	using System.Reflection;
 	using Exceptions;
+	using Utilities;
 
 	/// <summary>
 	///     Code pulled from
@@ -39,14 +40,17 @@ namespace Librainian.Threading {
 	/// <remarks>
 	///     TODO Needs some serious testing.
 	/// </remarks>
+	[NeedsTesting]
 	public static class ObjectExtensions {
 
-		private static MethodInfo MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
+		[NeedsTesting]
+		private static MethodInfo? MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
+		[NeedsTesting]
 		private static void CopyFields(
 			this Object original,
-			IDictionary<Object, Object> visited,
-			Object destination,
+			IDictionary<Object, Object?> visited,
+			Object? destination,
 			IReflect reflect,
 			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
 			Func<FieldInfo, Boolean>? filter = null
@@ -65,7 +69,8 @@ namespace Librainian.Threading {
 			}
 		}
 
-		private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object> visits ) {
+		[NeedsTesting]
+		private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object?> visits ) {
 			if ( originalObject is null ) {
 				return null;
 			}
@@ -84,27 +89,20 @@ namespace Librainian.Threading {
 				return null;
 			}
 
-			var copy = MemberwiseCloneMethod.Invoke( originalObject, null );
+			var copy = MemberwiseCloneMethod?.Invoke( originalObject, null );
 
 			if ( reflect.IsArray ) {
 				var elementsType = reflect.GetElementType();
 
 				if ( elementsType != null /*&& !elementsType.IsPrimitive()*/ ) {
 
-					//why skip primitives?
+					//TODO why skip primitives?
+
 					if ( copy is Array clonedArray ) {
 						for ( var index = 0; index < clonedArray.Length; index++ ) {
 							clonedArray.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
 						}
 					}
-
-					/*
-					clonedArray.ForEach( ( section, index ) => {
-						if ( index != null ) {
-							section.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
-						}
-					} );
-					*/
 				}
 			}
 
@@ -115,9 +113,10 @@ namespace Librainian.Threading {
 			return copy;
 		}
 
+		[NeedsTesting]
 		private static void RecursiveCopyBaseTypePrivateFields(
 			Object? originalObject,
-			IDictionary<Object, Object>? visited,
+			IDictionary<Object, Object?> visited,
 			Object? destination,
 			Type typeToReflect
 		) {
@@ -136,14 +135,17 @@ namespace Librainian.Threading {
 			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
 		}
 
+		[NeedsTesting]
 		public static T? Copy<T>( this T? original ) =>
 					( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
 
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
 		/// <returns></returns>
-		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+		[NeedsTesting]
+		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object?>( new ReferenceEqualComparer<Object?>() ) );
 
+		[NeedsTesting]
 		public static Object? GetPrivateFieldValue<T>( [DisallowNull] this T instance, String fieldName ) {
 			if ( instance is null ) {
 				throw new ArgumentEmptyException( nameof( instance ) );
@@ -163,6 +165,7 @@ namespace Librainian.Threading {
 			return info.GetValue( instance );
 		}
 
+		[NeedsTesting]
 		public static Boolean IsPrimitive<T>( this T? type ) =>
 			type switch {
 				null => false,
