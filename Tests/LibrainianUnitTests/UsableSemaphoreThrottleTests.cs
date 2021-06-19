@@ -29,13 +29,12 @@ namespace LibrainianUnitTests {
 
 	using System;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Librainian.Threading;
 	using NUnit.Framework;
 
 	public class UsableSemaphoreThrottleTests {
 
-		private static async Task<TimeSpan> DoThings( [NotNull] IUsableSemaphore throttle, TimeSpan taskTimeSpan ) {
+		private static async Task<TimeSpan> DoThings( IUsableSemaphore throttle, TimeSpan taskTimeSpan ) {
 			if ( throttle is null ) {
 				throw new ArgumentNullException( nameof( throttle ) );
 			}

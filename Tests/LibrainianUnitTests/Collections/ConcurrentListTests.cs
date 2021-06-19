@@ -32,7 +32,6 @@ namespace LibrainianUnitTests.Collections {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Librainian.Collections.Lists;
 	using Librainian.Maths;
 	using NUnit.Framework;
@@ -43,7 +42,7 @@ namespace LibrainianUnitTests.Collections {
 		/// <summary>Environment.ProcessorCount * 10240 = 163840</summary>
 		private static Int32 Threads { get; } = Environment.ProcessorCount * 10240;
 
-		private static Int32 AddManyProducts( [NotNull] ICollection<String> list ) {
+		private static Int32 AddManyProducts( ICollection<String> list ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}
@@ -53,7 +52,7 @@ namespace LibrainianUnitTests.Collections {
 			return list.Count;
 		}
 
-		private static (Int32 added, Int32 removed) AddManyProductsRemoveRandom( [NotNull] ICollection<String> list ) {
+		private static (Int32 added, Int32 removed) AddManyProductsRemoveRandom( ICollection<String> list ) {
 			if ( list is null ) {
 				throw new ArgumentNullException( nameof( list ) );
 			}

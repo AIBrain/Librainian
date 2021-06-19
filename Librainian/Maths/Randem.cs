@@ -320,7 +320,7 @@ namespace Librainian.Maths {
 			var key = typeof( T );
 
 			if ( EnumDictionary.TryGetValue( key, out var values ) ) {
-				return values!;
+				return values;
 			}
 
 			values = Enum.GetNames( key );

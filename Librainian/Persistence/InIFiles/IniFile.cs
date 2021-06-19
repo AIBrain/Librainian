@@ -193,7 +193,7 @@ namespace Librainian.Persistence.InIFiles {
 					this.Data[ section ] = new IniSection();
 				}
 
-				return this.Data[ section ]!;
+				return this.Data[ section ];
 			}
 		}
 
@@ -224,7 +224,7 @@ namespace Librainian.Persistence.InIFiles {
 
 			if ( line.Contains( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase ) ) {
 				var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase );
-				var key = line.Substring( 0, pos ).Trimmed();
+				var key = line[ ..pos ].Trimmed();
 
 				if ( !String.IsNullOrEmpty( key ) ) {
 					var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
@@ -361,11 +361,7 @@ namespace Librainian.Persistence.InIFiles {
 		public Boolean Add( String? section, String key, String? value ) {
 			var sect = section.Trimmed() ?? String.Empty;
 
-			var k = key.Trimmed();
-
-			if ( String.IsNullOrEmpty( key ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
-			}
+			var k = key.Trimmed() ?? throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 
 			var retries = 10;
 			TryAgain:
@@ -373,15 +369,15 @@ namespace Librainian.Persistence.InIFiles {
 			try {
 				var dataSection = this.EnsureDataSection( sect );
 
-				var found = dataSection.FirstOrDefault( line => line!.Key.Like( k ) );
+				var found = dataSection.FirstOrDefault( line => line.Key.Like( k ) );
 
 				if ( found == default( Object ) ) {
-					dataSection.Add( k!, value );
+					dataSection.Add( k, value );
 
 					return true;
 				}
 
-				found!.Value = value;
+				found.Value = value;
 
 				return true;
 			}
@@ -477,7 +473,7 @@ namespace Librainian.Persistence.InIFiles {
 
 					case LineType.KVP: {
 						var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase );
-						var key = line.Substring( 0, pos ).Trimmed();
+						var key = line[ ..pos ].Trimmed();
 
 						if ( !String.IsNullOrEmpty( key ) ) {
 							var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
@@ -566,7 +562,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			if ( this.Data.ContainsKey( section ) ) {
-				return this.Data[ section ]!.Remove( key );
+				return this.Data[ section ].Remove( key );
 			}
 
 			return false;

@@ -51,7 +51,7 @@ namespace Librainian.FileSystem {
 	using OperatingSystem;
 	using Parsing;
 	using Pri.LongPath;
-	using Common = Librainian.Common;
+	using Common = Common;
 	using Directory = System.IO.Directory;
 	using File = System.IO.File;
 	using Path = System.IO.Path;
@@ -89,7 +89,7 @@ namespace Librainian.FileSystem {
 							return true;
 					}
 
-					exception!.Log();
+					exception.Log();
 
 					return false;
 				} );
@@ -194,7 +194,7 @@ namespace Librainian.FileSystem {
 							return true;
 					}
 
-					exception!.Log();
+					exception.Log();
 
 					return false;
 				} );
@@ -1354,9 +1354,7 @@ namespace Librainian.FileSystem {
 
 			//TODO we have the document, see if we can just chop off down to a nonexistent filename.. just get rid of (3) then (2) then (1)
 
-			var splitIntoWords = fileNameWithoutExtension.Split( new[] {
-				' '
-			}, StringSplitOptions.RemoveEmptyEntries ).ToList();
+			var splitIntoWords = fileNameWithoutExtension.Split( ' ', StringSplitOptions.RemoveEmptyEntries ).ToList();
 
 			if ( splitIntoWords.Count >= 2 ) {
 				var list = splitIntoWords.ToList();

@@ -30,7 +30,6 @@ namespace LibrainianUnitTests.MMF {
 	using System;
 	using System.IO.MemoryMappedFiles;
 	using System.Text;
-	using JetBrains.Annotations;
 	using NUnit.Framework;
 
 	[TestFixture]
@@ -40,8 +39,7 @@ namespace LibrainianUnitTests.MMF {
 
 		//private var localFilePath = "complete_path_to_large_file";
 
-		[NotNull]
-		public String GetContent( [NotNull] MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
+		public String GetContent( MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
 			using var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read );
 			var contentArray = new Byte[ bytesToReadIn ];
 			memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );

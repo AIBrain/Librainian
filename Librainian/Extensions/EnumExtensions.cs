@@ -76,7 +76,7 @@ namespace Librainian.Extensions {
 				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
-			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item! );
+			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
 		}
 
 		/// <summary>Gets all values for an enum type.</summary>

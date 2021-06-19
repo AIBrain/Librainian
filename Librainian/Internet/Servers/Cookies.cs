@@ -65,7 +65,7 @@ namespace Librainian.Internet.Servers {
 					continue;
 				}
 
-				var name = s.Substring( 0, idxEquals ).Trim();
+				var name = s[ ..idxEquals ].Trim();
 				var value = s[ ( idxEquals + 1 ).. ].Trim();
 				cookies.Add( name, value );
 			}

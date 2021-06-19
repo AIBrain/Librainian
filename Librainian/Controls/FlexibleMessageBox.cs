@@ -315,9 +315,7 @@ namespace Librainian.Controls {
 					return default( IEnumerable<String?>? );
 				}
 
-				return message.Split( new[] {
-					'\n'
-				}, StringSplitOptions.None );
+				return message.Split( '\n', StringSplitOptions.None );
 			}
 
 			/// <summary>Handles the LinkClicked event of the richTextBoxMessage control.</summary>

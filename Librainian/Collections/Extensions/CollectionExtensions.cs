@@ -37,6 +37,7 @@ namespace Librainian.Collections.Extensions {
 	using System.Diagnostics.CodeAnalysis;
 	using System.Linq;
 	using System.Numerics;
+	using System.Runtime.CompilerServices;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Exceptions;
@@ -45,6 +46,7 @@ namespace Librainian.Collections.Extensions {
 	using Maths;
 	using PooledAwait;
 	using Threading;
+	using Utilities;
 
 	public static class CollectionExtensions {
 
@@ -116,7 +118,7 @@ namespace Librainian.Collections.Extensions {
 		public static Int32 Clear<T>( this IProducerConsumerCollection<T> collection ) => collection.RemoveAll();
 
 		public static IEnumerable<IEnumerable<T>> ChunkBy<T>( this IEnumerable<T> source, Int32 chunkSize ) {
-			return source.Select( ( x, i ) => ( x, i ) ).GroupBy( x => x.i / chunkSize ).Select( x => x.Select( v => v.x ) );
+			return source.Select( ( x, i ) => (x, i) ).GroupBy( x => x.i / chunkSize ).Select( x => x.Select( v => v.x ) );
 		}
 
 		/// <summary>
@@ -162,20 +164,25 @@ namespace Librainian.Collections.Extensions {
 		[Pure]
 		public static T[] Clone<T>( this T[] items ) {
 			if ( items is Byte[] bytes ) {
-				var clone = new T[bytes.Length];
-				Buffer.BlockCopy( bytes, 0, clone, 0, bytes.Length );
+				var bytesLength = bytes.Length;
+				var dst = new T[ bytesLength ];
+				Buffer.BlockCopy( bytes, 0, dst, 0, bytesLength );
 
-				return clone;
+				return dst;
 			}
 
 			var index = 0;
-			var copy = new T[items.Length];
+			var clone = new T[ items.Length ];
 
 			foreach ( var VARIABLE in items ) {
-				copy[index++] = ( T )VARIABLE.Copy();
+				var copy = VARIABLE.Copy();
+
+				if ( copy is not null ) {
+					clone[ index++ ] = copy;
+				}
 			}
 
-			return copy;
+			return clone;
 		}
 
 		/// <summary>
@@ -213,10 +220,10 @@ namespace Librainian.Collections.Extensions {
 			var totalLength = arrays.Select( bytes => ( UInt64 )bytes.Length ).Aggregate<UInt64, UInt64>( 0, ( current, i ) => current + i );
 
 			if ( totalLength > Int32.MaxValue ) {
-				//throw new OutOfRangeException( $"The total size of the arrays ({totalLength:N0}) is too large." );
+				throw new OutOfRangeException( $"The total size of the arrays ({totalLength:N0}) is too large." );
 			}
 
-			var both = new Byte[ totalLength ]; //BUG Let it throw if the memory cannot be allocated.
+			var both = new Byte[ totalLength ];
 			var offset = 0;
 
 			foreach ( var data in arrays ) {
@@ -228,46 +235,16 @@ namespace Librainian.Collections.Extensions {
 			return both;
 		}
 
-		/// <summary>Checks if two IEnumerables contain the exact same elements and same number of elements. Order does not matter.</summary>
+		/// <summary>Checks if two IEnumerables contain the exact same elements and same number of elements. (Order does not matter as this test adds in an OrderBy.)</summary>
 		/// <typeparam name="T">The Type of object.</typeparam>
 		/// <param name="a">The first collection.</param>
 		/// <param name="b">The second collection.</param>
 		/// <returns>True if both IEnumerables contain the same items, and same number of items; otherwise, false.</returns>
 		[Pure]
-		public static Boolean ContainSameElements<T>( this IList<T> a, IList<T> b ) {
-			if ( a is null ) {
-				throw new ArgumentEmptyException( nameof( a ) );
-			}
-
-			if ( b is null ) {
-				throw new ArgumentEmptyException( nameof( b ) );
-			}
-
-			if ( a.Count != b.Count ) {
-				return false;
-			}
-
-			if ( a.Count == 0 && b.Count == 0 ) {
-				return true; //empty set matches empty set. expected result?
-			}
-
-			//BUG Needs unit testing to verify if this works as expected. 1,2,3 == 3,1,2 == 2,3,1
-			var o = a.OrderBy( arg => arg );
-			var p = b.OrderBy( arg => arg );
-
-			return o.SequenceEqual( p );
-		}
+		public static Boolean ContainSameElements<T>( this IEnumerable<T> a, IEnumerable<T> b ) => a.OrderBy( arg => arg ).SequenceEqual( b.OrderBy( arg => arg ) );
 
 		[Pure]
-		public static BigInteger CountBig<TType>( this IEnumerable<TType> items ) {
-			if ( items is null ) {
-				throw new ArgumentEmptyException( nameof( items ) );
-			}
-
-			return items.LongCount();
-
-			//return items.Aggregate( BigInteger.Zero, ( current, item ) => current + BigInteger.One );
-		}
+		public static BigInteger CountBig<TType>( this IEnumerable<TType> items ) => items.LongCount();
 
 		/// <summary>
 		///     Counts the number of times each element appears in a collection, and returns a
@@ -306,13 +283,12 @@ namespace Librainian.Collections.Extensions {
 		[Pure]
 		public static Int32 CountRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationship ) => Relationships( self, relationship ).Count();
 
-		/// <summary>Returns duplicate items found in the <see cref="sequence" /> .</summary>
-		/// <param name="sequence">todo: describe sequence parameter on Duplicates</param>
+		/// <summary>Returns duplicate items found in the <see cref="enumerable" /> .</summary>
 		[Pure]
-		public static IEnumerable<T> Duplicates<T>( this IEnumerable<T> sequence ) {
+		public static IEnumerable<T> Duplicates<T>( this IEnumerable<T> enumerable ) {
 			var set = new HashSet<T>();
 
-			return sequence.Where( item => !set.Add( item ) );
+			return enumerable.Where( item => !set.Add( item ) );
 		}
 
 		/// <summary>
@@ -322,7 +298,7 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="self"></param>
 		/// <returns></returns>
 		[Pure]
-		public static IEnumerable<T> Empty<T>( [DisallowNull] this T self ) {
+		public static IEnumerable<T> Empty<T>( this T self ) {
 			yield break;
 		}
 
@@ -357,7 +333,7 @@ namespace Librainian.Collections.Extensions {
 
 			foreach ( var a in enumerable ) {
 				foreach ( var b in enumerable.Skip( ++index ).Where( b => relationship( a, b ) || relationship( b, a ) ) ) {
-					return ( a, b );
+					return (a, b);
 				}
 			}
 
@@ -397,19 +373,10 @@ namespace Librainian.Collections.Extensions {
 			}
 
 			while ( true ) {
-				dictionary.GetOrAdd( key, _ => function( key ), out added ); //BUG Does function run if the key is not added?
+				dictionary.GetOrAdd( key, _ => function( key ), out added );
 
 				return dictionary[ key ];
 			}
-		}
-
-		[Pure]
-		public static Boolean Has<T>( this Enum type, T value ) where T : struct {
-			if ( type is null ) {
-				throw new ArgumentEmptyException( nameof( type ) );
-			}
-
-			return ( ( Int32 )( ValueType )type & ( Int32 )( ValueType )value ) == ( Int32 )( ValueType )value;
 		}
 
 		[Pure]
@@ -426,15 +393,11 @@ namespace Librainian.Collections.Extensions {
 		}
 
 		[Pure]
-		public static Boolean In<T>( [DisallowNull] this T value, params T[] items ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
-
-			return items.Contains( value );
-		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Boolean In<T>( [DisallowNull] this T value, params T[] items ) => items.Contains( value );
 
 		[Pure]
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Int32 IndexOf<T>( this T[] self, T? item ) => Array.IndexOf( self, item );
 
 		/// <summary></summary>
@@ -444,17 +407,7 @@ namespace Librainian.Collections.Extensions {
 		/// <returns></returns>
 		/// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
 		[Pure]
-		public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence ) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
-
-			if ( sequence is null ) {
-				throw new ArgumentEmptyException( nameof( sequence ) );
-			}
-
-			return source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
-		}
+		public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence ) => source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
 
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
@@ -487,9 +440,7 @@ namespace Librainian.Collections.Extensions {
 
 			foreach ( var item in source ) {
 				// Remove bad prospective matches
-				var item1 = item;
-				var p1 = p;
-				prospects.RemoveAll( k => !comparer.Equals( item1, seq[ p1 - k ] ) );
+				prospects.RemoveAll( k => !comparer.Equals( item, seq[ p - k ] ) );
 
 				// Is it the start of a prospective match ?
 				if ( comparer.Equals( item, seq[ 0 ] ) ) {
@@ -564,6 +515,7 @@ namespace Librainian.Collections.Extensions {
 		public static LinkedListNode<TType>? NextOrFirst<TType>( this LinkedListNode<TType> current ) => current.Next ?? current.List?.First;
 
 		[Pure]
+		[NeedsTesting]
 		public static IEnumerable<T> OrderBy<T>( this IEnumerable<T> list, IEnumerable<T> guide ) {
 			var toBeSorted = new HashSet<T>( list );
 
@@ -600,7 +552,7 @@ namespace Librainian.Collections.Extensions {
 
 			Array.Resize( ref array, count );
 
-			yield return new ReadOnlyCollection<T>( array! );
+			yield return new ReadOnlyCollection<T>( array );
 		}
 
 		/// <summary>untested</summary>

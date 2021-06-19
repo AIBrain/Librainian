@@ -220,7 +220,7 @@ namespace Librainian.Maths {
 			var lastNumber = num;
 
 			// Cut the input string in half
-			var numberPart = s.Substring( 0, lastNumber ).Trim();
+			var numberPart = s[ ..lastNumber ].Trim();
 			var sizePart = s[ lastNumber.. ].Trim();
 
 			// Get the numeric part

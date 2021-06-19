@@ -35,8 +35,8 @@ namespace Librainian.OperatingSystem {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Exceptions;
-	using Librainian.Extensions;
-	using Librainian.FileSystem;
+	using Extensions;
+	using FileSystem;
 	using Logging;
 	using Maths;
 	using Measurement.Time;

@@ -179,7 +179,7 @@ namespace Librainian.Parsing {
 			self = self.Trimmed();
 
 			return String.IsNullOrEmpty( self ) ? String.Empty :
-				$"{( self!.StartsWith( ParsingConstants.Chars.LeftBrace ) ? String.Empty : ParsingConstants.Chars.LeftBrace )}{self}{( self.EndsWith( ParsingConstants.Chars.RightBrace ) ? String.Empty : ParsingConstants.Chars.RightBrace )}";
+				$"{( self.StartsWith( ParsingConstants.Chars.LeftBrace ) ? String.Empty : ParsingConstants.Chars.LeftBrace )}{self}{( self.EndsWith( ParsingConstants.Chars.RightBrace ) ? String.Empty : ParsingConstants.Chars.RightBrace )}";
 		}
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace Librainian.Parsing {
 		/// <exception cref="ArgumentEmptyException"></exception>
 		[DebuggerStepThrough]
 		[Pure]
-		public static String SmartBraces( this String self ) {
+		public static String SmartBraces( this String? self ) {
 			self = self.Trimmed();
 
 			if ( String.IsNullOrEmpty( self ) ) {
@@ -1727,14 +1727,14 @@ namespace Librainian.Parsing {
 			}
 
 			if ( removeUnderscores ) {
-				text = text!.Replace( Symbols.Underscore, ParsingConstants.Strings.Singlespace, false, cultureInfo ?? CultureInfo.CurrentCulture );
+				text = text.Replace( Symbols.Underscore, ParsingConstants.Strings.Singlespace, false, cultureInfo ?? CultureInfo.CurrentCulture );
 			}
 
 			if ( String.IsNullOrEmpty( text = text.Trimmed() ) ) {
 				return default( String? );
 			}
 
-			var sb = new StringBuilder( text!.Length );
+			var sb = new StringBuilder( text.Length );
 
 			foreach ( var word in text.Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries ) ) {
 				var w = word.TrimEnd();
@@ -2041,7 +2041,7 @@ namespace Librainian.Parsing {
 				return default( String? );
 			}
 
-			if ( text!.Length == 1 ) {
+			if ( text.Length == 1 ) {
 				return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ).ToString();
 			}
 
@@ -2261,7 +2261,7 @@ namespace Librainian.Parsing {
 		public static String? OnlyLetters( String? input ) => input == default( String? ) ? default( String? ) : String.Concat( input.Where( Char.IsLetter ) );
 
 		public static String? OnlyLettersAndNumbers( String? input ) =>
-			input == default( String? ) ? default( String? ) : String.Concat( input!.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ) );
+			input == default( String? ) ? default( String? ) : String.Concat( input.Where( c => Char.IsDigit( c ) || Char.IsLetter( c ) ) );
 
 		public static String? RemoveLastCharacter( this String self ) {
 			if ( self is null ) {

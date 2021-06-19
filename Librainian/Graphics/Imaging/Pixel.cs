@@ -165,7 +165,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
+			if ( !Byte.TryParse( line[ ..openParent ], out var checksum ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
 				}
@@ -183,9 +183,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] {
-				','
-			}, StringSplitOptions.RemoveEmptyEntries );
+			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( argb.Length != 4 ) {
 				if ( errors != null ) {
@@ -237,9 +235,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var xandy = line[ ( at + 1 ).. ].Split( new[] {
-				','
-			}, StringSplitOptions.RemoveEmptyEntries );
+			var xandy = line[ ( at + 1 ).. ].Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( xandy.Length != 2 ) {
 				if ( errors != null ) {

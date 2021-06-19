@@ -161,7 +161,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public Femtoseconds ToFemtoseconds() => new( this.Value / InOneFemtosecond );
 
-		public override String ToString() => $"{this.Value:N}as";
+		public override String ToString() => $"{this.Value}as";
 
 		/// <summary>Convert to a smaller unit.</summary>
 		/// <returns></returns>

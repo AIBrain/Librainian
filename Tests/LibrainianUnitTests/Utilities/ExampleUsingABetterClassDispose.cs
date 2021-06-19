@@ -32,7 +32,6 @@ namespace LibrainianUnitTests.Utilities {
 	using System;
 	using System.Diagnostics;
 	using System.IO;
-	using JetBrains.Annotations;
 	using Librainian.Utilities;
 	using NUnit.Framework;
 
@@ -68,10 +67,8 @@ namespace LibrainianUnitTests.Utilities {
 	/// </summary>
 	public class SysComObject {
 
-		[NotNull]
 		private static readonly Random RNG = new();
 
-		[CanBeNull]
 		private Byte[]? fakeInternalMemoryAllocation;
 
 		public SysComObject() => this.fakeInternalMemoryAllocation = null;

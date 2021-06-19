@@ -32,7 +32,6 @@ namespace LibrainianUnitTests.Persistence {
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Librainian.FileSystem;
 	using Librainian.Measurement.Time;
 	using Librainian.Persistence;
@@ -77,13 +76,10 @@ data33   =   3
 
 ";
 
-		[NotNull]
 		public IniFile Ini { get; } = new();
 
-		[NotNull]
 		public JSONFile Json { get; } = new();
 
-		[CanBeNull]
 		private CancellationTokenSource? CancellationTokenSource { get; set; }
 
 		public CancellationTokenSource CreateCancelToken() {

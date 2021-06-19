@@ -504,7 +504,7 @@ namespace Librainian.Converters {
 				var pos = s.LastIndexOf( '.' );
 
 				if ( pos.Any() ) {
-					s = s.Substring( 0, pos );
+					s = s[ ..pos ];
 				}
 
 				if ( !String.IsNullOrEmpty( s ) ) {
@@ -594,7 +594,7 @@ namespace Librainian.Converters {
 		}
 
 		/// <summary>Return the characters of the guid as a path structure.</summary>
-		/// <example>1/a/b/2/c/d/e/f/</example>
+		/// <example>/1/a/b/2/c/d/e/f/</example>
 		/// <param name="guid">    </param>
 		/// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
 		/// <returns></returns>
@@ -605,14 +605,14 @@ namespace Librainian.Converters {
 			var a = guid.ToByteArray();
 
 			if ( reversed ) {
-				return Path.Combine( a[ 15 ].ToString()!, a[ 14 ].ToString()!, a[ 13 ].ToString()!, a[ 12 ].ToString()!, a[ 11 ].ToString()!, a[ 10 ].ToString()!, a[ 9 ].ToString()!,
-					a[ 8 ].ToString()!, a[ 7 ].ToString()!, a[ 6 ].ToString()!, a[ 5 ].ToString()!, a[ 4 ].ToString()!, a[ 3 ].ToString()!, a[ 2 ].ToString()!, a[ 1 ].ToString()!,
-					a[ 0 ].ToString()! );
+				return Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(),
+					a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(),
+					a[ 0 ].ToString() );
 			}
 
-			return Path.Combine( a[ 0 ].ToString()!, a[ 1 ].ToString()!, a[ 2 ].ToString()!, a[ 3 ].ToString()!, a[ 4 ].ToString()!, a[ 5 ].ToString()!, a[ 6 ].ToString()!,
-				a[ 7 ].ToString()!, a[ 8 ].ToString()!, a[ 9 ].ToString()!, a[ 10 ].ToString()!, a[ 11 ].ToString()!, a[ 12 ].ToString()!, a[ 13 ].ToString()!, a[ 14 ].ToString()!,
-				a[ 15 ].ToString()! );
+			return Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(),
+				a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(),
+				a[ 15 ].ToString() );
 		}
 
 		[DebuggerStepThrough]
@@ -622,9 +622,7 @@ namespace Librainian.Converters {
 				throw new ArgumentEmptyException( nameof( directoryInfo ) );
 			}
 
-			return directoryInfo.FullName.Split( new[] {
-				Path.DirectorySeparatorChar
-			}, StringSplitOptions.RemoveEmptyEntries );
+			return directoryInfo.FullName.Split( Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 		}
 
 		/// <summary>

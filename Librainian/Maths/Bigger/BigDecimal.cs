@@ -377,7 +377,7 @@ namespace Librainian.Maths.Bigger {
 
 			var length = v.GetDecimalIndex();
 			if ( length > 0 ) {
-				return BigInteger.Parse( mant.Substring( 0, length ) );
+				return BigInteger.Parse( mant[ ..length ] );
 			}
 
 			if ( length == 0 ) {

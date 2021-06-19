@@ -102,7 +102,7 @@ namespace Librainian.Persistence {
 					return default( String? );
 				}
 
-				return this.Data[ section ]!.TryGetValue( key, out var value ) ? value : null;
+				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
 			}
 
 			[DebuggerStepThrough]
@@ -243,7 +243,7 @@ namespace Librainian.Persistence {
 				}
 
 				if ( data != null ) {
-					var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[ section ]!.Keys.AsParallel().AsUnordered(), key => {
+					var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[ section ].Keys.AsParallel().AsUnordered(), key => {
 						if ( !String.IsNullOrEmpty( key ) ) {
 							this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
 						}

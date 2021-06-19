@@ -98,7 +98,7 @@ namespace Librainian.Security {
 			return Task.Run( () => {
 				using var fs = new FileStream( filename, FileMode.Open, FileAccess.Read, FileShare.Read, 1073741824, true );
 
-				return MD5ThreadLocals.Value.ComputeHash( fs );
+				return MD5ThreadLocals.Value!.ComputeHash( fs );
 			} );
 		}
 
@@ -112,8 +112,8 @@ namespace Librainian.Security {
 			}
 
 			try {
-				var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? Iv.Substring( 0, 8 ) );
-				var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? Key.Substring( 0, 8 ) );
+				var _ivByte = Encoding.UTF8.GetBytes( iv[ ..8 ] ?? Iv[ ..8 ] );
+				var _keybyte = Encoding.UTF8.GetBytes( key[ ..8 ] ?? Key[ ..8 ] );
 				var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
 
 				using var des = new DESCryptoServiceProvider();
@@ -240,8 +240,8 @@ namespace Librainian.Security {
 			}
 
 			try {
-				var _ivByte = Encoding.UTF8.GetBytes( iv?.Substring( 0, 8 ) ?? Iv.Substring( 0, 8 ) );
-				var _keybyte = Encoding.UTF8.GetBytes( key?.Substring( 0, 8 ) ?? Key.Substring( 0, 8 ) );
+				var _ivByte = Encoding.UTF8.GetBytes( iv[ ..8 ] ?? Iv[ ..8 ] );
+				var _keybyte = Encoding.UTF8.GetBytes( key[ ..8 ] ?? Key[ ..8 ] );
 				var inputbyteArray = Encoding.UTF8.GetBytes( value );
 
 				using var des = new DESCryptoServiceProvider();

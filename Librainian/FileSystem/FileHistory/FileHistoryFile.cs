@@ -84,13 +84,13 @@ namespace Librainian.FileSystem.FileHistory {
 
 			var datepart = value[ ( posA + 1 )..posB ];
 
-			var parts = datepart.Split( new[] {
-				' '
-			}, StringSplitOptions.RemoveEmptyEntries );
+			if ( datepart != null ) {
+				var parts = datepart.Split( ' ', StringSplitOptions.RemoveEmptyEntries );
 
-			parts[ 0 ] = parts[ 0 ].Replace( '_', '/' );
-			parts[ 1 ] = parts[ 1 ].Replace( '_', ':' );
-			datepart = $"{parts[ 0 ]} {parts[ 1 ]}";
+				parts[ 0 ] = parts[ 0 ].Replace( '_', '/' );
+				parts[ 1 ] = parts[ 1 ].Replace( '_', ':' );
+				datepart = $"{parts[ 0 ]} {parts[ 1 ]}";
+			}
 
 			if ( DateTime.TryParse( datepart, out var result ) ) {
 				when = result;
@@ -99,7 +99,7 @@ namespace Librainian.FileSystem.FileHistory {
 					posA = 1;
 				}
 
-				filename = $"{value.Substring( 0, posA - "(".Length )}{value[ ( posB + "UTC)".Length ).. ]}{extension}";
+				filename = $"{value[ ..(posA - "(".Length) ]}{value[ ( posB + "UTC)".Length ).. ]}{extension}";
 
 				return true;
 			}

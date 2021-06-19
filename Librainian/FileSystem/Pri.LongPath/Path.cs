@@ -189,7 +189,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			String? basePath = null;
 
 			if ( !path.IsPathRooted() ) {
-				basePath = System.IO.Directory.GetCurrentDirectory();
+				basePath = Directory.GetCurrentDirectory();
 			}
 
 			path = path.NormalizeLongPath().RemoveLongPathPrefix();
@@ -204,7 +204,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			do { } while ( length > rootLength && !path[ --length ].IsDirectorySeparator() );
 
 			if ( basePath == null ) {
-				return path.Substring( 0, length );
+				return path[ ..length ];
 			}
 
 			path = path[ ( basePath.Length + 1 ).. ];
@@ -214,7 +214,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				length = 0;
 			}
 
-			return path.Substring( 0, length );
+			return path[ ..length ];
 		}
 
 		public static String GetExtension( this String path ) => System.IO.Path.GetExtension( path.ThrowIfBlank() );
@@ -248,7 +248,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				path = path.NormalizeLongPath().RemoveLongPathPrefix();
 			}
 
-			return path.Substring( 0, path.GetRootLength() );
+			return path[ ..path.GetRootLength() ];
 		}
 
 		/// <summary>
