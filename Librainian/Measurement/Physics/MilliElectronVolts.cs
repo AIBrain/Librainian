@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MilliElectronVolts.cs" last touched on 2021-04-25 at 6:15 AM by Protiguous.
+// File "MilliElectronVolts.cs" last touched on 2021-06-19 at 12:59 AM by Protiguous.
 
 namespace Librainian.Measurement.Physics {
 

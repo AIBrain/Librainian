@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TeraElectronVolts.cs" last touched on 2021-04-25 at 6:11 AM by Protiguous.
+// File "TeraElectronVolts.cs" last touched on 2021-06-19 at 1:00 AM by Protiguous.
 
 namespace Librainian.Measurement.Physics {
 
@@ -67,13 +67,13 @@ namespace Librainian.Measurement.Physics {
 
 		public TeraElectronVolts( MegaElectronVolts megaElectronVolts ) : this( megaElectronVolts.ToTeraElectronVolts() ) { }
 
-		public Int32 CompareTo( ElectronVolts other ) => this.Value.CompareTo( other.ToTeraElectronVolts().Value );
+		public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.ToTeraElectronVolts().Value );
 
-		public Int32 CompareTo( MegaElectronVolts other ) => this.Value.CompareTo( other.ToTeraElectronVolts().Value );
+		public Int32 CompareTo( MegaElectronVolts? other ) => this.Value.CompareTo( other?.ToTeraElectronVolts().Value );
 
-		public Int32 CompareTo( MilliElectronVolts other ) => this.Value.CompareTo( other.ToTeraElectronVolts().Value );
+		public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToTeraElectronVolts().Value );
 
-		public Int32 CompareTo( TeraElectronVolts other ) => this.Value.CompareTo( other.Value );
+		public Int32 CompareTo( TeraElectronVolts? other ) => this.Value.CompareTo( other?.Value );
 
 		public static TeraElectronVolts operator *( TeraElectronVolts left, BigDecimal right ) => new(left.Value * right);
 
