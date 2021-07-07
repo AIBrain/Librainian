@@ -37,7 +37,6 @@ namespace LibrainianUnitTests {
 	using Librainian.Measurement.Time;
 	using NUnit.Framework;
 
-
 	[TestFixture]
 	public static class FolderBagTests {
 
