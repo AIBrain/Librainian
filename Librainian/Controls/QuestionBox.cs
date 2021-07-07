@@ -54,13 +54,9 @@ namespace Librainian.Controls {
 			this.textBoxUserInput?.Focus();
 		}
 
-		private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) {
-			this.Response = this.textBoxUserInput.Text();
-		}
+		private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) => this.Response = this.textBoxUserInput.Text();
 
-		private void QuestionBox_Shown( Object sender, EventArgs e ) {
-			this.textBoxUserInput?.Focus();
-		}
+		private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxUserInput?.Focus();
 
 		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = this.textBoxUserInput.Text();
 	}

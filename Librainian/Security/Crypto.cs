@@ -105,6 +105,7 @@ namespace Librainian.Security {
 			}
 
 			String outStr;                 // Encrypted string to return
+			//AES aesAlg = null;
 			RijndaelManaged? aesAlg = null; // RijndaelManaged object used to encrypt the data.
 
 			try {

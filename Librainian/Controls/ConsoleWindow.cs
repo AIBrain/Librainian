@@ -90,13 +90,9 @@ namespace Librainian.Controls {
 
 		public static IntPtr GetWindow() => TheConsoleWindowHandle = GetConsoleWindow();
 
-		public static void HideWindow() {
-			ShowWindow( GetWindow(), SW_HIDE );
-		}
+		public static void HideWindow() => ShowWindow( GetWindow(), SW_HIDE );
 
-		public static void SetTitle( String? text ) {
-			SetWindowText( GetWindow(), text );
-		}
+		public static void SetTitle( String? text ) => SetWindowText( GetWindow(), text );
 
 		public static void ShowWindow() {
 			GetWindow();

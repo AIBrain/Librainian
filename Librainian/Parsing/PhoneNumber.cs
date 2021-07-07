@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,32 +23,29 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Segment.cs" last touched on 2021-07-07 at 6:51 AM by Protiguous.
+// File "PhoneNumber.cs" last touched on 2021-07-05 at 7:36 PM by Protiguous.
 
-namespace Librainian.Graphics.Geometry {
+namespace Librainian.Parsing {
 
 	using System;
-	using System.Diagnostics;
-	using DDD;
-	using Extensions;
-	using Newtonsoft.Json;
+	using System.Text.RegularExpressions;
 
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public record Segment( CoordinateF P1, CoordinateF P2 ) {
+	/// <summary>
+	///     //TODO This whole concept needs tests.
+	///     <code>PhoneNumber phoneNumber = "555-867-5309";</code>
+	/// </summary>
+	public record PhoneNumber( Int32 AreaCode, Int32 ExchangeCode, Int32 StationCode ) {
 
-		public Single X1 => this.P1.X;
+		private static Regex PhoneNumberRegex { get; } = new(@"\(?(\d{3})\)?-? *(\d{3})-? *-?(\d{4})", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-		public Single X2 => this.P2.X;
+		public static implicit operator PhoneNumber( String value ) {
+			var match = PhoneNumberRegex.Match( value );
+			if ( match.Length < 4 ) {
+				throw new FormatException( "Invalid phone number format" );
+			}
 
-		public Single Y1 => this.P1.Y;
-
-		public Single Y2 => this.P2.Y;
-
-		public Single Z1 => this.P1.Z;
-
-		public Single Z2 => this.P2.Z;
+			return new PhoneNumber( Int32.Parse( match.Groups[ 1 ].Value ), Int32.Parse( match.Groups[ 2 ].Value ), Int32.Parse( match.Groups[ 3 ].Value ) );
+		}
 
 	}
 

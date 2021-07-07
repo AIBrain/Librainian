@@ -39,8 +39,6 @@ namespace Librainian.Logging {
 
 		public void Write( String message ) => this._logger.LogInformation( message );
 
-		public void WriteLine( String message, params Object[] args ) {
-			this._logger.LogInformation( message, args );
-		}
+		public void WriteLine( String message, params Object[] args ) => this._logger.LogInformation( message, args );
 	}
 }

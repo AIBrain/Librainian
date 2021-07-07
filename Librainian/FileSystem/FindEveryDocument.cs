@@ -76,20 +76,14 @@ namespace Librainian.FileSystem {
 			this.DocumentsFound = documentsFound;
 		}
 
-		private void SetCurrentStatus( String? message ) {
-			this.CurrentStatus = message;
-		}
+		private void SetCurrentStatus( String? message ) => this.CurrentStatus = message;
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() { }
 
-		public void PauseScanning() {
-			this._pauseScanning.Value = true;
-		}
+		public void PauseScanning() => this._pauseScanning.Value = true;
 
-		public void ResumeScanning() {
-			this._pauseScanning.Value = false;
-		}
+		public void ResumeScanning() => this._pauseScanning.Value = false;
 
 		public async Task StartScanning() {
 			Int64 counter = 0;

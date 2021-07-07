@@ -42,13 +42,9 @@ namespace Librainian.Utilities {
 			
 		}
 
-		public void Write( String message ) {
-			throw new NotImplementedException();
-		}
+		public void Write( String message ) => throw new NotImplementedException();
 
-		public void WriteLine( String message, params Object[] args ) {
-			throw new NotImplementedException();
-		}
+		public void WriteLine( String message, params Object[] args ) => throw new NotImplementedException();
 
 	}
 

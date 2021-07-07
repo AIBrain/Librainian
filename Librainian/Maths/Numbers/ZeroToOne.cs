@@ -37,7 +37,7 @@ namespace Librainian.Maths.Numbers {
 	/// </summary>
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	public struct ZeroToOne {
 
 		public const Single MaximumValue = 1;

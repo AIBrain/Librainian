@@ -113,13 +113,10 @@ namespace Librainian.Extensions {
 			IEnumerable<IEnumerable<T>> result = Array.Empty<T[]>();
 
 			//TODO Don't know what to do with nulls in Combinations()..
-			return input?.Aggregate( result, ( current, item ) => current.Combine( item.Combinations() ) );
+			return input?.Aggregate( result, ( current, item ) => current.Combine( item ) );
 		}
 
-		public static IEnumerable<IEnumerable<T?>?> Combinations<T>( this IEnumerable<T?> input ) =>
-			input.Select( item => new[] {
-				item
-			} );
+		
 
 		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
 			this IEnumerable<IEnumerable<T?>?> setA,
@@ -184,7 +181,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public static IEnumerable<IEnumerable<T?>?>? Combine<T>(
+		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
 			this IEnumerable<IEnumerable<T?>?> setA,
 			IEnumerable<T?> setB
 		) {
@@ -202,7 +199,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public static IEnumerable<IEnumerable<T>?>? Combine<T>( [DisallowNull] this T a, IEnumerable<IEnumerable<T>> setB ) {
+		public static IEnumerable<IEnumerable<T?>?>? Combine<T>( [DisallowNull] this T a, IEnumerable<IEnumerable<T>> setB ) {
 			var found = false;
 
 			foreach ( var bGroup in setB ) {
@@ -218,7 +215,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public static IEnumerable<IEnumerable<T>>? Combine<T>( this IEnumerable<IEnumerable<T>> setA, [DisallowNull] T b ) {
+		public static IEnumerable<IEnumerable<T?>>? Combine<T>( this IEnumerable<IEnumerable<T>> setA, [DisallowNull] T b ) {
 			var found = false;
 
 			foreach ( var aGroup in setA ) {

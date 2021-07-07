@@ -28,7 +28,7 @@ namespace Librainian.Maths.Ranges {
 	using Newtonsoft.Json;
 
 	/// <summary>Represents a Single range with minimum and maximum values</summary>
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	public struct SingleRange {
 
 		public static readonly SingleRange ZeroToOne = new( 0, 1 );

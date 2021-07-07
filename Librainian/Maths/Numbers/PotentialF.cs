@@ -32,23 +32,18 @@ namespace Librainian.Maths.Numbers {
 	///     <para>Restricts the value to between 0.0 and 1.0.</para>
 	/// </summary>
 	/// <remarks>
-	///     <para>Just wanted a threadsafe wrapper for Min and Max.</para>
+	///     <para>Just wanted a threadsafe wrapper.</para>
 	/// </remarks>
 	[JsonObject]
-	public sealed class PotentialF {
+	public class PotentialF {
 
 		/// <summary></summary>
 		/// <remarks>ONLY used in the getter and setter.</remarks>
 		[JsonProperty]
 		private Single _value = MinValue;
 
-		/// <summary>1</summary>
 		public const Single MaxValue = 1.0f;
 
-		/// <summary>
-		///     <para>0.000000000000000000000000000000000000000000001401298</para>
-		///     <para>"1.401298E-45"</para>
-		/// </summary>
 		public const Single MinValue = 0.0f;
 
 		/// <summary>
@@ -74,6 +69,11 @@ namespace Librainian.Maths.Numbers {
 		/// <param name="initialValue"></param>
 		public PotentialF( Single initialValue ) => this.Value = initialValue;
 
+		/// <summary>
+		/// Sets the internal value to a random number between <paramref name="min"/> and <paramref name="max"/>, and between 0 and 1.
+		/// </summary>
+		/// <param name="min"></param>
+		/// <param name="max"></param>
 		public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min, max ) ) { }
 
 		public static implicit operator Single( PotentialF special ) => special.Value;

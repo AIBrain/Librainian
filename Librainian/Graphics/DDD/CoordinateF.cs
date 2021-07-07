@@ -41,7 +41,7 @@ namespace Librainian.Graphics.DDD {
 	/// <remarks>Code towards speed.</remarks>
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
 
 		public static CoordinateF? Empty { get; } = new( Single.Epsilon, Single.Epsilon, Single.Epsilon );

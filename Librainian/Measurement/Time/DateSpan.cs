@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Time {
 	///     Adapted from <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates/DateSpan.cs" />
 	/// </remarks>
 	[Immutable]
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	[Serializable]
 	public record DateSpan {
 

@@ -118,8 +118,6 @@ namespace Librainian.Extensions {
 			guid.SwapBytes( 6, 7 );
 		}
 
-		public static void SwapBytes( this Byte[] bytes, Int32 leftIndex, Int32 rightIndex ) {
-			( bytes[ leftIndex ], bytes[ rightIndex ] ) = ( bytes[ rightIndex ], bytes[ leftIndex ] );
-		}
+		public static void SwapBytes( this Byte[] bytes, Int32 leftIndex, Int32 rightIndex ) => (bytes[leftIndex], bytes[rightIndex]) = (bytes[rightIndex], bytes[leftIndex]);
 	}
 }

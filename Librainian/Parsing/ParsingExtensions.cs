@@ -41,14 +41,13 @@ namespace Librainian.Parsing {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Text.RegularExpressions;
-	using Collections.Extensions;
+	using System.Threading;
 	using Exceptions;
 	using JetBrains.Annotations;
 	using Linguistics;
 	using Logging;
 	using Maths;
 	using Maths.Numbers;
-	using Measurement.Time;
 	using Rationals;
 	using Threading;
 
@@ -94,9 +93,9 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <returns></returns>
 		[Pure]
-		public static IEnumerable<Char> AllLetters() => AllPossibleLetters.Value!;
+		public static IEnumerable<Char> AllLetters() => AllPossibleLetters.Value;
 
-		private static Lazy<ParallelQuery<Char>?> AllPossibleLetters { get; } =
+		private static Lazy<ParallelQuery<Char>> AllPossibleLetters { get; } =
 			new( () => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ) );
 
 		/// <summary>
@@ -110,7 +109,7 @@ namespace Librainian.Parsing {
 		/// <param name="maxlength"></param>
 		/// <returns></returns>
 		[Pure]
-		public static String? LimitLength( this String? self, UInt32 maxlength ) => self[ ..( Int32 )Math.Min( maxlength, ( UInt32 )self.Length ) ];
+		public static String? LimitLength( this String? self, UInt32 maxlength ) => self?[..( Int32 )Math.Min( maxlength, ( UInt32 )self.Length )];
 
 		/// <summary>
 		///     Returns the <paramref name="count" /> from the beginning of the string.
@@ -124,7 +123,7 @@ namespace Librainian.Parsing {
 		///     <seealso cref="LimitLength" />
 		/// </remarks>
 		[Pure]
-		public static String? Left( this String? self, UInt32 count ) => self[ ..( Int32 )Math.Min( count, ( UInt32 )self.Length ) ];
+		public static String? Left( this String? self, UInt32 count ) => self?[..( Int32 )Math.Min( count, ( UInt32 )self.Length )];
 
 		/// <summary>
 		///     Returns the <paramref name="count" /> from the end of the string.
@@ -158,7 +157,7 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
-		public static String? LimitAndTrim( this String? self, Int32 maxlength ) => self?[ ..Math.Min( maxlength, self.Length ) ]?.TrimEnd();
+		public static String? LimitAndTrim( this String? self, Int32 maxlength ) => self?[..Math.Min( maxlength, self.Length )]?.TrimEnd();
 
 		/// <summary>Add a single quote around <paramref name="self" />.</summary>
 		/// <param name="self"></param>
@@ -209,7 +208,7 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		public static String? TrimLeftAndRightChar( this String self ) => self[ 1..^1 ]?.Trimmed();
+		public static String? TrimLeftAndRightChar( this String self ) => self[1..^1]?.Trimmed();
 
 		/// <summary>
 		///     Add the left ` and/or right ” brackets if they're not already on the string.
@@ -231,8 +230,8 @@ namespace Librainian.Parsing {
 				return $"{ParsingConstants.Chars.LeftDoubleQuote}{trimmed}{ParsingConstants.Chars.DoubleQuote}";
 			}
 
-			var starts = trimmed[ 0 ];
-			var ends = trimmed[ ^1 ];
+			var starts = trimmed[0];
+			var ends = trimmed[^1];
 
 			if ( starts == ParsingConstants.Chars.SingleQuote && ends == ParsingConstants.Chars.SingleQuote ) {
 				return $"{ParsingConstants.Chars.LeftDoubleQuote}{trimmed}{ParsingConstants.Chars.RightDoubleQuote}";
@@ -373,7 +372,7 @@ namespace Librainian.Parsing {
 				return self;
 			}
 
-			return self[ ( self.IndexOf( splitter, comparison ) + splitter.Length ).. ];
+			return self[( self.IndexOf( splitter, comparison ) + splitter.Length )..];
 		}
 
 		[Pure]
@@ -423,7 +422,7 @@ namespace Librainian.Parsing {
 				return self;
 			}
 
-			return self[ ..self.IndexOf( splitter, comparison ) ];
+			return self[..self.IndexOf( splitter, comparison )];
 		}
 
 		/// <summary>
@@ -496,12 +495,12 @@ namespace Librainian.Parsing {
 			var maxi = length1;
 			var maxj = length2;
 
-			var dCurrent = new Int32[ maxi + 1 ];
-			var dMinus1 = new Int32[ maxi + 1 ];
-			var dMinus2 = new Int32[ maxi + 1 ];
+			var dCurrent = new Int32[maxi + 1];
+			var dMinus1 = new Int32[maxi + 1];
+			var dMinus2 = new Int32[maxi + 1];
 
 			for ( var i = 0; i <= maxi; i++ ) {
-				dCurrent[ i ] = i;
+				dCurrent[i] = i;
 			}
 
 			var jm1 = 0;
@@ -516,26 +515,26 @@ namespace Librainian.Parsing {
 
 				// Initialize
 				var minDistance = Int32.MaxValue;
-				dCurrent[ 0 ] = j;
+				dCurrent[0] = j;
 				var im1 = 0;
 				var im2 = -1;
 
 				for ( var i = 1; i <= maxi; i++ ) {
-					var cost = source[ im1 ] == target[ jm1 ] ? 0 : 1;
+					var cost = source[im1] == target[jm1] ? 0 : 1;
 
-					var del = dCurrent[ im1 ] + 1;
-					var ins = dMinus1[ i ] + 1;
-					var sub = dMinus1[ im1 ] + cost;
+					var del = dCurrent[im1] + 1;
+					var ins = dMinus1[i] + 1;
+					var sub = dMinus1[im1] + cost;
 
 					//Fastest execution for min value of 3 integers
 					var min = del > ins ? ins > sub ? sub : ins :
 						del > sub ? sub : del;
 
-					if ( i > 1 && j > 1 && source[ im2 ] == target[ jm1 ] && source[ im1 ] == target[ j - 2 ] ) {
-						min = Math.Min( min, dMinus2[ im2 ] + cost );
+					if ( i > 1 && j > 1 && source[im2] == target[jm1] && source[im1] == target[j - 2] ) {
+						min = Math.Min( min, dMinus2[im2] + cost );
 					}
 
-					dCurrent[ i ] = min;
+					dCurrent[i] = min;
 
 					if ( min < minDistance ) {
 						minDistance = min;
@@ -552,21 +551,21 @@ namespace Librainian.Parsing {
 				}
 			}
 
-			var result = dCurrent[ maxi ];
+			var result = dCurrent[maxi];
 
 			return result > threshold ? Int32.MaxValue : result;
 		}
 
 		[Pure]
 		public static Int32 EditDistanceParallel( this String s1, String s2 ) {
-			var dist = new Int32[ s1.Length + 1, s2.Length + 1 ];
+			var dist = new Int32[s1.Length + 1, s2.Length + 1];
 
 			for ( var i = 0; i <= s1.Length; i++ ) {
-				dist[ i, 0 ] = i;
+				dist[i, 0] = i;
 			}
 
 			for ( var j = 0; j <= s2.Length; j++ ) {
-				dist[ 0, j ] = j;
+				dist[0, j] = j;
 			}
 
 			var numBlocks = Environment.ProcessorCount * 4;
@@ -574,13 +573,13 @@ namespace Librainian.Parsing {
 			ParallelAlgorithms.Wavefront( ( startI, endI, startJ, endJ ) => {
 				for ( var i = startI + 1; i <= endI; i++ ) {
 					for ( var j = startJ + 1; j <= endJ; j++ ) {
-						dist[ i, j ] = s1[ i - 1 ] == s2[ j - 1 ] ? dist[ i - 1, j - 1 ] :
-							1 + Math.Min( dist[ i - 1, j ], Math.Min( dist[ i, j - 1 ], dist[ i - 1, j - 1 ] ) );
+						dist[i, j] = s1[i - 1] == s2[j - 1] ? dist[i - 1, j - 1] :
+							1 + Math.Min( dist[i - 1, j], Math.Min( dist[i, j - 1], dist[i - 1, j - 1] ) );
 					}
 				}
 			}, s1.Length, s2.Length, numBlocks, numBlocks );
 
-			return dist[ s1.Length, s2.Length ];
+			return dist[s1.Length, s2.Length];
 		}
 
 		/// <summary>
@@ -643,7 +642,7 @@ namespace Librainian.Parsing {
 
 			// Upgrade the escaping to RFC 3986, if necessary.
 			foreach ( var t in ParsingConstants.UriRfc3986CharsToEscape ) {
-				escaped.Replace( t, Uri.HexEscape( t[ 0 ] ) );
+				escaped.Replace( t, Uri.HexEscape( t[0] ) );
 			}
 
 			// Return the fully-RFC3986-escaped String.
@@ -673,14 +672,12 @@ namespace Librainian.Parsing {
 		}
 
 		[Pure]
-		public static String? FirstSentence( this String? text ) {
+		public static Sentence? FirstSentence( this String? text ) {
 			if ( String.IsNullOrWhiteSpace( text ) ) {
-				return String.Empty;
+				return Sentence.Empty;
 			}
 
-			var sentences = text.ToSentences().FirstOrDefault();
-
-			return sentences?.ToString();
+			return text.ToSentences().FirstOrDefault();
 		}
 
 		[Pure]
@@ -698,9 +695,9 @@ namespace Librainian.Parsing {
 			var bigInteger = numeratorShiftedToEnoughDigits / rational.Denominator;
 			var toBeFormatted = bigInteger.ToString();
 			var builder = new StringBuilder();
-			builder.Append( toBeFormatted[ 0 ] );
+			builder.Append( toBeFormatted[0] );
 			builder.Append( '.' );
-			builder.Append( toBeFormatted[ 1..numberOfDigits ] );
+			builder.Append( toBeFormatted[1..numberOfDigits] );
 
 			return builder.ToString();
 		}
@@ -756,7 +753,7 @@ namespace Librainian.Parsing {
 
 			// do the encoding
 			foreach ( var index in s.Select( t => ParsingConstants.English.Alphabet.Uppercase.IndexOf( t ) ).Where( index => index >= 0 ) ) {
-				coded.Append( codes[ index ] );
+				coded.Append( codes[index] );
 			}
 
 			// okay, so here's how this goes . . . the first thing I do is assign the coded String so that i can regex replace on it
@@ -764,7 +761,7 @@ namespace Librainian.Parsing {
 			// then i remove repeating characters
 			//result = repeating.Replace(result, "$1");
 			//var result = new Regex( @"(\d)\1*D?\1+" ).Replace( coded.ToString(), "$1" ).Substring( 1 );
-			var result = SoundExPart1.Value.Replace( coded.ToString(), "$1" )[ 1.. ];
+			var result = SoundExPart1.Value.Replace( coded.ToString(), "$1" )[1..];
 
 			// now i need to remove any characters coded as D from the front of the String because they're not really valid as the first code because they don't have an actual soundex code value
 			//result = new Regex( "^D+" ).Replace( result, Empty );
@@ -780,7 +777,7 @@ namespace Librainian.Parsing {
 			}
 
 			// return the first character followed by the coded String
-			return $"{s[ 0 ]}{result}";
+			return $"{s[0]}{result}";
 		}
 
 		private static Lazy<Regex> SoundExPart1 { get; } = new( () => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true );
@@ -892,24 +889,20 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[Pure]
 		public static String? JustNumbers( this String? s ) {
-			try {
-				if ( s != null ) {
-					var sb = new StringBuilder( s.Length );
+			if ( s is null ) {
+				return default( String? );
+			}
 
-					foreach ( Match m in RegexJustNumbers.Value.Matches( s ) ) {
-						if ( m != null ) {
-							sb.Append( m.Value );
-						}
-					}
+			var sb = new StringBuilder( s.Length );
 
-					return sb.ToString();
+			foreach ( Match m in RegexJustNumbers.Value.Matches( s ) ) {
+				if ( m != null ) {
+					sb.Append( m.Value );
 				}
 			}
-			catch ( Exception error ) {
-				error.Log();
-			}
 
-			return default( String? );
+			return sb.ToString();
+
 		}
 
 		/// <summary>
@@ -917,14 +910,14 @@ namespace Librainian.Parsing {
 		///     <para>( for example: cAt == CaT is true )</para>
 		///     <para>( for example: CaT == CaT is true )</para>
 		///     <para>( Like( null, null ) is false )</para>
-		///     <para>( Like( null, null, <paramref name="nullStringsAreEqual" />: false ) is false )</para>
-		///     <para>( Like( null, null, <paramref name="nullStringsAreEqual" />: true ) is true )</para>
 		///     <para>
-		///         <see cref="StringComparison.OrdinalIgnoreCase" />
+		///         Default comparison is <see cref="StringComparison.OrdinalIgnoreCase" />
 		///     </para>
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
+		/// <param name="compareOptions"></param>
+		/// <param name="comparison"></param>
 		/// <returns></returns>
 		[Pure]
 		public static Boolean Like(
@@ -933,6 +926,18 @@ namespace Librainian.Parsing {
 			CompareOptions compareOptions = CompareOptions.NullsAreNotEqual,
 			StringComparison comparison = StringComparison.OrdinalIgnoreCase
 		) {
+			if ( compareOptions.HasFlag( CompareOptions.NullsAreNotEqual ) && left is null && right is null ) {
+				return false;
+			}
+
+			if ( compareOptions.HasFlag( CompareOptions.NullAreEqual ) && left is null && right is null ) {
+				return true;
+			}
+
+			if ( ReferenceEquals( left, right ) ) {
+				return true;
+			}
+
 			if ( compareOptions.HasFlag( CompareOptions.IgnoreLeadingWhitespace ) ) {
 				left = left?.TrimStart();
 				right = right?.TrimStart();
@@ -943,23 +948,12 @@ namespace Librainian.Parsing {
 				right = right?.TrimEnd();
 			}
 
-			if ( compareOptions.HasFlag( CompareOptions.NullAreEqual ) && left is null && right is null ) {
-				return true;
-			}
-
-			if ( /*compareOptions.HasFlag(CompareOptions.NullsAreNotEqual) &&*/ left is null || right is null ) {
-				return false;
-			}
-
 			if ( compareOptions.HasFlag( CompareOptions.IgnoreAllWhitespace ) ) {
-				return left.StripAllWhitespace()!.Equals( right.StripAllWhitespace(), comparison );
+				left = left.StripAllWhitespace();
+				right = right.StripAllWhitespace();
 			}
 
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			return left.Equals( right, comparison );
+			return String.Equals( left, right, comparison );
 		}
 
 		[Flags]
@@ -976,10 +970,15 @@ namespace Librainian.Parsing {
 			IgnoreAllWhitespace = 0b10000
 		}
 
+		/// <summary>
+		/// Strips ALL whitespace from <paramref name="value"/>, returning <see cref="String.Empty"/> if needed.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		[Pure]
-		public static String? StripAllWhitespace( this String? value ) {
+		public static String StripAllWhitespace( this String? value ) {
 			if ( value is null ) {
-				return default( String? );
+				return String.Empty;
 			}
 
 			StringBuilder sb = new( value.Length, value.Length );
@@ -1001,6 +1000,8 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
+		/// <param name="compareOptions"></param>
+		/// <param name="comparison"></param>
 		/// <returns></returns>
 		[Pure]
 		public static Boolean Same(
@@ -1019,8 +1020,8 @@ namespace Librainian.Parsing {
 		public static String MakeInitialLowerCase( this String word, CultureInfo? cultureInfo = null ) =>
 			word.Length switch {
 				0 => String.Empty,
-				1 => Char.ToLower( word[ 0 ], cultureInfo ?? CultureInfo.CurrentCulture ).ToString(),
-				var _ => String.Concat( Char.ToLower( word[ 0 ], cultureInfo ?? CultureInfo.CurrentCulture ).ToString(), word[ 1.. ] )
+				1 => Char.ToLower( word[0], cultureInfo ?? CultureInfo.CurrentCulture ).ToString(),
+				var _ => String.Concat( Char.ToLower( word[0], cultureInfo ?? CultureInfo.CurrentCulture ).ToString(), word[1..] )
 			};
 
 		/// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.</summary>
@@ -1108,7 +1109,7 @@ namespace Librainian.Parsing {
 				throw new IndexOutOfRangeException( $"The index {index} is out of range (0 to {self.Length})." );
 			}
 
-			return new String( self[ index ], count );
+			return new String( self[index], count );
 		}
 
 		/// <summary>
@@ -1164,7 +1165,7 @@ namespace Librainian.Parsing {
 			if ( input.StartsWith( "\"", StringComparison.Ordinal ) && input.EndsWith( "\"", StringComparison.Ordinal ) ) {
 
 				// remove leading/trailing quotes
-				input = input[ 1..^1 ];
+				input = input[1..^1];
 			}
 
 			return input;
@@ -1223,7 +1224,7 @@ namespace Librainian.Parsing {
 		/// <returns></returns>
 		[Pure]
 		public static String? ReplaceAll( this String? haystack, String? needle, String? replacement, StringComparison comparison = StringComparison.Ordinal ) {
-			if ( String.IsNullOrEmpty( haystack ) || String.IsNullOrEmpty( needle ) || String.IsNullOrEmpty(replacement) ) {
+			if ( String.IsNullOrEmpty( haystack ) || String.IsNullOrEmpty( needle ) || String.IsNullOrEmpty( replacement ) ) {
 				return haystack;
 			}
 
@@ -1234,11 +1235,11 @@ namespace Librainian.Parsing {
 				return haystack;
 			}
 
-			var needleLength = needle.Length;	//Does this actually need optimized? oh well.
+			var needleLength = needle.Length;   //Does this actually need optimized? oh well.
 			Int32 indexOf;
 
 			while ( ( indexOf = haystack.IndexOf( needle, comparison ) ) > 0 ) {
-				haystack = $"{haystack[ ..indexOf ]}{replacement}{haystack[ ( indexOf + needleLength ).. ]}";
+				haystack = $"{haystack[..indexOf]}{replacement}{haystack[( indexOf + needleLength )..]}";
 			}
 
 			return haystack;
@@ -1248,7 +1249,7 @@ namespace Librainian.Parsing {
 		public static String ReplaceFirst( this String haystack, String needle, String? replacement, StringComparison comparison = StringComparison.Ordinal ) {
 			var indexOf = haystack.IndexOf( needle, comparison );
 
-			return indexOf < 0 ? haystack : $"{haystack[ ..indexOf ]}{replacement}{haystack[ ( indexOf + needle.Length ).. ]}";
+			return indexOf < 0 ? haystack : $"{haystack[..indexOf]}{replacement}{haystack[( indexOf + needle.Length )..]}";
 		}
 
 		[Pure]
@@ -1272,30 +1273,30 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static String ReverseWords( this String myString ) {
 			var length = myString.Length;
-			var tokens = new Char[ length ];
+			var tokens = new Char[length];
 			var position = 0;
 			Int32 lastIndex;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
-				if ( myString[ i ] != ' ' ) {
+				if ( myString[i] != ' ' ) {
 					continue;
 				}
 
 				lastIndex = length - position;
 
 				for ( var k = i + 1; k < lastIndex; k++ ) {
-					tokens[ position ] = myString[ k ];
+					tokens[position] = myString[k];
 					position++;
 				}
 
-				tokens[ position ] = ' ';
+				tokens[position] = ' ';
 				position++;
 			}
 
 			lastIndex = myString.Length - position;
 
 			for ( var i = 0; i < lastIndex; i++ ) {
-				tokens[ position ] = myString[ i ];
+				tokens[position] = myString[i];
 				position++;
 			}
 
@@ -1313,7 +1314,8 @@ namespace Librainian.Parsing {
 		/// <summary>Compute a Similarity between two strings. <br /> 1. 0 is a full, bit for bit match. <br /></summary>
 		/// <param name="source">      </param>
 		/// <param name="compare">     </param>
-		/// <param name="timeout">     </param>
+		/// <param name="timeout"></param>
+		/// <param name="cancellationToken">     </param>
 		/// <param name="matchReasons">preferably an empty queue</param>
 		/// <returns></returns>
 		/// <remarks>The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
@@ -1321,10 +1323,12 @@ namespace Librainian.Parsing {
 		public static Double Similarity(
 			this String? source,
 			String? compare,
-			ConcurrentQueue<String>? matchReasons = null,
-			TimeSpan? timeout = null
+			TimeSpan timeout,
+			CancellationToken cancellationToken,
+			out ConcurrentQueue<String> matchReasons
 		) {
 			var similarity = new PotentialF( 0 );
+			matchReasons = new ConcurrentQueue<String>();
 
 			switch ( source ) {
 				case null when compare is null:
@@ -1344,14 +1348,12 @@ namespace Librainian.Parsing {
 
 			var stopwatch = Stopwatch.StartNew();
 
-			timeout ??= Minutes.One;
-
 			if ( !source.Any() || !compare.Any() ) {
 				return similarity;
 			}
 
 			if ( source.ExactMatch( compare ) ) {
-				matchReasons?.Add( "ExactMatch( source, compare )" );
+				matchReasons.Enqueue( "ExactMatch( source, compare )" );
 				similarity.Add( 1 );
 
 				return similarity;
@@ -1382,7 +1384,7 @@ namespace Librainian.Parsing {
 			if ( sourceIntoUtf32Encoding.SequenceEqual( compareIntoUtf32Encoding ) ) {
 				votes.ForA( sourceIntoUtf32Encoding.Length );
 				votes.ForB( compareIntoUtf32Encoding.Length );
-				matchReasons?.Add( "exact match as UTF32 encoded" );
+				matchReasons.Enqueue( "exact match as UTF32 encoded" );
 
 				return similarity;
 			}
@@ -1396,7 +1398,7 @@ namespace Librainian.Parsing {
 			if ( source.SequenceEqual( compareReversed ) ) {
 				votes.ForA( source.Length );
 				votes.ForB( compare.Length / 2.0 );
-				matchReasons?.Add( "partial String reversal" );
+				matchReasons.Enqueue( "partial String reversal" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1410,7 +1412,7 @@ namespace Librainian.Parsing {
 			if ( sourceDistinct.SequenceEqual( compareDistinct ) ) {
 				votes.ForA( sourceDistinct.Length );
 				votes.ForB( compareDistinct.Length );
-				matchReasons?.Add( "exact match after Distinct()" );
+				matchReasons.Enqueue( "exact match after Distinct()" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1420,7 +1422,7 @@ namespace Librainian.Parsing {
 			if ( sourceDistinct.SequenceEqual( compareDistinctReverse ) ) {
 				votes.ForA( sourceDistinct.Length * 2 );
 				votes.ForB( compareDistinctReverse.Length );
-				matchReasons?.Add( "exact match after Distinct()" );
+				matchReasons.Enqueue( "exact match after Distinct()" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1441,7 +1443,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( tempcounter > 0 ) {
-				matchReasons?.Add( $"{tempcounter} characters found in compare from source" );
+				matchReasons.Enqueue( $"{tempcounter} characters found in compare from source" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1451,7 +1453,7 @@ namespace Librainian.Parsing {
 			votes.ForB( compare.Length );
 
 			if ( ( tempcounter = ( Int32 )votes.ForA( compare.Count( c => Contains( source, c ) ) ) ).Any() ) {
-				matchReasons?.Add( $"{tempcounter} characters found in compare from source" );
+				matchReasons.Enqueue( $"{tempcounter} characters found in compare from source" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1461,7 +1463,7 @@ namespace Librainian.Parsing {
 			if ( source.Contains( compare ) ) {
 				votes.ForA( source.Length );
 				votes.ForB( compare.Length );
-				matchReasons?.Add( "found compare String inside source String" );
+				matchReasons.Enqueue( "found compare String inside source String" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1471,7 +1473,7 @@ namespace Librainian.Parsing {
 			if ( compare.Contains( source ) ) {
 				votes.ForA( source.Length );
 				votes.ForB( compare.Length );
-				matchReasons?.Add( "found source String inside compare String" );
+				matchReasons.Enqueue( "found source String inside compare String" );
 			}
 
 			if ( stopwatch.Elapsed > timeout ) {
@@ -1500,7 +1502,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentEmptyException( nameof( s ) );
 			}
 
-			return FullSoundex( s ).PadRight( length, '0' )[ ..length ]; // and no longer than length
+			return FullSoundex( s ).PadRight( length, '0' )[..length]; // and no longer than length
 		}
 
 		[Pure]
@@ -1511,7 +1513,7 @@ namespace Librainian.Parsing {
 
 			var res = Enumerable.Range( 0, s.Length ).Select( index => new {
 				index,
-				ch = s[ index ]
+				ch = s[index]
 			} ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 			return res;
@@ -1597,11 +1599,11 @@ namespace Librainian.Parsing {
 			var output = input.StripTags( allowedTags );
 
 			/* Lambda functions */
-			static String HrefMatch( Match m ) => m.Groups[ 1 ].Value + "href..;,;.." + m.Groups[ 2 ].Value;
+			static String HrefMatch( Match m ) => m.Groups[1].Value + "href..;,;.." + m.Groups[2].Value;
 
-			static String ClassMatch( Match m ) => m.Groups[ 1 ].Value + "class..;,;.." + m.Groups[ 2 ].Value;
+			static String ClassMatch( Match m ) => m.Groups[1].Value + "class..;,;.." + m.Groups[2].Value;
 
-			static String UnsafeMatch( Match m ) => m.Groups[ 1 ].Value + m.Groups[ 4 ].Value;
+			static String UnsafeMatch( Match m ) => m.Groups[1].Value + m.Groups[4].Value;
 
 			/* Allow the "href" attribute */
 			output = new Regex( "(<a.*)href=(.*>)" ).Replace( output, HrefMatch );
@@ -1626,7 +1628,7 @@ namespace Librainian.Parsing {
 		public static String Sub( this String s, Int32 count ) {
 			var length = Math.Min( count, s.Length );
 
-			return s[ ..length ];
+			return s[..length];
 		}
 
 		/// <summary>
@@ -1650,7 +1652,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentOutOfRangeException( nameof( endIndex ) );
 			}
 
-			return self[ ..^endIndex ] ?? throw new NullException( nameof(self) );
+			return self[..^endIndex] ?? throw new NullException( nameof( self ) );
 		}
 
 		/// <summary>
@@ -1712,7 +1714,7 @@ namespace Librainian.Parsing {
 			var n = Math.Abs( number );
 			var lt = n % 100;
 
-			return number + OrdinalSuffixes[ lt is >= 11 and <= 13 ? 0 : n % 10 ];
+			return number + OrdinalSuffixes[lt is >= 11 and <= 13 ? 0 : n % 10];
 		}
 
 		/// <summary>Converts a String to pascal case with the option to remove underscores</summary>
@@ -1741,10 +1743,10 @@ namespace Librainian.Parsing {
 				var l = w.Length;
 
 				if ( l > 0 ) {
-					sb.Append( Char.ToUpper( w[ 0 ], cultureInfo ?? CultureInfo.CurrentCulture ) );
+					sb.Append( Char.ToUpper( w[0], cultureInfo ?? CultureInfo.CurrentCulture ) );
 
 					if ( l > 1 ) {
-						sb.Append( w[ 1.. ] );
+						sb.Append( w[1..] );
 					}
 				}
 			}
@@ -1756,7 +1758,7 @@ namespace Librainian.Parsing {
 			var start = 0;
 
 			while ( start < value.Length ) {
-				if ( Char.IsWhiteSpace( value[ start ] ) || value[ start ] == ParsingConstants.Chars.NullChar ) {
+				if ( Char.IsWhiteSpace( value[start] ) || value[start] == ParsingConstants.Chars.NullChar ) {
 					start++;
 				}
 				else {
@@ -1767,7 +1769,7 @@ namespace Librainian.Parsing {
 			var end = value.Length - 1;
 
 			while ( end >= start ) {
-				if ( Char.IsWhiteSpace( value[ end ] ) || value[ end ] == ParsingConstants.Chars.NullChar ) {
+				if ( Char.IsWhiteSpace( value[end] ) || value[end] == ParsingConstants.Chars.NullChar ) {
 					end--;
 				}
 				else {
@@ -1780,30 +1782,27 @@ namespace Librainian.Parsing {
 
 		/// <summary>Replaces all CR, LF, and tabs with spaces. And then replaces all double spaces with a single space.</summary>
 		/// <param name="s"></param>
+		/// <param name="comparison"></param>
 		/// <returns></returns>
-		public static String Cleanup( this String? s ) {
+		public static String Cleanup( this String? s, StringComparison comparison = StringComparison.OrdinalIgnoreCase ) {
 			if ( s is null ) {
 				return String.Empty;
 			}
 
-			while ( s.Contains( ParsingConstants.Chars.CR, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.Strings.CarriageReturn, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
+			while ( s.Contains( ParsingConstants.Chars.CR, comparison ) ) {
+				s = s.Replace( ParsingConstants.Strings.CarriageReturn, ParsingConstants.Strings.Singlespace, comparison );
 			}
 
-			while ( s.Contains( ParsingConstants.Chars.LF, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.Chars.LF.ToString(), ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
+			while ( s.Contains( ParsingConstants.Chars.LF, comparison ) ) {
+				s = s.Replace( ParsingConstants.Strings.LineFeed, ParsingConstants.Strings.Singlespace, comparison );
 			}
 
-			while ( s.Contains( ParsingConstants.Strings.Tab, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.Strings.Tab, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
+			while ( s.Contains( ParsingConstants.Strings.Tab, comparison ) ) {
+				s = s.Replace( ParsingConstants.Strings.Tab, ParsingConstants.Strings.Singlespace, comparison );
 			}
 
-			while ( s.Contains( ParsingConstants.Strings.Doublespace, StringComparison.OrdinalIgnoreCase ) ) {
-				s = s.Replace( ParsingConstants.Strings.Doublespace, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
-			}
-
-			while ( s.Contains( ParsingConstants.Strings.Doublespace ) ) {
-				s = s.Replace( ParsingConstants.Strings.Doublespace, ParsingConstants.Strings.Singlespace, StringComparison.OrdinalIgnoreCase );
+			while ( s.Contains( ParsingConstants.Strings.Doublespace, comparison ) ) {
+				s = s.Replace( ParsingConstants.Strings.Doublespace, ParsingConstants.Strings.Singlespace, comparison );
 			}
 
 			return s;
@@ -1812,15 +1811,29 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static IEnumerable<Sentence> ToSentences( this String? paragraph ) {
 			if ( paragraph is null ) {
-				return Enumerable.Empty<Sentence>();
+				foreach ( var _ in Enumerable.Empty<Sentence>() ) {
+					yield break;
+				}
 			}
 
+			var sentences = RegexBySentenceStackoverflow.Value.Split( paragraph! );
+
+			foreach ( var sentence in sentences ) {
+				var sen = Sentence.Parse( sentence.Cleanup() );
+				if ( sen.Equals(Sentence.Empty) ) {
+					continue;
+				}
+				yield return sen;
+			}
+
+			/*
 			paragraph = paragraph.Cleanup();
 			paragraph = paragraph.Replace( ParsingConstants.Chars.CR.ToString(), Environment.NewLine );
 			paragraph = paragraph.Replace( ParsingConstants.Chars.LF.ToString(), Environment.NewLine );
 
 			return RegexBySentenceStackoverflow.Value.Split( paragraph ).Select( s => s.Replace( Environment.NewLine, String.Empty ).Trimmed() ?? String.Empty )
-											   .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) ).Select( Sentence.Parse );
+			                                   .Where( s => !String.IsNullOrEmpty( s ) && !s.Equals( ".", StringComparison.Ordinal ) ).Select( Sentence.Parse );
+			*/
 		}
 
 		/// <summary>Returns the wording of a number.</summary>
@@ -1883,13 +1896,13 @@ namespace Librainian.Parsing {
 			}
 
 			if ( number < 20 ) {
-				words += ParsingConstants.English.UnitsMap[ number ];
+				words += ParsingConstants.English.UnitsMap[number];
 			}
 			else {
-				words += ParsingConstants.English.TensMap[ number / 10 ];
+				words += ParsingConstants.English.TensMap[number / 10];
 
 				if ( number % 10 > 0 ) {
-					words += "-" + ParsingConstants.English.UnitsMap[ number % 10 ];
+					words += "-" + ParsingConstants.English.UnitsMap[number % 10];
 				}
 			}
 
@@ -1931,12 +1944,10 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static IEnumerable<String> ToSplit( this String? sentence ) =>
 			RegexByWordBreak.Value.Split( $"{ParsingConstants.Strings.Singlespace}{sentence}{ParsingConstants.Strings.Singlespace}" )
-							.ToStrings( ParsingConstants.Strings.Singlespace ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries );
+							.ToStrings( ParsingConstants.Strings.Singlespace ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
 		[Pure]
-		public static IEnumerable<Word> ToWords( this String? sentence ) {
-			return sentence.ToSplit().Select( s => new Word( s ) );
-		}
+		public static IEnumerable<Word> ToWords( this String? sentence ) => sentence.ToSplit().Select( s => new Word( s ) );
 
 		/// <summary>
 		/// Needs unit tests.
@@ -1950,7 +1961,7 @@ namespace Librainian.Parsing {
 				return s;
 			}
 
-			return ( UInt32 )s.Length <= maximumLength ? s : s.AsMemory()[ ..( Int32 )maximumLength ].ToString();
+			return ( UInt32 )s.Length <= maximumLength ? s : s.AsMemory()[..( Int32 )maximumLength].ToString();
 		}
 
 		/// <summary>To convert a Byte Array of Unicode values (UTF-8 encoded) to a complete String.</summary>
@@ -1969,7 +1980,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentEmptyException( nameof( self ) );
 			}
 
-			return self[ ..Math.Min( self.Length, maxLength ) ] ?? throw new NullException(nameof(self));
+			return self[..Math.Min( self.Length, maxLength )] ?? throw new NullException( nameof( self ) );
 		}
 
 		/// <summary>Uses a <see cref="Regex" /> to count the number of words.</summary>
@@ -2004,7 +2015,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentEmptyException( nameof( right ) );
 			}
 
-			return Regex.Match( source, $"{left}(.*){right}" ).Groups[ 1 ].Value;
+			return Regex.Match( source, $"{left}(.*){right}" ).Groups[1].Value;
 		}
 
 		[DebuggerStepThrough]
@@ -2027,7 +2038,7 @@ namespace Librainian.Parsing {
 				return;
 			}
 
-			ref var first = ref memory.Span[ 0 ];
+			ref var first = ref memory.Span[0];
 			first = Char.ToUpper( first, cultureInfo ?? CultureInfo.CurrentCulture );
 		}
 
@@ -2042,10 +2053,10 @@ namespace Librainian.Parsing {
 			}
 
 			if ( text.Length == 1 ) {
-				return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ).ToString();
+				return Char.ToUpper( text[0], CultureInfo.CurrentCulture ).ToString();
 			}
 
-			return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ) + text[ 1.. ];
+			return Char.ToUpper( text[0], CultureInfo.CurrentCulture ) + text[1..];
 		}
 
 		[DebuggerStepThrough]
@@ -2116,7 +2127,7 @@ namespace Librainian.Parsing {
 
 			Int32 start = 0, end = source.Length - 1;
 
-			Char startChar = source[ start ], endChar = source[ end ];
+			Char startChar = source[start], endChar = source[end];
 
 			while ( start < end && ( startChar == ' ' || endChar == ' ' ) ) {
 				if ( startChar == ' ' ) {
@@ -2127,8 +2138,8 @@ namespace Librainian.Parsing {
 					--end;
 				}
 
-				startChar = source[ start ];
-				endChar = source[ end ];
+				startChar = source[start];
+				endChar = source[end];
 			}
 
 			return source.Slice( start, 1 + ( end - start ) );
@@ -2144,7 +2155,7 @@ namespace Librainian.Parsing {
 			self = self.Trimmed();
 
 			while ( self?.StartsWith( startingChar, comparison ) == true ) {
-				self = self[ startingChar.Length.. ].TrimStart();
+				self = self[startingChar.Length..].TrimStart();
 			}
 
 			return self;
@@ -2173,7 +2184,7 @@ namespace Librainian.Parsing {
 				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
-			var joined = String.Join( separator, list.Where(o => o is not null) );
+			var joined = String.Join( separator, list.Where( o => o is not null ) );
 
 			if ( trimEnd == true ) {
 				return String.IsNullOrEmpty( atTheEnd ) ? joined.TrimEnd() : $"{joined.TrimEnd()}{separator}{atTheEnd}".TrimEnd();
@@ -2268,14 +2279,14 @@ namespace Librainian.Parsing {
 				throw new NullException( nameof( self ) );
 			}
 
-			return self[ ..^1 ];
+			return self[..^1];
 		}
 		public static String? RemoveFirstCharacter( this String self ) {
 			if ( self == null ) {
 				throw new ArgumentEmptyException( nameof( self ) );
 			}
 
-			return self[ 1.. ];
+			return self[1..];
 		}
 
 	}

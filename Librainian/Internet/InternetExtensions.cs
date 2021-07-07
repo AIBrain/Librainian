@@ -47,9 +47,7 @@ namespace Librainian.Internet {
 
 		private static Regex ValidateURLRegex { get; } = new(@"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled);
 
-		public static String ToQueryString( this NameValueCollection nvc ) {
-			return String.Join( "&", nvc.AllKeys.Select( key => $"{HttpUtility.UrlEncode( key )}={HttpUtility.UrlEncode( nvc[ key ] )}" ) );
-		}
+		public static String ToQueryString( this NameValueCollection nvc ) => String.Join( "&", nvc.AllKeys.Select( key => $"{HttpUtility.UrlEncode( key )}={HttpUtility.UrlEncode( nvc[ key ] )}" ) );
 
 		public static async Task<TextReader?> DoRequestAsync( this WebRequest request ) {
 			if ( request is null ) {

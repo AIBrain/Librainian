@@ -337,7 +337,8 @@ namespace Librainian.Collections.Extensions {
 
 			while ( iterations.Any() ) {
 				iterations--;
-				list = list.OrderBy( o => Randem.Next() ).ThenBy( o => Randem.Next() ).ToList();
+				list = list.OrderBy( _ => Randem.Next() ).ThenBy( _ => Randem.Next() ).ToList();
+				//TODO Benchmark list = list.OrderBy( _ => Randem.NextDouble() ).ThenBy( _ => Randem.NextDouble() ).ToList();
 			}
 		}
 	}

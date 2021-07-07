@@ -67,10 +67,10 @@ namespace Librainian.Linguistics {
 		public override String ToString() => this.Value;
 
 		/// <summary>
-		/// Return a jagged array of every possible combination of the array. Does not exclude duplicates.
+		/// Return a jagged array of every possible combination.
 		/// </summary>
 		/// <returns></returns>
-		public Char[][] Possibles() => this.Value.ToArray().PowerSet();
+		public Char[][] PowerSet() => this.Value.ToArray().PowerSet();
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 	}

@@ -39,7 +39,7 @@ namespace Librainian.Graphics.DDD {
 	/// <remarks>Coded towards speed.</remarks>
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	public struct CoordinateU64 : IEquatable<CoordinateU64>, IComparable<CoordinateU64> {
 
 		/// <summary>The smallest value a <see cref="CoordinateU64" /> will hold.</summary>

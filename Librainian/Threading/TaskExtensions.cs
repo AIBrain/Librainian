@@ -1099,9 +1099,7 @@ namespace Librainian.Threading {
 
 			public T GetResult() => this._lazy.Value;
 
-			public void OnCompleted( Action continuation ) {
-				Task.Run( continuation );
-			}
+			public void OnCompleted( Action continuation ) => Task.Run( continuation );
 		}
 
 		public class ResourceLoader<T> : IResourceLoader<T> {

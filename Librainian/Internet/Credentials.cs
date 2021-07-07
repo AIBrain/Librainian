@@ -32,7 +32,7 @@ namespace Librainian.Internet {
 	using Parsing;
 
 	/// <summary>Simple container for a <see cref="Username" /> and <see cref="Password" />.</summary>
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	public class Credentials {
 
 		private String? _password;

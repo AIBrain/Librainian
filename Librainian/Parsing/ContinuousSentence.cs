@@ -101,7 +101,7 @@ namespace Librainian.Parsing {
 			try {
 				this.AccessInputBuffer.EnterReadLock();
 
-				var sentence = this.CurrentBuffer.FirstSentence();
+				var sentence = this.CurrentBuffer.FirstSentence()?.ToString();
 
 				return String.IsNullOrEmpty( sentence ) ? String.Empty : sentence;
 			}

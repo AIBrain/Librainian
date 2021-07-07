@@ -1,12 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "ListBoxLog.cs" last formatted on 2020-08-14 at 8:32 PM.
+// 
+// File "ListBoxLog.cs" last touched on 2021-07-03 at 12:19 PM by Protiguous.
 
 #nullable enable
 
@@ -35,12 +38,13 @@ namespace Librainian.Controls {
 	using Logging;
 	using Maths;
 	using Microsoft.Extensions.Logging;
+	using Parsing;
 	using Utilities;
 
 	/// <summary>Pulled from http://stackoverflow.com/a/6587172/956364</summary>
 	public sealed class ListBoxLog : ABetterClassDispose {
 
-		private const Int32 DefaultMaxLinesInListbox = 2048;
+		private const Int32 DefaultMaxLinesInListbox = 4096;
 
 		/// <summary>
 		///     <see cref="FormatALogEventMessage" />
@@ -70,19 +74,15 @@ namespace Librainian.Controls {
 			this.Box.DrawItem += this.DrawItemHandler;
 			this.Box.KeyDown += this.KeyDownHandler;
 
-#if NET48
-			this.Box.ContextMenu = new ContextMenu( new[] {
-				new MenuItem( "Copy", this.CopyMenuOnClickHandler )
-			} );
+			this.Box.ContextMenuStrip = new ContextMenuStrip( 
+				//new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) } //TODO
+			) {
+				AutoClose = true, AutoSize = true
+			};
 
-			if ( this.Box.ContextMenu != null ) {
-				this.Box.ContextMenu.Popup += this.CopyMenuPopupHandler;
+			if ( this.Box.ContextMenuStrip != null ) {
+				//this.Box.ContextMenuStrip.Popup += this.CopyMenuPopupHandler;	//TODO
 			}
-#endif
-#if NET50
-
-			//TODO add back in once NET50 has the contextmenu
-#endif
 
 			this.Box.DrawMode = DrawMode.OwnerDrawFixed;
 
@@ -98,21 +98,27 @@ namespace Librainian.Controls {
 
 		private Boolean CanAdd { get; set; }
 
+		/// <summary>
+		///     Used during every <see cref="DrawItemHandler" />.
+		/// </summary>
+		private Font HackFont { get; } = new("Hack", 8.25f, FontStyle.Regular);
+
 		private Int32 MaxEntriesInListBox { get; }
 
 		private String MessageFormat { get; }
 
 		public Boolean Paused { get; }
 
-		private static String FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
+		private static String? FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
 			var message = logEvent.Message ?? "*null*";
 
-			return String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ),                    /* {1} */
-								  logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ),                                                 /* {2} */
-								  logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
-								  logEvent.EventTime.ToString( "HH:mm" ),                                                               /* {5} */
-								  logEvent.LogLevel.LevelName()[ 0 ],                                                                 /* {6} */
-								  logEvent.LogLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LogLevel, /* {8} */ message );
+			var f = String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */
+				logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
+				logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
+				logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
+				logEvent.LogLevel.LevelName()[ 0 ], /* {6} */
+				logEvent.LogLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LogLevel, /* {8} */ message );
+			return f.Trimmed();
 		}
 
 		private void AddALogEntry( Object? item ) {
@@ -148,11 +154,9 @@ namespace Librainian.Controls {
 		private void CopyMenuOnClickHandler( Object? sender, EventArgs? e ) => this.CopyToClipboard();
 
 		private void CopyMenuPopupHandler( Object? sender, EventArgs? e ) {
-#if NET48
-			if ( sender is ContextMenu menu ) {
-				menu.MenuItems[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
+			if ( sender is ContextMenuStrip menu ) {
+				menu.Items[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
 			}
-#endif
 		}
 
 		private void CopyToClipboard() {
@@ -168,8 +172,8 @@ namespace Librainian.Controls {
 
 			foreach ( LogEvent logEvent in this.Box.SelectedItems ) {
 				selectedItemsAsRTFText.AppendFormat( @"{{\f0\fs16\chshdng0\chcbpat{0}\cb{0}\cf{1} ", logEvent.LogLevel == LogLevel.Critical ? 2 : 1,
-													 logEvent.LogLevel == LogLevel.Critical ? 1 : ( Int32 )logEvent.LogLevel > 5 ? 6 :
-													 ( Int32 )logEvent.LogLevel + 1 );
+					logEvent.LogLevel == LogLevel.Critical ? 1 :
+					( Int32 )logEvent.LogLevel > 5 ? 6 : ( Int32 )logEvent.LogLevel + 1 );
 
 				selectedItemsAsRTFText.Append( FormatALogEventMessage( logEvent, this.MessageFormat ) );
 				selectedItemsAsRTFText.AppendLine( @"\par}" );
@@ -196,16 +200,14 @@ namespace Librainian.Controls {
 
 				var logEvent = listboxItem is LogEvent item ? item : new LogEvent( LogLevel.Critical, listboxItem.ToString() );
 
-				(var fore, var back) = logEvent.LogLevel.Colors();
+				( var fore, var back ) = logEvent.LogLevel.Colors();
 
-				using var solidBrush = new SolidBrush( back );
+				using ( var solidBrush = new SolidBrush( back ) ) {
+					e.Graphics.FillRectangle( solidBrush, e.Bounds );
+				}
 
 				using var brush = new SolidBrush( fore );
-
-				using var font = new Font( "Hack", 8.25f, FontStyle.Regular );
-
-				e.Graphics.FillRectangle( solidBrush, e.Bounds );
-				e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), font, brush, e.Bounds );
+				e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), this.HackFont, brush, e.Bounds );
 			}
 			else {
 				String.Empty.Break();
@@ -222,17 +224,7 @@ namespace Librainian.Controls {
 
 		private void OnHandleDestroyed( Object? sender, EventArgs? e ) => this.CanAdd = false;
 
-		private void WriteEvent( LogEvent logEvent ) {
-			if ( this.CanAdd ) {
-				this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntry ), logEvent );
-			}
-		}
-
-		private void WriteEventLine( LogEvent logEvent ) {
-			if ( this.CanAdd ) {
-				this.Box.BeginInvoke( new AddALogEntryDelegate( this.AddALogEntryLine ), logEvent );
-			}
-		}
+		//private delegate void AddALogEntryDelegate( Object item );
 
 		public override void DisposeManaged() {
 			this.CanAdd = false;
@@ -243,47 +235,48 @@ namespace Librainian.Controls {
 				this.Box.DrawItem -= this.DrawItemHandler;
 				this.Box.KeyDown -= this.KeyDownHandler;
 
-#if NET48
-				using var boxContextMenu = this.Box.ContextMenu;
+				using var boxContextMenuStrip = this.Box.ContextMenuStrip;
 
-				if ( boxContextMenu != null ) {
-					boxContextMenu.MenuItems.Clear();
-					boxContextMenu.Popup -= this.CopyMenuPopupHandler;
+				if ( boxContextMenuStrip != null ) {
+					boxContextMenuStrip.Nop();
+					boxContextMenuStrip.Items.Clear();
+
+					//TODO boxContextMenu.Popup -= this.CopyMenuPopupHandler;
 				}
-#endif
 
 				this.Box.Items.Clear();
 				this.Box.DrawMode = DrawMode.Normal;
+				using ( this.HackFont ) { }
 			}
 		}
 
-		public void Log( String? message ) => this.WriteEvent( new LogEvent( LogLevel.Critical, message ) );
-
-		public void LogLine( String? message ) => this.LogLine( LogLevel.Debug, message );
-
-		public void LogLine( String? format, params Object[] args ) =>
-			this.LogLine( LogLevel.Debug, format is null ? null : String.Format( format, args ) );
-
-		public void LogLine( LogLevel loggingLevel, String? format, params Object[] args ) =>
-			this.LogLine( loggingLevel, format is null ? null : String.Format( format, args ) );
-
-		public void LogLine( LogLevel loggingLevel, String? message ) => this.WriteEventLine( new LogEvent( loggingLevel, message ) );
-
-		private delegate void AddALogEntryDelegate( Object item );
-
-		private class LogEvent {
-
-			public LogEvent( LogLevel loggingLevel, String? message ) {
-				this.EventTime = DateTime.Now;
-				this.LogLevel = loggingLevel;
-				this.Message = message;
+		public void LogCritical( String? message ) {
+			if ( this.CanAdd ) {
+				LogEvent logEvent = new(LogLevel.Critical, message);
+				this.Box.InvokeAction( () => this.AddALogEntry( logEvent ), RefreshOrInvalidate.Refresh );
 			}
-
-			public DateTime EventTime { get; }
-
-			public LogLevel LogLevel { get; }
-
-			public String? Message { get; }
 		}
+
+		/// <summary>
+		///     Write a <paramref name="message" /> with <see cref="LogLevel.Debug" />.
+		/// </summary>
+		/// <param name="message"></param>
+		public void LogLine( String? message ) {
+			if ( this.CanAdd ) {
+				LogEvent logEvent = new(LogLevel.Debug, message);
+				this.Box.InvokeAction( () => this.AddALogEntryLine( logEvent ), RefreshOrInvalidate.Refresh );
+			}
+		}
+
+		/// <summary>
+		///     ABetterRecordDispose is just fluff. (just want to see it in "action"..)
+		/// </summary>
+		private record LogEvent( LogLevel LogLevel, String? Message ) : ABetterRecordDispose {
+
+			public DateTime EventTime { get; } = DateTime.Now;
+
+		}
+
 	}
+
 }

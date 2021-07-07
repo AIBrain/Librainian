@@ -34,12 +34,12 @@ namespace Librainian {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Diagnostics.CodeAnalysis;
+	using System.Diagnostics.Contracts;
 	using System.Globalization;
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading;
 	using Exceptions;
-	using JetBrains.Annotations;
 	using Measurement;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -260,9 +260,8 @@ namespace Librainian {
 		/// <param name="right"></param>
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static void Swap<T>( [System.Diagnostics.CodeAnalysis.NotNull] [DisallowNull]
-			ref T left, [System.Diagnostics.CodeAnalysis.NotNull] [DisallowNull]
-			ref T right ) => ( left, right ) = ( right, left );
+		public static void SwapNullable<T>( ref T? left, ref T? right ) => ( left, right ) = ( right, left );
+		public static void Swap<T>( ref T left, ref T right ) => ( left, right ) = ( right, left );
 
 		/// <summary>
 		///     Given (T left, T right), Return (T right, T left).
@@ -280,11 +279,9 @@ namespace Librainian {
 		public static (T? right, T? left) Swap<T>( (T? left, T? right) tuple ) => ( tuple.right, tuple.left );
 
 		/// <summary>
-		///     Create only 1 instance of <see cref="T" /> per thread. (only unique when using this class!)
+		///     Create only 1 instance of <see cref="T" /> per thread. (Only unique when using this method!)
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		[JetBrains.Annotations.NotNull]
-		[UsedImplicitly]
 		public static class Cache<T> where T : notnull, new() {
 
 			private static ThreadLocal<T> LocalCache { get; } = new(() => new T(), false);
@@ -294,10 +291,9 @@ namespace Librainian {
 		}
 
 		/// <summary>
-		///     Only create 1 instance of <see cref="T" /> per all threads. (only unique when using this class!)
+		///     Only create 1 instance of <see cref="T" /> per all threads. (only unique when using this method!)
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		[JetBrains.Annotations.NotNull]
 		public static class CacheGlobal<T> where T : notnull, new() {
 
 			public static T Instance { get; } = new();

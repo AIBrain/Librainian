@@ -1191,9 +1191,7 @@ namespace Librainian.FileSystem {
 		}
 
 		[Pure]
-		public async PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken ) {
-			return await this.AsInt64( cancellationToken ).Select( i => i == 0L ? 1L : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
-		}
+		public async PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken ) => await this.AsInt64( cancellationToken ).Select( i => i == 0L ? 1L : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
 
 		/// <summary>"poor mans Decimal hash"</summary>
 		/// <returns></returns>
@@ -1400,17 +1398,14 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
-			if ( optimal is null ) {
-				yield break;
-			}
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false ) ?? 4096;
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
-			await using var buffered = new BufferedStream( stream, optimal.Value );
+			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal, FileOptions.SequentialScan );
+			await using var buffered = new BufferedStream( stream, optimal );
 
 			using var reader = new StreamReader( buffered );
 
-			while ( true ) {
+			while ( !cancellationToken.IsCancellationRequested ) {
 				var line = await reader.ReadLineAsync().ConfigureAwait( false );
 
 				if ( line is null ) {

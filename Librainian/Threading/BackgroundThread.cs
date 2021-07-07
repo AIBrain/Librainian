@@ -35,8 +35,7 @@ namespace Librainian.Threading {
 	using Utilities;
 
 	/// <summary>
-	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (<see cref="Poke" />
-	///     ).
+	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (<see cref="Poke" />).
 	/// </summary>
 	public class BackgroundThread : ABetterClassDispose {
 
@@ -48,15 +47,18 @@ namespace Librainian.Threading {
 			this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
 			this.cancellationToken = cancellationToken;
 
-			this.thread = new Thread( ThreadStart ) {
-				IsBackground = true, Priority = ThreadPriority.BelowNormal
+			this.signal = new( autoStart );
+
+			this.thread = new Thread( Start ) {
+				IsBackground = true,
+				Priority = ThreadPriority.BelowNormal
 			};
 
 			if ( autoStart ) {
-				this.Start();
+				this.thread.Start();
 			}
 
-			void ThreadStart() {
+			void Start() {
 				while ( !this.cancellationToken.IsCancellationRequested ) {
 					//Every second wake up and see if we can get the semaphore.
 					//If we can, then run the ActionToPerform().
@@ -68,7 +70,7 @@ namespace Librainian.Threading {
 							exception.Log();
 						}
 						finally {
-							this.signal.Release();
+							this.signal.Set();
 						}
 					}
 					else {
@@ -82,15 +84,9 @@ namespace Librainian.Threading {
 
 		private CancellationToken cancellationToken { get; }
 
-		private SemaphoreSlim signal { get; } = new(1, 1);
+		private ManualResetEventSlim signal { get; }
 
 		private Thread thread { get; }
-
-		private void Start() {
-			if ( this.thread.ThreadState != ThreadState.Running ) {
-				this.thread.Start();
-			}
-		}
 
 		public override void DisposeManaged() {
 			if ( this.thread.ThreadState == ThreadState.Running ) {
@@ -106,7 +102,7 @@ namespace Librainian.Threading {
 		//public Boolean IsRunningAction() => this.RunningAction;
 
 		/// <summary>Set the signal.</summary>
-		[Obsolete("using semaphore instead.")]
+		[Obsolete( "using semaphore instead." )]
 		public void Poke() {
 			//this.signal.Release();
 		}

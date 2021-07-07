@@ -62,13 +62,9 @@ namespace Librainian.Linguistics {
 			this.Add( paragraphs );
 		}
 
-		public void Add( Paragraph paragraph ) {
-			this.Paragraphs.Add( paragraph );
-		}
+		public void Add( Paragraph paragraph ) => this.Paragraphs.Add( paragraph );
 
-		public void Add( IEnumerable<Paragraph> paragraphs ) {
-			this.Paragraphs.AddRange( paragraphs );
-		}
+		public void Add( IEnumerable<Paragraph> paragraphs ) => this.Paragraphs.AddRange( paragraphs );
 
 		public Boolean Equals( Page? other ) {
 			if ( other is null ) {

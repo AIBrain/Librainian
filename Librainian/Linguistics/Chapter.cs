@@ -67,12 +67,8 @@ namespace Librainian.Linguistics {
 		public static Boolean Equals( Chapter? left, Chapter? right ) =>
 			left is not null && right is not null && ( ReferenceEquals( left, right ) || left.Pages.SequenceEqual( right.Pages ) );
 
-		public void Add( Page page ) {
-			this.Pages.Add( page );
-		}
+		public void Add( Page page ) => this.Pages.Add( page );
 
-		public void Add( IEnumerable<Page> pages ) {
-			this.Pages.AddRange( pages );
-		}
+		public void Add( IEnumerable<Page> pages ) => this.Pages.AddRange( pages );
 	}
 }

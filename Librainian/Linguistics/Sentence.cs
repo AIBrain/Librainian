@@ -34,6 +34,7 @@ namespace Librainian.Linguistics {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
+	using Extensions;
 	using Measurement;
 	using Newtonsoft.Json;
 	using Parsing;
@@ -138,6 +139,12 @@ namespace Librainian.Linguistics {
 		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
 		public override String ToString() => this.Words.ToStrings( ParsingConstants.Strings.Singlespace );
+
+		/// <summary>
+		/// Return a jagged array of every possible combination.
+		/// </summary>
+		/// <returns></returns>
+		public Word[][] PowerSet() => this.Words.ToArray().PowerSet();
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}

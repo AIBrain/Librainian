@@ -121,7 +121,7 @@ namespace Librainian.Measurement.Time {
 		public static async PooledTask<TimeSpan> AwaitContextSwitch() {
 			var stopwatch = Stopwatch.StartNew();
 
-			await Task.Run( () => Task.Delay( 1 ).Wait() ).ConfigureAwait( false );
+			await Task.Run( async () => await Task.Delay( 1 ).ConfigureAwait( false ) ).ConfigureAwait( false );
 
 			return stopwatch.Elapsed;
 		}

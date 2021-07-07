@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Time {
 	/// </summary>
 	/// <see cref="http://wikipedia.org/wiki/Units_of_time" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	[Immutable]
 	public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 		public SpanOfTime( BigInteger planckTimes ) {

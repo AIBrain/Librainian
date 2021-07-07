@@ -660,9 +660,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static String Text( this Control? control ) {
-			return control.InvokeFunction( () => control?.Text );
-		}
+		public static String Text( this Control? control ) => control.InvokeFunction( () => control?.Text );
 
 		/// <summary>
 		///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
@@ -835,9 +833,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Visible( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
-			control.InvokeAction( () => control.Visible = value, redraw );
-		}
+		public static void Visible( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) => control.InvokeAction( () => control.Visible = value, redraw );
 
 		public static Boolean Yes( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 

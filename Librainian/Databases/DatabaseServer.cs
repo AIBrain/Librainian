@@ -944,9 +944,7 @@ namespace Librainian.Databases {
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async FireAndForget FireOffQuery( String query, CancellationToken cancellationToken, params SqlParameter?[]? parameters ) {
-			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait(false);
-		}
+		public async FireAndForget FireOffQuery( String query, CancellationToken cancellationToken, params SqlParameter?[]? parameters ) => await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		/// <summary>
 		/// A debugging aid. EACH database call will delay upon opening a connection.

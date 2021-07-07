@@ -28,22 +28,23 @@
 namespace Librainian.Threading {
 
 	using System;
+	using System.Threading.Tasks;
 
-	public readonly struct Releaser : IDisposable {
+	public readonly struct Releaser : IAsyncDisposable {
 
-		private AsyncReaderWriterLock? _toRelease { get; }
+		private AsyncReaderWriterLock _toRelease { get; }
 
 		private Boolean _writer { get; }
 
-		internal Releaser( AsyncReaderWriterLock? toRelease, Boolean writer ) {
+		internal Releaser( AsyncReaderWriterLock toRelease, Boolean writer ) {
 			this._toRelease = toRelease;
 			this._writer = writer;
 		}
 
 		public void Dispose() {
-			if ( this._toRelease is null ) {
-				return;
-			}
+			//if ( this._toRelease is null ) {
+			//	return;
+			//}
 
 			if ( this._writer ) {
 				this._toRelease.WriterRelease();
@@ -52,5 +53,16 @@ namespace Librainian.Threading {
 				this._toRelease.ReaderRelease();
 			}
 		}
+
+		public ValueTask DisposeAsync() {
+			if ( this._writer ) {
+				this._toRelease.WriterRelease();
+			}
+			else {
+				this._toRelease.ReaderRelease();
+			}
+			return ValueTask.CompletedTask;
+		}
+
 	}
 }

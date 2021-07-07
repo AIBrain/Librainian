@@ -36,9 +36,7 @@ namespace Librainian.Parsing {
 
 	internal static class PluralizationServiceUtil {
 
-		internal static Boolean DoesWordContainSuffix( String word, IEnumerable<String> suffixes, CultureInfo culture ) {
-			return suffixes.Any( s => word.EndsWith( s, true, culture ) );
-		}
+		internal static Boolean DoesWordContainSuffix( String word, IEnumerable<String> suffixes, CultureInfo culture ) => suffixes.Any( s => word.EndsWith( s, true, culture ) );
 
 		internal static Boolean TryInflectOnSuffixInWord( String word, IEnumerable<String> suffixes, Func<String, String> operationOnWord, CultureInfo culture,
 			out String? newWord ) {

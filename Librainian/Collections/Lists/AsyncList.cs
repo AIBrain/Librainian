@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "ConcurrentList.cs" last formatted on 2020-08-14 at 8:31 PM.
-
-#nullable enable
+// 
+// File "AsyncList.cs" last touched on 2021-06-28 at 3:26 PM by Protiguous.
 
 namespace Librainian.Collections.Lists {
 
@@ -46,6 +47,7 @@ namespace Librainian.Collections.Lists {
 	using Utilities;
 
 	/// <summary>
+	/// TODO Work in progress. I want to make ConcurrentList more async-friendly.
 	///     <para>A thread safe generic list.</para>
 	///     <para>Use at your own risk.</para>
 	/// </summary>
@@ -58,7 +60,7 @@ namespace Librainian.Collections.Lists {
 	/// <copyright>Protiguous@Protiguous.com</copyright>
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumerable<T>>*/ {
+	public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumerable<T>>*/ {
 
 		public enum ThrowSetting {
 
@@ -80,7 +82,7 @@ namespace Librainian.Collections.Lists {
 		/// <param name="enumerable">  Fill the list with the given enumerable.</param>
 		/// <param name="readTimeout">Defaults to 60 seconds.</param>
 		/// <param name="writeTimeout">Defaults to 60 seconds.</param>
-		public ConcurrentList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
+		public AsyncList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
 			this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 			this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
 			this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
@@ -90,7 +92,7 @@ namespace Librainian.Collections.Lists {
 			}
 		}
 
-		public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
+		public AsyncList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
 
 		private ConcurrentQueue<T> InputBuffer { get; } = new();
 
@@ -113,7 +115,7 @@ namespace Librainian.Collections.Lists {
 		public TimeSpan TimeoutForWrites { get; set; }
 
 		/// <summary>
-		///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
+		///     <para>Count of items currently in this <see cref="AsyncList{T}" />.</para>
 		/// </summary>
 		[JsonIgnore]
 		public Int32 Count => ( Int32 )Interlocked.Read( ref this.ItemCount );
@@ -139,9 +141,7 @@ namespace Librainian.Collections.Lists {
 		/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
 		public T? this[ Int32 index ] {
 			[CanBeNull]
-#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
 			get {
-#pragma warning restore CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
 				if ( index < 0 || index > this.TheList.Count ) {
 					return this.ThrowWhenOutOfRange( index );
 				}
@@ -181,13 +181,13 @@ namespace Librainian.Collections.Lists {
 		///     <para>
 		///         Add the
 		///         <typeparam name="T">item</typeparam>
-		///         to the end of this <see cref="ConcurrentList{TType}" />.
+		///         to the end of this <see cref="AsyncList{T}" />.
 		///     </para>
 		/// </summary>
 		/// <param name="item"></param>
 		public void Add( T item ) => this.Add( item, null );
 
-		/// <summary>Mark this <see cref="ConcurrentList{TType}" /> to be cleared.</summary>
+		/// <summary>Mark this <see cref="AsyncList{T}" /> to be cleared.</summary>
 		public void Clear() {
 			if ( this.IsReadOnly ) {
 				this.ThrowWhenDisallowedModifications();
@@ -205,14 +205,14 @@ namespace Librainian.Collections.Lists {
 
 		/// <summary>
 		///     <para>
-		///         Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this
+		///         Determines whether the <paramref name="item" /> is in this <see cref="AsyncList{T}" /> at this
 		///         moment in time.
 		///     </para>
 		/// </summary>
 		public Boolean Contains( T item ) => this.Read( () => this.TheList.Contains( item ) );
 
 		/// <summary>
-		///     Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the
+		///     Copies the entire <see cref="AsyncList{T}" /> to the <paramref name="array" />, starting at the
 		///     specified index in the target array.
 		/// </summary>
 		/// <param name="array">     </param>
@@ -232,7 +232,7 @@ namespace Librainian.Collections.Lists {
 		/// <summary>
 		///     <para>
 		///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
-		///         <see cref="ConcurrentList{TType}" /> .
+		///         <see cref="AsyncList{T}" /> .
 		///     </para>
 		/// </summary>
 		/// <returns></returns>
@@ -244,13 +244,13 @@ namespace Librainian.Collections.Lists {
 		///         zero-based index, or -1 if not found.
 		///     </para>
 		/// </summary>
-		/// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
+		/// <param name="item">The object to locate in this <see cref="AsyncList{T}" />.</param>
 		public Int32 IndexOf( T item ) => this.Read( () => this.TheList.IndexOf( item ) );
 
 		//is this the proper way?
 		/// <summary>
 		///     <para>
-		///         Requests an insert of the <paramref name="item" /> into this <see cref="ConcurrentList{TType}" /> at the
+		///         Requests an insert of the <paramref name="item" /> into this <see cref="AsyncList{T}" /> at the
 		///         specified <paramref name="index" />.
 		///     </para>
 		/// </summary>
@@ -354,7 +354,7 @@ namespace Librainian.Collections.Lists {
 
 			 //TODO is this logic a good or bad shortcut?
 			if ( this.IsReadOnly ) {
-				return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
+				return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function???
 			}
 			*/
 
@@ -398,7 +398,7 @@ namespace Librainian.Collections.Lists {
 			var isDisposed = this.IsDisposed;
 
 			if ( isDisposed && this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
+				throw new ObjectDisposedException( $"This {nameof( AsyncList<T> )} has been disposed." );
 			}
 
 			return isDisposed;
@@ -446,7 +446,7 @@ namespace Librainian.Collections.Lists {
 			var isReadOnly = this.IsReadOnly;
 
 			if ( isReadOnly && this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new InvalidOperationException( $"This {nameof( ConcurrentList<T> )} is set to read-only." );
+				throw new InvalidOperationException( $"This {nameof( AsyncList<T> )} is set to read-only." );
 			}
 
 			return isReadOnly;
@@ -491,7 +491,7 @@ namespace Librainian.Collections.Lists {
 		///     <para>
 		///         Add the
 		///         <typeparam name="T">item</typeparam>
-		///         to the end of this <see cref="ConcurrentList{TType}" />.
+		///         to the end of this <see cref="AsyncList{T}" />.
 		///     </para>
 		/// </summary>
 		/// <param name="item">    </param>
@@ -634,17 +634,17 @@ namespace Librainian.Collections.Lists {
 		}
 
 		/// <summary>
-		///     <para>Returns a copy of this <see cref="ConcurrentList{TType}" /> (at this moment).</para>
+		///     <para>Returns a copy of this <see cref="AsyncList{T}" /> (at this moment).</para>
 		/// </summary>
 		/// <returns></returns>
-		public ConcurrentList<T> Clone() {
+		public AsyncList<T> Clone() {
 			this.CatchUp();
 
-			return new ConcurrentList<T>( this.Read( () => this.TheList ) );
+			return new AsyncList<T>( this.Read( () => this.TheList ) );
 		}
 
 		/// <summary>
-		///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
+		///     Signal that this <see cref="AsyncList{T}" /> will not be modified any more.
 		///     <para>Blocking.</para>
 		/// </summary>
 		/// <see cref="IsReadOnly" />
@@ -730,7 +730,7 @@ namespace Librainian.Collections.Lists {
 		}
 
 		/// <summary>
-		///     <para>Try to get an item in this <see cref="ConcurrentList{TType}" /> by index.</para>
+		///     <para>Try to get an item in this <see cref="AsyncList{T}" /> by index.</para>
 		///     <para>Returns true if the request was posted to the internal dataflow.</para>
 		/// </summary>
 		/// <param name="index">   </param>
