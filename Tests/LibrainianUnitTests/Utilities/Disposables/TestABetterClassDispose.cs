@@ -28,6 +28,7 @@
 namespace LibrainianUnitTests.Utilities.Disposables {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using Librainian;
 	using Librainian.Maths;
 	using Librainian.Utilities.Disposables;
@@ -36,7 +37,7 @@ namespace LibrainianUnitTests.Utilities.Disposables {
 	[TestFixture]
 	public class TestABetterClassDispose {
 
-		private static Int32 N => 65536 * 2;
+		private static Int32 N => 65536 * 256;
 
 		[Test]
 		public void TestDisposeMultipleTimesLongerLife() {
@@ -49,11 +50,10 @@ namespace LibrainianUnitTests.Utilities.Disposables {
 			this.Nop();
 		}
 
-		private static void ForceGC() {
-			GC.Collect( 2, GCCollectionMode.Forced, true );
-		}
+		private static void ForceGC() => GC.Collect( 2, GCCollectionMode.Forced, true );
 
 		[Test]
+		[SuppressMessage( "ReSharper", "ConvertToUsingDeclaration" )]
 		public void TestDisposeMultipleTimesExplicitly() {
 			ForceGC();
 			foreach ( var i in 1.To( N ) ) {
