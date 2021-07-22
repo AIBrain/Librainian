@@ -32,6 +32,7 @@ namespace Librainian.Financial.Containers.Shopping {
 	using Maths;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>Just a concept class.</summary>
 	[JsonObject]

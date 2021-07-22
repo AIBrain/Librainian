@@ -29,9 +29,57 @@ namespace LibrainianUnitTests.OperatingSystem {
 
 	using System;
 	using System.Globalization;
+	using System.IO;
+	using System.Text;
+	using FluentAssertions;
 	using Librainian.FileSystem;
 	using Librainian.FileSystem.FileHistory;
+	using Librainian.Parsing;
 	using NUnit.Framework;
+
+	[TestFixture]
+	public static class FolderTests {
+
+		public const String ExampleFolderStart = @"    c:\temp\";
+		public const String ExampleFolderPath = @"\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z\0\1\2\3\4\5\6\7\8\9\\\/\\/\";
+
+
+		[Test]
+		public static void TestCompactFormat() {
+			var example = new Folder( Path.Combine( ExampleFolderStart, ExampleFolderPath ) );
+
+			Console.WriteLine( example.ToCompactFormat() );
+		}
+
+		[Test]
+		public static void TestLevelsDeep() {
+			var example = new Folder( Path.Combine( ExampleFolderStart, ExampleFolderPath ) );
+			Console.WriteLine( example.DoubleQuote() );
+			Console.WriteLine( example.LevelsDeep() );
+			example.LevelsDeep().Should().Be( 36 );
+		}
+
+		[Test]
+		public static void TestExpandedLevelsDeep() {
+			var expanded = new StringBuilder( UInt16.MaxValue );
+			foreach ( var c in ExampleFolderPath.ToCharArray() ) {
+				if ( Char.IsLetterOrDigit( c ) ) {
+					expanded.Append( c.Repeat( 512 ) );
+				}
+				else {
+					expanded.Append( c );
+				}
+			}
+
+			var example = new Folder( Path.Combine( ExampleFolderStart, expanded.ToString() ) );
+			
+			Console.WriteLine( example.DoubleQuote() );
+			Console.WriteLine( example.LevelsDeep() );
+			example.LevelsDeep().Should().Be( 36 );
+		}
+
+
+	}
 
 	[TestFixture]
 	public static class FileHistoryFileTests {

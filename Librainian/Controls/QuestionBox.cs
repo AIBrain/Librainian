@@ -46,7 +46,7 @@ namespace Librainian.Controls {
 
 			this.InitializeComponent();
 			this.Question = question;
-			this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Both );
+			this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
 
 			this.Response = default( String? );
 

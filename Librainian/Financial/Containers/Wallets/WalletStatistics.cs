@@ -29,6 +29,7 @@ namespace Librainian.Financial.Containers.Wallets {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	[JsonObject]
 	public class WalletStatistics : ABetterClassDispose {

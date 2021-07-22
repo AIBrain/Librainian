@@ -36,6 +36,7 @@ namespace Librainian.Financial.Currency.BTC {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>A very simple, thread-safe, Decimal-based bitcoin wallet.</summary>
 	/// <remarks>TODO add in support for automatic persisting TODO add in support for exploring the blockchain. lol</remarks>

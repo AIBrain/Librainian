@@ -40,6 +40,7 @@ namespace Librainian.OperatingSystem.Compression {
 	using FileSystem;
 	using Rationals;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class RandomnessFeeding : ABetterClassDispose {
 

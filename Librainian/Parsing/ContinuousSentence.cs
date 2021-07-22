@@ -32,6 +32,7 @@ namespace Librainian.Parsing {
 	using System.Threading;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     A thread-safe object to contain a moving target of sentences.

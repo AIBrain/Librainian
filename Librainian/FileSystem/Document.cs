@@ -58,6 +58,7 @@ namespace Librainian.FileSystem {
 	using Security;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]

@@ -777,7 +777,7 @@ namespace Librainian.Controls {
 				} );
 
 				if ( owner is Control { InvokeRequired: true } control ) {
-					return ( DialogResult? )control.Invoke( func );
+					return control.Invoke( func );
 				}
 
 				return func();

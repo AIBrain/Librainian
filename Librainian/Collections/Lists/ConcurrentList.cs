@@ -44,6 +44,7 @@ namespace Librainian.Collections.Lists {
 	using Parsing;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>A thread safe generic list.</para>

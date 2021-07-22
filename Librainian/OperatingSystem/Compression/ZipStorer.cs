@@ -34,6 +34,7 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.Text;
 	using Exceptions;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     Class for compression/decompression file. Represents a Zip file.

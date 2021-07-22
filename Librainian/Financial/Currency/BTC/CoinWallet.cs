@@ -42,6 +42,7 @@ namespace Librainian.Financial.Currency.BTC {
 	using Newtonsoft.Json;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     My first go at a thread-safe CoinWallet class for bitcoin coins. It's more pseudocode for learning than for

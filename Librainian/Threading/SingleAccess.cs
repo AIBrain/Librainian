@@ -35,6 +35,7 @@ namespace Librainian.Threading {
 	using Measurement.Time;
 	using Persistence;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".

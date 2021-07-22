@@ -31,6 +31,7 @@ namespace Librainian.Financial.Customers {
 	using System.Collections.Generic;
 	using Containers.Wallets;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class Cashier : ABetterClassDispose, IPerson {
 

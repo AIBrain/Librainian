@@ -54,6 +54,7 @@ namespace Librainian.Databases {
 	using PooledAwait;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class DatabaseServer : ABetterClassDisposeReactive, IDatabase {
 
@@ -1140,7 +1141,6 @@ namespace Librainian.Databases {
 				if ( DatabaseDelay is Seconds delay ) {
 					Thread.Sleep( delay );
 				}
-
 
 				//$"Attempting to open sql connection. {Retry} attempts remaining..".Verbose();
 

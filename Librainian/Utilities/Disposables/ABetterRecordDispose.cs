@@ -27,7 +27,7 @@
 
 #nullable enable
 
-namespace Librainian.Utilities {
+namespace Librainian.Utilities.Disposables {
 
 	using System;
 	using System.Diagnostics;
@@ -35,14 +35,14 @@ namespace Librainian.Utilities {
 	using System.Threading;
 
 	/// <summary>
-	///     <para>A class for easier implementation the proper <see cref="IDisposable" /> pattern.</para>
+	///     <para>A record for easier implementation the proper <see cref="IDisposable" /> pattern.</para>
 	///     <para>Implement overrides on <see cref="DisposeManaged" />, and <see cref="DisposeNative" /> as needed.</para>
 	///     <code></code>
 	/// </summary>
-	/// <remarks>ABCD (hehe).</remarks>
+	/// <remarks>ABRD.</remarks>
+	/// <remarks>This is purely experimental. I've just started learning records.</remarks>
 	/// <copyright>Created by Protiguous.</copyright>
-	public abstract class ABetterClassDispose : IDisposable {
-
+	public abstract record ABetterRecordDispose : IABetterClassDispose {
 		private Int32 _hasDisposedManaged;
 
 		private Int32 _hasDisposedNative;
@@ -61,7 +61,7 @@ namespace Librainian.Utilities {
 					return; //don't allow the setting to be changed once it has been set.
 				}
 
-				_ = Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
+				Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace Librainian.Utilities {
 					return; //don't allow the setting to be changed once it has been set.
 				}
 
-				_ = Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
+				Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace Librainian.Utilities {
 					return; //don't allow the setting to be changed once it has been set.
 				}
 
-				_ = Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
+				Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
 			}
 		}
 
@@ -156,7 +156,6 @@ namespace Librainian.Utilities {
 		// ReSharper disable once UnusedParameter.Global
 #pragma warning disable IDE0060 // Remove unused parameter
 		public void Dispose( Boolean dispose ) => this.Dispose();
-
 #pragma warning restore IDE0060 // Remove unused parameter
 
 		/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>

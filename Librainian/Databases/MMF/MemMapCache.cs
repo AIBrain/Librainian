@@ -40,6 +40,7 @@ namespace Librainian.Databases.MMF {
 	using Exceptions;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	[Obsolete( "Unfinished attempt at caching." )]
 	public class MemMapCache<T> : ABetterClassDispose {

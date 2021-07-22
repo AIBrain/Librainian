@@ -34,6 +34,7 @@ namespace Librainian.Financial.Currency {
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>A very simple, thread-safe, Decimal-based wallet.</summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]

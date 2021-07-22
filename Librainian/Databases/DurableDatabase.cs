@@ -38,6 +38,7 @@ namespace Librainian.Databases {
 	using Maths;
 	using Microsoft.Data.SqlClient;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class DurableDatabase : ABetterClassDispose {
 

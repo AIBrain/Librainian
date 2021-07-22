@@ -31,6 +31,7 @@ namespace Librainian.Persistence {
 	using Measurement.Time;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public sealed class DeserializeReportStats : ABetterClassDispose {
 

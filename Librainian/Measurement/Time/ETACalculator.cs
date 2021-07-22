@@ -33,6 +33,7 @@ namespace Librainian.Measurement.Time {
 	using FluentTime;
 	using Maths;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>Calculates the "Estimated Time of Arrival", aka ETA</para>

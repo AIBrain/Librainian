@@ -23,35 +23,37 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ListBoxLog.cs" last touched on 2021-07-03 at 12:19 PM by Protiguous.
+// File "ListBoxLog.cs" last touched on 2021-07-17 at 3:09 PM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.Controls {
 
 	using System;
-	using System.Diagnostics;
 	using System.Drawing;
-	using System.Text;
 	using System.Windows.Forms;
 	using Exceptions;
 	using Logging;
 	using Maths;
 	using Microsoft.Extensions.Logging;
-	using Parsing;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>Pulled from http://stackoverflow.com/a/6587172/956364</summary>
-	public sealed class ListBoxLog : ABetterClassDispose {
+	public class ListBoxLog : ABetterClassDispose {
 
-		private const Int32 DefaultMaxLinesInListbox = 4096;
+		private const Int32 DefaultMaxLinesInListbox = 1024;
 
+		private const Int32 DefaultLongLinesInListbox = 512;
+
+		/*
 		/// <summary>
-		///     <see cref="FormatALogEventMessage" />
+		///     Used in <see cref="FormatALogEventMessage" />.
 		/// </summary>
 		private const String DefaultMessageFormat = "{4}>{8}";
+		*/
 
-		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, messageFormat, DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBoxNoFlicker listBox, String messageFormat ) : this( listBox, DefaultMaxLinesInListbox ) {
 			if ( listBox is null ) {
 				throw new ArgumentEmptyException( nameof( listBox ) );
 			}
@@ -61,16 +63,20 @@ namespace Librainian.Controls {
 			}
 		}
 
-		public ListBoxLog( ListBox listBox, String messageFormat = DefaultMessageFormat, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBoxNoFlicker listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+			/*
 			if ( String.IsNullOrWhiteSpace( messageFormat ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( messageFormat ) );
 			}
-
+			*/
+			
 			this.Box = listBox ?? throw new ArgumentEmptyException( nameof( listBox ) );
-			this.Box.SelectionMode = SelectionMode.MultiExtended;
+			this.Box.SelectionMode = SelectionMode.None;
+			this.Box.DrawMode = DrawMode.OwnerDrawVariable;
 
 			this.Box.HandleCreated += this.OnHandleCreated;
 			this.Box.HandleDestroyed += this.OnHandleDestroyed;
+			this.Box.MeasureItem += MeasureItemHandler;
 			this.Box.DrawItem += this.DrawItemHandler;
 			this.Box.KeyDown += this.KeyDownHandler;
 
@@ -84,12 +90,8 @@ namespace Librainian.Controls {
 				//this.Box.ContextMenuStrip.Popup += this.CopyMenuPopupHandler;	//TODO
 			}
 
-			this.Box.DrawMode = DrawMode.OwnerDrawFixed;
-
-			this.MessageFormat = messageFormat;
+			//this.MessageFormat = messageFormat;
 			this.MaxEntriesInListBox = maxLinesInListbox;
-
-			this.Paused = false;
 
 			this.CanAdd = listBox.IsHandleCreated;
 		}
@@ -105,22 +107,27 @@ namespace Librainian.Controls {
 
 		private Int32 MaxEntriesInListBox { get; }
 
-		private String MessageFormat { get; }
+		//private String MessageFormat { get; }
 
-		public Boolean Paused { get; }
+		private static (Color fore, Color back) InformationColors { get; } = LogLevel.Information.Colors();
 
+		private static (SolidBrush fore, SolidBrush back) InformationBrushes { get; } = ( new SolidBrush( InformationColors.fore ), new SolidBrush( InformationColors.back ) );
+
+		/*
 		private static String? FormatALogEventMessage( LogEvent logEvent, String messageFormat ) {
 			var message = logEvent.Message ?? "*null*";
 
-			var f = String.Format( messageFormat, /* {0} */ logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ), /* {1} */
-				logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ), /* {2} */
-				logEvent.EventTime.ToString( "yyyy-MM-dd" ), /* {3} */ logEvent.EventTime.ToString( "HH:mm:ss.fff" ), /* {4} */
-				logEvent.EventTime.ToString( "HH:mm" ), /* {5} */
-				logEvent.LogLevel.LevelName()[ 0 ], /* {6} */
-				logEvent.LogLevel.LevelName(), /* {7} */ ( Int32 )logEvent.LogLevel, /* {8} */ message );
+			var f = String.Format( messageFormat, logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss.fff" ),
+				logEvent.EventTime.ToString( "yyyy-MM-dd HH:mm:ss" ),
+				logEvent.EventTime.ToString( "yyyy-MM-dd" ), logEvent.EventTime.ToString( "HH:mm:ss.fff" ),
+				logEvent.EventTime.ToString( "HH:mm" ),
+				logEvent.LogLevel.LevelName()[0],
+				logEvent.LogLevel.LevelName(), ( Int32 )logEvent.LogLevel, message );
 			return f.Trimmed();
 		}
+		*/
 
+		/*
 		private void AddALogEntry( Object? item ) {
 			if ( item == null ) {
 				return;
@@ -138,20 +145,75 @@ namespace Librainian.Controls {
 			currentText += item as String ?? String.Empty;
 			this.Box.Items[ items.Count - 1 ] = currentText;
 		}
+		*/
 
-		private void AddALogEntryLine( Object item ) {
-			this.Box.Items.Add( item );
-
-			if ( this.Box.Items.Count > this.MaxEntriesInListBox ) {
-				this.Box.Items.RemoveAt( 0 );
+		/// <summary>
+		///     Write the <paramref name="message" /> onto a new line in the listbox.
+		/// </summary>
+		/// <param name="message"></param>
+		public void WriteLine( String message ) {
+			if ( message is null ) {
+				throw new ArgumentNullException( nameof( message ) );
 			}
 
-			if ( !this.Paused ) {
-				this.Box.TopIndex = this.Box.Items.Count - 1;
+			if ( this.CanAdd is false ) {
+				return;
 			}
+
+			this.Box.InvokeAction( () => {
+				this.Box.BeginUpdate();
+
+				while ( this.Box.Items.Count > this.MaxEntriesInListBox ) {
+					this.Box.Items.RemoveAt( 0 );
+				}
+
+				var index = this.Box.Items.Add( message );
+
+				this.Box.TopIndex = index;
+				this.Box.EndUpdate();
+			}, RefreshOrInvalidate.Neither );
 		}
 
-		private void CopyMenuOnClickHandler( Object? sender, EventArgs? e ) => this.CopyToClipboard();
+		/// <summary>
+		///     Append <paramref name="message" /> onto the most recent line.
+		/// </summary>
+		/// <param name="message"></param>
+		public void Append( String message ) {
+			if ( this.CanAdd is false ) {
+				return;
+			}
+
+			if ( message == null ) {
+				throw new ArgumentNullException( nameof( message ) );
+			}
+
+			this.Box.InvokeAction( () => {
+
+				var index = this.Box.Items.Count;
+
+				if ( !index.Any() ) {
+					this.WriteLine( message ); //no lines yet?
+					return;
+				}
+
+				--index;
+
+				var item = $"{this.Box.Items[ index ]} {message}".Trim();
+
+				if ( item.Length > DefaultLongLinesInListbox ) {
+					this.WriteLine( message );
+					return;
+				}
+
+				//item.Length.DebugLine();
+
+				this.Box.BeginUpdate();
+				this.Box.Items[ index ] = item;
+				this.Box.EndUpdate();
+			}, RefreshOrInvalidate.Neither );
+		}
+
+		//private void CopyMenuOnClickHandler( Object? sender, EventArgs? e ) => this.CopyToClipboard();	//TODO enable copy
 
 		private void CopyMenuPopupHandler( Object? sender, EventArgs? e ) {
 			if ( sender is ContextMenuStrip menu ) {
@@ -159,6 +221,7 @@ namespace Librainian.Controls {
 			}
 		}
 
+		/*
 		private void CopyToClipboard() {
 			if ( !this.Box.SelectedItems.Count.Any() ) {
 				return;
@@ -186,45 +249,74 @@ namespace Librainian.Controls {
 				Clipboard.SetData( DataFormats.Rtf, selectedItemsAsRTFText.ToString() );
 			}
 		}
+		*/
+
+		private static void MeasureItemHandler( Object? sender, MeasureItemEventArgs e ) {
+			const Byte margin = 1;
+
+			if ( sender is ListBox listBox ) {
+				e.ItemHeight = margin + listBox.Items[ e.Index ] switch {
+					String s => ( Int32 )e.Graphics.MeasureString( s, listBox.Font, listBox.Width ).Height,
+					//LogEvent logEvent => ( Int32 )e.Graphics.MeasureString( logEvent.Message, listBox.Font, listBox.Width ).Height,
+					var _ => ( Int32 )e.Graphics.MeasureString( listBox.Items[ e.Index ].ToString(), listBox.Font, listBox.Width ).Height
+				};
+			}
+		}
 
 		private void DrawItemHandler( Object? sender, DrawItemEventArgs e ) {
-			if ( e.Index < 0 ) {
+			
+			if ( e.Index < 0 || sender is not ListBox listbox ) {
 				return;
 			}
 
-			if ( sender is ListBox listbox ) {
-				e.DrawBackground();
-				e.DrawFocusRectangle();
+			$"Drawing box index {e.Index}..".DebugLine();
 
-				var listboxItem = listbox.Items[ e.Index ];
+			//e.DrawBackground();
+			//e.DrawFocusRectangle(); //TODO needed? what does it look like without this?
 
-				var logEvent = listboxItem is LogEvent item ? item : new LogEvent( LogLevel.Critical, listboxItem.ToString() );
+			var listboxItem = listbox.Items[ e.Index ];
 
-				( var fore, var back ) = logEvent.LogLevel.Colors();
-
-				using ( var solidBrush = new SolidBrush( back ) ) {
-					e.Graphics.FillRectangle( solidBrush, e.Bounds );
-				}
-
-				using var brush = new SolidBrush( fore );
-				e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), this.HackFont, brush, e.Bounds );
+			if ( listboxItem is String s ) {
+				e.Graphics.FillRectangle( InformationBrushes.back, e.Bounds );
+				e.Graphics.DrawString( s, this.HackFont, InformationBrushes.fore, e.Bounds );
 			}
 			else {
-				String.Empty.Break();
+				this.BreakIfDebug();
 			}
+
+			/*
+			case LogEvent logEvent: {
+					(var fore, var back) = logEvent.LogLevel.Colors();
+
+					using ( var solidBrush = new SolidBrush( back ) ) {
+						e.Graphics.FillRectangle( solidBrush, e.Bounds );
+					}
+
+					using var brush = new SolidBrush( fore );
+					e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), this.HackFont, brush, e.Bounds );
+					break;
+				}
+			*/
+			/*
+			default: {
+					var logEvent = new LogEvent( LogLevel.Information, listboxItem.ToString() );
+					e.Graphics.FillRectangle( InformationBrushes.back, e.Bounds );
+					e.Graphics.DrawString( FormatALogEventMessage( logEvent, this.MessageFormat ), this.HackFont, InformationBrushes.fore, e.Bounds );
+					break;
+				}
+			*/
+
 		}
 
 		private void KeyDownHandler( Object? sender, KeyEventArgs e ) {
 			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) {
-				this.CopyToClipboard();
+				//this.CopyToClipboard();	//TODO
 			}
 		}
 
 		private void OnHandleCreated( Object? sender, EventArgs? e ) => this.CanAdd = true;
 
 		private void OnHandleDestroyed( Object? sender, EventArgs? e ) => this.CanAdd = false;
-
-		//private delegate void AddALogEntryDelegate( Object item );
 
 		public override void DisposeManaged() {
 			this.CanAdd = false;
@@ -234,40 +326,34 @@ namespace Librainian.Controls {
 				this.Box.HandleCreated -= this.OnHandleDestroyed;
 				this.Box.DrawItem -= this.DrawItemHandler;
 				this.Box.KeyDown -= this.KeyDownHandler;
+				this.Box.MeasureItem -= MeasureItemHandler;
 
 				using var boxContextMenuStrip = this.Box.ContextMenuStrip;
 
-				if ( boxContextMenuStrip != null ) {
-					boxContextMenuStrip.Nop();
-					boxContextMenuStrip.Items.Clear();
+				boxContextMenuStrip?.Items.Clear();
 
-					//TODO boxContextMenu.Popup -= this.CopyMenuPopupHandler;
-				}
+				//TODO boxContextMenu.Popup -= this.CopyMenuPopupHandler;
 
 				this.Box.Items.Clear();
 				this.Box.DrawMode = DrawMode.Normal;
 				using ( this.HackFont ) { }
+
+				using ( InformationBrushes.fore ) { }
+
+				using ( InformationBrushes.back ) { }
 			}
 		}
 
+		/*
 		public void LogCritical( String? message ) {
 			if ( this.CanAdd ) {
 				LogEvent logEvent = new(LogLevel.Critical, message);
 				this.Box.InvokeAction( () => this.AddALogEntry( logEvent ), RefreshOrInvalidate.Refresh );
 			}
 		}
+		*/
 
-		/// <summary>
-		///     Write a <paramref name="message" /> with <see cref="LogLevel.Debug" />.
-		/// </summary>
-		/// <param name="message"></param>
-		public void LogLine( String? message ) {
-			if ( this.CanAdd ) {
-				LogEvent logEvent = new(LogLevel.Debug, message);
-				this.Box.InvokeAction( () => this.AddALogEntryLine( logEvent ), RefreshOrInvalidate.Refresh );
-			}
-		}
-
+		/*
 		/// <summary>
 		///     ABetterRecordDispose is just fluff. (just want to see it in "action"..)
 		/// </summary>
@@ -276,6 +362,7 @@ namespace Librainian.Controls {
 			public DateTime EventTime { get; } = DateTime.Now;
 
 		}
+		*/
 
 	}
 

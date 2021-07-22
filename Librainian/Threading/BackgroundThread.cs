@@ -33,6 +33,7 @@ namespace Librainian.Threading {
 	using Logging;
 	using Measurement.Time;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (<see cref="Poke" />).

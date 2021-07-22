@@ -158,7 +158,7 @@ namespace Librainian.Controls {
 				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
-			return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+			return form.InvokeRequired ? form.Invoke( () => form.Size ) : form.Size;
 		}
 
 		/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>

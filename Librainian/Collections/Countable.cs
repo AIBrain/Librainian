@@ -43,6 +43,7 @@ namespace Librainian.Collections {
 	using Threading;
 	using Threadsafe;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>Threadsafe dictionary for LARGE numbers ( <see cref="BigInteger" />).</para>

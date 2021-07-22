@@ -23,37 +23,29 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TestABetterClassDispose.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "IABetterClassDispose.cs" last touched on 2021-07-22 at 5:19 AM by Protiguous.
 
-namespace LibrainianUnitTests.Utilities {
+namespace Librainian.Utilities.Disposables {
 
 	using System;
-	using System.Diagnostics;
-	using Librainian.Utilities;
-	using NUnit.Framework;
+	using System.Diagnostics.CodeAnalysis;
 
-	[TestFixture]
-	public class TestABetterClassDispose {
+	public interface IABetterClassDispose : IDisposable {
 
-		[Test]
-		public void TestMethod1() {
-			using var test1 = new Test( 1 );
-			using var test2 = new Test( 2 );
-			using var test3 = new Test( 3 );
-			using var test4 = test3;
-			using var test = test1;
-		}
+		Boolean HasDisposedManaged { get; set; }
 
-		internal class Test : ABetterClassDispose {
+		Boolean HasDisposedNative { get; set; }
 
-			private readonly Byte value;
+		Boolean HasSuppressedFinalize { get; set; }
 
-			public Test( Byte val ) => this.value = val;
+		Boolean IsDisposed { get; }
 
-			/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-			public override void DisposeManaged() => Debug.WriteLine( this.value );
+		[SuppressMessage( "ReSharper", "UnusedParameter.Global" )]
+		void Dispose( Boolean dispose );
 
-		}
+		void DisposeManaged();
+
+		void DisposeNative();
 
 	}
 

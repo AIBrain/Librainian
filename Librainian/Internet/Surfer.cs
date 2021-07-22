@@ -35,6 +35,7 @@ namespace Librainian.Internet {
 	using System.Threading.Tasks;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class Surfer : ABetterClassDispose {
 

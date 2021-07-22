@@ -27,6 +27,7 @@ namespace Librainian.Graphics.Video {
 	using System;
 	using System.Drawing;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class BitmapInfo : ABetterClassDispose {
 

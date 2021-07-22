@@ -370,24 +370,28 @@ namespace Librainian.Controls {
 				return;
 			}
 
-			void Action() {
-				if ( redraw.HasFlag( RefreshOrInvalidate.Invalidate ) ) {
+			void MaybeRedraw() {
+				if ( redraw.HasFlag( RefreshOrInvalidate.Refresh ) ) {
 					control.Invalidate();
 				}
-
-				if ( redraw.HasFlag( RefreshOrInvalidate.Refresh ) ) {
+				else if ( redraw.HasFlag( RefreshOrInvalidate.Invalidate ) ) {
 					control.Refresh();
 				}
 			}
 
 			if ( control.InvokeRequired ) {
-				control.Invoke( action );
-				control.Invoke( ( Action )Action );
+				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh )) {
+					action += MaybeRedraw;
+				}
+				control.BeginInvoke( action );
 			}
 			else {
 				action();
-				Action();
+				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
+					MaybeRedraw();
+				}
 			}
+			
 		}
 
 		/*
@@ -571,7 +575,7 @@ namespace Librainian.Controls {
 					item.OuterHtml = String.Empty;
 				}
 
-				browser.BeginInvoke( new Action( browser.Update ) );
+				browser.BeginInvoke( browser.Update );
 			}
 
 			return true;

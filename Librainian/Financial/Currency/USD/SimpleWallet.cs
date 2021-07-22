@@ -29,6 +29,7 @@ namespace Librainian.Financial.Currency.USD {
 	using System.Threading;
 	using JetBrains.Annotations;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>A simple, thread-safe,  Decimal-based wallet.</summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]

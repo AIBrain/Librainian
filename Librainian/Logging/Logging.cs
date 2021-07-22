@@ -100,7 +100,7 @@ namespace Librainian.Logging {
 			loggingLevel switch {
 				LogLevel.Trace => (Color.Green, Color.White),
 				LogLevel.Debug => (Color.DarkSeaGreen, Color.White),
-				LogLevel.Information => (Color.Green, Color.White),
+				LogLevel.Information => (Color.Black, Color.White),
 				LogLevel.Warning => (Color.Goldenrod, Color.White),
 				LogLevel.Error => (Color.Red, Color.White),
 				LogLevel.Critical => (Color.DarkRed, Color.Aqua),

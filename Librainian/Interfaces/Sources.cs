@@ -145,6 +145,12 @@ namespace Librainian.Interfaces {
 		/// <summary>
 		/// aka discord "server"
 		/// </summary>
-		DiscordGuild
+		DiscordGuild,
+
+		/// <summary>
+		/// Message was produced from a cortex.
+		/// </summary>
+		Cortex
+
 	}
 }

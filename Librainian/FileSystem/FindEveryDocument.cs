@@ -41,6 +41,7 @@ namespace Librainian.FileSystem {
 	using Parsing;
 	using Threadsafe;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>Scan every drive.</para>

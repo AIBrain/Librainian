@@ -33,6 +33,7 @@ namespace Librainian.FileSystem {
 	using Collections.Lists;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class AllSeeingFileWatcher : ABetterClassDispose {
 

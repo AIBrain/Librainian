@@ -30,6 +30,7 @@ namespace Librainian.Persistence {
 	using Exceptions;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class ResourceScanner : ABetterClassDispose {
 

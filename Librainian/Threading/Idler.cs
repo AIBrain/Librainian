@@ -38,6 +38,7 @@ namespace Librainian.Threading {
 	using Extensions;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public enum JobStatus {
 

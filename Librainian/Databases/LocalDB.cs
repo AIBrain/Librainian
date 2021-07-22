@@ -41,6 +41,7 @@ namespace Librainian.Databases {
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class LocalDb : ABetterClassDispose {
 

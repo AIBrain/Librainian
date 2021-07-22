@@ -50,6 +50,7 @@ namespace Librainian.Persistence {
 	using OperatingSystem.Compression;
 	using Parsing;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>

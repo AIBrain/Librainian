@@ -30,6 +30,7 @@ namespace Librainian.Interfaces {
 	using System;
 	using System.Drawing;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class Message : ABetterClassDispose, IMessage {
 
