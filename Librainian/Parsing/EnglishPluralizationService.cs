@@ -863,46 +863,32 @@ namespace Librainian.Parsing {
 			}
 		};
 
-		[JetBrains.Annotations.NotNull]
 		private Lazy<Regex> AlpaLazy { get; } = new( () => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ) );
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary AssimilatedClassicalInflectionPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary ClassicalInflectionPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary IrregularPluralsPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary IrregularVerbPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private IList<String> KnownPluralWords { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private IList<String> KnownSingluarWords { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary OSuffixPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private BidirectionalDictionary<String, String> UserDictionary { get; } = new();
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary WordsEndingWithInxAnxYnxPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary WordsEndingWithSePluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary WordsEndingWithSisPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		private StringBidirectionalDictionary WordsEndingWithSusPluralizationService { get; }
 
-		[JetBrains.Annotations.NotNull]
 		public static PluralizationService Default { get; } = new EnglishPluralizationService( new CultureInfo( "en" ) );
 
 		public EnglishPluralizationService( CultureInfo cultureInfo ) : base( cultureInfo ) {
@@ -946,7 +932,7 @@ namespace Librainian.Parsing {
 
 			// use the last space to separate the words
 			var lastSpaceIndex = word.LastIndexOf( ' ' );
-			prefixWord = word.Substring( 0, lastSpaceIndex + 1 );
+			prefixWord = word[ ..(lastSpaceIndex + 1) ];
 
 			return word[ ( lastSpaceIndex + 1 ).. ];
 

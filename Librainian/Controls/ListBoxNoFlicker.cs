@@ -1,4 +1,4 @@
-// Copyright Â© Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,70 +23,32 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ExampleUsingABetterClassDispose.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "ListBoxNoFlicker.cs" last touched on 2021-07-17 at 3:23 PM by Protiguous.
 
-#nullable enable
+namespace Librainian.Controls {
 
-namespace LibrainianUnitTests.Utilities {
+	using System.Windows.Forms;
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using JetBrains.Annotations;
-	using Librainian.Utilities;
-	using Xunit;
+	public class ListBoxNoFlicker : ListBox {
+		//public ListBoxNoFlicker() => this.SetStyle( ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true );
 
-	public class ExampleUsingABetterClassDispose : ABetterClassDispose {
+		public ListBoxNoFlicker() {
+			this.SetStyle(
+				ControlStyles.OptimizedDoubleBuffer |
+				ControlStyles.ResizeRedraw |
+				ControlStyles.UserPaint,
+				true );
+		}
 
-		private MemoryStream? _memoryStream = new();
-
-		private SysComObject? _sysComObject = new();
-
-		public ExampleUsingABetterClassDispose() => this._sysComObject?.ReserveMemory();
-
-		[Fact]
-		public override void DisposeManaged() {
-			using ( this._memoryStream ) {
-				this._memoryStream = null;
+		/*
+		protected override CreateParams CreateParams {
+			get {
+				CreateParams cp = base.CreateParams;
+				cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+				return cp;
 			}
-
-			base.DisposeManaged();
 		}
-
-		[Fact]
-		public override void DisposeNative() {
-			this._sysComObject?.ReleaseMemory();
-			this._sysComObject = null;
-			base.DisposeNative();
-		}
-
-	}
-
-	/// <summary>
-	///     A fake COM interface object.
-	/// </summary>
-	public class SysComObject {
-
-		[NotNull]
-		private static readonly Random RNG = new();
-
-		[CanBeNull]
-		private Byte[]? fakeInternalMemoryAllocation;
-
-		public SysComObject() => this.fakeInternalMemoryAllocation = null;
-
-		public void ReleaseMemory() {
-			Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
-			this.fakeInternalMemoryAllocation = null;
-			Debug.Assert( this.fakeInternalMemoryAllocation == null, "" );
-		}
-
-		public void ReserveMemory() {
-			this.fakeInternalMemoryAllocation = new Byte[ RNG.Next( 128, 256 ) ];
-			Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
-			Debug.WriteLine( $"{this.fakeInternalMemoryAllocation.Length} bytes allocated to fake COM object." );
-		}
-
+		*/
 	}
 
 }

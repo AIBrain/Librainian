@@ -28,8 +28,9 @@ namespace Librainian.Threading {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Utilities;
+	using Utilities.Disposables;
 	using Timer = System.Timers.Timer;
 
 	/// <summary>
@@ -37,10 +38,8 @@ namespace Librainian.Threading {
 	/// </summary>
 	public class NicerSystemTimer : ABetterClassDispose {
 
-		[NotNull]
-		private ReaderWriterLockSlim? access { get; set; }
+		private ReaderWriterLockSlim access { get; set; }
 
-		[CanBeNull]
 		private Timer? Timer { get; set; }
 
 		/// <summary>
@@ -49,9 +48,9 @@ namespace Librainian.Threading {
 		/// <param name="action">      </param>
 		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
 		/// <param name="milliseconds"></param>
-		public NicerSystemTimer( [NotNull] Action action, Boolean repeat, Double? milliseconds = null ) {
+		public NicerSystemTimer( Action action, Boolean repeat, Double? milliseconds = null ) {
 			if ( action == null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			this.access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );

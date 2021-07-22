@@ -28,7 +28,6 @@
 namespace Librainian.Extensions {
 
 	using System;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	///     Simple EventArg for the two progress events NOTE: There will typically be some errors which is fine as some parts
@@ -41,7 +40,7 @@ namespace Librainian.Extensions {
 
 		public String? KeyName { get; }
 
-		public PopulateProgressEventArgs( Int32 itemCount, [CanBeNull] String? keyName = null ) {
+		public PopulateProgressEventArgs( Int32 itemCount, String? keyName = null ) {
 			this.ItemCount = itemCount;
 			this.KeyName = keyName;
 		}

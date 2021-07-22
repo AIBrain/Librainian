@@ -43,6 +43,7 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using Collections.Extensions;
 	using Collections.Sets;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
@@ -50,7 +51,7 @@ namespace Librainian.FileSystem {
 	using OperatingSystem;
 	using Parsing;
 	using Pri.LongPath;
-	using Common = Librainian.Common;
+	using Common = Common;
 	using Directory = System.IO.Directory;
 	using File = System.IO.File;
 	using Path = System.IO.Path;
@@ -59,9 +60,9 @@ namespace Librainian.FileSystem {
 
 		public const Int32 FsctlSetCompression = 0x9C040;
 
-		private static async Task FindEachDocument( [NotNull] IFolder folder, Action<Document>? onFindFile, String searchPattern, CancellationToken cancelToken ) {
+		private static async Task FindEachDocument( IFolder folder, Action<Document>? onFindFile, String searchPattern, CancellationToken cancelToken ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			try {
@@ -81,14 +82,14 @@ namespace Librainian.FileSystem {
 			catch ( AggregateException aggregateException ) {
 				aggregateException.Handle( exception => {
 					switch ( exception ) {
-						case UnauthorizedAccessException _:
-						case DirectoryNotFoundException _:
-						case IOException _:
-						case SecurityException _:
+						case UnauthorizedAccessException:
+						case DirectoryNotFoundException:
+						case IOException:
+						case SecurityException:
 							return true;
 					}
 
-					exception!.Log();
+					exception.Log();
 
 					return false;
 				} );
@@ -167,11 +168,7 @@ namespace Librainian.FileSystem {
 					CancellationToken cancelToken
 				) {
 			try {
-				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).WithCancellation( cancelToken ) ) {
-					if ( subFolder is null ) {
-						continue;
-					}
-
+				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ) ) {
 					try {
 						onEachDirectory?.Invoke( subFolder );
 					}
@@ -197,7 +194,7 @@ namespace Librainian.FileSystem {
 							return true;
 					}
 
-					exception!.Log();
+					exception.Log();
 
 					return false;
 				} );
@@ -212,7 +209,7 @@ namespace Librainian.FileSystem {
 		/// <param name="text">    </param>
 		/// <param name="waitfor"></param>
 		/// <returns></returns>
-		public static async Task<(Status, Exception?)> AppendTextAsync( [NotNull] this FileInfo fileInfo, [NotNull] String text, TimeSpan? waitfor = null ) {
+		public static async Task<(Status, Exception?)> AppendTextAsync( this FileInfo fileInfo, String text, TimeSpan? waitfor = null ) {
 			try {
 				var buffer = Common.DefaultEncoding.GetBytes( text ).AsMemory( 0 );
 				var length = buffer.Length;
@@ -234,7 +231,7 @@ namespace Librainian.FileSystem {
 				exception.Log();
 				return (Status.Exception, exception);
 			}
-			catch ( ArgumentNullException exception ) {
+			catch ( ArgumentEmptyException exception ) {
 				exception.Log();
 				return (Status.Exception, exception);
 			}
@@ -260,10 +257,9 @@ namespace Librainian.FileSystem {
 		/// <param name="fileInfo"></param>
 		/// <returns></returns>
 		/// <remarks>Don't use on large files obviously..</remarks>
-		[NotNull]
-		public static IEnumerable<Byte> AsBytes( [NotNull] this FileInfo fileInfo ) {
+		public static IEnumerable<Byte> AsBytes( this FileInfo fileInfo ) {
 			if ( fileInfo is null ) {
-				throw new ArgumentNullException( nameof( fileInfo ) );
+				throw new ArgumentEmptyException( nameof( fileInfo ) );
 			}
 
 			if ( !fileInfo.Exists ) {
@@ -296,9 +292,9 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <param name="filename"></param>
 		/// <returns></returns>
-		public static IEnumerable<Byte> AsBytes( [NotNull] this String filename ) {
+		public static IEnumerable<Byte> AsBytes( this String filename ) {
 			if ( String.IsNullOrWhiteSpace( filename ) ) {
-				throw new ArgumentNullException( nameof( filename ) );
+				throw new ArgumentEmptyException( nameof( filename ) );
 			}
 
 			if ( !File.Exists( filename ) ) {
@@ -333,11 +329,11 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <param name="fileInfo"></param>
 		/// <returns></returns>
-		public static IEnumerable<UInt16> AsUInt16Array( [NotNull] this FileInfo fileInfo ) {
+		public static IEnumerable<UInt16> AsUInt16Array( this FileInfo fileInfo ) {
 
 			// TODO this needs a unit test for endianness
 			if ( fileInfo is null ) {
-				throw new ArgumentNullException( nameof( fileInfo ) );
+				throw new ArgumentEmptyException( nameof( fileInfo ) );
 			}
 
 			if ( !fileInfo.Exists ) {
@@ -382,11 +378,10 @@ namespace Librainian.FileSystem {
 		/// <param name="searchPattern"></param>
 		/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
 		/// <returns></returns>
-		[NotNull]
 		public static async IAsyncEnumerable<Folder> BetterEnumerateDirectories(
-			[NotNull] this DirectoryInfo target,
+			this DirectoryInfo target,
 			[EnumeratorCancellation] CancellationToken cancellationToken,
-			[CanBeNull] String? searchPattern = "*",
+			String? searchPattern = "*",
 			SearchOption searchOption = SearchOption.AllDirectories
 		) {
 			searchPattern ??= "*";
@@ -596,13 +591,13 @@ namespace Librainian.FileSystem {
 		/// <summary>Copies data from a source stream to a target stream.</summary>
 		/// <param name="source">The source stream to copy from.</param>
 		/// <param name="target">The destination stream to copy to.</param>
-		public static void CopyStream( [NotNull] this Stream source, [NotNull] Stream target ) {
+		public static void CopyStream( this Stream source, Stream target ) {
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			if ( target is null ) {
-				throw new ArgumentNullException( nameof( target ) );
+				throw new ArgumentEmptyException( nameof( target ) );
 			}
 
 			if ( !source.CanRead ) {
@@ -627,10 +622,9 @@ namespace Librainian.FileSystem {
 		/// <param name="withExtension"></param>
 		/// <param name="toBase">       </param>
 		/// <returns></returns>
-		[NotNull]
-		public static FileInfo DateAndTimeAsFile( [NotNull] this DirectoryInfo info, [CanBeNull] String? withExtension, Int32 toBase = 16 ) {
+		public static FileInfo DateAndTimeAsFile( this DirectoryInfo info, String? withExtension, Int32 toBase = 16 ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase );
@@ -645,10 +639,9 @@ namespace Librainian.FileSystem {
 		/// <param name="requestReadAccess">  </param>
 		/// <param name="requestWriteAccess"> </param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static DirectoryInfo? Ensure( [NotNull] this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
+		public static DirectoryInfo? Ensure( this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
 			if ( directoryInfo is null ) {
-				throw new ArgumentNullException( nameof( directoryInfo ) );
+				throw new ArgumentEmptyException( nameof( directoryInfo ) );
 			}
 
 			try {
@@ -679,9 +672,9 @@ namespace Librainian.FileSystem {
 			return directoryInfo;
 		}
 
-		public static DateTime FileNameAsDateAndTime( [NotNull] this FileInfo info, DateTime? defaultValue = null ) {
+		public static DateTime FileNameAsDateAndTime( this FileInfo info, DateTime? defaultValue = null ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			defaultValue ??= DateTime.MinValue;
@@ -723,19 +716,19 @@ namespace Librainian.FileSystem {
 		/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
 		/// <param name="searchStyle">       </param>
 		public static async Task FindFiles(
-			[NotNull] this Folder folder,
-			[NotNull] IReadOnlyCollection<String> fileSearchPatterns,
+			this Folder folder,
+			IReadOnlyCollection<String> fileSearchPatterns,
 			CancellationToken cancelToken,
-			[CanBeNull] Action<Document>? onFindFile = null,
-			[CanBeNull] Action<Folder>? onEachDirectory = null,
+			Action<Document>? onFindFile = null,
+			Action<Folder>? onEachDirectory = null,
 			SearchStyle searchStyle = SearchStyle.FilesFirst
 		) {
 			if ( fileSearchPatterns is null ) {
-				throw new ArgumentNullException( nameof( fileSearchPatterns ) );
+				throw new ArgumentEmptyException( nameof( fileSearchPatterns ) );
 			}
 
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var searchPatterns = fileSearchPatterns.ToList();
@@ -765,7 +758,7 @@ namespace Librainian.FileSystem {
 		/// <param name="info"></param>
 		/// <returns></returns>
 		/// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
-		public static UInt64? GetFileSizeOnDiskAlt( [NotNull] this FileInfo info ) {
+		public static UInt64? GetFileSizeOnDiskAlt( this FileInfo info ) {
 			var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullName, out var sectorsPerCluster, out var bytesPerSector, out var _, out var _ );
 
 			if ( result == 0 ) {
@@ -779,7 +772,6 @@ namespace Librainian.FileSystem {
 			return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
 		}
 
-		[CanBeNull]
 		public static DriveInfo? GetLargestEmptiestDrive() =>
 			DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
 
@@ -791,8 +783,7 @@ namespace Librainian.FileSystem {
 		/// <param name="searchPattern"></param>
 		/// <param name="searchOption"> </param>
 		/// <returns></returns>
-		[NotNull]
-		public static String GetRandomFile( [NotNull] String path, [NotNull] String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
+		public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 			}
@@ -823,16 +814,16 @@ namespace Librainian.FileSystem {
 		/// <param name="cancellationToken">  </param>
 		/// <returns></returns>
 		public static async Task<Boolean> GrabAllFolders(
-			[NotNull] this Folder startingFolder,
-			[NotNull] ConcurrentSet<Folder> foldersFound,
+			this Folder startingFolder,
+			ConcurrentSet<Folder> foldersFound,
 			CancellationToken cancellationToken
 		) {
 			if ( startingFolder is null ) {
-				throw new ArgumentNullException( nameof( startingFolder ) );
+				throw new ArgumentEmptyException( nameof( startingFolder ) );
 			}
 
 			if ( foldersFound is null ) {
-				throw new ArgumentNullException( nameof( foldersFound ) );
+				throw new ArgumentEmptyException( nameof( foldersFound ) );
 			}
 
 			try {
@@ -880,15 +871,15 @@ namespace Librainian.FileSystem {
 			[NotNull] Action<Document> onEachDocumentFound, [CanBeNull] IProgress<Int64>? progressFolders, [CanBeNull] IProgress<Int64>? progressDocuments,
 			[NotNull] CancellationTokenSource cancellation ) {
 			if ( startingFolder is null ) {
-				throw new ArgumentNullException( nameof( startingFolder ) );
+				throw new ArgumentEmptyException( nameof( startingFolder ) );
 			}
 
 			if ( onEachDocumentFound is null ) {
-				throw new ArgumentNullException( nameof( onEachDocumentFound ) );
+				throw new ArgumentEmptyException( nameof( onEachDocumentFound ) );
 			}
 
 			//if ( foldersFound is null ) {
-			//    throw new ArgumentNullException( nameof( foldersFound ) );
+			//    throw new ArgumentEmptyException( nameof( foldersFound ) );
 			//}
 
 			if ( cancellation.IsCancellationRequested ) {
@@ -941,7 +932,7 @@ namespace Librainian.FileSystem {
 
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsExtended( [NotNull] this String path ) =>
+		public static Boolean IsExtended( this String path ) =>
 			path.Length >= 4 && path[ 0 ] == PathInternal.Constants.Backslash && ( path[ 1 ] == PathInternal.Constants.Backslash || path[ 1 ] == '?' ) && path[ 2 ] == '?' &&
 			path[ 3 ] == PathInternal.Constants.Backslash;
 
@@ -979,9 +970,9 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Open with Explorer.exe</summary>
 		/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
-		public static Boolean OpenWithExplorer( [NotNull] this DirectoryInfo folder ) {
+		public static Boolean OpenWithExplorer( this DirectoryInfo folder ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var windows = Windows.WindowsSystem32Folder.Value;
@@ -1000,9 +991,9 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Open with Explorer.exe</summary>
 		/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
-		public static Boolean OpenWithExplorer( [NotNull] this Folder folder ) {
+		public static Boolean OpenWithExplorer( this Folder folder ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var windows = Windows.WindowsSystem32Folder.Value;
@@ -1020,9 +1011,9 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Open with Explorer.exe</summary>
-		public static Boolean OpenWithExplorer( [NotNull] this Document document ) {
+		public static Boolean OpenWithExplorer( this Document document ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			var windows = Windows.WindowsSystem32Folder.Value;
@@ -1043,10 +1034,9 @@ namespace Librainian.FileSystem {
 		/// <param name="info">        </param>
 		/// <param name="newExtension"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static FileInfo PlusDateTime( [NotNull] this FileInfo info, [CanBeNull] String? newExtension = null ) {
+		public static FileInfo PlusDateTime( this FileInfo info, String? newExtension = null ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			if ( info.Directory is null ) {
@@ -1066,10 +1056,9 @@ namespace Librainian.FileSystem {
 		/// <param name="fileMissingRetries"></param>
 		/// <param name="retryDelay">        </param>
 		/// <returns></returns>
-		[ItemNotNull]
-		public static async Task<String> ReadTextAsync( [NotNull] String filePath, Int32? bufferSize = 65536, Int32? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
+		public static async Task<String> ReadTextAsync( String filePath, Int32? bufferSize = 65536, Int32? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
 			if ( String.IsNullOrWhiteSpace( filePath ) ) {
-				throw new ArgumentNullException( nameof( filePath ) );
+				throw new ArgumentEmptyException( nameof( filePath ) );
 			}
 
 			bufferSize ??= 65536;
@@ -1114,8 +1103,7 @@ namespace Librainian.FileSystem {
 		/// <param name="cancellationToken">     </param>
 		/// <returns></returns>
 		/// <exception cref="IOException"></exception>
-		[CanBeNull]
-		public static TResult? ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken cancellationToken ) where TResult : class {
+		public static TResult? ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken cancellationToken ) where TResult : class {
 			var stopwatch = Stopwatch.StartNew();
 			TryAgain:
 
@@ -1145,7 +1133,7 @@ namespace Librainian.FileSystem {
 		/// <param name="cancellationToken">     </param>
 		/// <returns></returns>
 		/// <exception cref="IOException"></exception>
-		public static Boolean ReTry<TResult>( [NotNull] this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result, CancellationToken cancellationToken )
+		public static Boolean ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result, CancellationToken cancellationToken )
 			where TResult : struct {
 			var stopwatch = Stopwatch.StartNew();
 			TryAgain:
@@ -1177,7 +1165,7 @@ namespace Librainian.FileSystem {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
@@ -1186,7 +1174,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( [CanBeNull] this FileInfo? left, [CanBeNull] FileInfo? right ) {
+		public static Boolean SameContent( this FileInfo? left, FileInfo? right ) {
 			if ( left is null || right is null ) {
 				return false;
 			}
@@ -1211,7 +1199,7 @@ namespace Librainian.FileSystem {
 		/// <param name="leftFileName"> </param>
 		/// <param name="rightFileName"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
@@ -1220,7 +1208,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( [CanBeNull] this String? leftFileName, [CanBeNull] String? rightFileName ) {
+		public static Boolean SameContent( this String? leftFileName, String? rightFileName ) {
 			if ( leftFileName is null || rightFileName is null ) {
 				return false;
 			}
@@ -1250,7 +1238,7 @@ namespace Librainian.FileSystem {
 		/// <param name="rightFile"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
@@ -1259,7 +1247,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static async Task<Boolean> SameContent( [CanBeNull] this Document? left, [CanBeNull] FileInfo? rightFile, CancellationToken cancellationToken ) {
+		public static async Task<Boolean> SameContent( this Document? left, FileInfo? rightFile, CancellationToken cancellationToken ) {
 			if ( left is null || rightFile is null ) {
 				return false;
 			}
@@ -1275,7 +1263,7 @@ namespace Librainian.FileSystem {
 		/// <param name="right"> </param>
 		/// <param name="left"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
@@ -1284,7 +1272,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public static async Task<Boolean> SameContent( [CanBeNull] this FileInfo? leftFile, [CanBeNull] Document? right, CancellationToken cancellationToken ) {
+		public static async Task<Boolean> SameContent( this FileInfo? leftFile, Document? right, CancellationToken cancellationToken ) {
 			if ( leftFile is null || right is null ) {
 				return false;
 			}
@@ -1301,14 +1289,14 @@ namespace Librainian.FileSystem {
 		/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
 		/// <param name="searchStyle">       </param>
 		public static void SearchAllDrives(
-			[NotNull] this IReadOnlyCollection<String> fileSearchPatterns,
+			this IReadOnlyCollection<String> fileSearchPatterns,
 			CancellationToken cancellationToken,
-			[CanBeNull] Action<Document>? onFindFile = null,
-			[CanBeNull] Action<Folder>? onEachDirectory = null,
+			Action<Document>? onFindFile = null,
+			Action<Folder>? onEachDirectory = null,
 			SearchStyle searchStyle = SearchStyle.FilesFirst
 		) {
 			if ( fileSearchPatterns is null ) {
-				throw new ArgumentNullException( nameof( fileSearchPatterns ) );
+				throw new ArgumentEmptyException( nameof( fileSearchPatterns ) );
 			}
 
 			try {
@@ -1344,10 +1332,9 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		[NotNull]
-		public static String SimplifyFileName( [NotNull] this Document document ) {
+		public static String SimplifyFileName( this Document document ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			var fileNameWithoutExtension = document.FileName.GetFileNameWithoutExtension();
@@ -1367,9 +1354,7 @@ namespace Librainian.FileSystem {
 
 			//TODO we have the document, see if we can just chop off down to a nonexistent filename.. just get rid of (3) then (2) then (1)
 
-			var splitIntoWords = fileNameWithoutExtension.Split( new[] {
-				' '
-			}, StringSplitOptions.RemoveEmptyEntries ).ToList();
+			var splitIntoWords = fileNameWithoutExtension.Split( ' ', StringSplitOptions.RemoveEmptyEntries ).ToList();
 
 			if ( splitIntoWords.Count >= 2 ) {
 				var list = splitIntoWords.ToList();
@@ -1405,18 +1390,16 @@ namespace Librainian.FileSystem {
 			return $"{fileNameWithoutExtension}{document.Extension()}";
 		}
 
-		[NotNull]
-		public static IEnumerable<String> ToPaths( [NotNull] this DirectoryInfo directoryInfo ) {
+		public static IEnumerable<String> ToPaths( this DirectoryInfo directoryInfo ) {
 			if ( directoryInfo is null ) {
-				throw new ArgumentNullException( nameof( directoryInfo ) );
+				throw new ArgumentEmptyException( nameof( directoryInfo ) );
 			}
 
 			return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
 		}
 
-		[NotNull]
 		public static MemoryStream TryCopyStream(
-			[NotNull] String filePath,
+			String filePath,
 			Boolean bePatient = true,
 			FileMode fileMode = FileMode.Open,
 			FileAccess fileAccess = FileAccess.Read,
@@ -1462,11 +1445,10 @@ namespace Librainian.FileSystem {
 		/// <param name="extension">If no extension is given, a random <see cref="Guid" /> is used.</param>
 		/// <param name="deleteAfterClose"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		[NotNull]
-		public static Document TryGetTempDocument( [NotNull] this Folder folder, [CanBeNull] String? extension = null, Boolean deleteAfterClose = false ) {
+		/// <exception cref="ArgumentEmptyException"></exception>
+		public static Document TryGetTempDocument( this Folder folder, String? extension = null, Boolean deleteAfterClose = false ) {
 			if ( folder is null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			var randomFileName = Guid.NewGuid().ToString();
@@ -1488,8 +1470,7 @@ namespace Librainian.FileSystem {
 		///     A valid FileStream object for the opened file, or null if the File could not be opened after the required
 		///     attempts
 		/// </returns>
-		[CanBeNull]
-		public static FileStream? TryOpen( [CanBeNull] String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+		public static FileStream? TryOpen( String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
 
 			//TODO
 			try {
@@ -1503,9 +1484,8 @@ namespace Librainian.FileSystem {
 			return default( FileStream? );
 		}
 
-		[CanBeNull]
 		public static FileStream? TryOpenForReading(
-			[NotNull] String filePath,
+			String filePath,
 			Boolean bePatient = true,
 			FileMode fileMode = FileMode.Open,
 			FileAccess fileAccess = FileAccess.Read,
@@ -1540,9 +1520,8 @@ namespace Librainian.FileSystem {
 			return default( FileStream? );
 		}
 
-		[CanBeNull]
 		public static FileStream? TryOpenForWriting(
-			[CanBeNull] String? filePath,
+			String? filePath,
 			FileMode fileMode = FileMode.Create,
 			FileAccess fileAccess = FileAccess.Write,
 			FileShare fileShare = FileShare.ReadWrite
@@ -1560,9 +1539,9 @@ namespace Librainian.FileSystem {
 			return default( FileStream? );
 		}
 
-		public static Int32? TurnOnCompression( [NotNull] this FileInfo info ) {
+		public static Int32? TurnOnCompression( this FileInfo info ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			if ( !info.Exists ) {
@@ -1597,8 +1576,7 @@ namespace Librainian.FileSystem {
 		/// <param name="basePath"></param>
 		/// <param name="d">       </param>
 		/// <returns></returns>
-		[NotNull]
-		public static DirectoryInfo WithShortDatePath( [NotNull] this DirectoryInfo basePath, DateTime d ) {
+		public static DirectoryInfo WithShortDatePath( this DirectoryInfo basePath, DateTime d ) {
 			var path = basePath.FullName.CombinePaths( d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
 
 			return new DirectoryInfo( path );
@@ -1617,16 +1595,13 @@ namespace Librainian.FileSystem {
 
 			public DateTime? LastWriteTime;
 
-			[CanBeNull]
 			public PathInformation? Parent;
 
-			[NotNull]
 			public PathInformation Path;
 
-			[NotNull]
 			public String Name { get; }
 
-			public FileInformation( [NotNull] String name, [NotNull] PathInformation path ) {
+			public FileInformation( String name, PathInformation path ) {
 				this.Path = path;
 				this.Name = name;
 			}
@@ -1643,13 +1618,11 @@ namespace Librainian.FileSystem {
 
 			public DateTime LastWriteTime;
 
-			[CanBeNull]
 			public PathInformation? Parent;
 
-			[NotNull]
 			public String Path { get; }
 
-			public PathInformation( [NotNull] String path ) => this.Path = path;
+			public PathInformation( String path ) => this.Path = path;
 		}
 	}
 }

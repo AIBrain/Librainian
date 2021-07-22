@@ -36,11 +36,12 @@ namespace Librainian.FileSystem {
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
 	using ComputerSystem.Devices;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Time;
 	using Parsing;
 	using Threadsafe;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>Scan every drive.</para>
@@ -64,51 +65,35 @@ namespace Librainian.FileSystem {
 
 		private ActionBlock<IFolder>? FoldersFound { get; set; }
 
-		[CanBeNull]
 		public String? CurrentStatus { get; private set; }
 
 		public IProgress<(Single counter, String message)> Progress { get; }
 
 		public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
 
-		public FindEveryDocument( [NotNull] IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
-			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ) );
+		public FindEveryDocument( IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
+			this.Progress = progress ?? throw new ArgumentEmptyException( nameof( progress ) );
 			documentsFound = new BufferBlock<IDocument>();
 			this.DocumentsFound = documentsFound;
 		}
 
-		private void SetCurrentStatus( String? message ) {
-			this.CurrentStatus = message;
-		}
+		private void SetCurrentStatus( String? message ) => this.CurrentStatus = message;
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() { }
 
-		public void PauseScanning() {
-			this._pauseScanning.Value = true;
-		}
+		public void PauseScanning() => this._pauseScanning.Value = true;
 
-		public void ResumeScanning() {
-			this._pauseScanning.Value = false;
-		}
+		public void ResumeScanning() => this._pauseScanning.Value = false;
 
-		[NotNull]
 		public async Task StartScanning() {
 			Int64 counter = 0;
 
 			this.SetCurrentStatus( "Creating ActionBlocks.." );
 
-			this.DrivesFound = new ActionBlock<Disk>( async disk => {
-				if ( disk != null ) {
-					await ScanDisk( disk ).ConfigureAwait( false );
-				}
-			} );
+			this.DrivesFound = new ActionBlock<Disk>( async disk => await ScanDisk( disk ).ConfigureAwait( false ) );
 
 			this.FoldersFound = new ActionBlock<IFolder>( async parent => {
-				if ( parent == null ) {
-					return;
-				}
-
 				await PauseWhilePaused().ConfigureAwait( false );
 
 				await foreach ( var folder in parent.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ) ) {
@@ -150,11 +135,9 @@ namespace Librainian.FileSystem {
 						return;
 					}
 
-					if ( drive != null ) {
-						this.SetCurrentStatus( $"Found drive {drive.DriveLetter.ToString().SmartQuote()}." );
+					this.SetCurrentStatus( $"Found drive {drive.DriveLetter.ToString().SmartQuote()}." );
 
-						this.DrivesFound?.Post( drive );
-					}
+					this.DrivesFound?.Post( drive );
 				}
 
 				this.DrivesFound?.Complete();

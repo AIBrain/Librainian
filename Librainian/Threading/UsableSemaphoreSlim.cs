@@ -28,11 +28,10 @@ namespace Librainian.Threading {
 	using System.Diagnostics;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public class UsableSemaphoreSlim : IUsableSemaphore {
 
-		[NotNull]
 		private readonly SemaphoreSlim _semaphore;
 
 		public UsableSemaphoreSlim( Int32 initialCount ) => this._semaphore = new SemaphoreSlim( initialCount );
@@ -44,7 +43,6 @@ namespace Librainian.Threading {
 			GC.SuppressFinalize( this );
 		}
 
-		[ItemNotNull]
 		public async Task<IUsableSemaphoreWrapper> WaitAsync() {
 			var wrapper = new UsableSemaphoreWrapper( this._semaphore );
 
@@ -62,18 +60,16 @@ namespace Librainian.Threading {
 
 		private class UsableSemaphoreWrapper : IUsableSemaphoreWrapper {
 
-			[NotNull]
 			private readonly SemaphoreSlim _semaphore;
 
-			[NotNull]
 			private readonly Stopwatch _stopwatch;
 
 			private Boolean _isDisposed;
 
 			public TimeSpan Elapsed => this._stopwatch.Elapsed;
 
-			public UsableSemaphoreWrapper( [NotNull] SemaphoreSlim semaphore ) {
-				this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
+			public UsableSemaphoreWrapper( SemaphoreSlim semaphore ) {
+				this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
 				this._stopwatch = new Stopwatch();
 			}
 
@@ -90,7 +86,6 @@ namespace Librainian.Threading {
 				this._isDisposed = true;
 			}
 
-			[NotNull]
 			public Task WaitAsync() {
 				if ( this._stopwatch.IsRunning ) {
 					throw new InvalidOperationException( "Already Initialized" );

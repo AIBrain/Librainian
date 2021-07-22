@@ -26,22 +26,16 @@ namespace Librainian.FileSystem {
 
 	using System;
 	using System.IO;
-	using JetBrains.Annotations;
 
 	public record FileWatchingEvents {
-		[CanBeNull]
 		public Action<FileSystemEventArgs>? OnChanged { get; set; }
 
-		[CanBeNull]
 		public Action<FileSystemEventArgs>? OnCreated { get; set; }
 
-		[CanBeNull]
 		public Action<FileSystemEventArgs>? OnDeleted { get; set; }
 
-		[CanBeNull]
 		public Action<ErrorEventArgs>? OnError { get; set; }
 
-		[CanBeNull]
 		public Action<FileSystemEventArgs>? OnRenamed { get; set; }
 	}
 }

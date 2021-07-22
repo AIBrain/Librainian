@@ -33,18 +33,16 @@ namespace Librainian.Threading {
 	using System.Diagnostics;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Maths;
 	using Measurement.Time;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>Usage: private  AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) { /*...*/ }</summary>
 	public sealed class AsyncLock : ABetterClassDispose {
 
-		[NotNull]
 		private Task<IDisposable?> _releaser { get; }
 
-		[NotNull]
 		private SemaphoreSlim Semaphore { get; } = new( 1 );
 
 		public AsyncLock() {
@@ -63,7 +61,6 @@ namespace Librainian.Threading {
 			using ( this.Semaphore ) { }
 		}
 
-		[CanBeNull]
 		public Task<IDisposable?> LockAsync() {
 			var wait = this.Semaphore.WaitAsync( Minutes.Ten );
 
@@ -79,7 +76,7 @@ namespace Librainian.Threading {
 
 			private AsyncLock toRelease { get; }
 
-			internal Releaser( [CanBeNull] AsyncLock toRelease ) => this.toRelease = toRelease;
+			internal Releaser( AsyncLock? toRelease ) => this.toRelease = toRelease;
 
 			public override void DisposeManaged() {
 				if ( !this.toRelease.Semaphore.CurrentCount.Any() ) {

@@ -30,7 +30,6 @@ namespace Librainian.Collections {
 	using System;
 	using System.Collections.Generic;
 	using System.Numerics;
-	using JetBrains.Annotations;
 	using Threadsafe;
 
 	public interface ICountable<in TKey> where TKey : notnull {
@@ -42,19 +41,19 @@ namespace Librainian.Collections {
 		TimeSpan WriteTimeout { get; set; }
 
 
-		BigInteger? this[ [NotNull] TKey key ] { get; set; }
+		BigInteger? this[ TKey key ] { get; set; }
 
-		Boolean Add( [NotNull] IEnumerable<TKey> keys );
+		Boolean Add( IEnumerable<TKey> keys );
 
-		Boolean Add( [NotNull] TKey key );
+		Boolean Add( TKey key );
 
-		Boolean Add( [NotNull] TKey key, BigInteger amount );
+		Boolean Add( TKey key, BigInteger amount );
 
 		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
 		/// <returns></returns>
 		Boolean Complete();
 
-		Boolean Subtract( [NotNull] TKey key, BigInteger amount );
+		Boolean Subtract( TKey key, BigInteger amount );
 
 		/// <summary>Return the sum of all values.</summary>
 		/// <returns></returns>

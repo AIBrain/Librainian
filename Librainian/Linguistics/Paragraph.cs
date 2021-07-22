@@ -30,7 +30,6 @@ namespace Librainian.Linguistics {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -46,11 +45,11 @@ namespace Librainian.Linguistics {
 
 		/// <summary>A <see cref="Paragraph" /> is ordered sequence of sentences.</summary>
 		/// <param name="paragraph"></param>
-		public Paragraph( [NotNull] String paragraph ) : this( paragraph.ToSentences() ) { }
+		public Paragraph( String paragraph ) : this( paragraph.ToSentences() ) { }
 
 		/// <summary>A <see cref="Paragraph" /> is a collection of sentences.</summary>
 		/// <param name="sentences"></param>
-		public Paragraph( [CanBeNull] IEnumerable<Sentence?>? sentences ) {
+		public Paragraph( IEnumerable<Sentence?>? sentences ) {
 			if ( sentences != null ) {
 				foreach ( var sentence in sentences ) {
 					if ( sentence is not null ) {
@@ -62,7 +61,6 @@ namespace Librainian.Linguistics {
 			this.Sentences.TrimExcess();
 		}
 
-		[NotNull]
 		[JsonProperty]
 		private List<Sentence> Sentences { get; } = new();
 
@@ -82,14 +80,12 @@ namespace Librainian.Linguistics {
 		}
 		*/
 
-		[NotNull]
-		public static implicit operator String( [NotNull] Paragraph paragraph ) => paragraph.ToString();
+		public static implicit operator String( Paragraph paragraph ) => paragraph.ToString();
 
 		/// <summary>Serves as the default hash function. </summary>
 		/// <returns>A hash code for the current object.</returns>
 		public override Int32 GetHashCode() => this.Sentences.GetHashCode();
 
-		[NotNull]
 		public override String ToString() {
 			var sb = new StringBuilder();
 

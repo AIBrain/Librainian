@@ -33,7 +33,7 @@ namespace Librainian.Linguistics {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -43,9 +43,8 @@ namespace Librainian.Linguistics {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 	[Serializable]
 	public record Library : IEnumerable<(UDC udc, Book book)> {
-		public Library( [NotNull] UDC udc, [NotNull] Book book ) => this.Add( udc, book );
+		public Library( UDC udc, Book book ) => this.Add( udc, book );
 
-		[NotNull]
 		[JsonProperty]
 		private ConcurrentDictionary<UDC, Book> Books { get; } = new();
 
@@ -53,7 +52,7 @@ namespace Librainian.Linguistics {
 
 		public IEnumerator GetEnumerator() => ( ( IEnumerable )this.Books ).GetEnumerator();
 
-		public virtual Boolean Equals( [CanBeNull] Library? other ) => Equals( this, other );
+		public virtual Boolean Equals( Library? other ) => Equals( this, other );
 
 		/// <summary>
 		///     Static equality test
@@ -61,7 +60,7 @@ namespace Librainian.Linguistics {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Library? left, [CanBeNull] Library? right ) {
+		public static Boolean Equals( Library? left, Library? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -74,13 +73,13 @@ namespace Librainian.Linguistics {
 			return left.OrderBy( pair => pair.udc ).SequenceEqual( right.OrderBy( pair => pair.udc ) );
 		}
 
-		public Boolean Add( [NotNull] UDC udc, [NotNull] Book book ) {
+		public Boolean Add( UDC udc, Book book ) {
 			if ( udc is null ) {
-				throw new ArgumentNullException( nameof( udc ) );
+				throw new ArgumentEmptyException( nameof( udc ) );
 			}
 
 			if ( book is null ) {
-				throw new ArgumentNullException( nameof( book ) );
+				throw new ArgumentEmptyException( nameof( book ) );
 			}
 
 			return this.Books.TryAdd( udc, book );

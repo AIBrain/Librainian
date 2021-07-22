@@ -25,7 +25,6 @@
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	/// <summary></summary>
 	/// <see cref="http://stackoverflow.com/a/8696503/956364" />
@@ -128,7 +127,7 @@ namespace Librainian.Graphics {
 		///     The coefficients to initialise. The number of elements of the array should be equal to 6,
 		///     else an exception will be thrown
 		/// </param>
-		public Matrix3X2( [NotNull] Double[] coefficients ) {
+		public Matrix3X2( Double[] coefficients ) {
 			if ( coefficients.GetLength( 0 ) != 6 ) {
 				throw new Exception( "The number of coefficients passed in to the constructor must be 6" );
 			}
@@ -172,7 +171,7 @@ namespace Librainian.Graphics {
 
 		/// <summary>Multiplies the 3x3 matrix passed in with the current 3x2 matrix</summary>
 		/// <param name="left">The 3x3 Matrix X</param>
-		public void Multiply( [NotNull] Matrix3X3 left ) {
+		public void Multiply( Matrix3X3 left ) {
 
 			// Multiply the 3x3 matrix with the 3x2 matrix and store inside the current 2x3 matrix
 			//

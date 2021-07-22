@@ -29,17 +29,14 @@ namespace Librainian.Linguistics {
 
 	using System;
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	public class Citation : ICitation {
 
-		[NotNull]
 		[JsonProperty]
 		public Uri Location { get; init; }
 
 		[JsonProperty]
-		[CanBeNull]
 		public Lazy<HashSet<Int32>>? PagesOrIndexes { get; set; }
 
 		public Citation( Uri location ) => this.Location = location;

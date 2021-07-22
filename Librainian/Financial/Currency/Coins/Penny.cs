@@ -26,14 +26,12 @@ namespace Librainian.Financial.Currency.Coins {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public sealed class Penny : ICoin {
 
 		public Decimal FaceValue => 0.01M;
 
-		[NotNull]
 		public override String ToString() => $"{this.FaceValue:C}";
 	}
 }

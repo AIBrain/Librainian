@@ -31,5 +31,8 @@ namespace Librainian.Interfaces {
 
 	public record SourceRecord( Sources Source, SourcePosition Position ) {
 		public override String ToString() => $"{this.Source}.{this.Position}";
+
+		public static SourceRecord Create( Sources Source, SourcePosition Position ) => new( Source, Position );
+
 	}
 }

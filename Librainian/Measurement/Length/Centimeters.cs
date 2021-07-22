@@ -25,22 +25,17 @@
 namespace Librainian.Measurement.Length {
 
 	using System;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
-	using Rationals;
 
 	[JsonObject]
-	public struct Centimeters {
+	public record Centimeters( BigDecimal Value ) {
 
 		/// <summary>One <see cref="Centimeters" /> .</summary>
 		public static readonly Centimeters One = new( 1 );
 
 		/// <summary>Two <see cref="Centimeters" /> .</summary>
 		public static readonly Centimeters Two = new( 2 );
-
-		[JsonProperty]
-		public readonly Rational Value;
-
-		public Centimeters( Decimal centimeters ) => this.Value = ( Rational )centimeters;
 
 		//public Centimeters( Millimeters millimeters ) {
 		//    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;

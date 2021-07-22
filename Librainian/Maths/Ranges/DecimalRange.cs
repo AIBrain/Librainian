@@ -80,13 +80,13 @@ namespace Librainian.Maths.Ranges {
 		/// <returns><b>True</b> if the specified range is inside this range or <b>false</b> otherwise.</returns>
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public Boolean IsInside( [NotNull] DecimalRange range ) => this.IsInside( range.Minimum ) && this.IsInside( range.Maximum );
+		public Boolean IsInside( DecimalRange range ) => this.IsInside( range.Minimum ) && this.IsInside( range.Maximum );
 
 		/// <summary>Check if the specified range overlaps with this range</summary>
 		/// <param name="range">Range to check for overlapping</param>
 		/// <returns><b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.</returns>
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public Boolean IsOverlapping( [NotNull] DecimalRange range ) => this.IsInside( range.Minimum ) || this.IsInside( range.Maximum );
+		public Boolean IsOverlapping( DecimalRange range ) => this.IsInside( range.Minimum ) || this.IsInside( range.Maximum );
 	}
 }

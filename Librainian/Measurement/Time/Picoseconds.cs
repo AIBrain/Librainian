@@ -29,9 +29,9 @@ namespace Librainian.Measurement.Time {
 
 	using System;
 	using System.Diagnostics;
-	using ExtendedNumerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -84,9 +84,9 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Zero <see cref="Picoseconds" />.</summary>
 		public static Picoseconds Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( [CanBeNull] Picoseconds? other ) {
+		public Int32 CompareTo( Picoseconds? other ) {
 			if ( other == null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

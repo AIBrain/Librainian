@@ -26,7 +26,7 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>Based from Microsoft Reference random.cs sources. This is purely for learning purposes.</summary>
 	public class MicrosoftsRandom {
@@ -140,9 +140,9 @@ namespace Librainian.Maths {
 	**Exceptions: None
 	==============================================================================*/
 
-		public virtual void NextBytes( [NotNull] Byte[] buffer ) {
+		public virtual void NextBytes( Byte[] buffer ) {
 			if ( buffer is null ) {
-				throw new ArgumentNullException( nameof( buffer ) );
+				throw new ArgumentEmptyException( nameof( buffer ) );
 			}
 
 			for ( var i = 0; i < buffer.Length; i++ ) {

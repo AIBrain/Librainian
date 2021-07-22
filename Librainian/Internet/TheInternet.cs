@@ -31,8 +31,8 @@ namespace Librainian.Internet {
 	using System.Collections.Generic;
 	using System.Net;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
 
@@ -48,11 +48,10 @@ namespace Librainian.Internet {
 		/// <param name="credentials"></param>
 		/// <param name="onWebException"></param>
 		/// <returns></returns>
-		[ItemCanBeNull]
-		public static async Task<IDocument?> DownloadAsync( [NotNull] Uri address, TimeSpan timeOut, [CanBeNull] IProgress<ZeroToOne>? reportProgress = null,
-			[CanBeNull] ICredentials? credentials = null, [CanBeNull] Action<Uri, WebExceptionStatus>? onWebException = null ) {
+		public static async Task<IDocument?> DownloadAsync( Uri address, TimeSpan timeOut, IProgress<ZeroToOne>? reportProgress = null,
+			ICredentials? credentials = null, Action<Uri, WebExceptionStatus>? onWebException = null ) {
 			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
+				throw new ArgumentEmptyException( nameof( address ) );
 			}
 
 			try {
@@ -98,10 +97,9 @@ namespace Librainian.Internet {
 			return default( IDocument );
 		}
 
-		[ItemNotNull]
-		public static IEnumerable<Document> FindFile( [NotNull] String filename, [NotNull] IEnumerable<String> locationClues ) {
+		public static IEnumerable<Document> FindFile( String filename, IEnumerable<String> locationClues ) {
 			if ( locationClues is null ) {
-				throw new ArgumentNullException( nameof( locationClues ) );
+				throw new ArgumentEmptyException( nameof( locationClues ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( filename ) ) {

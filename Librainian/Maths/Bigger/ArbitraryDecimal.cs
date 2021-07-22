@@ -22,13 +22,11 @@
 //
 // File "ArbitraryDecimal.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths.Bigger {
 
 	using System;
 	using System.Globalization;
-	using JetBrains.Annotations;
 
-	/// <summary>Private class used for manipulating</summary>
 	public class ArbitraryDecimal {
 
 		/// <summary>How many digits are *after* the System.Decimal point</summary>
@@ -109,7 +107,6 @@ namespace Librainian.Maths {
 		public void Shift( Int32 amount ) => this._decimalPoint += amount;
 
 		/// <summary>Converts the value to a proper System.Decimal String representation.</summary>
-		[NotNull]
 		public override String ToString() {
 			var digitString = new Char[ this._digits.Length ];
 

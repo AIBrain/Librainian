@@ -27,7 +27,6 @@
 namespace Librainian.Parsing {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Validation;
 
@@ -35,7 +34,7 @@ namespace Librainian.Parsing {
 	[JsonObject]
 	public class ValidatedStringJsonNetConverter : JsonConverter {
 
-		public override Boolean CanConvert( [NotNull] Type objectType ) {
+		public override Boolean CanConvert( Type objectType ) {
 			if ( objectType.IsSubclassOf( typeof( ValidatedString ) ) ) {
 				return true;
 			}
@@ -43,11 +42,10 @@ namespace Librainian.Parsing {
 			return objectType == typeof( ValidatedString );
 		}
 
-		[NotNull]
-		public override Object ReadJson( [NotNull] JsonReader reader, [NotNull] Type objectType, [CanBeNull] Object? existingValue, [CanBeNull] JsonSerializer serializer ) =>
+		public override Object ReadJson( JsonReader reader, Type objectType, Object? existingValue, JsonSerializer? serializer ) =>
 			Activator.CreateInstance( objectType, reader.Value );
 
-		public override void WriteJson( [NotNull] JsonWriter writer, [CanBeNull] Object? value, [CanBeNull] JsonSerializer serializer ) =>
+		public override void WriteJson( JsonWriter writer, Object? value, JsonSerializer? serializer ) =>
 			writer.WriteValue( ( ( ValidatedString )value ).Value );
 	}
 }

@@ -30,13 +30,14 @@ namespace Librainian.Threading {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Linq;
 	using System.Reflection;
 	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Maths;
 
@@ -51,8 +52,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-		[NotNull]
-		public static Action ActionBarrier( [NotNull] this Action action, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier( this Action action, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
@@ -69,8 +69,7 @@ namespace Librainian.Threading {
 		/// <returns></returns>
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-		[NotNull]
-		public static Action ActionBarrier<T>( [NotNull] this Action<T> action, [CanBeNull] T parameter, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier<T>( this Action<T> action, T? parameter, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
@@ -99,7 +98,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static UInt64 CalcSizeInBytes<T>( [CanBeNull] this T obj ) {
+		public static UInt64 CalcSizeInBytes<T>( this T? obj ) {
 			if ( obj is null ) {
 				return 0;
 			}
@@ -189,8 +188,24 @@ namespace Librainian.Threading {
 			return t.GetAwaiter();
 		}
 
+		/// <summary>
+		/// Asynchronously wait for all <paramref name="tasks"/>.
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
+		public static TaskAwaiter GetAwaiter( this Task[] tasks ) => Task.WhenAll( tasks ).GetAwaiter();
+
+		/// <summary>
+		/// Asynchronously wait for all <paramref name="tasks"/>.
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this IEnumerable<Task> tasks ) => Task.WhenAll( tasks ).GetAwaiter();
 
+		/// <summary>
+		/// Asynchronously wait a <see cref="TimeSpan"/>.
+		/// </summary>
+		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
 
 		public static Int32 GetMaximumActiveWorkerThreads() {
@@ -199,7 +214,7 @@ namespace Librainian.Threading {
 			return maxPortThreads;
 		}
 
-		public static UInt64 GetSizeOfPrimitive<T>( [CanBeNull] this T obj ) =>
+		public static UInt64 GetSizeOfPrimitive<T>( this T? obj ) =>
 			( UInt64 )( obj switch {
 				Boolean => sizeof( Boolean ),
 				Byte => sizeof( Byte ),
@@ -228,19 +243,19 @@ namespace Librainian.Threading {
 		/// <summary>boxed returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static Int32 MarshalSizeOf( [NotNull] this Object obj ) => Marshal.SizeOf( obj );
+		public static Int32 MarshalSizeOf( this Object obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>generic returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static Int32 MarshalSizeOf<T>( [NotNull] this T obj ) => Marshal.SizeOf( obj );
+		public static Int32 MarshalSizeOf<T>( [DisallowNull] this T obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>Repeat the <paramref name="action" /><paramref name="times" />.
 		/// <para>Swallows <see cref="Exception"/>.</para>
 		/// </summary>
 		/// <param name="times"> </param>
 		/// <param name="action"></param>
-		public static void Repeat( this Int32 times, [NotNull] Action action ) {
+		public static void Repeat( this Int32 times, Action action ) {
 			for ( var i = 0; i < Math.Abs( times ); i++ ) {
 				try {
 					action();
@@ -254,7 +269,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="times"></param>
-		public static void Repeat( [NotNull] this Action action, Int32 times ) {
+		public static void Repeat( this Action action, Int32 times ) {
 			for ( var i = 0; i < Math.Abs( times ); i++ ) {
 				try {
 					action();
@@ -268,7 +283,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="counter"></param>
-		public static void RepeatAction( [NotNull] this Action action, Int32 counter ) => Parallel.For( 1, counter, i => {
+		public static void RepeatAction( this Action action, Int32 counter ) => Parallel.For( 1, counter, i => {
 			try {
 				action();
 			}
@@ -284,10 +299,10 @@ namespace Librainian.Threading {
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
-		public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String>? output = null, [CanBeNull] String? description = null,
+		public static Boolean Run( this IEnumerable<Action> actions, Action<String>? output = null, String? description = null,
 			Boolean inParallel = true ) {
 			if ( actions is null ) {
-				throw new ArgumentNullException( nameof( actions ) );
+				throw new ArgumentEmptyException( nameof( actions ) );
 			}
 
 			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
@@ -313,10 +328,10 @@ namespace Librainian.Threading {
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
 		/// <returns></returns>
-		public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String>? output = null, [CanBeNull] String? description = null,
+		public static Boolean Run( this IEnumerable<Func<Boolean>> functions, Action<String>? output = null, String? description = null,
 			Boolean inParallel = true ) {
 			if ( functions is null ) {
-				throw new ArgumentNullException( nameof( functions ) );
+				throw new ArgumentEmptyException( nameof( functions ) );
 			}
 
 			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {

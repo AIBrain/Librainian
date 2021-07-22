@@ -28,15 +28,14 @@ namespace Librainian.Databases {
 	using System.Collections.Generic;
 	using System.Data;
 	using System.Linq.Expressions;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Microsoft.Data.SqlClient;
 
 	public static class GenericPopulator<T> {
 
-		[CanBeNull]
-		public static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
+		public static Func<SqlDataReader, T>? GetReader( IDataRecord reader ) {
 			if ( reader == null ) {
-				throw new ArgumentNullException( nameof( reader ) );
+				throw new ArgumentEmptyException( nameof( reader ) );
 			}
 
 			var readerColumns = new List<String>();
@@ -103,8 +102,7 @@ namespace Librainian.Databases {
 
 	public static class GenericPopulatorExtensions {
 
-		[NotNull]
-		public static List<T> CreateList<T>( [NotNull] SqlDataReader reader ) {
+		public static List<T> CreateList<T>( SqlDataReader reader ) {
 			var results = new List<T>();
 			var readRow = GenericPopulator<T>.GetReader( reader );
 

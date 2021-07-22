@@ -28,13 +28,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.Runtime.ConstrainedExecution;
 	using System.Runtime.InteropServices;
 	using System.Security;
-	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
 	using OperatingSystem;
 
 	public class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid {
 
-		[NotNull]
 		public static SafeTokenHandle InvalidHandle => new( IntPtr.Zero );
 
 		private SafeTokenHandle() : base( true ) { }

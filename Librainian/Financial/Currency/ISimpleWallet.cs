@@ -25,25 +25,19 @@
 namespace Librainian.Financial.Currency {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public interface ISimpleWallet {
 
 		Decimal Balance { get; }
 
-		[CanBeNull]
 		Action<Decimal>? OnAfterDeposit { get; set; }
 
-		[CanBeNull]
 		Action<Decimal>? OnAfterWithdraw { get; set; }
 
-		[CanBeNull]
 		Action<Decimal>? OnAnyUpdate { get; set; }
 
-		[CanBeNull]
 		Action<Decimal>? OnBeforeDeposit { get; set; }
 
-		[CanBeNull]
 		Action<Decimal>? OnBeforeWithdraw { get; set; }
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
@@ -51,7 +45,7 @@ namespace Librainian.Financial.Currency {
 		/// <returns></returns>
 		Boolean TryAdd( Decimal amount );
 
-		Boolean TryAdd( [NotNull] SimpleWallet wallet );
+		Boolean TryAdd( SimpleWallet wallet );
 
 		/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
 		/// <param name="amount"></param>
@@ -66,6 +60,6 @@ namespace Librainian.Financial.Currency {
 
 		Boolean TryWithdraw( Decimal amount );
 
-		Boolean TryWithdraw( [NotNull] SimpleWallet wallet );
+		Boolean TryWithdraw( SimpleWallet wallet );
 	}
 }

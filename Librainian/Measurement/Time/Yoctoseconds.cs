@@ -32,9 +32,9 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using ExtendedNumerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -104,9 +104,9 @@ namespace Librainian.Measurement.Time {
 		public static BigDecimal InOneSecond { get; } = BigDecimal.Parse( "10E24" );
 		
 
-		public Int32 CompareTo( [CanBeNull] Yoctoseconds? other ) {
+		public Int32 CompareTo( Yoctoseconds? other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

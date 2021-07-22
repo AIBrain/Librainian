@@ -37,8 +37,8 @@ namespace Librainian.FileSystem {
 
 	public static class DocumentExtensions {
 
-		private static async Task InternalCopyWithProgress( [NotNull] IDocument source, [NotNull] IDocument destination, [CanBeNull] IProgress<Decimal> progress,
-			[CanBeNull] IProgress<TimeSpan> eta, [NotNull] Char[] buffer, Decimal bytesToBeCopied, [CanBeNull] Stopwatch begin ) {
+		private static async Task InternalCopyWithProgress( IDocument source, IDocument destination, IProgress<Decimal>? progress,
+			IProgress<TimeSpan>? eta, Char[] buffer, Decimal bytesToBeCopied, Stopwatch? begin ) {
 			using var reader = new StreamReader( source.FullPath );
 
 #if NET5_0_OR_GREATER
@@ -119,9 +119,9 @@ namespace Librainian.FileSystem {
         /// <returns></returns>
         public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
             IProgress<TimeSpan> eta = null ) {
-            if ( source is null ) { throw new ArgumentNullException( nameof( source ) ); }
+            if ( source is null ) { throw new ArgumentEmptyException( nameof( source ) ); }
 
-            if ( destination is null ) { throw new ArgumentNullException( nameof( destination ) ); }
+            if ( destination is null ) { throw new ArgumentEmptyException( nameof( destination ) ); }
 
             try {
                 var begin = Stopwatch.StartNew();

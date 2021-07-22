@@ -31,7 +31,6 @@ namespace Librainian.Parsing.Markov {
 	using System.Linq;
 	using System.Text;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Linguistics;
 	using Maths;
 
@@ -39,12 +38,11 @@ namespace Librainian.Parsing.Markov {
 
 		public readonly String Name;
 
-		[NotNull]
 		private ConcurrentDictionary<Word, List<Word>> _markovChains { get; } = new();
 
 		private MkModel() => throw new NotImplementedException();
 
-		public MkModel( [NotNull] String name ) {
+		public MkModel( String name ) {
 			if ( String.IsNullOrWhiteSpace( name ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
 			}
@@ -52,7 +50,6 @@ namespace Librainian.Parsing.Markov {
 			this.Name = name;
 		}
 
-		[NotNull]
 		public Task<String> GenerateRandomCorpus( Int32 numberOfWords ) =>
 			Task.Run( () => {
 				if ( !this._markovChains.Any() ) {
@@ -80,8 +77,7 @@ namespace Librainian.Parsing.Markov {
 		/// </summary>
 		/// <param name="word"></param>
 		/// <returns></returns>
-		[NotNull]
-		public IEnumerable<Word> Nexts( [CanBeNull] Word? word ) {
+		public IEnumerable<Word> Nexts( Word? word ) {
 			if ( word is null ) {
 				return Enumerable.Empty<Word>();
 			}
@@ -93,7 +89,7 @@ namespace Librainian.Parsing.Markov {
 			return this._markovChains[ word ];
 		}
 
-		public Task Train( [CanBeNull] String? corpus, Int32 level = 3 ) =>
+		public Task Train( String? corpus, Int32 level = 3 ) =>
 			Task.Run( () => {
 				var words = corpus.ToWords().ToList();
 

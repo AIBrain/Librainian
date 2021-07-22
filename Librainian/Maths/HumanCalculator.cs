@@ -27,7 +27,6 @@ namespace Librainian.Maths {
 	using System;
 	using System.Linq;
 	using System.Numerics;
-	using JetBrains.Annotations;
 
 	/// <summary>Challenge: Do math the way we (me) were taught in school.</summary>
 	public static class HumanCalculator {
@@ -63,7 +62,7 @@ namespace Librainian.Maths {
 		/// <summary>Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).</summary>
 		/// <param name="terms"></param>
 		/// <returns></returns>
-		public static BigInteger Add( [NotNull] params BigInteger[] terms ) {
+		public static BigInteger Add( params BigInteger[] terms ) {
 			var total = BigInteger.Zero;
 
 			foreach ( var local in terms.Select( term => term.ToString() ) ) {
@@ -118,7 +117,7 @@ namespace Librainian.Maths {
 
 		public static BigInteger Multiply( BigInteger[] terms ) => throw new NotImplementedException();
 
-		public static BigInteger Operate( Operation operation, [CanBeNull] params BigInteger[] terms ) {
+		public static BigInteger Operate( Operation operation, params BigInteger[]? terms ) {
 			return operation switch {
 				Operation.Addition => Add( terms ),
 				Operation.Subtraction => Subtract( terms ),

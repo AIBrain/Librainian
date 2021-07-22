@@ -29,24 +29,22 @@ namespace Librainian.Exceptions {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 
 	[Serializable]
 	public class MutableBaseException : ImmutableFailureException {
 
-		protected MutableBaseException( [NotNull] SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+		protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		internal MutableBaseException( [NotNull] Type type, [NotNull] Exception inner ) : base( type, FormatMessage( type ), inner ) {
+		internal MutableBaseException( Type type, Exception inner ) : base( type, FormatMessage( type ), inner ) {
 			if ( type is null ) {
-				throw new ArgumentNullException( nameof( type ) );
+				throw new ArgumentEmptyException( nameof( type ) );
 			}
 
 			if ( inner is null ) {
-				throw new ArgumentNullException( nameof( inner ) );
+				throw new ArgumentEmptyException( nameof( inner ) );
 			}
 		}
 
-		[NotNull]
-		private static String FormatMessage( [NotNull] Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
+		private static String FormatMessage( Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
 	}
 }

@@ -26,7 +26,6 @@ namespace Librainian.Measurement.Frequency {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Time;
@@ -107,15 +106,14 @@ namespace Librainian.Measurement.Frequency {
 		[JsonProperty]
 		public Decimal Value { get; init; }
 
-		public static implicit operator SpanOfTime( [NotNull] Hertz hertz ) => new Seconds( 1 / hertz.Value );
+		public static implicit operator SpanOfTime( Hertz hertz ) => new Seconds( 1 / hertz.Value );
 
-		public static implicit operator TimeSpan( [NotNull] Hertz hertz ) => TimeSpan.FromSeconds( ( Double )( 1 / hertz.Value ) );
+		public static implicit operator TimeSpan( Hertz hertz ) => TimeSpan.FromSeconds( ( Double )( 1 / hertz.Value ) );
 
-		public static Boolean operator <( [NotNull] Hertz left, [NotNull] Hertz right ) => left.Value.CompareTo( right.Value ) < 0;
+		public static Boolean operator <( Hertz left, Hertz right ) => left.Value.CompareTo( right.Value ) < 0;
 
-		public static Boolean operator >( [NotNull] Hertz left, [NotNull] Hertz right ) => left.Value.CompareTo( right.Value ) > 0;
+		public static Boolean operator >( Hertz left, Hertz right ) => left.Value.CompareTo( right.Value ) > 0;
 
-		[NotNull]
 		public override String ToString() => $"{this.Value} hertz ({( ( TimeSpan )this ).Simpler()})";
 	}
 }

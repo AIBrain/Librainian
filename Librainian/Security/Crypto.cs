@@ -28,7 +28,7 @@ namespace Librainian.Security {
 	using System.IO;
 	using System.Security.Cryptography;
 	using System.Text;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class Crypto {
 
@@ -40,14 +40,13 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="cipherText">The text to decrypt.</param>
 		/// <param name="sharedSecret">A password used to generate a key for decryption.</param>
-		[NotNull]
-		public static String DecryptStringAES( [NotNull] this String cipherText, [NotNull] String sharedSecret ) {
+		public static String DecryptStringAES( this String cipherText, String sharedSecret ) {
 			if ( String.IsNullOrEmpty( cipherText ) ) {
-				throw new ArgumentNullException( nameof( cipherText ) );
+				throw new ArgumentEmptyException( nameof( cipherText ) );
 			}
 
 			if ( String.IsNullOrEmpty( sharedSecret ) ) {
-				throw new ArgumentNullException( nameof( sharedSecret ) );
+				throw new ArgumentEmptyException( nameof( sharedSecret ) );
 			}
 
 			// Declare the RijndaelManaged object used to decrypt the data.
@@ -96,17 +95,17 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="plainText">The text to encrypt.</param>
 		/// <param name="sharedSecret">A password used to generate a key for encryption.</param>
-		[NotNull]
-		public static String EncryptStringAES( [NotNull] this String plainText, [NotNull] String sharedSecret ) {
+		public static String EncryptStringAES( this String plainText, String sharedSecret ) {
 			if ( String.IsNullOrEmpty( plainText ) ) {
-				throw new ArgumentNullException( nameof( plainText ) );
+				throw new ArgumentEmptyException( nameof( plainText ) );
 			}
 
 			if ( String.IsNullOrEmpty( sharedSecret ) ) {
-				throw new ArgumentNullException( nameof( sharedSecret ) );
+				throw new ArgumentEmptyException( nameof( sharedSecret ) );
 			}
 
 			String outStr;                 // Encrypted string to return
+			//AES aesAlg = null;
 			RijndaelManaged? aesAlg = null; // RijndaelManaged object used to encrypt the data.
 
 			try {
@@ -148,8 +147,7 @@ namespace Librainian.Security {
 			return outStr;
 		}
 
-		[NotNull]
-		public static Byte[] ReadByteArray( [NotNull] this Stream s ) {
+		public static Byte[] ReadByteArray( this Stream s ) {
 			var rawLength = new Byte[ sizeof( Int32 ) ];
 
 			if ( s.Read( rawLength, 0, rawLength.Length ) != rawLength.Length ) {

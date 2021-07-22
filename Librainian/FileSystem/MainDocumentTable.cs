@@ -34,7 +34,6 @@ namespace Librainian.FileSystem {
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Persistence;
 
 	/// <summary>A persisted cache of all found <see cref="Document" />.</summary>
@@ -57,11 +56,10 @@ namespace Librainian.FileSystem {
 		/// <param name="folders"></param>
 		/// <param name="reportDocument"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static async Task SearchAsync(
-			[NotNull] IFolder folder,
-			[CanBeNull] IProgress<IFolder>? folders = null,
-			[CanBeNull] IProgress<Document>? reportDocument = null
+			IFolder folder,
+			IProgress<IFolder>? folders = null,
+			IProgress<Document>? reportDocument = null
 		) {
 			if ( CTS.IsCancellationRequested ) {
 				return;

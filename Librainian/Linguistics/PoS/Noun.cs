@@ -25,12 +25,11 @@
 namespace Librainian.Linguistics.PoS {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
 	public record Noun : Word, ITaggedWord {
-		public Noun( [NotNull] String word ) : base( word ) { }
+		public Noun( String word ) : base( word ) { }
 
 		public PartsOfSpeech PartOfSpeech => PartsOfSpeech.Noun;
 

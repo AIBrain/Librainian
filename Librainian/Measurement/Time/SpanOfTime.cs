@@ -32,10 +32,10 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Linq;
 	using System.Numerics;
-	using ExtendedNumerics;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Maths;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Time {
 	/// </summary>
 	/// <see cref="http://wikipedia.org/wiki/Units_of_time" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	[Immutable]
 	public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 		public SpanOfTime( BigInteger planckTimes ) {
@@ -254,27 +254,23 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Attoseconds Attoseconds { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Days" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Days Days { get; init; }
 
 		/// <summary>
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Femtoseconds Femtoseconds { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Hours" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Hours Hours { get; init; }
 
 		/// <summary>
@@ -283,34 +279,29 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <trivia>One microsecond is to one second as one second is to 11.574 days.</trivia>
 		[JsonProperty]
-		[NotNull]
 		public Microseconds Microseconds { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Milliseconds" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Milliseconds Milliseconds { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Minutes" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Minutes Minutes { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Months" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Months Months { get; init; }
 
 		/// <summary>
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Nanoseconds Nanoseconds { get; init; }
 
 		/// <summary>
@@ -318,34 +309,29 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <see cref="http://wikipedia.org/wiki/Picosecond" />
 		[JsonProperty]
-		[NotNull]
 		public Picoseconds Picoseconds { get; init; }
 
 		/// <summary>
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public PlanckTimes PlanckTimes { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Seconds" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Seconds Seconds { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Weeks" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Weeks Weeks { get; init; }
 
 		/// <summary>
 		///     How many <see cref="Years" /> does this <see cref="SpanOfTime" /> span?
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Years Years { get; init; }
 
 		/// <summary>
@@ -371,11 +357,11 @@ namespace Librainian.Measurement.Time {
 		/// <returns></returns>
 		public static SpanOfTime Combine( SpanOfTime left, SpanOfTime right ) {
 			if ( left is null ) {
-				throw new ArgumentNullException( nameof( left ) );
+				throw new ArgumentEmptyException( nameof( left ) );
 			}
 
 			if ( right is null ) {
-				throw new ArgumentNullException( nameof( right ) );
+				throw new ArgumentEmptyException( nameof( right ) );
 			}
 
 			//TODO do some overflow handling with BigInteger math
@@ -414,7 +400,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Int32 CompareTo( [CanBeNull] SpanOfTime? left, [CanBeNull] SpanOfTime? right ) {
+		public static Int32 CompareTo( SpanOfTime? left, SpanOfTime? right ) {
 			if ( left is null || right is null ) {
 				return Order.Before;
 			}
@@ -431,7 +417,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] SpanOfTime? left, [CanBeNull] SpanOfTime? right ) {
+		public static Boolean Equals( SpanOfTime? left, SpanOfTime? right ) {
 			if ( left is null || right is null ) {
 				return false;
 			}
@@ -503,7 +489,7 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public static SpanOfTime TryParse( [CanBeNull] String? text ) {
+		public static SpanOfTime TryParse( String? text ) {
 			try {
 				if ( null == text ) {
 					return Zero;
@@ -564,7 +550,7 @@ namespace Librainian.Measurement.Time {
 				//TODO other combinations
 				//TODO parse for more, even multiple  2 days, 3 hours, and 4 minutes etc...
 			}
-			catch ( ArgumentNullException ) { }
+			catch ( ArgumentEmptyException ) { }
 			catch ( ArgumentException ) { }
 			catch ( OverflowException ) { }
 
@@ -626,7 +612,6 @@ namespace Librainian.Measurement.Time {
 			return ( BigInteger )span.Years.Value;
 		}
 
-		[NotNull]
 		public override String ToString() {
 			var bob = new Queue<String>( 20 );
 

@@ -36,10 +36,10 @@ namespace Librainian.Measurement.Time {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using ExtendedNumerics;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Maths;
+	using Maths.Bigger;
 	using Parsing;
 	using PooledAwait;
 
@@ -57,7 +57,7 @@ namespace Librainian.Measurement.Time {
 
 		public static DateTime StarDateOrigin { get; } = new( 2318, 7, 5, 12, 0, 0, DateTimeKind.Utc );
 
-		private static DateTime ParseFormattedDate( [CanBeNull] String? input, [CanBeNull] IFormatProvider culture ) {
+		private static DateTime ParseFormattedDate( String? input, IFormatProvider? culture ) {
 			var formats = new[] {
 				"u", "s", "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", "yyyy-MM-ddTHH:mm:ssZ", "yyyy-MM-dd HH:mm:ssZ", "yyyy-MM-ddTHH:mm:ss", "yyyy-MM-ddTHH:mm:sszzzzzz",
 				"M/d/yyyy h:mm:ss tt" // default format for invariant culture
@@ -103,9 +103,11 @@ namespace Librainian.Measurement.Time {
 		public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) =>
 			current.SetTime( hour, minute, second, milliseconds );
 
-		public static DateTime Average( [NotNull] this IEnumerable<DateTime> dates ) {
+		public static Boolean Between( this DateTime dt, DateTime rangeBeg, DateTime rangeEnd ) => rangeBeg <= dt && dt <= rangeEnd;
+
+		public static DateTime Average( this IEnumerable<DateTime> dates ) {
 			if ( dates is null ) {
-				throw new ArgumentNullException( nameof( dates ) );
+				throw new ArgumentEmptyException( nameof( dates ) );
 			}
 
 			var ticks = dates.Select( time => time.Ticks ).Average();
@@ -119,7 +121,7 @@ namespace Librainian.Measurement.Time {
 		public static async PooledTask<TimeSpan> AwaitContextSwitch() {
 			var stopwatch = Stopwatch.StartNew();
 
-			await Task.Run( () => Task.Delay( 1 ).Wait() ).ConfigureAwait( false );
+			await Task.Run( async () => await Task.Delay( 1 ).ConfigureAwait( false ) ).ConfigureAwait( false );
 
 			return stopwatch.Elapsed;
 		}
@@ -214,7 +216,7 @@ namespace Librainian.Measurement.Time {
 			return TimeSpan.FromMilliseconds( ( Double )remainingTime );
 		}
 
-		public static DateTime ExtractDate( [NotNull] this String input, [NotNull] String pattern, [CanBeNull] IFormatProvider culture ) {
+		public static DateTime ExtractDate( this String input, String pattern, IFormatProvider? culture ) {
 			var dt = DateTime.MinValue;
 			var regex = new Regex( pattern );
 
@@ -603,7 +605,7 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="value">The ISO 8601 string representation to parse.</param>
 		/// <returns>The DateTime equivalent.</returns>
-		public static DateTime ParseIso8601( [NotNull] this String value ) =>
+		public static DateTime ParseIso8601( this String value ) =>
 			DateTime.ParseExact( value, Iso8601Format, CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal );
 
 		/// <summary>
@@ -612,7 +614,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="input">  JSON value to parse</param>
 		/// <param name="culture"></param>
 		/// <returns>DateTime</returns>
-		public static DateTime ParseJsonDate( [NotNull] this String input, [CanBeNull] CultureInfo culture ) {
+		public static DateTime ParseJsonDate( this String input, CultureInfo? culture ) {
 			if ( String.IsNullOrWhiteSpace( input ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
 			}
@@ -855,57 +857,67 @@ namespace Librainian.Measurement.Time {
 		///     Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".
 		/// </summary>
 		/// <param name="timeSpan"></param>
-		[NotNull]
 		public static String Simpler( this TimeSpan timeSpan ) {
 			var sb = new StringBuilder();
 
-			if ( timeSpan.Days > 730.5D ) {
+			if ( timeSpan.Days > 365*2 ) {
 				sb.AppendFormat( " {0:n0} years", timeSpan.Days / 365 );
 			}
 
-			//else if ( timeSpan.Days > 365 ) {
-			//    sb.AppendFormat( " {0} year", timeSpan.Days / 365 );
-			//}
-			//else if ( timeSpan.Days > 14 ) {
-			//    sb.AppendFormat( " {0:n0} weeks", timeSpan.Days / 7 );
-			//}
-			//else if ( timeSpan.Days > 7 ) {
-			//    sb.AppendFormat( " {0} week", timeSpan.Days / 7 );
-			//}
-			//else
-			if ( timeSpan.Days > 1 ) {
-				sb.Append( $" {timeSpan.Days:R} days" );
-			}
-			else if ( timeSpan.Days == 1 ) {
-				sb.Append( $" {timeSpan.Days:R} day" );
+			else if ( timeSpan.Days.Between( 365, 366) ) {
+			    sb.Append( " 1 year" );
 			}
 
-			if ( timeSpan.Hours > 1 ) {
-				sb.Append( $" {timeSpan.Hours:n0} hours" );
-			}
-			else if ( timeSpan.Hours == 1 ) {
-				sb.Append( $" {timeSpan.Hours} hour" );
-			}
-
-			if ( timeSpan.Minutes > 1 ) {
-				sb.Append( $" {timeSpan.Minutes:n0} minutes" );
-			}
-			else if ( timeSpan.Minutes == 1 ) {
-				sb.Append( $" {timeSpan.Minutes} minute" );
-			}
-
-			if ( timeSpan.Seconds > 1 ) {
-				sb.Append( $" {timeSpan.Seconds:n0} seconds" );
-			}
-			else if ( timeSpan.Seconds == 1 ) {
-				sb.Append( $" {timeSpan.Seconds} second" );
+			switch ( timeSpan.Days ) {
+				//else if ( timeSpan.Days > 14 ) {
+				//    sb.AppendFormat( " {0:n0} weeks", timeSpan.Days / 7 );
+				//}
+				//else if ( timeSpan.Days > 7 ) {
+				//    sb.AppendFormat( " {0} week", timeSpan.Days / 7 );
+				//}
+				//else
+				case > 1:
+					sb.Append( $" {timeSpan.Days:R} days" );
+					break;
+				case 1:
+					sb.Append( $" {timeSpan.Days:R} day" );
+					break;
 			}
 
-			if ( timeSpan.Milliseconds > 1 ) {
-				sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" );
+			switch ( timeSpan.Hours ) {
+				case > 1:
+					sb.Append( $" {timeSpan.Hours:n0} hours" );
+					break;
+				case 1:
+					sb.Append( $" {timeSpan.Hours} hour" );
+					break;
 			}
-			else if ( timeSpan.Milliseconds == 1 ) {
-				sb.Append( $" {timeSpan.Milliseconds} millisecond" );
+
+			switch ( timeSpan.Minutes ) {
+				case > 1:
+					sb.Append( $" {timeSpan.Minutes:n0} minutes" );
+					break;
+				case 1:
+					sb.Append( $" {timeSpan.Minutes} minute" );
+					break;
+			}
+
+			switch ( timeSpan.Seconds ) {
+				case > 1:
+					sb.Append( $" {timeSpan.Seconds:n0} seconds" );
+					break;
+				case 1:
+					sb.Append( $" {timeSpan.Seconds} second" );
+					break;
+			}
+
+			switch ( timeSpan.Milliseconds ) {
+				case > 1:
+					sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" );
+					break;
+				case 1:
+					sb.Append( $" {timeSpan.Milliseconds} millisecond" );
+					break;
 			}
 
 			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
@@ -919,7 +931,6 @@ namespace Librainian.Measurement.Time {
 		///     Display a <see cref="Duration" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".
 		/// </summary>
 		/// <param name="duration"></param>
-		[NotNull]
 		public static String Simpler( this Duration duration ) {
 			var sb = new StringBuilder();
 
@@ -962,6 +973,18 @@ namespace Librainian.Measurement.Time {
 			return sb.ToString().Trim();
 		}
 
+		public static Boolean IsWorkingDay( this DateTime date ) => date.DayOfWeek is not DayOfWeek.Saturday and not DayOfWeek.Sunday;
+
+		public static Boolean IsWeekend( this DateTime date ) => date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+		public static DateTime NextWorkday( this DateTime date ) {
+			var nextDay = date.AddDays( 1 );
+			while ( !nextDay.IsWorkingDay() ) {
+				nextDay = nextDay.AddDays( 1 );
+			}
+			return nextDay;
+		}
+
 		/// <summary>
 		///     <para>
 		///         Throws an <see cref="OverflowException" /> if the <paramref name="value" /> is lower than
@@ -1001,7 +1024,7 @@ namespace Librainian.Measurement.Time {
 		public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks * scalar ) );
 
 		// if ( value < Constants.MinimumUsefulDecimal ) { throw new OverflowException( Constants.ValueIsTooLow ); }
-		public static SpanOfTime TimeStatement( [CanBeNull] this Action? action ) {
+		public static SpanOfTime TimeStatement( this Action? action ) {
 			var one = Stopwatch.StartNew();
 
 			try {
@@ -1019,10 +1042,8 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="value">The date to format.</param>
 		/// <returns>The formatted date.</returns>
-		[NotNull]
 		public static String ToIso8601( this DateTime value ) => value.ToUniversalTime().ToString( Iso8601Format, CultureInfo.CurrentCulture );
 
-		[NotNull]
 		public static String ToPath( this DateTime dateTime ) {
 			var sb = new StringBuilder( String.Empty, 20 );
 			sb.Append( $"{dateTime.Year:D}/" );

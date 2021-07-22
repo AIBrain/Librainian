@@ -29,13 +29,11 @@ namespace Librainian.Linguistics {
 
 	using System;
 	using Exceptions;
-	using JetBrains.Annotations;
 
 	public record Person {
-		[NotNull]
 		public String FullName { get; }
 
-		protected Person( [NotNull] String fullName ) {
+		protected Person( String fullName ) {
 			if ( String.IsNullOrWhiteSpace( fullName ) ) {
 				throw new ArgumentEmptyException( nameof( fullName ) );
 			}

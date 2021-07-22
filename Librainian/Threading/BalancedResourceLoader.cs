@@ -29,20 +29,16 @@ namespace Librainian.Threading {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public class BalancedResourceLoader<T> : IResourceLoader<T> {
 
 		private Int32 _index;
 
-		[NotNull]
 		private Object _lock { get; } = new();
 
-		[NotNull]
 		private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new();
 
-		[NotNull]
-		[ItemNotNull]
 		private IList<IResourceLoader<T>> _resourceLoaders { get; }
 
 		public Int32 Available => this._resourceLoaders.Sum( r => r.Available );
@@ -51,12 +47,12 @@ namespace Librainian.Threading {
 
 		public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
 
-		public BalancedResourceLoader( [NotNull] params IResourceLoader<T>[] resourceLoaders ) : this( resourceLoaders as IList<IResourceLoader<T>> ) { }
+		public BalancedResourceLoader( params IResourceLoader<T>[] resourceLoaders ) : this( resourceLoaders as IList<IResourceLoader<T>> ) { }
 
-		public BalancedResourceLoader( [NotNull] IList<IResourceLoader<T>> resourceLoaders ) =>
-			this._resourceLoaders = resourceLoaders ?? throw new ArgumentNullException( nameof( resourceLoaders ) );
+		public BalancedResourceLoader( IList<IResourceLoader<T>> resourceLoaders ) =>
+			this._resourceLoaders = resourceLoaders ?? throw new ArgumentEmptyException( nameof( resourceLoaders ) );
 
-		private Boolean GetOrQueue( [CanBeNull] out Task<T> resource, Boolean queueOnFailure, CancellationToken cancelToken ) {
+		private Boolean GetOrQueue( out Task<T>? resource, Boolean queueOnFailure, CancellationToken cancelToken ) {
 			var i = this._index;
 
 			while ( true ) {
@@ -91,9 +87,9 @@ namespace Librainian.Threading {
 			}
 		}
 
-		private void OnResourceLoaded( [NotNull] Task<T> task ) {
+		private void OnResourceLoaded( Task<T> task ) {
 			if ( task is null ) {
-				throw new ArgumentNullException( nameof( task ) );
+				throw new ArgumentEmptyException( nameof( task ) );
 			}
 
 			Task<T> _resource;

@@ -32,7 +32,7 @@ namespace Librainian.Databases {
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
-	using JetBrains.Annotations;
+	using System.Threading;
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
 
@@ -40,7 +40,6 @@ namespace Librainian.Databases {
 
 		TimeSpan CommandTimeout { get; set; }
 
-		[CanBeNull]
 		String? Query { get; set; }
 
 		/// <summary>
@@ -51,9 +50,9 @@ namespace Librainian.Databases {
 
 		Int32? ExecuteNonQuery( String query, Int32 retries, CommandType commandType, params SqlParameter[] parameters );
 
-		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
-		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     Returns a <see cref="DataTable" />
@@ -63,24 +62,26 @@ namespace Librainian.Databases {
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		Boolean ExecuteReader( [NotNull] String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
+		Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
 
 		/// <summary>
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		PooledValueTask<DataTableReader?> ExecuteReaderAsync( String query, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<DataTableReader?> ExecuteReaderAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     Returns a <see cref="DataTable" />
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		PooledValueTask<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     <para>Returns the first column of the first row.</para>
@@ -89,16 +90,17 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		TResult? ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+		TResult? ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     <para>Returns the first column of the first row.</para>
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		PooledValueTask<TResult?> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<TResult?> ExecuteScalarAsync<TResult>( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="query" />.
@@ -108,33 +110,36 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		PooledValueTask<Boolean> FillTableAsync( [NotNull] String query, CommandType commandType, [NotNull] DataTable table, params SqlParameter[] parameters );
+		PooledValueTask<Boolean> FillTableAsync( String query, CommandType commandType, DataTable table, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
-		DataTableReader? QueryAdHoc( [NotNull] String query, params SqlParameter[] parameters );
+		DataTableReader? QueryAdHoc( String query, params SqlParameter[] parameters );
 
-		PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String query, [CanBeNull] params SqlParameter?[]? parameters );
+		PooledValueTask<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter?[]? parameters );
 
-		PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( [NotNull] String query, params SqlParameter[] parameters );
+		PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     <para>Connect and then run <paramref name="query" />.</para>
 		/// </summary>
 		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"></param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, params SqlParameter[] parameters );
+		PooledValueTask<SqlDataReader?> QueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     <para>Connect and then run <paramref name="query" />.</para>
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<SqlDataReader?> QueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		///     Returns a <see cref="IEnumerable{T}" />
@@ -143,12 +148,12 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		IEnumerable<TResult>? QueryList<TResult>( [NotNull] String query, CommandType commandType, params SqlParameter[] parameters );
+		IEnumerable<TResult>? QueryList<TResult>( String query, CommandType commandType, params SqlParameter[] parameters );
 
-		PooledValueTask<Int32?> RunSprocAsync( String query, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> RunSprocAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
-		void UseDatabase( [NotNull] String databaseName );
+		void UseDatabase( String databaseName );
 
-		PooledValueTask UseDatabaseAsync( [NotNull] String databaseName );
+		PooledValueTask UseDatabaseAsync( String databaseName, CancellationToken cancellationToken );
 	}
 }

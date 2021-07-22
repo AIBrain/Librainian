@@ -28,7 +28,7 @@ namespace Librainian.Threading {
 	using System.Collections.Generic;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>Copyright (c) Microsoft Corporation. All rights reserved. File: ParallelAlgorithms_Wavefront.cs</summary>
 	public static class ParallelAlgorithms {
@@ -39,8 +39,7 @@ namespace Librainian.Threading {
 		/// <param name="toExclusive">  The end of the range, exclusive.</param>
 		/// <param name="body">         The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
-		[CanBeNull]
-		public static TResult SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] Func<Int32, TResult> body ) =>
+		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, Func<Int32, TResult> body ) =>
 			fromInclusive.SpeculativeFor( toExclusive, CPU.AllExceptOne, body );
 
 		/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
@@ -50,11 +49,11 @@ namespace Librainian.Threading {
 		/// <param name="options">      The options to use for processing the loop.</param>
 		/// <param name="body">         The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
-		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, [NotNull] ParallelOptions options, [NotNull] Func<Int32, TResult> body ) {
+		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, ParallelOptions options, Func<Int32, TResult> body ) {
 
 			// Validate parameters; the Parallel.For we delegate to will validate the rest
 			if ( body is null ) {
-				throw new ArgumentNullException( nameof( body ) );
+				throw new ArgumentEmptyException( nameof( body ) );
 			}
 
 			// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
@@ -82,8 +81,7 @@ namespace Librainian.Threading {
 		/// <param name="source">The input elements to be processed.</param>
 		/// <param name="body">  The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
-		[CanBeNull]
-		public static TResult SpeculativeForEach<TSource, TResult>( [NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, TResult> body ) =>
+		public static TResult SpeculativeForEach<TSource, TResult>( this IEnumerable<TSource> source, Func<TSource, TResult> body ) =>
 			source.SpeculativeForEach( CPU.AllExceptOne, body );
 
 		/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
@@ -94,18 +92,18 @@ namespace Librainian.Threading {
 		/// <param name="body">   The function to execute for each element.</param>
 		/// <returns>The result computed.</returns>
 		public static TResult SpeculativeForEach<TSource, TResult>(
-			[NotNull] this IEnumerable<TSource> source,
-			[NotNull] ParallelOptions options,
-			[NotNull] Func<TSource, TResult> body
+			this IEnumerable<TSource> source,
+			ParallelOptions options,
+			Func<TSource, TResult> body
 		) {
 
 			// Validate parameters; the Parallel.ForEach we delegate to will validate the rest
 			if ( body is null ) {
-				throw new ArgumentNullException( nameof( body ) );
+				throw new ArgumentEmptyException( nameof( body ) );
 			}
 
 			// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
-			Object result = null;
+			Object? result = null;
 
 			// Run all bodies in parallel, stopping as soon as one has completed.
 			Parallel.ForEach( source, options, ( item, loopState ) => {
@@ -130,8 +128,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
 		/// <param name="functions">The functions to be executed.</param>
 		/// <returns>A result from executing one of the functions.</returns>
-		[CanBeNull]
-		public static T SpeculativeInvoke<T>( [NotNull] params Func<T>[] functions ) => CPU.AllExceptOne.SpeculativeInvoke( functions );
+		public static T SpeculativeInvoke<T>( params Func<T>[] functions ) => CPU.AllExceptOne.SpeculativeInvoke( functions );
 
 		/// <summary>
 		///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
@@ -141,16 +138,15 @@ namespace Librainian.Threading {
 		/// <param name="options">  The options to use for the execution.</param>
 		/// <param name="functions">The functions to be executed.</param>
 		/// <returns>A result from executing one of the functions.</returns>
-		[CanBeNull]
-		public static T SpeculativeInvoke<T>( [NotNull] this ParallelOptions options, [NotNull] params Func<T>[] functions ) {
+		public static T SpeculativeInvoke<T>( this ParallelOptions options, params Func<T>[] functions ) {
 
 			// Validate parameters
 			if ( options is null ) {
-				throw new ArgumentNullException( nameof( options ) );
+				throw new ArgumentEmptyException( nameof( options ) );
 			}
 
 			if ( functions is null ) {
-				throw new ArgumentNullException( nameof( functions ) );
+				throw new ArgumentEmptyException( nameof( functions ) );
 			}
 
 			// Speculatively invoke each function
@@ -167,7 +163,7 @@ namespace Librainian.Threading {
 		/// <param name="numBlocksPerRow">   Partition the matrix into this number of blocks along the rows.</param>
 		/// <param name="numBlocksPerColumn">Partition the matrix into this number of blocks along the columns.</param>
 		public static void Wavefront(
-			[NotNull] this Action<Int32, Int32, Int32, Int32> processBlock,
+			this Action<Int32, Int32, Int32, Int32> processBlock,
 			Int32 numRows,
 			Int32 numColumns,
 			Int32 numBlocksPerRow,
@@ -192,7 +188,7 @@ namespace Librainian.Threading {
 			}
 
 			if ( processBlock is null ) {
-				throw new ArgumentNullException( nameof( processBlock ) );
+				throw new ArgumentEmptyException( nameof( processBlock ) );
 			}
 
 			// Compute the size of each block
@@ -214,7 +210,7 @@ namespace Librainian.Threading {
 		/// <param name="processRowColumnCell">The action to invoke for every cell, supplied with the row and column indices.</param>
 		/// <param name="numRows">             The number of rows in the matrix.</param>
 		/// <param name="numColumns">          The number of columns in the matrix.</param>
-		public static void Wavefront( [NotNull] this Action<Int32, Int32> processRowColumnCell, Int32 numRows, Int32 numColumns ) {
+		public static void Wavefront( this Action<Int32, Int32> processRowColumnCell, Int32 numRows, Int32 numColumns ) {
 
 			// Validate parameters
 			if ( numRows <= 0 ) {
@@ -226,7 +222,7 @@ namespace Librainian.Threading {
 			}
 
 			if ( processRowColumnCell is null ) {
-				throw new ArgumentNullException( nameof( processRowColumnCell ) );
+				throw new ArgumentEmptyException( nameof( processRowColumnCell ) );
 			}
 
 			// Store the previous row of tasks as well as the previous task in the current row

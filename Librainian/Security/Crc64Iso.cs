@@ -25,7 +25,6 @@
 namespace Librainian.Security {
 
 	using System;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	///     <see cref="CRC64" />
@@ -42,9 +41,9 @@ namespace Librainian.Security {
 
 		public Crc64Iso( UInt64 seed ) : base( Iso3309Polynomial, seed ) { }
 
-		public static UInt64 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
+		public static UInt64 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
-		public static UInt64 Compute( UInt64 seed, [NotNull] Byte[] buffer ) {
+		public static UInt64 Compute( UInt64 seed, Byte[] buffer ) {
 			Table ??= CreateTable( Iso3309Polynomial );
 
 			return CalculateHash( seed, Table, buffer, 0, buffer.Length );

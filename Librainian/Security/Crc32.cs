@@ -29,7 +29,6 @@ namespace Librainian.Security {
 	using System;
 	using System.Collections.Generic;
 	using System.Security.Cryptography;
-	using JetBrains.Annotations;
 
 	/// <summary>Implements a 32-bit CRC hash algorithm compatible with Zip etc.</summary>
 	/// <remarks>
@@ -66,7 +65,6 @@ namespace Librainian.Security {
 			this.Seed = this._hash = seed;
 		}
 
-		[NotNull]
 		private static UInt32[] InitializeTable( UInt32 polynomial ) {
 			if ( _defaultTable != null ) {
 				return _defaultTable;
@@ -98,7 +96,6 @@ namespace Librainian.Security {
 
 		protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( this.Table, this._hash, buffer, start, length );
 
-		[NotNull]
 		protected override Byte[] HashFinal() {
 			var hashBuffer = UInt32ToBigEndianBytes( ~this._hash );
 			this.HashValue = hashBuffer;
@@ -106,7 +103,6 @@ namespace Librainian.Security {
 			return hashBuffer;
 		}
 
-		[NotNull]
 		internal static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
 			var result = BitConverter.GetBytes( uint32 );
 
@@ -124,9 +120,7 @@ namespace Librainian.Security {
 		/// <param name="start"> </param>
 		/// <param name="size">  </param>
 		/// <returns></returns>
-		public static UInt32 CalculateHash( [NotNull]
-											UInt32[] table, UInt32 seed, [NotNull]
-											IList<Byte> buffer, Int32 start, Int32 size ) {
+		public static UInt32 CalculateHash( UInt32[] table, UInt32 seed, IList<Byte> buffer, Int32 start, Int32 size ) {
 			var crc = seed;
 
 			for ( var i = start; i < size - start; i++ ) {
@@ -136,11 +130,11 @@ namespace Librainian.Security {
 			return crc;
 		}
 
-		public static UInt32 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
+		public static UInt32 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
-		public static UInt32 Compute( UInt32 seed, [NotNull] Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
+		public static UInt32 Compute( UInt32 seed, Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
 
-		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, [NotNull] Byte[] buffer ) =>
+		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, Byte[] buffer ) =>
 			~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
 
 		public override void Initialize() => this._hash = this.Seed;

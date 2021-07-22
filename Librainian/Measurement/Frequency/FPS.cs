@@ -29,7 +29,6 @@ namespace Librainian.Measurement.Frequency {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 	using Time;
@@ -125,7 +124,6 @@ namespace Librainian.Measurement.Frequency {
 
 		public static Boolean operator >( Fps left, Fps right ) => left.Value.CompareTo( right.Value ) > 0;
 
-		[NotNull]
 		public override String ToString() => $"{this.Value} FPS ({( ( TimeSpan )this ).Simpler()})";
 	}
 }

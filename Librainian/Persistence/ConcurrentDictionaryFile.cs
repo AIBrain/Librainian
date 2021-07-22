@@ -36,8 +36,8 @@ namespace Librainian.Persistence {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
 	using Measurement.Time;
@@ -51,7 +51,6 @@ namespace Librainian.Persistence {
 		private volatile Boolean _isLoading;
 
 		[JsonProperty]
-		[NotNull]
 		public Document Document { get; }
 
 		public Boolean IsLoading {
@@ -70,8 +69,8 @@ namespace Librainian.Persistence {
 		/// <param name="document"></param>
 		/// <param name="progress"></param>
 		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] Document document, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) {
-			this.Document = document ?? throw new ArgumentNullException( nameof( document ) );
+		public ConcurrentDictionaryFile( Document document, Progress<ZeroToOne> progress, Boolean preload = false ) {
+			this.Document = document ?? throw new ArgumentEmptyException( nameof( document ) );
 
 			if ( !this.Document.ContainingingFolder().Info.Exists ) {
 				this.Document.ContainingingFolder().Info.Create();
@@ -89,7 +88,7 @@ namespace Librainian.Persistence {
 		/// <param name="filename"></param>
 		/// <param name="progress"></param>
 		/// <param name="preload"> </param>
-		public ConcurrentDictionaryFile( [NotNull] String filename, [NotNull] Progress<ZeroToOne> progress, Boolean preload = false ) : this( new Document( filename ),
+		public ConcurrentDictionaryFile( String filename, Progress<ZeroToOne> progress, Boolean preload = false ) : this( new Document( filename ),
 			progress, preload ) { }
 
 		protected virtual void Dispose( Boolean releaseManaged ) {
@@ -122,7 +121,7 @@ namespace Librainian.Persistence {
 			return true;
 		}
 
-		public async Task<Status> Load( [NotNull] IProgress<ZeroToOne> progress, CancellationToken cancellationToken = default ) {
+		public async Task<Status> Load( IProgress<ZeroToOne> progress, CancellationToken cancellationToken = default ) {
 			try {
 				this.IsLoading = true;
 
@@ -178,10 +177,9 @@ namespace Librainian.Persistence {
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.Keys.Count} keys, {this.Values.Count} values";
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( [CanBeNull] TKey key ) => this.TryRemove( key, out var _ );
+		public Boolean TryRemove( TKey? key ) => this.TryRemove( key, out var _ );
 	}
 }

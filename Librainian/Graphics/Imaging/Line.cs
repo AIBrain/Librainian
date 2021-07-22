@@ -32,7 +32,7 @@ namespace Librainian.Graphics.Imaging {
 	using System.Linq;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>A horizontal line of <see cref="Pixel" />.</summary>
@@ -49,7 +49,7 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Returns a hash code for the specified object.</summary>
 		/// <returns>A hash code for the specified object.</returns>
 		/// <param name="obj">The <see cref="Object" /> for which a hash code is to be returned.</param>
-		/// <exception cref="ArgumentNullException">
+		/// <exception cref="ArgumentEmptyException">
 		///     The type of <paramref name="obj" /> is a reference type and
 		///     <paramref name="obj" /> is null.
 		/// </exception>
@@ -81,13 +81,13 @@ namespace Librainian.Graphics.Imaging {
 		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
 		///     false.
 		/// </returns>
-		public static Boolean operator ==( [CanBeNull] Line left, [CanBeNull] Line right ) => Equals( left, right );
+		public static Boolean operator ==( Line? left, Line? right ) => Equals( left, right );
 
 		/// <summary>Returns a value that indicates whether two <see cref="Line" /> objects have different values.</summary>
 		/// <param name="left">The first value to compare.</param>
 		/// <param name="right">The second value to compare.</param>
 		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-		public static Boolean operator !=( [CanBeNull] Line left, [CanBeNull] Line right ) => !Equals( left, right );
+		public static Boolean operator !=( Line? left, Line? right ) => !Equals( left, right );
 
 		/// <summary>How many pixels should be in this line?</summary>
 		[JsonProperty]
@@ -96,7 +96,6 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>An array of pixels</summary>
 		/// <remarks>I'd prefer a list instead of an array.</remarks>
 		[JsonProperty]
-		[NotNull]
 		public Pixel[] Pixels;
 
 		/// <summary>Returns the zero-based <see cref="Pixel" /> or null if not found.</summary>
@@ -120,9 +119,9 @@ namespace Librainian.Graphics.Imaging {
 
 		/// <summary>Construct a <see cref="Line" /> from an array of <see cref="Pixel" />.</summary>
 		/// <param name="pixels"></param>
-		public Line( [NotNull] Pixel[] pixels ) {
+		public Line( Pixel[] pixels ) {
 			if ( pixels is null ) {
-				throw new ArgumentNullException( nameof( pixels ) );
+				throw new ArgumentEmptyException( nameof( pixels ) );
 			}
 
 			this.Pixels = pixels.ToArray();
@@ -141,7 +140,6 @@ namespace Librainian.Graphics.Imaging {
 			return checksum.Value;
 		}
 
-		[NotNull]
 		private Task<UInt64> CalculateChecksumAsync() =>
 			Task.Run( () => {
 				var checksum = ( UInt64 )0;
@@ -159,7 +157,7 @@ namespace Librainian.Graphics.Imaging {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Line? left, [CanBeNull] Line? right ) {
+		public static Boolean Equals( Line? left, Line? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}

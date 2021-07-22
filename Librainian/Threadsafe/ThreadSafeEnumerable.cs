@@ -30,39 +30,31 @@ namespace Librainian.Threadsafe {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public class ThreadSafeEnumerable<T> : IEnumerable<T> {
 
-		[NotNull]
 		private IEnumerable<T> Original { get; }
 
-		public ThreadSafeEnumerable( [NotNull] IEnumerable<T> original ) => this.Original = original ?? throw new ArgumentNullException( nameof( original ) );
+		public ThreadSafeEnumerable( IEnumerable<T> original ) => this.Original = original ?? throw new ArgumentEmptyException( nameof( original ) );
 
-		[NotNull]
 		public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this.Original.GetEnumerator() );
 
-		[NotNull]
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		private sealed class ThreadSafeEnumerator : IEnumerator<T> {
 
-			[NotNull]
 			private ThreadLocal<T?> current { get; } = new();
 
-			[NotNull]
 			private IEnumerator<T> original { get; }
 
-			[NotNull]
 			private Object padlock { get; } = new();
 
-			[CanBeNull]
 			public T? Current => this.current.Value;
 
-			[CanBeNull]
 			Object? IEnumerator.Current => this.Current;
 
-			internal ThreadSafeEnumerator( [NotNull] IEnumerator<T> original ) => this.original = original ?? throw new ArgumentNullException( nameof( original ) );
+			internal ThreadSafeEnumerator( IEnumerator<T> original ) => this.original = original ?? throw new ArgumentEmptyException( nameof( original ) );
 
 			public void Dispose() {
 				using ( this.original ) { }

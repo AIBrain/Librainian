@@ -28,16 +28,13 @@
 namespace Librainian.Linguistics {
 
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	public interface IHasAuthors {
 
-		[NotNull]
 		[JsonProperty]
 		public HashSet<Author> Authors { get; }
 
-		[NotNull]
 		public IEnumerable<Author> GetAuthors() => this.Authors;
 	}
 }

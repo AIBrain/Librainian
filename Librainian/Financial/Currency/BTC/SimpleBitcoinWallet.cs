@@ -32,10 +32,11 @@ namespace Librainian.Financial.Currency.BTC {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>A very simple, thread-safe, Decimal-based bitcoin wallet.</summary>
 	/// <remarks>TODO add in support for automatic persisting TODO add in support for exploring the blockchain. lol</remarks>
@@ -45,7 +46,6 @@ namespace Librainian.Financial.Currency.BTC {
 	public class SimpleBitcoinWallet : ABetterClassDispose, IEquatable<SimpleBitcoinWallet>, IComparable<SimpleBitcoinWallet> {
 
 		[NonSerialized]
-		[NotNull]
 		private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
 		[JsonProperty]
@@ -88,19 +88,14 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 		}
 
-		[CanBeNull]
 		public Action<Decimal>? OnAfterDeposit { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnAfterWithdraw { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnAnyUpdate { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnBeforeDeposit { get; set; }
 
-		[CanBeNull]
 		public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
 		/// <summary>
@@ -112,7 +107,7 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <param name="satoshi"></param>
 		public SimpleBitcoinWallet( Int64 satoshi ) : this( satoshi.ToBTC() ) { }
 
-		public SimpleBitcoinWallet( [NotNull] ISimpleWallet wallet ) : this( wallet.Balance ) { }
+		public SimpleBitcoinWallet( ISimpleWallet wallet ) : this( wallet.Balance ) { }
 
 		/// <summary>Initialize the wallet with the specified <paramref name="btcbalance" /> .</summary>
 		/// <param name="btcbalance"></param>
@@ -131,7 +126,7 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] SimpleBitcoinWallet? left, [CanBeNull] SimpleBitcoinWallet? right ) {
+		public static Boolean Equals( SimpleBitcoinWallet? left, SimpleBitcoinWallet? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -143,9 +138,9 @@ namespace Librainian.Financial.Currency.BTC {
 			return left.Balance == right.Balance;
 		}
 
-		public Int32 CompareTo( [NotNull] SimpleBitcoinWallet? otherWallet ) {
+		public Int32 CompareTo( SimpleBitcoinWallet otherWallet ) {
 			if ( otherWallet is null ) {
-				throw new ArgumentNullException( nameof( otherWallet ) );
+				throw new ArgumentEmptyException( nameof( otherWallet ) );
 			}
 
 			return this.Balance.CompareTo( otherWallet.Balance );
@@ -166,11 +161,10 @@ namespace Librainian.Financial.Currency.BTC {
 		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
 		///     <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as SimpleBitcoinWallet );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as SimpleBitcoinWallet );
 
 		public override Int32 GetHashCode() => this.Balance.GetHashCode();
 
-		[NotNull]
 		public override String ToString() => $"฿ {this.Balance:F8}";
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
@@ -197,9 +191,9 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 		}
 
-		public Boolean TryAdd( [NotNull] SimpleBitcoinWallet wallet ) {
+		public Boolean TryAdd( SimpleBitcoinWallet wallet ) {
 			if ( wallet is null ) {
-				throw new ArgumentNullException( nameof( wallet ) );
+				throw new ArgumentEmptyException( nameof( wallet ) );
 			}
 
 			return this.TryAdd( wallet.Balance );
@@ -224,7 +218,7 @@ namespace Librainian.Financial.Currency.BTC {
 			return true;
 		}
 
-		public Boolean TryTransfer( Decimal amount, [CanBeNull] ref SimpleBitcoinWallet? intoWallet ) {
+		public Boolean TryTransfer( Decimal amount, ref SimpleBitcoinWallet? intoWallet ) {
 			if ( amount <= Decimal.Zero ) {
 				return false;
 			}
@@ -279,7 +273,7 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 		}
 
-		public void TryUpdateBalance( [NotNull] SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( simpleBitcoinWallet.Balance );
+		public void TryUpdateBalance( SimpleBitcoinWallet simpleBitcoinWallet ) => this.TryUpdateBalance( simpleBitcoinWallet.Balance );
 
 		/// <summary>
 		///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
@@ -323,9 +317,9 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <summary>Attempt to withdraw an amount (must be larger than Zero) from the wallet.</summary>
 		/// <param name="wallet"></param>
 		/// <returns></returns>
-		public Boolean TryWithdraw( [NotNull] SimpleBitcoinWallet wallet ) {
+		public Boolean TryWithdraw( SimpleBitcoinWallet wallet ) {
 			if ( wallet is null ) {
-				throw new ArgumentNullException( nameof( wallet ) );
+				throw new ArgumentEmptyException( nameof( wallet ) );
 			}
 
 			return this.TryWithdraw( wallet.Balance );

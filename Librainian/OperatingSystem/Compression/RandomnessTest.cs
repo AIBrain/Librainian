@@ -25,13 +25,11 @@
 namespace Librainian.OperatingSystem.Compression {
 
 	using System;
-	using JetBrains.Annotations;
 	using Maths;
 
 	//[TestFixture]
 	public static class RandomnessTest {
 
-		[NotNull]
 		public static RandomnessFeeding RandomnessFeeding { get; } = new();
 
 		//[OneTimeTearDown]

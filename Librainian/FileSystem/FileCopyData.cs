@@ -32,33 +32,25 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections.Generic;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using PooledAwait;
 
 	public record FileCopyData( IDocument Source, IDocument Destination ) {
-		[CanBeNull]
 		public DateTime? WhenStarted { get; init; }
 
 		public UInt64 SourceSize { get; set; }
 
-		[CanBeNull]
 		public UInt64? BytesCopied { get; set; }
 
-		[CanBeNull]
 		public IProgress<FileCopyData>? DataCopied { get; set; }
 
-		[CanBeNull]
 		public Action<FileCopyData>? OnCompleted { get; set; }
 
-		[CanBeNull]
 		public DateTime? WhenCompleted { get; set; }
 
-		[CanBeNull]
 		public IList<Exception>? Exceptions { get; set; }
 
-		[CanBeNull] public PooledValueTask<FileCopyData>? CopyTask { get; set; }
+		public PooledValueTask<FileCopyData>? CopyTask { get; set; }
 
-		[CanBeNull]
 		public Status? Status { get; set; }
 
 		public CancellationTokenSource CancellationTokenSource { get; init; } = new();

@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "Tasks.cs" last formatted on 2020-08-14 at 8:46 PM.
+// 
+// File "Tasks.cs" last touched on 2021-04-25 at 10:33 AM by Protiguous.
 
 namespace Librainian.Threading {
 
@@ -29,7 +32,7 @@ namespace Librainian.Threading {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Measurement.Time;
 
@@ -40,7 +43,7 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="completedTask"></param>
 		/// <param name="completionSource"></param>
-		private static void PropagateResult<T>( Task<T> completedTask, [CanBeNull] TaskCompletionSource<T> completionSource ) {
+		private static void PropagateResult<T>( Task<T> completedTask, TaskCompletionSource<T>? completionSource ) {
 			switch ( completedTask.Status ) {
 				case TaskStatus.Canceled:
 					completionSource.TrySetCanceled();
@@ -68,7 +71,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
@@ -95,10 +97,9 @@ namespace Librainian.Threading {
 		///     Interleaved(tasks)) { var t = await bucket; int result = await t;
 		///     Console.WriteLine("{0}: {1}", DateTime.Now, result); }
 		/// </example>
-		[NotNull]
-		public static Task<Task<T>>[] Interleaved<T>( [NotNull] IEnumerable<Task<T>> tasks ) {
+		public static Task<Task<T>>[] Interleaved<T>( IEnumerable<Task<T>> tasks ) {
 			if ( tasks == null ) {
-				throw new ArgumentNullException( nameof( tasks ) );
+				throw new ArgumentEmptyException( nameof( tasks ) );
 			}
 
 			var inputTasks = tasks.ToList();
@@ -134,21 +135,20 @@ namespace Librainian.Threading {
 		///// <param name="priority"></param>
 		//public static void Spawn( [NotNull] this Action job, Span? delay = null, Single priority ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 		//    AddThenFireAndForget( job: job, delay: delay );
 		//}
 
-		[NotNull]
-		public static Task Multitude( [CanBeNull] params Action[] actions ) => Task.Run( () => Parallel.Invoke( actions ) );
+		public static Task Multitude( params Action[]? actions ) => Task.Run( () => Parallel.Invoke( actions ) );
 
 		/// <summary>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" /> .</summary>
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this TimeSpan delay, [NotNull] Action job ) {
+		public static async Task Then( this TimeSpan delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -162,9 +162,9 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this Milliseconds delay, [NotNull] Action job ) {
+		public static async Task Then( this Milliseconds delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -178,9 +178,9 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this Seconds delay, [NotNull] Action job ) {
+		public static async Task Then( this Seconds delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -194,9 +194,9 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
 		/// <returns></returns>
-		public static async Task Then( this Minutes delay, [NotNull] Action job ) {
+		public static async Task Then( this Minutes delay, Action job ) {
 			if ( job == null ) {
-				throw new ArgumentNullException( nameof( job ) );
+				throw new ArgumentEmptyException( nameof( job ) );
 			}
 
 			await Task.Delay( delay ).ConfigureAwait( false );
@@ -209,8 +209,7 @@ namespace Librainian.Threading {
 		/// <param name="pre"></param>
 		/// <param name="post"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static Action Wrap( [CanBeNull] this Action? action, [CanBeNull] Action? pre, [CanBeNull] Action? post ) =>
+		public static Action Wrap( this Action? action, Action? pre, Action? post ) =>
 			() => {
 				try {
 					pre?.Invoke();
@@ -244,12 +243,11 @@ namespace Librainian.Threading {
 		//}
 
 		//private static void SetMaximumActiveWorkerThreads() {
-		//    int maxWorkerThreads, maxPortThreads;
-		//    ThreadPool.GetMaxThreads( out maxWorkerThreads, out maxPortThreads );
-		//    maxWorkerThreads = 1 + Threads.ProcessorCount + .Parameters.DefaultSprouts;
-		//    if ( ThreadPool.SetMaxThreads( workerThreads: maxWorkerThreads, completionPortThreads: maxPortThreads ) ) {
-		//        Generic.Report( String.Format( "Successfully set max threads to {0} and I/O threads to {1}", maxWorkerThreads, maxPortThreads ) );
-		//    }
+		//	ThreadPool.GetMaxThreads( out var maxWorkerThreads, out var maxPortThreads );
+		//	maxWorkerThreads = 1 + Environment.ProcessorCount;
+		//	if ( ThreadPool.SetMaxThreads( maxWorkerThreads, maxPortThreads ) ) {
+		//		$"Successfully set max threads to {maxWorkerThreads} and I/O threads to {maxPortThreads}".Verbose();
+		//	}
 		//}
 
 		//private static void SetMinimumWorkerThreads() {
@@ -271,7 +269,7 @@ namespace Librainian.Threading {
 		///// <returns> </returns>
 		//public static Task Start( Action job, TimeSpan? delay = null ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 
 		//    if ( delay.HasValue ) {
@@ -302,7 +300,7 @@ namespace Librainian.Threading {
 		//[Obsolete]
 		//public static Task Job( this  Action job ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 		//    var task = Factory.StartNew( action: job );
 		//    return task;
@@ -319,7 +317,7 @@ namespace Librainian.Threading {
 		///// <returns> </returns>
 		//public static async void Then( Action<Task> task, TimeSpan? delay = null ) {
 		//    if ( task == null ) {
-		//        throw new ArgumentNullException( "task" );
+		//        throw new ArgumentEmptyException( "task" );
 		//    }
 		//    if ( !delay.HasValue ) {
 		//        delay = Millisecond.One;
@@ -336,7 +334,7 @@ namespace Librainian.Threading {
 		///// <param name="delay"> </param>
 		//public static Task Then( this Action job, TimeSpan? delay = null ) {
 		//    if ( job == null ) {
-		//        throw new ArgumentNullException( "job" );
+		//        throw new ArgumentEmptyException( "job" );
 		//    }
 		//    if ( !delay.HasValue ) { delay = Millisecond.TwoHundredEleven; }
 
@@ -419,5 +417,7 @@ namespace Librainian.Threading {
 		//        }
 		//    } );
 		//}
+
 	}
+
 }

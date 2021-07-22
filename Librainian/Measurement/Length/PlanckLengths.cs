@@ -26,7 +26,6 @@ namespace Librainian.Measurement.Length {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 	using Maths.Numbers;
 	using Newtonsoft.Json;
 
@@ -56,7 +55,6 @@ namespace Librainian.Measurement.Length {
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		[NotNull]
 		public override String ToString() => $"{this.Value}";
 
 		//public static implicit operator Span( PlanckUnits milliseconds ) {

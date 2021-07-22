@@ -26,7 +26,6 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Numerics;
-	using JetBrains.Annotations;
 	using Rationals;
 
 	public static class MathConstants {
@@ -45,7 +44,6 @@ namespace Librainian.Maths {
 
 		public const Boolean Yes = true;
 
-		[NotNull]
 		public static readonly Double[] Logfactorialtable = {
 			0.000000000000000, 0.000000000000000, 0.693147180559945, 1.791759469228055, 3.178053830347946, 4.787491742782046, 6.579251212010101, 8.525161361065415,
 			10.604602902745251, 12.801827480081469, 15.104412573075516, 17.502307845873887, 19.987214495661885, 22.552163853123421, 25.191221182738683, 27.899271383840894,

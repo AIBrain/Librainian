@@ -26,14 +26,12 @@ namespace Librainian.Measurement.Length {
 
 	using System;
 	using JetBrains.Annotations;
-	using Rationals;
+	using Maths.Bigger;
 
 	public interface IQuantityOfDistance {
 
-		Int32 GetHashCode();
-
 		[Pure]
-		Rational ToMeters();
+		BigDecimal ToMeters();
 
 		String ToString();
 	}

@@ -46,6 +46,11 @@ namespace Librainian.Interfaces {
 		UserText,
 
 		/// <summary>
+		///     the user clicked a button or interacted with the userinerface in some way.
+		/// </summary>
+		UserAction,
+
+		/// <summary>
 		///     the user dragged a folder/file over to the ai
 		/// </summary>
 		DragAndDrop,
@@ -140,6 +145,12 @@ namespace Librainian.Interfaces {
 		/// <summary>
 		/// aka discord "server"
 		/// </summary>
-		DiscordGuild
+		DiscordGuild,
+
+		/// <summary>
+		/// Message was produced from a cortex.
+		/// </summary>
+		Cortex
+
 	}
 }

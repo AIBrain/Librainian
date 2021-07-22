@@ -25,9 +25,9 @@
 namespace Librainian.Financial.Containers.Shopping {
 
 	using System;
+	using Exceptions;
 	using Exceptions.Warnings;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -54,11 +54,11 @@ namespace Librainian.Financial.Containers.Shopping {
 
 		public ShoppingItem( ItemCategory category, Guid itemID ) {
 			if ( category == ItemCategory.Invalid ) {
-				throw new ArgumentNullException( nameof( category ) );
+				throw new ArgumentEmptyException( nameof( category ) );
 			}
 
 			if ( itemID == Guid.Empty ) {
-				throw new InvalidParameterWarning( "", new ArgumentNullException( nameof( itemID ) ) );
+				throw new InvalidParameterWarning( "", new ArgumentEmptyException( nameof( itemID ) ) );
 			}
 
 			this.Category = category;
@@ -69,7 +69,7 @@ namespace Librainian.Financial.Containers.Shopping {
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] ShoppingItem? left, [CanBeNull] ShoppingItem? right ) {
+		public static Boolean Equals( ShoppingItem? left, ShoppingItem? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}

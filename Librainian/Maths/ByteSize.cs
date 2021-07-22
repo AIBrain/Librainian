@@ -28,7 +28,7 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Globalization;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>Represents a byte size value.</summary>
 	/// <remarks>Source: https://github.com/omar/ByteSize/blob/master/src/ByteSizeLib/ByteSize.cs </remarks>
@@ -72,7 +72,6 @@ namespace Librainian.Maths {
 
 		public Double KiloBytes => this.Bytes / BytesInKiloByte;
 
-		[NotNull]
 		public String LargestWholeNumberSymbol {
 			get {
 
@@ -193,7 +192,7 @@ namespace Librainian.Maths {
 
 			// Arg checking
 			if ( String.IsNullOrWhiteSpace( s ) ) {
-				throw new ArgumentNullException( nameof( s ), "String is null or whitespace" );
+				throw new ArgumentEmptyException( nameof( s ) );
 			}
 
 			// Get the index of the first non-digit character
@@ -221,7 +220,7 @@ namespace Librainian.Maths {
 			var lastNumber = num;
 
 			// Cut the input string in half
-			var numberPart = s.Substring( 0, lastNumber ).Trim();
+			var numberPart = s[ ..lastNumber ].Trim();
 			var sizePart = s[ lastNumber.. ].Trim();
 
 			// Get the numeric part
@@ -273,7 +272,7 @@ namespace Librainian.Maths {
 			}
 		}
 
-		public static Boolean TryParse( [CanBeNull] String? s, out ByteSize result ) {
+		public static Boolean TryParse( String? s, out ByteSize result ) {
 			try {
 				result = Parse( s );
 
@@ -317,13 +316,10 @@ namespace Librainian.Maths {
 		///     giga, tera) used is the largest metric prefix such that
 		///     the corresponding value is greater than or equal to one.
 		/// </summary>
-		[NotNull]
 		public override String ToString() => this.ToString( "0.##", CultureInfo.CurrentCulture );
 
-		[NotNull]
-		public String ToString( [CanBeNull] String? format ) => this.ToString( format, CultureInfo.CurrentCulture );
+		public String ToString( String? format ) => this.ToString( format, CultureInfo.CurrentCulture );
 
-		[NotNull]
 		public String ToString( String format, IFormatProvider provider ) {
 			if ( !format.Contains( "#" ) && !format.Contains( "0" ) ) {
 				format = "0.## " + format;

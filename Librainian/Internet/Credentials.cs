@@ -32,17 +32,14 @@ namespace Librainian.Internet {
 	using Parsing;
 
 	/// <summary>Simple container for a <see cref="Username" /> and <see cref="Password" />.</summary>
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	public class Credentials {
 
-		[CanBeNull]
 		private String? _password;
 
-		[CanBeNull]
 		private String? _username;
 
 		/// <summary>Alias for <see cref="Username" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? Name {
 			[CanBeNull]
@@ -52,7 +49,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Password" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? Pass {
 			[CanBeNull]
@@ -62,7 +58,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Password" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? Passcode {
 			[CanBeNull]
@@ -72,7 +67,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Password" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? PassCode {
 			[CanBeNull]
@@ -82,14 +76,12 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>The password property.</summary>
-		[CanBeNull]
 		public String? Password {
 			get => this._password;
 			set => this._password = value.Trimmed();
 		}
 
 		/// <summary>Alias for <see cref="Password" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? PassWord {
 			[CanBeNull]
@@ -99,7 +91,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Username" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? User {
 			[CanBeNull]
@@ -109,7 +100,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Username" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? Userid {
 			[CanBeNull]
@@ -119,7 +109,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Username" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? UserId {
 			[CanBeNull]
@@ -129,7 +118,6 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>Alias for <see cref="Username" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? UserID {
 			[CanBeNull]
@@ -139,14 +127,12 @@ namespace Librainian.Internet {
 		}
 
 		/// <summary>The *real* Username instance.</summary>
-		[CanBeNull]
 		public String? Username {
 			get => this._username;
 			set => this._username = value.Trimmed();
 		}
 
 		/// <summary>Alias for <see cref="Username" />.</summary>
-		[CanBeNull]
 		[JsonIgnore]
 		public String? UserName {
 			[CanBeNull]
@@ -162,7 +148,7 @@ namespace Librainian.Internet {
 		/// </summary>
 		/// <param name="username">Accepts Base64 encoded strings.</param>
 		/// <param name="password">Accepts Base64 encoded strings.</param>
-		public Credentials( [NotNull] String username, [NotNull] String password ) {
+		public Credentials( String username, String password ) {
 			if ( String.IsNullOrWhiteSpace( username ) ) {
 				throw new ArgumentEmptyException( nameof( username ) );
 			}
@@ -175,7 +161,6 @@ namespace Librainian.Internet {
 			this.Password = password.EndsWith( "=" ) ? password.FromBase64() : password;
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.Username ?? Symbols.Null} : {this.Password ?? Symbols.Null}";
 
 		/// <summary>Ensure <see cref="Username" /> and <see cref="Password" /> are not null, empty, or whitespace.</summary>

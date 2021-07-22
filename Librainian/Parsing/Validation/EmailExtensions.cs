@@ -28,12 +28,11 @@ namespace Librainian.Parsing.Validation {
 
 	using System;
 	using System.Net.Mail;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	public static class EmailExtensions {
 
-		public static Boolean IsValidEmailAddress( [NotNull] this String email ) {
+		public static Boolean IsValidEmailAddress( this String email ) {
 			try {
 				if ( !String.IsNullOrEmpty( email = email.Trim() ) ) {
 					var _ = new MailAddress( email );
@@ -51,15 +50,12 @@ namespace Librainian.Parsing.Validation {
 	[JsonObject]
 	public class Email : ValidatedString {
 
-		protected Email( [NotNull] String value ) : base( value, s => s.IsValidEmailAddress() ) { }
+		protected Email( String value ) : base( value, s => s.IsValidEmailAddress() ) { }
 
-		[NotNull]
-		public static implicit operator Email( [NotNull] String str ) => new( str );
+		public static implicit operator Email( String str ) => new( str );
 
-		[NotNull]
-		public static implicit operator MailAddress( [NotNull] Email email ) => new( email );
+		public static implicit operator MailAddress( Email email ) => new( email );
 
-		[NotNull]
-		public static implicit operator String( [NotNull] Email email ) => email.Value;
+		public static implicit operator String( Email email ) => email.Value;
 	}
 }

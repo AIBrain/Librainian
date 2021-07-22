@@ -26,18 +26,16 @@ namespace Librainian.Financial.Containers.Wallets {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	[JsonObject]
 	public class WalletStatistics : ABetterClassDispose {
 
-		[NotNull]
 		private readonly ReaderWriterLockSlim _depositLock = new( LockRecursionPolicy.SupportsRecursion );
 
-		[NotNull]
 		private readonly ReaderWriterLockSlim _withwrawLock = new( LockRecursionPolicy.SupportsRecursion );
 
 		[JsonProperty]

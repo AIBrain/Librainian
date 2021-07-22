@@ -26,7 +26,6 @@ namespace Librainian.Parsing.Validation {
 
 	using System;
 	using System.Text.RegularExpressions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -39,7 +38,7 @@ namespace Librainian.Parsing.Validation {
 
 		public String Pattern { get; }
 
-		protected RegexString( [NotNull] String value, [NotNull] String pattern ) : base(
+		protected RegexString( String value, String pattern ) : base(
 					value, s => !String.IsNullOrEmpty( value ) && !String.IsNullOrEmpty( pattern ) && new Regex( pattern ).IsMatch( s ) ) =>
 			this.Pattern = pattern;
 	}

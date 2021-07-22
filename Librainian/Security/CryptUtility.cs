@@ -29,7 +29,6 @@ namespace Librainian.Security {
 	using System.Drawing;
 	using System.IO;
 	using System.Linq;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	/// Where did this class come from?
@@ -56,8 +55,7 @@ namespace Librainian.Security {
 		/// <summary>Combines all key files and passwords into one key stream</summary>
 		/// <param name="keys">The keys to combine</param>
 		/// <returns>The resulting key stream</returns>
-		[NotNull]
-		private static MemoryStream GetKeyStream( [NotNull] IReadOnlyList<FilePasswordPair> keys ) {
+		private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
 
 			//Xor the keys an their passwords
 			var keyStreams = new MemoryStream[ keys.Count ];
@@ -97,7 +95,7 @@ namespace Librainian.Security {
 			return resultKeyStream;
 		}
 
-		private static Byte GetReverseKeyByte( [NotNull] Stream keyStream ) {
+		private static Byte GetReverseKeyByte( Stream keyStream ) {
 
 			//jump to reverse-read position and read from the end of the stream
 			var keyPosition = keyStream.Position;
@@ -113,7 +111,6 @@ namespace Librainian.Security {
 		/// <summary>Combines key file and password using XOR</summary>
 		/// <param name="key">The key/password pair to combine</param>
 		/// <returns>The stream created from key and password</returns>
-		[NotNull]
 		public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
 			var fileStream = new FileStream( key.FileName, FileMode.Open );
 			var resultStream = new MemoryStream();
@@ -156,7 +153,6 @@ namespace Librainian.Security {
 			};
 		}
 
-		[NotNull]
 		public static String UnTrimColorString( String color, Int32 desiredLength ) {
 			var difference = desiredLength - color.Length;
 

@@ -1,15 +1,15 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "DatabaseExtensions.cs" last touched on 2021-04-25 at 8:32 AM by Protiguous.
+// 
+// File "DatabaseExtensions.cs" last touched on 2021-04-25 at 6:51 AM by Protiguous.
 
 #nullable enable
 
@@ -36,6 +36,7 @@ namespace Librainian.Databases {
 	using System.Data;
 	using System.Data.Common;
 	using System.Diagnostics;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Globalization;
 	using System.Linq;
 	using System.Management;
@@ -43,6 +44,7 @@ namespace Librainian.Databases {
 	using System.ServiceProcess;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
@@ -56,7 +58,6 @@ namespace Librainian.Databases {
 
 	public static class DatabaseExtensions {
 
-		[NotNull]
 		private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new();
 
 		/// <summary>
@@ -64,8 +65,7 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="reader"></param>
 		/// <returns></returns>
-		[NotNull]
-		private static FieldDictionary GetFieldNames( [NotNull] this IDataReader reader ) {
+		private static FieldDictionary GetFieldNames( this IDataReader reader ) {
 			var dictionary = new FieldDictionary( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
 
 			if ( !reader.IsClosed ) {
@@ -77,8 +77,8 @@ namespace Librainian.Databases {
 			return dictionary;
 		}
 
-		[NotNull]
-		public static T? Adhoc<T>( [NotNull] this SqlConnectionStringBuilder builderToTest, [NotNull] String command, CancellationToken cancellationToken ) {
+		[return: System.Diagnostics.CodeAnalysis.NotNull]
+		public static T? Adhoc<T>( this SqlConnectionStringBuilder builderToTest, String command, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
@@ -96,18 +96,19 @@ namespace Librainian.Databases {
 		}
 
 		public static async PooledValueTask<T?> AdhocAsync<T>(
-			[NotNull] this SqlConnectionStringBuilder builderToTest,
-			[NotNull] String query,
-			CancellationToken cancellationToken
+			this SqlConnectionStringBuilder builderToTest,
+			String query,
+			CancellationToken connectCancellationToken,
+			CancellationToken executeCancellationToken
 		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken, cancellationToken );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, connectCancellationToken, executeCancellationToken );
 
-				return await db.ExecuteScalarAsync<T>( query, CommandType.Text ).ConfigureAwait( false );
+				return await db.ExecuteScalarAsync<T>( query, CommandType.Text, executeCancellationToken ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -127,7 +128,7 @@ namespace Librainian.Databases {
         [NotNull]
         public static List<T> DataTableToList<T>( [NotNull] this DataTable table ) where T : class, new() {
             if ( table is null ) {
-                throw new ArgumentNullException( nameof( table ) );
+                throw new ArgumentEmptyException( nameof( table ) );
             }
 
             var list = new List<T>( table.Rows.Count );
@@ -159,7 +160,6 @@ namespace Librainian.Databases {
 		///     Enumerates all SQL Server instances on the machine.
 		/// </summary>
 		/// <returns></returns>
-		[ItemNotNull]
 		public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
 			const String query = @"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = 'instanceID'";
 
@@ -203,14 +203,13 @@ namespace Librainian.Databases {
 		/// <param name="connectionString"></param>
 		/// <param name="key">             </param>
 		/// <returns></returns>
-		[NotNull]
 		public static async Task<String> FileSet(
-			[NotNull] this ConcurrentDictionaryFile<String, String> file,
-			[NotNull] String connectionString,
-			[NotNull] String key = Words.PrimeConnectionString
+			this ConcurrentDictionaryFile<String, String> file,
+			String connectionString,
+			String key = Words.PrimeConnectionString
 		) {
 			if ( file is null ) {
-				throw new ArgumentNullException( nameof( file ) );
+				throw new ArgumentEmptyException( nameof( file ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( key ) ) {
@@ -230,16 +229,16 @@ namespace Librainian.Databases {
 		}
 
 		public static async Task<Boolean> FileSet(
-			[NotNull] this ConcurrentDictionaryFile<String, String> file,
-			[NotNull] SqlServerInfo sqlServerInfo,
-			[NotNull] String key = Words.PrimeConnectionString
+			this ConcurrentDictionaryFile<String, String> file,
+			SqlServerInfo sqlServerInfo,
+			String key = Words.PrimeConnectionString
 		) {
 			if ( file is null ) {
-				throw new ArgumentNullException( nameof( file ) );
+				throw new ArgumentEmptyException( nameof( file ) );
 			}
 
 			if ( sqlServerInfo is null ) {
-				throw new ArgumentNullException( nameof( sqlServerInfo ) );
+				throw new ArgumentEmptyException( nameof( sqlServerInfo ) );
 			}
 
 			if ( sqlServerInfo.Status != Status.Success ) {
@@ -259,14 +258,13 @@ namespace Librainian.Databases {
 			return file.Get( key ).Like( connectionString );
 		}
 
-		[CanBeNull]
 		public static String? Get(
-			[NotNull] this ConcurrentDictionaryFile<String, String> file,
-			[NotNull] String key = Words.PrimeConnectionString,
+			this ConcurrentDictionaryFile<String, String> file,
+			String key = Words.PrimeConnectionString,
 			Boolean throwIfNotFound = true
 		) {
 			if ( file is null ) {
-				throw new ArgumentNullException( nameof( file ) );
+				throw new ArgumentEmptyException( nameof( file ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( key ) ) {
@@ -290,15 +288,12 @@ namespace Librainian.Databases {
 		///     Method returns the correct SQL namespace to use to detect SQL Server instances.
 		/// </summary>
 		/// <returns>namespace to use to detect SQL Server instances</returns>
-		[ItemNotNull]
-		[NotNull]
 		public static IEnumerable<String> GetCorrectWmiNameSpaces() {
 			const String root = "root\\Microsoft\\sqlserver";
 
 			var namespaces = new List<String>();
 
 			try {
-
 				// Enumerate all WMI instances of __namespace WMI class.
 				var objectGetOptions = new ObjectGetOptions {
 					Timeout = Seconds.Ten
@@ -338,8 +333,7 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="serviceName"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static String GetInstanceNameFromServiceName( [CanBeNull] String? serviceName ) {
+		public static String GetInstanceNameFromServiceName( String? serviceName ) {
 			if ( String.IsNullOrEmpty( serviceName ) ) {
 				return String.Empty;
 			}
@@ -352,7 +346,6 @@ namespace Librainian.Databases {
 			return serviceName.Substring( dollar + 1, serviceName.Length - dollar - 1 );
 		}
 
-		[NotNull]
 		public static IList<PropertyInfo> GetPropertiesForType<T>() {
 			var type = typeof( T );
 
@@ -370,18 +363,17 @@ namespace Librainian.Databases {
 		/// <param name="wmiNamespace">The wmi namespace to connect to</param>
 		/// <param name="propertyName">The property name whose value is required</param>
 		/// <returns></returns>
-		[NotNull]
-		public static String? GetWmiPropertyValueForEngineService( [NotNull] String serviceName, [NotNull] String wmiNamespace, [NotNull] String propertyName ) {
+		public static String GetWmiPropertyValueForEngineService( String serviceName, String wmiNamespace, String propertyName ) {
 			if ( serviceName is null ) {
-				throw new ArgumentNullException( nameof( serviceName ) );
+				throw new ArgumentEmptyException( nameof( serviceName ) );
 			}
 
 			if ( wmiNamespace is null ) {
-				throw new ArgumentNullException( nameof( wmiNamespace ) );
+				throw new ArgumentEmptyException( nameof( wmiNamespace ) );
 			}
 
 			if ( propertyName is null ) {
-				throw new ArgumentNullException( nameof( propertyName ) );
+				throw new ArgumentEmptyException( nameof( propertyName ) );
 			}
 
 			var query = $"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = '{propertyName}' and ServiceName = '{serviceName}'";
@@ -397,8 +389,7 @@ namespace Librainian.Databases {
 		}
 
 		[Pure]
-		[NotNull]
-		public static SqlCommand PopulateParameters( [NotNull] this SqlCommand command, IEnumerable<SqlParameter?>? parameters ) {
+		public static SqlCommand PopulateParameters( this SqlCommand command, IEnumerable<SqlParameter?>? parameters ) {
 			if ( command.Parameters is null || parameters is null ) {
 				return command;
 			}
@@ -410,45 +401,46 @@ namespace Librainian.Databases {
 			return command;
 		}
 
-		public static Boolean PossibleLossOfConnection( [CanBeNull] this InvalidOperationException exception ) {
-
-			// ugh.
-
-			if ( exception is null ) {
-				return false;
+		public static Boolean AttemptQueryAgain<T>( this T exception ) where T : Exception {
+			if ( exception is DbException { IsTransient: true } ) {
+				return true;
 			}
 
-			return exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase )
-				|| exception.HResult == -2146233079;
-		}
+			if ( exception is SqlException { IsTransient: true } ) {
+				return true;
+			}
 
-		public static Boolean PossibleTimeout( [NotNull] this DbException exception ) {
+			if ( exception is SqlException
+				{
+					Errors: { }
+				} sqlxException ) {
+				foreach ( SqlError error in sqlxException.Errors ) {
+					if ( error.Message?.Contains( "Execution Timeout Expired", StringComparison.OrdinalIgnoreCase ) == true ) {
+						return true;
+					}
+				}
+			}
 
-			// ugh.
-
-			if ( exception is null ) {
-				throw new ArgumentNullException( nameof( exception ) );
+			if ( exception is TaskCanceledException ) {
+				return false;
 			}
 
 			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
 				   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
-				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase );
+				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
 		}
 
-		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString(
-			[NotNull] String connectionString,
-
-			//Credentials getCredentials,
-			CancellationToken cancellationToken
-		) {
+		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString( String connectionString, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 			}
 
-			try {
-				var builder = new SqlConnectionStringBuilder( connectionString );
+			var builder = new SqlConnectionStringBuilder( connectionString );
 
-				var sqlServer = await builder.TryGetResponse( cancellationToken ).ConfigureAwait( false );
+			TryAgain:
+			try {
+				var sqlServer = await builder.TryGetResponse( cancellationToken, cancellationToken ).ConfigureAwait( false );
 
 				if ( sqlServer?.Status.IsGood() == true ) {
 					if ( sqlServer.ConnectionStringBuilder != null ) {
@@ -456,16 +448,12 @@ namespace Librainian.Databases {
 					}
 				}
 			}
-			catch ( TaskCanceledException exception ) {
-				exception.Log();
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
 			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain() ) {
+					await Task.Delay( Seconds.One, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
 				exception.Log();
 			}
 
@@ -482,10 +470,9 @@ namespace Librainian.Databases {
 		/// <copyright>
 		///     Based from http://codereview.stackexchange.com/q/40891
 		/// </copyright>
-		[NotNull]
-		public static DataSet ToDataSet<T>( [NotNull] this IEnumerable<T> list, DataSet? exampleSet = null ) {
+		public static DataSet ToDataSet<T>( this IEnumerable<T> list, DataSet? exampleSet = null ) {
 			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			var dataSet = new DataSet {
@@ -540,13 +527,64 @@ namespace Librainian.Databases {
 			return dataSet;
 		}
 
+		public static DataSet ToDataSet<T>( this IEnumerable<T> collection ) {
+			var dts = new DataSet();
+
+			var properties = TypeDescriptor.GetProperties( typeof( T ) );
+			DataTable table = new();
+			foreach ( PropertyDescriptor prop in properties ) {
+				table.Columns.Add( prop.Name, Nullable.GetUnderlyingType( prop.PropertyType ) ?? prop.PropertyType );
+			}
+
+			foreach ( var item in collection ) {
+				if ( item is null or DBNull) {
+					continue;
+				}
+
+				var row = table.NewRow();
+				foreach ( PropertyDescriptor prop in properties ) {
+					row[ prop.Name ] = prop.GetValue( item ) ?? DBNull.Value;
+				}
+				table.Rows.Add( row );
+
+			}
+
+			dts.Tables.Add( table );
+
+			return dts;
+		}
+
+		public static DataTable ToDataTable<T>( this IEnumerable<T> collection ) {
+
+			DataTable table = new();
+
+			var properties = TypeDescriptor.GetProperties( typeof( T ) );
+			foreach ( PropertyDescriptor prop in properties ) {
+				table.Columns.Add( prop.Name, Nullable.GetUnderlyingType( prop.PropertyType ) ?? prop.PropertyType );
+			}
+
+			foreach ( var item in collection ) {
+				if ( item is null or DBNull) {
+					continue;
+				}
+
+				var row = table.NewRow();
+				foreach ( PropertyDescriptor prop in properties ) {
+					row[ prop.Name ] = prop.GetValue( item ) ?? DBNull.Value;
+				}
+				table.Rows.Add( row );
+
+			}
+
+			return table;
+		}
+
 		/// <summary>
 		///     To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.
 		/// </summary>
 		/// <param name="dataReader"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static DataTable ToDataTable( [NotNull] this SqlDataReader dataReader ) {
+		public static DataTable ToDataTable( this SqlDataReader dataReader ) {
 			var table = new DataTable();
 			table.BeginLoadData();
 			table.Load( dataReader, LoadOption.OverwriteChanges, ( _, _ ) => $"Error reading {nameof( dataReader )}.".Log() );
@@ -565,10 +603,9 @@ namespace Librainian.Databases {
 		/// <copyright>
 		///     Based from http://codereview.stackexchange.com/q/40891
 		/// </copyright>
-		[NotNull]
-		public static DataTable ToDataTable<T>( [NotNull] this IEnumerable<T> list ) {
+		public static DataTable ToDataTableBuggy<T>( this IEnumerable<T> list ) {
 			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+				throw new ArgumentEmptyException( nameof( list ) );
 			}
 
 			var table = new DataTable();
@@ -585,7 +622,7 @@ namespace Librainian.Databases {
 				var newRow = table.NewRow();
 
 				foreach ( var propInfo in properties ) {
-					newRow[ propInfo.Name ] = item; // DBNull.Value?
+					newRow[ propInfo.Name ] = item;	//BUG This does not look right??
 				}
 
 				table.Rows.Add( newRow );
@@ -600,8 +637,7 @@ namespace Librainian.Databases {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static DataTable ToDataTable3<T>( [NotNull] this IEnumerable<T> list ) {
+		public static DataTable ToDataTable3<T>( this IEnumerable<T> list ) {
 			"Untested code!".Break();
 			var table = new DataTable();
 
@@ -668,7 +704,7 @@ namespace Librainian.Databases {
 		[NotNull]
 		public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
 			if ( table is null ) {
-				throw new ArgumentNullException( nameof( table ) );
+				throw new ArgumentEmptyException( nameof( table ) );
 			}
 
 			var properties = GetPropertiesForType<T>();
@@ -681,10 +717,9 @@ namespace Librainian.Databases {
 		}
 		*/
 
-		[NotNull]
-		public static SqlParameter ToSqlParameter<TValue>( [NotNull] this TValue value, [NotNull] String parameterName ) {
+		public static SqlParameter ToSqlParameter<TValue>( [DisallowNull] this TValue value, String parameterName ) {
 			if ( value is null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			if ( String.IsNullOrEmpty( parameterName ) ) {
@@ -696,8 +731,7 @@ namespace Librainian.Databases {
 			};
 		}
 
-		[NotNull]
-		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, [NotNull] String parameterName, Int32 size ) {
+		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) {
 			if ( String.IsNullOrWhiteSpace( parameterName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( parameterName ) );
 			}
@@ -812,16 +846,20 @@ namespace Librainian.Databases {
 		///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
 		/// </summary>
 		/// <param name="test">             </param>
-		/// <param name="cancellationToken"></param>
+		/// <param name="connectCancellationToken"></param>
+		/// <param name="executeCancellationToken"></param>
 		/// <returns></returns>
-		[ItemCanBeNull]
-		public static async ValueTask<SqlServerInfo?> TryGetResponse( [NotNull] this SqlConnectionStringBuilder test, CancellationToken cancellationToken ) {
+		public static async ValueTask<SqlServerInfo?> TryGetResponse(
+			this SqlConnectionStringBuilder test,
+			CancellationToken connectCancellationToken,
+			CancellationToken executeCancellationToken
+		) {
 			if ( test is null ) {
-				throw new ArgumentNullException( nameof( test ) );
+				throw new ArgumentEmptyException( nameof( test ) );
 			}
 
 			try {
-				var version = await test.AdhocAsync<String>( "select @@version;", cancellationToken ).ConfigureAwait( false );
+				var version = await test.AdhocAsync<String>( "select @@version;", connectCancellationToken, executeCancellationToken ).ConfigureAwait( false );
 
 				if ( String.IsNullOrWhiteSpace( version ) ) {
 					$"Failed connecting to server {test.DataSource}.".Verbose();
@@ -829,7 +867,7 @@ namespace Librainian.Databases {
 					return default( SqlServerInfo? );
 				}
 
-				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", cancellationToken ).ConfigureAwait( false );
+				var getdate = await test.AdhocAsync<DateTime?>( "select sysutcdatetime();", connectCancellationToken, executeCancellationToken ).ConfigureAwait( false );
 
 				if ( !getdate.HasValue ) {
 					$"Failed connecting to server {test.DataSource}.".Verbose();
@@ -854,8 +892,8 @@ namespace Librainian.Databases {
 					};
 				}
 			}
-			catch ( Exception exception ) {
-				exception.Log();
+			catch ( TaskCanceledException exception ) {
+				exception.Log( BreakOrDontBreak.DontBreak );
 			}
 
 			"Failed connecting to server.".Break();
@@ -913,5 +951,7 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
+
 	}
+
 }

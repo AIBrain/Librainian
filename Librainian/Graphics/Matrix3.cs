@@ -25,19 +25,17 @@
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public class Matrix3 : Matrix {
 
 		public Matrix3() : base( 3, 3 ) { }
 
-		public Matrix3( [NotNull] Single[,] matrix ) : base( matrix ) {
+		public Matrix3( Single[,] matrix ) : base( matrix ) {
 			if ( this.Rows != 3 || this.Cols != 3 ) {
 				throw new ArgumentException();
 			}
 		}
 
-		[NotNull]
 		public static Matrix3 I() =>
 			new( new[ , ] {
 				{
@@ -49,8 +47,7 @@ namespace Librainian.Graphics {
 				}
 			} );
 
-		[NotNull]
-		public static Matrix3 operator *( [NotNull] Matrix3 mat1, [NotNull] Matrix3 mat2 ) {
+		public static Matrix3 operator *( Matrix3 mat1, Matrix3 mat2 ) {
 			var m1 = mat1.matrix;
 			var m2 = mat2.matrix;
 			var m3 = new Single[ 3, 3 ];
@@ -67,7 +64,6 @@ namespace Librainian.Graphics {
 			return new Matrix3( m3 );
 		}
 
-		[NotNull]
-		public static Matrix3 operator *( [NotNull] Matrix3 m, Single scalar ) => new( Multiply( m, scalar ) );
+		public static Matrix3 operator *( Matrix3 m, Single scalar ) => new( Multiply( m, scalar ) );
 	}
 }

@@ -40,6 +40,7 @@ namespace Librainian.FileSystem {
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Maths;
 	using Maths.Numbers;
@@ -72,14 +73,12 @@ namespace Librainian.FileSystem {
 		///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
 		/// </example>
 		/// <see cref="Pri.LongPath.Path.GetFileName" />
-		[NotNull]
 		public String FileName { get; }
 
 		/// <summary>
 		///     Represents the fully qualified path of the file.
 		///     <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
 		/// </summary>
-		[NotNull]
 		public String FullPath { get; }
 
 		Boolean IsBufferLoaded { get; }
@@ -100,13 +99,11 @@ namespace Librainian.FileSystem {
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
 		/// <see cref="Pri.LongPath.Path.GetFileNameWithoutExtension" />
-		[NotNull]
 		public String Name { get; }
 
 		public PathTypeAttributes PathTypeAttributes { get; }
 
 		/// <summary>Anything that can be temp stored can go in this. Not serialized. Defaults to be used for internal locking.</summary>
-		[CanBeNull]
 		public Object? Tag { get; set; }
 
 		FileStream? Writer { get; set; }
@@ -119,7 +116,7 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <param name="cancellationToken"></param>
-		public PooledValueTask<IDocument> AppendText( [NotNull] String text, CancellationToken cancellationToken );
+		public PooledValueTask<IDocument> AppendText( String text, CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <param name="cancellationToken"></param>
@@ -136,7 +133,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Guid" />.</summary>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		/// <returns></returns>
-		[NotNull]
 		public IAsyncEnumerable<Guid> AsGuids( CancellationToken cancellationToken );
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
@@ -164,9 +160,9 @@ namespace Librainian.FileSystem {
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
 		public PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
-			[NotNull] IDocument destination,
-			[NotNull] IProgress<Single> progress,
-			[NotNull] IProgress<TimeSpan> eta,
+			IDocument destination,
+			IProgress<Single> progress,
+			IProgress<TimeSpan> eta,
 			CancellationToken cancellationToken
 		);
 
@@ -198,7 +194,7 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="source"></param>
 		/// <returns></returns>
-		public PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( [NotNull] Uri source );
+		public PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( Uri source );
 
 		//TODO PooledValueTask<UInt64?> RealSizeOnDisk( CancellationToken cancellationToken );
 		//TODO PooledValueTask<UInt64?> AllocatedSizeOnDisk( CancellationToken cancellationToken );
@@ -216,7 +212,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
 		/// </summary>
-		[NotNull]
 		public String Extension();
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
@@ -245,7 +240,7 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		UInt64? GetLength();
 
-		void GetObjectData( [NotNull] SerializationInfo info, StreamingContext context );
+		void GetObjectData( SerializationInfo info, StreamingContext context );
 
 		/// <summary>
 		///     <para>
@@ -276,7 +271,7 @@ namespace Librainian.FileSystem {
 		/// <param name="verb">     "runas" is elevated</param>
 		/// <param name="useShell"></param>
 		/// <returns></returns>
-		public PooledValueTask<Process?> Launch( [CanBeNull] String? arguments = null, String verb = "runas", Boolean useShell = false );
+		public PooledValueTask<Process?> Launch( String? arguments = null, String verb = "runas", Boolean useShell = false );
 
 		/// <summary>Returns the length of the file (if it exists).</summary>
 		public PooledValueTask<UInt64?> Length( CancellationToken cancellationToken );
@@ -328,7 +323,7 @@ namespace Librainian.FileSystem {
 		/// <param name="right"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
@@ -337,7 +332,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="IOException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		public PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken cancellationToken );
+		public PooledValueTask<Boolean> SameContent( Document? right, CancellationToken cancellationToken );
 
 		/// <summary>
 		///     <para>If the file does not exist, return <see cref="Status.Error" />.</para>
@@ -368,7 +363,7 @@ namespace Librainian.FileSystem {
 		///     <para>Optional buffersize. Defaults to 1 MB.</para>
 		/// </summary>
 		/// <returns></returns>
-		Task<StreamWriter?> StreamWriter( CancellationToken cancellationToken, [CanBeNull] Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
+		Task<StreamWriter?> StreamWriter( CancellationToken cancellationToken, Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
 
 		/// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
 		/// <returns></returns>
@@ -393,6 +388,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.</summary>
 		/// <param name="destination"></param>
 		/// <returns></returns>
-		PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( [NotNull] Uri destination );
+		PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( Uri destination );
 	}
 }

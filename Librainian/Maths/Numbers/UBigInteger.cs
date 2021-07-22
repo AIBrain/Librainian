@@ -30,6 +30,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Diagnostics;
 	using System.Globalization;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Rationals;
@@ -70,11 +71,11 @@ namespace Librainian.Maths.Numbers {
 
 		public UBigInteger( UInt64 value ) => this.InternalValue = value;
 
-		public UBigInteger( [NotNull] Byte[] bytes ) {
+		public UBigInteger( Byte[] bytes ) {
 
 			// http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
 			if ( bytes is null ) {
-				throw new ArgumentNullException( nameof( bytes ) );
+				throw new ArgumentEmptyException( nameof( bytes ) );
 			}
 
 			var bytesWith00Attheendnd = new Byte[ bytes.Length + 1 ];
@@ -164,9 +165,9 @@ namespace Librainian.Maths.Numbers {
 
 		public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left.InternalValue >= right.InternalValue;
 
-		public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
+		public static UBigInteger Parse( String number, NumberStyles style ) {
 			if ( number is null ) {
-				throw new ArgumentNullException( nameof( number ) );
+				throw new ArgumentEmptyException( nameof( number ) );
 			}
 
 			return new UBigInteger( BigInteger.Parse( number, style ) );
@@ -177,7 +178,7 @@ namespace Librainian.Maths.Numbers {
 		[Pure]
 		public Int32 CompareTo( Object? obj ) =>
 			obj switch {
-				null => throw new ArgumentNullException( nameof( obj ) ),
+				null => throw new ArgumentEmptyException( nameof( obj ) ),
 				UBigInteger uBigInteger => this.InternalValue.CompareTo( uBigInteger ),
 				var _ => throw new InvalidCastException( $"Error casting {nameof( obj )} to a {nameof( UBigInteger )}" )
 			};
@@ -188,12 +189,10 @@ namespace Librainian.Maths.Numbers {
 
 		public Int32 CompareTo( UInt64 other ) => this.InternalValue.CompareTo( other );
 
-		[NotNull]
 		public Byte[] ToByteArray() => this.InternalValue.ToByteArray();
 
 		public override String ToString() => this.InternalValue.ToString();
 
-		[CanBeNull]
-		public String ToString( [NotNull] String format ) => this.InternalValue.ToString( format );
+		public String ToString( String format ) => this.InternalValue.ToString( format );
 	}
 }

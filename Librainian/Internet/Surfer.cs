@@ -33,9 +33,9 @@ namespace Librainian.Internet {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class Surfer : ABetterClassDispose {
 
@@ -50,7 +50,7 @@ namespace Librainian.Internet {
 
 		private Boolean _downloadInProgressStatus;
 
-		public Surfer( [CanBeNull] Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) {
+		public Surfer( Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) {
 			this._webclient = new WebClient {
 				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
 			};
@@ -105,7 +105,7 @@ namespace Librainian.Internet {
 			}
 		}
 
-		public static IEnumerable<UriLinkItem> ParseLinks( [CanBeNull] Uri baseUri, [NotNull] String webpage ) {
+		public static IEnumerable<UriLinkItem> ParseLinks( Uri? baseUri, String webpage ) {
 
 			// ReSharper disable LoopCanBeConvertedToQuery
 #pragma warning disable IDE0007 // Use implicit type
@@ -128,7 +128,7 @@ namespace Librainian.Internet {
 		/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public Boolean Surf( [CanBeNull] String? address ) {
+		public Boolean Surf( String? address ) {
 			if ( String.IsNullOrWhiteSpace( address ) ) {
 				return false;
 			}
@@ -148,8 +148,8 @@ namespace Librainian.Internet {
 		/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
 		/// <param name="address"></param>
 		/// <returns></returns>
-		public Boolean Surf( [CanBeNull] Uri address ) {
-			if ( null == address ) {
+		public Boolean Surf( Uri? address ) {
+			if ( address is null ) {
 				return false;
 			}
 
@@ -167,7 +167,7 @@ namespace Librainian.Internet {
 			}
 		}
 
-		internal void webclient_DownloadStringCompleted( [CanBeNull] Object? sender, [NotNull] DownloadStringCompletedEventArgs e ) {
+		internal void webclient_DownloadStringCompleted( Object? sender, DownloadStringCompletedEventArgs e ) {
 			if ( e.UserState is Uri userState ) {
 				$"Surf(): Download completed on {userState}".Info();
 				this._pastUrls.Add( userState );

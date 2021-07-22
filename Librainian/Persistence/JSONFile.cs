@@ -33,6 +33,7 @@ namespace Librainian.Persistence {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
@@ -50,25 +51,20 @@ namespace Librainian.Persistence {
 	public class JSONFile {
 
 		[JsonProperty]
-		[NotNull]
 		private SectionType Data {
 			[DebuggerStepThrough]
 			get;
 		} = new();
 
-		[NotNull]
 		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[ section ].Keys );
 
 		/// <summary></summary>
 		[JsonProperty]
-		[CanBeNull]
 		public Document? Document { get; set; }
 
-		[NotNull]
 		public IEnumerable<String> Sections => this.Data.Keys;
 
-		[CanBeNull]
-		public ReadOnlyDataType? this[ [CanBeNull] String? section ] {
+		public ReadOnlyDataType? this[ String? section ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -90,8 +86,7 @@ namespace Librainian.Persistence {
 		/// <param name="section"></param>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public String? this[ [CanBeNull] String? section, [CanBeNull] String? key ] {
+		public String? this[ String? section, String? key ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -107,7 +102,7 @@ namespace Librainian.Persistence {
 					return default( String? );
 				}
 
-				return this.Data[ section ]!.TryGetValue( key, out var value ) ? value : null;
+				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
 			}
 
 			[DebuggerStepThrough]
@@ -127,7 +122,7 @@ namespace Librainian.Persistence {
 		/// <summary></summary>
 		/// <param name="document"></param>
 		/// <param name="cancellationToken"></param>
-		public JSONFile( [CanBeNull] Document document, CancellationToken cancellationToken ) : this() {
+		public JSONFile( Document? document, CancellationToken cancellationToken ) : this() {
 			this.Document = document;
 
 			this.Document?.ContainingingFolder().Create( cancellationToken );
@@ -227,7 +222,6 @@ namespace Librainian.Persistence {
 			return !this.Data.Keys.Any();
 		}
 
-		[NotNull]
 		public async Task<Boolean> Read( CancellationToken cancellationToken ) {
 			var document = this.Document;
 
@@ -249,15 +243,11 @@ namespace Librainian.Persistence {
 				}
 
 				if ( data != null ) {
-					var result = Parallel.ForEach( data.Keys.AsParallel(), section => {
-						if ( data[ section! ] != null ) {
-							Parallel.ForEach( data[ section ]!.Keys.AsParallel().AsUnordered(), key => {
-								if ( !String.IsNullOrEmpty( key ) ) {
-									this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
-								}
-							} );
+					var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[ section ].Keys.AsParallel().AsUnordered(), key => {
+						if ( !String.IsNullOrEmpty( key ) ) {
+							this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
 						}
-					} );
+					} ) );
 
 					return result.IsCompleted;
 				}
@@ -281,22 +271,21 @@ namespace Librainian.Persistence {
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.Sections.Count()} sections, {this.AllKeys.Count()} keys";
 
 		[DebuggerStepThrough]
 		public Boolean TryRemove( String section ) {
 			if ( section == null ) {
-				throw new ArgumentNullException( nameof( section ) );
+				throw new ArgumentEmptyException( nameof( section ) );
 			}
 
 			return this.Data.TryRemove( section, out var _ );
 		}
 
 		[DebuggerStepThrough]
-		public Boolean TryRemove( String section, [CanBeNull] String? key ) {
+		public Boolean TryRemove( String section, String? key ) {
 			if ( section == null ) {
-				throw new ArgumentNullException( nameof( section ) );
+				throw new ArgumentEmptyException( nameof( section ) );
 			}
 
 			if ( key is null ) {
@@ -311,7 +300,6 @@ namespace Librainian.Persistence {
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public async Task<Boolean> Write( CancellationToken cancellationToken ) {
 			var document = this.Document;
 

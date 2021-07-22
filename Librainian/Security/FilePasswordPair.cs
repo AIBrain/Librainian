@@ -27,7 +27,7 @@
 namespace Librainian.Security {
 
 	using System;
-	using JetBrains.Annotations;
 
-	public record FilePasswordPair( [NotNull] String FileName, [NotNull] String Password ) { }
+	public record FilePasswordPair( String FileName, String Password );
+
 }

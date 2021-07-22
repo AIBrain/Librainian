@@ -26,14 +26,14 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class EasierSemaphore {
 
 		/// <summary>Blocks the current thread until the current <see cref="WaitHandle" /> receives a signal.</summary>
-		public static Token WaitOneThenRelease( [NotNull] this Semaphore semaphore, TimeSpan? timeout = null ) {
+		public static Token WaitOneThenRelease( this Semaphore semaphore, TimeSpan? timeout = null ) {
 			if ( semaphore is null ) {
-				throw new ArgumentNullException( nameof( semaphore ) );
+				throw new ArgumentEmptyException( nameof( semaphore ) );
 			}
 
 			if ( timeout.HasValue ) {
@@ -48,10 +48,9 @@ namespace Librainian.Threading {
 
 		public readonly struct Token : IDisposable {
 
-			[NotNull]
 			private readonly Semaphore _semaphore;
 
-			public Token( [NotNull] Semaphore semaphore ) => this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
+			public Token( Semaphore semaphore ) => this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
 
 			public void Dispose() => this._semaphore.Release();
 		}

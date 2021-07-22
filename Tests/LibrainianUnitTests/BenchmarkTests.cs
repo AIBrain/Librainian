@@ -30,11 +30,12 @@ namespace LibrainianUnitTests {
 	using System.Threading;
 	using FluentAssertions;
 	using Librainian.Measurement;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class BenchmarkTests {
 
-		[Fact]
+		[Test]
 		public static void TestBenchmarking_MethodA() {
 			static void a() => Thread.Sleep( 10 );
 			static void b() => Thread.Sleep( 20 );
@@ -42,7 +43,7 @@ namespace LibrainianUnitTests {
 			var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
 		}
 
-		[Fact]
+		[Test]
 		public static void TestBenchmarking_MethodB() {
 			static void a() => Thread.Sleep( 20 );
 			static void b() => Thread.Sleep( 10 );
@@ -50,10 +51,10 @@ namespace LibrainianUnitTests {
 			var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
 		}
 
-		[Fact]
+		[Test]
 		public static void TestBenchmarking_Same() {
-			static void a() => Thread.Sleep( 111 );
-			static void b() => Thread.Sleep( 111 );
+			static void a() => Thread.Sleep( 16 );
+			static void b() => Thread.Sleep( 16 );
 			var result = Benchmark.WhichIsFaster( a, b );
 			var _ = result.Should()!.Be( Benchmark.AorB.Same );
 		}

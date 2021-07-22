@@ -25,7 +25,6 @@
 namespace Librainian.Linguistics {
 
 	using System;
-	using JetBrains.Annotations;
 	using Parsing;
 
 	/// <summary>Universal Decimal Classification</summary>
@@ -37,13 +36,11 @@ namespace Librainian.Linguistics {
 	/// </example>
 	public class UDC {
 
-		[CanBeNull]
-		public static UDC Unknown { get; } = new( String.Empty );
+		public static UDC? Unknown { get; } = new( String.Empty );
 
-		[CanBeNull]
 		public String? Notation { get; }
 
-		public UDC( [NotNull] String notation ) => this.Notation = notation.Trimmed();
+		public UDC( String notation ) => this.Notation = notation.Trimmed();
 
 		/// <summary>Serves as the default hash function. </summary>
 		/// <returns>A hash code for the current object.</returns>

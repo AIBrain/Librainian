@@ -27,28 +27,26 @@ namespace Librainian.Internet.Servers {
 	using System;
 	using System.Net;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class WebServer : ABetterClassDispose {
 
-		[NotNull]
 		private readonly HttpListener _httpListener = new();
 
-		[NotNull]
 		private readonly AutoResetEvent _listenForNextRequest = new( false );
 
 		public Boolean IsRunning { get; private set; }
 
 		public String Prefix { get; set; }
 
-		private static void ListenerCallback( [CanBeNull] IAsyncResult ar ) {
+		private static void ListenerCallback( IAsyncResult? ar ) {
 
 			//TODO
 		}
 
 		// Loop here to begin processing of new requests.
-		private void Listen( [CanBeNull] Object? state ) {
+		private void Listen( Object? state ) {
 			while ( this._httpListener.IsListening ) {
 				this._httpListener.BeginGetContext( ListenerCallback, this._httpListener );
 				this._listenForNextRequest.WaitOne();

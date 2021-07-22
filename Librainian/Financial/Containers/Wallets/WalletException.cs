@@ -26,7 +26,6 @@ namespace Librainian.Financial.Containers.Wallets {
 
 	using System;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 
@@ -34,9 +33,9 @@ namespace Librainian.Financial.Containers.Wallets {
 	[Serializable]
 	public class WalletException : InvalidOperationException {
 
-		protected WalletException( [NotNull] SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
+		protected WalletException( SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
-		public WalletException( [CanBeNull] String? message ) : base( message ) {
+		public WalletException( String? message ) : base( message ) {
 			message.Log();
 		}
 	}

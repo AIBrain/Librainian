@@ -27,6 +27,7 @@
 namespace Librainian.Security {
 
 	using System;
+	using Exceptions;
 
 	/// <summary>
 	///     <para>Mersenne Twister random number generator; from <see cref="http://takel.jp/mt/MersenneTwister.cs" /></para>
@@ -138,10 +139,10 @@ namespace Librainian.Security {
 
 		/// <summary></summary>
 		/// <param name="buffer"></param>
-		/// <exception cref="ArgumentNullException"></exception>
-		public override void NextBytes( Byte[] buffer ) /* throws ArgumentNullException*/ {
+		/// <exception cref="ArgumentEmptyException"></exception>
+		public override void NextBytes( Byte[] buffer )  {
 			if ( buffer is null ) {
-				throw new ArgumentNullException();
+				throw new ArgumentEmptyException(nameof(buffer));
 			}
 
 			var bufLen = buffer.Length;

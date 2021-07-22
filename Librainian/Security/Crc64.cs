@@ -27,7 +27,6 @@ namespace Librainian.Security {
 	using System;
 	using System.Collections.Generic;
 	using System.Security.Cryptography;
-	using JetBrains.Annotations;
 
 	/// <summary>Implements a 64-bit CRC hash algorithm for a given polynomial.</summary>
 	/// <remarks>For ISO 3309 compliant 64-bit CRC's use Crc64Iso.</remarks>
@@ -50,7 +49,6 @@ namespace Librainian.Security {
 			this._seed = this._hash = seed;
 		}
 
-		[NotNull]
 		private static UInt64[] InitializeTable( UInt64 polynomial ) {
 			if ( Crc64Iso.Table != null && polynomial == Crc64Iso.Iso3309Polynomial ) {
 				return Crc64Iso.Table;
@@ -65,7 +63,6 @@ namespace Librainian.Security {
 			return createTable;
 		}
 
-		[NotNull]
 		private static Byte[] UInt64ToBigEndianBytes( UInt64 value ) {
 			var result = BitConverter.GetBytes( value );
 
@@ -76,7 +73,7 @@ namespace Librainian.Security {
 			return result;
 		}
 
-		protected static UInt64 CalculateHash( UInt64 seed, [CanBeNull] UInt64[] table, [CanBeNull] IList<Byte> buffer, Int32 start, Int32 size ) {
+		protected static UInt64 CalculateHash( UInt64 seed, UInt64[]? table, IList<Byte>? buffer, Int32 start, Int32 size ) {
 			var crc = seed;
 
 			for ( var i = start; i < size; i++ ) {
@@ -88,7 +85,6 @@ namespace Librainian.Security {
 			return crc;
 		}
 
-		[NotNull]
 		protected static UInt64[] CreateTable( UInt64 polynomial ) {
 			var createTable = new UInt64[ 256 ]; //did they mean 255 here (Byte.MaxValue)??
 
@@ -112,7 +108,6 @@ namespace Librainian.Security {
 
 		protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( this._hash, this._table, buffer, start, length );
 
-		[NotNull]
 		protected override Byte[] HashFinal() {
 			var hashBuffer = UInt64ToBigEndianBytes( this._hash );
 			this.HashValue = hashBuffer;

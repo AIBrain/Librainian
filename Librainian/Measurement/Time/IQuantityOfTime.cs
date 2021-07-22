@@ -32,14 +32,15 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Runtime.CompilerServices;
+	using Exceptions;
 	using JetBrains.Annotations;
 
 	public interface IQuantityOfTime {
 
 		[DebuggerStepThrough]
-		public Int32 CompareTo( [NotNull] IQuantityOfTime other ) {
+		public Int32 CompareTo( IQuantityOfTime other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );

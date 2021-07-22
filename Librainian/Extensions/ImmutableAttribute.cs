@@ -45,17 +45,17 @@ namespace Librainian.Extensions {
 
 		public Boolean OnFaith;
 
-		private static Boolean IsMarkedImmutable( [NotNull] Type type ) {
+		private static Boolean IsMarkedImmutable( Type type ) {
 			if ( type is null ) {
-				throw new ArgumentNullException( nameof( type ) );
+				throw new ArgumentEmptyException( nameof( type ) );
 			}
 
 			return type.TypeHasAttribute<ImmutableAttribute>();
 		}
 
-		private static Boolean IsWhiteListed( [NotNull] Type type ) {
+		private static Boolean IsWhiteListed( Type type ) {
 			if ( type is null ) {
-				throw new ArgumentNullException( nameof( type ) );
+				throw new ArgumentEmptyException( nameof( type ) );
 			}
 
 			// Boolean, int, etc.
@@ -93,17 +93,17 @@ namespace Librainian.Extensions {
 		// TODO: replace this with a per-field attribute, to allow the immutability test to run over the rest of the type.
 		/// <summary>Ensures that 'type' follows the rules for immutability</summary>
 		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-		public static void VerifyTypeIsImmutable( [NotNull] Type type, [NotNull] IEnumerable<Type> whiteList ) {
+		public static void VerifyTypeIsImmutable( Type type, IEnumerable<Type> whiteList ) {
 			if ( type is null ) {
-				throw new ArgumentNullException( nameof( type ) );
+				throw new ArgumentEmptyException( nameof( type ) );
 			}
 
 			if ( type.BaseType is null ) {
-				throw new ArgumentNullException( nameof( type ) );
+				throw new ArgumentEmptyException( nameof( type ) );
 			}
 
 			if ( whiteList is null ) {
-				throw new ArgumentNullException( nameof( whiteList ) );
+				throw new ArgumentEmptyException( nameof( whiteList ) );
 			}
 
 			var list = whiteList as IList<Type> ?? whiteList.ToList();
@@ -144,13 +144,13 @@ namespace Librainian.Extensions {
 
 		/// <summary>Ensures that all types in 'assemblies' that are marked [Immutable] follow the rules for immutability.</summary>
 		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
-		public static void VerifyTypesAreImmutable( [NotNull] IEnumerable<Assembly> assemblies, [NotNull] params Type[] whiteList ) {
+		public static void VerifyTypesAreImmutable( IEnumerable<Assembly> assemblies, params Type[] whiteList ) {
 			if ( assemblies is null ) {
-				throw new ArgumentNullException( nameof( assemblies ) );
+				throw new ArgumentEmptyException( nameof( assemblies ) );
 			}
 
 			if ( whiteList == null ) {
-				throw new ArgumentNullException( nameof( whiteList ) );
+				throw new ArgumentEmptyException( nameof( whiteList ) );
 			}
 
 			var typesMarkedImmutable = from type in assemblies.GetTypes() where IsMarkedImmutable( type ) select type;

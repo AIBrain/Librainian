@@ -29,7 +29,7 @@ namespace Librainian.Internet {
 	using System.Net;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 
 	/// <summary>
@@ -42,7 +42,6 @@ namespace Librainian.Internet {
 		///     <para>Provide to each thread its own <see cref="WebClient" />.</para>
 		///     <para>Do NOT use Dispose on these clients.</para>
 		/// </summary>
-		[NotNull]
 		public static ThreadLocal<Lazy<WebClient>> ThreadSafeWebClients { get; } =
 			new( () => new Lazy<WebClient>( () => new WebClient() ), true );
 
@@ -53,10 +52,9 @@ namespace Librainian.Internet {
 		/// <param name="client"></param>
 		/// <param name="cancellationToken"></param>
 		/// <copyright>Protiguous</copyright>
-		[NotNull]
-		public static WebClient Add( [NotNull] this WebClient client, CancellationToken cancellationToken ) {
+		public static WebClient Add( this WebClient client, CancellationToken cancellationToken ) {
 			if ( client is null ) {
-				throw new ArgumentNullException( nameof( client ) );
+				throw new ArgumentEmptyException( nameof( client ) );
 			}
 
 			cancellationToken.Register( client.CancelAsync );
@@ -69,10 +67,9 @@ namespace Librainian.Internet {
 		/// <param name="address">The URI from which to download data.</param>
 		/// <param name="cancellationToken"></param>
 		/// <returns>A Task that contains the downloaded data.</returns>
-		[NotNull]
-		public static Task<Byte[]?> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] String address, CancellationToken cancellationToken ) {
+		public static Task<Byte[]?> DownloadDataTaskAsync( this WebClient webClient, String address, CancellationToken cancellationToken ) {
 			if ( webClient is null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
+				throw new ArgumentEmptyException( nameof( webClient ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( address ) ) {
@@ -86,13 +83,13 @@ namespace Librainian.Internet {
 		/// <param name="webClient">The WebClient.</param>
 		/// <param name="address">The URI from which to download data.</param>
 		/// <returns>A Task that contains the downloaded data.</returns>
-		public static async Task<Byte[]?> DownloadDataTaskAsync( [NotNull] this WebClient webClient, [NotNull] Uri address ) {
+		public static async Task<Byte[]?> DownloadDataTaskAsync( this WebClient webClient, Uri address ) {
 			if ( webClient is null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
+				throw new ArgumentEmptyException( nameof( webClient ) );
 			}
 
 			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
+				throw new ArgumentEmptyException( nameof( address ) );
 			}
 
 			try {
@@ -112,17 +109,17 @@ namespace Librainian.Internet {
 		/// <param name="progress"></param>
 		/// <returns></returns>
 		public static async Task DownloadFileTaskAsync(
-			[NotNull] this WebClient webClient,
-			[NotNull] Uri address,
-			[NotNull] String fileName,
-			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
+			this WebClient webClient,
+			Uri address,
+			String fileName,
+			IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
 		) {
 			if ( webClient is null ) {
-				throw new ArgumentNullException( nameof( webClient ) );
+				throw new ArgumentEmptyException( nameof( webClient ) );
 			}
 
 			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
+				throw new ArgumentEmptyException( nameof( address ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( fileName ) ) {
@@ -169,7 +166,6 @@ namespace Librainian.Internet {
 		///     A thread-local (threadsafe) <see cref="WebClient" />.
 		///     <para>Do NOT use Dispose on these clients.</para>
 		/// </summary>
-		[NotNull]
 		public static WebClient Instance() => ThreadSafeWebClients.Value!.Value;
 
 		/// <summary>
@@ -178,10 +174,9 @@ namespace Librainian.Internet {
 		/// <param name="client"></param>
 		/// <param name="timeout"></param>
 		/// <copyright>Protiguous</copyright>
-		[NotNull]
-		public static WebClient SetTimeout( [NotNull] this WebClient client, TimeSpan timeout ) {
+		public static WebClient SetTimeout( this WebClient client, TimeSpan timeout ) {
 			if ( client is null ) {
-				throw new ArgumentNullException( nameof( client ) );
+				throw new ArgumentEmptyException( nameof( client ) );
 			}
 
 			using var cancel = new CancellationTokenSource( timeout );
@@ -196,10 +191,9 @@ namespace Librainian.Internet {
 		/// <param name="timeout"></param>
 		/// <param name="cancellationToken"></param>
 		/// <copyright>Protiguous</copyright>
-		[NotNull]
-		public static WebClient SetTimeoutAndCancel( [NotNull] this WebClient client, TimeSpan timeout, CancellationToken cancellationToken ) {
+		public static WebClient SetTimeoutAndCancel( this WebClient client, TimeSpan timeout, CancellationToken cancellationToken ) {
 			if ( client is null ) {
-				throw new ArgumentNullException( nameof( client ) );
+				throw new ArgumentEmptyException( nameof( client ) );
 			}
 
 			return client.Add( cancellationToken ).SetTimeout( timeout );

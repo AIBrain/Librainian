@@ -30,9 +30,9 @@ namespace Librainian.Graphics {
 	using System.Runtime.Serialization.Formatters.Binary;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
 	using Imaging;
-	using JetBrains.Annotations;
 	using Moving;
 	using OperatingSystem;
 
@@ -42,7 +42,6 @@ namespace Librainian.Graphics {
 
 		private static RAMP DefaultRamp = GetGamma();
 
-		[NotNull]
 		public static Stream EfvToStream() {
 			var ms = new MemoryStream();
 
@@ -95,10 +94,9 @@ namespace Librainian.Graphics {
 			}
 		}
 
-		[NotNull]
-		public static Task<Erg> TryConvertToERG( [NotNull] this Document document, CancellationToken cancellationToken ) {
+		public static Task<Erg> TryConvertToERG( this Document document, CancellationToken cancellationToken ) {
 			if ( document == null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			return Task.Run( () => {
@@ -111,14 +109,13 @@ namespace Librainian.Graphics {
 			}, cancellationToken );
 		}
 
-		[NotNull]
-		public static Task<Boolean> TrySave( [NotNull] this Erg erg, [NotNull] Document document, CancellationToken cancellationToken ) {
+		public static Task<Boolean> TrySave( this Erg erg, Document document, CancellationToken cancellationToken ) {
 			if ( erg == null ) {
-				throw new ArgumentNullException( nameof( erg ) );
+				throw new ArgumentEmptyException( nameof( erg ) );
 			}
 
 			if ( document == null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			return Task.Run( () => {
@@ -131,14 +128,13 @@ namespace Librainian.Graphics {
 			}, cancellationToken );
 		}
 
-		[NotNull]
-		public static Task<Boolean> TrySave( [NotNull] this Efv efv, [NotNull] Document document, CancellationToken cancellationToken ) {
+		public static Task<Boolean> TrySave( this Efv efv, Document document, CancellationToken cancellationToken ) {
 			if ( efv == null ) {
-				throw new ArgumentNullException( nameof( efv ) );
+				throw new ArgumentEmptyException( nameof( efv ) );
 			}
 
 			if ( document == null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			return Task.Run( () => {

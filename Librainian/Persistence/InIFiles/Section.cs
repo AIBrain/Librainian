@@ -34,6 +34,7 @@ namespace Librainian.Persistence.InIFiles {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
@@ -46,7 +47,7 @@ namespace Librainian.Persistence.InIFiles {
 	///         This just wraps a <see cref="ConcurrentDictionary{TKey,TValue}" /> so we can index the <see cref="Data" />
 	///         without throwing exceptions on missing or null keys.
 	///     </para>
-	///     <para>Does not throw <see cref="ArgumentNullException" /> on null keys passed to the indexer.</para>
+	///     <para>Does not throw <see cref="ArgumentEmptyException" /> on null keys passed to the indexer.</para>
 	/// </summary>
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
@@ -60,16 +61,13 @@ namespace Librainian.Persistence.InIFiles {
 		public Boolean AutoCleanup { get; set; } = true;
 
 		[JsonIgnore]
-		[NotNull]
 		public IReadOnlyList<String> Keys => ( IReadOnlyList<String> )this.Data.Keys;
 
 		[JsonIgnore]
-		[NotNull]
 		public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
 
 		[JsonIgnore]
-		[CanBeNull]
-		public String? this[ [CanBeNull] String? key ] {
+		public String? this[ String? key ] {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
@@ -97,7 +95,7 @@ namespace Librainian.Persistence.InIFiles {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Section? left, [CanBeNull] Section? right ) {
+		public static Boolean Equals( Section? left, Section? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -113,13 +111,12 @@ namespace Librainian.Persistence.InIFiles {
 			return left.Data.OrderBy( pair => pair.Key ).SequenceEqual( right.Data.OrderBy( pair => pair.Key ) ); //will this work? //TODO what about comparing values also?
 		}
 
-		public static Boolean operator !=( [CanBeNull] Section left, [CanBeNull] Section right ) => !Equals( left, right );
+		public static Boolean operator !=( Section? left, Section? right ) => !Equals( left, right );
 
-		public static Boolean operator ==( [CanBeNull] Section left, [CanBeNull] Section right ) => Equals( left, right );
+		public static Boolean operator ==( Section? left, Section? right ) => Equals( left, right );
 
 		/// <summary>Remove any key where there is no value.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public Task CleanupAsync( CancellationToken cancellationToken ) =>
 			Task.Run( () => {
 
@@ -134,19 +131,18 @@ namespace Librainian.Persistence.InIFiles {
 				}
 			}, cancellationToken );
 
-		public Boolean Equals( [CanBeNull] Section? other ) => Equals( this, other );
+		public Boolean Equals( Section? other ) => Equals( this, other );
 
-		public override Boolean Equals( [CanBeNull] Object? obj ) => Equals( this, obj as Section );
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as Section );
 
 		public override Int32 GetHashCode() => this.Data.GetHashCode();
 
 		/// <summary>Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.</summary>
 		/// <param name="reader"></param>
 		/// <returns></returns>
-		[NotNull]
-		public async Task<Boolean> ReadAsync( [NotNull] TextReader reader, CancellationToken cancellationToken ) {
+		public async Task<Boolean> ReadAsync( TextReader reader, CancellationToken cancellationToken ) {
 			if ( reader is null ) {
-				throw new ArgumentNullException( nameof( reader ) );
+				throw new ArgumentEmptyException( nameof( reader ) );
 			}
 
 			try {
@@ -170,16 +166,14 @@ namespace Librainian.Persistence.InIFiles {
 			return false;
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.Keys.Take( 25 ).ToStrings()}";
 
 		/// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>
 		/// <param name="writer"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public Task Write( [NotNull] TextWriter writer ) {
+		public Task Write( TextWriter writer ) {
 			if ( writer is null ) {
-				throw new ArgumentNullException( nameof( writer ) );
+				throw new ArgumentEmptyException( nameof( writer ) );
 			}
 
 			try {

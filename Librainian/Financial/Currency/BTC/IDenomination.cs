@@ -26,7 +26,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 
 	namespace Denominations {
 
@@ -35,7 +34,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 			public Decimal FaceValue => 1.00M;
 
-			[NotNull]
 			public override String ToString() => $"฿{this.FaceValue:f8}";
 		}
 
@@ -44,7 +42,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 			public Decimal FaceValue => 0.001M;
 
-			[NotNull]
 			public override String ToString() => $"฿{this.FaceValue:f8}";
 		}
 
@@ -53,7 +50,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 			public Decimal FaceValue => 0.00000001M;
 
-			[NotNull]
 			public override String ToString() => $"฿{this.FaceValue:f8}";
 		}
 
@@ -62,7 +58,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 			public Decimal FaceValue => 0.000001M;
 
-			[NotNull]
 			public override String ToString() => $"฿{this.FaceValue:f8}";
 		}
 	}

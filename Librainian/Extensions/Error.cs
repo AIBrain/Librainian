@@ -26,6 +26,7 @@ namespace Librainian.Extensions {
 
 	using System;
 	using System.Diagnostics;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 
@@ -39,7 +40,7 @@ namespace Librainian.Extensions {
 		/// <param name="final"> </param>
 		/// <returns>Returns true if successful.</returns>
 		[DebuggerStepThrough]
-		public static Boolean Trap( [InstantHandle][NotNull] this Action action, [InstantHandle][CanBeNull] Action? final = default( Action? ) ) {
+		public static Boolean Trap( [InstantHandle] this Action action, [InstantHandle] Action? final = default( Action? ) ) {
 			try {
 				action();
 
@@ -64,11 +65,11 @@ namespace Librainian.Extensions {
 		/// <param name="actions"></param>
 		/// <returns>Returns true if successful.</returns>
 		[DebuggerStepThrough]
-		public static Boolean Trap( [InstantHandle][CanBeNull] params Action[]? actions ) {
+		public static Boolean Trap( [InstantHandle] params Action[]? actions ) {
 			try {
 				if ( actions is null ) {
 					if ( Debugger.IsAttached ) {
-						throw new ArgumentNullException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
+						throw new ArgumentEmptyException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
 					}
 
 					return false;
@@ -92,11 +93,10 @@ namespace Librainian.Extensions {
 		/// <param name="final"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		[CanBeNull]
-		public static T? Trap<T>( [InstantHandle][CanBeNull] this Func<T>? func, [InstantHandle][CanBeNull] Action? final = default( Action? ) ) {
+		public static T? Trap<T>( [InstantHandle] this Func<T>? func, [InstantHandle] Action? final = default( Action? ) ) {
 			if ( func is null ) {
 				if ( Debugger.IsAttached ) {
-					throw new ArgumentNullException( nameof( func ) );
+					throw new ArgumentEmptyException( nameof( func ) );
 				}
 
 				return default( T? );
@@ -127,21 +127,20 @@ namespace Librainian.Extensions {
 		/// <param name="final">   </param>
 		/// <param name="actions"></param>
 		/// <returns></returns>
-		[CanBeNull]
 		[DebuggerStepThrough]
 		public static R? Trap<T, R>(
-			[InstantHandle][CanBeNull] this Func<T?, R>? func,
-			[CanBeNull] T? argument,
-			[CanBeNull] out Exception? exception,
-			[InstantHandle][CanBeNull] Action? final = default( Action? ),
-			[CanBeNull] params Action[]? actions
+			[InstantHandle] this Func<T?, R>? func,
+			T? argument,
+			out Exception? exception,
+			[InstantHandle] Action? final = default( Action? ),
+			params Action[]? actions
 		) {
 			if ( func is null ) {
 				if ( Debugger.IsAttached ) {
-					throw new ArgumentNullException( nameof( func ) );
+					throw new ArgumentEmptyException( nameof( func ) );
 				}
 
-				exception = new ArgumentNullException( nameof( func ) );
+				exception = new ArgumentEmptyException( nameof( func ) );
 
 				return default( R );
 			}

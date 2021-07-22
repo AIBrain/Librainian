@@ -29,15 +29,13 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
 	public class UsableSemaphoreThrottle : IUsableSemaphore {
 
-		[NotNull]
 		private readonly IUsableSemaphore _semaphore;
 
-		[NotNull]
 		private readonly IThrottle _throttle;
 
 		public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount ) {
@@ -50,9 +48,9 @@ namespace Librainian.Threading {
 			this._semaphore = new UsableSemaphoreSlim( initialCount, maxCount );
 		}
 
-		public UsableSemaphoreThrottle( [NotNull] IThrottle throttle, [NotNull] IUsableSemaphore semaphore ) {
-			this._throttle = throttle ?? throw new ArgumentNullException( nameof( throttle ) );
-			this._semaphore = semaphore ?? throw new ArgumentNullException( nameof( semaphore ) );
+		public UsableSemaphoreThrottle( IThrottle throttle, IUsableSemaphore semaphore ) {
+			this._throttle = throttle ?? throw new ArgumentEmptyException( nameof( throttle ) );
+			this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
 		}
 
 		public void Dispose() {

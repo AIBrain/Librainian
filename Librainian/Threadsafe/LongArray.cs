@@ -29,12 +29,10 @@ namespace Librainian.Threadsafe {
 	using System;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	/// <summary>A <see cref="Int64" /> array that may be updated atomically</summary>
 	public class LongArray {
 
-		[NotNull]
 		private Int64[] Array { get; }
 
 		/// <summary>Length of the array</summary>
@@ -52,7 +50,7 @@ namespace Librainian.Threadsafe {
 
 		/// <summary>Create a new <see cref="LongArray" /> with the same length as, and all elements copied from, the given array.</summary>
 		/// <param name="array"></param>
-		public LongArray( [NotNull] Int64[] array ) {
+		public LongArray( Int64[] array ) {
 			this.Array = new Int64[ array.Length ];
 			array.CopyTo( this.Array, 0 );
 		}

@@ -44,6 +44,7 @@ namespace Librainian.FileSystem {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Exceptions.Warnings;
 	using Internet;
 	using JetBrains.Annotations;
@@ -57,17 +58,17 @@ namespace Librainian.FileSystem {
 	using Security;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public class Document : ABetterClassDispose, IDocument {
 
-		[CanBeNull]
 		private Folder? _containingFolder;
 
-		protected Document( [NotNull] SerializationInfo info ) {
+		protected Document( SerializationInfo info ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			this.FullPath = ( info.GetString( nameof( this.FullPath ) ) ?? throw new InvalidOperationException() ).TrimAndThrowIfBlank();
@@ -81,7 +82,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="FileNotFoundException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="IOException"></exception>
-		public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
+		public Document( String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
 			if ( String.IsNullOrWhiteSpace( fullPath ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
 			}
@@ -142,30 +143,25 @@ namespace Librainian.FileSystem {
 
 		private Document() => throw new NotAllowedWarning( "Private contructor is not allowed." );
 
-		public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ),
+		public Document( String justPath, String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ),
 			deleteAfterClose ) { }
 
-		public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName, deleteAfterClose ) { }
+		public Document( FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName, deleteAfterClose ) { }
 
-		public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
+		public Document( IFolder folder, String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
 
-		public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this(
+		public Document( IFolder folder, IDocument document, Boolean deleteAfterClose = false ) : this(
 			Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) { }
 
-		[CanBeNull]
 		private Lazy<FileSystemWatcher>? Watcher { get; }
 
-		[CanBeNull]
 		private Lazy<FileWatchingEvents>? WatchEvents { get; }
 
-		[NotNull]
 		public static String InvalidFileNameCharacters { get; } = new( Path.GetInvalidFileNameChars() );
 
-		[NotNull]
 		public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new( () =>
 			new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
-		[NotNull]
 		private ThreadLocal<JsonSerializer> JsonSerializers { get; } = new( () => new JsonSerializer {
 			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 			PreserveReferencesHandling = PreserveReferencesHandling.All
@@ -177,7 +173,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		public static TimeSpan DefaultDocumentTimeout { get; set; } = Seconds.Thirty;
 
-		[CanBeNull]
 		public Byte[]? Buffer { get; set; }
 
 		public Boolean IsBufferLoaded {
@@ -187,10 +182,8 @@ namespace Librainian.FileSystem {
 			private set;
 		}
 
-		[CanBeNull]
 		public FileStream? Writer { get; set; }
 
-		[CanBeNull]
 		public StreamWriter? WriterStream { get; set; }
 
 		/// <summary>
@@ -200,14 +193,13 @@ namespace Librainian.FileSystem {
 		/// <param name="other"></param>
 		/// <returns></returns>
 		[Pure]
-		public Boolean Equals( [CanBeNull] IDocument? other ) => Equals( this, other );
+		public Boolean Equals( IDocument? other ) => Equals( this, other );
 
 		/// <summary>
 		///     Represents the fully qualified path of the file.
 		///     <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public String FullPath { get; }
 
 		/// <summary>Local file creation <see cref="DateTime" />.</summary>
@@ -282,7 +274,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Anything that can be temp stored can go in this. Not serialized. Defaults to be used for internal locking.</summary>
 		[JsonIgnore]
-		[CanBeNull]
 		public Object? Tag { get; set; }
 
 		public Boolean DeleteAfterClose {
@@ -303,7 +294,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.</summary>
 		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		[NotNull]
 		[Pure]
 		public async IAsyncEnumerable<Byte> AsBytes( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
@@ -330,7 +320,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		/// <returns></returns>
-		[NotNull]
 		[Pure]
 		public async IAsyncEnumerable<Int32> AsInt32( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
@@ -471,13 +460,13 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
-			[NotNull] IDocument destination,
-			[NotNull] IProgress<Single> progress,
-			[NotNull] IProgress<TimeSpan> eta,
+			IDocument destination,
+			IProgress<Single> progress,
+			IProgress<TimeSpan> eta,
 			CancellationToken cancellationToken
 		) {
 			if ( destination is null ) {
-				throw new ArgumentNullException( nameof( destination ) );
+				throw new ArgumentEmptyException( nameof( destination ) );
 			}
 
 			var stopwatch = Stopwatch.StartNew();
@@ -704,9 +693,9 @@ namespace Librainian.FileSystem {
 		/// <param name="source"></param>
 		/// <returns></returns>
 		[Pure]
-		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( [NotNull] Uri source ) {
+		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( Uri source ) {
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			//TODO possibly download entire file, delete original version, then rename the newly downloaded file?
@@ -730,7 +719,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
 		/// </summary>
-		[NotNull]
 		[Pure]
 		public String Extension() => Path.GetExtension( this.FullPath ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
@@ -741,7 +729,6 @@ namespace Librainian.FileSystem {
 		///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
 		/// </example>
 		/// <see cref="Path.GetFileName" />
-		[NotNull]
 		public String FileName => Path.GetFileName( this.FullPath );
 
 		/// <summary>Returns the size of the file, if it exists.</summary>
@@ -755,7 +742,7 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <param name="cancellationToken"></param>
-		public async PooledValueTask<IDocument> AppendText( [NotNull] String text, CancellationToken cancellationToken ) {
+		public async PooledValueTask<IDocument> AppendText( String text, CancellationToken cancellationToken ) {
 			var folder = this.ContainingingFolder();
 
 			if ( !await folder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
@@ -788,7 +775,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns the filename, without the extension.</summary>
 		/// <returns></returns>
-		[NotNull]
 		[Pure]
 		public String JustName() => Path.GetFileNameWithoutExtension( this.FileName );
 
@@ -809,7 +795,7 @@ namespace Librainian.FileSystem {
 				null => null,
 				>= IDocument.MaximumBufferSize => IDocument.MaximumBufferSize,
 				var _ => size switch {
-					>= Int32.MaxValue => Int32.MaxValue,
+					>= Int32.MaxValue/2 => Int32.MaxValue/2,
 					{ } ul => ( Int32 )ul
 				}
 			};
@@ -821,7 +807,7 @@ namespace Librainian.FileSystem {
 		/// <param name="useShell"></param>
 		/// <returns></returns>
 		[Pure]
-		public PooledValueTask<Process?> Launch( [CanBeNull] String? arguments = null, [CanBeNull] String? verb = "runas", Boolean useShell = false ) {
+		public PooledValueTask<Process?> Launch( String? arguments = null, String? verb = "runas", Boolean useShell = false ) {
 			try {
 				var info = new ProcessStartInfo( this.FullPath ) {
 					Arguments = arguments ?? String.Empty,
@@ -845,8 +831,7 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
-		/// <see cref="Path.GetFileNameWithoutExtension" />
-		[NotNull]
+		/// <see cref="Path.GetFileNameWithoutExtension(System.ReadOnlySpan{Char})" />
 		public String Name => this.FileName;
 
 		[Pure]
@@ -862,7 +847,7 @@ namespace Librainian.FileSystem {
 		/// <param name="right"></param>
 		/// <param name="cancellationToken"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
@@ -872,7 +857,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[Pure]
-		public async PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken cancellationToken ) {
+		public async PooledValueTask<Boolean> SameContent( Document? right, CancellationToken cancellationToken ) {
 			if ( right is null ) {
 				return false;
 			}
@@ -893,7 +878,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
 		/// <returns></returns>
-		[NotNull]
 		[Pure]
 		public StreamReader StreamReader() => new( File.OpenRead( this.FullPath ) );
 
@@ -905,7 +889,7 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		public async Task<StreamWriter?> StreamWriter(
 			CancellationToken cancellationToken,
-			[CanBeNull] Encoding? encoding = null,
+			Encoding? encoding = null,
 			UInt32 bufferSize = MathConstants.Sizes.OneMegaByte
 		) {
 			try {
@@ -942,7 +926,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
 		[Pure]
-		[NotNull]
 		public override String ToString() => this.FullPath;
 
 		/// <summary>
@@ -966,7 +949,7 @@ namespace Librainian.FileSystem {
 					await Task.Delay( delayBetweenRetries, cancellationToken ).ConfigureAwait( false );
 				}
 				catch ( UnauthorizedAccessException ) { }
-				catch ( ArgumentNullException ) { }
+				catch ( ArgumentEmptyException ) { }
 			}
 
 			return await this.Exists( cancellationToken ).ConfigureAwait( false );
@@ -976,9 +959,9 @@ namespace Librainian.FileSystem {
 		/// <param name="destination"></param>
 		/// <returns></returns>
 		[Pure]
-		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( [NotNull] Uri destination ) {
+		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( Uri destination ) {
 			if ( destination is null ) {
-				throw new ArgumentNullException( nameof( destination ) );
+				throw new ArgumentEmptyException( nameof( destination ) );
 			}
 
 			if ( !destination.IsWellFormedOriginalString() ) {
@@ -1053,7 +1036,6 @@ namespace Librainian.FileSystem {
 			return (Status.Exception, default( T? ));
 		}
 
-		[NotNull]
 		[Pure]
 		public IFolder ContainingingFolder() {
 			if ( this._containingFolder is null ) {
@@ -1121,7 +1103,7 @@ namespace Librainian.FileSystem {
 
 			return fileCopyData;
 
-			void RecordException( [CanBeNull] Exception? exception ) {
+			void RecordException( Exception? exception ) {
 				if ( exception is null ) {
 					return;
 				}
@@ -1210,9 +1192,7 @@ namespace Librainian.FileSystem {
 		}
 
 		[Pure]
-		public async PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken ) {
-			return await this.AsInt64( cancellationToken ).Select( i => i == 0L ? 1L : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
-		}
+		public async PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken ) => await this.AsInt64( cancellationToken ).Select( i => i == 0L ? 1L : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
 
 		/// <summary>"poor mans Decimal hash"</summary>
 		/// <returns></returns>
@@ -1300,7 +1280,6 @@ namespace Librainian.FileSystem {
 		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		/// <returns></returns>
-		[NotNull]
 		[Pure]
 		public async IAsyncEnumerable<Decimal> AsDecimal( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var fileLength = await this.Length( cancellationToken ).ConfigureAwait( false );
@@ -1410,7 +1389,7 @@ namespace Librainian.FileSystem {
 		[Pure]
 		public PooledValueTask<Status> TurnOffReadonly( CancellationToken cancellationToken ) => this.SetReadOnly( false, cancellationToken );
 
-		public virtual void GetObjectData( [NotNull] SerializationInfo info, StreamingContext context ) =>
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context ) =>
 			info.AddValue( nameof( this.FullPath ), this.FullPath, typeof( String ) );
 
 		public async IAsyncEnumerable<String> ReadLines( [EnumeratorCancellation] CancellationToken cancellationToken ) {
@@ -1420,17 +1399,14 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
-			if ( optimal is null ) {
-				yield break;
-			}
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false ) ?? 4096;
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
-			await using var buffered = new BufferedStream( stream, optimal.Value );
+			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal, FileOptions.SequentialScan );
+			await using var buffered = new BufferedStream( stream, optimal );
 
 			using var reader = new StreamReader( buffered );
 
-			while ( true ) {
+			while ( !cancellationToken.IsCancellationRequested ) {
 				var line = await reader.ReadLineAsync().ConfigureAwait( false );
 
 				if ( line is null ) {
@@ -1498,7 +1474,7 @@ namespace Librainian.FileSystem {
 			[NotNull] Action<DownloadProgressChangedEventArgs>? progress ,
 			CancellationToken onComplete  ) {
 			if ( destination is null ) {
-				throw new ArgumentNullException( nameof( destination ) );
+				throw new ArgumentEmptyException( nameof( destination ) );
 			}
 
 			if ( !this.Exists() ) {
@@ -1539,11 +1515,10 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="document"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		[NotNull]
 		[Pure]
-		public static implicit operator FileInfo( [NotNull] Document document ) => ToFileInfo( document, GetDefaultCancelToken() ).AsValueTask().AsTask().Result;
+		public static implicit operator FileInfo( Document document ) => ToFileInfo( document, GetDefaultCancelToken() ).AsValueTask().AsTask().Result;
 
 		/// <summary>
 		///     Returns a new <see cref="CancellationToken" /> with the timeout set via <see cref="DefaultDocumentTimeout" />.
@@ -1553,9 +1528,9 @@ namespace Librainian.FileSystem {
 		public static CancellationToken GetDefaultCancelToken( TimeSpan? timeout = null ) => new CancellationTokenSource( timeout ?? DefaultDocumentTimeout ).Token;
 
 		[Pure]
-		public static async PooledValueTask<FileInfo> ToFileInfo( [NotNull] Document document, CancellationToken cancellationToken ) {
+		public static async PooledValueTask<FileInfo> ToFileInfo( Document document, CancellationToken cancellationToken ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			return await Task.Run( () => {
@@ -1574,12 +1549,12 @@ namespace Librainian.FileSystem {
 		/// <returns></returns>
 		[Pure]
 		public static async PooledValueTask<WebClient> DownloadFileTaskAsync(
-			[NotNull] Uri address,
-			[NotNull] String fileName,
-			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
+			Uri address,
+			String fileName,
+			IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
 		) {
 			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
+				throw new ArgumentEmptyException( nameof( address ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( fileName ) ) {
@@ -1627,9 +1602,8 @@ namespace Librainian.FileSystem {
 			return webClient;
 		}
 
-		[NotNull]
 		[Pure]
-		public static IDocument GetTempDocument( [CanBeNull] String? extension = null ) {
+		public static IDocument GetTempDocument( String? extension = null ) {
 			if ( String.IsNullOrEmpty( extension ) ) {
 				extension = Guid.NewGuid().ToString();
 			}
@@ -1646,7 +1620,7 @@ namespace Librainian.FileSystem {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean operator !=( [CanBeNull] Document? left, [CanBeNull] IDocument? right ) => !Equals( left, right );
+		public static Boolean operator !=( Document? left, IDocument? right ) => !Equals( left, right );
 
 		/// <summary>
 		///     <para>Compares the file names (case sensitive) and file sizes for equality.</para>
@@ -1655,7 +1629,7 @@ namespace Librainian.FileSystem {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean operator ==( [CanBeNull] Document? left, [CanBeNull] IDocument? right ) => Equals( left, right );
+		public static Boolean operator ==( Document? left, IDocument? right ) => Equals( left, right );
 
 		/// <summary>
 		///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
@@ -1669,7 +1643,7 @@ namespace Librainian.FileSystem {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean Equals( [CanBeNull] IDocument? left, [CanBeNull] IDocument? right ) {
+		public static Boolean Equals( IDocument? left, IDocument? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}

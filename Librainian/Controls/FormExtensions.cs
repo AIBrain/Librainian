@@ -33,16 +33,16 @@ namespace Librainian.Controls {
 	using System.Drawing;
 	using System.Linq;
 	using System.Windows.Forms;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Microsoft.Win32;
 	using Persistence;
 
 	public static class FormExtensions {
 
-		public static Boolean IsFullyVisibleOnAnyScreen( [NotNull] this Form form ) {
+		public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			var desktopBounds = form.DesktopBounds;
@@ -52,20 +52,20 @@ namespace Librainian.Controls {
 
 		public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
 
-		public static void LoadLocation( [NotNull] this Form form ) {
+		public static void LoadLocation( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( form.Name is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
-			var x = AppRegistry.GetInt32( nameof( form.DesktopLocation.X ), form.Name, nameof( form.DesktopLocation.X ) );
-			var y = AppRegistry.GetInt32( nameof( form.DesktopLocation.Y ), form.Name, nameof( form.DesktopLocation.Y ) );
+			var x = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.X ) );
+			var y = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.Y ) );
 
 			if ( x.HasValue && y.HasValue ) {
-				form.InvokeAction( () => form.SetDesktopLocation( x.Value, y.Value ) );
+				form.InvokeAction( () => form.Location = new( x.Value, y.Value ) );
 			}
 		}
 
@@ -73,13 +73,13 @@ namespace Librainian.Controls {
 		///     <seealso cref="SaveSize(Form)" />
 		/// </summary>
 		/// <param name="form"></param>
-		public static void LoadSize( [NotNull] this Form form ) {
+		public static void LoadSize( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( form.Name is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( AppRegistry.TheApplication is null ) {
@@ -92,49 +92,49 @@ namespace Librainian.Controls {
 			var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
 
 			if ( width.HasValue && height.HasValue ) {
-				form.Size( new Size( width.Value, height.Value ) );
+				form.Size( new( width.Value, height.Value ) );
 			}
 		}
 
 		/// <summary>Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.</summary>
 		/// <remarks></remarks>
-		public static void Location( [NotNull] this Form form, Point location ) {
+		public static void Location( this Form form, Point location ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
-			form.InvokeAction( () => form.SetDesktopLocation( location.X, location.Y ) );
+			form.InvokeAction( () => form.Location = new( location.X, location.Y ) );
 		}
 
-		public static void SaveLocation( [CanBeNull] this Form form ) {
+		public static void SaveLocation( this Form? form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( AppRegistry.TheApplication is null ) {
 				throw new InvalidOperationException( "Application registry not set up." );
 			}
 
-			$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
+			//$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
 
-			AppRegistry.Set( nameof( form.Location ), form.Name ?? throw new InvalidOperationException(), nameof( form.DesktopLocation.X ),
-				form.WindowState == FormWindowState.Normal ? form.DesktopLocation.X : form.RestoreBounds.X, RegistryValueKind.DWord );
+			AppRegistry.Set( nameof( form.Location ), form.Name ?? throw new InvalidOperationException(), nameof( form.Location.X ),
+				form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.X, RegistryValueKind.DWord );
 
-			AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.DesktopLocation.Y ),
-				form.WindowState == FormWindowState.Normal ? form.DesktopLocation.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
+			AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.Y ),
+				form.WindowState == FormWindowState.Normal ? form.Location.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
 		}
 
 		/// <summary>
 		///     <seealso cref="LoadSize(Form)" />
 		/// </summary>
 		/// <param name="form"></param>
-		public static void SaveSize( [NotNull] this Form form ) {
+		public static void SaveSize( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( form.Name is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			if ( AppRegistry.TheApplication is null ) {
@@ -144,28 +144,28 @@ namespace Librainian.Controls {
 			$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Log();
 
 			AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
-				form.WindowState == FormWindowState.Normal ? form.DesktopBounds.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
+				form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
 
 			AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
-				form.WindowState == FormWindowState.Normal ? form.DesktopBounds.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
+				form.WindowState == FormWindowState.Normal ? form.Size.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
 		}
 
 		/// <summary>Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.</summary>
 		/// <param name="form"></param>
 		/// <returns></returns>
-		public static Size Size( [NotNull] this Form form ) {
+		public static Size Size( this Form form ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
-			return form.InvokeRequired ? ( Size )form.Invoke( new Func<Size>( () => form.Size ) ) : form.Size;
+			return form.InvokeRequired ? form.Invoke( () => form.Size ) : form.Size;
 		}
 
 		/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
 		/// <remarks></remarks>
-		public static void Size( [NotNull] this Form form, Size size ) {
+		public static void Size( this Form form, Size size ) {
 			if ( form is null ) {
-				throw new ArgumentNullException( nameof( form ) );
+				throw new ArgumentEmptyException( nameof( form ) );
 			}
 
 			form.InvokeAction( () => form.Size = size );

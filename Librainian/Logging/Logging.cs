@@ -33,8 +33,8 @@ namespace Librainian.Logging {
 	using System.Diagnostics;
 	using System.Drawing;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Microsoft.Extensions.Logging;
+	using Newtonsoft.Json;
 	using Parsing;
 	using Persistence;
 
@@ -51,9 +51,8 @@ namespace Librainian.Logging {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="s"></param>
 		/// <param name="breakReason"></param>
-		[CanBeNull]
 		[DebuggerStepThrough]
-		public static String? Break<T>( [CanBeNull] this T s, [CanBeNull] String? breakReason = null ) {
+		public static String? Break<T>( this T? s, String? breakReason = null ) {
 			if ( !String.IsNullOrEmpty( breakReason ) ) {
 				breakReason.DebugLine();
 			}
@@ -64,7 +63,7 @@ namespace Librainian.Logging {
 		}
 
 		[DebuggerStepThrough]
-		public static void BreakIf( this Boolean condition, [CanBeNull] String? message = null ) {
+		public static void BreakIf( this Boolean condition, String? message = null ) {
 			if ( condition ) {
 				message.Break();
 			}
@@ -72,7 +71,7 @@ namespace Librainian.Logging {
 
 		[DebuggerStepThrough]
 		[Conditional( "DEBUG" )]
-		public static void BreakIfDebug<T>( [CanBeNull] this T? _, [CanBeNull] String? breakReason = null ) {
+		public static void BreakIfDebug<T>( this T? _, String? breakReason = null ) {
 			if ( breakReason is not null ) {
 				$"Break reason: {breakReason}".DebugLine();
 			}
@@ -83,14 +82,14 @@ namespace Librainian.Logging {
 		}
 
 		[DebuggerStepThrough]
-		public static void BreakIfFalse( this Boolean condition, [CanBeNull] String? message = null ) {
+		public static void BreakIfFalse( this Boolean condition, String? message = null ) {
 			if ( !condition ) {
 				message.Break();
 			}
 		}
 
 		[DebuggerStepThrough]
-		public static void BreakIfTrue( this Boolean condition, [CanBeNull] String? message = null ) {
+		public static void BreakIfTrue( this Boolean condition, String? message = null ) {
 			if ( condition ) {
 				message.Break();
 			}
@@ -101,7 +100,7 @@ namespace Librainian.Logging {
 			loggingLevel switch {
 				LogLevel.Trace => (Color.Green, Color.White),
 				LogLevel.Debug => (Color.DarkSeaGreen, Color.White),
-				LogLevel.Information => (Color.Green, Color.White),
+				LogLevel.Information => (Color.Black, Color.White),
 				LogLevel.Warning => (Color.Goldenrod, Color.White),
 				LogLevel.Error => (Color.Red, Color.White),
 				LogLevel.Critical => (Color.DarkRed, Color.Aqua),
@@ -112,30 +111,29 @@ namespace Librainian.Logging {
 		/// <summary>Write line to <see cref="System.Diagnostics.Debug" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		[DebuggerStepThrough]
-		public static void DebugLine<T>( [CanBeNull] this T? self ) => Debug.WriteLine( self );
+		public static void DebugLine<T>( this T? self ) => Debug.WriteLine( self );
 
 		/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		[DebuggerStepThrough]
-		public static void DebugNoLine<T>( [CanBeNull] this T? self ) => Debug.Write( self );
+		public static void DebugNoLine<T>( this T? self ) => Debug.Write( self );
 
 		/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		[DebuggerStepThrough]
-		public static void Error<T>( [CanBeNull] this T? self ) => self.DebugLine();
+		public static void Error<T>( this T? self ) => self.DebugLine();
 
 		/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		[DebuggerStepThrough]
-		public static void Fatal<T>( [CanBeNull] this T? self ) => self.DebugLine();
+		public static void Fatal<T>( this T? self ) => self.DebugLine();
 
 		/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		[DebuggerStepThrough]
-		public static void Info<T>( [CanBeNull] this T? self ) => self.DebugLine();
+		public static void Info<T>( this T? self ) => self.DebugLine();
 
 		[DebuggerStepThrough]
-		[NotNull]
 		public static String LevelName( this LogLevel loggingLevel ) =>
 			loggingLevel switch {
 				LogLevel.Trace => nameof( LogLevel.Trace ),
@@ -149,8 +147,7 @@ namespace Librainian.Logging {
 			};
 
 		[DebuggerStepThrough]
-		[CanBeNull]
-		public static Exception Log<T>( [CanBeNull] this T? message, BreakOrDontBreak? breakinto = null ) {
+		public static Exception Log<T>( this T? message, BreakOrDontBreak? breakinto = null ) {
 			if ( message is null ) {
 				if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
 					Debugger.Break();
@@ -178,18 +175,19 @@ namespace Librainian.Logging {
 		/// <typeparam name="TM"></typeparam>
 		/// <param name="self"></param>
 		/// <param name="more"></param>
+		/// <param name="asJSON"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		[CanBeNull]
-		public static TT? Log<TT, TM>( [CanBeNull] this TT? self, [CanBeNull] TM? more ) {
-			var o = $"{self.ToJSON()}";
+		public static TT? Log<TT, TM>( this TT? self, TM? more, Boolean asJSON = false ) {
+			var o = asJSON ? $"{self.ToJSON( Formatting.Indented )}" : self?.ToString();
+
 			o.DebugLine();
 
-			if ( more is not null ) {
-				$"Error={self.SmartQuote()}; {more.ToJSON()}".BreakIfDebug();
+			if ( more is null ) {
+				$"Error={self.SmartQuote()}".BreakIfDebug();
 			}
 			else {
-				$"Error={self.SmartQuote()}".BreakIfDebug();
+				$"Error={self.SmartQuote()}; {more.ToJSON( Formatting.Indented )}".BreakIfDebug();
 			}
 
 			return self;
@@ -201,7 +199,7 @@ namespace Librainian.Logging {
 		[Conditional( "DEBUG" )]
 		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
-		public static void LogTimeMessage( [CanBeNull] this String? message, BreakOrDontBreak? breakinto = BreakOrDontBreak.DontBreak ) {
+		public static void LogTimeMessage( this String? message, BreakOrDontBreak? breakinto = BreakOrDontBreak.DontBreak ) {
 			$"[{DateTime.Now:t}] {message ?? Symbols.Null}".DebugLine();
 
 			if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
@@ -211,7 +209,7 @@ namespace Librainian.Logging {
 
 		[Conditional( "DEBUG" )]
 		[DebuggerStepThrough]
-		public static void TimeDebug( [NotNull] this String message, Boolean newline = true, Boolean showThread = false ) {
+		public static void TimeDebug( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
 				var m = showThread ? $"[{DateTime.UtcNow:s}].({Thread.CurrentThread.ManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
 				Debug.WriteLine( m );
@@ -228,7 +226,7 @@ namespace Librainian.Logging {
 		/// <param name="message"></param>
 		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
-		public static void Trace( [NotNull] this String message ) => System.Diagnostics.Trace.Write( message );
+		public static void Trace( this String message ) => System.Diagnostics.Trace.Write( message );
 
 		/// <summary>
 		///     Write a message to System.Diagnostics.TraceLine.
@@ -237,11 +235,11 @@ namespace Librainian.Logging {
 		/// <param name="message"></param>
 		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
-		public static void TraceLine( [NotNull] this String message ) => System.Diagnostics.Trace.WriteLine( message );
+		public static void TraceLine( this String message ) => System.Diagnostics.Trace.WriteLine( message );
 
 		[Conditional( "DEBUG" )]
 		[DebuggerStepThrough]
-		public static void TraceWithTime( [NotNull] this String message, Boolean newline = true, Boolean showThread = false ) {
+		public static void TraceWithTime( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
 				var m = showThread ? $"[{DateTime.UtcNow:s}].({Thread.CurrentThread.ManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
 				m.TraceLine();
@@ -253,6 +251,6 @@ namespace Librainian.Logging {
 
 		[Conditional( "VERBOSE" )]
 		[DebuggerStepThrough]
-		public static void Verbose( [NotNull] this String message ) => System.Diagnostics.Trace.WriteLine( message );
+		public static void Verbose( this String message ) => System.Diagnostics.Trace.WriteLine( message );
 	}
 }

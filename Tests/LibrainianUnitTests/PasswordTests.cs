@@ -27,18 +27,19 @@
 
 namespace LibrainianUnitTests {
 
-	using System.Diagnostics;
+	using System;
 	using Librainian.Maths;
-	using Librainian.Parsing;
 	using Librainian.Security;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class PasswordTests {
 
-		[Fact]
+		[Test]
 		public static void TestAFew() {
-			foreach ( var _ in 1.To( 25 ) ) {
-				Debug.WriteLine( PronounceablePasswordCreator.Generate( 3.Next( 15 ) ).ToPascalCase() );
+			foreach ( var _ in 1.To( 26 ) ) {
+				var test = PronounceablePasswordCreator.Generate( 3.Next( 15 ) );
+				Console.WriteLine( test );
 			}
 		}
 

@@ -28,11 +28,9 @@ namespace Librainian.Databases {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public record SqlServerInstance {
-		[NotNull]
 		public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
 
 		public String? Edition { get; set; }
@@ -45,7 +43,6 @@ namespace Librainian.Databases {
 
 		public Version? Version { get; set; }
 
-		[NotNull]
 		public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
 	}
 }

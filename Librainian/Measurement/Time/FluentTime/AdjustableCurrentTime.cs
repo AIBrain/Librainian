@@ -28,11 +28,9 @@
 namespace Librainian.Measurement.Time.FluentTime {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public static class AdjustableCurrentTime {
 
-		[CanBeNull]
 		private static DateTime? _overrideNow;
 
 		public static DateTime Now => _overrideNow ?? DateTime.Now;

@@ -26,14 +26,12 @@ namespace Librainian.Financial.Currency.BankNotes {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public sealed class Ten : IBankNote {
 
 		public Decimal FaceValue => 10.00M;
 
-		[NotNull]
 		public override String ToString() => $"{this.FaceValue:C}";
 	}
 }

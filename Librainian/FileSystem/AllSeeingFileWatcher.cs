@@ -31,14 +31,12 @@ namespace Librainian.FileSystem {
 	using System.Collections.Concurrent;
 	using System.IO;
 	using Collections.Lists;
-	using JetBrains.Annotations;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class AllSeeingFileWatcher : ABetterClassDispose {
 
-		[ItemNotNull]
-		[NotNull]
 		private ConcurrentList<FileSystemWatcher> FileWatchers { get; } = new();
 
 		public ConcurrentDictionary<DateTime, FileSystemEventArgs> Changed { get; } = new( Environment.ProcessorCount, 512 );
@@ -49,13 +47,13 @@ namespace Librainian.FileSystem {
 
 		public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } = new( Environment.ProcessorCount, 512 );
 
-		private void OnChanged( [CanBeNull] Object? sender, [CanBeNull] FileSystemEventArgs args ) => this.Changed[ DateTime.UtcNow ] = args;
+		private void OnChanged( Object? sender, FileSystemEventArgs? args ) => this.Changed[ DateTime.UtcNow ] = args;
 
-		private void OnCreated( [CanBeNull] Object? sender, [CanBeNull] FileSystemEventArgs args ) => this.Created[ DateTime.UtcNow ] = args;
+		private void OnCreated( Object? sender, FileSystemEventArgs? args ) => this.Created[ DateTime.UtcNow ] = args;
 
-		private void OnDeleted( [CanBeNull] Object? sender, [CanBeNull] FileSystemEventArgs args ) => this.Deleted[ DateTime.UtcNow ] = args;
+		private void OnDeleted( Object? sender, FileSystemEventArgs? args ) => this.Deleted[ DateTime.UtcNow ] = args;
 
-		private void OnRenamed( [CanBeNull] Object? sender, [CanBeNull] RenamedEventArgs args ) => this.Renamed[ DateTime.UtcNow ] = args;
+		private void OnRenamed( Object? sender, RenamedEventArgs? args ) => this.Renamed[ DateTime.UtcNow ] = args;
 
 		public override void DisposeManaged() {
 			this.Nop();

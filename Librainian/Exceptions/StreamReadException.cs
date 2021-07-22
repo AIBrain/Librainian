@@ -25,16 +25,12 @@
 namespace Librainian.Exceptions {
 
 	using System;
-	using JetBrains.Annotations;
 
 	[Serializable]
 	public class StreamReadException : StreamException {
 
-		public StreamReadException( [CanBeNull]
-									String? message ) : base( message ) { }
+		public StreamReadException( String? message ) : base( message ) { }
 
-		public StreamReadException( [CanBeNull]
-									String? message, [CanBeNull]
-									Exception innerException ) : base( message, innerException ) { }
+		public StreamReadException( String? message, Exception? innerException ) : base( message, innerException ) { }
 	}
 }

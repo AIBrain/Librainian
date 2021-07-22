@@ -37,11 +37,12 @@ namespace Librainian.Financial.Currency.BTC {
 	using System.Threading.Tasks.Dataflow;
 	using Collections.Extensions;
 	using Containers.Wallets;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Maths;
 	using Newtonsoft.Json;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     My first go at a thread-safe CoinWallet class for bitcoin coins. It's more pseudocode for learning than for
@@ -53,30 +54,23 @@ namespace Librainian.Financial.Currency.BTC {
 	public class CoinWallet : ABetterClassDispose, IEnumerable<KeyValuePair<ICoin, UInt64>>, ICoinWallet {
 
 		/// <summary>Count of each <see cref="ICoin" />.</summary>
-		[NotNull]
 		private readonly ConcurrentDictionary<ICoin, UInt64> _coins = new();
 
-		[CanBeNull]
-		private ActionBlock<BitcoinTransactionMessage> Actor { get; set; }
+		private ActionBlock<BitcoinTransactionMessage>? Actor { get; set; }
 
 		/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
-		[NotNull]
 		public IEnumerable<ICoin> Coins => this._coins.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
-		[NotNull]
 		public IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped => this._coins;
 
 		public Guid ID { get; }
 
-		[CanBeNull]
 		public Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
 
-		[CanBeNull]
 		public Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
 
 		[JsonProperty]
-		[CanBeNull]
-		public WalletStatistics Statistics { get; } = new();
+		public WalletStatistics? Statistics { get; } = new();
 
 		/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
 		public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
@@ -111,7 +105,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static CoinWallet Create( Guid? id = null ) {
 			if ( !id.HasValue || id.Value == Guid.Empty ) {
 				id = Guid.NewGuid();
@@ -122,7 +115,7 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public Boolean Contains( ICoin coin ) {
 			if ( coin is null ) {
-				throw new ArgumentNullException( nameof( coin ) );
+				throw new ArgumentEmptyException( nameof( coin ) );
 			}
 
 			return this._coins.ContainsKey( coin );
@@ -130,13 +123,13 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public UInt64 Count( ICoin coin ) {
 			if ( coin is null ) {
-				throw new ArgumentNullException( nameof( coin ) );
+				throw new ArgumentEmptyException( nameof( coin ) );
 			}
 
 			return this._coins.TryGetValue( coin, out var result ) ? result : UInt64.MinValue;
 		}
 
-		public UInt64 Deposit( [NotNull] ICoin coin, UInt64 quantity, Boolean updateStatistics = true ) {
+		public UInt64 Deposit( ICoin coin, UInt64 quantity, Boolean updateStatistics = true ) {
 			try {
 				lock ( this._coins ) {
 					UInt64 newQuantity = 0;
@@ -169,7 +162,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator() => this._coins.GetEnumerator();
 
-		[NotNull]
 		public override String ToString() {
 			var coins = this._coins.Aggregate( 0UL, ( current, pair ) => current + pair.Value );
 
@@ -184,9 +176,9 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <param name="quantity"></param>
 		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
-		public Boolean TryWithdraw( [NotNull] ICoin coin, UInt64 quantity ) {
+		public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
 			if ( coin is null ) {
-				throw new ArgumentNullException( nameof( coin ) );
+				throw new ArgumentEmptyException( nameof( coin ) );
 			}
 
 			if ( quantity <= 0 ) {
@@ -206,7 +198,6 @@ namespace Librainian.Financial.Currency.BTC {
 			return true;
 		}
 
-		[CanBeNull]
 		public ICoin? TryWithdrawAnyCoin() {
 			var possibleCoins = this._coins.Where( pair => pair.Value > 0 ).Select( pair => pair.Key ).ToList();
 
@@ -220,7 +211,6 @@ namespace Librainian.Financial.Currency.BTC {
 			return this.TryWithdraw( key, 1 ) ? key : default( ICoin );
 		}
 
-		[CanBeNull]
 		public ICoin? TryWithdrawSmallestCoin() {
 			var coin = this._coins.Where( pair => pair.Value > 0 ).Select( pair => pair.Key ).OrderBy( coin1 => coin1.FaceValue ).FirstOrDefault();
 

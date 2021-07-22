@@ -23,37 +23,16 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TestABetterClassDispose.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "NeedsTestingAttribute.cs" last touched on 2021-06-18 at 5:38 PM by Protiguous.
 
-namespace LibrainianUnitTests.Utilities {
+namespace Librainian.Utilities {
 
 	using System;
-	using System.Diagnostics;
-	using Librainian.Utilities;
-	using Xunit;
 
-	public class TestABetterClassDispose {
-
-		[Fact]
-		public void TestMethod1() {
-			using var test1 = new Test( 1 );
-			using var test2 = new Test( 2 );
-			using var test3 = new Test( 3 );
-			using var test4 = test3;
-			using var test = test1;
-		}
-
-		internal class Test : ABetterClassDispose {
-
-			private readonly Byte value;
-
-			public Test( Byte val ) => this.value = val;
-
-			/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-			public override void DisposeManaged() => Debug.WriteLine( this.value );
-
-		}
-
-	}
+	/// <summary>
+	///     Mark that this class needs testing and unit testing to confirm it works as expected.
+	/// </summary>
+	[AttributeUsage( AttributeTargets.All )]
+	public class NeedsTestingAttribute : Attribute { }
 
 }

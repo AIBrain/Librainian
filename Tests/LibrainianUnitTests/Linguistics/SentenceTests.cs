@@ -30,16 +30,15 @@ namespace LibrainianUnitTests.Linguistics {
 	using System;
 	using System.Linq;
 	using FluentAssertions;
-	using JetBrains.Annotations;
 	using Librainian.Extensions;
 	using Librainian.Linguistics;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class SentenceTests {
 
 		public const String Sample = "the quick brown fox jumped over the lazy dog";
 
-		[NotNull]
 		public static Sentence SampleLengthTest() {
 			var sentence = Sentence.Parse( Sample );
 
@@ -48,7 +47,7 @@ namespace LibrainianUnitTests.Linguistics {
 			return sentence;
 		}
 
-		[Fact]
+		[Test]
 		public static void CombinationsTest() {
 			var sentence = SampleLengthTest();
 

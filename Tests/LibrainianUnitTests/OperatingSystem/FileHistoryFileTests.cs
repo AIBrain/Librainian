@@ -28,20 +28,66 @@
 namespace LibrainianUnitTests.OperatingSystem {
 
 	using System;
-	using System.Diagnostics.CodeAnalysis;
 	using System.Globalization;
+	using System.IO;
+	using System.Text;
+	using FluentAssertions;
 	using Librainian.FileSystem;
 	using Librainian.FileSystem.FileHistory;
-	using Xunit;
+	using Librainian.Parsing;
+	using NUnit.Framework;
 
+	[TestFixture]
+	public static class FolderTests {
+
+		public const String ExampleFolderStart = @"    c:\temp\";
+		public const String ExampleFolderPath = @"\a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z\0\1\2\3\4\5\6\7\8\9\\\/\\/\";
+
+
+		[Test]
+		public static void TestCompactFormat() {
+			var example = new Folder( Path.Combine( ExampleFolderStart, ExampleFolderPath ) );
+
+			Console.WriteLine( example.ToCompactFormat() );
+		}
+
+		[Test]
+		public static void TestLevelsDeep() {
+			var example = new Folder( Path.Combine( ExampleFolderStart, ExampleFolderPath ) );
+			Console.WriteLine( example.DoubleQuote() );
+			Console.WriteLine( example.LevelsDeep() );
+			example.LevelsDeep().Should().Be( 36 );
+		}
+
+		[Test]
+		public static void TestExpandedLevelsDeep() {
+			var expanded = new StringBuilder( UInt16.MaxValue );
+			foreach ( var c in ExampleFolderPath.ToCharArray() ) {
+				if ( Char.IsLetterOrDigit( c ) ) {
+					expanded.Append( c.Repeat( 512 ) );
+				}
+				else {
+					expanded.Append( c );
+				}
+			}
+
+			var example = new Folder( Path.Combine( ExampleFolderStart, expanded.ToString() ) );
+			
+			Console.WriteLine( example.DoubleQuote() );
+			Console.WriteLine( example.LevelsDeep() );
+			example.LevelsDeep().Should().Be( 36 );
+		}
+
+
+	}
+
+	[TestFixture]
 	public static class FileHistoryFileTests {
 
 		public const String Example = @"S:\do not delete! FileHistory\Rick\ZEUS do not delete!\Data\C\Users\Rick\Desktop\autoruns (2015_09_04 16_15_01 UTC).exe";
 
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
 
-		[Fact]
-		[SuppressMessage( "ReSharper", "UnusedVariable" )]
+		[Test]
 		public static void RunTests() {
 			var example = DateTime.Parse( "2015/09/04 16:15:01" );
 
@@ -55,7 +101,6 @@ namespace LibrainianUnitTests.OperatingSystem {
 			}
 		}
 
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
 
 	}
 

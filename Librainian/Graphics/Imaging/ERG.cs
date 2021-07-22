@@ -29,7 +29,6 @@ namespace Librainian.Graphics.Imaging {
 	using System.Drawing.Imaging;
 	using System.Threading.Tasks;
 	using Collections.Sets;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary> Experimental Resilient Graphics </summary>
@@ -61,22 +60,18 @@ namespace Librainian.Graphics.Imaging {
 		public UInt32 Height { get; private set; }
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentSet<Pixel> Pixels { get; } = new();
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentSet<Int32> PropertyIdList { get; } = new();
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentSet<PropertyItem> PropertyItems { get; } = new();
 
 		public UInt32 Width { get; private set; }
 
 		public Erg() => this.Checksum = UInt64.MaxValue;
 
-		[NotNull]
 		public Task<UInt64> CalculateChecksumAsync() =>
 			Task.Run( () => {
 				unchecked {

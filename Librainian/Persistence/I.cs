@@ -28,8 +28,8 @@ namespace Librainian.Persistence {
 
 	using System;
 	using System.Diagnostics;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Microsoft.VisualBasic;
 	using Newtonsoft.Json;
 
@@ -41,18 +41,16 @@ namespace Librainian.Persistence {
 	public class I {
 
 		[JsonProperty]
-		[NotNull]
 		public String K { get; }
 
 		[JsonProperty]
-		[NotNull]
 		public Unique U { get; }
 
-		public I( [NotNull] String key, [NotNull] Uri pointer ) {
-			this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+		public I( String key, Uri pointer ) {
+			this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
 
 			if ( pointer is null ) {
-				throw new ArgumentNullException( nameof( pointer ) );
+				throw new ArgumentEmptyException( nameof( pointer ) );
 			}
 
 			if ( !pointer.IsAbsoluteUri ) {
@@ -66,8 +64,8 @@ namespace Librainian.Persistence {
 		/// <param name="key"></param>
 		/// <param name="pointer"></param>
 		/// <exception cref="ArgumentException"></exception>
-		public I( [NotNull] String key, [CanBeNull] String? pointer ) {
-			this.K = key ?? throw new ArgumentNullException( nameof( key ) );
+		public I( String key, String? pointer ) {
+			this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
 
 			if ( !Uri.TryCreate( pointer, UriKind.Absolute, out var uri ) ) {
 				throw new ArgumentException();
@@ -81,7 +79,6 @@ namespace Librainian.Persistence {
 			this.U = u;
 		}
 
-		[NotNull]
 		public override String ToString() => this.K.Length > 42 ? $"{Strings.Left( this.K, 20 )}..{Strings.Right( this.K, 20 )}={this.U}" : $"{this.K}";
 	}
 }

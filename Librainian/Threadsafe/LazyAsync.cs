@@ -77,9 +77,7 @@ namespace Librainian.Threadsafe {
 		/// <summary>
 		///     Starts the asynchronous initialization, if it has not already started.
 		/// </summary>
-		public void Start() {
-			_ = this.instance.Value;
-		}
+		public void Start() => _ = this.instance.Value;
 	}
 
 	public class TestLazyAsync {

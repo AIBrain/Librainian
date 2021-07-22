@@ -28,7 +28,6 @@ namespace Librainian.FileSystem {
 
 	using System;
 	using System.Diagnostics;
-	using JetBrains.Annotations;
 	using Maths;
 	using Newtonsoft.Json;
 
@@ -39,19 +38,15 @@ namespace Librainian.FileSystem {
 		public UInt64 BytesCopied { get; set; }
 
 		[JsonProperty]
-		[CanBeNull]
 		public IDocument? DestinationDocument { get; set; }
 
 		[JsonProperty]
-		[CanBeNull]
 		public String? DestinationDocumentCRC64 { get; set; }
 
 		[JsonProperty]
-		[CanBeNull]
 		public IDocument? SourceDocument { get; set; }
 
 		[JsonProperty]
-		[CanBeNull]
 		public String? SourceDocumentCRC64 { get; set; }
 
 		[JsonProperty]
@@ -88,7 +83,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() =>
 			$"{this.SourceDocument?.FileName} copied to {this.DestinationDocument?.ContainingingFolder().FullPath} @ {this.MegabytesPerSecond()}MB/s";
 	}

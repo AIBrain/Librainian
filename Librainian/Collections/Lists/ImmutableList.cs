@@ -28,7 +28,7 @@ namespace Librainian.Collections.Lists {
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Librainian.Extensions;
 
 	/// <summary>
@@ -40,7 +40,6 @@ namespace Librainian.Collections.Lists {
 	[Immutable]
 	public sealed class ImmutableList<T> : IList<T>, IPossibleThrowable {
 
-		[NotNull]
 		private T[] Array { get; }
 
 		/// <summary>Retrieves the immutable count of the list.</summary>
@@ -58,8 +57,7 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="index">The index to access.</param>
 		/// <returns>The element at the specified index.</returns>
-		[CanBeNull]
-		public T this[ Int32 index ] {
+		public T? this[ Int32 index ] {
 			get => this.Array[ index ];
 
 			// ReSharper disable once ValueParameterNotUsed
@@ -71,9 +69,9 @@ namespace Librainian.Collections.Lists {
 
 		/// <summary>Create a new list, copying elements from the specified array.</summary>
 		/// <param name="arrayToCopy">An array whose contents will be copied.</param>
-		public ImmutableList( [NotNull] T[] arrayToCopy ) {
+		public ImmutableList( T[] arrayToCopy ) {
 			if ( arrayToCopy is null ) {
-				throw new ArgumentNullException( nameof( arrayToCopy ) );
+				throw new ArgumentEmptyException( nameof( arrayToCopy ) );
 			}
 
 			this.Array = new T[ arrayToCopy.Length ];
@@ -82,7 +80,7 @@ namespace Librainian.Collections.Lists {
 
 		/// <summary>Create a new list, copying elements from the specified enumerable.</summary>
 		/// <param name="enumerableToCopy">An enumerable whose contents will be copied.</param>
-		public ImmutableList( [NotNull] IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
+		public ImmutableList( IEnumerable<T> enumerableToCopy ) => this.Array = enumerableToCopy.ToArray();
 
 		private void ThrowNotMutable() {
 			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
@@ -98,8 +96,7 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Copies the list and adds a new value at the end.</summary>
 		/// <param name="value">The value to add.</param>
 		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndAdd( [CanBeNull] T value ) {
+		public ImmutableList<T> CopyAndAdd( T? value ) {
 			var newArray = new T[ this.Array.Length + 1 ];
 			this.Array.CopyTo( newArray, 0 );
 			newArray[ this.Array.Length ] = value;
@@ -109,15 +106,13 @@ namespace Librainian.Collections.Lists {
 
 		/// <summary>Returns a new, cleared (empty) immutable list.</summary>
 		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
 		public ImmutableList<T> CopyAndClear() => new( System.Array.Empty<T>() );
 
 		/// <summary>Copies the list and inserts a particular element.</summary>
 		/// <param name="index">The index at which to insert an element.</param>
 		/// <param name="item"> The element to insert.</param>
 		/// <returns>An immutable copy of this modified list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndInsert( Int32 index, [CanBeNull] T item ) {
+		public ImmutableList<T> CopyAndInsert( Int32 index, T? item ) {
 			var newArray = new T[ this.Array.Length + 1 ];
 			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
 			newArray[ index ] = item;
@@ -129,8 +124,7 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Copies the list and removes a particular element.</summary>
 		/// <param name="item">The element to remove.</param>
 		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndRemove( [CanBeNull] T item ) {
+		public ImmutableList<T> CopyAndRemove( T? item ) {
 			var index = this.IndexOf( item );
 
 			if ( index == -1 ) {
@@ -143,7 +137,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Copies the list and removes a particular element.</summary>
 		/// <param name="index">The index of the element to remove.</param>
 		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
 		public ImmutableList<T> CopyAndRemoveAt( Int32 index ) {
 			var newArray = new T[ this.Array.Length - 1 ];
 			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
@@ -156,8 +149,7 @@ namespace Librainian.Collections.Lists {
 		/// <param name="index">The index whose value is to be changed.</param>
 		/// <param name="item"> The value to store at the specified index.</param>
 		/// <returns>A modified copy of this list.</returns>
-		[NotNull]
-		public ImmutableList<T> CopyAndSet( Int32 index, [CanBeNull] T item ) {
+		public ImmutableList<T> CopyAndSet( Int32 index, T? item ) {
 			var newArray = new T[ this.Array.Length ];
 			this.Array.CopyTo( newArray, 0 );
 			newArray[ index ] = item;

@@ -27,41 +27,37 @@ namespace Librainian.Persistence {
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class ResourceScanner : ABetterClassDispose {
 
-		[NotNull]
 		private TaskCompletionSource<Status> CompletionSource { get; } = new( TaskCreationOptions.RunContinuationsAsynchronously );
 
-		[NotNull]
 		private Task DiscoveryTask { get; }
 
-		[NotNull]
 		private TimeTracker TimeTracker { get; } = new();
 
-		[NotNull]
 		public CancellationTokenSource CancellationSource { get; }
 
 		public Boolean Waiting { get; private set; }
 
 		/// <summary>await on this after creation.</summary>
-		[NotNull]
 		public Task<Status> Completion => this.CompletionSource.Task;
 
 		/// <summary>Starts scanning the resource via <paramref name="discovery" /> function parameter.</summary>
 		/// <param name="discovery">The function to run in a task.</param>
 		/// <param name="cancellationSource"></param>
 		/// <param name="timeout">Defaults to <see cref="Timeout.InfiniteTimeSpan" /></param>
-		public ResourceScanner( [NotNull] Func<Status> discovery, [NotNull] CancellationTokenSource cancellationSource, TimeSpan? timeout = null ) {
+		public ResourceScanner( Func<Status> discovery, CancellationTokenSource cancellationSource, TimeSpan? timeout = null ) {
 			if ( discovery is null ) {
-				throw new ArgumentNullException( nameof( discovery ) );
+				throw new ArgumentEmptyException( nameof( discovery ) );
 			}
 
 			if ( cancellationSource is null ) {
-				throw new ArgumentNullException( nameof( cancellationSource ) );
+				throw new ArgumentEmptyException( nameof( cancellationSource ) );
 			}
 
 			this.CancellationSource = CancellationTokenSource.CreateLinkedTokenSource( cancellationSource.Token,
@@ -109,7 +105,6 @@ namespace Librainian.Persistence {
 
 		/// <summary>awaits for the <see cref="CompletionSource" /> to finish.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public Task WaitAsync() {
 			this.Waiting = true;
 

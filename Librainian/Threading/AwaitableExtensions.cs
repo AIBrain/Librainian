@@ -30,14 +30,12 @@ namespace Librainian.Threading {
 	using System.Runtime.CompilerServices;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 
 	namespace ExtremeConfigAwait {
 
 		using System;
 		using System.Runtime.CompilerServices;
 		using System.Threading;
-		using JetBrains.Annotations;
 
 		/// <summary>
 		///     From
@@ -51,7 +49,7 @@ namespace Librainian.Threading {
 
 			public void GetResult() { }
 
-			public void OnCompleted( [CanBeNull] Action? continuation ) {
+			public void OnCompleted( Action? continuation ) {
 				var prevContext = SynchronizationContext.Current;
 
 				try {
@@ -71,7 +69,7 @@ namespace Librainian.Threading {
 	/// </summary>
 	public static class AwaitableExtensions {
 
-		private static void PrintContext( [CallerMemberName][CanBeNull] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+		private static void PrintContext( [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
 			var ctx = SynchronizationContext.Current;
 
 			if ( ctx != null ) {
@@ -103,7 +101,7 @@ namespace Librainian.Threading {
 
 		public static ConfiguredTaskAwaitable PrintContext(
 			this ConfiguredTaskAwaitable t,
-			[CallerMemberName][CanBeNull] String? callerName = null,
+			[CallerMemberName] String? callerName = null,
 			[CallerLineNumber] Int32 line = 0
 		) {
 			PrintContext( callerName, line );
@@ -111,8 +109,7 @@ namespace Librainian.Threading {
 			return t;
 		}
 
-		[CanBeNull]
-		public static Task PrintContext( [CanBeNull] this Task t, [CallerMemberName][CanBeNull] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
+		public static Task? PrintContext( this Task? t, [CallerMemberName] String? callerName = null, [CallerLineNumber] Int32 line = 0 ) {
 			PrintContext( callerName, line );
 
 			return t;

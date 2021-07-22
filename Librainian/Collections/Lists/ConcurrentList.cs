@@ -36,6 +36,7 @@ namespace Librainian.Collections.Lists {
 	using System.Runtime.Serialization;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
@@ -43,6 +44,7 @@ namespace Librainian.Collections.Lists {
 	using Parsing;
 	using Threading;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>A thread safe generic list.</para>
@@ -55,9 +57,17 @@ namespace Librainian.Collections.Lists {
 	///     <para>Call <see cref="CatchUp" /> to quickly add any pending items.</para>
 	/// </remarks>
 	/// <copyright>Protiguous@Protiguous.com</copyright>
-	[JsonObject( MemberSerialization.Fields )]
+	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumerable<T>>*/ {
+
+		public enum ThrowSetting {
+
+			DontThrowExceptions,
+
+			Throw
+
+		}
 
 		private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
 
@@ -67,19 +77,41 @@ namespace Librainian.Collections.Lists {
 		[JsonIgnore]
 		private Int64 ItemCount;
 
-		[NotNull]
+		/// <summary>Create an empty list with different timeout values.</summary>
+		/// <param name="enumerable">  Fill the list with the given enumerable.</param>
+		/// <param name="readTimeout">Defaults to 60 seconds.</param>
+		/// <param name="writeTimeout">Defaults to 60 seconds.</param>
+		public ConcurrentList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
+			this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+			this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
+			this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
+
+			if ( enumerable is not null ) {
+				this.AddRange( enumerable );
+			}
+		}
+
+		public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
+
 		private ConcurrentQueue<T> InputBuffer { get; } = new();
 
 		[JsonIgnore]
-		[NotNull]
 		private ReaderWriterLockSlim ReaderWriter { get; }
 
 		/// <summary>
 		///     <para>The internal list actually used.</para>
 		/// </summary>
-		[NotNull]
 		[JsonProperty]
-		private List<T> TheList { get; } = new();
+		private List<T?> TheList { get; } = new();
+
+		/// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
+		public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
+
+		[JsonProperty]
+		public TimeSpan TimeoutForReads { get; set; }
+
+		[JsonProperty]
+		public TimeSpan TimeoutForWrites { get; set; }
 
 		/// <summary>
 		///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
@@ -98,15 +130,6 @@ namespace Librainian.Collections.Lists {
 			set => Interlocked.Exchange( ref this._isReadOnly, value ? 1 : 0 );
 		}
 
-		/// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
-		public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
-
-		[JsonProperty]
-		public TimeSpan TimeoutForReads { get; set; }
-
-		[JsonProperty]
-		public TimeSpan TimeoutForWrites { get; set; }
-
 		/// <summary>Gets or sets the element at the specified index.</summary>
 		/// <returns>The element at the specified index.</returns>
 		/// <param name="index">The zero-based index of the element to get or set.</param>
@@ -115,10 +138,11 @@ namespace Librainian.Collections.Lists {
 		///     <see cref="IList" />.
 		/// </exception>
 		/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
-		[CanBeNull]
-		public T this[ Int32 index ] {
+		public T? this[ Int32 index ] {
 			[CanBeNull]
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
 			get {
+#pragma warning restore CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
 				if ( index < 0 || index > this.TheList.Count ) {
 					return this.ThrowWhenOutOfRange( index );
 				}
@@ -154,199 +178,6 @@ namespace Librainian.Collections.Lists {
 			}
 		}
 
-		/// <summary>Create an empty list with different timeout values.</summary>
-		/// <param name="enumerable">  Fill the list with the given enumerable.</param>
-		/// <param name="readTimeout">Defaults to 60 seconds.</param>
-		/// <param name="writeTimeout">Defaults to 60 seconds.</param>
-		public ConcurrentList( [CanBeNull] IEnumerable<T>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
-			this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-			this.TimeoutForReads = readTimeout ?? TimeSpan.FromSeconds( 60 );
-			this.TimeoutForWrites = writeTimeout ?? TimeSpan.FromSeconds( 60 );
-
-			if ( enumerable is not null ) {
-				this.AddRange( enumerable );
-			}
-		}
-
-		public ConcurrentList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
-
-		public enum ThrowSetting {
-
-			DontThrowExceptions,
-
-			Throw
-		}
-
-		private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
-
-		private void AnItemHasBeenRemoved( [CanBeNull] Action? action = null ) {
-			Interlocked.Decrement( ref this.ItemCount );
-			action?.Execute();
-		}
-
-		/// <summary>
-		///     TODO These need to be tested!!
-		/// </summary>
-		/// <param name="_"></param>
-		[OnDeserialized]
-		private void OnDeserialized( StreamingContext _ ) => this.ResetCount( this.TheList.Count );
-
-		/// <summary>
-		///     <para>Filter read requests through a <see cref="ReaderWriterLockSlim" />.</para>
-		/// </summary>
-		/// <typeparam name="TFuncResult"></typeparam>
-		/// <param name="func"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ObjectDisposedException"></exception>
-		[CanBeNull]
-		private TFuncResult Read<TFuncResult>( [NotNull] Func<TFuncResult> func ) {
-			if ( func == null ) {
-				throw new ArgumentNullException( nameof( func ) );
-			}
-
-			if ( this.ThrowWhenDisposed() ) {
-				return default( TFuncResult )!;
-			}
-
-			/*
-
-			 //TODO is this logic a good or bad shortcut?
-			if ( this.IsReadOnly ) {
-				return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
-			}
-			*/
-
-			this.CatchUp();
-
-			if ( this.ReaderWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ) ) {
-				try {
-					return func();
-				}
-				finally {
-					this.ReaderWriter.ExitUpgradeableReadLock();
-				}
-			}
-
-			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new TimeoutException( CouldNotObtainReadLock );
-			}
-
-			return default( TFuncResult )!;
-		}
-
-		private void ResetCount( Int32 toCount = default ) => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) + toCount );
-
-		private Int32 ResizeCapacity( Int32 capacity ) => this.Write( () => this.TheList.Capacity = capacity );
-
-		private void ThrowWhenDisallowedModifications() {
-			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new InvalidOperationException( "List does not allow modifications." );
-			}
-		}
-
-		/// <summary>
-		///     <para>
-		///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-		///         <exception cref="ObjectDisposedException" /> will be thrown.
-		///     </para>
-		///     <para>Otherwise, true is returned when this object has been disposed.</para>
-		/// </summary>
-		/// <exception cref="ObjectDisposedException"></exception>
-		private Boolean ThrowWhenDisposed() {
-			var isDisposed = this.IsDisposed;
-
-			if ( isDisposed && this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
-			}
-
-			return isDisposed;
-		}
-
-		private void ThrowWhenNoReadLock() {
-			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new TimeoutException( CouldNotObtainReadLock );
-			}
-		}
-
-		private void ThrowWhenNoWriteLock() {
-			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new TimeoutException( "Could not obtain write-lock." );
-			}
-		}
-
-		/// <summary>
-		///     <para>
-		///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-		///         <exception cref="ArgumentOutOfRangeException" /> will be thrown.
-		///     </para>
-		/// </summary>
-		/// <param name="index"></param>
-		private T ThrowWhenOutOfRange( Int32 index ) {
-			var message = $"The value {index} is out of range. (It must be between 0 and {this.Count}).";
-			message.Log();
-
-			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new ArgumentOutOfRangeException( nameof( index ), index, message );
-			}
-
-			return default( T )!;
-		}
-
-		/// <summary>
-		///     <para>
-		///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-		///         <exception cref="ObjectDisposedException" /> will be thrown.
-		///     </para>
-		///     <para>Otherwise, true is returned when this object has been disposed.</para>
-		/// </summary>
-		/// <exception cref="ObjectDisposedException"></exception>
-		private Boolean ThrowWhenReadOnly() {
-			var isReadOnly = this.IsReadOnly;
-
-			if ( isReadOnly && this.ThrowExceptions == ThrowSetting.Throw ) {
-				throw new InvalidOperationException( $"This {nameof( ConcurrentList<T> )} is set to read-only." );
-			}
-
-			return isReadOnly;
-		}
-
-		/// <summary>
-		///     <para>Filter write requests through the <see cref="ReaderWriter" />.</para>
-		/// </summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="func">                         </param>
-		/// <returns></returns>
-		/// <see cref="CatchUp" />
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ObjectDisposedException"></exception>
-		/// <exception cref="TimeoutException"></exception>
-		[CanBeNull]
-		private TResult Write<TResult>( [NotNull] Func<TResult> func ) {
-			if ( func is null ) {
-				throw new ArgumentNullException( nameof( func ) );
-			}
-
-			if ( this.ThrowWhenDisposed() || this.ThrowWhenReadOnly() ) {
-				return default( TResult )!;
-			}
-
-			if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
-				try {
-					this.ThrowWhenDisposed();
-
-					return func();
-				}
-				finally {
-					this.ReaderWriter.ExitWriteLock();
-				}
-			}
-
-			this.ThrowWhenNoWriteLock();
-
-			return default( TResult )!;
-		}
-
 		/// <summary>
 		///     <para>
 		///         Add the
@@ -356,154 +187,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="item"></param>
 		public void Add( T item ) => this.Add( item, null );
-
-		/// <summary>
-		///     <para>
-		///         Add the
-		///         <typeparam name="T">item</typeparam>
-		///         to the end of this <see cref="ConcurrentList{TType}" />.
-		///     </para>
-		/// </summary>
-		/// <param name="item">    </param>
-		/// <param name="afterAdd"></param>
-		/// <returns></returns>
-		public Boolean Add( [CanBeNull] T item, [CanBeNull] Action? afterAdd ) {
-			if ( this.ThrowWhenDisposed() ) {
-				return false;
-			}
-
-			if ( this.IsReadOnly ) {
-				this.ThrowWhenDisallowedModifications();
-
-				return false;
-			}
-
-			return this.Write( () => {
-				try {
-					this.ThrowWhenDisposed();
-					this.TheList.Add( item );
-
-					return true;
-				}
-				finally {
-					this.AnItemHasBeenAdded();
-					afterAdd?.Invoke();
-				}
-			} );
-		}
-
-		public Boolean AddAndWait( [CanBeNull] T item ) => this.Add( item, this.CatchUp );
-
-		/// <summary>Creates a hot task that needs to be awaited.</summary>
-		/// <param name="item"></param>
-		/// <param name="afterAdd"></param>
-		/// <returns></returns>
-		[NotNull]
-		public Task<Boolean> AddAsync( [CanBeNull] T item, [CanBeNull] Action? afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
-
-		/// <summary>Add a collection of items.</summary>
-		/// <param name="items">          </param>
-		/// <param name="useParallelism">
-		///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order
-		///     of items.
-		/// </param>
-		/// <param name="afterEachAdd">   <see cref="Action" /> to perform after each add.</param>
-		/// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
-		/// <exception cref="ArgumentNullException"></exception>
-		public void AddRange( [NotNull] IEnumerable<T> items, Byte useParallelism = 0, [CanBeNull] Action? afterEachAdd = null, [CanBeNull] Action? afterRangeAdded = null ) {
-			if ( this.ThrowWhenDisposed() ) {
-				return;
-			}
-
-			if ( this.IsReadOnly ) {
-				this.ThrowWhenDisallowedModifications();
-
-				return;
-			}
-
-			try {
-				if ( useParallelism.Any() ) {
-					items.AsParallel().WithDegreeOfParallelism( useParallelism ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
-				}
-				else {
-					foreach ( var item in items ) {
-						this.TryAdd( item, afterEachAdd );
-					}
-				}
-			}
-			finally {
-				this.TrimExcess();
-
-				if ( !this.ThrowWhenDisposed() ) {
-					afterRangeAdded?.Invoke();
-				}
-			}
-		}
-
-		/// <summary>Returns a hot task that needs to be awaited.</summary>
-		/// <param name="items"></param>
-		/// <param name="cancellationToken"></param>
-		/// <param name="afterEachAdd"></param>
-		/// <param name="afterRangeAdded"></param>
-		/// <param name="useParallelism"></param>
-		/// <returns></returns>
-		[NotNull]
-		public Task AddRangeAsync(
-			[CanBeNull] IEnumerable<T>? items,
-			 CancellationToken cancellationToken,
-			[CanBeNull] Action? afterEachAdd = null,
-			[CanBeNull] Action? afterRangeAdded = null,
-			Byte useParallelism = 0
-		) =>
-			Task.Run( () => {
-				this.ThrowWhenDisposed();
-
-				if ( items != null ) {
-					this.AddRange( items, useParallelism, afterEachAdd, afterRangeAdded );
-				}
-			}, cancellationToken );
-
-		/// <summary>
-		///     Returns true if any items have not been added to the list yet.
-		/// </summary>
-		/// <returns></returns>
-		/// <see cref="CatchUp" />
-		public Boolean AnyWritesPending() => this.InputBuffer.Any();
-
-		/// <summary>
-		///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.
-		/// </summary>
-		public void CatchUp() {
-			if ( this.IsReadOnly || !this.AnyWritesPending() || this.ThrowWhenDisposed() ) {
-				return;
-			}
-
-			if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
-				try {
-					if ( this.ThrowWhenDisposed() ) {
-						return;
-					}
-
-					while ( this.InputBuffer.TryDequeue( out var item ) ) {
-						if ( this.IsReadOnly || this.ThrowWhenDisposed() ) {
-							return;
-						}
-
-						try {
-							this.TheList.Add( item );
-						}
-						finally {
-							this.AnItemHasBeenAdded();
-						}
-					}
-				}
-				finally {
-					this.ReaderWriter.ExitWriteLock();
-				}
-			}
-
-			this.ThrowWhenNoWriteLock();
-		}
 
 		/// <summary>Mark this <see cref="ConcurrentList{TType}" /> to be cleared.</summary>
 		public void Clear() {
@@ -522,32 +205,6 @@ namespace Librainian.Collections.Lists {
 		}
 
 		/// <summary>
-		///     <para>Returns a copy of this <see cref="ConcurrentList{TType}" /> (at this moment).</para>
-		/// </summary>
-		/// <returns></returns>
-		[NotNull]
-		public ConcurrentList<T> Clone() {
-			this.CatchUp();
-
-			return new ConcurrentList<T>( this.Read( () => this.TheList ) );
-		}
-
-		/// <summary>
-		///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
-		///     <para>Blocking.</para>
-		/// </summary>
-		/// <see cref="IsReadOnly" />
-		public void Complete() {
-			try {
-				this.CatchUp();
-				this.TrimExcess();
-			}
-			finally {
-				this.IsReadOnly = true;
-			}
-		}
-
-		/// <summary>
 		///     <para>
 		///         Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this
 		///         moment in time.
@@ -563,7 +220,7 @@ namespace Librainian.Collections.Lists {
 		/// <param name="arrayIndex"></param>
 		public void CopyTo( T[] array, Int32 arrayIndex ) {
 			if ( array is null ) {
-				throw new ArgumentNullException( nameof( array ) );
+				throw new ArgumentEmptyException( nameof( array ) );
 			}
 
 			this.Read( () => {
@@ -571,11 +228,6 @@ namespace Librainian.Collections.Lists {
 
 				return true;
 			} );
-		}
-
-		public override void DisposeManaged() {
-
-			//nothing to do.. yet.
 		}
 
 		/// <summary>
@@ -634,34 +286,6 @@ namespace Librainian.Collections.Lists {
 		/// <returns></returns>
 		public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
 
-		/// <summary>
-		///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
-		/// </summary>
-		/// <param name="item">        </param>
-		/// <param name="afterRemoval"></param>
-		/// <returns></returns>
-		public Boolean Remove( [CanBeNull] T item, [CanBeNull] Action? afterRemoval ) {
-			if ( this.ThrowWhenDisposed() ) {
-				return false;
-			}
-
-			if ( this.IsReadOnly ) {
-				this.ThrowWhenDisallowedModifications();
-
-				return false;
-			}
-
-			return this.Write( () => {
-				var result = this.TheList.Remove( item );
-
-				if ( result ) {
-					this.AnItemHasBeenRemoved( afterRemoval );
-				}
-
-				return result;
-			} );
-		}
-
 		public void RemoveAt( Int32 index ) {
 			if ( index < 0 ) {
 				this.ThrowWhenOutOfRange( index );
@@ -692,9 +316,383 @@ namespace Librainian.Collections.Lists {
 			} );
 		}
 
+		/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
+		/// <returns></returns>
+		IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
+
+		private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
+
+		private void AnItemHasBeenRemoved( Action? action = null ) {
+			Interlocked.Decrement( ref this.ItemCount );
+			action?.Execute();
+		}
+
+		/// <summary>
+		///     TODO These need to be tested!!
+		/// </summary>
+		/// <param name="_"></param>
+		[OnDeserialized]
+		private void OnDeserialized( StreamingContext _ ) => this.ResetCount( this.TheList.Count );
+
+		/// <summary>
+		///     <para>Filter read requests through a <see cref="ReaderWriterLockSlim" />.</para>
+		/// </summary>
+		/// <typeparam name="TFuncResult"></typeparam>
+		/// <param name="func"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentEmptyException"></exception>
+		/// <exception cref="ObjectDisposedException"></exception>
+		private TFuncResult? Read<TFuncResult>( Func<TFuncResult?> func ) {
+			if ( func == null ) {
+				throw new ArgumentEmptyException( nameof( func ) );
+			}
+
+			if ( this.ThrowWhenDisposed() ) {
+				return default( TFuncResult );
+			}
+
+			/*
+
+			 //TODO is this logic a good or bad shortcut?
+			if ( this.IsReadOnly ) {
+				return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
+			}
+			*/
+
+			this.CatchUp();
+
+			if ( this.ReaderWriter.TryEnterUpgradeableReadLock( this.TimeoutForReads ) ) {
+				try {
+					return func();
+				}
+				finally {
+					this.ReaderWriter.ExitUpgradeableReadLock();
+				}
+			}
+
+			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new TimeoutException( CouldNotObtainReadLock );
+			}
+
+			return default( TFuncResult? );
+		}
+
+		private void ResetCount( Int32 toCount = default ) => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) + toCount );
+
+		private Int32 ResizeCapacity( Int32 capacity ) => this.Write( () => this.TheList.Capacity = capacity );
+
+		private void ThrowWhenDisallowedModifications() {
+			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new InvalidOperationException( "List does not allow modifications." );
+			}
+		}
+
+		/// <summary>
+		///     <para>
+		///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
+		///         <exception cref="ObjectDisposedException" /> will be thrown.
+		///     </para>
+		///     <para>Otherwise, true is returned when this object has been disposed.</para>
+		/// </summary>
+		/// <exception cref="ObjectDisposedException"></exception>
+		private Boolean ThrowWhenDisposed() {
+			var isDisposed = this.IsDisposed;
+
+			if ( isDisposed && this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
+			}
+
+			return isDisposed;
+		}
+
+		private void ThrowWhenNoReadLock() {
+			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new TimeoutException( CouldNotObtainReadLock );
+			}
+		}
+
+		private void ThrowWhenNoWriteLock() {
+			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new TimeoutException( "Could not obtain write-lock." );
+			}
+		}
+
+		/// <summary>
+		///     <para>
+		///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
+		///         <exception cref="ArgumentOutOfRangeException" /> will be thrown.
+		///     </para>
+		/// </summary>
+		/// <param name="index"></param>
+		private T? ThrowWhenOutOfRange( Int32 index ) {
+			var message = $"The value {index} is out of range. (It must be between 0 and {this.Count}).";
+			message.Log();
+
+			if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new ArgumentOutOfRangeException( nameof( index ), index, message );
+			}
+
+			return default( T? );
+		}
+
+		/// <summary>
+		///     <para>
+		///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
+		///         <exception cref="ObjectDisposedException" /> will be thrown.
+		///     </para>
+		///     <para>Otherwise, true is returned when this object has been disposed.</para>
+		/// </summary>
+		/// <exception cref="ObjectDisposedException"></exception>
+		private Boolean ThrowWhenReadOnly() {
+			var isReadOnly = this.IsReadOnly;
+
+			if ( isReadOnly && this.ThrowExceptions == ThrowSetting.Throw ) {
+				throw new InvalidOperationException( $"This {nameof( ConcurrentList<T> )} is set to read-only." );
+			}
+
+			return isReadOnly;
+		}
+
+		/// <summary>
+		///     <para>Filter write requests through the <see cref="ReaderWriter" />.</para>
+		/// </summary>
+		/// <typeparam name="TResult"></typeparam>
+		/// <param name="func">                         </param>
+		/// <returns></returns>
+		/// <see cref="CatchUp" />
+		/// <exception cref="ArgumentEmptyException"></exception>
+		/// <exception cref="ObjectDisposedException"></exception>
+		/// <exception cref="TimeoutException"></exception>
+		private TResult? Write<TResult>( Func<TResult> func ) {
+			if ( func is null ) {
+				throw new ArgumentEmptyException( nameof( func ) );
+			}
+
+			if ( this.ThrowWhenDisposed() || this.ThrowWhenReadOnly() ) {
+				return default( TResult );
+			}
+
+			if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
+				try {
+					this.ThrowWhenDisposed();
+
+					return func();
+				}
+				finally {
+					this.ReaderWriter.ExitWriteLock();
+				}
+			}
+
+			this.ThrowWhenNoWriteLock();
+
+			return default( TResult );
+		}
+
+		/// <summary>
+		///     <para>
+		///         Add the
+		///         <typeparam name="T">item</typeparam>
+		///         to the end of this <see cref="ConcurrentList{TType}" />.
+		///     </para>
+		/// </summary>
+		/// <param name="item">    </param>
+		/// <param name="afterAdd"></param>
+		/// <returns></returns>
+		public Boolean Add( T? item, Action? afterAdd ) {
+			if ( this.ThrowWhenDisposed() ) {
+				return false;
+			}
+
+			if ( this.IsReadOnly ) {
+				this.ThrowWhenDisallowedModifications();
+
+				return false;
+			}
+
+			return this.Write( () => {
+				try {
+					this.ThrowWhenDisposed();
+					this.TheList.Add( item );
+
+					return true;
+				}
+				finally {
+					this.AnItemHasBeenAdded();
+					afterAdd?.Invoke();
+				}
+			} );
+		}
+
+		public Boolean AddAndWait( T? item ) => this.Add( item, this.CatchUp );
+
+		/// <summary>Creates a hot task that needs to be awaited.</summary>
+		/// <param name="item"></param>
+		/// <param name="afterAdd"></param>
+		/// <returns></returns>
+		public Task<Boolean> AddAsync( T? item, Action? afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
+
+		/// <summary>Add a collection of items.</summary>
+		/// <param name="items">          </param>
+		/// <param name="useParallelism">
+		///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order
+		///     of items.
+		/// </param>
+		/// <param name="afterEachAdd">   <see cref="Action" /> to perform after each add.</param>
+		/// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
+		/// <exception cref="ArgumentEmptyException"></exception>
+		public void AddRange( IEnumerable<T?> items, Byte useParallelism = 0, Action? afterEachAdd = null, Action? afterRangeAdded = null ) {
+			if ( this.ThrowWhenDisposed() ) {
+				return;
+			}
+
+			if ( this.IsReadOnly ) {
+				this.ThrowWhenDisallowedModifications();
+
+				return;
+			}
+
+			try {
+				if ( useParallelism.Any() ) {
+					items.AsParallel().WithDegreeOfParallelism( useParallelism ).ForAll( item => this.TryAdd( item, afterEachAdd ) );
+				}
+				else {
+					foreach ( var item in items ) {
+						this.TryAdd( item, afterEachAdd );
+					}
+				}
+			}
+			finally {
+				this.TrimExcess();
+
+				if ( !this.ThrowWhenDisposed() ) {
+					afterRangeAdded?.Invoke();
+				}
+			}
+		}
+
+		/// <summary>Returns a hot task that needs to be awaited.</summary>
+		/// <param name="items"></param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="afterEachAdd"></param>
+		/// <param name="afterRangeAdded"></param>
+		/// <param name="useParallelism"></param>
+		/// <returns></returns>
+		public Task AddRangeAsync(
+			IEnumerable<T>? items,
+			CancellationToken cancellationToken,
+			Action? afterEachAdd = null,
+			Action? afterRangeAdded = null,
+			Byte useParallelism = 0
+		) =>
+			Task.Run( () => {
+				this.ThrowWhenDisposed();
+
+				if ( items != null ) {
+					this.AddRange( items, useParallelism, afterEachAdd, afterRangeAdded );
+				}
+			}, cancellationToken );
+
+		/// <summary>
+		///     Returns true if any items have not been added to the list yet.
+		/// </summary>
+		/// <returns></returns>
+		/// <see cref="CatchUp" />
+		public Boolean AnyWritesPending() => this.InputBuffer.Any();
+
+		/// <summary>
+		///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.
+		/// </summary>
+		public void CatchUp() {
+			if ( this.IsReadOnly || !this.AnyWritesPending() || this.ThrowWhenDisposed() ) {
+				return;
+			}
+
+			if ( this.ReaderWriter.TryEnterWriteLock( this.TimeoutForWrites ) ) {
+				try {
+					if ( this.ThrowWhenDisposed() ) {
+						return;
+					}
+
+					while ( this.InputBuffer.TryDequeue( out var item ) ) {
+						if ( this.IsReadOnly || this.ThrowWhenDisposed() ) {
+							return;
+						}
+
+						try {
+							this.TheList.Add( item );
+						}
+						finally {
+							this.AnItemHasBeenAdded();
+						}
+					}
+				}
+				finally {
+					this.ReaderWriter.ExitWriteLock();
+				}
+			}
+
+			this.ThrowWhenNoWriteLock();
+		}
+
+		/// <summary>
+		///     <para>Returns a copy of this <see cref="ConcurrentList{TType}" /> (at this moment).</para>
+		/// </summary>
+		/// <returns></returns>
+		public ConcurrentList<T> Clone() {
+			this.CatchUp();
+
+			return new ConcurrentList<T>( this.Read( () => this.TheList ) );
+		}
+
+		/// <summary>
+		///     Signal that this <see cref="ConcurrentList{TType}" /> will not be modified any more.
+		///     <para>Blocking.</para>
+		/// </summary>
+		/// <see cref="IsReadOnly" />
+		public void Complete() {
+			try {
+				this.CatchUp();
+				this.TrimExcess();
+			}
+			finally {
+				this.IsReadOnly = true;
+			}
+		}
+
+		public override void DisposeManaged() {
+			//nothing to do.. yet.
+		}
+
+		/// <summary>
+		///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
+		/// </summary>
+		/// <param name="item">        </param>
+		/// <param name="afterRemoval"></param>
+		/// <returns></returns>
+		public Boolean Remove( T? item, Action? afterRemoval ) {
+			if ( this.ThrowWhenDisposed() ) {
+				return false;
+			}
+
+			if ( this.IsReadOnly ) {
+				this.ThrowWhenDisallowedModifications();
+
+				return false;
+			}
+
+			return this.Write( () => {
+				var result = this.TheList.Remove( item );
+
+				if ( result ) {
+					this.AnItemHasBeenRemoved( afterRemoval );
+				}
+
+				return result;
+			} );
+		}
+
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.Take( 30 ).ToStrings( this.Count > 30 ? "..." : String.Empty )}";
 
 		/// <summary>The <see cref="List{T}.Capacity" /> is resized down to the <see cref="List{T}.Count" />.</summary>
@@ -705,7 +703,7 @@ namespace Librainian.Collections.Lists {
 				return true;
 			} );
 
-		public Boolean TryAdd( [CanBeNull] T item, [CanBeNull] Action? afterAdd = null ) => this.Add( item, afterAdd );
+		public Boolean TryAdd( T? item, Action? afterAdd = null ) => this.Add( item, afterAdd );
 
 		/// <summary>
 		///     Returns true if there are no more incoming items.
@@ -738,7 +736,7 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="index">   </param>
 		/// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
-		public Boolean TryGet( Int32 index, [CanBeNull] Action<T>? afterGet ) {
+		public Boolean TryGet( Int32 index, Action<T?>? afterGet ) {
 			if ( index < 0 ) {
 				return false;
 			}
@@ -757,104 +755,6 @@ namespace Librainian.Collections.Lists {
 			} );
 		}
 
-		/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
-		/// <returns></returns>
-		[NotNull]
-		IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
-
-		/*
-
-        /// <summary>
-        ///     <para>Harker Shuffle Algorithm</para>
-        ///     <para>
-        ///         Not cryptographically guaranteed or tested to be the most performant, but it *should* shuffle *well enough*
-        ///         in reasonable time.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="iterations">At least 1 iterations to be done over the whole list.</param>
-        /// <param name="forHowLong">Or for how long to run.</param>
-        /// <param name="cancellationToken">Or until cancelled.</param>
-        public void ShuffleByHarker( Int32 iterations = 1, TimeSpan? forHowLong = null, CancellationToken? cancellationToken = null ) =>
-            this.Write( () => {
-                Stopwatch started = null;
-
-                if ( forHowLong.HasValue ) {
-                    started = Stopwatch.StartNew(); //don't allocate a stopwatch unless we're waiting for time to pass.
-                }
-
-                var itemCount = this.Count;
-
-                var leftTracker = new ReaderWriterLockSlim[ itemCount ];
-
-                for ( var i = 0; i < leftTracker.Length; i++ ) {
-                    leftTracker[ i ] = new ReaderWriterLockSlim();
-                }
-
-                var rightTracker = new ReaderWriterLockSlim[ itemCount ];
-
-                for ( var i = 0; i < rightTracker.Length; i++ ) {
-                    rightTracker[ i ] = new ReaderWriterLockSlim();
-                }
-
-                if ( !cancellationToken.HasValue ) {
-                    cancellationToken = CancellationToken.None;
-                }
-
-                var parallelOptions = new ParallelOptions {
-                    CancellationToken = cancellationToken.Value, MaxDegreeOfParallelism = Environment.ProcessorCount
-                };
-
-                var left = new TranslateBytesToInt32 {
-                    Bytes = new Byte[ itemCount * sizeof( Int32 ) ]
-                };
-
-                var right = new TranslateBytesToInt32 {
-                    Bytes = new Byte[ itemCount * sizeof( Int32 ) ]
-                };
-
-                do {
-                    Parallel.Invoke( parallelOptions, () => Randem.NextBytes( left.Bytes ), () => Randem.NextBytes( right.Bytes ) );
-
-                    //I don't know how well the list will handle this Parallel.For. It needs tested. I can think values can possibly overwrite each other and some may end up lost.
-                    Parallel.For( 0, itemCount, parallelOptions, index => {
-
-                        //so.. how badly will this fail? race conditions and all..
-                        //and if we're locking, then is there any benefit to using Parallel.For?
-
-                        if ( leftTracker[ index ].TryEnterWriteLock( 0 ) && rightTracker[ index ].TryEnterWriteLock( 0 ) ) {
-                            try {
-                                var indexA = left.Ints[ index ];
-                                var indexB = right.Ints[ index ];
-
-                                var c = this.TheList[ indexA ];
-                                this.TheList[ indexA ] = this.TheList[ indexB ];
-                                this.TheList[ indexB ] = c;
-                            }
-                            finally {
-                                rightTracker[ index ].ExitWriteLock();
-                                leftTracker[ index ].ExitWriteLock();
-                            }
-                        }
-                    } );
-
-                    --iterations;
-
-                    if ( cancellationToken.Value.IsCancellationRequested ) {
-                        return true;
-                    }
-
-                    if ( forHowLong.HasValue ) {
-                        iterations++; //we're waiting for time. reincrement the counter.
-
-                        if ( started.Elapsed > forHowLong.Value ) {
-                            return true;
-                        }
-                    }
-                } while ( iterations.Any() );
-
-                return true;
-            } );
-        */
 	}
+
 }

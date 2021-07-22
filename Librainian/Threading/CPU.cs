@@ -27,7 +27,6 @@ namespace Librainian.Threading {
 	using System;
 	using System.Diagnostics;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
 	using Logging;
 
 	public static class CPU {
@@ -43,7 +42,6 @@ namespace Librainian.Threading {
 		///     <para>8 cores to 8</para>
 		///     <para>n cores to n</para>
 		/// </summary>
-		[NotNull]
 		public static ParallelOptions AllCPU { get; } = new() {
 			MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount )
 		};
@@ -59,7 +57,6 @@ namespace Librainian.Threading {
 		///     <para>8 cores to 7</para>
 		///     <para>n cores to n-1</para>
 		/// </summary>
-		[NotNull]
 		public static ParallelOptions AllExceptOne { get; } = new() {
 			MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount - 1 ) //leave the OS a little wiggle room on one CPU
 		};
@@ -75,7 +72,6 @@ namespace Librainian.Threading {
 		///     <para>8 cores to 4</para>
 		///     <para>n cores to n/2</para>
 		/// </summary>
-		[NotNull]
 		public static ParallelOptions CPULight { get; } = new() {
 			MaxDegreeOfParallelism = Environment.ProcessorCount / 2
 		};
@@ -91,7 +87,6 @@ namespace Librainian.Threading {
 		///     <para>8 cores to 16</para>
 		///     <para>n cores to 2n</para>
 		/// </summary>
-		[NotNull]
 		public static ParallelOptions DiskIntensive { get; } = new() {
 			MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount * 2 )
 		};
@@ -99,7 +94,6 @@ namespace Librainian.Threading {
 		/// <summary>
 		/// Set MaxDegreeOfParallelism to half of maximum CPU processors.
 		/// </summary>
-		[NotNull]
 		public static ParallelOptions HalfOfCPU { get; } = new() {
 			MaxDegreeOfParallelism = Environment.ProcessorCount / 2
 		};

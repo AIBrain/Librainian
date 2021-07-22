@@ -28,16 +28,15 @@ namespace Librainian.Databases.MMF {
 	using System.Linq;
 	using System.Reflection;
 	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
 
 	/// <summary>Check if a Type is a value type</summary>
 	internal class ValueTypeCheck {
 
 		private Type Type { get; }
 
-		public ValueTypeCheck( [CanBeNull] Type objectType ) => this.Type = objectType;
+		public ValueTypeCheck( Type? objectType ) => this.Type = objectType;
 
-		private static Boolean HasMarshalDefinedSize( [NotNull] MemberInfo info ) {
+		private static Boolean HasMarshalDefinedSize( MemberInfo info ) {
 			var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
 
 			if ( customAttributes.Length == 0 ) {

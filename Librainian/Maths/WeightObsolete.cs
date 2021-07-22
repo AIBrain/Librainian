@@ -26,7 +26,7 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -74,12 +74,11 @@ namespace Librainian.Maths {
 
 		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
 
-		public static implicit operator Double( [NotNull] WeightObsolete special ) => special.Value;
+		public static implicit operator Double( WeightObsolete special ) => special.Value;
 
-		[NotNull]
-		public static WeightObsolete Parse( [NotNull] String value ) {
+		public static WeightObsolete Parse( String value ) {
 			if ( value is null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			return new WeightObsolete( Double.Parse( value ) );
@@ -95,7 +94,6 @@ namespace Librainian.Maths {
 
 		public Boolean IsNeither() => !this.IsFor() && !this.IsAgainst();
 
-		[NotNull]
 		public override String ToString() => $"{this.Value:R}";
 	}
 }

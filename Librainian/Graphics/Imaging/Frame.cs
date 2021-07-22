@@ -64,7 +64,7 @@ namespace Librainian.Graphics.Imaging {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		[Pure]
-		public static Boolean Equals( [CanBeNull] Frame? left, [CanBeNull] Frame? right ) {
+		public static Boolean Equals( Frame? left, Frame? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -99,7 +99,7 @@ namespace Librainian.Graphics.Imaging {
 		/// <param name="left">The first value to compare.</param>
 		/// <param name="right">The second value to compare.</param>
 		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-		public static Boolean operator !=( [CanBeNull] Frame left, [CanBeNull] Frame right ) => !left.Equals( right );
+		public static Boolean operator !=( Frame? left, Frame? right ) => !left.Equals( right );
 
 		/// <summary>
 		///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Graphics.Imaging.Frame" />
@@ -111,7 +111,7 @@ namespace Librainian.Graphics.Imaging {
 		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
 		///     false.
 		/// </returns>
-		public static Boolean operator ==( [CanBeNull] Frame left, [CanBeNull] Frame right ) => left.Equals( right );
+		public static Boolean operator ==( Frame? left, Frame? right ) => left.Equals( right );
 
 		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
 		/// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
@@ -124,7 +124,7 @@ namespace Librainian.Graphics.Imaging {
 		///     <see langword="true" /> if <paramref name="obj" /> and this instance are the same type and represent the same
 		///     value; otherwise, <see langword="false" />.
 		/// </returns>
-		public override Boolean Equals( [CanBeNull] Object? obj ) => Object.Equals( this, obj is Frame frame ? frame : default( Frame ) );
+		public override Boolean Equals( Object? obj ) => Object.Equals( this, obj is Frame frame ? frame : default( Frame ) );
 
 		/// <summary>Returns the hash code for this instance.</summary>
 		/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>

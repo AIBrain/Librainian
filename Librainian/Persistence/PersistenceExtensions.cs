@@ -33,6 +33,7 @@ namespace Librainian.Persistence {
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.Diagnostics.CodeAnalysis;
 	using System.IdentityModel.Tokens.Jwt;
 	using System.IO;
 	using System.IO.IsolatedStorage;
@@ -44,13 +45,12 @@ namespace Librainian.Persistence {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Converters;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
 	using Newtonsoft.Json;
 	using Newtonsoft.Json.Serialization;
-	using Xunit;
 
 	public static class PersistenceExtensions {
 
@@ -70,7 +70,6 @@ namespace Librainian.Persistence {
 			return folder;
 		} );
 
-		[NotNull]
 		public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
 			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 			PreserveReferencesHandling = PreserveReferencesHandling.All
@@ -78,7 +77,6 @@ namespace Librainian.Persistence {
 
 		public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
 
-		[NotNull]
 		public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
 
 			//TODO ContractResolver needs testing
@@ -94,12 +92,11 @@ namespace Librainian.Persistence {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="storedAsString"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="EncoderFallbackException"></exception>
 		/// <exception cref="FormatException"></exception>
 		/// <exception cref="System.Xml.XmlException"></exception>
-		[CanBeNull]
-		public static T? Deserialize<T>( [CanBeNull] this String? storedAsString ) {
+		public static T? Deserialize<T>( this String? storedAsString ) {
 			try {
 				return storedAsString.FromJSON<T>();
 			}
@@ -111,16 +108,15 @@ namespace Librainian.Persistence {
 		}
 
 		public static async Task<Boolean> DeserializeDictionary<TKey, TValue>(
-			[NotNull] this ConcurrentDictionary<TKey, TValue> toDictionary,
-			[NotNull] Folder folder,
-			[CanBeNull] String? calledWhat,
-			[CanBeNull] String? extension,
+			this ConcurrentDictionary<TKey, TValue> toDictionary,
+			Folder folder,
+			String? calledWhat,
+			String? extension,
 			CancellationToken cancellationToken
 		) where TKey : IComparable<TKey> {
-			Assert.NotNull( nameof( folder ) );
 
 			if ( folder == null ) {
-				throw new ArgumentNullException( nameof( folder ) );
+				throw new ArgumentEmptyException( nameof( folder ) );
 			}
 
 			try {
@@ -193,9 +189,8 @@ namespace Librainian.Persistence {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="bytes"></param>
 		/// <returns></returns>
-		[CanBeNull]
 		[Obsolete]
-		public static T Deserializer<T>( [NotNull] this Byte[] bytes ) {
+		public static T Deserializer<T>( this Byte[] bytes ) {
 			using var memoryStream = new MemoryStream( bytes );
 
 			var binaryFormatter = new BinaryFormatter();
@@ -207,13 +202,13 @@ namespace Librainian.Persistence {
 		/// <param name="isf">     </param>
 		/// <param name="document"></param>
 		/// <returns></returns>
-		public static Boolean FileCanBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
+		public static Boolean FileCanBeRead( this IsolatedStorageFile isf, Document document ) {
 			if ( isf is null ) {
-				throw new ArgumentNullException( nameof( isf ) );
+				throw new ArgumentEmptyException( nameof( isf ) );
 			}
 
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			try {
@@ -229,7 +224,7 @@ namespace Librainian.Persistence {
 			catch ( IsolatedStorageException exception ) {
 				exception.Log();
 			}
-			catch ( ArgumentNullException exception ) {
+			catch ( ArgumentEmptyException exception ) {
 				exception.Log();
 			}
 			catch ( ArgumentException exception ) {
@@ -248,13 +243,13 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public static Boolean FileCannotBeRead( [NotNull] this IsolatedStorageFile isf, [NotNull] Document document ) {
+		public static Boolean FileCannotBeRead( this IsolatedStorageFile isf, Document document ) {
 			if ( isf is null ) {
-				throw new ArgumentNullException( nameof( isf ) );
+				throw new ArgumentEmptyException( nameof( isf ) );
 			}
 
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			return !isf.FileCanBeRead( document );
@@ -264,8 +259,7 @@ namespace Librainian.Persistence {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="data"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static T? FromJSON<T>( [CanBeNull] this String? data ) {
+		public static T? FromJSON<T>( this String? data ) {
 			if ( String.IsNullOrWhiteSpace( data ) ) {
 				return default( T );
 			}
@@ -277,7 +271,7 @@ namespace Librainian.Persistence {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="InvalidDataContractException">
 		///     the type being serialized does not conform to data contract rules. For example, the
 		///     <see cref="DataContractAttribute" /> attribute
@@ -285,10 +279,9 @@ namespace Librainian.Persistence {
 		/// </exception>
 		/// <exception cref="SerializationException">there is a problem with the instance being serialized.</exception>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[CanBeNull]
-		public static String? Serialize<T>( [NotNull] this T self ) {
+		public static String? Serialize<T>( [DisallowNull] this T self ) {
 			if ( self is null ) {
-				throw new ArgumentNullException( nameof( self ) );
+				throw new ArgumentEmptyException( nameof( self ) );
 			}
 
 			try {
@@ -317,11 +310,11 @@ namespace Librainian.Persistence {
 		/// <param name="extension"> </param>
 		/// <returns></returns>
 		public static async Task<Boolean> SerializeDictionary<TKey, TValue>(
-			[NotNull] this IDictionary<TKey, TValue> dictionary,
-			[NotNull] Folder folder,
-			[CanBeNull] String? calledWhat, CancellationToken cancellationToken,
-			[CanBeNull] IProgress<Single>? progress = null,
-			[CanBeNull] String? extension = ".xml"
+			this IDictionary<TKey, TValue> dictionary,
+			Folder folder,
+			String? calledWhat, CancellationToken cancellationToken,
+			IProgress<Single>? progress = null,
+			String? extension = ".xml"
 		) where TKey : IComparable<TKey> {
 			if ( !dictionary.Any() ) {
 				return false;
@@ -403,7 +396,7 @@ namespace Librainian.Persistence {
 		[CanBeNull]
 		public static Byte[]? Serializer<T>( [NotNull] this T self ) {
 			if ( self is null ) {
-				throw new ArgumentNullException( nameof( self ) );
+				throw new ArgumentEmptyException( nameof( self ) );
 			}
 
 			try {
@@ -436,7 +429,7 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		public static Boolean Save<TSource>(this TSource objectToSerialize, [NotNull] String attribute, Document destination, CompressionLevel compression = CompressionLevel.Fastest)
 		{
-			if (attribute.IsNullOrWhiteSpace()) { throw new ArgumentNullException(nameof(attribute)); }
+			if (attribute.IsNullOrWhiteSpace()) { throw new ArgumentEmptyException(nameof(attribute)); }
 
 			try
 			{
@@ -459,19 +452,13 @@ namespace Librainian.Persistence {
 		}
 		*/
 
-		/// <summary>Return this object as a JSON string.</summary>
+		/// <summary>Return this object as a JSON string or null.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self">       </param>
 		/// <param name="formatting"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static String? ToJSON<T>( [CanBeNull] this T self, Formatting formatting = Formatting.None ) {
-			if ( self is null ) {
-				return default( String? );
-			}
-
-			return JsonConvert.SerializeObject( self, formatting, Jss.Value );
-		}
+		public static String? ToJSON<T>( this T? self, Formatting formatting = Formatting.None ) =>
+			self is null ? default( String? ) : JsonConvert.SerializeObject( self, formatting, Jss.Value );
 
 		/*
 
@@ -488,7 +475,7 @@ namespace Librainian.Persistence {
 		/// <see cref="TrySave{TKey}" />
 		/// <returns></returns>
 		public static Boolean TryLoad<TSource>([NotNull] this String attribute, out TSource value, String location = null) {
-			if (attribute is null) { throw new ArgumentNullException(nameof(attribute)); }
+			if (attribute is null) { throw new ArgumentEmptyException(nameof(attribute)); }
 
 			value = default;
 
@@ -507,7 +494,7 @@ namespace Librainian.Persistence {
 				return true;
 			}
 			catch (InvalidOperationException exception) { exception.Log(); }
-			catch (ArgumentNullException exception) { exception.Log(); }
+			catch (ArgumentEmptyException exception) { exception.Log(); }
 			catch (SerializationException exception) { exception.Log(); }
 			catch (Exception exception) { exception.Log(); }
 
@@ -526,7 +513,7 @@ namespace Librainian.Persistence {
 		/// <returns></returns>
 		public static Boolean TrySave<TKey>( [CanBeNull] this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			if ( overwrite && document.Exists() ) {
@@ -558,8 +545,7 @@ namespace Librainian.Persistence {
 
 		private class MyContractResolver : DefaultContractResolver {
 
-			[NotNull]
-			protected override IList<JsonProperty> CreateProperties( [CanBeNull] Type type, MemberSerialization memberSerialization ) {
+			protected override IList<JsonProperty> CreateProperties( Type? type, MemberSerialization memberSerialization ) {
 				var list = base.CreateProperties( type, memberSerialization );
 
 				foreach ( var prop in list ) {

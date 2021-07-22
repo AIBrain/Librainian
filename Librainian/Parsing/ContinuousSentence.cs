@@ -30,9 +30,9 @@ namespace Librainian.Parsing {
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     A thread-safe object to contain a moving target of sentences.
@@ -43,18 +43,15 @@ namespace Librainian.Parsing {
 		//TODO this class *really* needs updated
 
 		[JsonProperty]
-		[NotNull]
 		private String _inputBuffer = String.Empty;
 
 		[JsonIgnore]
-		[NotNull]
 		private ReaderWriterLockSlim AccessInputBuffer { get; } = new( LockRecursionPolicy.SupportsRecursion );
 
 		public static IEnumerable<String> EndOfUSEnglishSentences { get; } = new[] {
 			".", "?", "!"
 		};
 
-		[NotNull]
 		public String CurrentBuffer {
 			get {
 				try {
@@ -79,12 +76,11 @@ namespace Librainian.Parsing {
 			}
 		}
 
-		public ContinuousSentence( [CanBeNull] String? startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
+		public ContinuousSentence( String? startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
 		/// <summary>Append the <paramref name="text" /> to the current sentence buffer.</summary>
 		/// <returns></returns>
-		[NotNull]
-		public ContinuousSentence Add( [CanBeNull] String? text ) {
+		public ContinuousSentence Add( String? text ) {
 			text ??= String.Empty;
 
 			this.CurrentBuffer += text;
@@ -97,18 +93,16 @@ namespace Librainian.Parsing {
 			using ( this.AccessInputBuffer ) { }
 		}
 
-		[NotNull]
 		public String PeekNextChar() =>
 			new( new[] {
 				this.CurrentBuffer.FirstOrDefault()
 			} );
 
-		[NotNull]
 		public String PeekNextSentence() {
 			try {
 				this.AccessInputBuffer.EnterReadLock();
 
-				var sentence = this.CurrentBuffer.FirstSentence();
+				var sentence = this.CurrentBuffer.FirstSentence()?.ToString();
 
 				return String.IsNullOrEmpty( sentence ) ? String.Empty : sentence;
 			}
@@ -117,14 +111,12 @@ namespace Librainian.Parsing {
 			}
 		}
 
-		[NotNull]
 		public String PeekNextWord() {
 			var word = this.CurrentBuffer.ToWords().FirstOrDefault();
 
 			return word ?? String.Empty;
 		}
 
-		[NotNull]
 		public String PullNextChar() {
 			try {
 				this.AccessInputBuffer.EnterWriteLock();
@@ -148,7 +140,6 @@ namespace Librainian.Parsing {
 			}
 		}
 
-		[NotNull]
 		public String PullNextSentence() {
 			try {
 				this.AccessInputBuffer.EnterUpgradeableReadLock();

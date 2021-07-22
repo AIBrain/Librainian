@@ -24,10 +24,8 @@
 
 namespace Librainian.Measurement.Time {
 
-	using System;
 	using System.Numerics;
-	using ExtendedNumerics;
-	using Rationals;
+	using Maths.Bigger;
 
 	public static class PlanckExtensions {
 
@@ -42,6 +40,7 @@ namespace Librainian.Measurement.Time {
 			return integer;
 		}
 
+		/*
 		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>
@@ -53,17 +52,17 @@ namespace Librainian.Measurement.Time {
 
 			return plancks.WholePart;
 		}
+		*/
 
 		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>
 		/// <returns></returns>
 		public static BigInteger PullPlancks( this BigDecimal constant, ref BigInteger planckTimes ) {
-			var reduce = ( BigInteger )constant;
+			var times = BigDecimal.Divide( planckTimes, constant );
+			planckTimes -= BigInteger.Multiply( ( BigInteger )times, ( BigInteger )constant );
 
-			planckTimes -= reduce;
-
-			return reduce;
+			return ( BigInteger )times;
 		}
 
 		/*

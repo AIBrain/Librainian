@@ -29,5 +29,6 @@ namespace Librainian.Measurement.Time {
 
 	using System;
 
-	public record TimeProgression( Double MillisecondsPassed, Double Progress ) { }
+	public record TimeProgression( Double MillisecondsPassed, Double Progress );
+
 }

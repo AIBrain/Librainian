@@ -1,4 +1,4 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+// Copyright � Protiguous. All Rights Reserved.
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
@@ -20,18 +20,31 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ReferenceEqualityComparer.cs" last formatted on 2020-08-14 at 8:46 PM.
+// File "FileSizeFormatProviderExtensions.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.FileSystem {
 
 	using System;
-	using System.Collections.Generic;
-	using JetBrains.Annotations;
 
-	public class ReferenceEqualityComparer : EqualityComparer<Object> {
-
-		public override Boolean Equals( [CanBeNull] Object? x, [CanBeNull] Object? y ) => ReferenceEquals( x, y );
-
-		public override Int32 GetHashCode( [CanBeNull] Object? obj ) => obj?.GetHashCode() ?? 0;
+	public static class FileSizeExtensions {
+		public static String ToFileSize( this Int64 size ) {
+			if ( size < 1024 ) { return size.ToString( "F0" ) + " bytes"; }
+			if ( size < Math.Pow( 1024, 2 ) ) { return ( size / 1024 ).ToString( "F0" ) + "KB"; }
+			if ( size < Math.Pow( 1024, 3 ) ) { return ( size / Math.Pow( 1024, 2 ) ).ToString( "F0" ) + "MB"; }
+			if ( size < Math.Pow( 1024, 4 ) ) { return ( size / Math.Pow( 1024, 3 ) ).ToString( "F0" ) + "GB"; }
+			if ( size < Math.Pow( 1024, 5 ) ) { return ( size / Math.Pow( 1024, 4 ) ).ToString( "F0" ) + "TB"; }
+			if ( size < Math.Pow( 1024, 6 ) ) { return ( size / Math.Pow( 1024, 5 ) ).ToString( "F0" ) + "PB"; }
+			return ( size / Math.Pow( 1024, 6 ) ).ToString( "F0" ) + "EB";
+		}
+		public static String ToFileSize( this UInt64 size ) {
+			if ( size < 1024 ) { return size.ToString( "F0" ) + " bytes"; }
+			if ( size < Math.Pow( 1024, 2 ) ) { return ( size / 1024 ).ToString( "F0" ) + "KB"; }
+			if ( size < Math.Pow( 1024, 3 ) ) { return ( size / Math.Pow( 1024, 2 ) ).ToString( "F0" ) + "MB"; }
+			if ( size < Math.Pow( 1024, 4 ) ) { return ( size / Math.Pow( 1024, 3 ) ).ToString( "F0" ) + "GB"; }
+			if ( size < Math.Pow( 1024, 5 ) ) { return ( size / Math.Pow( 1024, 4 ) ).ToString( "F0" ) + "TB"; }
+			if ( size < Math.Pow( 1024, 6 ) ) { return ( size / Math.Pow( 1024, 5 ) ).ToString( "F0" ) + "PB"; }
+			return ( size / Math.Pow( 1024, 6 ) ).ToString( "F0" ) + "EB";
+		}
 	}
+	
 }

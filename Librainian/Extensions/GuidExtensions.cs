@@ -28,8 +28,8 @@ namespace Librainian.Extensions {
 	using System.IO;
 	using System.Linq;
 	using System.Text.RegularExpressions;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
 
@@ -50,9 +50,9 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public static Guid FromPath( [NotNull] this DirectoryInfo path ) {
+		public static Guid FromPath( this DirectoryInfo path ) {
 			if ( path == null ) {
-				throw new ArgumentNullException( nameof( path ) );
+				throw new ArgumentEmptyException( nameof( path ) );
 			}
 
 			var s = path.ToPaths().ToList();
@@ -100,11 +100,11 @@ namespace Librainian.Extensions {
 		///     <see langword="true" /> if <paramref name="s" /> was converted successfully; otherwise, <see langword="false" />
 		///     .
 		/// </value>
-		/// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
+		/// <exception cref="ArgumentEmptyException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
 		/// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
-		public static Boolean IsGuid( [NotNull] this String s ) {
+		public static Boolean IsGuid( this String s ) {
 			if ( s is null ) {
-				throw new ArgumentNullException( nameof( s ) );
+				throw new ArgumentEmptyException( nameof( s ) );
 			}
 
 			var match = InGuidFormat.Match( s );

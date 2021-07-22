@@ -27,14 +27,15 @@
 namespace Librainian.Threading {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Threading;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
 	using Persistence;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".
@@ -45,7 +46,6 @@ namespace Librainian.Threading {
 	/// </example>
 	public class SingleAccess : ABetterClassDispose {
 
-		[CanBeNull]
 		private Semaphore? Semaphore { get; }
 
 		public Boolean Snagged { get; private set; }
@@ -60,11 +60,11 @@ namespace Librainian.Threading {
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
-		public SingleAccess( [NotNull] FileSystemInfo name, TimeSpan? timeout = null ) : this( name.FullName, timeout ) { }
+		public SingleAccess( FileSystemInfo name, TimeSpan? timeout = null ) : this( name.FullName, timeout ) { }
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
-		public SingleAccess( [NotNull] String name, TimeSpan? timeout = null ) {
+		public SingleAccess( String name, TimeSpan? timeout = null ) {
 			if ( String.IsNullOrWhiteSpace( name ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
 			}
@@ -81,7 +81,7 @@ namespace Librainian.Threading {
 			}
 		}
 
-		public SingleAccess( [NotNull] IDocument document, TimeSpan? timeout = null ) : this( document.FullPath, timeout ) { }
+		public SingleAccess( IDocument document, TimeSpan? timeout = null ) : this( document.FullPath, timeout ) { }
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() {
@@ -109,7 +109,6 @@ namespace Librainian.Threading {
 	/// </example>
 	public class SingleAccess<T> : ABetterClassDispose {
 
-		[CanBeNull]
 		private Semaphore? Semaphore { get; }
 
 		public Boolean Snagged { get; private set; }
@@ -120,7 +119,7 @@ namespace Librainian.Threading {
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="self" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
-		public SingleAccess( [NotNull] T self, TimeSpan? timeout = null ) {
+		public SingleAccess( [DisallowNull] T self, TimeSpan? timeout = null ) {
 			try {
 				timeout ??= Minutes.One;
 

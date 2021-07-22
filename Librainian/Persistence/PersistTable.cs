@@ -37,6 +37,7 @@ namespace Librainian.Persistence {
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
 	using JetBrains.Annotations;
 	using Logging;
@@ -49,6 +50,7 @@ namespace Librainian.Persistence {
 	using OperatingSystem.Compression;
 	using Parsing;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>
@@ -63,11 +65,9 @@ namespace Librainian.Persistence {
 	public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue?> where TKey : IComparable<TKey> {
 
 		[JsonProperty]
-		[NotNull]
 		private PersistentDictionary<TKey, String?> Dictionary { get; }
 
 		/// <summary>No path given?</summary>
-		[NotNull]
 		public Folder Folder { get; }
 
 		public Int32 Count => this.Dictionary.Count;
@@ -89,8 +89,7 @@ namespace Librainian.Persistence {
 		/// <summary></summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public TValue? this[ [CanBeNull] TKey? key ] {
+		public TValue? this[ TKey? key ] {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
@@ -119,19 +118,19 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public PersistTable( Environment.SpecialFolder specialFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
+		public PersistTable( Environment.SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
 
-		public PersistTable( Environment.SpecialFolder specialFolder, [CanBeNull] String? subFolder, [NotNull] String tableName ) : this( new Folder( specialFolder, subFolder,
+		public PersistTable( Environment.SpecialFolder specialFolder, String? subFolder, String tableName ) : this( new Folder( specialFolder, subFolder,
 			tableName ) ) { }
 
-		public PersistTable( [NotNull] Folder folder, [NotNull] String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
+		public PersistTable( Folder folder, String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) { }
 
-		public PersistTable( [NotNull] Folder folder, [NotNull] String subFolder, [NotNull] String tableName ) :
+		public PersistTable( Folder folder, String subFolder, String tableName ) :
 			this( Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
 
-		public PersistTable( [NotNull] Folder folder, Boolean testForReadWriteAccess = false ) {
+		public PersistTable( Folder folder, Boolean testForReadWriteAccess = false ) {
 			try {
-				this.Folder = folder ?? throw new ArgumentNullException( nameof( folder ) );
+				this.Folder = folder ?? throw new ArgumentEmptyException( nameof( folder ) );
 
 				this.Folder.Info.Create();
 				this.Folder.Info.Refresh();
@@ -159,7 +158,7 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		public PersistTable( [NotNull] String fullpath ) : this( new Folder( fullpath ) ) { }
+		public PersistTable( String fullpath ) : this( new Folder( fullpath ) ) { }
 
 		/// <summary>Return true if we can read/write in the <see cref="Folder" /> .</summary>
 		/// <returns></returns>
@@ -179,7 +178,7 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public void Add( TKey key, [CanBeNull] TValue? value ) => this[ key ] = value;
+		public void Add( TKey key, TValue? value ) => this[ key ] = value;
 
 		public void Add( KeyValuePair<TKey, TValue?> item ) => this[ item.Key ] = item.Value;
 
@@ -226,7 +225,6 @@ namespace Librainian.Persistence {
 
 		/// <summary>All <see cref="KeyValuePair{TKey,TValue}" /> , with the <see cref="TValue" /> deserialized.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public IEnumerable<KeyValuePair<TKey, TValue?>> Items() {
 			foreach ( var pair in this.Dictionary ) {
 				if ( pair.Value != null ) {
@@ -248,12 +246,11 @@ namespace Librainian.Persistence {
 
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
-		[NotNull]
 		public override String ToString() => $"{this.Count} items";
 
-		public void TryAdd( [NotNull] TKey key, [CanBeNull] TValue value ) {
+		public void TryAdd( TKey key, TValue? value ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			if ( !this.Dictionary.ContainsKey( key ) ) {
@@ -272,10 +269,10 @@ namespace Librainian.Persistence {
 		///     value for the type of the
 		///     <paramref name="value" /> parameter. This parameter is passed uninitialized.
 		/// </param>
-		/// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-		public Boolean TryGetValue( [NotNull] TKey key, out TValue? value ) {
+		/// <exception cref="ArgumentEmptyException"><paramref name="key" /> is null.</exception>
+		public Boolean TryGetValue( TKey key, out TValue? value ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			value = default( TValue );
@@ -289,9 +286,9 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		public Boolean TryRemove( [NotNull] TKey key ) {
+		public Boolean TryRemove( TKey key ) {
 			if ( key is null ) {
-				throw new ArgumentNullException( nameof( key ) );
+				throw new ArgumentEmptyException( nameof( key ) );
 			}
 
 			return this.Dictionary.ContainsKey( key ) && this.Dictionary.Remove( key );

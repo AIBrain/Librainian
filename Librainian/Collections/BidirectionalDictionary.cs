@@ -32,7 +32,6 @@ namespace Librainian.Collections {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	///     This class provide service for both the singularization and pluralization, it takes the word pairs
@@ -40,10 +39,8 @@ namespace Librainian.Collections {
 	/// </summary>
 	public class BidirectionalDictionary<TSingle, TPlural> where TSingle : class where TPlural : class {
 
-		[NotNull]
 		private ConcurrentDictionary<TPlural, TSingle?> PluralToSingle { get; } = new();
 
-		[NotNull]
 		private ConcurrentDictionary<TSingle, TPlural?> SingleToPlural { get; } = new();
 
 		protected BidirectionalDictionary( IDictionary<TSingle, TPlural> firstToSecondDictionary ) {
@@ -54,7 +51,7 @@ namespace Librainian.Collections {
 
 		public BidirectionalDictionary() { }
 
-		public void AddValue( [NotNull] TSingle firstValue, [NotNull] TPlural secondValue ) {
+		public void AddValue( TSingle firstValue, TPlural secondValue ) {
 			this.SingleToPlural[ firstValue ] = secondValue;
 
 			this.PluralToSingle[ secondValue ] = firstValue;
@@ -68,8 +65,8 @@ namespace Librainian.Collections {
 
 		public virtual Boolean ExistsInSingle( TSingle value ) => this.SingleToPlural.ContainsKey( value );
 
-		public virtual TPlural? GetPlural( [NotNull] TSingle value ) => this.SingleToPlural.TryGetValue( value, out var second ) ? second : default;
+		public virtual TPlural? GetPlural( TSingle value ) => this.SingleToPlural.TryGetValue( value, out var second ) ? second : default;
 
-		public virtual TSingle? GetSingle( [NotNull] TPlural value ) => this.PluralToSingle.TryGetValue( value, out var first ) ? first : default;
+		public virtual TSingle? GetSingle( TPlural value ) => this.PluralToSingle.TryGetValue( value, out var first ) ? first : default;
 	}
 }

@@ -28,9 +28,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
 	using System.Timers;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
@@ -55,7 +55,6 @@ namespace Librainian.Measurement.Time.Clocks {
 	public class TickingClock : ABetterClassDispose, IStandardClock {
 
 		/// <summary></summary>
-		[CanBeNull]
 		private Timer? _timer;
 
 		/// <summary></summary>
@@ -73,19 +72,15 @@ namespace Librainian.Measurement.Time.Clocks {
 		[JsonProperty]
 		public ClockMinute Minute { get; private set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action<ClockHour>? OnHourTick { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action? OnMillisecondTick { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action? OnMinuteTick { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action? OnSecondTick { get; set; }
 
@@ -124,9 +119,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			Hours
 		}
 
-		private void OnHourElapsed( [CanBeNull]
-									Object? sender, [CanBeNull]
-									ElapsedEventArgs? e ) {
+		private void OnHourElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Hour = this.Hour.Next( out var tocked );
 
 			if ( tocked ) {
@@ -134,9 +127,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 		}
 
-		private void OnMillisecondElapsed( [CanBeNull]
-										   Object? sender, [CanBeNull]
-										   ElapsedEventArgs e ) {
+		private void OnMillisecondElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Millisecond = this.Millisecond.Next( out var tocked );
 
 			if ( tocked ) {
@@ -146,9 +137,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 		}
 
-		private void OnMinuteElapsed( [CanBeNull]
-									  Object? sender, [CanBeNull]
-									  ElapsedEventArgs e ) {
+		private void OnMinuteElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Minute = this.Minute.Next( out var tocked );
 
 			if ( tocked ) {
@@ -158,9 +147,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			}
 		}
 
-		private void OnSecondElapsed( [CanBeNull]
-									  Object? sender, [CanBeNull]
-									  ElapsedEventArgs e ) {
+		private void OnSecondElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Second = this.Second.Next( out var tocked );
 
 			if ( tocked ) {

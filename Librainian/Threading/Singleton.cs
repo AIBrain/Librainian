@@ -24,13 +24,10 @@
 
 namespace Librainian.Threading {
 
-	using JetBrains.Annotations;
-
 	/// <summary>Singleton Pattern. Judith Bishop Nov 2007</summary>
 	/// <remarks>Untested.</remarks>
 	public class Singleton<T> where T : class, new() {
 
-		[CanBeNull]
 		public static T Instance => SingletonCreator.SingleInstance;
 
 		private Singleton() { }

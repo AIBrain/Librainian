@@ -30,5 +30,6 @@ namespace Librainian.Measurement.Time.Clocks {
 	using Extensions;
 
 	[Immutable]
-	public record DateAndTime( Date Date, Time Time ) { }
+	public record DateAndTime( Date Date, Time Time );
+
 }

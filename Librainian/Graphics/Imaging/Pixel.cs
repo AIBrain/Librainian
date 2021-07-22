@@ -29,6 +29,7 @@ namespace Librainian.Graphics.Imaging {
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
@@ -101,7 +102,6 @@ namespace Librainian.Graphics.Imaging {
 
 		public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
 
-		[NotNull]
 		public static explicit operator Byte[]( Pixel pixel ) =>
 			new[] {
 				pixel.Checksum, pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue
@@ -129,21 +129,19 @@ namespace Librainian.Graphics.Imaging {
 		[Pure]
 		public override Int32 GetHashCode() => this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
 
-		[NotNull]
 		public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
-		[CanBeNull]
-		public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
+		public Task WriteToStreamAsync( StreamWriter streamWriter ) {
 			if ( streamWriter is null ) {
-				throw new ArgumentNullException( nameof( streamWriter ) );
+				throw new ArgumentEmptyException( nameof( streamWriter ) );
 			}
 
 			return streamWriter.WriteLineAsync( this.ToString() );
 		}
 
-		public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [CanBeNull] StreamWriter? errors = null ) {
+		public static async Task<Pixel?> ReadFromStreamAsync( StreamReader reader, StreamWriter? errors = null ) {
 			if ( reader is null ) {
-				throw new ArgumentNullException( nameof( reader ) );
+				throw new ArgumentEmptyException( nameof( reader ) );
 			}
 
 			var line = await reader.ReadLineAsync().ConfigureAwait( false ) ?? String.Empty;
@@ -167,7 +165,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
+			if ( !Byte.TryParse( line[ ..openParent ], out var checksum ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
 				}
@@ -185,9 +183,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] {
-				','
-			}, StringSplitOptions.RemoveEmptyEntries );
+			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( argb.Length != 4 ) {
 				if ( errors != null ) {
@@ -239,9 +235,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var xandy = line[ ( at + 1 ).. ].Split( new[] {
-				','
-			}, StringSplitOptions.RemoveEmptyEntries );
+			var xandy = line[ ( at + 1 ).. ].Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( xandy.Length != 2 ) {
 				if ( errors != null ) {

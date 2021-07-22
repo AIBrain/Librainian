@@ -28,8 +28,10 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Reflection;
-	using JetBrains.Annotations;
+	using Exceptions;
+	using Utilities;
 
 	/// <summary>
 	///     Code pulled from
@@ -38,17 +40,20 @@ namespace Librainian.Threading {
 	/// <remarks>
 	///     TODO Needs some serious testing.
 	/// </remarks>
+	[NeedsTesting]
 	public static class ObjectExtensions {
 
-		private static MethodInfo MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance )!;
+		[NeedsTesting]
+		private static MethodInfo? MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
+		[NeedsTesting]
 		private static void CopyFields(
-			[NotNull] this Object original,
-			[NotNull] IDictionary<Object, Object> visited,
-			[NotNull] Object destination,
-			[NotNull] IReflect reflect,
+			this Object original,
+			IDictionary<Object, Object?> visited,
+			Object? destination,
+			IReflect reflect,
 			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-			[CanBeNull] Func<FieldInfo, Boolean>? filter = null
+			Func<FieldInfo, Boolean>? filter = null
 		) {
 			var fields = reflect.GetFields( bindingFlags );
 
@@ -64,8 +69,8 @@ namespace Librainian.Threading {
 			}
 		}
 
-		[CanBeNull]
-		private static Object? InternalCopy( [CanBeNull] Object? originalObject, [NotNull] IDictionary<Object, Object> visits ) {
+		[NeedsTesting]
+		private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object?> visits ) {
 			if ( originalObject is null ) {
 				return null;
 			}
@@ -84,27 +89,20 @@ namespace Librainian.Threading {
 				return null;
 			}
 
-			var copy = MemberwiseCloneMethod.Invoke( originalObject, null );
+			var copy = MemberwiseCloneMethod?.Invoke( originalObject, null );
 
 			if ( reflect.IsArray ) {
 				var elementsType = reflect.GetElementType();
 
 				if ( elementsType != null /*&& !elementsType.IsPrimitive()*/ ) {
 
-					//why skip primitives?
+					//TODO why skip primitives?
+
 					if ( copy is Array clonedArray ) {
 						for ( var index = 0; index < clonedArray.Length; index++ ) {
 							clonedArray.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
 						}
 					}
-
-					/*
-					clonedArray.ForEach( ( section, index ) => {
-						if ( index != null ) {
-							section.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
-						}
-					} );
-					*/
 				}
 			}
 
@@ -115,11 +113,12 @@ namespace Librainian.Threading {
 			return copy;
 		}
 
+		[NeedsTesting]
 		private static void RecursiveCopyBaseTypePrivateFields(
-			[CanBeNull] Object? originalObject,
-			[CanBeNull] IDictionary<Object, Object> visited,
-			[CanBeNull] Object? destination,
-			[NotNull] Type typeToReflect
+			Object? originalObject,
+			IDictionary<Object, Object?> visited,
+			Object? destination,
+			Type typeToReflect
 		) {
 			if ( originalObject is null ) {
 				return;
@@ -136,20 +135,20 @@ namespace Librainian.Threading {
 			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
 		}
 
-		[CanBeNull]
-		public static T? Copy<T>( [CanBeNull] this T original ) =>
+		[NeedsTesting]
+		public static T? Copy<T>( this T? original ) =>
 					( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
 
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static Object? DeepCopy<T>( [CanBeNull] this T original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+		[NeedsTesting]
+		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object?>( new ReferenceEqualComparer<Object?>() ) );
 
-		[CanBeNull]
-		public static Object? GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
+		[NeedsTesting]
+		public static Object? GetPrivateFieldValue<T>( [DisallowNull] this T instance, String fieldName ) {
 			if ( instance is null ) {
-				throw new ArgumentNullException( nameof( instance ) );
+				throw new ArgumentEmptyException( nameof( instance ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( fieldName ) ) {
@@ -166,7 +165,8 @@ namespace Librainian.Threading {
 			return info.GetValue( instance );
 		}
 
-		public static Boolean IsPrimitive<T>( [CanBeNull] this T type ) =>
+		[NeedsTesting]
+		public static Boolean IsPrimitive<T>( this T? type ) =>
 			type switch {
 				null => false,
 				String _ => true,

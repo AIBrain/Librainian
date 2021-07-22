@@ -1,15 +1,15 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
-//
+﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "ControlExtensions.cs" last touched on 2021-04-25 at 11:02 AM by Protiguous.
+// 
+// File "ControlExtensions.cs" last touched on 2021-06-08 at 5:02 PM by Protiguous.
 
 #nullable enable
 
@@ -42,24 +42,57 @@ namespace Librainian.Controls {
 	using Collections.Extensions;
 	using Converters;
 	using Exceptions;
-	using JetBrains.Annotations;
+	using Logging;
 	using Maths;
 	using Measurement.Time;
+	using PooledAwait;
 	using Threading;
 	using Color = System.Drawing.Color;
 
 	public static class ControlExtensions {
 
+		/// <summary>
+		///     Allows the form's size and location to be persisted after shown event.
+		/// </summary>
+		/// <param name="form"></param>
+		public static void PersistPlacement<TForm>( this TForm form ) where TForm : Form {
+			form.Shown += ( _, _ ) => form.InvokeAction( SizeAndLocation );
+
+			void SizeAndLocation() {
+				try {
+					form.SuspendLayout();
+					form.WindowState = FormWindowState.Normal;
+					form.StartPosition = FormStartPosition.WindowsDefaultBounds;
+
+					form.LoadLocation();
+					form.LoadSize();
+
+					if ( !form.IsFullyVisibleOnAnyScreen() ) {
+						form.WindowState = FormWindowState.Normal;
+						form.StartPosition = FormStartPosition.CenterScreen;
+					}
+
+					form.ResumeLayout( true );
+
+					form.LocationChanged += ( _, _ ) => form.InvokeAction( form.SaveLocation );
+					form.SizeChanged += ( _, _ ) => form.InvokeAction( form.SaveSize );
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+			}
+		}
+
 		[DebuggerStepThrough]
-		public static void Append( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [CanBeNull] params Object[] args ) =>
+		public static void Append( this RichTextBox box, String text, Color color, params Object[]? args ) =>
 			box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
 
 		[DebuggerStepThrough]
-		public static void AppendLine( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [NotNull] params Object[] args ) =>
+		public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) =>
 			box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
 
 		[DebuggerStepThrough]
-		public static void AppendText( [NotNull] this RichTextBox box, [NotNull] String text, Color color, [CanBeNull] params Object[]? args ) {
+		public static void AppendText( this RichTextBox box, String text, Color color, params Object[]? args ) {
 			if ( args != null ) {
 				text = String.Format( text, args );
 			}
@@ -105,14 +138,14 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static void BusyCursor( [NotNull] this Control control ) => control.InvokeAction( () => control.Cursor = Cursors.WaitCursor );
+		public static void BusyCursor( this Control control ) => control.InvokeAction( () => control.Cursor = Cursors.WaitCursor );
 
 		/// <summary>
 		///     Threadsafe <see cref="CheckBox.Checked" /> check.
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static Boolean? Checked( [CanBeNull] this CheckBox? control ) {
+		public static Boolean? Checked( this CheckBox? control ) {
 			return control?.InvokeFunction( Target );
 
 			Boolean? Target() => control.CheckState == CheckState.Indeterminate ? default( Boolean? ) : control.Checked;
@@ -124,10 +157,9 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="refreshOrInvalidate"></param>
-		[NotNull]
-		public static CheckBox Checked( [NotNull] this CheckBox control, Boolean? value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
+		public static CheckBox Checked( this CheckBox control, Boolean? value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
 			if ( control is null ) {
-				throw new ArgumentNullException( nameof( control ) );
+				throw new ArgumentEmptyException( nameof( control ) );
 			}
 
 			control.InvokeAction( Action );
@@ -157,7 +189,9 @@ namespace Librainian.Controls {
 		/// <param name="delay">  </param>
 		/// <returns></returns>
 		/// <see cref="Push" />
-		public static void Click( [NotNull] this Button control, TimeSpan? delay = null ) => control.Push( delay );
+		public static void Click( this Button control, TimeSpan? delay = null ) {
+			var _ = control.Push( delay ); //swallow the async
+		}
 
 		/// <summary>
 		///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the
@@ -165,7 +199,6 @@ namespace Librainian.Controls {
 		///     the darkForeColor is returned.
 		/// </summary>
 		public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
-
 			// Counting the perceptive luminance - human eye favors green color...
 			return A() < 0.5 ? darkForeColor : lightForeColor;
 
@@ -191,7 +224,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="refreshOrInvalidate"></param>
-		public static void Enabled( [CanBeNull] this Control? control, Boolean value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
+		public static void Enabled( this Control? control, Boolean value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
 			control?.InvokeAction( () => {
 				if ( control.IsDisposed ) {
 					return;
@@ -214,9 +247,9 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
-		public static void Enabled( [NotNull] this ToolStripProgressBar control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
+		public static void Enabled( this ToolStripProgressBar control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
 			if ( control is null ) {
-				throw new ArgumentNullException( nameof( control ) );
+				throw new ArgumentEmptyException( nameof( control ) );
 			}
 
 			control.ProgressBar?.InvokeAction( Action );
@@ -238,27 +271,24 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="spanOff">How long to keep the control off before it resets.</param>
-		public static void Flash( [NotNull] this Control control, TimeSpan? spanOff = null ) {
+		public static void Flash( this Control control, TimeSpan? spanOff = null ) {
 			if ( control is null ) {
-				throw new ArgumentNullException( nameof( control ) );
+				throw new ArgumentEmptyException( nameof( control ) );
 			}
 
 			spanOff ??= Milliseconds.One;
 			spanOff.Value.CreateTimer( OnTick ).Once().Start();
 
 			void Action() {
-				var foreColor = control.ForeColor;
-				control.ForeColor = control.BackColor;
-				control.BackColor = foreColor;
+				( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor );
 				control.Refresh();
 			}
 
 			void OnTick() => control.InvokeAction( Action );
 		}
 
-		[NotNull]
 		[DebuggerStepThrough]
-		public static Task FlashWhileBlank( [NotNull] this Control input, [NotNull] Control control, CancellationToken cancellationToken ) =>
+		public static Task FlashWhileBlank( this Control input, Control control, CancellationToken cancellationToken ) =>
 			Seconds.Five.Then( async () => {
 				if ( String.IsNullOrWhiteSpace( input.Text() ) ) {
 					control.Flash( Seconds.One );
@@ -271,7 +301,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		[DebuggerStepThrough]
-		public static void Fokus( [NotNull] this Control control ) =>
+		public static void Fokus( this Control control ) =>
 			control.InvokeAction( () => {
 				if ( !control.IsDisposed && control.CanFocus ) {
 					_ = control.Focus();
@@ -283,7 +313,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static Color ForeColor( [NotNull] this Control control ) {
+		public static Color ForeColor( this Control control ) {
 			var func = new Func<Color>( () => control.ForeColor );
 
 			return control.InvokeFunction( func );
@@ -296,7 +326,7 @@ namespace Librainian.Controls {
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
 		[DebuggerStepThrough]
-		public static void ForeColor( [NotNull] this Control control, Color value, RefreshOrInvalidate redraw ) {
+		public static void ForeColor( this Control control, Color value, RefreshOrInvalidate redraw ) {
 			control.InvokeAction( Action, redraw );
 
 			void Action() {
@@ -308,7 +338,7 @@ namespace Librainian.Controls {
 		///     wpf, I think
 		/// </summary>
 		/// <param name="window"></param>
-		public static void FullScreen( [NotNull] this Window window ) {
+		public static void FullScreen( this Window window ) {
 			window.WindowState = WindowState.Maximized;
 			window.WindowStyle = WindowStyle.None;
 		}
@@ -319,7 +349,7 @@ namespace Librainian.Controls {
 		/// <param name="window"></param>
 		/// <param name="icon"></param>
 		/// <param name="redraw"></param>
-		public static void Icon( [NotNull] this Window window, ImageSource icon, RefreshOrInvalidate redraw ) {
+		public static void Icon( this Window window, ImageSource icon, RefreshOrInvalidate redraw ) {
 			window.Dispatcher?.InvokeAsync( Action, DispatcherPriority.Background, CancellationToken.None );
 
 			void Action() {
@@ -335,29 +365,33 @@ namespace Librainian.Controls {
 		/// <param name="redraw"></param>
 		/// <seealso />
 		[DebuggerStepThrough]
-		public static void InvokeAction( [CanBeNull] this Control? control, [NotNull] Action action, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
+		public static void InvokeAction( this Control? control, Action action, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
 			if ( control?.IsDisposed != false ) {
 				return;
 			}
 
-			void Action() {
-				if ( redraw.HasFlag( RefreshOrInvalidate.Invalidate ) ) {
+			void MaybeRedraw() {
+				if ( redraw.HasFlag( RefreshOrInvalidate.Refresh ) ) {
 					control.Invalidate();
 				}
-
-				if ( redraw.HasFlag( RefreshOrInvalidate.Refresh ) ) {
+				else if ( redraw.HasFlag( RefreshOrInvalidate.Invalidate ) ) {
 					control.Refresh();
 				}
 			}
 
 			if ( control.InvokeRequired ) {
-				control.Invoke( action );
-				control.Invoke( ( Action )Action );
+				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh )) {
+					action += MaybeRedraw;
+				}
+				control.BeginInvoke( action );
 			}
 			else {
 				action();
-				Action();
+				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
+					MaybeRedraw();
+				}
 			}
+			
 		}
 
 		/*
@@ -386,18 +420,17 @@ namespace Librainian.Controls {
 		}
 		*/
 
-		[NotNull]
-		public static T? InvokeFunction<T>( [CanBeNull] this Control? control, [NotNull] Func<T> function ) {
+		public static T? InvokeFunction<T>( this Control? control, Func<T?> function ) {
 			if ( control is null ) {
 				return default( T? );
 			}
 
 			if ( function is null ) {
-				throw new ArgumentNullException( nameof( function ) );
+				throw new ArgumentEmptyException( nameof( function ) );
 			}
 
 			if ( control.InvokeRequired ) {
-				return ( T )control.Invoke( function ) ?? throw new InvalidCastException( $"Could not cast result of function to a {typeof( T ).FullName}" );
+				return ( T )control.Invoke( function );
 			}
 
 			return function();
@@ -421,8 +454,7 @@ namespace Librainian.Controls {
 			return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
 		}
 
-		[NotNull]
-		public static Task MarqueeAsync( [NotNull] this Control control, TimeSpan timeSpan, [NotNull] String message ) {
+		public static Task MarqueeAsync( this Control control, TimeSpan timeSpan, String message ) {
 			control.Text( message );
 			var until = DateTime.Now.Add( timeSpan );
 
@@ -442,9 +474,9 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static Int32 Maximum( [NotNull] this ProgressBar control ) {
+		public static Int32 Maximum( this ProgressBar control ) {
 			if ( control is null ) {
-				throw new ArgumentNullException( nameof( control ) );
+				throw new ArgumentEmptyException( nameof( control ) );
 			}
 
 			return control.InvokeFunction( () => control.Maximum );
@@ -456,7 +488,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Maximum( [NotNull] this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
+		public static void Maximum( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			control.InvokeAction( Action, redraw );
 
 			void Action() {
@@ -469,7 +501,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static Int32 Minimum( [NotNull] this ProgressBar control ) => control.InvokeFunction( () => control.Minimum );
+		public static Int32 Minimum( this ProgressBar control ) => control.InvokeFunction( () => control.Minimum );
 
 		/// <summary>
 		///     Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" /> across threads.
@@ -477,7 +509,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Minimum( [NotNull] this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
+		public static void Minimum( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 			control.InvokeAction( () => control.Minimum = value, redraw );
 
 		public static Boolean Nope( this DialogResult result ) => result.In( DialogResult.Abort, DialogResult.Cancel );
@@ -489,17 +521,18 @@ namespace Librainian.Controls {
 		/// <param name="delay">  </param>
 		/// <returns></returns>
 		/// <see cref="Push" />
-		public static async Task PerformClick( [NotNull] this Button control, TimeSpan? delay = null ) {
+		public static async Task PerformClick( this Button control, TimeSpan? delay = null ) {
 			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
 
 			control.InvokeAction( control.PerformClick, RefreshOrInvalidate.Neither );
 		}
 
+
 		/// <summary>
 		///     Threadsafe <see cref="Button.PerformClick" />.
 		/// </summary>
 		/// <param name="control"></param>
-		public static void Press( [NotNull] this Button control ) => control.InvokeAction( control.PerformClick );
+		public static void Press( this Button control ) => control.InvokeAction( control.PerformClick );
 
 		/// <summary>
 		///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
@@ -508,10 +541,11 @@ namespace Librainian.Controls {
 		/// <param name="delay">     </param>
 		/// <param name="afterClick"></param>
 		/// <returns></returns>
-		public static async ValueTask Push( [CanBeNull] this Button? control, TimeSpan? delay = null, [CanBeNull] Action? afterClick = null ) {
+		public static async FireAndForget Push( this Button? control, TimeSpan? delay = null, Action? afterClick = null ) {
 			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
 
 			control.InvokeAction( control!.PerformClick, RefreshOrInvalidate.Neither );
+			afterClick?.Invoke();
 		}
 
 		/// <summary>
@@ -519,11 +553,11 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static void Redraw( [NotNull] this Control control ) => control.InvokeAction( control.Refresh );
+		public static void Redraw( this Control control ) => control.InvokeAction( control.Refresh );
 
-		public static Boolean RemoveTags( [NotNull] this WebBrowser browser, [NotNull] String tagName, Int32 keepAtMost = 50 ) {
+		public static Boolean RemoveTags( this WebBrowser browser, String tagName, Int32 keepAtMost = 50 ) {
 			if ( browser is null ) {
-				throw new ArgumentNullException( nameof( browser ) );
+				throw new ArgumentEmptyException( nameof( browser ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( tagName ) ) {
@@ -541,7 +575,7 @@ namespace Librainian.Controls {
 					item.OuterHtml = String.Empty;
 				}
 
-				browser.BeginInvoke( new Action( browser.Update ) );
+				browser.BeginInvoke( browser.Update );
 			}
 
 			return true;
@@ -552,9 +586,9 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
-		public static void Reset( [NotNull] this ProgressBar control, Int32? value = null ) {
+		public static void Reset( this ProgressBar control, Int32? value = null ) {
 			if ( control is null ) {
-				throw new ArgumentNullException( nameof( control ) );
+				throw new ArgumentEmptyException( nameof( control ) );
 			}
 
 			control.Value( value ?? control.Minimum() );
@@ -565,7 +599,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		public static void ResetCursor( [NotNull] this Control control ) {
+		public static void ResetCursor( this Control control ) {
 			control.InvokeAction( Action );
 
 			void Action() {
@@ -582,14 +616,14 @@ namespace Librainian.Controls {
 		/// <param name="value">  </param>
 		/// <param name="maximum"></param>
 		/// <see cref="Values" />
-		public static void Set( [NotNull] this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum, value, maximum );
+		public static void Set( this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum, value, maximum );
 
 		/// <summary>
 		///     Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="redraw"></param>
-		public static void Step( [NotNull] this ProgressBar control, RefreshOrInvalidate redraw ) {
+		public static void Step( this ProgressBar control, RefreshOrInvalidate redraw ) {
 			control.InvokeAction( Action, redraw );
 
 			void Action() {
@@ -604,7 +638,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="redraw"></param>
-		public static void Step( [NotNull] this ToolStripProgressBar control, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
+		public static void Step( this ToolStripProgressBar control, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 			control.GetCurrentParent()?.InvokeAction( control.PerformStep, redraw );
 
 		/// <summary>
@@ -613,7 +647,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Step( [NotNull] this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
+		public static void Step( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 			control.InvokeAction( () => control.Step = value, redraw );
 
 		/// <summary>
@@ -622,7 +656,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Style( [NotNull] this ProgressBar control, ProgressBarStyle value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
+		public static void Style( this ProgressBar control, ProgressBarStyle value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 			control.InvokeAction( () => control.Style = value, redraw );
 
 		/// <summary>
@@ -630,10 +664,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static String? Text( [CanBeNull] this Control? control ) {
-			return control.InvokeFunction( () => control?.Text );
-		}
+		public static String Text( this Control? control ) => control.InvokeFunction( () => control?.Text );
 
 		/// <summary>
 		///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
@@ -641,8 +672,12 @@ namespace Librainian.Controls {
 		/// <param name="toolStripItem"></param>
 		/// <param name="value">        </param>
 		/// <param name="redraw"></param>
-		public static void Text( [CanBeNull] this ToolStripItem? toolStripItem, [CanBeNull] String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
-			toolStripItem?.GetCurrentParent()?.InvokeAction( Action );
+		public static void Text( this ToolStripItem? toolStripItem, String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
+			if ( toolStripItem?.IsDisposed != false ) {
+				return;
+			}
+
+			toolStripItem.GetCurrentParent()?.InvokeAction( Action );
 
 			void Action() {
 				toolStripItem.Text = value;
@@ -663,12 +698,12 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Text( [CanBeNull] this Control? control, [CanBeNull] String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
+		public static void Text( this Control? control, String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 			control?.InvokeAction( () => control.Text = value, redraw );
 
 		public static void TextAdd(
-			[CanBeNull] this RichTextBox? textBox,
-			[NotNull] String message,
+			this RichTextBox? textBox,
+			String message,
 			Int32 maxlines,
 			RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate
 		) {
@@ -677,7 +712,7 @@ namespace Librainian.Controls {
 			}
 
 			if ( message is null ) {
-				throw new ArgumentNullException( nameof( message ) );
+				throw new ArgumentEmptyException( nameof( message ) );
 			}
 
 			textBox.InvokeAction( () => {
@@ -689,9 +724,9 @@ namespace Librainian.Controls {
 			}, redraw );
 		}
 
-		public static void TextAdd( [NotNull] this RichTextBox textBox, [NotNull] String? text, Color color, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
+		public static void TextAdd( this RichTextBox textBox, String text, Color color, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			if ( textBox is null ) {
-				throw new ArgumentNullException( nameof( textBox ) );
+				throw new ArgumentEmptyException( nameof( textBox ) );
 			}
 
 			textBox.InvokeAction( Action, redraw );
@@ -701,7 +736,7 @@ namespace Librainian.Controls {
 				textBox.SelectionLength = 0;
 
 				textBox.SelectionColor = color;
-				textBox.AppendText( text ?? String.Empty );
+				textBox.AppendText( text );
 				textBox.SelectionColor = textBox.ForeColor;
 			}
 		}
@@ -714,7 +749,7 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="s"></param>
 		/// <returns></returns>
-		public static CheckState ToCheckState( [NotNull] this String s ) =>
+		public static CheckState ToCheckState( this String s ) =>
 			!String.IsNullOrWhiteSpace( s ) ? s.ToBoolean() ? CheckState.Checked :
 				Boolean.TryParse( s, out var _ ) ? CheckState.Checked : CheckState.Unchecked : CheckState.Unchecked;
 
@@ -753,7 +788,7 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Value( [NotNull] this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
+		public static void Value( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			control.InvokeAction( Action, redraw );
 
 			void Action() {
@@ -777,14 +812,14 @@ namespace Librainian.Controls {
 		/// <param name="maximum"></param>
 		/// <param name="redraw"></param>
 		public static void Values(
-			[NotNull] this ProgressBar control,
+			this ProgressBar control,
 			Int32 minimum,
 			Int32 value,
 			Int32 maximum,
 			RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate
 		) {
 			if ( control is null ) {
-				throw new ArgumentNullException( nameof( control ) );
+				throw new ArgumentEmptyException( nameof( control ) );
 			}
 
 			var lowEnd = Math.Min( minimum, maximum );
@@ -802,12 +837,12 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Visible( [NotNull] this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
-			control.InvokeAction( () => control.Visible = value, redraw );
-		}
+		public static void Visible( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) => control.InvokeAction( () => control.Visible = value, redraw );
 
 		public static Boolean Yes( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 
 		public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
+
 	}
+
 }

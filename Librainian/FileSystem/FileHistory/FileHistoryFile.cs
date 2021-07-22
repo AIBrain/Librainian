@@ -26,7 +26,7 @@ namespace Librainian.FileSystem.FileHistory {
 
 	using System;
 	using System.IO;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public class FileHistoryFile {
 
@@ -37,13 +37,10 @@ namespace Librainian.FileSystem.FileHistory {
 		private readonly DateTime? _when;
 
 		/// <summary>(includes the extension)</summary>
-		[NotNull]
 		public String FileName => this._filename;
 
-		[NotNull]
 		public IFolder Folder => this._folder;
 
-		[NotNull]
 		public IDocument FullPathAndName => new Document( this.Folder, this.FileName );
 
 		public Boolean IsFileHistoryFile { get; }
@@ -52,7 +49,7 @@ namespace Librainian.FileSystem.FileHistory {
 
 		public DateTime? When => this._when;
 
-		public FileHistoryFile( [NotNull] Document biglongpath ) {
+		public FileHistoryFile( Document biglongpath ) {
 			this.OriginalPath = biglongpath;
 			this.IsFileHistoryFile = TryParseFileHistoryFile( biglongpath, out this._folder, out this._filename, out this._when );
 		}
@@ -65,9 +62,9 @@ namespace Librainian.FileSystem.FileHistory {
 		///     <para>Returns the <see cref="DateTime" /> part of this <see cref="Document" /> or null.</para>
 		/// </param>
 		/// <returns></returns>
-		public static Boolean TryParseFileHistoryFile( [NotNull] Document original, [CanBeNull] out IFolder folder, [CanBeNull] out String? filename, out DateTime? when ) {
+		public static Boolean TryParseFileHistoryFile( Document original, out IFolder? folder, out String? filename, out DateTime? when ) {
 			if ( original is null ) {
-				throw new ArgumentNullException( nameof( original ) );
+				throw new ArgumentEmptyException( nameof( original ) );
 			}
 
 			filename = null;
@@ -87,13 +84,13 @@ namespace Librainian.FileSystem.FileHistory {
 
 			var datepart = value[ ( posA + 1 )..posB ];
 
-			var parts = datepart.Split( new[] {
-				' '
-			}, StringSplitOptions.RemoveEmptyEntries );
+			if ( datepart != null ) {
+				var parts = datepart.Split( ' ', StringSplitOptions.RemoveEmptyEntries );
 
-			parts[ 0 ] = parts[ 0 ].Replace( '_', '/' );
-			parts[ 1 ] = parts[ 1 ].Replace( '_', ':' );
-			datepart = $"{parts[ 0 ]} {parts[ 1 ]}";
+				parts[ 0 ] = parts[ 0 ].Replace( '_', '/' );
+				parts[ 1 ] = parts[ 1 ].Replace( '_', ':' );
+				datepart = $"{parts[ 0 ]} {parts[ 1 ]}";
+			}
 
 			if ( DateTime.TryParse( datepart, out var result ) ) {
 				when = result;
@@ -102,7 +99,7 @@ namespace Librainian.FileSystem.FileHistory {
 					posA = 1;
 				}
 
-				filename = $"{value.Substring( 0, posA - "(".Length )}{value[ ( posB + "UTC)".Length ).. ]}{extension}";
+				filename = $"{value[ ..(posA - "(".Length) ]}{value[ ( posB + "UTC)".Length ).. ]}{extension}";
 
 				return true;
 			}

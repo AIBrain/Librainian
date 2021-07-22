@@ -31,7 +31,6 @@ namespace Librainian.Exceptions.Warnings {
 	using System;
 	using System.Diagnostics;
 	using System.Runtime.Serialization;
-	using JetBrains.Annotations;
 	using Logging;
 
 	public class UnknownWarning : Warning {
@@ -62,7 +61,7 @@ namespace Librainian.Exceptions.Warnings {
 			//message.Break();
 		}
 
-		protected Warning( String? message, [CanBeNull] Exception? inner ) : base( message, inner ) {
+		protected Warning( String? message, Exception? inner ) : base( message, inner ) {
 
 			//message.Break();
 		}

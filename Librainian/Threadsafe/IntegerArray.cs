@@ -29,12 +29,11 @@ namespace Librainian.Threadsafe {
 	using System;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>An <see cref="Int32" /> array that may be updated atomically</summary>
 	public class IntegerArray {
 
-		[NotNull]
 		private Int32[] Array { get; }
 
 		/// <summary>Length of the array</summary>
@@ -52,9 +51,9 @@ namespace Librainian.Threadsafe {
 
 		/// <summary>Create a new AtomicIntegerArray with the same length as, and all elements copied from, the given array.</summary>
 		/// <param name="array"></param>
-		public IntegerArray( [NotNull] Int32[] array ) {
+		public IntegerArray( Int32[] array ) {
 			if ( array is null ) {
-				throw new ArgumentNullException( nameof( array ) );
+				throw new ArgumentEmptyException( nameof( array ) );
 			}
 
 			this.Array = new Int32[ array.Length ];

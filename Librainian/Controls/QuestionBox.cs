@@ -32,7 +32,6 @@ namespace Librainian.Controls {
 	using System;
 	using System.Windows.Forms;
 	using Exceptions;
-	using JetBrains.Annotations;
 
 	public partial class QuestionBox : Form {
 
@@ -40,14 +39,14 @@ namespace Librainian.Controls {
 
 		public String? Response { get; set; }
 
-		public QuestionBox( [NotNull] String question ) {
+		public QuestionBox( String question ) {
 			if ( String.IsNullOrWhiteSpace( question ) ) {
 				throw new ArgumentEmptyException( nameof( question ) );
 			}
 
 			this.InitializeComponent();
 			this.Question = question;
-			this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Both );
+			this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
 
 			this.Response = default( String? );
 
@@ -55,13 +54,9 @@ namespace Librainian.Controls {
 			this.textBoxUserInput?.Focus();
 		}
 
-		private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) {
-			this.Response = this.textBoxUserInput.Text();
-		}
+		private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) => this.Response = this.textBoxUserInput.Text();
 
-		private void QuestionBox_Shown( Object sender, EventArgs e ) {
-			this.textBoxUserInput?.Focus();
-		}
+		private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxUserInput?.Focus();
 
 		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = this.textBoxUserInput.Text();
 	}

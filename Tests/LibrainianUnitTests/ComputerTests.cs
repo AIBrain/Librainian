@@ -30,12 +30,13 @@ namespace LibrainianUnitTests {
 	using System;
 	using System.Diagnostics;
 	using System.Management;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class ComputerTests {
 
-		[Fact]
-		public static void OutputRamInformation() {
+		[Test]
+		public static void OutputRAMInformation() {
 			var searcher = new ManagementObjectSearcher( "select * from Win32_PhysicalMemory" );
 
 			var ram = 1;

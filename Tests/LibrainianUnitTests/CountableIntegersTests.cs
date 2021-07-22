@@ -32,8 +32,9 @@ namespace LibrainianUnitTests {
 	using Librainian.Collections;
 	using Librainian.Maths;
 	using Librainian.Measurement.Time;
-	using Xunit;
+	using NUnit.Framework;
 
+	[TestFixture]
 	public static class CountableIntegersTests {
 
 		public static Countable<String> Countable { get; } = new( Seconds.One, Seconds.One );
@@ -41,7 +42,7 @@ namespace LibrainianUnitTests {
 		//[Theory]
 		//public static void Setup() { }
 
-		[Fact]
+		[Test]
 		public static void TestAdding() {
 			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
 				var key = Randem.NextString( 2 );
@@ -58,7 +59,7 @@ namespace LibrainianUnitTests {
 			Console.WriteLine( timeTaken.Simpler() );
 		}
 
-		[Fact]
+		[Test]
 		public static void TestSubtracting() {
 			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
 				var key = Randem.NextString( 2 );

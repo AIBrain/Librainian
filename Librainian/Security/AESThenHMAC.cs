@@ -28,7 +28,6 @@ namespace Librainian.Security {
 	using System.IO;
 	using System.Security.Cryptography;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Maths;
 
 	/// <summary>
@@ -54,7 +53,6 @@ namespace Librainian.Security {
 
 		/// <summary>Helper that generates a random key on each call.</summary>
 		/// <returns></returns>
-		[NotNull]
 		public static Byte[] NewKey() {
 			var key = new Byte[ KeyBitSize / 8 ];
 			Randem.RNG.Value.GetBytes( key );
@@ -68,8 +66,7 @@ namespace Librainian.Security {
 		/// <param name="authKey">The auth key.</param>
 		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 		/// <returns>Decrypted Message</returns>
-		[CanBeNull]
-		public static Byte[]? SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+		public static Byte[]? SimpleDecrypt( Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 
 			//Basic Usage Error Checks
 			if ( cryptKey.Length != KeyBitSize / 8 ) {
@@ -145,8 +142,7 @@ namespace Librainian.Security {
 		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-		[CanBeNull]
-		public static String SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+		public static String? SimpleDecrypt( String encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 			}
@@ -167,8 +163,7 @@ namespace Librainian.Security {
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
 		/// <remarks>Significantly less secure than using random binary keys.</remarks>
-		[CanBeNull]
-		public static String? SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+		public static String? SimpleDecryptWithPassword( String encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 			}
@@ -197,8 +192,7 @@ namespace Librainian.Security {
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="ArgumentException">Must have a password of minimum length;password</exception>
 		/// <remarks>Significantly less secure than using random binary keys.</remarks>
-		[CanBeNull]
-		public static Byte[]? SimpleDecryptWithPassword( [NotNull] Byte[] encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+		public static Byte[]? SimpleDecryptWithPassword( Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
 
 			//User Error Checks
 			if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
@@ -240,8 +234,7 @@ namespace Librainian.Security {
 		/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
 		/// <returns>Encrypted Message</returns>
 		/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
-		[NotNull]
-		public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[]? nonSecretPayload = null ) {
+		public static Byte[] SimpleEncrypt( this Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 
 			//User Error Checks
 			if ( cryptKey.Length != KeyBitSize / 8 ) {
@@ -315,8 +308,7 @@ namespace Librainian.Security {
 		/// <returns>Encrypted Message</returns>
 		/// <exception cref="ArgumentException">Secret Message Required!;secretMessage</exception>
 		/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
-		[NotNull]
-		public static String SimpleEncrypt( [NotNull] String secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, [CanBeNull] Byte[] nonSecretPayload = null ) {
+		public static String SimpleEncrypt( String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 			if ( String.IsNullOrEmpty( secretMessage ) ) {
 				throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
 			}
@@ -340,8 +332,7 @@ namespace Librainian.Security {
 		///     Significantly less secure than using random binary keys. Adds additional non secret payload for key generation
 		///     parameters.
 		/// </remarks>
-		[NotNull]
-		public static String SimpleEncryptWithPassword( [NotNull] String secretMessage, [NotNull] String password, [CanBeNull] Byte[] nonSecretPayload = null ) {
+		public static String SimpleEncryptWithPassword( String secretMessage, String password, Byte[]? nonSecretPayload = null ) {
 			if ( String.IsNullOrEmpty( secretMessage ) ) {
 				throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
 			}
@@ -365,8 +356,7 @@ namespace Librainian.Security {
 		///     Significantly less secure than using random binary keys. Adds additional non secret payload for key generation
 		///     parameters.
 		/// </remarks>
-		[NotNull]
-		public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[]? nonSecretPayload = null ) {
+		public static Byte[] SimpleEncryptWithPassword( Byte[] secretMessage, String password, Byte[]? nonSecretPayload = null ) {
 			nonSecretPayload ??= Array.Empty<Byte>();
 
 			//User Error Checks

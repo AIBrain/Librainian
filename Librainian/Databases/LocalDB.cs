@@ -33,24 +33,25 @@ namespace Librainian.Databases {
 	using System.Reflection;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
 	using FileSystem.Pri.LongPath;
-	using JetBrains.Annotations;
 	using Logging;
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class LocalDb : ABetterClassDispose {
 
-		public LocalDb( [NotNull] String databaseName, [CanBeNull] Folder? databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
+		public LocalDb( String databaseName, Folder? databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
 
 			//TODO Check for [] around databaseName.
 			//TODO Check for spaces in databaseName.
 
 			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
-				throw new ArgumentNullException( nameof( databaseName ) );
+				throw new ArgumentEmptyException( nameof( databaseName ) );
 			}
 
 			databaseLocation ??= new Folder( Environment.SpecialFolder.LocalApplicationData, Assembly.GetEntryAssembly()?.Location.GetDirectoryName() ?? nameof( LocalDb ) );
@@ -104,22 +105,16 @@ namespace Librainian.Databases {
 			this.Connection.Close();
 		}
 
-		[NotNull]
 		public SqlConnection Connection { get; set; }
 
-		[NotNull]
 		public String ConnectionString { get; set; }
 
-		[NotNull]
 		public Folder DatabaseLocation { get; }
 
-		[NotNull]
 		public Document DatabaseLog { get; }
 
-		[NotNull]
 		public Document DatabaseMdf { get; }
 
-		[NotNull]
 		public String DatabaseName { get; }
 
 		public TimeSpan ReadTimeout { get; }

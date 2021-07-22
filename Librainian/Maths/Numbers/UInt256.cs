@@ -30,6 +30,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Globalization;
 	using System.Net;
 	using System.Numerics;
+	using Exceptions;
 	using JetBrains.Annotations;
 
 	/// <summary>
@@ -58,9 +59,9 @@ namespace Librainian.Maths.Numbers {
 			this._hashCode = (this._part1, this._part2, this._part3, this._part4).GetHashCode();
 		}
 
-		public UInt256( [NotNull] Byte[] value ) {
+		public UInt256( Byte[] value ) {
 			if ( value == null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
 			if ( value[ 32 ] is > 32 and not ( 33 and 0 ) ) {
@@ -114,7 +115,7 @@ namespace Librainian.Maths.Numbers {
 		public static explicit operator Double( UInt256 value ) => ( Double )value.ToBigInteger();
 
 		//TODO properly taken into account host endianness
-		public static UInt256 FromByteArray( [NotNull] Byte[] buffer ) {
+		public static UInt256 FromByteArray( Byte[] buffer ) {
 			unchecked {
 				if ( buffer.Length != 32 ) {
 					throw new ArgumentException( nameof( buffer ) );
@@ -234,14 +235,14 @@ namespace Librainian.Maths.Numbers {
 
 		public static UInt256 operator >>( UInt256 value, Int32 shift ) => new( value.ToBigInteger() >> shift );
 
-		public static UInt256 Parse( [CanBeNull] String? value ) => new( BigInteger.Parse( "0" + value ).ToByteArray() );
+		public static UInt256 Parse( String? value ) => new( BigInteger.Parse( "0" + value ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, [CanBeNull] IFormatProvider provider ) =>
+		public static UInt256 Parse( String? value, IFormatProvider? provider ) =>
 			new( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style ) => new( BigInteger.Parse( "0" + value, style ).ToByteArray() );
+		public static UInt256 Parse( String? value, NumberStyles style ) => new( BigInteger.Parse( "0" + value, style ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style, [CanBeNull] IFormatProvider provider ) =>
+		public static UInt256 Parse( String? value, NumberStyles style, IFormatProvider? provider ) =>
 			new( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
 
 		public static UInt256 Pow( UInt256 value, Int32 exponent ) => new( BigInteger.Pow( value.ToBigInteger(), exponent ) );
@@ -275,7 +276,6 @@ namespace Librainian.Maths.Numbers {
 
 		public BigInteger ToBigInteger() => new( this.ToByteArray().Concat( 0 ) );
 
-		[NotNull]
 		public Byte[] ToByteArray() {
 			var buffer = new Byte[ 32 ];
 			Buffer.BlockCopy( this._part4.GetBytes(), 0, buffer, 0, 8 );
@@ -286,7 +286,7 @@ namespace Librainian.Maths.Numbers {
 			return buffer;
 		}
 
-		public void ToByteArray( [NotNull] Byte[] buffer, Int32 offset ) {
+		public void ToByteArray( Byte[] buffer, Int32 offset ) {
 			Buffer.BlockCopy( this._part4.GetBytes(), 0, buffer, 0 + offset, 8 );
 			Buffer.BlockCopy( this._part3.GetBytes(), 0, buffer, 8 + offset, 8 );
 			Buffer.BlockCopy( this._part2.GetBytes(), 0, buffer, 16 + offset, 8 );
@@ -294,7 +294,6 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		//TODO properly taken into account host endianness
-		[NotNull]
 		public Byte[] ToByteArrayBe() {
 			unchecked {
 				var buffer = new Byte[ 32 ];
@@ -311,7 +310,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => this.ToHexNumberString();
 	}
 }

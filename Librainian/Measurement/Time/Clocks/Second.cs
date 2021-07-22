@@ -28,7 +28,6 @@ namespace Librainian.Measurement.Time.Clocks {
 	using System;
 	using System.Linq;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -58,15 +57,13 @@ namespace Librainian.Measurement.Time.Clocks {
 		[JsonProperty]
 		public Byte Value { get; }
 
-		public static implicit operator Byte( [NotNull] Second value ) => value.Value;
+		public static implicit operator Byte( Second value ) => value.Value;
 
-		[NotNull]
 		public static implicit operator Second( Byte value ) => new( value );
 
 		/// <summary>
 		///     Provide the next second.
 		/// </summary>
-		[NotNull]
 		public Second Next( out Boolean tocked ) {
 			var next = this.Value + 1;
 
@@ -84,7 +81,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// <summary>
 		///     Provide the previous second.
 		/// </summary>
-		[NotNull]
 		public Second Previous( out Boolean tocked ) {
 			var next = this.Value - 1;
 

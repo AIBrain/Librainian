@@ -27,8 +27,8 @@ namespace Librainian.Security {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Maths;
+	using Parsing;
 
 	//  This password generator gives you a list of "pronounceable" passwords. It is modeled after Morrie Gasser's original generator described in
 	//           Gasser, M., A Random Word Generator for Pronouncable Passwords, MTR-3006,
@@ -43,19 +43,17 @@ namespace Librainian.Security {
 	/// <summary>Random Password Generator, see http://www.multicians.org/thvv/gpw.html</summary>
 	public static class PronounceablePasswordCreator {
 
-		[NotNull]
-		public static String EnglishAlphabetLowercase { get; } = "abcdefghijklmnopqrstuvwxyz";
+		public static String EnglishAlphabetLowercase => "abcdefghijklmnopqrstuvwxyz";
 
 		/// <summary>create a prounouncable word of the required length using third-order approximation.</summary>
 		/// <param name="requiredLength"></param>
 		/// <returns></returns>
-		[NotNull]
 		public static String Generate( Int32 requiredLength ) {
 			Int32 c1;
 			Int32 c2;
 			Int32 c3;
 
-			var password = new StringBuilder( requiredLength );
+			var password = new StringBuilder( requiredLength, requiredLength );
 			var weightedRandom = ( Int64 )( Randem.NextDouble() * GpwData.Sigma );
 			Int64 sum = 0;
 
@@ -66,14 +64,12 @@ namespace Librainian.Security {
 					for ( c3 = 0; c3 < 26 && !finished; c3++ ) {
 						sum += GpwData.Get( c1, c2, c3 );
 
-						if ( sum <= weightedRandom ) {
-							continue;
+						if ( sum > weightedRandom ) {
+							password.Append( EnglishAlphabetLowercase[ c1 ] );
+							password.Append( EnglishAlphabetLowercase[ c2 ] );
+							password.Append( EnglishAlphabetLowercase[ c3 ] );
+							finished = true;
 						}
-
-						password.Append( EnglishAlphabetLowercase[ c1 ] );
-						password.Append( EnglishAlphabetLowercase[ c2 ] );
-						password.Append( EnglishAlphabetLowercase[ c3 ] );
-						finished = true;
 					}
 				}
 			}
@@ -122,8 +118,7 @@ namespace Librainian.Security {
 		/// <param name="minWordLength"></param>
 		/// <param name="maxWordLength"></param>
 		/// <returns></returns>
-		[NotNull]
-		public static String GeneratePhrase( Int32 minLength, Int32 minWordLength = 3, Int32 maxWordLength = 6 ) {
+		public static String GeneratePhrase( Int32 minLength, Int32 minWordLength = 5, Int32 maxWordLength = 11 ) {
 			var words = new List<String>();
 			var passwordLength = 0;
 
@@ -134,7 +129,7 @@ namespace Librainian.Security {
 				words.Add( word );
 			}
 
-			return String.Join( " ", words.ToArray() );
+			return String.Join( ParsingConstants.Chars.Space, words.ToArray() );
 		}
 	}
 }

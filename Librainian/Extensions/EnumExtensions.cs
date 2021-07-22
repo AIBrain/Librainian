@@ -34,7 +34,7 @@ namespace Librainian.Extensions {
 	using System.ComponentModel;
 	using System.Globalization;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>Pulled from <see cref="http://stackoverflow.com/a/944352/956364" /></summary>
 	public static class EnumExtensions {
@@ -42,8 +42,7 @@ namespace Librainian.Extensions {
 		/// <summary>Returns the text of the [Description("text")] attribute on an enum. Or null if not found.</summary>
 		/// <param name="element"></param>
 		/// <returns></returns>
-		[CanBeNull]
-		public static String? Description( [NotNull] this Enum element ) {
+		public static String? Description( this Enum element ) {
 			var type = element.GetType();
 
 			var memberInfo = type.GetMember( element.ToString() );
@@ -62,8 +61,7 @@ namespace Librainian.Extensions {
 		}
 
 		/// <summary>Gets all combined items from an enum value.</summary>
-		[NotNull]
-		public static IEnumerable<T> GetAllSelectedItems<T>( [CanBeNull] this Enum value ) {
+		public static IEnumerable<T> GetAllSelectedItems<T>( this Enum? value ) {
 			var valueAsInt = Convert.ToInt32( value );
 
 			return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T )item;
@@ -73,24 +71,21 @@ namespace Librainian.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value">The value.</param>
 		/// <returns></returns>
-		[NotNull]
-		public static IEnumerable<T> GetAllValues<T>( [NotNull] this Enum value ) {
+		public static IEnumerable<T> GetAllValues<T>( this Enum value ) {
 			if ( value is null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
-			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item! );
+			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
 		}
 
 		/// <summary>Gets all values for an enum type.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		[NotNull]
 		public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
 		// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
-		[CanBeNull]
-		public static T GetAttribute<T>( [NotNull] this Enum value ) where T : Attribute {
+		public static T GetAttribute<T>( this Enum value ) where T : Attribute {
 			var type = value.GetType();
 			var memberInfo = type.GetMember( value.ToString() );
 			var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( T ), false );
@@ -98,8 +93,7 @@ namespace Librainian.Extensions {
 			return ( T )attributes[ 0 ];
 		}
 
-		[CanBeNull]
-		public static String? GetDescription<T>( [CanBeNull] this T e ) where T : IConvertible {
+		public static String? GetDescription<T>( this T? e ) where T : IConvertible {
 			if ( e is not Enum ) {
 				return default( String? );
 			}
@@ -127,7 +121,6 @@ namespace Librainian.Extensions {
 			return default( String? );
 		}
 
-		[NotNull]
-		public static IEnumerable<T> GetEnums<T>( [CanBeNull] this T _ ) => Enum.GetValues( typeof( T ) ).Cast<T>()!;
+		public static IEnumerable<T> GetEnums<T>( this T? _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
 	}
 }

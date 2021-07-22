@@ -28,7 +28,7 @@ namespace Librainian.Parsing {
 
 	using System;
 	using System.Text.RegularExpressions;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>
 	///     A custom formatter for byte sizes (things like files, network bandwidth, etc.) that will automatically
@@ -58,7 +58,7 @@ namespace Librainian.Parsing {
 		///     <see langword="false" />.
 		/// </returns>
 		/// <exception cref="InvalidOperationException"></exception>
-		public static Boolean TryParse( [NotNull] String input, out Int64 bytes ) {
+		public static Boolean TryParse( String input, out Int64 bytes ) {
 			const String expr = @"^\s*(?<num>\d+(?:\.\d+)?)\s*(?<mod>[kKmMgGtTpPeEyY]?[bB])?\s*$";
 			var match = Regex.Match( input, expr );
 			bytes = 0;
@@ -129,10 +129,9 @@ namespace Librainian.Parsing {
 		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
 		///     <paramref name="format" /> and <paramref name="formatProvider" />.
 		/// </returns>
-		[NotNull]
-		public override String Format( String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider ) {
+		public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
 			if ( format == null ) {
-				throw new ArgumentNullException( nameof( format ) );
+				throw new ArgumentEmptyException( nameof( format ) );
 			}
 
 			Int64 bytes;

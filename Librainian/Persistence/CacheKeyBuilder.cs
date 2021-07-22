@@ -31,8 +31,7 @@ namespace Librainian.Persistence {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
-	using JetBrains.Annotations;
-	using Logging;
+	using Exceptions;
 	using Microsoft.Data.SqlClient;
 	using Parsing;
 
@@ -43,11 +42,10 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="things"></param>
-		[NotNull]
 		[DebuggerStepThrough]
-		public static String BuildKey<T>( [NotNull] params T[] things ) {
+		public static String BuildKey<T>( params T[] things ) {
 			if ( things is null ) {
-				throw new ArgumentNullException( nameof( things ) );
+				throw new ArgumentEmptyException( nameof( things ) );
 			}
 
 			if ( !things.Any() ) {
@@ -80,11 +78,10 @@ namespace Librainian.Persistence {
 		///     Build a key from combining 1 or more Objects.
 		/// </summary>
 		/// <param name="things"></param>
-		[NotNull]
 		[DebuggerStepThrough]
-		public static String BuildKey( [NotNull] params Object[] things ) {
+		public static String BuildKey( params Object[] things ) {
 			if ( things is null ) {
-				throw new ArgumentNullException( nameof( things ) ).Log( BreakOrDontBreak.Break )!;
+				throw new ArgumentEmptyException( nameof( things ) );
 			}
 
 			if ( !things.Any() ) {

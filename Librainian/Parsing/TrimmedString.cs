@@ -48,11 +48,10 @@ namespace Librainian.Parsing {
 		public static TrimmedString Empty { get; } = new( String.Empty );
 
 		[field: JsonProperty]
-		[NotNull]
 		public String Value { get; }
 
 		[DebuggerStepThrough]
-		public TrimmedString( [CanBeNull] String? value, Boolean veryTrim = false ) {
+		public TrimmedString( String? value, Boolean veryTrim = false ) {
 			if ( value == null ) {
 				this.Value = String.Empty;
 
@@ -112,7 +111,7 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="value"></param>
 		[DebuggerStepThrough]
-		public TrimmedString( [CanBeNull] Object? value ) => this.Value = ( value?.ToString() ?? String.Empty ).Trim();
+		public TrimmedString( Object? value ) => this.Value = ( value?.ToString() ?? String.Empty ).Trim();
 
 		/// <summary>Static equality test. (Compares both values with <see cref="String.Equals(Object)" />)</summary>
 		/// <param name="left"> </param>
@@ -122,10 +121,9 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static Boolean Equals( TrimmedString left, TrimmedString right ) => String.Equals( left.Value, right.Value, StringComparison.Ordinal );
 
-		[NotNull]
 		public static implicit operator String( TrimmedString value ) => value.Value;
 
-		public static implicit operator TrimmedString( [CanBeNull] String? value ) => new( value );
+		public static implicit operator TrimmedString( String? value ) => new( value );
 
 		public static Boolean operator !=( TrimmedString left, TrimmedString right ) => !Equals( left, right );
 
@@ -133,7 +131,7 @@ namespace Librainian.Parsing {
 
 		public Int32 CompareTo( TrimmedString other ) => String.Compare( this.Value, other.Value, StringComparison.Ordinal );
 
-		public Int32 CompareTo( [CanBeNull] String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
+		public Int32 CompareTo( String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
 
 		public Boolean Equals( TrimmedString other ) => Equals( this, other );
 
@@ -153,7 +151,7 @@ namespace Librainian.Parsing {
 		/// <param name="right"></param>
 		/// <returns></returns>
 		[DebuggerStepThrough]
-		public Boolean Like( [CanBeNull] String? right ) => this.Value.Like( right );
+		public Boolean Like( String? right ) => this.Value.Like( right );
 
 		/// <summary>Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)</summary>
 		/// <param name="right"></param>
@@ -163,64 +161,63 @@ namespace Librainian.Parsing {
 
 		[DebuggerStepThrough]
 		public void ThrowIfEmpty() {
-			if ( this.Value is null || this.IsEmpty() ) {
+			if ( this.IsEmpty() ) {
 				throw new ArgumentEmptyException( "Value was empty." );
 			}
 		}
 
 		[DebuggerStepThrough]
-		public Boolean ToBoolean( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToBoolean( provider );
+		public Boolean ToBoolean( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToBoolean( provider );
 
 		[DebuggerStepThrough]
-		public Byte ToByte( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToByte( provider );
+		public Byte ToByte( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToByte( provider );
 
 		[DebuggerStepThrough]
-		public Char ToChar( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToChar( provider );
+		public Char ToChar( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToChar( provider );
 
 		[DebuggerStepThrough]
-		public DateTime ToDateTime( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToDateTime( provider );
+		public DateTime ToDateTime( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToDateTime( provider );
 
 		[DebuggerStepThrough]
-		public Decimal ToDecimal( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToDecimal( provider );
+		public Decimal ToDecimal( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToDecimal( provider );
 
 		[DebuggerStepThrough]
-		public Double ToDouble( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToDouble( provider );
+		public Double ToDouble( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToDouble( provider );
 
 		[DebuggerStepThrough]
-		public Int16 ToInt16( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToInt16( provider );
+		public Int16 ToInt16( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToInt16( provider );
 
 		[DebuggerStepThrough]
-		public Int32 ToInt32( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToInt32( provider );
+		public Int32 ToInt32( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToInt32( provider );
 
 		[DebuggerStepThrough]
-		public Int64 ToInt64( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToInt64( provider );
+		public Int64 ToInt64( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToInt64( provider );
 
 		public TrimmedString ToLower( CultureInfo? cultureInfo = null ) => this.Value.ToLower( cultureInfo ?? CultureInfo.CurrentCulture );
 
 		[DebuggerStepThrough]
-		public SByte ToSByte( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToSByte( provider );
+		public SByte ToSByte( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToSByte( provider );
 
 		[DebuggerStepThrough]
-		public Single ToSingle( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToSingle( provider );
+		public Single ToSingle( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToSingle( provider );
 
 		[DebuggerStepThrough]
-		[NotNull]
 		public override String ToString() => this.Value;
 
 		[DebuggerStepThrough]
-		public String ToString( [CanBeNull] IFormatProvider? provider ) => this.Value.ToString( provider );
+		public String ToString( IFormatProvider? provider ) => this.Value.ToString( provider );
 
 		[DebuggerStepThrough]
-		public Object ToType( Type conversionType, [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToType( conversionType, provider );
+		public Object ToType( Type conversionType, IFormatProvider? provider ) => ( this.Value as IConvertible ).ToType( conversionType, provider );
 
 		[DebuggerStepThrough]
-		public UInt16 ToUInt16( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToUInt16( provider );
+		public UInt16 ToUInt16( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToUInt16( provider );
 
 		[DebuggerStepThrough]
-		public UInt32 ToUInt32( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToUInt32( provider );
+		public UInt32 ToUInt32( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToUInt32( provider );
 
 		[DebuggerStepThrough]
-		public UInt64 ToUInt64( [CanBeNull] IFormatProvider? provider ) => ( this.Value as IConvertible ).ToUInt64( provider );
+		public UInt64 ToUInt64( IFormatProvider? provider ) => ( this.Value as IConvertible ).ToUInt64( provider );
 
 		[DebuggerStepThrough]
 		public TrimmedString ToUpper( CultureInfo? cultureInfo = null ) => this.Value.ToUpper( cultureInfo ?? CultureInfo.CurrentCulture );

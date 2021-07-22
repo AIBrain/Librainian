@@ -31,6 +31,8 @@ namespace Librainian.Interfaces {
 
 		Unknown = 0,
 
+		User,
+
 		Self,
 
 		Inner,

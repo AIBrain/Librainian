@@ -35,18 +35,17 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.Numerics;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Extensions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Rationals;
 	using Utilities;
+	using Utilities.Disposables;
 
 	public class RandomnessFeeding : ABetterClassDispose {
 
-		[NotNull]
 		private GZipStream GZipStream { get; }
 
-		[NotNull]
 		private NullStream NullStream { get; } = new();
 
 		public BigInteger HowManyBytesAsCompressed { get; private set; }
@@ -65,9 +64,9 @@ namespace Librainian.OperatingSystem.Compression {
 			using ( this.NullStream ) { }
 		}
 
-		public void FeedItData( [NotNull] Byte[] data ) {
+		public void FeedItData( Byte[] data ) {
 			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			this.HowManyBytesFed += data.LongLength;
@@ -76,9 +75,9 @@ namespace Librainian.OperatingSystem.Compression {
 			this.NullStream.Seek( 0, SeekOrigin.Begin ); //rewind our 'position' so we don't overrun a long
 		}
 
-		public async Task FeedItDataAsync( [NotNull] Document document, CancellationToken cancellationToken ) {
+		public async Task FeedItDataAsync( Document document, CancellationToken cancellationToken ) {
 			if ( document == null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			this.FeedItData( await document.AsBytes( cancellationToken ).ToArrayAsync( cancellationToken ).ConfigureAwait( false ) );

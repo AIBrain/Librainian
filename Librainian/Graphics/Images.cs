@@ -33,7 +33,6 @@ namespace Librainian.Graphics {
 	using System.Drawing.Imaging;
 	using System.Globalization;
 	using System.Text;
-	using JetBrains.Annotations;
 
 	public static class Images {
 
@@ -938,8 +937,7 @@ namespace Librainian.Graphics {
 			HalftoneShape = 0x500D
 		}
 
-		[NotNull]
-		public static Matrix3X2 ComputeForwardTransform( [NotNull] IList<Point> baselineLocations, [NotNull] IList<Point> registerLocations ) {
+		public static Matrix3X2 ComputeForwardTransform( IList<Point> baselineLocations, IList<Point> registerLocations ) {
 			if ( baselineLocations.Count < 3 || registerLocations.Count < 3 ) {
 				throw new Exception( "Unable to compute the forward transform. A minimum of 3 control point pairs are required." );
 			}
@@ -994,8 +992,7 @@ namespace Librainian.Graphics {
 			return uMat;
 		}
 
-		[CanBeNull]
-		public static DateTime? GetProperteryAsDateTime( [CanBeNull] this PropertyItem? item ) {
+		public static DateTime? GetProperteryAsDateTime( this PropertyItem? item ) {
 			if ( item is null ) {
 				return default( DateTime? );
 			}
@@ -1039,7 +1036,6 @@ namespace Librainian.Graphics {
 			///     <para>.tif</para>
 			/// </summary>
 			/// <see cref="http://wikipedia.org/wiki/TIFF" />
-			[NotNull]
 			public static String Tiff => ".tif";
 		}
 

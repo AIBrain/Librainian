@@ -28,7 +28,7 @@ namespace Librainian.Measurement {
 	using System.Diagnostics;
 	using System.Runtime;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Seconds = Time.Seconds;
 
@@ -54,9 +54,9 @@ namespace Librainian.Measurement {
 		/// <param name="method"></param>
 		/// <param name="runFor">Defaults to 5 seconds.</param>
 		/// <returns>Returns how many rounds are ran in the time given.</returns>
-		public static UInt64 GetBenchmark( [NotNull] Action method, TimeSpan? runFor ) {
+		public static UInt64 GetBenchmark( Action method, TimeSpan? runFor ) {
 			if ( method is null ) {
-				throw new ArgumentNullException( nameof( method ) );
+				throw new ArgumentEmptyException( nameof( method ) );
 			}
 
 			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
@@ -112,13 +112,13 @@ namespace Librainian.Measurement {
 		/// <param name="methodB"></param>
 		/// <param name="runfor">Defaults to 5 seconds.</param>
 		/// <returns></returns>
-		public static AorB WhichIsFaster( [NotNull] Action methodA, [NotNull] Action methodB, TimeSpan? runfor = null ) {
+		public static AorB WhichIsFaster( Action methodA, Action methodB, TimeSpan? runfor = null ) {
 			if ( methodA is null ) {
-				throw new ArgumentNullException( nameof( methodA ) );
+				throw new ArgumentEmptyException( nameof( methodA ) );
 			}
 
 			if ( methodB is null ) {
-				throw new ArgumentNullException( nameof( methodB ) );
+				throw new ArgumentEmptyException( nameof( methodB ) );
 			}
 
 			runfor ??= Seconds.One;

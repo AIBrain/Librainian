@@ -27,16 +27,16 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Windows.Forms;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     Updated the code.
 	/// </summary>
 	public class NicerFormTimer : ABetterClassDispose {
 
-		[CanBeNull]
 		private Timer? Timer { get; set; }
 
 		/// <summary>
@@ -45,9 +45,9 @@ namespace Librainian.Threading {
 		/// <param name="action">      </param>
 		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
 		/// <param name="milliseconds"></param>
-		public NicerFormTimer( [NotNull] Action action, Boolean repeat, Int32? milliseconds = null ) {
+		public NicerFormTimer( Action action, Boolean repeat, Int32? milliseconds = null ) {
 			if ( action is null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			this.Timer = new Timer {

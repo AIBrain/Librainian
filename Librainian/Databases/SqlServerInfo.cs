@@ -27,12 +27,10 @@
 namespace Librainian.Databases {
 
 	using System;
-	using JetBrains.Annotations;
 	using Microsoft.Data.SqlClient;
 
 	public class SqlServerInfo {
 
-		[CanBeNull]
 		public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }
 
 		public Status Status { get; set; }
@@ -40,10 +38,8 @@ namespace Librainian.Databases {
 		/// <summary>
 		///     The datetime on the Server in UTC.
 		/// </summary>
-		[CanBeNull]
 		public DateTime? UTCDateTime { get; set; }
 
-		[CanBeNull]
 		public String? Version { get; set; }
 	}
 }

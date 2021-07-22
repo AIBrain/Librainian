@@ -32,8 +32,8 @@ namespace Librainian.Linguistics {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -46,9 +46,9 @@ namespace Librainian.Linguistics {
 	public record Book : IEnumerable<(Int32 pageid, Page page)>, IHasAuthors {
 		private Book() { }
 
-		public Book( [ItemNotNull][NotNull] IEnumerable<Page> pages, [ItemNotNull][CanBeNull] IEnumerable<Author>? authors = null ) {
+		public Book( IEnumerable<Page> pages, IEnumerable<Author>? authors = null ) {
 			if ( pages is null ) {
-				throw new ArgumentNullException( nameof( pages ) );
+				throw new ArgumentEmptyException( nameof( pages ) );
 			}
 
 			var pageNumber = 0;
@@ -62,11 +62,9 @@ namespace Librainian.Linguistics {
 			}
 		}
 
-		[NotNull]
 		[JsonProperty]
 		public HashSet<Author> Authors { get; } = new();
 
-		[NotNull]
 		[JsonProperty]
 		private Dictionary<Int32, Page> Pages { get; } = new();
 
@@ -90,7 +88,7 @@ namespace Librainian.Linguistics {
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] Book? left, [CanBeNull] Book? right ) {
+		public static Boolean Equals( Book? left, Book? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -102,10 +100,8 @@ namespace Librainian.Linguistics {
 			return left.SequenceEqual( right ); //no authors?? No authors.
 		}
 
-		[NotNull]
 		public IEnumerable<Author> GetAuthors() => this.Authors;
 
-		[NotNull]
 		public IEnumerable<(Int32, Page)> GetPages() => this.Pages.Select( pair => (pair.Key, pair.Value) );
 	}
 }

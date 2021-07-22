@@ -32,8 +32,9 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using ExtendedNumerics;
+	using Exceptions;
 	using Extensions;
+	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -61,7 +62,7 @@ namespace Librainian.Measurement.Time {
 
 		public Int32 CompareTo( Years? other ) {
 			if ( other is null ) {
-				throw new ArgumentNullException( nameof( other ) );
+				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );

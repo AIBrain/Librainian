@@ -26,13 +26,11 @@ namespace Librainian.Internet {
 
 	using System;
 	using System.Net;
-	using JetBrains.Annotations;
 
 	public class WebClientWithTimeout : WebClient {
 
 		/// <summary>The <see cref="WebRequest" /> instance.</summary>
-		[CanBeNull]
-		public WebRequest Request { get; private set; }
+		public WebRequest? Request { get; private set; }
 
 		public TimeSpan Timeout { get; set; }
 

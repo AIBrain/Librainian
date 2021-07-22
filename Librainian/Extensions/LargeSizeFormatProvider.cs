@@ -27,15 +27,14 @@
 namespace Librainian.Extensions {
 
 	using System;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Maths;
 
 	public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
 		private const String FileSizeFormat = "fs";
 
-		[NotNull]
-		private static String? DefaultFormat( [NotNull] String format, [NotNull] Object arg, [CanBeNull] IFormatProvider? formatProvider ) {
+		private static String? DefaultFormat( String format, Object arg, IFormatProvider? formatProvider ) {
 			var formattableArg = arg as IFormattable;
 
 			var s = formattableArg?.ToString( format, formatProvider );
@@ -43,10 +42,9 @@ namespace Librainian.Extensions {
 			return s ?? arg.ToString();
 		}
 
-		[NotNull]
-		public String Format( [CanBeNull] String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider ) {
+		public String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
 			if ( arg == null ) {
-				throw new ArgumentNullException( nameof( arg ) );
+				throw new ArgumentEmptyException( nameof( arg ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( format ) ) {

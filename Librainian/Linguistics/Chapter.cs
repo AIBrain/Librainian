@@ -32,7 +32,7 @@ namespace Librainian.Linguistics {
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Linq;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -45,15 +45,14 @@ namespace Librainian.Linguistics {
 	public record Chapter : IEnumerable<Page>, IHasAuthors {
 		private Chapter() { }
 
-		public Chapter( [NotNull][ItemNotNull] IEnumerable<Page> pages ) {
+		public Chapter( IEnumerable<Page> pages ) {
 			if ( pages is null ) {
-				throw new ArgumentNullException( nameof( pages ) );
+				throw new ArgumentEmptyException( nameof( pages ) );
 			}
 
 			this.Add( pages );
 		}
 
-		[NotNull]
 		[JsonProperty]
 		private List<Page> Pages { get; } = new();
 
@@ -65,15 +64,11 @@ namespace Librainian.Linguistics {
 
 		public HashSet<Author> Authors { get; } = new();
 
-		public static Boolean Equals( [CanBeNull] Chapter? left, [CanBeNull] Chapter? right ) =>
+		public static Boolean Equals( Chapter? left, Chapter? right ) =>
 			left is not null && right is not null && ( ReferenceEquals( left, right ) || left.Pages.SequenceEqual( right.Pages ) );
 
-		public void Add( Page page ) {
-			this.Pages.Add( page );
-		}
+		public void Add( Page page ) => this.Pages.Add( page );
 
-		public void Add( IEnumerable<Page> pages ) {
-			this.Pages.AddRange( pages );
-		}
+		public void Add( IEnumerable<Page> pages ) => this.Pages.AddRange( pages );
 	}
 }

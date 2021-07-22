@@ -29,32 +29,34 @@ namespace LibrainianUnitTests.Maths {
 
 	using System;
 	using Librainian.Measurement.Time;
-	using Xunit;
+	using NUnit.Framework;
+
 
 	/// <summary>
 	///     From <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates.Tests/DateSpanTests.cs" />
 	/// </summary>
+	[TestFixture]
 	public class DateSpanTests {
 
-		[Fact]
+		[Test]
 		public void Can_get_date_difference_in_days() {
 			var start = DateTime.Now;
 			var end = DateTime.Now.AddDays( 5 );
 			var diff = DateSpan.GetDifference( DateInterval.Days, start, end );
 
-			Assert.Equal( 5, diff );
+			Assert.AreEqual( 5, diff );
 		}
 
-		[Fact]
+		[Test]
 		public void Can_get_date_difference_in_days_spanning_one_month() {
 			var start = new DateTime( 2009, 09, 30 );
 			var end = new DateTime( 2009, 10, 01 );
 
 			var days = DateSpan.GetDifference( DateInterval.Days, start, end );
-			Assert.Equal( 1, days );
+			Assert.AreEqual( 1, days );
 		}
 
-		[Fact]
+		[Test]
 		public void Can_get_date_difference_in_days_spanning_one_week() {
 			var start = new DateTime( 2009, 09, 30 );
 			var end = start.AddDays( 10 );
@@ -62,36 +64,36 @@ namespace LibrainianUnitTests.Maths {
 			var days = DateSpan.GetDifference( DateInterval.Days, start, end );
 			var weeks = DateSpan.GetDifference( DateInterval.Weeks, start, end );
 
-			Assert.Equal( 10, days );
-			Assert.Equal( 1, weeks );
+			Assert.AreEqual( 10, days );
+			Assert.AreEqual( 1, weeks );
 		}
 
-		[Fact]
+		[Test]
 		public void Can_get_date_difference_in_days_spanning_two_months() {
 			var start = new DateTime( 2009, 09, 30 );
 			var end = new DateTime( 2009, 11, 04 ); // 4 days in November, 31 in October
 
 			var days = DateSpan.GetDifference( DateInterval.Days, start, end );
-			Assert.Equal( 35, days );
+			Assert.AreEqual( 35, days );
 		}
 
-		[Fact]
+		[Test]
 		public void Can_get_date_difference_in_seconds() {
 			var start = DateTime.Now;
 			var end = DateTime.Now.AddDays( 5 );
 			var diff = DateSpan.GetDifference( DateInterval.Seconds, start, end );
 
-			Assert.Equal( 432000, diff );
+			Assert.AreEqual( 432000, diff );
 		}
 
-		[Fact]
+		[Test]
 		public void Can_handle_composite_spans() {
 			var start = new DateTime( 2009, 9, 30 );
 			var end = new DateTime( 2009, 10, 31 );
 			var span = new DateSpan( start, end );
 
-			Assert.Equal( 1, span.Months );
-			Assert.Equal( 1, span.Days );
+			Assert.AreEqual( 1, span.Months );
+			Assert.AreEqual( 1, span.Days );
 
 			Console.WriteLine( span.Months );
 			Console.WriteLine( span.Days );

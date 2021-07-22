@@ -27,7 +27,6 @@
 namespace Librainian.Persistence.InIFiles {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -68,26 +67,21 @@ namespace Librainian.Persistence.InIFiles {
 		};
 
 		[JsonProperty]
-		[CanBeNull]
 		public String? Key { get; }
 
 		/// <summary>
 		///     The prefix for lines.
 		/// </summary>
 		[JsonProperty]
-		[CanBeNull]
 		public String? LineHeader { get; set; }
 
 		[JsonProperty]
 		public LineTypes LineType { get; }
 
 		[JsonProperty]
-		[CanBeNull]
 		public String? Value { get; set; }
 
-		public IniLine( [CanBeNull]
-						String? key, [CanBeNull]
-						String? value = default ) {
+		public IniLine( String? key, String? value = default ) {
 			key = key.Trimmed() ?? String.Empty;
 
 			var test = key.StartsWith( CommentHeaders, StringComparison.Ordinal );
