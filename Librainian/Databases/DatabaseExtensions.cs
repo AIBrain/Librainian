@@ -77,13 +77,13 @@ namespace Librainian.Databases {
 		}
 
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T? Adhoc<T>( this SqlConnectionStringBuilder builderToTest, String command, CancellationToken cancellationToken ) {
+		public static T? Adhoc<T>( this SqlConnectionStringBuilder builderToTest, String applicationName, String command, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
 
 			try {
-				using var db = new DatabaseServer( builderToTest.ConnectionString, null, cancellationToken, cancellationToken );
+				using var db = new DatabaseServer( builderToTest.ConnectionString, null, applicationName ,cancellationToken, cancellationToken );
 
 				return db.ExecuteScalar<T>( command, CommandType.Text );
 			}

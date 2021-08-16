@@ -30,7 +30,9 @@ namespace Librainian.Databases {
 	using System.Linq.Expressions;
 	using Exceptions;
 	using Microsoft.Data.SqlClient;
+	using Utilities;
 
+	[NeedsTesting]
 	public static class GenericPopulator<T> {
 
 		public static Func<SqlDataReader, T>? GetReader( IDataRecord reader ) {
@@ -62,7 +64,7 @@ namespace Librainian.Databases {
 			foreach ( var prop in typeof( T ).GetProperties() ) {
 
 				// determine the default value of the property
-				Object defaultValue = null;
+				Object? defaultValue = null;
 
 				if ( prop.PropertyType.IsValueType ) {
 					defaultValue = Activator.CreateInstance( prop.PropertyType );
@@ -83,7 +85,7 @@ namespace Librainian.Databases {
 					var ifFalse = Expression.Convert( Expression.Constant( defaultValue ), prop.PropertyType );
 
 					// create the actual Bind expression to bind the value from the reader to the property value
-					var mi = typeof( T ).GetMember( prop.Name )[ 0 ];
+					var mi = typeof( T ).GetMember( prop.Name )[0];
 					MemberBinding mb = Expression.Bind( mi, Expression.Condition( testExp, ifTrue, ifFalse ) );
 					memberBindings.Add( mb );
 				}
@@ -105,9 +107,10 @@ namespace Librainian.Databases {
 		public static List<T> CreateList<T>( SqlDataReader reader ) {
 			var results = new List<T>();
 			var readRow = GenericPopulator<T>.GetReader( reader );
-
-			while ( reader.Read() ) {
-				results.Add( readRow( reader ) );
+			if ( readRow != null ) {
+				while ( reader.Read() ) {
+					results.Add( readRow( reader ) );
+				}
 			}
 
 			return results;

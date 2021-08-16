@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Status.cs" last touched on 2021-04-25 at 12:18 PM by Protiguous.
+// File "Status.cs" last touched on 2021-08-16 at 6:35 AM by Protiguous.
 
 // ReSharper disable once CheckNamespace
 
@@ -48,7 +48,10 @@ namespace Librainian {
 		Warning = Skip - 1,
 
 		[Description( Symbols.Fail )]
-		Skip = -Continue,
+		Skip = -Advance,
+
+		[Description( Symbols.BlackStar )]
+		Cancel = -Continue,
 
 		[Description( Symbols.Timeout )]
 		Timeout = Stop - 1,

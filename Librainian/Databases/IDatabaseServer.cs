@@ -42,18 +42,21 @@ namespace Librainian.Databases {
 
 		String? Query { get; set; }
 
+		/*
 		/// <summary>
 		///     Opens and then closes a <see cref="SqlConnection" />.
 		/// </summary>
 		/// <returns></returns>
 		Int32? ExecuteNonQuery( String query, CommandType commandType, params SqlParameter[] parameters );
+		*/
 
-		Int32? ExecuteNonQuery( String query, Int32 retriesLeft, CommandType commandType, params SqlParameter[] parameters );
+		//Int32? ExecuteNonQuery( String query, Int32 retriesLeft, CommandType commandType, params SqlParameter[] parameters );
 
 		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
+		/*
 		/// <summary>
 		///     Returns a <see cref="DataTable" />
 		/// </summary>
@@ -62,6 +65,7 @@ namespace Librainian.Databases {
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
 		Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
+		*/
 
 		/// <summary>
 		/// </summary>
@@ -80,6 +84,7 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		PooledValueTask<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
+		/*
 		/// <summary>
 		///     <para>Returns the first column of the first row.</para>
 		/// </summary>
@@ -88,6 +93,7 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
 		TResult? ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[] parameters );
+		*/
 
 		/// <summary>
 		///     <para>Returns the first column of the first row.</para>
@@ -110,12 +116,13 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		PooledValueTask<Boolean> FillTableAsync( String query, CommandType commandType, DataTable table, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
-		DataTableReader? QueryAdHoc( String query, params SqlParameter[] parameters );
+		//DataTableReader? QueryAdHoc( String query, params SqlParameter[] parameters );
 
 		PooledValueTask<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter?[]? parameters );
 
 		PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
+		/*
 		/// <summary>
 		///     <para>Connect and then run <paramref name="query" />.</para>
 		/// </summary>
@@ -125,6 +132,7 @@ namespace Librainian.Databases {
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
 		PooledValueTask<SqlDataReader?> QueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
+		*/
 
 		/// <summary>
 		///     <para>Connect and then run <paramref name="query" />.</para>
@@ -142,13 +150,15 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		IEnumerable<TResult>? QueryList<TResult>( String query, CommandType commandType, params SqlParameter[] parameters );
+		PooledValueTask<IEnumerable<TResult>?> QueryListAsync<TResult>( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
+		
 
 		PooledValueTask<Int32?> RunSprocAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
-		void UseDatabase( String databaseName );
+		//void UseDatabase( String databaseName );
 
 		PooledValueTask UseDatabaseAsync( String databaseName, CancellationToken cancellationToken );
 	}
