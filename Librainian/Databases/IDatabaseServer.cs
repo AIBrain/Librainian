@@ -36,7 +36,7 @@ namespace Librainian.Databases {
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
 
-	public interface IDatabase {
+	public interface IDatabaseServer {
 
 		TimeSpan CommandTimeout { get; set; }
 
@@ -48,7 +48,7 @@ namespace Librainian.Databases {
 		/// <returns></returns>
 		Int32? ExecuteNonQuery( String query, CommandType commandType, params SqlParameter[] parameters );
 
-		Int32? ExecuteNonQuery( String query, Int32 retries, CommandType commandType, params SqlParameter[] parameters );
+		Int32? ExecuteNonQuery( String query, Int32 retriesLeft, CommandType commandType, params SqlParameter[] parameters );
 
 		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
@@ -61,7 +61,6 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
 
 		/// <summary>
@@ -70,7 +69,6 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		PooledValueTask<DataTableReader?> ExecuteReaderAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
@@ -80,7 +78,6 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		PooledValueTask<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
@@ -99,7 +96,6 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		PooledValueTask<TResult?> ExecuteScalarAsync<TResult>( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>

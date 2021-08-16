@@ -149,17 +149,14 @@ namespace Librainian.Threading {
 		/// <summary>
 		///     How long the <see cref="Job{T}" /> has been running.
 		/// </summary>
-		/// <returns></returns>
 		public TimeSpan Elapsed() => this._stopwatch.Elapsed;
 
 		/// <summary>Query the <see cref="EstimatedTimeRemaining" />.</summary>
-		/// <returns></returns>
 		public TimeSpan ETR() => this.EstimatedTimeRemaining;
 
 		public Boolean IsDone() => this.TheTask.IsDone();
 
 		/// <summary>aka Run()</summary>
-		/// <returns></returns>
 		public async Task Task() {
 			try {
 				await this.TheTask.ConfigureAwait( false );

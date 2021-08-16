@@ -83,7 +83,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <param name="coinWallet"></param>
 		/// <param name="amount"></param>
 		/// <param name="optimalAmountOfCoin"></param>
-		/// <returns></returns>
 		public static Decimal Fund( this CoinWallet coinWallet, Decimal amount, Boolean optimalAmountOfCoin = true ) {
 			if ( coinWallet is null ) {
 				throw new ArgumentEmptyException( nameof( coinWallet ) );
@@ -102,7 +101,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
-		/// <returns></returns>
 		public static IEnumerable<KeyValuePair<ICoin, UInt64>> Optimal( this Decimal amount, ref Decimal leftOverAmount ) {
 			var left = new List<ICoin>( PossibleCoins );
 			var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );
@@ -127,7 +125,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 		/// <summary>Truncate anything lesser than 1 <see cref="Satoshi" />.</summary>
 		/// <param name="btc"></param>
-		/// <returns></returns>
 		public static Decimal Sanitize( this Decimal btc ) {
 			var sanitized = btc.ToSatoshi().ToBTC();
 
@@ -154,7 +151,6 @@ namespace Librainian.Financial.Currency.BTC {
 		///     <para>NMC</para>
 		///     <para>etc...</para>
 		/// </param>
-		/// <returns></returns>
 		public static String? SimplerBTC( this Decimal btc, String coinSuffix = "BTC" ) {
 			if ( coinSuffix is null ) {
 				throw new ArgumentEmptyException( nameof( coinSuffix ) );
@@ -182,7 +178,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <summary>Create a TPL dataflow task for depositing large volumes of money.</summary>
 		/// <param name="coinWallet"></param>
 		/// <param name="sourceAmounts"></param>
-		/// <returns></returns>
 		public static Task StartDeposit( CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>> sourceAmounts ) {
 			if ( coinWallet is null ) {
 				throw new ArgumentEmptyException( nameof( coinWallet ) );
@@ -218,7 +213,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 		/// <summary>Return the <paramref name="wallet" /> in Satoshi.</summary>
 		/// <param name="wallet"></param>
-		/// <returns></returns>
 		public static Int64 ToSatoshi( this SimpleBitcoinWallet wallet ) => wallet.Balance.ToSatoshi();
 
 		public static Decimal ToμBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.ΜBtcInOneBtc;
@@ -263,7 +257,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <summary>Create a TPL dataflow task for depositing large volumes of money into this wallet.</summary>
 		/// <param name="coinWallet"></param>
 		/// <param name="sourceAmounts"></param>
-		/// <returns></returns>
 		public static Task Transfer( CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>>? sourceAmounts ) {
 			if ( coinWallet is null ) {
 				throw new ArgumentEmptyException( nameof( coinWallet ) );
@@ -284,7 +277,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
-		/// <returns></returns>
 		public static IEnumerable<KeyValuePair<ICoin, UInt64>> UnOptimal( this Decimal amount, ref Decimal leftOverAmount ) {
 			var left = new List<ICoin>( PossibleCoins );
 			var result = left.ToDictionary<ICoin, ICoin, UInt64>( denomination => denomination, denomination => 0 );

@@ -42,7 +42,6 @@ namespace Librainian.Collections {
 	using Newtonsoft.Json;
 	using Threading;
 	using Threadsafe;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -198,7 +197,6 @@ namespace Librainian.Collections {
 		}
 
 		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
-		/// <returns></returns>
 		public Boolean Complete() {
 			this.IsReadOnly = true;
 			this.Trim();
@@ -248,7 +246,6 @@ namespace Librainian.Collections {
 		}
 
 		/// <summary>Return the sum of all values.</summary>
-		/// <returns></returns>
 		public BigInteger Sum() => this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
 
 		public void Trim() =>
@@ -256,7 +253,6 @@ namespace Librainian.Collections {
 						pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
 
 		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
-		/// <returns></returns>
 		public Boolean EnableMutable() => !( this.IsReadOnly = false );
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>

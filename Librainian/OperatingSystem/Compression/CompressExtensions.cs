@@ -39,7 +39,6 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Compresses the data by using <see cref="GZipStream" />.</summary>
 		/// <param name="data"></param>
 		/// <param name="compressionLevel"></param>
-		/// <returns></returns>
 		public static Byte[] Compress( this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
 			if ( data is null ) {
 				throw new ArgumentEmptyException( nameof( data ) );
@@ -65,7 +64,6 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string, Gzip compressed and then converted to base64.</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static async Task<String> CompressAsync( this String text, Encoding? encoding = null ) {
 			var buffer = ( encoding ?? Common.DefaultEncoding ).GetBytes( text );
 
@@ -110,7 +108,6 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string decompressed (from base64).</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static async Task<String> DecompressAsync( this String text, Encoding? encoding = null ) {
 			var buffer = Convert.FromBase64String( text );
 
@@ -145,7 +142,6 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string decompressed (from base64).</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static String FromCompressedBase64( this String text, Encoding? encoding = null ) {
 			if ( text is null ) {
 				throw new ArgumentEmptyException( nameof( text ) );
@@ -167,7 +163,6 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string compressed (and then returned as a base64 string).</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static String ToCompressedBase64( this String text, Encoding? encoding = null ) {
 			using var incoming = new MemoryStream( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ), false );
 

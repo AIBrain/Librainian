@@ -123,28 +123,24 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.
 		/// </summary>
 		/// <param name="minutes"></param>
-		/// <returns></returns>
 		public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.
 		/// </summary>
 		/// <param name="minutes"></param>
-		/// <returns></returns>
 		public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.
 		/// </summary>
 		/// <param name="minutes"></param>
-		/// <returns></returns>
 		public static implicit operator SpanOfTime( Minutes minutes ) => new(minutes);
 
 		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );

@@ -74,7 +74,6 @@ namespace Librainian.Graphics {
 		/// <summary>Static comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
-		/// <returns></returns>
 		public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( right );
 
 		/// <summary>Determines whether the specified Point3D instances are unequal.</summary>

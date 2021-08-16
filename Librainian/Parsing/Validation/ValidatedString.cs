@@ -84,7 +84,6 @@ namespace Librainian.Parsing.Validation {
 		/// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( IValidatedString? left, IValidatedString? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
@@ -104,7 +103,6 @@ namespace Librainian.Parsing.Validation {
 		/// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( String? left, IValidatedString? right ) {
 			if ( left is null && right is null ) {
 				return true;
@@ -120,7 +118,6 @@ namespace Librainian.Parsing.Validation {
 		/// <summary>Static comparison for <see cref="IValidatedString" /> and <see cref="String" />.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( IValidatedString? left, String? right ) {
 			if ( left?.Value is null || right is null ) {
 				return false;

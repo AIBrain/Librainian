@@ -39,7 +39,6 @@ namespace Librainian.Internet.Servers {
 	using System.Threading.Tasks;
 	using JetBrains.Annotations;
 	using Logging;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary></summary>
@@ -119,7 +118,6 @@ namespace Librainian.Internet.Servers {
 
 		/// <summary>Start the http listener.</summary>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		/// <see cref="Stop" />
 		public async Task Run( CancellationToken cancellationToken ) {
 			"Webserver running...".Info();

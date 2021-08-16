@@ -6,24 +6,24 @@
 //
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Extensions {
 
@@ -43,7 +43,7 @@ namespace Librainian.Extensions {
 	[MeansImplicitUse]
 	public sealed class ImmutableAttribute : Attribute {
 
-		public Boolean OnFaith;
+		public Boolean OnFaith { get; set; }
 
 		private static Boolean IsMarkedImmutable( Type type ) {
 			if ( type is null ) {
@@ -85,12 +85,7 @@ namespace Librainian.Extensions {
 			return immutableAttribute.OnFaith;
 		}
 
-		// in some cases, a type is immutable but can't be proven as such. in these cases, the developer can mark the type with [Immutable(true)] and the code below will take it on faith that the type is immutable,
-		// instead of testing explicitly.
-		//
-		// A common example is a type that contains a List<T>, but doesn't modify it after construction.
-		//
-		// TODO: replace this with a per-field attribute, to allow the immutability test to run over the rest of the type.
+
 		/// <summary>Ensures that 'type' follows the rules for immutability</summary>
 		/// <exception cref="ImmutableFailureException">Thrown if a mutability issue appears.</exception>
 		public static void VerifyTypeIsImmutable( Type type, IEnumerable<Type> whiteList ) {

@@ -97,7 +97,6 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Given a <see cref="DateTime" />, calculate the <see cref="SpanOfTime" />.</summary>
 		/// <param name="dateTime"></param>
-		/// <returns></returns>
 		public static SpanOfTime CalcSpanSince( DateTime dateTime ) {
 			var sinceThen = new SpanOfTime( dateTime - DateTime.MinValue );
 			var plancksSinceThen = sinceThen.CalcTotalPlanckTimes();

@@ -87,14 +87,12 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Task<T> GetAwaiter<T>( this T value ) => Task.FromResult( value );
 
 		/// <summary>
 		/// Is this even legal?
 		/// </summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Task<Boolean> GetAwaiter( this Boolean value ) => Task.FromResult( value );
 
 		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();

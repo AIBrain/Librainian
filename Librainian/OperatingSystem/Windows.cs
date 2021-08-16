@@ -68,7 +68,6 @@ namespace Librainian.OperatingSystem {
 			new( () => FindDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ), true );
 
 		/// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
-		/// <returns></returns>
 		public static async Task CleanUpPath( Boolean reportToConsole, CancellationToken cancellationToken ) {
 			if ( reportToConsole ) {
 				"Attempting to verify and fix the PATH environment.".Info();
@@ -175,7 +174,7 @@ namespace Librainian.OperatingSystem {
 
 					var process = Process.Start( startInfo );
 
-					if ( null == process ) {
+					if ( process == null ) {
 						"failure.".Info();
 
 						return false;

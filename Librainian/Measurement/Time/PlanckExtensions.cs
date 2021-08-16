@@ -32,7 +32,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>
-		/// <returns></returns>
 		public static BigInteger PullPlancks( this BigInteger constant, ref BigInteger planckTimes ) {
 			var integer = BigInteger.Divide( planckTimes, constant );
 			planckTimes -= BigInteger.Multiply( integer, constant );
@@ -57,7 +56,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>
-		/// <returns></returns>
 		public static BigInteger PullPlancks( this BigDecimal constant, ref BigInteger planckTimes ) {
 			var times = BigDecimal.Divide( planckTimes, constant );
 			planckTimes -= BigInteger.Multiply( ( BigInteger )times, ( BigInteger )constant );

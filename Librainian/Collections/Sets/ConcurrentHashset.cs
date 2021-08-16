@@ -55,7 +55,6 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Gets the item in the set or throws.</summary>
 		/// <param name="index"></param>
-		/// <returns></returns>
 		/// <exception cref="IndexOutOfRangeException"></exception>
 		public T this[ Int32 index ] {
 			[NotNull]
@@ -115,7 +114,6 @@ namespace Librainian.Collections.Sets {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public void Replace( T left, T right ) {
 			this.Remove( left );
 			this.Add( right );
@@ -124,7 +122,6 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Set the tag on an item.</summary>
 		/// <param name="item"></param>
 		/// <param name="tag"></param>
-		/// <returns></returns>
 		public Boolean Tag( T item, Object? tag ) {
 			this.Set[ item ] = tag;
 
@@ -133,7 +130,6 @@ namespace Librainian.Collections.Sets {
 
 		/// <summary>Get the tag on an item.</summary>
 		/// <param name="item"></param>
-		/// <returns></returns>
 		public Object? Tag( T item ) {
 			this.Set.TryGetValue( item, out var tag );
 

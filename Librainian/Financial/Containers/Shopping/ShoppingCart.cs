@@ -31,7 +31,6 @@ namespace Librainian.Financial.Containers.Shopping {
 	using Collections.Lists;
 	using Maths;
 	using Newtonsoft.Json;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>Just a concept class.</summary>
@@ -74,7 +73,6 @@ namespace Librainian.Financial.Containers.Shopping {
 
 		/// <summary>Removes the first <paramref name="item" /> from the list.</summary>
 		/// <param name="item"></param>
-		/// <returns></returns>
 		public Boolean RemoveItem( ShoppingItem? item ) => this.Items.Remove( item );
 
 		public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {

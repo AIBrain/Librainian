@@ -40,7 +40,6 @@ namespace Librainian.Databases {
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public class LocalDb : ABetterClassDispose {

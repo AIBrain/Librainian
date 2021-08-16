@@ -140,7 +140,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// </summary>
 		/// <param name="wallet"></param>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public static async Task<Decimal> Fund( this Wallet wallet, Decimal amount ) {
 			if ( wallet is null ) {
 				throw new ArgumentEmptyException( nameof( wallet ) );
@@ -156,7 +155,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <summary>Create a TPL dataflow task for depositing large volumes of money.</summary>
 		/// <param name="wallet"></param>
 		/// <param name="sourceAmounts"></param>
-		/// <returns></returns>
 		public static Task StartDeposit( Wallet wallet, IEnumerable<(IDenomination, UInt64)>? sourceAmounts ) {
 			if ( wallet is null ) {
 				throw new ArgumentEmptyException( nameof( wallet ) );
@@ -197,7 +195,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// </summary>
 		/// <param name="amount"></param>
 		/// <param name="leftOverAmount">Fractions of Dollars/Pennies not accounted for. OfficeSpace, Superman III"...</param>
-		/// <returns></returns>
 		public static Dictionary<IDenomination, UInt64> ToOptimal( this Decimal amount, out Decimal leftOverAmount ) {
 			var denominations = new List<IDenomination>( PossibleDenominations );
 			var optimal = denominations.ToDictionary<IDenomination, IDenomination, UInt64>( denomination => denomination, denomination => 0 );

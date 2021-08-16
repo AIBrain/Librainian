@@ -33,7 +33,6 @@ namespace Librainian.Financial.Currency {
 	using Exceptions;
 	using Measurement.Time;
 	using Newtonsoft.Json;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>A very simple, thread-safe, Decimal-based wallet.</summary>
@@ -90,7 +89,6 @@ namespace Librainian.Financial.Currency {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( SimpleWallet? left, SimpleWallet? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
@@ -143,7 +141,6 @@ namespace Librainian.Financial.Currency {
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
 		/// <param name="amount">  </param>
-		/// <returns></returns>
 		public Boolean TryAdd( Decimal amount ) {
 			try {
 				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
@@ -175,7 +172,6 @@ namespace Librainian.Financial.Currency {
 
 		/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" />.</summary>
 		/// <param name="amount">  </param>
-		/// <returns></returns>
 		public Boolean TryDeposit( Decimal amount ) {
 			if ( amount > Decimal.Zero ) {
 				this.OnBeforeDeposit?.Invoke( amount );
@@ -230,7 +226,6 @@ namespace Librainian.Financial.Currency {
 		///     <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
 		/// </summary>
 		/// <param name="amount">  </param>
-		/// <returns></returns>
 		public Boolean TryUpdateBalance( Decimal amount ) {
 			try {
 				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
@@ -259,7 +254,6 @@ namespace Librainian.Financial.Currency {
 		///     <para>If the amount is not available, then nothing is withdrawn.</para>
 		/// </summary>
 		/// <param name="amount">  </param>
-		/// <returns></returns>
 		public Boolean TryWithdraw( Decimal amount ) {
 			if ( amount <= Decimal.Zero ) {
 				return false;

@@ -143,7 +143,6 @@ namespace Librainian.Linguistics {
 		/// <summary>
 		/// Return a jagged array of every possible combination.
 		/// </summary>
-		/// <returns></returns>
 		public Word[][] PowerSet() => this.Words.ToArray().PowerSet();
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

@@ -43,7 +43,6 @@ namespace Librainian.Collections.Lists {
 	using Newtonsoft.Json;
 	using Parsing;
 	using Threading;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -236,7 +235,6 @@ namespace Librainian.Collections.Lists {
 		///         <see cref="ConcurrentList{TType}" /> .
 		///     </para>
 		/// </summary>
-		/// <returns></returns>
 		public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
 		/// <summary>
@@ -283,7 +281,6 @@ namespace Librainian.Collections.Lists {
 		///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
 		/// </summary>
 		/// <param name="item"></param>
-		/// <returns></returns>
 		public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
 
 		public void RemoveAt( Int32 index ) {
@@ -317,7 +314,6 @@ namespace Librainian.Collections.Lists {
 		}
 
 		/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
-		/// <returns></returns>
 		IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
 		private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
@@ -339,7 +335,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <typeparam name="TFuncResult"></typeparam>
 		/// <param name="func"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
 		private TFuncResult? Read<TFuncResult>( Func<TFuncResult?> func ) {
@@ -458,7 +453,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="func">                         </param>
-		/// <returns></returns>
 		/// <see cref="CatchUp" />
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
@@ -497,7 +491,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="item">    </param>
 		/// <param name="afterAdd"></param>
-		/// <returns></returns>
 		public Boolean Add( T? item, Action? afterAdd ) {
 			if ( this.ThrowWhenDisposed() ) {
 				return false;
@@ -528,7 +521,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Creates a hot task that needs to be awaited.</summary>
 		/// <param name="item"></param>
 		/// <param name="afterAdd"></param>
-		/// <returns></returns>
 		public Task<Boolean> AddAsync( T? item, Action? afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
 
 		/// <summary>Add a collection of items.</summary>
@@ -576,7 +568,6 @@ namespace Librainian.Collections.Lists {
 		/// <param name="afterEachAdd"></param>
 		/// <param name="afterRangeAdded"></param>
 		/// <param name="useParallelism"></param>
-		/// <returns></returns>
 		public Task AddRangeAsync(
 			IEnumerable<T>? items,
 			CancellationToken cancellationToken,
@@ -595,7 +586,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>
 		///     Returns true if any items have not been added to the list yet.
 		/// </summary>
-		/// <returns></returns>
 		/// <see cref="CatchUp" />
 		public Boolean AnyWritesPending() => this.InputBuffer.Any();
 
@@ -637,7 +627,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>
 		///     <para>Returns a copy of this <see cref="ConcurrentList{TType}" /> (at this moment).</para>
 		/// </summary>
-		/// <returns></returns>
 		public ConcurrentList<T> Clone() {
 			this.CatchUp();
 
@@ -668,7 +657,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="item">        </param>
 		/// <param name="afterRemoval"></param>
-		/// <returns></returns>
 		public Boolean Remove( T? item, Action? afterRemoval ) {
 			if ( this.ThrowWhenDisposed() ) {
 				return false;
@@ -709,7 +697,6 @@ namespace Librainian.Collections.Lists {
 		///     Returns true if there are no more incoming items.
 		/// </summary>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		public Boolean TryCatchup( TimeSpan? timeout = default ) {
 			if ( this.IsReadOnly || this.IsDisposed ) {
 				return true;

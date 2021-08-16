@@ -100,7 +100,6 @@ namespace Librainian.Graphics.Imaging {
 
 		/// <summary>Returns the zero-based <see cref="Pixel" /> or null if not found.</summary>
 		/// <param name="index"></param>
-		/// <returns></returns>
 		public Pixel? this[ UInt64 index ] {
 			get {
 				if ( index <= this.Count ) {
@@ -156,7 +155,6 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Static comparison type.</summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Line? left, Line? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

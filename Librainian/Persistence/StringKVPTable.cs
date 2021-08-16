@@ -40,12 +40,10 @@ namespace Librainian.Persistence {
 	using Measurement.Time;
 	using Microsoft.Database.Isam.Config;
 	using Microsoft.Isam.Esent.Collections.Generic;
-	using Microsoft.Isam.Esent.Interop.Windows81;
 	using Newtonsoft.Json;
 	using OperatingSystem.Compression;
 	using Parsing;
 	using PooledAwait;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -127,7 +125,6 @@ namespace Librainian.Persistence {
 		/// <summary>
 		/// </summary>
 		/// <param name="key"></param>
-		/// <returns></returns>
 		public String? this[ String key ] {
 			[CanBeNull]
 			get {
@@ -189,7 +186,6 @@ namespace Librainian.Persistence {
 
 				var customConfig = new DatabaseConfig {
 					CreatePathIfNotExist = true,
-					EnableShrinkDatabase = ShrinkDatabaseGrbit.On,
 					DefragmentSequentialBTrees = true
 				};
 
@@ -206,7 +202,6 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Return true if we can read/write in the <see cref="Folder" /> .
 		/// </summary>
-		/// <returns></returns>
 		private async PooledValueTask<Boolean> TestForReadWriteAccess( CancellationToken cancellationToken ) {
 			try {
 				var document = this.Folder.TryGetTempDocument();
@@ -286,7 +281,6 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     All <see cref="KeyValuePair{TKey,TValue }" /> , with the <see cref="String" /> deserialized.
 		/// </summary>
-		/// <returns></returns>
 		public IEnumerable<KeyValuePair<String, String?>> Items() =>
 			this.Dictionary.Select( pair => new KeyValuePair<String, String?>( pair.Key, pair.Value?.FromCompressedBase64() ) );
 

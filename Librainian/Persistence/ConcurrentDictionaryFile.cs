@@ -172,7 +172,6 @@ namespace Librainian.Persistence {
 
 		/// <summary>Saves the data to the <see cref="Document" />.</summary>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public PooledValueTask<Boolean> Save( CancellationToken? cancellationToken = null ) => this.Flush( cancellationToken ?? this.MainCTS.Token );
 
 		/// <summary>Returns a string that represents the current object.</summary>

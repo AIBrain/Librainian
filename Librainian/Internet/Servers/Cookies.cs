@@ -42,7 +42,6 @@ namespace Librainian.Internet.Servers {
 		///     the String is null or empty, an empty cookies collection is returned.
 		/// </summary>
 		/// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
-		/// <returns></returns>
 		public static Cookies FromString( String str ) {
 			var cookies = new Cookies();
 
@@ -92,12 +91,10 @@ namespace Librainian.Internet.Servers {
 
 		/// <summary>Gets the cookie with the specified name. If the cookie is not found, null is returned;</summary>
 		/// <param name="name">The name of the cookie.</param>
-		/// <returns></returns>
 		public Cookie? Get( String name ) => this.CookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
 		/// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
 		/// <param name="name">The name of the cookie.</param>
-		/// <returns></returns>
 		public String GetValue( String name ) {
 			var cookie = this.Get( name );
 

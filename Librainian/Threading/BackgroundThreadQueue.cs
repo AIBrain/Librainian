@@ -31,7 +31,6 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using Exceptions;
 	using Threadsafe;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>

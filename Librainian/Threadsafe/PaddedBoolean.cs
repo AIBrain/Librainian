@@ -105,7 +105,6 @@ namespace Librainian.Threadsafe {
 		/// <summary>Atomically set the value to the given updated value if the current value equals the comparand</summary>
 		/// <param name="newValue"> The new value</param>
 		/// <param name="comparand">The comparand (expected value)</param>
-		/// <returns></returns>
 		public Boolean AtomicCompareExchange( Boolean newValue, Boolean comparand ) {
 			var newValueInt = ToInt( newValue );
 			var comparandInt = ToInt( comparand );

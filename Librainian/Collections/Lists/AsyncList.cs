@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "AsyncList.cs" last touched on 2021-06-28 at 3:26 PM by Protiguous.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Collections.Lists {
 
@@ -44,7 +44,6 @@ namespace Librainian.Collections.Lists {
 	using Newtonsoft.Json;
 	using Parsing;
 	using Threading;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -140,14 +139,14 @@ namespace Librainian.Collections.Lists {
 		///     <see cref="IList" />.
 		/// </exception>
 		/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
-		public T? this[ Int32 index ] {
+		public T? this[Int32 index] {
 			[CanBeNull]
 			get {
 				if ( index < 0 || index > this.TheList.Count ) {
 					return this.ThrowWhenOutOfRange( index );
 				}
 
-				return this.Read( () => this.TheList[ index ] );
+				return this.Read( () => this.TheList[index] );
 			}
 
 			set {
@@ -165,7 +164,7 @@ namespace Librainian.Collections.Lists {
 					}
 
 					try {
-						this.TheList[ index ] = value;
+						this.TheList[index] = value;
 
 						return true;
 					}
@@ -236,7 +235,6 @@ namespace Librainian.Collections.Lists {
 		///         <see cref="AsyncList{T}" /> .
 		///     </para>
 		/// </summary>
-		/// <returns></returns>
 		public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
 		/// <summary>
@@ -283,7 +281,6 @@ namespace Librainian.Collections.Lists {
 		///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
 		/// </summary>
 		/// <param name="item"></param>
-		/// <returns></returns>
 		public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
 
 		public void RemoveAt( Int32 index ) {
@@ -317,7 +314,6 @@ namespace Librainian.Collections.Lists {
 		}
 
 		/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
-		/// <returns></returns>
 		IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
 
 		private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
@@ -339,7 +335,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <typeparam name="TFuncResult"></typeparam>
 		/// <param name="func"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
 		private TFuncResult? Read<TFuncResult>( Func<TFuncResult?> func ) {
@@ -458,7 +453,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
 		/// <param name="func">                         </param>
-		/// <returns></returns>
 		/// <see cref="CatchUp" />
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="ObjectDisposedException"></exception>
@@ -497,7 +491,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="item">    </param>
 		/// <param name="afterAdd"></param>
-		/// <returns></returns>
 		public Boolean Add( T? item, Action? afterAdd ) {
 			if ( this.ThrowWhenDisposed() ) {
 				return false;
@@ -528,7 +521,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>Creates a hot task that needs to be awaited.</summary>
 		/// <param name="item"></param>
 		/// <param name="afterAdd"></param>
-		/// <returns></returns>
 		public Task<Boolean> AddAsync( T? item, Action? afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
 
 		/// <summary>Add a collection of items.</summary>
@@ -576,7 +568,6 @@ namespace Librainian.Collections.Lists {
 		/// <param name="afterEachAdd"></param>
 		/// <param name="afterRangeAdded"></param>
 		/// <param name="useParallelism"></param>
-		/// <returns></returns>
 		public Task AddRangeAsync(
 			IEnumerable<T>? items,
 			CancellationToken cancellationToken,
@@ -595,7 +586,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>
 		///     Returns true if any items have not been added to the list yet.
 		/// </summary>
-		/// <returns></returns>
 		/// <see cref="CatchUp" />
 		public Boolean AnyWritesPending() => this.InputBuffer.Any();
 
@@ -637,7 +627,6 @@ namespace Librainian.Collections.Lists {
 		/// <summary>
 		///     <para>Returns a copy of this <see cref="AsyncList{T}" /> (at this moment).</para>
 		/// </summary>
-		/// <returns></returns>
 		public AsyncList<T> Clone() {
 			this.CatchUp();
 
@@ -668,7 +657,6 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="item">        </param>
 		/// <param name="afterRemoval"></param>
-		/// <returns></returns>
 		public Boolean Remove( T? item, Action? afterRemoval ) {
 			if ( this.ThrowWhenDisposed() ) {
 				return false;
@@ -709,7 +697,6 @@ namespace Librainian.Collections.Lists {
 		///     Returns true if there are no more incoming items.
 		/// </summary>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		public Boolean TryCatchup( TimeSpan? timeout = default ) {
 			if ( this.IsReadOnly || this.IsDisposed ) {
 				return true;
@@ -748,7 +735,7 @@ namespace Librainian.Collections.Lists {
 					return false;
 				}
 
-				var result = this.TheList[ index ];
+				var result = this.TheList[index];
 				afterGet?.Invoke( result );
 
 				return true;

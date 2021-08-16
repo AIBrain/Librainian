@@ -285,13 +285,13 @@ namespace Librainian.FileSystem {
 			finally {
 				hFile.CloseHandle();
 
-				// ReSharper disable once RedundantAssignment
-				hFile = IntPtr.Zero;
+				
+				//hFile = IntPtr.Zero;
 
 				Marshal.FreeHGlobal( pAlloc );
 
-				// ReSharper disable once RedundantAssignment
-				pAlloc = IntPtr.Zero;
+				
+				//pAlloc = IntPtr.Zero;
 			}
 		}
 
@@ -388,12 +388,7 @@ namespace Librainian.FileSystem {
 
 				hFile = OpenFile( path );
 
-				var mfd = new MoveFileData {
-					HFile = hFile,
-					StartingVcn = vcn,
-					StartingLcn = lcn,
-					ClusterCount = count
-				};
+				var mfd = new MoveFileData( count, hFile, lcn, vcn);
 
 				var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
 				var p = handle.AddrOfPinnedObject();
@@ -437,15 +432,7 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>input structure for use in MoveFile</summary>
-		public struct MoveFileData {
+		public record MoveFileData( Int32 ClusterCount , IntPtr HFile , Int64 StartingLcn , Int64 StartingVcn );
 
-			public Int32 ClusterCount;
-
-			public IntPtr HFile;
-
-			public Int64 StartingLcn;
-
-			public Int64 StartingVcn;
-		}
 	}
 }

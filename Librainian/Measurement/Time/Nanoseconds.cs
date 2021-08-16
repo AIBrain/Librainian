@@ -145,7 +145,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Nanoseconds left, Nanoseconds right ) => left.Value == right.Value;
 
 		public static implicit operator Microseconds( Nanoseconds nanoseconds ) => nanoseconds.ToMicroseconds();

@@ -85,7 +85,6 @@ namespace Librainian {
 		/// <param name="target">        </param>
 		/// <param name="startInclusive"></param>
 		/// <param name="endInclusive">  </param>
-		/// <returns></returns>
 		/// <example>5.Between(1, 10)</example>
 		/// <example>5.Between(10, 1)</example>
 		/// <example>5.Between(10, 6) == false</example>
@@ -109,7 +108,6 @@ namespace Librainian {
 		/// <param name="target">        </param>
 		/// <param name="startInclusive"></param>
 		/// <param name="endInclusive">  </param>
-		/// <returns></returns>
 		/// <example>5.Between(1, 10)</example>
 		/// <example>5.Between(10, 1)</example>
 		/// <example>5.Between(10, 6) == false</example>
@@ -124,7 +122,6 @@ namespace Librainian {
 		/// <param name="target">        </param>
 		/// <param name="startInclusive"></param>
 		/// <param name="endInclusive">  </param>
-		/// <returns></returns>
 		/// <example>5.Between(1, 10)</example>
 		/// <example>5.Between(10, 1)</example>
 		/// <example>5.Between(10, 6) == false</example>
@@ -139,7 +136,6 @@ namespace Librainian {
 		/// <param name="target">        </param>
 		/// <param name="startInclusive"></param>
 		/// <param name="endInclusive">  </param>
-		/// <returns></returns>
 		/// <example>5.Between(1, 10)</example>
 		/// <example>5.Between(10, 1)</example>
 		/// <example>5.Between(10, 6) == false</example>
@@ -154,7 +150,6 @@ namespace Librainian {
 		/// <param name="target">        </param>
 		/// <param name="startInclusive"></param>
 		/// <param name="endInclusive">  </param>
-		/// <returns></returns>
 		/// <example>5.Between(1, 10)</example>
 		/// <example>5.Between(10, 1)</example>
 		/// <example>5.Between(10, 6) == false</example>
@@ -218,7 +213,6 @@ namespace Librainian {
 		///     <see cref="Newtonsoft.Json.JsonConvert" /> .
 		/// </summary>
 		/// <param name="bob"></param>
-		/// <returns></returns>
 		[Pure]
 		public static UInt64 MemoryUsed<T>( [DisallowNull] this T bob ) => JsonConvert.SerializeObject( bob, Formatting.None ).LengthReal();
 
@@ -248,7 +242,6 @@ namespace Librainian {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static T? NullIf<T>( this T? left, T? right ) where T : class => Comparer<T>.Default.Compare( left, right ) == 0 ? null : left;
 
@@ -269,7 +262,6 @@ namespace Librainian {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static (T? right, T? left) Swap<T>( this T? left, T? right ) => ( right, left );
@@ -334,6 +326,13 @@ namespace Librainian {
 			}
 
 			(array[ index1 ], array[ index2 ]) = (array[ index2 ], array[ index1 ]);
+		}
+
+		public static void YieldFor( TimeSpan timeSpan ) {
+			var stopwatch = Stopwatch.StartNew();
+			while ( stopwatch.Elapsed < timeSpan ) {
+				Thread.Yield();
+			} 
 		}
 
 	}

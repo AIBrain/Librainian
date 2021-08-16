@@ -69,7 +69,6 @@ namespace Librainian.Linguistics {
 		/// <summary>
 		/// Return a jagged array of every possible combination.
 		/// </summary>
-		/// <returns></returns>
 		public Char[][] PowerSet() => this.Value.ToArray().PowerSet();
 
 		public override Int32 GetHashCode() => this.Value.GetHashCode();

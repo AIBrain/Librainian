@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "Surfer.cs" last formatted on 2020-08-14 at 8:35 PM.
+// 
+// File "Surfer.cs" last touched on 2021-08-01 at 3:47 PM by Protiguous.
 
 namespace Librainian.Internet {
 
@@ -34,12 +37,11 @@ namespace Librainian.Internet {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Logging;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public class Surfer : ABetterClassDispose {
 
-		private readonly ReaderWriterLockSlim _downloadInProgressAccess = new( LockRecursionPolicy.SupportsRecursion );
+		private readonly ReaderWriterLockSlim _downloadInProgressAccess = new(LockRecursionPolicy.SupportsRecursion);
 
 		private readonly ConcurrentBag<Uri> _pastUrls = new();
 
@@ -55,7 +57,7 @@ namespace Librainian.Internet {
 				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
 			};
 
-			if ( null != onDownloadStringCompleted ) {
+			if ( onDownloadStringCompleted != null ) {
 				this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
 			}
 			else {
@@ -106,20 +108,13 @@ namespace Librainian.Internet {
 		}
 
 		public static IEnumerable<UriLinkItem> ParseLinks( Uri? baseUri, String webpage ) {
-
-			// ReSharper disable LoopCanBeConvertedToQuery
-#pragma warning disable IDE0007 // Use implicit type
 			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
-#pragma warning restore IDE0007 // Use implicit type
 
-				// ReSharper restore LoopCanBeConvertedToQuery
 				var value = match.Groups[ 1 ].Value;
 				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-				var i = new UriLinkItem {
-					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ),
-					Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
-				};
+				var i = new UriLinkItem( new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty ),
+					Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ) );
 
 				yield return i;
 			}
@@ -127,7 +122,6 @@ namespace Librainian.Internet {
 
 		/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
 		/// <param name="address"></param>
-		/// <returns></returns>
 		public Boolean Surf( String? address ) {
 			if ( String.IsNullOrWhiteSpace( address ) ) {
 				return false;
@@ -147,7 +141,6 @@ namespace Librainian.Internet {
 
 		/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
 		/// <param name="address"></param>
-		/// <returns></returns>
 		public Boolean Surf( Uri? address ) {
 			if ( address is null ) {
 				return false;
@@ -179,26 +172,29 @@ namespace Librainian.Internet {
 
 		private void StartNextDownload() =>
 			Task.Run( () => {
-				Thread.Yield();
+				    Thread.Yield();
 
-				if ( this.DownloadInProgress ) {
-					return;
-				}
+				    if ( this.DownloadInProgress ) {
+					    return;
+				    }
 
-				if ( !this._urls.TryDequeue( out var address ) ) {
-					return;
-				}
+				    if ( !this._urls.TryDequeue( out var address ) ) {
+					    return;
+				    }
 
-				this.DownloadInProgress = true;
-				$"Surf(): Starting download: {address.AbsoluteUri}".Info();
-				this._webclient.DownloadStringAsync( address, address );
-			} ).ContinueWith( t => {
-				if ( this._urls.Any() ) {
-					this.StartNextDownload();
-				}
-			} );
+				    this.DownloadInProgress = true;
+				    $"Surf(): Starting download: {address.AbsoluteUri}".Info();
+				    this._webclient.DownloadStringAsync( address, address );
+			    } )
+			    .ContinueWith( t => {
+				    if ( this._urls.Any() ) {
+					    this.StartNextDownload();
+				    }
+			    } );
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
+
 	}
+
 }

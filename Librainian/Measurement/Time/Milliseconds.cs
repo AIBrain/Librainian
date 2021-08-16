@@ -161,7 +161,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Milliseconds left, Milliseconds right ) => left.Value == right.Value;
 
 		public static explicit operator Double( Milliseconds milliseconds ) => ( Double )milliseconds.Value;
@@ -170,7 +169,6 @@ namespace Librainian.Measurement.Time {
 		///     Implicitly convert the number of <paramref name="milliseconds" /> to <see cref="Microseconds" />.
 		/// </summary>
 		/// <param name="milliseconds"></param>
-		/// <returns></returns>
 		public static implicit operator Microseconds( Milliseconds milliseconds ) => milliseconds.ToMicroseconds();
 
 		public static implicit operator BigDecimal( Milliseconds milliseconds ) => milliseconds.Value;

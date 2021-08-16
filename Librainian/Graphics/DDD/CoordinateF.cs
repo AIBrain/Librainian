@@ -92,7 +92,6 @@ namespace Librainian.Graphics.DDD {
 		/// <summary>static comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
-		/// <returns></returns>
 		public static Boolean Equals( CoordinateF? left, CoordinateF? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

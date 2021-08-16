@@ -57,7 +57,7 @@ namespace Librainian.Linguistics {
 				this.Pages[ pageNumber++ ] = page;
 			}
 
-			if ( null != authors ) {
+			if ( authors != null ) {
 				this.Authors.AddRange( authors );
 			}
 		}
@@ -87,7 +87,6 @@ namespace Librainian.Linguistics {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Book? left, Book? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

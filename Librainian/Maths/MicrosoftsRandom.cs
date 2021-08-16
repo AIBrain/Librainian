@@ -84,7 +84,7 @@ namespace Librainian.Maths {
 					SeedArray = new Int32[ SpecialLength ];
 				}
 
-				var mj = Middle - ( seed ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() );
+				var mj = Middle - ( seed ^ Environment.CurrentManagedThreadId.GetHashCode() );
 
 				SeedArray[ Special ] = mj;
 

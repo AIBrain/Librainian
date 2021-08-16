@@ -92,7 +92,6 @@ namespace Librainian.Measurement.Physics {
 		/// <summary></summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) => new(left.Value * right.Value);
 
 		//public static implicit operator AtomicMassUnits( MegaElectronVolts megaElectronVolts ) {
@@ -102,7 +101,6 @@ namespace Librainian.Measurement.Physics {
 		/// <summary></summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new(left.Value * right);
 
 		public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) => new(left * right.Value);

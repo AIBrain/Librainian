@@ -76,7 +76,6 @@ namespace Librainian.Measurement.Spatial {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Radians left, Radians right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
 
 		public static implicit operator Decimal( Radians radians ) => ( Decimal )radians.Value;

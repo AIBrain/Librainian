@@ -77,7 +77,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -85,7 +84,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -93,7 +91,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -101,7 +98,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -109,7 +105,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -117,7 +112,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -125,7 +119,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -133,7 +126,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -141,7 +133,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -149,7 +140,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -157,7 +147,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -165,7 +154,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -505,7 +493,6 @@ namespace Librainian.Maths {
 		/// <param name="start"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		public static IEnumerable<Byte> To( this Byte start, Byte end, Byte step = 1 ) {
 			if ( step == 0 ) {
 				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -535,7 +522,6 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		public static IEnumerable<UInt64> To( this Int32 begin, UInt64 end, UInt64 step = 1 ) {
 			if ( step == 0 ) {
 				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -571,7 +557,6 @@ namespace Librainian.Maths {
 		/// <param name="begin">inclusive</param>
 		/// <param name="end">  inclusive</param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<Int32> To( this Int32 begin, Int32 end, Int32 step = 1 ) {
 			if ( step == 0 ) {
@@ -599,7 +584,6 @@ namespace Librainian.Maths {
 		/// <param name="from"></param>
 		/// <param name="end"> </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
 			if ( step == 0 ) {
@@ -630,7 +614,6 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end"> </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<Int64> To( this Int64 begin, Int64 end, Int64 step = 1 ) {
 			if ( step == 0 ) {
@@ -661,7 +644,6 @@ namespace Librainian.Maths {
 		/// <param name="from"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger end, UInt64 step = 1 ) {
 			if ( step == 0 ) {
@@ -684,7 +666,6 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<BigInteger> To( this Int64 begin, BigInteger end, UInt64 step = 1 ) {
 			if ( step == 0 ) {
@@ -709,7 +690,6 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end">   </param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<Rational> To( this Int32 begin, Rational end, Rational step ) {
 			if ( step == 0 ) {
@@ -737,7 +717,6 @@ namespace Librainian.Maths {
 		/// <param name="from"></param>
 		/// <param name="to">  </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		/// <remarks>//TODO Untested code!</remarks>
 		/// <example>
 		///     var now = DateTime.UtcNow; var then = now.AddMinutes( 10 ); var minutes = now.To( then, TimeSpan.FromMinutes( 1 )

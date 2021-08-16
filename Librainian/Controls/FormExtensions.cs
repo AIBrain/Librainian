@@ -152,7 +152,6 @@ namespace Librainian.Controls {
 
 		/// <summary>Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.</summary>
 		/// <param name="form"></param>
-		/// <returns></returns>
 		public static Size Size( this Form form ) {
 			if ( form is null ) {
 				throw new ArgumentEmptyException( nameof( form ) );

@@ -111,7 +111,6 @@ namespace Librainian.Measurement {
 		/// <param name="methodA"></param>
 		/// <param name="methodB"></param>
 		/// <param name="runfor">Defaults to 5 seconds.</param>
-		/// <returns></returns>
 		public static AorB WhichIsFaster( Action methodA, Action methodB, TimeSpan? runfor = null ) {
 			if ( methodA is null ) {
 				throw new ArgumentEmptyException( nameof( methodA ) );

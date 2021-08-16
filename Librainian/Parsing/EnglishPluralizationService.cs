@@ -927,7 +927,6 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="word"></param>
 		/// <param name="prefixWord"></param>
-		/// <returns></returns>
 		private static String GetSuffixWord( String word, out String prefixWord ) {
 
 			// use the last space to separate the words
@@ -1333,7 +1332,6 @@ namespace Librainian.Parsing {
 		///     or contains non alphabetical characters
 		/// </summary>
 		/// <param name="word"></param>
-		/// <returns></returns>
 		private Boolean IsNoOpWord( String word ) => !this.IsAlphabets( word ) || word.Length <= 1 || this._pronounList.Contains( word.ToLowerInvariant() );
 
 		private Boolean IsUninflective( String word ) =>
@@ -1346,7 +1344,6 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="word"></param>
 		/// <param name="action"></param>
-		/// <returns></returns>
 		public static String Capitalize( String word, Func<String, String> action ) {
 			var result = action( word );
 

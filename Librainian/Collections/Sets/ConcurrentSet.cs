@@ -219,7 +219,6 @@ namespace Librainian.Collections.Sets {
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
 		/// <summary>Returns a copy of the items to an array.</summary>
-		/// <returns></returns>
 		public T[] ToArray() => this.Dictionary.Keys.ToArray();
 
 		public Boolean TryAdd( T item ) => this.Dictionary.TryAdd( item, null );

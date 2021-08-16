@@ -47,7 +47,6 @@ namespace Librainian.Security {
 
 		/// <summary>create a prounouncable word of the required length using third-order approximation.</summary>
 		/// <param name="requiredLength"></param>
-		/// <returns></returns>
 		public static String Generate( Int32 requiredLength ) {
 			Int32 c1;
 			Int32 c2;
@@ -117,7 +116,6 @@ namespace Librainian.Security {
 		/// <param name="minLength"></param>
 		/// <param name="minWordLength"></param>
 		/// <param name="maxWordLength"></param>
-		/// <returns></returns>
 		public static String GeneratePhrase( Int32 minLength, Int32 minWordLength = 5, Int32 maxWordLength = 11 ) {
 			var words = new List<String>();
 			var passwordLength = 0;

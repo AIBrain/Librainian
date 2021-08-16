@@ -87,7 +87,6 @@ namespace Librainian.FileSystem {
 		/// <param name="searchPatterns">               </param>
 		/// <param name="overwriteDestinationDocuments"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static async Task<IEnumerable<DocumentCopyStatistics>> CopyFiles(
 			this Folder sourceFolder,
 			Folder destinationFolder,
@@ -233,7 +232,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary><see cref="PathSplitter" />.</summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		public static IEnumerable<String> SplitPath( String path ) {
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				throw new ArgumentEmptyException( nameof( path ) );
@@ -244,7 +242,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary><see cref="PathSplitter" />.</summary>
 		/// <param name="info"></param>
-		/// <returns></returns>
 		public static IEnumerable<String> SplitPath( this DirectoryInfo info ) {
 			if ( info is null ) {
 				throw new ArgumentEmptyException( nameof( info ) );
@@ -259,7 +256,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="folder"></param>
 		/// <param name="tryFor"></param>
-		/// <returns></returns>
 		public static async PooledValueTask<Boolean?> TryDeleting( this Folder folder, TimeSpan tryFor, CancellationToken cancellationToken ) {
 			if ( folder == null ) {
 				throw new ArgumentEmptyException( nameof( folder ) );

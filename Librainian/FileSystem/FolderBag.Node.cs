@@ -58,7 +58,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Static equality check</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
-		/// <returns></returns>
 		public static Boolean Equals( FolderBagNode? left, FolderBagNode? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

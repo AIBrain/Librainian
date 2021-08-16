@@ -81,7 +81,6 @@ namespace Librainian.Measurement.Spatial {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
 
 		public static implicit operator Decimal( Degrees degrees ) => ( Decimal )degrees.Value;

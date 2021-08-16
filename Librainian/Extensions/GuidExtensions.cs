@@ -49,7 +49,6 @@ namespace Librainian.Extensions {
 		///     <see cref="Converters.ConverterExtensions.ToPath" />
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		public static Guid FromPath( this DirectoryInfo path ) {
 			if ( path == null ) {
 				throw new ArgumentEmptyException( nameof( path ) );
@@ -115,7 +114,6 @@ namespace Librainian.Extensions {
 		/// <summary>merge two guids</summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Guid Munge( this Guid left, Guid right ) {
 			const Int32 bytecount = 16;
 			var destByte = new Byte[ bytecount ];
@@ -134,7 +132,6 @@ namespace Librainian.Extensions {
 		/// <summary>Untested.</summary>
 		/// <param name="guid">  </param>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public static Guid Next( this Guid guid, Int64 amount = 1 ) {
 			var bytes = guid.ToByteArray();
 			var uBigInteger = new UBigInteger( bytes );
@@ -149,7 +146,6 @@ namespace Librainian.Extensions {
 		/// <summary>Untested.</summary>
 		/// <param name="guid">  </param>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public static Guid Previous( this Guid guid, Int64 amount = 1 ) {
 			var bytes = guid.ToByteArray();
 			var uBigInteger = new UBigInteger( bytes );

@@ -57,7 +57,6 @@ namespace Librainian.Converters {
 		/// </summary>
 		/// <param name="anything"></param>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static T AsType<T>( this T anything ) => anything;
 
@@ -70,7 +69,6 @@ namespace Librainian.Converters {
 		/// <typeparam name="TIn"></typeparam>
 		/// <typeparam name="TOut"></typeparam>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static TOut? Cast<TIn, TOut>( this TIn value ) {
 			if ( value is null ) {
 				return default( TOut? );
@@ -96,7 +94,6 @@ namespace Librainian.Converters {
 		///     <para>Null or empty strings return <see cref="Decimal.Zero" />.</para>
 		/// </summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static Decimal MoneyToDecimal<T>( this T? value ) {
@@ -323,7 +320,6 @@ namespace Librainian.Converters {
 		///     </para>
 		/// </summary>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		/// <see cref="ToGuid(DateTime)" />
 		[DebuggerStepThrough]
 		[Pure]
@@ -364,7 +360,6 @@ namespace Librainian.Converters {
 
 		/// <summary>Tries to convert <paramref name="value" /> to a <see cref="Decimal" />.</summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static Decimal? ToDecimalOrNull<T>( this T? value ) {
@@ -423,7 +418,6 @@ namespace Librainian.Converters {
 
 		/// <summary>Convert the first 16 bytes of the SHA256 hash of the <paramref name="word" /> into a <see cref="Guid" />.</summary>
 		/// <param name="word"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static Guid ToGuid( this String word ) {
@@ -435,7 +429,6 @@ namespace Librainian.Converters {
 
 		/// <summary>Converts a datetime to a guid. Returns Guid.Empty if any error occurs.</summary>
 		/// <param name="dateTime"></param>
-		/// <returns></returns>
 		/// <see cref="ToDateTime" />
 		[DebuggerStepThrough]
 		[Pure]
@@ -471,7 +464,6 @@ namespace Librainian.Converters {
 		/// </summary>
 		/// <param name="high">    </param>
 		/// <param name="low">   </param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high, low ).guid;
@@ -482,7 +474,6 @@ namespace Librainian.Converters {
 
 		/// <summary>Returns the value converted to an <see cref="Int32" /> or null.</summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static Int32? ToIntOrNull<T>( this T? value ) {
@@ -524,7 +515,6 @@ namespace Librainian.Converters {
 		/// <summary>Converts <paramref name="value" /> to an <see cref="Int32" /> or throws <see cref="FormatException" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="FormatException"></exception>
 		[DebuggerStepThrough]
@@ -597,7 +587,6 @@ namespace Librainian.Converters {
 		/// <example>/1/a/b/2/c/d/e/f/</example>
 		/// <param name="guid">    </param>
 		/// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
-		/// <returns></returns>
 		/// <see cref="GuidExtensions.FromPath" />
 		[DebuggerStepThrough]
 		[Pure]
@@ -633,7 +622,6 @@ namespace Librainian.Converters {
 		///     </para>
 		/// </summary>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static String? ToStringOrNull<T>( this T? self ) =>
@@ -654,7 +642,6 @@ namespace Librainian.Converters {
 
 		/// <summary>Untested.</summary>
 		/// <param name="guid"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		public static UBigInteger ToUBigInteger( this Guid guid ) => new( guid.ToByteArray() );

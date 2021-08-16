@@ -62,7 +62,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		///     Provide the next <see cref="ClockMillisecond" />.
 		/// </summary>
 		/// <param name="tocked">True when the <see cref="Value" /> went higher than <see cref="Maximum" />.</param>
-		/// <returns></returns>
 		public ClockMillisecond Next( out Boolean tocked ) {
 			var next = this.Value + 1;
 

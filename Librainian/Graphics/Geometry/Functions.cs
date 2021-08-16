@@ -52,7 +52,6 @@ namespace Librainian.Graphics.Geometry {
 		///     Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be
 		///     found.
 		/// </summary>
-		/// <returns></returns>
 		public static Boolean CalculateLineLineIntersection(
 			this Vector3 line1Point1,
 			Vector3 line1Point2,
@@ -130,7 +129,6 @@ namespace Librainian.Graphics.Geometry {
 		///     Calculates the intersection line segment between 2 lines (not segments). Returns false if no solution can be
 		///     found.
 		/// </summary>
-		/// <returns></returns>
 		public static Boolean CalculateLineLineIntersection(
 			this CoordinateF? line1Point1,
 			CoordinateF? line1Point2,

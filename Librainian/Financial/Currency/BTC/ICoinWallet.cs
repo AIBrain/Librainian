@@ -65,7 +65,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="coin"></param>
 		/// <param name="quantity"></param>
-		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		Boolean TryWithdraw( ICoin coin, UInt64 quantity );
 	}

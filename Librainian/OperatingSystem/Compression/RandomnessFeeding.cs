@@ -39,7 +39,6 @@ namespace Librainian.OperatingSystem.Compression {
 	using Extensions;
 	using FileSystem;
 	using Rationals;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public class RandomnessFeeding : ABetterClassDispose {
@@ -84,7 +83,6 @@ namespace Librainian.OperatingSystem.Compression {
 		}
 
 		/// <summary>The smaller the compressed 'data' is, the less the random it was.</summary>
-		/// <returns></returns>
 		public Decimal GetCurrentCompressionRatio() {
 			var d = ( Decimal )new Rational( this.HowManyBytesAsCompressed, this.HowManyBytesFed );
 

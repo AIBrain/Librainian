@@ -136,7 +136,6 @@ namespace Librainian.Security {
 
 		/// <summary>To encrypt use <seealso cref="EncryptDES" />.</summary>
 		/// <param name="textToDecrypt"></param>
-		/// <returns></returns>
 		public static String DecryptDES( this String textToDecrypt ) {
 			if ( textToDecrypt is null ) {
 				throw new ArgumentEmptyException( nameof( textToDecrypt ) );
@@ -264,7 +263,6 @@ namespace Librainian.Security {
 
 		/// <summary>To decrypt use <see cref="DecryptDES" />.</summary>
 		/// <param name="textToEncrypt"></param>
-		/// <returns></returns>
 		public static String EncryptDES( this String textToEncrypt ) {
 			if ( textToEncrypt is null ) {
 				throw new ArgumentEmptyException( nameof( textToEncrypt ) );
@@ -402,7 +400,6 @@ namespace Librainian.Security {
 
 		/// <summary></summary>
 		/// <param name="s"></param>
-		/// <returns></returns>
 		public static String GetMD5Hash( this String s ) {
 			using MD5 md5 = new MD5CryptoServiceProvider();
 
@@ -411,7 +408,6 @@ namespace Librainian.Security {
 
 		/// <summary>Uses the md5sum.exe to obtain the md5 string.</summary>
 		/// <param name="file"></param>
-		/// <returns></returns>
 		public static String? MD5( this FileInfo file ) {
 			if ( !file.Exists ) {
 				return default( String? );
@@ -467,7 +463,6 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="input">   </param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static Byte[] Sha256( this String input, Encoding? encoding = null ) {
 			if ( input is null ) {
 				throw new ArgumentEmptyException( nameof( input ) );
@@ -484,7 +479,6 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="input">   </param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static Byte[] Sha384( this String input, Encoding? encoding = null ) {
 			if ( input is null ) {
 				throw new ArgumentEmptyException( nameof( input ) );
@@ -513,7 +507,6 @@ namespace Librainian.Security {
 		/// </summary>
 		/// <param name="input">   </param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
 		public static Byte[] Sha512( this String input, Encoding? encoding = null ) {
 			if ( input is null ) {
 				throw new ArgumentEmptyException( nameof( input ) );
@@ -811,7 +804,7 @@ namespace Librainian.Security {
 
 				//TODO put a 64k buffer here instead of byte-by-byte
 				while ( ( data = inputStream.ReadByte() ) != -1 ) {
-					if ( null != reportEveryXBytes && null != reportProgress ) {
+					if ( reportEveryXBytes != null && reportProgress != null ) {
 						var position = ( UInt64 )inputStream.Position;
 
 						if ( position % reportEveryXBytes.Value == 0 ) {

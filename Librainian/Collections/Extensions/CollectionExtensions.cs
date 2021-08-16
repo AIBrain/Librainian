@@ -126,7 +126,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="bag"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static async PooledValueTask<Boolean> Clear<T>( this ConcurrentBag<T> bag, CancellationToken cancellationToken ) {
 			await Task.Run( () => {
 				while ( !bag.IsEmpty && !cancellationToken.IsCancellationRequested ) {
@@ -156,7 +155,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="items"></param>
-		/// <returns></returns>
 		[Pure]
 		public static T[] Clone<T>( this T[] items ) {
 			if ( items is Byte[] bytes ) {
@@ -187,7 +185,6 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="bytes"></param>
 		/// <param name="offset"></param>
 		/// <param name="length"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Byte[] Clone( this Byte[] bytes, Int32 offset, Int32 length ) {
 			if ( bytes is null ) {
@@ -210,7 +207,6 @@ namespace Librainian.Collections.Extensions {
 
 		/// <summary>Concat multiple byte arrays into one new larger array.</summary>
 		/// <param name="arrays"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Byte[] Concat<T>( params T[][] arrays ) {
 			var totalLength = arrays.Select( bytes => ( UInt64 )bytes.Length ).Aggregate<UInt64, UInt64>( 0, ( current, i ) => current + i );
@@ -292,7 +288,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<T> Empty<T>( this T self ) {
 			yield break;
@@ -303,7 +298,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		[Pure]
 #pragma warning disable 1998
 		public static async IAsyncEnumerable<T> EmptyAsync<T>( [DisallowNull] this T self ) {
@@ -352,7 +346,6 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="key">      </param>
 		/// <param name="function"></param>
 		/// <param name="added">    </param>
-		/// <returns></returns>
 		[Pure]
 		public static TValue GetOrAdd<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> function, out Boolean added )
 			where TKey : notnull {
@@ -400,7 +393,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source">  </param>
 		/// <param name="sequence"></param>
-		/// <returns></returns>
 		/// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
 		[Pure]
 		public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence ) => source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
@@ -410,7 +402,6 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="source">  </param>
 		/// <param name="sequence"></param>
 		/// <param name="comparer"></param>
-		/// <returns></returns>
 		/// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
 		[Pure]
 		public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence, IEqualityComparer<T> comparer ) {
@@ -558,7 +549,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="TValue"></typeparam>
 		/// <param name="self"></param>
 		/// <param name="key"> </param>
-		/// <returns></returns>
 		[Pure]
 		public static TValue? Pop<TKey, TValue>( this IDictionary<TKey, TValue> self, [DisallowNull] TKey key ) {
 			if ( self is null ) {
@@ -582,7 +572,6 @@ namespace Librainian.Collections.Extensions {
 		/// <summary>untested</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		[Pure]
 		public static T PopFirst<T>( this ICollection<T> self ) {
 			if ( self is null ) {
@@ -599,7 +588,6 @@ namespace Librainian.Collections.Extensions {
 		/// <summary>untested</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		[Pure]
 		public static T PopLast<T>( this ICollection<T> self ) {
 			if ( self is null ) {
@@ -616,7 +604,6 @@ namespace Librainian.Collections.Extensions {
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="current"></param>
-		/// <returns></returns>
 		/// <remarks>Basically if the previous node is null, then wrap back around to the last item.</remarks>
 		[Pure]
 		public static LinkedListNode<T>? PreviousOrLast<T>( this LinkedListNode<T> current ) => current.Previous ?? current.List?.Last;
@@ -684,7 +671,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="collection">  </param>
 		/// <param name="specificItem"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Object? Remove<T>( this IProducerConsumerCollection<T> collection, [DisallowNull] T specificItem ) {
 			if ( collection is null ) {
@@ -779,7 +765,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <param name="item"></param>
-		/// <returns></returns>
 		/// <exception cref="IndexOutOfRangeException"></exception>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		/// <exception cref="NotSupportedException"></exception>
@@ -805,7 +790,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
-		/// <returns></returns>
 		public static T? TakeFirst<T>( this IList<T> list ) {
 			if ( list is null ) {
 				throw new ArgumentEmptyException( nameof( list ) );
@@ -827,7 +811,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <param name="item"></param>
-		/// <returns></returns>
 		public static Boolean TakeLast<T>( this IList<T> list, out T? item ) {
 			if ( list is null ) {
 				throw new ArgumentEmptyException( nameof( list ) );
@@ -852,7 +835,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
-		/// <returns></returns>
 		public static T? TakeLast<T>( this IList<T> list ) where T : class {
 			if ( list is null ) {
 				throw new ArgumentEmptyException( nameof( list ) );
@@ -873,7 +855,6 @@ namespace Librainian.Collections.Extensions {
 		/// <summary>Optimally create a list from the <paramref name="source" />.</summary>
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">  </param>
-		/// <returns></returns>
 		[Pure]
 		public static List<TSource> ToListTrimExcess<TSource>( this IEnumerable<TSource> source ) {
 			var bob = new List<TSource>( source );
@@ -886,7 +867,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source"></param>
 		/// <param name="x">The percent of <paramref name="source" /> to get.</param>
-		/// <returns></returns>
 		[Pure]
 		public static IEnumerable<TSource> Top<TSource>( this IEnumerable<TSource> source, Double x ) {
 			if ( source is null ) {
@@ -912,7 +892,6 @@ namespace Librainian.Collections.Extensions {
 		/// <param name="dictionary"></param>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean TryRemove<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, [DisallowNull] TKey key, [DisallowNull] TValue value )
 			where TKey : notnull {
@@ -927,7 +906,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="queue"></param>
 		/// <param name="item"> </param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean TryTake<T>( this ConcurrentQueue<T> queue, out T? item ) => queue.TryDequeue( out item! );
 
@@ -935,7 +913,6 @@ namespace Librainian.Collections.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="stack"></param>
 		/// <param name="item"> </param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean TryTake<T>( this ConcurrentStack<T> stack, out T? item ) => stack.TryPop( out item! );
 
@@ -1015,7 +992,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tuple"></param>
-		/// <returns></returns>
 		public static IEnumerator<T?> GetEnumerator<T>( this (T, T) tuple ) {
 			yield return tuple.Item1;
 			yield return tuple.Item2;
@@ -1026,7 +1002,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tuple"></param>
-		/// <returns></returns>
 		public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T) tuple ) {
 			yield return tuple.Item1;
 			yield return tuple.Item2;
@@ -1038,7 +1013,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tuple"></param>
-		/// <returns></returns>
 		public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T, T) tuple ) {
 			yield return tuple.Item1;
 			yield return tuple.Item2;
@@ -1051,7 +1025,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tuple"></param>
-		/// <returns></returns>
 		public static IEnumerator<T?> GetEnumerator<T>( this (T, T, T, T, T) tuple ) {
 			yield return tuple.Item1;
 			yield return tuple.Item2;

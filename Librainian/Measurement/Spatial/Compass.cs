@@ -89,7 +89,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>Clockwise from a top-down view.</summary>
 		/// <param name="byAmount"></param>
-		/// <returns></returns>
 		public Boolean RotateRight( Single byAmount ) {
 			if ( Single.IsNaN( byAmount ) ) {
 				return false;

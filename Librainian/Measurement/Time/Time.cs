@@ -84,7 +84,6 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary></summary>
 		/// <param name="date"></param>
-		/// <returns></returns>
 		public static implicit operator DateTime( Time date ) =>
 			new( DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value, date.Second.Value, date.Millisecond.Value );
 

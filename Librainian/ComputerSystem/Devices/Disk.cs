@@ -87,7 +87,6 @@ namespace Librainian.ComputerSystem.Devices {
 		}
 
 		/// <summary></summary>
-		/// <returns></returns>
 		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
 
 		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;

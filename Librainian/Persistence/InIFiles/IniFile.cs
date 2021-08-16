@@ -491,7 +491,6 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		/// <summary>Return the entire structure as a JSON formatted String.</summary>
-		/// <returns></returns>
 		public String AsJSON() {
 			var tempDocument = Document.GetTempDocument();
 
@@ -509,7 +508,6 @@ namespace Librainian.Persistence.InIFiles {
 		}
 
 		/// <summary>Removes all data from all sections.</summary>
-		/// <returns></returns>
 		public Boolean Clear() {
 			Parallel.ForEach( this.Data.Keys, section => this.TryRemove( section ) );
 
@@ -520,7 +518,6 @@ namespace Librainian.Persistence.InIFiles {
 		/// <param name="document"> </param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="overwrite"></param>
-		/// <returns></returns>
 		public async Task<Boolean> Save( IDocument document, CancellationToken cancellationToken, Boolean overwrite = true ) {
 			if ( document is null ) {
 				throw new ArgumentEmptyException( nameof( document ) );

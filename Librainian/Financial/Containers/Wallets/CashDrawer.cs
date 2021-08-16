@@ -37,19 +37,19 @@ namespace Librainian.Financial.Containers.Wallets {
 		public CashDrawer( Guid id ) : base( id ) { }
 
 		public Boolean Fund( params IBankNote[] bankNotes ) {
-			if ( null == bankNotes ) {
+			if ( bankNotes == null ) {
 				throw new ArgumentEmptyException( nameof( bankNotes ) );
 			}
 
-			return 0 == bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) );
+			return bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) ) == 0;
 		}
 
 		public Boolean Fund( params ICoin[] coins ) {
-			if ( null == coins ) {
+			if ( coins == null ) {
 				throw new ArgumentEmptyException( nameof( coins ) );
 			}
 
-			return 0 == coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 );
+			return coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 ) == 0;
 		}
 
 		public Decimal RunningTotal() => this.Total();

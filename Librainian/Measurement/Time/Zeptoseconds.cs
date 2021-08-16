@@ -112,7 +112,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// Return this value in <see cref="Yoctoseconds"/>.
 		/// </summary>
-		/// <returns></returns>
 		public IQuantityOfTime ToFinerGranularity() => this.ToYoctoseconds();
 
 		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneZeptosecond );
@@ -122,7 +121,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		/// Return this value in <see cref="Attoseconds"/>.
 		/// </summary>
-		/// <returns></returns>
 		public IQuantityOfTime ToCoarserGranularity() => this.ToAttoseconds();
 
 		TimeSpan IQuantityOfTime.ToTimeSpan() => this.ToSeconds();
@@ -136,14 +134,12 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Zeptoseconds left, Zeptoseconds right ) => left.Value == right.Value;
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="zeptoseconds" /> to <see cref="Milliseconds" />.
 		/// </summary>
 		/// <param name="zeptoseconds"></param>
-		/// <returns></returns>
 		public static implicit operator Attoseconds( Zeptoseconds zeptoseconds ) => zeptoseconds.ToAttoseconds();
 
 		public static implicit operator SpanOfTime( Zeptoseconds zeptoseconds ) => new( zeptoseconds );
@@ -154,7 +150,6 @@ namespace Librainian.Measurement.Time {
 		///     Implicitly convert the number of <paramref name="zeptoseconds" /> to <see cref="Yoctoseconds" />.
 		/// </summary>
 		/// <param name="zeptoseconds"></param>
-		/// <returns></returns>
 		public static implicit operator Yoctoseconds( Zeptoseconds zeptoseconds ) => zeptoseconds.ToYoctoseconds();
 
 		public static Zeptoseconds operator -( Zeptoseconds zeptoseconds ) => new( zeptoseconds.Value * -1 );
@@ -180,7 +175,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     <para>Convert to a larger unit.</para>
 		/// </summary>
-		/// <returns></returns>
 		public Attoseconds ToAttoseconds() => new( this.Value / InOneAttosecond );
 
 		public override String ToString() => $"{this.Value:N}";
@@ -190,7 +184,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     <para>Convert to a smaller unit.</para>
 		/// </summary>
-		/// <returns></returns>
 		public Yoctoseconds ToYoctoseconds() => new( this.Value * Yoctoseconds.InOneZeptosecond );
 	}
 }

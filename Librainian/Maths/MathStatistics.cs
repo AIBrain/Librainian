@@ -51,7 +51,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="data"></param>
 		/// <param name="items"></param>
-		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
 		public static Double GeometricMean( this IEnumerable<Double> data, Int32 items ) {
 			if ( items <= 0 ) {
@@ -73,7 +72,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="data"></param>
 		/// <param name="items"></param>
-		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
 		public static Decimal GeometricMean( this IEnumerable<Decimal> data, Int32 items ) {
 			if ( items <= 0 ) {
@@ -95,7 +93,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="data"></param>
 		/// <param name="items"></param>
-		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Geometric_mean" />
 		public static Rational GeometricMean( this IEnumerable<Rational> data, Int32 items ) {
 			if ( items <= 0 ) {
@@ -183,61 +180,51 @@ namespace Librainian.Maths {
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000f.OneIn();</example>
 		public static Single OneIn( this Single possible ) => 1f / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this Double possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this UInt64 possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this Int64 possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this UInt32 possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this Int32 possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this UInt16 possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this Int16 possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this Byte possible ) => 1d / possible;
 
 		/// <summary>One in <paramref name="possible" /></summary>
 		/// <param name="possible"></param>
-		/// <returns></returns>
 		/// <example>var f = 7000.OneIn();</example>
 		public static Double OneIn( this SByte possible ) => 1d / possible;
 

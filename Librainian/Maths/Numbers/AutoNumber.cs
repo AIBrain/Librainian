@@ -51,7 +51,6 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		/// <summary>Returns the incremented Identity</summary>
-		/// <returns></returns>
 		public UInt64 Next() => ( UInt64 )Interlocked.Increment( ref this._identity );
 
 		/// <summary>Resets the Identity to the specified seed value</summary>

@@ -94,7 +94,6 @@ namespace Librainian.Measurement.Length {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
 
 		public static Feet operator -( Feet feet ) => new( feet.Value * -1 );

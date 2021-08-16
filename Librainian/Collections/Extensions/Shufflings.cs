@@ -119,7 +119,6 @@ namespace Librainian.Collections.Extensions {
 		/// </summary>
 		/// <param name="sequence"></param>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		public static IEnumerable<T> AsRandom<T>( this IEnumerable<T> sequence ) =>
 			sequence.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism )
 				.WithMergeOptions( ParallelMergeOptions.AutoBuffered );

@@ -42,7 +42,6 @@ namespace Librainian.Collections {
 
 		/// <summary>Get or set the <paramref name="key" /> for this word.</summary>
 		/// <param name="key"></param>
-		/// <returns></returns>
 		public UInt64 this[ String key ] {
 			get => this.Words.TryGetValue( key, out var result ) ? result : default( UInt64 );
 
@@ -58,7 +57,6 @@ namespace Librainian.Collections {
 
 		/// <summary>Get or set the word for this guid.</summary>
 		/// <param name="key"></param>
-		/// <returns></returns>
 		public String? this[ UInt64 key ] {
 			get => this.Ints[ key ];
 
@@ -87,7 +85,6 @@ namespace Librainian.Collections {
 
 		/// <summary>Returns true if the word is contained in the collections.</summary>
 		/// <param name="word"></param>
-		/// <returns></returns>
 		public Boolean Contains( String? word ) {
 			if ( String.IsNullOrEmpty( word ) ) {
 				return false;
@@ -98,7 +95,6 @@ namespace Librainian.Collections {
 
 		/// <summary>Returns true if the guid is contained in the collection.</summary>
 		/// <param name="key"></param>
-		/// <returns></returns>
 		public Boolean Contains( UInt64 key ) => this.Ints.TryGetValue( key, out var _ );
 
 		public ICollection<UInt64> EachInt() => this.Ints.Keys;

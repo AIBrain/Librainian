@@ -1,12 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "CoordinateU64.cs" last formatted on 2020-08-14 at 8:34 PM.
+// 
+// File "CoordinateU64.cs" last touched on 2021-07-31 at 7:34 AM by Protiguous.
 
 #nullable enable
 
@@ -40,44 +43,27 @@ namespace Librainian.Graphics.DDD {
 	[Immutable]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
-	public struct CoordinateU64 : IEquatable<CoordinateU64>, IComparable<CoordinateU64> {
+	public record CoordinateU64 {
 
 		/// <summary>The smallest value a <see cref="CoordinateU64" /> will hold.</summary>
 		public const UInt64 Minimum = 1 + UInt64.MinValue; //TODO why is this not Zero ?
-
-		public static readonly CoordinateU64 Empty;
 
 		/// <summary>The largest value a <see cref="CoordinateU64" /> will hold.</summary>
 		/// <remarks>the cuberoot of <see cref="UInt64.MaxValue" /> split into x*y*z.</remarks>
 		public static readonly UInt64 Maximum = ( UInt64 )Math.Pow( UInt64.MaxValue, 1.0 / 3.0 );
 
-		public static readonly CoordinateU64 MaxValue = new( UInt64.MaxValue, UInt64.MaxValue, UInt64.MaxValue );
+		public static readonly CoordinateU64 MaxValue = new(UInt64.MaxValue, UInt64.MaxValue, UInt64.MaxValue);
 
-		public static readonly CoordinateU64 MinValue = new( Minimum, Minimum, Minimum );
-
-		/// <summary>Maximum - Minimum</summary>
-		public static readonly UInt64 Range = Maximum - Minimum;
-
-		[JsonProperty]
-		public readonly UInt64 SquareLength;
-
-		[JsonProperty]
-		public readonly UInt64 X;
-
-		[JsonProperty]
-		public readonly UInt64 Y;
-
-		[JsonProperty]
-		public readonly UInt64 Z;
+		public static readonly CoordinateU64 MinValue = new(Minimum, Minimum, Minimum);
 
 		///// <summary>
 		/////   Initialize with a random point.
 		///// </summary>
 		//public Coordinate() : this( x: Randem.NextFloat(), y: Randem.NextFloat(), z: Randem.NextFloat() ) { }
 
-		public CoordinateU64( UInt64Range x ) : this( x.Min.Next( x.Max ), Minimum.Next( Maximum ), Minimum.Next( Maximum ) ) { }
+		public CoordinateU64( UInt64Range x ) : this( x.Minimum.Next( x.Maximum ), Minimum.Next( Maximum ), Minimum.Next( Maximum ) ) { }
 
-		public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Min.Next( x.Max ), y.Min.Next( y.Max ), z.Min.Next( z.Max ) ) { }
+		public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Minimum.Next( x.Maximum ), y.Minimum.Next( y.Maximum ), z.Minimum.Next( z.Maximum ) ) { }
 
 		/// <summary></summary>
 		/// <param name="x"></param>
@@ -89,6 +75,21 @@ namespace Librainian.Graphics.DDD {
 			this.Z = Math.Max( Minimum, Math.Min( Maximum, z ) );
 			this.SquareLength = this.X * this.X + this.Y * this.Y + this.Z * this.Z;
 		}
+
+		/// <summary>Maximum - Minimum</summary>
+		public static UInt64 Range { get; } = Maximum - Minimum;
+
+		[JsonProperty]
+		public UInt64 SquareLength { get; init; }
+
+		[JsonProperty]
+		public UInt64 X { get; init; }
+
+		[JsonProperty]
+		public UInt64 Y { get; init; }
+
+		[JsonProperty]
+		public UInt64 Z { get; init; }
 
 		/// <summary>Calculates the distance between two <see cref="CoordinateU64" />.</summary>
 		public static UInt64 Distance( CoordinateU64 left, CoordinateU64 right ) {
@@ -102,12 +103,11 @@ namespace Librainian.Graphics.DDD {
 		/// <summary>static comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
-		/// <returns></returns>
 		public static Boolean Equals( CoordinateU64 left, CoordinateU64 right ) => left.X == right.X && left.Y == right.Y && left.Z == right.Z;
 
-		public static implicit operator Point( CoordinateU64 coordinate ) => new( ( Int32 )coordinate.X, ( Int32 )coordinate.Y );
+		public static implicit operator Point( CoordinateU64 coordinate ) => new(( Int32 )coordinate.X, ( Int32 )coordinate.Y);
 
-		public static implicit operator PointF( CoordinateU64 coordinate ) => new( coordinate.X, coordinate.Y );
+		public static implicit operator PointF( CoordinateU64 coordinate ) => new(coordinate.X, coordinate.Y);
 
 		/// <summary>
 		///     <para>Returns a new Coordinate as a unit <see cref="CoordinateU64" />.</para>
@@ -119,11 +119,7 @@ namespace Librainian.Graphics.DDD {
 			return new CoordinateU64( ( UInt64 )( coordinate.X * num ), ( UInt64 )( coordinate.Y * num ), ( UInt64 )( coordinate.Z * num ) );
 		}
 
-		public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new( v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z );
-
-		public static Boolean operator !=( CoordinateU64 left, CoordinateU64 right ) => !Equals( left, right );
-
-		public static Boolean operator ==( CoordinateU64 left, CoordinateU64 right ) => Equals( left, right );
+		public static CoordinateU64 operator -( CoordinateU64 v1, CoordinateU64 v2 ) => new(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
 
 		/// <summary>Compares the current <see cref="CoordinateU64" /> with another <see cref="CoordinateU64" />.</summary>
 		/// <returns>
@@ -146,19 +142,8 @@ namespace Librainian.Graphics.DDD {
 			return ( UInt64 )Math.Sqrt( num1 * num1 + num2 * num2 + num3 * num3 );
 		}
 
-		/// <summary>Calls the static comparison.</summary>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public Boolean Equals( CoordinateU64 other ) => Equals( this, other );
-
-		public override Boolean Equals( Object? obj ) => obj is CoordinateU64 u64 && Equals( this, u64 );
-
-		/// <summary>
-		///     preCalc hash of <see cref="X" />, <see cref="Y" />, and <see cref="Z" />. (I have no clue if GetHashCode is
-		///     called once for immutable objects..?)
-		/// </summary>
-		public override Int32 GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
-
 		public override String ToString() => $"{this.X}, {this.Y}, {this.Z}";
+
 	}
+
 }

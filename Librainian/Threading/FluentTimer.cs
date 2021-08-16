@@ -34,7 +34,6 @@ namespace Librainian.Threading {
 	using Exceptions;
 	using Measurement.Frequency;
 	using Measurement.Time;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public static class FluentTimerExt {
@@ -44,14 +43,12 @@ namespace Librainian.Threading {
 		///     <para>Same as <see cref="Begin" />.</para>
 		/// </summary>
 		/// <param name="timer"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		public static FluentTimer AndStart( this FluentTimer timer ) => timer.Begin();
 
 		/// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
 		/// <param name="timer"></param>
 		/// <param name="set"></param>
-		/// <returns></returns>
 		public static FluentTimer AutoReset( this FluentTimer timer, Boolean set = true ) {
 			if ( timer is null ) {
 				throw new ArgumentEmptyException( nameof( timer ) );
@@ -66,7 +63,6 @@ namespace Librainian.Threading {
 		///     <para>Start the <paramref name="timer" />.</para>
 		/// </summary>
 		/// <param name="timer"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		public static FluentTimer Begin( this FluentTimer timer ) {
 			if ( timer is null ) {
@@ -86,7 +82,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="interval"> </param>
 		/// <param name="onTick"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentException"></exception>
 		public static FluentTimer CreateTimer( this TimeSpan interval, Action? onTick = null ) {
 			if ( interval < Milliseconds.One ) {
@@ -136,7 +131,6 @@ namespace Librainian.Threading {
 		///     <para>Start the <paramref name="timer" />.</para>
 		/// </summary>
 		/// <param name="timer"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
 		public static FluentTimer Start( this FluentTimer timer ) => timer.Begin();
 

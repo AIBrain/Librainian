@@ -57,7 +57,6 @@ namespace Librainian.FileSystem {
 	using PooledAwait;
 	using Security;
 	using Threading;
-	using Utilities;
 	using Utilities.Disposables;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -191,7 +190,6 @@ namespace Librainian.FileSystem {
 		///     <para>To compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.SameContent" />.</para>
 		/// </summary>
 		/// <param name="other"></param>
-		/// <returns></returns>
 		[Pure]
 		public Boolean Equals( IDocument? other ) => Equals( this, other );
 
@@ -292,7 +290,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.</summary>
-		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		[Pure]
 		public async IAsyncEnumerable<Byte> AsBytes( [EnumeratorCancellation] CancellationToken cancellationToken ) {
@@ -319,7 +316,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
 		[Pure]
 		public async IAsyncEnumerable<Int32> AsInt32( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
@@ -346,7 +342,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
 		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
 		[Pure]
 		public async IAsyncEnumerable<Int64> AsInt64( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
@@ -373,7 +368,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Guid" />.</summary>
 		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
 		public async IAsyncEnumerable<Guid> AsGuids( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
 			if ( optimal is null ) {
@@ -397,7 +391,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="UInt64" />.</summary>
-		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		[Pure]
 		public async IAsyncEnumerable<UInt64> AsUInt64( [EnumeratorCancellation] CancellationToken cancellationToken ) {
@@ -423,7 +416,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>HarkerHash (hash-by-addition)</summary>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<Int32> HarkerHash32( CancellationToken cancellationToken ) =>
 			await this.AsInt32( cancellationToken ).Select( i => i == 0 ? 1 : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
@@ -457,7 +449,6 @@ namespace Librainian.FileSystem {
 		/// <param name="progress">   </param>
 		/// <param name="eta">        </param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
 			IDocument destination,
@@ -530,7 +521,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary></summary>
-		/// <returns></returns>
 		/// <exception cref="InvalidOperationException"></exception>
 		[Pure]
 		public async PooledValueTask<String?> CRC32Hex( CancellationToken cancellationToken ) {
@@ -618,7 +608,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Returns a lowercase hex-string of the hash.</summary>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<String?> CRC64Hex( CancellationToken cancellationToken ) {
 			try {
@@ -691,7 +680,6 @@ namespace Librainian.FileSystem {
 		///     <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
 		/// </summary>
 		/// <param name="source"></param>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( Uri source ) {
 			if ( source is null ) {
@@ -732,7 +720,6 @@ namespace Librainian.FileSystem {
 		public String FileName => Path.GetFileName( this.FullPath );
 
 		/// <summary>Returns the size of the file, if it exists.</summary>
-		/// <returns></returns>
 		[Pure]
 		public PooledValueTask<UInt64?> Size( CancellationToken cancellationToken ) => this.Length( cancellationToken );
 
@@ -764,17 +751,14 @@ namespace Librainian.FileSystem {
 		///     <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
 		/// </summary>
 		/// <param name="other"></param>
-		/// <returns></returns>
 		[Pure]
 		public override Boolean Equals( Object? other ) => other is IDocument document && Equals( this, document );
 
 		/// <summary>(file name, not contents)</summary>
-		/// <returns></returns>
 		[Pure]
 		public override Int32 GetHashCode() => this.FullPath.GetHashCode();
 
 		/// <summary>Returns the filename, without the extension.</summary>
-		/// <returns></returns>
 		[Pure]
 		public String JustName() => Path.GetFileNameWithoutExtension( this.FileName );
 
@@ -805,7 +789,6 @@ namespace Librainian.FileSystem {
 		/// <param name="arguments"></param>
 		/// <param name="verb">     "runas" is elevated</param>
 		/// <param name="useShell"></param>
-		/// <returns></returns>
 		[Pure]
 		public PooledValueTask<Process?> Launch( String? arguments = null, String? verb = "runas", Boolean useShell = false ) {
 			try {
@@ -846,7 +829,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="right"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
 		/// <exception cref="ArgumentException"></exception>
@@ -877,7 +859,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
-		/// <returns></returns>
 		[Pure]
 		public StreamReader StreamReader() => new( File.OpenRead( this.FullPath ) );
 
@@ -886,7 +867,6 @@ namespace Librainian.FileSystem {
 		///     <para>Optional <paramref name="encoding" />. Defaults to <see cref="Encoding.Unicode" />.</para>
 		///     <para>Optional buffersize. Defaults to 1 MB.</para>
 		/// </summary>
-		/// <returns></returns>
 		public async Task<StreamWriter?> StreamWriter(
 			CancellationToken cancellationToken,
 			Encoding? encoding = null,
@@ -913,7 +893,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<String?> ToJSON() {
 			using var reader = new StreamReader( this.FullPath );
@@ -933,7 +912,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="delayBetweenRetries"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public async PooledValueTask<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken cancellationToken ) {
 			while ( !cancellationToken.IsCancellationRequested && await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 				try {
@@ -957,7 +935,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.</summary>
 		/// <param name="destination"></param>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( Uri destination ) {
 			if ( destination is null ) {
@@ -983,7 +960,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="FullPath" />.</summary>
 		/// <see cref="op_Implicit" />
 		/// <see cref="ToFileInfo" />
-		/// <returns></returns>
 		[Pure]
 		public PooledValueTask<FileInfo> GetFreshInfo( CancellationToken cancellationToken ) => ToFileInfo( this, cancellationToken );
 
@@ -991,7 +967,6 @@ namespace Librainian.FileSystem {
 		/// <param name="progress"></param>
 		/// <param name="cancellationToken"></param>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		public async PooledValueTask<(Status status, T? obj)> LoadJSON<T>( IProgress<ZeroToOne>? progress, CancellationToken cancellationToken ) {
 			var i = 0.0;
 			const Double maxsteps = 6.0;
@@ -1195,7 +1170,6 @@ namespace Librainian.FileSystem {
 		public async PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken ) => await this.AsInt64( cancellationToken ).Select( i => i == 0L ? 1L : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
 
 		/// <summary>"poor mans Decimal hash"</summary>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<Decimal> HarkerHashDecimal( CancellationToken cancellationToken ) =>
 			await this.AsDecimal( cancellationToken ).Select( i => i == 0M ? 1M : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
@@ -1219,7 +1193,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
-		/// <returns></returns>
 		public async PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken cancellationToken ) {
 			var size = await this.Size( cancellationToken ).ConfigureAwait( false );
 
@@ -1279,7 +1252,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
 		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
 		[Pure]
 		public async IAsyncEnumerable<Decimal> AsDecimal( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			var fileLength = await this.Length( cancellationToken ).ConfigureAwait( false );
@@ -1325,7 +1297,6 @@ namespace Librainian.FileSystem {
 		///     <para>Should be able to read and write from <see cref="FileStream" />.</para>
 		///     <para>If there is any error opening or creating the file, <see cref="Writer" /> will be null.</para>
 		/// </summary>
-		/// <returns></returns>
 		public async PooledValueTask<FileStream?> OpenWriter( Boolean deleteIfAlreadyExists, CancellationToken cancellationToken, FileShare sharingOptions = FileShare.None ) {
 			try {
 				this.ReleaseWriter();
@@ -1363,7 +1334,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="value"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public async PooledValueTask<Status> SetReadOnly( Boolean value, CancellationToken cancellationToken ) {
 			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
@@ -1420,7 +1390,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     Synchronous version.
 		/// </summary>
-		/// <returns></returns>
 		public UInt64? GetLength() {
 			var info = new FileInfo( this.FullPath );
 			info.Refresh();
@@ -1430,7 +1399,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     Synchronous version.
 		/// </summary>
-		/// <returns></returns>
 		public Boolean GetExists() {
 			var info = new FileInfo( this.FullPath );
 			info.Refresh();
@@ -1440,7 +1408,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     Synchronous version.
 		/// </summary>
-		/// <returns></returns>
 		public UInt64? GetSize() {
 			var info = new FileInfo( this.FullPath );
 			info.Refresh();
@@ -1514,7 +1481,6 @@ namespace Librainian.FileSystem {
 		///     Pull a new <see cref="FileInfo" /> for the <paramref name="document" />.
 		/// </summary>
 		/// <param name="document"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[Pure]
@@ -1524,7 +1490,6 @@ namespace Librainian.FileSystem {
 		///     Returns a new <see cref="CancellationToken" /> with the timeout set via <see cref="DefaultDocumentTimeout" />.
 		/// </summary>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		public static CancellationToken GetDefaultCancelToken( TimeSpan? timeout = null ) => new CancellationTokenSource( timeout ?? DefaultDocumentTimeout ).Token;
 
 		[Pure]
@@ -1546,7 +1511,6 @@ namespace Librainian.FileSystem {
 		/// <param name="address"></param>
 		/// <param name="fileName"></param>
 		/// <param name="progress"></param>
-		/// <returns></returns>
 		[Pure]
 		public static async PooledValueTask<WebClient> DownloadFileTaskAsync(
 			Uri address,
@@ -1618,7 +1582,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean operator !=( Document? left, IDocument? right ) => !Equals( left, right );
 
@@ -1627,7 +1590,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean operator ==( Document? left, IDocument? right ) => Equals( left, right );
 
@@ -1641,7 +1603,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean Equals( IDocument? left, IDocument? right ) {
 			if ( ReferenceEquals( left, right ) ) {

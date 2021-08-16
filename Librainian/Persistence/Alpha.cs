@@ -49,7 +49,6 @@ namespace Librainian.Persistence {
 		/// <summary>Pull the value out of the either.</summary>
 		/// <param name="key"></param>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Boolean TryGet( String? key, out String? value ) {
 			value = null;
 
@@ -176,7 +175,6 @@ namespace Librainian.Persistence {
 			/// <summary>
 			///     <para>Starts the local and remote discovery tasks.</para>
 			/// </summary>
-			/// <returns></returns>
 			/// <remarks>Is this coded in the correct way for starting Tasks?</remarks>
 			public static async Task Initialize( CancellationToken? localToken = null, CancellationToken? remoteToken = null ) {
 				try {

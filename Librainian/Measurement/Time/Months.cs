@@ -78,7 +78,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Return this value in <see cref="Weeks" />.
 		/// </summary>
-		/// <returns></returns>
 		public IQuantityOfTime ToFinerGranularity() => this.ToWeeks();
 
 		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneMonth );
@@ -88,7 +87,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Return this value in <see cref="Years" />.
 		/// </summary>
-		/// <returns></returns>
 		public IQuantityOfTime ToCoarserGranularity() => this.ToYears();
 
 		public TimeSpan ToTimeSpan() => this.ToSeconds();

@@ -41,7 +41,6 @@ namespace Librainian.Extensions {
 
 		/// <summary>Returns the text of the [Description("text")] attribute on an enum. Or null if not found.</summary>
 		/// <param name="element"></param>
-		/// <returns></returns>
 		public static String? Description( this Enum element ) {
 			var type = element.GetType();
 
@@ -70,7 +69,6 @@ namespace Librainian.Extensions {
 		/// <summary>Gets all items for an enum value.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value">The value.</param>
-		/// <returns></returns>
 		public static IEnumerable<T> GetAllValues<T>( this Enum value ) {
 			if ( value is null ) {
 				throw new ArgumentEmptyException( nameof( value ) );
@@ -81,7 +79,6 @@ namespace Librainian.Extensions {
 
 		/// <summary>Gets all values for an enum type.</summary>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
 		// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.

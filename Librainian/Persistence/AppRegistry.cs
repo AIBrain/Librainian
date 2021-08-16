@@ -101,7 +101,6 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
-		/// <returns></returns>
 		public static Object? Get( String folder, String key ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -132,7 +131,6 @@ namespace Librainian.Persistence {
 		/// <param name="folder"></param>
 		/// <param name="key">   </param>
 		/// <param name="subkey"></param>
-		/// <returns></returns>
 		public static Object? Get( String folder, String key, String subkey ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -525,7 +523,6 @@ namespace Librainian.Persistence {
 		/// <param name="key">   </param>
 		/// <param name="value"> </param>
 		/// <param name="kind">  </param>
-		/// <returns></returns>
 		public static Boolean Set( String folder, String key, Object? value, RegistryValueKind kind ) {
 			if ( folder.IsEmpty() ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
@@ -562,7 +559,6 @@ namespace Librainian.Persistence {
 		/// <param name="subkey"></param>
 		/// <param name="value"> </param>
 		/// <param name="kind">  </param>
-		/// <returns></returns>
 		public static Boolean Set<T>( String folder, String key, String subkey, T? value, RegistryValueKind kind ) {
 			if ( String.IsNullOrWhiteSpace( folder ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( folder ) );

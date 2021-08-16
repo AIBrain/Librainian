@@ -63,14 +63,12 @@ namespace Librainian.Magic {
 		}
 
 		/// <summary>Create a new instance of type <see cref="T" /> with no parameters.</summary>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New() => InstantiatorImpl.CtorFunc();
 
 		/// <summary>Create a new instance of type <see cref="T" /> with one parameter.</summary>
 		/// <typeparam name="TA"></typeparam>
 		/// <param name="valueA"></param>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New<TA>( TA? valueA ) => InstantiatorImpl<TA>.CtorFunc( valueA );
 
@@ -79,7 +77,6 @@ namespace Librainian.Magic {
 		/// <typeparam name="TB"></typeparam>
 		/// <param name="valueA"></param>
 		/// <param name="valueB"></param>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New<TA, TB>( TA? valueA, TB? valueB ) => InstantiatorImpl<TA, TB>.CtorFunc( valueA, valueB );
 
@@ -90,7 +87,6 @@ namespace Librainian.Magic {
 		/// <param name="valueA"></param>
 		/// <param name="valueB"></param>
 		/// <param name="valueC"></param>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New<TA, TB, TC>( TA? valueA, TB? valueB, TC? valueC ) =>
 			InstantiatorImpl<TA, TB, TC>.CtorFunc( valueA, valueB, valueC );
@@ -104,7 +100,6 @@ namespace Librainian.Magic {
 		/// <param name="valueB"></param>
 		/// <param name="valueC"></param>
 		/// <param name="valueD"></param>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New<TA, TB, TC, TD>( TA? valueA, TB? valueB, TC? valueC, TD? valueD ) =>
 			InstantiatorImpl<TA, TB, TC, TD>.CtorFunc( valueA, valueB, valueC, valueD );
@@ -120,7 +115,6 @@ namespace Librainian.Magic {
 		/// <param name="valueC"></param>
 		/// <param name="valueD"></param>
 		/// <param name="valueE"></param>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New<TA, TB, TC, TD, TE>( TA? valueA, TB? valueB, TC? valueC, TD? valueD, TE? valueE ) =>
 			InstantiatorImpl<TA, TB, TC, TD, TE>.CtorFunc( valueA, valueB, valueC, valueD, valueE );
@@ -138,7 +132,6 @@ namespace Librainian.Magic {
 		/// <param name="valueD"></param>
 		/// <param name="valueE"></param>
 		/// <param name="valueF"></param>
-		/// <returns></returns>
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T New<TA, TB, TC, TD, TE, TF>(
 			TA? valueA,

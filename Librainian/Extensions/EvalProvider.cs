@@ -61,7 +61,6 @@ namespace Librainian.Extensions {
 		/// <param name="code">           </param>
 		/// <param name="usingStatements"></param>
 		/// <param name="assemblies">     </param>
-		/// <returns></returns>
 		public static Func<T, TResult> CreateEvalMethod<T, TResult>( String? code, String[]? usingStatements = null,
 			String[]? assemblies = null ) {
 			var returnType = typeof( TResult );

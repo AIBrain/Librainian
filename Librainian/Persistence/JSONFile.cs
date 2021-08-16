@@ -85,7 +85,6 @@ namespace Librainian.Persistence {
 		/// <summary></summary>
 		/// <param name="section"></param>
 		/// <param name="key"></param>
-		/// <returns></returns>
 		public String? this[ String? section, String? key ] {
 			[DebuggerStepThrough]
 			[CanBeNull]
@@ -135,7 +134,6 @@ namespace Librainian.Persistence {
 		/// <summary>(Trims whitespaces from section and key)</summary>
 		/// <param name="section"></param>
 		/// <param name="pair"></param>
-		/// <returns></returns>
 		public Boolean Add( String section, KeyValuePair<String, String?> pair ) {
 			if ( String.IsNullOrWhiteSpace( section ) ) {
 				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
@@ -176,7 +174,6 @@ namespace Librainian.Persistence {
 		/// <summary>(Trims whitespaces from section and key)</summary>
 		/// <param name="section"></param>
 		/// <param name="pair"></param>
-		/// <returns></returns>
 		public Boolean Add( String section, (String k, String? v) tuple ) {
 			if ( String.IsNullOrWhiteSpace( section ) ) {
 				throw new ArgumentException( "Argument is null or whitespace", nameof( section ) );
@@ -215,7 +212,6 @@ namespace Librainian.Persistence {
 		}
 
 		/// <summary>Removes all data from all sections.</summary>
-		/// <returns></returns>
 		public Boolean Clear( CancellationToken cancellationToken ) {
 			Parallel.ForEach( this.Data.Keys.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), section => this.TryRemove( section ) );
 
@@ -299,7 +295,6 @@ namespace Librainian.Persistence {
 		}
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>
-		/// <returns></returns>
 		public async Task<Boolean> Write( CancellationToken cancellationToken ) {
 			var document = this.Document;
 

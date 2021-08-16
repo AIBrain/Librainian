@@ -78,7 +78,6 @@ namespace Librainian.Internet {
 			Boolean Cancel();
 
 			/// <summary>Returns true if the web request is in progress.</summary>
-			/// <returns></returns>
 			Boolean IsBusy();
 
 			Boolean Start();
@@ -253,7 +252,6 @@ namespace Librainian.Internet {
 			}
 
 			/// <summary>Returns true if the web request is in progress.</summary>
-			/// <returns></returns>
 			public Boolean IsBusy() => this.Client.IsBusy;
 
 			public virtual Boolean Start() {

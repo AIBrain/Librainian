@@ -33,11 +33,13 @@ namespace Librainian.Controls {
 		//public ListBoxNoFlicker() => this.SetStyle( ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true );
 
 		public ListBoxNoFlicker() {
+			/*
 			this.SetStyle(
 				ControlStyles.OptimizedDoubleBuffer |
 				ControlStyles.ResizeRedraw |
 				ControlStyles.UserPaint,
 				true );
+			*/
 		}
 
 		/*

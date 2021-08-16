@@ -156,7 +156,6 @@ namespace Librainian.Controls {
 		/// <param name="caption">The caption.</param>
 		/// <param name="buttons">The buttons.</param>
 		/// <param name="icon">   The icon.</param>
-		/// <returns></returns>
 		public static DialogResult? Show( String? text, String? caption, MessageBoxButtons buttons, MessageBoxIcon icon ) =>
 			FlexibleMessageBoxForm.ShowDialog( null, text, caption, buttons, icon, MessageBoxDefaultButton.Button1 );
 

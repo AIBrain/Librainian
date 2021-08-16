@@ -36,10 +36,10 @@ namespace Librainian.Controls {
 	using Logging;
 	using Maths;
 	using Microsoft.Extensions.Logging;
-	using Utilities;
 	using Utilities.Disposables;
 
-	/// <summary>Pulled from http://stackoverflow.com/a/6587172/956364</summary>
+	/// <summary>Pulled from http://stackoverflow.com/a/6587172/956364
+	/// </summary>
 	public class ListBoxLog : ABetterClassDispose {
 
 		private const Int32 DefaultMaxLinesInListbox = 1024;
@@ -53,7 +53,7 @@ namespace Librainian.Controls {
 		private const String DefaultMessageFormat = "{4}>{8}";
 		*/
 
-		public ListBoxLog( ListBoxNoFlicker listBox, String messageFormat ) : this( listBox, DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, DefaultMaxLinesInListbox ) {
 			if ( listBox is null ) {
 				throw new ArgumentEmptyException( nameof( listBox ) );
 			}
@@ -63,7 +63,7 @@ namespace Librainian.Controls {
 			}
 		}
 
-		public ListBoxLog( ListBoxNoFlicker listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBox listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
 			/*
 			if ( String.IsNullOrWhiteSpace( messageFormat ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( messageFormat ) );
@@ -161,8 +161,8 @@ namespace Librainian.Controls {
 			}
 
 			this.Box.InvokeAction( () => {
-				this.Box.BeginUpdate();
 
+				this.Box.BeginUpdate();
 				while ( this.Box.Items.Count > this.MaxEntriesInListBox ) {
 					this.Box.Items.RemoveAt( 0 );
 				}
@@ -170,7 +170,9 @@ namespace Librainian.Controls {
 				var index = this.Box.Items.Add( message );
 
 				this.Box.TopIndex = index;
+				this.Box.TopIndex = index;
 				this.Box.EndUpdate();
+
 			}, RefreshOrInvalidate.Neither );
 		}
 
@@ -217,7 +219,9 @@ namespace Librainian.Controls {
 
 		private void CopyMenuPopupHandler( Object? sender, EventArgs? e ) {
 			if ( sender is ContextMenuStrip menu ) {
-				menu.Items[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
+				if ( menu.Items.Count > 0 ) {
+					menu.Items[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
+				}
 			}
 		}
 

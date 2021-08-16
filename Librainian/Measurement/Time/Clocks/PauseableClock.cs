@@ -275,7 +275,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		/// <summary>Advance the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
 		/// <param name="amount">    </param>
 		/// <param name="skipEvents"></param>
-		/// <returns></returns>
 		public Boolean Advance( Milliseconds amount, Boolean skipEvents = true ) {
 			try {
 				this.Pause();
@@ -317,7 +316,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary>Rewind the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public Boolean Rewind( Milliseconds amount ) {
 			try {
 				this.Pause();

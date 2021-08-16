@@ -47,7 +47,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Returns True if the folder exists.</para>
 		/// </summary>
-		/// <returns></returns>
 		/// See also:
 		/// <see cref="Delete"></see>
 		PooledValueTask<Boolean> Create( CancellationToken cancellationToken );
@@ -55,7 +54,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Returns True if the folder no longer exists.</para>
 		/// </summary>
-		/// <returns></returns>
 		/// <see cref="Create"></see>
 		PooledValueTask<Boolean> Delete( CancellationToken cancellationToken );
 
@@ -78,7 +76,6 @@ namespace Librainian.FileSystem {
 		Boolean ExistsSync();
 
 		/// <summary>Free space available to the current user.</summary>
-		/// <returns></returns>
 		PooledValueTask<UInt64> GetAvailableFreeSpace();
 
 		Disk GetDrive();
@@ -86,7 +83,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		/// Sync version
 		/// </summary>
-		/// <returns></returns>
 		Boolean GetExists();
 
 		Int32 GetHashCode();
@@ -97,7 +93,6 @@ namespace Librainian.FileSystem {
 		///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
 		/// </summary>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		PooledValueTask<Boolean> IsEmpty( CancellationToken cancellationToken );
 
 		void OpenWithExplorer();
@@ -107,7 +102,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Shorten the full path with "..."</para>
 		/// </summary>
-		/// <returns></returns>
 		String ToCompactFormat();
 
 		/// <summary>Returns a String that represents the current object.</summary>

@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ControlExtensions.cs" last touched on 2021-06-08 at 5:02 PM by Protiguous.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -33,6 +33,7 @@ namespace Librainian.Controls {
 	using System.Collections;
 	using System.Diagnostics;
 	using System.Runtime.CompilerServices;
+	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -45,6 +46,7 @@ namespace Librainian.Controls {
 	using Logging;
 	using Maths;
 	using Measurement.Time;
+	using OperatingSystem;
 	using PooledAwait;
 	using Threading;
 	using Color = System.Drawing.Color;
@@ -137,14 +139,12 @@ namespace Librainian.Controls {
 		///     Just changes the cursor to the <see cref="Cursors.WaitCursor" />.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static void BusyCursor( this Control control ) => control.InvokeAction( () => control.Cursor = Cursors.WaitCursor );
 
 		/// <summary>
 		///     Threadsafe <see cref="CheckBox.Checked" /> check.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static Boolean? Checked( this CheckBox? control ) {
 			return control?.InvokeFunction( Target );
 
@@ -187,7 +187,6 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="delay">  </param>
-		/// <returns></returns>
 		/// <see cref="Push" />
 		public static void Click( this Button control, TimeSpan? delay = null ) {
 			var _ = control.Push( delay ); //swallow the async
@@ -280,7 +279,7 @@ namespace Librainian.Controls {
 			spanOff.Value.CreateTimer( OnTick ).Once().Start();
 
 			void Action() {
-				( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor );
+				(control.ForeColor, control.BackColor) = (control.BackColor, control.ForeColor);
 				control.Refresh();
 			}
 
@@ -312,7 +311,6 @@ namespace Librainian.Controls {
 		///     Threadsafe <see cref="Control.ForeColor" /> check.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static Color ForeColor( this Control control ) {
 			var func = new Func<Color>( () => control.ForeColor );
 
@@ -380,7 +378,7 @@ namespace Librainian.Controls {
 			}
 
 			if ( control.InvokeRequired ) {
-				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh )) {
+				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
 					action += MaybeRedraw;
 				}
 				control.BeginInvoke( action );
@@ -391,7 +389,7 @@ namespace Librainian.Controls {
 					MaybeRedraw();
 				}
 			}
-			
+
 		}
 
 		/*
@@ -430,7 +428,7 @@ namespace Librainian.Controls {
 			}
 
 			if ( control.InvokeRequired ) {
-				return ( T )control.Invoke( function );
+				return control.Invoke( function );
 			}
 
 			return function();
@@ -449,7 +447,7 @@ namespace Librainian.Controls {
 		}
 
 		public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-			transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
+			transparentPercent = 255 - ( transparentPercent.ForceBounds( 0, 1 ) * 255 );
 
 			return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
 		}
@@ -473,7 +471,6 @@ namespace Librainian.Controls {
 		///     Threadsafe get.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static Int32 Maximum( this ProgressBar control ) {
 			if ( control is null ) {
 				throw new ArgumentEmptyException( nameof( control ) );
@@ -500,7 +497,6 @@ namespace Librainian.Controls {
 		///     Threadsafe get.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static Int32 Minimum( this ProgressBar control ) => control.InvokeFunction( () => control.Minimum );
 
 		/// <summary>
@@ -519,7 +515,6 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="delay">  </param>
-		/// <returns></returns>
 		/// <see cref="Push" />
 		public static async Task PerformClick( this Button control, TimeSpan? delay = null ) {
 			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
@@ -540,7 +535,6 @@ namespace Librainian.Controls {
 		/// <param name="control">   </param>
 		/// <param name="delay">     </param>
 		/// <param name="afterClick"></param>
-		/// <returns></returns>
 		public static async FireAndForget Push( this Button? control, TimeSpan? delay = null, Action? afterClick = null ) {
 			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
 
@@ -552,7 +546,6 @@ namespace Librainian.Controls {
 		///     Threadsafe <see cref="Control.Refresh" />.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static void Redraw( this Control control ) => control.InvokeAction( control.Refresh );
 
 		public static Boolean RemoveTags( this WebBrowser browser, String tagName, Int32 keepAtMost = 50 ) {
@@ -568,8 +561,8 @@ namespace Librainian.Controls {
 				return false;
 			}
 
-			while ( null != browser.Document && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
-				var item = browser.Document.GetElementsByTagName( tagName )[ 0 ];
+			while ( browser.Document != null && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
+				var item = browser.Document.GetElementsByTagName( tagName )[0];
 
 				if ( item is not null ) {
 					item.OuterHtml = String.Empty;
@@ -598,7 +591,6 @@ namespace Librainian.Controls {
 		///     Just changes the cursor to the <see cref="Cursors.Default" />.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static void ResetCursor( this Control control ) {
 			control.InvokeAction( Action );
 
@@ -663,8 +655,7 @@ namespace Librainian.Controls {
 		///     <para>Safely get the <see cref="Control.Text" /> of a <see cref="Control" /> across threads.</para>
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
-		public static String Text( this Control? control ) => control.InvokeFunction( () => control?.Text );
+		public static String? Text( this Control? control ) => control.InvokeFunction( () => control?.Text );
 
 		/// <summary>
 		///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
@@ -748,7 +739,6 @@ namespace Librainian.Controls {
 		///     <see cref="CheckState.Unchecked" />.
 		/// </summary>
 		/// <param name="s"></param>
-		/// <returns></returns>
 		public static CheckState ToCheckState( this String s ) =>
 			!String.IsNullOrWhiteSpace( s ) ? s.ToBoolean() ? CheckState.Checked :
 				Boolean.TryParse( s, out var _ ) ? CheckState.Checked : CheckState.Unchecked : CheckState.Unchecked;
@@ -772,14 +762,12 @@ namespace Librainian.Controls {
 		///     Threadsafe Value get.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static Decimal Value( this NumericUpDown control ) => control.InvokeFunction( () => control.Value );
 
 		/// <summary>
 		///     Threadsafe Value get.
 		/// </summary>
 		/// <param name="control"></param>
-		/// <returns></returns>
 		public static Int32 Value( this ProgressBar control ) => control.InvokeFunction( () => control.Value );
 
 		/// <summary>
@@ -842,6 +830,27 @@ namespace Librainian.Controls {
 		public static Boolean Yes( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 
 		public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topLeftX"></param>
+		/// <param name="topLeftY"></param>
+		/// <param name="bottomRightX"></param>
+		/// <param name="bottomRightY"></param>
+		/// <param name="nWidthEllipse"></param>
+		/// <param name="nHeightEllipse"></param>
+		/// <returns></returns>
+		/// <code>
+		/// protected override void OnPaint(PaintEventArgs pevent) {
+		///		base.OnPaint( pevent);
+		///		Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
+		/// }
+		/// </code>
+		[DllImport( DLL.GDI32, EntryPoint = "CreateRoundRectRgn" )]
+		public static extern IntPtr CreateRoundRectRgn( Int32 topLeftX, Int32 topLeftY, Int32 bottomRightX, Int32 bottomRightY, Int32 nWidthEllipse, Int32 nHeightEllipse );
+
 
 	}
 

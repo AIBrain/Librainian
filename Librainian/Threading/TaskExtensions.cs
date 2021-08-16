@@ -68,7 +68,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>
 		/// <param name="anything"></param>
-		/// <returns></returns>
 		[Obsolete( "Don't use it. Unless you know what/why it does." )]
 		public static void Consume<T>( this Task<T> task, Object? anything = default ) {
 			if ( task is null ) {
@@ -104,7 +103,6 @@ namespace Librainian.Threading {
 		///     Just a wrapper for <see cref="Task.Delay(Int32)" />.
 		/// </summary>
 		/// <param name="delay"></param>
-		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Task Delay( this TimeSpan delay ) => Task.Delay( delay );
 
@@ -112,7 +110,6 @@ namespace Librainian.Threading {
 		///     Just a wrapper for <see cref="Task.Delay(Int32)" />.
 		/// </summary>
 		/// <param name="delay"></param>
-		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Task Delay( this IQuantityOfTime delay ) => Task.Delay( delay.ToTimeSpan() );
 
@@ -121,7 +118,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="args">  </param>
-		/// <returns></returns>
 		public static void Execute( this Action action, Object[]? args = default ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
@@ -143,7 +139,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="args">  </param>
-		/// <returns></returns>
 		public static void Execute<T>( this Action<T> action, Object[]? args = null ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
@@ -230,7 +225,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="lazy"></param>
-		/// <returns></returns>
 		public static Awaiter<T> GetAwaiter<T>( this Lazy<T> lazy ) => new( lazy );
 
 		/// <summary>
@@ -238,7 +232,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
-		/// <returns></returns>
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
 			if ( source is null ) {
 				throw new ArgumentEmptyException( nameof( source ) );
@@ -262,7 +255,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tasks"></param>
-		/// <returns></returns>
 		/// <example>
 		///     var tasks = new[] { Task.Delay(3000).ContinueWith(_ =&gt; 3), Task.Delay(1000).ContinueWith(_ =&gt; 1),
 		///     Task.Delay(2000).ContinueWith(_ =&gt; 2),
@@ -306,7 +298,6 @@ namespace Librainian.Threading {
 		///     Returns true if the <paramref name="task" /> is Completed, Cancelled, or Faulted.
 		/// </summary>
 		/// <param name="task"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static Boolean IsDone( this Task task ) => task.IsCompleted || task.IsCanceled || task.IsFaulted;
 
@@ -322,7 +313,6 @@ namespace Librainian.Threading {
 		///     <para>Shortcut for Task.ConfigureAwait(false).</para>
 		/// </summary>
 		/// <param name="task"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static ConfiguredTaskAwaitable NoUI( this Task task ) => task.ConfigureAwait( false );
 
@@ -331,7 +321,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static ConfiguredTaskAwaitable<T> NoUI<T>( this Task<T> task ) => task.ConfigureAwait( false );
 
@@ -406,7 +395,6 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static async Task Then( this TimeSpan delay, Action job, CancellationToken cancellationToken ) {
 			if ( job is null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -421,7 +409,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
-		/// <returns></returns>
 		public static async Task Then( this SpanOfTime delay, Action job ) {
 			if ( job is null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -436,7 +423,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="first"> </param>
 		/// <param name="second"></param>
-		/// <returns></returns>
 		public static async Task Then( this Task first, Task second ) {
 			if ( first is null ) {
 				throw new ArgumentEmptyException( nameof( first ) );
@@ -456,7 +442,6 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static async Task Then( this SpanOfTime delay, Action job, CancellationToken cancellationToken ) {
 			if ( job is null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -472,7 +457,6 @@ namespace Librainian.Threading {
 		/// <param name="delay"></param>
 		/// <param name="job">  </param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static async Task Then( this IQuantityOfTime delay, Action job, CancellationToken cancellationToken ) {
 			if ( delay is null ) {
 				throw new ArgumentEmptyException( nameof( delay ) );
@@ -781,7 +765,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self">    </param>
 		/// <param name="timeSpan"></param>
-		/// <returns></returns>
 		public static async IAsyncEnumerable<T> Until<T>( this IEnumerable<T> self, TimeSpan timeSpan ) {
 			var watch = Stopwatch.StartNew();
 
@@ -796,7 +779,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self">    </param>
 		/// <param name="timeSpan"></param>
-		/// <returns></returns>
 		public static async IAsyncEnumerable<T> Until<T>( this IAsyncEnumerable<T> self, TimeSpan timeSpan ) {
 			var watch = Stopwatch.StartNew();
 
@@ -811,7 +793,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self">    </param>
 		/// <param name="when"></param>
-		/// <returns></returns>
 		public static IAsyncEnumerable<T> Until<T>( this IEnumerable<T> self, DateTime when ) => self.ToAsyncEnumerable().TakeWhile( _ => DateTime.UtcNow < when );
 
 		/// <summary>
@@ -820,7 +801,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self">    </param>
 		/// <param name="when"></param>
-		/// <returns></returns>
 		public static IAsyncEnumerable<T> Until<T>( this IAsyncEnumerable<T> self, DateTime when ) => self.TakeWhile( _ => DateTime.UtcNow < when );
 
 		/// <summary>
@@ -828,7 +808,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		public static Task<Boolean> Until( this TimeSpan timeout, Task task ) => UntilTimeout( task, timeout );
 
 		/// <summary>
@@ -838,7 +817,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		public static async Task<Boolean> UntilTimeout( this Task task, TimeSpan timeout ) {
 			if ( task is null ) {
 				throw new ArgumentEmptyException( nameof( task ) );
@@ -911,7 +889,6 @@ namespace Librainian.Threading {
 		/// <param name="count">How many tasks to complete before returning.</param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="tasks"></param>
-		/// <returns></returns>
 		public static async PooledTask WhenCount( this Int32 count, CancellationToken cancellationToken, params Task[]? tasks ) {
 			if ( !count.Any() ) {
 				return;
@@ -939,7 +916,6 @@ namespace Librainian.Threading {
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
 		/// <param name="cancellationToken">  </param>
-		/// <returns></returns>
 		/// <exception cref="TaskCanceledException">thrown when the task was cancelled?</exception>
 		/// <exception cref="OperationCanceledException">thrown when <paramref name="timeout" /> happens?</exception>
 		public static async Task<Task> With<T>( this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
@@ -963,7 +939,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"> </param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static async Task<Task> With<T>( this Task<T> task, CancellationToken cancellationToken ) {
 			if ( task is null ) {
 				throw new ArgumentEmptyException( nameof( task ) );
@@ -985,7 +960,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		public static async Task<Task> With<T>( this Task<T> task, TimeSpan timeout ) {
 			if ( task is null ) {
 				throw new ArgumentEmptyException( nameof( task ) );
@@ -1008,7 +982,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		/// <exception cref="OperationCanceledException">on timeout</exception>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		public static async Task<Task> WithTimeout<T>( this Task<T> task, TimeSpan timeout ) {
@@ -1025,7 +998,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task">   </param>
 		/// <param name="timeout"></param>
-		/// <returns></returns>
 		/// <exception cref="OperationCanceledException">on timeout</exception>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		public static async Task<Task> WithTimeout<T>( this Task<T> task, TimeSpan timeout, CancellationToken cancellationToken ) {
@@ -1042,7 +1014,6 @@ namespace Librainian.Threading {
 		/// <param name="pre">   </param>
 		/// <param name="action"></param>
 		/// <param name="post">  </param>
-		/// <returns></returns>
 		public static Action Wrap( this Action? action, Action? pre, Action? post ) =>
 			() => {
 				try {
@@ -1072,7 +1043,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="selector"></param>
-		/// <returns></returns>
 		public static Task<T> Wrap<T>( this Func<T> selector ) => Task.Run( selector );
 
 		/// <summary>
@@ -1082,7 +1052,6 @@ namespace Librainian.Threading {
 		/// <typeparam name="TOut"></typeparam>
 		/// <param name="selector"></param>
 		/// <param name="input">   </param>
-		/// <returns></returns>
 		public static Task<TOut> Wrap<TIn, TOut>( this Func<TIn, TOut> selector, TIn? input ) => Task.Run( () => selector( input ) );
 
 		/// <summary>

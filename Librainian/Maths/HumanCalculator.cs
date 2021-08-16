@@ -50,7 +50,6 @@ namespace Librainian.Maths {
 		/// <summary>Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).</summary>
 		/// <param name="whom"></param>
 		/// <param name="nombre"></param>
-		/// <returns></returns>
 		/// <see cref="http://wikipedia.org/wiki/Addition#Notation_and_terminology" />
 		public static BigInteger Add( this BigInteger whom, BigInteger nombre ) {
 			var resultant = BigInteger.Zero;
@@ -61,7 +60,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Add classroom-style (the challenge: avoid using BigInteger+BigInteger operation or reversing the strings).</summary>
 		/// <param name="terms"></param>
-		/// <returns></returns>
 		public static BigInteger Add( params BigInteger[] terms ) {
 			var total = BigInteger.Zero;
 
@@ -99,7 +97,7 @@ namespace Librainian.Maths {
 					var t = ( l + m ).ToString();
 					var c = Byte.Parse( t.Last().ToString() );
 
-					if ( 2 == t.Length ) {
+					if ( t.Length == 2 ) {
 						result = "1" + c;
 					}
 					else {

@@ -67,6 +67,6 @@ namespace Librainian.Logging {
 			this.Flush();
 		}
 
-		//private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Thread.CurrentThread.ManagedThreadId})] ";
+		//private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Environment.CurrentManagedThreadId})] ";
 	}
 }

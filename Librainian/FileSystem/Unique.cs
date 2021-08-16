@@ -91,7 +91,6 @@ namespace Librainian.FileSystem {
 		/// <summary>Static (Ordinal) comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Unique? left, Unique? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
@@ -127,7 +126,6 @@ namespace Librainian.FileSystem {
 		/// <summary>If the <paramref name="uri" /> is parsed, then <paramref name="unique" /> will never be null.</summary>
 		/// <param name="uri"></param>
 		/// <param name="unique"></param>
-		/// <returns></returns>
 		public static Boolean TryCreate( Uri? uri, out Unique unique ) {
 			if ( uri is null ) {
 				unique = Empty;
@@ -147,7 +145,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
-		/// <returns></returns>
 		public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken cancellationToken ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
@@ -165,7 +162,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
-		/// <returns></returns>
 		public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken cancellationToken ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
@@ -195,7 +191,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
-		/// <returns></returns>
 		public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken cancellationToken ) {
 			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
@@ -260,7 +255,6 @@ namespace Librainian.FileSystem {
 		public Boolean IsFile() => !this.ToFileInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
 
 		/// <summary>Is this a windows folder (directory)?</summary>
-		/// <returns></returns>
 		public Boolean IsFolder() => this.IsDirectory();
 
 		/// <summary>
@@ -269,7 +263,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="timeout"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public async Task<Int64> Length( TimeSpan timeout, CancellationToken cancellationToken ) {
 			try {
 				using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );

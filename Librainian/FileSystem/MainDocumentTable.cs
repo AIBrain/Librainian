@@ -55,7 +55,6 @@ namespace Librainian.FileSystem {
 		/// <param name="folder"></param>
 		/// <param name="folders"></param>
 		/// <param name="reportDocument"></param>
-		/// <returns></returns>
 		public static async Task SearchAsync(
 			IFolder folder,
 			IProgress<IFolder>? folders = null,

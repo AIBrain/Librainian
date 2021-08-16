@@ -61,7 +61,6 @@ namespace Librainian.FileSystem.FileHistory {
 		/// <param name="when">
 		///     <para>Returns the <see cref="DateTime" /> part of this <see cref="Document" /> or null.</para>
 		/// </param>
-		/// <returns></returns>
 		public static Boolean TryParseFileHistoryFile( Document original, out IFolder? folder, out String? filename, out DateTime? when ) {
 			if ( original is null ) {
 				throw new ArgumentEmptyException( nameof( original ) );

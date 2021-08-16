@@ -32,7 +32,6 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Text;
 	using Exceptions.Warnings;
 	using OperatingSystem;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>A generic base class for physical device classes.</summary>

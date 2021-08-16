@@ -70,7 +70,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <para>Checks if the <paramref name="path"/> starts with \\?\</para>
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static String AddLongPathPrefix( this String path ) {
 			path = path.ThrowIfBlank();
@@ -93,7 +92,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <para>If it doesn't, it calls <see cref="AddLongPathPrefix"/>.</para>
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		public static String CheckAddLongPathPrefix( this String path ) {
 			path = path.ThrowIfBlank();
 
@@ -229,7 +227,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <para>Otherwise, normalize it, and then remove the long path prefix.</para>
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static String GetFullPath( this String path ) => path.IsPathUnc() ? path : path.NormalizeLongPath().RemoveLongPathPrefix();
 
@@ -338,7 +335,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="parameterName"></param>
-		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static String NormalizeLongPath( this String path, String parameterName = "path" ) => path.CheckAddLongPathPrefix();
 
@@ -350,7 +346,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <para>Otherwise just return the path as is.</para>
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		public static String RemoveLongPathPrefix( this String path ) {
 
 			if ( String.IsNullOrWhiteSpace( path ) ) {

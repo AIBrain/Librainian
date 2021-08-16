@@ -117,7 +117,6 @@ namespace Librainian.Graphics.Moving {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equal( Pixelyx? left, Pixelyx? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

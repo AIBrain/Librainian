@@ -29,7 +29,6 @@ namespace Librainian.Persistence {
 	using System.Threading.Tasks;
 	using Exceptions;
 	using Threading;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public class ResourceScanner : ABetterClassDispose {
@@ -104,7 +103,6 @@ namespace Librainian.Persistence {
 		}
 
 		/// <summary>awaits for the <see cref="CompletionSource" /> to finish.</summary>
-		/// <returns></returns>
 		public Task WaitAsync() {
 			this.Waiting = true;
 

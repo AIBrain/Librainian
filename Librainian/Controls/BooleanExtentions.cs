@@ -36,14 +36,12 @@ namespace Librainian.Controls {
 		/// Ignores the <paramref name="value"/> and returns false.
 		/// </summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Boolean False( this Boolean value ) => false;
 
 		/// <summary>
 		/// Ignores the <paramref name="value"/> and returns true.
 		/// </summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static Boolean True( this Boolean value ) => true;
 	}
 }

@@ -109,7 +109,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Returns the reconstructed path and filename.</summary>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public Document Recombined() {
 			var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
@@ -119,7 +118,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Replace the original path, with <paramref name="replacement" /> path, not changing the filename.</summary>
 		/// <param name="replacement"></param>
-		/// <returns></returns>
 
 		//[DebuggerStepThrough]
 		public Boolean ReplacePath( IFolder replacement ) {

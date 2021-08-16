@@ -32,7 +32,6 @@ namespace Librainian.OperatingSystem {
 		/// <summary>Execute the <paramref name="command" /> in a CMD.EXE context.</summary>
 		/// <param name="command"></param>
 		/// <param name="createWindow"></param>
-		/// <returns></returns>
 		public static String? CmdExecute( String? command, Boolean createWindow = true ) {
 			using var process = Process.Start( new ProcessStartInfo( "cmd.exe", $"/c {command}" ) {
 				RedirectStandardOutput = true,

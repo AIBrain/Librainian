@@ -61,7 +61,6 @@ namespace Librainian.Measurement.Spatial {
 		///     to 10 degrees should work like 350, 351, 352, ....359,
 		///     0, 1, 2, 3....10. And not the other way around going 350, 349, 348.....200...1000, 12, 11, 10.
 		/// </remarks>
-		/// <returns></returns>
 		public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
 			var dif = To180Angle( to - from );
 			dif *= Clamp01( portion );
@@ -112,7 +111,6 @@ namespace Librainian.Measurement.Spatial {
 		///     (east) and go counter-clockwise.
 		/// </summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Double MathAngleToCompassAngle( Double angle ) {
 			angle = 90.0f - angle;
 
@@ -124,7 +122,6 @@ namespace Librainian.Measurement.Spatial {
 		/// <summary>Clockwise from a top-down view.</summary>
 		/// <param name="degrees"></param>
 		/// <param name="byAmount"></param>
-		/// <returns></returns>
 		public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
 			if ( Single.IsNaN( byAmount ) ) {
 				return degrees;
@@ -140,7 +137,6 @@ namespace Librainian.Measurement.Spatial {
 		/// <summary>Clockwise from a top-down view.</summary>
 		/// <param name="degrees"></param>
 		/// <param name="byAmount"></param>
-		/// <returns></returns>
 		public static Degrees RotateRight( this Degrees degrees, Single byAmount = 1 ) {
 			if ( Single.IsNaN( byAmount ) ) {
 				return degrees;
@@ -155,7 +151,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>Convert angle between -180 and 180 degrees If you want the angle to be between -180 and 180</summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Single To180Angle( this Single angle ) {
 			while ( angle < -180.0f ) {
 				angle += 360.0f;
@@ -170,7 +165,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>And for a Vector with 3 angles</summary>
 		/// <param name="angles"></param>
-		/// <returns></returns>
 		public static Vector3 To180Angle( Vector3 angles ) {
 			angles.X = To180Angle( angles.X );
 			angles.Y = To180Angle( angles.Y );
@@ -181,7 +175,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>When you have an angle in degrees, that you want to convert in the range of 0-360</summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Double To360Angle( this Double angle ) {
 			while ( angle < 0.0 ) {
 				angle += 360.0;
@@ -196,7 +189,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>When you have an angle in degrees, that you want to convert in the range of 0-360</summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Single To360Angle( this Single angle ) {
 			while ( angle < 0.0f ) {
 				angle += 360.0f;
@@ -211,7 +203,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>To do the same for a vector of 3 angles</summary>
 		/// <param name="angles"></param>
-		/// <returns></returns>
 		public static Vector3 To360Angle( this Vector3 angles ) {
 			angles.X = To360Angle( angles.X );
 			angles.Y = To360Angle( angles.Y );

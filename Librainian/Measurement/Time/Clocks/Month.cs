@@ -71,7 +71,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary>Provide the next <see cref="Month" />.</summary>
 		/// <param name="tocked"></param>
-		/// <returns></returns>
 		public Month Next( out Boolean tocked ) {
 			var next = this.Value + 1;
 

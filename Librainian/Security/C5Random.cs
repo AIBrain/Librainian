@@ -161,7 +161,6 @@ namespace Librainian.Security {
 		/// <exception cref="ArgumentException">If max is less than min</exception>
 		/// <param name="min">The lower bound (inclusive)</param>
 		/// <param name="max">The upper bound (exclusive)</param>
-		/// <returns></returns>
 		public override Int32 Next( Int32 min, Int32 max ) {
 			if ( min > max ) {
 				throw new ArgumentException( "min must be less than or equal to max" );
@@ -173,7 +172,6 @@ namespace Librainian.Security {
 		/// <summary>Get a random non-negative integer less than a given upper bound</summary>
 		/// <exception cref="ArgumentException">If max is negative</exception>
 		/// <param name="max">The upper bound (exclusive)</param>
-		/// <returns></returns>
 		public override Int32 Next( Int32 max ) {
 			if ( max < 0 ) {
 				throw new ArgumentException( "max must be non-negative" );

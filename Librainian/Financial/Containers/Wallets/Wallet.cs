@@ -41,7 +41,6 @@ namespace Librainian.Financial.Containers.Wallets {
 	using Exceptions;
 	using Maths;
 	using Newtonsoft.Json;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -91,12 +90,10 @@ namespace Librainian.Financial.Containers.Wallets {
 		}
 
 		/// <summary>Create an empty wallet with a new random id.</summary>
-		/// <returns></returns>
 		public static Wallet Create() => new( Guid.NewGuid() );
 
 		/// <summary>Create an empty wallet with the given <paramref name="id" />.</summary>
 		/// <param name="id"></param>
-		/// <returns></returns>
 		public static Wallet Create( Guid id ) => new( id );
 
 		//private ActionBlock<TransactionMessage> Messages {get;}
@@ -161,7 +158,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <param name="denomination"></param>
 		/// <param name="quantity">    </param>
 		/// <param name="id">          </param>
-		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean Deposit( IDenomination denomination, UInt64 quantity, Guid? id = null ) {
 			if ( denomination is null ) {
@@ -188,7 +184,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <summary></summary>
 		/// <param name="coin">    </param>
 		/// <param name="quantity"></param>
-		/// <returns></returns>
 		/// <exception cref="WalletException"></exception>
 		public UInt64 Deposit( ICoin coin, UInt64 quantity ) {
 			try {
@@ -301,7 +296,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// </summary>
 		/// <param name="bankNote"></param>
 		/// <param name="quantity"></param>
-		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean TryWithdraw( IBankNote bankNote, UInt64 quantity ) {
 			if ( bankNote == null ) {
@@ -329,7 +323,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// </summary>
 		/// <param name="coin">    </param>
 		/// <param name="quantity"></param>
-		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
 			if ( coin is null ) {
@@ -354,7 +347,6 @@ namespace Librainian.Financial.Containers.Wallets {
 		/// <summary></summary>
 		/// <param name="denomination"></param>
 		/// <param name="quantity">    </param>
-		/// <returns></returns>
 		/// <exception cref="WalletException"></exception>
 		public Boolean TryWithdraw( IDenomination denomination, UInt64 quantity ) {
 			return denomination switch {
@@ -366,7 +358,6 @@ namespace Librainian.Financial.Containers.Wallets {
 
 		/// <summary></summary>
 		/// <param name="message"></param>
-		/// <returns></returns>
 		/// <exception cref="WalletException"></exception>
 		public Boolean TryWithdraw( TransactionMessage message ) {
 			return message.Denomination switch {

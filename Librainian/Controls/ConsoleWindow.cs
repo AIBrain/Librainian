@@ -104,10 +104,10 @@ namespace Librainian.Controls {
 		[DllImport( DLL.Kernel32, SetLastError = true, ExactSpelling = false )]
 		private static extern Boolean SetConsoleIcon( IntPtr hIcon );
 
-		[DllImport( DLL.Kernel32, SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = false )]
+		[DllImport( DLL.User32, SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = false )]
 		private static extern Boolean SetWindowText( IntPtr hwnd, String? lpString );
 
-		[DllImport( DLL.Kernel32, ExactSpelling = false )]
+		[DllImport( DLL.User32, ExactSpelling = false )]
 		private static extern Boolean ShowWindow( IntPtr hWnd, Int32 nCmdShow );
 
 		public static Boolean AllocateWindow() {
@@ -134,7 +134,6 @@ namespace Librainian.Controls {
 		/// <param name="hMenu"></param>
 		/// <param name="nPosition"></param>
 		/// <param name="wFlags"></param>
-		/// <returns></returns>
 		[DllImport( DLL.Kernel32 )]
 		private static extern Int32 DeleteMenu( IntPtr hMenu, Int32 nPosition, Int32 wFlags );
 

@@ -1,2 +1,5 @@
 ﻿[*.cs]
+dotnet_diagnostic.CA1200.severity=warning
 
+[*.{cs,vb}]
+dotnet_diagnostic.CA1051.severity=error

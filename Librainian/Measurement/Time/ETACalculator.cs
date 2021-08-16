@@ -32,7 +32,6 @@ namespace Librainian.Measurement.Time {
 	using System.Timers;
 	using FluentTime;
 	using Maths;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -89,7 +88,6 @@ namespace Librainian.Measurement.Time {
 		public DateTime Eta() => DateTime.Now + this.Etr();
 
 		/// <summary>Get the internal data points we have so far.</summary>
-		/// <returns></returns>
 		public IEnumerable<TimeProgression> GetDataPoints() =>
 			this._datapoints.OrderBy( pair => pair.Key ).Select( pair => new TimeProgression( pair.Key.TotalMilliseconds, pair.Value ) );
 

@@ -91,7 +91,6 @@ namespace Librainian.Persistence {
 		/// <summary>Bascially just calls <see cref="FromJSON{T}"/>.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="storedAsString"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="EncoderFallbackException"></exception>
 		/// <exception cref="FormatException"></exception>
@@ -188,7 +187,6 @@ namespace Librainian.Persistence {
 		/// <summary>See also <see cref="Serializer" />.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="bytes"></param>
-		/// <returns></returns>
 		[Obsolete]
 		public static T Deserializer<T>( this Byte[] bytes ) {
 			using var memoryStream = new MemoryStream( bytes );
@@ -201,7 +199,6 @@ namespace Librainian.Persistence {
 		/// <summary>Can the file be read from at this moment in time ?</summary>
 		/// <param name="isf">     </param>
 		/// <param name="document"></param>
-		/// <returns></returns>
 		public static Boolean FileCanBeRead( this IsolatedStorageFile isf, Document document ) {
 			if ( isf is null ) {
 				throw new ArgumentEmptyException( nameof( isf ) );
@@ -258,7 +255,6 @@ namespace Librainian.Persistence {
 		/// <summary>Return this JSON string as an object.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="data"></param>
-		/// <returns></returns>
 		public static T? FromJSON<T>( this String? data ) {
 			if ( String.IsNullOrWhiteSpace( data ) ) {
 				return default( T );
@@ -270,7 +266,6 @@ namespace Librainian.Persistence {
 		/// <summary>Basically just calls <see cref="ToJSON{T}"/>.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self"></param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="InvalidDataContractException">
 		///     the type being serialized does not conform to data contract rules. For example, the
@@ -308,7 +303,6 @@ namespace Librainian.Persistence {
 		/// <param name="cancellationToken"></param>
 		/// <param name="progress">  </param>
 		/// <param name="extension"> </param>
-		/// <returns></returns>
 		public static async Task<Boolean> SerializeDictionary<TKey, TValue>(
 			this IDictionary<TKey, TValue> dictionary,
 			Folder folder,
@@ -456,7 +450,6 @@ namespace Librainian.Persistence {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="self">       </param>
 		/// <param name="formatting"></param>
-		/// <returns></returns>
 		public static String? ToJSON<T>( this T? self, Formatting formatting = Formatting.None ) =>
 			self is null ? default( String? ) : JsonConvert.SerializeObject( self, formatting, Jss.Value );
 

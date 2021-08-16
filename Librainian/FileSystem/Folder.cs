@@ -186,7 +186,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Returns True if the folder exists.</para>
 		/// </summary>
-		/// <returns></returns>
 		/// See also:
 		/// <see cref="Delete"></see>
 		public async PooledValueTask<Boolean> Create( CancellationToken cancellationToken ) {
@@ -218,7 +217,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Returns True if the folder no longer exists.</para>
 		/// </summary>
-		/// <returns></returns>
 		/// <see cref="Create"></see>
 		public async PooledValueTask<Boolean> Delete( CancellationToken cancellationToken ) {
 			try {
@@ -238,7 +236,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="searchPattern"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public async IAsyncEnumerable<Document> EnumerateDocuments( String? searchPattern, [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			searchPattern = searchPattern.NullIfEmptyOrWhiteSpace() ?? "*.*";
 
@@ -299,7 +296,6 @@ namespace Librainian.FileSystem {
 		/// <param name="searchPattern"></param>
 		/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public async IAsyncEnumerable<Folder> EnumerateFolders(
 			String? searchPattern,
 			SearchOption searchOption,
@@ -396,7 +392,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Free space available to the current user.</summary>
-		/// <returns></returns>
 		public PooledValueTask<UInt64> GetAvailableFreeSpace() => new(( UInt64 )new DriveInfo( this.GetDrive().ToString() ).AvailableFreeSpace);
 
 		public Disk GetDrive() => new(this.Info.Root.FullName);
@@ -404,7 +399,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     Synchronous version.
 		/// </summary>
-		/// <returns></returns>
 		public Boolean GetExists() {
 			this.Info.Refresh();
 			return this.Info.Exists;
@@ -417,7 +411,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Check if this <see cref="Folder" /> contains any <see cref="Folder" /> or any <see cref="Document" /> .</para>
 		/// </summary>
-		/// <returns></returns>
 		public async PooledValueTask<Boolean> IsEmpty( CancellationToken cancellationToken ) =>
 			!await this.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false ) &&
 			!await this.EnumerateDocuments( "*.*", cancellationToken ).AnyAsync( cancellationToken ).ConfigureAwait( false );
@@ -442,7 +435,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Shorten the full path with "..."</para>
 		/// </summary>
-		/// <returns></returns>
 		public String ToCompactFormat() {
 			var length = this.FullPath.Length;
 			var sb = new StringBuilder( length, length );
@@ -464,7 +456,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="fullpath"></param>
 		/// <param name="replacement"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static String CleanPath( String? fullpath, String? replacement = null ) {
 			if ( fullpath is null ) {
@@ -522,7 +513,6 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( IFolder? left, IFolder? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
@@ -536,7 +526,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Throws Exception if unable to obtain the Temp path.</summary>
-		/// <returns></returns>
 		public static IFolder GetTempFolder() => new Folder( Path.GetTempPath() );
 
 		public static implicit operator DirectoryInfo( Folder folder ) => folder.Info;
@@ -647,7 +636,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     Return how many [sub]folders are in this folder's path.
 		/// </summary>
-		/// <returns></returns>
 		public UInt16 LevelsDeep() {
 			this._levelsDeep ??= ( UInt16? )this.FullPath.Count( c => c == FolderSeparatorChar );
 
@@ -657,7 +645,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <see cref="op_Implicit" />
 		/// </summary>
-		/// <returns></returns>
 		public DirectoryInfo ToDirectoryInfo() => this;
 
 	}

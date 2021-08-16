@@ -71,7 +71,6 @@ namespace Librainian.Interfaces {
 		///     Default layout for <see cref="IMessage" /> interface.
 		///     <para>"override" in derived class to change what is shown.</para>
 		/// </summary>
-		/// <returns></returns>
 		String ToString() =>
 			this.Data is null ? $"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description})" :
 				$"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description}){Environment.NewLine} {this.Data}";

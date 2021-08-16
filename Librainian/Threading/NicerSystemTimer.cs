@@ -29,7 +29,6 @@ namespace Librainian.Threading {
 	using System.Diagnostics;
 	using System.Threading;
 	using Exceptions;
-	using Utilities;
 	using Utilities.Disposables;
 	using Timer = System.Timers.Timer;
 

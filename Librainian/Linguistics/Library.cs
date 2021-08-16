@@ -59,7 +59,6 @@ namespace Librainian.Linguistics {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Library? left, Library? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

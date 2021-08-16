@@ -94,7 +94,6 @@ namespace Librainian.Persistence.InIFiles {
 		/// <summary>Static comparison. Checks references and then keys and then values.</summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Section? left, Section? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
@@ -116,7 +115,6 @@ namespace Librainian.Persistence.InIFiles {
 		public static Boolean operator ==( Section? left, Section? right ) => Equals( left, right );
 
 		/// <summary>Remove any key where there is no value.</summary>
-		/// <returns></returns>
 		public Task CleanupAsync( CancellationToken cancellationToken ) =>
 			Task.Run( () => {
 
@@ -139,7 +137,6 @@ namespace Librainian.Persistence.InIFiles {
 
 		/// <summary>Merges (adds keys and overwrites values) <see cref="Data" /> into <see cref="this" />.</summary>
 		/// <param name="reader"></param>
-		/// <returns></returns>
 		public async Task<Boolean> ReadAsync( TextReader reader, CancellationToken cancellationToken ) {
 			if ( reader is null ) {
 				throw new ArgumentEmptyException( nameof( reader ) );
@@ -170,7 +167,6 @@ namespace Librainian.Persistence.InIFiles {
 
 		/// <summary>Write this <see cref="Section" /> to the <paramref name="writer" />.</summary>
 		/// <param name="writer"></param>
-		/// <returns></returns>
 		public Task Write( TextWriter writer ) {
 			if ( writer is null ) {
 				throw new ArgumentEmptyException( nameof( writer ) );

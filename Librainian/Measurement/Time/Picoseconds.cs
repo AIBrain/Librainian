@@ -125,11 +125,9 @@ namespace Librainian.Measurement.Time {
 		public static Boolean operator >( Picoseconds left, Picoseconds right ) => left.Value > right.Value;
 
 		/// <summary>Convert to a smaller unit.</summary>
-		/// <returns></returns>
 		public Femtoseconds ToFemtoseconds() => new( this.Value * Femtoseconds.InOnePicosecond );
 
 		/// <summary>Convert to a greater unit.</summary>
-		/// <returns></returns>
 		public Nanoseconds ToNanoseconds() => new( this.Value / InOneNanosecond );
 
 		public override String ToString() => $"{this.Value} ps";

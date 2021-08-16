@@ -138,7 +138,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Attoseconds left, Attoseconds right ) => left.Value == right.Value;
 
 		public static implicit operator Femtoseconds( Attoseconds attoseconds ) => attoseconds.ToFemtoseconds();
@@ -158,13 +157,11 @@ namespace Librainian.Measurement.Time {
 		public static Boolean operator >( Attoseconds left, Attoseconds right ) => left.Value > right.Value;
 
 		/// <summary>Convert to a larger unit.</summary>
-		/// <returns></returns>
 		public Femtoseconds ToFemtoseconds() => new( this.Value / InOneFemtosecond );
 
 		public override String ToString() => $"{this.Value}as";
 
 		/// <summary>Convert to a smaller unit.</summary>
-		/// <returns></returns>
 		public Zeptoseconds ToZeptoseconds() => new( this.Value * Zeptoseconds.InOneAttosecond );
 	}
 }

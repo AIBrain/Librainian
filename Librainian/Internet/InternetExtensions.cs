@@ -208,9 +208,8 @@ namespace Librainian.Internet {
 				var value = match.Groups[ 1 ].Value;
 				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-				var i = new UriLinkItem {
-					Text = Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ), Href = new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty )
-				};
+				var i = new UriLinkItem( new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty ),
+					Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ) );
 
 				yield return i;
 			}

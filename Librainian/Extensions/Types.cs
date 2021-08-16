@@ -62,7 +62,6 @@ namespace Librainian.Extensions {
 		/// <summary>Creates a new <see cref="IList{T}" /> with a clone of each item.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
-		/// <returns></returns>
 		public static IList<T> Clone<T>( this IEnumerable<T> list ) where T : ICloneable =>
 			list.Select( item => ( T )item.Clone() ).ToList();
 
@@ -99,7 +98,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">     </param>
 		/// <param name="destination"></param>
-		/// <returns></returns>
 		public static Boolean CopyFields<TSource>( [DisallowNull] this TSource source, [DisallowNull] TSource destination ) {
 			if ( source is null ) {
 				throw new ArgumentEmptyException( nameof( source ) );
@@ -131,7 +129,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">     </param>
 		/// <param name="destination"></param>
-		/// <returns></returns>
 		public static Boolean CopyProperties<TSource>( this TSource? source, TSource? destination ) {
 			try {
 				var sourceProps = source.GetType().GetAllProperties().Where( prop => prop.CanRead );
@@ -196,7 +193,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="TSource"></typeparam>
 		/// <param name="source">     </param>
 		/// <param name="destination"></param>
-		/// <returns></returns>
 		public static Boolean DeepClone<TSource>( this TSource? source, TSource? destination ) {
 			if ( ReferenceEquals( source, destination ) ) {
 				return true;
@@ -218,7 +214,6 @@ namespace Librainian.Extensions {
 
 		/// <summary>Enumerate all fields of the <paramref name="type" /></summary>
 		/// <param name="type"></param>
-		/// <returns></returns>
 		public static IEnumerable<FieldInfo> GetAllFields( this Type? type ) {
 			const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -227,7 +222,6 @@ namespace Librainian.Extensions {
 
 		/// <summary>Enumerate all properties of the <paramref name="type" /></summary>
 		/// <param name="type"></param>
-		/// <returns></returns>
 		public static IEnumerable<PropertyInfo> GetAllProperties( this Type? type ) {
 			if ( type is null ) {
 				return Enumerable.Empty<PropertyInfo>();
@@ -270,7 +264,6 @@ namespace Librainian.Extensions {
 
 		/// <summary>Get all <see cref="GetSealedClassesDerivedFrom" /><paramref name="baseType" />.</summary>
 		/// <param name="baseType"></param>
-		/// <returns></returns>
 		public static IEnumerable<Type> GetSealedClassesDerivedFrom( this Type? baseType ) {
 			if ( baseType is null ) {
 				throw new ArgumentEmptyException( nameof( baseType ) );
@@ -284,7 +277,6 @@ namespace Librainian.Extensions {
 		///     <see cref="Activator.CreateInstance(Type,BindingFlags,Binder,System.Object[],CultureInfo) " />.
 		/// </summary>
 		/// <param name="baseType"></param>
-		/// <returns></returns>
 		public static IEnumerable<Type> GetTypesDerivedFrom( this Type? baseType ) {
 			if ( baseType is null ) {
 				throw new ArgumentEmptyException( nameof( baseType ) );
@@ -335,7 +327,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="TType"></typeparam>
 		/// <param name="_"></param>
 		/// <param name="c"></param>
-		/// <returns></returns>
 		public static Boolean IsDerivedFrom<TType>( this TType _, Type c ) {
 			var p = typeof( TType );
 
@@ -372,7 +363,6 @@ namespace Librainian.Extensions {
 		/// </summary>
 		/// <param name="type">   </param>
 		/// <param name="generic"></param>
-		/// <returns></returns>
 		public static Boolean IsSubclassOfRawGeneric( this Type? type, Type? generic ) {
 			while ( type != typeof( Object ) ) {
 				var cur = type is {
@@ -410,14 +400,12 @@ namespace Librainian.Extensions {
 
 		/// <summary>Alternate method of creating an object of type. Not proven to be faster than new().</summary>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static T Newby<T>() where T : class => typeof( T ).Newby<T>();
 
 		/// <summary>Alternate method of creating an object of type. Not proven to be faster than new().</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="type"></param>
-		/// <returns></returns>
 		public static T Newby<T>( this Type type ) where T : class {
 			if ( !ObjectActivators.TryGetValue( type, out var activator ) ) {
 				var dynamicMethod = new DynamicMethod( "CreateInstance", type, Type.EmptyTypes, true );

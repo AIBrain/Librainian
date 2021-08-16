@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ImmutableList.cs" last formatted on 2020-08-14 at 8:31 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Collections.Lists {
 
@@ -40,7 +43,7 @@ namespace Librainian.Collections.Lists {
 	[Immutable]
 	public sealed class ImmutableList<T> : IList<T>, IPossibleThrowable {
 
-		private T[] Array { get; }
+		private T?[] Array { get; }
 
 		/// <summary>Retrieves the immutable count of the list.</summary>
 		public Int32 Count => this.Array.Length;
@@ -57,8 +60,8 @@ namespace Librainian.Collections.Lists {
 		/// </summary>
 		/// <param name="index">The index to access.</param>
 		/// <returns>The element at the specified index.</returns>
-		public T? this[ Int32 index ] {
-			get => this.Array[ index ];
+		public T? this[Int32 index] {
+			get => this.Array[index];
 
 			// ReSharper disable once ValueParameterNotUsed
 			set => this.ThrowNotMutable();
@@ -74,7 +77,7 @@ namespace Librainian.Collections.Lists {
 				throw new ArgumentEmptyException( nameof( arrayToCopy ) );
 			}
 
-			this.Array = new T[ arrayToCopy.Length ];
+			this.Array = new T[arrayToCopy.Length];
 			Buffer.BlockCopy( arrayToCopy, 0, this.Array, 0, arrayToCopy.Length );
 		}
 
@@ -97,9 +100,9 @@ namespace Librainian.Collections.Lists {
 		/// <param name="value">The value to add.</param>
 		/// <returns>A modified copy of this list.</returns>
 		public ImmutableList<T> CopyAndAdd( T? value ) {
-			var newArray = new T[ this.Array.Length + 1 ];
+			var newArray = new T[this.Array.Length + 1];
 			this.Array.CopyTo( newArray, 0 );
-			newArray[ this.Array.Length ] = value;
+			newArray[this.Array.Length] = value;
 
 			return new ImmutableList<T>( newArray );
 		}
@@ -113,9 +116,9 @@ namespace Librainian.Collections.Lists {
 		/// <param name="item"> The element to insert.</param>
 		/// <returns>An immutable copy of this modified list.</returns>
 		public ImmutableList<T> CopyAndInsert( Int32 index, T? item ) {
-			var newArray = new T[ this.Array.Length + 1 ];
+			var newArray = new T[this.Array.Length + 1];
 			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
-			newArray[ index ] = item;
+			newArray[index] = item;
 			Buffer.BlockCopy( this.Array, index, newArray, index + 1, this.Array.Length - index );
 
 			return new ImmutableList<T>( newArray );
@@ -138,7 +141,7 @@ namespace Librainian.Collections.Lists {
 		/// <param name="index">The index of the element to remove.</param>
 		/// <returns>A modified copy of this list.</returns>
 		public ImmutableList<T> CopyAndRemoveAt( Int32 index ) {
-			var newArray = new T[ this.Array.Length - 1 ];
+			var newArray = new T[this.Array.Length - 1];
 			Buffer.BlockCopy( this.Array, 0, newArray, 0, index );
 			Buffer.BlockCopy( this.Array, index + 1, newArray, index, this.Array.Length - index - 1 );
 
@@ -150,9 +153,9 @@ namespace Librainian.Collections.Lists {
 		/// <param name="item"> The value to store at the specified index.</param>
 		/// <returns>A modified copy of this list.</returns>
 		public ImmutableList<T> CopyAndSet( Int32 index, T? item ) {
-			var newArray = new T[ this.Array.Length ];
+			var newArray = new T[this.Array.Length];
 			this.Array.CopyTo( newArray, 0 );
-			newArray[ index ] = item;
+			newArray[index] = item;
 
 			return new ImmutableList<T>( newArray );
 		}

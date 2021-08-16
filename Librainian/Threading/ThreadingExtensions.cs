@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ThreadingExtensions.cs" last formatted on 2020-10-12 at 4:26 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -49,7 +52,6 @@ namespace Librainian.Threading {
 		/// <summary>Only allow a delegate to run X times.</summary>
 		/// <param name="action">      </param>
 		/// <param name="callsAllowed"></param>
-		/// <returns></returns>
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
 		public static Action ActionBarrier( this Action action, Int64? callsAllowed = null ) {
@@ -66,10 +68,9 @@ namespace Librainian.Threading {
 		/// <param name="action">      </param>
 		/// <param name="parameter">   </param>
 		/// <param name="callsAllowed"></param>
-		/// <returns></returns>
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-		public static Action ActionBarrier<T>( this Action<T> action, T? parameter, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier<T>( this Action<T?> action, T? parameter, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
@@ -97,7 +98,6 @@ namespace Librainian.Threading {
 		/// <summary>About X bytes by polling the object's fields.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="obj"></param>
-		/// <returns></returns>
 		public static UInt64 CalcSizeInBytes<T>( this T? obj ) {
 			if ( obj is null ) {
 				return 0;
@@ -174,7 +174,6 @@ namespace Librainian.Threading {
 		/// Asynchronously wait until cancellation is requested.
 		/// </summary>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this CancellationToken cancellationToken ) {
 			var tcs = new TaskCompletionSource<Boolean>();
 			Task t = tcs.Task;
@@ -192,20 +191,17 @@ namespace Librainian.Threading {
 		/// Asynchronously wait for all <paramref name="tasks"/>.
 		/// </summary>
 		/// <param name="tasks"></param>
-		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this Task[] tasks ) => Task.WhenAll( tasks ).GetAwaiter();
 
 		/// <summary>
 		/// Asynchronously wait for all <paramref name="tasks"/>.
 		/// </summary>
 		/// <param name="tasks"></param>
-		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this IEnumerable<Task> tasks ) => Task.WhenAll( tasks ).GetAwaiter();
 
 		/// <summary>
 		/// Asynchronously wait a <see cref="TimeSpan"/>.
 		/// </summary>
-		/// <returns></returns>
 		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
 
 		public static Int32 GetMaximumActiveWorkerThreads() {
@@ -229,25 +225,21 @@ namespace Librainian.Threading {
 				Single => sizeof( Single ),
 				Double => sizeof( Double ),
 				Decimal => sizeof( Decimal ),
-				String s => sizeof( Char ) * s.Length,
-				{ } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
+				String s => sizeof( Char ) * s.Length, { } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
 				var _ => 0
 			} );
 
 		/// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static Int32 MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
 
 		/// <summary>boxed returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
-		/// <returns></returns>
 		public static Int32 MarshalSizeOf( this Object obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>generic returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
-		/// <returns></returns>
 		public static Int32 MarshalSizeOf<T>( [DisallowNull] this T obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>Repeat the <paramref name="action" /><paramref name="times" />.
@@ -283,11 +275,19 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="counter"></param>
-		public static void RepeatAction( this Action action, Int32 counter ) => Parallel.For( 1, counter, i => {
-			try {
+		public static void RepeatAction( this Action action, Int32 counter, Boolean useTryCatch ) => Parallel.For( 1, counter, i => {
+			if ( useTryCatch ) {
+				try {
+					action();
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+			}
+			else {
 				action();
 			}
-			catch ( Exception ) { }
+
 		} );
 
 		/// <summary>
@@ -298,7 +298,6 @@ namespace Librainian.Threading {
 		/// <param name="output">     </param>
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
-		/// <returns></returns>
 		public static Boolean Run( this IEnumerable<Action> actions, Action<String>? output = null, String? description = null,
 			Boolean inParallel = true ) {
 			if ( actions is null ) {
@@ -327,7 +326,6 @@ namespace Librainian.Threading {
 		/// <param name="output">     </param>
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
-		/// <returns></returns>
 		public static Boolean Run( this IEnumerable<Func<Boolean>> functions, Action<String>? output = null, String? description = null,
 			Boolean inParallel = true ) {
 			if ( functions is null ) {
@@ -365,7 +363,7 @@ namespace Librainian.Threading {
 
 		public sealed class ContextCallOnlyXTimes {
 
-			public Int64 CallsAllowed;
+			internal Int64 CallsAllowed;
 
 			public ContextCallOnlyXTimes( Int64 times ) {
 				if ( times <= 0 ) {

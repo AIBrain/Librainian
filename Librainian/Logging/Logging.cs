@@ -176,7 +176,6 @@ namespace Librainian.Logging {
 		/// <param name="self"></param>
 		/// <param name="more"></param>
 		/// <param name="asJSON"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static TT? Log<TT, TM>( this TT? self, TM? more, Boolean asJSON = false ) {
 			var o = asJSON ? $"{self.ToJSON( Formatting.Indented )}" : self?.ToString();
@@ -211,7 +210,7 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void TimeDebug( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
-				var m = showThread ? $"[{DateTime.UtcNow:s}].({Thread.CurrentThread.ManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
+				var m = showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
 				Debug.WriteLine( m );
 			}
 			else {
@@ -241,7 +240,7 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void TraceWithTime( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
-				var m = showThread ? $"[{DateTime.UtcNow:s}].({Thread.CurrentThread.ManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
+				var m = showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
 				m.TraceLine();
 			}
 			else {

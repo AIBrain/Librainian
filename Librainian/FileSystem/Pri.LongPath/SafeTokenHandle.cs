@@ -40,7 +40,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		// 0 is an Invalid Handle
 		public SafeTokenHandle( IntPtr handle ) : base( true ) => this.SetHandle( handle );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		[SuppressUnmanagedCodeSecurity]
 		[ReliabilityContract( Consistency.WillNotCorruptState, Cer.Success )]
 		private static extern Boolean CloseHandle( IntPtr handle );

@@ -41,28 +41,27 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Checksum of the page (guard against corruption).</summary>
 		/// <remarks>Should include the <see cref="LineCount" /> and <see cref="Delay" /> to prevent buffer overflows and timeouts.</remarks>
 		[JsonProperty]
-		public UInt64 Checksum;
+		public UInt64 Checksum { get; }
 
 		/// <summary>How many milliseconds to display this frame?</summary>
 		[JsonProperty]
-		public UInt64 Delay;
+		public UInt64 Delay { get; }
 
 		/// <summary></summary>
 		[JsonProperty]
-		public UInt64 Identity;
+		public UInt64 Identity { get; }
 
 		/// <summary>How many lines should be in this frame?</summary>
 		[JsonProperty]
-		public UInt64 LineCount;
+		public UInt64 LineCount { get; }
 
 		/// <summary>An array of <see cref="Line" />.</summary>
 		[JsonProperty]
-		public Line[]? Lines;
+		public Line[]? Lines { get; }
 
 		/// <summary>static comparision</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
 		public static Boolean Equals( Frame? left, Frame? right ) {
 			if ( ReferenceEquals( left, right ) ) {

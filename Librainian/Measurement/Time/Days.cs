@@ -140,14 +140,12 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Days left, Days right ) => left.Value == right.Value;
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="days" /> to <see cref="Hours" />.
 		/// </summary>
 		/// <param name="days"></param>
-		/// <returns></returns>
 		public static implicit operator Hours( Days days ) => days.ToHours();
 
 		public static implicit operator SpanOfTime( Days days ) => new( days );
@@ -158,7 +156,6 @@ namespace Librainian.Measurement.Time {
 		///     Implicitly convert the number of <paramref name="days" /> to <see cref="Weeks" />.
 		/// </summary>
 		/// <param name="days"></param>
-		/// <returns></returns>
 		public static implicit operator Weeks( Days days ) => days.ToWeeks();
 
 		public static Days operator -( Days days ) => new( days.Value * -1 );

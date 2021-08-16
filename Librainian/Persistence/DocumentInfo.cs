@@ -130,7 +130,6 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( DocumentInfo? left, DocumentInfo? right ) {
 			if ( left is null || right is null ) {
 				return false;
@@ -176,14 +175,13 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="document"></param>
 		/// <param name="cancellationToken">   </param>
-		/// <returns></returns>
 		public async Task GetHashesAsync( Document document, CancellationToken cancellationToken ) {
 			if ( document is null ) {
 				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
 			var watch = Stopwatch.StartNew();
-			$"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
+			$"[{Environment.CurrentManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
 			var total = 3 * await document.Size( cancellationToken ).ConfigureAwait( false );
 
@@ -202,7 +200,7 @@ namespace Librainian.Persistence {
 			watch.Stop();
 
 			var per = total / ( Decimal )watch.ElapsedMilliseconds;
-			$"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}...at {per:F} bytes per millisecond.".Verbose();
+			$"[{Environment.CurrentManagedThreadId}] Completed hashings on {this.AbsolutePath}...at {per:F} bytes per millisecond.".Verbose();
 		}
 
 		/// <summary>
@@ -223,7 +221,6 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Looks at the entire document.
 		/// </summary>
-		/// <returns></returns>
 		public async Task ScanAsync( CancellationToken cancellationToken ) {
 			try {
 				var record = MainDocumentTable.DocumentInfos[ this.AbsolutePath ];

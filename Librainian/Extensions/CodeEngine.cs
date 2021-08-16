@@ -163,11 +163,11 @@ namespace Coding
 
 		public Object? Run() {
 			lock ( this._compileLock ) {
-				if ( null == this._compilerResults ) {
+				if ( this._compilerResults == null ) {
 					this.Compile();
 				}
 
-				if ( null == this._compilerResults ) {
+				if ( this._compilerResults == null ) {
 					return default( Object );
 				}
 

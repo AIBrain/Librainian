@@ -51,7 +51,7 @@ namespace Librainian.Graphics.Imaging {
 
 		/// <summary>EXIF metadata</summary>
 		[JsonProperty]
-		public readonly ConcurrentDictionary<String, String> Exifs = new();
+		public ConcurrentDictionary<String, String> Exifs { get; } = new();
 
 		/// <summary>Checksum of all pages</summary>
 		[JsonProperty]

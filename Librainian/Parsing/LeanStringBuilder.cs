@@ -73,7 +73,6 @@ namespace Librainian.Parsing {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( LeanStringBuilder? left, LeanStringBuilder? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

@@ -108,7 +108,6 @@ namespace Librainian.Persistence {
 		public override String ToString() => $"{this.Count} items";
 
 		/// <summary>Saves the data to the <see cref="Document" />.</summary>
-		/// <returns></returns>
 		public async PooledValueTask<Boolean> Write() {
 			var document = this.Document;
 

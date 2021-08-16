@@ -110,7 +110,6 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Static comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equal( Pixel left, Pixel right ) =>
 			left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue &&
 			left.X == right.X && left.Y == right.Y;

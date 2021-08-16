@@ -47,7 +47,6 @@ namespace Librainian.Internet {
 		/// <param name="timeOut"></param>
 		/// <param name="credentials"></param>
 		/// <param name="onWebException"></param>
-		/// <returns></returns>
 		public static async Task<IDocument?> DownloadAsync( Uri address, TimeSpan timeOut, IProgress<ZeroToOne>? reportProgress = null,
 			ICredentials? credentials = null, Action<Uri, WebExceptionStatus>? onWebException = null ) {
 			if ( address is null ) {

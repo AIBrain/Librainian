@@ -30,7 +30,6 @@ namespace Librainian.Financial.Currency {
 
 		/// <summary>Always have 8 decimal places showing, even the zeros.</summary>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public static String Formatted( this Decimal amount ) => $"{amount:F8}";
 	}
 }

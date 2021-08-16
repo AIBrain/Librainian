@@ -52,7 +52,6 @@ namespace Librainian.Security {
 		public const Int32 SaltBitSize = 64;
 
 		/// <summary>Helper that generates a random key on each call.</summary>
-		/// <returns></returns>
 		public static Byte[] NewKey() {
 			var key = new Byte[ KeyBitSize / 8 ];
 			Randem.RNG.Value.GetBytes( key );

@@ -41,15 +41,12 @@ namespace Librainian.Measurement.Time.Clocks {
 		ClockSecond Second { get; }
 
 		/// <summary></summary>
-		/// <returns></returns>
 		Boolean IsAm();
 
 		/// <summary></summary>
-		/// <returns></returns>
 		Boolean IsPm();
 
 		/// <summary></summary>
-		/// <returns></returns>
 		Time Time();
 	}
 }

@@ -354,7 +354,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static SpanOfTime Combine( SpanOfTime left, SpanOfTime right ) {
 			if ( left is null ) {
 				throw new ArgumentEmptyException( nameof( left ) );
@@ -399,7 +398,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Int32 CompareTo( SpanOfTime? left, SpanOfTime? right ) {
 			if ( left is null || right is null ) {
 				return Order.Before;
@@ -416,7 +414,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( SpanOfTime? left, SpanOfTime? right ) {
 			if ( left is null || right is null ) {
 				return false;
@@ -429,14 +426,12 @@ namespace Librainian.Measurement.Time {
 		///     <para>Allow an explicit cast from a <see cref="TimeSpan" /> into a <see cref="SpanOfTime" />.</para>
 		/// </summary>
 		/// <param name="span"></param>
-		/// <returns></returns>
 		public static explicit operator SpanOfTime( TimeSpan span ) => new( span );
 
 		/// <summary>
 		///     Allow an automatic cast to <see cref="TimeSpan" />.
 		/// </summary>
 		/// <param name="spanOfTime"></param>
-		/// <returns></returns>
 		public static implicit operator TimeSpan( SpanOfTime spanOfTime ) =>
 			new( ( Int32 )spanOfTime.Days.Value, ( Int32 )spanOfTime.Hours.Value, ( Int32 )spanOfTime.Minutes.Value, ( Int32 )spanOfTime.Seconds.Value,
 				( Int32 )spanOfTime.Milliseconds.Value );
@@ -448,7 +443,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static SpanOfTime operator -( SpanOfTime left, SpanOfTime right ) {
 			var leftPlancks = left.CalcTotalPlanckTimes();
 			var rightPlancks = right.CalcTotalPlanckTimes();
@@ -464,7 +458,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static SpanOfTime operator +( SpanOfTime left, SpanOfTime right ) => Add( left, right );
 
 		/// <summary>
@@ -473,7 +466,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static SpanOfTime Add( SpanOfTime left, SpanOfTime right ) => Combine( left, right );
 
 		public static Boolean operator <( SpanOfTime left, SpanOfTime right ) => left.CalcTotalPlanckTimes() < right.CalcTotalPlanckTimes();
@@ -488,10 +480,9 @@ namespace Librainian.Measurement.Time {
 		///     assume seconds given
 		/// </summary>
 		/// <param name="text"></param>
-		/// <returns></returns>
 		public static SpanOfTime TryParse( String? text ) {
 			try {
-				if ( null == text ) {
+				if ( text == null ) {
 					return Zero;
 				}
 
@@ -580,7 +571,6 @@ namespace Librainian.Measurement.Time {
 		///             cref="Nanoseconds" />
 		///     </para>
 		/// </summary>
-		/// <returns></returns>
 		public Double GetApproximateMilliseconds() {
 			var mill = Milliseconds.Zero;
 			mill += this.Nanoseconds.ToMicroseconds().ToMilliseconds();

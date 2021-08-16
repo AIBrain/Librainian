@@ -50,7 +50,6 @@ namespace Librainian.FileSystem {
 		/// <param name="destinationFolder"></param>
 		/// <param name="overwriteDestination"></param>
 		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
 		public async Task LoadFilesToBeCopied(
 			IAsyncEnumerable<Document> sourceFiles,
 			IFolder destinationFolder,

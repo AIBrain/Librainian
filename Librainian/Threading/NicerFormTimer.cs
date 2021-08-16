@@ -29,7 +29,6 @@ namespace Librainian.Threading {
 	using System.Windows.Forms;
 	using Exceptions;
 	using Logging;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>

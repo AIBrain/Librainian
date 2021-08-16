@@ -92,14 +92,12 @@ namespace Librainian.Maths.Numbers {
 		/// <summary>Lerp?</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Percentage Combine( Percentage left, Percentage right ) =>
 			new( ( left.Value + right.Value ) / 2m );
 
 		/// <summary>static comparison</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Percentage? left, Percentage? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

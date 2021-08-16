@@ -42,7 +42,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
-		/// <returns></returns>
 		public static IEnumerable<T?> Append<T>( this IEnumerable<T?>? a, IEnumerable<T?>? b ) {
 			if ( a is not null ) {
 				foreach ( var item in a ) {
@@ -61,7 +60,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
-		/// <returns></returns>
 		public static IEnumerable<T?> Append<T>( this T? a, IEnumerable<T?>? b ) {
 			if ( a is not null ) {
 				yield return a;
@@ -78,7 +76,6 @@ namespace Librainian.Extensions {
 		/// <typeparam name="T"></typeparam>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
-		/// <returns></returns>
 		public static IEnumerable<T?> Append<T>( this IEnumerable<T?>? a, T? b ) {
 			if ( a is not null ) {
 				foreach ( var item in a ) {
@@ -241,7 +238,6 @@ namespace Librainian.Extensions {
 		/// <para>(Return a jagged array of every possible combination of the <paramref name="s"/>.)</para>
 		/// <para>Note: Does not exclude duplicates.</para>
 		/// </summary>
-		/// <returns></returns>
 		public static T[][] PowerSet<T>( this T[] s ) {
 			var arrayLength = s.Length;
 
@@ -275,7 +271,6 @@ namespace Librainian.Extensions {
 		/// <para>(Return a jagged array of every possible combination of the <paramref name="s"/>.)</para>
 		/// <para>Note: Does not exclude duplicates.</para>
 		/// </summary>
-		/// <returns></returns>
 		public static T[][] PowerSet<T>( this IEnumerable<T> list ) {
 			var enumerable = list as T[] ?? list.ToArray();
 			var length = enumerable.Length;

@@ -1021,13 +1021,11 @@ namespace Librainian.Graphics {
 		/// <summary>Returns true if the date is 'old' enough.</summary>
 		/// <param name="dateTime"></param>
 		/// <param name="byYears"> </param>
-		/// <returns></returns>
 		/// <remarks>Any time travelers in the house?</remarks>
 		public static Boolean IsDateNotTooNew( this DateTime dateTime, Int32 byYears = 5 ) => dateTime.Year <= DateTime.UtcNow.AddYears( byYears ).Year;
 
 		/// <summary>Returns true if the date is 'recent' enough.</summary>
 		/// <param name="dateTime"></param>
-		/// <returns></returns>
 		public static Boolean IsDateRecentEnough( this DateTime dateTime ) => dateTime.Year >= 1825;
 
 		internal static class FileNameExtension {

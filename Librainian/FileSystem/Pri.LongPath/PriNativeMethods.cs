@@ -212,10 +212,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			Impersonation = 2
 		}
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetErrorMode", ExactSpelling = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetErrorMode", ExactSpelling = true )]
 		private static extern Int32 SetErrorMode_VistaAndOlder( Int32 newMode );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetThreadErrorMode", ExactSpelling = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetThreadErrorMode", ExactSpelling = false, SetLastError = true )]
 		private static extern Boolean SetErrorMode_Win7AndNewer( Int32 newMode, out Int32 oldMode );
 
 		[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
@@ -228,10 +228,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			[In][Out] ref DWORD ReturnLength
 		);
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		public static extern Boolean CloseHandle( IntPtr handle );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean CopyFile(
 			String src,
@@ -260,7 +260,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="hSourceFile"></param>
 		/// <param name="hDestinationFile"></param>
 		/// <param name="lpData"></param>
-		/// <returns></returns>
 		public static CopyProgressResult CopyProgressHandler(
 			Int64 total,
 			Int64 transferred,
@@ -274,11 +273,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		) =>
 			CopyProgressResult.PROGRESS_CONTINUE;
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean CreateDirectory( this String lpPathName, IntPtr lpSecurityAttributes );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern SafeFileHandle CreateFile(
 			String lpFileName,
 			EFileAccess dwDesiredAccess,
@@ -292,7 +291,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 		public static extern Boolean DecryptFile( String path, Int32 reservedMustBeZero );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean DeleteFile( String lpFileName );
 
@@ -312,18 +311,18 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.advapi32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 		public static extern Boolean EncryptFile( String path );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean FindClose( IntPtr hFindFile );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern NativeMethods.SafeFindHandle FindFirstFile( String lpFileName, out WIN32_FIND_DATA lpFindFileData );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean FindNextFile( this NativeMethods.SafeFindHandle hFindFile, out WIN32_FIND_DATA lpFindFileData );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern Int32 FormatMessage(
 			Int32 dwFlags,
 			IntPtr lpSource,
@@ -334,16 +333,16 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			IntPtr va_list_arguments
 		);
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
 		public static extern IntPtr GetCurrentProcess();
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
 		public static extern IntPtr GetCurrentThread();
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		public static extern FileAttributes GetFileAttributes( String lpFileName );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
 		public static extern Boolean GetFileAttributesEx( String name, Int32 fileInfoLevel, ref WIN32_FILE_ATTRIBUTE_DATA lpFileInformation );
 
 		/*
@@ -408,7 +407,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			out IntPtr securityDescriptor
 		);
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		public static extern IntPtr LocalFree( IntPtr handle );
 
 		[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "LookupPrivilegeValueW", CharSet = CharSet.Auto, SetLastError = true )]
@@ -416,11 +415,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		public static Int32 MakeHRFromErrorCode( ERROR errorCode ) => unchecked(( Int32 )0x80070000 | ( Int32 )errorCode);
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean MoveFile( String lpPathNameFrom, String lpPathNameTo );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 		public static extern Boolean MoveFileWithProgress(
 			String lpExistingFileName,
 			String lpNewFileName,
@@ -446,11 +445,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		);
 		*/
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean RemoveDirectory( String lpPathName );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Auto )]
 		public static extern Boolean ReplaceFile(
 			String replacedFileName,
 			String replacementFileName,
@@ -463,7 +462,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Auto, SetLastError = true )]
 		public static extern Boolean RevertToSelf();
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.Auto, ExactSpelling = false, SetLastError = true )]
 		public static extern Boolean SetCurrentDirectory( String path );
 
 		public static Int32 SetErrorMode( Int32 newMode ) {
@@ -476,7 +475,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return num;
 		}
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean SetFileAttributes( String lpFileName, [MarshalAs( UnmanagedType.U4 )] FileAttributes dwFileAttributes );
 
@@ -487,7 +486,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <param name="handle"></param>
 		/// <param name="origin"></param>
 		/// <param name="offset"></param>
-		/// <returns></returns>
 		/// <exception cref="IOException"></exception>
 		public static UInt64 SetFilePointer( SafeFileHandle? handle, SeekOrigin origin, UInt64 offset ) {
 			var result = SetFilePointerEx( handle, offset, out var filePointer, origin );
@@ -499,20 +497,20 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return filePointer;
 		}
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, EntryPoint = "SetFilePointer", SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, EntryPoint = "SetFilePointer", SetLastError = true )]
 		public static extern Int32 SetFilePointer( SafeFileHandle handle, Int32 distanceToMove, ref Int32 distanceToMoveHigh, Int32 origin );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		public static extern Boolean SetFilePointerEx( SafeFileHandle hFile, UInt64 distanceToMove, out UInt64 lpNewFilePointer, SeekOrigin dwMoveMethod );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		public static extern unsafe Boolean SetFileTime( SafeFileHandle hFile, FILE_TIME* creationTime, FILE_TIME* lastAccessTime, FILE_TIME* lastWriteTime );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean SetFileTime( SafeFileHandle hFile, Int64 creationTime, Int64 lastAccessTime, Int64 lastWriteTime );
 
-		[DllImport( DLL.kernel32, BestFitMapping = false, SetLastError = true )]
+		[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
 		[return: MarshalAs( UnmanagedType.Bool )]
 		public static extern Boolean SetFileTime( IntPtr hFile, Int64 creationTime, Int64 lastAccessTime, Int64 lastWriteTime );
 

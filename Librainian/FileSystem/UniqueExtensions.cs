@@ -40,7 +40,6 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Convert a <see cref="TrimmedString" /> to a <see cref="Unique" /> location.</summary>
 		/// <param name="location"></param>
-		/// <returns></returns>
 		public static Unique ToUnique( this TrimmedString location ) =>
 			Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
 

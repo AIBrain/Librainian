@@ -47,7 +47,6 @@ namespace Librainian.Threadsafe {
 		/// <summary>Atomically set the value to the given updated value if the current value equals the comparand</summary>
 		/// <param name="newValue"> The new value</param>
 		/// <param name="comparand">The comparand (expected value)</param>
-		/// <returns></returns>
 		public Boolean AtomicCompareExchange( Int32 newValue, Int32 comparand ) => Interlocked.CompareExchange( ref this._value, newValue, comparand ) == comparand;
 
 		/// <summary>Atomically increment the current value and return the new value</summary>

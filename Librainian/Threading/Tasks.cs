@@ -70,7 +70,6 @@ namespace Librainian.Threading {
 		/// <summary>http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source"></param>
-		/// <returns></returns>
 		public static IEnumerable<Task<T>> InCompletionOrder<T>( this IEnumerable<Task<T>> source ) {
 			var inputs = source.ToList();
 			var boxes = inputs.Select( x => new TaskCompletionSource<T>() ).ToList();
@@ -89,7 +88,6 @@ namespace Librainian.Threading {
 		/// <summary></summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tasks"></param>
-		/// <returns></returns>
 		/// <example>
 		///     var tasks = new[] { Task.Delay(3000).ContinueWith(_ =&gt; 3), Task.Delay(1000).ContinueWith(_ =&gt; 1),
 		///     Task.Delay(2000).ContinueWith(_ =&gt; 2),
@@ -145,7 +143,6 @@ namespace Librainian.Threading {
 		/// <summary>Do the <paramref name="job" /> with a dataflow after a <see cref="Timer" /> .</summary>
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
-		/// <returns></returns>
 		public static async Task Then( this TimeSpan delay, Action job ) {
 			if ( job == null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -161,7 +158,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
-		/// <returns></returns>
 		public static async Task Then( this Milliseconds delay, Action job ) {
 			if ( job == null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -177,7 +173,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
-		/// <returns></returns>
 		public static async Task Then( this Seconds delay, Action job ) {
 			if ( job == null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -193,7 +188,6 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="delay"></param>
 		/// <param name="job"></param>
-		/// <returns></returns>
 		public static async Task Then( this Minutes delay, Action job ) {
 			if ( job == null ) {
 				throw new ArgumentEmptyException( nameof( job ) );
@@ -208,7 +202,6 @@ namespace Librainian.Threading {
 		/// <param name="action"></param>
 		/// <param name="pre"></param>
 		/// <param name="post"></param>
-		/// <returns></returns>
 		public static Action Wrap( this Action? action, Action? pre, Action? post ) =>
 			() => {
 				try {

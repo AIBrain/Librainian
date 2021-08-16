@@ -97,7 +97,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Return this value in <see cref="Months" />.
 		/// </summary>
-		/// <returns></returns>
 		public IQuantityOfTime ToCoarserGranularity() => this.ToMonths();
 
 		TimeSpan IQuantityOfTime.ToTimeSpan() => this.ToSeconds();

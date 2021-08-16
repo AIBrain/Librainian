@@ -130,7 +130,6 @@ namespace Librainian.Measurement.Time {
 		///     Returns the Start of the given <paramref name="date" />.
 		/// </summary>
 		/// <param name="date"></param>
-		/// <returns></returns>
 		public static DateTime BeginningOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
 
 		public static TimeSpan DateTimePrecision() {
@@ -148,14 +147,12 @@ namespace Librainian.Measurement.Time {
 		///     Example: Console.WriteLine( 3.Days().FromNow() );
 		/// </summary>
 		/// <param name="days"></param>
-		/// <returns></returns>
 		public static TimeSpan Days( this Double days ) => TimeSpan.FromDays( days );
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Days().FromNow() );
 		/// </summary>
 		/// <param name="days"></param>
-		/// <returns></returns>
 		public static TimeSpan Days( this Int32 days ) => TimeSpan.FromDays( days );
 
 		/// <summary>
@@ -168,7 +165,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
-		/// <returns></returns>
 		public static TimeSpan Divide( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
 
 		/// <summary>
@@ -176,7 +172,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
-		/// <returns></returns>
 		public static TimeSpan Divide( this TimeSpan timeSpan, Int64 scalar ) => TimeSpan.FromTicks( timeSpan.Ticks / scalar );
 
 		/// <summary>
@@ -184,14 +179,12 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
-		/// <returns></returns>
 		public static TimeSpan Divide( this TimeSpan timeSpan, Decimal scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks / scalar ) );
 
 		/// <summary>
 		///     <para>Returns the last millisecond of the given <paramref name="date" />.</para>
 		/// </summary>
 		/// <param name="date"></param>
-		/// <returns></returns>
 		public static DateTime EndOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind );
 
 		/// <summary>
@@ -199,7 +192,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="timeElapsed">Time elapsed so far.</param>
 		/// <param name="progress">   Progress done so far from 0.0 to 1.0</param>
-		/// <returns></returns>
 		public static TimeSpan EstimateTimeRemaining( this TimeSpan timeElapsed, Decimal progress ) {
 			const Decimal max = 1m;
 
@@ -275,7 +267,6 @@ namespace Librainian.Measurement.Time {
 		///     2011-01-01T06:40:20.005
 		/// </summary>
 		/// <param name="current">The DateTime to adjust</param>
-		/// <returns></returns>
 		public static DateTime FirstDayOfYear( this DateTime current ) => current.SetDate( current.Year, 1, 1 );
 
 		public static DateTime From( this DateTime dateTime, TimeSpan timeSpan ) => dateTime + timeSpan;
@@ -284,35 +275,30 @@ namespace Librainian.Measurement.Time {
 		///     Example: Console.WriteLine( 3.Days().FromNow() );
 		/// </summary>
 		/// <param name="timeSpan"></param>
-		/// <returns></returns>
 		public static DateTime FromNow( this TimeSpan timeSpan ) => DateTime.UtcNow.Add( timeSpan );
 
 		/// <summary>
 		///     returns seconds since 1970-01-01 as a <see cref="DateTime" />.
 		/// </summary>
 		/// <param name="timestamp"></param>
-		/// <returns></returns>
 		public static DateTime FromUNIXTimestamp( this UInt64 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
 
 		/// <summary>
 		///     returns seconds since 1970-01-01 as a <see cref="DateTime" />.
 		/// </summary>
 		/// <param name="timestamp"></param>
-		/// <returns></returns>
 		public static DateTime FromUNIXTimestamp( this Int32 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
 
 		/// <summary>
 		///     returns seconds since 1970-01-01 as a <see cref="DateTime" />.
 		/// </summary>
 		/// <param name="timestamp"></param>
-		/// <returns></returns>
 		public static DateTime FromUNIXTimestamp( this Int64 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
 
 		/// <summary>
 		///     Return how many years old the person is in <see cref="Years" />.
 		/// </summary>
 		/// <param name="dateOfBirth"></param>
-		/// <returns></returns>
 		public static Years GetAge( this DateTime dateOfBirth ) {
 
 			//this seems to work for 99% of cases, but it still feels hacky.
@@ -344,21 +330,18 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Accurate to within how many nanoseconds?
 		/// </summary>
-		/// <returns></returns>
 		public static Int64 GetTimerAccuracy() => 1000000000L / Stopwatch.Frequency;
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Hours().FromNow() );
 		/// </summary>
 		/// <param name="hours"></param>
-		/// <returns></returns>
 		public static TimeSpan Hours( this Double hours ) => TimeSpan.FromHours( hours );
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Hours().FromNow() );
 		/// </summary>
 		/// <param name="hours"></param>
-		/// <returns></returns>
 		public static TimeSpan Hours( this Int32 hours ) => TimeSpan.FromHours( hours );
 
 		/// <summary>
@@ -399,7 +382,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     <para>Determines if the specified year is a leap year.</para>
 		/// </summary>
-		/// <returns></returns>
 		/// <param name="year">Year to test.</param>
 		/// <copyright>
 		///     Tommy
@@ -435,14 +417,12 @@ namespace Librainian.Measurement.Time {
 		///     2011-12-25T06:40:20.005
 		/// </summary>
 		/// <param name="current">The DateTime to adjust</param>
-		/// <returns></returns>
 		public static DateTime LastDayOfWeeek( this DateTime current ) => current.FirstDayOfWeek().AddDays( 6 );
 
 		/// <summary>
 		///     untested.
 		/// </summary>
 		/// <param name="date"></param>
-		/// <returns></returns>
 		public static DateTime LastDayOfWeek( this DateTime date ) {
 			var month = date.Month;
 
@@ -462,7 +442,6 @@ namespace Librainian.Measurement.Time {
 		///     2011-12-31T06:40:20.005
 		/// </summary>
 		/// <param name="current">The DateTime to adjust</param>
-		/// <returns></returns>
 		public static DateTime LastDayOfYear( this DateTime current ) => current.SetDate( current.Year, 12, 31 );
 
 		/// <summary>
@@ -486,35 +465,30 @@ namespace Librainian.Measurement.Time {
 		///     Example: Console.WriteLine( 3.Milliseconds().FromNow() );
 		/// </summary>
 		/// <param name="milliseconds"></param>
-		/// <returns></returns>
 		public static TimeSpan Milliseconds( this Int64 milliseconds ) => TimeSpan.FromMilliseconds( milliseconds );
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Milliseconds().FromNow() );
 		/// </summary>
 		/// <param name="milliseconds"></param>
-		/// <returns></returns>
 		public static TimeSpan Milliseconds( this Double milliseconds ) => TimeSpan.FromMilliseconds( milliseconds );
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Milliseconds().FromNow() );
 		/// </summary>
 		/// <param name="milliseconds"></param>
-		/// <returns></returns>
 		public static TimeSpan Milliseconds( this Milliseconds milliseconds ) => milliseconds;
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Minutes().FromNow() );
 		/// </summary>
 		/// <param name="minutes"></param>
-		/// <returns></returns>
 		public static TimeSpan Minutes( this Int32 minutes ) => TimeSpan.FromMinutes( minutes );
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Minutes().FromNow() );
 		/// </summary>
 		/// <param name="minutes"></param>
-		/// <returns></returns>
 		public static TimeSpan Minutes( this Double minutes ) => TimeSpan.FromMinutes( minutes );
 
 		/// <summary>
@@ -559,7 +533,6 @@ namespace Librainian.Measurement.Time {
 		///     the last day of the next month is used. Eg, 2013-01-31T06:40:20.005 = &gt; 2013-02-28T06:40:20.005
 		/// </summary>
 		/// <param name="current">The DateTime to adjust</param>
-		/// <returns></returns>
 		public static DateTime NextMonth( this DateTime current ) {
 			var year = current.Month == 12 ? current.Year + 1 : current.Year;
 
@@ -664,7 +637,6 @@ namespace Librainian.Measurement.Time {
 		///     many days the last day of the previous month is used. Eg, 2009-03-31T06:40:20.005 = &gt; 2009-02-28T06:40:20.005
 		/// </summary>
 		/// <param name="current">The DateTime to adjust</param>
-		/// <returns></returns>
 		public static DateTime PreviousMonth( this DateTime current ) {
 			var year = current.Month == 1 ? current.Year - 1 : current.Year;
 
@@ -756,14 +728,12 @@ namespace Librainian.Measurement.Time {
 		///     Example: Console.WriteLine( 3.Seconds().FromNow() );
 		/// </summary>
 		/// <param name="seconds"></param>
-		/// <returns></returns>
 		public static TimeSpan Seconds( this Int32 seconds ) => TimeSpan.FromSeconds( seconds );
 
 		/// <summary>
 		///     Example: Console.WriteLine( 3.Seconds().FromNow() );
 		/// </summary>
 		/// <param name="seconds"></param>
-		/// <returns></returns>
 		public static TimeSpan Seconds( this Double seconds ) => TimeSpan.FromSeconds( seconds );
 
 		/// <summary>
@@ -1020,7 +990,6 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="timeSpan"></param>
 		/// <param name="scalar">  </param>
-		/// <returns></returns>
 		public static TimeSpan Times( this TimeSpan timeSpan, Double scalar ) => TimeSpan.FromTicks( ( Int64 )( timeSpan.Ticks * scalar ) );
 
 		// if ( value < Constants.MinimumUsefulDecimal ) { throw new OverflowException( Constants.ValueIsTooLow ); }
@@ -1075,7 +1044,6 @@ namespace Librainian.Measurement.Time {
 		///     Seconds since 1970-01-01
 		/// </summary>
 		/// <param name="date"></param>
-		/// <returns></returns>
 		public static UInt64 ToUnixTimestamp( this DateTime date ) {
 			var diff = date - Epochs.Unix;
 
@@ -1103,7 +1071,6 @@ namespace Librainian.Measurement.Time {
 		///     Return how many years old the person is in <see cref="Years" />.
 		/// </summary>
 		/// <param name="dateOfBirth"></param>
-		/// <returns></returns>
 		public static Years YearsFrom( this DateTime dateOfBirth ) => new Seconds( ( DateTime.UtcNow - dateOfBirth ).TotalSeconds ).ToYears();
 	}
 }

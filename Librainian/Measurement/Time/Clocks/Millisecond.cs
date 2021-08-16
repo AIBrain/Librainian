@@ -59,7 +59,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary>Allow this class to be visibly cast to an <see cref="Int16" />.</summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static implicit operator Int16( Millisecond value ) => value.Value;
 
 		public static implicit operator Millisecond( Int16 value ) => new( value );
@@ -68,7 +67,6 @@ namespace Librainian.Measurement.Time.Clocks {
 		///     Provide the next <see cref="Millisecond" />.
 		/// </summary>
 		/// <param name="tocked">True when the <see cref="Value" /> went higher than <see cref="Maximum" />.</param>
-		/// <returns></returns>
 		public Millisecond Next( out Boolean tocked ) {
 			var next = this.Value + 1;
 

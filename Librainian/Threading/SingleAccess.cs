@@ -34,7 +34,6 @@ namespace Librainian.Threading {
 	using Logging;
 	using Measurement.Time;
 	using Persistence;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>

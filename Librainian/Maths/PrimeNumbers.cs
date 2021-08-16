@@ -94,7 +94,6 @@ namespace Librainian.Maths {
 		/// <summary>Untested. Returns a list of integers that COULD be prime, not that ARE prime.</summary>
 		/// <param name="lowEnd"></param>
 		/// <param name="highEnd"></param>
-		/// <returns></returns>
 		public static IEnumerable<Int32> PotentialPrimes( Int32 lowEnd, Int32 highEnd ) {
 			var k = lowEnd;
 
@@ -135,7 +134,6 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="lowEnd"></param>
 		/// <param name="highEnd"></param>
-		/// <returns></returns>
 		public static IEnumerable<Int32> Primes( Int32 lowEnd, Int32 highEnd ) {
 			var sqrt = 1;
 

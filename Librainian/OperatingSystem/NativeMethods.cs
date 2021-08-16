@@ -813,7 +813,6 @@ namespace Librainian.OperatingSystem {
 		/// </summary>
 		/// <param name="lpFileName">    </param>
 		/// <param name="lpFileSizeHigh"></param>
-		/// <returns></returns>
 		/// <see cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern UInt32 GetCompressedFileSizeW(
@@ -829,7 +828,6 @@ namespace Librainian.OperatingSystem {
 		public static extern IntPtr GetDC( IntPtr hWnd );
 
 		/// <summary></summary>
-		/// <returns></returns>
 		/// <see cref="http://www.facepunch.com/showthread.php?t=1312991" />
 		public static IntPtr GetDesktopHandle() {
 			var desktop = GetDesktopWindow();
@@ -874,7 +872,6 @@ namespace Librainian.OperatingSystem {
 		/// <param name="nBufferLength"></param>
 		/// <param name="lpBuffer"></param>
 		/// <param name="lpFilePart"></param>
-		/// <returns></returns>
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true )]
 		public static extern UInt32 GetFullPathNameW( String lpFileName, UInt32 nBufferLength, StringBuilder lpBuffer, IntPtr lpFilePart );
 
@@ -995,7 +992,6 @@ namespace Librainian.OperatingSystem {
 		/// <param name="servertype">  </param>
 		/// <param name="domain">      </param>
 		/// <param name="resumeHandle"></param>
-		/// <returns></returns>
 		/// <see cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
 		[DllImport( "netapi32.dll", EntryPoint = "NetServerEnum", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Int32 NetServerEnum(
@@ -1052,7 +1048,6 @@ namespace Librainian.OperatingSystem {
 		/// <param name="message"></param>
 		/// <param name="iconSize"></param>
 		/// <param name="iconHandle"></param>
-		/// <returns></returns>
 		[DllImport( "user32.dll", ExactSpelling = false )]
 		public static extern IntPtr SendMessage( this IntPtr hwnd, Int32 message, IconSize iconSize, IntPtr iconHandle );
 
@@ -1074,7 +1069,6 @@ namespace Librainian.OperatingSystem {
 		/// <summary></summary>
 		/// <param name="hThread">             </param>
 		/// <param name="dwThreadAffinityMask"></param>
-		/// <returns></returns>
 		/// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern IntPtr SetThreadAffinityMask( IntPtr hThread, IntPtr dwThreadAffinityMask );
@@ -1455,7 +1449,6 @@ namespace Librainian.OperatingSystem {
 			public readonly Int64 QuadPart;
 
 			/// <summary>use only when QuadPart cannot be passed</summary>
-			/// <returns></returns>
 			public Int64 ToInt64() => ( ( Int64 )this.High << 32 ) | ( UInt32 )this.Low;
 
 			// just for demonstration
@@ -1655,7 +1648,6 @@ namespace Librainian.OperatingSystem {
 			/// </summary>
 			/// <param name="left"></param>
 			/// <param name="right"></param>
-			/// <returns></returns>
 			public static Boolean Equals( HANDLE? left, HANDLE? right ) {
 				if ( ReferenceEquals( left, right ) ) {
 					return true;

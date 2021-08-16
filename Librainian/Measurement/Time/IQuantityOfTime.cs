@@ -49,7 +49,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Example: Seconds to Minutes.
 		/// </summary>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		IQuantityOfTime ToCoarserGranularity();
@@ -57,7 +56,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     Example: Hours to Minutes.
 		/// </summary>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		[Pure]
 		IQuantityOfTime ToFinerGranularity();

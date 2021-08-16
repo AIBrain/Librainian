@@ -112,14 +112,12 @@ namespace Librainian.Measurement.Time {
 		///     <para>Compares <see cref="Microseconds" /></para>
 		/// </summary>
 		/// <param name="other"></param>
-		/// <returns></returns>
 		public Int32 CompareTo( Duration? other ) => this.Microseconds.CompareTo( other.Microseconds );
 
 		/// <summary>
 		///     <para>Compares <see cref="TotalMilliseconds" /></para>
 		/// </summary>
 		/// <param name="other"></param>
-		/// <returns></returns>
 		public Int32 CompareTo( TimeSpan other ) => this.TotalMilliseconds().CompareTo( other.TotalMilliseconds );
 
 		public BigDecimal Days() => (BigInteger)this.TotalHours() % Measurement.Time.Hours.InOneDay;

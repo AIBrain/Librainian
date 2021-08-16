@@ -50,19 +50,16 @@ namespace Librainian.Collections {
 		Boolean Add( TKey key, BigInteger amount );
 
 		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
-		/// <returns></returns>
 		Boolean Complete();
 
 		Boolean Subtract( TKey key, BigInteger amount );
 
 		/// <summary>Return the sum of all values.</summary>
-		/// <returns></returns>
 		BigInteger Sum();
 
 		void Trim();
 
 		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
-		/// <returns></returns>
 		Boolean EnableMutable();
 
 

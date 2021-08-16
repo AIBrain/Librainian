@@ -135,7 +135,6 @@ namespace Librainian.Collections.Stacks {
 		/// <summary>Attempt two <see cref="TryPop" /></summary>
 		/// <param name="itemOne"></param>
 		/// <param name="itemTwo"></param>
-		/// <returns></returns>
 		public Boolean TryPopPop( out T? itemOne, out T? itemTwo ) {
 			if ( !this.TryPop( out itemOne ) ) {
 				itemTwo = default( T );

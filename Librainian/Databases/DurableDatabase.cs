@@ -37,7 +37,6 @@ namespace Librainian.Databases {
 	using Logging;
 	using Maths;
 	using Microsoft.Data.SqlClient;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public class DurableDatabase : ABetterClassDispose {
@@ -66,7 +65,7 @@ namespace Librainian.Databases {
 
 			var test = this.OpenConnection(); //try/start the current thread's open;
 
-			if ( null == test ) {
+			if ( test == null ) {
 				var builder = new SqlConnectionStringBuilder( this.ConnectionString );
 
 				throw new InvalidOperationException( $"Unable to connect to {builder.DataSource}" );
@@ -101,7 +100,6 @@ namespace Librainian.Databases {
 
 		/// <summary>Return true if connected.</summary>
 		/// <param name="sender"></param>
-		/// <returns></returns>
 		private Boolean ReOpenConnection( Object? sender ) {
 			if ( this.CancelConnection.IsCancellationRequested ) {
 				return false;
@@ -219,7 +217,6 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
-		/// <returns></returns>
 		public Int32? ExecuteNonQuery( String query, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
@@ -232,7 +229,7 @@ namespace Librainian.Databases {
 						CommandType = CommandType.Text
 					};
 
-					if ( null != parameters ) {
+					if ( parameters != null ) {
 						command.Parameters?.AddRange( parameters );
 					}
 
@@ -264,7 +261,7 @@ namespace Librainian.Databases {
 					CommandType = CommandType.StoredProcedure
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -290,7 +287,6 @@ namespace Librainian.Databases {
 		}
 
 		/// <summary></summary>
-		/// <returns></returns>
 		public Boolean ExecuteNonQuery( String query ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
@@ -331,7 +327,7 @@ namespace Librainian.Databases {
 						CommandType = commandType
 					};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -352,27 +348,30 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
-			table = new DataTable();
+			using DataTable local = new();
+
+			table = local;
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
 				table.BeginLoadData();
 
 				using ( var reader = command.ExecuteReader() ) {
-					table.Load( reader );
+					if ( reader != null ) {
+						table.Load( reader );
+					}
 				}
 
 				table.EndLoadData();
@@ -396,7 +395,6 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		public DataTable ExecuteReader( String query, CommandType commandType, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
@@ -409,7 +407,7 @@ namespace Librainian.Databases {
 					CommandType = commandType
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -438,7 +436,6 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		public async Task<DataTableReader?> ExecuteReaderAsyncDataReader( String? query, CommandType commandType, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
@@ -453,7 +450,7 @@ namespace Librainian.Databases {
 					using ( var command = new SqlCommand( query, this.OpenConnection() ) {
 						CommandType = commandType
 					} ) {
-					if ( null != parameters ) {
+					if ( parameters != null ) {
 						command.Parameters?.AddRange( parameters );
 					}
 
@@ -477,9 +474,8 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
-			var table = new DataTable();
+			using var table = new DataTable();
 
 			try {
 #if NET5_0_OR_GREATER
@@ -489,7 +485,7 @@ namespace Librainian.Databases {
 						CommandType = commandType
 					};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -523,20 +519,19 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		public (Status status, TResult result) ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[]? parameters ) {
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
 				var scalar = command.ExecuteScalar();
 
-				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+				if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
 					return (Status.Success, default( TResult ));
 				}
 
@@ -566,7 +561,6 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
 		public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>(
 			String query,
 			CommandType commandType,
@@ -585,7 +579,7 @@ namespace Librainian.Databases {
 						CommandTimeout = 0
 					};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -603,7 +597,7 @@ namespace Librainian.Databases {
 					throw;
 				}
 
-				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+				if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
 					return (Status.Success, default( TResult ));
 				}
 
@@ -632,14 +626,13 @@ namespace Librainian.Databases {
 		/// <summary>Returns a <see cref="DataTable" /></summary>
 		/// <param name="query">     </param>
 		/// <param name="parameters"></param>
-		/// <returns></returns>
 		public IEnumerable<TResult?>? QueryList<TResult>( String query, params SqlParameter[]? parameters ) {
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = CommandType.StoredProcedure
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 

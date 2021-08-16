@@ -42,14 +42,12 @@ namespace Librainian.Financial.Currency {
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		Boolean TryAdd( Decimal amount );
 
 		Boolean TryAdd( SimpleWallet wallet );
 
 		/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		Boolean TryDeposit( Decimal amount );
 
 		Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet );

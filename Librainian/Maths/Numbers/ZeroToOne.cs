@@ -102,7 +102,6 @@ namespace Librainian.Maths.Numbers {
 		///     Attempt to parse <paramref name="value" />, otherwise return null.
 		/// </summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
 		public static ZeroToOne? TryParse( String value ) => Decimal.TryParse( value, out var result ) ? result : default( ZeroToOne? );
 
 		public override String ToString() => $"{( Single )this:P}";

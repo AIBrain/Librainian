@@ -37,7 +37,6 @@ namespace Librainian.Graphics.Manipulation {
 		/// <param name="image"></param>
 		/// <param name="rectangle"></param>
 		/// <param name="pixelateSize"></param>
-		/// <returns></returns>
 		private static Bitmap Pixelate( this Image image, Rectangle rectangle, Int32 pixelateSize ) {
 			var pixelated = new Bitmap( image.Width, image.Height );
 

@@ -50,10 +50,10 @@ namespace Librainian.Graphics.Moving {
 		/// <summary>For each item here, draw them too.</summary>
 		/// <remarks>I need to stop coding while I'm asleep.</remarks>
 		[JsonProperty]
-		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples = new();
+		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples { get; } = new();
 
 		[JsonProperty]
-		public ConcurrentDictionary<UInt64, Pixelyx> Pixels = new();
+		public ConcurrentDictionary<UInt64, Pixelyx> Pixels { get; } = new();
 
 		/// <summary>Checksum guard</summary>
 		[JsonProperty]

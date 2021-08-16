@@ -35,7 +35,6 @@ namespace Librainian.Financial.Currency.BTC {
 	using Exceptions;
 	using Measurement.Time;
 	using Newtonsoft.Json;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>A very simple, thread-safe, Decimal-based bitcoin wallet.</summary>
@@ -125,7 +124,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( SimpleBitcoinWallet? left, SimpleBitcoinWallet? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
@@ -169,7 +167,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
 		/// <param name="amount">  </param>
-		/// <returns></returns>
 		public Boolean TryAdd( Decimal amount ) {
 			try {
 				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
@@ -201,7 +198,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 		/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" /> .</summary>
 		/// <param name="amount">  </param>
-		/// <returns></returns>
 		public Boolean TryDeposit( Decimal amount ) {
 			if ( amount <= Decimal.Zero ) {
 				return false;
@@ -253,7 +249,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="amount">  </param>
 		/// <param name="sanitize"></param>
-		/// <returns></returns>
 		public Boolean TryUpdateBalance( Decimal amount, Boolean sanitize = true ) {
 			try {
 				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
@@ -281,7 +276,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="amount">  </param>
 		/// <param name="sanitize"></param>
-		/// <returns></returns>
 		public Boolean TryWithdraw( Decimal amount, Boolean sanitize = true ) {
 			if ( sanitize ) {
 				amount = amount.Sanitize();
@@ -316,7 +310,6 @@ namespace Librainian.Financial.Currency.BTC {
 
 		/// <summary>Attempt to withdraw an amount (must be larger than Zero) from the wallet.</summary>
 		/// <param name="wallet"></param>
-		/// <returns></returns>
 		public Boolean TryWithdraw( SimpleBitcoinWallet wallet ) {
 			if ( wallet is null ) {
 				throw new ArgumentEmptyException( nameof( wallet ) );

@@ -131,14 +131,12 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( Yoctoseconds left, Yoctoseconds right ) => left.Value.Equals( right.Value );
 
 		/// <summary>
 		///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.
 		/// </summary>
 		/// <param name="yoctoseconds"></param>
-		/// <returns></returns>
 		public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
 
 		public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new( yoctoseconds );
@@ -147,7 +145,6 @@ namespace Librainian.Measurement.Time {
 		///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.
 		/// </summary>
 		/// <param name="yoctoseconds"></param>
-		/// <returns></returns>
 		public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
 
 		public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new( yoctoseconds.Value * -1 );

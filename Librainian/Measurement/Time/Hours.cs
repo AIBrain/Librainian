@@ -85,12 +85,10 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Implicitly convert the number of <paramref name="hours" /> to <see cref="Days" />.</summary>
 		/// <param name="hours"></param>
-		/// <returns></returns>
 		public static implicit operator Days( Hours hours ) => hours.ToDays();
 
 		/// <summary>Implicitly convert the number of <paramref name="hours" /> to <see cref="Minutes" />.</summary>
 		/// <param name="hours"></param>
-		/// <returns></returns>
 		public static implicit operator Minutes( Hours hours ) => hours.ToMinutes();
 
 		public static implicit operator SpanOfTime( Hours hours ) => new( hours );

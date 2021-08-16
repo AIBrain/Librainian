@@ -30,7 +30,7 @@ namespace Librainian.Financial.Currency.BTC {
 	/// <summary></summary>
 	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
 	public class Hash {
-
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>" )]
 		public readonly Byte[] HashBytes;
 
 		public Byte this[ Int32 i ] {

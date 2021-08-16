@@ -40,7 +40,7 @@ namespace Librainian.Measurement.Time.Clocks {
 		public const Byte MinimumValue = 1;
 
 		[JsonProperty]
-		public readonly Byte Value;
+		public Byte Value { get; }
 
 		public Hour( Byte value ) {
 			if ( value is < MinimumValue or > MaximumValue ) {

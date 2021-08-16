@@ -29,7 +29,6 @@ namespace Librainian.Interfaces {
 
 	using System;
 	using System.Drawing;
-	using Utilities;
 	using Utilities.Disposables;
 
 	public class Message : ABetterClassDispose, IMessage {
@@ -78,7 +77,6 @@ namespace Librainian.Interfaces {
 		/// <summary>
 		/// Default layout for <see cref="Message"/> object.
 		/// </summary>
-		/// <returns></returns>
 		public override String ToString() =>
 			this.Data is null ?
 				$"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description})" :

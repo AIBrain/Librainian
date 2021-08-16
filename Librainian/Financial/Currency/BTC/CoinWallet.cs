@@ -41,7 +41,6 @@ namespace Librainian.Financial.Currency.BTC {
 	using Maths;
 	using Newtonsoft.Json;
 	using Threading;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>
@@ -104,7 +103,6 @@ namespace Librainian.Financial.Currency.BTC {
 		///     <paramref name="id" /> is generated.
 		/// </summary>
 		/// <param name="id"></param>
-		/// <returns></returns>
 		public static CoinWallet Create( Guid? id = null ) {
 			if ( !id.HasValue || id.Value == Guid.Empty ) {
 				id = Guid.NewGuid();
@@ -174,7 +172,6 @@ namespace Librainian.Financial.Currency.BTC {
 		/// </summary>
 		/// <param name="coin">    </param>
 		/// <param name="quantity"></param>
-		/// <returns></returns>
 		/// <remarks>Locks the wallet.</remarks>
 		public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
 			if ( coin is null ) {

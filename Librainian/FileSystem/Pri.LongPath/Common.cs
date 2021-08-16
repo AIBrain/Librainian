@@ -122,7 +122,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// Checks if <paramref name="path"/> starts with \\?\UNC\
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static Boolean IsPathUnc( this String path ) {
 			path = path.ThrowIfBlank();
@@ -137,7 +136,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		/// <summary>Capture the <see cref="Uri" /> from <paramref name="path" /></summary>
 		/// <param name="path"></param>
 		/// <param name="uri"></param>
-		/// <returns></returns>
 		public static Boolean IsPathUnc( this String path, out Uri? uri ) {
 			path = path.ThrowIfBlank();
 

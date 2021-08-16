@@ -67,7 +67,7 @@ namespace Librainian.ComputerSystem.Devices {
 				//OfType() instead of Cast()??
 				var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
 
-				if ( null == crtNetworkAdapter ) {
+				if ( crtNetworkAdapter == null ) {
 					return;
 				}
 

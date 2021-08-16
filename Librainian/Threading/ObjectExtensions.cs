@@ -141,7 +141,6 @@ namespace Librainian.Threading {
 
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
-		/// <returns></returns>
 		[NeedsTesting]
 		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object?>( new ReferenceEqualComparer<Object?>() ) );
 

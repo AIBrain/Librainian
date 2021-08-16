@@ -104,7 +104,6 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equals( D? left, D? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;

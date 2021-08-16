@@ -28,7 +28,6 @@ namespace Librainian.Financial.Currency.USD {
 	using System.Diagnostics;
 	using System.Threading;
 	using JetBrains.Annotations;
-	using Utilities;
 	using Utilities.Disposables;
 
 	/// <summary>A simple, thread-safe,  Decimal-based wallet.</summary>
@@ -98,7 +97,6 @@ namespace Librainian.Financial.Currency.USD {
 
 		/// <summary>Add any (+-)amount directly to the balance.</summary>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public Boolean TryAdd( Decimal amount ) => throw new NotImplementedException();
 
 		public Boolean TryAdd( Currency.SimpleWallet wallet ) => throw new NotImplementedException();

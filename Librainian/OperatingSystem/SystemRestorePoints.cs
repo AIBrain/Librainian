@@ -31,7 +31,6 @@ namespace Librainian.OperatingSystem {
 
 		/// <summary>Untested.</summary>
 		/// <param name="title"></param>
-		/// <returns></returns>
 		public static Boolean CreateRestorePoint( String title = null ) {
 			if ( String.IsNullOrWhiteSpace( title ) ) {
 				var now = DateTime.Now;

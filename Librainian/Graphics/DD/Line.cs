@@ -29,8 +29,10 @@ namespace Librainian.Graphics.DD {
 	using System.Drawing;
 
 	public record Line {
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>" )]
 		public PointF P1;
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>" )]
 		public PointF P2;
 
 		public Line( PointF p1, PointF p2 ) {

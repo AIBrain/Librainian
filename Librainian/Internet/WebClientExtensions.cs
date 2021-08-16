@@ -107,7 +107,6 @@ namespace Librainian.Internet {
 		/// <param name="address"></param>
 		/// <param name="fileName"></param>
 		/// <param name="progress"></param>
-		/// <returns></returns>
 		public static async Task DownloadFileTaskAsync(
 			this WebClient webClient,
 			Uri address,

@@ -116,7 +116,6 @@ namespace Librainian.Parsing {
 		/// <summary>Static equality test. (Compares both values with <see cref="String.Equals(Object)" />)</summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[Pure]
 		public static Boolean Equals( TrimmedString left, TrimmedString right ) => String.Equals( left.Value, right.Value, StringComparison.Ordinal );
@@ -149,13 +148,11 @@ namespace Librainian.Parsing {
 
 		/// <summary>Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)</summary>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public Boolean Like( String? right ) => this.Value.Like( right );
 
 		/// <summary>Compares and ignores case. ( <see cref="StringComparison.CurrentCultureIgnoreCase" />)</summary>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public Boolean Like( TrimmedString right ) => this.Value.Like( right.Value );
 

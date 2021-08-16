@@ -91,7 +91,6 @@ namespace Librainian.Extensions {
 		/// <summary>Wrap a function with a try/catch.</summary>
 		/// <param name="func"> </param>
 		/// <param name="final"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static T? Trap<T>( [InstantHandle] this Func<T>? func, [InstantHandle] Action? final = default( Action? ) ) {
 			if ( func is null ) {
@@ -126,7 +125,6 @@ namespace Librainian.Extensions {
 		/// <param name="exception"></param>
 		/// <param name="final">   </param>
 		/// <param name="actions"></param>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static R? Trap<T, R>(
 			[InstantHandle] this Func<T?, R>? func,

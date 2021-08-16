@@ -39,7 +39,6 @@ namespace Librainian.OperatingSystem {
 		/// <summary>Returns true if the disk/drive has seek penalty.</summary>
 		/// <param name="diskNumber"></param>
 		/// <param name="seekPenaltySize"></param>
-		/// <returns></returns>
 		public static Boolean? IncursSeekPenalty( this Byte diskNumber, out UInt32 seekPenaltySize ) {
 			seekPenaltySize = 0;
 

@@ -28,11 +28,11 @@ namespace Librainian.Graphics {
 
 	public class Matrix {
 
-		protected readonly Int32 Cols;
+		protected Int32 Cols { get; }
 
-		protected readonly Single[,] matrix;
+		protected Single[,] matrix { get; }
 
-		protected readonly Int32 Rows;
+		protected Int32 Rows { get; }
 
 		protected Matrix( Single[,] matrix ) {
 			this.matrix = matrix;
