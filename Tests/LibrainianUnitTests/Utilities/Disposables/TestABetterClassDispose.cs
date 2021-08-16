@@ -57,7 +57,9 @@ namespace LibrainianUnitTests.Utilities.Disposables {
 		public void TestDisposeMultipleTimesExplicitly() {
 			ForceGC();
 			foreach ( var i in 1.To( N ) ) {
+#pragma warning disable IDE0063 // Use simple 'using' statement
 				using ( var testAbcd = new TestABCD( i ) ) {
+#pragma warning restore IDE0063 // Use simple 'using' statement
 					testAbcd.Dispose();
 				}
 			}

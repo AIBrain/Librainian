@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ABetterClassDispose.cs" last touched on 2021-07-22 at 5:41 AM by Protiguous.
+// File "ABetterClassDispose.cs" last touched on 2021-08-15 at 4:56 AM by Protiguous.
 
 #nullable enable
 
@@ -98,7 +98,6 @@ namespace Librainian.Utilities.Disposables {
 		}
 
 		/// <summary>Can be changed to a property, if desired.</summary>
-		/// <returns></returns>
 		public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
 		/// <summary>
@@ -152,17 +151,10 @@ namespace Librainian.Utilities.Disposables {
 		/// </summary>
 		/// <param name="dispose"></param>
 		[DebuggerStepThrough]
-
-		// ReSharper disable once UnusedParameter.Global
-#pragma warning disable IDE0060 // Remove unused parameter
 		public void Dispose( Boolean dispose ) => this.Dispose();
 
-#pragma warning restore IDE0060 // Remove unused parameter
-
 		/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
-		/// <example>
-		///     <code>using var bob = new DisposableType();</code>
-		/// </example>
+		/// <code>using var bob = new DisposableType();</code>
 		[DebuggerStepThrough]
 		public virtual void DisposeManaged() { }
 
@@ -173,6 +165,10 @@ namespace Librainian.Utilities.Disposables {
 		public virtual void DisposeNative() =>
 			/*make this virtual so it is optional*/
 			this.HasDisposedNative = true;
+
+		~ABetterClassDispose() {
+			this.Dispose();
+		}
 
 		/*
 

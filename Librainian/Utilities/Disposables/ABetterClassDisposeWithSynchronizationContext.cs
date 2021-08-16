@@ -100,7 +100,6 @@ namespace Librainian.Utilities.Disposables {
 		}
 
 		/// <summary>Can be changed to a property, if desired.</summary>
-		/// <returns></returns>
 		public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
 		/// <summary>
