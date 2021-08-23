@@ -23,31 +23,32 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BenchmarkParsing.cs" last touched on 2021-07-31 at 5:31 AM by Protiguous.
+// File "CompareRight_SubstringRangeSlice.cs" last touched on 2021-08-23 at 5:45 AM by Protiguous.
 
 namespace Benchmarks {
 
 	using System;
 	using BenchmarkDotNet.Attributes;
+	using Librainian.Exceptions;
+	using Librainian.Parsing;
 
-	//[MemoryDiagnoser]
-	public class CompareSubstringVersusSlice {
+	[MemoryDiagnoser]
+	public class CompareRight_SubstringRangeSlice {
+
 		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
 
-		//[Benchmark]
-		public String GetCity() {
-			var cityAndPostalCode = Default_TestAddress.Substring( 37, 15 );
-			var city = cityAndPostalCode.Substring( 7, 8 );
-			return city;
+		[Benchmark]
+		public Boolean WithRightSlice() {
+			var cityAndPostalCode = Default_TestAddress.AsSpan().RightSlice( "Warszawa".Length );
+			return cityAndPostalCode != "Warszawa" ? throw new NullException( nameof( cityAndPostalCode ) ) : true;
 		}
 
-		//[Benchmark]
-		public String GetCity2() {
-			ReadOnlySpan<Char> addressAsSpan = Default_TestAddress;
-			var cityAndPostalCode = addressAsSpan.Slice( 37, 15 );
-			var city = cityAndPostalCode.Slice( 7, 8 );
-			return city.ToString();
+		[Benchmark( Baseline = true )]
+		public Boolean WithRightOldWay() {
+			var cityAndPostalCode = Default_TestAddress.Right( "Warszawa".Length );
+			return cityAndPostalCode != "Warszawa" ? throw new NullException( nameof( cityAndPostalCode ) ) : true;
 		}
+
 	}
 
 }
