@@ -10,6 +10,7 @@
 		<StartupObject />
 		<EnableNETAnalyzers>false</EnableNETAnalyzers>
 		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -17,9 +18,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="FluentAssertions" Version="5.10.3" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-		<PackageReference Include="Microsoft.TestPlatform" Version="16.10.0" />
+		<PackageReference Include="FluentAssertions" Version="6.1.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+		<PackageReference Include="Microsoft.TestPlatform" Version="16.11.0" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
 	</ItemGroup>
 
