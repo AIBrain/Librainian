@@ -60,7 +60,7 @@ namespace Librainian.FileSystem {
 				throw new ArgumentEmptyException( nameof( sourceFiles ) );
 			}
 
-			await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ) ) {
+			await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
 				var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
 
 				if ( overwriteDestination && await destinationDocument.Exists( cancellationToken ).ConfigureAwait( false ) ) {

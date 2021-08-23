@@ -42,6 +42,7 @@ namespace Librainian.Databases {
 	using Converters;
 	using Exceptions;
 	using Internet;
+	using LazyCache;
 	using Logging;
 	using Maths;
 	using Measurement.Frequency;
@@ -49,13 +50,12 @@ namespace Librainian.Databases {
 	using Microsoft.Data.SqlClient;
 	using Microsoft.Data.SqlClient.Server;
 	using Parsing;
-	using Persistence;
 	using PooledAwait;
 	using Threading;
 	using Utilities;
 	using Utilities.Disposables;
 
-	public class DatabaseServer : ABetterClassDisposeReactive, IDatabaseServer {
+	public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
 		/// <summary>
 		///     Defaults to 5 attempts.
@@ -67,6 +67,8 @@ namespace Librainian.Databases {
 		/// </summary>
 		private static Int64 ConnectionCounter;
 
+		public static IAppCache? Cache { get; set; }
+
 		/// <summary>
 		/// </summary>
 		/// <param name="connectionString"> </param>
@@ -75,33 +77,39 @@ namespace Librainian.Databases {
 		/// <exception cref="InvalidOperationException"></exception>
 		public DatabaseServer( String connectionString, String? useDatabase, String applicationName ) {
 			this.ApplicationName = applicationName;
-			$"New {nameof( DatabaseServer )} on thread {Environment.CurrentManagedThreadId} for app {applicationName.DoubleQuote()}.".Verbose();
 
-			this.ConnectionTimeout = DefaultConnectionTimeout;
+			var key = nameof( DatabaseServer ).ToKey( nameof( CreateConnectionWithBuilder ), nameof( this._connectionString ) );
+			this._connectionString = Cache?.GetOrAdd( key, CreateConnectionWithBuilder );
 
-			connectionString = connectionString.Trimmed() ?? throw new ArgumentEmptyException( nameof( connectionString ) );
-
-			var builder = new SqlConnectionStringBuilder( connectionString ) {
-				Pooling = true,
-				MaxPoolSize = 32767,
-				IntegratedSecurity = true,
-				MultipleActiveResultSets = true,
-				WorkstationID = Environment.MachineName,
-				ApplicationIntent = ApplicationIntent.ReadWrite,
-				ApplicationName = applicationName,
-				ConnectTimeout = ( Int32 )this.ConnectionTimeout.TotalSeconds,
-				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
-			};
-
-			builder.IntegratedSecurity = String.IsNullOrWhiteSpace( builder.UserID ) && String.IsNullOrWhiteSpace( builder.Password );
-
-			if ( !String.IsNullOrEmpty( useDatabase = useDatabase.Trimmed() ) ) {
-				builder.InitialCatalog = useDatabase;
+			if ( String.IsNullOrWhiteSpace( this._connectionString ) ) {
+				throw new NullException( nameof( this._connectionString ) );
 			}
 
-			this._connectionString = builder.ConnectionString;
+			String CreateConnectionWithBuilder() {
+				$"New {nameof( DatabaseServer )} on thread {Environment.CurrentManagedThreadId} for app {applicationName.DoubleQuote()}.".Verbose();
 
-			Debug.Assert( !String.IsNullOrWhiteSpace( this._connectionString ) );
+				connectionString = connectionString.Trimmed() ?? throw new ArgumentEmptyException( nameof( connectionString ) );
+
+				var builder = new SqlConnectionStringBuilder( connectionString ) {
+					Pooling = true,
+					MaxPoolSize = 32767,
+					IntegratedSecurity = true,
+					MultipleActiveResultSets = true,
+					WorkstationID = Environment.MachineName,
+					ApplicationIntent = ApplicationIntent.ReadWrite,
+					ApplicationName = applicationName,
+					ConnectTimeout = ( Int32 )DefaultConnectionTimeout.TotalSeconds,
+					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds
+				};
+
+				builder.IntegratedSecurity = String.IsNullOrWhiteSpace( builder.UserID ) && String.IsNullOrWhiteSpace( builder.Password );
+
+				if ( !String.IsNullOrEmpty( useDatabase = useDatabase.Trimmed() ) ) {
+					builder.InitialCatalog = useDatabase;
+				}
+
+				return builder.ConnectionString;
+			}
 		}
 
 		public String ApplicationName { get; }
@@ -116,11 +124,9 @@ namespace Librainian.Databases {
 		/// </summary>
 		public static TimeSpan DefaultCommandTimeout => Minutes.One;
 
-		public TimeSpan ConnectionTimeout { get; set; }
-
 		public static TimeSpan DefaultTimeBetweenRetries => Seconds.One;
 
-		private String? _connectionString { get; }
+		private String? _connectionString { get; set; }
 
 		private Stopwatch TimeSinceLastConnectAttempt { get; } = Stopwatch.StartNew();
 
@@ -194,7 +200,7 @@ namespace Librainian.Databases {
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> ExecuteNonQueryAsync(
+		public async Task<Int32?> ExecuteNonQueryAsync(
 			String query,
 			CommandType commandType,
 			CancellationToken cancellationToken,
@@ -204,17 +210,14 @@ namespace Librainian.Databases {
 
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 			try {
 				await this.CreateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
-				var command = this.Command;
-				if ( command != null ) {
-					return await command.ExecuteNonQueryAsync( cancellationToken )!.ConfigureAwait( false );
-				}
+				return await this.Command.ExecuteNonQueryAsync( cancellationToken )!.ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -222,7 +225,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( Int32? );
@@ -238,7 +241,7 @@ namespace Librainian.Databases {
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
+		public async Task<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
 			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		/// <summary>
@@ -250,7 +253,7 @@ namespace Librainian.Databases {
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="SqlException"></exception>
 		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> RunSprocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
+		public async Task<Int32?> RunSprocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
 			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		/*
@@ -311,7 +314,7 @@ namespace Librainian.Databases {
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		[NeedsTesting]
-		public async PooledValueTask<DataTableReader?> ExecuteReaderAsync(
+		public async Task<DataTableReader?> ExecuteReaderAsync(
 			String query,
 			CommandType commandType,
 			CancellationToken cancellationToken,
@@ -325,7 +328,7 @@ namespace Librainian.Databases {
 
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
@@ -343,7 +346,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -351,7 +354,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( DataTableReader? );
@@ -364,7 +367,7 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		public async PooledValueTask<DataTable> ExecuteReaderDataTableAsync(
+		public async Task<DataTable> ExecuteReaderDataTableAsync(
 			String query,
 			CommandType commandType,
 			CancellationToken cancellationToken,
@@ -378,7 +381,7 @@ namespace Librainian.Databases {
 
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 			var table = new DataTable();
 
 			try {
@@ -394,7 +397,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -402,7 +405,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return table;
@@ -446,7 +449,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				this.CloseConnection();
+				//this.CloseConnection();
 			}
 
 			return default( T? );
@@ -460,7 +463,7 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		public async PooledValueTask<T?> ExecuteScalarAsync<T>(
+		public async Task<T?> ExecuteScalarAsync<T>(
 			String query,
 			CommandType commandType,
 			CancellationToken cancellationToken,
@@ -474,7 +477,7 @@ namespace Librainian.Databases {
 
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
@@ -491,7 +494,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -499,7 +502,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( T? );
@@ -515,7 +518,7 @@ namespace Librainian.Databases {
 		/// <param name="table">      </param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		public async PooledValueTask<Boolean> FillTableAsync(
+		public async Task<Boolean> FillTableAsync(
 			String query,
 			CommandType commandType,
 			DataTable table,
@@ -530,7 +533,7 @@ namespace Librainian.Databases {
 
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 			table.Clear();
 
 			try {
@@ -556,7 +559,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -564,7 +567,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return true;
@@ -596,14 +599,14 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				this.CloseConnection();
+				//this.CloseConnection();
 			}
 
 			return default( DataTableReader? );
 		}
 		*/
 
-		public async PooledValueTask<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+		public async Task<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
@@ -611,7 +614,7 @@ namespace Librainian.Databases {
 			this.Query = query;
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( CommandType.Text, cancellationToken, parameters ).ConfigureAwait( false );
@@ -624,7 +627,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -632,13 +635,13 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( DataTableReader? );
 		}
 
-		public async PooledValueTask<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+		public async Task<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
@@ -646,7 +649,7 @@ namespace Librainian.Databases {
 			this.Query = query;
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( CommandType.Text, cancellationToken, parameters ).ConfigureAwait( false );
@@ -658,7 +661,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -666,7 +669,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return this;
@@ -682,7 +685,7 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		public async PooledValueTask<SqlDataReader?> QueryAsync(
+		public async Task<SqlDataReader?> QueryAsync(
 			String query,
 			CommandType commandType,
 			CancellationToken cancellationToken,
@@ -695,7 +698,7 @@ namespace Librainian.Databases {
 			this.Query = query;
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
@@ -707,7 +710,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -715,7 +718,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( SqlDataReader? );
@@ -728,7 +731,7 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		public async PooledValueTask<IEnumerable<TResult>?> QueryListAsync<TResult>(
+		public async Task<IEnumerable<TResult>?> QueryListAsync<TResult>(
 			String query,
 			CommandType commandType,
 			CancellationToken cancellationToken,
@@ -741,7 +744,7 @@ namespace Librainian.Databases {
 			this.Query = query;
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
@@ -754,7 +757,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -762,7 +765,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( IEnumerable<TResult>? );
@@ -778,7 +781,7 @@ namespace Librainian.Databases {
 		}
 		*/
 
-		public async PooledValueTask UseDatabaseAsync( String databaseName, CancellationToken cancellationToken ) {
+		public async Task UseDatabaseAsync( String databaseName, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( databaseName ) );
 			}
@@ -787,29 +790,26 @@ namespace Librainian.Databases {
 		}
 
 		[NeedsTesting]
-		public async PooledValueTask CreateCommand( CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+		public async Task CreateCommand( CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( this.Query ) ) {
 				throw new NullException( nameof( this.Query ) );
 			}
 
 			await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
+			//$"Creating command for query {this.Query.DoubleQuote()}..".Verbose();
 			this.Command = new SqlCommand( this.Query, this.Connection ) {
-				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds, CommandType = commandType
+				CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds,
+				CommandType = commandType
 			};
 
-			if ( this.Command.Parameters is null || parameters is null ) {
+			if ( parameters?.Length.Any() != true || this.Command.Parameters is null ) {
 				return;
 			}
 
-			foreach ( var parameter in parameters.Distinct() ) {
-				// This cloning is an attempt to get rid of the stupid "feature" of sqlparameters being "assigned" already.
-				// Needs tested asap!!
-				var serialized = parameter.Serialize();
-				var newParameter = serialized.Deserialize<SqlParameter>();
-				if ( newParameter != null ) {
-					this.Command.Parameters.Add( newParameter );
-				}
+			foreach ( var parameter in parameters ) {
+				//$"Adding parameter {parameter.ParameterName} to command object..".Verbose();
+				this.Command.Parameters.Add( parameter );
 			}
 		}
 
@@ -822,7 +822,7 @@ namespace Librainian.Databases {
 		/// <param name="parameters"></param>
 		/// <exception cref="ArgumentException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
-		public async PooledValueTask<SqlDataReader?> QueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+		public async Task<SqlDataReader?> QueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
@@ -830,7 +830,7 @@ namespace Librainian.Databases {
 			this.Query = query;
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
@@ -848,7 +848,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -856,7 +856,7 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( SqlDataReader? );
@@ -877,7 +877,7 @@ namespace Librainian.Databases {
 		/// <summary>
 		///     Create a sql server database connection via async.
 		/// </summary>
-		private async ValueTask<Status> OpenConnectionAsync(
+		private async Task<Status> OpenConnectionAsync(
 			CancellationToken cancellationToken,
 			Int32 retriesLeft = DefaultRetries,
 			IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null
@@ -894,6 +894,7 @@ namespace Librainian.Databases {
 			--retriesLeft;
 
 			this.Connection = new SqlConnection( this._connectionString );
+			this.Connection.InfoMessage += ConnectionOnInfoMessage;
 
 			try {
 				if ( DatabaseDelay is Seconds delay ) {
@@ -905,17 +906,22 @@ namespace Librainian.Databases {
 				if ( progress is not null ) {
 					var stopwatch = Stopwatch.StartNew();
 					var sqlConnection = this.Connection;
-					timer = Fps.Thirty.CreateTimer( () => progress.Report( ( stopwatch.Elapsed, sqlConnection.State ) ) );
+					timer = Fps.Thirty.CreateTimer( () => progress.Report( (stopwatch.Elapsed, sqlConnection.State) ) );
 				}
 
 				try {
 					this.TimeSinceLastConnectAttempt.Restart();
-					var cancels = cancellationToken;
-					await this.Connection.OpenAsync( cancels ).ConfigureAwait( false );
 
-					if ( this.Connection.State == ConnectionState.Open ) {
-						return Status.Continue;
+					//$"Opening connection for {this.Query}..".Verbose();
+					await this.Connection.OpenAsync( cancellationToken ).ConfigureAwait( false );
+
+					while ( this.Connection?.State == ConnectionState.Connecting ) {
+						"awaiting for connection state to become open..".Verbose();
+						await Task.Delay( Milliseconds.One, cancellationToken ).ConfigureAwait( false );
 					}
+
+					Interlocked.Increment( ref ConnectionCounter );
+					return Status.Continue;
 				}
 				catch ( InvalidOperationException exception ) {
 					if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
@@ -968,10 +974,14 @@ namespace Librainian.Databases {
 			return Status.Unknown;
 		}
 
-		private void ValueChangedHandler( AsyncLocalValueChangedArgs<SqlConnection?> obj ) {
+		private static void ConnectionOnInfoMessage( Object sender, SqlInfoMessageEventArgs e ) => $"{nameof( SqlInfoMessageEventArgs )} {nameof( e.Message )}={e.Message}".Verbose();
+
+		/*
+		private static void ValueChangedHandler( AsyncLocalValueChangedArgs<SqlConnection?> obj ) {
 			$"Thread {Environment.CurrentManagedThreadId}: was {( obj.PreviousValue?.ToString() ).SmartQuote()} to {( obj.CurrentValue?.ToString() ).SmartQuote()}."
-				.TraceLine();
+				.Verbose();
 		}
+		*/
 
 		public async Task<IDictionary?> GetStats( CancellationToken cancellationToken ) {
 			try {
@@ -1008,7 +1018,7 @@ namespace Librainian.Databases {
 			this.Query = query;
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				await this.CreateCommand( CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
@@ -1017,7 +1027,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -1025,31 +1035,36 @@ namespace Librainian.Databases {
 				exception.Log( Rebuild( query, parameters ) );
 			}
 			finally {
-				await this.CloseConnection().ConfigureAwait( false );
+				//this.CloseConnection();
 			}
 
 			return default( Int32? );
 		}
 
-		private async PooledValueTask CloseConnection() {
+		private void CloseConnection() {
 			var connection = this.Connection;
 			if ( connection is null ) {
 				return;
 			}
 
-			await using ( connection.ConfigureAwait( false ) ) {
-				try {
-					await connection.CloseAsync().ConfigureAwait( false );
+			try {
+				using ( connection ) {
+					if ( connection.State == ConnectionState.Open ) {
+						connection.Close();
+					}
 				}
-				catch ( SqlException exception ) {
-					exception.Log( BreakOrDontBreak.Break );
-				}
-				finally {
-					Interlocked.Decrement( ref ConnectionCounter );
-				}
-
+			}
+			catch ( InvalidOperationException ) {
+				/* swallow */
+			}
+			catch ( SqlException exception ) {
+				exception.Log( BreakOrDontBreak.Break );
+			}
+			finally {
+				Interlocked.Decrement( ref ConnectionCounter );
 				this.Connection = default( SqlConnection? );
 			}
+
 		}
 
 		/*
@@ -1115,7 +1130,7 @@ namespace Librainian.Databases {
 		/// <param name="query">     </param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"></param>
-		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
+		public async Task<T?> ExecuteScalarAsync<T>( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
 			await this.ExecuteScalarAsync<T?>( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 		/*
@@ -1169,34 +1184,34 @@ namespace Librainian.Databases {
 			$"Warning: We have an undisposed DatabaseServer() connection somewhere. This could cause a memory leak. Query={this.Query.DoubleQuote()}".Log(
 				BreakOrDontBreak.Break );
 
-		public override void DisposeManaged() {
+		public override ValueTask DisposeManagedAsync() {
+			this.CloseConnection();
 			using ( this.Command ) {
 				this.Command = default( SqlCommand? );
 			}
-
-			this.CloseConnection();
+			return ValueTask.CompletedTask;
 		}
 
 		[DebuggerStepThrough]
-		private static String Rebuild( String query, IEnumerable<SqlParameter?>? parameters = null ) {
+		private static String Rebuild( String query, IEnumerable<SqlParameter>? parameters = null ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			return parameters is null ? $"exec {query}" :
-				$"exec {query} {parameters.Where( parameter => parameter is not null ).Select( parameter => $"{parameter!.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings( ", " )}; ";
+				$"exec {query} {parameters.Select( parameter => $"{parameter.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings( ", " )}; ";
 		}
 
-		public async PooledValueTask<Boolean> CreateDatabase( String databaseName, String connectionString, CancellationToken cancellationToken ) {
+		public async Task<Boolean> CreateDatabase( String databaseName, String connectionString, CancellationToken cancellationToken ) {
 			databaseName = databaseName.Trimmed() ?? throw new ArgumentEmptyException( nameof( databaseName ) );
 			connectionString = connectionString.Trimmed() ?? throw new ArgumentEmptyException( nameof( connectionString ) );
 
 			var retries = DefaultRetries;
 
-			TryAgain:
+		TryAgain:
 
 			try {
-				using var db = new DatabaseServer( connectionString, "master", this.ApplicationName );
+				await using var db = new DatabaseServer( connectionString, "master", this.ApplicationName );
 
 				await db.QueryAdhocReaderAsync( $"create database {databaseName.SmartBraces()};", cancellationToken ).ConfigureAwait( false );
 
@@ -1204,7 +1219,7 @@ namespace Librainian.Databases {
 			}
 			catch ( Exception exception ) {
 				if ( exception.AttemptQueryAgain( ref retries ) ) {
-					await this.CloseConnection().ConfigureAwait( false );
+					this.CloseConnection();
 					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
 					goto TryAgain;
 				}
@@ -1215,6 +1230,7 @@ namespace Librainian.Databases {
 			return false;
 		}
 
+		/*
 		public static SqlConnectionStringBuilder PopulateConnectionStringBuilder(
 			String serverName,
 			String instanceName,
@@ -1258,12 +1274,13 @@ namespace Librainian.Databases {
 
 			return builder;
 		}
+		*/
 
 		/*
         [NotNull]
         [DebuggerStepThrough]
-        public static async PooledValueTask StartAnySQLBrowsers( TimeSpan timeout ) {
-            await PooledValueTask.Run( () => {
+        public static async Task StartAnySQLBrowsers( TimeSpan timeout ) {
+            await Task.Run( () => {
                 "Searching for any database servers...".Log();
 
                 var machines = new ConcurrentHashset<String> {
@@ -1416,9 +1433,9 @@ namespace Librainian.Databases {
 		}
 
 		internal static IEnumerable<SqlDataRecord> CreateSqlDataRecords<T>( String columnName, SqlDbType sqlDbType, IEnumerable<T> rows ) {
-			var metaData = new SqlMetaData[ 1 ];
-			metaData[ 0 ] = new SqlMetaData( columnName, sqlDbType );
-			SqlDataRecord record = new(metaData);
+			var metaData = new SqlMetaData[1];
+			metaData[0] = new SqlMetaData( columnName, sqlDbType );
+			SqlDataRecord record = new( metaData );
 			foreach ( var row in rows ) {
 				if ( row is not null ) {
 					record.SetValue( 0, row );
@@ -1427,6 +1444,8 @@ namespace Librainian.Databases {
 				yield return record;
 			}
 		}
+
+		public String? GetConnectionString() => this._connectionString;
 
 	}
 

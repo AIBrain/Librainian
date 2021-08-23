@@ -320,12 +320,10 @@ namespace Librainian.Databases {
 			}
 
 			try {
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var command = new SqlCommand( query, this.OpenConnection() ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
 						CommandType = commandType
 					};
+				await using var asyncDisposable = command.ConfigureAwait( false );
 
 				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
@@ -444,20 +442,16 @@ namespace Librainian.Databases {
 			try {
 				DataTable table;
 
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType
-					} ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
+					CommandType = commandType
+				};
+				await using ( command.ConfigureAwait( false ) ) {
 					if ( parameters != null ) {
 						command.Parameters?.AddRange( parameters );
 					}
 
-#if NET5_0_OR_GREATER
-					await
-#endif
-						using var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+					var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+					await using var _ = reader.ConfigureAwait( false );
 					table = reader.ToDataTable();
 				}
 
@@ -478,12 +472,10 @@ namespace Librainian.Databases {
 			using var table = new DataTable();
 
 			try {
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var command = new SqlCommand( query, this.OpenConnection() ) {
+					var command = new SqlCommand( query, this.OpenConnection() ) {
 						CommandType = commandType
 					};
+				await using var _ = command.ConfigureAwait( false );
 
 				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
@@ -491,10 +483,8 @@ namespace Librainian.Databases {
 
 				table.BeginLoadData();
 
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) {
+				var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false );
+				await using ( reader.ConfigureAwait( false ) ) {
 					table.Load( reader );
 				}
 
@@ -571,13 +561,11 @@ namespace Librainian.Databases {
 			}
 
 			try {
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var command = new SqlCommand( query, this.OpenConnection() ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
 						CommandType = commandType,
 						CommandTimeout = 0
 					};
+				await using var _ = command.ConfigureAwait( false );
 
 				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );

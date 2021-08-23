@@ -260,6 +260,10 @@ namespace Librainian.FileSystem {
 
 				Debug.Assert( startingVcn == 0 );
 
+				if ( startingVcn != 0 ) {
+					throw new InvalidOperationException( $"{nameof(startingVcn)} is not 0." );
+				}
+
 				pDest = ( IntPtr )( ( Int64 )pDest + 8 );
 
 				// now pDest points at an array of pairs of Int64s.
@@ -342,6 +346,10 @@ namespace Librainian.FileSystem {
 				var startingLcn = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
 
 				Debug.Assert( startingLcn == 0 );
+
+				if ( startingLcn != 0 ) {
+					throw new InvalidOperationException( $"{nameof( startingLcn )} is not 0." );
+				}
 
 				pDest = ( IntPtr )( ( Int64 )pDest + 8 );
 				var bitmapSize = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );

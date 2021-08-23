@@ -116,7 +116,7 @@ namespace Librainian.FileSystem {
 
 			await fileCopyManager.LoadFilesToBeCopied( sourceFiles, destinationFolder, overwriteDestinationDocuments, cancellationToken ).ConfigureAwait( false );
 
-			await foreach ( var sourceFileTask in fileCopyManager.FilesToBeCopied().WithCancellation( cancellationToken ) ) {
+			await foreach ( var sourceFileTask in fileCopyManager.FilesToBeCopied().WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
 				var fileCopyData = await sourceFileTask.ConfigureAwait( false );
 
 				var dcs = new DocumentCopyStatistics {
@@ -198,7 +198,7 @@ namespace Librainian.FileSystem {
 			//First check across all known drives.
 			var found = false;
 
-			await foreach ( var drive in Disk.GetDrives( cancellationToken ) ) {
+			await foreach ( var drive in Disk.GetDrives( cancellationToken ).ConfigureAwait( false ) ) {
 				var path = Path.Combine( drive.RootDirectory, folderName );
 				var asFolder = new Folder( path );
 
@@ -215,8 +215,8 @@ namespace Librainian.FileSystem {
 
 			//Next, check subfolders, beginning with the first drive.
 
-			await foreach ( var drive in Disk.GetDrives( cancellationToken ) ) {
-				await foreach ( var folder in drive.EnumerateFolders( cancellationToken ) ) {
+			await foreach ( var drive in Disk.GetDrives( cancellationToken ).ConfigureAwait( false ) ) {
+				await foreach ( var folder in drive.EnumerateFolders( cancellationToken ).ConfigureAwait( false ) ) {
 					var parts = SplitPath( ( Folder )folder ); //TODO fix this
 
 					if ( parts.Any( s => s.Like( folderName ) ) ) {

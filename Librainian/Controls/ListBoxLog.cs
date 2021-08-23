@@ -315,6 +315,7 @@ namespace Librainian.Controls {
 		private void KeyDownHandler( Object? sender, KeyEventArgs e ) {
 			if ( e.Modifiers == Keys.Control && e.KeyCode == Keys.C ) {
 				//this.CopyToClipboard();	//TODO
+				this.Nop();	//just to stop the "convert to static" prompt
 			}
 		}
 

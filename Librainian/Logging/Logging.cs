@@ -210,8 +210,7 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void TimeDebug( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
-				var m = showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
-				Debug.WriteLine( m );
+				Debug.WriteLine( showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}" );
 			}
 			else {
 				Debug.Write( message );
@@ -236,12 +235,11 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void TraceLine( this String message ) => System.Diagnostics.Trace.WriteLine( message );
 
-		[Conditional( "DEBUG" )]
+		[Conditional( "TRACE" )]
 		[DebuggerStepThrough]
 		public static void TraceWithTime( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
-				var m = showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}";
-				m.TraceLine();
+				(showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}").TraceLine();
 			}
 			else {
 				message.Trace();

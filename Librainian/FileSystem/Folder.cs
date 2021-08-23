@@ -283,7 +283,7 @@ namespace Librainian.FileSystem {
 
 		public async IAsyncEnumerable<Document> EnumerateDocuments( IEnumerable<String> searchPatterns, [EnumeratorCancellation] CancellationToken cancelToken ) {
 			foreach ( var searchPattern in searchPatterns ) {
-				await foreach ( var document in this.EnumerateDocuments( searchPattern, cancelToken ) ) {
+				await foreach ( var document in this.EnumerateDocuments( searchPattern, cancelToken ).ConfigureAwait( false ) ) {
 					yield return document;
 				}
 			}
@@ -343,7 +343,7 @@ namespace Librainian.FileSystem {
 
 						switch ( searchOption ) {
 							case SearchOption.AllDirectories: {
-								await foreach ( var info in subFolder.EnumerateFolders( searchPattern, searchOption, cancellationToken ) ) {
+								await foreach ( var info in subFolder.EnumerateFolders( searchPattern, searchOption, cancellationToken ).ConfigureAwait( false ) ) {
 									yield return info;
 								}
 

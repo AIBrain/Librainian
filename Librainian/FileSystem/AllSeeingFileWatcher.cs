@@ -30,11 +30,13 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Collections.Concurrent;
 	using System.IO;
+	using System.Linq;
+	using System.Threading.Tasks;
 	using Collections.Lists;
 	using Logging;
 	using Utilities.Disposables;
 
-	public class AllSeeingFileWatcher : ABetterClassDispose {
+	public class AllSeeingFileWatcher : ABetterClassDisposeAsync {
 
 		private ConcurrentList<FileSystemWatcher> FileWatchers { get; } = new();
 
@@ -54,9 +56,9 @@ namespace Librainian.FileSystem {
 
 		private void OnRenamed( Object? sender, RenamedEventArgs? args ) => this.Renamed[ DateTime.UtcNow ] = args;
 
-		public override void DisposeManaged() {
+		public override async ValueTask DisposeManagedAsync() {
 			this.Nop();
-			this.Stop();
+			await this.Stop().ConfigureAwait( false );
 		}
 
 		public void Start() {
@@ -84,8 +86,8 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		public void Stop() {
-			foreach ( var watcher in this.FileWatchers ) {
+		public async Task Stop() {
+			await foreach ( var watcher in this.FileWatchers.ToAsyncEnumerable() ) {
 				using ( watcher ) { }
 			}
 		}

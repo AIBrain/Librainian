@@ -39,6 +39,7 @@ namespace Librainian {
 	using System.Runtime.CompilerServices;
 	using System.Text;
 	using System.Threading;
+	using System.Windows.Forms;
 	using Exceptions;
 	using Measurement;
 	using Newtonsoft.Json;
@@ -328,12 +329,14 @@ namespace Librainian {
 			(array[ index1 ], array[ index2 ]) = (array[ index2 ], array[ index1 ]);
 		}
 
-		public static void YieldFor( TimeSpan timeSpan ) {
+		private static void YieldFor( TimeSpan timeSpan ) {
 			var stopwatch = Stopwatch.StartNew();
 			while ( stopwatch.Elapsed < timeSpan ) {
 				Thread.Yield();
 			} 
 		}
+
+		public static String GetApplicationName( String defaultOtherwise ) => Application.ProductName.Trimmed() ?? defaultOtherwise.Trimmed() ?? throw new NullException(nameof( GetApplicationName));
 
 	}
 

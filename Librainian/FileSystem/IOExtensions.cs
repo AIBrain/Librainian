@@ -63,7 +63,7 @@ namespace Librainian.FileSystem {
 			}
 
 			try {
-				await foreach ( var file in folder.EnumerateDocuments( searchPattern, cancelToken ) ) {
+				await foreach ( var file in folder.EnumerateDocuments( searchPattern, cancelToken ).ConfigureAwait( false ) ) {
 					try {
 						onFindFile?.Invoke( file );
 					}
@@ -163,7 +163,7 @@ namespace Librainian.FileSystem {
 			CancellationToken cancelToken
 		) {
 			try {
-				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ) ) {
+				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).ConfigureAwait( false ) ) {
 					try {
 						onEachDirectory?.Invoke( subFolder );
 					}
@@ -420,7 +420,7 @@ namespace Librainian.FileSystem {
 						case SearchOption.AllDirectories: {
 							var subInfo = new DirectoryInfo( subFolder );
 
-							await foreach ( var info in subInfo.BetterEnumerateDirectories( cancellationToken, searchPattern ) ) {
+							await foreach ( var info in subInfo.BetterEnumerateDirectories( cancellationToken, searchPattern ).ConfigureAwait( false ) ) {
 								yield return info;
 							}
 
@@ -718,7 +718,7 @@ namespace Librainian.FileSystem {
 
 			var searchPatterns = fileSearchPatterns.ToList();
 
-			await foreach ( var searchPattern in searchPatterns.ToAsyncEnumerable().WithCancellation( cancelToken ) ) {
+			await foreach ( var searchPattern in searchPatterns.ToAsyncEnumerable().WithCancellation( cancelToken ).ConfigureAwait( false ) ) {
 				if ( String.IsNullOrWhiteSpace( searchPattern ) ) {
 					continue;
 				}
@@ -814,7 +814,7 @@ namespace Librainian.FileSystem {
 				}
 
 				if ( foldersFound.Add( startingFolder ) ) {
-					await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.AllDirectories, cancellationToken ) ) {
+					await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.AllDirectories, cancellationToken ).ConfigureAwait( false ) ) {
 						if ( foldersFound.Add( subFolder ) ) {
 							//recurse into
 							await GrabAllFolders( subFolder, foldersFound, cancellationToken ).ConfigureAwait( false );
@@ -1050,7 +1050,8 @@ namespace Librainian.FileSystem {
 					var sb = new StringBuilder( bufferSize.Value );
 					var buffer = new Byte[ bufferSize.Value ];
 
-					await using var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true );
+					var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true );
+					await using var _ = sourceStream.ConfigureAwait( false );
 
 					Int32 numRead;
 

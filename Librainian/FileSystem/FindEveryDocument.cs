@@ -95,11 +95,11 @@ namespace Librainian.FileSystem {
 			this.FoldersFound = new ActionBlock<IFolder>( async parent => {
 				await PauseWhilePaused().ConfigureAwait( false );
 
-				await foreach ( var folder in parent.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ) ) {
+				await foreach ( var folder in parent.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ).ConfigureAwait( false ) ) {
 					await AddFoundFolder( folder ).ConfigureAwait( false );
 				}
 
-				await foreach ( var document in parent.EnumerateDocuments( "*.*", this.CancellationToken ) ) {
+				await foreach ( var document in parent.EnumerateDocuments( "*.*", this.CancellationToken ).ConfigureAwait( false ) ) {
 					await AddFoundDocument( document ).ConfigureAwait( false );
 				}
 			} );
@@ -148,7 +148,7 @@ namespace Librainian.FileSystem {
 
 				await PauseWhilePaused().ConfigureAwait( false );
 
-				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ) ) {
+				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ).ConfigureAwait( false ) ) {
 					await PauseWhilePaused().ConfigureAwait( false );
 
 					this.SetCurrentStatus( $"Found main folder {folder.FullPath.SmartQuote()}." );

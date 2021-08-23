@@ -36,10 +36,10 @@ namespace Librainian.Controls {
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using System.Windows;
+	//using System.Windows;
 	using System.Windows.Forms;
-	using System.Windows.Media;
-	using System.Windows.Threading;
+	//using System.Windows.Media;
+	//using System.Windows.Threading;
 	using Collections.Extensions;
 	using Converters;
 	using Exceptions;
@@ -324,14 +324,9 @@ namespace Librainian.Controls {
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
 		[DebuggerStepThrough]
-		public static void ForeColor( this Control control, Color value, RefreshOrInvalidate redraw ) {
-			control.InvokeAction( Action, redraw );
+		public static void ForeColor( this Control control, Color value, RefreshOrInvalidate redraw ) => control.InvokeAction( () => control.ForeColor = value, redraw );
 
-			void Action() {
-				control.ForeColor = value;
-			}
-		}
-
+		/*
 		/// <summary>
 		///     wpf, I think
 		/// </summary>
@@ -340,7 +335,9 @@ namespace Librainian.Controls {
 			window.WindowState = WindowState.Maximized;
 			window.WindowStyle = WindowStyle.None;
 		}
+		*/
 
+		/*
 		/// <summary>
 		///     wpf, I think
 		/// </summary>
@@ -354,6 +351,7 @@ namespace Librainian.Controls {
 				window.Icon = icon;
 			}
 		}
+		*/
 
 		/// <summary>
 		///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
@@ -485,13 +483,8 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Maximum( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
-			control.InvokeAction( Action, redraw );
-
-			void Action() {
-				control.Maximum = value;
-			}
-		}
+		public static void Maximum( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) =>
+			control.InvokeAction( () => control.Maximum = value, redraw );
 
 		/// <summary>
 		///     Threadsafe get.

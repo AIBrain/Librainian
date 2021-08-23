@@ -298,7 +298,8 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
@@ -307,7 +308,8 @@ namespace Librainian.FileSystem {
 			var buffer = new Byte[ sizeof( Byte ) ];
 			var length = buffer.Length;
 
-			await using var buffered = new BufferedStream( stream, optimal.Value );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return buffer[ 0 ];
@@ -323,7 +325,8 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
@@ -332,7 +335,8 @@ namespace Librainian.FileSystem {
 			var buffer = new Byte[ sizeof( Int32 ) ];
 			var length = buffer.Length;
 
-			await using var buffered = new BufferedStream( stream, optimal.Value );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return BitConverter.ToInt32( buffer, 0 );
@@ -349,7 +353,8 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
@@ -358,7 +363,8 @@ namespace Librainian.FileSystem {
 			var buffer = new Byte[ sizeof( Int64 ) ];
 			var length = buffer.Length;
 
-			await using var buffered = new BufferedStream( stream, optimal.Value );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return BitConverter.ToInt64( buffer, 0 );
@@ -374,7 +380,8 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
@@ -383,7 +390,8 @@ namespace Librainian.FileSystem {
 			var buffer = new Byte[ sizeof( Decimal ) ];
 			var length = buffer.Length;
 
-			await using var buffered = new BufferedStream( stream, optimal.Value );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return new Guid( buffer );
@@ -399,7 +407,8 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
@@ -408,7 +417,8 @@ namespace Librainian.FileSystem {
 			var buffer = new Byte[ sizeof( UInt64 ) ];
 			var length = buffer.Length;
 
-			await using var buffered = new BufferedStream( stream, sizeof( UInt64 ) );
+			var buffered = new BufferedStream( stream, sizeof( UInt64 ) );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return BitConverter.ToUInt64( buffer, 0 );
@@ -542,9 +552,11 @@ namespace Librainian.FileSystem {
 				using var crc32 = new CRC32( ( UInt32 )size.Value, ( UInt32 )size.Value );
 
 				//TODO Would BufferedStream be any faster here?
-				await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, size.Value, FileOptions.SequentialScan );
+				var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, size.Value, FileOptions.SequentialScan );
+				await using var _ = fileStream.ConfigureAwait( false );
 
-				await using var buffered = new BufferedStream( fileStream, size.Value );
+				var buffered = new BufferedStream( fileStream, size.Value );
+				await using var __ = buffered.ConfigureAwait( false );
 
 				var hash = await crc32.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
 
@@ -580,8 +592,10 @@ namespace Librainian.FileSystem {
 					using var crc64 = new CRC64( size.Value, size.Value );
 
 					//TODO Would BufferedStream be any faster here?
-					await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
-					await using var buffered = new BufferedStream( fileStream, optimal.Value );
+					var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+					await using var _ = fileStream.ConfigureAwait( false );
+					var buffered = new BufferedStream( fileStream, optimal.Value );
+					await using var __ = buffered.ConfigureAwait( false );
 
 					var hash = await crc64.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
 
@@ -617,8 +631,10 @@ namespace Librainian.FileSystem {
 					var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
 					using var crc64 = new CRC64( size.Value, size.Value );
 
-					await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
-					await using var buffered = new BufferedStream( fileStream, optimal.Value );
+					var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+					await using var _ = fileStream.ConfigureAwait( false );
+					var buffered = new BufferedStream( fileStream, optimal.Value );
+					await using var __ = buffered.ConfigureAwait( false );
 
 					var hash = await crc64.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
 
@@ -1221,7 +1237,8 @@ namespace Librainian.FileSystem {
 
 			var offset = 0;
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 
@@ -1229,7 +1246,8 @@ namespace Librainian.FileSystem {
 				return Status.Exception;
 			}
 
-			await using var buffered = new BufferedStream( stream );
+			var buffered = new BufferedStream( stream );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			Int32 bytesRead;
 
@@ -1265,13 +1283,15 @@ namespace Librainian.FileSystem {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
 				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
 			}
 
-			await using var buffered = new BufferedStream( stream, optimal.Value ); //TODO Is this buffering twice??
+			var buffered = new BufferedStream( stream, optimal.Value ); //TODO Is this buffering twice??
+			await using var __ = buffered.ConfigureAwait( false );
 
 			using var br = new BinaryReader( buffered );
 
@@ -1371,8 +1391,10 @@ namespace Librainian.FileSystem {
 
 			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false ) ?? 4096;
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal, FileOptions.SequentialScan );
-			await using var buffered = new BufferedStream( stream, optimal );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
+			var buffered = new BufferedStream( stream, optimal );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			using var reader = new StreamReader( buffered );
 

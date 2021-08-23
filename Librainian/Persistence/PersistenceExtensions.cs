@@ -136,7 +136,7 @@ namespace Librainian.Persistence {
 
 				//enumerate all the files with the wildcard *.extension
 
-				await foreach ( var document in folder.EnumerateDocuments( $"*.{extension}", cancellationToken ) ) {
+				await foreach ( var document in folder.EnumerateDocuments( $"*.{extension}", cancellationToken ).ConfigureAwait( false ) ) {
 					var length = await document.Length( cancellationToken ).ConfigureAwait( false );
 
 					if ( length < 1 ) {
@@ -352,7 +352,7 @@ namespace Librainian.Persistence {
 							progress.Report( soFar );
 						}
 
-						await using ( writer ) { }
+						await using ( writer.ConfigureAwait( false ) ) { }
 
 						fileName = $"{hereNow}.xml"; //let the file name change over time so we don't have bigHuge monolithic files.
 						using var newdocument = new Document( folder, fileName );
@@ -364,7 +364,7 @@ namespace Librainian.Persistence {
 					await writer.WriteLineAsync( data ).ConfigureAwait( false );
 				}
 
-				await using ( writer ) { }
+				await using ( writer.ConfigureAwait( false ) ) { }
 
 				stopwatch.Stop();
 				String.Format( "Serialized {1} {3} in {0} into {2} files.", stopwatch.Elapsed.Simpler(), itemCount, fileCount, calledWhat ).Info();

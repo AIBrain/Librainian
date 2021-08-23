@@ -59,11 +59,11 @@ namespace Librainian.Collections.Sets {
 		public T this[ Int32 index ] {
 			[NotNull]
 			get {
-				var list = this.Set.Keys;
-
 				if ( index < 0 ) {
 					throw new IndexOutOfRangeException( $"The index {index} is less than 0." );
 				}
+
+				var list = this.Set.Keys;
 
 				if ( index > list.Count ) {
 					throw new IndexOutOfRangeException( $"The index {index} is greater than items in set ({list.Count})." );

@@ -29,7 +29,7 @@ namespace Librainian.Databases {
 	using System;
 	using Microsoft.Data.SqlClient;
 
-	public class SqlServerInfo {
+	public record SqlServerInfo( String Version ) {
 
 		public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }
 
@@ -38,8 +38,6 @@ namespace Librainian.Databases {
 		/// <summary>
 		///     The datetime on the Server in UTC.
 		/// </summary>
-		public DateTime? UTCDateTime { get; set; }
-
-		public String? Version { get; set; }
+		public DateTimeOffset? UTCDateTime { get; set; }
 	}
 }

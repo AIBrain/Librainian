@@ -65,7 +65,7 @@ namespace Librainian.FileSystem {
 			}
 
 			//Update the MFT
-			await foreach ( var document in folder.EnumerateDocuments( "*.*", CTS.Token ) ) {
+			await foreach ( var document in folder.EnumerateDocuments( "*.*", CTS.Token ).ConfigureAwait( false ) ) {
 				if ( CTS.IsCancellationRequested ) {
 					return;
 				}
@@ -83,7 +83,7 @@ namespace Librainian.FileSystem {
 			}
 
 			//And then scan down into any subfolders.
-			await foreach ( var subFolder in folder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CTS.Token ) ) {
+			await foreach ( var subFolder in folder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CTS.Token ).ConfigureAwait( false ) ) {
 				if ( CTS.IsCancellationRequested ) {
 					return;
 				}

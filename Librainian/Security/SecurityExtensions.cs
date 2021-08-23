@@ -668,13 +668,15 @@ namespace Librainian.Security {
 				aes.IV = rgb.GetBytes( aes.BlockSize >> 3 );
 				aes.Mode = CipherMode.CBC;
 
-				await using var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
+				var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
+				await using var _ = outputStream.ConfigureAwait( false );
 
 				using var decryptor = aes.CreateDecryptor();
 
 				var inputStream = new FileStream( input.FullPath, FileMode.Open, FileAccess.Read );
 
-				await using var cs = new CryptoStream( inputStream, decryptor, CryptoStreamMode.Read );
+				var cs = new CryptoStream( inputStream, decryptor, CryptoStreamMode.Read );
+				await using var __ = cs.ConfigureAwait( false );
 
 				Int32 data;
 
@@ -779,7 +781,8 @@ namespace Librainian.Security {
 				aes.Key = rgb.GetBytes( aes.KeySize >> 3 );
 				aes.IV = rgb.GetBytes( aes.BlockSize >> 3 );
 
-				await using var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
+				var outputStream = new FileStream( output.FullPath, FileMode.Create, FileAccess.Write );
+				await using var _ = outputStream.ConfigureAwait( false );
 
 				if ( !outputStream.CanWrite ) {
 					exceptions.Add( new IOException( $"Unable to write to {output.FullPath}." ) );
@@ -789,9 +792,11 @@ namespace Librainian.Security {
 
 				using var encryptor = aes.CreateEncryptor();
 
-				await using var cryptoStream = new CryptoStream( outputStream, encryptor, CryptoStreamMode.Write );
+				var cryptoStream = new CryptoStream( outputStream, encryptor, CryptoStreamMode.Write );
+				await using var __ = cryptoStream.ConfigureAwait( false );
 
-				await using var inputStream = new FileStream( input.FullPath, FileMode.Open, FileAccess.Read );
+				var inputStream = new FileStream( input.FullPath, FileMode.Open, FileAccess.Read );
+				await using var ___ = inputStream.ConfigureAwait( false );
 
 				if ( !inputStream.CanRead || !inputStream.CanSeek ) {
 					exceptions.Add( new IOException( $"Unable to read from {input.FullPath}." ) );

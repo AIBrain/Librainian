@@ -35,9 +35,7 @@ namespace Librainian.Internet {
 
 			// The downloaded resource ends up in the variable named content.
 
-			await
-
-			using var content = new MemoryStream();
+			await using var content = new MemoryStream();
 
 			// Send the request to the Internet resource and wait for the response.
 

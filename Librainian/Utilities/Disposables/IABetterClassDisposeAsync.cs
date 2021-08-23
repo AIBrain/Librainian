@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,25 +23,26 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Singleton.cs" last touched on 2021-08-20 at 8:00 AM by Protiguous.
+// File "IABetterClassDisposeAsync.cs" last touched on 2021-08-21 at 2:05 PM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Utilities.Disposables {
 
-	/// <summary>Singleton Pattern. Judith Bishop Nov 2007</summary>
-	/// <remarks>Untested.</remarks>
-	public class Singleton<T> where T : class, new() {
+	using System;
+	using System.Threading.Tasks;
 
-		private Singleton() { }
+	public interface IABetterClassDisposeAsync : IAsyncDisposable {
 
-		public static T Instance => SingletonCreator.SingleInstance;
+		Boolean HasDisposedManaged { get; set; }
 
-		public static class SingletonCreator {
+		Boolean HasDisposedNative { get; set; }
 
-			static SingletonCreator() { }
+		Boolean HasSuppressedFinalize { get; set; }
 
-			internal static T SingleInstance { get; } = new();
+		Boolean IsDisposed { get; }
 
-		}
+		ValueTask DisposeManagedAsync();
+
+		ValueTask DisposeNativeAsync();
 
 	}
 

@@ -167,6 +167,10 @@ namespace Librainian.Persistence {
 
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as DocumentInfo );
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		// ReSharper disable once NonReadonlyMemberInGetHashCode
 		public override Int32 GetHashCode() => this.Length?.GetHashCode() ?? 0;
 
@@ -183,8 +187,6 @@ namespace Librainian.Persistence {
 			var watch = Stopwatch.StartNew();
 			$"[{Environment.CurrentManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
-			var total = 3 * await document.Size( cancellationToken ).ConfigureAwait( false );
-
 			var addHash = document.HarkerHash32( cancellationToken ).AsValueTask().AsTask();
 			var crc32 = document.CRC32( cancellationToken ).AsValueTask().AsTask();
 			var crc64 = document.CRC64( cancellationToken ).AsValueTask().AsTask();
@@ -199,8 +201,8 @@ namespace Librainian.Persistence {
 
 			watch.Stop();
 
-			var per = total / ( Decimal )watch.ElapsedMilliseconds;
-			$"[{Environment.CurrentManagedThreadId}] Completed hashings on {this.AbsolutePath}...at {per:F} bytes per millisecond.".Verbose();
+			$"[{Environment.CurrentManagedThreadId}] Completed hashings on {this.AbsolutePath}...at {3 * await document.Size( cancellationToken ).ConfigureAwait( false ) / ( Decimal )watch.ElapsedMilliseconds:F} bytes per millisecond."
+				.Verbose();
 		}
 
 		/// <summary>
