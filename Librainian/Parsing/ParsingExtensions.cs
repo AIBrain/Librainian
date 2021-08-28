@@ -145,7 +145,7 @@ namespace Librainian.Parsing {
 
 			var startIndex = self.Length - count;
 
-			return self[ startIndex.. ];
+			return self[ startIndex.. ] ?? String.Empty;
 		}
 
 		/// <summary>
@@ -164,15 +164,15 @@ namespace Librainian.Parsing {
 		[DebuggerStepThrough]
 		[Pure]
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static String RightSlice( this ReadOnlySpan<Char> self, Int32 count ) {
-			if ( count <= 0 ) {
+		public static ReadOnlySpan<Char> Right( this ReadOnlySpan<Char> self, Int32 count ) {
+			if ( count <= 0 || self.IsEmpty ) {
 				return String.Empty;
 			}
 
 			var startIndex = self.Length - count;
 
-			return self[ startIndex.. ].ToString();
-			
+			return self[ startIndex.. ];
+
 		}
 
 		/// <summary>Return <paramref name="self" />, up the <paramref name="maxlength" />.</summary>

@@ -23,36 +23,31 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompareRight_SubstringRangeSlice.cs" last touched on 2021-08-23 at 5:45 AM by Protiguous.
+// File "CompareSubstringVersusSlice.cs" last touched on 2021-08-23 at 6:25 AM by Protiguous.
 
 namespace Benchmarks {
 
 	using System;
 	using BenchmarkDotNet.Attributes;
-	using Librainian.Exceptions;
-	using Librainian.Parsing;
 
 	[MemoryDiagnoser]
-	public class CompareRight_SubstringRangeSlice {
+	public class CompareSubstringVersusSlice {
 
 		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
 
 		[Benchmark]
-		public void WithRightSlice() {
-			var local = Default_TestAddress[ .. ];
-			var right = local.AsSpan().Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
-			}
+		public String GetCity() {
+			var cityAndPostalCode = Default_TestAddress.Substring( 37, 15 );
+			var city = cityAndPostalCode.Substring( 7, 8 );
+			return city;
 		}
 
-		[Benchmark( Baseline = true )]
-		public void WithRightOldWay() {
-			var local = Default_TestAddress[..];
-			var right = local.Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
-			}
+		[Benchmark]
+		public String GetCity2() {
+			ReadOnlySpan<Char> addressAsSpan = Default_TestAddress;
+			var cityAndPostalCode = addressAsSpan.Slice( 37, 15 );
+			var city = cityAndPostalCode.Slice( 7, 8 );
+			return city.ToString();
 		}
 
 	}

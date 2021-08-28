@@ -36,7 +36,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using Exceptions;
 	using JetBrains.Annotations;
 
-	public static class Common {
+	public static class PriCommon {
 
 		private const UInt32 ProtectedDiscretionaryAcl = 0x80000000;
 

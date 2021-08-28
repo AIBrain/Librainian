@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "ControlExtensions.cs" last touched on 2021-08-28 at 4:27 PM by Protiguous.
 
 #nullable enable
 
@@ -31,15 +31,14 @@ namespace Librainian.Controls {
 
 	using System;
 	using System.Collections;
+	using System.ComponentModel;
 	using System.Diagnostics;
+	using System.Drawing;
 	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
-	//using System.Windows;
 	using System.Windows.Forms;
-	//using System.Windows.Media;
-	//using System.Windows.Threading;
 	using Collections.Extensions;
 	using Converters;
 	using Exceptions;
@@ -49,7 +48,9 @@ namespace Librainian.Controls {
 	using OperatingSystem;
 	using PooledAwait;
 	using Threading;
-	using Color = System.Drawing.Color;
+	//using System.Windows;
+	//using System.Windows.Media;
+	//using System.Windows.Threading;
 
 	public static class ControlExtensions {
 
@@ -279,7 +280,7 @@ namespace Librainian.Controls {
 			spanOff.Value.CreateTimer( OnTick ).Once().Start();
 
 			void Action() {
-				(control.ForeColor, control.BackColor) = (control.BackColor, control.ForeColor);
+				( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor );
 				control.Refresh();
 			}
 
@@ -379,6 +380,7 @@ namespace Librainian.Controls {
 				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
 					action += MaybeRedraw;
 				}
+
 				control.BeginInvoke( action );
 			}
 			else {
@@ -387,7 +389,25 @@ namespace Librainian.Controls {
 					MaybeRedraw();
 				}
 			}
+		}
 
+		public static TResult? SafeInvoke<T,TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
+			if ( synchronizeInvoke.InvokeRequired ) {
+				var result = synchronizeInvoke.BeginInvoke( call, new Object[] { synchronizeInvoke } );
+				var endResult = synchronizeInvoke.EndInvoke( result );
+				return ( TResult? )endResult;
+			}
+
+			return call( synchronizeInvoke );
+		}
+
+		public static void SafeInvoke<T>( this T isi, Action<T> call ) where T : ISynchronizeInvoke {
+			if ( isi.InvokeRequired ) {
+				isi.BeginInvoke( call, new Object[] { isi } );
+			}
+			else {
+				call( isi );
+			}
 		}
 
 		/*
@@ -445,7 +465,7 @@ namespace Librainian.Controls {
 		}
 
 		public static Color MakeTransparent( this Color thisColor, Double transparentPercent ) {
-			transparentPercent = 255 - ( transparentPercent.ForceBounds( 0, 1 ) * 255 );
+			transparentPercent = 255 - transparentPercent.ForceBounds( 0, 1 ) * 255;
 
 			return Color.FromArgb( thisColor.ToArgb() + ( Int32 )transparentPercent * 0x1000000 );
 		}
@@ -515,7 +535,6 @@ namespace Librainian.Controls {
 			control.InvokeAction( control.PerformClick, RefreshOrInvalidate.Neither );
 		}
 
-
 		/// <summary>
 		///     Threadsafe <see cref="Button.PerformClick" />.
 		/// </summary>
@@ -555,7 +574,7 @@ namespace Librainian.Controls {
 			}
 
 			while ( browser.Document != null && browser.Document.GetElementsByTagName( tagName ).Count > keepAtMost ) {
-				var item = browser.Document.GetElementsByTagName( tagName )[0];
+				var item = browser.Document.GetElementsByTagName( tagName )[ 0 ];
 
 				if ( item is not null ) {
 					item.OuterHtml = String.Empty;
@@ -685,12 +704,7 @@ namespace Librainian.Controls {
 		public static void Text( this Control? control, String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 			control?.InvokeAction( () => control.Text = value, redraw );
 
-		public static void TextAdd(
-			this RichTextBox? textBox,
-			String message,
-			Int32 maxlines,
-			RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate
-		) {
+		public static void TextAdd( this RichTextBox? textBox, String message, Int32 maxlines, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			if ( textBox is null ) {
 				return;
 			}
@@ -792,13 +806,7 @@ namespace Librainian.Controls {
 		/// <param name="value">  </param>
 		/// <param name="maximum"></param>
 		/// <param name="redraw"></param>
-		public static void Values(
-			this ProgressBar control,
-			Int32 minimum,
-			Int32 value,
-			Int32 maximum,
-			RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate
-		) {
+		public static void Values( this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			if ( control is null ) {
 				throw new ArgumentEmptyException( nameof( control ) );
 			}
@@ -818,15 +826,14 @@ namespace Librainian.Controls {
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
 		/// <param name="redraw"></param>
-		public static void Visible( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) => control.InvokeAction( () => control.Visible = value, redraw );
+		public static void Visible( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) =>
+			control.InvokeAction( () => control.Visible = value, redraw );
 
 		public static Boolean Yes( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 
 		public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 
-
 		/// <summary>
-		/// 
 		/// </summary>
 		/// <param name="topLeftX"></param>
 		/// <param name="topLeftY"></param>
@@ -836,14 +843,13 @@ namespace Librainian.Controls {
 		/// <param name="nHeightEllipse"></param>
 		/// <returns></returns>
 		/// <code>
-		/// protected override void OnPaint(PaintEventArgs pevent) {
-		///		base.OnPaint( pevent);
-		///		Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
-		/// }
-		/// </code>
+		///  protected override void OnPaint(PaintEventArgs pevent) {
+		/// 		base.OnPaint( pevent);
+		/// 		Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
+		///  }
+		///  </code>
 		[DllImport( DLL.GDI32, EntryPoint = "CreateRoundRectRgn" )]
 		public static extern IntPtr CreateRoundRectRgn( Int32 topLeftX, Int32 topLeftY, Int32 bottomRightX, Int32 bottomRightY, Int32 nWidthEllipse, Int32 nHeightEllipse );
-
 
 	}
 

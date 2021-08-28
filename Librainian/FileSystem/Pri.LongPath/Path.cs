@@ -1,29 +1,29 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Path.cs" last touched on 2021-08-28 at 8:06 AM by Protiguous.
 
 #nullable enable
 
@@ -41,10 +41,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 	public static class Path {
 
-		[JetBrains.Annotations.NotNull]
 		public const String LongPathPrefix = @"\\?\";
 
-		[JetBrains.Annotations.NotNull]
 		public const String UNCLongPathPrefix = @"\\?\UNC\";
 
 		public const Char VolumeSeparatorChar = ':';
@@ -66,8 +64,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 		/// <summary>
-		/// <para>Throws if the <paramref name="path"/> is blank.</para>
-		/// <para>Checks if the <paramref name="path"/> starts with \\?\</para>
+		///     <para>Throws if the <paramref name="path" /> is blank.</para>
+		///     <para>Checks if the <paramref name="path" /> starts with \\?\</para>
 		/// </summary>
 		/// <param name="path"></param>
 		[DebuggerStepThrough]
@@ -83,13 +81,12 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 		[DebuggerStepThrough]
-		public static String ChangeExtension( this String filename, String? extension ) =>
-			System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
+		public static String ChangeExtension( this String filename, String? extension ) => System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
 
 		/// <summary>
-		/// <para>Throws if blank.</para>
-		/// <para>Checks if the <paramref name="path"/> starts with \\?\</para>
-		/// <para>If it doesn't, it calls <see cref="AddLongPathPrefix"/>.</para>
+		///     <para>Throws if blank.</para>
+		///     <para>Checks if the <paramref name="path" /> starts with \\?\</para>
+		///     <para>If it doesn't, it calls <see cref="AddLongPathPrefix" />.</para>
 		/// </summary>
 		/// <param name="path"></param>
 		public static String CheckAddLongPathPrefix( this String path ) {
@@ -102,7 +99,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			var maxPathLimit = PriNativeMethods.MAX_PATH;
 
 			if ( Uri.TryCreate( path, UriKind.Absolute, out var uri ) && uri.IsUnc ) {
-
 				// What's going on here?
 				// Empirical evidence shows that Windows has trouble dealing with UNC paths
 				// longer than MAX_PATH *minus* the length of the "\\hostname\" prefix.
@@ -137,12 +133,10 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return $"{path1}{DirectorySeparatorChar}{path2}";
 		}
 
-		public static String CombinePaths( this String path1, String path2,
-					String path3 ) => CombinePaths( path1, path2 ).CombinePaths( path3 );
+		public static String CombinePaths( this String path1, String path2, String path3 ) => CombinePaths( path1, path2 ).CombinePaths( path3 );
 
-		public static String CombinePaths( this String path1, String path2,
-					String path3, String path4 ) =>
-					CombinePaths( path1.CombinePaths( path2 ), path3 ).CombinePaths( path4 );
+		public static String CombinePaths( this String path1, String path2, String path3, String path4 ) =>
+			CombinePaths( path1.CombinePaths( path2 ), path3 ).CombinePaths( path4 );
 
 		public static String CombinePaths( params String[] paths ) {
 			if ( paths == null ) {
@@ -223,8 +217,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static String? GetFileNameWithoutExtension( this String? path ) => System.IO.Path.GetFileNameWithoutExtension( path );
 
 		/// <summary>
-		/// <para>If the <paramref name="path"/> is UNC, then leave it UNC.</para>
-		/// <para>Otherwise, normalize it, and then remove the long path prefix.</para>
+		///     <para>If the <paramref name="path" /> is UNC, then leave it UNC.</para>
+		///     <para>Otherwise, normalize it, and then remove the long path prefix.</para>
 		/// </summary>
 		/// <param name="path"></param>
 		[DebuggerStepThrough]
@@ -280,7 +274,8 @@ namespace Librainian.FileSystem.Pri.LongPath {
 						var num = 2;
 
 						while ( rootLength >= length ||
-								( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) && --num <= 0 ) {
+						        ( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) &&
+						        --num <= 0 ) {
 							++rootLength;
 						}
 					}
@@ -316,7 +311,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[DebuggerStepThrough]
 		public static Boolean HasIllegalCharacters( this String path ) {
-			Common.ThrowIfBlank( ref path );
+			PriCommon.ThrowIfBlank( ref path );
 			return path?.Any( InvalidPathChars.Contains ) == true;
 		}
 
@@ -330,8 +325,11 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DebuggerStepThrough]
 		public static Boolean IsPathRooted( this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
 
-		/// <summary>Normalizes path and adds the \\?\ long path prefix.
-		/// <para><remarks>Makes a DLL call to kernel32.dll.GetFullPathNameW.</remarks></para>
+		/// <summary>
+		///     Normalizes path and adds the \\?\ long path prefix.
+		///     <para>
+		///         <remarks>Makes a DLL call to kernel32.dll.GetFullPathNameW.</remarks>
+		///     </para>
 		/// </summary>
 		/// <param name="path"></param>
 		/// <param name="parameterName"></param>
@@ -339,15 +337,17 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		public static String NormalizeLongPath( this String path, String parameterName = "path" ) => path.CheckAddLongPathPrefix();
 
 		/// <summary>
-		/// <para>Trim whitespace from the <paramref name="path"/>.</para>
-		/// <para>If the <paramref name="path"/> is null, empty or whitespace then return <see cref="String.Empty"/>.</para>
-		/// <para>If the <paramref name="path"/> doesn't start with "\\?\UNC\", then return the rest of the path.</para>
-		/// <para>If the <paramref name="path"/> starts with "\\?\UNC\", then return the rest of the \\<paramref name="path"/>.</para>
-		/// <para>Otherwise just return the path as is.</para>
+		///     <para>Trim whitespace from the <paramref name="path" />.</para>
+		///     <para>If the <paramref name="path" /> is null, empty or whitespace then return <see cref="String.Empty" />.</para>
+		///     <para>If the <paramref name="path" /> doesn't start with "\\?\UNC\", then return the rest of the path.</para>
+		///     <para>
+		///         If the <paramref name="path" /> starts with "\\?\UNC\", then return the rest of the \\
+		///         <paramref name="path" />.
+		///     </para>
+		///     <para>Otherwise just return the path as is.</para>
 		/// </summary>
 		/// <param name="path"></param>
 		public static String RemoveLongPathPrefix( this String path ) {
-
 			if ( String.IsNullOrWhiteSpace( path ) ) {
 				return String.Empty;
 			}
@@ -358,11 +358,13 @@ namespace Librainian.FileSystem.Pri.LongPath {
 				return String.Empty;
 			}
 
-			if ( !path.StartsWith( LongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) { // \\?\
+			if ( !path.StartsWith( LongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) {
+				// \\?\
 				return path;
 			}
 
-			if ( path.StartsWith( UNCLongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) { // \\?\UNC\
+			if ( path.StartsWith( UNCLongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) {
+				// \\?\UNC\
 				return $@"\\{path[ UNCLongPathPrefix.Length.. ]}";
 			}
 
@@ -388,7 +390,6 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		}
 
 		/// <summary>
-		///
 		/// </summary>
 		/// <param name="path"></param>
 		/// <exception cref="InvalidOperationException"></exception>
@@ -454,5 +455,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 			return false;
 		}
+
 	}
+
 }

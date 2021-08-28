@@ -23,36 +23,32 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompareRight_SubstringRangeSlice.cs" last touched on 2021-08-23 at 5:45 AM by Protiguous.
+// File "Class1.cs" last touched on 2021-08-28 at 5:15 AM by Protiguous.
 
-namespace Benchmarks {
+namespace Librainian.Internet {
 
 	using System;
-	using BenchmarkDotNet.Attributes;
-	using Librainian.Exceptions;
-	using Librainian.Parsing;
+	using System.Net;
+	using System.Threading.Tasks;
+	using Newtonsoft.Json.Linq;
+	using RestSharp;
 
-	[MemoryDiagnoser]
-	public class CompareRight_SubstringRangeSlice {
+	public static class Weather {
 
-		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
-
-		[Benchmark]
-		public void WithRightSlice() {
-			var local = Default_TestAddress[ .. ];
-			var right = local.AsSpan().Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
+		public static async Task<Double?> GetTemperature( Double latitude, Double longitude ) {
+			const String apiUrl = "https://api.weather.gov/";
+			var coordinates = $"{latitude},{longitude}";
+			var requestPath = $"points/{coordinates}/forecast/hourly";
+			var client = new RestClient( apiUrl );
+			var request = new RestRequest( requestPath );
+			dynamic response = await client.GetAsync<dynamic>( request ).ConfigureAwait( false );
+			if ( response.StatusCode == HttpStatusCode.OK ) {
+				dynamic obj = JObject.Parse( response.Content );
+				var period = obj.properties.periods[ 0 ];
+				return ( Double )period.temperature;
 			}
-		}
 
-		[Benchmark( Baseline = true )]
-		public void WithRightOldWay() {
-			var local = Default_TestAddress[..];
-			var right = local.Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
-			}
+			return null;
 		}
 
 	}

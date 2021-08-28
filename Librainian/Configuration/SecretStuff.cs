@@ -23,37 +23,17 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompareRight_SubstringRangeSlice.cs" last touched on 2021-08-23 at 5:45 AM by Protiguous.
+// File "SecretStuff.cs" last touched on 2021-08-27 at 11:32 AM by Protiguous.
 
-namespace Benchmarks {
+namespace Librainian.Configuration {
 
 	using System;
-	using BenchmarkDotNet.Attributes;
-	using Librainian.Exceptions;
-	using Librainian.Parsing;
 
-	[MemoryDiagnoser]
-	public class CompareRight_SubstringRangeSlice {
+	public class SecretStuff : ISecrectStuff {
 
-		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
+		public String? BackupDatabaseConnectionString { get; set; }
 
-		[Benchmark]
-		public void WithRightSlice() {
-			var local = Default_TestAddress[ .. ];
-			var right = local.AsSpan().Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
-			}
-		}
-
-		[Benchmark( Baseline = true )]
-		public void WithRightOldWay() {
-			var local = Default_TestAddress[..];
-			var right = local.Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
-			}
-		}
+		public String? DatabaseConnectionString { get; set; }
 
 	}
 

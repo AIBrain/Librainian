@@ -49,35 +49,13 @@ namespace Librainian {
 
 		public static Encoding DefaultEncoding { get; } = Encoding.Unicode;
 
-		public static String ToKey<T>( this T? value, String className, String methodName, String argumentName ) {
-			if ( className is null ) {
-				throw new ArgumentEmptyException( nameof( className ) );
-			}
-
-			if ( methodName is null ) {
-				throw new ArgumentEmptyException( nameof( methodName ) );
-			}
-
-			if ( argumentName is null ) {
-				throw new ArgumentEmptyException( nameof( argumentName ) );
-			}
-
-			//using the reasoning that a string lookup will match sooner by having the most selective "key" first, which would be the value.
-			return $"{value}{Symbols.TripleTilde}{className}{Symbols.TripleTilde}{methodName}{Symbols.TripleTilde}{argumentName}";
-		}
-
-		public static String ToKey<T>( this T? value, String className, String methodName ) {
-			if ( className is null ) {
-				throw new ArgumentEmptyException( nameof( className ) );
-			}
-
-			if ( methodName is null ) {
-				throw new ArgumentEmptyException( nameof( methodName ) );
-			}
-
-			//using the reasoning that a string lookup will match sooner by having the most selective "key" first, which would be the value.
-			return $"{value}{Symbols.TripleTilde}{methodName}{Symbols.TripleTilde}{className}";
-		}
+		/// <summary>
+		/// Convert any number of strings into a Key (keys to use for caching)
+		/// Using the reasoning that a string lookup will match sooner by having the most selective "key" first.
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <returns></returns>
+		public static String ToKey( params String[] keys) => keys.ToStrings( Symbols.TripleTilde );
 
 		/// <summary>
 		///     Return true if an <see cref="IComparable" /> value is <see cref="Between{T}" /> two inclusive values.

@@ -23,31 +23,16 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BenchmarkParsing.cs" last touched on 2021-07-31 at 5:31 AM by Protiguous.
+// File "QueryTiming.cs" last touched on 2021-08-26 at 2:03 PM by Protiguous.
 
-namespace Benchmarks {
+namespace Librainian.Databases {
 
-	using System;
-	using BenchmarkDotNet.Attributes;
+	public enum QueryTiming {
 
-	//[MemoryDiagnoser]
-	public class CompareSubstringVersusSlice {
-		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
+		ReportTiming = 0,
 
-		//[Benchmark]
-		public String GetCity() {
-			var cityAndPostalCode = Default_TestAddress.Substring( 37, 15 );
-			var city = cityAndPostalCode.Substring( 7, 8 );
-			return city;
-		}
+		DontReportTiming
 
-		//[Benchmark]
-		public String GetCity2() {
-			ReadOnlySpan<Char> addressAsSpan = Default_TestAddress;
-			var cityAndPostalCode = addressAsSpan.Slice( 37, 15 );
-			var city = cityAndPostalCode.Slice( 7, 8 );
-			return city.ToString();
-		}
 	}
 
 }

@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DatabaseExtensions.cs" last touched on 2021-08-20 at 6:25 AM by Protiguous.
+// File "DatabaseExtensions.cs" last touched on 2021-08-28 at 7:55 AM by Protiguous.
 
 #nullable enable
 
@@ -51,7 +51,6 @@ namespace Librainian.Databases {
 	using Microsoft.SqlServer.Management.Smo;
 	using Parsing;
 	using Persistence;
-	using PooledAwait;
 	using FieldDictionary = System.Collections.Generic.Dictionary<System.String, System.Int32>;
 
 	public static class DatabaseExtensions {
@@ -78,7 +77,7 @@ namespace Librainian.Databases {
 		[return: System.Diagnostics.CodeAnalysis.NotNull]
 		public static T? Adhoc<T>( this SqlConnectionStringBuilder builderToTest, String applicationName, String command, CancellationToken cancellationToken ) {
 			if ( String.IsNullOrWhiteSpace( command ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( command ) );
+				throw new NullException( "Value cannot be null or whitespace.", nameof( command ) );
 			}
 
 			try {
@@ -94,19 +93,20 @@ namespace Librainian.Databases {
 		}
 		*/
 
+		/*
 		public static async PooledValueTask<T?> AdhocAsync<T>(
-			this SqlConnectionStringBuilder builderToTest,
+			IValidatedConnectionString connectionStringSetting,
 			String query,
 			String applicationName,
 			CancellationToken cancellationToken
 		) {
 			//TODO This needs redone. I don't want to be passing around a SqlConnectionStringBuilder.
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
+				throw new NullException( "Value cannot be null or whitespace.", nameof( query ) );
 			}
 
 			try {
-				await using var db = new DatabaseServer( builderToTest.ConnectionString, null, applicationName );
+				await using var db = new DatabaseServer( builderToTest.ConnectionString, applicationName, QueryTiming.ReportTiming );
 
 				return await db.ExecuteScalarAsync<T>( query, CommandType.Text, cancellationToken ).ConfigureAwait( false );
 			}
@@ -116,6 +116,7 @@ namespace Librainian.Databases {
 				throw;
 			}
 		}
+		*/
 
 		/*
 
@@ -207,11 +208,11 @@ namespace Librainian.Databases {
 			}
 
 			if ( String.IsNullOrWhiteSpace( key ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+				throw new NullException( nameof( key ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
+				throw new NullException( nameof( connectionString ) );
 			}
 
 			file[ key ] = connectionString;
@@ -258,7 +259,7 @@ namespace Librainian.Databases {
 			}
 
 			if ( String.IsNullOrWhiteSpace( key ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
+				throw new NullException( nameof( key ) );
 			}
 
 			if ( file.TryGetValue( key, out var connection ) ) {
@@ -416,20 +417,25 @@ namespace Librainian.Databases {
 			       exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
 		}
 
-		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString( String connectionString, String applicationName, CancellationToken cancellationToken ) {
-			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
+		/*
+		public static async ValueTask<(Status, String?)> TestDatabaseConnectionString( IValidatedConnectionString validatedConnectionString, IApplicationSetting applicationSettings, CancellationToken cancellationToken ) {
+			if ( validatedConnectionString == null ) {
+				throw new ArgumentNullException( nameof( validatedConnectionString ) );
 			}
 
-			if ( String.IsNullOrWhiteSpace( applicationName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( applicationName ) );
+			if ( applicationSettings == null ) {
+				throw new ArgumentNullException( nameof( applicationSettings ) );
 			}
-
-			var builder = new SqlConnectionStringBuilder( connectionString );
 
 			var retries = DatabaseServer.DefaultRetries;
 			TryAgain:
 			try {
+				var database = new DatabaseServer( validatedConnectionString, applicationSettings, QueryTiming.ReportTiming );
+
+				await database
+				      .ExecuteScalarAsync( $"{this.AIServer.DatabaseToUse}.[Neuron].[DepolarizeNeurons]", this.CancellationToken, depolarized, peakedneurons )
+				      .ConfigureAwait( false );
+
 				var sqlServer = await builder.TryGetResponse( applicationName, cancellationToken ).ConfigureAwait( false );
 
 				if ( sqlServer?.Status.IsGood() == true ) {
@@ -449,6 +455,7 @@ namespace Librainian.Databases {
 
 			return ( Status.Failure, default( String? ) );
 		}
+		*/
 
 		/// <summary>
 		///     Convert our IList to a DataSet
@@ -710,7 +717,7 @@ namespace Librainian.Databases {
 			}
 
 			if ( String.IsNullOrEmpty( parameterName ) ) {
-				throw new ArgumentException( "Value cannot be null or empty.", nameof( parameterName ) );
+				throw new NullException( nameof( parameterName ) );
 			}
 
 			return new SqlParameter( parameterName, value ) {
@@ -720,7 +727,7 @@ namespace Librainian.Databases {
 
 		public static SqlParameter ToSqlParameter( this SqlDbType sqlDbType, String parameterName, Int32 size ) {
 			if ( String.IsNullOrWhiteSpace( parameterName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( parameterName ) );
+				throw new NullException( nameof( parameterName ) );
 			}
 
 			return new(parameterName, sqlDbType, size);
@@ -828,6 +835,7 @@ namespace Librainian.Databases {
                 }
         */
 
+		/*
 		/// <summary>
 		///     Performs two adhoc selects on the database.
 		///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
@@ -845,7 +853,7 @@ namespace Librainian.Databases {
 			}
 
 			if ( String.IsNullOrWhiteSpace( applicationName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( applicationName ) );
+				throw new NullException( "Value cannot be null or whitespace.", nameof( applicationName ) );
 			}
 
 			try {
@@ -887,6 +895,7 @@ namespace Librainian.Databases {
 
 			return default( SqlServerInfo? );
 		}
+		*/
 
 		/*
                 [Obsolete( "No access to a local Server atm." )]

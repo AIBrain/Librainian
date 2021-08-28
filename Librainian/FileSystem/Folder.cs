@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Folder.cs" last touched on 2021-07-14 at 4:41 AM by Protiguous.
+// File "Folder.cs" last touched on 2021-08-28 at 7:59 AM by Protiguous.
 
 namespace Librainian.FileSystem {
 
@@ -276,7 +276,7 @@ namespace Librainian.FileSystem {
 					more = await Task.Run( () => hFindFile.FindNextFile( out findData ), cancellationToken ).ConfigureAwait( false );
 				}
 				catch ( Exception exception ) {
-					exception.Log( false );
+					exception.Log();
 				}
 			} while ( more );
 		}
@@ -364,7 +364,7 @@ namespace Librainian.FileSystem {
 					more = await Task.Run( () => hFindFile.FindNextFile( out findData ), cancellationToken ).ConfigureAwait( false );
 				}
 				catch ( Exception exception ) {
-					exception.Log( false );
+					exception.Log();
 				}
 			} while ( more );
 		}

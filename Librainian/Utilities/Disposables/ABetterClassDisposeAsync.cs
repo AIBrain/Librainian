@@ -116,7 +116,7 @@ namespace Librainian.Utilities.Disposables {
 		}
 
 		~ABetterClassDisposeAsync() {
-			_ = this.DisposeAsync();
+			this.DisposeAsync().AsTask().GetAwaiter().GetResult();	//TODO ugh
 		}
 
 		public async ValueTask DisposeAsync() {

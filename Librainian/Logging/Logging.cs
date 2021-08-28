@@ -31,6 +31,7 @@ namespace Librainian.Logging {
 
 	using System;
 	using System.Diagnostics;
+	using System.Diagnostics.Eventing.Reader;
 	using System.Drawing;
 	using System.Threading;
 	using Microsoft.Extensions.Logging;
@@ -148,23 +149,21 @@ namespace Librainian.Logging {
 
 		[DebuggerStepThrough]
 		public static Exception Log<T>( this T? message, BreakOrDontBreak? breakinto = null ) {
-			if ( message is null ) {
-				if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
-					Debugger.Break();
-				}
-			}
-			else {
-				if ( message is Exception exception ) {
-					exception.ToStringDemystified().LogTimeMessage( breakinto );
-					return exception;
-				}
-
-				message.ToString().LogTimeMessage( breakinto );
+			if ( message is Exception exception ) {
+				exception.ToStringDemystified().LogTimeMessage( breakinto );
+				return exception;
 			}
 
+			if ( breakinto == BreakOrDontBreak.Break && Debugger.IsAttached ) {
+				Debugger.Break();
+			}
+			//else {
+			//	message.ToString().LogTimeMessage( breakinto );
+			//}
 			return new Exception( message?.ToString() );
 		}
 
+		/*
 		/// <summary>
 		///     Write
 		///     <param name="self"></param>
@@ -191,6 +190,7 @@ namespace Librainian.Logging {
 
 			return self;
 		}
+		*/
 
 		/// <summary>Prefix <paramref name="message" /> with the datetime and write out to the attached debugger and/or trace.</summary>
 		/// <param name="message"></param>
@@ -239,7 +239,7 @@ namespace Librainian.Logging {
 		[DebuggerStepThrough]
 		public static void TraceWithTime( this String message, Boolean newline = true, Boolean showThread = false ) {
 			if ( newline ) {
-				(showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}").TraceLine();
+				( showThread ? $"[{DateTime.UtcNow:s}].({Environment.CurrentManagedThreadId}) {message}" : $"[{DateTime.UtcNow:s}] {message}" ).TraceLine();
 			}
 			else {
 				message.Trace();

@@ -23,35 +23,32 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompareRight_SubstringRangeSlice.cs" last touched on 2021-08-23 at 5:45 AM by Protiguous.
+// File "QuickAsync.cs" last touched on 2021-08-28 at 7:12 AM by Protiguous.
 
-namespace Benchmarks {
+namespace Librainian.Threading {
 
 	using System;
-	using BenchmarkDotNet.Attributes;
-	using Librainian.Exceptions;
-	using Librainian.Parsing;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
+	using PooledAwait;
 
-	[MemoryDiagnoser]
-	public class CompareRight_SubstringRangeSlice {
+	public static class QuickAsync {
 
-		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
+		public static TaskFactory QuickTaskFactory { get; } = new(TaskCreationOptions.PreferFairness, TaskContinuationOptions.ExecuteSynchronously);
 
-		[Benchmark]
-		public void WithRightSlice() {
-			var local = Default_TestAddress[ .. ];
-			var right = local.AsSpan().Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
-			}
-		}
+		public static async PooledValueTask<TResult> RunQuickly<TResult>( this Func<Task<TResult>> func, CancellationToken cancellationToken ) =>
+			await QuickTaskFactory.StartNew( func, cancellationToken ).Unwrap().ConfigureAwait( false );
 
-		[Benchmark( Baseline = true )]
-		public void WithRightOldWay() {
-			var local = Default_TestAddress[..];
-			var right = local.Right( "Warszawa".Length );
-			if ( right != "Warszawa" ) {
-				throw new NullException( nameof( right ) );
+		public static async PooledValueTask RunQuickly( this Func<Task> func, CancellationToken cancellationToken ) =>
+			await QuickTaskFactory.StartNew( func, cancellationToken ).Unwrap().ConfigureAwait( false );
+
+		public static async PooledValueTask RunQuickly( this Action func, CancellationToken cancellationToken ) =>
+			await QuickTaskFactory.StartNew( func, cancellationToken ).ConfigureAwait( false );
+
+		public static async PooledValueTask RunQuickly( this CancellationToken cancellationToken, params Action[] actions ) {
+			await foreach ( var action in actions.ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {
+				await QuickTaskFactory.StartNew( action, cancellationToken ).ConfigureAwait( false );
 			}
 		}
 

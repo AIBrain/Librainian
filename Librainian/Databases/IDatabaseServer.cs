@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IDatabaseServer.cs" last touched on 2021-08-20 at 6:27 AM by Protiguous.
+// File "IDatabaseServer.cs" last touched on 2021-08-27 at 10:31 AM by Protiguous.
 
 #nullable enable
 
@@ -34,6 +34,7 @@ namespace Librainian.Databases {
 	using System.Data;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Microsoft.Data.SqlClient;
 	using PooledAwait;
 
@@ -43,30 +44,9 @@ namespace Librainian.Databases {
 
 		String? Query { get; set; }
 
-		/*
-		/// <summary>
-		///     Opens and then closes a <see cref="SqlConnection" />.
-		/// </summary>
-		/// <returns></returns>
-		Int32? ExecuteNonQuery( String query, CommandType commandType, params SqlParameter[] parameters );
-		*/
-
-		//Int32? ExecuteNonQuery( String query, Int32 retriesLeft, CommandType commandType, params SqlParameter[] parameters );
-
 		Task<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
-		Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
-
-		/*
-		/// <summary>
-		///     Returns a <see cref="DataTable" />
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="table">      </param>
-		/// <param name="parameters"> </param>
-		Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[] parameters );
-		*/
+		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		/// <summary>
 		/// </summary>
@@ -84,17 +64,6 @@ namespace Librainian.Databases {
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
-
-		/*
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		TResult? ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[] parameters );
-		*/
 
 		/// <summary>
 		///     <para>Returns the first column of the first row.</para>
@@ -114,32 +83,13 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
 		/// <param name="cancellationToken"></param>
+		/// <param name="progress"></param>
 		/// <param name="parameters"> </param>
-		Task<Boolean> FillTableAsync(
-			String query,
-			CommandType commandType,
-			DataTable table,
-			CancellationToken cancellationToken,
-			params SqlParameter[] parameters
-		);
-
-		//DataTableReader? QueryAdHoc( String query, params SqlParameter[] parameters );
+		Task<Boolean> FillTableAsync( String query, CommandType commandType, DataTable table, CancellationToken cancellationToken, IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null, params SqlParameter[] parameters );
 
 		Task<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter?[]? parameters );
 
 		Task<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
-
-		/*
-		/// <summary>
-		///     <para>Connect and then run <paramref name="query" />.</para>
-		/// </summary>
-		/// <param name="query">     </param>
-		/// <param name="cancellationToken"></param>
-		/// <param name="parameters"></param>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		Task<SqlDataReader?> QueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
-		*/
 
 		/// <summary>
 		///     <para>Connect and then run <paramref name="query" />.</para>
@@ -148,7 +98,7 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="NullException"></exception>
 		/// <exception cref="InvalidOperationException"></exception>
 		Task<SqlDataReader?> QueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
@@ -160,16 +110,9 @@ namespace Librainian.Databases {
 		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
 		/// <returns></returns>
-		Task<IEnumerable<TResult>?> QueryListAsync<TResult>(
-			String query,
-			CommandType commandType,
-			CancellationToken cancellationToken,
-			params SqlParameter[] parameters
-		);
+		Task<IEnumerable<TResult>?> QueryListAsync<TResult>( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		Task<Int32?> RunSprocAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
-
-		//void UseDatabase( String databaseName );
 
 		Task UseDatabaseAsync( String databaseName, CancellationToken cancellationToken );
 

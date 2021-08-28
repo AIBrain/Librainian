@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IOExtensions.cs" last touched on 2021-07-31 at 7:38 AM by Protiguous.
+// File "IOExtensions.cs" last touched on 2021-08-28 at 8:06 AM by Protiguous.
 
 #nullable enable
 
@@ -205,7 +205,7 @@ namespace Librainian.FileSystem {
 		/// <param name="waitfor"></param>
 		public static async Task<(Status, Exception?)> AppendTextAsync( this FileInfo fileInfo, String text, TimeSpan? waitfor = null ) {
 			try {
-				var buffer = Librainian.Common.DefaultEncoding.GetBytes( text ).AsMemory( 0 );
+				var buffer = Common.DefaultEncoding.GetBytes( text ).AsMemory( 0 );
 				var length = buffer.Length;
 
 				await using var sourceStream = ReTry( () => new FileStream( fileInfo.FullName, FileMode.Append, FileAccess.Write, FileShare.Write, length, true ),
@@ -440,7 +440,7 @@ namespace Librainian.FileSystem {
 					more = await Task.Run( () => hFindFile.FindNextFile( out findData ), cancellationToken ).ConfigureAwait( false );
 				}
 				catch ( Exception exception ) {
-					exception.Log( false );
+					exception.Log();
 				}
 			} while ( more );
 		}
