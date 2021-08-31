@@ -171,22 +171,22 @@ namespace Librainian.Converters {
 					return false;
 
 				case String s: {
-					var clean = s.Trimmed();
+						var clean = s.Trimmed();
 
-					if ( clean is null ) {
-						return false;
+						if ( clean is null ) {
+							return false;
+						}
+
+						if ( clean.In( ParsingConstants.TrueStrings ) ) {
+							return true;
+						}
+
+						if ( Boolean.TryParse( clean, out var result ) ) {
+							return result;
+						}
+
+						break;
 					}
-
-					if ( clean.In( ParsingConstants.TrueStrings ) ) {
-						return true;
-					}
-
-					if ( Boolean.TryParse( clean, out var result ) ) {
-						return result;
-					}
-
-					break;
-				}
 			}
 
 			var t = value.ToString();
@@ -230,26 +230,26 @@ namespace Librainian.Converters {
 					return default( Boolean? );
 
 				case String s: {
-					var trimmed = s.Trimmed();
+						var trimmed = s.Trimmed();
 
-					if ( trimmed is null ) {
-						return default( Boolean? );
+						if ( trimmed is null ) {
+							return default( Boolean? );
+						}
+
+						if ( trimmed.In( ParsingConstants.TrueStrings ) ) {
+							return true;
+						}
+
+						if ( trimmed.In( ParsingConstants.FalseStrings ) ) {
+							return default( Boolean? );
+						}
+
+						if ( Boolean.TryParse( trimmed, out var result ) ) {
+							return result;
+						}
+
+						break;
 					}
-
-					if ( trimmed.In( ParsingConstants.TrueStrings ) ) {
-						return true;
-					}
-
-					if ( trimmed.In( ParsingConstants.FalseStrings ) ) {
-						return default( Boolean? );
-					}
-
-					if ( Boolean.TryParse( trimmed, out var result ) ) {
-						return result;
-					}
-
-					break;
-				}
 			}
 
 			var t = value.ToString();
@@ -329,8 +329,8 @@ namespace Librainian.Converters {
 			//var dayofYear = BitConverter.ToUInt16( bytes, startIndex: 4 ); //not used in constructing the datetime
 			//var dayofweek = ( DayOfWeek )bytes[ 8 ]; //not used in constructing the datetime
 
-			return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[ 13 ], bytes[ 9 ], bytes[ 10 ], bytes[ 11 ], bytes[ 12 ], BitConverter.ToUInt16( bytes, 6 ),
-				( DateTimeKind )bytes[ 15 ] );
+			return new DateTime( BitConverter.ToInt32( bytes, 0 ), bytes[13], bytes[9], bytes[10], bytes[11], bytes[12], BitConverter.ToUInt16( bytes, 6 ),
+				( DateTimeKind )bytes[15] );
 		}
 
 		[Pure]
@@ -495,7 +495,7 @@ namespace Librainian.Converters {
 				var pos = s.LastIndexOf( '.' );
 
 				if ( pos.Any() ) {
-					s = s[ ..pos ];
+					s = s[..pos];
 				}
 
 				if ( !String.IsNullOrEmpty( s ) ) {
@@ -567,9 +567,9 @@ namespace Librainian.Converters {
 				}
 				else {
 					if ( !bob.IsDBNull( ordinal.Value ) ) {
-						$"{bob[ columnName ]}".Log(); //TODO
+						$"{bob[columnName]}".Log(); //TODO
 
-						return bob[ columnName ].ToDecimalOrNull();
+						return bob[columnName].ToDecimalOrNull();
 					}
 				}
 			}
@@ -594,14 +594,14 @@ namespace Librainian.Converters {
 			var a = guid.ToByteArray();
 
 			if ( reversed ) {
-				return Path.Combine( a[ 15 ].ToString(), a[ 14 ].ToString(), a[ 13 ].ToString(), a[ 12 ].ToString(), a[ 11 ].ToString(), a[ 10 ].ToString(), a[ 9 ].ToString(),
-					a[ 8 ].ToString(), a[ 7 ].ToString(), a[ 6 ].ToString(), a[ 5 ].ToString(), a[ 4 ].ToString(), a[ 3 ].ToString(), a[ 2 ].ToString(), a[ 1 ].ToString(),
-					a[ 0 ].ToString() );
+				return Path.Combine( a[15].ToString(), a[14].ToString(), a[13].ToString(), a[12].ToString(), a[11].ToString(), a[10].ToString(), a[9].ToString(),
+					a[8].ToString(), a[7].ToString(), a[6].ToString(), a[5].ToString(), a[4].ToString(), a[3].ToString(), a[2].ToString(), a[1].ToString(),
+					a[0].ToString() );
 			}
 
-			return Path.Combine( a[ 0 ].ToString(), a[ 1 ].ToString(), a[ 2 ].ToString(), a[ 3 ].ToString(), a[ 4 ].ToString(), a[ 5 ].ToString(), a[ 6 ].ToString(),
-				a[ 7 ].ToString(), a[ 8 ].ToString(), a[ 9 ].ToString(), a[ 10 ].ToString(), a[ 11 ].ToString(), a[ 12 ].ToString(), a[ 13 ].ToString(), a[ 14 ].ToString(),
-				a[ 15 ].ToString() );
+			return Path.Combine( a[0].ToString(), a[1].ToString(), a[2].ToString(), a[3].ToString(), a[4].ToString(), a[5].ToString(), a[6].ToString(),
+				a[7].ToString(), a[8].ToString(), a[9].ToString(), a[10].ToString(), a[11].ToString(), a[12].ToString(), a[13].ToString(), a[14].ToString(),
+				a[15].ToString() );
 		}
 
 		[DebuggerStepThrough]

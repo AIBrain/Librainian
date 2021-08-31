@@ -67,7 +67,7 @@ namespace Librainian.Persistence.InIFiles {
 		public IReadOnlyList<String> Values => ( IReadOnlyList<String> )this.Data.Values;
 
 		[JsonIgnore]
-		public String? this[ String? key ] {
+		public String? this[String? key] {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
@@ -86,7 +86,7 @@ namespace Librainian.Persistence.InIFiles {
 					this.Data.TryRemove( key, out var _ ); //a little cleanup
 				}
 				else {
-					this.Data[ key ] = value;
+					this.Data[key] = value;
 				}
 			}
 		}
@@ -124,7 +124,7 @@ namespace Librainian.Persistence.InIFiles {
 						return;
 					}
 					if ( this.Data.TryRemove( key, out var value ) && !String.IsNullOrEmpty( value ) ) {
-						this[ key ] = value; //whoops, re-add value. Cause: other threads.
+						this[key] = value; //whoops, re-add value. Cause: other threads.
 					}
 				}
 			}, cancellationToken );
@@ -148,7 +148,7 @@ namespace Librainian.Persistence.InIFiles {
 				if ( that != null && JsonConvert.DeserializeObject( that, this.Data.GetType() ) is DataType other ) {
 					Parallel.ForEach( other.TakeWhile( _ => !cancellationToken.IsCancellationRequested ), pair => {
 						(var key, var value) = pair;
-						this[ key ] = value;
+						this[key] = value;
 					} );
 
 					return true;

@@ -38,10 +38,10 @@ namespace Librainian.Maths.Bigger {
 		/// <summary>Constructs an arbitrary System.Decimal expansion from the given long. The long must not be negative.</summary>
 		public ArbitraryDecimal( Int64 x ) {
 			var tmp = x.ToString( CultureInfo.CurrentCulture );
-			this._digits = new Byte[ tmp.Length ];
+			this._digits = new Byte[tmp.Length];
 
 			for ( var i = 0; i < tmp.Length; i++ ) {
-				this._digits[ i ] = ( Byte )( tmp[ i ] - '0' );
+				this._digits[i] = ( Byte )( tmp[i] - '0' );
 			}
 
 			this.Normalize();
@@ -49,15 +49,15 @@ namespace Librainian.Maths.Bigger {
 
 		/// <summary>Multiplies the current expansion by the given amount, which should only be 2 or 5.</summary>
 		public void MultiplyBy( Int32 amount ) {
-			var result = new Byte[ this._digits.Length + 1 ];
+			var result = new Byte[this._digits.Length + 1];
 
 			for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
-				var resultDigit = this._digits[ i ] * amount + result[ i + 1 ];
-				result[ i ] = ( Byte )( resultDigit / 10 );
-				result[ i + 1 ] = ( Byte )( resultDigit % 10 );
+				var resultDigit = this._digits[i] * amount + result[i + 1];
+				result[i] = ( Byte )( resultDigit / 10 );
+				result[i + 1] = ( Byte )( resultDigit % 10 );
 			}
 
-			if ( result[ 0 ] != 0 ) {
+			if ( result[0] != 0 ) {
 				this._digits = result;
 			}
 			else {
@@ -72,7 +72,7 @@ namespace Librainian.Maths.Bigger {
 			Int32 first;
 
 			for ( first = 0; first < this._digits.Length; first++ ) {
-				if ( this._digits[ first ] != 0 ) {
+				if ( this._digits[first] != 0 ) {
 					break;
 				}
 			}
@@ -80,7 +80,7 @@ namespace Librainian.Maths.Bigger {
 			Int32 last;
 
 			for ( last = this._digits.Length - 1; last >= 0; last-- ) {
-				if ( this._digits[ last ] != 0 ) {
+				if ( this._digits[last] != 0 ) {
 					break;
 				}
 			}
@@ -89,10 +89,10 @@ namespace Librainian.Maths.Bigger {
 				return;
 			}
 
-			var tmp = new Byte[ last - first + 1 ];
+			var tmp = new Byte[last - first + 1];
 
 			for ( var i = 0; i < tmp.Length; i++ ) {
-				tmp[ i ] = this._digits[ i + first ];
+				tmp[i] = this._digits[i + first];
 			}
 
 			this._decimalPoint -= this._digits.Length - ( last + 1 );
@@ -108,10 +108,10 @@ namespace Librainian.Maths.Bigger {
 
 		/// <summary>Converts the value to a proper System.Decimal String representation.</summary>
 		public override String ToString() {
-			var digitString = new Char[ this._digits.Length ];
+			var digitString = new Char[this._digits.Length];
 
 			for ( var i = 0; i < this._digits.Length; i++ ) {
-				digitString[ i ] = ( Char )( this._digits[ i ] + '0' );
+				digitString[i] = ( Char )( this._digits[i] + '0' );
 			}
 
 			// Simplest case - nothing after the System.Decimal point, and last real digit is

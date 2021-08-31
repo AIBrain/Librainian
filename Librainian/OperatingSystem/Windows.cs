@@ -64,57 +64,6 @@ namespace Librainian.OperatingSystem {
 
 		public static Lazy<Document?> CommandPrompt { get; } = new( () => FluffDocument( Path.Combine( WindowsSystem32Folder.Value.FullPath, "cmd.exe" ) ), true );
 
-		public static class Utilities {
-
-			public static Lazy<Document?> IrfanView64 { get; } =
-				new( () => FluffDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ), true );
-
-			public static async Task<Process?>? TryConvert_WithIrfanviewAsync( Document inDocument, Document outDocument ) {
-				if ( inDocument == null ) {
-					throw new ArgumentEmptyException( nameof( inDocument ) );
-				}
-
-				if ( outDocument == null ) {
-					throw new ArgumentEmptyException( nameof( outDocument ) );
-				}
-
-				var irfan = IrfanView64.Value;
-				if ( irfan is null ) {
-					return default( Process? );
-				}
-
-				if ( await irfan.Exists( CancellationToken.None ).ConfigureAwait( false ) != true ) {
-					return default( Process? );
-				}
-
-				try {
-					var arguments = $" {inDocument.FullPath.Quoted()} /convert={outDocument.FullPath.Quoted()} ";
-
-					var proc = new ProcessStartInfo {
-						UseShellExecute = false,
-						WorkingDirectory = Folder.GetTempFolder().FullPath,
-						FileName = irfan.FullPath,
-
-						//Verb = "runas", //demand elevated permissions
-						Arguments = arguments,
-						CreateNoWindow = true,
-						ErrorDialog = false,
-						WindowStyle = ProcessWindowStyle.Normal
-					};
-
-					$"Running irfanview command '{proc.Arguments}'...".Info();
-
-					return Process.Start( proc );
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-
-				return default( Process? );
-			}
-
-		}
-
 		/// <summary>Cleans and sorts the Windows <see cref="Environment" /> path variable.</summary>
 		public static async Task CleanUpPath( Boolean reportToConsole, CancellationToken cancellationToken ) {
 			if ( reportToConsole ) {
@@ -142,7 +91,7 @@ namespace Librainian.OperatingSystem {
 			var pathsData = new ConcurrentDictionary<String, Folder>( Environment.ProcessorCount, justpaths.Count );
 
 			foreach ( var s in justpaths ) {
-				pathsData[ s ] = new Folder( s );
+				pathsData[s] = new Folder( s );
 			}
 
 			if ( reportToConsole ) {
@@ -362,6 +311,56 @@ namespace Librainian.OperatingSystem {
 		public static void Yield() {
 			if ( Randem.NextBoolean() ) {
 				Thread.Yield();
+			}
+		}
+
+		public static class Utilities {
+
+			public static Lazy<Document?> IrfanView64 { get; } =
+				new( () => FluffDocument( Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ProgramFiles ) + @"\IrfanView\", "i_view64.exe" ) ), true );
+
+			public static async Task<Process?>? TryConvert_WithIrfanviewAsync( Document inDocument, Document outDocument ) {
+				if ( inDocument == null ) {
+					throw new ArgumentEmptyException( nameof( inDocument ) );
+				}
+
+				if ( outDocument == null ) {
+					throw new ArgumentEmptyException( nameof( outDocument ) );
+				}
+
+				var irfan = IrfanView64.Value;
+				if ( irfan is null ) {
+					return default( Process? );
+				}
+
+				if ( await irfan.Exists( CancellationToken.None ).ConfigureAwait( false ) != true ) {
+					return default( Process? );
+				}
+
+				try {
+					var arguments = $" {inDocument.FullPath.Quoted()} /convert={outDocument.FullPath.Quoted()} ";
+
+					var proc = new ProcessStartInfo {
+						UseShellExecute = false,
+						WorkingDirectory = Folder.GetTempFolder().FullPath,
+						FileName = irfan.FullPath,
+
+						//Verb = "runas", //demand elevated permissions
+						Arguments = arguments,
+						CreateNoWindow = true,
+						ErrorDialog = false,
+						WindowStyle = ProcessWindowStyle.Normal
+					};
+
+					$"Running irfanview command '{proc.Arguments}'...".Info();
+
+					return Process.Start( proc );
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+
+				return default( Process? );
 			}
 		}
 	}

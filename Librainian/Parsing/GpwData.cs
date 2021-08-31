@@ -1816,6 +1816,6 @@ namespace Librainian.Parsing {
 			//Debug.WriteLine( Sigma );
 		}
 
-		public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) => Tris[ i1 * 26 * 26 + i2 * 26 + i3 ];
+		public static Int16 Get( Int32 i1, Int32 i2, Int32 i3 ) => Tris[i1 * 26 * 26 + i2 * 26 + i3];
 	}
 }

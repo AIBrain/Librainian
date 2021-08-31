@@ -48,13 +48,13 @@ namespace Librainian.FileSystem {
 
 		public ConcurrentDictionary<DateTime, RenamedEventArgs> Renamed { get; } = new( Environment.ProcessorCount, 512 );
 
-		private void OnChanged( Object? sender, FileSystemEventArgs? args ) => this.Changed[ DateTime.UtcNow ] = args;
+		private void OnChanged( Object? sender, FileSystemEventArgs? args ) => this.Changed[DateTime.UtcNow] = args;
 
-		private void OnCreated( Object? sender, FileSystemEventArgs? args ) => this.Created[ DateTime.UtcNow ] = args;
+		private void OnCreated( Object? sender, FileSystemEventArgs? args ) => this.Created[DateTime.UtcNow] = args;
 
-		private void OnDeleted( Object? sender, FileSystemEventArgs? args ) => this.Deleted[ DateTime.UtcNow ] = args;
+		private void OnDeleted( Object? sender, FileSystemEventArgs? args ) => this.Deleted[DateTime.UtcNow] = args;
 
-		private void OnRenamed( Object? sender, RenamedEventArgs? args ) => this.Renamed[ DateTime.UtcNow ] = args;
+		private void OnRenamed( Object? sender, RenamedEventArgs? args ) => this.Renamed[DateTime.UtcNow] = args;
 
 		public override async ValueTask DisposeManagedAsync() {
 			this.Nop();

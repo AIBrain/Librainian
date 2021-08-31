@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<LangVersion>preview</LangVersion>
+		<AnalysisLevel>preview</AnalysisLevel>
+		<Platforms>x64</Platforms>
+		<Configurations>Release</Configurations>
+		<Platforms>x64</Platforms>
+		<LangVersion>preview</LangVersion>
+		<StartupObject>Benchmarks.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+		<PackageReference Include="BenchmarkDotNet.Annotations" Version="0.13.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Librainian\Librainian.csproj" />
+	</ItemGroup>
+
+</Project>

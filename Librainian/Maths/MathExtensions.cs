@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MathExtensions.cs" last touched on 2021-04-25 at 7:59 AM by Protiguous.
 
 #nullable enable
@@ -164,7 +164,7 @@ namespace Librainian.Maths {
 		/// <param name="first"> </param>
 		/// <param name="second"></param>
 		public static Byte[] Concat( this Byte[] first, Byte[] second ) {
-			var buffer = new Byte[ first.Length + second.Length ];
+			var buffer = new Byte[first.Length + second.Length];
 			Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
 			Buffer.BlockCopy( second, 0, buffer, first.Length, second.Length );
 
@@ -178,9 +178,9 @@ namespace Librainian.Maths {
 		/// <param name="first"> </param>
 		/// <param name="second"></param>
 		public static Byte[] Concat( this Byte[] first, Byte second ) {
-			var buffer = new Byte[ first.Length + 1 ];
+			var buffer = new Byte[first.Length + 1];
 			Buffer.BlockCopy( first, 0, buffer, 0, first.Length );
-			buffer[ ^1 ] = second;
+			buffer[^1] = second;
 
 			return buffer;
 		}
@@ -192,20 +192,20 @@ namespace Librainian.Maths {
 		/// <param name="howManyBytes">   </param>
 		/// <see cref="http://github.com/mkadlec/ConvertBigIntToBcd/blob/master/ConvertBigIntToBcd.cs" />
 		public static Byte[] ConvertBigIntToBcd( this Int64 numberToConvert, Int32 howManyBytes ) {
-			var convertedNumber = new Byte[ howManyBytes ];
+			var convertedNumber = new Byte[howManyBytes];
 			var strNumber = numberToConvert.ToString();
 			var currentNumber = String.Empty;
 
 			for ( var i = 0; i < howManyBytes; i++ ) {
-				convertedNumber[ i ] = 0xff;
+				convertedNumber[i] = 0xff;
 			}
 
 			for ( var i = 0; i < strNumber.Length; i++ ) {
-				currentNumber += strNumber[ i ].ToString();
+				currentNumber += strNumber[i].ToString();
 
 				if ( i == strNumber.Length - 1 && i % 2 == 0 ) {
-					convertedNumber[ i / 2 ] = 0xf;
-					convertedNumber[ i / 2 ] |= ( Byte )( ( Int32.Parse( currentNumber ) % 10 ) << 4 );
+					convertedNumber[i / 2] = 0xf;
+					convertedNumber[i / 2] |= ( Byte )( ( Int32.Parse( currentNumber ) % 10 ) << 4 );
 				}
 
 				if ( i % 2 == 0 ) {
@@ -213,8 +213,8 @@ namespace Librainian.Maths {
 				}
 
 				var value = Int32.Parse( currentNumber );
-				convertedNumber[ ( i - 1 ) / 2 ] = ( Byte )( value % 10 );
-				convertedNumber[ ( i - 1 ) / 2 ] |= ( Byte )( ( value / 10 ) << 4 );
+				convertedNumber[( i - 1 ) / 2] = ( Byte )( value % 10 );
+				convertedNumber[( i - 1 ) / 2] |= ( Byte )( ( value / 10 ) << 4 );
 				currentNumber = String.Empty;
 			}
 
@@ -261,32 +261,32 @@ namespace Librainian.Maths {
 		/// </summary>
 		/// <param name="d"></param>
 		public static String Decimal2Packed( this Decimal d ) {
-			var output = new Boolean[ 10 ];
-			var input = new Boolean[ 12 ];
+			var output = new Boolean[10];
+			var input = new Boolean[12];
 
 			for ( var i = 0; i < 3; i++ ) {
 				var a = ( Int32 )( ( Int32 )d / Math.Pow( 10, i ) ) % 10;
 
 				for ( var j = 0; j < 4; j++ ) {
-					input[ j + i * 4 ] = ( a & ( 1 << j ) ) != 0;
+					input[j + i * 4] = ( a & ( 1 << j ) ) != 0;
 				}
 			}
 
-			output[ 0 ] = input[ 0 ];
-			output[ 1 ] = input[ 7 ] | ( input[ 11 ] & input[ 3 ] ) | false;
-			output[ 2 ] = input[ 11 ] | ( input[ 7 ] & input[ 3 ] ) | false;
-			output[ 3 ] = input[ 11 ] | input[ 7 ] | input[ 3 ];
-			output[ 4 ] = input[ 4 ];
-			output[ 5 ] = input[ 5 ] | false | ( input[ 11 ] & input[ 3 ] );
-			output[ 6 ] = false | ( input[ 7 ] & input[ 3 ] );
-			output[ 7 ] = input[ 8 ];
-			output[ 8 ] = input[ 9 ] | ( input[ 11 ] & input[ 1 ] ) | false;
-			output[ 9 ] = input[ 10 ] | ( input[ 11 ] & input[ 2 ] ) | false;
+			output[0] = input[0];
+			output[1] = input[7] | ( input[11] & input[3] ) | false;
+			output[2] = input[11] | ( input[7] & input[3] ) | false;
+			output[3] = input[11] | input[7] | input[3];
+			output[4] = input[4];
+			output[5] = input[5] | false | ( input[11] & input[3] );
+			output[6] = false | ( input[7] & input[3] );
+			output[7] = input[8];
+			output[8] = input[9] | ( input[11] & input[1] ) | false;
+			output[9] = input[10] | ( input[11] & input[2] ) | false;
 
 			var sb = new StringBuilder();
 
 			for ( var i = 9; i >= 0; i-- ) {
-				sb.Append( output[ i ] ? '1' : '0' );
+				sb.Append( output[i] ? '1' : '0' );
 			}
 
 			return sb.ToString();
@@ -302,6 +302,7 @@ namespace Librainian.Maths {
 
 		[Pure]
 		public static Double Erf( this Double x ) {
+
 			// constants
 			const Double a1 = 0.254829592;
 			const Double a2 = -0.284496736;
@@ -341,7 +342,7 @@ namespace Librainian.Maths {
 			}
 		}
 
-		public static UInt32 FibonacciSequence( this UInt32 n ) => FibonacciLookup[ n ];
+		public static UInt32 FibonacciSequence( this UInt32 n ) => FibonacciLookup[n];
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -555,17 +556,17 @@ namespace Librainian.Maths {
 		public static UInt16[] GetBitFields( UInt32 packedBits, Byte[] bitFields ) {
 			const Int32 maxBits = 32;
 			var fields = bitFields.Length - 1; // number of fields to unpack
-			var retArr = new UInt16[ fields + 1 ]; // init return array
+			var retArr = new UInt16[fields + 1]; // init return array
 			var curPos = 0; // current field bit position (start)
 
 			for ( var f = fields; f >= 0; f-- ) // loop from last
 			{
 				var lastEnd = curPos; // position where last field ended
-				curPos += bitFields[ f ]; // we get where the current value starts
+				curPos += bitFields[f]; // we get where the current value starts
 
 				var leftShift = maxBits - curPos; // we figure how much left shift we gotta apply for the other numbers to overflow into oblivion
 
-				retArr[ f ] = ( UInt16 )( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
+				retArr[f] = ( UInt16 )( ( packedBits << leftShift ) >> ( leftShift + lastEnd ) ); // we do magic
 			}
 
 			return retArr;
@@ -793,16 +794,16 @@ namespace Librainian.Maths {
 		public static Double LogFactorial( this Int32 n ) {
 			switch ( n ) {
 				case < 0: {
-					throw new ArgumentOutOfRangeException( nameof( n ) );
-				}
+						throw new ArgumentOutOfRangeException( nameof( n ) );
+					}
 				case <= 254: {
-					return MathConstants.Logfactorialtable[ n ];
-				}
+						return MathConstants.Logfactorialtable[n];
+					}
 				default: {
-					var x = n + 1d;
+						var x = n + 1d;
 
-					return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
-				}
+						return ( x - 0.5 ) * Math.Log( x ) - x + 0.5 * Math.Log( 2 * Math.PI ) + 1.0 / ( 12.0 * x );
+					}
 			}
 		}
 
@@ -818,6 +819,7 @@ namespace Librainian.Maths {
 			}
 
 			if ( Math.Abs( x ) > 1e-4 ) {
+
 				// x is large enough that the obvious evaluation is OK
 				return Math.Log( 1.0 + x );
 			}
@@ -944,11 +946,11 @@ namespace Librainian.Maths {
 				throw new ArgumentEmptyException( nameof( bitFields ) );
 			}
 
-			UInt32 retVal = values[ 0 ]; //we set the first value right away
+			UInt32 retVal = values[0]; //we set the first value right away
 
 			for ( var f = 1; f < values.Length; f++ ) {
-				retVal <<= bitFields[ f ]; //we shift the previous value
-				retVal += values[ f ]; //and add our current value //on some processors | (pipe) will be faster here
+				retVal <<= bitFields[f]; //we shift the previous value
+				retVal += values[f]; //and add our current value //on some processors | (pipe) will be faster here
 			}
 
 			return retVal;
@@ -957,6 +959,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static Double Phi( this Double x ) {
+
 			// constants
 			const Double a1 = 0.254829592;
 			const Double a2 = -0.284496736;
@@ -1010,7 +1013,7 @@ namespace Librainian.Maths {
 			for ( var i = e.Count - 1; i >= 0; --i ) {
 				a *= a;
 
-				if ( e[ i ] ) {
+				if ( e[i] ) {
 					a *= x;
 				}
 			}
@@ -1131,7 +1134,7 @@ namespace Librainian.Maths {
 		/// <param name="value"></param>
 		public static Tuple<Decimal, Decimal> Split( this Decimal value ) {
 			var parts = value.ToString( "R" ).Split( '.' );
-			var result = new Tuple<Decimal, Decimal>( Decimal.Parse( parts[ 0 ] ), Decimal.Parse( "0." + parts[ 1 ] ) );
+			var result = new Tuple<Decimal, Decimal>( Decimal.Parse( parts[0] ), Decimal.Parse( "0." + parts[1] ) );
 
 			return result;
 		}
@@ -1143,7 +1146,7 @@ namespace Librainian.Maths {
 		public static Tuple<Double, Double> Split( this Double value ) {
 			var parts = value.ToString( "R" ).Split( '.' );
 
-			return new Tuple<Double, Double>( Double.Parse( parts[ 0 ] ), Double.Parse( "0." + parts[ 1 ] ) );
+			return new Tuple<Double, Double>( Double.Parse( parts[0] ), Double.Parse( "0." + parts[1] ) );
 		}
 
 		/// <summary>
@@ -1303,7 +1306,7 @@ namespace Librainian.Maths {
 			var b = ( UInt32 )@base;
 
 			while ( ( n > 0 ) | ( minDigits-- > 0 ) ) {
-				s = MathConstants.NumberBaseChars[ ( Int32 )( n % b ) ] + s;
+				s = MathConstants.NumberBaseChars[( Int32 )( n % b )] + s;
 				n /= b;
 			}
 
@@ -1317,7 +1320,7 @@ namespace Librainian.Maths {
 		public static UInt64? ToUInt64( this String? text ) => UInt64.TryParse( text, out var result ) ? result : null;
 
 		public static UInt64 ToUInt64( this Byte[] bytes, Int32 pos ) =>
-			( UInt64 )( bytes[ pos++ ] | ( bytes[ pos++ ] << 8 ) | ( bytes[ pos++ ] << 16 ) | ( bytes[ pos ] << 24 ) );
+			( UInt64 )( bytes[pos++] | ( bytes[pos++] << 8 ) | ( bytes[pos++] << 16 ) | ( bytes[pos] << 24 ) );
 
 		public static Int64 Truncate( this Single number ) => ( Int64 )number;
 
@@ -1394,7 +1397,7 @@ namespace Librainian.Maths {
 
 			afterDecimalPoint = BigInteger.Zero;
 
-			return BigInteger.TryParse( split[ 0 ], out beforeDecimalPoint ) && BigInteger.TryParse( split[ 1 ], out afterDecimalPoint );
+			return BigInteger.TryParse( split[0], out beforeDecimalPoint ) && BigInteger.TryParse( split[1], out afterDecimalPoint );
 		}
 
 		public static Int32 TurnBitsOff( this Int32 value, Byte bitToTurnOff ) => value & ~bitToTurnOff;
@@ -1427,7 +1430,5 @@ namespace Librainian.Maths {
 
 		[Pure]
 		public static Int64 Twice( this Int64 number ) => number * 2L;
-
 	}
-
 }

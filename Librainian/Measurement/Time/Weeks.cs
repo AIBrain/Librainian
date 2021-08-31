@@ -143,6 +143,6 @@ namespace Librainian.Measurement.Time {
 
 		public Months ToMonths() => new( this.Value / InOneMonth );
 
-		public override String ToString() => $"{this.Value} week" + ( this.Value==1 ? String.Empty : "s" );
+		public override String ToString() => $"{this.Value} week" + ( this.Value == 1 ? String.Empty : "s" );
 	}
 }

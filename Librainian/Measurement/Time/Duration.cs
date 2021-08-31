@@ -41,7 +41,6 @@ namespace Librainian.Measurement.Time {
 	[JsonObject]
 	[Immutable]
 	public record Duration( BigDecimal Microseconds ) : IComparable<Duration>, IComparable<TimeSpan> {
-
 		public static BigDecimal MicrosecondsPerDay => MicrosecondsPerHour * Measurement.Time.Hours.InOneDay;
 
 		public static BigDecimal MicrosecondsPerHour => MicrosecondsPerMinute * Measurement.Time.Minutes.InOneHour;
@@ -57,7 +56,6 @@ namespace Librainian.Measurement.Time {
 		public static BigDecimal MicrosecondsPerWeek => MicrosecondsPerDay * Measurement.Time.Days.InOneWeek;
 
 		public static BigDecimal MicrosecondsPerYear => MicrosecondsPerDay * Measurement.Time.Days.InOneCommonYear;
-
 
 		public Duration( Microseconds microseconds ) : this( microseconds.Value * MicrosecondsPerMicrosecond ) { }
 
@@ -76,7 +74,7 @@ namespace Librainian.Measurement.Time {
 		public Duration( Years years ) : this( years.Value * MicrosecondsPerYear ) { }
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="ticks"></param>
 		public Duration( Int64 ticks ) : this( ticks / 10.0m ) { } //TODO Is /10 correct for ticks to microseconds?
@@ -84,8 +82,6 @@ namespace Librainian.Measurement.Time {
 		public Duration( TimeSpan time ) : this( time.Ticks ) { }
 
 		public Duration( params TimeSpan[] times ) : this( times.Where( span => span != default( TimeSpan ) ).Sum( timeSpan => timeSpan.TotalMilliseconds ) * MicrosecondsPerMillisecond ) {
-			
-			
 		}
 
 		public static Duration FromDays( BigDecimal value ) => new( new Days( value ) );
@@ -120,20 +116,20 @@ namespace Librainian.Measurement.Time {
 		/// <param name="other"></param>
 		public Int32 CompareTo( TimeSpan other ) => this.TotalMilliseconds().CompareTo( other.TotalMilliseconds );
 
-		public BigDecimal Days() => (BigInteger)this.TotalHours() % Measurement.Time.Hours.InOneDay;
+		public BigDecimal Days() => ( BigInteger )this.TotalHours() % Measurement.Time.Hours.InOneDay;
 
 		/// <summary>Returns the hash code for this instance.</summary>
 		[Pure]
 		public override Int32 GetHashCode() => this.Microseconds.GetHashCode();
 
 		[Pure]
-		public BigDecimal Hours() => ( BigInteger )this.TotalMinutes()  % Measurement.Time.Minutes.InOneHour;
+		public BigDecimal Hours() => ( BigInteger )this.TotalMinutes() % Measurement.Time.Minutes.InOneHour;
 
 		[Pure]
 		public BigDecimal Milliseconds() => ( BigInteger )this.TotalMicroseconds() % Measurement.Time.Microseconds.InOneMillisecond;
 
 		[Pure]
-		public BigDecimal Minutes() => ( BigInteger )this.TotalSeconds()  % Measurement.Time.Seconds.InOneMinute;
+		public BigDecimal Minutes() => ( BigInteger )this.TotalSeconds() % Measurement.Time.Seconds.InOneMinute;
 
 		[Pure]
 		public BigDecimal Seconds() => ( BigInteger )this.TotalMilliseconds() % Measurement.Time.Milliseconds.InOneSecond;
@@ -166,7 +162,7 @@ namespace Librainian.Measurement.Time {
 		public BigDecimal TotalYears() => this.TotalDays() / Measurement.Time.Days.InOneCommonYear;
 
 		[Pure]
-		public BigDecimal Weeks() => ( BigInteger )this.TotalDays()  % Measurement.Time.Days.InOneWeek;
+		public BigDecimal Weeks() => ( BigInteger )this.TotalDays() % Measurement.Time.Days.InOneWeek;
 
 		[Pure]
 		public BigDecimal Years() => ( BigInteger )this.TotalDays() % ( BigInteger )Measurement.Time.Days.InOneCommonYear;

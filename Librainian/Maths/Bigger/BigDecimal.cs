@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "BigDecimal.cs" last touched on 2021-05-14 at 7:58 AM by Protiguous.
 
 #nullable enable
@@ -43,16 +43,62 @@ namespace Librainian.Maths.Bigger {
 	/// </summary>
 	public readonly struct BigDecimal : IComparable, IComparable<BigDecimal>, ICloneable<BigDecimal> {
 
-		public Boolean Equals( BigDecimal other ) => this.Exponent == other.Exponent && this.Mantissa.Equals( other.Mantissa );
-		public static Boolean Equals( BigDecimal left,BigDecimal right ) => left.Exponent == right.Exponent && left.Mantissa.Equals( right.Mantissa );
-
-		public override Boolean Equals( Object? obj ) => obj is BigDecimal other && this.Equals( other );
-
-		public override Int32 GetHashCode() => HashCode.Combine( this.Exponent, this.Mantissa );
-
 		private const String NullString = "(␀)";
 
 		private const String NumericCharacters = "-0.1234567890";
+
+		private static NumberFormatInfo BigDecimalNumberFormatInfo => CultureInfo.InvariantCulture.NumberFormat;
+
+		private static BigInteger TenInt => new( 10 );
+
+		public static BigDecimal One => new( 1 );
+
+		public static BigDecimal OneHalf => 0.5d;
+
+		public static BigDecimal Pi =>
+			new( BigInteger.Parse(
+					"314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196" )
+				, 1 );
+
+		public static BigDecimal Ten => new( 10, 0 );
+
+		public static BigDecimal Zero => new( 0 );
+
+		public Int32 DecimalPlaces => this.SignifigantDigits + this.Exponent;
+
+		public Int32 Exponent { get; }
+
+		/// <summary>
+		///     This method returns true if the BigDecimal is greater than zero, false otherwise.
+		/// </summary>
+		public Boolean IsPositve => !this.IsZero && !this.IsNegative;
+
+		public Int32 Length => GetSignifigantDigits( this.Mantissa ) + this.Exponent;
+
+		public BigInteger Mantissa { get; }
+
+		public SByte Sign => this.GetSign();
+
+		public Int32 SignifigantDigits => GetSignifigantDigits( this.Mantissa );
+
+		public BigInteger WholeValue => this.GetWholePart();
+
+		public static BigDecimal E =>
+			new( BigInteger.Parse(
+					"271828182845904523536028747135266249775724709369995957496696762772407663035354759457138217852516642749193200305992181741359662904357290033429526059563073813232862794349076323382988075319525101901157383" )
+				, 1 );
+
+		public static BigDecimal MinusOne => new( BigInteger.MinusOne, 0 );
+
+		/// <summary>
+		///     This method returns true if the BigDecimal is less than zero, false otherwise.
+		/// </summary>
+		public Boolean IsNegative => this.Mantissa.Sign < 0;
+
+		/// <summary>
+		///     This method returns true if the BigDecimal is equal to zero, false otherwise.
+		/// </summary>
+		public Boolean IsZero => this.Mantissa.IsZero;
 
 		public BigDecimal( Decimal value ) : this( new BigInteger( value ), 0 ) { }
 
@@ -95,73 +141,6 @@ namespace Librainian.Maths.Bigger {
 			this.Mantissa = mantissa;
 			this.Exponent = exponent;
 		}
-
-		private static NumberFormatInfo BigDecimalNumberFormatInfo => CultureInfo.InvariantCulture.NumberFormat;
-
-		private static BigInteger TenInt => new(10);
-
-		public static BigDecimal One => new(1);
-
-		public static BigDecimal OneHalf => 0.5d;
-
-		public static BigDecimal Pi =>
-			new(BigInteger.Parse(
-					"314159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196" )
-				, 1);
-
-		public static BigDecimal Ten => new(10, 0);
-
-		public static BigDecimal Zero => new(0);
-
-		public Int32 DecimalPlaces => this.SignifigantDigits + this.Exponent;
-
-		public Int32 Exponent { get; }
-
-		/// <summary>
-		///     This method returns true if the BigDecimal is less than zero, false otherwise.
-		/// </summary>
-		public Boolean IsNegative => this.Mantissa.Sign < 0;
-
-		/// <summary>
-		///     This method returns true if the BigDecimal is greater than zero, false otherwise.
-		/// </summary>
-		public Boolean IsPositve => !this.IsZero && !this.IsNegative;
-
-		public Int32 Length => GetSignifigantDigits( this.Mantissa ) + this.Exponent;
-
-		public BigInteger Mantissa { get; }
-
-		public Int32 SignifigantDigits => GetSignifigantDigits( this.Mantissa );
-
-		public BigInteger WholeValue => this.GetWholePart();
-
-		public static BigDecimal E =>
-			new(BigInteger.Parse(
-					"271828182845904523536028747135266249775724709369995957496696762772407663035354759457138217852516642749193200305992181741359662904357290033429526059563073813232862794349076323382988075319525101901157383" )
-				, 1);
-
-		public static BigDecimal MinusOne => new(BigInteger.MinusOne, 0);
-
-		/// <summary>
-		///     This method returns true if the BigDecimal is equal to zero, false otherwise.
-		/// </summary>
-		public Boolean IsZero => this.Mantissa.IsZero;
-
-		public SByte Sign => this.GetSign();
-
-		public BigDecimal Duplicate() => new(this.Mantissa, this.Exponent);
-
-		/// <summary>
-		///     Compares two BigDecimal values, returning an integer that indicates their relationship.
-		/// </summary>
-		public Int32 CompareTo( Object? obj ) => obj is BigDecimal @decimal ? this.CompareTo( @decimal ) : throw new ArgumentEmptyException( nameof( obj ) );
-
-		/// <summary>
-		///     Compares two BigDecimal values, returning an integer that indicates their relationship.
-		/// </summary>
-		public Int32 CompareTo( BigDecimal? other ) =>
-			this < other ? -1 :
-			this > other ? 1 : 0;
 
 		/// <summary>
 		///     Returns the mantissa of value, aligned to the exponent of reference. Assumes the exponent of value is larger than
@@ -213,26 +192,26 @@ namespace Librainian.Maths.Bigger {
 			if ( negativeExponent ) {
 				if ( absExp > result.Length ) {
 					var zerosToAdd = Math.Abs( absExp - result.Length );
-					var zeroString = String.Join( String.Empty, Enumerable.Repeat( formatProvider.NativeDigits[ 0 ], zerosToAdd ) );
+					var zeroString = String.Join( String.Empty, Enumerable.Repeat( formatProvider.NativeDigits[0], zerosToAdd ) );
 					result = zeroString + result;
 					result = result.Insert( 0, formatProvider.NumberDecimalSeparator );
-					result = result.Insert( 0, formatProvider.NativeDigits[ 0 ] ?? throw new InvalidOperationException() );
+					result = result.Insert( 0, formatProvider.NativeDigits[0] ?? throw new InvalidOperationException() );
 				}
 				else {
 					var indexOfRadixPoint = Math.Abs( absExp - result.Length );
 					result = result.Insert( indexOfRadixPoint, formatProvider.NumberDecimalSeparator );
 					if ( indexOfRadixPoint == 0 ) {
-						result = result.Insert( 0, formatProvider.NativeDigits[ 0 ] ?? throw new InvalidOperationException() );
+						result = result.Insert( 0, formatProvider.NativeDigits[0] ?? throw new InvalidOperationException() );
 					}
 				}
 
 				result = result.TrimEnd( '0' );
 				if ( result.Last().ToString() == formatProvider.NumberDecimalSeparator ) {
-					result = result[ ..^1 ];
+					result = result[..^1];
 				}
 			}
 			else {
-				var zeroString = String.Join( String.Empty, Enumerable.Repeat( formatProvider.NativeDigits[ 0 ], absExp ) );
+				var zeroString = String.Join( String.Empty, Enumerable.Repeat( formatProvider.NativeDigits[0], absExp ) );
 				result += zeroString;
 			}
 
@@ -263,7 +242,7 @@ namespace Librainian.Maths.Bigger {
 			var mantissa = this.Mantissa.ToString();
 			var length = mantissa.Length + this.Exponent;
 			if ( length == 0 ) {
-				if ( Int32.TryParse( mantissa[ 0 ].ToString(), out var tenthsPlace ) ) {
+				if ( Int32.TryParse( mantissa[0].ToString(), out var tenthsPlace ) ) {
 					return tenthsPlace < 5 ? ( SByte )0 : ( SByte )1;
 				}
 
@@ -297,6 +276,9 @@ namespace Librainian.Maths.Bigger {
 
 			return result;
 		}
+
+		public static BigDecimal Concat( String beforeDecimal, String afterDecimal ) =>
+			Parse( $"{beforeDecimal}{BigDecimalNumberFormatInfo.NumberDecimalSeparator}{afterDecimal}" );
 
 		/// <summary>
 		///     Divides two BigDecimal values.
@@ -339,6 +321,8 @@ namespace Librainian.Maths.Bigger {
 			return result;
 		}
 
+		public static Boolean Equals( BigDecimal left, BigDecimal right ) => left.Exponent == right.Exponent && left.Mantissa.Equals( right.Mantissa );
+
 		/// <summary>
 		///     Returns e raised to the specified power
 		/// </summary>
@@ -377,11 +361,11 @@ namespace Librainian.Maths.Bigger {
 
 			var length = v.GetDecimalIndex();
 			if ( length > 0 ) {
-				return BigInteger.Parse( mant[ ..length ] );
+				return BigInteger.Parse( mant[..length] );
 			}
 
 			if ( length == 0 ) {
-				var tenthsPlace = Int32.Parse( mant[ 0 ].ToString() );
+				var tenthsPlace = Int32.Parse( mant[0].ToString() );
 				return tenthsPlace >= 5 ? new BigInteger( 1 ) : new BigInteger( 0 );
 			}
 
@@ -442,27 +426,27 @@ namespace Librainian.Maths.Bigger {
 			return result;
 		}
 
-		public static implicit operator BigDecimal( Byte value ) => new(value);
+		public static implicit operator BigDecimal( Byte value ) => new( value );
 
-		public static implicit operator BigDecimal( SByte value ) => new(value);
+		public static implicit operator BigDecimal( SByte value ) => new( value );
 
-		public static implicit operator BigDecimal( Int16 value ) => new(value);
+		public static implicit operator BigDecimal( Int16 value ) => new( value );
 
-		public static implicit operator BigDecimal( Int32 value ) => new(value);
+		public static implicit operator BigDecimal( Int32 value ) => new( value );
 
-		public static implicit operator BigDecimal( Int64 value ) => new(value);
+		public static implicit operator BigDecimal( Int64 value ) => new( value );
 
-		public static implicit operator BigDecimal( UInt16 value ) => new(value);
+		public static implicit operator BigDecimal( UInt16 value ) => new( value );
 
-		public static implicit operator BigDecimal( UInt32 value ) => new(value);
+		public static implicit operator BigDecimal( UInt32 value ) => new( value );
 
-		public static implicit operator BigDecimal( UInt64 value ) => new(value);
+		public static implicit operator BigDecimal( UInt64 value ) => new( value );
 
-		public static implicit operator BigDecimal( BigInteger value ) => new(value, 0);
+		public static implicit operator BigDecimal( BigInteger value ) => new( value, 0 );
 
-		public static implicit operator BigDecimal( Single value ) => new(value);
+		public static implicit operator BigDecimal( Single value ) => new( value );
 
-		public static implicit operator BigDecimal( Double value ) => new(value);
+		public static implicit operator BigDecimal( Double value ) => new( value );
 
 		public static implicit operator BigDecimal( Decimal value ) {
 			var mantissa = new BigInteger( value );
@@ -481,6 +465,7 @@ namespace Librainian.Maths.Bigger {
 		///     Divides two BigDecimal values, returning the remainder and discarding the quotient.
 		/// </summary>
 		public static BigDecimal Mod( BigDecimal value, BigDecimal mod ) {
+
 			// x – q * y
 			var quotient = Divide( value, mod );
 			var floor = Floor( quotient );
@@ -490,12 +475,12 @@ namespace Librainian.Maths.Bigger {
 		/// <summary>
 		///     Multiplies two BigDecimal values.
 		/// </summary>
-		public static BigDecimal Multiply( BigDecimal left, BigDecimal right ) => new(left.Mantissa * right.Mantissa, left.Exponent + right.Exponent);
+		public static BigDecimal Multiply( BigDecimal left, BigDecimal right ) => new( left.Mantissa * right.Mantissa, left.Exponent + right.Exponent );
 
 		/// <summary>
 		///     Returns the result of multiplying a BigDecimal by negative one.
 		/// </summary>
-		public static BigDecimal Negate( BigDecimal value ) => new(BigInteger.Negate( value.Mantissa ), value.Exponent);
+		public static BigDecimal Negate( BigDecimal value ) => new( BigInteger.Negate( value.Mantissa ), value.Exponent );
 
 		public static BigDecimal operator -( BigDecimal value ) => Negate( value );
 
@@ -570,20 +555,6 @@ namespace Librainian.Maths.Bigger {
 			}
 
 			return new BigDecimal( mantessa, exponent );
-		}
-
-		public static BigDecimal Concat( String beforeDecimal, String afterDecimal ) =>
-			Parse( $"{beforeDecimal}{BigDecimalNumberFormatInfo.NumberDecimalSeparator}{afterDecimal}" );
-
-		public static Boolean TryParse( String input, out BigDecimal? result ) {
-			try {
-				result = Parse( input );
-				return true;
-			}
-			catch ( Exception ) {
-				result = default( BigDecimal? );
-				return false;
-			}
 		}
 
 		/// <summary>
@@ -665,21 +636,43 @@ namespace Librainian.Maths.Bigger {
 		/// </summary>
 		public static BigDecimal Subtract( BigDecimal left, BigDecimal right ) => Add( left, Negate( right ) );
 
-		//public override Boolean Equals( Object obj ) => obj is BigDecimal @decimal && this.Equals( @decimal );
-
-		/*
-		public Boolean Equals( BigDecimal other ) {
-
-			//this.Normalize();
-			//other.Normalize();
-
-			var matchMantissa = this.Mantissa.Equals( other.Mantissa );
-			var matchExponent = this.Exponent.Equals( other.Exponent );
-			var matchSign = this.Sign.Equals( other.Sign );
-
-			return matchMantissa && matchExponent && matchSign;
+		public static Boolean TryParse( String input, out BigDecimal? result ) {
+			try {
+				result = Parse( input );
+				return true;
+			}
+			catch ( Exception ) {
+				result = default( BigDecimal? );
+				return false;
+			}
 		}
-		*/
+
+		/// <summary>
+		///     Compares two BigDecimal values, returning an integer that indicates their relationship.
+		/// </summary>
+		public Int32 CompareTo( Object? obj ) => obj is BigDecimal @decimal ? this.CompareTo( @decimal ) : throw new ArgumentEmptyException( nameof( obj ) );
+
+		/// <summary>
+		///     Compares two BigDecimal values, returning an integer that indicates their relationship.
+		/// </summary>
+		public Int32 CompareTo( BigDecimal? other ) =>
+			this < other ? -1 :
+			this > other ? 1 : 0;
+
+		public Int32 CompareTo( BigDecimal other ) {
+			var exponentComparison = this.Exponent.CompareTo( other.Exponent );
+			if ( exponentComparison != 0 ) {
+				return exponentComparison;
+			}
+
+			return this.Mantissa.CompareTo( other.Mantissa );
+		}
+
+		public BigDecimal Duplicate() => new( this.Mantissa, this.Exponent );
+
+		public Boolean Equals( BigDecimal other ) => this.Exponent == other.Exponent && this.Mantissa.Equals( other.Mantissa );
+
+		public override Boolean Equals( Object? obj ) => obj is BigDecimal other && this.Equals( other );
 
 		/// <summary>
 		///     Returns the zero-based index of the decimal point, if the BigDecimal were rendered as a string.
@@ -697,8 +690,9 @@ namespace Librainian.Maths.Bigger {
 			switch ( valueSplit.Length ) {
 				case 1:
 					return Zero;
+
 				case 2:
-					resultString = valueSplit[ 1 ];
+					resultString = valueSplit[1];
 					break;
 			}
 
@@ -728,6 +722,24 @@ namespace Librainian.Maths.Bigger {
 			//}
 		}
 
+		public override Int32 GetHashCode() => HashCode.Combine( this.Exponent, this.Mantissa );
+
+		//public override Boolean Equals( Object obj ) => obj is BigDecimal @decimal && this.Equals( @decimal );
+
+		/*
+		public Boolean Equals( BigDecimal other ) {
+
+			//this.Normalize();
+			//other.Normalize();
+
+			var matchMantissa = this.Mantissa.Equals( other.Mantissa );
+			var matchExponent = this.Exponent.Equals( other.Exponent );
+			var matchSign = this.Sign.Equals( other.Sign );
+
+			return matchMantissa && matchExponent && matchSign;
+		}
+		*/
+
 		//public override Int32 GetHashCode() => ( this.Mantissa, this.Exponent ).GetHashCode();
 
 		/// <summary>
@@ -741,7 +753,7 @@ namespace Librainian.Maths.Bigger {
 				BigDecimalNumberFormatInfo.NumberDecimalSeparator
 			}, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 			if ( valueSplit.Length > 0 ) {
-				resultString = valueSplit[ 0 ];
+				resultString = valueSplit[0];
 			}
 
 			return BigInteger.Parse( resultString ?? throw new InvalidOperationException() );
@@ -750,18 +762,5 @@ namespace Librainian.Maths.Bigger {
 		public override String ToString() => this.ToString( BigDecimalNumberFormatInfo );
 
 		public String ToString( IFormatProvider provider ) => ToString( this.Mantissa, this.Exponent, provider );
-
-		public Int32 CompareTo( BigDecimal other ) {
-			var exponentComparison = this.Exponent.CompareTo( other.Exponent );
-			if ( exponentComparison != 0 ) {
-				return exponentComparison;
-			}
-
-			return this.Mantissa.CompareTo( other.Mantissa );
-		}
-
 	}
-
-	
-
 }

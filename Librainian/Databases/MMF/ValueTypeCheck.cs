@@ -43,7 +43,7 @@ namespace Librainian.Databases.MMF {
 				return false;
 			}
 
-			var attribute = ( MarshalAsAttribute )customAttributes[ 0 ];
+			var attribute = ( MarshalAsAttribute )customAttributes[0];
 
 			if ( attribute.Value == UnmanagedType.Currency ) {
 				return true;

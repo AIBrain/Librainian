@@ -138,7 +138,7 @@ namespace Librainian.Financial.Currency.BTC {
 						}
 					}
 					else {
-						newQuantity = this._coins[ coin ] += quantity;
+						newQuantity = this._coins[coin] += quantity;
 					}
 
 					return newQuantity;
@@ -183,11 +183,11 @@ namespace Librainian.Financial.Currency.BTC {
 			}
 
 			lock ( this._coins ) {
-				if ( !this._coins.ContainsKey( coin ) || this._coins[ coin ] < quantity ) {
+				if ( !this._coins.ContainsKey( coin ) || this._coins[coin] < quantity ) {
 					return false; //no coins to withdraw!
 				}
 
-				this._coins[ coin ] -= quantity;
+				this._coins[coin] -= quantity;
 			}
 
 			this.OnWithdraw?.Invoke( new KeyValuePair<ICoin, UInt64>( coin, quantity ) );

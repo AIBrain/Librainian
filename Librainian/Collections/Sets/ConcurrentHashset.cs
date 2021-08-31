@@ -56,7 +56,7 @@ namespace Librainian.Collections.Sets {
 		/// <summary>Gets the item in the set or throws.</summary>
 		/// <param name="index"></param>
 		/// <exception cref="IndexOutOfRangeException"></exception>
-		public T this[ Int32 index ] {
+		public T this[Int32 index] {
 			[NotNull]
 			get {
 				if ( index < 0 ) {
@@ -86,7 +86,7 @@ namespace Librainian.Collections.Sets {
 		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object?>();
 
 		[DebuggerStepThrough]
-		public void Add( T item ) => this.Set[ item ] = null;
+		public void Add( T item ) => this.Set[item] = null;
 
 		[DebuggerStepThrough]
 		public void AddRange( IEnumerable<T> items ) {
@@ -123,7 +123,7 @@ namespace Librainian.Collections.Sets {
 		/// <param name="item"></param>
 		/// <param name="tag"></param>
 		public Boolean Tag( T item, Object? tag ) {
-			this.Set[ item ] = tag;
+			this.Set[item] = tag;
 
 			return true;
 		}

@@ -70,7 +70,7 @@ namespace Librainian.Security {
 				return _defaultTable;
 			}
 
-			var createTable = new UInt32[ 256 ];
+			var createTable = new UInt32[256];
 
 			for ( var i = 0; i < 256; i++ ) {
 				var entry = ( UInt32 )i;
@@ -84,7 +84,7 @@ namespace Librainian.Security {
 					}
 				}
 
-				createTable[ i ] = entry;
+				createTable[i] = entry;
 			}
 
 			if ( polynomial == DefaultPolynomial ) {
@@ -123,7 +123,7 @@ namespace Librainian.Security {
 			var crc = seed;
 
 			for ( var i = start; i < size - start; i++ ) {
-				crc = ( crc >> 8 ) ^ table[ buffer[ i ] ^ ( crc & 0xff ) ];
+				crc = ( crc >> 8 ) ^ table[buffer[i] ^ ( crc & 0xff )];
 			}
 
 			return crc;

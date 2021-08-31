@@ -25,7 +25,6 @@
 namespace Librainian.Maths {
 
 	using System;
-	using System.Threading;
 	using Exceptions;
 
 	/// <summary>Based from Microsoft Reference random.cs sources. This is purely for learning purposes.</summary>
@@ -65,9 +64,9 @@ namespace Librainian.Maths {
 					locINextp = 1;
 				}
 
-				var retVal = SeedArray[ locINext ] - SeedArray[ locINextp ];
+				var retVal = SeedArray[locINext] - SeedArray[locINextp];
 
-				SeedArray[ locINext ] = retVal;
+				SeedArray[locINext] = retVal;
 
 				inext = locINext;
 				inextp = locINextp;
@@ -81,25 +80,25 @@ namespace Librainian.Maths {
 		public static void Seed( Int32 seed ) {
 			unchecked {
 				if ( SeedArray is not { Length: SpecialLength } ) {
-					SeedArray = new Int32[ SpecialLength ];
+					SeedArray = new Int32[SpecialLength];
 				}
 
 				var mj = Middle - ( seed ^ Environment.CurrentManagedThreadId.GetHashCode() );
 
-				SeedArray[ Special ] = mj;
+				SeedArray[Special] = mj;
 
 				var mk = 1;
 
 				for ( var i = 0; i < Special; i++ ) {
 					var ii = 21 * i % Special;
-					SeedArray[ ii ] = mk;
+					SeedArray[ii] = mk;
 					mk = mj - mk;
-					mj = SeedArray[ ii ];
+					mj = SeedArray[ii];
 				}
 
 				for ( var k = 1; k < 5; k++ ) {
 					for ( var i = 1; i < SpecialLength; i++ ) {
-						SeedArray[ i ] -= SeedArray[ 1 + ( i + 30 ) % Special ];
+						SeedArray[i] -= SeedArray[1 + ( i + 30 ) % Special];
 					}
 				}
 
@@ -146,7 +145,7 @@ namespace Librainian.Maths {
 			}
 
 			for ( var i = 0; i < buffer.Length; i++ ) {
-				buffer[ i ] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
+				buffer[i] = ( Byte )( InternalSample() % ( Byte.MaxValue + 1 ) );
 			}
 		}
 

@@ -65,7 +65,7 @@ namespace Librainian.Security {
 
 		private UInt32 _i = 15;
 
-		private UInt32[] _q { get; } = new UInt32[ _qLength ];
+		private UInt32[] _q { get; } = new UInt32[_qLength];
 
 		/// <summary>
 		///     <para>Create a random number generator with a given seed.</para>
@@ -83,10 +83,10 @@ namespace Librainian.Security {
 				j ^= j << 0xD;
 				j ^= j >> 0x11;
 				j ^= j << 0x5;
-				this._q[ i ] = j;
+				this._q[i] = j;
 			}
 
-			this._q[ ^1 ] = ( UInt32 )( seed ^ ( seed >> 32 ) );
+			this._q[^1] = ( UInt32 )( seed ^ ( seed >> 32 ) );
 		}
 
 		/// <summary>
@@ -135,18 +135,18 @@ namespace Librainian.Security {
 			const UInt32 r = 0xfffffffe;
 
 			this._i = ( this._i + 1 ) & 15;
-			var t = a * this._q[ this._i ] + this._c;
+			var t = a * this._q[this._i] + this._c;
 			this._c = ( UInt32 )( t >> 32 );
 			var x = ( UInt32 )( t + this._c );
 
 			if ( x >= this._c ) {
-				return this._q[ this._i ] = r - x;
+				return this._q[this._i] = r - x;
 			}
 
 			x++;
 			this._c++;
 
-			return this._q[ this._i ] = r - x;
+			return this._q[this._i] = r - x;
 		}
 
 		/// <summary>Get a new random System.Double value</summary>
@@ -188,7 +188,7 @@ namespace Librainian.Security {
 			}
 
 			for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
-				buffer[ i ] = ( Byte )this.Cmwc();
+				buffer[i] = ( Byte )this.Cmwc();
 			}
 		}
 

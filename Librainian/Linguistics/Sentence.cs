@@ -138,12 +138,12 @@ namespace Librainian.Linguistics {
 		//[NotNull]public IEnumerable<Sentence> Possibles() => this.Words.ToArray().FastPowerSet().Select( words => new Sentence( words ) ).Where( sentence => !sentence.ToString().IsNullOrEmpty() );
 		public override Int32 GetHashCode() => this.Words.GetHashCode();
 
-		public override String ToString() => this.Words.ToStrings( ParsingConstants.Strings.Singlespace );
-
 		/// <summary>
 		/// Return a jagged array of every possible combination.
 		/// </summary>
 		public Word[][] PowerSet() => this.Words.ToArray().PowerSet();
+
+		public override String ToString() => this.Words.ToStrings( ParsingConstants.Strings.Singlespace );
 
 		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}

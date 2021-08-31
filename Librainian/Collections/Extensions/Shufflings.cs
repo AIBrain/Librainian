@@ -130,7 +130,7 @@ namespace Librainian.Collections.Extensions {
 			var length = buffer.Length;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
-				retry:
+			retry:
 				var indexa = 0.Next( length );
 				var indexb = 0.Next( length );
 
@@ -138,9 +138,9 @@ namespace Librainian.Collections.Extensions {
 					goto retry;
 				}
 
-				(var a, var b) = (buffer[ indexa ], buffer[ indexb ]);
-				buffer[ indexa ] = b;
-				buffer[ indexb ] = a;
+				(var a, var b) = (buffer[indexa], buffer[indexb]);
+				buffer[indexa] = b;
+				buffer[indexb] = a;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace Librainian.Collections.Extensions {
 			var length = list.Count;
 
 			for ( var i = length - 1; i >= 0; i-- ) {
-				retry:
+			retry:
 				var indexa = 0.Next( length );
 				var indexb = 0.Next( length );
 
@@ -159,9 +159,9 @@ namespace Librainian.Collections.Extensions {
 					goto retry;
 				}
 
-				(var a, var b) = (list[ indexa ], list[ indexb ]);
-				list[ indexa ] = b;
-				list[ indexb ] = a;
+				(var a, var b) = (list[indexa], list[indexb]);
+				list[indexa] = b;
+				list[indexb] = a;
 			}
 		}
 
@@ -192,34 +192,34 @@ namespace Librainian.Collections.Extensions {
 
 				switch ( shufflingType ) {
 					case ShufflingType.ByGuid: {
-						ShuffleByGuid( ref list, iterations );
+							ShuffleByGuid( ref list, iterations );
 
-						break;
-					}
+							break;
+						}
 
 					case ShufflingType.ByRandom: {
-						ShuffleByRandomThenByRandom( ref list, iterations );
+							ShuffleByRandomThenByRandom( ref list, iterations );
 
-						break;
-					}
+							break;
+						}
 
 					case ShufflingType.ByHarker: {
-						ShuffleByHarker( list, iterations, forHowLong, token );
+							ShuffleByHarker( list, iterations, forHowLong, token );
 
-						break;
-					}
+							break;
+						}
 
 					case ShufflingType.ByBags: {
-						ShuffleByBags( ref list, iterations );
+							ShuffleByBags( ref list, iterations );
 
-						break;
-					}
+							break;
+						}
 
 					case ShufflingType.BestChoice: {
-						ShuffleByHarker( list, iterations, forHowLong, token );
+							ShuffleByHarker( list, iterations, forHowLong, token );
 
-						break;
-					}
+							break;
+						}
 
 					default:
 						throw new ArgumentOutOfRangeException( nameof( shufflingType ) );
@@ -337,6 +337,7 @@ namespace Librainian.Collections.Extensions {
 			while ( iterations.Any() ) {
 				iterations--;
 				list = list.OrderBy( _ => Randem.Next() ).ThenBy( _ => Randem.Next() ).ToList();
+
 				//TODO Benchmark list = list.OrderBy( _ => Randem.NextDouble() ).ThenBy( _ => Randem.NextDouble() ).ToList();
 			}
 		}

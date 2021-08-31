@@ -42,8 +42,8 @@ namespace Librainian.FileSystem {
 			using var reader = new StreamReader( source.FullPath );
 
 #if NET5_0_OR_GREATER
-			#endif
-				var writer = new StreamWriter( destination.FullPath, false );
+#endif
+			var writer = new StreamWriter( destination.FullPath, false );
 			await using var _ = writer.ConfigureAwait( false );
 
 			Int32 numRead;

@@ -56,7 +56,7 @@ namespace Librainian.Persistence {
 			get;
 		} = new();
 
-		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[ section ].Keys );
+		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[section].Keys );
 
 		/// <summary></summary>
 		[JsonProperty]
@@ -64,7 +64,7 @@ namespace Librainian.Persistence {
 
 		public IEnumerable<String> Sections => this.Data.Keys;
 
-		public ReadOnlyDataType? this[ String? section ] {
+		public ReadOnlyDataType? this[String? section] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -85,7 +85,7 @@ namespace Librainian.Persistence {
 		/// <summary></summary>
 		/// <param name="section"></param>
 		/// <param name="key"></param>
-		public String? this[ String? section, String? key ] {
+		public String? this[String? section, String? key] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -101,7 +101,7 @@ namespace Librainian.Persistence {
 					return default( String? );
 				}
 
-				return this.Data[ section ].TryGetValue( key, out var value ) ? value : null;
+				return this.Data[section].TryGetValue( key, out var value ) ? value : null;
 			}
 
 			[DebuggerStepThrough]
@@ -146,7 +146,7 @@ namespace Librainian.Persistence {
 			}
 
 			var retries = 10;
-			TryAgain:
+		TryAgain:
 
 			if ( !this.Data.ContainsKey( section ) ) {
 				this.Data.TryAdd( section, new DataType() );
@@ -154,7 +154,7 @@ namespace Librainian.Persistence {
 
 			try {
 				(var key, var value) = pair;
-				this.Data[ section ][ key.Trim() ] = value;
+				this.Data[section][key.Trim()] = value;
 
 				return true;
 			}
@@ -186,7 +186,7 @@ namespace Librainian.Persistence {
 			}
 
 			var retries = 10;
-			TryAgain:
+		TryAgain:
 
 			if ( !this.Data.ContainsKey( section ) ) {
 				this.Data.TryAdd( section, new DataType() );
@@ -194,7 +194,7 @@ namespace Librainian.Persistence {
 
 			try {
 				(var key, var value) = tuple;
-				this.Data[ section ][ key.Trim() ] = value;
+				this.Data[section][key.Trim()] = value;
 
 				return true;
 			}
@@ -239,9 +239,9 @@ namespace Librainian.Persistence {
 				}
 
 				if ( data != null ) {
-					var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[ section ].Keys.AsParallel().AsUnordered(), key => {
+					var result = Parallel.ForEach( data.Keys.AsParallel(), section => Parallel.ForEach( data[section].Keys.AsParallel().AsUnordered(), key => {
 						if ( !String.IsNullOrEmpty( key ) ) {
-							this.Add( section, new KeyValuePair<String, String?>( key, data[ section ][ key ] ) );
+							this.Add( section, new KeyValuePair<String, String?>( key, data[section][key] ) );
 						}
 					} ) );
 
@@ -291,7 +291,7 @@ namespace Librainian.Persistence {
 				return false;
 			}
 
-			return this.Data[ section ].TryRemove( key, out var _ );
+			return this.Data[section].TryRemove( key, out var _ );
 		}
 
 		/// <summary>Saves the <see cref="Data" /> to the <see cref="Document" />.</summary>

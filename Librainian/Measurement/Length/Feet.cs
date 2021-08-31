@@ -42,13 +42,12 @@ namespace Librainian.Measurement.Length {
 	/// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public record Feet(BigDecimal Value) : IQuantityOfDistance, IComparable<Feet> {
+	public record Feet( BigDecimal Value ) : IQuantityOfDistance, IComparable<Feet> {
 
 		/// <summary>60</summary>
 		public const Byte InOneYard = 3;
 
 		public const Decimal FeetPerMeter = 3.28084m;
-
 
 		public Feet( Int64 value ) : this( ( BigDecimal )value ) { }
 

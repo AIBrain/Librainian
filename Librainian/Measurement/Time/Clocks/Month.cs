@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time.Clocks {
 	public record Month : IComparable<Month>, IClockPart {
 		public const Byte MaximumValue = 12;
 
-		public const Byte MinimumValue = 0;	//TODO um... not 1??
+		public const Byte MinimumValue = 0; //TODO um... not 1??
 
 		public Month( Byte value ) {
 			if ( value is < MinimumValue or > MaximumValue ) {

@@ -164,7 +164,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( line[ ..openParent ], out var checksum ) ) {
+			if ( !Byte.TryParse( line[..openParent], out var checksum ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
 				}
@@ -192,7 +192,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[ 0 ], out var alpha ) ) {
+			if ( !Byte.TryParse( argb[0], out var alpha ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Alpha from {line}" ).ConfigureAwait( false );
 				}
@@ -200,7 +200,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[ 1 ], out var red ) ) {
+			if ( !Byte.TryParse( argb[1], out var red ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Red from {line}" ).ConfigureAwait( false );
 				}
@@ -208,7 +208,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[ 2 ], out var green ) ) {
+			if ( !Byte.TryParse( argb[2], out var green ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Green from {line}" ).ConfigureAwait( false );
 				}
@@ -216,7 +216,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( argb[ 3 ], out var blue ) ) {
+			if ( !Byte.TryParse( argb[3], out var blue ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Blue from {line}" ).ConfigureAwait( false );
 				}
@@ -234,7 +234,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var xandy = line[ ( at + 1 ).. ].Split( ',', StringSplitOptions.RemoveEmptyEntries );
+			var xandy = line[( at + 1 )..].Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( xandy.Length != 2 ) {
 				if ( errors != null ) {
@@ -244,7 +244,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !UInt32.TryParse( xandy[ 0 ], out var x ) ) {
+			if ( !UInt32.TryParse( xandy[0], out var x ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse X from {line}" ).ConfigureAwait( false );
 				}
@@ -252,7 +252,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !UInt32.TryParse( xandy[ 0 ], out var y ) ) {
+			if ( !UInt32.TryParse( xandy[0], out var y ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Y from {line}" ).ConfigureAwait( false );
 				}

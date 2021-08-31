@@ -103,8 +103,6 @@ namespace Librainian.Measurement.Time {
 		public static DateTime At( this DateTime current, Int32 hour, Int32 minute, Int32 second, Int32 milliseconds ) =>
 			current.SetTime( hour, minute, second, milliseconds );
 
-		public static Boolean Between( this DateTime dt, DateTime rangeBeg, DateTime rangeEnd ) => rangeBeg <= dt && dt <= rangeEnd;
-
 		public static DateTime Average( this IEnumerable<DateTime> dates ) {
 			if ( dates is null ) {
 				throw new ArgumentEmptyException( nameof( dates ) );
@@ -131,6 +129,8 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="date"></param>
 		public static DateTime BeginningOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
+
+		public static Boolean Between( this DateTime dt, DateTime rangeBeg, DateTime rangeEnd ) => rangeBeg <= dt && dt <= rangeEnd;
 
 		public static TimeSpan DateTimePrecision() {
 			Int64 now;
@@ -217,18 +217,18 @@ namespace Librainian.Measurement.Time {
 			}
 
 			var matches = regex.Matches( input );
-			var match = matches[ 0 ];
-			var ms = Convert.ToInt64( match.Groups[ 1 ].Value );
+			var match = matches[0];
+			var ms = Convert.ToInt64( match.Groups[1].Value );
 
 			dt = Epochs.Unix.AddMilliseconds( ms );
 
 			// adjust if time zone modifier present
-			if ( match.Groups.Count <= 2 || String.IsNullOrEmpty( match.Groups[ 3 ].Value ) ) {
+			if ( match.Groups.Count <= 2 || String.IsNullOrEmpty( match.Groups[3].Value ) ) {
 				return dt;
 			}
 
-			var mod = DateTime.ParseExact( match.Groups[ 3 ].Value, "HHmm", culture );
-			dt = match.Groups[ 2 ].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
+			var mod = DateTime.ParseExact( match.Groups[3].Value, "HHmm", culture );
+			dt = match.Groups[2].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
 
 			return dt;
 		}
@@ -403,6 +403,10 @@ namespace Librainian.Measurement.Time {
 			return year % 400 == 0;
 		}
 
+		public static Boolean IsWeekend( this DateTime date ) => date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+
+		public static Boolean IsWorkingDay( this DateTime date ) => date.DayOfWeek is not DayOfWeek.Saturday and not DayOfWeek.Sunday;
+
 		/// <summary>
 		///     Sets the day of the <see cref="DateTime" /> to the last day in that month.
 		/// </summary>
@@ -547,6 +551,14 @@ namespace Librainian.Measurement.Time {
 			return firstDayOfNextMonth.SetDay( day );
 		}
 
+		public static DateTime NextWorkday( this DateTime date ) {
+			var nextDay = date.AddDays( 1 );
+			while ( !nextDay.IsWorkingDay() ) {
+				nextDay = nextDay.AddDays( 1 );
+			}
+			return nextDay;
+		}
+
 		/// <summary>
 		///     Returns the same date (same Day, Month, Hour, Minute, Second etc) in the next calendar year. If that day does not
 		///     exist in next year in same month, number of
@@ -677,48 +689,48 @@ namespace Librainian.Measurement.Time {
 
 			switch ( rt ) {
 				case RoundTo.Second: {
-					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
+						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
 
-					if ( dateTime.Millisecond >= 500 ) {
-						rounded = rounded.AddSeconds( 1 );
+						if ( dateTime.Millisecond >= 500 ) {
+							rounded = rounded.AddSeconds( 1 );
+						}
+
+						break;
 					}
-
-					break;
-				}
 
 				case RoundTo.Minute: {
-					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
+						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
 
-					if ( dateTime.Second >= 30 ) {
-						rounded = rounded.AddMinutes( 1 );
+						if ( dateTime.Second >= 30 ) {
+							rounded = rounded.AddMinutes( 1 );
+						}
+
+						break;
 					}
-
-					break;
-				}
 
 				case RoundTo.Hour: {
-					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
+						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
 
-					if ( dateTime.Minute >= 30 ) {
-						rounded = rounded.AddHours( 1 );
+						if ( dateTime.Minute >= 30 ) {
+							rounded = rounded.AddHours( 1 );
+						}
+
+						break;
 					}
-
-					break;
-				}
 
 				case RoundTo.Day: {
-					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
+						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
 
-					if ( dateTime.Hour >= 12 ) {
-						rounded = rounded.AddDays( 1 );
+						if ( dateTime.Hour >= 12 ) {
+							rounded = rounded.AddDays( 1 );
+						}
+
+						break;
 					}
 
-					break;
-				}
-
 				default: {
-					throw new ArgumentOutOfRangeException( nameof( rt ) );
-				}
+						throw new ArgumentOutOfRangeException( nameof( rt ) );
+					}
 			}
 
 			return rounded;
@@ -830,15 +842,15 @@ namespace Librainian.Measurement.Time {
 		public static String Simpler( this TimeSpan timeSpan ) {
 			var sb = new StringBuilder();
 
-			if ( timeSpan.Days > 365*2 ) {
+			if ( timeSpan.Days > 365 * 2 ) {
 				sb.AppendFormat( " {0:n0} years", timeSpan.Days / 365 );
 			}
-
-			else if ( timeSpan.Days.Between( 365, 366) ) {
-			    sb.Append( " 1 year" );
+			else if ( timeSpan.Days.Between( 365, 366 ) ) {
+				sb.Append( " 1 year" );
 			}
 
 			switch ( timeSpan.Days ) {
+
 				//else if ( timeSpan.Days > 14 ) {
 				//    sb.AppendFormat( " {0:n0} weeks", timeSpan.Days / 7 );
 				//}
@@ -849,6 +861,7 @@ namespace Librainian.Measurement.Time {
 				case > 1:
 					sb.Append( $" {timeSpan.Days:R} days" );
 					break;
+
 				case 1:
 					sb.Append( $" {timeSpan.Days:R} day" );
 					break;
@@ -858,6 +871,7 @@ namespace Librainian.Measurement.Time {
 				case > 1:
 					sb.Append( $" {timeSpan.Hours:n0} hours" );
 					break;
+
 				case 1:
 					sb.Append( $" {timeSpan.Hours} hour" );
 					break;
@@ -867,6 +881,7 @@ namespace Librainian.Measurement.Time {
 				case > 1:
 					sb.Append( $" {timeSpan.Minutes:n0} minutes" );
 					break;
+
 				case 1:
 					sb.Append( $" {timeSpan.Minutes} minute" );
 					break;
@@ -876,6 +891,7 @@ namespace Librainian.Measurement.Time {
 				case > 1:
 					sb.Append( $" {timeSpan.Seconds:n0} seconds" );
 					break;
+
 				case 1:
 					sb.Append( $" {timeSpan.Seconds} second" );
 					break;
@@ -885,6 +901,7 @@ namespace Librainian.Measurement.Time {
 				case > 1:
 					sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" );
 					break;
+
 				case 1:
 					sb.Append( $" {timeSpan.Milliseconds} millisecond" );
 					break;
@@ -941,18 +958,6 @@ namespace Librainian.Measurement.Time {
 			}
 
 			return sb.ToString().Trim();
-		}
-
-		public static Boolean IsWorkingDay( this DateTime date ) => date.DayOfWeek is not DayOfWeek.Saturday and not DayOfWeek.Sunday;
-
-		public static Boolean IsWeekend( this DateTime date ) => date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
-
-		public static DateTime NextWorkday( this DateTime date ) {
-			var nextDay = date.AddDays( 1 );
-			while ( !nextDay.IsWorkingDay() ) {
-				nextDay = nextDay.AddDays( 1 );
-			}
-			return nextDay;
 		}
 
 		/// <summary>

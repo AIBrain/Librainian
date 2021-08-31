@@ -71,10 +71,10 @@ namespace Librainian.FileSystem {
 				}
 
 				reportDocument?.Report( document );
-				Documents[ document.FullPath ] = document;
+				Documents[document.FullPath] = document;
 
 				var docinfo = new DocumentInfo( document );
-				DocumentInfos[ document.FullPath ] = docinfo;
+				DocumentInfos[document.FullPath] = docinfo;
 				await docinfo.ScanAsync( CTS.Token ).ConfigureAwait( false );
 			}
 

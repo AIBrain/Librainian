@@ -12,7 +12,5 @@
 		///     Returns a clone of this instance.
 		/// </summary>
 		T Duplicate();
-
 	}
-
 }

@@ -58,10 +58,10 @@ namespace Librainian.Security {
 		private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
 
 			//Xor the keys an their passwords
-			var keyStreams = new MemoryStream[ keys.Count ];
+			var keyStreams = new MemoryStream[keys.Count];
 
 			for ( var n = 0; n < keys.Count; n++ ) {
-				keyStreams[ n ] = CreateKeyStream( keys[ n ] );
+				keyStreams[n] = CreateKeyStream( keys[n] );
 			}
 
 			//Buffer for the resulting stream
@@ -120,7 +120,7 @@ namespace Librainian.Security {
 			while ( ( currentByte = fileStream.ReadByte() ) >= 0 ) {
 
 				//combine the key-byte with the corresponding password-byte
-				currentByte ^= key.Password[ passwordIndex ];
+				currentByte ^= key.Password[passwordIndex];
 
 				//add the result to the key stream
 				resultStream.WriteByte( ( Byte )currentByte );

@@ -49,7 +49,7 @@ namespace Librainian.Parsing.Validation {
 
 		public Int32 Length => this.Value.Length;
 
-		public Char this[ Int32 index ] => this.Value[ index ];
+		public Char this[Int32 index] => this.Value[index];
 
 		public ValidatedString( String value, Func<String, Boolean> validationFunc ) {
 			this.Value = value ?? throw new ArgumentEmptyException( nameof( value ) );

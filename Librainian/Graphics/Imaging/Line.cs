@@ -100,10 +100,10 @@ namespace Librainian.Graphics.Imaging {
 
 		/// <summary>Returns the zero-based <see cref="Pixel" /> or null if not found.</summary>
 		/// <param name="index"></param>
-		public Pixel? this[ UInt64 index ] {
+		public Pixel? this[UInt64 index] {
 			get {
 				if ( index <= this.Count ) {
-					return this.Pixels[ index ];
+					return this.Pixels[index];
 				}
 
 				return default( Pixel? );
@@ -111,7 +111,7 @@ namespace Librainian.Graphics.Imaging {
 
 			set {
 				if ( value.HasValue && index <= this.Count ) {
-					this.Pixels[ index ] = value.Value;
+					this.Pixels[index] = value.Value;
 				}
 			}
 		}

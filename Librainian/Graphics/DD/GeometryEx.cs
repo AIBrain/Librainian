@@ -35,14 +35,14 @@ namespace Librainian.Graphics.DD {
 					return Intersection.None;
 
 				case 1:
-					return IntersectionOf( polygon[ 0 ], line );
+					return IntersectionOf( polygon[0], line );
 			}
 
 			var tangent = false;
 
 			for ( var index = 0; index < polygon.Length; index++ ) {
 				var index2 = ( index + 1 ) % polygon.Length;
-				var intersection = IntersectionOf( line, new Line( polygon[ index ], polygon[ index2 ] ) );
+				var intersection = IntersectionOf( line, new Line( polygon[index], polygon[index2] ) );
 
 				switch ( intersection ) {
 					case Intersection.Intersection:
@@ -141,27 +141,27 @@ namespace Librainian.Graphics.DD {
 
 				case 1:
 
-					if ( Math.Abs( polygon[ 0 ].X - point.X ) < Single.Epsilon && Math.Abs( polygon[ 0 ].Y - point.Y ) < Single.Epsilon ) {
+					if ( Math.Abs( polygon[0].X - point.X ) < Single.Epsilon && Math.Abs( polygon[0].Y - point.Y ) < Single.Epsilon ) {
 						return Intersection.Tangent;
 					}
 
 					return Intersection.None;
 
 				case 2:
-					return IntersectionOf( point, new Line( polygon[ 0 ], polygon[ 1 ] ) );
+					return IntersectionOf( point, new Line( polygon[0], polygon[1] ) );
 			}
 
 			var counter = 0;
 			Int32 i;
 			var n = polygon.Length;
-			var p1 = polygon[ 0 ];
+			var p1 = polygon[0];
 
 			if ( point == p1 ) {
 				return Intersection.Tangent;
 			}
 
 			for ( i = 1; i <= n; i++ ) {
-				var p2 = polygon[ i % n ];
+				var p2 = polygon[i % n];
 
 				if ( point == p2 ) {
 					return Intersection.Tangent;

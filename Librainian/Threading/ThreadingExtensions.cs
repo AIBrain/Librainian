@@ -287,7 +287,6 @@ namespace Librainian.Threading {
 			else {
 				action();
 			}
-
 		} );
 
 		/// <summary>

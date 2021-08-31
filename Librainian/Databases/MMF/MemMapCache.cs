@@ -87,7 +87,7 @@ namespace Librainian.Databases.MMF {
 
 			try {
 				if ( this._keyExpirations.ContainsKey( key ) ) {
-					if ( DateTime.UtcNow >= this._keyExpirations[ key ] ) {
+					if ( DateTime.UtcNow >= this._keyExpirations[key] ) {
 						this._keyExpirations.Remove( key );
 
 						return default( T );
@@ -155,7 +155,7 @@ namespace Librainian.Databases.MMF {
 					this._keyExpirations.Add( key, expire );
 				}
 				else {
-					this._keyExpirations[ key ] = expire;
+					this._keyExpirations[key] = expire;
 				}
 
 #pragma warning disable CA1416 // Validate platform compatibility

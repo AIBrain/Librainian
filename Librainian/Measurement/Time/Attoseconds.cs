@@ -43,7 +43,7 @@ namespace Librainian.Measurement.Time {
 		/// <see cref="Femtoseconds" />
 		public const UInt16 InOneFemtosecond = 1000;
 
-		public Attoseconds( Int64 value ) : this( new BigDecimal(value) ) { }
+		public Attoseconds( Int64 value ) : this( new BigDecimal( value ) ) { }
 
 		public Attoseconds( UInt64 value ) : this( ( BigDecimal )value ) { }
 

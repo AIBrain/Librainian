@@ -35,10 +35,10 @@ namespace Librainian.Graphics.DD {
 
 		public Int32 Length => this.Points.Length;
 
-		public PointF this[ Int32 index ] {
-			get => this.Points[ index ];
+		public PointF this[Int32 index] {
+			get => this.Points[index];
 
-			set => this.Points[ index ] = value;
+			set => this.Points[index] = value;
 		}
 
 		public Polygon( PointF[] points ) : this() => this.Points = points;

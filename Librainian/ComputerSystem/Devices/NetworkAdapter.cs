@@ -73,11 +73,11 @@ namespace Librainian.ComputerSystem.Devices {
 
 				this.DeviceId = deviceId;
 
-				this.Name = crtNetworkAdapter[ "ProductName" ]?.ToString();
+				this.Name = crtNetworkAdapter["ProductName"]?.ToString();
 
-				this.NetEnabled = crtNetworkAdapter[ nameof( this.NetEnabled ) ].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled;
+				this.NetEnabled = crtNetworkAdapter[nameof( this.NetEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled;
 
-				this.NetConnectionStatus = crtNetworkAdapter[ nameof( this.NetConnectionStatus ) ].ToIntOrThrow();
+				this.NetConnectionStatus = crtNetworkAdapter[nameof( this.NetConnectionStatus )].ToIntOrThrow();
 			}
 			catch ( NullReferenceException ) {
 
@@ -118,9 +118,9 @@ namespace Librainian.ComputerSystem.Devices {
 
 			foreach ( var o in networkAdapters ) {
 				if ( o is ManagementObject moNetworkAdapter ) {
-					yield return new NetworkAdapter( moNetworkAdapter[ "DeviceID" ].ToIntOrThrow(), moNetworkAdapter[ "ProductName" ]?.ToString(),
-													 moNetworkAdapter[ nameof( NetEnabled ) ].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
-														 ( Int32 )EnumNetEnabledStatus.Disabled, moNetworkAdapter[ nameof( NetConnectionStatus ) ].ToIntOrThrow() );
+					yield return new NetworkAdapter( moNetworkAdapter["DeviceID"].ToIntOrThrow(), moNetworkAdapter["ProductName"]?.ToString(),
+													 moNetworkAdapter[nameof( NetEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
+														 ( Int32 )EnumNetEnabledStatus.Disabled, moNetworkAdapter[nameof( NetConnectionStatus )].ToIntOrThrow() );
 				}
 			}
 		}
@@ -176,7 +176,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 			try {
 				foreach ( var o in $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}".WmiQuery() ) {
-					netEnabled = o is ManagementObject networkAdapter && networkAdapter[ nameof( netEnabled ) ].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
+					netEnabled = o is ManagementObject networkAdapter && networkAdapter[nameof( netEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
 									 ( Int32 )EnumNetEnabledStatus.Disabled;
 				}
 			}

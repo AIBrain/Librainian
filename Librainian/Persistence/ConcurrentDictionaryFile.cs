@@ -144,7 +144,7 @@ namespace Librainian.Persistence {
 					};
 
 					if ( dictionary != null ) {
-						var r = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[ key ] = dictionary[ key ], parallelOptions: options );
+						var r = Parallel.ForEach( dictionary.Keys.AsParallel(), body: key => this[key] = dictionary[key], parallelOptions: options );
 
 						return r.IsCompleted.ToStatus();
 					}

@@ -82,7 +82,7 @@ namespace Librainian.FileSystem {
 				return;
 			}
 
-			var currentNode = new FolderBagNode( pathParts[ 0 ] );
+			var currentNode = new FolderBagNode( pathParts[0] );
 
 			var existingNode = this.Roots.Find( node => FolderBagNode.Equals( node, currentNode ) ); // look for an existing root node
 

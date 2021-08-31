@@ -42,6 +42,7 @@ namespace Librainian.Threading {
 		}
 
 		public void Dispose() {
+
 			//if ( this._toRelease is null ) {
 			//	return;
 			//}
@@ -63,6 +64,5 @@ namespace Librainian.Threading {
 			}
 			return ValueTask.CompletedTask;
 		}
-
 	}
 }

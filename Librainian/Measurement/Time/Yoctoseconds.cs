@@ -50,12 +50,11 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		public const UInt16 InOneZeptosecond = 1000;
 
-
 		public Yoctoseconds( Decimal value ) : this( ( BigDecimal )value ) { }
 		public Yoctoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
 		public Yoctoseconds( Int64 value ) : this( ( BigInteger )value ) { }
 
-		public Yoctoseconds( BigInteger value ) : this( new BigDecimal(value )) { }
+		public Yoctoseconds( BigInteger value ) : this( new BigDecimal( value ) ) { }
 
 		/// <summary>
 		///     <see cref="Five" /><see cref="Yoctoseconds" />.
@@ -102,7 +101,6 @@ namespace Librainian.Measurement.Time {
 		public static Yoctoseconds Zero { get; } = new( ( BigDecimal )0 );
 
 		public static BigDecimal InOneSecond { get; } = BigDecimal.Parse( "10E24" );
-		
 
 		public Int32 CompareTo( Yoctoseconds? other ) {
 			if ( other is null ) {
@@ -114,7 +112,7 @@ namespace Librainian.Measurement.Time {
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToPlanckTimes();
 
-		public PlanckTimes ToPlanckTimes() => new( ( BigInteger )(this.Value * PlanckTimes.InOneYoctosecond) );
+		public PlanckTimes ToPlanckTimes() => new( ( BigInteger )( this.Value * PlanckTimes.InOneYoctosecond ) );
 
 		public Seconds ToSeconds() => new( this.Value * InOneSecond );
 
@@ -161,10 +159,10 @@ namespace Librainian.Measurement.Time {
 
 		public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
 
-		public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new( ( BigInteger )(yoctoseconds.Value * PlanckTimes.InOneYoctosecond) );
+		public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new( ( BigInteger )( yoctoseconds.Value * PlanckTimes.InOneYoctosecond ) );
 
 		public override String ToString() => $"{this.Value} ys";
 
-		public Zeptoseconds ToZeptoseconds() => new( ( BigInteger )(this.Value / InOneZeptosecond) );
+		public Zeptoseconds ToZeptoseconds() => new( ( BigInteger )( this.Value / InOneZeptosecond ) );
 	}
 }

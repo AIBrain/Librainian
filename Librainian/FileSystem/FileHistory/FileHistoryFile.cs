@@ -36,11 +36,6 @@ namespace Librainian.FileSystem.FileHistory {
 
 		private readonly DateTime? _when;
 
-		/// <summary>(includes the extension)</summary>
-		public String FileName => this._filename;
-
-		public IFolder Folder => this._folder;
-
 		public IDocument FullPathAndName => new Document( this.Folder, this.FileName );
 
 		public Boolean IsFileHistoryFile { get; }
@@ -48,6 +43,11 @@ namespace Librainian.FileSystem.FileHistory {
 		public Document OriginalPath { get; }
 
 		public DateTime? When => this._when;
+
+		/// <summary>(includes the extension)</summary>
+		public String FileName => this._filename;
+
+		public IFolder Folder => this._folder;
 
 		public FileHistoryFile( Document biglongpath ) {
 			this.OriginalPath = biglongpath;
@@ -81,14 +81,14 @@ namespace Librainian.FileSystem.FileHistory {
 				return false;
 			}
 
-			var datepart = value[ ( posA + 1 )..posB ];
+			var datepart = value[( posA + 1 )..posB];
 
 			if ( datepart != null ) {
 				var parts = datepart.Split( ' ', StringSplitOptions.RemoveEmptyEntries );
 
-				parts[ 0 ] = parts[ 0 ].Replace( '_', '/' );
-				parts[ 1 ] = parts[ 1 ].Replace( '_', ':' );
-				datepart = $"{parts[ 0 ]} {parts[ 1 ]}";
+				parts[0] = parts[0].Replace( '_', '/' );
+				parts[1] = parts[1].Replace( '_', ':' );
+				datepart = $"{parts[0]} {parts[1]}";
 			}
 
 			if ( DateTime.TryParse( datepart, out var result ) ) {
@@ -98,7 +98,7 @@ namespace Librainian.FileSystem.FileHistory {
 					posA = 1;
 				}
 
-				filename = $"{value[ ..(posA - "(".Length) ]}{value[ ( posB + "UTC)".Length ).. ]}{extension}";
+				filename = $"{value[..( posA - "(".Length )]}{value[( posB + "UTC)".Length )..]}{extension}";
 
 				return true;
 			}

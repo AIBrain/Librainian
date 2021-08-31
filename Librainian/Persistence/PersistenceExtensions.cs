@@ -113,7 +113,6 @@ namespace Librainian.Persistence {
 			String? extension,
 			CancellationToken cancellationToken
 		) where TKey : IComparable<TKey> {
-
 			if ( folder == null ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
 			}
@@ -155,7 +154,7 @@ namespace Librainian.Persistence {
 
 								(var key, var value) = line.Deserialize<(TKey, TValue)>();
 
-								toDictionary[ key ] = value;
+								toDictionary[key] = value;
 							}
 							catch ( Exception lineexception ) {
 								lineexception.Log();

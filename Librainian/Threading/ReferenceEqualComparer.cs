@@ -29,9 +29,8 @@ namespace Librainian.Threading {
 
 	public class ReferenceEqualComparer<T> : EqualityComparer<T> {
 
-		public override Boolean Equals( T? x, T? y ) => ReferenceEquals(x,y);
+		public override Boolean Equals( T? x, T? y ) => ReferenceEquals( x, y );
 
 		public override Int32 GetHashCode( T obj ) => obj?.GetHashCode() ?? 0;
-
 	}
 }

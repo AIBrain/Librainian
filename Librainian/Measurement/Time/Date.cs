@@ -64,8 +64,8 @@ namespace Librainian.Measurement.Time {
 
 		public Date( DateTime dateTime ) : this( dateTime.Year, ( Byte )dateTime.Month, ( Byte )dateTime.Day ) { }
 
-		public Date( SpanOfTime spanOfTime ) : this( new Year( spanOfTime.GetWholeYears() ), new Month( ( Byte )(UInt32)spanOfTime.Months.Value ),
-			new Day( ( Byte )(UInt32)spanOfTime.Days.Value ) ) { }
+		public Date( SpanOfTime spanOfTime ) : this( new Year( spanOfTime.GetWholeYears() ), new Month( ( Byte )( UInt32 )spanOfTime.Months.Value ),
+			new Day( ( Byte )( UInt32 )spanOfTime.Days.Value ) ) { }
 
 		public static Date Now => new( DateTime.Now );
 

@@ -120,7 +120,7 @@ namespace Librainian.Measurement.Time {
 
 		public Months ToMonths() => new( this.Value * Months.InOneCommonYear );
 
-		public override String ToString() => this.Value==1 ? $"{this.Value} year" : $"{this.Value} years";
+		public override String ToString() => this.Value == 1 ? $"{this.Value} year" : $"{this.Value} years";
 
 		public Weeks ToWeeks() => new( this.Value * Weeks.InOneCommonYear );
 	}

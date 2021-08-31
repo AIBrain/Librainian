@@ -48,9 +48,9 @@ namespace Librainian.Internet {
 				throw new InvalidOperationException( $"Error while calling GetBestInterface(). Error={error}" );
 			}
 
-			var indexedIpAdapterInfo = AdapterInfo.IndexedIpAdapterInfos[ interfaceIndex ];
+			var indexedIpAdapterInfo = AdapterInfo.IndexedIpAdapterInfos[interfaceIndex];
 
-			return NetworkInterfaces[ indexedIpAdapterInfo.AdapterName ];
+			return NetworkInterfaces[indexedIpAdapterInfo.AdapterName];
 		}
 	}
 }

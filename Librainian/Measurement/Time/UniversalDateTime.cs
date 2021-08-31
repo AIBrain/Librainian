@@ -49,7 +49,7 @@ namespace Librainian.Measurement.Time {
 		///     <para>The value of this constant is equivalent to 00:00:00.0000000, January 1, 0001.</para>
 		///     <para>430,000,000,000,000,000 seconds</para>
 		/// </summary>
-		public static PlanckTimes PlancksUpToMinDateTime =>  new( new Seconds( 4.3E17m ).Value );
+		public static PlanckTimes PlancksUpToMinDateTime => new( new Seconds( 4.3E17m ).Value );
 
 		/// <summary>
 		///     <para>0 planck times</para>

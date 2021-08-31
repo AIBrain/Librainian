@@ -60,7 +60,7 @@ namespace Librainian.Threading {
 					i = 0;
 				}
 
-				if ( this._resourceLoaders[ i ].TryGet( out resource, cancelToken ) ) {
+				if ( this._resourceLoaders[i].TryGet( out resource, cancelToken ) ) {
 					resource.ContinueWith( this.OnResourceLoaded, cancelToken );
 
 					this._index++;

@@ -155,7 +155,5 @@
 
 			return input == p ? n : low;
 		}
-
 	}
-
 }

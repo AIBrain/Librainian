@@ -95,7 +95,6 @@ namespace Librainian.Measurement.Time {
 		public Zeptoseconds( BigInteger value ) : this( ( BigDecimal )value ) { }
 
 		public static BigDecimal InOneSecond { get; } = new( 10E21 );
-		
 
 		public Int32 CompareTo( Zeptoseconds? other ) {
 			if ( other is null ) {

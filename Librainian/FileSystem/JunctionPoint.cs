@@ -192,7 +192,7 @@ namespace Librainian.FileSystem {
 					var targetDir = Encoding.Unicode.GetString( reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength );
 
 					if ( targetDir.StartsWith( NonInterpretedPathPrefix ) ) {
-						targetDir = targetDir[ NonInterpretedPathPrefix.Length.. ];
+						targetDir = targetDir[NonInterpretedPathPrefix.Length..];
 					}
 
 					return targetDir;
@@ -255,7 +255,7 @@ namespace Librainian.FileSystem {
 				SubstituteNameLength = ( UInt16 )targetDirBytes.Length,
 				PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ),
 				PrintNameLength = 0,
-				PathBuffer = new Byte[ 0x3ff0 ]
+				PathBuffer = new Byte[0x3ff0]
 			};
 
 			Buffer.BlockCopy( targetDirBytes, 0, reparseDataBuffer.PathBuffer, 0, targetDirBytes.Length );
@@ -298,7 +298,7 @@ namespace Librainian.FileSystem {
 			var reparseDataBuffer = new ReparseDataBuffer {
 				ReparseTag = IOReparseTagMountPoint,
 				ReparseDataLength = 0,
-				PathBuffer = new Byte[ 0x3ff0 ]
+				PathBuffer = new Byte[0x3ff0]
 			};
 
 			var inBufferSize = Marshal.SizeOf( reparseDataBuffer );

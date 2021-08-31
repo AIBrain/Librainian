@@ -107,7 +107,7 @@ namespace Librainian.Persistence.InIFiles {
 
 		public IEnumerable<String> Sections => this.Data.Keys;
 
-		public IniSection? this[ String? section ] {
+		public IniSection? this[String? section] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -134,16 +134,16 @@ namespace Librainian.Persistence.InIFiles {
 				if ( this.Data.ContainsKey( section ) ) {
 
 					//TODO merge, not overwrite
-					this.Data[ section ] = value;
+					this.Data[section] = value;
 
 					return;
 				}
 
-				this.Data[ section ] = value;
+				this.Data[section] = value;
 			}
 		}
 
-		public String? this[ String? section, String? key ] {
+		public String? this[String? section, String? key] {
 			[DebuggerStepThrough]
 			[CanBeNull]
 			get {
@@ -159,7 +159,7 @@ namespace Librainian.Persistence.InIFiles {
 					return default( String? );
 				}
 
-				return this.Data[ section ].FirstOrDefault( line => line.Key.Like( key ) )?.Value;
+				return this.Data[section].FirstOrDefault( line => line.Key.Like( key ) )?.Value;
 			}
 
 			[CanBeNull]
@@ -190,10 +190,10 @@ namespace Librainian.Persistence.InIFiles {
 
 			lock ( this.Data ) {
 				if ( !this.Data.ContainsKey( section ) ) {
-					this.Data[ section ] = new IniSection();
+					this.Data[section] = new IniSection();
 				}
 
-				return this.Data[ section ];
+				return this.Data[section];
 			}
 		}
 
@@ -224,10 +224,10 @@ namespace Librainian.Persistence.InIFiles {
 
 			if ( line.Contains( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase ) ) {
 				var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase );
-				var key = line[ ..pos ].Trimmed();
+				var key = line[..pos].Trimmed();
 
 				if ( !String.IsNullOrEmpty( key ) ) {
-					var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
+					var value = line[( pos + IniLine.PairSeparator.Length )..].Trimmed();
 
 					if ( this.Add( section, key, value ) ) {
 						counter++;
@@ -364,7 +364,7 @@ namespace Librainian.Persistence.InIFiles {
 			var k = key.Trimmed() ?? throw new ArgumentException( "Value cannot be null or whitespace.", nameof( key ) );
 
 			var retries = 10;
-			TryAgain:
+		TryAgain:
 
 			try {
 				var dataSection = this.EnsureDataSection( sect );
@@ -455,34 +455,34 @@ namespace Librainian.Persistence.InIFiles {
 				switch ( lineType ) {
 					case LineType.Unknown: {
 
-						//TODO Do nothing? or add to "bottom" of the "top" of lines, ie Global-Comments-No-Section
-						break;
-					}
-
-					case LineType.Comment: {
-						this.Add( currentSection ?? String.Empty, line, null );
-
-						break;
-					}
-
-					case LineType.Section: {
-						currentSection = line.Substring( SectionBegin.Length, line.Length - ( SectionBegin.Length + SectionEnd.Length ) ).Trimmed();
-
-						break;
-					}
-
-					case LineType.KVP: {
-						var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase );
-						var key = line[ ..pos ].Trimmed();
-
-						if ( !String.IsNullOrEmpty( key ) ) {
-							var value = line[ ( pos + IniLine.PairSeparator.Length ).. ].Trimmed();
-
-							this.Add( currentSection, key, value );
+							//TODO Do nothing? or add to "bottom" of the "top" of lines, ie Global-Comments-No-Section
+							break;
 						}
 
-						break;
-					}
+					case LineType.Comment: {
+							this.Add( currentSection ?? String.Empty, line, null );
+
+							break;
+						}
+
+					case LineType.Section: {
+							currentSection = line.Substring( SectionBegin.Length, line.Length - ( SectionBegin.Length + SectionEnd.Length ) ).Trimmed();
+
+							break;
+						}
+
+					case LineType.KVP: {
+							var pos = line.IndexOf( IniLine.PairSeparator, StringComparison.OrdinalIgnoreCase );
+							var key = line[..pos].Trimmed();
+
+							if ( !String.IsNullOrEmpty( key ) ) {
+								var value = line[( pos + IniLine.PairSeparator.Length )..].Trimmed();
+
+								this.Add( currentSection, key, value );
+							}
+
+							break;
+						}
 
 					default:
 						throw new ArgumentOutOfRangeException( nameof( lines ) );
@@ -559,7 +559,7 @@ namespace Librainian.Persistence.InIFiles {
 			}
 
 			if ( this.Data.ContainsKey( section ) ) {
-				return this.Data[ section ].Remove( key );
+				return this.Data[section].Remove( key );
 			}
 
 			return false;

@@ -70,7 +70,7 @@ namespace Librainian.Collections {
 		public TimeSpan WriteTimeout { get; set; }
 
 		[JsonProperty]
-		public BigInteger? this[ TKey key ] {
+		public BigInteger? this[TKey key] {
 			get {
 				if ( key is null ) {
 					throw new ArgumentEmptyException( nameof( key ) );
@@ -128,7 +128,7 @@ namespace Librainian.Collections {
 		private ReaderWriterLockSlim Bucket( TKey key ) {
 			var hash = Hash( key );
 
-			TryAgain:
+		TryAgain:
 
 			if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
 				return bucket;
@@ -184,7 +184,7 @@ namespace Librainian.Collections {
 						this.Dictionary.TryAdd( key, BigInteger.Zero );
 					}
 
-					this.Dictionary[ key ] += amount;
+					this.Dictionary[key] += amount;
 
 					return true;
 				}
@@ -212,6 +212,9 @@ namespace Librainian.Collections {
 			}
 		}
 
+		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
+		public Boolean EnableMutable() => !( this.IsReadOnly = false );
+
 		/// <summary>Returns an enumerator that iterates through a collection.</summary>
 		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
 		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
@@ -233,7 +236,7 @@ namespace Librainian.Collections {
 						this.Dictionary.TryAdd( key, BigInteger.Zero );
 					}
 
-					this.Dictionary[ key ] -= amount;
+					this.Dictionary[key] -= amount;
 
 					return true;
 				}
@@ -251,9 +254,6 @@ namespace Librainian.Collections {
 		public void Trim() =>
 					Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), CPU.AllExceptOne,
 						pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
-
-		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
-		public Boolean EnableMutable() => !( this.IsReadOnly = false );
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
 		/// <returns>An enumerator that can be used to iterate through the collection.</returns>

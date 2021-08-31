@@ -52,9 +52,9 @@ namespace Librainian.Collections {
 		public BidirectionalDictionary() { }
 
 		public void AddValue( TSingle firstValue, TPlural secondValue ) {
-			this.SingleToPlural[ firstValue ] = secondValue;
+			this.SingleToPlural[firstValue] = secondValue;
 
-			this.PluralToSingle[ secondValue ] = firstValue;
+			this.PluralToSingle[secondValue] = firstValue;
 		}
 
 		public void AddValue( (TSingle firstValue, TPlural secondValue) values ) => this.AddValue( values.firstValue, values.secondValue );

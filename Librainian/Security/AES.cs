@@ -109,7 +109,7 @@ namespace Librainian.Security {
 			BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, null, 0, ref pcbPlainText, 0 );
 
 			//Allocate Plain Text Buffer
-			var pbPlainText = new Byte[ pcbPlainText ];
+			var pbPlainText = new Byte[pcbPlainText];
 
 			//Decrypt The Data
 			var status = BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, pbPlainText, pbPlainText.Length, ref pcbPlainText, 0 );
@@ -137,7 +137,7 @@ namespace Librainian.Security {
 			BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, null, 0, ref pcbCipherText, 0 );
 
 			//Allocate Cipher Text Buffer
-			var pbCipherText = new Byte[ pcbCipherText ];
+			var pbCipherText = new Byte[pcbCipherText];
 
 			//Encrypt The Data
 			var status = BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, pbCipherText, pcbCipherText, ref pcbCipherText, 0 );
@@ -156,7 +156,7 @@ namespace Librainian.Security {
 			BCryptOpenAlgorithmProvider( ref this._algHandle, "AES", "Microsoft Primitive Provider", 0 );
 
 			//Allocate DWORD for ObjectLength
-			var pbObjectLength = new Byte[ 4 ];
+			var pbObjectLength = new Byte[4];
 
 			//Initialize ObjectLength Byte Count
 			var pcbObjectLength = 0;
@@ -168,7 +168,7 @@ namespace Librainian.Security {
 			this._keyHandle = IntPtr.Zero;
 
 			//Initialize Key Object Size with ObjectLength
-			var keyObjectSize = ( pbObjectLength[ 3 ] << 24 ) | ( pbObjectLength[ 2 ] << 16 ) | ( pbObjectLength[ 1 ] << 8 ) | pbObjectLength[ 0 ];
+			var keyObjectSize = ( pbObjectLength[3] << 24 ) | ( pbObjectLength[2] << 16 ) | ( pbObjectLength[1] << 8 ) | pbObjectLength[0];
 
 			//Initialize AES Key
 			Byte[] pbKey = {
@@ -177,7 +177,7 @@ namespace Librainian.Security {
 			};
 
 			//Allocate KeyObject With Key Object Size
-			var pbKeyObject = new Byte[ keyObjectSize ];
+			var pbKeyObject = new Byte[keyObjectSize];
 
 			//Generate Symmetric Key Object
 			var status = BCryptGenerateSymmetricKey( this._algHandle, ref this._keyHandle, pbKeyObject, keyObjectSize, pbKey, pbKey.Length, 0 );

@@ -64,9 +64,9 @@ namespace Librainian.Security {
 						sum += GpwData.Get( c1, c2, c3 );
 
 						if ( sum > weightedRandom ) {
-							password.Append( EnglishAlphabetLowercase[ c1 ] );
-							password.Append( EnglishAlphabetLowercase[ c2 ] );
-							password.Append( EnglishAlphabetLowercase[ c3 ] );
+							password.Append( EnglishAlphabetLowercase[c1] );
+							password.Append( EnglishAlphabetLowercase[c2] );
+							password.Append( EnglishAlphabetLowercase[c3] );
 							finished = true;
 						}
 					}
@@ -77,8 +77,8 @@ namespace Librainian.Security {
 			var nchar = 3;
 
 			while ( nchar < requiredLength ) {
-				c1 = EnglishAlphabetLowercase.IndexOf( password[ nchar - 2 ] );
-				c2 = EnglishAlphabetLowercase.IndexOf( password[ nchar - 1 ] );
+				c1 = EnglishAlphabetLowercase.IndexOf( password[nchar - 2] );
+				c2 = EnglishAlphabetLowercase.IndexOf( password[nchar - 1] );
 
 				sum = 0;
 
@@ -101,7 +101,7 @@ namespace Librainian.Security {
 						continue;
 					}
 
-					password.Append( EnglishAlphabetLowercase[ c3 ] );
+					password.Append( EnglishAlphabetLowercase[c3] );
 
 					break;
 				}

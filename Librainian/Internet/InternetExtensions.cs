@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "InternetExtensions.cs" last touched on 2021-04-25 at 6:05 PM by Protiguous.
 
 namespace Librainian.Internet {
@@ -45,9 +45,9 @@ namespace Librainian.Internet {
 
 	public static class InternetExtensions {
 
-		private static Regex ValidateURLRegex { get; } = new(@"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled);
+		private static Regex IP4ValidRegex { get; } = new( "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", RegexOptions.Compiled | RegexOptions.Singleline );
 
-		public static String ToQueryString( this NameValueCollection nvc ) => String.Join( "&", nvc.AllKeys.Select( key => $"{HttpUtility.UrlEncode( key )}={HttpUtility.UrlEncode( nvc[ key ] )}" ) );
+		private static Regex ValidateURLRegex { get; } = new( @"http(s)?://([\w-]+\.)+[\w-]+(/[\w- ./?%&=]*)?", RegexOptions.Compiled );
 
 		public static async Task<TextReader?> DoRequestAsync( this WebRequest request ) {
 			if ( request is null ) {
@@ -79,47 +79,6 @@ namespace Librainian.Internet {
 			}
 			*/
 		}
-
-		/*
-		public static async Task<TextReader?> DoRequestAsync( this Uri uri ) {
-			if ( uri is null ) {
-				throw new ArgumentEmptyException( nameof( uri ) );
-			}
-
-			var request = new HttpClient( new HttpClientHandler(){} );
-			//var request = WebRequest.CreateHttp( uri );
-
-			//request.AllowReadStreamBuffering = true;
-
-			//request.GetStringAsync(
-
-			return await request.DoRequestAsync().ConfigureAwait( false );
-		}
-		*/
-
-		/*
-		public static async Task<T?> DoRequestJsonAsync<T>( this WebRequest request ) {
-			if ( request is null ) {
-				throw new ArgumentEmptyException( nameof( request ) );
-			}
-
-			using var reader = await DoRequestAsync( request ).ConfigureAwait( false );
-
-			var response = await reader.ReadToEndAsync().ConfigureAwait( false );
-
-			return JsonConvert.DeserializeObject<T>( response );
-		}
-		*/
-
-		/*
-		public static async Task<T?> DoRequestJsonAsync<T>( Uri uri ) {
-			var reader = await DoRequestAsync( uri ).ConfigureAwait( false );
-
-			var response = await reader.ReadToEndAsync().ConfigureAwait( false );
-
-			return JsonConvert.DeserializeObject<T>( response );
-		}
-		*/
 
 		/// <summary>Convert network bytes to a string</summary>
 		/// <exception cref="ArgumentException"></exception>
@@ -181,16 +140,14 @@ namespace Librainian.Internet {
 			return default( String? );
 		}
 
-		private static Regex IP4ValidRegex { get; } = new( "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}", RegexOptions.Compiled | RegexOptions.Singleline );
-
 		public static Boolean IsValidIP4( this String ip ) {
-			if ( !IP4ValidRegex.IsMatch( ip) ) {
+			if ( !IP4ValidRegex.IsMatch( ip ) ) {
 				return false;
 			}
 
 			var ips = ip.Split( '.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
-			return ips.Length is 4 && Int32.Parse( ips[ 0 ] ) < 256 && ( Int32.Parse( ips[ 1 ] ) < 256 ) & ( Int32.Parse( ips[ 2 ] ) < 256 ) & ( Int32.Parse( ips[ 3 ] ) < 256 );
+			return ips.Length is 4 && Int32.Parse( ips[0] ) < 256 && ( Int32.Parse( ips[1] ) < 256 ) & ( Int32.Parse( ips[2] ) < 256 ) & ( Int32.Parse( ips[3] ) < 256 );
 		}
 
 		public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );
@@ -205,10 +162,10 @@ namespace Librainian.Internet {
 			}
 
 			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
-				var value = match.Groups[ 1 ].Value;
+				var value = match.Groups[1].Value;
 				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
 
-				var i = new UriLinkItem( new Uri( baseUri, m2.Success ? m2.Groups[ 1 ].Value : String.Empty ),
+				var i = new UriLinkItem( new Uri( baseUri, m2.Success ? m2.Groups[1].Value : String.Empty ),
 					Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ) );
 
 				yield return i;
@@ -224,6 +181,48 @@ namespace Librainian.Internet {
 			return BitConverter.GetBytes( len ).Concat( bytes );
 		}
 
-	}
+		public static String ToQueryString( this NameValueCollection nvc ) => String.Join( "&", nvc.AllKeys.Select( key => $"{HttpUtility.UrlEncode( key )}={HttpUtility.UrlEncode( nvc[key] )}" ) );
 
+		/*
+		public static async Task<TextReader?> DoRequestAsync( this Uri uri ) {
+			if ( uri is null ) {
+				throw new ArgumentEmptyException( nameof( uri ) );
+			}
+
+			var request = new HttpClient( new HttpClientHandler(){} );
+
+			//var request = WebRequest.CreateHttp( uri );
+
+			//request.AllowReadStreamBuffering = true;
+
+			//request.GetStringAsync(
+
+			return await request.DoRequestAsync().ConfigureAwait( false );
+		}
+		*/
+
+		/*
+		public static async Task<T?> DoRequestJsonAsync<T>( this WebRequest request ) {
+			if ( request is null ) {
+				throw new ArgumentEmptyException( nameof( request ) );
+			}
+
+			using var reader = await DoRequestAsync( request ).ConfigureAwait( false );
+
+			var response = await reader.ReadToEndAsync().ConfigureAwait( false );
+
+			return JsonConvert.DeserializeObject<T>( response );
+		}
+		*/
+
+		/*
+		public static async Task<T?> DoRequestJsonAsync<T>( Uri uri ) {
+			var reader = await DoRequestAsync( uri ).ConfigureAwait( false );
+
+			var response = await reader.ReadToEndAsync().ConfigureAwait( false );
+
+			return JsonConvert.DeserializeObject<T>( response );
+		}
+		*/
+	}
 }

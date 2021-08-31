@@ -75,14 +75,14 @@ namespace Librainian.Financial.Containers.Wallets {
 			try {
 				lock ( this.BankNotes ) {
 					if ( this.BankNotes.ContainsKey( bankNote ) ) {
-						this.BankNotes[ bankNote ] += quantity;
+						this.BankNotes[bankNote] += quantity;
 					}
 					else {
 						if ( this.BankNotes.TryAdd( bankNote, quantity ) ) { }
 					}
 				}
 
-				return this.BankNotes[ bankNote ]; //outside of lock... is this okay?
+				return this.BankNotes[bankNote]; //outside of lock... is this okay?
 			}
 			finally {
 				this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity;
@@ -189,7 +189,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			try {
 				lock ( this.Coins ) {
 					if ( this.Coins.ContainsKey( coin ) ) {
-						this.Coins[ coin ] += quantity;
+						this.Coins[coin] += quantity;
 					}
 					else {
 						if ( !this.Coins.TryAdd( coin, quantity ) ) {
@@ -199,7 +199,7 @@ namespace Librainian.Financial.Containers.Wallets {
 				}
 
 				lock ( this.Coins ) {
-					return this.Coins[ coin ];
+					return this.Coins[coin];
 				}
 			}
 			finally {
@@ -307,8 +307,8 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 
 			lock ( this.BankNotes ) {
-				if ( this.BankNotes.ContainsKey( bankNote ) && this.BankNotes[ bankNote ] >= quantity ) {
-					this.BankNotes[ bankNote ] -= quantity;
+				if ( this.BankNotes.ContainsKey( bankNote ) && this.BankNotes[bankNote] >= quantity ) {
+					this.BankNotes[bankNote] -= quantity;
 
 					return true;
 				}
@@ -334,8 +334,8 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 
 			lock ( this.Coins ) {
-				if ( this.Coins.ContainsKey( coin ) && this.Coins[ coin ] >= quantity ) {
-					this.Coins[ coin ] -= quantity;
+				if ( this.Coins.ContainsKey( coin ) && this.Coins[coin] >= quantity ) {
+					this.Coins[coin] -= quantity;
 
 					return true;
 				}

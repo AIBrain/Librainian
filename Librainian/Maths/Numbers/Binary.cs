@@ -41,10 +41,10 @@ namespace Librainian.Maths.Numbers {
 
 		public Int32 Length => this.Booleans.Count;
 
-		public Boolean this[ Int32 index ] {
-			get => this.Booleans[ index ];
+		public Boolean this[Int32 index] {
+			get => this.Booleans[index];
 
-			set => this.Booleans[ index ] = value;
+			set => this.Booleans[index] = value;
 		}
 
 		public Binary( IReadOnlyCollection<Boolean> booleans ) {
@@ -59,16 +59,16 @@ namespace Librainian.Maths.Numbers {
 		public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
 
 		public static Binary Concatenate( Binary a, Binary b ) {
-			var result = new Binary( new Boolean[ a.Length + b.Length ] );
+			var result = new Binary( new Boolean[a.Length + b.Length] );
 			var n = 0;
 
 			foreach ( var bit in a ) {
-				result[ n ] = bit;
+				result[n] = bit;
 				++n;
 			}
 
 			foreach ( var bit in b ) {
-				result[ n ] = bit;
+				result[n] = bit;
 				++n;
 			}
 
@@ -96,10 +96,10 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentException( "Binaries must have same length" );
 			}
 
-			var result = new Boolean[ a.Length ];
+			var result = new Boolean[a.Length];
 
 			for ( var i = 0; i < a.Length; i++ ) {
-				result[ i ] = a[ i ] & b[ i ];
+				result[i] = a[i] & b[i];
 			}
 
 			return new Binary( result );
@@ -112,10 +112,10 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentException( "Binaries must have same length" );
 			}
 
-			var result = new Boolean[ a.Length ];
+			var result = new Boolean[a.Length];
 
 			for ( var i = 0; i < a.Length; i++ ) {
-				result[ i ] = a[ i ] ^ b[ i ];
+				result[i] = a[i] ^ b[i];
 			}
 
 			return new Binary( result );

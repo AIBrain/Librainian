@@ -66,7 +66,7 @@ namespace Librainian.Maths {
 			}
 
 			this._windowSize = windowSize;
-			this._values = new Single[ this._windowSize ];
+			this._values = new Single[this._windowSize];
 
 			this.Reset();
 		}
@@ -95,11 +95,11 @@ namespace Librainian.Maths {
 			else {
 
 				// remove oldest value from sum
-				this._sum -= this._values[ this._nextValueIndex ];
+				this._sum -= this._values[this._nextValueIndex];
 			}
 
 			// store the value
-			this._values[ this._nextValueIndex ] = nextValue;
+			this._values[this._nextValueIndex] = nextValue;
 
 			// progress the next value index pointer
 			this._nextValueIndex++;

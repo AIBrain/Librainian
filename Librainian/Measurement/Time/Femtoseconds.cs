@@ -40,15 +40,14 @@ namespace Librainian.Measurement.Time {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public record Femtoseconds(BigDecimal Value) : IQuantityOfTime, IComparable<Femtoseconds> {
+	public record Femtoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Femtoseconds> {
 
 		/// <summary>1000</summary>
 		public const UInt16 InOnePicosecond = 1000;
 
-
-		public Femtoseconds( Decimal value ) : this( (BigDecimal)value ) { }
-		public Femtoseconds( Int32 value ) : this( (BigDecimal)value ) { }
-		public Femtoseconds( Int64 value ) : this( (BigDecimal)value ) { }
+		public Femtoseconds( Decimal value ) : this( ( BigDecimal )value ) { }
+		public Femtoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
+		public Femtoseconds( Int64 value ) : this( ( BigDecimal )value ) { }
 
 		public Femtoseconds( BigInteger value ) : this( ( BigDecimal )value ) { }
 
@@ -153,6 +152,5 @@ namespace Librainian.Measurement.Time {
 		public Picoseconds ToPicoseconds() => new( this.Value / InOnePicosecond );
 
 		public override String ToString() => $"{this.Value} fs";
-
 	}
 }

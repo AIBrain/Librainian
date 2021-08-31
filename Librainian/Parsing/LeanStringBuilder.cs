@@ -162,7 +162,7 @@ namespace Librainian.Parsing {
 			}
 
 			this.TrimExcess();
-			var final = new Char[ this._charCount ];
+			var final = new Char[this._charCount];
 			var offest = 0;
 
 			foreach ( var t in this._parts ) {

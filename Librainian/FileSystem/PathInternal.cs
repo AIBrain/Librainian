@@ -74,8 +74,8 @@ namespace Librainian.FileSystem {
 				return true;
 			}
 
-			if ( path.Length >= 4 && path[ 0 ].IsDirectorySeparator() && path[ 1 ].IsDirectorySeparator() && ( path[ 2 ] == '.' || path[ 2 ] == '?' ) ) {
-				return path[ 3 ].IsDirectorySeparator();
+			if ( path.Length >= 4 && path[0].IsDirectorySeparator() && path[1].IsDirectorySeparator() && ( path[2] == '.' || path[2] == '?' ) ) {
+				return path[3].IsDirectorySeparator();
 			}
 
 			return false;
@@ -94,16 +94,16 @@ namespace Librainian.FileSystem {
 				return true;
 			}
 
-			if ( path[ 0 ].IsDirectorySeparator() ) {
-				if ( path[ 1 ] != '?' ) {
-					return !path[ 1 ].IsDirectorySeparator();
+			if ( path[0].IsDirectorySeparator() ) {
+				if ( path[1] != '?' ) {
+					return !path[1].IsDirectorySeparator();
 				}
 
 				return false;
 			}
 
-			if ( path.Length >= 3 && path[ 1 ] == Path.VolumeSeparatorChar && path[ 2 ].IsDirectorySeparator() ) {
-				return !path[ 0 ].IsValidDriveChar();
+			if ( path.Length >= 3 && path[1] == Path.VolumeSeparatorChar && path[2].IsDirectorySeparator() ) {
+				return !path[0].IsValidDriveChar();
 			}
 
 			return true;

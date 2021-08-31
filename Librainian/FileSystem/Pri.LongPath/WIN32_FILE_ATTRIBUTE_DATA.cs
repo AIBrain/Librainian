@@ -28,8 +28,9 @@ namespace Librainian.FileSystem.Pri.LongPath {
 	using System.IO;
 
 	[Serializable]
-	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields")]
+	[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields" )]
 	public struct WIN32_FILE_ATTRIBUTE_DATA {
+
 		public FileAttributes fileAttributes;
 
 		public Int32 fileSizeHigh;

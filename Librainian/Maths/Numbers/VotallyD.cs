@@ -71,8 +71,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		public Boolean IsAWinning => this.A > this.B;
-
 		public Boolean IsBWinning => this.B > this.A;
 
 		public Boolean IsLandslideA => this.IsAWinning && this.A > this.HalfOfVotes();
@@ -81,6 +79,8 @@ namespace Librainian.Maths.Numbers {
 
 		/// <summary><see cref="A" /> + <see cref="B" /></summary>
 		public Double Votes => this.A + this.B;
+
+		public Boolean IsAWinning => this.A > this.B;
 
 		public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
 			this.A = votesForA;
@@ -108,6 +108,8 @@ namespace Librainian.Maths.Numbers {
 
 			return votes.Near( 0 ) ? 0 : this.A / votes;
 		}
+
+		public VotallyD Clone() => new( this.A, this.B );
 
 		/// <summary>
 		///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
@@ -162,8 +164,6 @@ namespace Librainian.Maths.Numbers {
 				this.B = 0;
 			}
 		}
-
-		public VotallyD Clone() => new( this.A, this.B );
 
 		Object ICloneable.Clone() => this.Clone();
 	}

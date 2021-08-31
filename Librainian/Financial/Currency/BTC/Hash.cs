@@ -30,13 +30,14 @@ namespace Librainian.Financial.Currency.BTC {
 	/// <summary></summary>
 	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
 	public class Hash {
+
 		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>" )]
 		public readonly Byte[] HashBytes;
 
-		public Byte this[ Int32 i ] {
-			get => this.HashBytes[ i ];
+		public Byte this[Int32 i] {
+			get => this.HashBytes[i];
 
-			set => this.HashBytes[ i ] = value;
+			set => this.HashBytes[i] = value;
 		}
 
 		public Hash( Byte[] b ) => this.HashBytes = b;
@@ -49,7 +50,7 @@ namespace Librainian.Financial.Currency.BTC {
 
 		public override Int32 GetHashCode() {
 			if ( this.HashBytes.Length >= 4 ) {
-				return ( this.HashBytes[ 0 ] << 24 ) | ( this.HashBytes[ 1 ] << 16 ) | ( this.HashBytes[ 2 ] << 8 ) | ( this.HashBytes[ 3 ] << 0 );
+				return ( this.HashBytes[0] << 24 ) | ( this.HashBytes[1] << 16 ) | ( this.HashBytes[2] << 8 ) | ( this.HashBytes[3] << 0 );
 			}
 
 			return this.HashBytes.GetHashCode();

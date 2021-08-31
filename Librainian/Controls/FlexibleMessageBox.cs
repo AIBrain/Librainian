@@ -281,7 +281,7 @@ namespace Librainian.Controls {
 			private static String GetButtonText( ButtonID buttonID ) {
 				var buttonTextArrayIndex = Convert.ToInt32( buttonID );
 
-				return ButtonTextsEnglish[ buttonTextArrayIndex ];
+				return ButtonTextsEnglish[buttonTextArrayIndex];
 			}
 
 			/// <summary>
@@ -451,39 +451,39 @@ namespace Librainian.Controls {
 				var pictureBoxForIcon = new PictureBox();
 				switch ( icon ) {
 					case MessageBoxIcon.Information: {
-						pictureBoxForIcon.Image = SystemIcons.Information.ToBitmap();
+							pictureBoxForIcon.Image = SystemIcons.Information.ToBitmap();
 
-						break;
-					}
+							break;
+						}
 					case MessageBoxIcon.Warning: {
-						pictureBoxForIcon.Image = SystemIcons.Warning.ToBitmap();
+							pictureBoxForIcon.Image = SystemIcons.Warning.ToBitmap();
 
-						break;
-					}
+							break;
+						}
 
 					case MessageBoxIcon.Error: {
-						pictureBoxForIcon.Image = SystemIcons.Error.ToBitmap();
+							pictureBoxForIcon.Image = SystemIcons.Error.ToBitmap();
 
-						break;
-					}
+							break;
+						}
 
 					case MessageBoxIcon.Question: {
-						pictureBoxForIcon.Image = SystemIcons.Question.ToBitmap();
+							pictureBoxForIcon.Image = SystemIcons.Question.ToBitmap();
 
-						break;
-					}
+							break;
+						}
 
 					default: {
 
-						//When no icon is used: Correct placement and width of rich text box.
-						pictureBoxForIcon.Visible = false;
-						if ( flexibleMessageBoxForm._richTextBoxMessage != null ) {
-							flexibleMessageBoxForm._richTextBoxMessage.Left -= pictureBoxForIcon.Width;
-							flexibleMessageBoxForm._richTextBoxMessage.Width += pictureBoxForIcon.Width;
-						}
+							//When no icon is used: Correct placement and width of rich text box.
+							pictureBoxForIcon.Visible = false;
+							if ( flexibleMessageBoxForm._richTextBoxMessage != null ) {
+								flexibleMessageBoxForm._richTextBoxMessage.Left -= pictureBoxForIcon.Width;
+								flexibleMessageBoxForm._richTextBoxMessage.Width += pictureBoxForIcon.Width;
+							}
 
-						break;
-					}
+							break;
+						}
 				}
 			}
 

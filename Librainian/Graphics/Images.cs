@@ -960,22 +960,22 @@ namespace Librainian.Graphics {
 			for ( var i = 0; i < n; i++ ) {
 
 				// Compute sum of squares for X^T * X
-				a += xy[ i ].X * xy[ i ].X;
-				b += xy[ i ].X * xy[ i ].Y;
-				c += xy[ i ].X;
-				d += xy[ i ].X * xy[ i ].Y;
-				e += xy[ i ].Y * xy[ i ].Y;
-				f += xy[ i ].Y;
-				g += xy[ i ].X;
-				h += xy[ i ].Y;
+				a += xy[i].X * xy[i].X;
+				b += xy[i].X * xy[i].Y;
+				c += xy[i].X;
+				d += xy[i].X * xy[i].Y;
+				e += xy[i].Y * xy[i].Y;
+				f += xy[i].Y;
+				g += xy[i].X;
+				h += xy[i].Y;
 
 				// Compute sum of squares for X^T * U
-				p += xy[ i ].X * uv[ i ].X;
-				q += xy[ i ].X * uv[ i ].Y;
-				r += xy[ i ].Y * uv[ i ].X;
-				s += xy[ i ].Y * uv[ i ].Y;
-				t += uv[ i ].X;
-				u += uv[ i ].Y;
+				p += xy[i].X * uv[i].X;
+				q += xy[i].X * uv[i].Y;
+				r += xy[i].Y * uv[i].X;
+				s += xy[i].Y * uv[i].Y;
+				t += uv[i].X;
+				u += uv[i].Y;
 			}
 
 			// Create matrices from the coefficients

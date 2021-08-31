@@ -114,7 +114,7 @@ namespace Librainian.Internet {
 			) : base( source, destination, waitifBusy, timeout, cancellationToken, credentials ) {
 				$"{nameof( FileDownloader )} created with {nameof( this.Id )} of {this.Id}.".Log();
 
-				DownloadRequests[ this.Id ] = this;
+				DownloadRequests[this.Id] = this;
 
 				if ( autoStart ) {
 					this.Start();
@@ -277,26 +277,26 @@ namespace Librainian.Internet {
 				catch ( Exception exception ) {
 					switch ( exception ) {
 						case ArgumentOutOfRangeException _: {
-							return false;
-						}
+								return false;
+							}
 
 						case ObjectDisposedException _: {
-							return false;
-						}
+								return false;
+							}
 
 						case AbandonedMutexException _: {
-							return false;
-						}
+								return false;
+							}
 
 						case InvalidOperationException _: {
-							return false;
-						}
+								return false;
+							}
 
 						default: {
-							exception.Log();
+								exception.Log();
 
-							throw;
-						}
+								throw;
+							}
 					}
 				}
 			}

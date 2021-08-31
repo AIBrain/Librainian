@@ -35,34 +35,6 @@ namespace Librainian.Extensions {
 
 	public static class Utility {
 
-		/// <summary>
-		/// Copy from one stream to another.
-		/// Example:
-		/// using(var stream = response.GetResponseStream())
-		/// using(var ms = new MemoryStream())
-		/// {
-		///     stream.CopyTo(ms);
-		///      // Do something with copied data
-		/// }
-		/// </summary>
-		/// <param name="fromStream">From stream.</param>
-		/// <param name="toStream">To stream.</param>
-		public static void CopyTo( this Stream fromStream, Stream toStream ) {
-			if ( fromStream == null ) {
-				throw new ArgumentNullException( nameof( fromStream ) );
-			}
-
-			if ( toStream == null ) {
-				throw new ArgumentNullException( nameof( toStream ) );
-			}
-
-			var bytes = new Byte[ 8192 ];
-			Int32 dataRead;
-			while ( ( dataRead = fromStream.Read( bytes, 0, bytes.Length ) ) > 0 ) {
-				toStream.Write( bytes, 0, dataRead );
-			}
-		}
-
 		private static ReaderWriterLockSlim ConsoleOutputSynch { get; } = new( LockRecursionPolicy.SupportsRecursion );
 
 		private static DummyXMLResolver DummyXMLResolver { get; } = new();
@@ -116,6 +88,34 @@ namespace Librainian.Extensions {
 			}
 			finally {
 				ConsoleOutputSynch.ExitUpgradeableReadLock();
+			}
+		}
+
+		/// <summary>
+		/// Copy from one stream to another.
+		/// Example:
+		/// using(var stream = response.GetResponseStream())
+		/// using(var ms = new MemoryStream())
+		/// {
+		///     stream.CopyTo(ms);
+		///      // Do something with copied data
+		/// }
+		/// </summary>
+		/// <param name="fromStream">From stream.</param>
+		/// <param name="toStream">To stream.</param>
+		public static void CopyTo( this Stream fromStream, Stream toStream ) {
+			if ( fromStream == null ) {
+				throw new ArgumentNullException( nameof( fromStream ) );
+			}
+
+			if ( toStream == null ) {
+				throw new ArgumentNullException( nameof( toStream ) );
+			}
+
+			var bytes = new Byte[8192];
+			Int32 dataRead;
+			while ( ( dataRead = fromStream.Read( bytes, 0, bytes.Length ) ) > 0 ) {
+				toStream.Write( bytes, 0, dataRead );
 			}
 		}
 

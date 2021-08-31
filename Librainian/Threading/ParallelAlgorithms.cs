@@ -226,9 +226,9 @@ namespace Librainian.Threading {
 			}
 
 			// Store the previous row of tasks as well as the previous task in the current row
-			var prevTaskRow = new Task[ numColumns ];
+			var prevTaskRow = new Task[numColumns];
 			Task prevTaskInCurrentRow = null;
-			var dependencies = new Task[ 2 ];
+			var dependencies = new Task[2];
 
 			// Create a task for each cell
 			for ( var row = 0; row < numRows; row++ ) {
@@ -250,7 +250,7 @@ namespace Librainian.Threading {
 					else if ( row == 0 || column == 0 ) {
 
 						// Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only on the task to their left
-						var antecedent = column == 0 ? prevTaskRow[ 0 ] : prevTaskInCurrentRow;
+						var antecedent = column == 0 ? prevTaskRow[0] : prevTaskInCurrentRow;
 
 						curTask = antecedent?.ContinueWith( p => {
 							p.Wait(); // Necessary only to propagate exceptions
@@ -260,8 +260,8 @@ namespace Librainian.Threading {
 					else // row > 0 && column > 0
 					{
 						// All other tasks depend on both the tasks above and to the left
-						dependencies[ 0 ] = prevTaskInCurrentRow;
-						dependencies[ 1 ] = prevTaskRow[ column ];
+						dependencies[0] = prevTaskInCurrentRow;
+						dependencies[1] = prevTaskRow[column];
 
 						curTask = Task.Factory.ContinueWhenAll( dependencies, ps => {
 							Task.WaitAll( ps ); // Necessary only to propagate exceptions
@@ -270,7 +270,7 @@ namespace Librainian.Threading {
 					}
 
 					// Keep track of the task just created for future iterations
-					prevTaskRow[ column ] = prevTaskInCurrentRow = curTask;
+					prevTaskRow[column] = prevTaskInCurrentRow = curTask;
 				}
 			}
 

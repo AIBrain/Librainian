@@ -151,6 +151,5 @@ namespace Librainian.Interfaces {
 		/// Message was produced from a cortex.
 		/// </summary>
 		Cortex
-
 	}
 }

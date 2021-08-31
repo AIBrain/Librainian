@@ -49,13 +49,13 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Human readable file header.</summary>
 		public static readonly String Header = "ERG0.1";
 
-		/// <summary>EXIF metadata</summary>
-		[JsonProperty]
-		public ConcurrentDictionary<String, String> Exifs { get; } = new();
-
 		/// <summary>Checksum of all pages</summary>
 		[JsonProperty]
 		public UInt64 Checksum { get; private set; }
+
+		/// <summary>EXIF metadata</summary>
+		[JsonProperty]
+		public ConcurrentDictionary<String, String> Exifs { get; } = new();
 
 		public UInt32 Height { get; private set; }
 

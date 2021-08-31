@@ -78,7 +78,7 @@ namespace Librainian.Security {
 
 			for ( var i = start; i < size; i++ ) {
 				unchecked {
-					crc = ( crc >> 8 ) ^ table[ ( buffer[ i ] ^ crc ) & 0xff ];
+					crc = ( crc >> 8 ) ^ table[( buffer[i] ^ crc ) & 0xff];
 				}
 			}
 
@@ -86,7 +86,7 @@ namespace Librainian.Security {
 		}
 
 		protected static UInt64[] CreateTable( UInt64 polynomial ) {
-			var createTable = new UInt64[ 256 ]; //did they mean 255 here (Byte.MaxValue)??
+			var createTable = new UInt64[256]; //did they mean 255 here (Byte.MaxValue)??
 
 			for ( var i = 0; i < 256; ++i ) {
 				var entry = ( UInt64 )i;
@@ -100,7 +100,7 @@ namespace Librainian.Security {
 					}
 				}
 
-				createTable[ i ] = entry;
+				createTable[i] = entry;
 			}
 
 			return createTable;

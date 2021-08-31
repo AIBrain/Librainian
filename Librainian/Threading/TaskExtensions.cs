@@ -50,22 +50,6 @@ namespace Librainian.Threading {
 	/// </summary>
 	public static class TaskExtensions {
 
-		/// <summary>
-		/// Throws <see cref="OperationCanceledException"></see> if any tokens that have been cancelled.
-		/// </summary>
-		/// <param name="tokens"></param>
-		/// <exception cref="OperationCanceledException"></exception>
-		[NeedsTesting]
-		public static void ThrowAnyCancelledTokens( params CancellationToken[] tokens ) {
-			if ( tokens is null ) {
-				throw new ArgumentEmptyException( nameof( tokens ) );
-			}
-
-			foreach ( var cancellationToken in tokens ) {
-				cancellationToken.ThrowIfCancellationRequested();
-			}
-		}
-
 		/// <summary>Quietly consume the <paramref name="task" /> on a background thread. Fire & forget.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>
@@ -122,9 +106,10 @@ namespace Librainian.Threading {
 		public static void Execute( this Action action, Object[]? args = default ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
-					if ( method.Target is ISynchronizeInvoke {
-						InvokeRequired: true
-					} syncInvoke ) {
+					if ( method.Target is ISynchronizeInvoke
+						{
+							InvokeRequired: true
+						} syncInvoke ) {
 						syncInvoke.Invoke( method, args );
 					}
 					else {
@@ -145,9 +130,10 @@ namespace Librainian.Threading {
 		public static void Execute<T>( this Action<T> action, Object[]? args = null ) {
 			foreach ( var method in action.GetInvocationList() ) {
 				try {
-					if ( method.Target is ISynchronizeInvoke {
-						InvokeRequired: true
-					} syncInvoke ) {
+					if ( method.Target is ISynchronizeInvoke
+						{
+							InvokeRequired: true
+						} syncInvoke ) {
 						syncInvoke.Invoke( method, args );
 					}
 					else {
@@ -193,11 +179,11 @@ namespace Librainian.Threading {
 		}
 
 		public static async Task<TResult> FromEvent<TDelegate, TResult>(
-			Func<TaskCompletionSource<TResult>, TDelegate> createDelegate,
-			Action<TDelegate> registerDelegate,
-			Action<TDelegate> unregisterDelegate,
-			TimeSpan timeout
-		) {
+					Func<TaskCompletionSource<TResult>, TDelegate> createDelegate,
+					Action<TDelegate> registerDelegate,
+					Action<TDelegate> unregisterDelegate,
+					TimeSpan timeout
+				) {
 			if ( createDelegate is null ) {
 				throw new ArgumentEmptyException( nameof( createDelegate ) );
 			}
@@ -234,7 +220,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="lazy"></param>
-		public static Awaiter<T> GetAwaiter<T>( this Lazy<T> lazy ) => new(lazy);
+		public static Awaiter<T> GetAwaiter<T>( this Lazy<T> lazy ) => new( lazy );
 
 		/// <summary>
 		///     http://stackoverflow.com/questions/35247862/is-there-a-reason-to-prefer-one-of-these-implementations-over-the-other
@@ -252,12 +238,106 @@ namespace Librainian.Threading {
 
 			foreach ( var task in inputs ) {
 				task.ContinueWith( completed => {
-					var nextBox = boxes[ Interlocked.Increment( ref currentIndex ) ];
+					var nextBox = boxes[Interlocked.Increment( ref currentIndex )];
 					completed.PropagateResult( nextBox );
 				}, TaskContinuationOptions.ExecuteSynchronously );
 			}
 
 			return boxes.Select( box => box.Task );
+		}
+
+		/// <summary>
+		/// Return tasks in order of completion.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
+		public static async Task<IEnumerable<Task<Task<T>>>> InOrderOfCompletion<T>( this IEnumerable<Task<T>> tasks ) {
+			var enumerable = tasks as Task<T>[] ?? tasks.ToArray();
+
+			var inputTasks = enumerable.ToAsyncEnumerable();
+
+			var buckets = new TaskCompletionSource<Task<T>>[enumerable.Length];
+			var results = new Task<Task<T>>[buckets.Length];
+
+			for ( var i = 0; i < buckets.Length; i++ ) {
+				buckets[i] = new TaskCompletionSource<Task<T>>();
+				results[i] = buckets[i].Task;
+			}
+
+			var nextTaskIndex = -1;
+
+			void Continuation( Task<T> completed ) {
+				var bucket = buckets[Interlocked.Increment( ref nextTaskIndex )];
+				bucket.TrySetResult( completed );
+			}
+
+			await foreach ( var inputTask in inputTasks.ConfigureAwait( false ) ) {
+				await inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default )
+							   .ConfigureAwait( false );
+			}
+
+			return results;
+		}
+
+		/// <summary>
+		/// Return tasks in order of completion.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
+		public static async Task<IEnumerable<Task<Task<T>>>> InOrderOfCompletion<T>( this IDictionary<TimeSpan, Task<T>> tasks ) {
+			var buckets = new TaskCompletionSource<Task<T>>[tasks.Count];
+			var results = new Task<Task<T>>[buckets.Length];
+
+			for ( var i = 0; i < buckets.Length; i++ ) {
+				buckets[i] = new TaskCompletionSource<Task<T>>();
+				results[i] = buckets[i].Task;
+			}
+
+			var nextTaskIndex = -1;
+
+			void Continuation( Task<T> completed ) {
+				var bucket = buckets[Interlocked.Increment( ref nextTaskIndex )];
+				bucket.TrySetResult( completed );
+			}
+
+			await foreach ( var inputTask in tasks.ToAsyncEnumerable().ConfigureAwait( false ) ) {
+				await inputTask.Value.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default )
+							   .ConfigureAwait( false );
+			}
+
+			return results;
+		}
+
+		/// <summary>
+		/// Return tasks in order of completion.
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
+		public static async Task<IEnumerable<Task<Task>>> InOrderOfCompletionAsync( this IEnumerable<Task> tasks ) {
+			var inputTasks = tasks.ToList();
+
+			var buckets = new TaskCompletionSource<Task>[inputTasks.Count];
+			var results = new Task<Task>[buckets.Length];
+
+			for ( var i = 0; i < buckets.Length; i++ ) {
+				buckets[i] = new TaskCompletionSource<Task>();
+				results[i] = buckets[i].Task;
+			}
+
+			var nextTaskIndex = -1;
+
+			void Continuation( Task completed ) {
+				var bucket = buckets[Interlocked.Increment( ref nextTaskIndex )];
+				bucket.TrySetResult( completed );
+			}
+
+			foreach ( var inputTask in inputTasks ) {
+				await inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default ).ConfigureAwait( false );
+			}
+
+			return results;
 		}
 
 		/// <summary>
@@ -277,12 +357,12 @@ namespace Librainian.Threading {
 			}
 
 			var inputTasks = tasks.ToList();
-			var buckets = new TaskCompletionSource<Task<T>>[ inputTasks.Count ];
-			var results = new Task<Task<T>>[ buckets.Length ];
+			var buckets = new TaskCompletionSource<Task<T>>[inputTasks.Count];
+			var results = new Task<Task<T>>[buckets.Length];
 
 			for ( var i = 0; i < buckets.Length; i++ ) {
-				buckets[ i ] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
-				results[ i ] = buckets[ i ].Task;
+				buckets[i] = new TaskCompletionSource<Task<T>>( TaskCreationOptions.RunContinuationsAsynchronously );
+				results[i] = buckets[i].Task;
 			}
 
 			var nextTaskIndex = -1;
@@ -292,7 +372,7 @@ namespace Librainian.Threading {
 					throw new ArgumentEmptyException( nameof( completed ) );
 				}
 
-				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
+				var bucket = buckets[Interlocked.Increment( ref nextTaskIndex )];
 				bucket.TrySetResult( completed );
 			}
 
@@ -744,6 +824,22 @@ namespace Librainian.Threading {
 		}
 
 		/// <summary>
+		/// Throws <see cref="OperationCanceledException"></see> if any tokens that have been cancelled.
+		/// </summary>
+		/// <param name="tokens"></param>
+		/// <exception cref="OperationCanceledException"></exception>
+		[NeedsTesting]
+		public static void ThrowAnyCancelledTokens( params CancellationToken[] tokens ) {
+			if ( tokens is null ) {
+				throw new ArgumentEmptyException( nameof( tokens ) );
+			}
+
+			foreach ( var cancellationToken in tokens ) {
+				cancellationToken.ThrowIfCancellationRequested();
+			}
+		}
+
+		/// <summary>
 		///     Keep posting to the <see cref="ITargetBlock{TInput}" /> until it posts.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -878,17 +974,17 @@ namespace Librainian.Threading {
 			}
 
 			var timer = afterDelay.CreateTimer( () => {
-				                      if ( condition() ) {
-					                      try {
-						                      action();
-					                      }
-					                      catch ( Exception exception ) {
-						                      exception.Log();
-					                      }
-				                      }
-			                      } )
-			                      .Once()
-			                      .Start();
+				if ( condition() ) {
+					try {
+						action();
+					}
+					catch ( Exception exception ) {
+						exception.Log();
+					}
+				}
+			} )
+								  .Once()
+								  .Start();
 
 			return timer;
 		}
@@ -1080,18 +1176,11 @@ namespace Librainian.Threading {
 			public T GetResult() => this._lazy.Value;
 
 			public void OnCompleted( Action continuation ) => Task.Run( continuation );
-
 		}
 
 		public class ResourceLoader<T> : IResourceLoader<T> {
 
 			private Int32 _count;
-
-			public ResourceLoader( Func<CancellationToken, Task<T>> loader, Int32 maxConcurrency ) {
-				this._loader = loader ?? throw new ArgumentEmptyException( nameof( loader ) );
-				this._semaphore = new SemaphoreSlim( maxConcurrency, maxConcurrency );
-				this.MaxConcurrency = maxConcurrency;
-			}
 
 			private Func<CancellationToken, Task<T>> _loader { get; }
 
@@ -1104,6 +1193,21 @@ namespace Librainian.Threading {
 			public Int32 Count => this._count;
 
 			public Int32 MaxConcurrency { get; }
+
+			public ResourceLoader( Func<CancellationToken, Task<T>> loader, Int32 maxConcurrency ) {
+				this._loader = loader ?? throw new ArgumentEmptyException( nameof( loader ) );
+				this._semaphore = new SemaphoreSlim( maxConcurrency, maxConcurrency );
+				this.MaxConcurrency = maxConcurrency;
+			}
+
+			[ItemNotNull]
+			private async Task<T> WaitAndLoadAsync( CancellationToken cancelToken ) {
+				Interlocked.Increment( ref this._count );
+
+				using ( await this._semaphore.UseWaitAsync( cancelToken ).ConfigureAwait( false ) ) {
+					return await this._loader( cancelToken ).ConfigureAwait( false );
+				}
+			}
 
 			public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
 				lock ( this._lock ) {
@@ -1124,112 +1228,6 @@ namespace Librainian.Threading {
 					return true;
 				}
 			}
-
-			[ItemNotNull]
-			private async Task<T> WaitAndLoadAsync( CancellationToken cancelToken ) {
-				Interlocked.Increment( ref this._count );
-
-				using ( await this._semaphore.UseWaitAsync( cancelToken ).ConfigureAwait( false ) ) {
-					return await this._loader( cancelToken ).ConfigureAwait( false );
-				}
-			}
-
 		}
-
-		/// <summary>
-		/// Return tasks in order of completion.
-		/// </summary>
-		/// <param name="tasks"></param>
-		/// <returns></returns>
-		public static async Task<IEnumerable<Task<Task>>> InOrderOfCompletionAsync( this IEnumerable<Task> tasks ) {
-			var inputTasks = tasks.ToList();
-
-			var buckets = new TaskCompletionSource<Task>[ inputTasks.Count ];
-			var results = new Task<Task>[ buckets.Length ];
-
-			for ( var i = 0; i < buckets.Length; i++ ) {
-				buckets[ i ] = new TaskCompletionSource<Task>();
-				results[ i ] = buckets[ i ].Task;
-			}
-
-			var nextTaskIndex = -1;
-
-			void Continuation( Task completed ) {
-				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
-				bucket.TrySetResult( completed );
-			}
-
-			foreach ( var inputTask in inputTasks ) {
-				await inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default ).ConfigureAwait( false );
-			}
-
-			return results;
-		}
-
-		/// <summary>
-		/// Return tasks in order of completion.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="tasks"></param>
-		/// <returns></returns>
-		public static async Task<IEnumerable<Task<Task<T>>>> InOrderOfCompletion<T>( this IEnumerable<Task<T>> tasks ) {
-			var enumerable = tasks as Task<T>[] ?? tasks.ToArray();
-
-			var inputTasks = enumerable.ToAsyncEnumerable();
-
-			var buckets = new TaskCompletionSource<Task<T>>[ enumerable.Length ];
-			var results = new Task<Task<T>>[ buckets.Length ];
-
-			for ( var i = 0; i < buckets.Length; i++ ) {
-				buckets[ i ] = new TaskCompletionSource<Task<T>>();
-				results[ i ] = buckets[ i ].Task;
-			}
-
-			var nextTaskIndex = -1;
-
-			void Continuation( Task<T> completed ) {
-				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
-				bucket.TrySetResult( completed );
-			}
-
-			await foreach ( var inputTask in inputTasks.ConfigureAwait( false ) ) {
-				await inputTask.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default )
-				               .ConfigureAwait( false );
-			}
-
-			return results;
-		}
-
-		/// <summary>
-		/// Return tasks in order of completion.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="tasks"></param>
-		/// <returns></returns>
-		public static async Task<IEnumerable<Task<Task<T>>>> InOrderOfCompletion<T>( this IDictionary<TimeSpan, Task<T>> tasks ) {
-			var buckets = new TaskCompletionSource<Task<T>>[ tasks.Count ];
-			var results = new Task<Task<T>>[ buckets.Length ];
-
-			for ( var i = 0; i < buckets.Length; i++ ) {
-				buckets[ i ] = new TaskCompletionSource<Task<T>>();
-				results[ i ] = buckets[ i ].Task;
-			}
-
-			var nextTaskIndex = -1;
-
-			void Continuation( Task<T> completed ) {
-				var bucket = buckets[ Interlocked.Increment( ref nextTaskIndex ) ];
-				bucket.TrySetResult( completed );
-			}
-
-			await foreach ( var inputTask in tasks.ToAsyncEnumerable().ConfigureAwait( false ) ) {
-				await inputTask.Value.ContinueWith( Continuation, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default )
-				               .ConfigureAwait( false );
-			}
-
-			return results;
-		}
-
 	}
-
 }

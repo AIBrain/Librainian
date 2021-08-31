@@ -76,7 +76,7 @@ namespace Librainian.FileSystem {
 					WhenStarted = null
 				};
 
-				this.SourceFilesToBeCopied[ sourceFile ] = fileCopyData.Source.Copy( fileCopyData, cancellationToken );
+				this.SourceFilesToBeCopied[sourceFile] = fileCopyData.Source.Copy( fileCopyData, cancellationToken );
 			}
 		}
 	}

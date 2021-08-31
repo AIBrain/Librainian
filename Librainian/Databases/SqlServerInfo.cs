@@ -30,7 +30,6 @@ namespace Librainian.Databases {
 	using Microsoft.Data.SqlClient;
 
 	public record SqlServerInfo( String Version ) {
-
 		public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }
 
 		public Status Status { get; set; }

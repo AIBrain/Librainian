@@ -61,10 +61,10 @@ namespace Librainian.Extensions {
 				return Guid.Empty;
 			}
 
-			var b = new Byte[ s.Count ];
+			var b = new Byte[s.Count];
 
 			for ( var i = 0; i < s.Count; i++ ) {
-				b[ i ] = Convert.ToByte( s[ i ] );
+				b[i] = Convert.ToByte( s[i] );
 			}
 
 			try {
@@ -116,13 +116,13 @@ namespace Librainian.Extensions {
 		/// <param name="right"></param>
 		public static Guid Munge( this Guid left, Guid right ) {
 			const Int32 bytecount = 16;
-			var destByte = new Byte[ bytecount ];
+			var destByte = new Byte[bytecount];
 			var lhsBytes = left.ToByteArray();
 			var rhsBytes = right.ToByteArray();
 
 			for ( var i = 0; i < bytecount; i++ ) {
 				unchecked {
-					destByte[ i ] = ( Byte )( lhsBytes[ i ] ^ rhsBytes[ i ] );
+					destByte[i] = ( Byte )( lhsBytes[i] ^ rhsBytes[i] );
 				}
 			}
 

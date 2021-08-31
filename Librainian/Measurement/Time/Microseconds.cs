@@ -95,9 +95,7 @@ namespace Librainian.Measurement.Time {
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToNanoseconds();
 
-		
-
-		public PlanckTimes ToPlanckTimes() => new(  this.Value * PlanckTimes.InOneMicrosecond  );
+		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneMicrosecond );
 
 		public Seconds ToSeconds() => new( this.ToMilliseconds().Value / Milliseconds.InOneSecond );
 

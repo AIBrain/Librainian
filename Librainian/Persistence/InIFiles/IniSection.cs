@@ -47,13 +47,13 @@ namespace Librainian.Persistence.InIFiles {
 		/// <summary>Gets the element at the specified index in the read-only list.</summary>
 		/// <param name="index">The zero-based index of the element to get. </param>
 		/// <returns>The element at the specified index in the read-only list.</returns>
-		public IniLine this[ Int32 index ] {
+		public IniLine this[Int32 index] {
 			get {
 				if ( index <= 0 || index > this.Count ) {
 					throw new ArgumentOutOfRangeException( nameof( index ) );
 				}
 
-				return this.lines[ index ];
+				return this.lines[index];
 			}
 		}
 

@@ -27,6 +27,7 @@ namespace Librainian.FileSystem {
 	using System;
 
 	public static class FileSizeExtensions {
+
 		public static String ToFileSize( this Int64 size ) {
 			if ( size < 1024 ) { return size.ToString( "F0" ) + " bytes"; }
 			if ( size < Math.Pow( 1024, 2 ) ) { return ( size / 1024 ).ToString( "F0" ) + "KB"; }
@@ -36,6 +37,7 @@ namespace Librainian.FileSystem {
 			if ( size < Math.Pow( 1024, 6 ) ) { return ( size / Math.Pow( 1024, 5 ) ).ToString( "F0" ) + "PB"; }
 			return ( size / Math.Pow( 1024, 6 ) ).ToString( "F0" ) + "EB";
 		}
+
 		public static String ToFileSize( this UInt64 size ) {
 			if ( size < 1024 ) { return size.ToString( "F0" ) + " bytes"; }
 			if ( size < Math.Pow( 1024, 2 ) ) { return ( size / 1024 ).ToString( "F0" ) + "KB"; }
@@ -46,5 +48,4 @@ namespace Librainian.FileSystem {
 			return ( size / Math.Pow( 1024, 6 ) ).ToString( "F0" ) + "EB";
 		}
 	}
-	
 }

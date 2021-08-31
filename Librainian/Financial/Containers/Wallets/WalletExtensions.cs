@@ -208,7 +208,7 @@ namespace Librainian.Financial.Containers.Wallets {
 				var count = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
 
 				if ( count.Any() ) {
-					optimal[ highestBill ] += count;
+					optimal[highestBill] += count;
 					leftOverAmount -= count * highestBill.FaceValue;
 				}
 			}

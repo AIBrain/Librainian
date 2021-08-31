@@ -48,6 +48,8 @@ namespace Librainian.Controls {
 	using OperatingSystem;
 	using PooledAwait;
 	using Threading;
+	using Utilities;
+
 	//using System.Windows;
 	//using System.Windows.Media;
 	//using System.Windows.Threading;
@@ -160,25 +162,21 @@ namespace Librainian.Controls {
 		/// <param name="refreshOrInvalidate"></param>
 		public static CheckBox Checked( this CheckBox control, Boolean? value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
 			if ( control is null ) {
-				throw new ArgumentEmptyException( nameof( control ) );
+				throw new NullException( nameof( control ) );
 			}
 
-			control.InvokeAction( Action );
+			control.InvokeAction( Action, refreshOrInvalidate );
 
 			return control;
 
 			void Action() {
-				if ( value is not null ) {
-					control.CheckState = value.Value ? CheckState.Checked : CheckState.Unchecked;
-					control.Checked = value.Value;
-				}
-				else {
+				if ( value is null ) {
 					control.Checked = false; //TODO this false needs checked for resulting value/look match
 					control.CheckState = CheckState.Indeterminate;
 				}
-
-				if ( refreshOrInvalidate.HasFlag( RefreshOrInvalidate.Refresh ) ) {
-					control.Refresh();
+				else {
+					control.CheckState = value.Value ? CheckState.Checked : CheckState.Unchecked;
+					control.Checked = value.Value;
 				}
 			}
 		}
@@ -247,9 +245,10 @@ namespace Librainian.Controls {
 		/// </summary>
 		/// <param name="control"></param>
 		/// <param name="value">  </param>
+		/// <param name="redraw"></param>
 		public static void Enabled( this ToolStripProgressBar control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
 			if ( control is null ) {
-				throw new ArgumentEmptyException( nameof( control ) );
+				throw new NullException( nameof( control ) );
 			}
 
 			control.ProgressBar?.InvokeAction( Action );
@@ -273,21 +272,22 @@ namespace Librainian.Controls {
 		/// <param name="spanOff">How long to keep the control off before it resets.</param>
 		public static void Flash( this Control control, TimeSpan? spanOff = null ) {
 			if ( control is null ) {
-				throw new ArgumentEmptyException( nameof( control ) );
+				throw new NullException( nameof( control ) );
 			}
 
-			spanOff ??= Milliseconds.One;
-			spanOff.Value.CreateTimer( OnTick ).Once().Start();
-
-			void Action() {
-				( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor );
-				control.Refresh();
-			}
-
-			void OnTick() => control.InvokeAction( Action );
+			spanOff ??= Milliseconds.FiveHundred;
+			spanOff.Value.CreateTimer( () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) ).Once().Start();
 		}
 
+		/// <summary>
+		/// Flash a control while the text is blank.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="control"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
 		[DebuggerStepThrough]
+		[NeedsTesting]
 		public static Task FlashWhileBlank( this Control input, Control control, CancellationToken cancellationToken ) =>
 			Seconds.Five.Then( async () => {
 				if ( String.IsNullOrWhiteSpace( input.Text() ) ) {
@@ -362,8 +362,12 @@ namespace Librainian.Controls {
 		/// <param name="redraw"></param>
 		/// <seealso />
 		[DebuggerStepThrough]
-		public static void InvokeAction( this Control? control, Action action, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
-			if ( control?.IsDisposed != false ) {
+		public static void InvokeAction( this Control control, Action action, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
+			if ( control is null ) {
+				throw new ArgumentNullException( nameof( control ) );
+			}
+
+			if ( control.IsDisposed ) {
 				return;
 			}
 
@@ -375,6 +379,13 @@ namespace Librainian.Controls {
 					control.Refresh();
 				}
 			}
+
+			action += MaybeRedraw;
+
+			SafeInvoke( control, _ => action() );
+
+			/*
+			I need some data on which is better for .NET 6+: SafeInvoke or control.InvokeRequired+BeginInvoke+EndInvoke?
 
 			if ( control.InvokeRequired ) {
 				if ( redraw.In( RefreshOrInvalidate.Invalidate, RefreshOrInvalidate.Refresh ) ) {
@@ -389,6 +400,7 @@ namespace Librainian.Controls {
 					MaybeRedraw();
 				}
 			}
+			*/
 		}
 
 		public static TResult? SafeInvoke<T,TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
@@ -438,18 +450,14 @@ namespace Librainian.Controls {
 
 		public static T? InvokeFunction<T>( this Control? control, Func<T?> function ) {
 			if ( control is null ) {
-				return default( T? );
+				throw new NullException( nameof( control ) );
 			}
 
 			if ( function is null ) {
-				throw new ArgumentEmptyException( nameof( function ) );
+				throw new NullException( nameof( function ) );
 			}
 
-			if ( control.InvokeRequired ) {
-				return control.Invoke( function );
-			}
-
-			return function();
+			return control.InvokeRequired ? control.Invoke( function ) : function();
 		}
 
 		public static Color MakeDarker( this Color thisColor, Double darknessPercent ) {
@@ -489,13 +497,7 @@ namespace Librainian.Controls {
 		///     Threadsafe get.
 		/// </summary>
 		/// <param name="control"></param>
-		public static Int32 Maximum( this ProgressBar control ) {
-			if ( control is null ) {
-				throw new ArgumentEmptyException( nameof( control ) );
-			}
-
-			return control.InvokeFunction( () => control.Maximum );
-		}
+		public static Int32 Maximum( this ProgressBar control ) => control.InvokeFunction( () => control.Maximum );
 
 		/// <summary>
 		///     Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" /> across threads.
@@ -562,11 +564,11 @@ namespace Librainian.Controls {
 
 		public static Boolean RemoveTags( this WebBrowser browser, String tagName, Int32 keepAtMost = 50 ) {
 			if ( browser is null ) {
-				throw new ArgumentEmptyException( nameof( browser ) );
+				throw new NullException( nameof( browser ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( tagName ) ) {
-				throw new ArgumentEmptyException( nameof( tagName ) );
+				throw new NullException( nameof( tagName ) );
 			}
 
 			if ( browser.Document is null ) {
@@ -593,7 +595,7 @@ namespace Librainian.Controls {
 		/// <param name="value">  </param>
 		public static void Reset( this ProgressBar control, Int32? value = null ) {
 			if ( control is null ) {
-				throw new ArgumentEmptyException( nameof( control ) );
+				throw new NullException( nameof( control ) );
 			}
 
 			control.Value( value ?? control.Minimum() );
@@ -710,7 +712,7 @@ namespace Librainian.Controls {
 			}
 
 			if ( message is null ) {
-				throw new ArgumentEmptyException( nameof( message ) );
+				throw new NullException( nameof( message ) );
 			}
 
 			textBox.InvokeAction( () => {
@@ -724,7 +726,7 @@ namespace Librainian.Controls {
 
 		public static void TextAdd( this RichTextBox textBox, String text, Color color, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			if ( textBox is null ) {
-				throw new ArgumentEmptyException( nameof( textBox ) );
+				throw new NullException( nameof( textBox ) );
 			}
 
 			textBox.InvokeAction( Action, redraw );
@@ -808,7 +810,7 @@ namespace Librainian.Controls {
 		/// <param name="redraw"></param>
 		public static void Values( this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 			if ( control is null ) {
-				throw new ArgumentEmptyException( nameof( control ) );
+				throw new NullException( nameof( control ) );
 			}
 
 			var lowEnd = Math.Min( minimum, maximum );

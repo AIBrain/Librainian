@@ -33,6 +33,5 @@ namespace Librainian.Interfaces {
 		public override String ToString() => $"{this.Source}.{this.Position}";
 
 		public static SourceRecord Create( Sources Source, SourcePosition Position ) => new( Source, Position );
-
 	}
 }

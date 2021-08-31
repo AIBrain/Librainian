@@ -69,7 +69,7 @@ namespace Librainian.Parsing {
 
 			Int64 mult = 1;
 
-			switch ( match.Groups[ "mod" ].Value.ToUpper() ) {
+			switch ( match.Groups["mod"].Value.ToUpper() ) {
 				case "B":
 				case "":
 					break;
@@ -113,7 +113,7 @@ namespace Librainian.Parsing {
 					throw new InvalidOperationException();
 			}
 
-			bytes = ( Int64 )Math.Round( Single.Parse( match.Groups[ "num" ].Value ) * mult );
+			bytes = ( Int64 )Math.Round( Single.Parse( match.Groups["num"].Value ) * mult );
 
 			return true;
 		}
@@ -144,7 +144,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( bytes == 0 ) {
-				return "0" + Suffixes[ 0 ];
+				return "0" + Suffixes[0];
 			}
 
 			var m = Regex.Match( format, @"^[B|b](?<prec>\d+)?$" );
@@ -153,7 +153,7 @@ namespace Librainian.Parsing {
 				return this.HandleOtherFormats( format, arg );
 			}
 
-			var prec = m.Groups[ "prec" ].Success ? Byte.Parse( m.Groups[ "prec" ].Value ) : 0;
+			var prec = m.Groups["prec"].Success ? Byte.Parse( m.Groups["prec"].Value ) : 0;
 			var place = Convert.ToInt32( Math.Floor( Math.Log( bytes, 1024 ) ) );
 
 			if ( place >= Suffixes.Length ) {
@@ -162,7 +162,7 @@ namespace Librainian.Parsing {
 
 			var num = Math.Round( bytes / Math.Pow( 1024, place ), 1 );
 
-			return $"{num.ToString( "F" + prec )}{Suffixes[ place ]}";
+			return $"{num.ToString( "F" + prec )}{Suffixes[place]}";
 		}
 	}
 }

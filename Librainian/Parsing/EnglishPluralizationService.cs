@@ -931,9 +931,9 @@ namespace Librainian.Parsing {
 
 			// use the last space to separate the words
 			var lastSpaceIndex = word.LastIndexOf( ' ' );
-			prefixWord = word[ ..(lastSpaceIndex + 1) ];
+			prefixWord = word[..( lastSpaceIndex + 1 )];
 
-			return word[ ( lastSpaceIndex + 1 ).. ];
+			return word[( lastSpaceIndex + 1 )..];
 
 			//
 		}
@@ -1354,8 +1354,8 @@ namespace Librainian.Parsing {
 
 				var sb = new StringBuilder( result.Length );
 
-				sb.Append( Char.ToUpperInvariant( result[ 0 ] ) );
-				sb.Append( result[ 1.. ] );
+				sb.Append( Char.ToUpperInvariant( result[0] ) );
+				sb.Append( result[1..] );
 
 				return sb.ToString();
 			}

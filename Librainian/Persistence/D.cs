@@ -65,37 +65,6 @@ namespace Librainian.Persistence {
 			this.V = value;
 		}
 
-		public override Int32 GetHashCode() => this.K.GetHashCode();
-
-		public override String ToString() {
-			String keypart;
-
-			if ( this.K.Length > 22 ) {
-				var left = Strings.Left( this.K, 10 );
-				var right = Strings.Right( this.K, 10 );
-
-				keypart = $"{left}..{right}";
-			}
-			else {
-				keypart = this.K;
-			}
-
-			if ( this.V is null ) {
-				return $"{keypart}={Symbols.Null}";
-			}
-
-			var valuepart = String.Empty;
-
-			if ( this.V.Length > 22 ) {
-				var left = Strings.Left( this.V, 10 );
-				var right = Strings.Right( this.V, 10 );
-
-				valuepart = $"{left}..{right}";
-			}
-
-			return $"{keypart}={valuepart}";
-		}
-
 		/// <summary>
 		///     <para>Static equality test.</para>
 		///     <para>Return true if: K and K have the same value, and V and V have the same value.</para>
@@ -130,7 +99,38 @@ namespace Librainian.Persistence {
 
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as D );
 
+		public override Int32 GetHashCode() => this.K.GetHashCode();
+
 		public Int32 GetHashCode( D d ) => d.K.GetHashCode();
+
+		public override String ToString() {
+			String keypart;
+
+			if ( this.K.Length > 22 ) {
+				var left = Strings.Left( this.K, 10 );
+				var right = Strings.Right( this.K, 10 );
+
+				keypart = $"{left}..{right}";
+			}
+			else {
+				keypart = this.K;
+			}
+
+			if ( this.V is null ) {
+				return $"{keypart}={Symbols.Null}";
+			}
+
+			var valuepart = String.Empty;
+
+			if ( this.V.Length > 22 ) {
+				var left = Strings.Left( this.V, 10 );
+				var right = Strings.Right( this.V, 10 );
+
+				valuepart = $"{left}..{right}";
+			}
+
+			return $"{keypart}={valuepart}";
+		}
 
 		Boolean IEqualityComparer<D>.Equals( D? x, D? y ) => Equals( x, y );
 	}

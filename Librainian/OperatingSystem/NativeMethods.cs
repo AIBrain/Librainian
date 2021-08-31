@@ -904,28 +904,28 @@ namespace Librainian.OperatingSystem {
 		public static void HandleLastError( String fullPath, Int32 lastWin32Error ) {
 			switch ( lastWin32Error ) {
 				case ( Int32 )ErrorCodes.ERROR_FILE_NOT_FOUND: {
-					ThrowFileNotFound( fullPath );
+						ThrowFileNotFound( fullPath );
 
-					break;
-				}
+						break;
+					}
 
 				case ( Int32 )ErrorCodes.ERROR_PATH_NOT_FOUND: {
-					ThrowPathNotFound( fullPath );
+						ThrowPathNotFound( fullPath );
 
-					break;
-				}
+						break;
+					}
 
 				case ( Int32 )ErrorCodes.ERROR_ACCESS_DENIED: {
-					ThrowAccessDenied( fullPath );
+						ThrowAccessDenied( fullPath );
 
-					break;
-				}
+						break;
+					}
 
 				default: {
-					ThrowExceptionForHR( lastWin32Error );
+						ThrowExceptionForHR( lastWin32Error );
 
-					break;
-				}
+						break;
+					}
 			}
 
 			throw new Exception( "wtf" );

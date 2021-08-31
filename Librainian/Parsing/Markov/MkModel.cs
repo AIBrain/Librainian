@@ -39,9 +39,9 @@ namespace Librainian.Parsing.Markov {
 
 	public class MkModel {
 
-		public String Name { get; }
-
 		private ConcurrentDictionary<Word, List<Word>> _markovChains { get; } = new();
+
+		public String Name { get; }
 
 		private MkModel() => throw new NotImplementedException();
 

@@ -113,7 +113,7 @@ namespace Librainian.Financial.Currency.BTC {
 				var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
 
 				if ( chunks > Decimal.Zero ) {
-					result[ coin ] += chunks;
+					result[coin] += chunks;
 					leftOverAmount -= chunks * coin.FaceValue;
 				}
 
@@ -289,7 +289,7 @@ namespace Librainian.Financial.Currency.BTC {
 				var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
 
 				if ( chunks > Decimal.Zero ) {
-					result[ coin ] += chunks;
+					result[coin] += chunks;
 					leftOverAmount -= chunks * coin.FaceValue;
 				}
 

@@ -80,7 +80,7 @@ namespace Librainian.Maths {
 			yield return 2;
 			yield return 3;
 			var k = 1;
-			loop:
+		loop:
 
 			yield return k * 6 - 1;
 			yield return k * 6 + 1;
@@ -98,7 +98,7 @@ namespace Librainian.Maths {
 			var k = lowEnd;
 
 			yield return k;
-			loop:
+		loop:
 
 			yield return k * 6 - 1;
 			yield return k * 6 + 1;

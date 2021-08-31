@@ -51,13 +51,13 @@ namespace Librainian.ComputerSystem.Devices {
 
 		public String RootDirectory => this.Info.RootDirectory.Name;
 
-		public Disk( Document document ) : this( document.FullPath[ 0 ] ) { }
+		public Disk( Document document ) : this( document.FullPath[0] ) { }
 
-		public Disk( Folder folder ) : this( folder.FullPath[ 0 ] ) { }
+		public Disk( Folder folder ) : this( folder.FullPath[0] ) { }
 
-		public Disk( String fullpath ) : this( fullpath[ 0 ] ) { }
+		public Disk( String fullpath ) : this( fullpath[0] ) { }
 
-		public Disk( DriveInfo info ) : this( info.RootDirectory.FullName[ 0 ] ) { }
+		public Disk( DriveInfo info ) : this( info.RootDirectory.FullName[0] ) { }
 
 		public Disk( Char driveLetter ) {
 			this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
@@ -72,7 +72,7 @@ namespace Librainian.ComputerSystem.Devices {
 		/// <summary>
 		///     Assume <see cref="Environment.CurrentDirectory" />.
 		/// </summary>
-		public Disk() : this( Environment.CurrentDirectory[ 0 ] ) { }
+		public Disk() : this( Environment.CurrentDirectory[0] ) { }
 
 		public static async IAsyncEnumerable<Disk> GetDrives( [EnumeratorCancellation] CancellationToken cancellationToken ) {
 			await foreach ( var driveInfo in DriveInfo.GetDrives().ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {

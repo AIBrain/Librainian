@@ -42,7 +42,7 @@ namespace Librainian.Collections {
 
 		/// <summary>Get or set the <paramref name="key" /> for this word.</summary>
 		/// <param name="key"></param>
-		public UInt64 this[ String key ] {
+		public UInt64 this[String key] {
 			get => this.Words.TryGetValue( key, out var result ) ? result : default( UInt64 );
 
 			set {
@@ -50,22 +50,22 @@ namespace Librainian.Collections {
 					return;
 				}
 
-				this.Words[ key ] = value;
-				this.Ints[ value ] = key;
+				this.Words[key] = value;
+				this.Ints[value] = key;
 			}
 		}
 
 		/// <summary>Get or set the word for this guid.</summary>
 		/// <param name="key"></param>
-		public String? this[ UInt64 key ] {
-			get => this.Ints[ key ];
+		public String? this[UInt64 key] {
+			get => this.Ints[key];
 
 			set {
 				if ( value != null ) {
-					this.Words[ value ] = key;
+					this.Words[value] = key;
 				}
 
-				this.Ints[ key ] = value;
+				this.Ints[key] = value;
 			}
 		}
 

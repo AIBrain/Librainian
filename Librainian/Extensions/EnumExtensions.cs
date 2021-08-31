@@ -50,10 +50,10 @@ namespace Librainian.Extensions {
 				return default( String? ); //element.ToString();
 			}
 
-			var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( DescriptionAttribute ), false );
+			var attributes = memberInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false );
 
 			if ( attributes.Any() ) {
-				return ( attributes[ 0 ] as DescriptionAttribute )?.Description;
+				return ( attributes[0] as DescriptionAttribute )?.Description;
 			}
 
 			return null;
@@ -85,9 +85,9 @@ namespace Librainian.Extensions {
 		public static T GetAttribute<T>( this Enum value ) where T : Attribute {
 			var type = value.GetType();
 			var memberInfo = type.GetMember( value.ToString() );
-			var attributes = memberInfo[ 0 ].GetCustomAttributes( typeof( T ), false );
+			var attributes = memberInfo[0].GetCustomAttributes( typeof( T ), false );
 
-			return ( T )attributes[ 0 ];
+			return ( T )attributes[0];
 		}
 
 		public static String? GetDescription<T>( this T? e ) where T : IConvertible {
@@ -110,7 +110,7 @@ namespace Librainian.Extensions {
 
 				var memInfo = type.GetMember( ename );
 
-				if ( memInfo[ 0 ].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
+				if ( memInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
 					return descriptionAttribute.Description;
 				}
 			}

@@ -61,7 +61,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return buffer.ToString();
 		}
 
-		public static Boolean EndsWith( this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[ ^1 ] == value;
+		public static Boolean EndsWith( this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[^1] == value;
 
 		public static FileAttributes GetAttributes( this String path ) {
 			var normalizedPath = path.NormalizeLongPath();

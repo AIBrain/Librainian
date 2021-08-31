@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,12 +17,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "DatabaseExtensions.cs" last touched on 2021-08-28 at 7:55 AM by Protiguous.
 
 #nullable enable
@@ -100,6 +100,7 @@ namespace Librainian.Databases {
 			String applicationName,
 			CancellationToken cancellationToken
 		) {
+
 			//TODO This needs redone. I don't want to be passing around a SqlConnectionStringBuilder.
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new NullException( "Value cannot be null or whitespace.", nameof( query ) );
@@ -157,6 +158,52 @@ namespace Librainian.Databases {
         }
 		*/
 
+		public static Boolean AttemptQueryAgain<T>( this T exception, ref Int32 retriesLeft ) where T : Exception {
+			if ( !retriesLeft.Any() || exception is TaskCanceledException or OperationCanceledException ) {
+				return false;
+			}
+
+			--retriesLeft;
+
+			switch ( exception ) {
+				case SqlException
+				{
+					IsTransient: true
+				}:
+					return true;
+
+				case DbException
+				{
+					IsTransient: true
+				}:
+					return true;
+
+				case SqlException
+				{
+					Errors: { }
+				} sqlxException: {
+						foreach ( SqlError error in sqlxException.Errors ) {
+							if ( error.Message?.Contains( "Execution Timeout Expired", StringComparison.CurrentCultureIgnoreCase ) == true ) {
+								return true;
+							}
+						}
+
+						break;
+					}
+			}
+
+			if ( exception.Message.Contains( "deadlocked", StringComparison.CurrentCultureIgnoreCase ) ) {
+				if ( exception.Message.Contains( "Rerun the transaction", StringComparison.CurrentCultureIgnoreCase ) ) {
+					return true;
+				}
+			}
+
+			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
+				   exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
+		}
+
 		/// <summary>
 		///     Enumerates all SQL Server instances on the machine.
 		/// </summary>
@@ -175,7 +222,7 @@ namespace Librainian.Databases {
 					yield break;
 				}
 
-				foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine[ "ServiceName" ]?.ToString() ) ) {
+				foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine["ServiceName"]?.ToString() ) ) {
 					if ( !String.IsNullOrWhiteSpace( serviceName ) ) {
 						var instance = new SqlServerInstance {
 							ServiceName = serviceName,
@@ -215,10 +262,10 @@ namespace Librainian.Databases {
 				throw new NullException( nameof( connectionString ) );
 			}
 
-			file[ key ] = connectionString;
+			file[key] = connectionString;
 			await file.Flush( CancellationToken.None ).ConfigureAwait( false );
 
-			Debug.Assert( file[ key ].Like( connectionString ) );
+			Debug.Assert( file[key].Like( connectionString ) );
 
 			return key;
 		}
@@ -285,6 +332,7 @@ namespace Librainian.Databases {
 			var namespaces = new List<String>();
 
 			try {
+
 				// Enumerate all WMI instances of __namespace WMI class.
 				var objectGetOptions = new ObjectGetOptions {
 					Timeout = Seconds.Ten
@@ -292,7 +340,7 @@ namespace Librainian.Databases {
 
 				using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), objectGetOptions );
 
-				var items = nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ]?.ToString() );
+				var items = nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"]?.ToString() );
 
 				foreach ( var item in items ) {
 					if ( !String.IsNullOrWhiteSpace( item ) ) {
@@ -310,6 +358,7 @@ namespace Librainian.Databases {
 		}
 
 		public static dynamic? GetDataSources() {
+
 			//var services = ServiceController.GetServices().Where( service => service.ServiceName.StartsWith( "MSSQL$" ) );
 			//return services;
 
@@ -342,7 +391,7 @@ namespace Librainian.Databases {
 				TypeDictionary.Add( type, type.GetProperties() );
 			}
 
-			return TypeDictionary[ type ];
+			return TypeDictionary[type];
 		}
 
 		/// <summary>
@@ -369,52 +418,11 @@ namespace Librainian.Databases {
 
 			foreach ( var o in propertySearcher.Get() ) {
 				if ( o is ManagementObject managementObject ) {
-					return managementObject[ "PropertyStrValue" ].ToString();
+					return managementObject["PropertyStrValue"].ToString();
 				}
 			}
 
 			return String.Empty;
-		}
-
-		public static Boolean AttemptQueryAgain<T>( this T exception, ref Int32 retriesLeft ) where T : Exception {
-			if ( !retriesLeft.Any() || exception is TaskCanceledException or OperationCanceledException ) {
-				return false;
-			}
-
-			--retriesLeft;
-
-			switch ( exception ) {
-				case SqlException {
-					IsTransient: true
-				}:
-					return true;
-				case DbException {
-					IsTransient: true
-				}:
-					return true;
-				case SqlException {
-					Errors: { }
-				} sqlxException: {
-					foreach ( SqlError error in sqlxException.Errors ) {
-						if ( error.Message?.Contains( "Execution Timeout Expired", StringComparison.CurrentCultureIgnoreCase ) == true ) {
-							return true;
-						}
-					}
-
-					break;
-				}
-			}
-
-			if ( exception.Message.Contains( "deadlocked", StringComparison.CurrentCultureIgnoreCase ) ) {
-				if ( exception.Message.Contains( "Rerun the transaction", StringComparison.CurrentCultureIgnoreCase ) ) {
-					return true;
-				}
-			}
-
-			return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
-			       exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
-			       exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
-			       exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
 		}
 
 		/*
@@ -518,7 +526,7 @@ namespace Librainian.Databases {
 			var i = 0;
 
 			foreach ( DataViewSetting dataViewSetting in exampleSet.DefaultViewManager.DataViewSettings ) {
-				dataSet.DefaultViewManager.DataViewSettings[ i++ ] = dataViewSetting;
+				dataSet.DefaultViewManager.DataViewSettings[i++] = dataViewSetting;
 			}
 
 			return dataSet;
@@ -540,7 +548,7 @@ namespace Librainian.Databases {
 
 				var row = table.NewRow();
 				foreach ( PropertyDescriptor prop in properties ) {
-					row[ prop.Name ] = prop.GetValue( item ) ?? DBNull.Value;
+					row[prop.Name] = prop.GetValue( item ) ?? DBNull.Value;
 				}
 
 				table.Rows.Add( row );
@@ -566,7 +574,7 @@ namespace Librainian.Databases {
 
 				var row = table.NewRow();
 				foreach ( PropertyDescriptor prop in properties ) {
-					row[ prop.Name ] = prop.GetValue( item ) ?? DBNull.Value;
+					row[prop.Name] = prop.GetValue( item ) ?? DBNull.Value;
 				}
 
 				table.Rows.Add( row );
@@ -584,6 +592,40 @@ namespace Librainian.Databases {
 			table.BeginLoadData();
 			table.Load( dataReader, LoadOption.OverwriteChanges, ( _, _ ) => $"Error reading {nameof( dataReader )}.".Log() );
 			table.EndLoadData();
+
+			return table;
+		}
+
+		/// <summary>
+		///     Warning: Untested.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		public static DataTable ToDataTable3<T>( this IEnumerable<T> list ) {
+			"Untested code!".Break();
+			using var table = new DataTable();
+
+			var columns = list.GetType().GetProperties();
+
+			foreach ( var getProperty in columns ) {
+				var icolType = getProperty.PropertyType;
+
+				if ( icolType.IsGenericType && icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
+					icolType = icolType.GetGenericArguments()[0];
+				}
+
+				table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
+			}
+
+			foreach ( var record in list.Where( record => record is not null ) ) {
+				var dr = table.NewRow();
+
+				foreach ( var p in columns ) {
+					dr[p.Name] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
+				}
+
+				table.Rows.Add( dr );
+			}
 
 			return table;
 		}
@@ -617,44 +659,10 @@ namespace Librainian.Databases {
 				var newRow = table.NewRow();
 
 				foreach ( var propInfo in properties ) {
-					newRow[ propInfo.Name ] = item; //BUG This does not look right??
+					newRow[propInfo.Name] = item; //BUG This does not look right??
 				}
 
 				table.Rows.Add( newRow );
-			}
-
-			return table;
-		}
-
-		/// <summary>
-		///     Warning: Untested.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="list"></param>
-		public static DataTable ToDataTable3<T>( this IEnumerable<T> list ) {
-			"Untested code!".Break();
-			using var table = new DataTable();
-
-			var columns = list.GetType().GetProperties();
-
-			foreach ( var getProperty in columns ) {
-				var icolType = getProperty.PropertyType;
-
-				if ( icolType.IsGenericType && icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
-					icolType = icolType.GetGenericArguments()[ 0 ];
-				}
-
-				table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
-			}
-
-			foreach ( var record in list.Where( record => record is not null ) ) {
-				var dr = table.NewRow();
-
-				foreach ( var p in columns ) {
-					dr[ p.Name ] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
-				}
-
-				table.Rows.Add( dr );
 			}
 
 			return table;
@@ -730,7 +738,7 @@ namespace Librainian.Databases {
 				throw new NullException( nameof( parameterName ) );
 			}
 
-			return new(parameterName, sqlDbType, size);
+			return new( parameterName, sqlDbType, size );
 		}
 
 		/*
@@ -836,6 +844,7 @@ namespace Librainian.Databases {
         */
 
 		/*
+
 		/// <summary>
 		///     Performs two adhoc selects on the database.
 		///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
@@ -947,7 +956,5 @@ namespace Librainian.Databases {
                     return stopwatch.Elapsed;
                 }
         */
-
 	}
-
 }

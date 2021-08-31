@@ -206,7 +206,7 @@ namespace Librainian.Maths {
 
 			// Pick first non-digit number
 			for ( num = 0; num < s.Length; num++ ) {
-				if ( !( Char.IsDigit( s[ num ] ) || s[ num ] == decimalSeparator || s[ num ] == groupSeparator ) ) {
+				if ( !( Char.IsDigit( s[num] ) || s[num] == decimalSeparator || s[num] == groupSeparator ) ) {
 					found = true;
 
 					break;
@@ -220,8 +220,8 @@ namespace Librainian.Maths {
 			var lastNumber = num;
 
 			// Cut the input string in half
-			var numberPart = s[ ..lastNumber ].Trim();
-			var sizePart = s[ lastNumber.. ].Trim();
+			var numberPart = s[..lastNumber].Trim();
+			var sizePart = s[lastNumber..].Trim();
 
 			// Get the numeric part
 			if ( !Double.TryParse( numberPart, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.CurrentInfo, out var number ) ) {

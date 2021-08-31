@@ -47,9 +47,9 @@ namespace Librainian.Graphics {
 		/// <summary>Gets or sets the M11 coefficient</summary>
 		/// <value>The M11</value>
 		public Double M11 {
-			get => this._coeffs[ _M11 ];
+			get => this._coeffs[_M11];
 
-			set => this._coeffs[ _M11 ] = value;
+			set => this._coeffs[_M11] = value;
 		}
 
 		///// <summary>
@@ -65,62 +65,62 @@ namespace Librainian.Graphics {
 		/// <summary>Gets or sets the M12 coefficient</summary>
 		/// <value>The M12</value>
 		public Double M12 {
-			get => this._coeffs[ _M12 ];
+			get => this._coeffs[_M12];
 
-			set => this._coeffs[ _M12 ] = value;
+			set => this._coeffs[_M12] = value;
 		}
 
 		/// <summary>Gets or sets the M21 coefficient</summary>
 		/// <value>The M21</value>
 		public Double M21 {
-			get => this._coeffs[ _M21 ];
+			get => this._coeffs[_M21];
 
-			set => this._coeffs[ _M21 ] = value;
+			set => this._coeffs[_M21] = value;
 		}
 
 		/// <summary>Gets or sets the M22 coefficient</summary>
 		/// <value>The M22</value>
 		public Double M22 {
-			get => this._coeffs[ _M22 ];
+			get => this._coeffs[_M22];
 
-			set => this._coeffs[ _M22 ] = value;
+			set => this._coeffs[_M22] = value;
 		}
 
 		/// <summary>Gets or sets the M31 coefficient</summary>
 		/// <value>The M31</value>
 		public Double M31 {
-			get => this._coeffs[ _M31 ];
+			get => this._coeffs[_M31];
 
-			set => this._coeffs[ _M31 ] = value;
+			set => this._coeffs[_M31] = value;
 		}
 
 		/// <summary>Gets or sets the M32 coefficient</summary>
 		/// <value>The M32</value>
 		public Double M32 {
-			get => this._coeffs[ _M32 ];
+			get => this._coeffs[_M32];
 
-			set => this._coeffs[ _M32 ] = value;
+			set => this._coeffs[_M32] = value;
 		}
 
 		/// <summary>Gets or sets the Translation Offset in the X Direction</summary>
 		/// <value>The M31</value>
 		public Double OffsetX {
-			get => this._coeffs[ _M31 ];
+			get => this._coeffs[_M31];
 
-			set => this._coeffs[ _M31 ] = value;
+			set => this._coeffs[_M31] = value;
 		}
 
 		// NB: M11, M12, M21, M22 members of IAffineTransformCoefficients are implemented within the #region Public Properties directive
 		/// <summary>Gets or sets the Translation Offset in the Y Direction</summary>
 		/// <value>The M32</value>
 		public Double OffsetY {
-			get => this._coeffs[ _M32 ];
+			get => this._coeffs[_M32];
 
-			set => this._coeffs[ _M32 ] = value;
+			set => this._coeffs[_M32] = value;
 		}
 
 		/// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
-		public Matrix3X2() => this._coeffs = new Double[ 6 ];
+		public Matrix3X2() => this._coeffs = new Double[6];
 
 		/// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
 		/// <param name="coefficients">
@@ -188,19 +188,19 @@ namespace Librainian.Graphics {
 			var h = left.M32;
 			var i = left.M33;
 
-			var j = this._coeffs[ _M11 ];
-			var k = this._coeffs[ _M12 ];
-			var l = this._coeffs[ _M21 ];
-			var m = this._coeffs[ _M22 ];
-			var n = this._coeffs[ _M31 ];
-			var o = this._coeffs[ _M32 ];
+			var j = this._coeffs[_M11];
+			var k = this._coeffs[_M12];
+			var l = this._coeffs[_M21];
+			var m = this._coeffs[_M22];
+			var n = this._coeffs[_M31];
+			var o = this._coeffs[_M32];
 
-			this._coeffs[ _M11 ] = a * j + b * l + c * n;
-			this._coeffs[ _M12 ] = a * k + b * m + c * o;
-			this._coeffs[ _M21 ] = d * j + e * l + f * n;
-			this._coeffs[ _M22 ] = d * k + e * m + f * o;
-			this._coeffs[ _M31 ] = g * j + h * l + i * n;
-			this._coeffs[ _M32 ] = g * k + h * m + i * o;
+			this._coeffs[_M11] = a * j + b * l + c * n;
+			this._coeffs[_M12] = a * k + b * m + c * o;
+			this._coeffs[_M21] = d * j + e * l + f * n;
+			this._coeffs[_M22] = d * k + e * m + f * o;
+			this._coeffs[_M31] = g * j + h * l + i * n;
+			this._coeffs[_M32] = g * k + h * m + i * o;
 		}
 	}
 }

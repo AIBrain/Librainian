@@ -53,7 +53,7 @@ namespace Librainian.Security {
 
 		/// <summary>Helper that generates a random key on each call.</summary>
 		public static Byte[] NewKey() {
-			var key = new Byte[ KeyBitSize / 8 ];
+			var key = new Byte[KeyBitSize / 8];
 			Randem.RNG.Value.GetBytes( key );
 
 			return key;
@@ -82,7 +82,7 @@ namespace Librainian.Security {
 
 			using var hmac = new HMACSHA256( authKey );
 
-			var sentTag = new Byte[ hmac.HashSize / 8 ];
+			var sentTag = new Byte[hmac.HashSize / 8];
 
 			//Calculate Tag
 			var calcTag = hmac.ComputeHash( encryptedMessage, 0, encryptedMessage.Length - sentTag.Length );
@@ -100,7 +100,7 @@ namespace Librainian.Security {
 			var compare = 0;
 
 			for ( var i = 0; i < sentTag.Length; i++ ) {
-				compare |= sentTag[ i ] ^ calcTag[ i ];
+				compare |= sentTag[i] ^ calcTag[i];
 			}
 
 			//if message doesn't authenticate return null
@@ -116,7 +116,7 @@ namespace Librainian.Security {
 			};
 
 			//Grab IV from message
-			var iv = new Byte[ ivLength ];
+			var iv = new Byte[ivLength];
 			Array.Copy( encryptedMessage, nonSecretPayloadLength, iv, 0, iv.Length );
 
 			using var decrypter = aes.CreateDecryptor( cryptKey, iv );
@@ -202,8 +202,8 @@ namespace Librainian.Security {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 			}
 
-			var cryptSalt = new Byte[ SaltBitSize / 8 ];
-			var authSalt = new Byte[ SaltBitSize / 8 ];
+			var cryptSalt = new Byte[SaltBitSize / 8];
+			var authSalt = new Byte[SaltBitSize / 8];
 
 			//Grab Salt from Non-Secret Payload
 			Array.Copy( encryptedMessage, nonSecretPayloadLength, cryptSalt, 0, cryptSalt.Length );
@@ -370,7 +370,7 @@ namespace Librainian.Security {
 			const Int32 saltsize = SaltBitSize / 8;
 			const Int32 saltier = saltsize * 2;
 
-			var payload = new Byte[ saltier + nonSecretPayload.Length ];
+			var payload = new Byte[saltier + nonSecretPayload.Length];
 
 			Buffer.BlockCopy( nonSecretPayload, 0, payload, 0, nonSecretPayload.Length );
 

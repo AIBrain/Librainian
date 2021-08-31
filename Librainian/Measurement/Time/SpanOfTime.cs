@@ -501,7 +501,6 @@ namespace Librainian.Measurement.Time {
 					return new SpanOfTime( new Seconds( units ) ); //assume seconds given?
 				}
 
-
 				if ( text.EndsWith( "milliseconds", StringComparison.CurrentCultureIgnoreCase ) ) {
 					text = text.Before( "milliseconds" ) ?? String.Empty;
 
@@ -555,11 +554,11 @@ namespace Librainian.Measurement.Time {
 
 		public PlanckTimes CalcTotalPlanckTimes() {
 			return this._totalPlankTimes ??= this.PlanckTimes.ToPlanckTimes() + this.Yoctoseconds.ToPlanckTimes() +
-			                                 this.Zeptoseconds.ToPlanckTimes() + this.Attoseconds.ToPlanckTimes() +
-			                                 this.Femtoseconds.ToPlanckTimes() + this.Picoseconds.ToPlanckTimes() + this.Nanoseconds.ToPlanckTimes() +
-			                                 this.Microseconds.ToPlanckTimes() + this.Milliseconds.ToPlanckTimes() + this.Seconds.ToPlanckTimes() +
-			                                 this.Minutes.ToPlanckTimes() + this.Hours.ToPlanckTimes() + this.Days.ToPlanckTimes() +
-			                                 this.Weeks.ToPlanckTimes() + this.Months.ToPlanckTimes() + this.Years.ToPlanckTimes();
+											 this.Zeptoseconds.ToPlanckTimes() + this.Attoseconds.ToPlanckTimes() +
+											 this.Femtoseconds.ToPlanckTimes() + this.Picoseconds.ToPlanckTimes() + this.Nanoseconds.ToPlanckTimes() +
+											 this.Microseconds.ToPlanckTimes() + this.Milliseconds.ToPlanckTimes() + this.Seconds.ToPlanckTimes() +
+											 this.Minutes.ToPlanckTimes() + this.Hours.ToPlanckTimes() + this.Days.ToPlanckTimes() +
+											 this.Weeks.ToPlanckTimes() + this.Months.ToPlanckTimes() + this.Years.ToPlanckTimes();
 		}
 
 		/// <summary>

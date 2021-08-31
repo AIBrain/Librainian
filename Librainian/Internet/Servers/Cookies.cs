@@ -64,8 +64,8 @@ namespace Librainian.Internet.Servers {
 					continue;
 				}
 
-				var name = s[ ..idxEquals ].Trim();
-				var value = s[ ( idxEquals + 1 ).. ].Trim();
+				var name = s[..idxEquals].Trim();
+				var value = s[( idxEquals + 1 )..].Trim();
 				cookies.Add( name, value );
 			}
 
@@ -86,7 +86,7 @@ namespace Librainian.Internet.Servers {
 		/// <param name="expireTime">The amount of time before the cookie should expire.</param>
 		public void Add( String name, String? value, TimeSpan expireTime ) {
 			name = name.ToLower( CultureInfo.CurrentCulture );
-			this.CookieCollection[ name ] = new Cookie( name, value, expireTime );
+			this.CookieCollection[name] = new Cookie( name, value, expireTime );
 		}
 
 		/// <summary>Gets the cookie with the specified name. If the cookie is not found, null is returned;</summary>

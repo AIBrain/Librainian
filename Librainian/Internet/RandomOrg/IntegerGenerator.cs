@@ -127,7 +127,7 @@ namespace Librainian.Internet.RandomOrg {
 				}
 
 				Uri address = new( $"http://www.random.org/integers/?num={num}&min={min}&max={max}&col={col}&base={inbase}&format=plain&rnd=new" );
-				var job = address.GetWebPageAsync(cancellationToken);
+				var job = address.GetWebPageAsync( cancellationToken );
 
 				if ( job == null ) {
 					throw new InvalidOperationException( "Unable to pull random numbers from Random.Org." );
@@ -153,7 +153,7 @@ namespace Librainian.Internet.RandomOrg {
 				this._index++;
 				this._index %= this.Ints.Count;
 
-				return this.Ints[ this._index ];
+				return this.Ints[this._index];
 			}
 		}
 	}

@@ -41,6 +41,14 @@ namespace Librainian.Databases {
 
 	public class DurableDatabase : ABetterClassDispose {
 
+		private String ConnectionString { get; }
+
+		private UInt16 Retries { get; }
+
+		private ThreadLocal<SqlConnection> SqlConnections { get; }
+
+		public CancellationTokenSource CancelConnection { get; } = new();
+
 		/// <summary>A database connection attempts to stay connected in the event of an unwanted disconnect.</summary>
 		/// <param name="connectionString"></param>
 		/// <param name="retries">         </param>
@@ -71,14 +79,6 @@ namespace Librainian.Databases {
 				throw new InvalidOperationException( $"Unable to connect to {builder.DataSource}" );
 			}
 		}
-
-		private String ConnectionString { get; }
-
-		private UInt16 Retries { get; }
-
-		private ThreadLocal<SqlConnection> SqlConnections { get; }
-
-		public CancellationTokenSource CancelConnection { get; } = new();
 
 		private SqlConnection? OpenConnection() {
 			var sqlConnectionsValue = this.SqlConnections.Value;
@@ -180,38 +180,38 @@ namespace Librainian.Databases {
 				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 				switch ( connection.State ) {
 					case ConnectionState.Open: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Closed: {
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Connecting: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Executing: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Fetching: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Broken: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 				}
 			}
 		}
@@ -254,7 +254,7 @@ namespace Librainian.Databases {
 				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
@@ -321,8 +321,8 @@ namespace Librainian.Databases {
 
 			try {
 				var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType
-					};
+					CommandType = commandType
+				};
 				await using var asyncDisposable = command.ConfigureAwait( false );
 
 				if ( parameters != null ) {
@@ -472,9 +472,9 @@ namespace Librainian.Databases {
 			using var table = new DataTable();
 
 			try {
-					var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType
-					};
+				var command = new SqlCommand( query, this.OpenConnection() ) {
+					CommandType = commandType
+				};
 				await using var _ = command.ConfigureAwait( false );
 
 				if ( parameters != null ) {
@@ -562,16 +562,16 @@ namespace Librainian.Databases {
 
 			try {
 				var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType,
-						CommandTimeout = 0
-					};
+					CommandType = commandType,
+					CommandTimeout = 0
+				};
 				await using var _ = command.ConfigureAwait( false );
 
 				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
-				TryAgain:
+			TryAgain:
 				Object scalar;
 
 				try {

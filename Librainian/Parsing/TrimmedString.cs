@@ -59,7 +59,7 @@ namespace Librainian.Parsing {
 			}
 
 			if ( veryTrim ) {
-				TryAgain:
+			TryAgain:
 				var anychange = false;
 
 				while ( value.Contains( Replacements.Space + Replacements.Return ) ) {

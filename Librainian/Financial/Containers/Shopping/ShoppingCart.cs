@@ -83,7 +83,7 @@ namespace Librainian.Financial.Containers.Shopping {
 					items.TryAdd( shoppingItem, 0 );
 				}
 
-				items[ shoppingItem ]++;
+				items[shoppingItem]++;
 			}
 
 			return items;

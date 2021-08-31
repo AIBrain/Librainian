@@ -29,5 +29,4 @@ namespace Librainian.Parsing.Markov {
 	using System.Collections.Generic;
 
 	public record Chain( String Word, List<Chain> WordChain );
-
 }

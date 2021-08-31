@@ -82,7 +82,7 @@ namespace Librainian.Extensions {
 					res = selector( source, param );
 
 					if ( res != null ) {
-						values[ key ] = res;
+						values[key] = res;
 					}
 				}
 

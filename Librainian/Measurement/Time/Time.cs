@@ -53,7 +53,7 @@ namespace Librainian.Measurement.Time {
 		/// <summary></summary>
 		/// <param name="spanOfTime"></param>
 		public Time( SpanOfTime spanOfTime ) : this( ( Byte )( UInt32 )spanOfTime.Hours.Value, ( Byte )( UInt32 )spanOfTime.Minutes.Value, ( Byte )( UInt32 )spanOfTime.Seconds.Value,
-			( UInt16 )(UInt32)spanOfTime.Milliseconds.Value, ( UInt16 )( UInt32 )spanOfTime.Microseconds.Value ) { }
+			( UInt16 )( UInt32 )spanOfTime.Milliseconds.Value, ( UInt16 )( UInt32 )spanOfTime.Microseconds.Value ) { }
 
 		public static Time Minimum { get; } = new( ClockHour.Minimum, ClockMinute.Minimum, ClockSecond.Minimum, ClockMillisecond.Minimum );
 

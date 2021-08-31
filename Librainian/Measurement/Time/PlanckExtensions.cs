@@ -40,6 +40,7 @@ namespace Librainian.Measurement.Time {
 		}
 
 		/*
+
 		/// <summary>Given the <paramref name="constant" />, reduce <paramref name="planckTimes" />, and return the remainder.</summary>
 		/// <param name="constant"></param>
 		/// <param name="planckTimes"></param>

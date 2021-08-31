@@ -62,12 +62,12 @@ namespace Librainian.Threading {
 			this._tasks.Add( task );
 
 			if ( this._threads is null ) {
-				this._threads = new Thread[ Math.Max( 1, Environment.ProcessorCount ) ];
+				this._threads = new Thread[Math.Max( 1, Environment.ProcessorCount )];
 
 				var threads = this._threads;
 
 				for ( var i = 0; i < threads.Length; i++ ) {
-					threads[ i ] = new Thread( () => {
+					threads[i] = new Thread( () => {
 						foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
 							this.TryExecuteTask( t );
 						}
@@ -77,7 +77,7 @@ namespace Librainian.Threading {
 						IsBackground = true
 					};
 
-					threads[ i ].Start();
+					threads[i].Start();
 				}
 			}
 		}

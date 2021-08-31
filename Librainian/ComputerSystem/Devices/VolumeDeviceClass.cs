@@ -48,7 +48,7 @@ namespace Librainian.ComputerSystem.Devices {
 					continue;
 				}
 
-				this.LogicalDrives[ sb.ToString() ] = drive.Replace( @"\", "" );
+				this.LogicalDrives[sb.ToString()] = drive.Replace( @"\", "" );
 			}
 		}
 

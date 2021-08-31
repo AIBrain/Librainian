@@ -203,6 +203,5 @@ namespace Librainian.Measurement.Time {
 		public Microseconds ToMicroseconds() => new( this.Value * Microseconds.InOneMillisecond );
 
 		public override String ToString() => $"{this.Value} milliseconds";
-
 	}
 }

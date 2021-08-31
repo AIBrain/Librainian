@@ -44,7 +44,6 @@ namespace Librainian.Measurement.Time {
 		///     1000
 		/// </summary>
 		public const UInt16 InOneMicrosecond = 1000;
-		
 
 		/// <summary>
 		///     Ten <see cref="Nanoseconds" /> s.

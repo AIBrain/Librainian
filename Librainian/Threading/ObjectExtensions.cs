@@ -82,7 +82,7 @@ namespace Librainian.Threading {
 			}
 
 			if ( visits.ContainsKey( originalObject ) ) {
-				return visits[ originalObject ];
+				return visits[originalObject];
 			}
 
 			if ( typeof( Delegate ).IsAssignableFrom( reflect ) ) {

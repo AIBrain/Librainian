@@ -47,20 +47,20 @@ namespace Librainian.Graphics.Moving {
 		/// <summary>Human readable file header.</summary>
 		public static readonly String Header = "EFV0.1";
 
+		/// <summary>Checksum guard</summary>
+		[JsonProperty]
+		public UInt64 Checksum { get; set; }
+
 		/// <summary>For each item here, draw them too.</summary>
 		/// <remarks>I need to stop coding while I'm asleep.</remarks>
 		[JsonProperty]
 		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples { get; } = new();
 
 		[JsonProperty]
-		public ConcurrentDictionary<UInt64, Pixelyx> Pixels { get; } = new();
-
-		/// <summary>Checksum guard</summary>
-		[JsonProperty]
-		public UInt64 Checksum { get; set; }
-
-		[JsonProperty]
 		public UInt16 Height { get; set; }
+
+		[JsonProperty]
+		public ConcurrentDictionary<UInt64, Pixelyx> Pixels { get; } = new();
 
 		[JsonProperty]
 		public UInt16 Width { get; set; }
@@ -74,10 +74,10 @@ namespace Librainian.Graphics.Moving {
 
 				//TODO this.Dopples[pixelyx.Timestamp] ??= new List<UInt64>();
 
-				this.Dopples[ pixelyx.Timestamp ].Add( pair.Value.Timestamp );
+				this.Dopples[pixelyx.Timestamp].Add( pair.Value.Timestamp );
 			}
 
-			this.Pixels[ pixelyx.Timestamp ] = pixelyx;
+			this.Pixels[pixelyx.Timestamp] = pixelyx;
 
 			return true;
 		}

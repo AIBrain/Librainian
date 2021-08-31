@@ -39,7 +39,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 		//[Test]
 		public static Boolean RunSimulation() {
-			var buffer = new Byte[ MathConstants.Sizes.OneMegaByte ]; //one megabyte
+			var buffer = new Byte[MathConstants.Sizes.OneMegaByte]; //one megabyte
 #if TRACE
 
 			//var bufferLength = buffer.LongLength;

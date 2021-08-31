@@ -65,7 +65,6 @@ namespace Librainian.Collections.Lists {
 			DontThrowExceptions,
 
 			Throw
-
 		}
 
 		private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
@@ -137,7 +136,7 @@ namespace Librainian.Collections.Lists {
 		///     <see cref="IList" />.
 		/// </exception>
 		/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
-		public T? this[ Int32 index ] {
+		public T? this[Int32 index] {
 			[CanBeNull]
 #pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
 			get {
@@ -146,7 +145,7 @@ namespace Librainian.Collections.Lists {
 					return this.ThrowWhenOutOfRange( index );
 				}
 
-				return this.Read( () => this.TheList[ index ] );
+				return this.Read( () => this.TheList[index] );
 			}
 
 			set {
@@ -164,7 +163,7 @@ namespace Librainian.Collections.Lists {
 					}
 
 					try {
-						this.TheList[ index ] = value;
+						this.TheList[index] = value;
 
 						return true;
 					}
@@ -649,6 +648,7 @@ namespace Librainian.Collections.Lists {
 		}
 
 		public override void DisposeManaged() {
+
 			//nothing to do.. yet.
 		}
 
@@ -735,13 +735,11 @@ namespace Librainian.Collections.Lists {
 					return false;
 				}
 
-				var result = this.TheList[ index ];
+				var result = this.TheList[index];
 				afterGet?.Invoke( result );
 
 				return true;
 			} );
 		}
-
 	}
-
 }

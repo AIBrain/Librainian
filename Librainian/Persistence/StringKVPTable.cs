@@ -89,7 +89,7 @@ namespace Librainian.Persistence {
 
 		public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
 
-		public String? this[ params String[] keys ] {
+		public String? this[params String[] keys] {
 			[CanBeNull]
 			get {
 				if ( keys is null ) {
@@ -118,14 +118,14 @@ namespace Librainian.Persistence {
 					return;
 				}
 
-				this.Dictionary[ key ] = value.ToCompressedBase64();
+				this.Dictionary[key] = value.ToCompressedBase64();
 			}
 		}
 
 		/// <summary>
 		/// </summary>
 		/// <param name="key"></param>
-		public String? this[ String key ] {
+		public String? this[String key] {
 			[CanBeNull]
 			get {
 				if ( key is null ) {
@@ -150,7 +150,7 @@ namespace Librainian.Persistence {
 					return;
 				}
 
-				this.Dictionary[ key ] = value.ToCompressedBase64();
+				this.Dictionary[key] = value.ToCompressedBase64();
 			}
 		}
 
@@ -220,16 +220,16 @@ namespace Librainian.Persistence {
 
 		public void Add( String key, String? value ) {
 			if ( value is not null ) {
-				this[ key ] = value;
+				this[key] = value;
 			}
 		}
 
 		public void Add( KeyValuePair<String, String?> item ) {
 			(var key, var value) = item;
-			this[ key ] = value;
+			this[key] = value;
 		}
 
-		public void Add( (String key, String value) kvp ) => this[ kvp.key ] = kvp.value;
+		public void Add( (String key, String value) kvp ) => this[kvp.key] = kvp.value;
 
 		public void Clear() => this.Dictionary.Clear();
 
@@ -334,7 +334,7 @@ namespace Librainian.Persistence {
 			}
 
 			if ( !this.Dictionary.ContainsKey( key ) ) {
-				this[ key ] = value;
+				this[key] = value;
 			}
 		}
 

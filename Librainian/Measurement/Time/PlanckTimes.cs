@@ -82,10 +82,10 @@ namespace Librainian.Measurement.Time {
 
 		public static BigDecimal InOneZeptosecond => InOneAttosecond / Zeptoseconds.InOneAttosecond;
 
-		public PlanckTimes( Decimal value ) : this( ( BigInteger )value  ) { }
-		public PlanckTimes( BigDecimal value ) : this( ( BigInteger )value  ) { }
+		public PlanckTimes( Decimal value ) : this( ( BigInteger )value ) { }
+		public PlanckTimes( BigDecimal value ) : this( ( BigInteger )value ) { }
 
-		public PlanckTimes( UInt64 value ) : this( ( BigInteger ) value  ) { }
+		public PlanckTimes( UInt64 value ) : this( ( BigInteger )value ) { }
 		public PlanckTimes( Int64 value ) : this( ( BigInteger )value ) { }
 
 		/// <summary>
@@ -136,7 +136,7 @@ namespace Librainian.Measurement.Time {
 
 		public static PlanckTimes Combine( PlanckTimes left, PlanckTimes right ) => new( left.Value + right.Value );
 
-		public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new( left.Value + planckTimes);
+		public static PlanckTimes Combine( PlanckTimes left, BigInteger planckTimes ) => new( left.Value + planckTimes );
 
 		/// <summary>
 		///     <para>static equality test</para>

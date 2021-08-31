@@ -113,8 +113,6 @@ namespace Librainian.Extensions {
 			return input?.Aggregate( result, ( current, item ) => current.Combine( item ) );
 		}
 
-		
-
 		public static IEnumerable<IEnumerable<T?>?> Combine<T>(
 			this IEnumerable<IEnumerable<T?>?> setA,
 			IEnumerable<IEnumerable<T?>?>? setB
@@ -241,25 +239,25 @@ namespace Librainian.Extensions {
 		public static T[][] PowerSet<T>( this T[] s ) {
 			var arrayLength = s.Length;
 
-			var powerSet = new T[ 1 << arrayLength ][];
-			powerSet[ 0 ] = Array.Empty<T>();
+			var powerSet = new T[1 << arrayLength][];
+			powerSet[0] = Array.Empty<T>();
 
 			for ( var i = 0; i < arrayLength; i++ ) {
-				var current = s[ i ];
+				var current = s[i];
 				var count = 1 << i;
 
 				for ( var j = 0; j < count; j++ ) {
-					var source = powerSet[ j ];
+					var source = powerSet[j];
 
 					var sourceLength = source.Length;
 
-					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
+					var destination = powerSet[count + j] = new T[sourceLength + 1];
 
 					for ( var q = 0; q < sourceLength; q++ ) {
-						destination[ q ] = source[ q ];
+						destination[q] = source[q];
 					}
 
-					destination[ sourceLength ] = current;
+					destination[sourceLength] = current;
 				}
 			}
 
@@ -275,25 +273,25 @@ namespace Librainian.Extensions {
 			var enumerable = list as T[] ?? list.ToArray();
 			var length = enumerable.Length;
 
-			var powerSet = new T[ 1 << length ][];
-			powerSet[ 0 ] = Array.Empty<T>();
+			var powerSet = new T[1 << length][];
+			powerSet[0] = Array.Empty<T>();
 
 			for ( var i = 0; i < length; i++ ) {
-				var current = enumerable[ i ];
+				var current = enumerable[i];
 				var count = 1 << i;
 
 				for ( var j = 0; j < count; j++ ) {
-					var source = powerSet[ j ];
+					var source = powerSet[j];
 
 					var sourceLength = source.Length;
 
-					var destination = powerSet[ count + j ] = new T[ sourceLength + 1 ];
+					var destination = powerSet[count + j] = new T[sourceLength + 1];
 
 					for ( var q = 0; q < sourceLength; q++ ) {
-						destination[ q ] = source[ q ];
+						destination[q] = source[q];
 					}
 
-					destination[ sourceLength ] = current;
+					destination[sourceLength] = current;
 				}
 			}
 

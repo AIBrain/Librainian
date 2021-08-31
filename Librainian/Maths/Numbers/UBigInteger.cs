@@ -78,9 +78,9 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentEmptyException( nameof( bytes ) );
 			}
 
-			var bytesWith00Attheendnd = new Byte[ bytes.Length + 1 ];
+			var bytesWith00Attheendnd = new Byte[bytes.Length + 1];
 			bytes.CopyTo( bytesWith00Attheendnd, 0 );
-			bytesWith00Attheendnd[ bytes.Length ] = 0;
+			bytesWith00Attheendnd[bytes.Length] = 0;
 			this.InternalValue = new BigInteger( bytesWith00Attheendnd );
 
 			Debug.Assert( this.InternalValue >= BigInteger.Zero );

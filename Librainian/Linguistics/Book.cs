@@ -54,7 +54,7 @@ namespace Librainian.Linguistics {
 			var pageNumber = 0;
 
 			foreach ( var page in pages ) {
-				this.Pages[ pageNumber++ ] = page;
+				this.Pages[pageNumber++] = page;
 			}
 
 			if ( authors != null ) {

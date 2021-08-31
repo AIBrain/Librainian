@@ -75,9 +75,9 @@ namespace Librainian.Graphics {
 		public static void SetGamma( Int32 gamma ) {
 			if ( gamma.Between( 1, 256 ) ) {
 				var ramp = new RAMP {
-					Red = new UInt16[ 256 ],
-					Green = new UInt16[ 256 ],
-					Blue = new UInt16[ 256 ]
+					Red = new UInt16[256],
+					Green = new UInt16[256],
+					Blue = new UInt16[256]
 				};
 
 				for ( var i = 1; i < 256; i++ ) {
@@ -87,7 +87,7 @@ namespace Librainian.Graphics {
 						iArrayValue = 0xffff;
 					}
 
-					ramp.Red[ i ] = ramp.Blue[ i ] = ramp.Green[ i ] = ( UInt16 )iArrayValue;
+					ramp.Red[i] = ramp.Blue[i] = ramp.Green[i] = ( UInt16 )iArrayValue;
 				}
 
 				NativeMethods.SetDeviceGammaRamp( NativeMethods.GetDC( IntPtr.Zero ), ref ramp );

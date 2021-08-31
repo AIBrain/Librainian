@@ -237,7 +237,7 @@ namespace Librainian.Extensions {
 				list = Assembly.GetAssembly( typeof( T ) )?.GetTypes().ToList();
 
 				if ( list is not null ) {
-					EnumerableOfTypeCache[ typeof( T ) ] = list;
+					EnumerableOfTypeCache[typeof( T )] = list;
 				}
 			}
 
@@ -365,7 +365,8 @@ namespace Librainian.Extensions {
 		/// <param name="generic"></param>
 		public static Boolean IsSubclassOfRawGeneric( this Type? type, Type? generic ) {
 			while ( type != typeof( Object ) ) {
-				var cur = type is {
+				var cur = type is
+				{
 					IsGenericType: true
 				} ? type.GetGenericTypeDefinition() : type;
 
@@ -386,7 +387,7 @@ namespace Librainian.Extensions {
 
 			foreach ( DictionaryEntry pair in sourceValue ) {
 				try {
-					destAsDictionary[ pair.Key ] = pair.Value;
+					destAsDictionary[pair.Key] = pair.Value;
 				}
 				catch ( Exception exception ) {
 					exception.Log();

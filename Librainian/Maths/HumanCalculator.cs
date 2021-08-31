@@ -89,10 +89,10 @@ namespace Librainian.Maths {
 					}
 
 					var l = Byte.Parse( s.Last().ToString() );
-					s = s[ ..^1 ];
+					s = s[..^1];
 
 					var m = Byte.Parse( term.Last().ToString() );
-					term = term[ ..^1 ];
+					term = term[..^1];
 
 					var t = ( l + m ).ToString();
 					var c = Byte.Parse( t.Last().ToString() );

@@ -34,32 +34,16 @@ namespace Librainian.Controls {
 	using OperatingSystem;
 
 	/// <summary>
-	/// 
+	///
 	/// </summary>
 	/// <see cref="http://stackoverflow.com/a/55540909/956364"/>
 	public class ScrollingRichTextBox : RichTextBox {
 
-		[DllImport( DLL.User32, CharSet = CharSet.Auto )]
-		private static extern IntPtr SendMessage(
-			IntPtr hWnd,
-			UInt32 Msg,
-			IntPtr wParam,
-			IntPtr LParam );
-
-		private const Int32 _WM_VSCROLL = 277;
 		private const Int32 _SB_BOTTOM = 7;
 
-		/// <summary>
-		/// Scrolls to the bottom of the RichTextBox.
-		/// </summary>
-		public void ScrollToBottom() => SendMessage( this.Handle, _WM_VSCROLL, new IntPtr( _SB_BOTTOM ), new IntPtr( 0 ) );
+		private const Int32 _WM_VSCROLL = 277;
 
 		public CircularLinesLogger? CircularLogger { get; set; }
-
-		public Boolean AttachCircularLinesLogger( CircularLinesLogger circularLinesLogger ) {
-			this.CircularLogger = circularLinesLogger ?? throw new ArgumentNullException( nameof( circularLinesLogger ) );
-			return this.CircularLogger is not null;
-		}
 
 		public enum NewLineOrNot {
 
@@ -68,8 +52,24 @@ namespace Librainian.Controls {
 			Append,
 
 			NewLine
-
 		}
+
+		[DllImport( DLL.User32, CharSet = CharSet.Auto )]
+		private static extern IntPtr SendMessage(
+			IntPtr hWnd,
+			UInt32 Msg,
+			IntPtr wParam,
+			IntPtr LParam );
+
+		public Boolean AttachCircularLinesLogger( CircularLinesLogger circularLinesLogger ) {
+			this.CircularLogger = circularLinesLogger ?? throw new ArgumentNullException( nameof( circularLinesLogger ) );
+			return this.CircularLogger is not null;
+		}
+
+		/// <summary>
+		/// Scrolls to the bottom of the RichTextBox.
+		/// </summary>
+		public void ScrollToBottom() => SendMessage( this.Handle, _WM_VSCROLL, new IntPtr( _SB_BOTTOM ), new IntPtr( 0 ) );
 
 		public void Write( String message, NewLineOrNot newline = NewLineOrNot.Append ) {
 			if ( this.CircularLogger is null ) {
@@ -80,6 +80,7 @@ namespace Librainian.Controls {
 
 			this.InvokeAction( () => {
 				var newText = this.CircularLogger.AsText();
+
 				//if ( newText.Length > 65536 ) {
 				//	newText = newText[ newText.Length.Half().. ];
 				//}
@@ -91,11 +92,6 @@ namespace Librainian.Controls {
 				this.ResumeLayout();
 				this.ScrollToBottom();
 			}, RefreshOrInvalidate.Invalidate );
-			
 		}
-
-		
-
 	}
-
 }

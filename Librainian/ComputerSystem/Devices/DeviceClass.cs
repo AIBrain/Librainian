@@ -95,7 +95,7 @@ namespace Librainian.ComputerSystem.Devices {
 		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, String? defaultValue ) {
 			const Int32 propertyBufferSize = 1024;
 
-			var propertyBuffer = new Byte[ propertyBufferSize ];
+			var propertyBuffer = new Byte[propertyBufferSize];
 
 			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
 																  out var requiredSize ) ) {
@@ -119,7 +119,7 @@ namespace Librainian.ComputerSystem.Devices {
 			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( UInt32 ) );
 
 			//var propertyBuffer = Marshal.AllocHGlobal( propertyBufferSize );
-			var propertyBuffer = new Byte[ propertyBufferSize ];
+			var propertyBuffer = new Byte[propertyBufferSize];
 
 			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
 																  out var requiredSize ) ) {
@@ -143,7 +143,7 @@ namespace Librainian.ComputerSystem.Devices {
 		internal Guid GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, Guid defaultValue ) {
 			var propertyBufferSize = ( UInt32 )Marshal.SizeOf( typeof( Guid ) );
 
-			var propertyBuffer = new Byte[ propertyBufferSize ];
+			var propertyBuffer = new Byte[propertyBufferSize];
 
 			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
 																  out var requiredSize ) ) {

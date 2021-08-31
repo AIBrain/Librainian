@@ -64,12 +64,12 @@ namespace Librainian.Maths.Numbers {
 				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
-			if ( value[ 32 ] is > 32 and not ( 33 and 0 ) ) {
+			if ( value[32] is > 32 and not ( 33 and 0 ) ) {
 				throw new ArgumentOutOfRangeException( nameof( value ) );
 			}
 
 			if ( value.Length < 32 ) {
-				value = value.Concat( new Byte[ 32 - value.Length ] );
+				value = value.Concat( new Byte[32 - value.Length] );
 			}
 
 			// convert parts and store
@@ -277,7 +277,7 @@ namespace Librainian.Maths.Numbers {
 		public BigInteger ToBigInteger() => new( this.ToByteArray().Concat( 0 ) );
 
 		public Byte[] ToByteArray() {
-			var buffer = new Byte[ 32 ];
+			var buffer = new Byte[32];
 			Buffer.BlockCopy( this._part4.GetBytes(), 0, buffer, 0, 8 );
 			Buffer.BlockCopy( this._part3.GetBytes(), 0, buffer, 8, 8 );
 			Buffer.BlockCopy( this._part2.GetBytes(), 0, buffer, 16, 8 );
@@ -296,7 +296,7 @@ namespace Librainian.Maths.Numbers {
 		//TODO properly taken into account host endianness
 		public Byte[] ToByteArrayBe() {
 			unchecked {
-				var buffer = new Byte[ 32 ];
+				var buffer = new Byte[32];
 
 				Buffer.BlockCopy( BitConverter.GetBytes( IPAddress.HostToNetworkOrder( ( Int64 )this._part1 ) ), 0, buffer, 0, 8 );
 

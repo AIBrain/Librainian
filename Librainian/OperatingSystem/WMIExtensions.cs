@@ -52,7 +52,7 @@ namespace Librainian.OperatingSystem {
 			var instances = managementClass.GetInstances();
 
 			foreach ( var baseObject in instances ) {
-				if ( baseObject is ManagementObject managementObject && managementObject[ wmiMustBeTrue ].ToBoolean() && managementObject[ wmiProperty ] is String identifier ) {
+				if ( baseObject is ManagementObject managementObject && managementObject[wmiMustBeTrue].ToBoolean() && managementObject[wmiProperty] is String identifier ) {
 					try {
 						return identifier;
 					}
@@ -81,7 +81,7 @@ namespace Librainian.OperatingSystem {
 
 			foreach ( var baseObject in instances ) {
 				try {
-					if ( baseObject is ManagementObject managementObject && managementObject[ wmiProperty ] is String identifier ) {
+					if ( baseObject is ManagementObject managementObject && managementObject[wmiProperty] is String identifier ) {
 						return identifier;
 					}
 				}

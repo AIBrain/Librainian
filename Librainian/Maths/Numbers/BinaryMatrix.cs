@@ -40,38 +40,38 @@ namespace Librainian.Maths.Numbers {
 
 		public BinaryMatrix( Boolean[,] matrix ) => this.Matrix = matrix;
 
-		public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[ rowsAmount, columsAmount ];
+		public BinaryMatrix( Int32 rowsAmount, Int32 columsAmount ) => this.Matrix = new Boolean[rowsAmount, columsAmount];
 
-		public Boolean Get( Int32 row, Int32 column ) => this.Matrix[ row, column ];
+		public Boolean Get( Int32 row, Int32 column ) => this.Matrix[row, column];
 
 		public Binary GetColumn( Int32 index ) {
-			var column = new Boolean[ this.RowAmount ];
+			var column = new Boolean[this.RowAmount];
 
 			for ( var y = 0; y < this.RowAmount; y++ ) {
-				column[ y ] = this.Matrix[ y, index ];
+				column[y] = this.Matrix[y, index];
 			}
 
 			return new Binary( column );
 		}
 
 		public Binary GetRow( Int32 index ) {
-			var row = new Boolean[ this.ColumnAmount ];
+			var row = new Boolean[this.ColumnAmount];
 
 			for ( var x = 0; x < this.ColumnAmount; x++ ) {
-				row[ x ] = this.Matrix[ index, x ];
+				row[x] = this.Matrix[index, x];
 			}
 
 			return new Binary( row );
 		}
 
-		public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[ row, column ] = value;
+		public void Set( Int32 row, Int32 column, Boolean value ) => this.Matrix[row, column] = value;
 
 		public override String ToString() {
 			var stringBuilder = new StringBuilder( this.Matrix.Length );
 
 			for ( var y = 0; y < this.RowAmount; y++ ) {
 				for ( var x = 0; x < this.ColumnAmount; x++ ) {
-					stringBuilder.Append( this.Matrix[ y, x ] ? '1' : '0' );
+					stringBuilder.Append( this.Matrix[y, x] ? '1' : '0' );
 				}
 
 				stringBuilder.Append( '\n' );

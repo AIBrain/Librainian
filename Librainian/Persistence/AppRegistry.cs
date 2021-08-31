@@ -72,7 +72,7 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Registry key for the current user;
 		/// </summary>
-		public static RegistryKey TheUser { get; } = Registry.CurrentUser ?? throw new NullException(nameof(TheUser));
+		public static RegistryKey TheUser { get; } = Registry.CurrentUser ?? throw new NullException( nameof( TheUser ) );
 
 		static AppRegistry() {
 			if ( TheUser is null ) {

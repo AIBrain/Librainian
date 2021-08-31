@@ -1,6 +1,5 @@
 ﻿namespace Benchmarks {
 	using System;
-	using BenchmarkDotNet.Configs;
 	using BenchmarkDotNet.Running;
 
 	public class Program {

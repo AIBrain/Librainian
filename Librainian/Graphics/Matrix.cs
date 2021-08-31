@@ -41,7 +41,7 @@ namespace Librainian.Graphics {
 		}
 
 		protected Matrix( Int32 rows, Int32 cols ) {
-			this.matrix = new Single[ rows, cols ];
+			this.matrix = new Single[rows, cols];
 			this.Rows = rows;
 			this.Cols = cols;
 		}
@@ -57,17 +57,17 @@ namespace Librainian.Graphics {
 			var m2Cols = matrix2.Cols;
 			var m1 = matrix1.matrix;
 			var m2 = matrix2.matrix;
-			var m3 = new Single[ m1Rows, m2Cols ];
+			var m3 = new Single[m1Rows, m2Cols];
 
 			for ( var i = 0; i < m1Rows; ++i ) {
 				for ( var j = 0; j < m2Cols; ++j ) {
 					Single sum = 0;
 
 					for ( var it = 0; it < m1Cols; ++it ) {
-						sum += m1[ i, it ] * m2[ it, j ];
+						sum += m1[i, it] * m2[it, j];
 					}
 
-					m3[ i, j ] = sum;
+					m3[i, j] = sum;
 				}
 			}
 
@@ -78,11 +78,11 @@ namespace Librainian.Graphics {
 			var rows = matrix.Rows;
 			var cols = matrix.Cols;
 			var m1 = matrix.matrix;
-			var m2 = new Single[ rows, cols ];
+			var m2 = new Single[rows, cols];
 
 			for ( var i = 0; i < rows; ++i ) {
 				for ( var j = 0; j < cols; ++j ) {
-					m2[ i, j ] = m1[ i, j ] * scalar;
+					m2[i, j] = m1[i, j] * scalar;
 				}
 			}
 
@@ -106,7 +106,7 @@ namespace Librainian.Graphics {
 						res += ",";
 					}
 
-					res += this.matrix[ i, j ];
+					res += this.matrix[i, j];
 				}
 			}
 

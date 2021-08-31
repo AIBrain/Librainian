@@ -29,5 +29,4 @@ namespace Librainian.Security {
 	using System;
 
 	public record FilePasswordPair( String FileName, String Password );
-
 }

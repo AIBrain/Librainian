@@ -84,6 +84,7 @@ namespace Librainian.Maths {
 		};
 
 		public static readonly BigInteger MaxiumDecimalValue = ( BigInteger )Decimal.MaxValue;
+
 		public static readonly BigInteger MinimumDecimalValue = ( BigInteger )Decimal.MinValue;
 
 		public static readonly Rational MinusOneOverTwo = new( -1, 2 );

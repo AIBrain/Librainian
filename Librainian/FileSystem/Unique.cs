@@ -57,16 +57,16 @@ namespace Librainian.FileSystem {
 
 		//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
 
-		/// <summary>Just an easier to use mnemonic.</summary>
-		[JsonIgnore]
-		public String AbsolutePath => this.U.AbsolutePath;
-
 		/// <summary>
 		///     The location/directory/path/file/name/whatever.ext
 		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
 		/// </summary>
 		[JsonIgnore]
 		public Uri U => this.u;
+
+		/// <summary>Just an easier to use mnemonic.</summary>
+		[JsonIgnore]
+		public String AbsolutePath => this.U.AbsolutePath;
 
 		/// <summary>What effect will this have down the road?</summary>
 		private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
@@ -270,7 +270,7 @@ namespace Librainian.FileSystem {
 				try {
 					await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
 
-					var header = client.ResponseHeaders[ "Content-Length" ];
+					var header = client.ResponseHeaders["Content-Length"];
 
 					if ( Int64.TryParse( header, out var result ) ) {
 						return result;

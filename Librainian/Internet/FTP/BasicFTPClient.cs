@@ -157,7 +157,7 @@ namespace Librainian.Internet.FTP {
 
 			// Read the data from disk
 			var fs = new FileStream( srcfile, FileMode.Open );
-			var fileData = new Byte[ fs.Length ];
+			var fileData = new Byte[fs.Length];
 
 			var numBytesToRead = ( Int32 )fs.Length;
 			var numBytesRead = 0;

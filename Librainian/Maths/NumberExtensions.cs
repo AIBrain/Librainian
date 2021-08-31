@@ -416,15 +416,15 @@ namespace Librainian.Maths {
 		/// <param name="source">Source value to reverse</param>
 		/// <returns>Input value with reversed bits</returns>
 		public static Int32 ReverseBits( this Int32 source ) =>
-			( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) | ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) |
-			BitReverseTable256[ ( source >> 24 ) & 0xff ];
+			( BitReverseTable256[source & 0xff] << 24 ) | ( BitReverseTable256[( source >> 8 ) & 0xff] << 16 ) | ( BitReverseTable256[( source >> 16 ) & 0xff] << 8 ) |
+			BitReverseTable256[( source >> 24 ) & 0xff];
 
 		/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 		/// <param name="source">Source value to reverse</param>
 		/// <returns>Input value with reversed bits</returns>
 		public static UInt32 ReverseBits( this UInt32 source ) =>
-			( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
-						( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
+			( UInt32 )( ( BitReverseTable256[source & 0xff] << 24 ) | ( BitReverseTable256[( source >> 8 ) & 0xff] << 16 ) |
+						( BitReverseTable256[( source >> 16 ) & 0xff] << 8 ) | BitReverseTable256[( source >> 24 ) & 0xff] );
 
 		/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 		/// <param name="source">Source value to reverse</param>
@@ -471,7 +471,7 @@ namespace Librainian.Maths {
 				adjustedSize /= 1024;
 			}
 
-			return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[ mag ] );
+			return String.Format( $"{{0:n{decimalPlaces}}} {{1}}", adjustedSize, SizeSuffixes[mag] );
 		}
 
 		public static IEnumerable<Int32> Through( this Int32 begin, Int32 end ) {

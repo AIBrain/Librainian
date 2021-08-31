@@ -1,7 +1,4 @@
-﻿
-
-namespace Librainian.Parsing
-{
+﻿namespace Librainian.Parsing {
 
 	using System;
 	using System.Text;
@@ -12,10 +9,38 @@ namespace Librainian.Parsing
 	public class MutableString {
 
 		private const Int32 DefaultExtraBufferSize = 2048;
+
 		private readonly StringBuilder _value;
 
+		public String Value {
+			get => this._value.ToString();
+
+			set {
+				this.Clear();
+				this.Append( value );
+			}
+		}
+
+		public Int32 Length => this._value.Length;
+
+		public Char this[Int32 i] {
+			get => this._value[i];
+			set => this._value[i] = value;
+		}
+
+		public MutableString this[Int32 startIndex, Int32 length] => this.Value.Substring( startIndex, length );
+
+		public Char this[Index i] {
+			get => this._value[i];
+			set => this._value[i] = value;
+		}
+
+		public MutableString this[Range r] => this.Value[r];
+
 		public MutableString() => this._value = new StringBuilder();
+
 		public MutableString( Int32 capacity ) => this._value = new StringBuilder( capacity );
+
 		public MutableString( Int32 capacity, Int32 maxCapacity ) => this._value = new StringBuilder( capacity, maxCapacity );
 
 		public MutableString( StringBuilder value, Int32? bufferCapacity = DefaultExtraBufferSize ) : this() {
@@ -36,55 +61,26 @@ namespace Librainian.Parsing
 			}
 		}
 
-		public Char this[Int32 i]
-		{
-			get => this._value[i];
-			set => this._value[i] = value;
+		public static implicit operator MutableString( String value ) => new( value );
+
+		public static implicit operator String( MutableString value ) => value.Value;
+
+		public static MutableString operator +( MutableString a, MutableString b ) {
+			a.Append( b );
+			return a;
 		}
-
-		public MutableString this[Int32 startIndex, Int32 length] => this.Value.Substring(startIndex, length);
-
-		public Char this[Index i]
-		{
-			get => this._value[i];
-			set => this._value[i] = value;
-		}
-
-		public MutableString this[Range r] => this.Value[r];
-
-		public void Clear() => this._value.Clear();
-
-		public Int32 Length => this._value.Length;
-
-		public String Value
-		{
-			get => this._value.ToString();
-			set
-			{
-				this.Clear();
-				this.Append(value);
-			}
-		}
-
-		public void Replace( MutableString oldValue, MutableString newValue ) => this._value.Replace( oldValue, newValue );
-
-		public void Remove( Int32 startIndex, Int32 length ) => this._value.Remove( startIndex, length );
 
 		public void Append( String value ) => this._value.Append( value );
 
 		public void Append( MutableString value ) => this._value.Append( value );
 
-		public static MutableString operator +(MutableString a, MutableString b)
-		{
-			a.Append(b);
-			return a;
-		}
+		public void Clear() => this._value.Clear();
 
-		public static implicit operator String(MutableString value) => value.Value;
+		public MutableString Copy() => new( this._value );
 
-		public static implicit operator MutableString(String value) => new(value);
+		public void Remove( Int32 startIndex, Int32 length ) => this._value.Remove( startIndex, length );
 
-		public MutableString Copy() => new(this._value);
+		public void Replace( MutableString oldValue, MutableString newValue ) => this._value.Replace( oldValue, newValue );
 
 		public override String ToString() => this.Value;
 	}

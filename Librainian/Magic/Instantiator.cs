@@ -45,10 +45,10 @@ namespace Librainian.Magic {
 				throw new ArgumentEmptyException( nameof( argTypes ) );
 			}
 
-			var paramExpressions = new ParameterExpression[ argTypes.Length ];
+			var paramExpressions = new ParameterExpression[argTypes.Length];
 
 			for ( var i = 0; i < paramExpressions.Length; i++ ) {
-				paramExpressions[ i ] = Expression.Parameter( argTypes[ i ], String.Concat( "arg", i ) );
+				paramExpressions[i] = Expression.Parameter( argTypes[i], String.Concat( "arg", i ) );
 			}
 
 			var ctorInfo = typeof( T ).GetConstructor( argTypes );
