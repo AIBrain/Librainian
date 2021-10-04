@@ -16,5 +16,8 @@
     <Compile Update="Internet\WebClientWithTimeout.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="Threading\BackgroundThread.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

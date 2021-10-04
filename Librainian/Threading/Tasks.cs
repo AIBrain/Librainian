@@ -85,7 +85,7 @@ namespace Librainian.Threading {
 			return boxes.Select( box => box.Task );
 		}
 
-		/// <summary></summary>
+		
 		/// <typeparam name="T"></typeparam>
 		/// <param name="tasks"></param>
 		/// <example>

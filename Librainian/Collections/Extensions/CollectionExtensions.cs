@@ -389,7 +389,7 @@ namespace Librainian.Collections.Extensions {
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		public static Int32 IndexOf<T>( this T[] self, T? item ) => Array.IndexOf( self, item );
 
-		/// <summary></summary>
+		
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source">  </param>
 		/// <param name="sequence"></param>
@@ -397,7 +397,7 @@ namespace Librainian.Collections.Extensions {
 		[Pure]
 		public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence ) => source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
 
-		/// <summary></summary>
+		
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source">  </param>
 		/// <param name="sequence"></param>
@@ -605,7 +605,7 @@ namespace Librainian.Collections.Extensions {
 			return result;
 		}
 
-		/// <summary></summary>
+		
 		/// <typeparam name="T"></typeparam>
 		/// <param name="current"></param>
 		/// <remarks>Basically if the previous node is null, then wrap back around to the last item.</remarks>

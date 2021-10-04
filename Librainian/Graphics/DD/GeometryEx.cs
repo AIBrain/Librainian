@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,15 +23,15 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "GeometryEx.cs" last formatted on 2020-08-14 at 8:34 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Graphics.DD {
 
 	using System;
-	using System.Drawing;
 
 	public static class GeometryEx {
 
+		/*
 		public static Intersection IntersectionOf( Line line, Polygon polygon ) {
 			switch ( polygon.Length ) {
 				case 0:
@@ -57,8 +60,9 @@ namespace Librainian.Graphics.DD {
 
 			return tangent ? Intersection.Tangent : IntersectionOf( line.P1, polygon );
 		}
+		*/
 
-		public static Intersection IntersectionOf( PointF point, Line line ) {
+		public static Intersection IntersectionOf( PointR point, Line line ) {
 			var bottomY = Math.Min( line.Y1, line.Y2 );
 			var topY = Math.Max( line.Y1, line.Y2 );
 			var heightIsRight = point.Y >= bottomY && point.Y <= topY;
@@ -78,6 +82,7 @@ namespace Librainian.Graphics.DD {
 			return onLine && heightIsRight ? Intersection.Tangent : Intersection.None;
 		}
 
+		/*
 		public static Intersection IntersectionOf( Line line1, Line line2 ) {
 
 			// Fail if either line segment is zero-length.
@@ -97,8 +102,12 @@ namespace Librainian.Graphics.DD {
 			}
 
 			// (1) Translate the system so that point A is on the origin.
-			line1.X2 -= line1.X1;
-			line1.Y2 -= line1.Y1;
+			//line1.X2 -= line1.X1;
+			//line1.Y2 -= line1.Y1;
+			line1 = line1 with {
+				P2 = line1.P2 with { X = line1.P2.X - line1.X1, Y = line1.P2.Y - line1.Y1 }
+			};
+
 			line2.X1 -= line1.X1;
 			line2.Y1 -= line1.Y1;
 			line2.X2 -= line1.X1;
@@ -133,8 +142,9 @@ namespace Librainian.Graphics.DD {
 			// (4) Apply the discovered position to line A-B in the original coordinate system.
 			return Intersection.Intersection;
 		}
+		*/
 
-		public static Intersection IntersectionOf( PointF point, Polygon polygon ) {
+		public static Intersection IntersectionOf( PointR point, Polygon polygon ) {
 			switch ( polygon.Length ) {
 				case 0:
 					return Intersection.None;

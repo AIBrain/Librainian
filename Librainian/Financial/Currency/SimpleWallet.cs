@@ -76,7 +76,7 @@ namespace Librainian.Financial.Currency {
 		/// </summary>
 		public TimeSpan Timeout { get; set; }
 
-		public SimpleWallet() => this.Timeout = Minutes.One;
+		public SimpleWallet() : base( nameof( SimpleWallet) ) => this.Timeout = Minutes.One;
 
 		/// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
 		/// <param name="balance"></param>

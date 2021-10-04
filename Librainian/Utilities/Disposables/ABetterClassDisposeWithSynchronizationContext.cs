@@ -186,6 +186,10 @@ namespace Librainian.Utilities.Disposables {
 			/*make this virtual so it is optional*/
 			this.HasDisposedNative = true;
 
+		~ABetterClassDisposeWithSynchronizationContext() {
+			this.Dispose();
+		}
+
 		/*
 
         /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>

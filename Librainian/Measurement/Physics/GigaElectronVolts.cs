@@ -29,8 +29,8 @@ namespace Librainian.Measurement.Physics {
 
 	using System;
 	using System.Diagnostics;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in <see cref="GigaElectronVolts" />.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -52,10 +52,10 @@ namespace Librainian.Measurement.Physics {
 
 		public const Decimal InOneTeraElectronVolt = 1E3m;
 
-		/// <summary></summary>
+		
 		public static readonly GigaElectronVolts One = new( Decimal.One );
 
-		/// <summary></summary>
+		
 		public static readonly GigaElectronVolts Zero = new( Decimal.Zero );
 
 		public GigaElectronVolts( Decimal units ) : this( ( BigDecimal )units ) { }

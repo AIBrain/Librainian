@@ -76,7 +76,7 @@ namespace Librainian.Internet {
 			}
 		}
 
-		public Surfer( Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) {
+		public Surfer( Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) : base( nameof( Surfer ) ) {
 			this._webclient = new WebClient {
 				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
 			};

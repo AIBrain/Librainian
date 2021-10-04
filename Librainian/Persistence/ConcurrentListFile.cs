@@ -45,7 +45,7 @@ namespace Librainian.Persistence {
 	public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
 
 		/// <summary>disallow constructor without a document/filename</summary>
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public Document Document { get; set; }
 

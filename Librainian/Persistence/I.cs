@@ -60,7 +60,7 @@ namespace Librainian.Persistence {
 			this.U = pointer.ToUnique();
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="key"></param>
 		/// <param name="pointer"></param>
 		/// <exception cref="ArgumentException"></exception>

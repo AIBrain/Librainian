@@ -44,7 +44,7 @@ namespace Librainian.Threading {
 
 		private SemaphoreSlim Semaphore { get; } = new( 1 );
 
-		public AsyncLock() {
+		public AsyncLock() : base( nameof( AsyncLock ) ) {
 			if ( new Releaser( this ) is IDisposable jane ) {
 				var releaser = Task.FromResult( jane );
 
@@ -75,7 +75,7 @@ namespace Librainian.Threading {
 
 			private AsyncLock toRelease { get; }
 
-			internal Releaser( AsyncLock? toRelease ) => this.toRelease = toRelease;
+			internal Releaser( AsyncLock? toRelease ) : base(nameof( Releaser ) ) => this.toRelease = toRelease;
 
 			public override void DisposeManaged() {
 				if ( !this.toRelease.Semaphore.CurrentCount.Any() ) {

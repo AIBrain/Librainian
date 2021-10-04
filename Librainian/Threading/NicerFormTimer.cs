@@ -44,7 +44,7 @@ namespace Librainian.Threading {
 		/// <param name="action">      </param>
 		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
 		/// <param name="milliseconds"></param>
-		public NicerFormTimer( Action action, Boolean repeat, Int32? milliseconds = null ) {
+		public NicerFormTimer( Action action, Boolean repeat, Int32? milliseconds = null ) : base( nameof( NicerFormTimer ) ) {
 			if ( action is null ) {
 				throw new ArgumentEmptyException( nameof( action ) );
 			}
@@ -72,6 +72,7 @@ namespace Librainian.Threading {
 
 		public override void DisposeManaged() {
 			using ( this.Timer ) {
+				this.Timer?.Stop();
 				this.Timer = null;
 			}
 

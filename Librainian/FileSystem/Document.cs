@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Document.cs" last touched on 2021-08-28 at 7:56 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -65,7 +65,7 @@ namespace Librainian.FileSystem {
 
 		private Folder? _containingFolder;
 
-		protected Document( SerializationInfo info ) {
+		protected Document( SerializationInfo info ) : base( nameof( Document ) ) {
 			if ( info is null ) {
 				throw new ArgumentEmptyException( nameof( info ) );
 			}
@@ -73,7 +73,9 @@ namespace Librainian.FileSystem {
 			this.FullPath = ( info.GetString( nameof( this.FullPath ) ) ?? throw new InvalidOperationException() ).TrimAndThrowIfBlank();
 		}
 
-		/// <summary></summary>
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="fullPath"></param>
 		/// <param name="deleteAfterClose"></param>
 		/// <param name="watchFile"></param>
@@ -81,7 +83,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="FileNotFoundException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="IOException"></exception>
-		public Document( String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
+		public Document( String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) : base( nameof( Document ) ) {
 			if ( String.IsNullOrWhiteSpace( fullPath ) ) {
 				throw new NullException( nameof( fullPath ) );
 			}
@@ -140,7 +142,7 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		private Document() => throw new NotAllowedWarning( "Private contructor is not allowed." );
+		private Document() : base( nameof( Document ) ) => throw new NotAllowedWarning( "Private contructor is not allowed." );
 
 		public Document( String justPath, String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ), deleteAfterClose ) { }
 
@@ -167,7 +169,7 @@ namespace Librainian.FileSystem {
 
 		/// <summary>
 		///     Get or sets the <see cref="TimeSpan" /> used when getting a fresh <see cref="CancellationToken" /> via
-		///     <see cref="GetDefaultCancelToken" />.
+		///     <see cref="GetCancelToken" />.
 		/// </summary>
 		public static TimeSpan DefaultDocumentTimeout { get; set; } = Seconds.Thirty;
 
@@ -529,7 +531,7 @@ namespace Librainian.FileSystem {
 			return null;
 		}
 
-		/// <summary></summary>
+
 		/// <exception cref="InvalidOperationException"></exception>
 		[Pure]
 		public async PooledValueTask<String?> CRC32Hex( CancellationToken cancellationToken ) {
@@ -793,10 +795,7 @@ namespace Librainian.FileSystem {
 			return size switch {
 				null => null,
 				>= IDocument.MaximumBufferSize => IDocument.MaximumBufferSize,
-				var _ => size switch {
-					>= Int32.MaxValue / 2 => Int32.MaxValue / 2,
-					{ } ul => ( Int32 )ul
-				}
+				var _ => ( Int32 )size
 			};
 		}
 
@@ -972,7 +971,7 @@ namespace Librainian.FileSystem {
 		/// <see cref="op_Implicit" />
 		/// <see cref="ToFileInfo" />
 		[Pure]
-		public PooledValueTask<FileInfo> GetFreshInfo( CancellationToken cancellationToken ) => ToFileInfo( this, cancellationToken );
+		public PooledValueTask<FileInfo> GetFreshInfo( CancellationToken cancellationToken ) => ToFileInfo( this );
 
 		/// <summary>Attempt to return an object Deserialized from this JSON text file.</summary>
 		/// <param name="progress"></param>
@@ -1200,7 +1199,7 @@ namespace Librainian.FileSystem {
 			this.ReleaseWriter();
 
 			if ( this.DeleteAfterClose ) {
-				var _ = this.Delete( GetDefaultCancelToken() );
+				var _ = this.Delete( this.GetCancelToken() );
 			}
 		}
 
@@ -1431,11 +1430,13 @@ namespace Librainian.FileSystem {
 			return ( UInt64? )info.Length;
 		}
 
+		/*
 		private async PooledValueTask ThrowIfNotExists() {
-			if ( !await this.Exists( GetDefaultCancelToken( Seconds.Ten ) ).ConfigureAwait( false ) ) {
+			if ( !await this.Exists( this.GetCancelToken() ).ConfigureAwait( false ) ) {
 				throw new FileNotFoundException( $"Could find document {this.FullPath.SmartQuote()}." );
 			}
 		}
+		*/
 
 		private void ReleaseWriterStream() {
 			using ( this.WriterStream ) {
@@ -1494,6 +1495,13 @@ namespace Librainian.FileSystem {
 		}
 		*/
 
+		public CancellationTokenSource? CancellationTokenSource { get; set; }
+
+		private CancellationToken GetCancelToken() {
+			this.CancellationTokenSource ??= new CancellationTokenSource();
+			return this.CancellationTokenSource.Token;
+		}
+
 		/// <summary>
 		///     Pull a new <see cref="FileInfo" /> for the <paramref name="document" />.
 		/// </summary>
@@ -1501,16 +1509,10 @@ namespace Librainian.FileSystem {
 		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[Pure]
-		public static implicit operator FileInfo( Document document ) => ToFileInfo( document, GetDefaultCancelToken() ).AsValueTask().AsTask().Result;
-
-		/// <summary>
-		///     Returns a new <see cref="CancellationToken" /> with the timeout set via <see cref="DefaultDocumentTimeout" />.
-		/// </summary>
-		/// <param name="timeout"></param>
-		public static CancellationToken GetDefaultCancelToken( TimeSpan? timeout = null ) => new CancellationTokenSource( timeout ?? DefaultDocumentTimeout ).Token;
+		public static implicit operator FileInfo( Document document ) => ToFileInfo( document ).AsValueTask().AsTask().Result;
 
 		[Pure]
-		public static async PooledValueTask<FileInfo> ToFileInfo( Document document, CancellationToken cancellationToken ) {
+		public static async PooledValueTask<FileInfo> ToFileInfo( Document document ) {
 			if ( document is null ) {
 				throw new ArgumentEmptyException( nameof( document ) );
 			}
@@ -1521,7 +1523,7 @@ namespace Librainian.FileSystem {
 				info.Refresh();
 
 				return info;
-			}, cancellationToken )
+			} )
 							 .ConfigureAwait( false );
 		}
 

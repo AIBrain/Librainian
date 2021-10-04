@@ -137,7 +137,7 @@ namespace Librainian.Security {
 			return this.Next( maxValue - minValue ) + minValue;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="buffer"></param>
 		/// <exception cref="ArgumentEmptyException"></exception>
 		public override void NextBytes( Byte[] buffer ) {

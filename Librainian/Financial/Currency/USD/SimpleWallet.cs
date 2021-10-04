@@ -38,7 +38,7 @@ namespace Librainian.Financial.Currency.USD {
 
 		private Decimal _balance;
 
-		/// <summary></summary>
+		
 		/// <exception cref="TimeoutException"></exception>
 		public Decimal Balance {
 			get {
@@ -86,7 +86,7 @@ namespace Librainian.Financial.Currency.USD {
 		/// </summary>
 		public TimeSpan Timeout { get; set; }
 
-		public SimpleWallet() => this.Timeout = TimeSpan.FromMinutes( 1 );
+		public SimpleWallet() : base( nameof( SimpleWallet ) ) => this.Timeout = TimeSpan.FromMinutes( 1 );
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() {

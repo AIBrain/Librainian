@@ -33,19 +33,17 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 	using Newtonsoft.Json;
-
-	// return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
 
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public record Days( BigDecimal Value ) : IQuantityOfTime, IComparable<Days> {
 
 		/// <summary>
-		///     365.25
+		///     365.2422 (days)
 		/// </summary>
-		public const Decimal InOneCommonYear = 365.25m;
+		public const Decimal InOneCommonYear = 365.2422m;
 
 		/// <summary>
 		///     7
@@ -121,13 +119,7 @@ namespace Librainian.Measurement.Time {
 		///     <paramref name="other" />. Greater than zero This
 		///     instance follows <paramref name="other" /> in the sort order.
 		/// </returns>
-		public Int32 CompareTo( IQuantityOfTime other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );
-		}
+		public Int32 CompareTo( IQuantityOfTime? other ) => other is null ? SortOrder.NullsDefault : this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );
 
 		public static Days Combine( Days left, Days right ) => Combine( left, right.Value );
 

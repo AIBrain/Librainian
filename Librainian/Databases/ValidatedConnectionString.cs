@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ValidatedConnectionString.cs" last touched on 2021-08-28 at 7:49 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Databases {
 
@@ -73,14 +73,14 @@ namespace Librainian.Databases {
 
 				var builder = new SqlConnectionStringBuilder( trimmed ) {
 					Pooling = true,
-					MaxPoolSize = 65536,
+					MaxPoolSize = 2048,
 					IntegratedSecurity = true,
 					MultipleActiveResultSets = true,
 					WorkstationID = Environment.MachineName,
 					ApplicationIntent = ApplicationIntent.ReadWrite,
 					ApplicationName = applicationSetting.GetProductName(),
-					ConnectTimeout = ( Int32 )DatabaseServer.DefaultConnectionTimeout.TotalSeconds,
-					CommandTimeout = ( Int32 )DatabaseServer.DefaultCommandTimeout.TotalSeconds
+					//ConnectTimeout = ( Int32 )DatabaseServer.DefaultConnectionTimeout.TotalSeconds,
+					//CommandTimeout = ( Int32 )DatabaseServer.DefaultExecuteTimeout.TotalSeconds
 				};
 
 				builder.IntegratedSecurity = String.IsNullOrWhiteSpace( builder.UserID ) && String.IsNullOrWhiteSpace( builder.Password );

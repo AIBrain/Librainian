@@ -95,7 +95,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		[JsonProperty]
 		public DateTime InstanceCreationTime { get; private set; }
 
-		public WalletStatistics() => this.Reset();
+		public WalletStatistics() : base( nameof( WalletStatistics ) ) => this.Reset();
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() {

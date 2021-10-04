@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 //
@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Yoctoseconds.cs" last touched on 2021-03-07 at 2:38 PM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -33,8 +33,8 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -51,7 +51,9 @@ namespace Librainian.Measurement.Time {
 		public const UInt16 InOneZeptosecond = 1000;
 
 		public Yoctoseconds( Decimal value ) : this( ( BigDecimal )value ) { }
+
 		public Yoctoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
+
 		public Yoctoseconds( Int64 value ) : this( ( BigInteger )value ) { }
 
 		public Yoctoseconds( BigInteger value ) : this( new BigDecimal( value ) ) { }
@@ -59,46 +61,46 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     <see cref="Five" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Five { get; } = new( ( BigDecimal )5 );
+		public static Yoctoseconds Five { get; } = new( 5 );
 
 		/// <summary>
 		///     <see cref="One" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds One { get; } = new( ( BigDecimal )1 );
+		public static Yoctoseconds One { get; } = new( 1 );
 
 		/// <summary>
 		///     <see cref="Seven" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Seven { get; } = new( ( BigDecimal )7 );
+		public static Yoctoseconds Seven { get; } = new( 7 );
 
 		/// <summary>
 		///     <see cref="Ten" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Ten { get; } = new( ( BigDecimal )10 );
+		public static Yoctoseconds Ten { get; } = new( 10 );
 
 		/// <summary>
 		///     <see cref="Thirteen" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Thirteen { get; } = new( ( BigDecimal )13 );
+		public static Yoctoseconds Thirteen { get; } = new( 13 );
 
 		/// <summary>
 		///     <see cref="Thirty" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Thirty { get; } = new( ( BigDecimal )30 );
+		public static Yoctoseconds Thirty { get; } = new( 30 );
 
 		/// <summary>
 		///     <see cref="Three" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Three { get; } = new( ( BigDecimal )3 );
+		public static Yoctoseconds Three { get; } = new( 3 );
 
 		/// <summary>
 		///     <see cref="Two" /><see cref="Yoctoseconds" />.
 		/// </summary>
-		public static Yoctoseconds Two { get; } = new( ( BigDecimal )2 );
+		public static Yoctoseconds Two { get; } = new( 2 );
 
 		/// <summary>
 		/// </summary>
-		public static Yoctoseconds Zero { get; } = new( ( BigDecimal )0 );
+		public static Yoctoseconds Zero { get; } = new( 0 );
 
 		public static BigDecimal InOneSecond { get; } = BigDecimal.Parse( "10E24" );
 
@@ -164,5 +166,7 @@ namespace Librainian.Measurement.Time {
 		public override String ToString() => $"{this.Value} ys";
 
 		public Zeptoseconds ToZeptoseconds() => new( ( BigInteger )( this.Value / InOneZeptosecond ) );
+
 	}
+
 }

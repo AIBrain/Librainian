@@ -30,9 +30,9 @@ namespace Librainian.Measurement.Physics {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -42,7 +42,7 @@ namespace Librainian.Measurement.Physics {
 	[Immutable]
 	public record AtomicMassUnits( BigDecimal Value ) : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
-		/// <summary></summary>
+		
 		public const Decimal InOneElectronVolt = 0.000000001073544m;
 
 		public const Decimal InOneGigaElectronVolt = 1.073544m;
@@ -63,10 +63,10 @@ namespace Librainian.Measurement.Physics {
 
 		public static readonly AtomicMassUnits NegativeOne = new( -1m );
 
-		/// <summary></summary>
+		
 		public static readonly AtomicMassUnits NegativeZero = new( -Decimal.Zero );
 
-		/// <summary></summary>
+		
 		public static readonly AtomicMassUnits One = new( 1m );
 
 		public static readonly ElectronVolts OneAtomicUnitEqualsElectronVolt = new MegaElectronVolts( 931.494095m );
@@ -89,7 +89,7 @@ namespace Librainian.Measurement.Physics {
 		//    return gigaElectronVolts.ToElectronVolts();
 		//}
 
-		/// <summary></summary>
+		
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value * right.Value );
@@ -98,7 +98,7 @@ namespace Librainian.Measurement.Physics {
 		//    return megaElectronVolts.ToElectronVolts();
 		//}
 
-		/// <summary></summary>
+		
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
 		public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new( left.Value * right );

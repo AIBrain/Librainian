@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "IOExtensions.cs" last touched on 2021-08-28 at 8:06 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -842,7 +842,7 @@ namespace Librainian.FileSystem {
 
 		/*
 
-		/// <summary></summary>
+		
 		/// <param name="startingFolder">        </param>
 		/// <param name="documentSearchPatterns"></param>
 		/// <param name="onEachDocumentFound">   Warning, this could OOM on a large folder structure.</param>
@@ -1559,11 +1559,7 @@ namespace Librainian.FileSystem {
 		}
 
 		[Serializable]
-		public record FileInformation {
-			public FileInformation( String name, PathInformation path ) {
-				this.Path = path;
-				this.Name = name;
-			}
+		public record FileInformation( String Name, PathInformation Path ) {
 
 			public FileAttributes Attributes { get; set; }
 
@@ -1577,14 +1573,12 @@ namespace Librainian.FileSystem {
 
 			public PathInformation? Parent { get; set; }
 
-			public PathInformation Path { get; set; }
+			public PathInformation Path { get; set; } = Path;
 
-			public String Name { get; }
 		}
 
 		[Serializable]
-		public record PathInformation {
-			public PathInformation( String path ) => this.Path = path;
+		public record PathInformation( String Path ) {
 
 			public FileAttributes Attributes { get; set; }
 
@@ -1596,7 +1590,6 @@ namespace Librainian.FileSystem {
 
 			public PathInformation? Parent { get; set; }
 
-			public String Path { get; }
 		}
 	}
 }

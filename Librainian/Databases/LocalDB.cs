@@ -39,12 +39,11 @@ namespace Librainian.Databases {
 	using Logging;
 	using Measurement.Time;
 	using Microsoft.Data.SqlClient;
-	using PooledAwait;
 	using Utilities.Disposables;
 
 	public class LocalDb : ABetterClassDispose {
 
-		public LocalDb( String databaseName, Folder? databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) {
+		public LocalDb( String databaseName, Folder? databaseLocation = null, TimeSpan? timeoutForReads = null, TimeSpan? timeoutForWrites = null ) : base( nameof( LocalDb ) ) {
 
 			//TODO Check for [] around databaseName.
 			//TODO Check for spaces in databaseName.
@@ -73,7 +72,7 @@ namespace Librainian.Databases {
 			var _ = this.Initialize( new CancellationTokenSource( Minutes.One ).Token );
 		}
 
-		private async FireAndForget Initialize( CancellationToken cancellationToken ) {
+		private async ValueTask Initialize( CancellationToken cancellationToken ) {
 			var exists = await this.DatabaseMdf.Exists( cancellationToken ).ConfigureAwait( false );
 
 			if ( !exists ) {
@@ -104,7 +103,7 @@ namespace Librainian.Databases {
 			this.Connection.Close();
 		}
 
-		public SqlConnection Connection { get; set; }
+		public SqlConnection? Connection { get; set; }
 
 		public String ConnectionString { get; set; }
 

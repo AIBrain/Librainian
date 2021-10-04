@@ -65,7 +65,7 @@ namespace Librainian.Internet.RandomOrg {
 			return responseFromServer.Split( '\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries ).Where( s => s.Any() ).Select( Int32.Parse );
 		}
 
-		/// <summary></summary>
+		
 		/// <see cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
 		public class IntegerGenerator {
 

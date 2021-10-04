@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Seconds.cs" last touched on 2021-07-31 at 7:38 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Measurement.Time {
 
@@ -31,9 +31,9 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -49,10 +49,10 @@ namespace Librainian.Measurement.Time {
 	public record Seconds( BigDecimal Value ) : IQuantityOfTime {
 
 		/// <summary>31536000</summary>
-		public const UInt32 InOneCommonYear = 31536000;
+		public const Int32 InOneCommonYear = 31536000;
 
 		/// <summary>86400</summary>
-		public const UInt32 InOneDay = 86400;
+		public const Int32 InOneDay = 86400;
 
 		/// <summary>3600</summary>
 		public const UInt16 InOneHour = 3600;
@@ -61,10 +61,10 @@ namespace Librainian.Measurement.Time {
 		public const Byte InOneMinute = 60;
 
 		/// <summary>2635200 (30.5 days)</summary>
-		public const UInt32 InOneMonth = 2635200;
+		public const Int32 InOneMonth = 2635200;
 
 		/// <summary>604800</summary>
-		public const UInt32 InOneWeek = 604800;
+		public const Int32 InOneWeek = 604800;
 
 		public Seconds( Double value ) : this( ( BigDecimal )value ) { }
 
@@ -95,7 +95,6 @@ namespace Librainian.Measurement.Time {
 		/// <summary><see cref="Two" /><see cref="Seconds" />.</summary>
 		public static Seconds Two { get; } = new( ( BigDecimal )2 );
 
-		/// <summary></summary>
 		public static Seconds Zero { get; } = new( ( BigDecimal )0 );
 
 		public IQuantityOfTime ToFinerGranularity() => this.ToMilliseconds();
@@ -155,23 +154,7 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Returns a <see cref="TimeSpan" /></summary>
 		/// <param name="seconds"></param>
-		public static implicit operator TimeSpan( Seconds seconds ) {
-
-			//var maxED = new BigDecimal( TimeSpan.MaxValue.TotalSeconds );
-			//var compare = seconds.Value.CompareTo( maxED );
-
-			//if ( >= maxED ) { }
-
-			//if ( seconds.Value >= maxED ) {
-			//	return TimeSpan.MaxValue;
-			//}
-
-			//if ( seconds.Value <= TimeSpan.MinValue.TotalSeconds ) {
-			//	return TimeSpan.MinValue;
-			//}
-			seconds.Nop();
-			return TimeSpan.FromSeconds( ( Double )seconds.Value );
-		}
+		public static implicit operator TimeSpan( Seconds seconds ) => TimeSpan.FromSeconds( ( Double )seconds.Value );
 
 		public static Seconds operator -( Seconds seconds ) => new( seconds.Value * -1 );
 
@@ -206,5 +189,7 @@ namespace Librainian.Measurement.Time {
 		public Weeks ToWeeks() => new( this.Value / InOneWeek );
 
 		public Years ToYears() => new( this.Value / InOneCommonYear );
+
 	}
+
 }

@@ -38,9 +38,9 @@ namespace Librainian.Maths {
 	using System.Numerics;
 	using System.Runtime.CompilerServices;
 	using System.Text;
-	using Bigger;
 	using Collections.Extensions;
 	using Exceptions;
+	using ExtendedNumerics;
 	using JetBrains.Annotations;
 	using Numbers;
 
@@ -650,6 +650,7 @@ namespace Librainian.Maths {
 		[Pure]
 		public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
+		/*
 		/// <summary>
 		///     <para>
 		///         If the <paramref name="number" /> is less than <see cref="BigDecimal.Zero" />, then return
@@ -661,6 +662,7 @@ namespace Librainian.Maths {
 		[DebuggerStepThrough]
 		[Pure]
 		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
+		*/
 
 		/// <summary>
 		///     <para>
@@ -672,13 +674,9 @@ namespace Librainian.Maths {
 		/// <param name="number"></param>
 		[DebuggerStepThrough]
 		[Pure]
-		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal? number ) {
-			if ( number <= BigDecimal.Zero ) {
-				return BigDecimal.Zero;
-			}
-
-			return ( BigDecimal )number;
-		}
+		public static BigDecimal IfLessThanZeroThenZero( this BigDecimal? number ) =>
+			number is null ? BigDecimal.Zero :
+			number <= BigDecimal.Zero ? BigDecimal.Zero : number;
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -1073,15 +1071,14 @@ namespace Librainian.Maths {
 		public static void RotateRight( ref this UInt64 original, Int32 bits ) => original = ( original >> bits ) | ( original << ( 64 - bits ) );
 
 		/// <summary>
-		///     Truncate, don't round. Just chop it off.
+		///     Truncate, don't round. Just chop it off after <paramref name="decimalPlaces"/>.
 		/// </summary>
 		/// <param name="number">       </param>
 		/// <param name="decimalPlaces"></param>
-		/// <returns>Bitcoin ftw!</returns>
 		public static Decimal Sanitize( this Decimal number, UInt16 decimalPlaces = 8 ) {
 			number *= ( Decimal )Math.Pow( 10, decimalPlaces );
 
-			number = Math.Truncate( number ); //Truncate, don't round. Just chop it off.
+			number = Math.Truncate( number ); //Don't round. Just Truncate.
 
 			number *= ( Decimal )Math.Pow( 10, -decimalPlaces );
 

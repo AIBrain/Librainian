@@ -31,23 +31,23 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://wikipedia.org/wiki/Femtosecond" />
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
-	public record Femtoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Femtoseconds> {
+	public record Femtoseconds(BigDecimal Value) : IQuantityOfTime, IComparable<Femtoseconds> {
 
 		/// <summary>1000</summary>
 		public const UInt16 InOnePicosecond = 1000;
 
 		public Femtoseconds( Decimal value ) : this( ( BigDecimal )value ) { }
 		public Femtoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
-		public Femtoseconds( Int64 value ) : this( ( BigDecimal )value ) { }
+		public Femtoseconds( Int64 value ) : this( ( Decimal )value ) { }
 
 		public Femtoseconds( BigInteger value ) : this( ( BigDecimal )value ) { }
 
@@ -92,9 +92,6 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>Zero <see cref="Femtoseconds" />.</summary>
 		public static Femtoseconds Zero { get; } = new( 0 );
-
-		[JsonProperty]
-		public BigDecimal Value { get; }
 
 		public Int32 CompareTo( Femtoseconds? other ) {
 			if ( other == null ) {

@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 //
@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Milliseconds.cs" last touched on 2021-03-07 at 3:06 PM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -33,15 +33,20 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
 	using JetBrains.Annotations;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	[Immutable]
 	public record Milliseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Milliseconds> {
+
+		public Milliseconds( Int32 value ) : this( ( Decimal )value ) { }
+		public Milliseconds( Int64 value ) : this( ( Decimal )value ) { }
+		public Milliseconds( UInt32 value ) : this( ( Decimal )value ) { }
+		public Milliseconds( UInt64 value ) : this( ( Decimal )value ) { }
 
 		/// <summary>
 		///     1000
@@ -64,7 +69,7 @@ namespace Librainian.Measurement.Time {
 		public static Milliseconds FiveHundred { get; } = new( 500 );
 
 		/// <summary>
-		///     111. 1 Hertz (9 <see cref="Milliseconds" />).
+		///     111.1 Hertz (9 <see cref="Milliseconds" />).
 		/// </summary>
 		public static Milliseconds Hertz111 { get; } = new( 9 );
 
@@ -102,6 +107,11 @@ namespace Librainian.Measurement.Time {
 		///     Three <see cref="Milliseconds" /> s.
 		/// </summary>
 		public static Milliseconds Three { get; } = new( 3 );
+
+		/// <summary>
+		///     Four <see cref="Milliseconds" /> s.
+		/// </summary>
+		public static Milliseconds Four { get; } = new( 4 );
 
 		/// <summary>
 		///     Three Three Three <see cref="Milliseconds" />.
@@ -203,5 +213,7 @@ namespace Librainian.Measurement.Time {
 		public Microseconds ToMicroseconds() => new( this.Value * Microseconds.InOneMillisecond );
 
 		public override String ToString() => $"{this.Value} milliseconds";
+
 	}
+
 }

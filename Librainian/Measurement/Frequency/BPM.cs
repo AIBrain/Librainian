@@ -47,7 +47,7 @@ namespace Librainian.Measurement.Frequency {
 		/// <summary>111. 1 Hertz <see cref="Bpm" />.</summary>
 		public static Bpm Hertz111 { get; } = new( 9 );
 
-		/// <summary></summary>
+		
 		public static Bpm MaxValue { get; } = new( UInt64.MaxValue );
 
 		/// <summary>About zero. :P</summary>

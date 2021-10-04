@@ -169,9 +169,18 @@ namespace Librainian {
 		public static void Run<TForm>( IHost host ) where TForm : Form {
 			try {
 				CommonPreRun();
+
 				using var form = ( host.Services ?? throw new NullException( nameof( host ) ) ).GetRequiredService<TForm>();
+
 				form.PersistPlacement();
-				Application.Run( form );
+
+				var mainForm = form;
+				if ( mainForm.InvokeRequired ) {
+					$"{nameof( mainForm.InvokeRequired )} on {nameof( mainForm.Name )}.".DebugLine();
+				}
+
+				form.InvokeAction( () => Application.Run( mainForm ), RefreshOrInvalidate.Refresh );
+
 			}
 			catch ( Exception exception ) {
 				exception.Log( BreakOrDontBreak.Break );

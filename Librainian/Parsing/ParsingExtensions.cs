@@ -689,7 +689,7 @@ namespace Librainian.Parsing {
 		[Pure]
 		public static Word? FirstWord( this String? sentence ) => sentence.ToWords().FirstOrDefault();
 
-		/// <summary></summary>
+		
 		/// <param name="rational">      </param>
 		/// <param name="numberOfDigits"></param>
 		/// <seealso
@@ -1253,7 +1253,7 @@ namespace Librainian.Parsing {
 			return new String( charArray );
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="myString"></param>
 		/// <see cref="http://codereview.stackexchange.com/questions/78065/reverse-a-sentence-quickly-without-pointers" />
 		[Pure]
@@ -1882,7 +1882,7 @@ namespace Librainian.Parsing {
 			return words.Trim();
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="number"></param>
 		/// <see cref="http://stackoverflow.com/a/7829529/956364" />
 		[Pure]

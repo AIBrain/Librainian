@@ -1,4 +1,4 @@
-﻿// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 //
@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Logging.cs" last touched on 2021-04-25 at 9:02 PM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -31,13 +31,9 @@ namespace Librainian.Logging {
 
 	using System;
 	using System.Diagnostics;
-	using System.Diagnostics.Eventing.Reader;
 	using System.Drawing;
-	using System.Threading;
 	using Microsoft.Extensions.Logging;
-	using Newtonsoft.Json;
 	using Parsing;
-	using Persistence;
 
 	public static class Logging {
 
@@ -148,7 +144,7 @@ namespace Librainian.Logging {
 			};
 
 		[DebuggerStepThrough]
-		public static Exception Log<T>( this T? message, BreakOrDontBreak? breakinto = null ) {
+		public static Exception Log<T>( this T? message, BreakOrDontBreak? breakinto = null ) where T : Exception {
 			if ( message is Exception exception ) {
 				exception.ToStringDemystified().LogTimeMessage( breakinto );
 				return exception;

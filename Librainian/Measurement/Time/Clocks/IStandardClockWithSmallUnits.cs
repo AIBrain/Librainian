@@ -38,7 +38,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		ClockSecond Second { get; }
 
-		Time GetTime();
+		TimeClock GetTime();
 
 		Boolean IsAm();
 

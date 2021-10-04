@@ -357,7 +357,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 
 		/*
 
-		/// <summary></summary>
+		
 		/// <param name="lpFileName"></param>
 		/// <param name="nBufferLength"></param>
 		/// <param name="lpBuffer"></param>
@@ -541,7 +541,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 		[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
 		public static extern Boolean SetThreadToken( [In] IntPtr Thread, [In] SafeTokenHandle Token );
 
-		/// <summary></summary>
+		
 		/// <param name="oldFile"></param>
 		/// <param name="newFile"></param>
 		/// <param name="progress"></param>

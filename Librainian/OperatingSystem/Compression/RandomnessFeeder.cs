@@ -41,7 +41,7 @@ namespace Librainian.OperatingSystem.Compression {
 	using Rationals;
 	using Utilities.Disposables;
 
-	public class RandomnessFeeding : ABetterClassDispose {
+	public class RandomnessFeeder : ABetterClassDispose {
 
 		private GZipStream GZipStream { get; }
 
@@ -51,7 +51,7 @@ namespace Librainian.OperatingSystem.Compression {
 
 		public BigInteger HowManyBytesFed { get; private set; }
 
-		public RandomnessFeeding() {
+		public RandomnessFeeder() : base( nameof( RandomnessFeeder ) ) {
 			this.HowManyBytesAsCompressed = BigInteger.Zero;
 			this.HowManyBytesFed = BigInteger.Zero;
 			this.GZipStream = new GZipStream( this.NullStream, CompressionLevel.Optimal );

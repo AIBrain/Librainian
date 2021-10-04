@@ -32,15 +32,15 @@ namespace Librainian.Measurement.Time.Clocks {
 	using Extensions;
 	using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="Month" />.</summary>
+	/// <summary>A simple struct for a <see cref="ClockMonth" />.</summary>
 	[JsonObject]
 	[Immutable]
-	public record Month : IComparable<Month>, IClockPart {
+	public record ClockMonth : IComparable<ClockMonth>, IClockPart {
 		public const Byte MaximumValue = 12;
 
-		public const Byte MinimumValue = 0; //TODO um... not 1??
+		public const Byte MinimumValue = 1; //TODO um... not 1??
 
-		public Month( Byte value ) {
+		public ClockMonth( Byte value ) {
 			if ( value is < MinimumValue or > MaximumValue ) {
 				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
 			}
@@ -49,15 +49,15 @@ namespace Librainian.Measurement.Time.Clocks {
 		}
 
 		/// <summary>12</summary>
-		public static Month Maximum { get; } = new( MaximumValue );
+		public static ClockMonth Maximum { get; } = new( MaximumValue );
 
 		/// <summary>1</summary>
-		public static Month Minimum { get; } = new( MinimumValue );
+		public static ClockMonth Minimum { get; } = new( MinimumValue );
 
 		[JsonProperty]
 		public Byte Value { get; init; }
 
-		public Int32 CompareTo( Month other ) {
+		public Int32 CompareTo( ClockMonth other ) {
 			if ( other == null ) {
 				throw new ArgumentEmptyException( nameof( other ) );
 			}
@@ -65,13 +65,13 @@ namespace Librainian.Measurement.Time.Clocks {
 			return this.Value.CompareTo( other.Value );
 		}
 
-		public static implicit operator Byte( Month value ) => value.Value;
+		public static implicit operator Byte( ClockMonth value ) => value.Value;
 
-		public static implicit operator Month( Byte value ) => new( value );
+		public static implicit operator ClockMonth( Byte value ) => new( value );
 
-		/// <summary>Provide the next <see cref="Month" />.</summary>
+		/// <summary>Provide the next <see cref="ClockMonth" />.</summary>
 		/// <param name="tocked"></param>
-		public Month Next( out Boolean tocked ) {
+		public ClockMonth Next( out Boolean tocked ) {
 			var next = this.Value + 1;
 
 			if ( next > Maximum.Value ) {
@@ -82,11 +82,11 @@ namespace Librainian.Measurement.Time.Clocks {
 				tocked = false;
 			}
 
-			return ( Month )next;
+			return ( ClockMonth )next;
 		}
 
-		/// <summary>Provide the previous <see cref="Month" />.</summary>
-		public Month Previous( out Boolean tocked ) {
+		/// <summary>Provide the previous <see cref="ClockMonth" />.</summary>
+		public ClockMonth Previous( out Boolean tocked ) {
 			var next = this.Value - 1;
 
 			if ( next < Minimum.Value ) {
@@ -97,7 +97,7 @@ namespace Librainian.Measurement.Time.Clocks {
 				tocked = false;
 			}
 
-			return ( Month )next;
+			return ( ClockMonth )next;
 		}
 	}
 }

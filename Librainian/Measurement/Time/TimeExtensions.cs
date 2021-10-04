@@ -1,12 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,14 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "TimeExtensions.cs" last formatted on 2021-02-03 at 3:30 PM.
+// 
+// File "TimeExtensions.cs" last touched on 2021-09-28 at 6:40 AM by Protiguous.
 
 #nullable enable
 
@@ -37,15 +39,13 @@ namespace Librainian.Measurement.Time {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Logging;
 	using Maths;
-	using Maths.Bigger;
 	using Parsing;
 	using PooledAwait;
 
 	public static class TimeExtensions {
-
-		private static TimeSpan? AverageTimePrecision;
 
 		/// <summary>
 		///     The ISO 8601 format string.
@@ -55,7 +55,9 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		public const String Iso8601Format = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
 
-		public static DateTime StarDateOrigin { get; } = new( 2318, 7, 5, 12, 0, 0, DateTimeKind.Utc );
+		private static TimeSpan? AverageTimePrecision;
+
+		public static DateTime StarDateOrigin { get; } = new(2318, 7, 5, 12, 0, 0, DateTimeKind.Utc);
 
 		private static DateTime ParseFormattedDate( String? input, IFormatProvider? culture ) {
 			var formats = new[] {
@@ -128,7 +130,7 @@ namespace Librainian.Measurement.Time {
 		///     Returns the Start of the given <paramref name="date" />.
 		/// </summary>
 		/// <param name="date"></param>
-		public static DateTime BeginningOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind );
+		public static DateTime BeginningOfDay( this DateTime date ) => new(date.Year, date.Month, date.Day, 0, 0, 0, 0, date.Kind);
 
 		public static Boolean Between( this DateTime dt, DateTime rangeBeg, DateTime rangeEnd ) => rangeBeg <= dt && dt <= rangeEnd;
 
@@ -185,7 +187,7 @@ namespace Librainian.Measurement.Time {
 		///     <para>Returns the last millisecond of the given <paramref name="date" />.</para>
 		/// </summary>
 		/// <param name="date"></param>
-		public static DateTime EndOfDay( this DateTime date ) => new( date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind );
+		public static DateTime EndOfDay( this DateTime date ) => new(date.Year, date.Month, date.Day, 23, 59, 59, 999, date.Kind);
 
 		/// <summary>
 		///     Return a quick estimation of the time remaining [on a download for example].
@@ -195,10 +197,10 @@ namespace Librainian.Measurement.Time {
 		public static TimeSpan EstimateTimeRemaining( this TimeSpan timeElapsed, Decimal progress ) {
 			const Decimal max = 1m;
 
-			if ( progress <= max.Epsilon() ) {
+			if ( progress < max.Epsilon() ) {
 				progress = max.Epsilon();
 			}
-			else if ( progress >= max ) {
+			else if ( progress > max ) {
 				progress = max;
 			}
 
@@ -217,18 +219,18 @@ namespace Librainian.Measurement.Time {
 			}
 
 			var matches = regex.Matches( input );
-			var match = matches[0];
-			var ms = Convert.ToInt64( match.Groups[1].Value );
+			var match = matches[ 0 ];
+			var ms = Convert.ToInt64( match.Groups[ 1 ].Value );
 
-			dt = Epochs.Unix.AddMilliseconds( ms );
+			dt = DateTime.UnixEpoch.AddMilliseconds( ms );
 
 			// adjust if time zone modifier present
-			if ( match.Groups.Count <= 2 || String.IsNullOrEmpty( match.Groups[3].Value ) ) {
+			if ( match.Groups.Count <= 2 || String.IsNullOrEmpty( match.Groups[ 3 ].Value ) ) {
 				return dt;
 			}
 
-			var mod = DateTime.ParseExact( match.Groups[3].Value, "HHmm", culture );
-			dt = match.Groups[2].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
+			var mod = DateTime.ParseExact( match.Groups[ 3 ].Value, "HHmm", culture );
+			dt = match.Groups[ 2 ].Value == "+" ? dt.Add( mod.TimeOfDay ) : dt.Subtract( mod.TimeOfDay );
 
 			return dt;
 		}
@@ -245,7 +247,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns>given <see cref="DateTime" /> with the day part set to the first day in that month.</returns>
 		public static DateTime FirstDayOfMonth( this DateTime current ) => current.SetDay( 1 );
 
-		public static DateTime FirstDayOfTheMonth( this DateTime date ) => new( date.Year, date.Month, 1 );
+		public static DateTime FirstDayOfTheMonth( this DateTime date ) => new(date.Year, date.Month, 1);
 
 		/// <summary>
 		///     Returns a DateTime adjusted to the beginning of the week.
@@ -281,26 +283,25 @@ namespace Librainian.Measurement.Time {
 		///     returns seconds since 1970-01-01 as a <see cref="DateTime" />.
 		/// </summary>
 		/// <param name="timestamp"></param>
-		public static DateTime FromUNIXTimestamp( this UInt64 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
+		public static DateTime FromUNIXTimestamp( this UInt64 timestamp ) => DateTime.UnixEpoch.AddSeconds( timestamp );
 
 		/// <summary>
 		///     returns seconds since 1970-01-01 as a <see cref="DateTime" />.
 		/// </summary>
 		/// <param name="timestamp"></param>
-		public static DateTime FromUNIXTimestamp( this Int32 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
+		public static DateTime FromUNIXTimestamp( this Int32 timestamp ) => DateTime.UnixEpoch.AddSeconds( timestamp );
 
 		/// <summary>
 		///     returns seconds since 1970-01-01 as a <see cref="DateTime" />.
 		/// </summary>
 		/// <param name="timestamp"></param>
-		public static DateTime FromUNIXTimestamp( this Int64 timestamp ) => Epochs.Unix.AddSeconds( timestamp );
+		public static DateTime FromUNIXTimestamp( this Int64 timestamp ) => DateTime.UnixEpoch.AddSeconds( timestamp );
 
 		/// <summary>
 		///     Return how many years old the person is in <see cref="Years" />.
 		/// </summary>
 		/// <param name="dateOfBirth"></param>
 		public static Years GetAge( this DateTime dateOfBirth ) {
-
 			//this seems to work for 99% of cases, but it still feels hacky.
 			//what about leap-year birthdays?
 			//what about other calendars?
@@ -320,11 +321,10 @@ namespace Librainian.Measurement.Time {
 			}
 
 			$"Performing {Environment.ProcessorCount} timeslice calibrations.".Verbose();
-			AverageTimePrecision =
-				new Milliseconds( 0.To( Environment.ProcessorCount ).Select( i => DateTimePrecision() ).Average( span => span.TotalMilliseconds ) );
-			$"Average datetime precision is {AverageTimePrecision.GetValueOrDefault( Measurement.Time.Milliseconds.One ).Simpler()}.".Verbose();
+			AverageTimePrecision = new Milliseconds( 0.To( Environment.ProcessorCount ).Select( i => DateTimePrecision() ).Average( span => span.TotalMilliseconds ) );
+			$"Average datetime precision is {AverageTimePrecision.GetValueOrDefault( Time.Milliseconds.One ).Simpler()}.".Verbose();
 
-			return AverageTimePrecision.GetValueOrDefault( Measurement.Time.Milliseconds.One );
+			return AverageTimePrecision.GetValueOrDefault( Time.Milliseconds.One );
 		}
 
 		/// <summary>
@@ -388,7 +388,6 @@ namespace Librainian.Measurement.Time {
 		///     Dugger & Jared Chavez
 		/// </copyright>
 		public static Boolean IsLeapYear( this Int64 year ) {
-
 			// not divisible by 4? not a leap year
 			if ( year % 4 != 0 ) {
 				return false;
@@ -414,7 +413,7 @@ namespace Librainian.Measurement.Time {
 		/// <returns>given <see cref="DateTime" /> with the day part set to the last day in that month.</returns>
 		public static DateTime LastDayOfMonth( this DateTime current ) => current.SetDay( DateTime.DaysInMonth( current.Year, current.Month ) );
 
-		public static DateTime LastDayOfTheMonth( this DateTime date ) => new( date.Year, date.Month, DateTime.DaysInMonth( date.Year, date.Month ) );
+		public static DateTime LastDayOfTheMonth( this DateTime date ) => new(date.Year, date.Month, DateTime.DaysInMonth( date.Year, date.Month ));
 
 		/// <summary>
 		///     Returns the last day of the week keeping the time component intact. Eg, 2011-12-24T06:40:20.005 =&gt;
@@ -556,6 +555,7 @@ namespace Librainian.Measurement.Time {
 			while ( !nextDay.IsWorkingDay() ) {
 				nextDay = nextDay.AddDays( 1 );
 			}
+
 			return nextDay;
 		}
 
@@ -610,7 +610,7 @@ namespace Librainian.Measurement.Time {
 			input = input.RemoveSurroundingQuotes();
 
 			if ( Int64.TryParse( input, out var unix ) ) {
-				return Epochs.Unix.AddSeconds( unix );
+				return DateTime.UnixEpoch.AddSeconds( unix );
 			}
 
 			if ( input.Contains( "/Date(" ) ) {
@@ -689,48 +689,48 @@ namespace Librainian.Measurement.Time {
 
 			switch ( rt ) {
 				case RoundTo.Second: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Kind );
 
-						if ( dateTime.Millisecond >= 500 ) {
-							rounded = rounded.AddSeconds( 1 );
-						}
-
-						break;
+					if ( dateTime.Millisecond >= 500 ) {
+						rounded = rounded.AddSeconds( 1 );
 					}
+
+					break;
+				}
 
 				case RoundTo.Minute: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0, dateTime.Kind );
 
-						if ( dateTime.Second >= 30 ) {
-							rounded = rounded.AddMinutes( 1 );
-						}
-
-						break;
+					if ( dateTime.Second >= 30 ) {
+						rounded = rounded.AddMinutes( 1 );
 					}
+
+					break;
+				}
 
 				case RoundTo.Hour: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, 0, 0, dateTime.Kind );
 
-						if ( dateTime.Minute >= 30 ) {
-							rounded = rounded.AddHours( 1 );
-						}
-
-						break;
+					if ( dateTime.Minute >= 30 ) {
+						rounded = rounded.AddHours( 1 );
 					}
+
+					break;
+				}
 
 				case RoundTo.Day: {
-						rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
+					rounded = new DateTime( dateTime.Year, dateTime.Month, dateTime.Day, 0, 0, 0, dateTime.Kind );
 
-						if ( dateTime.Hour >= 12 ) {
-							rounded = rounded.AddDays( 1 );
-						}
-
-						break;
+					if ( dateTime.Hour >= 12 ) {
+						rounded = rounded.AddDays( 1 );
 					}
+
+					break;
+				}
 
 				default: {
-						throw new ArgumentOutOfRangeException( nameof( rt ) );
-					}
+					throw new ArgumentOutOfRangeException( nameof( rt ) );
+				}
 			}
 
 			return rounded;
@@ -752,95 +752,117 @@ namespace Librainian.Measurement.Time {
 		///     Returns <see cref="DateTime" /> with changed Year part.
 		/// </summary>
 		public static DateTime SetDate( this DateTime value, Int32 year ) =>
-			new( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new(year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Year and Month part.
 		/// </summary>
 		public static DateTime SetDate( this DateTime value, Int32 year, Int32 month ) =>
-			new( year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new(year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Year, Month and Day part.
 		/// </summary>
 		public static DateTime SetDate( this DateTime value, Int32 year, Int32 month, Int32 day ) =>
-			new( year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new(year, month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Day part.
 		/// </summary>
 		public static DateTime SetDay( this DateTime value, Int32 day ) =>
-			new( value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new(value.Year, value.Month, day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Hour part.
 		/// </summary>
 		public static DateTime SetHour( this DateTime originalDate, Int32 hour ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Millisecond part.
 		/// </summary>
 		public static DateTime SetMillisecond( this DateTime originalDate, Int32 millisecond ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, originalDate.Second, millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, originalDate.Second, millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Minute part.
 		/// </summary>
 		public static DateTime SetMinute( this DateTime originalDate, Int32 minute ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Month part.
 		/// </summary>
 		public static DateTime SetMonth( this DateTime value, Int32 month ) =>
-			new( value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new(value.Year, month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Second part.
 		/// </summary>
 		public static DateTime SetSecond( this DateTime originalDate, Int32 second ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, originalDate.Hour, originalDate.Minute, second, originalDate.Millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns the original <see cref="DateTime" /> with Hour part changed to supplied hour parameter.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, hour, originalDate.Minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns the original <see cref="DateTime" /> with Hour and Minute parts changed to supplied hour and minute
 		///     parameters.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, originalDate.Second, originalDate.Millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns the original <see cref="DateTime" /> with Hour, Minute and Second parts changed to supplied hour, minute
 		///     and second parameters.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, originalDate.Millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns the original <see cref="DateTime" /> with Hour, Minute, Second and Millisecond parts changed to supplied
 		///     hour, minute, second and millisecond parameters.
 		/// </summary>
 		public static DateTime SetTime( this DateTime originalDate, Int32 hour, Int32 minute, Int32 second, Int32 millisecond ) =>
-			new( originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind );
+			new(originalDate.Year, originalDate.Month, originalDate.Day, hour, minute, second, millisecond, originalDate.Kind);
 
 		/// <summary>
 		///     Returns <see cref="DateTime" /> with changed Year part.
 		/// </summary>
 		public static DateTime SetYear( this DateTime value, Int32 year ) =>
-			new( year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind );
+			new(year, value.Month, value.Day, value.Hour, value.Minute, value.Second, value.Millisecond, value.Kind);
 
 		/// <summary>
 		///     Display a <see cref="TimeSpan" /> in simpler terms. ie "2 hours 4 minutes 33 seconds".
 		/// </summary>
 		/// <param name="timeSpan"></param>
 		public static String Simpler( this TimeSpan timeSpan ) {
-			var sb = new StringBuilder();
+			var length = 0;
+
+			if (timeSpan.Days.Any()  ) {
+				length += 2 * ( timeSpan.Days.ToString().Length + " years ".Length );
+			}
+
+			if (timeSpan.Hours.Any()  ) {
+				length += timeSpan.Hours.ToString().Length + " hours ".Length;
+			}
+
+			if ( timeSpan.Minutes.Any() ) {
+				length += timeSpan.Minutes.ToString().Length + " minutes ".Length;
+			}
+
+			if ( timeSpan.Seconds.Any() ) {
+				length += timeSpan.Seconds.ToString().Length + " seconds ".Length;
+			}
+
+			if ( timeSpan.Milliseconds.Any() ) {
+				length += timeSpan.Milliseconds.ToString().Length + " milliseconds ".Length;
+			}
+
+			var sb = new StringBuilder( length, length );
 
 			if ( timeSpan.Days > 365 * 2 ) {
 				sb.AppendFormat( " {0:n0} years", timeSpan.Days / 365 );
@@ -850,65 +872,65 @@ namespace Librainian.Measurement.Time {
 			}
 
 			switch ( timeSpan.Days ) {
-
-				//else if ( timeSpan.Days > 14 ) {
-				//    sb.AppendFormat( " {0:n0} weeks", timeSpan.Days / 7 );
-				//}
-				//else if ( timeSpan.Days > 7 ) {
-				//    sb.AppendFormat( " {0} week", timeSpan.Days / 7 );
-				//}
-				//else
-				case > 1:
+				case > 1: {
 					sb.Append( $" {timeSpan.Days:R} days" );
 					break;
-
-				case 1:
+				}
+				case 1: {
 					sb.Append( $" {timeSpan.Days:R} day" );
 					break;
+				}
 			}
 
 			switch ( timeSpan.Hours ) {
-				case > 1:
+				case > 1: {
 					sb.Append( $" {timeSpan.Hours:n0} hours" );
 					break;
+				}
 
-				case 1:
+				case 1: {
 					sb.Append( $" {timeSpan.Hours} hour" );
 					break;
+				}
 			}
 
 			switch ( timeSpan.Minutes ) {
-				case > 1:
+				case > 1: {
 					sb.Append( $" {timeSpan.Minutes:n0} minutes" );
 					break;
+				}
 
-				case 1:
+				case 1: {
 					sb.Append( $" {timeSpan.Minutes} minute" );
 					break;
+				}
 			}
 
 			switch ( timeSpan.Seconds ) {
-				case > 1:
+				case > 1: {
 					sb.Append( $" {timeSpan.Seconds:n0} seconds" );
 					break;
+				}
 
-				case 1:
+				case 1: {
 					sb.Append( $" {timeSpan.Seconds} second" );
 					break;
+				}
 			}
 
 			switch ( timeSpan.Milliseconds ) {
-				case > 1:
+				case > 1: {
 					sb.Append( $" {timeSpan.Milliseconds:n0} milliseconds" );
 					break;
-
-				case 1:
+				}
+				case 1: {
 					sb.Append( $" {timeSpan.Milliseconds} millisecond" );
 					break;
+				}
 			}
 
 			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
-				sb.Append( " 0 milliseconds " );
+				sb.Append( " ~0 milliseconds " );
 			}
 
 			return sb.ToString().Trim();
@@ -946,11 +968,13 @@ namespace Librainian.Measurement.Time {
 			}
 
 			if ( BigDecimal.Abs( duration.Milliseconds() ) >= BigDecimal.One.BigEpsilon() ) {
-				sb.AppendFormat( BigDecimal.Abs( duration.Milliseconds() - 1 ) <= BigDecimal.One.BigEpsilon() ? " {0:R} millisecond" : " {0:R} milliseconds", duration.Milliseconds() );
+				sb.AppendFormat( BigDecimal.Abs( duration.Milliseconds() - 1 ) <= BigDecimal.One.BigEpsilon() ? " {0:R} millisecond" : " {0:R} milliseconds",
+					duration.Milliseconds() );
 			}
 
 			if ( BigDecimal.Abs( duration.Microseconds ) >= BigDecimal.One.BigEpsilon() ) {
-				sb.AppendFormat( BigDecimal.Abs( duration.Microseconds - 1 ) <= BigDecimal.One.BigEpsilon() ? " {0:R} microsecond" : " {0:R} microseconds", duration.Microseconds );
+				sb.AppendFormat( BigDecimal.Abs( duration.Microseconds - 1 ) <= BigDecimal.One.BigEpsilon() ? " {0:R} microsecond" : " {0:R} microseconds",
+					duration.Microseconds );
 			}
 
 			if ( String.IsNullOrEmpty( sb.ToString().Trim() ) ) {
@@ -1032,9 +1056,9 @@ namespace Librainian.Measurement.Time {
 		}
 
 		public static SpanOfTime ToSpanOfTime( this Date date ) {
-			(var year, var month, var day) = date;
+			( var year, var month, var day ) = date;
 
-			return new( years: new Years( year.Value ), months: new Months( month.Value ), days: new Days( day.Value ) );
+			return new(years: new Years( year.Value ), months: new Months( month.Value ), days: new Days( day.Value ));
 		}
 
 		public static Decimal ToStarDate( this DateTime earthDateTime ) {
@@ -1049,18 +1073,18 @@ namespace Librainian.Measurement.Time {
 		///     Seconds since 1970-01-01
 		/// </summary>
 		/// <param name="date"></param>
-		public static UInt64 ToUnixTimestamp( this DateTime date ) {
-			var diff = date - Epochs.Unix;
+		public static Int64 ToUnixTimestamp( this DateTime date ) {
+			var diff = date - DateTime.UnixEpoch;
 
-			return ( UInt64 )diff.TotalSeconds;
+			return ( Int64 )diff.TotalSeconds;
 		}
 
 		public static Boolean TryConvertToDateTime( this Date date, out DateTime? dateTime ) {
 			try {
-				(var year, var month, var day) = date;
+				( var year, var month, var day ) = date;
 
 				if ( year.Value.Between( DateTime.MinValue.Year, DateTime.MaxValue.Year ) ) {
-					dateTime = new DateTime( ( Int32 )year.Value, month.Value, day.Value );
+					dateTime = new DateTime( ( Int32 )year.Value, ( Int32 )month.Value, ( Int32 )day.Value );
 
 					return true;
 				}
@@ -1077,5 +1101,7 @@ namespace Librainian.Measurement.Time {
 		/// </summary>
 		/// <param name="dateOfBirth"></param>
 		public static Years YearsFrom( this DateTime dateOfBirth ) => new Seconds( ( DateTime.UtcNow - dateOfBirth ).TotalSeconds ).ToYears();
+
 	}
+
 }

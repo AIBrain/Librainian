@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Length {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -49,36 +49,36 @@ namespace Librainian.Measurement.Length {
 
 		public const Decimal FeetPerMeter = 3.28084m;
 
-		public Feet( Int64 value ) : this( ( BigDecimal )value ) { }
+		public Feet( Int64 value ) : this( ( Decimal )value ) { }
 
 		public Feet( BigInteger value ) : this( ( BigDecimal )value ) { }
 
 		/// <summary><see cref="Five" /> .</summary>
-		public static Feet Five { get; } = new( 5 );
+		public static Feet Five { get; } = new( 5M );
 
 		/// <summary><see cref="One" /> .</summary>
-		public static Feet One { get; } = new( 1 );
+		public static Feet One { get; } = new( 1M );
 
 		/// <summary><see cref="Seven" /> .</summary>
-		public static Feet Seven { get; } = new( 7 );
+		public static Feet Seven { get; } = new( 7M );
 
 		/// <summary><see cref="Ten" /> .</summary>
-		public static Feet Ten { get; } = new( 10 );
+		public static Feet Ten { get; } = new( 10M );
 
 		/// <summary><see cref="Thirteen" /> .</summary>
-		public static Feet Thirteen { get; } = new( 13 );
+		public static Feet Thirteen { get; } = new( 13M );
 
 		/// <summary><see cref="Thirty" /> .</summary>
-		public static Feet Thirty { get; } = new( 30 );
+		public static Feet Thirty { get; } = new( 30M );
 
 		/// <summary><see cref="Three" /> .</summary>
-		public static Feet Three { get; } = new( 3 );
+		public static Feet Three { get; } = new( 3M );
 
 		/// <summary><see cref="Two" /> .</summary>
-		public static Feet Two { get; } = new( 2 );
+		public static Feet Two { get; } = new( 2M );
 
-		/// <summary></summary>
-		public static Feet Zero { get; } = new( 0 );
+		
+		public static Feet Zero { get; } = new( 0M );
 
 		public BigDecimal ToMeters() => this.Value / FeetPerMeter;
 
@@ -113,11 +113,11 @@ namespace Librainian.Measurement.Length {
 
 		public Int32 CompareTo( Feet? other ) {
 			if ( ReferenceEquals( this, other ) ) {
-				return Order.Same;
+				return SortOrder.Same;
 			}
 
 			if ( other is null ) {
-				return Order.After;
+				return SortOrder.After;
 			}
 
 			return this.Value.CompareTo( other.Value );

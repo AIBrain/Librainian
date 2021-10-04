@@ -74,7 +74,7 @@ namespace Librainian.Threading {
 
 		private CancellationToken Token { get; }
 
-		public Idler( CancellationToken cancellationToken ) {
+		public Idler( CancellationToken cancellationToken ) : base( nameof( Idler ) ) {
 			this.Token = cancellationToken;
 
 			//this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
@@ -95,7 +95,7 @@ namespace Librainian.Threading {
 
 			try {
 
-				//"Idle(): Running next job...".Verbose();
+				$"{nameof(Idler)}: Running next job..".Verbose();
 				jack.Execute();
 			}
 			catch ( Exception exception ) {
@@ -104,7 +104,7 @@ namespace Librainian.Threading {
 			finally {
 				this.Nop();
 
-				//"Idle(): Done with job.".Verbose();
+				$"{nameof( Idler )}: Done with job.".Verbose();
 			}
 		}
 

@@ -28,25 +28,25 @@ namespace Librainian.Measurement.Time.Clocks {
 
 	public interface IStandardClock {
 
-		/// <summary></summary>
+		
 		ClockHour Hour { get; }
 
-		/// <summary></summary>
+		
 		ClockMillisecond Millisecond { get; }
 
-		/// <summary></summary>
+		
 		ClockMinute Minute { get; }
 
-		/// <summary></summary>
+		
 		ClockSecond Second { get; }
 
-		/// <summary></summary>
+		
 		Boolean IsAm();
 
-		/// <summary></summary>
+		
 		Boolean IsPm();
 
-		/// <summary></summary>
-		Time Time();
+		
+		TimeClock Time();
 	}
 }

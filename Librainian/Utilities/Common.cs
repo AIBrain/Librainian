@@ -44,6 +44,7 @@ namespace Librainian {
 	using Measurement;
 	using Newtonsoft.Json;
 	using Parsing;
+	using SortOrder = Measurement.SortOrder;
 
 	public static class Common {
 
@@ -70,12 +71,12 @@ namespace Librainian {
 		/// <example>5.Between(5, 5))</example>
 		[Pure]
 		public static Boolean Between<T>( this T target, T startInclusive, T endInclusive ) where T : IComparable {
-			if ( startInclusive.CompareTo( endInclusive ) is Order.After ) {
-				return target.CompareTo( startInclusive ) <= Order.Same && target.CompareTo( endInclusive ) >= Order.Same;
+			if ( startInclusive.CompareTo( endInclusive ) is SortOrder.After ) {
+				return target.CompareTo( startInclusive ) <= SortOrder.Same && target.CompareTo( endInclusive ) >= SortOrder.Same;
 			}
 
-			if ( target.CompareTo( startInclusive ) >= Order.Same ) {
-				return target.CompareTo( endInclusive ) <= Order.Same;
+			if ( target.CompareTo( startInclusive ) >= SortOrder.Same ) {
+				return target.CompareTo( endInclusive ) <= SortOrder.Same;
 			}
 
 			return false;

@@ -25,8 +25,8 @@
 namespace Librainian.Measurement.Length {
 
 	using System;
+	using ExtendedNumerics;
 	using JetBrains.Annotations;
-	using Maths.Bigger;
 
 	public interface IQuantityOfDistance {
 

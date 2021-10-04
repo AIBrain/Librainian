@@ -32,7 +32,7 @@ namespace Librainian.Measurement.Physics {
 
 	public static class UniversalConstants {
 
-		/// <summary></summary>
+		
 		/// <see cref="http://wikipedia.org/wiki/Elementary_charge" />
 		public static ElectronVolts ElementaryCharge { get; } = new( 0.0000000000000000001602176565m );
 

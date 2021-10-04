@@ -27,7 +27,7 @@ namespace Librainian.Financial.Currency.BTC {
 	using System;
 	using System.Linq;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
 	public class Hash {
 

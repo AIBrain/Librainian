@@ -30,8 +30,8 @@ namespace Librainian.Measurement.Physics {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -60,10 +60,10 @@ namespace Librainian.Measurement.Physics {
 
 		public static readonly KiloElectronVolts NegativeOne = new( -1m );
 
-		/// <summary></summary>
+		
 		public static readonly KiloElectronVolts NegativeZero = new( -Decimal.Zero );
 
-		/// <summary></summary>
+		
 		public static readonly KiloElectronVolts One = new( 1m );
 
 		public static readonly KiloElectronVolts Zero = new( 0m );

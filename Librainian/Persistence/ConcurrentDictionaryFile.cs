@@ -64,7 +64,7 @@ namespace Librainian.Persistence {
 		private ConcurrentDictionaryFile() => throw new NotImplementedException();
 
 		/// <summary>Disallow constructor without a document/filename</summary>
-		/// <summary></summary>
+		
 		/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
 		/// <param name="document"></param>
 		/// <param name="progress"></param>

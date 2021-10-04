@@ -44,7 +44,7 @@ namespace Librainian.Databases {
 
 		String? Query { get; set; }
 
-		Task<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
+		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
 		PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[] parameters );
 
@@ -87,7 +87,7 @@ namespace Librainian.Databases {
 		/// <param name="parameters"> </param>
 		Task<Boolean> FillTableAsync( String query, CommandType commandType, DataTable table, CancellationToken cancellationToken, IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null, params SqlParameter[] parameters );
 
-		Task<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter?[]? parameters );
+		Task<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters );
 
 		Task<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters );
 

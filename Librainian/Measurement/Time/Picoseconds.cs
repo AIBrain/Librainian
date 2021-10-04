@@ -30,8 +30,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]

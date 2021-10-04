@@ -58,7 +58,7 @@ namespace Librainian.Persistence {
 
 		public IEnumerable<String?> AllKeys => this.Sections.SelectMany( section => this.Data[section].Keys );
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public Document? Document { get; set; }
 
@@ -82,7 +82,7 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="section"></param>
 		/// <param name="key"></param>
 		public String? this[String? section, String? key] {
@@ -118,7 +118,7 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="document"></param>
 		/// <param name="cancellationToken"></param>
 		public JSONFile( Document? document, CancellationToken cancellationToken ) : this() {

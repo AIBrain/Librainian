@@ -46,7 +46,7 @@ namespace Librainian.Persistence {
 
 		public Int64 Total { get; set; }
 
-		public DeserializeReportStats( Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) {
+		public DeserializeReportStats( Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) :base(nameof( DeserializeReportStats ) ){
 			this.Gains.Values.Clear();
 			this.Gains.Value = 0;
 

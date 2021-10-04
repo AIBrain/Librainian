@@ -36,7 +36,7 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.Threading.Tasks;
 	using Exceptions;
 
-	/// <summary></summary>
+	
 	public static class CompressExtensions {
 
 		/// <summary>Compresses the data by using <see cref="GZipStream" />.</summary>

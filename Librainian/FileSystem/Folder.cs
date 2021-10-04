@@ -91,7 +91,7 @@ namespace Librainian.FileSystem {
 		[JsonIgnore]
 		public String Name => this.Info.Name;
 
-		/// <summary></summary>
+		
 		/// <param name="fullPath"></param>
 		/// <exception cref="InvalidOperationException"></exception>
 		/// <exception cref="PathTooLongException"></exception>

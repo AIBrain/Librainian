@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ABetterClassDispose.cs" last touched on 2021-08-15 at 4:56 AM by Protiguous.
+// File "ABetterClassDispose.cs" last touched on 2021-09-11 at 3:26 AM by Protiguous.
 
 #nullable enable
 
@@ -42,6 +42,10 @@ namespace Librainian.Utilities.Disposables {
 	/// <remarks>ABCD (hehe).</remarks>
 	/// <copyright>Created by Protiguous.</copyright>
 	public abstract class ABetterClassDispose : IABetterClassDispose {
+
+		protected ABetterClassDispose( String hint ) {
+			this.SetDisposeHint( hint );
+		}
 
 		private Int32 _hasDisposedManaged;
 
@@ -170,20 +174,13 @@ namespace Librainian.Utilities.Disposables {
 			this.Dispose();
 		}
 
-		/*
-
         /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
-        [CanBeNull]
         private String? DisposeHint { get; set; }
-        */
-
-		/*
 
         /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
         /// <param name="hint"></param>
         [Conditional( "DEBUG" )]
-        public void SetDisposeHint( [CanBeNull] String? hint ) => this.DisposeHint = hint;
-        */
+        public void SetDisposeHint( String hint ) => this.DisposeHint = hint;
 
 	}
 

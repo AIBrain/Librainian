@@ -44,6 +44,10 @@ namespace Librainian.Databases.MMF {
 	[Obsolete( "Unfinished attempt at caching." )]
 	public class MemMapCache<T> : ABetterClassDispose {
 
+		public MemMapCache() : base( nameof( MemMapCache<T> ) ) {
+			
+		}
+
 		private const String Delim = "[!@#]";
 
 		private NetworkStream? _networkStream;

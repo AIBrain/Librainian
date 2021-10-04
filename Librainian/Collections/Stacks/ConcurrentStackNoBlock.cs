@@ -75,7 +75,7 @@ namespace Librainian.Collections.Stacks {
 		}
 	}
 
-	/// <summary></summary>
+	
 	/// <typeparam name="T"></typeparam>
 	/// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
 	public class ConcurrentStackNoBlock<T> {

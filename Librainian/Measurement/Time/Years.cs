@@ -33,8 +33,8 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	[JsonObject]

@@ -31,7 +31,7 @@ namespace Librainian.Persistence {
 	using System.Security.Permissions;
 	using Newtonsoft.Json;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://stackoverflow.com/a/4857322/956364" />
 	[JsonObject]
 	[Serializable]

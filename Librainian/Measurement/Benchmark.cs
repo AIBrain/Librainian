@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Benchmark.cs" last formatted on 2020-08-14 at 8:38 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Measurement {
 
@@ -30,7 +33,7 @@ namespace Librainian.Measurement {
 	using System.Threading;
 	using Exceptions;
 	using Logging;
-	using Seconds = Time.Seconds;
+	using Time;
 
 	/// <summary>
 	///     Originally based upon the idea from
@@ -52,7 +55,7 @@ namespace Librainian.Measurement {
 
 		/// <summary>For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.</summary>
 		/// <param name="method"></param>
-		/// <param name="runFor">Defaults to 5 seconds.</param>
+		/// <param name="runFor">Defaults to 1 second.</param>
 		/// <returns>Returns how many rounds are ran in the time given.</returns>
 		public static UInt64 GetBenchmark( Action method, TimeSpan? runFor ) {
 			if ( method is null ) {
@@ -71,33 +74,24 @@ namespace Librainian.Measurement {
 			runFor ??= Seconds.One;
 
 			try {
-				try {
-					method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
+				method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
 
 				var rounds = 0UL;
 
 				var stopwatch = Stopwatch.StartNew();
 
 				while ( stopwatch.Elapsed < runFor ) {
-					try {
-						method.Invoke();
-					}
-					catch ( Exception exception ) {
-						var again = exception.Log( BreakOrDontBreak.Break );
-						if ( again is not null ) {
-							throw again;
-						}
-					}
-					finally {
-						++rounds;
-					}
+
+					method.Invoke();
+
+					++rounds;
+
 				}
 
 				return rounds;
+			}
+			catch ( Exception exception ) {
+				throw exception.Log( BreakOrDontBreak.Break );
 			}
 			finally {
 				Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
@@ -106,11 +100,12 @@ namespace Librainian.Measurement {
 		}
 
 		/// <summary>
-		/// A quick primitive test for which method runs more times in the given timespan.
+		/// A quick (2 seconds) <strong>primitive</strong> test for which method runs more times in the given timespan.
+		/// <para>For a better, more accurate test, use BenchmarkDotNet nuget.</para>
 		/// </summary>
 		/// <param name="methodA"></param>
 		/// <param name="methodB"></param>
-		/// <param name="runfor">Defaults to 5 seconds.</param>
+		/// <param name="runfor">Defaults to 1 second.</param>
 		public static AorB WhichIsFaster( Action methodA, Action methodB, TimeSpan? runfor = null ) {
 			if ( methodA is null ) {
 				throw new ArgumentEmptyException( nameof( methodA ) );

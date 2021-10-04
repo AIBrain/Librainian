@@ -130,12 +130,12 @@ namespace Librainian.Graphics.Geometry {
 		///     found.
 		/// </summary>
 		public static Boolean CalculateLineLineIntersection(
-			this CoordinateF? line1Point1,
-			CoordinateF? line1Point2,
-			CoordinateF? line2Point1,
-			CoordinateF? line2Point2,
-			out CoordinateF? resultSegmentPoint1,
-			out CoordinateF? resultSegmentPoint2
+			this CoordinateF line1Point1,
+			CoordinateF line1Point2,
+			CoordinateF line2Point1,
+			CoordinateF line2Point2,
+			out CoordinateF resultSegmentPoint1,
+			out CoordinateF resultSegmentPoint2
 		) {
 			"".Break();
 
@@ -143,18 +143,14 @@ namespace Librainian.Graphics.Geometry {
 			resultSegmentPoint1 = CoordinateF.Empty;
 			resultSegmentPoint2 = CoordinateF.Empty;
 
-			var p1 = line1Point1;
-			var p2 = line1Point2;
-			var p3 = line2Point1;
-			var p4 = line2Point2;
-			var p13 = p1 - p3;
-			var p43 = p4 - p3;
+			var p13 = line1Point1 - line2Point1;
+			var p43 = line2Point2 - line2Point1;
 
 			if ( p43.SquareLength < Single.Epsilon ) {
 				return false;
 			}
 
-			var p21 = p2 - p1;
+			var p21 = line1Point2 - line1Point1;
 
 			if ( p21.SquareLength < Single.Epsilon ) {
 				return false;
@@ -175,10 +171,10 @@ namespace Librainian.Graphics.Geometry {
 			var numer = d1343 * d4321 - d1321 * d4343;
 
 			var mua = numer / denom;
-			resultSegmentPoint1 = new CoordinateF( p1.X + mua * p21.X, p1.Y + mua * p21.Y, p1.Z + mua * p21.Z );
+			resultSegmentPoint1 = new CoordinateF( line1Point1.X + mua * p21.X, line1Point1.Y + mua * p21.Y, line1Point1.Z + mua * p21.Z );
 
 			var mub = ( d1343 + d4321 * mua ) / d4343;
-			resultSegmentPoint2 = new CoordinateF( p3.X + mub * p43.X, p3.Y + mub * p43.Y, p3.Z + mub * p43.Z );
+			resultSegmentPoint2 = new CoordinateF( line2Point1.X + mub * p43.X, line2Point1.Y + mub * p43.Y, line2Point1.Z + mub * p43.Z );
 
 			return true;
 		}

@@ -1,7 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code
-//  (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -18,11 +20,10 @@
 //
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "VolatileBoolean.cs" last formatted on 2021-02-12 at 12:10 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -37,9 +38,9 @@ namespace Librainian.Threadsafe {
 	///     <para>A threadsafe boolean.</para>
 	/// </summary>
 	/// <copyright>Protiguous</copyright>
-	public struct VolatileBoolean {
+	public record VolatileBoolean( Boolean _value = false ) {
 
-		private volatile Boolean _value;
+		private volatile Boolean _value = _value;
 
 		public Boolean Value {
 			[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -50,11 +51,6 @@ namespace Librainian.Threadsafe {
 			[DebuggerStepThrough]
 			set => this.WriteFence( value );
 		}
-
-		/// <summary>
-		/// </summary>
-		/// <param name="value"></param>
-		public VolatileBoolean( Boolean value ) => this._value = value;
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		[DebuggerStepThrough]

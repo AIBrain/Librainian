@@ -79,7 +79,7 @@ namespace Librainian.Controls {
 			}
 		}
 
-		public ListBoxLog( ListBox listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
+		public ListBoxLog( ListBox listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) :base(nameof( ListBoxLog ) ){
 			/*
 			if ( String.IsNullOrWhiteSpace( messageFormat ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( messageFormat ) );

@@ -81,7 +81,7 @@ namespace Librainian.Maths.Numbers {
 		[Pure]
 		public Int32 CompareTo( Percentage? other ) {
 			if ( other is null ) {
-				return Order.Before;
+				return SortOrder.Before;
 			}
 
 			return this.Value.CompareTo( other.Value );

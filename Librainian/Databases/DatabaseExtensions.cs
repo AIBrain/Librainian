@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "DatabaseExtensions.cs" last touched on 2021-08-28 at 7:55 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -166,20 +166,17 @@ namespace Librainian.Databases {
 			--retriesLeft;
 
 			switch ( exception ) {
-				case SqlException
-				{
+				case SqlException {
 					IsTransient: true
 				}:
 					return true;
 
-				case DbException
-				{
+				case DbException {
 					IsTransient: true
 				}:
 					return true;
 
-				case SqlException
-				{
+				case SqlException {
 					Errors: { }
 				} sqlxException: {
 						foreach ( SqlError error in sqlxException.Errors ) {
@@ -418,7 +415,10 @@ namespace Librainian.Databases {
 
 			foreach ( var o in propertySearcher.Get() ) {
 				if ( o is ManagementObject managementObject ) {
-					return managementObject["PropertyStrValue"].ToString();
+					var value = managementObject["PropertyStrValue"]?.ToString();
+					if ( !String.IsNullOrWhiteSpace( value ) ) {
+						return value;
+					}
 				}
 			}
 
@@ -590,7 +590,7 @@ namespace Librainian.Databases {
 		public static DataTable ToDataTable( this SqlDataReader dataReader ) {
 			using var table = new DataTable();
 			table.BeginLoadData();
-			table.Load( dataReader, LoadOption.OverwriteChanges, ( _, _ ) => $"Error reading {nameof( dataReader )}.".Log() );
+			table.Load( dataReader, LoadOption.OverwriteChanges, ( _, _ ) => $"Error reading {nameof( dataReader )}.".Verbose() );
 			table.EndLoadData();
 
 			return table;

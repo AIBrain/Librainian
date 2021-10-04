@@ -28,8 +28,8 @@ namespace Librainian.Measurement.Time {
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -98,11 +98,11 @@ namespace Librainian.Measurement.Time {
 
 		public Int32 CompareTo( Zeptoseconds? other ) {
 			if ( other is null ) {
-				return Order.Before;
+				return SortOrder.Before;
 			}
 
 			if ( ReferenceEquals( this, other ) ) {
-				return Order.Same;
+				return SortOrder.Same;
 			}
 
 			return this.Value.CompareTo( other.Value );

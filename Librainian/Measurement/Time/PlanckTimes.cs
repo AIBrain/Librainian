@@ -30,7 +30,7 @@ namespace Librainian.Measurement.Time {
 	using System.Numerics;
 	using System.Runtime.CompilerServices;
 	using Exceptions;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -91,17 +91,17 @@ namespace Librainian.Measurement.Time {
 		/// <summary>
 		///     One <see cref="PlanckTimes" />.
 		/// </summary>
-		public static PlanckTimes One { get; } = new( 1 );
+		public static PlanckTimes One { get; } = new( 1L );
 
 		/// <summary>
 		///     Two <see cref="PlanckTimes" />.
 		/// </summary>
-		public static PlanckTimes Two { get; } = new( 2 );
+		public static PlanckTimes Two { get; } = new( 2L );
 
 		/// <summary>
 		///     Zero <see cref="PlanckTimes" />.
 		/// </summary>
-		public static PlanckTimes Zero { get; } = new( 0 );
+		public static PlanckTimes Zero { get; } = new( 0L );
 
 		/// <summary>
 		///     Compares the current instance with another object of the same type and returns an integer that indicates whether
@@ -116,7 +116,7 @@ namespace Librainian.Measurement.Time {
 		///     <paramref name="other" />. Greater than zero This
 		///     instance follows <paramref name="other" /> in the sort order.
 		/// </returns>
-		public Int32 CompareTo( IQuantityOfTime other ) {
+		public Int32 CompareTo( IQuantityOfTime? other ) {
 			if ( other is null ) {
 				throw new ArgumentEmptyException( nameof( other ) );
 			}

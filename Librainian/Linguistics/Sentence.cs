@@ -47,7 +47,7 @@ namespace Librainian.Linguistics {
 	[Serializable]
 	public class Sentence : IEquatable<Sentence>, IEnumerable<Word>, IComparable<Sentence>, IHasCitations {
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		private List<Word> Words { get; } = new();
 
@@ -87,11 +87,11 @@ namespace Librainian.Linguistics {
 
 		public static Int32 Compare( Sentence? left, Sentence? right ) {
 			if ( ReferenceEquals( left, right ) ) {
-				return Order.Same;
+				return SortOrder.Same;
 			}
 
 			if ( left is null || right is null ) {
-				return Order.Before; //TODO needs tested
+				return SortOrder.Before; //TODO needs tested
 			}
 
 			return left.CompareTo( right );

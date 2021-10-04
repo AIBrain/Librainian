@@ -50,7 +50,7 @@ namespace Librainian.FileSystem {
 		private const Int32 EOFMarker = -1;
 
 		[JsonProperty]
-		private readonly Uri u;
+		private readonly Uri? u;
 
 		/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
 		public static readonly Unique Empty = new();
@@ -62,16 +62,16 @@ namespace Librainian.FileSystem {
 		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
 		/// </summary>
 		[JsonIgnore]
-		public Uri U => this.u;
+		public Uri? U => this.u;
 
 		/// <summary>Just an easier to use mnemonic.</summary>
 		[JsonIgnore]
-		public String AbsolutePath => this.U.AbsolutePath;
+		public String? AbsolutePath => this.U?.AbsolutePath;
 
 		/// <summary>What effect will this have down the road?</summary>
 		private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
 
-		/// <summary></summary>
+		
 		/// <param name="location"></param>
 		/// <exception cref="ArgumentEmptyException">When <paramref name="location" /> was parsed down to nothing.</exception>
 		/// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>

@@ -23,15 +23,15 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Attoseconds.cs" last formatted on 2021-01-01 at 9:38 AM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Measurement.Time {
 
 	using System;
 	using System.Diagnostics;
 	using System.Numerics;
+	using ExtendedNumerics;
 	using Extensions;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -41,60 +41,61 @@ namespace Librainian.Measurement.Time {
 
 		/// <summary>1000</summary>
 		/// <see cref="Femtoseconds" />
-		public const UInt16 InOneFemtosecond = 1000;
+		public const Int16 InOneFemtosecond = 1000;
 
-		public Attoseconds( Int64 value ) : this( new BigDecimal( value ) ) { }
+		public Attoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
+		public Attoseconds( Int64 value ) : this( ( BigDecimal )value ) { }
 
 		public Attoseconds( UInt64 value ) : this( ( BigDecimal )value ) { }
 
 		public Attoseconds( BigInteger value ) : this( ( BigDecimal )value ) { }
 
 		/// <summary>Ten <see cref="Attoseconds" /> s.</summary>
-		public static Attoseconds Fifteen { get; } = new( 15 );
+		public static Attoseconds Fifteen { get; } = new( 15M );
 
 		/// <summary>Five <see cref="Attoseconds" /> s.</summary>
-		public static Attoseconds Five { get; } = new( 5 );
+		public static Attoseconds Five { get; } = new( 5m );
 
 		/// <summary>Five Hundred <see cref="Attoseconds" /> s.</summary>
-		public static Attoseconds FiveHundred { get; } = new( 500 );
+		public static Attoseconds FiveHundred { get; } = new( 500m );
 
 		/// <summary>111. 1 Hertz <see cref="Attoseconds" />.</summary>
-		public static Attoseconds Hertz111 { get; } = new( 9 );
+		public static Attoseconds Hertz111 { get; } = new( 9m );
 
 		/// <summary>One <see cref="Attoseconds" />.</summary>
 		/// <remarks>the time it takes for light to travel the length of three hydrogen atoms</remarks>
-		public static Attoseconds One { get; } = new( 1 );
+		public static Attoseconds One { get; } = new( 1m );
 
 		/// <summary><see cref="OneHundred" /><see cref="Attoseconds" />.</summary>
 		/// <remarks>fastest ever view of molecular motion</remarks>
-		public static Attoseconds OneHundred { get; } = new( 100 );
+		public static Attoseconds OneHundred { get; } = new( 100m );
 
 		/// <summary>One Thousand Nine <see cref="Attoseconds" /> (Prime).</summary>
-		public static Attoseconds OneThousandNine { get; } = new( 1009 );
+		public static Attoseconds OneThousandNine { get; } = new( 1009m );
 
 		/// <summary>Sixteen <see cref="Attoseconds" />.</summary>
-		public static Attoseconds Sixteen { get; } = new( 16 );
+		public static Attoseconds Sixteen { get; } = new( 16m );
 
 		/// <summary><see cref="SixtySeven" /><see cref="Attoseconds" />.</summary>
 		/// <remarks>the shortest pulses of laser light yet created</remarks>
-		public static Attoseconds SixtySeven { get; } = new( 67 );
+		public static Attoseconds SixtySeven { get; } = new( 67m );
 
 		/// <summary>Ten <see cref="Attoseconds" /> s.</summary>
-		public static Attoseconds Ten { get; } = new( 10 );
+		public static Attoseconds Ten { get; } = new( 10m );
 
 		/// <summary>Three <see cref="Attoseconds" /> s.</summary>
-		public static Attoseconds Three { get; } = new( 3 );
+		public static Attoseconds Three { get; } = new( 3m );
 
 		/// <summary>Three Three Three <see cref="Attoseconds" />.</summary>
-		public static Attoseconds ThreeHundredThirtyThree { get; } = new( 333 );
+		public static Attoseconds ThreeHundredThirtyThree { get; } = new( 333m );
 
 		/// <summary><see cref="ThreeHundredTwenty" /><see cref="Attoseconds" />.</summary>
 		/// <remarks>estimated time it takes electrons to transfer between atoms</remarks>
-		public static Attoseconds ThreeHundredTwenty { get; } = new( 320 );
+		public static Attoseconds ThreeHundredTwenty { get; } = new( 320m );
 
 		/// <summary><see cref="Twelve" /><see cref="Attoseconds" />.</summary>
 		/// <remarks>record for shortest time interval measured as of 12 May 2010</remarks>
-		public static Attoseconds Twelve { get; } = new( 12 );
+		public static Attoseconds Twelve { get; } = new( 12m );
 
 		/// <summary><see cref="TwentyFour" /><see cref="Attoseconds" />.</summary>
 		/// <remarks>the atomic unit of time</remarks>

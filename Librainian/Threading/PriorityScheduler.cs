@@ -32,7 +32,7 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 
-	/// <summary></summary>
+	
 	/// <example>
 	///     Task.Run(() =&gt; { //everything here will be executed in a thread whose priority is BelowNormal }, null,
 	///     TaskCreationOptions.None, PriorityScheduler.BelowNormal);

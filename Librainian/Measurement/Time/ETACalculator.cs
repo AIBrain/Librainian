@@ -70,7 +70,7 @@ namespace Librainian.Measurement.Time {
 			}
 		}
 
-		public EtaCalculator() => this.Reset( Seconds.One );
+		public EtaCalculator() : base( nameof( EtaCalculator ) ) => this.Reset( Seconds.One );
 
 		/// <summary>
 		///     <para>Returns True when there is enough data to calculate the ETA.</para>

@@ -28,7 +28,7 @@
 namespace Librainian.Measurement.Length {
 
 	using System;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 	using Newtonsoft.Json;
 
 	[JsonObject]

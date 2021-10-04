@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "IDocument.cs" last touched on 2021-03-07 at 3:17 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -50,11 +50,11 @@ namespace Librainian.FileSystem {
 
 		/// <summary>
 		///     Largest amount of memory that will be allocated for file reads.
+		/// <para>1 gibibyte</para>
 		/// </summary>
-		/// <remarks>About 1.8GB (90% of 2GB)</remarks>
-		const Int32 MaximumBufferSize = ( Int32 )( Int32.MaxValue * 0.9 );
+		public const Int32 MaximumBufferSize = 1024 * 1024 * 1024;
 
-		Byte[]? Buffer { get; set; }
+		public Byte[]? Buffer { get; set; }
 
 		/// <summary>Local file creation <see cref="DateTime" />.</summary>
 		public DateTime? CreationTime { get; set; }

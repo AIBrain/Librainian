@@ -75,7 +75,7 @@ namespace Librainian.Parsing {
 			}
 		}
 
-		public ContinuousSentence( String? startingInput = null ) => this.CurrentBuffer = startingInput ?? String.Empty;
+		public ContinuousSentence( String? startingInput = null ) :base(nameof( ContinuousSentence ) ) => this.CurrentBuffer = startingInput ?? String.Empty;
 
 		/// <summary>Append the <paramref name="text" /> to the current sentence buffer.</summary>
 		public ContinuousSentence Add( String? text ) {

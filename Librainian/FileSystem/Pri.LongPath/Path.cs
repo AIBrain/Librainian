@@ -378,7 +378,7 @@ namespace Librainian.FileSystem.Pri.LongPath {
 			return path;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="path"></param>
 		/// <exception cref="ArgumentEmptyException">Thrown if any invalid chars found in path.</exception>
 		[Pure]

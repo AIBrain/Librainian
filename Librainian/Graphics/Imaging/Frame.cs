@@ -47,7 +47,7 @@ namespace Librainian.Graphics.Imaging {
 		[JsonProperty]
 		public UInt64 Delay { get; }
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public UInt64 Identity { get; }
 

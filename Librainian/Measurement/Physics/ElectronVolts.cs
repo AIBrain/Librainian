@@ -29,9 +29,9 @@ namespace Librainian.Measurement.Physics {
 
 	using System;
 	using System.Diagnostics;
+	using ExtendedNumerics;
 	using Extensions;
 	using Maths;
-	using Maths.Bigger;
 
 	/// <summary>Units of mass and energy in ElectronVolts.</summary>
 	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -49,13 +49,13 @@ namespace Librainian.Measurement.Physics {
 
 		public static readonly ElectronVolts NegativeOne = new( -1m );
 
-		/// <summary></summary>
+		
 		public static readonly ElectronVolts NegativeZero = new( -Decimal.Zero );
 
 		/// <summary>More than nothing (unknown but not massless).</summary>
 		public static readonly ElectronVolts NonZero = new( MathExtensions.EpsilonDecimal );
 
-		/// <summary></summary>
+		
 		public static readonly ElectronVolts One = new( 1m );
 
 		public static readonly ElectronVolts Zero = new( 0m );

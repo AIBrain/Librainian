@@ -31,6 +31,10 @@ namespace Librainian.Graphics.Video {
 
 	public class BitmapInfo : ABetterClassDispose {
 
+		public BitmapInfo() : base( nameof( BitmapInfo ) ) {
+			
+		}
+
 		//count of frames in the AVI stream, or 0
 		public Int32 AviCountFrames { get; set; }
 

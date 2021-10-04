@@ -72,7 +72,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			return actionBlock.Completion;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="wallet"></param>
 		/// <param name="message"></param>
 		public static Boolean Deposit( this Wallet wallet, TransactionMessage message ) {

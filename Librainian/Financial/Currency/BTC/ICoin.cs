@@ -24,7 +24,7 @@
 
 namespace Librainian.Financial.Currency.BTC {
 
-	/// <summary></summary>
+	
 	/// <see cref="http://wikipedia.org/wiki/Bitcoin" />
 	/// <see cref="http://en.bitcoin.it/wiki/FAQ" />
 	/// <see cref="http://bitcoin.it/wiki/Units" />

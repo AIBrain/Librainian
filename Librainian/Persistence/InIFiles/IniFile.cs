@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "IniFile.cs" last touched on 2021-03-07 at 4:38 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -65,6 +65,7 @@ namespace Librainian.Persistence.InIFiles {
 			Section,
 
 			KVP
+
 		}
 
 		public const String SectionBegin = "[";
@@ -132,7 +133,6 @@ namespace Librainian.Persistence.InIFiles {
 				}
 
 				if ( this.Data.ContainsKey( section ) ) {
-
 					//TODO merge, not overwrite
 					this.Data[section] = value;
 
@@ -411,14 +411,12 @@ namespace Librainian.Persistence.InIFiles {
 				return true;
 			}
 			catch ( IOException exception ) {
-
 				//file in use by another app
 				exception.Log();
 
 				return false;
 			}
 			catch ( OutOfMemoryException exception ) {
-
 				//file is big-huge! As my daughter would say.
 				exception.Log();
 
@@ -454,7 +452,6 @@ namespace Librainian.Persistence.InIFiles {
 
 				switch ( lineType ) {
 					case LineType.Unknown: {
-
 							//TODO Do nothing? or add to "bottom" of the "top" of lines, ie Global-Comments-No-Section
 							break;
 						}
@@ -532,7 +529,7 @@ namespace Librainian.Persistence.InIFiles {
 				}
 			}
 
-			foreach ( var section in this.Data.Keys.OrderBy( section => section ) ) {
+			await foreach ( var section in this.Data.Keys.OrderBy( section => section ).ToAsyncEnumerable().WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
 				await this.WriteSectionAsync( document, section, cancellationToken ).ConfigureAwait( false );
 			}
 
@@ -564,5 +561,7 @@ namespace Librainian.Persistence.InIFiles {
 
 			return false;
 		}
+
 	}
+
 }

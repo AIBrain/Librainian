@@ -34,7 +34,7 @@ namespace Librainian.Security {
     using OperatingSystem;
     using Utilities;
 
-    /// <summary></summary>
+    
     public class Impersonator : ABetterClassDispose {
         [CanBeNull]
         private WindowsImpersonationContext _impersonationContext;

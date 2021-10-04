@@ -344,6 +344,15 @@ dotnet_diagnostic.CA1401.severity = none
 # AsyncFixer01: Unnecessary async/await usage
 dotnet_diagnostic.AsyncFixer01.severity = none
 
+# RCS1138: Add summary to documentation comment.
+dotnet_diagnostic.RCS1138.severity = silent
+
+# CA1051: Do not declare visible instance fields
+dotnet_diagnostic.CA1051.severity = suggestion
+
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = error
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab

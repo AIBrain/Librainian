@@ -70,7 +70,7 @@ namespace Librainian.FileSystem {
 
 		public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
 
-		public FindEveryDocument( IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) {
+		public FindEveryDocument( IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) : base( nameof( FindEveryDocument ) ) {
 			this.Progress = progress ?? throw new ArgumentEmptyException( nameof( progress ) );
 			documentsFound = new BufferBlock<IDocument>();
 			this.DocumentsFound = documentsFound;

@@ -49,7 +49,7 @@ namespace Librainian.Threading {
 
 		public Boolean Snagged { get; private set; }
 
-		private SingleAccess() {
+		private SingleAccess() : base(nameof( SingleAccess ) ) {
 			/* Disallow private contructor */
 		}
 
@@ -63,7 +63,7 @@ namespace Librainian.Threading {
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
-		public SingleAccess( String name, TimeSpan? timeout = null ) {
+		public SingleAccess( String name, TimeSpan? timeout = null ) : base( nameof( SingleAccess ) ) {
 			if ( String.IsNullOrWhiteSpace( name ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
 			}
@@ -112,13 +112,13 @@ namespace Librainian.Threading {
 
 		public Boolean Snagged { get; private set; }
 
-		private SingleAccess() {
+		private SingleAccess():base(nameof( SingleAccess ) ) {
 			/* Disallow private contructor */
 		}
 
 		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="self" />.</summary>
 		/// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
-		public SingleAccess( [DisallowNull] T self, TimeSpan? timeout = null ) {
+		public SingleAccess( [DisallowNull] T self, TimeSpan? timeout = null ) : base( nameof( SingleAccess ) ) {
 			try {
 				timeout ??= Minutes.One;
 

@@ -154,7 +154,7 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		private StringKVPTable() => throw new NotImplementedException();
+		private StringKVPTable() : base( nameof( StringKVPTable ) ) => throw new NotImplementedException();
 
 		public StringKVPTable( Environment.SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, tableName ) ) { }
 
@@ -169,7 +169,7 @@ namespace Librainian.Persistence {
 		public StringKVPTable( Folder folder, String subFolder, String tableName ) : this(
 			Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
 
-		public StringKVPTable( Folder folder ) {
+		public StringKVPTable( Folder folder ) : base( nameof( StringKVPTable ) ) {
 			if ( folder is null ) {
 				throw new ArgumentEmptyException( nameof( folder ) );
 			}

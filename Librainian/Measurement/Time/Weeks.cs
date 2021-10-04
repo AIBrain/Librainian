@@ -33,7 +33,7 @@ namespace Librainian.Measurement.Time {
 	using System.Diagnostics;
 	using System.Numerics;
 	using Exceptions;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 	using Newtonsoft.Json;
 
 	[JsonObject]
@@ -78,11 +78,11 @@ namespace Librainian.Measurement.Time {
 
 		public Int32 CompareTo( IQuantityOfTime? other ) {
 			if ( other is null ) {
-				return Order.Before;
+				return SortOrder.Before;
 			}
 
 			if ( ReferenceEquals( this, other ) ) {
-				return Order.Same;
+				return SortOrder.Same;
 			}
 
 			return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );

@@ -118,7 +118,7 @@ namespace Librainian.Collections {
 
 		public Countable() : this( Minutes.One, Minutes.One ) { }
 
-		public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) {
+		public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) : base(nameof(Countable<TKey> )) {
 			this.ReadTimeout = readTimeout;
 			this.WriteTimeout = writeTimeout;
 		}

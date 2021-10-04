@@ -36,7 +36,7 @@ namespace Librainian.Financial.Customers {
 
 		public List<Wallet> Wallets { get; } = new();
 
-		public Cashier( Guid cashierID ) => this.Wallets.Add( new Wallet( cashierID ) );
+		public Cashier( Guid cashierID ) : base( nameof( Cashier ) ) => this.Wallets.Add( new Wallet( cashierID ) );
 
 		/// <summary>Dispose any disposable members.</summary>
 		public override void DisposeManaged() {

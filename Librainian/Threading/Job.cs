@@ -55,7 +55,7 @@ namespace Librainian.Threading {
 		public CancellationTokenSource CTS { get; }
 
 		/// <summary>Query the <see cref="ETR" />.</summary>
-		public TimeSpan EstimatedTimeRemaining => this.MaxRunningTime - this.Elapsed();
+		public TimeSpan EstimatedTimeRemaining() => this.MaxRunningTime - this.Elapsed();
 
 		public TimeSpan MaxRunningTime { get; private set; }
 
@@ -70,13 +70,15 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="maxRuntime"></param>
 		/// <param name="progress">Update this progress after each <see cref="Step" />.</param>
-		private Job( TimeSpan maxRuntime, IProgress<Single> progress ) {
+		private Job( TimeSpan maxRuntime, IProgress<Single> progress ) : base( nameof( Job<T> ) ) {
 			this.MaxRunningTime = maxRuntime;
 			this.Progress = progress;
 			this.CTS = new CancellationTokenSource( this.MaxRunningTime );
 			this._stopwatch = Stopwatch.StartNew();
-			var timer = FluentTimerExt.CreateTimer( Fps.Sixty ).AutoReset().AndStart();
+			this.Timer = FluentTimer.Create( Fps.Sixty ).AutoReset().AndStart();
 		}
+
+		private FluentTimer Timer { get; set; }
 
 		public Job( Func<T> func, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
 			if ( func is null ) {
@@ -144,6 +146,8 @@ namespace Librainian.Threading {
 			if ( !this.CTS.IsCancellationRequested ) {
 				this.CTS.Cancel( true );
 			}
+
+			this.Timer.Stop();
 		}
 
 		/// <summary>
@@ -152,7 +156,7 @@ namespace Librainian.Threading {
 		public TimeSpan Elapsed() => this._stopwatch.Elapsed;
 
 		/// <summary>Query the <see cref="EstimatedTimeRemaining" />.</summary>
-		public TimeSpan ETR() => this.EstimatedTimeRemaining;
+		public TimeSpan ETR() => this.EstimatedTimeRemaining();
 
 		public Boolean IsDone() => this.TheTask.IsDone();
 

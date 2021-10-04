@@ -37,13 +37,13 @@ namespace Librainian.Maths {
 			/// <see cref="http://wikipedia.org/wiki/Addition" />
 			Addition,
 
-			/// <summary></summary>
+			
 			Subtraction,
 
-			/// <summary></summary>
+			
 			Multiplication,
 
-			/// <summary></summary>
+			
 			Division
 		}
 

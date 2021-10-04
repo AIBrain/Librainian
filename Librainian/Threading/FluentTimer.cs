@@ -74,42 +74,6 @@ namespace Librainian.Threading {
 			return timer;
 		}
 
-		public static FluentTimer CreateTimer( this Hertz frequency, Action onTick ) => CreateTimer( ( TimeSpan )frequency, onTick );
-
-		/// <summary>
-		///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
-		///     <para>Defaults to a one-time <see cref="Timer.Elapsed" /></para>
-		/// </summary>
-		/// <param name="interval"> </param>
-		/// <param name="onTick"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public static FluentTimer CreateTimer( this TimeSpan interval, Action? onTick = null ) {
-			if ( interval < Milliseconds.One ) {
-				interval = Milliseconds.One;
-			}
-
-			var milliseconds = interval.TotalMilliseconds;
-
-			if ( milliseconds <= 0 ) {
-				milliseconds = 1;
-			}
-
-			var create = new FluentTimer( milliseconds ).Once();
-
-			create.Timer.Elapsed += ( sender, args ) => {
-				try {
-					create.Timer.Stop();
-					onTick?.Invoke();
-				}
-				finally {
-					if ( create.Timer.AutoReset ) {
-						_ = create.Start();
-					}
-				}
-			};
-
-			return create;
-		}
 
 		public static FluentTimer End( this FluentTimer timer ) {
 			if ( timer is null ) {
@@ -147,6 +111,44 @@ namespace Librainian.Threading {
 
 	public class FluentTimer : ABetterClassDispose {
 
+
+		public static FluentTimer Create( Hertz frequency, Action onTick ) => Create( ( TimeSpan )frequency, onTick );
+
+		/// <summary>
+		///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
+		///     <para>Defaults to a one-time tick.</para>
+		/// </summary>
+		/// <param name="interval"> </param>
+		/// <param name="onTick"></param>
+		/// <exception cref="ArgumentException"></exception>
+		public static FluentTimer Create( TimeSpan interval, Action? onTick = null ) {
+			if ( interval < Milliseconds.One ) {
+				interval = Milliseconds.One;
+			}
+
+			var milliseconds = interval.TotalMilliseconds;
+
+			if ( milliseconds <= 0 ) {
+				milliseconds = 1;
+			}
+
+			var create = new FluentTimer( milliseconds ).Once();
+
+			create.Timer.Elapsed += ( sender, args ) => {
+				try {
+					//create.Timer.Stop();
+					onTick?.Invoke();
+				}
+				finally {
+					//if ( create.Timer.AutoReset ) {
+					//	_ = create.Start();
+					//}
+				}
+			};
+
+			return create;
+		}
+
 		internal Timer Timer { get; }
 
 		/// <summary>
@@ -156,7 +158,7 @@ namespace Librainian.Threading {
 
 		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Decimal )milliseconds ) ) { }
 
-		public FluentTimer( IQuantityOfTime quantityOfTime ) {
+		public FluentTimer( IQuantityOfTime quantityOfTime ) : base( nameof( FluentTimer ) ) {
 			if ( quantityOfTime == null ) {
 				throw new ArgumentEmptyException( nameof( quantityOfTime ) );
 			}

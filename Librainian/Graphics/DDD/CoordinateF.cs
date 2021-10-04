@@ -44,7 +44,7 @@ namespace Librainian.Graphics.DDD {
 	[JsonObject]
 	public class CoordinateF : IEquatable<CoordinateF>, IComparable<CoordinateF> {
 
-		public static CoordinateF? Empty { get; } = new( Single.Epsilon, Single.Epsilon, Single.Epsilon );
+		public static CoordinateF Empty { get; } = new( Single.Epsilon, Single.Epsilon, Single.Epsilon );
 
 		public static CoordinateF One { get; } = new( 1, 1, 1 );
 
@@ -69,7 +69,7 @@ namespace Librainian.Graphics.DDD {
 		public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( Randem.NextFloat( x.Min, x.Max ), Randem.NextFloat( y.Min, y.Max ),
 																				  Randem.NextFloat( z.Min, z.Max ) ) { }
 
-		/// <summary></summary>
+		
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
@@ -159,7 +159,7 @@ namespace Librainian.Graphics.DDD {
 		/// <param name="other">An object to compare with this object.</param>
 		public Int32 CompareTo( CoordinateF? other ) {
 			if ( other is null ) {
-				return Order.Before;
+				return SortOrder.Before;
 			}
 
 			return this.SquareLength.CompareTo( other.SquareLength );

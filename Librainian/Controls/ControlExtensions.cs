@@ -276,7 +276,7 @@ namespace Librainian.Controls {
 			}
 
 			spanOff ??= Milliseconds.FiveHundred;
-			spanOff.Value.CreateTimer( () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) ).Once().Start();
+			FluentTimer.Create( spanOff.Value, () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) ).Once().Start();
 		}
 
 		/// <summary>
@@ -552,7 +552,7 @@ namespace Librainian.Controls {
 		public static async FireAndForget Push( this Button? control, TimeSpan? delay = null, Action? afterClick = null ) {
 			await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
 
-			control.InvokeAction( control!.PerformClick, RefreshOrInvalidate.Neither );
+			control?.InvokeAction( control.PerformClick, RefreshOrInvalidate.Neither );
 			afterClick?.Invoke();
 		}
 

@@ -25,7 +25,7 @@
 namespace Librainian.Measurement.Time {
 
 	using System.Numerics;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 
 	public static class PlanckExtensions {
 

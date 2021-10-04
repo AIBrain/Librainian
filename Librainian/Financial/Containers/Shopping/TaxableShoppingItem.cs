@@ -26,7 +26,7 @@ namespace Librainian.Financial.Containers.Shopping {
 
 	using System;
 
-	public class TaxableShoppingItem : ShoppingItem {
+	public record TaxableShoppingItem : ShoppingItem {
 
 		public TaxableShoppingItem( ItemCategory category, Guid itemID ) : base( category, itemID ) => this.TaxExempt = false;
 	}

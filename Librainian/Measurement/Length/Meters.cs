@@ -28,7 +28,7 @@
 namespace Librainian.Measurement.Length {
 
 	using System;
-	using Maths.Bigger;
+	using ExtendedNumerics;
 
 	public record Meters( BigDecimal Value ) {
 		public Meters( Decimal meters ) : this( ( BigDecimal )meters ) { }

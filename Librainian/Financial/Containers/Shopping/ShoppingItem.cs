@@ -29,10 +29,11 @@ namespace Librainian.Financial.Containers.Shopping {
 	using Exceptions.Warnings;
 	using Extensions;
 	using Newtonsoft.Json;
+	using Utilities.Disposables;
 
 	[JsonObject]
 	[Immutable]
-	public class ShoppingItem {
+	public record ShoppingItem : ABetterRecordDispose {
 
 		[JsonProperty]
 		public ItemCategory Category { get; }

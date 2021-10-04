@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "ArgumentEmptyException.cs" last touched on 2021-04-25 at 6:18 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Exceptions {
 
@@ -42,13 +42,17 @@ namespace Librainian.Exceptions {
 		protected ArgumentEmptyException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
 		public ArgumentEmptyException( String? paramName ) {
-			CannotBeEmpty( paramName ).Log( BreakOrDontBreak.Break );
+			CannotBeEmpty( paramName ).DebugLine();
+			this.Log( BreakOrDontBreak.Break );
 		}
 
 		public ArgumentEmptyException( String? paramName, Exception? innerException ) : base( CannotBeEmpty( paramName ), innerException ) {
-			CannotBeEmpty( paramName ).Log( BreakOrDontBreak.Break );
+			CannotBeEmpty( paramName ).DebugLine();
+			this.Log( BreakOrDontBreak.Break );
 		}
 
 		private static String CannotBeEmpty( String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
+
 	}
+
 }

@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Class1.cs" last touched on 2021-08-28 at 5:15 AM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Internet {
 
@@ -41,9 +41,9 @@ namespace Librainian.Internet {
 			var requestPath = $"points/{coordinates}/forecast/hourly";
 			var client = new RestClient( apiUrl );
 			var request = new RestRequest( requestPath );
-			dynamic response = await client.GetAsync<dynamic>( request ).ConfigureAwait( false );
+			var response = await client.GetAsync<dynamic>( request ).ConfigureAwait( false );
 			if ( response.StatusCode == HttpStatusCode.OK ) {
-				dynamic obj = JObject.Parse( response.Content );
+				var obj = JObject.Parse( response.Content );
 				var period = obj.properties.periods[0];
 				return ( Double )period.temperature;
 			}

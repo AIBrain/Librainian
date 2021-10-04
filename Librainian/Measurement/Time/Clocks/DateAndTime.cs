@@ -28,7 +28,9 @@
 namespace Librainian.Measurement.Time.Clocks {
 
 	using Extensions;
+	using Utilities;
 
 	[Immutable]
-	public record DateAndTime( Date Date, Time Time );
+	[NeedsTesting]
+	public record DateAndTime( Date Date, TimeClock Time );
 }

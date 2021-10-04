@@ -74,7 +74,7 @@ namespace Librainian.Financial.Currency.BTC {
 		/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
 		public Decimal Total => this._coins.Aggregate( Decimal.Zero, ( current, pair ) => current + pair.Key.FaceValue * pair.Value );
 
-		private CoinWallet( Guid id ) {
+		private CoinWallet( Guid id ) : base( nameof( CoinWallet ) ) {
 			this.ID = id;
 
 			this.Actor = new ActionBlock<BitcoinTransactionMessage>( message => {

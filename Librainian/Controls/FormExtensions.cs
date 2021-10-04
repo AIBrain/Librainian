@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "FormExtensions.cs" last touched on 2021-05-05 at 5:51 PM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -86,7 +86,7 @@ namespace Librainian.Controls {
 				throw new InvalidOperationException( "Application registry not set up." );
 			}
 
-			$"Loading form {form.Name} position from registry.".Log();
+			$"Loading form {form.Name} position from registry.".Verbose();
 
 			var width = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Width ) );
 			var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
@@ -141,7 +141,7 @@ namespace Librainian.Controls {
 				throw new InvalidOperationException( "Application registry not set up." );
 			}
 
-			$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Log();
+			$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
 
 			AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
 				form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );

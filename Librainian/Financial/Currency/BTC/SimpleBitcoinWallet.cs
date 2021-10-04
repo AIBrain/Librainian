@@ -110,7 +110,7 @@ namespace Librainian.Financial.Currency.BTC {
 
 		/// <summary>Initialize the wallet with the specified <paramref name="btcbalance" /> .</summary>
 		/// <param name="btcbalance"></param>
-		public SimpleBitcoinWallet( Decimal btcbalance ) {
+		public SimpleBitcoinWallet( Decimal btcbalance ) : base( nameof( SimpleBitcoinWallet ) ) {
 			this._balance = btcbalance;
 			this.Timeout = Minutes.One;
 		}

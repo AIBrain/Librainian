@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "IOWrapper.cs" last formatted on 2020-08-14 at 8:40 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -260,10 +263,6 @@ namespace Librainian.FileSystem {
 
 				Debug.Assert( startingVcn == 0 );
 
-				if ( startingVcn != 0 ) {
-					throw new InvalidOperationException( $"{nameof(startingVcn)} is not 0." );
-				}
-
 				pDest = ( IntPtr )( ( Int64 )pDest + 8 );
 
 				// now pDest points at an array of pairs of Int64s.
@@ -289,12 +288,12 @@ namespace Librainian.FileSystem {
 			finally {
 				hFile.CloseHandle();
 
-				
+
 				//hFile = IntPtr.Zero;
 
 				Marshal.FreeHGlobal( pAlloc );
 
-				
+
 				//pAlloc = IntPtr.Zero;
 			}
 		}
@@ -347,10 +346,6 @@ namespace Librainian.FileSystem {
 
 				Debug.Assert( startingLcn == 0 );
 
-				if ( startingLcn != 0 ) {
-					throw new InvalidOperationException( $"{nameof( startingLcn )} is not 0." );
-				}
-
 				pDest = ( IntPtr )( ( Int64 )pDest + 8 );
 				var bitmapSize = ( Int64 )( Marshal.PtrToStructure( pDest, typeof( Int64 ) ) ?? throw new InvalidOperationException() );
 
@@ -359,7 +354,7 @@ namespace Librainian.FileSystem {
 
 				var bitmapBegin = ( IntPtr )( ( Int64 )pDest + 8 );
 
-				var byteArr = new Byte[ byteSize ];
+				var byteArr = new Byte[byteSize];
 
 				Marshal.Copy( bitmapBegin, byteArr, 0, byteSize );
 
@@ -396,7 +391,7 @@ namespace Librainian.FileSystem {
 
 				hFile = OpenFile( path );
 
-				var mfd = new MoveFileData( count, hFile, lcn, vcn);
+				var mfd = new MoveFileData( count, hFile, lcn, vcn );
 
 				var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
 				var p = handle.AddrOfPinnedObject();
@@ -440,7 +435,7 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>input structure for use in MoveFile</summary>
-		public record MoveFileData( Int32 ClusterCount , IntPtr HFile , Int64 StartingLcn , Int64 StartingVcn );
+		public record MoveFileData( Int32 ClusterCount, IntPtr HFile, Int64 StartingLcn, Int64 StartingVcn );
 
 	}
 }

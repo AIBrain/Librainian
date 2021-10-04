@@ -37,7 +37,7 @@ namespace Librainian.Threading {
 	/// </summary>
 	public class NicerSystemTimer : ABetterClassDispose {
 
-		private ReaderWriterLockSlim access { get; set; }
+		private ReaderWriterLockSlim? access { get; set; }
 
 		private Timer? Timer { get; set; }
 
@@ -47,7 +47,7 @@ namespace Librainian.Threading {
 		/// <param name="action">      </param>
 		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
 		/// <param name="milliseconds"></param>
-		public NicerSystemTimer( Action action, Boolean repeat, Double? milliseconds = null ) {
+		public NicerSystemTimer( Action action, Boolean repeat, Double? milliseconds = null ) : base( nameof( NicerSystemTimer ) ) {
 			if ( action == null ) {
 				throw new ArgumentEmptyException( nameof( action ) );
 			}
@@ -80,6 +80,7 @@ namespace Librainian.Threading {
 
 		public override void DisposeManaged() {
 			using ( this.Timer ) {
+				this.Timer?.Stop();
 				this.Timer = null;
 			}
 

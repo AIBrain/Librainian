@@ -30,11 +30,11 @@ namespace Librainian.OperatingSystem.Compression {
 	//[TestFixture]
 	public static class RandomnessTest {
 
-		public static RandomnessFeeding RandomnessFeeding { get; } = new();
+		public static RandomnessFeeder RandomnessFeeder { get; } = new();
 
 		//[OneTimeTearDown]
 		public static void Done() {
-			using ( RandomnessFeeding ) { }
+			using ( RandomnessFeeder ) { }
 		}
 
 		//[Test]
@@ -54,11 +54,11 @@ namespace Librainian.OperatingSystem.Compression {
 
 				//Trace.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
 				//var before = RandomnessFeeding.HowManyBytesFed;
-				RandomnessFeeding.FeedItData( buffer );
+				RandomnessFeeder.FeedItData( buffer );
 
 				//var after = RandomnessFeeding.HowManyBytesFed;
 
-				RandomnessFeeding.Report();
+				RandomnessFeeder.Report();
 			}
 
 			return true;

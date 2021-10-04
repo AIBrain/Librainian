@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,57 +23,151 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "WebServer.cs" last formatted on 2020-08-14 at 8:34 PM.
+// File "SimpleWebServer.cs" last touched on 2021-04-25 at 6:08 PM by Protiguous.
+
+#nullable enable
 
 namespace Librainian.Internet.Servers {
 
 	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 	using System.Net;
+	using System.Text;
 	using System.Threading;
+	using System.Threading.Tasks;
+	using JetBrains.Annotations;
+	using Logging;
 	using Utilities.Disposables;
 
+	
+	/// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
+	/// <example>
+	/// <code>
+	///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/");
+	///		ws.Run();
+	///		Console.WriteLine("A simple webserver. Press a key to quit.");
+	///		Console.ReadKey();
+	///     ws.Stop();
+	/// </code>
+	/// </example>
+	/// <example>
+	/// <code>
+	///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }
+	/// </code>
+	/// </example>
+	[UsedImplicitly]
 	public class WebServer : ABetterClassDispose {
 
+		
 		private readonly HttpListener _httpListener = new();
 
-		private readonly AutoResetEvent _listenForNextRequest = new( false );
+		
+		private readonly Func<HttpListenerRequest, String>? _responderResponderMethod;
 
-		public Boolean IsRunning { get; private set; }
+		public Boolean IsReadyForRequests { get; private set; }
 
-		public String Prefix { get; set; }
+		public String? NotReadyBecause { get; private set; }
 
-		private static void ListenerCallback( IAsyncResult? ar ) {
+		
+		/// <param name="prefixes"></param>
+		/// <param name="responderMethod">  </param>
+		/// <exception cref="HttpListenerException"></exception>
+		/// <exception cref="ObjectDisposedException"></exception>
+		public WebServer( ICollection<String>? prefixes, Func<HttpListenerRequest, String>? responderMethod ) : base( nameof( WebServer ) ) {
+			this.ImNotReady( String.Empty );
 
-			//TODO
-		}
+			if ( !HttpListener.IsSupported ) {
+				this.ImNotReady( "HttpListener is not supported." );
 
-		// Loop here to begin processing of new requests.
-		private void Listen( Object? state ) {
-			while ( this._httpListener.IsListening ) {
-				this._httpListener.BeginGetContext( ListenerCallback, this._httpListener );
-				this._listenForNextRequest.WaitOne();
+				return;
+			}
+
+			if ( prefixes?.Any() != true ) {
+				this.ImNotReady( "URI prefixes are required." );
+
+				return;
+			}
+
+			if ( responderMethod is null ) {
+				this.ImNotReady( "A responder method is required" );
+
+				return;
+			}
+
+			foreach ( var prefix in prefixes ) {
+				this._httpListener.Prefixes.Add( prefix );
+			}
+
+			this._responderResponderMethod = responderMethod;
+
+			try {
+				this._httpListener.Start();
+				this.IsReadyForRequests = true;
+			}
+			catch {
+				this.ImNotReady( "The httpListener did not Start()." );
 			}
 		}
 
-		internal void Stop() {
-			this._httpListener.Stop();
-			this.IsRunning = false;
+		public WebServer( Func<HttpListenerRequest, String>? method, params String[]? prefixes ) : this( prefixes, method ) { }
+
+		private void ImNotReady( String? because ) {
+			this.IsReadyForRequests = false;
+			this.NotReadyBecause = because;
 		}
 
 		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			using ( this._listenForNextRequest ) { }
+		public override void DisposeManaged() => this.Stop();
+
+		/// <summary>Start the http listener.</summary>
+		/// <param name="cancellationToken"></param>
+		/// <see cref="Stop" />
+		public async Task Run( CancellationToken cancellationToken ) {
+			"Webserver running...".Verbose();
+
+			try {
+				while ( this._httpListener.IsListening ) {
+					"Webserver listening..".Verbose();
+
+					var listenerContext = await this._httpListener.GetContextAsync().ConfigureAwait( false );
+
+					if ( this._responderResponderMethod is null ) {
+
+						//no responderMethod?!?
+						return;
+					}
+
+					try {
+						var response = this._responderResponderMethod( listenerContext.Request );
+						var buffer = Encoding.UTF8.GetBytes( response );
+						listenerContext.Response.ContentLength64 = buffer.Length;
+						await listenerContext.Response.OutputStream.WriteAsync( buffer, cancellationToken ).ConfigureAwait( false );
+					}
+					catch(Exception exception) {
+						exception.Log(BreakOrDontBreak.DontBreak);
+					}
+					finally {
+						listenerContext.Response.OutputStream.Close();
+					}
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log( BreakOrDontBreak.DontBreak );
+			}
 		}
 
-		public void Start() {
-			if ( String.IsNullOrEmpty( this.Prefix ) ) {
-				throw new InvalidOperationException( "Specify prefix" );
-			}
+		public void Stop() {
+			using ( this._httpListener ) {
+				try {
+					if ( this._httpListener.IsListening ) {
+						this._httpListener.Stop();
+					}
+				}
+				catch ( ObjectDisposedException ) { }
 
-			this._httpListener.Prefixes.Clear();
-			this._httpListener.Prefixes.Add( this.Prefix );
-			this._httpListener.Start();
-			ThreadPool.QueueUserWorkItem( this.Listen );
+				this._httpListener.Close();
+			}
 		}
 	}
 }

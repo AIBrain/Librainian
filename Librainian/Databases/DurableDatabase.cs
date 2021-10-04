@@ -56,7 +56,7 @@ namespace Librainian.Databases {
 		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.
 		/// It probably doesn't help, as experience shows a database connection should be as short as possible.
 		/// </remarks>
-		public DurableDatabase( String connectionString, UInt16 retries ) {
+		public DurableDatabase( String connectionString, UInt16 retries ) : base( nameof( DurableDatabase ) ) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 			}
@@ -286,7 +286,7 @@ namespace Librainian.Databases {
 			return default( Int32? );
 		}
 
-		/// <summary></summary>
+		
 		public Boolean ExecuteNonQuery( String query ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
 				throw new ArgumentEmptyException( nameof( query ) );
@@ -430,7 +430,7 @@ namespace Librainian.Databases {
 			return table;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>

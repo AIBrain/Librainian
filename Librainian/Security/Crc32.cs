@@ -113,7 +113,7 @@ namespace Librainian.Security {
 			return result;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="table"> </param>
 		/// <param name="seed">  </param>
 		/// <param name="buffer"></param>

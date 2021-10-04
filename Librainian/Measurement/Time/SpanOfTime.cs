@@ -33,9 +33,9 @@ namespace Librainian.Measurement.Time {
 	using System.Linq;
 	using System.Numerics;
 	using Exceptions;
+	using ExtendedNumerics;
 	using Extensions;
 	using Maths;
-	using Maths.Bigger;
 	using Newtonsoft.Json;
 	using Parsing;
 
@@ -400,7 +400,7 @@ namespace Librainian.Measurement.Time {
 		/// <param name="right"></param>
 		public static Int32 CompareTo( SpanOfTime? left, SpanOfTime? right ) {
 			if ( left is null || right is null ) {
-				return Order.Before;
+				return SortOrder.Before;
 			}
 
 			var leftPlancks = left.CalcTotalPlanckTimes();
@@ -497,7 +497,7 @@ namespace Librainian.Measurement.Time {
 				}
 
 				var units = BigDecimal.Parse( text );
-				if ( units is { } ) {
+				if ( units != BigDecimal.Zero ) {
 					return new SpanOfTime( new Seconds( units ) ); //assume seconds given?
 				}
 
@@ -505,7 +505,7 @@ namespace Librainian.Measurement.Time {
 					text = text.Before( "milliseconds" ) ?? String.Empty;
 
 					units = BigDecimal.Parse( text );
-					if ( units is { } ) {
+					if ( units != BigDecimal.Zero ) {
 						return new SpanOfTime( new Milliseconds( units ) );
 					}
 				}
@@ -514,7 +514,7 @@ namespace Librainian.Measurement.Time {
 					text = text.Before( "millisecond" ) ?? String.Empty;
 
 					units = BigDecimal.Parse( text );
-					if ( units is { } ) {
+					if ( units != BigDecimal.Zero ) {
 						return new SpanOfTime( new Milliseconds( units ) );
 					}
 				}
@@ -523,7 +523,7 @@ namespace Librainian.Measurement.Time {
 					text = text.Before( "seconds" ) ?? String.Empty;
 
 					units = BigDecimal.Parse( text );
-					if ( units is { } ) {
+					if ( units != BigDecimal.Zero ) {
 						return new SpanOfTime( new Seconds( units ) );
 					}
 				}
@@ -532,7 +532,7 @@ namespace Librainian.Measurement.Time {
 					text = text.Before( "second" ) ?? String.Empty;
 
 					units = BigDecimal.Parse( text );
-					if ( units is { } ) {
+					if ( units != BigDecimal.Zero ) {
 						return new SpanOfTime( new Seconds( units ) );
 					}
 				}

@@ -92,7 +92,7 @@ namespace Librainian.Extensions {
 		/// <param name="func"> </param>
 		/// <param name="final"></param>
 		[DebuggerStepThrough]
-		public static T? Trap<T>( [InstantHandle] this Func<T>? func, [InstantHandle] Action? final = default( Action? ) ) {
+		public static T? Trap<T>( /*[InstantHandle]*/ this Func<T>? func, /*[InstantHandle]*/ Action? final = default( Action? ) ) {
 			if ( func is null ) {
 				if ( Debugger.IsAttached ) {
 					throw new ArgumentEmptyException( nameof( func ) );

@@ -50,7 +50,7 @@ namespace Librainian.ComputerSystem.Devices {
 		///     The handle of the top-level window to be used for any user interface or IntPtr.Zero for no
 		///     handle.
 		/// </param>
-		private DeviceClass( Guid classGuid, IntPtr hwndParent ) {
+		private DeviceClass( Guid classGuid, IntPtr hwndParent ) : base( nameof( DeviceClass ) ) {
 			this._classGuid = classGuid;
 
 			this._deviceInfoSet = NativeMethods.SetupDiGetClassDevs( ref this._classGuid, "" /*was 0*/, hwndParent,

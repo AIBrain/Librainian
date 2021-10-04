@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ABetterClassDisposeReactive.cs" last touched on 2021-08-15 at 4:55 AM by Protiguous.
+// File "ABetterClassDisposeReactive.cs" last touched on 2021-09-11 at 3:30 AM by Protiguous.
 
 namespace Librainian.Utilities.Disposables {
 
@@ -167,13 +167,19 @@ namespace Librainian.Utilities.Disposables {
 			/*make this virtual so it is optional*/
 			this.HasDisposedNative = true;
 
+		~ABetterClassDisposeReactive() {
+			this.Dispose();
+		}
+
 		/*
+
         /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
         [CanBeNull]
         private String? DisposeHint { get; set; }
         */
 
 		/*
+
         /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
         /// <param name="hint"></param>
         [Conditional( "DEBUG" )]

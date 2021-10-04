@@ -69,7 +69,7 @@ namespace Librainian.Financial.Containers.Wallets {
 		[JsonProperty]
 		public WalletStatistics Statistics { get; } = new();
 
-		public Wallet( Guid id ) => this.ID = id;
+		public Wallet( Guid id ) : base( nameof( Wallet ) ) => this.ID = id;
 
 		private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
 			try {
@@ -181,7 +181,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			return true;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="coin">    </param>
 		/// <param name="quantity"></param>
 		/// <exception cref="WalletException"></exception>
@@ -207,7 +207,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="message"></param>
 		/// <exception cref="WalletException"></exception>
 		public void Deposit( TransactionMessage message ) {
@@ -344,7 +344,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			}
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="denomination"></param>
 		/// <param name="quantity">    </param>
 		/// <exception cref="WalletException"></exception>
@@ -356,7 +356,7 @@ namespace Librainian.Financial.Containers.Wallets {
 			};
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="message"></param>
 		/// <exception cref="WalletException"></exception>
 		public Boolean TryWithdraw( TransactionMessage message ) {

@@ -33,30 +33,30 @@ namespace Librainian.Measurement.Time.Clocks {
 	using Extensions;
 	using Newtonsoft.Json;
 
-	/// <summary>A simple type for a Year.</summary>
+	/// <summary>A simple type for a ClockYear.</summary>
 	[JsonObject]
 	[Immutable]
-	public record Year( BigInteger Value ) : IComparable<Year>, IClockPart {
-		public static Year Zero { get; } = new( BigInteger.Zero );
+	public record ClockYear( BigInteger Value ) : IComparable<ClockYear>, IClockPart {
+		public static ClockYear Zero { get; } = new( BigInteger.Zero );
 
-		public Int32 CompareTo( Year other ) {
-			if ( other == null ) {
+		public Int32 CompareTo( ClockYear? other ) {
+			if ( other is null ) {
 				throw new ArgumentEmptyException( nameof( other ) );
 			}
 
 			return this.Value.CompareTo( other.Value );
 		}
 
-		public static implicit operator Year( BigInteger value ) => new( value );
+		public static implicit operator ClockYear( BigInteger value ) => new( value );
 
-		public static explicit operator BigInteger( Year value ) => value.Value;
+		public static explicit operator BigInteger( ClockYear value ) => value.Value;
 
-		public static Boolean operator <( Year left, Year right ) => left.Value < right.Value;
+		public static Boolean operator <( ClockYear left, ClockYear right ) => left.Value < right.Value;
 
-		public static Boolean operator >( Year left, Year right ) => left.Value > right.Value;
+		public static Boolean operator >( ClockYear left, ClockYear right ) => left.Value > right.Value;
 
-		public Year Next() => new( this.Value + 1 );
+		public ClockYear Next() => new( this.Value + 1 );
 
-		public Year Previous() => new( this.Value - 1 );
+		public ClockYear Previous() => new( this.Value - 1 );
 	}
 }

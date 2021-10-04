@@ -25,8 +25,6 @@
 namespace Librainian.Financial.Containers.Shopping {
 
 	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
 	using System.Linq;
 	using Collections.Lists;
 	using Maths;
@@ -37,17 +35,21 @@ namespace Librainian.Financial.Containers.Shopping {
 	[JsonObject]
 	public class ShoppingCart : ABetterClassDispose {
 
+		public ShoppingCart() : base( nameof( ShoppingCart ) ) {
+			
+		}
+
 		[JsonProperty]
 		private ConcurrentList<ShoppingItem> Items { get; } = new(); //TODO make this a dictionary of Item.Counts
 
-		public Boolean AddItem( ShoppingItem item ) => this.Items.TryAdd( item );
+		public Boolean Add( ShoppingItem item ) => this.Items.TryAdd( item );
 
 		public UInt32 AddItems( params ShoppingItem[]? items ) {
 			if ( items is null ) {
 				return 0;
 			}
 
-			return ( UInt32 )items.Count( this.AddItem );
+			return ( UInt32 )items.Count( this.Add );
 		}
 
 		public UInt32 AddItems( ShoppingItem? item, UInt32 quantity = 1 ) {
@@ -55,7 +57,7 @@ namespace Librainian.Financial.Containers.Shopping {
 
 			if ( item is not null ) {
 				while ( quantity.Any() ) {
-					if ( this.Items.TryAdd( item ) ) {
+					if ( this.Add( item ) ) {
 						added++;
 					}
 
@@ -75,18 +77,5 @@ namespace Librainian.Financial.Containers.Shopping {
 		/// <param name="item"></param>
 		public Boolean RemoveItem( ShoppingItem? item ) => this.Items.Remove( item );
 
-		public IEnumerable<KeyValuePair<ShoppingItem, Int32>> RunningList() {
-			var items = new ConcurrentDictionary<ShoppingItem, Int32>();
-
-			foreach ( var shoppingItem in this.Items ) {
-				if ( !items.ContainsKey( shoppingItem ) ) {
-					items.TryAdd( shoppingItem, 0 );
-				}
-
-				items[shoppingItem]++;
-			}
-
-			return items;
-		}
 	}
 }

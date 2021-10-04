@@ -84,7 +84,7 @@ namespace Librainian.Persistence {
 				return default( TValue? ); //BUG is this intended?
 			} );
 
-		/// <summary></summary>
+		
 		/// <param name="key"></param>
 		public TValue? this[TKey? key] {
 			[CanBeNull]
@@ -123,7 +123,7 @@ namespace Librainian.Persistence {
 
 		public PersistTable( Folder folder, String subFolder, String tableName ) : this( Path.Combine( folder.FullPath, subFolder, tableName ) ) { }
 
-		public PersistTable( Folder folder, Boolean testForReadWriteAccess = false ) {
+		public PersistTable( Folder folder, Boolean testForReadWriteAccess = false ) : base( nameof( PersistTable<TKey,TValue> ) ) {
 			try {
 				this.Folder = folder ?? throw new ArgumentEmptyException( nameof( folder ) );
 

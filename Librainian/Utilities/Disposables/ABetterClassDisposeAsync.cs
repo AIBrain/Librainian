@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ABetterClassDisposeAsync.cs" last touched on 2021-08-21 at 2:05 PM by Protiguous.
+// File "ABetterClassDisposeAsync.cs" last touched on 2021-09-11 at 3:29 AM by Protiguous.
 
 namespace Librainian.Utilities.Disposables {
 
@@ -100,29 +100,11 @@ namespace Librainian.Utilities.Disposables {
 		/// <summary>Can be changed to a property, if desired.</summary>
 		public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
-		/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
-		/// <code>using var bob = new DisposableType();</code>
-		[DebuggerStepThrough]
-		public virtual ValueTask DisposeManagedAsync() => ValueTask.CompletedTask;
-
-		/// <summary>
-		///     Dispose of COM objects, handles, etc in this method.
-		/// </summary>
-		[DebuggerStepThrough]
-		public virtual ValueTask DisposeNativeAsync() {
-			/*make this virtual so it is optional*/
-			this.HasDisposedNative = true;
-			return ValueTask.CompletedTask;
-		}
-
-		~ABetterClassDisposeAsync() {
-			this.DisposeAsync().AsTask().GetAwaiter().GetResult();	//TODO ugh
-		}
-
 		public async ValueTask DisposeAsync() {
 			if ( !this.HasDisposedManaged ) {
 				try {
-					await this.DisposeManagedAsync().ConfigureAwait( false ); //Any derived class should have overloaded this method and disposed of any managed objects inside.
+					await this.DisposeManagedAsync()
+					          .ConfigureAwait( false ); //Any derived class should have overloaded this method and disposed of any managed objects inside.
 				}
 				catch ( Exception exception ) {
 					Debug.WriteLine( exception );
@@ -155,6 +137,25 @@ namespace Librainian.Utilities.Disposables {
 					this.HasSuppressedFinalize = true;
 				}
 			}
+		}
+
+		/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
+		/// <code>using var bob = new DisposableType();</code>
+		[DebuggerStepThrough]
+		public virtual ValueTask DisposeManagedAsync() => ValueTask.CompletedTask;
+
+		/// <summary>
+		///     Dispose of COM objects, handles, etc in this method.
+		/// </summary>
+		[DebuggerStepThrough]
+		public virtual ValueTask DisposeNativeAsync() {
+			/*make this virtual so it is optional*/
+			this.HasDisposedNative = true;
+			return ValueTask.CompletedTask;
+		}
+
+		~ABetterClassDisposeAsync() {
+			this.DisposeAsync().AsTask().GetAwaiter().GetResult(); //TODO ugh, there has to be a better way?
 		}
 
 		/*

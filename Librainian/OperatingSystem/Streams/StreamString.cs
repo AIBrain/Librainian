@@ -31,7 +31,7 @@ namespace Librainian.OperatingSystem.Streams {
 	using System.IO;
 	using System.Text;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://github.com/firepacket/anark.it/" />
 	public class StreamString {
 
