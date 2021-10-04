@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "CreateUnsafeSerializer.cs" last formatted on 2020-08-14 at 8:32 PM.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Databases.MMF {
 
@@ -43,14 +46,14 @@ namespace Librainian.Databases.MMF {
 		private Type Type { get; } = typeof( T );
 
 		private static void BytesToObjectCode( StringBuilder sb, String? typeFullName ) {
-			sb.Append( $"public unsafe {typeFullName} BytesToObject( byte[] bytes )" );
+			sb.Append( "public unsafe " ).Append( typeFullName ).Append( " BytesToObject( byte[] bytes )" );
 			sb.Append( '{' );
 
 			sb.Append( @"
                 fixed (byte* srcPtr = &bytes[0])
                 {" );
 
-			sb.Append( $"return *({typeFullName}*)srcPtr;" );
+			sb.Append( "return *(" ).Append( typeFullName ).Append( "*)srcPtr;" );
 			sb.Append( "}}" );
 		}
 
@@ -74,7 +77,7 @@ namespace Librainian.Databases.MMF {
 
 			var interfaceType = typeof( ISerializeDeserialize<T> );
 
-			sb.Append( $"public class UnsafeConverter : {interfaceType.Namespace}.ISerializeDeserialize<{typeFullName}>" );
+			sb.Append( "public class UnsafeConverter : " ).Append( interfaceType.Namespace ).Append( ".ISerializeDeserialize<" ).Append( typeFullName ).Append( '>' );
 			sb.Append( '{' );
 			sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
 
@@ -103,16 +106,16 @@ namespace Librainian.Databases.MMF {
 			var modifer = this._addCount / this._ptrSize;
 
 			if ( modifer >= this._ptrSize ) {
-				sb.Append( $"dest += {this._addCount};" );
-				sb.Append( $"src += {this._addCount};" );
+				sb.Append( "dest += " ).Append( this._addCount ).Append( ';' );
+				sb.Append( "src += " ).Append( this._addCount ).Append( ';' );
 				this._addCount = 0;
 			}
 		}
 
 		private void ObjectToBytesCode( StringBuilder sb, String? typeFullName ) {
-			sb.Append( $"public unsafe byte[] ObjectToBytes({typeFullName} srcObject)" );
+			sb.Append( "public unsafe byte[] ObjectToBytes(" ).Append( typeFullName ).Append( " srcObject)" );
 			sb.Append( '{' );
-			sb.Append( $"byte[] buffer = new byte[{this._size}];" );
+			sb.Append( "byte[] buffer = new byte[" ).Append( this._size ).Append( "];" );
 
 			sb.Append( @"
                 fixed (byte* destPtr = &buffer[0])
@@ -129,21 +132,23 @@ namespace Librainian.Databases.MMF {
 		}
 
 		private void SetPointerLength( Int32 length ) {
-			if ( length >= 8 ) {
-				this._ptrSize = 8;
-				this._ptrType = "Int64";
-			}
-			else if ( length >= 4 ) {
-				this._ptrSize = 4;
-				this._ptrType = "Int32";
-			}
-			else if ( length >= 2 ) {
-				this._ptrSize = 2;
-				this._ptrType = "Int16";
-			}
-			else {
-				this._ptrSize = 1;
-				this._ptrType = "byte";
+			switch ( length ) {
+				case >= 8:
+					this._ptrSize = 8;
+					this._ptrType = "Int64";
+					break;
+				case >= 4:
+					this._ptrSize = 4;
+					this._ptrType = "Int32";
+					break;
+				case >= 2:
+					this._ptrSize = 2;
+					this._ptrType = "Int16";
+					break;
+				default:
+					this._ptrSize = 1;
+					this._ptrType = "byte";
+					break;
 			}
 		}
 	}

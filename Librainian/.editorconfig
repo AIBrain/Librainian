@@ -353,6 +353,9 @@ dotnet_diagnostic.CA1051.severity = suggestion
 # IDE0005: Using directive is unnecessary.
 dotnet_diagnostic.IDE0005.severity = error
 
+# RCS1213: Remove unused member declaration.
+dotnet_diagnostic.RCS1213.severity = none
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab
