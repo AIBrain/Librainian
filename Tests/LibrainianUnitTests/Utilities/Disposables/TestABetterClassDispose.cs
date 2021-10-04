@@ -53,16 +53,13 @@ namespace LibrainianUnitTests.Utilities.Disposables {
 		private static void ForceGC() => GC.Collect( 2, GCCollectionMode.Forced, true );
 
 		[Test]
-		[SuppressMessage( "ReSharper", "ConvertToUsingDeclaration" )]
 		public void TestDisposeMultipleTimesExplicitly() {
 			ForceGC();
-			foreach ( var i in 1.To( N ) ) {
-#pragma warning disable IDE0063 // Use simple 'using' statement
-				using ( var testAbcd = new TestABCD( i ) ) {
-#pragma warning restore IDE0063 // Use simple 'using' statement
-					testAbcd.Dispose();
-				}
-			}
+			foreach ( var i in 1.To( N ) )
+            {
+                using var testAbcd = new TestABCD( i );
+                testAbcd.DisposeManaged();
+            }
 
 			ForceGC();
 			this.Nop();
@@ -70,14 +67,14 @@ namespace LibrainianUnitTests.Utilities.Disposables {
 
 		public class TestABCD : ABetterClassDispose {
 
-			private readonly Int32 value;
+			private readonly Int32 _value;
 
-			public TestABCD( Int32 val ) => this.value = val;
+			public TestABCD( Int32 val ) : base( nameof( TestABCD ) ) => this._value = val;
 
 			/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 			public override void DisposeManaged() {
-				if ( this.value % 1024 == 1024 ) {
-					Console.WriteLine( this.value );
+				if ( this._value % 1024 == 1024 ) {
+					Console.WriteLine( this._value );
 				}
 			}
 

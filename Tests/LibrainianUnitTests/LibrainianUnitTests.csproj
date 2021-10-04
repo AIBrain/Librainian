@@ -8,7 +8,7 @@
 		<ApplicationIcon />
 		<OutputType>Library</OutputType>
 		<StartupObject />
-		<EnableNETAnalyzers>false</EnableNETAnalyzers>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<Nullable>enable</Nullable>
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
@@ -18,14 +18,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Librainian\Librainian.csproj" />
+	  <None Remove=".editorconfig" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.1" />
 		<PackageReference Include="FluentAssertions" Version="6.1.0" />
 		<PackageReference Include="JetBrains.DotMemoryUnit" Version="3.1.20200127.214830" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Librainian\Librainian.csproj" />
+	  <ProjectReference Include="..\..\Others\BigDecimal\BigDecimal\BigDecimal.csproj" />
 	</ItemGroup>
 
 </Project>

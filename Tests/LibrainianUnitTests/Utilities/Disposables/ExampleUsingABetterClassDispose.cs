@@ -42,7 +42,7 @@ namespace LibrainianUnitTests.Utilities.Disposables {
 
 		private SysComObject? _sysComObject = new();
 
-		public ExampleUsingABetterClassDispose() => this._sysComObject?.ReserveMemory();
+		public ExampleUsingABetterClassDispose() : base( nameof( ExampleUsingABetterClassDispose ) ) => this._sysComObject?.ReserveMemory();
 
 		[Test]
 		public override void DisposeManaged() {

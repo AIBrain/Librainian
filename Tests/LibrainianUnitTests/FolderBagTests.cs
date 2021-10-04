@@ -59,7 +59,7 @@ namespace LibrainianUnitTests {
 			var allPaths = pathTree.ToList();
 			watch.Stop();
 
-			Assert.True( counter == allPaths.LongCount() );
+			Assert.True( counter == allPaths.Count );
 			Debug.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
 
 			var temp = Document.GetTempDocument().ContainingingFolder();

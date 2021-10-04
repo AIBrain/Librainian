@@ -1,15 +1,15 @@
-// Copyright � Protiguous. All Rights Reserved.
-// 
+// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,50 +17,27 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "TimeTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 // ReSharper disable EqualExpressionComparison
 
 namespace LibrainianUnitTests.Maths {
 
 	using System;
+	using ExtendedNumerics;
 	using FluentAssertions;
-	using Librainian.Logging;
 	using Librainian.Measurement.Frequency;
 	using Librainian.Measurement.Time;
-	using Librainian.Measurement.Time.Clocks;
 	using NUnit.Framework;
-
 
 	[TestFixture]
 	public static class TimeTests {
-
-		[Test]
-		public static void DayTest() => Day.Maximum.Value.Should().BeGreaterThan( Day.Minimum.Value );
-
-		[Test]
-		public static void HourTest() => Hour.Maximum.Value.Should().BeGreaterThan( Hour.Minimum.Value );
-
-		[Test]
-		public static void MicrosecondTest() => Microsecond.Maximum.Value.Should().BeGreaterThan( Microsecond.Minimum.Value );
-
-		[Test]
-		public static void MillisecondTest() => Millisecond.Maximum.Value.Should().BeGreaterThan( Millisecond.Minimum.Value );
-
-		[Test]
-		public static void MinuteTest() => Minute.Maximum.Value.Should().BeGreaterThan( Minute.Minimum.Value );
-
-		[Test]
-		public static void MonthTest() => Month.Maximum.Value.Should().BeGreaterThan( Month.Minimum.Value );
-
-		[Test]
-		public static void SecondTest() => Second.Maximum.Value.Should().BeGreaterThan( Second.Minimum.Value );
 
 		[Test]
 		public static void ShouldReturnCorrectHomesteadDate_WhenSending_April_6_2378() {
@@ -188,50 +165,71 @@ namespace LibrainianUnitTests.Maths {
 
 		[Test]
 		public static void TestPlanckTimes() {
-			//PlanckTimes.Zero.Should().BeLessThan(PlanckTimes.One);
-			//PlanckTimes.One.Should().BeGreaterThan(PlanckTimes.Zero);
-			//PlanckTimes.One.Should().Be(PlanckTimes.One);
-			//PlanckTimes.One.Should().BeLessThan(Yoctoseconds.One);
-			PlanckTimes.InOneSecond.Should()?.BeLessThan( PlanckTimes.InOneMinute );
-			PlanckTimes.InOneMinute.Should()?.BeLessThan( PlanckTimes.InOneHour );
-			PlanckTimes.InOneHour.Should()?.BeLessThan( PlanckTimes.InOneDay );
-			PlanckTimes.InOneDay.Should()?.BeLessThan( PlanckTimes.InOneWeek );
-			PlanckTimes.InOneWeek.Should()?.BeLessThan( PlanckTimes.InOneMonth );
-			PlanckTimes.InOneMonth.Should()?.BeLessThan( PlanckTimes.InOneYear );
+			PlanckTimes.One.Should().Be( PlanckTimes.One );
+			PlanckTimes.Zero.Should().BeLessThan( PlanckTimes.One );
+			PlanckTimes.One.Should().BeGreaterThan( PlanckTimes.Zero );
+			PlanckTimes.One.Should().BeLessThan( Yoctoseconds.One );
+			Assert.Less( PlanckTimes.InOneSecond, PlanckTimes.InOneMinute );
+			Assert.Less( PlanckTimes.InOneMinute, PlanckTimes.InOneHour );
+			Assert.Less( PlanckTimes.InOneHour, PlanckTimes.InOneDay );
+			Assert.Less( PlanckTimes.InOneDay, PlanckTimes.InOneWeek );
+			Assert.Less( PlanckTimes.InOneWeek, PlanckTimes.InOneMonth );
+			Assert.Less( PlanckTimes.InOneMonth, PlanckTimes.InOneYear );
 		}
 
 		[Test]
 		public static void TestSeconds() {
-			//Seconds.Zero.Should().BeLessThan(Seconds.One);
-			//Seconds.One.Should().BeGreaterThan(Seconds.Zero);
-			//Seconds.One.Should().Be(Seconds.One);
-			//Seconds.One.Should().BeLessThan(Minutes.One);
-			//Seconds.One.Should().BeGreaterThan(Milliseconds.One);
+			Assert.Less( Seconds.Zero.ToTimeSpan(), Seconds.One.ToTimeSpan() );
+			Assert.Greater( Seconds.One.ToTimeSpan(), Seconds.Zero.ToTimeSpan() );
+			Assert.AreEqual( Seconds.One.ToTimeSpan(), Seconds.One.ToTimeSpan() );
+			Assert.Less( Seconds.One.ToTimeSpan(), Minutes.One.ToTimeSpan() );
+			Assert.Greater( Seconds.One.ToTimeSpan(), Milliseconds.One.ToTimeSpan() );
 		}
 
 		[Test]
-		public static void TestSpanIdentity() {
-			try {
-				SpanOfTime.Identity.Yoctoseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Zeptoseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Femtoseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Attoseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Picoseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Nanoseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Microseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Milliseconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Seconds.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Minutes.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Hours.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Days.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Weeks.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Months.Value.Should()?.Be( 1 );
-				SpanOfTime.Identity.Years.Value.Should()?.Be( 1 );
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-		}
+		public static void TestSpanIdentityYoctoseconds() => SpanOfTime.Identity.Yoctoseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityZeptoseconds() => SpanOfTime.Identity.Zeptoseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityFemtoseconds() => SpanOfTime.Identity.Femtoseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityAttoseconds() => SpanOfTime.Identity.Attoseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityPicoseconds() => SpanOfTime.Identity.Picoseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityNanoseconds() => SpanOfTime.Identity.Nanoseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityMicroseconds() => SpanOfTime.Identity.Microseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityMilliseconds() => SpanOfTime.Identity.Milliseconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentitySeconds() => SpanOfTime.Identity.Seconds.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityMinutes() => SpanOfTime.Identity.Minutes.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityHours() => SpanOfTime.Identity.Hours.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityDays() => SpanOfTime.Identity.Days.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityWeeks() => SpanOfTime.Identity.Weeks.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityMonths() => SpanOfTime.Identity.Months.Value.Should()?.Be( BigDecimal.One );
+
+		[Test]
+		public static void TestSpanIdentityYears() => SpanOfTime.Identity.Years.Value.Should()?.Be( BigDecimal.One );
 
 		[Test]
 		public static void TestTimes() {
@@ -242,12 +240,25 @@ namespace LibrainianUnitTests.Maths {
 		}
 
 		[Test]
+		public static void TestEstimateTimeRemaining() {
+			var timetakenSoFar = ( TimeSpan )Minutes.Fifteen;
+			const Decimal progress = 0.25m;
+
+			var estimateTimeRemaining = timetakenSoFar.EstimateTimeRemaining( progress );
+			TestContext.WriteLine( estimateTimeRemaining.Simpler() );
+
+			var expected = new Minutes( 45 ).AsTimeSpan();
+
+			Assert.AreEqual( estimateTimeRemaining, expected );
+		}
+
+		[Test]
 		public static void TestWeeks() {
 			Assert.True( Weeks.Zero < Weeks.One );
 			Assert.True( Weeks.One == Weeks.One );
 			Assert.True( Weeks.One < Months.One );
 			Assert.True( Weeks.One > Days.One );
-			Assert.True( Weeks.One > Years.One );
+			Assert.True( Weeks.One < Years.One );
 		}
 
 		[Test]
