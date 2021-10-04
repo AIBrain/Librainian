@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Countable.cs" last touched on 2021-03-07 at 2:00 PM by Protiguous.
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -52,6 +52,13 @@ namespace Librainian.Collections {
 	/// <typeparam name="TKey"></typeparam>
 	[JsonObject]
 	public class Countable<TKey> : ABetterClassDispose, IEnumerable<(TKey, BigInteger)>, ICountable<TKey> where TKey : notnull {
+
+		public Countable() : this( Minutes.One, Minutes.One ) { }
+
+		public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) : base( nameof( Countable<TKey> ) ) {
+			this.ReadTimeout = readTimeout;
+			this.WriteTimeout = writeTimeout;
+		}
 
 		/// <summary>Quick hashes of <see cref="TKey" /> for <see cref="ReaderWriterLockSlim" />.</summary>
 		private ConcurrentDictionary<Byte, ReaderWriterLockSlim> Buckets { get; } = new( Environment.ProcessorCount, 1 );
@@ -116,35 +123,6 @@ namespace Librainian.Collections {
 			}
 		}
 
-		public Countable() : this( Minutes.One, Minutes.One ) { }
-
-		public Countable( TimeSpan readTimeout, TimeSpan writeTimeout ) : base(nameof(Countable<TKey> )) {
-			this.ReadTimeout = readTimeout;
-			this.WriteTimeout = writeTimeout;
-		}
-
-		private static Byte Hash( TKey key ) => ( Byte )key.GetHashCode();
-
-		private ReaderWriterLockSlim Bucket( TKey key ) {
-			var hash = Hash( key );
-
-		TryAgain:
-
-			if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
-				return bucket;
-			}
-
-			bucket = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-
-			if ( this.Buckets.TryAdd( hash, bucket ) ) {
-				return bucket;
-			}
-
-			goto TryAgain;
-		}
-
-		private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
-
 		public Boolean Add( IEnumerable<TKey> keys ) {
 			if ( keys is null ) {
 				throw new ArgumentEmptyException( nameof( keys ) );
@@ -204,20 +182,8 @@ namespace Librainian.Collections {
 			return this.IsReadOnly;
 		}
 
-		public override void DisposeManaged() {
-			this.Complete();
-
-			foreach ( var pair in this.Buckets ) {
-				using ( pair.Value ) { }
-			}
-		}
-
 		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
 		public Boolean EnableMutable() => !( this.IsReadOnly = false );
-
-		/// <summary>Returns an enumerator that iterates through a collection.</summary>
-		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
 		public Boolean Subtract( TKey key, BigInteger amount ) {
 			if ( key is null ) {
@@ -252,11 +218,47 @@ namespace Librainian.Collections {
 		public BigInteger Sum() => this.Dictionary.Aggregate( BigInteger.Zero, ( current, pair ) => current + pair.Value );
 
 		public void Trim() =>
-					Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), CPU.AllExceptOne,
-						pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
+			Parallel.ForEach( this.Dictionary.Where( pair => pair.Value == default( BigInteger ) || pair.Value == BigInteger.Zero ), CPU.AllExceptOne,
+				pair => this.Dictionary.TryRemove( pair.Key, out var dummy ) );
+
+		/// <summary>Returns an enumerator that iterates through a collection.</summary>
+		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
+		public IEnumerator GetEnumerator() => this.Dictionary.GetEnumerator();
 
 		/// <summary>Returns an enumerator that iterates through the collection.</summary>
 		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
 		IEnumerator<(TKey, BigInteger)> IEnumerable<(TKey, BigInteger)>.GetEnumerator() => ( IEnumerator<(TKey, BigInteger)> )this.GetEnumerator();
+
+		private static Byte Hash( TKey key ) => ( Byte )HashCode.Combine( key );
+
+		private ReaderWriterLockSlim Bucket( TKey key ) {
+			var hash = Hash( key );
+
+		TryAgain:
+
+			if ( this.Buckets.TryGetValue( hash, out var bucket ) ) {
+				return bucket;
+			}
+
+			bucket = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+
+			if ( this.Buckets.TryAdd( hash, bucket ) ) {
+				return bucket;
+			}
+
+			goto TryAgain;
+		}
+
+		private IEnumerable<Byte> GetUsedBuckets() => this.Dictionary.Keys.Select( Hash );
+
+		public override void DisposeManaged() {
+			this.Complete();
+
+			foreach ( var pair in this.Buckets ) {
+				using ( pair.Value ) { }
+			}
+		}
+
 	}
+
 }
