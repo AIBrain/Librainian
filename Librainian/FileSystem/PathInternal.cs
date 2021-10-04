@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "PathInternal.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 #nullable enable
@@ -41,9 +41,8 @@ namespace Librainian.FileSystem {
 		private static extern UInt32 GetLongPathNameW( this String lpszShortPath, StringBuilder lpszLongPath, UInt32 cchBuffer );
 
 		[Pure]
-		[JetBrains.Annotations.NotNull]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static String EnsureExtendedPrefix( [JetBrains.Annotations.NotNull] this String path ) {
+		public static String EnsureExtendedPrefix( this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
 			if ( path.IsPartiallyQualified() || path.IsDevice() ) {
@@ -57,8 +56,7 @@ namespace Librainian.FileSystem {
 			return $"{Constants.ExtendedPathPrefix}{path}";
 		}
 
-		[JetBrains.Annotations.NotNull]
-		public static String GetLongPathName( [JetBrains.Annotations.NotNull] this String path ) {
+		public static String GetLongPathName( this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
 			var stringBuffer = new StringBuilder( Constants.MaxPathLength );
@@ -69,7 +67,7 @@ namespace Librainian.FileSystem {
 
 		[Pure]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsDevice( [JetBrains.Annotations.NotNull] this String path ) {
+		public static Boolean IsDevice( this String path ) {
 			path = path.TrimAndThrowIfBlank();
 
 			if ( path.IsExtended() ) {
@@ -113,7 +111,7 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Returns true if the path is too long</summary>
 		[DebuggerStepThrough]
-		public static Boolean IsPathTooLong( [JetBrains.Annotations.NotNull] this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
+		public static Boolean IsPathTooLong( this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
 
 		[DebuggerStepThrough]
 		[Pure]
@@ -127,19 +125,17 @@ namespace Librainian.FileSystem {
 		/// <param name="path"></param>
 		/// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
 		[DebuggerStepThrough]
-		[JetBrains.Annotations.NotNull]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static String TrimAndThrowIfBlank( [CanBeNull] this String? path ) {
-
+		public static String TrimAndThrowIfBlank( this String? path ) {
 			path = path?.Trim();
-			
+
 			if ( String.IsNullOrEmpty( path ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 			}
 
 			return path;
 		}
-		
+
 		/// <summary>
 		///     Trims <paramref name="path" /> and throws <see cref="ArgumentException" /> if null, empty, or whitespace.
 		/// <para>Returns true if the <paramref name="path"/> was blank.</para>
@@ -148,7 +144,7 @@ namespace Librainian.FileSystem {
 		/// <exception cref="ArgumentException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean TrimAndThrowIfBlank( [DoesNotReturnIf( true )] [CanBeNull] ref String path ) {
+		public static Boolean TrimAndThrowIfBlank( [DoesNotReturnIf( true )] ref String? path ) {
 			path = path.Trim();
 
 			if ( !String.IsNullOrEmpty( path ) ) {
@@ -156,7 +152,6 @@ namespace Librainian.FileSystem {
 			}
 
 			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
-
 		}
 
 		public static class Constants {
@@ -186,7 +181,7 @@ namespace Librainian.FileSystem {
 			/// <summary>
 			/// [Maximum] value could be 32767, but this gives a little wiggle room of 32512.
 			/// </summary>
-			public const UInt16 MaxPathLength = ( UInt16 )(Int16.MaxValue - MaxComponentLength);
+			public const UInt16 MaxPathLength = ( UInt16 )( Int16.MaxValue - MaxComponentLength );
 
 			/// <summary>
 			/// \\
@@ -207,9 +202,6 @@ namespace Librainian.FileSystem {
 			/// \\
 			/// </summary>
 			public const String UncPathPrefix = TwoBackslashes;
-
 		}
-
 	}
-
 }

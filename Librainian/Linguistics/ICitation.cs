@@ -29,7 +29,6 @@ namespace Librainian.Linguistics {
 
 	using System;
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	public interface ICitation {
@@ -38,26 +37,21 @@ namespace Librainian.Linguistics {
 		///     A sentence, page, book, internet
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public Uri Location { get; init; }
 
 		[JsonProperty]
-		[CanBeNull]
-		[ItemNotNull]
 		public Lazy<HashSet<Int32>>? PagesOrIndexes { get; set; }
 
 		/*
 		public Boolean Add( [NotNull] Uri location ) {
-			this.Location = location ?? throw new ArgumentNullException( nameof( location ) );
+			this.Location = location ?? throw new ArgumentEmptyException( nameof( location ) );
 
 			return true;
 		}
 		*/
 
 		public Boolean AddPage( Int32 page ) {
-			if ( this.PagesOrIndexes is null ) {
-				this.PagesOrIndexes = new Lazy<HashSet<Int32>>( () => new HashSet<Int32>() );
-			}
+			this.PagesOrIndexes ??= new Lazy<HashSet<Int32>>( () => new HashSet<Int32>() );
 
 			return this.PagesOrIndexes.Value.Add( page );
 		}

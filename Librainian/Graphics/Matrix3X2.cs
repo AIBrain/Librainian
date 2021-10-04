@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,20 +14,19 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Matrix3X2.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://stackoverflow.com/a/8696503/956364" />
 	public class Matrix3X2 : ICloneable {
 
@@ -44,27 +43,6 @@ namespace Librainian.Graphics {
 		private const Int32 _M32 = 5;
 
 		private readonly Double[] _coeffs;
-
-		/// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
-		public Matrix3X2() => this._coeffs = new Double[6];
-
-		/// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
-		/// <param name="coefficients">
-		///     The coefficients to initialise. The number of elements of the array should be equal to 6,
-		///     else an exception will be thrown
-		/// </param>
-		public Matrix3X2( [NotNull] Double[] coefficients ) {
-			if ( coefficients.GetLength( 0 ) != 6 ) {
-				throw new Exception( "The number of coefficients passed in to the constructor must be 6" );
-			}
-
-			this._coeffs = coefficients;
-		}
-
-		public Matrix3X2( Double m11, Double m12, Double m21, Double m22, Double m31, Double m32 ) =>
-			this._coeffs = new[] {
-				m11, m12, m21, m22, m31, m32
-			};
 
 		/// <summary>Gets or sets the M11 coefficient</summary>
 		/// <value>The M11</value>
@@ -141,6 +119,27 @@ namespace Librainian.Graphics {
 			set => this._coeffs[_M32] = value;
 		}
 
+		/// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
+		public Matrix3X2() => this._coeffs = new Double[6];
+
+		/// <summary>Initializes a new instance of the <see cref="Matrix3X2" /> class.</summary>
+		/// <param name="coefficients">
+		///     The coefficients to initialise. The number of elements of the array should be equal to 6,
+		///     else an exception will be thrown
+		/// </param>
+		public Matrix3X2( Double[] coefficients ) {
+			if ( coefficients.GetLength( 0 ) != 6 ) {
+				throw new Exception( "The number of coefficients passed in to the constructor must be 6" );
+			}
+
+			this._coeffs = coefficients;
+		}
+
+		public Matrix3X2( Double m11, Double m12, Double m21, Double m22, Double m31, Double m32 ) =>
+			this._coeffs = new[] {
+				m11, m12, m21, m22, m31, m32
+			};
+
 		/// <summary>Creates a new object that is a copy of the current instance.</summary>
 		/// <returns>A new object that is a copy of this instance.</returns>
 		public Object Clone() {
@@ -172,7 +171,8 @@ namespace Librainian.Graphics {
 
 		/// <summary>Multiplies the 3x3 matrix passed in with the current 3x2 matrix</summary>
 		/// <param name="left">The 3x3 Matrix X</param>
-		public void Multiply( [NotNull] Matrix3X3 left ) {
+		public void Multiply( Matrix3X3 left ) {
+
 			// Multiply the 3x3 matrix with the 3x2 matrix and store inside the current 2x3 matrix
 			//
 			// [a b c] [j k] [(aj + bl + cn) (ak + bm + co)] [d e f] * [l m] = [(dj + el + fn) (dk + em + fo)] [g h i] [n o] [(gj + hl + in) (gk + hm + io)]
@@ -202,7 +202,5 @@ namespace Librainian.Graphics {
 			this._coeffs[_M31] = g * j + h * l + i * n;
 			this._coeffs[_M32] = g * k + h * m + i * o;
 		}
-
 	}
-
 }

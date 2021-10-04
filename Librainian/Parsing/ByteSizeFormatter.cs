@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,20 +14,21 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ByteSizeFormatter.cs" last formatted on 2020-08-14 at 8:41 PM.
 
 #nullable enable
+
 namespace Librainian.Parsing {
 
 	using System;
 	using System.Text.RegularExpressions;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>
 	///     A custom formatter for byte sizes (things like files, network bandwidth, etc.) that will automatically
@@ -57,7 +58,7 @@ namespace Librainian.Parsing {
 		///     <see langword="false" />.
 		/// </returns>
 		/// <exception cref="InvalidOperationException"></exception>
-		public static Boolean TryParse( [NotNull] String input, out Int64 bytes ) {
+		public static Boolean TryParse( String input, out Int64 bytes ) {
 			const String expr = @"^\s*(?<num>\d+(?:\.\d+)?)\s*(?<mod>[kKmMgGtTpPeEyY]?[bB])?\s*$";
 			var match = Regex.Match( input, expr );
 			bytes = 0;
@@ -108,7 +109,8 @@ namespace Librainian.Parsing {
 
 					break;
 
-				default: throw new InvalidOperationException();
+				default:
+					throw new InvalidOperationException();
 			}
 
 			bytes = ( Int64 )Math.Round( Single.Parse( match.Groups["num"].Value ) * mult );
@@ -127,10 +129,9 @@ namespace Librainian.Parsing {
 		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
 		///     <paramref name="format" /> and <paramref name="formatProvider" />.
 		/// </returns>
-		[NotNull]
-		public override String Format( String? format, [CanBeNull] Object? arg, [CanBeNull] IFormatProvider? formatProvider ) {
+		public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
 			if ( format == null ) {
-				throw new ArgumentNullException( nameof( format ) );
+				throw new ArgumentEmptyException( nameof( format ) );
 			}
 
 			Int64 bytes;
@@ -163,7 +164,5 @@ namespace Librainian.Parsing {
 
 			return $"{num.ToString( "F" + prec )}{Suffixes[place]}";
 		}
-
 	}
-
 }

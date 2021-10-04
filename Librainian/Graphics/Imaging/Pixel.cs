@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Pixel.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics.Imaging {
@@ -29,6 +29,7 @@ namespace Librainian.Graphics.Imaging {
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Newtonsoft.Json;
@@ -74,7 +75,7 @@ namespace Librainian.Graphics.Imaging {
 			this.Blue = blue;
 			this.X = x;
 			this.Y = y;
-			this.Checksum = ( Byte )( alpha, red, green, blue, x, y ).GetHashCode();
+			this.Checksum = ( Byte )(alpha, red, green, blue, x, y).GetHashCode();
 		}
 
 		public Pixel( UInt32 x, UInt32 y, Byte alpha, Byte red, Byte green, Byte blue ) {
@@ -84,7 +85,7 @@ namespace Librainian.Graphics.Imaging {
 			this.Blue = blue;
 			this.X = x;
 			this.Y = y;
-			this.Checksum = ( Byte )( alpha, red, green, blue, x, y ).GetHashCode();
+			this.Checksum = ( Byte )(alpha, red, green, blue, x, y).GetHashCode();
 		}
 
 		public Pixel( Color color, UInt32 x, UInt32 y ) {
@@ -94,14 +95,13 @@ namespace Librainian.Graphics.Imaging {
 			this.Blue = color.B;
 			this.X = x;
 			this.Y = y;
-			this.Checksum = ( Byte )( color.A, color.R, color.G, color.B, x, y ).GetHashCode();
+			this.Checksum = ( Byte )(color.A, color.R, color.G, color.B, x, y).GetHashCode();
 		}
 
 		//public static explicit operator Pixel( Color pixel ) => new Pixel( pixel.A, pixel.R, pixel.G, pixel.B );
 
 		public static implicit operator Color( Pixel pixel ) => Color.FromArgb( pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue );
 
-		[NotNull]
 		public static explicit operator Byte[]( Pixel pixel ) =>
 			new[] {
 				pixel.Checksum, pixel.Alpha, pixel.Red, pixel.Green, pixel.Blue
@@ -110,7 +110,6 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Static comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Boolean Equal( Pixel left, Pixel right ) =>
 			left.Checksum == right.Checksum && left.Alpha == right.Alpha && left.Red == right.Red && left.Green == right.Green && left.Blue == right.Blue &&
 			left.X == right.X && left.Y == right.Y;
@@ -129,21 +128,19 @@ namespace Librainian.Graphics.Imaging {
 		[Pure]
 		public override Int32 GetHashCode() => this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
 
-		[NotNull]
 		public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";
 
-		[CanBeNull]
-		public Task WriteToStreamAsync( [NotNull] StreamWriter streamWriter ) {
+		public Task WriteToStreamAsync( StreamWriter streamWriter ) {
 			if ( streamWriter is null ) {
-				throw new ArgumentNullException( nameof( streamWriter ) );
+				throw new ArgumentEmptyException( nameof( streamWriter ) );
 			}
 
 			return streamWriter.WriteLineAsync( this.ToString() );
 		}
 
-		public static async Task<Pixel?> ReadFromStreamAsync( [NotNull] StreamReader reader, [CanBeNull] StreamWriter? errors = null ) {
+		public static async Task<Pixel?> ReadFromStreamAsync( StreamReader reader, StreamWriter? errors = null ) {
 			if ( reader is null ) {
-				throw new ArgumentNullException( nameof( reader ) );
+				throw new ArgumentEmptyException( nameof( reader ) );
 			}
 
 			var line = await reader.ReadLineAsync().ConfigureAwait( false ) ?? String.Empty;
@@ -167,7 +164,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			if ( !Byte.TryParse( line.Substring( 0, openParent ), out var checksum ) ) {
+			if ( !Byte.TryParse( line[..openParent], out var checksum ) ) {
 				if ( errors != null ) {
 					await errors.WriteLineAsync( $"Unable to parse Checksum from {line}" ).ConfigureAwait( false );
 				}
@@ -185,9 +182,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( new[] {
-				','
-			}, StringSplitOptions.RemoveEmptyEntries );
+			var argb = line.Substring( openParent + 1, closeParent - openParent ).Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( argb.Length != 4 ) {
 				if ( errors != null ) {
@@ -239,9 +234,7 @@ namespace Librainian.Graphics.Imaging {
 				return default( Pixel? );
 			}
 
-			var xandy = line[ ( at + 1 ).. ].Split( new[] {
-				','
-			}, StringSplitOptions.RemoveEmptyEntries );
+			var xandy = line[( at + 1 )..].Split( ',', StringSplitOptions.RemoveEmptyEntries );
 
 			if ( xandy.Length != 2 ) {
 				if ( errors != null ) {
@@ -285,7 +278,5 @@ namespace Librainian.Graphics.Imaging {
 		///     value; otherwise, <see langword="false" />.
 		/// </returns>
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as Pixel? ?? default( Pixel ) );
-
 	}
-
 }

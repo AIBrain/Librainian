@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,21 +14,23 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "UInt256.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 #nullable enable
+
 namespace Librainian.Maths.Numbers {
 
 	using System;
 	using System.Globalization;
 	using System.Net;
 	using System.Numerics;
+	using Exceptions;
 	using JetBrains.Annotations;
 
 	/// <summary>
@@ -46,7 +48,7 @@ namespace Librainian.Maths.Numbers {
 
 		private readonly UInt64 _part4; // parts are big-endian
 
-		public static UInt256 Zero { get; } = new( new Byte[0] );
+		public static UInt256 Zero { get; } = new( Array.Empty<Byte>() );
 
 		private UInt256( UInt64 part1, UInt64 part2, UInt64 part3, UInt64 part4 ) {
 			this._part1 = part1;
@@ -54,16 +56,16 @@ namespace Librainian.Maths.Numbers {
 			this._part3 = part3;
 			this._part4 = part4;
 
-			this._hashCode = ( this._part1, this._part2, this._part3, this._part4 ).GetHashCode();
+			this._hashCode = (this._part1, this._part2, this._part3, this._part4).GetHashCode();
 		}
 
-		public UInt256( [NotNull] Byte[] value ) {
+		public UInt256( Byte[] value ) {
 			if ( value == null ) {
-				throw new ArgumentNullException( nameof( value ) );
+				throw new ArgumentEmptyException( nameof( value ) );
 			}
 
-			if ( value.Length > 32 && !( value.Length == 33 && value[32] == 0 ) ) {
-				throw new ArgumentOutOfRangeException();
+			if ( value[32] is > 32 and not ( 33 and 0 ) ) {
+				throw new ArgumentOutOfRangeException( nameof( value ) );
 			}
 
 			if ( value.Length < 32 ) {
@@ -76,18 +78,18 @@ namespace Librainian.Maths.Numbers {
 			this._part3 = value.ToUInt64( 8 );
 			this._part4 = value.ToUInt64( 0 );
 
-			this._hashCode = ( this._part1, this._part2, this._part3, this._part4 ).GetHashCode();
+			this._hashCode = (this._part1, this._part2, this._part3, this._part4).GetHashCode();
 		}
 
 		public UInt256( Int32 value ) : this( value.GetBytes() ) {
 			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException( nameof( value ) );
 			}
 		}
 
 		public UInt256( Int64 value ) : this( value.GetBytes() ) {
 			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException( nameof( value ) );
 			}
 		}
 
@@ -97,7 +99,7 @@ namespace Librainian.Maths.Numbers {
 
 		public UInt256( BigInteger value ) : this( value.ToByteArray() ) {
 			if ( value < 0 ) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException( nameof( value ) );
 			}
 		}
 
@@ -113,10 +115,10 @@ namespace Librainian.Maths.Numbers {
 		public static explicit operator Double( UInt256 value ) => ( Double )value.ToBigInteger();
 
 		//TODO properly taken into account host endianness
-		public static UInt256 FromByteArray( [NotNull] Byte[] buffer ) {
+		public static UInt256 FromByteArray( Byte[] buffer ) {
 			unchecked {
 				if ( buffer.Length != 32 ) {
-					throw new ArgumentException();
+					throw new ArgumentException( nameof( buffer ) );
 				}
 
 				var part1 = ( UInt64 )IPAddress.HostToNetworkOrder( BitConverter.ToInt64( buffer, 0 ) );
@@ -233,14 +235,14 @@ namespace Librainian.Maths.Numbers {
 
 		public static UInt256 operator >>( UInt256 value, Int32 shift ) => new( value.ToBigInteger() >> shift );
 
-		public static UInt256 Parse( [CanBeNull] String? value ) => new( BigInteger.Parse( "0" + value ).ToByteArray() );
+		public static UInt256 Parse( String? value ) => new( BigInteger.Parse( "0" + value ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, [CanBeNull] IFormatProvider provider ) =>
+		public static UInt256 Parse( String? value, IFormatProvider? provider ) =>
 			new( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style ) => new( BigInteger.Parse( "0" + value, style ).ToByteArray() );
+		public static UInt256 Parse( String? value, NumberStyles style ) => new( BigInteger.Parse( "0" + value, style ).ToByteArray() );
 
-		public static UInt256 Parse( [CanBeNull] String? value, NumberStyles style, [CanBeNull] IFormatProvider provider ) =>
+		public static UInt256 Parse( String? value, NumberStyles style, IFormatProvider? provider ) =>
 			new( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
 
 		public static UInt256 Pow( UInt256 value, Int32 exponent ) => new( BigInteger.Pow( value.ToBigInteger(), exponent ) );
@@ -274,7 +276,6 @@ namespace Librainian.Maths.Numbers {
 
 		public BigInteger ToBigInteger() => new( this.ToByteArray().Concat( 0 ) );
 
-		[NotNull]
 		public Byte[] ToByteArray() {
 			var buffer = new Byte[32];
 			Buffer.BlockCopy( this._part4.GetBytes(), 0, buffer, 0, 8 );
@@ -285,7 +286,7 @@ namespace Librainian.Maths.Numbers {
 			return buffer;
 		}
 
-		public void ToByteArray( [NotNull] Byte[] buffer, Int32 offset ) {
+		public void ToByteArray( Byte[] buffer, Int32 offset ) {
 			Buffer.BlockCopy( this._part4.GetBytes(), 0, buffer, 0 + offset, 8 );
 			Buffer.BlockCopy( this._part3.GetBytes(), 0, buffer, 8 + offset, 8 );
 			Buffer.BlockCopy( this._part2.GetBytes(), 0, buffer, 16 + offset, 8 );
@@ -293,7 +294,6 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		//TODO properly taken into account host endianness
-		[NotNull]
 		public Byte[] ToByteArrayBe() {
 			unchecked {
 				var buffer = new Byte[32];
@@ -310,9 +310,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => this.ToHexNumberString();
-
 	}
-
 }

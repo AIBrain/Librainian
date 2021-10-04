@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,18 +14,17 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "StringHexPrefix.cs" last formatted on 2020-08-14 at 8:41 PM.
 
 namespace Librainian.Parsing.Validation {
 
 	using System;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary>be a hexadecimal number (optional 0x or &amp;H prefix)</summary>
@@ -35,9 +34,6 @@ namespace Librainian.Parsing.Validation {
 
 		public StringHexPrefix( String value ) : base( value, "^(0x|&H)?[0-9a-fA-F]*$" ) { }
 
-		[NotNull]
-		public static explicit operator StringHexPrefix( [CanBeNull] String? str ) => new( str );
-
+		public static explicit operator StringHexPrefix( String? str ) => new( str );
 	}
-
 }

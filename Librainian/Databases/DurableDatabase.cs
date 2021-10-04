@@ -32,21 +32,31 @@ namespace Librainian.Databases {
 	using System.Data.Common;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Extensions;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
 	using Microsoft.Data.SqlClient;
-	using Utilities;
+	using Utilities.Disposables;
 
 	public class DurableDatabase : ABetterClassDispose {
+
+		private String ConnectionString { get; }
+
+		private UInt16 Retries { get; }
+
+		private ThreadLocal<SqlConnection> SqlConnections { get; }
+
+		public CancellationTokenSource CancelConnection { get; } = new();
 
 		/// <summary>A database connection attempts to stay connected in the event of an unwanted disconnect.</summary>
 		/// <param name="connectionString"></param>
 		/// <param name="retries">         </param>
 		/// <exception cref="InvalidOperationException"></exception>
-		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.</remarks>
-		public DurableDatabase( [NotNull] String connectionString, UInt16 retries ) {
+		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.
+		/// It probably doesn't help, as experience shows a database connection should be as short as possible.
+		/// </remarks>
+		public DurableDatabase( String connectionString, UInt16 retries ) : base( nameof( DurableDatabase ) ) {
 			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 			}
@@ -63,32 +73,23 @@ namespace Librainian.Databases {
 
 			var test = this.OpenConnection(); //try/start the current thread's open;
 
-			if ( null == test ) {
+			if ( test == null ) {
 				var builder = new SqlConnectionStringBuilder( this.ConnectionString );
 
 				throw new InvalidOperationException( $"Unable to connect to {builder.DataSource}" );
 			}
 		}
 
-		[NotNull] private String ConnectionString { get; }
-
-		private UInt16 Retries { get; }
-
-		[NotNull] private ThreadLocal<SqlConnection> SqlConnections { get; }
-
-		public CancellationTokenSource CancelConnection { get; } = new();
-
-		[CanBeNull]
 		private SqlConnection? OpenConnection() {
 			var sqlConnectionsValue = this.SqlConnections.Value;
-			if ( sqlConnectionsValue?.State == ConnectionState.Open ) {
+			if ( sqlConnectionsValue!.State == ConnectionState.Open ) {
 				return this.SqlConnections.Value;
 			}
 
 			try {
-				this.SqlConnections.Value?.Open();
+				sqlConnectionsValue.Open();
 
-				return this.SqlConnections.Value;
+				return sqlConnectionsValue;
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -99,9 +100,7 @@ namespace Librainian.Databases {
 
 		/// <summary>Return true if connected.</summary>
 		/// <param name="sender"></param>
-		/// <returns></returns>
-		private Boolean ReOpenConnection( [CanBeNull]
-			Object? sender ) {
+		private Boolean ReOpenConnection( Object? sender ) {
 			if ( this.CancelConnection.IsCancellationRequested ) {
 				return false;
 			}
@@ -137,8 +136,7 @@ namespace Librainian.Databases {
 			return false;
 		}
 
-		private void SqlConnection_StateChange( [CanBeNull]
-			Object? sender, [NotNull] StateChangeEventArgs e ) {
+		private void SqlConnection_StateChange( Object? sender, StateChangeEventArgs e ) {
 			switch ( e.CurrentState ) {
 				case ConnectionState.Closed:
 					this.ReOpenConnection( sender );
@@ -182,48 +180,46 @@ namespace Librainian.Databases {
 				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 				switch ( connection.State ) {
 					case ConnectionState.Open: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Closed: {
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Connecting: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Executing: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Fetching: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 
 					case ConnectionState.Broken: {
-						connection.Close();
+							connection.Close();
 
-						break;
-					}
+							break;
+						}
 				}
 			}
 		}
 
 		/// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
-		/// <returns></returns>
-		public Int32? ExecuteNonQuery( [NotNull] String query, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public Int32? ExecuteNonQuery( String query, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			try {
@@ -233,7 +229,7 @@ namespace Librainian.Databases {
 						CommandType = CommandType.Text
 					};
 
-					if ( null != parameters ) {
+					if ( parameters != null ) {
 						command.Parameters?.AddRange( parameters );
 					}
 
@@ -253,26 +249,26 @@ namespace Librainian.Databases {
 			return default( Int32? );
 		}
 
-		public Int32? ExecuteNonQuery( [NotNull] String query, Int32 retries, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public Int32? ExecuteNonQuery( String query, Int32 retries, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
-			TryAgain:
+		TryAgain:
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = CommandType.StoredProcedure
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
 				return command.ExecuteNonQuery();
 			}
 			catch ( InvalidOperationException ) {
+
 				//timeout probably
 				retries--;
 
@@ -290,11 +286,10 @@ namespace Librainian.Databases {
 			return default( Int32? );
 		}
 
-		/// <summary></summary>
-		/// <returns></returns>
-		public Boolean ExecuteNonQuery( [NotNull] String query ) {
+		
+		public Boolean ExecuteNonQuery( String query ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			try {
@@ -319,22 +314,18 @@ namespace Librainian.Databases {
 			return false;
 		}
 
-		[ItemCanBeNull]
-		public async Task<Int32?> ExecuteNonQueryAsync( [NotNull] String query, CommandType commandType, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			try {
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType
-					};
+				var command = new SqlCommand( query, this.OpenConnection() ) {
+					CommandType = commandType
+				};
+				await using var asyncDisposable = command.ConfigureAwait( false );
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -355,28 +346,30 @@ namespace Librainian.Databases {
 		/// <param name="commandType"></param>
 		/// <param name="table">      </param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public Boolean ExecuteReader( [NotNull] String query, CommandType commandType, [NotNull] out DataTable table, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
-			table = new DataTable();
+			using DataTable local = new();
+
+			table = local;
 
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
 				table.BeginLoadData();
 
 				using ( var reader = command.ExecuteReader() ) {
-					table.Load( reader );
+					if ( reader != null ) {
+						table.Load( reader );
+					}
 				}
 
 				table.EndLoadData();
@@ -400,12 +393,9 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		[NotNull]
-		public DataTable ExecuteReader( [NotNull] String query, CommandType commandType, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public DataTable ExecuteReader( String query, CommandType commandType, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			var table = new DataTable();
@@ -415,7 +405,7 @@ namespace Librainian.Databases {
 					CommandType = commandType
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
@@ -440,36 +430,28 @@ namespace Librainian.Databases {
 			return table;
 		}
 
-		/// <summary></summary>
+		
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		[ItemCanBeNull]
-		public async Task<DataTableReader> ExecuteReaderAsyncDataReader( [CanBeNull]
-			String? query, CommandType commandType, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public async Task<DataTableReader?> ExecuteReaderAsyncDataReader( String? query, CommandType commandType, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			try {
 				DataTable table;
 
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using ( var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType
-					} ) {
-					if ( null != parameters ) {
+				var command = new SqlCommand( query, this.OpenConnection() ) {
+					CommandType = commandType
+				};
+				await using ( command.ConfigureAwait( false ) ) {
+					if ( parameters != null ) {
 						command.Parameters?.AddRange( parameters );
 					}
 
-#if NET5_0_OR_GREATER
-					await
-#endif
-						using var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+					var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+					await using var _ = reader.ConfigureAwait( false );
 					table = reader.ToDataTable();
 				}
 
@@ -486,30 +468,23 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public async Task<DataTable> ExecuteReaderDataTableAsync( [NotNull] String query, CommandType commandType, [CanBeNull]
-			params SqlParameter[]? parameters ) {
-			var table = new DataTable();
+		public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
+			using var table = new DataTable();
 
 			try {
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType
-					};
+				var command = new SqlCommand( query, this.OpenConnection() ) {
+					CommandType = commandType
+				};
+				await using var _ = command.ConfigureAwait( false );
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
 				table.BeginLoadData();
 
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using ( var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false ) ) {
+				var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false );
+				await using ( reader.ConfigureAwait( false ) ) {
 					table.Load( reader );
 				}
 
@@ -534,22 +509,20 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public (Status status, TResult result) ExecuteScalar<TResult>( [NotNull] String query, CommandType commandType, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public (Status status, TResult result) ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[]? parameters ) {
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = commandType
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
 				var scalar = command.ExecuteScalar();
 
-				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return (Status.Success, default( TResult ))!;
+				if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+					return (Status.Success, default( TResult ));
 				}
 
 				if ( scalar is TResult result1 ) {
@@ -578,27 +551,27 @@ namespace Librainian.Databases {
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>( [NotNull] String query, CommandType commandType, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>(
+			String query,
+			CommandType commandType,
+			params SqlParameter[]? parameters
+		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new ArgumentEmptyException( nameof( query ) );
 			}
 
 			try {
-#if NET5_0_OR_GREATER
-				await
-#endif
-					using var command = new SqlCommand( query, this.OpenConnection() ) {
-						CommandType = commandType,
-						CommandTimeout = 0
-					};
+				var command = new SqlCommand( query, this.OpenConnection() ) {
+					CommandType = commandType,
+					CommandTimeout = 0
+				};
+				await using var _ = command.ConfigureAwait( false );
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
-				TryAgain:
+			TryAgain:
 				Object scalar;
 
 				try {
@@ -612,8 +585,8 @@ namespace Librainian.Databases {
 					throw;
 				}
 
-				if ( null == scalar || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return (Status.Success, default( TResult ))!;
+				if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+					return (Status.Success, default( TResult ));
 				}
 
 				if ( scalar is TResult scalarAsync ) {
@@ -627,6 +600,7 @@ namespace Librainian.Databases {
 				return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
 			}
 			catch ( InvalidCastException exception ) {
+
 				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 				exception.Log();
 			}
@@ -640,17 +614,13 @@ namespace Librainian.Databases {
 		/// <summary>Returns a <see cref="DataTable" /></summary>
 		/// <param name="query">     </param>
 		/// <param name="parameters"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		[ItemCanBeNull]
-		public IEnumerable<TResult> QueryList<TResult>( [NotNull] String query, [CanBeNull]
-			params SqlParameter[]? parameters ) {
+		public IEnumerable<TResult?>? QueryList<TResult>( String query, params SqlParameter[]? parameters ) {
 			try {
 				using var command = new SqlCommand( query, this.OpenConnection() ) {
 					CommandType = CommandType.StoredProcedure
 				};
 
-				if ( null != parameters ) {
+				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 

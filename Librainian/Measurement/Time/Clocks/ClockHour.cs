@@ -6,91 +6,92 @@
 // 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 // 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 // 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "ClockHour.cs" last touched on 2021-10-02 at 7:08 AM by Protiguous.
 
 namespace Librainian.Measurement.Time.Clocks {
 
-    using System;
-    using Extensions;
-    using Newtonsoft.Json;
+	using System;
+	using Extensions;
+	using Newtonsoft.Json;
+	using Utilities;
 
-    /// <summary>
-    ///     <para>A simple struct for an <see cref="ClockHour" />.</para>
-    /// </summary>
-    [JsonObject]
-    [Immutable]
-    public record ClockHour : IClockPart {
+	/// <summary>
+	///     <para>A simple record for an <see cref="ClockHour" />.</para>
+	/// </summary>
+	[JsonObject]
+	[Immutable]
+	[NeedsTesting]
+	public record ClockHour : IClockPart {
 
-        public const Byte MaximumValue = Hours.InOneDay;
+		public const Byte MaximumValue = 24;
 
-        public const Byte MinimumValue = 1;
+		public const Byte MinimumValue = 1;
 
-        [JsonProperty]
-        public readonly Byte Value;
+		public ClockHour( Byte value ) {
+			if ( value is < MinimumValue or > MaximumValue ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
+			}
 
-        public ClockHour( Byte value ) {
-            if ( value is < MinimumValue or > MaximumValue) {
-                throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
-            }
+			this.Value = value;
+		}
 
-            this.Value = value;
-        }
+		public Byte Value { get; init; }
 
-        public static ClockHour Maximum { get; } = new( MaximumValue );
+		public static ClockHour Maximum { get; } = new(MaximumValue);
 
-        public static ClockHour Minimum { get; } = new( MinimumValue );
+		public static ClockHour Minimum { get; } = new(MinimumValue);
 
-        public static implicit operator Byte( ClockHour value ) => value.Value;
+		public static implicit operator Byte( ClockHour value ) => value.Value;
 
-        public static implicit operator ClockHour( Byte value ) => new( value );
+		public static implicit operator ClockHour( Byte value ) => new(value);
 
-        /// <summary>Provide the next <see cref="ClockHour" />.</summary>
-        public ClockHour Next( out Boolean tocked ) {
-            var next = this.Value + 1;
+		/// <summary>Provide the next <see cref="ClockHour" />.</summary>
+		public ClockHour Next( out Boolean tocked ) {
+			var next = this.Value + 1;
 
-            if ( next > Maximum ) {
-                tocked = true;
+			if ( next > Maximum ) {
+				tocked = true;
 
-                return Minimum;
-            }
+				return Minimum;
+			}
 
-            tocked = false;
+			tocked = false;
 
-            return ( ClockHour )next;
-        }
+			return ( ClockHour )next;
+		}
 
-        /// <summary>Provide the previous <see cref="ClockHour" />.</summary>
-        public ClockHour Previous( out Boolean tocked ) {
-            var next = this.Value - 1;
+		/// <summary>Provide the previous <see cref="ClockHour" />.</summary>
+		public ClockHour Previous( out Boolean tocked ) {
+			var next = this.Value - 1;
 
-            if ( next < Minimum ) {
-                tocked = true;
+			if ( next < Minimum ) {
+				tocked = true;
 
-                return Maximum;
-            }
+				return Maximum;
+			}
 
-            tocked = false;
+			tocked = false;
 
-            return ( ClockHour )next;
-        }
+			return ( ClockHour )next;
+		}
 
-    }
+	}
 
 }

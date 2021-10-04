@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "C5Random.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 #nullable enable
@@ -27,7 +27,7 @@
 namespace Librainian.Security {
 
 	using System;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/*
         Copyright (c) 2003-2006 Niels Kokholm and Peter Sestoft
@@ -65,6 +65,8 @@ namespace Librainian.Security {
 
 		private UInt32 _i = 15;
 
+		private UInt32[] _q { get; } = new UInt32[_qLength];
+
 		/// <summary>
 		///     <para>Create a random number generator with a given seed.</para>
 		///     <para>If 0 or no seed is provided, the current date &amp; time is used.</para>
@@ -99,15 +101,15 @@ namespace Librainian.Security {
 		///     The start state. Must be a collection of random bits given by an array of exactly 16
 		///     <see cref="UInt32" />.
 		/// </param>
-		public C5Random( [NotNull] UInt32[] array ) {
+		public C5Random( UInt32[] array ) {
 			if ( array is null ) {
-				throw new ArgumentNullException( nameof( array ) );
+				throw new ArgumentEmptyException( nameof( array ) );
 			}
 
 			if ( array.Length > 0 ) {
 				Buffer.BlockCopy( array, 0, this._q, 0, _qLength );
 			}
-			else if ( array.Length is > 0 and < _qLength) {
+			else if ( array.Length is > 0 and < _qLength ) {
 				var b = Array.ConvertAll( array, j => {
 					j ^= j << 0xD;
 					j ^= j >> 0x11;
@@ -127,8 +129,6 @@ namespace Librainian.Security {
 				Buffer.BlockCopy( b, 0, this._q, 0, _qLength );
 			}
 		}
-
-		private UInt32[] _q { get; } = new UInt32[_qLength];
 
 		private UInt32 Cmwc() {
 			const UInt64 a = 487198574UL;
@@ -161,7 +161,6 @@ namespace Librainian.Security {
 		/// <exception cref="ArgumentException">If max is less than min</exception>
 		/// <param name="min">The lower bound (inclusive)</param>
 		/// <param name="max">The upper bound (exclusive)</param>
-		/// <returns></returns>
 		public override Int32 Next( Int32 min, Int32 max ) {
 			if ( min > max ) {
 				throw new ArgumentException( "min must be less than or equal to max" );
@@ -173,7 +172,6 @@ namespace Librainian.Security {
 		/// <summary>Get a random non-negative integer less than a given upper bound</summary>
 		/// <exception cref="ArgumentException">If max is negative</exception>
 		/// <param name="max">The upper bound (exclusive)</param>
-		/// <returns></returns>
 		public override Int32 Next( Int32 max ) {
 			if ( max < 0 ) {
 				throw new ArgumentException( "max must be non-negative" );
@@ -186,7 +184,7 @@ namespace Librainian.Security {
 		/// <param name="buffer">The array to fill</param>
 		public override void NextBytes( Byte[] buffer ) {
 			if ( buffer is null ) {
-				throw new ArgumentNullException( nameof( buffer ) );
+				throw new ArgumentEmptyException( nameof( buffer ) );
 			}
 
 			for ( Int32 i = 0, length = buffer.Length; i < length; i++ ) {
@@ -197,7 +195,5 @@ namespace Librainian.Security {
 		/// <summary>Get a new random System.Double value</summary>
 		/// <returns>The random Double</returns>
 		public override Double NextDouble() => this.Cmwc() / 4294967296.0;
-
 	}
-
 }

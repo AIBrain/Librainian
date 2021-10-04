@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "JunctionPoint.cs" last formatted on 2020-08-14 at 8:40 PM.
 
 namespace Librainian.FileSystem {
@@ -29,73 +29,11 @@ namespace Librainian.FileSystem {
 	using System.IO;
 	using System.Runtime.InteropServices;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Microsoft.Win32.SafeHandles;
 	using OperatingSystem;
 
 	/// <summary>Provides access to NTFS junction points in .Net.</summary>
 	public static class JunctionPoint {
-
-		public enum ECreationDisposition : UInt32 {
-
-			New = 1,
-			CreateAlways = 2,
-			OpenExisting = 3,
-			OpenAlways = 4,
-			TruncateExisting = 5
-
-		}
-
-		[Flags]
-		public enum EFileAccess : UInt32 {
-
-			GenericRead = 0x80000000,
-			GenericWrite = 0x40000000,
-			GenericExecute = 0x20000000,
-			GenericAll = 0x10000000
-
-		}
-
-		[Flags]
-		public enum EFileAttributes : UInt32 {
-
-			Readonly = 0x00000001,
-			Hidden = 0x00000002,
-			System = 0x00000004,
-			Directory = 0x00000010,
-			Archive = 0x00000020,
-			Device = 0x00000040,
-			Normal = 0x00000080,
-			Temporary = 0x00000100,
-			SparseFile = 0x00000200,
-			ReparsePoint = 0x00000400,
-			Compressed = 0x00000800,
-			Offline = 0x00001000,
-			NotContentIndexed = 0x00002000,
-			Encrypted = 0x00004000,
-			WriteThrough = 0x80000000,
-			Overlapped = 0x40000000,
-			NoBuffering = 0x20000000,
-			RandomAccess = 0x10000000,
-			SequentialScan = 0x08000000,
-			DeleteOnClose = 0x04000000,
-			BackupSemantics = 0x02000000,
-			PosixSemantics = 0x01000000,
-			OpenReparsePoint = 0x00200000,
-			OpenNoRecall = 0x00100000,
-			FirstPipeInstance = 0x00080000
-
-		}
-
-		[Flags]
-		public enum EFileShare : UInt32 {
-
-			None = 0x00000000,
-			Read = 0x00000001,
-			Write = 0x00000002,
-			Delete = 0x00000004
-
-		}
 
 		/// <summary>The data present in the reparse point buffer is invalid.</summary>
 		private const Int32 ErrorInvalidReparseData = 4392;
@@ -130,8 +68,98 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		private const String NonInterpretedPathPrefix = @"\??\";
 
-		[CanBeNull]
-		private static String? InternalGetTarget( [JetBrains.Annotations.NotNull] SafeHandle handle ) {
+		public enum ECreationDisposition : UInt32 {
+
+			New = 1,
+
+			CreateAlways = 2,
+
+			OpenExisting = 3,
+
+			OpenAlways = 4,
+
+			TruncateExisting = 5
+		}
+
+		[Flags]
+		public enum EFileAccess : UInt32 {
+
+			GenericRead = 0x80000000,
+
+			GenericWrite = 0x40000000,
+
+			GenericExecute = 0x20000000,
+
+			GenericAll = 0x10000000
+		}
+
+		[Flags]
+		public enum EFileAttributes : UInt32 {
+
+			Readonly = 0x00000001,
+
+			Hidden = 0x00000002,
+
+			System = 0x00000004,
+
+			Directory = 0x00000010,
+
+			Archive = 0x00000020,
+
+			Device = 0x00000040,
+
+			Normal = 0x00000080,
+
+			Temporary = 0x00000100,
+
+			SparseFile = 0x00000200,
+
+			ReparsePoint = 0x00000400,
+
+			Compressed = 0x00000800,
+
+			Offline = 0x00001000,
+
+			NotContentIndexed = 0x00002000,
+
+			Encrypted = 0x00004000,
+
+			WriteThrough = 0x80000000,
+
+			Overlapped = 0x40000000,
+
+			NoBuffering = 0x20000000,
+
+			RandomAccess = 0x10000000,
+
+			SequentialScan = 0x08000000,
+
+			DeleteOnClose = 0x04000000,
+
+			BackupSemantics = 0x02000000,
+
+			PosixSemantics = 0x01000000,
+
+			OpenReparsePoint = 0x00200000,
+
+			OpenNoRecall = 0x00100000,
+
+			FirstPipeInstance = 0x00080000
+		}
+
+		[Flags]
+		public enum EFileShare : UInt32 {
+
+			None = 0x00000000,
+
+			Read = 0x00000001,
+
+			Write = 0x00000002,
+
+			Delete = 0x00000004
+		}
+
+		private static String? InternalGetTarget( SafeHandle handle ) {
 			var outBufferSize = Marshal.SizeOf( typeof( ReparseDataBuffer ) );
 			var outBuffer = Marshal.AllocHGlobal( outBufferSize );
 
@@ -155,7 +183,7 @@ namespace Librainian.FileSystem {
 					throw new InvalidOperationException();
 				}
 				else {
-					var reparseDataBuffer = ( ReparseDataBuffer ) toStructure;
+					var reparseDataBuffer = ( ReparseDataBuffer )toStructure;
 
 					if ( reparseDataBuffer.ReparseTag != IOReparseTagMountPoint ) {
 						return default( String? );
@@ -175,8 +203,7 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		[JetBrains.Annotations.NotNull]
-		private static SafeFileHandle OpenReparsePoint( [CanBeNull] String? reparsePoint, FileAccess accessMode ) {
+		private static SafeFileHandle OpenReparsePoint( String? reparsePoint, FileAccess accessMode ) {
 			var bob = NativeMethods.CreateFile( reparsePoint, accessMode, FileShare.Read | FileShare.Write | FileShare.Delete, IntPtr.Zero, FileMode.Open,
 												FileAttributes.Archive | FileAttributes.ReparsePoint, IntPtr.Zero );
 
@@ -201,7 +228,7 @@ namespace Librainian.FileSystem {
 		///     Thrown when the junction point could not be created or when an existing directory was
 		///     found and <paramref name="overwrite" /> if false
 		/// </exception>
-		public static void Create( [JetBrains.Annotations.NotNull] String junctionPoint, String targetDir, Boolean overwrite ) {
+		public static void Create( String junctionPoint, String targetDir, Boolean overwrite ) {
 			targetDir = Path.GetFullPath( targetDir );
 
 			if ( !Directory.Exists( targetDir ) ) {
@@ -222,8 +249,12 @@ namespace Librainian.FileSystem {
 			var targetDirBytes = Encoding.Unicode.GetBytes( NonInterpretedPathPrefix + Path.GetFullPath( targetDir ) );
 
 			var reparseDataBuffer = new ReparseDataBuffer {
-				ReparseTag = IOReparseTagMountPoint, ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ), SubstituteNameOffset = 0,
-				SubstituteNameLength = ( UInt16 )targetDirBytes.Length, PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ), PrintNameLength = 0,
+				ReparseTag = IOReparseTagMountPoint,
+				ReparseDataLength = ( UInt16 )( targetDirBytes.Length + 12 ),
+				SubstituteNameOffset = 0,
+				SubstituteNameLength = ( UInt16 )targetDirBytes.Length,
+				PrintNameOffset = ( UInt16 )( targetDirBytes.Length + 2 ),
+				PrintNameLength = 0,
 				PathBuffer = new Byte[0x3ff0]
 			};
 
@@ -253,7 +284,7 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <remarks>Only works on NTFS.</remarks>
 		/// <param name="junctionPoint">The junction point path</param>
-		public static void Delete( [CanBeNull] String? junctionPoint ) {
+		public static void Delete( String? junctionPoint ) {
 			if ( !Directory.Exists( junctionPoint ) ) {
 				if ( File.Exists( junctionPoint ) ) {
 					throw new IOException( "Path is not a junction point." );
@@ -265,7 +296,9 @@ namespace Librainian.FileSystem {
 			using var handle = OpenReparsePoint( junctionPoint, FileAccess.Write );
 
 			var reparseDataBuffer = new ReparseDataBuffer {
-				ReparseTag = IOReparseTagMountPoint, ReparseDataLength = 0, PathBuffer = new Byte[0x3ff0]
+				ReparseTag = IOReparseTagMountPoint,
+				ReparseDataLength = 0,
+				PathBuffer = new Byte[0x3ff0]
 			};
 
 			var inBufferSize = Marshal.SizeOf( reparseDataBuffer );
@@ -297,7 +330,7 @@ namespace Librainian.FileSystem {
 		/// <param name="path">The junction point path</param>
 		/// <returns>True if the specified path represents a junction point</returns>
 		/// <exception cref="IOException">Thrown if the specified path is invalid or some other error occurs</exception>
-		public static Boolean Exists( [CanBeNull] String? path ) {
+		public static Boolean Exists( String? path ) {
 			if ( !Directory.Exists( path ) ) {
 				return false;
 			}
@@ -315,8 +348,7 @@ namespace Librainian.FileSystem {
 		///     Thrown when the specified path does not exist, is invalid, is not a junction point, or
 		///     some other error occurs
 		/// </exception>
-		[JetBrains.Annotations.NotNull]
-		public static String GetTarget( [CanBeNull] String? junctionPoint ) {
+		public static String GetTarget( String? junctionPoint ) {
 			using var handle = OpenReparsePoint( junctionPoint, FileAccess.Read );
 
 			var target = InternalGetTarget( handle );
@@ -368,9 +400,6 @@ namespace Librainian.FileSystem {
 			/// </summary>
 			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 0x3FF0 )]
 			public Byte[] PathBuffer;
-
 		}
-
 	}
-
 }

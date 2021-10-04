@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "NumberExtensions.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 #nullable enable
@@ -33,6 +33,7 @@ namespace Librainian.Maths {
 	using System.Numerics;
 	using System.Runtime.CompilerServices;
 	using System.Text;
+	using Exceptions;
 	using JetBrains.Annotations;
 	using Measurement.Time;
 	using Numbers;
@@ -41,7 +42,6 @@ namespace Librainian.Maths {
 	public static class NumberExtensions {
 
 		/// <summary>Table used for reversing bits.</summary>
-		[NotNull]
 		private static readonly Byte[] BitReverseTable256 = {
 			0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0, 0x10, 0x90,
 			0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0, 0x08, 0x88, 0x48, 0xC8,
@@ -71,14 +71,12 @@ namespace Librainian.Maths {
 			0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF
 		};
 
-		[NotNull]
 		private static readonly String[] SizeSuffixes = {
 			"bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
 		};
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -86,7 +84,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -94,7 +91,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -102,7 +98,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -110,7 +105,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -118,7 +112,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -126,7 +119,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -134,7 +126,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -142,7 +133,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -150,7 +140,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -158,7 +147,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -166,7 +154,6 @@ namespace Librainian.Maths {
 
 		/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 		/// <param name="number"></param>
-		/// <returns></returns>
 		[Pure]
 		[DebuggerStepThrough]
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -282,6 +269,28 @@ namespace Librainian.Maths {
 			}
 
 			return i;
+		}
+
+		public static TimeSpan GetStep( this DateTime from, DateTime to ) {
+			var diff = from >= to ? from - to : to - from;
+
+			if ( diff.TotalDays > 1 ) {
+				return Days.One;
+			}
+
+			if ( diff.TotalHours > 1 ) {
+				return Hours.One;
+			}
+
+			if ( diff.TotalMinutes > 1 ) {
+				return Minutes.One;
+			}
+
+			if ( diff.TotalSeconds > 1 ) {
+				return Seconds.One;
+			}
+
+			return Milliseconds.One;
 		}
 
 		/// <summary>Finds the parity of a given value.</summary>
@@ -439,7 +448,6 @@ namespace Librainian.Maths {
 			return ( Int16 )( ( source >> 8 ) | ( source << 8 ) );
 		}
 
-		[NotNull]
 		[DebuggerStepThrough]
 		[Pure]
 		public static String SizeSuffix( this Int64 value, Int32 decimalPlaces = 1 ) {
@@ -485,11 +493,10 @@ namespace Librainian.Maths {
 		/// <param name="start"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		public static IEnumerable<Byte> To( this Byte start, Byte end, Byte step = 1 ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			if ( start <= end ) {
 				for ( var b = start; b <= end; b += step ) {
@@ -497,7 +504,7 @@ namespace Librainian.Maths {
 
 					if ( b == Byte.MaxValue ) {
 						yield break; //special case to deal with overflow
-					} 
+					}
 				}
 			}
 			else {
@@ -506,7 +513,7 @@ namespace Librainian.Maths {
 
 					if ( b == Byte.MinValue ) {
 						yield break; //special case to deal with underflow
-					} 
+					}
 				}
 			}
 		}
@@ -515,37 +522,33 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		public static IEnumerable<UInt64> To( this Int32 begin, UInt64 end, UInt64 step = 1 ) {
-
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			var start = ( Decimal )begin;
 
-            if ( start <= end ) {
-                const Decimal maxValue = UInt64.MaxValue;
+			if ( start <= end ) {
+				const Decimal maxValue = UInt64.MaxValue;
 
 				for ( var value = start; value <= end; value += step ) {
-                    yield return ( UInt64 )value;	//TODO needs unit tested
+					yield return ( UInt64 )value;   //TODO needs unit tested
 
-                    if ( value >= maxValue ) {
-                        yield break; //special case to deal with overflow
-					} 
-
+					if ( value >= maxValue ) {
+						yield break; //special case to deal with overflow
+					}
 				}
 			}
 			else {
-                const Decimal minValue = UInt64.MinValue;
+				const Decimal minValue = UInt64.MinValue;
 
 				for ( var ul = start; ul >= end; ul -= step ) {
-                    yield return ( UInt64 )ul; //TODO needs unit test
+					yield return ( UInt64 )ul; //TODO needs unit test
 
-                    if ( ul < minValue ) {
-                        yield break; //special case to deal with overflow
-                    }
-
+					if ( ul < minValue ) {
+						yield break; //special case to deal with overflow
+					}
 				}
 			}
 		}
@@ -554,13 +557,11 @@ namespace Librainian.Maths {
 		/// <param name="begin">inclusive</param>
 		/// <param name="end">  inclusive</param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<Int32> To( this Int32 begin, Int32 end, Int32 step = 1 ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			if ( begin == end ) {
 				/*no-op?*/
@@ -583,13 +584,11 @@ namespace Librainian.Maths {
 		/// <param name="from"></param>
 		/// <param name="end"> </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			if ( from <= end ) {
 				for ( var ul = from; ul <= end; ul += step ) {
@@ -615,13 +614,11 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end"> </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<Int64> To( this Int64 begin, Int64 end, Int64 step = 1 ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			if ( begin <= end ) {
 				for ( var ul = begin; ul <= end; ul += step ) {
@@ -647,13 +644,11 @@ namespace Librainian.Maths {
 		/// <param name="from"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger end, UInt64 step = 1 ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			if ( from <= end ) {
 				for ( var ul = from; ul <= end; ul += step ) {
@@ -671,13 +666,11 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end">  </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<BigInteger> To( this Int64 begin, BigInteger end, UInt64 step = 1 ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			BigInteger start = begin;
 
@@ -697,13 +690,11 @@ namespace Librainian.Maths {
 		/// <param name="begin"></param>
 		/// <param name="end">   </param>
 		/// <param name="step"> </param>
-		/// <returns></returns>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<Rational> To( this Int32 begin, Rational end, Rational step ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			Rational start = begin;
 
@@ -719,28 +710,6 @@ namespace Librainian.Maths {
 			}
 		}
 
-		public static TimeSpan GetStep( this DateTime from, DateTime to ) {
-			var diff = from >= to ? from - to : to - from;
-
-			if ( diff.TotalDays > 1 ) {
-				return Days.One;
-			}
-
-			if ( diff.TotalHours > 1 ) {
-				return Hours.One;
-			}
-
-			if ( diff.TotalMinutes > 1 ) {
-				return Minutes.One;
-			}
-
-			if ( diff.TotalSeconds > 1 ) {
-				return Seconds.One;
-			}
-
-			return Milliseconds.One;
-		}
-
 		/// <summary>
 		///     Return each <see cref="DateTime" /> between <paramref name="from" /> and <paramref name="to" />, stepped by a
 		///     <see cref="TimeSpan" /> ( <paramref name="step" />).
@@ -748,7 +717,6 @@ namespace Librainian.Maths {
 		/// <param name="from"></param>
 		/// <param name="to">  </param>
 		/// <param name="step"></param>
-		/// <returns></returns>
 		/// <remarks>//TODO Untested code!</remarks>
 		/// <example>
 		///     var now = DateTime.UtcNow; var then = now.AddMinutes( 10 ); var minutes = now.To( then, TimeSpan.FromMinutes( 1 )
@@ -756,13 +724,12 @@ namespace Librainian.Maths {
 		///     Console.WriteLine( dateTime ); }
 		/// </example>
 		[Pure]
-		[NotNull]
 		public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
 			step ??= from.GetStep( to );
 
-            if ( step == TimeSpan.Zero ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == TimeSpan.Zero ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			if ( from > to ) {
 				for ( var dateTime = from; dateTime >= to; dateTime -= step.Value ) {
@@ -777,11 +744,10 @@ namespace Librainian.Maths {
 		}
 
 		[Pure]
-		[NotNull]
 		public static IEnumerable<Single> To( this Single start, Single end, Single step ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
 			var count = end - start + 1.0f;
 
@@ -791,48 +757,45 @@ namespace Librainian.Maths {
 		}
 
 		[Pure]
-		[NotNull]
 		public static IEnumerable<Double> To( this Double start, Double end, Single step ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
+			}
 
-            if ( end >= start ) {
-                for ( var i = start; i <= end; i += step ) {
-                    yield return i;
-                }
-            }
-            else {
-                for ( var i = start; i >= end; i -= step ) {
-                    yield return i;
-                }
-            }
+			if ( end >= start ) {
+				for ( var i = start; i <= end; i += step ) {
+					yield return i;
+				}
+			}
+			else {
+				for ( var i = start; i >= end; i -= step ) {
+					yield return i;
+				}
+			}
 		}
 
 		[Pure]
-		[NotNull]
 		public static IEnumerable<Decimal> To( this Decimal start, Decimal end, Decimal step ) {
-            if ( step == 0 ) {
-                throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
-            }
-
-            if ( end >= start ) {
-				for ( var i = start; i <= end; i += step ) {
-                    yield return i;
-                }
+			if ( step == 0 ) {
+				throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
 			}
-            else {
-                for ( var i = start; i >= end; i -= step ) {
+
+			if ( end >= start ) {
+				for ( var i = start; i <= end; i += step ) {
 					yield return i;
-                }
-            }
-        }
+				}
+			}
+			else {
+				for ( var i = start; i >= end; i -= step ) {
+					yield return i;
+				}
+			}
+		}
 
 		[Pure]
-		[NotNull]
-		public static String ToHex( [NotNull] this IEnumerable<Byte> input ) {
+		public static String ToHex( this IEnumerable<Byte> input ) {
 			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
+				throw new ArgumentEmptyException( nameof( input ) );
 			}
 
 			var result = new StringBuilder();
@@ -844,18 +807,12 @@ namespace Librainian.Maths {
 			return result.ToString();
 		}
 
-		[CanBeNull]
 		public static String ToHex( this UInt32 value ) => BitConverter.GetBytes( value ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "X2" ) );
 
-		[CanBeNull]
 		public static String ToHex( this UInt64 value ) => BitConverter.GetBytes( value ).Aggregate( String.Empty, ( current, b ) => current + b.ToString( "X2" ) );
 
-		[NotNull]
-		public static String ToHexNumberString( [NotNull] this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
+		public static String ToHexNumberString( this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
 
-		[NotNull]
 		public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
-
 	}
-
 }

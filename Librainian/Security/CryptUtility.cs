@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "CryptUtility.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 namespace Librainian.Security {
@@ -29,7 +29,6 @@ namespace Librainian.Security {
 	using System.Drawing;
 	using System.IO;
 	using System.Linq;
-	using JetBrains.Annotations;
 
 	/// <summary>
 	/// Where did this class come from?
@@ -46,7 +45,7 @@ namespace Librainian.Security {
 				0 => pixelColor.R,
 				1 => pixelColor.G,
 				2 => pixelColor.B,
-				_ => 0
+				var _ => 0
 			};
 
 			return returnValue;
@@ -56,8 +55,8 @@ namespace Librainian.Security {
 		/// <summary>Combines all key files and passwords into one key stream</summary>
 		/// <param name="keys">The keys to combine</param>
 		/// <returns>The resulting key stream</returns>
-		[NotNull]
-		private static MemoryStream GetKeyStream( [NotNull] IReadOnlyList<FilePasswordPair> keys ) {
+		private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
+
 			//Xor the keys an their passwords
 			var keyStreams = new MemoryStream[keys.Count];
 
@@ -78,15 +77,15 @@ namespace Librainian.Security {
 					var readByte = stream.ReadByte();
 
 					if ( readByte < 0 ) {
+
 						//end of stream - close the file
 						//the last loop (n==maxLength) will close the last stream
 						using ( stream ) {
 							stream.Close();
 						}
-
-						
 					}
 					else {
+
 						//copy a byte into the result key
 						resultKeyStream.WriteByte( ( Byte )readByte );
 					}
@@ -96,7 +95,8 @@ namespace Librainian.Security {
 			return resultKeyStream;
 		}
 
-		private static Byte GetReverseKeyByte( [NotNull] Stream keyStream ) {
+		private static Byte GetReverseKeyByte( Stream keyStream ) {
+
 			//jump to reverse-read position and read from the end of the stream
 			var keyPosition = keyStream.Position;
 			keyStream.Seek( -keyPosition, SeekOrigin.End );
@@ -108,34 +108,9 @@ namespace Librainian.Security {
 			return reverseKeyByte;
 		}
 
-		/// <summary>Changees one component of a color</summary>
-		/// <param name="pixelColor">The Color</param>
-		/// <param name="colorComponent">The component to change (0-R, 1-G, 2-B)</param>
-		/// <param name="newValue">New value of the component</param>
-		public static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
-			pixelColor = colorComponent switch {
-				0 => Color.FromArgb( newValue, pixelColor.G, pixelColor.B ),
-				1 => Color.FromArgb( pixelColor.R, newValue, pixelColor.B ),
-				2 => Color.FromArgb( pixelColor.R, pixelColor.G, newValue ),
-				_ => pixelColor
-			};
-		}
-
-		[NotNull]
-		public static String UnTrimColorString( String color, Int32 desiredLength ) {
-			var difference = desiredLength - color.Length;
-
-			if ( difference > 0 ) {
-				color = new String( '0', difference ) + color;
-			}
-
-			return color;
-		}
-
 		/// <summary>Combines key file and password using XOR</summary>
 		/// <param name="key">The key/password pair to combine</param>
 		/// <returns>The stream created from key and password</returns>
-		[NotNull]
 		public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
 			var fileStream = new FileStream( key.FileName, FileMode.Open );
 			var resultStream = new MemoryStream();
@@ -143,6 +118,7 @@ namespace Librainian.Security {
 			Int32 currentByte;
 
 			while ( ( currentByte = fileStream.ReadByte() ) >= 0 ) {
+
 				//combine the key-byte with the corresponding password-byte
 				currentByte ^= key.Password[passwordIndex];
 
@@ -164,6 +140,27 @@ namespace Librainian.Security {
 			return resultStream;
 		}
 
-	}
+		/// <summary>Changees one component of a color</summary>
+		/// <param name="pixelColor">The Color</param>
+		/// <param name="colorComponent">The component to change (0-R, 1-G, 2-B)</param>
+		/// <param name="newValue">New value of the component</param>
+		public static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
+			pixelColor = colorComponent switch {
+				0 => Color.FromArgb( newValue, pixelColor.G, pixelColor.B ),
+				1 => Color.FromArgb( pixelColor.R, newValue, pixelColor.B ),
+				2 => Color.FromArgb( pixelColor.R, pixelColor.G, newValue ),
+				var _ => pixelColor
+			};
+		}
 
+		public static String UnTrimColorString( String color, Int32 desiredLength ) {
+			var difference = desiredLength - color.Length;
+
+			if ( difference > 0 ) {
+				color = new String( '0', difference ) + color;
+			}
+
+			return color;
+		}
+	}
 }

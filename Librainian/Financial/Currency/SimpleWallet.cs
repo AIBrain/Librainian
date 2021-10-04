@@ -1,16 +1,16 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
+//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 //     No warranties are expressed, implied, or given.
@@ -18,292 +18,278 @@
 //     We are NOT responsible for Anything You Do With Our Executables.
 //     We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
 namespace Librainian.Financial.Currency {
 
-    using System;
-    using System.Diagnostics;
-    using System.Threading;
-    using JetBrains.Annotations;
-    using Measurement.Time;
-    using Newtonsoft.Json;
-    using Utilities;
+	using System;
+	using System.Diagnostics;
+	using System.Threading;
+	using Exceptions;
+	using Measurement.Time;
+	using Newtonsoft.Json;
+	using Utilities.Disposables;
 
-    /// <summary>A very simple, thread-safe, Decimal-based wallet.</summary>
-    [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-    [JsonObject]
-    public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
+	/// <summary>A very simple, thread-safe, Decimal-based wallet.</summary>
+	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+	[JsonObject]
+	public class SimpleWallet : ABetterClassDispose, ISimpleWallet, IEquatable<SimpleWallet> {
 
-        [NotNull]
-        private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
+		private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
-        [JsonProperty]
-        private Decimal _balance;
+		[JsonProperty]
+		private Decimal _balance;
 
-        public SimpleWallet() => this.Timeout = Minutes.One;
+		public Decimal Balance {
+			get {
+				if ( this._access.TryEnterReadLock( this.Timeout ) ) {
+					try {
+						return this._balance;
+					}
+					finally {
+						this._access.ExitReadLock();
+					}
+				}
 
-        /// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
-        /// <param name="balance"></param>
-        public SimpleWallet( Decimal balance ) : this() => this._balance = balance;
+				return Decimal.Zero;
+			}
+		}
 
-        //TODO add in support for automatic persisting?
-        /// <summary>
-        ///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
-        /// </summary>
-        public TimeSpan Timeout { get; set; }
+		public Action<Decimal>? OnAfterDeposit { get; set; }
 
-        /// <summary>Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.</summary>
-        /// <param name="other">Annother to compare with this wallet.</param>
-        public Boolean Equals( SimpleWallet other ) => Equals( this, other );
+		public Action<Decimal>? OnAfterWithdraw { get; set; }
 
-        public Decimal Balance {
-            get {
-                if ( this._access.TryEnterReadLock( this.Timeout ) ) {
-                    try {
-                        return this._balance;
-                    }
-                    finally {
-                        this._access.ExitReadLock();
-                    }
-                }
+		public Action<Decimal>? OnAnyUpdate { get; set; }
 
-                return Decimal.Zero;
-            }
-        }
+		public Action<Decimal>? OnBeforeDeposit { get; set; }
 
-        [CanBeNull]
-        public Action<Decimal>? OnAfterDeposit { get; set; }
+		public Action<Decimal>? OnBeforeWithdraw { get; set; }
 
-        [CanBeNull]
-        public Action<Decimal>? OnAfterWithdraw { get; set; }
+		//TODO add in support for automatic persisting?
+		/// <summary>
+		///     <para>Defaults to <see cref="Seconds.Thirty" /> in the ctor.</para>
+		/// </summary>
+		public TimeSpan Timeout { get; set; }
 
-        [CanBeNull]
-        public Action<Decimal>? OnAnyUpdate { get; set; }
+		public SimpleWallet() : base( nameof( SimpleWallet) ) => this.Timeout = Minutes.One;
 
-        [CanBeNull]
-        public Action<Decimal>? OnBeforeDeposit { get; set; }
+		/// <summary>Initialize the wallet with the specified <paramref name="balance" />.</summary>
+		/// <param name="balance"></param>
+		public SimpleWallet( Decimal balance ) : this() => this._balance = balance;
 
-        [CanBeNull]
-        public Action<Decimal>? OnBeforeWithdraw { get; set; }
+		/// <summary>
+		///     <para>Static comparison.</para>
+		///     <para>Returns true if the wallets ARE the same instance.</para>
+		///     <para>Returns true if the wallets HAVE the same balance.</para>
+		/// </summary>
+		/// <param name="left"> </param>
+		/// <param name="right"></param>
+		public static Boolean Equals( SimpleWallet? left, SimpleWallet? right ) {
+			if ( ReferenceEquals( left, right ) ) {
+				return true;
+			}
 
-        /// <summary>Add any (+-)amount directly to the balance.</summary>
-        /// <param name="amount">  </param>
-        /// <returns></returns>
-        public Boolean TryAdd( Decimal amount ) {
-            try {
-                if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    try {
-                        this._balance += amount;
+			if ( left is null || right is null ) {
+				return false;
+			}
 
-                        return true;
-                    }
-                    finally {
-                        this._access.ExitWriteLock();
-                    }
-                }
-                else {
-                    return false;
-                }
-            }
-            finally {
-                this.OnAnyUpdate?.Invoke( amount );
-            }
-        }
+			return left.Balance == right.Balance;
+		}
 
-        public Boolean TryAdd( SimpleWallet wallet ) {
-            if ( wallet is null ) {
-                throw new ArgumentNullException( nameof( wallet ) );
-            }
+		/// <summary>Returns a value that indicates whether two <see cref="SimpleWallet" /> objects have different values.</summary>
+		/// <param name="left">The first value to compare.</param>
+		/// <param name="right">The second value to compare.</param>
+		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+		public static Boolean operator !=( SimpleWallet? left, SimpleWallet? right ) => !Equals( left, right );
 
-            return this.TryAdd( wallet.Balance );
-        }
+		/// <summary>Returns a value that indicates whether the values of two <see cref="SimpleWallet" /> objects are equal.</summary>
+		/// <param name="left">The first value to compare.</param>
+		/// <param name="right">The second value to compare.</param>
+		/// <returns>
+		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
+		///     false.
+		/// </returns>
+		public static Boolean operator ==( SimpleWallet? left, SimpleWallet? right ) => Equals( left, right );
 
-        /// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" />.</summary>
-        /// <param name="amount">  </param>
-        /// <returns></returns>
-        public Boolean TryDeposit( Decimal amount ) {
-            if ( amount > Decimal.Zero ) {
-                this.OnBeforeDeposit?.Invoke( amount );
+		/// <summary>Dispose any disposable members.</summary>
+		public override void DisposeManaged() {
+			using ( this._access ) { }
+		}
 
-                if ( this.TryAdd( amount ) ) {
-                    this.OnAfterDeposit?.Invoke( amount );
+		/// <summary>Indicates whether the current wallet has the same balance as the <paramref name="other" /> wallet.</summary>
+		/// <param name="other">Annother to compare with this wallet.</param>
+		public Boolean Equals( SimpleWallet other ) => Equals( this, other );
 
-                    return true;
-                }
-            }
+		/// <summary>Determines whether the specified object is equal to the current object.</summary>
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns>
+		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
+		///     <see langword="false" />.
+		/// </returns>
+		public override Boolean Equals( Object? obj ) => Equals( this, obj as SimpleWallet );
 
-            return false;
-        }
+		/// <summary>Serves as the default hash function.</summary>
+		/// <returns>A hash code for the current object.</returns>
+		public override Int32 GetHashCode() => this._access.GetHashCode();
 
-        public Boolean TryTransfer( Decimal amount, [NotNull] ref SimpleWallet intoWallet ) {
-            if ( Equals( this, intoWallet ) ) {
-                throw new InvalidOperationException( "Cannot transfer amount into self-wallet." );
-            }
+		public override String ToString() => $"{this.Balance:F8}";
 
-            if ( amount <= Decimal.Zero ) {
-                return false;
-            }
+		/// <summary>Add any (+-)amount directly to the balance.</summary>
+		/// <param name="amount">  </param>
+		public Boolean TryAdd( Decimal amount ) {
+			try {
+				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
+					try {
+						this._balance += amount;
 
-            try {
-                if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    try {
-                        if ( this._balance < amount ) {
-                            return false;
-                        }
+						return true;
+					}
+					finally {
+						this._access.ExitWriteLock();
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			finally {
+				this.OnAnyUpdate?.Invoke( amount );
+			}
+		}
 
-                        this._balance -= amount;
+		public Boolean TryAdd( SimpleWallet wallet ) {
+			if ( wallet is null ) {
+				throw new ArgumentEmptyException( nameof( wallet ) );
+			}
 
-                        intoWallet.TryDeposit( amount );
+			return this.TryAdd( wallet.Balance );
+		}
 
-                        return true;
-                    }
-                    finally {
-                        this._access.ExitWriteLock();
-                    }
-                }
-                else {
-                    return false;
-                }
-            }
-            finally {
-                this.OnAfterWithdraw?.Invoke( amount );
-                this.OnAnyUpdate?.Invoke( amount );
-            }
-        }
+		/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="Balance" />.</summary>
+		/// <param name="amount">  </param>
+		public Boolean TryDeposit( Decimal amount ) {
+			if ( amount > Decimal.Zero ) {
+				this.OnBeforeDeposit?.Invoke( amount );
 
-        /// <summary>
-        ///     <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
-        /// </summary>
-        /// <param name="amount">  </param>
-        /// <returns></returns>
-        public Boolean TryUpdateBalance( Decimal amount ) {
-            try {
-                if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    try {
-                        this._balance = amount;
+				if ( this.TryAdd( amount ) ) {
+					this.OnAfterDeposit?.Invoke( amount );
 
-                        return true;
-                    }
-                    finally {
-                        this._access.ExitWriteLock();
-                    }
-                }
-                else {
-                    return false;
-                }
-            }
-            finally {
-                this.OnAnyUpdate?.Invoke( amount );
-            }
-        }
+					return true;
+				}
+			}
 
-        public void TryUpdateBalance( [NotNull] SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
+			return false;
+		}
 
-        /// <summary>
-        ///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
-        ///     <para>If the amount is not available, then nothing is withdrawn.</para>
-        /// </summary>
-        /// <param name="amount">  </param>
-        /// <returns></returns>
-        public Boolean TryWithdraw( Decimal amount ) {
-            if ( amount <= Decimal.Zero ) {
-                return false;
-            }
+		public Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet ) {
+			if ( Equals( this, intoWallet ) ) {
+				throw new InvalidOperationException( "Cannot transfer amount into self-wallet." );
+			}
 
-            try {
-                if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
-                    try {
-                        if ( this._balance < amount ) {
-                            return false;
-                        }
+			if ( amount <= Decimal.Zero ) {
+				return false;
+			}
 
-                        this._balance -= amount;
+			try {
+				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
+					try {
+						if ( this._balance < amount ) {
+							return false;
+						}
 
-                        return true;
-                    }
-                    finally {
-                        this._access.ExitWriteLock();
-                    }
-                }
-                else {
-                    return false;
-                }
-            }
-            finally {
-                this.OnAfterWithdraw?.Invoke( amount );
-                this.OnAnyUpdate?.Invoke( amount );
-            }
-        }
+						this._balance -= amount;
 
-        public Boolean TryWithdraw( SimpleWallet wallet ) {
-            if ( wallet is null ) {
-                throw new ArgumentNullException( nameof( wallet ) );
-            }
+						intoWallet.TryDeposit( amount );
 
-            return this.TryWithdraw( wallet.Balance );
-        }
+						return true;
+					}
+					finally {
+						this._access.ExitWriteLock();
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			finally {
+				this.OnAfterWithdraw?.Invoke( amount );
+				this.OnAnyUpdate?.Invoke( amount );
+			}
+		}
 
-        /// <summary>
-        ///     <para>Static comparison.</para>
-        ///     <para>Returns true if the wallets ARE the same instance.</para>
-        ///     <para>Returns true if the wallets HAVE the same balance.</para>
-        /// </summary>
-        /// <param name="left"> </param>
-        /// <param name="right"></param>
-        /// <returns></returns>
-        public static Boolean Equals( [CanBeNull] SimpleWallet? left, [CanBeNull] SimpleWallet? right ) {
-            if ( ReferenceEquals( left, right ) ) {
-                return true;
-            }
+		/// <summary>
+		///     <para>Directly sets the <see cref="Balance" /> of this wallet.</para>
+		/// </summary>
+		/// <param name="amount">  </param>
+		public Boolean TryUpdateBalance( Decimal amount ) {
+			try {
+				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
+					try {
+						this._balance = amount;
 
-            if ( left is null || right is null ) {
-                return false;
-            }
+						return true;
+					}
+					finally {
+						this._access.ExitWriteLock();
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			finally {
+				this.OnAnyUpdate?.Invoke( amount );
+			}
+		}
 
-            return left.Balance == right.Balance;
-        }
+		public void TryUpdateBalance( SimpleWallet simpleWallet ) => this.TryUpdateBalance( simpleWallet.Balance );
 
-        /// <summary>Returns a value that indicates whether two <see cref="SimpleWallet" /> objects have different values.</summary>
-        /// <param name="left">The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static Boolean operator !=( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => !Equals( left, right );
+		/// <summary>
+		///     <para>Attempt to withdraw an amount (larger than Zero) from the wallet.</para>
+		///     <para>If the amount is not available, then nothing is withdrawn.</para>
+		/// </summary>
+		/// <param name="amount">  </param>
+		public Boolean TryWithdraw( Decimal amount ) {
+			if ( amount <= Decimal.Zero ) {
+				return false;
+			}
 
-        /// <summary>Returns a value that indicates whether the values of two <see cref="SimpleWallet" /> objects are equal.</summary>
-        /// <param name="left">The first value to compare.</param>
-        /// <param name="right">The second value to compare.</param>
-        /// <returns>
-        ///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
-        ///     false.
-        /// </returns>
-        public static Boolean operator ==( [CanBeNull] SimpleWallet left, [CanBeNull] SimpleWallet right ) => Equals( left, right );
+			try {
+				if ( this._access.TryEnterWriteLock( this.Timeout ) ) {
+					try {
+						if ( this._balance < amount ) {
+							return false;
+						}
 
-        /// <summary>Dispose any disposable members.</summary>
-        public override void DisposeManaged() {
-            using ( this._access ) { }
-        }
+						this._balance -= amount;
 
-        /// <summary>Determines whether the specified object is equal to the current object.</summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>
-        ///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-        ///     <see langword="false" />.
-        /// </returns>
-        public override Boolean Equals( Object? obj ) => Equals( this, obj as SimpleWallet );
+						return true;
+					}
+					finally {
+						this._access.ExitWriteLock();
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			finally {
+				this.OnAfterWithdraw?.Invoke( amount );
+				this.OnAnyUpdate?.Invoke( amount );
+			}
+		}
 
-        /// <summary>Serves as the default hash function.</summary>
-        /// <returns>A hash code for the current object.</returns>
-        public override Int32 GetHashCode() => this._access.GetHashCode();
+		public Boolean TryWithdraw( SimpleWallet wallet ) {
+			if ( wallet is null ) {
+				throw new ArgumentEmptyException( nameof( wallet ) );
+			}
 
-        [NotNull]
-        public override String ToString() => $"{this.Balance:F8}";
-
-    }
-
+			return this.TryWithdraw( wallet.Balance );
+		}
+	}
 }

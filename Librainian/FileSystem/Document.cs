@@ -1,33 +1,34 @@
-// Copyright � Protiguous. All Rights Reserved.
-// 
+// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// 
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
 namespace Librainian.FileSystem {
+
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
@@ -43,45 +44,38 @@ namespace Librainian.FileSystem {
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using Exceptions.Warnings;
 	using Internet;
 	using JetBrains.Annotations;
 	using Logging;
 	using Maths;
 	using Maths.Numbers;
-    using Newtonsoft.Json;
+	using Measurement.Time;
+	using Newtonsoft.Json;
 	using Parsing;
 	using PooledAwait;
 	using Security;
-    using Threading;
-    using Utilities;
-	using Directory = Pri.LongPath.Directory;
-	using File = Pri.LongPath.File;
-	using FileInfo = Pri.LongPath.FileInfo;
-	using FileSystemInfo = Pri.LongPath.FileSystemInfo;
-	using Path = Pri.LongPath.Path;
+	using Threading;
+	using Utilities.Disposables;
 
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	[JsonObject]
 	public class Document : ABetterClassDispose, IDocument {
-		/// <summary>
-		///     Largest amount of memory that will be allocated for file reads.
-		/// </summary>
-		/// <remarks>About 1.8GB (90% of 2GB)</remarks>
-		public const Int32 MaximumBufferSize = ( Int32 )(Int32.MaxValue * 0.9);
 
-		[CanBeNull]
 		private Folder? _containingFolder;
 
-		protected Document( [NotNull] SerializationInfo info ) {
+		protected Document( SerializationInfo info ) : base( nameof( Document ) ) {
 			if ( info is null ) {
-				throw new ArgumentNullException( nameof( info ) );
+				throw new ArgumentEmptyException( nameof( info ) );
 			}
 
 			this.FullPath = ( info.GetString( nameof( this.FullPath ) ) ?? throw new InvalidOperationException() ).TrimAndThrowIfBlank();
 		}
 
-		/// <summary></summary>
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="fullPath"></param>
 		/// <param name="deleteAfterClose"></param>
 		/// <param name="watchFile"></param>
@@ -89,15 +83,18 @@ namespace Librainian.FileSystem {
 		/// <exception cref="FileNotFoundException"></exception>
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="IOException"></exception>
-		public Document( [NotNull] String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) {
+		public Document( String fullPath, Boolean deleteAfterClose = false, Boolean watchFile = false ) : base( nameof( Document ) ) {
 			if ( String.IsNullOrWhiteSpace( fullPath ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fullPath ) );
+				throw new NullException( nameof( fullPath ) );
 			}
 
 			this.FullPath = Path.Combine( Path.GetFullPath( fullPath ), Path.GetFileName( fullPath ) ).TrimAndThrowIfBlank();
 
+			//TODO What about just keeping the full path along with the long path UNC prefix?
+
 			if ( Uri.TryCreate( fullPath, UriKind.Absolute, out var uri ) ) {
 				if ( uri.IsFile ) {
+
 					//this.FullPath = Path.GetFullPath( uri.AbsolutePath );
 					this.FullPath = Path.GetFullPath( fullPath );
 					this.PathTypeAttributes = PathTypeAttributes.Document;
@@ -137,90 +134,78 @@ namespace Librainian.FileSystem {
 
 				var watcher = this.Watcher.Value;
 
-				watcher.Created += ( _, e ) => this.WatchEvents.Value.OnCreated( e );
-				watcher.Changed += ( _, e ) => this.WatchEvents.Value.OnChanged( e );
-				watcher.Deleted += ( _, e ) => this.WatchEvents.Value.OnDeleted( e );
-				watcher.Renamed += ( _, e ) => this.WatchEvents.Value.OnRenamed( e );
-				watcher.Error += ( _, e ) => this.WatchEvents.Value.OnError( e );
+				watcher.Created += ( _, e ) => this.WatchEvents.Value.OnCreated?.Invoke( e );
+				watcher.Changed += ( _, e ) => this.WatchEvents.Value.OnChanged?.Invoke( e );
+				watcher.Deleted += ( _, e ) => this.WatchEvents.Value.OnDeleted?.Invoke( e );
+				watcher.Renamed += ( _, e ) => this.WatchEvents.Value.OnRenamed?.Invoke( e );
+				watcher.Error += ( _, e ) => this.WatchEvents.Value.OnError?.Invoke( e );
 			}
 		}
 
-		private Document() => throw new NotImplementedException( "Private contructor is not allowed." );
+		private Document() : base( nameof( Document ) ) => throw new NotAllowedWarning( "Private contructor is not allowed." );
 
-		public Document( [NotNull] String justPath, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ),
-			deleteAfterClose ) { }
+		public Document( String justPath, String filename, Boolean deleteAfterClose = false ) : this( Path.Combine( justPath, filename ), deleteAfterClose ) { }
 
-		public Document( [NotNull] FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullPath, deleteAfterClose ) { }
+		public Document( FileSystemInfo info, Boolean deleteAfterClose = false ) : this( info.FullName, deleteAfterClose ) { }
 
-		public Document( [NotNull] IFolder folder, [NotNull] String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
+		public Document( IFolder folder, String filename, Boolean deleteAfterClose = false ) : this( folder.FullPath, filename, deleteAfterClose ) { }
 
-		public Document( [NotNull] IFolder folder, [NotNull] IDocument document, Boolean deleteAfterClose = false ) : this( Path.Combine( folder.FullPath, document.FileName ),
-			deleteAfterClose ) { }
+		public Document( IFolder folder, IDocument document, Boolean deleteAfterClose = false ) : this(
+			Path.Combine( folder.FullPath, document.FileName ), deleteAfterClose ) { }
 
-		[CanBeNull]
-		public Byte[]? Buffer { get; set; }
-
-		public Boolean IsBufferLoaded {
-			get;
-			[Pure]
-			private set;
-		}
-
-		[CanBeNull]
-		public FileStream? Writer { get; set; }
-
-		[CanBeNull]
-		public StreamWriter? WriterStream { get; set; }
-
-		[CanBeNull]
 		private Lazy<FileSystemWatcher>? Watcher { get; }
 
-		[CanBeNull]
 		private Lazy<FileWatchingEvents>? WatchEvents { get; }
 
-		[NotNull]
-		public static String InvalidFileNameCharacters { get; } = new( Path.InvalidFileNameChars );
+		public static String InvalidFileNameCharacters { get; } = new( Path.GetInvalidFileNameChars() );
 
-		[NotNull]
 		public static Lazy<Regex> RegexForInvalidFileNameCharacters { get; } = new( () =>
-			new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ) );
+			 new Regex( $"[{Regex.Escape( InvalidFileNameCharacters )}]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
-		[NotNull]
 		private ThreadLocal<JsonSerializer> JsonSerializers { get; } = new( () => new JsonSerializer {
 			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 			PreserveReferencesHandling = PreserveReferencesHandling.All
 		} );
 
-		/// <summary>Returns an enumerator that iterates through the collection.</summary>
-		/// <returns>A <see cref="IEnumerator" /> that can be used to iterate through the collection.</returns>
-		[Pure]
-		public IEnumerator<Byte> GetEnumerator() => this.AsBytes().GetEnumerator();
+		/// <summary>
+		///     Get or sets the <see cref="TimeSpan" /> used when getting a fresh <see cref="CancellationToken" /> via
+		///     <see cref="GetCancelToken" />.
+		/// </summary>
+		public static TimeSpan DefaultDocumentTimeout { get; set; } = Seconds.Thirty;
 
-		/// <summary>Returns an enumerator that iterates through a collection.</summary>
-		/// <returns>An <see cref="IEnumerator" /> object that can be used to iterate through the collection.</returns>
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		public Byte[]? Buffer { get; set; }
+
+		public Boolean IsBufferLoaded {
+			get;
+
+			[Pure]
+			private set;
+		}
+
+		public FileStream? Writer { get; set; }
+
+		public StreamWriter? WriterStream { get; set; }
 
 		/// <summary>
 		///     <para>Compares the file names (case insensitive) and file sizes for equality.</para>
 		///     <para>To compare the contents of two <see cref="IDocument" /> use <see cref="IDocument.SameContent" />.</para>
 		/// </summary>
 		/// <param name="other"></param>
-		/// <returns></returns>
 		[Pure]
-		public Boolean Equals( [CanBeNull] IDocument? other ) => Equals( this, other );
+		public Boolean Equals( IDocument? other ) => Equals( this, other );
 
 		/// <summary>
 		///     Represents the fully qualified path of the file.
 		///     <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
 		/// </summary>
 		[JsonProperty]
-		[NotNull]
 		public String FullPath { get; }
 
 		/// <summary>Local file creation <see cref="DateTime" />.</summary>
 		[JsonIgnore]
 		public DateTime? CreationTime {
 			get => this.CreationTimeUtc?.ToLocalTime();
+
 			set => this.CreationTimeUtc = value?.ToUniversalTime();
 		}
 
@@ -240,6 +225,7 @@ namespace Librainian.FileSystem {
 		[JsonIgnore]
 		public DateTime? LastAccessTime {
 			get => this.LastAccessTimeUtc?.ToLocalTime();
+
 			set => this.LastAccessTimeUtc = value?.ToUniversalTime();
 		}
 
@@ -259,6 +245,7 @@ namespace Librainian.FileSystem {
 		[JsonIgnore]
 		public DateTime? LastWriteTime {
 			get => this.LastWriteTimeUtc?.ToLocalTime();
+
 			set => this.LastWriteTimeUtc = value?.ToUniversalTime();
 		}
 
@@ -278,22 +265,14 @@ namespace Librainian.FileSystem {
 		public PathTypeAttributes PathTypeAttributes { get; set; } = PathTypeAttributes.Unknown;
 
 		/// <summary>Returns the length of the file (default if it doesn't exists).</summary>
-		[JsonIgnore]
-		public UInt64? Length {
-			get {
-				var info = this.GetFreshInfo();
+		public async PooledValueTask<UInt64?> Length( CancellationToken cancellationToken ) {
+			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
-				if ( info.Exists ) {
-					return ( UInt64 )info.Length;
-				}
-
-				return null;
-			}
+			return info.Exists ? ( UInt64? )info.Length : default( UInt64? );
 		}
 
 		/// <summary>Anything that can be temp stored can go in this. Not serialized. Defaults to be used for internal locking.</summary>
 		[JsonIgnore]
-		[CanBeNull]
 		public Object? Tag { get; set; }
 
 		public Boolean DeleteAfterClose {
@@ -312,207 +291,194 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Byte" />.</summary>
-		/// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
-		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		[NotNull]
 		[Pure]
-		public IEnumerable<Byte> AsBytes( FileOptions options = FileOptions.SequentialScan ) {
-			if ( !this.Exists() ) {
+		public async IAsyncEnumerable<Byte> AsBytes( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+			if ( optimal is null ) {
 				yield break;
 			}
 
-			using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneMegaByte, options );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}" );
+				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
 			}
 
-			var buffer = new Byte[ sizeof( Byte ) ];
+			var buffer = new Byte[sizeof( Byte )];
+			var length = buffer.Length;
 
-			using var buffered = new BufferedStream( stream );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
-			while ( buffered.Read( buffer, 0, buffer.Length ).Any() ) {
-				yield return buffer[ 0 ];
+			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
+				yield return buffer[0];
 			}
 		}
 
-		/// <summary>"simple Int32 hash"</summary>
-		/// <returns></returns>
-		[Pure]
-		public Int32 CalculateHarkerHashInt32() => this.AsInt32().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered )
-			.Aggregate( 0, ( current, i ) => unchecked(current + i) );
-
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
-		/// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
-		[NotNull]
 		[Pure]
-		public IEnumerable<Int32> AsInt32( FileOptions options = FileOptions.SequentialScan ) {
-			if ( !this.Exists() ) {
+		public async IAsyncEnumerable<Int32> AsInt32( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+			if ( optimal is null ) {
 				yield break;
 			}
 
-			using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte, options );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}." );
+				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
 			}
 
-			var buffer = new Byte[ sizeof( Int32 ) ];
+			var buffer = new Byte[sizeof( Int32 )];
+			var length = buffer.Length;
 
-			using var buffered = new BufferedStream( stream, sizeof( Int32 ) );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
-			while ( buffered.Read( buffer, 0, buffer.Length ).Any() ) {
+			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return BitConverter.ToInt32( buffer, 0 );
 			}
 		}
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
-		/// <param name="token"></param>
-		/// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
 		[Pure]
-		public async IAsyncEnumerable<Int64> AsInt64( [EnumeratorCancellation] CancellationToken token,
-			FileOptions options = FileOptions.Asynchronous | FileOptions.SequentialScan ) {
-			if ( !this.Exists() ) {
+		public async IAsyncEnumerable<Int64> AsInt64( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+			if ( optimal is null ) {
 				yield break;
 			}
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte, options );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}." );
+				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
 			}
 
-			var buffer = new Byte[ sizeof( Int64 ) ];
+			var buffer = new Byte[sizeof( Int64 )];
 			var length = buffer.Length;
 
-			await using var buffered = new BufferedStream( stream, MathConstants.Sizes.OneGigaByte );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
-			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), token ) ).Any() ) {
+			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return BitConverter.ToInt64( buffer, 0 );
 			}
 		}
 
-		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int32" />.</summary>
-		/// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Guid" />.</summary>
+		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
-		[NotNull]
-		[Pure]
-		public IEnumerable<Guid> AsGuids( FileOptions options = FileOptions.SequentialScan ) {
-			if ( this.Exists() is false ) {
+		public async IAsyncEnumerable<Guid> AsGuids( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+			if ( optimal is null ) {
 				yield break;
 			}
 
-			using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte, options );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}." );
+				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
 			}
 
-			var buffer = new Byte[ sizeof( Decimal ) ]; //sizeof( Decimal ) == sizeof( Guid ) right?
+			var buffer = new Byte[sizeof( Decimal )];
+			var length = buffer.Length;
 
-			using var buffered = new BufferedStream( stream, sizeof( Decimal ) );
+			var buffered = new BufferedStream( stream, optimal.Value );
+			await using var __ = buffered.ConfigureAwait( false );
 
-			while ( buffered.Read( buffer, 0, buffer.Length ).Any() ) {
+			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 				yield return new Guid( buffer );
 			}
 		}
 
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="UInt64" />.</summary>
-		/// <returns></returns>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
 		[Pure]
-		public IEnumerable<UInt64> AsUInt64( FileOptions options = FileOptions.SequentialScan ) {
-			if ( this.Exists() is false ) {
+		public async IAsyncEnumerable<UInt64> AsUInt64( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+			if ( optimal is null ) {
 				yield break;
 			}
 
-			using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte, options );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}" );
+				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
 			}
 
-			var bytes = new Byte[ sizeof( UInt64 ) ];
+			var buffer = new Byte[sizeof( UInt64 )];
+			var length = buffer.Length;
 
-			using var buffered = new BufferedStream( stream, sizeof( UInt64 ) );
+			var buffered = new BufferedStream( stream, sizeof( UInt64 ) );
+			await using var __ = buffered.ConfigureAwait( false );
 
-			while ( buffered.Read( bytes, 0, bytes.Length ).Any() ) {
-				yield return BitConverter.ToUInt64( bytes, 0 );
+			while ( ( await buffered.ReadAsync( buffer.AsMemory( 0, length ), cancellationToken ).ConfigureAwait( false ) ).Any() ) {
+				yield return BitConverter.ToUInt64( buffer, 0 );
 			}
 		}
 
-		/// <summary>HarkerHash (hash-by-addition) ( )</summary>
-		/// <remarks>
-		///     <para>The result is the same, No Matter What Order the bytes are read in. Right?</para>
-		///     <para>So it should be able to be read in parallel..</para>
-		/// </remarks>
-		/// <returns></returns>
+		/// <summary>HarkerHash (hash-by-addition)</summary>
 		[Pure]
-		public Int32 CalcHashInt32( Boolean inParallel = true ) {
-			var result = 0;
-
-			if ( inParallel ) {
-				result = this.CalculateHarkerHashInt32();
-			}
-			else {
-				foreach ( var b in this.AsInt32() ) {
-					unchecked {
-						result += b == 0 ? 1 : b;
-					}
-				}
-			}
-
-			return result;
-		}
+		public async PooledValueTask<Int32> HarkerHash32( CancellationToken cancellationToken ) =>
+			await this.AsInt32( cancellationToken ).Select( i => i == 0 ? 1 : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
 
 		/// <summary>Deletes the file.</summary>
-		public void Delete() {
-			var fileInfo = this.GetFreshInfo();
+		public async PooledValueTask Delete( CancellationToken cancellationToken ) {
+			var fileInfo = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
 
-			if ( !fileInfo.Exists ) {
-				return;
+			if ( fileInfo.Exists ) {
+				if ( fileInfo.IsReadOnly ) {
+					fileInfo.IsReadOnly = false;
+				}
+
+				fileInfo.Delete();
 			}
-
-			if ( fileInfo.IsReadOnly ) {
-				fileInfo.IsReadOnly = false;
-			}
-
-			fileInfo.Delete();
 		}
 
 		/// <summary>Returns whether the file exists.</summary>
 		[DebuggerStepThrough]
 		[Pure]
-		public Boolean Exists() => this.GetFreshInfo().Exists;
+		public async PooledValueTask<Boolean> Exists( CancellationToken cancellationToken ) {
+			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
+			return info.Exists;
+		}
 
 		/// <summary>
 		///     <para>Clone the entire IDocument to the <paramref name="destination" /> as quickly as possible.</para>
 		///     <para>this will OVERWRITE any <see cref="destination" /> file.</para>
 		/// </summary>
 		/// <param name="destination"></param>
-		/// <param name="token"></param>
 		/// <param name="progress">   </param>
 		/// <param name="eta">        </param>
-		/// <returns></returns>
+		/// <param name="cancellationToken"></param>
 		[Pure]
-		public async PooledValueTask<(Status success, TimeSpan timeElapsed)> Clone( [NotNull] IDocument destination, CancellationToken token,
-			[CanBeNull] IProgress<Single>? progress = null, [CanBeNull] IProgress<TimeSpan>? eta = null ) {
+		public async PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
+			IDocument destination,
+			IProgress<Single> progress,
+			IProgress<TimeSpan> eta,
+			CancellationToken cancellationToken
+		) {
 			if ( destination is null ) {
-				throw new ArgumentNullException( nameof( destination ) );
+				throw new ArgumentEmptyException( nameof( destination ) );
 			}
 
 			var stopwatch = Stopwatch.StartNew();
 
 			try {
-				if ( this.Length.Any() ) {
+				if ( ( await this.Length( cancellationToken ).ConfigureAwait( false ) ).Any() ) {
 					if ( Uri.TryCreate( this.FullPath, UriKind.Absolute, out var sourceAddress ) ) {
-						using var client = new WebClient().Add( token );
+
+						//BUG Obsolete
+						using var client = new WebClient().Add( cancellationToken );
 
 						await client.DownloadFileTaskAsync( sourceAddress, destination.FullPath ).ConfigureAwait( false );
 
@@ -529,21 +495,22 @@ namespace Librainian.FileSystem {
 		}
 
 		[Pure]
-		public async PooledValueTask<Int32?> CRC32( CancellationToken token ) {
+		public async PooledValueTask<Int32?> CRC32( CancellationToken cancellationToken ) {
 			try {
-				var size = this.Size();
-
-				if ( size?.Any() is true ) {
-					await using var fileStream = File.OpenRead( this.FullPath );
-
-					using var crc32 = new CRC32( ( UInt32 )size, ( UInt32 )size );
-
-					var hash = await crc32.ComputeHashAsync( fileStream, token );
-
-					return BitConverter.ToInt32( hash, 0 );
+				var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+				if ( optimal is null ) {
+					return null;
 				}
 
-				return null;
+				using var crc32 = new CRC32( ( UInt32 )optimal, ( UInt32 )optimal );
+
+				await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+
+				await using var buffered = new BufferedStream( fileStream, optimal.Value );
+
+				var hash = await crc32.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
+
+				return BitConverter.ToInt32( hash, 0 );
 			}
 			catch ( FileNotFoundException exception ) {
 				exception.Log();
@@ -564,35 +531,35 @@ namespace Librainian.FileSystem {
 			return null;
 		}
 
-		/// <summary></summary>
-		/// <returns></returns>
+
 		/// <exception cref="InvalidOperationException"></exception>
 		[Pure]
-		public async PooledValueTask<String?> CRC32Hex( CancellationToken token ) {
+		public async PooledValueTask<String?> CRC32Hex( CancellationToken cancellationToken ) {
 			try {
-				/*
-				if ( this.Exists() is false ) {
-					return default;
-				}
-				*/
+				var size = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
 
-				var size = this.Size();
+				//var size = await this.Size().ConfigureAwait( false );
 
 				switch ( size ) {
 					case null:
 					case not > 0: {
-						return null;
-					}
+							return null;
+						}
 					case > Int32.MaxValue / 2: {
-						throw new InvalidOperationException( "File too large to convert to hex." );
-					}
+							throw new InvalidOperationException( "File too large to convert to hex." );
+						}
 				}
-
-				await using var fileStream = File.OpenRead( this.FullPath );
 
 				using var crc32 = new CRC32( ( UInt32 )size.Value, ( UInt32 )size.Value );
 
-				var hash = await crc32.ComputeHashAsync( fileStream, token ).ConfigureAwait( false );
+				//TODO Would BufferedStream be any faster here?
+				var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, size.Value, FileOptions.SequentialScan );
+				await using var _ = fileStream.ConfigureAwait( false );
+
+				var buffered = new BufferedStream( fileStream, size.Value );
+				await using var __ = buffered.ConfigureAwait( false );
+
+				var hash = await crc32.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
 
 				return hash.Aggregate( String.Empty, ( current, b ) => current + $"{b:X}" );
 			}
@@ -615,22 +582,23 @@ namespace Librainian.FileSystem {
 			return null;
 		}
 
-
 		[Pure]
-		public async PooledValueTask<Int64?> CRC64( CancellationToken token ) {
+		public async PooledValueTask<Int64?> CRC64( CancellationToken cancellationToken ) {
 			try {
-				if ( this.Exists() is false ) {
-					return null;
-				}
+				var size = await this.Size( cancellationToken ).ConfigureAwait( false );
 
-				await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read );
+				if ( size?.Any() is true ) {
+					var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
 
-				var size = this.Size();
-
-				if ( size > 0 ) {
 					using var crc64 = new CRC64( size.Value, size.Value );
 
-					var hash = await crc64.ComputeHashAsync( fileStream, token ).ConfigureAwait( false );
+					//TODO Would BufferedStream be any faster here?
+					var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+					await using var _ = fileStream.ConfigureAwait( false );
+					var buffered = new BufferedStream( fileStream, optimal.Value );
+					await using var __ = buffered.ConfigureAwait( false );
+
+					var hash = await crc64.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
 
 					return BitConverter.ToInt64( hash, 0 );
 				}
@@ -655,22 +623,21 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Returns a lowercase hex-string of the hash.</summary>
-		/// <returns></returns>
 		[Pure]
-		public async PooledValueTask<String?> CRC64Hex( CancellationToken token ) {
+		public async PooledValueTask<String?> CRC64Hex( CancellationToken cancellationToken ) {
 			try {
-				if ( this.Exists() is false ) {
-					return null;
-				}
+				var size = await this.Size( cancellationToken ).ConfigureAwait( false );
 
-				await using var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read );
-
-				var size = this.Size();
-
-				if ( size is > 0 ) {
+				if ( size?.Any() is true ) {
+					var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
 					using var crc64 = new CRC64( size.Value, size.Value );
 
-					var hash = await crc64.ComputeHashAsync( fileStream, token ).ConfigureAwait( false );
+					var fileStream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+					await using var _ = fileStream.ConfigureAwait( false );
+					var buffered = new BufferedStream( fileStream, optimal.Value );
+					await using var __ = buffered.ConfigureAwait( false );
+
+					var hash = await crc64.ComputeHashAsync( buffered, cancellationToken ).ConfigureAwait( false );
 
 					return hash.Aggregate( String.Empty, ( current, b ) => current + $"{b:X}" );
 				}
@@ -695,9 +662,9 @@ namespace Librainian.FileSystem {
 		}
 
 		[Pure]
-		public async PooledValueTask<Boolean> IsAll( Byte number, CancellationToken token ) {
+		public async PooledValueTask<Boolean> IsAll( Byte number, CancellationToken cancellationToken ) {
 			if ( !this.IsBufferLoaded ) {
-				var result = await this.LoadDocumentIntoBuffer( token ).ConfigureAwait( false );
+				var result = await this.LoadDocumentIntoBuffer( cancellationToken ).ConfigureAwait( false );
 
 				if ( !result.IsGood() ) {
 					return false;
@@ -717,7 +684,7 @@ namespace Librainian.FileSystem {
 			var max = buffer.Length;
 
 			for ( var i = 0; i < max; i++ ) {
-				if ( buffer[ i ] != number ) {
+				if ( buffer[i] != number ) {
 					return false;
 				}
 			}
@@ -730,11 +697,10 @@ namespace Librainian.FileSystem {
 		///     <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
 		/// </summary>
 		/// <param name="source"></param>
-		/// <returns></returns>
 		[Pure]
-		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( [NotNull] Uri source ) {
+		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( Uri source ) {
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			//TODO possibly download entire file, delete original version, then rename the newly downloaded file?
@@ -758,7 +724,6 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
 		/// </summary>
-		[NotNull]
 		[Pure]
 		public String Extension() => Path.GetExtension( this.FullPath ).Trim().NullIfEmptyOrWhiteSpace() ?? String.Empty;
 
@@ -769,52 +734,48 @@ namespace Librainian.FileSystem {
 		///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
 		/// </example>
 		/// <see cref="Path.GetFileName" />
-		[NotNull]
 		public String FileName => Path.GetFileName( this.FullPath );
 
 		/// <summary>Returns the size of the file, if it exists.</summary>
-		/// <returns></returns>
 		[Pure]
-		public UInt64? Size() => this.Length;
+		public PooledValueTask<UInt64?> Size( CancellationToken cancellationToken ) => this.Length( cancellationToken );
 
 		/// <summary>
 		///     <para>If the file does not exist, it is created.</para>
 		///     <para>Then the <paramref name="text" /> is appended to the file.</para>
 		/// </summary>
 		/// <param name="text"></param>
-		[NotNull]
-		public IDocument AppendText( [NotNull] String text ) {
+		/// <param name="cancellationToken"></param>
+		public async PooledValueTask<IDocument> AppendText( String text, CancellationToken cancellationToken ) {
 			var folder = this.ContainingingFolder();
 
-			if ( !folder.Exists() ) {
+			if ( !await folder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 				if ( !Directory.CreateDirectory( folder.FullPath ).Exists ) {
 					throw new DirectoryNotFoundException( $"Could not create folder \"{folder.FullPath}\"." );
 				}
 			}
 
-			this.SetReadOnly( false );
+			await this.SetReadOnly( false, cancellationToken ).ConfigureAwait( false );
 
-			File.AppendAllText( this.FullPath, text );
+			await File.AppendAllTextAsync( this.FullPath, text, cancellationToken ).ConfigureAwait( false );
 
 			return this;
 		}
+
+		public IAsyncEnumerator<Byte> GetAsyncEnumerator( CancellationToken cancellationToken ) => this.AsBytes( cancellationToken ).GetAsyncEnumerator( cancellationToken );
 
 		/// <summary>
 		///     <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
 		/// </summary>
 		/// <param name="other"></param>
-		/// <returns></returns>
 		[Pure]
 		public override Boolean Equals( Object? other ) => other is IDocument document && Equals( this, document );
 
 		/// <summary>(file name, not contents)</summary>
-		/// <returns></returns>
 		[Pure]
 		public override Int32 GetHashCode() => this.FullPath.GetHashCode();
 
 		/// <summary>Returns the filename, without the extension.</summary>
-		/// <returns></returns>
-		[NotNull]
 		[Pure]
 		public String JustName() => Path.GetFileNameWithoutExtension( this.FileName );
 
@@ -826,22 +787,24 @@ namespace Librainian.FileSystem {
 		///     <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
 		/// </summary>
 		[Pure]
-		public Int32 GetOptimalBufferSize() {
-            var size = this.Size();
+		public async PooledValueTask<Int32?> GetOptimalBufferSize( CancellationToken cancellationToken ) {
+			var size = await this.Size( cancellationToken ).ConfigureAwait( false );
 
-            return size switch {
-                >= MaximumBufferSize => MaximumBufferSize,
-                _ => ( Int32 )( size ?? 4096 )
-            };
-        }
+			//A null size means the file was not found.
+
+			return size switch {
+				null => null,
+				>= IDocument.MaximumBufferSize => IDocument.MaximumBufferSize,
+				var _ => ( Int32 )size
+			};
+		}
 
 		/// <summary>Attempt to start the process.</summary>
 		/// <param name="arguments"></param>
 		/// <param name="verb">     "runas" is elevated</param>
 		/// <param name="useShell"></param>
-		/// <returns></returns>
 		[Pure]
-		public PooledValueTask<Process?> Launch( [CanBeNull] String? arguments = null, [CanBeNull] String? verb = "runas", Boolean useShell = false ) {
+		public PooledValueTask<Process?> Launch( String? arguments = null, String? verb = "runas", Boolean useShell = false ) {
 			try {
 				var info = new ProcessStartInfo( this.FullPath ) {
 					Arguments = arguments ?? String.Empty,
@@ -865,27 +828,24 @@ namespace Librainian.FileSystem {
 		/// <summary>
 		///     <para>Just the file's name, including the extension.</para>
 		/// </summary>
-		/// <see cref="Path.GetFileNameWithoutExtension" />
-		[NotNull]
+		/// <see cref="Path.GetFileNameWithoutExtension(System.ReadOnlySpan{Char})" />
 		public String Name => this.FileName;
 
 		[Pure]
-		[NotNull]
-		public Task<String> ReadStringAsync() {
+		public async PooledValueTask<String> ReadStringAsync() {
 			using var reader = new StreamReader( this.FullPath );
 
-			return reader.ReadToEndAsync();
+			return await reader.ReadToEndAsync().ConfigureAwait( false );
 		}
 
 		/// <summary>
 		///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
 		/// </summary>
 		/// <param name="right"></param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <param name="cancellationToken"></param>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="NullException"></exception>
 		/// <exception cref="UnauthorizedAccessException"></exception>
 		/// <exception cref="PathTooLongException"></exception>
 		/// <exception cref="NotSupportedException"></exception>
@@ -893,50 +853,45 @@ namespace Librainian.FileSystem {
 		/// <exception cref="DirectoryNotFoundException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
 		[Pure]
-		public async PooledValueTask<Boolean> SameContent( [CanBeNull] Document? right, CancellationToken token ) {
-			if ( right is null || !this.Exists() || !right.Exists() || this.Size() != right.Size() ) {
+		public async PooledValueTask<Boolean> SameContent( Document? right, CancellationToken cancellationToken ) {
+			if ( right is null ) {
 				return false;
 			}
 
-			if ( !this.IsBufferLoaded ) {
-				await this.LoadDocumentIntoBuffer( token ).ConfigureAwait( false );
+			if ( !await this.Exists( cancellationToken ).ConfigureAwait( false ) || !await right.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+				return false;
 			}
 
-			if ( !right.IsBufferLoaded ) {
-				await right.LoadDocumentIntoBuffer( token ).ConfigureAwait( false );
+			if ( await this.Size( cancellationToken ).ConfigureAwait( false ) != await right.Size( cancellationToken ).ConfigureAwait( false ) ) {
+				return false;
 			}
 
-			if ( this.IsBufferLoaded && !( this.Buffer is null ) && right.IsBufferLoaded && !( right.Buffer is null ) ) {
-				return this.Buffer.SequenceEqual( right.Buffer );
-			}
+			var lefts = this.AsDecimal( cancellationToken ); //Could use AsBytes.. any performance difference?
+			var rights = right.AsDecimal( cancellationToken ); //Could use AsGuids also?
 
-			return this.Length == right.Length && this.AsGuids().SequenceEqual( right.AsGuids() );
+			return await lefts.SequenceEqualAsync( rights, cancellationToken ).ConfigureAwait( false );
 		}
 
 		/// <summary>Open the file for reading and return a <see cref="StreamReader" />.</summary>
-		/// <returns></returns>
-		[NotNull]
 		[Pure]
 		public StreamReader StreamReader() => new( File.OpenRead( this.FullPath ) );
 
 		/// <summary>
 		///     Open the file for writing and return a <see cref="StreamWriter" />.
-		///     <para>Optionally the <paramref name="encoding" /> can be given. Defaults to <see cref="Encoding.UTF8" />.</para>
-		///     <para>Optionally the buffersze can be given. Defaults to 1 MB.</para>
+		///     <para>Optional <paramref name="encoding" />. Defaults to <see cref="Encoding.Unicode" />.</para>
+		///     <para>Optional buffersize. Defaults to 1 MB.</para>
 		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		public StreamWriter? StreamWriter( [CanBeNull] Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte ) {
+		public async Task<StreamWriter?> StreamWriter( CancellationToken cancellationToken, Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte ) {
 			try {
 				this.ReleaseWriterStream();
 
-				this.OpenWriter();
+				await this.OpenWriter( false, cancellationToken ).ConfigureAwait( false );
 
 				if ( this.Writer is null ) {
 					return default( StreamWriter? );
 				}
 
-				return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.UTF8, ( Int32 )bufferSize, false );
+				return this.WriterStream = new StreamWriter( this.Writer, encoding ?? Encoding.Unicode, ( Int32 )bufferSize, false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -948,7 +903,6 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>Return this <see cref="IDocument" /> as a JSON string.</summary>
-		/// <returns></returns>
 		[Pure]
 		public async PooledValueTask<String?> ToJSON() {
 			using var reader = new StreamReader( this.FullPath );
@@ -961,48 +915,44 @@ namespace Librainian.FileSystem {
 		/// <summary>Returns a string that represents the current object.</summary>
 		/// <returns>A string that represents the current object.</returns>
 		[Pure]
-		[NotNull]
 		public override String ToString() => this.FullPath;
 
 		/// <summary>
 		///     <para>Returns true if this <see cref="Document" /> no longer seems to exist.</para>
 		/// </summary>
 		/// <param name="delayBetweenRetries"></param>
-		/// <param name="token"></param>
-		/// <returns></returns>
-		public async PooledValueTask<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken token ) {
-			await Task.Run( async () => {
-				while ( !token.IsCancellationRequested && this.Exists() ) {
-					try {
-						if ( this.Exists() ) {
-							this.Delete();
-						}
+		/// <param name="cancellationToken"></param>
+		public async PooledValueTask<Boolean?> TryDeleting( TimeSpan delayBetweenRetries, CancellationToken cancellationToken ) {
+			while ( !cancellationToken.IsCancellationRequested && await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+				try {
+					if ( await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+						await this.Delete( cancellationToken ).ConfigureAwait( false );
 					}
-					catch ( DirectoryNotFoundException ) { }
-					catch ( PathTooLongException ) { }
-					catch ( IOException ) {
-						// IOException is thrown when the file is in use by any process.
-						await Task.Delay( delayBetweenRetries, token ).ConfigureAwait( false );
-					}
-					catch ( UnauthorizedAccessException ) { }
-					catch ( ArgumentNullException ) { }
 				}
-			}, token ).ConfigureAwait( false );
+				catch ( DirectoryNotFoundException ) { }
+				catch ( PathTooLongException ) { }
+				catch ( IOException ) {
 
-			return this.Exists();
+					// IOException is thrown when the file is in use by any process.
+					await Task.Delay( delayBetweenRetries, cancellationToken ).ConfigureAwait( false );
+				}
+				catch ( UnauthorizedAccessException ) { }
+				catch ( ArgumentEmptyException ) { }
+			}
+
+			return await this.Exists( cancellationToken ).ConfigureAwait( false );
 		}
 
 		/// <summary>Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.</summary>
 		/// <param name="destination"></param>
-		/// <returns></returns>
 		[Pure]
-		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( [NotNull] Uri destination ) {
+		public async PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( Uri destination ) {
 			if ( destination is null ) {
-				throw new ArgumentNullException( nameof( destination ) );
+				throw new ArgumentEmptyException( nameof( destination ) );
 			}
 
 			if ( !destination.IsWellFormedOriginalString() ) {
-				return (new ArgumentException( $"Destination address '{destination.OriginalString}' is not well formed.", nameof( destination ) ), null);
+				return (new InvalidOperationException( $"Destination address '{destination.OriginalString}' is not well formed." ), null);
 			}
 
 			try {
@@ -1019,25 +969,24 @@ namespace Librainian.FileSystem {
 
 		/// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="FullPath" />.</summary>
 		/// <see cref="op_Implicit" />
-		/// <returns></returns>
-		[NotNull]
+		/// <see cref="ToFileInfo" />
 		[Pure]
-		public FileInfo GetFreshInfo() => this; //use the implicit operator. see op_Implicit(FileInfo) above.
+		public PooledValueTask<FileInfo> GetFreshInfo( CancellationToken cancellationToken ) => ToFileInfo( this );
 
 		/// <summary>Attempt to return an object Deserialized from this JSON text file.</summary>
 		/// <param name="progress"></param>
-		/// <param name="token"></param>
+		/// <param name="cancellationToken"></param>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		public async PooledValueTask<(Status status, T? obj)> LoadJSON<T>( IProgress<ZeroToOne>? progress = null, CancellationToken? token = null ) {
+		public async PooledValueTask<(Status status, T? obj)> LoadJSON<T>( IProgress<ZeroToOne>? progress, CancellationToken cancellationToken ) {
 			var i = 0.0;
 			const Double maxsteps = 6.0;
 
 			try {
 				progress?.Report( ++i / maxsteps );
 
-				if ( !this.Exists() ) {
-					progress?.Report( 1 );
+				if ( !await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+					ZeroToOne bob;
+					progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 
 					return (Status.Bad, default( T? ));
 				}
@@ -1051,7 +1000,7 @@ namespace Librainian.FileSystem {
 				progress?.Report( ++i / maxsteps );
 
 				try {
-					var run = await Task.Run( () => this.JsonSerializers.Value!.Deserialize<T>( jsonReader ), token ?? CancellationToken.None ).ConfigureAwait( false );
+					var run = await Task.Run( () => this.JsonSerializers.Value!.Deserialize<T>( jsonReader ), cancellationToken ).ConfigureAwait( false );
 
 					progress?.Report( ++i / maxsteps );
 
@@ -1062,23 +1011,23 @@ namespace Librainian.FileSystem {
 				}
 			}
 			catch ( TaskCanceledException ) {
-				progress?.Report( 1 );
+				progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 			}
 			catch ( Exception exception ) {
-				progress?.Report( 1 );
+				progress?.Report( new ZeroToOne( ZeroToOne.MaximumValue ) );
 				exception.Log();
 			}
 
 			return (Status.Exception, default( T? ));
 		}
 
-		[NotNull]
 		[Pure]
 		public IFolder ContainingingFolder() {
 			if ( this._containingFolder is null ) {
 				var directoryName = Path.GetDirectoryName( this.FullPath );
 
 				if ( String.IsNullOrWhiteSpace( directoryName ) ) {
+
 					//empty means a root-level folder (C:\) was found. Right?
 					directoryName = Path.GetPathRoot( this.FullPath );
 				}
@@ -1090,40 +1039,46 @@ namespace Librainian.FileSystem {
 		}
 
 		[Pure]
-		public async PooledValueTask<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken ) {
-
-			if ( !Uri.TryCreate( fileCopyData.Source.FullPath, UriKind.RelativeOrAbsolute, out var uri ) || uri is null ) {
+		public async Task<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken ) {
+			if ( !Uri.TryCreate( fileCopyData.Source.FullPath, UriKind.RelativeOrAbsolute, out var uri ) ) {
 				throw new UriFormatException( $"Unable to parse {this.FullPath.DoubleQuote()} into a Uri." );
 			}
 
 			try {
-				if ( DoesSourceFileExist() is false ) {
-                    return fileCopyData with {Status = Status.Bad};
-                }
+				if ( await DoesSourceFileExist().ConfigureAwait( false ) is false ) {
+					return fileCopyData with {
+						Status = Status.Bad
+					};
+				}
 
-				if ( CheckSourceSize( out var size ) is false || size is null ) {
-                    return fileCopyData with {Status = Status.Failure};
-                }
+				(var exists, var size) = await CheckSourceSize().ConfigureAwait( false );
 
-                fileCopyData.SourceSize = size.Value;
+				if ( exists is false || size is null ) {
+					return fileCopyData with {
+						Status = Status.Failure
+					};
+				}
 
-                var bytes = size.Value;
-                Single bits = bytes * 8;
-                const Int32 bitsPerSecond = 11 * 1024 * 1014;
-                var guessSeconds = bits / bitsPerSecond;
+				fileCopyData.SourceSize = size.Value;
 
-				var estimatedTimeToCopy = TimeSpan.FromSeconds(guessSeconds * 2);
+				var bytes = size.Value;
+				Single bits = bytes * 8;
+				const Int32 bitsPerSecond = 11 * MathConstants.Sizes.OneMegaByte;
+				var guessSeconds = bits / bitsPerSecond;
+
+				var estimatedTimeToCopy = TimeSpan.FromSeconds( guessSeconds * 2 );
 
 				//TODO Add in capability to pause/resume?
-                await DidDownloadWork().WithTimeout( estimatedTimeToCopy, cancellationToken ).ConfigureAwait(false);
-            }
-            catch ( TaskCanceledException exception ) {
+				await DownloadAndVerifySize().WithTimeout( estimatedTimeToCopy, fileCopyData.CancellationTokenSource.Token ).ConfigureAwait( false );
+			}
+			catch ( TaskCanceledException exception ) {
+
 				//what is thrown when a Task<T> times out or is cancelled? TaskCanceledException or OperationCanceledException?
 				RecordException( exception );
 			}
-            catch ( OperationCanceledException exception ) {
-                RecordException( exception );
-            }
+			catch ( OperationCanceledException exception ) {
+				RecordException( exception );
+			}
 			catch ( WebException exception ) {
 				RecordException( exception );
 			}
@@ -1133,7 +1088,7 @@ namespace Librainian.FileSystem {
 
 			return fileCopyData;
 
-			void RecordException( [CanBeNull] Exception? exception ) {
+			void RecordException( Exception? exception ) {
 				if ( exception is null ) {
 					return;
 				}
@@ -1142,84 +1097,98 @@ namespace Librainian.FileSystem {
 				fileCopyData.Exceptions.Add( exception );
 			}
 
-			Boolean DoesSourceFileExist() {
+			async PooledValueTask<Boolean> DoesSourceFileExist() {
 				$"Checking for existance of source file {fileCopyData.Source.FullPath.DoubleQuote()}".Verbose();
-				var exists = fileCopyData.Source.Exists();
+				var exists = await fileCopyData.Source.Exists( cancellationToken ).ConfigureAwait( false );
 				if ( exists is not true ) {
 					RecordException( new FileNotFoundException( "Missing file.", fileCopyData.Source.FullPath ) );
 
 					return false;
-
 				}
 
 				return true;
 			}
 
-            Boolean CheckSourceSize( out UInt64? size ) {
-                $"Checking for size of source file {fileCopyData.Source.FullPath.DoubleQuote()}".Verbose();
-                size = fileCopyData.Source.Size();
+			async PooledValueTask<(Boolean exists, UInt64? size)> CheckSourceSize() {
+				$"Checking for size of source file {fileCopyData.Source.FullPath.DoubleQuote()}".Verbose();
+				var size = await fileCopyData.Source.Size( cancellationToken ).ConfigureAwait( false );
 
-                if ( size is > 0 ) {
-                    return true;
-                }
+				if ( size is > 0 ) {
+					return (true, size);
+				}
 
-                RecordException( new FileNotFoundException( "Empty file.", fileCopyData.Source.FullPath ) );
+				RecordException( new FileNotFoundException( "Empty file.", fileCopyData.Source.FullPath ) );
 
-                return false;
+				return (false, default( UInt64? ));
+			}
 
-            }
+			async Task<Boolean> DownloadAndVerifySize() {
+				using var webClient = new WebClient();
+				$"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} instantiated.".Verbose();
 
-            async Task<Boolean> DidDownloadWork() {
-                using var webClient = new WebClient();
-                $"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} instantiated.".Verbose();
+				webClient.Disposed += ( _, _ ) => $"{nameof( webClient )} {nameof( webClient.Disposed )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()}."
+					.Verbose();
 
-                webClient.Disposed += ( _, _ ) => $"{nameof( webClient )} {nameof( webClient.Disposed )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
+				webClient.DownloadFileCompleted += ( _, args ) => {
+					fileCopyData.WhenCompleted = DateTime.UtcNow;
 
-                webClient.DownloadFileCompleted += ( _, args ) => {
-                    fileCopyData.WhenCompleted = DateTime.UtcNow;
+					RecordException( args.Error );
 
-                    RecordException( args.Error );
+					if ( args.Error is null ) {
+						fileCopyData.OnCompleted?.Invoke( fileCopyData );
+					}
+				};
 
-                    if ( args.Error is null ) {
-                        fileCopyData.OnCompleted?.Invoke( fileCopyData );
-                    }
-                };
+				webClient.DownloadProgressChanged += ( _, args ) => fileCopyData.DataCopied?.Report( fileCopyData with {
+					BytesCopied = ( UInt64 )args.BytesReceived
+				} );
 
-                webClient.DownloadProgressChanged += ( _, args ) => fileCopyData.DataCopied?.Report( fileCopyData with {BytesCopied = ( UInt64 )args.BytesReceived} );
+				$"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} started.".Verbose();
+				await webClient.DownloadFileTaskAsync( uri, fileCopyData.Destination.FullPath ).ConfigureAwait( false );
 
-                $"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} started.".Verbose();
-                await webClient.DownloadFileTaskAsync( uri, fileCopyData.Destination.FullPath ).ConfigureAwait( false );
+				$"Checking existance of destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
+				if ( await fileCopyData.Destination.Exists( cancellationToken ).ConfigureAwait( false ) is false ) {
+					$"Could not find destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
 
+					return false;
+				}
 
-                $"Checking existance of destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
-                if ( fileCopyData.Destination.Exists() is false ) {
-                    $"Could not find destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
+				$"Checking size of destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
+				var destinationSize = await fileCopyData.Destination.Size( cancellationToken ).ConfigureAwait( false );
 
-                    return false;
-                }
+				if ( destinationSize is null ) {
+					RecordException( new UnknownWarning(
+						$"Unknown error occurred copying file {fileCopyData.Source.FullPath.DoubleQuote()} to {fileCopyData.Destination.ContainingingFolder().FullPath}." ) );
 
-                $"Checking size of destination file {fileCopyData.Destination.FullPath.DoubleQuote()}.".Verbose();
-                var destinationSize = fileCopyData.Destination.Size();
+					return false;
+				}
 
-                if ( destinationSize is null ) {
-                    RecordException( new Warning(
-                        $"Unknown error occurred copying file {fileCopyData.Source.FullPath.DoubleQuote()} to {fileCopyData.Destination.ContainingingFolder().FullPath}." ) );
+				if ( destinationSize != fileCopyData.SourceSize ) {
+					RecordException( new UnknownWarning(
+						$"Unknown error occurred copying file {fileCopyData.Source.FullPath.DoubleQuote()} to {fileCopyData.Destination.ContainingingFolder().FullPath}." ) );
 
-                    return false;
-                }
+					return false;
+				}
 
-                if ( destinationSize != fileCopyData.SourceSize ) {
-                    RecordException( new Warning(
-                        $"Unknown error occurred copying file {fileCopyData.Source.FullPath.DoubleQuote()} to {fileCopyData.Destination.ContainingingFolder().FullPath}." ) );
+				$"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} done.".Verbose();
 
-                    return false;
-                }
+				return true;
+			}
+		}
 
-                $"{nameof( webClient )} for file copy task {fileCopyData.Destination.FullPath.DoubleQuote()} done.".Verbose();
+		[Pure]
+		public async PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken ) =>
+			await this.AsInt64( cancellationToken ).Select( i => i == 0L ? 1L : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
 
-                return true;
-            }
-        }
+		/// <summary>"poor mans Decimal hash"</summary>
+		[Pure]
+		public async PooledValueTask<Decimal> HarkerHashDecimal( CancellationToken cancellationToken ) =>
+			await this.AsDecimal( cancellationToken ).Select( i => i == 0M ? 1M : i ).SumAsync( cancellationToken ).ConfigureAwait( false );
+
+		/// <summary>Returns an enumerator that iterates through the collection.</summary>
+		/// <returns>A <see cref="IEnumerator" /> that can be used to iterate through the collection.</returns>
+		[Pure]
+		public IAsyncEnumerator<Byte> GetEnumerator() => this.AsBytes( CancellationToken.None ).GetAsyncEnumerator();
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() {
@@ -1230,53 +1199,55 @@ namespace Librainian.FileSystem {
 			this.ReleaseWriter();
 
 			if ( this.DeleteAfterClose ) {
-				this.Delete();
+				var _ = this.Delete( this.GetCancelToken() );
 			}
 		}
 
 		/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
-		/// <returns></returns>
-		public async PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken token ) {
-			var size = this.Size();
+		public async PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken cancellationToken ) {
+			var size = await this.Size( cancellationToken ).ConfigureAwait( false );
 
 			switch ( size ) {
 				case null: {
-					return Status.Exception;
-				}
+						return Status.Exception;
+					}
 				default: {
-					if ( size > 0 ) {
-						if ( size.Value > Int32.MaxValue ) {
-							return Status.Exception;
+						if ( size > 0 ) {
+							if ( size.Value > Int32.MaxValue ) {
+								return Status.Exception;
+							}
 						}
-					}
-					else {
-						return Status.No;
-					}
+						else {
+							return Status.No;
+						}
 
-					break;
-				}
+						break;
+					}
 			}
 
 			var bytesLeft = size.Value;
 
-			var filelength = ( Int32 )size.Value; //will we EVER have an image (or whatever) larger than Int32? (yes, probably)
-			this.Buffer = new Byte[ filelength ];
+			var filelength = ( Int32 )size.Value; //will we EVER have an image (or whatever) larger than Int32? (answer: yes)
+			this.Buffer = new Byte[filelength];
 
 			var offset = 0;
 
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan );
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, filelength, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
 
 			if ( !stream.CanRead ) {
+
 				//throw new NotSupportedException( message: $"Cannot read from file stream on {this.FullPath}" );
 				return Status.Exception;
 			}
 
-			await using var buffered = new BufferedStream( stream );
+			var buffered = new BufferedStream( stream );
+			await using var __ = buffered.ConfigureAwait( false );
 
 			Int32 bytesRead;
 
 			do {
-				bytesRead = await buffered.ReadAsync( this.Buffer.AsMemory( offset, filelength ), token ).ConfigureAwait( false );
+				bytesRead = await buffered.ReadAsync( this.Buffer.AsMemory( offset, filelength ), cancellationToken ).ConfigureAwait( false );
 				bytesLeft -= bytesRead.Positive();
 
 				if ( !bytesRead.Any() || !bytesLeft.Any() ) {
@@ -1291,69 +1262,31 @@ namespace Librainian.FileSystem {
 			return Status.Failure;
 		}
 
-		/// <summary>"poor mans Int64 hash"</summary>
-		/// <returns></returns>
-		[Pure]
-		public async Task<Int64> CalculateHarkerHashInt64( CancellationToken token ) {
-			this.ThrowIfNotExists();
-
-			var total = 0L;
-			await foreach ( var l in this.AsInt64( token ) ) {
-				total += l;
-			}
-
-			return total;
-		}
-
-		/// <summary>"poor mans Int64 hash"</summary>
-		/// <returns></returns>
-		[Pure]
-		public Decimal CalculateHarkerHashDecimal() {
-			this.ThrowIfNotExists();
-
-			return this.AsDecimal().AsParallel().AsUnordered().WithMergeOptions( ParallelMergeOptions.AutoBuffered ).Aggregate( 0M, ( current, i ) => current + i );
-		}
-
-		private void ThrowIfNotExists() {
-			if ( !this.Exists() ) {
-				throw new FileNotFoundException( $"Could find document {this.FullPath.DoubleQuote()}." );
-			}
-		}
-
-
-		[Pure]
-		public PooledValueTask<Decimal> CalculateHarkerHashDecimalAsync() {
-			this.ThrowIfNotExists();
-
-			return new PooledValueTask<Decimal>( this.CalculateHarkerHashDecimal() );
-		}
-
 		/// <summary>Enumerates the <see cref="IDocument" /> as a sequence of <see cref="Int64" />.</summary>
-		/// <param name="options">Defaults to <see cref="FileOptions.SequentialScan" />.</param>
+		/// <param name="cancellationToken"></param>
 		/// <exception cref="NotSupportedException">Thrown when the <see cref="FileStream" /> cannot be read.</exception>
-		/// <returns></returns>
-		[NotNull]
 		[Pure]
-		public IEnumerable<Decimal> AsDecimal( FileOptions options = FileOptions.SequentialScan ) {
-			var fileLength = this.Length;
+		public async IAsyncEnumerable<Decimal> AsDecimal( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var fileLength = await this.Length( cancellationToken ).ConfigureAwait( false );
 
 			if ( !fileLength.HasValue ) {
 				yield break;
 			}
 
-			//Span<Byte> inBuffer = stackalloc Byte[ MathConstants.Sizes.OneGigaByte / sizeof( Byte ) ];
-			//var inLength = inBuffer.Length;
-
-			//Span<Decimal> outBuffer = stackalloc Decimal[ MathConstants.Sizes.OneGigaByte / sizeof( Decimal ) ];
-			//var outLength = outBuffer.Length;
-
-			using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, MathConstants.Sizes.OneGigaByte, options );
-
-			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath}." );
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false );
+			if ( optimal is null ) {
+				yield break;
 			}
 
-			using var buffered = new BufferedStream( stream, MathConstants.Sizes.OneGigaByte ); //TODO Is this buffering twice??
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal.Value, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
+
+			if ( !stream.CanRead ) {
+				throw new NotSupportedException( $"Cannot read from file stream on {this.FullPath.SmartQuote()}." );
+			}
+
+			var buffered = new BufferedStream( stream, optimal.Value ); //TODO Is this buffering twice??
+			await using var __ = buffered.ConfigureAwait( false );
 
 			using var br = new BinaryReader( buffered );
 
@@ -1374,28 +1307,22 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		private void ReleaseWriterStream() {
-			using ( this.WriterStream ) {
-				this.WriterStream = null;
-			}
-		}
-
 		/// <summary>
 		///     Opens an existing file or creates a new file for writing.
 		///     <para>Should be able to read and write from <see cref="FileStream" />.</para>
-		///     <para>If there is any error opening or creating the file, <see cref="Writer" /> will be default.</para>
+		///     <para>If there is any error opening or creating the file, <see cref="Writer" /> will be null.</para>
 		/// </summary>
-		/// <returns></returns>
-		[CanBeNull]
-		public FileStream? OpenWriter() {
+		public async PooledValueTask<FileStream?> OpenWriter( Boolean deleteIfAlreadyExists, CancellationToken cancellationToken, FileShare sharingOptions = FileShare.None ) {
 			try {
 				this.ReleaseWriter();
 
-				if ( this.Exists() ) {
-					this.SetReadOnly( false );
+				if ( deleteIfAlreadyExists ) {
+					if ( await this.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+						await this.Delete( cancellationToken ).ConfigureAwait( false );
+					}
 				}
 
-				return this.Writer = new FileStream( this.FullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None );
+				return this.Writer = new FileStream( this.FullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, sharingOptions );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
@@ -1403,16 +1330,122 @@ namespace Librainian.FileSystem {
 
 			this.ReleaseWriter();
 
-			return null;
+			return default( FileStream? );
 		}
 
-		private void ReleaseWriter() {
+		/// <summary>
+		///     Releases the <see cref="FileStream" /> opened by <see cref="OpenWriter" />.
+		/// </summary>
+		public void ReleaseWriter() {
 			using ( this.Writer ) {
-				this.Writer = null;
+				this.Writer = default( FileStream? );
+			}
+		}
+
+		/// <summary>
+		///     <para>If the file does not exist, return <see cref="Status.Error" />.</para>
+		///     <para>If an exception happens, return <see cref="Status.Exception" />.</para>
+		///     <para>Otherwise, return <see cref="Status.Success" />.</para>
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="cancellationToken"></param>
+		public async PooledValueTask<Status> SetReadOnly( Boolean value, CancellationToken cancellationToken ) {
+			var info = await this.GetFreshInfo( cancellationToken ).ConfigureAwait( false );
+
+			if ( info.Exists != true ) {
+				return Status.Error;
+			}
+
+			try {
+				if ( info.IsReadOnly != value ) {
+					info.IsReadOnly = value;
+				}
+
+				return Status.Success;
+			}
+			catch ( Exception ) {
+				return Status.Exception;
+			}
+		}
+
+		[Pure]
+		public PooledValueTask<Status> TurnOnReadonly( CancellationToken cancellationToken ) => this.SetReadOnly( true, cancellationToken );
+
+		[Pure]
+		public PooledValueTask<Status> TurnOffReadonly( CancellationToken cancellationToken ) => this.SetReadOnly( false, cancellationToken );
+
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context ) => info.AddValue( nameof( this.FullPath ), this.FullPath, typeof( String ) );
+
+		public async IAsyncEnumerable<String> ReadLines( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+			var size = await this.Size( cancellationToken ).ConfigureAwait( false );
+
+			if ( !size.Any() ) {
+				yield break;
+			}
+
+			var optimal = await this.GetOptimalBufferSize( cancellationToken ).ConfigureAwait( false ) ?? 4096;
+
+			var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, optimal, FileOptions.SequentialScan );
+			await using var _ = stream.ConfigureAwait( false );
+			var buffered = new BufferedStream( stream, optimal );
+			await using var __ = buffered.ConfigureAwait( false );
+
+			using var reader = new StreamReader( buffered );
+
+			while ( !cancellationToken.IsCancellationRequested ) {
+				var line = await reader.ReadLineAsync().ConfigureAwait( false );
+
+				if ( line is null ) {
+					break;
+				}
+
+				yield return line;
+			}
+		}
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		public UInt64? GetLength() {
+			var info = new FileInfo( this.FullPath );
+			info.Refresh();
+			return info.Exists ? ( UInt64 )info.Length : null;
+		}
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		public Boolean GetExists() {
+			var info = new FileInfo( this.FullPath );
+			info.Refresh();
+			return info.Exists;
+		}
+
+		/// <summary>
+		///     Synchronous version.
+		/// </summary>
+		public UInt64? GetSize() {
+			var info = new FileInfo( this.FullPath );
+			info.Refresh();
+			return ( UInt64? )info.Length;
+		}
+
+		/*
+		private async PooledValueTask ThrowIfNotExists() {
+			if ( !await this.Exists( this.GetCancelToken() ).ConfigureAwait( false ) ) {
+				throw new FileNotFoundException( $"Could find document {this.FullPath.SmartQuote()}." );
+			}
+		}
+		*/
+
+		private void ReleaseWriterStream() {
+			using ( this.WriterStream ) {
+				this.WriterStream = null;
 			}
 		}
 
 		/*
+
 		/// <summary>Returns true if this IDocument was copied to the <paramref name="destination" />.</summary>
 		/// <param name="destination"></param>
 		/// <param name="onEachProgress"></param>
@@ -1426,7 +1459,7 @@ namespace Librainian.FileSystem {
 			[NotNull] Action<DownloadProgressChangedEventArgs>? progress ,
 			CancellationToken onComplete  ) {
 			if ( destination is null ) {
-				throw new ArgumentNullException( nameof( destination ) );
+				throw new ArgumentEmptyException( nameof( destination ) );
 			}
 
 			if ( !this.Exists() ) {
@@ -1462,88 +1495,59 @@ namespace Librainian.FileSystem {
 		}
 		*/
 
+		public CancellationTokenSource? CancellationTokenSource { get; set; }
+
+		private CancellationToken GetCancelToken() {
+			this.CancellationTokenSource ??= new CancellationTokenSource();
+			return this.CancellationTokenSource.Token;
+		}
+
 		/// <summary>
 		///     Pull a new <see cref="FileInfo" /> for the <paramref name="document" />.
 		/// </summary>
 		/// <param name="document"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentEmptyException"></exception>
 		/// <exception cref="FileNotFoundException"></exception>
-		[NotNull]
 		[Pure]
-		public static implicit operator FileInfo( [NotNull] Document document ) {
+		public static implicit operator FileInfo( Document document ) => ToFileInfo( document ).AsValueTask().AsTask().Result;
+
+		[Pure]
+		public static async PooledValueTask<FileInfo> ToFileInfo( Document document ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
-			var info = new FileInfo( document.FullPath );
+			return await Task.Run( () => {
+				var info = new FileInfo( document.FullPath );
 
-			if ( info is null ) {
-				throw new FileNotFoundException( $"Unable to find file {document.DoubleQuote()}." );
-			}
+				info.Refresh();
 
-			return info;
+				return info;
+			} )
+							 .ConfigureAwait( false );
 		}
-
-		[NotNull]
-		[Pure]
-		public FileInfo ToFileInfo() => this;
-
-		/// <summary>
-		///     <para>If the file does not exist, return <see cref="Status.Error" />.</para>
-		///     <para>If an exception happens, return <see cref="Status.Exception" />.</para>
-		///     <para>Otherwise, return <see cref="Status.Success" />.</para>
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public Status SetReadOnly( Boolean value ) {
-			var info = this.GetFreshInfo();
-
-			if ( !info.Exists ) {
-				return Status.Error;
-			}
-
-			try {
-				if ( info.IsReadOnly != value ) {
-					info.IsReadOnly = value;
-				}
-
-				return Status.Success;
-			}
-			catch ( Exception ) {
-				return Status.Exception;
-			}
-		}
-
-		[Pure]
-		public Status TurnOnReadonly() => this.SetReadOnly( true );
-
-		[Pure]
-		public Status TurnOffReadonly() => this.SetReadOnly( false );
-
-		public virtual void GetObjectData( [NotNull] SerializationInfo info, StreamingContext context ) =>
-			info.AddValue( nameof( this.FullPath ), this.FullPath, typeof( String ) );
-
 
 		/// <summary>this seems to work great!</summary>
 		/// <param name="address"></param>
 		/// <param name="fileName"></param>
 		/// <param name="progress"></param>
-		/// <returns></returns>
 		[Pure]
-		public static async PooledValueTask<WebClient> DownloadFileTaskAsync( [NotNull] Uri address, [NotNull] String fileName,
-			[CanBeNull] IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress ) {
+		public static async PooledValueTask<WebClient> DownloadFileTaskAsync(
+			Uri address,
+			String fileName,
+			IProgress<(Int64 BytesReceived, Int32 ProgressPercentage, Int64 TotalBytesToReceive)>? progress
+		) {
 			if ( address is null ) {
-				throw new ArgumentNullException( nameof( address ) );
+				throw new ArgumentEmptyException( nameof( address ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( fileName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fileName ) );
+				throw new NullException( nameof( fileName ) );
 			}
 
 			var tcs = new TaskCompletionSource<Object?>( address, TaskCreationOptions.RunContinuationsAsynchronously );
 
-			void CompletedHandler( Object cs, AsyncCompletedEventArgs ce ) {
+			void CompletedHandler( Object? cs, AsyncCompletedEventArgs ce ) {
 				if ( ce.UserState != tcs ) {
 					return;
 				}
@@ -1582,9 +1586,8 @@ namespace Librainian.FileSystem {
 			return webClient;
 		}
 
-		[NotNull]
 		[Pure]
-		public static IDocument GetTempDocument( [CanBeNull] String? extension = null ) {
+		public static IDocument GetTempDocument( String? extension = null ) {
 			if ( String.IsNullOrEmpty( extension ) ) {
 				extension = Guid.NewGuid().ToString();
 			}
@@ -1599,31 +1602,29 @@ namespace Librainian.FileSystem {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
-		public static Boolean operator !=( [CanBeNull] Document? left, [CanBeNull] IDocument? right ) => !Equals( left, right );
+		public static Boolean operator !=( Document? left, IDocument? right ) => !Equals( left, right );
 
 		/// <summary>
 		///     <para>Compares the file names (case sensitive) and file sizes for equality.</para>
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
-		public static Boolean operator ==( [CanBeNull] Document? left, [CanBeNull] IDocument? right ) => Equals( left, right );
+		public static Boolean operator ==( Document? left, IDocument? right ) => Equals( left, right );
 
 		/// <summary>
 		///     <para>Static case sensitive comparison of the file names and file sizes for equality.</para>
 		///     <para>To compare the contents of two <see cref="Document" /> use <see cref="IDocument.SameContent" />.</para>
 		///     <para>
-		///         To quickly compare the contents of two <see cref="Document" /> use <see cref="CRC32" /> or <see cref="CRC64" />.
+		///         To quickly compare the contents of two <see cref="Document" /> use <see cref="CRC32" /> or <see cref="CRC64" />
+		///         .
 		///     </para>
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		[Pure]
-		public static Boolean Equals( [CanBeNull] IDocument? left, [CanBeNull] IDocument? right ) {
+		public static Boolean Equals( IDocument? left, IDocument? right ) {
 			if ( ReferenceEquals( left, right ) ) {
 				return true;
 			}
@@ -1633,26 +1634,6 @@ namespace Librainian.FileSystem {
 			}
 
 			return left.FullPath.Is( right.FullPath ); //&& left.Size() == right.Size();
-		}
-
-		public async IAsyncEnumerable<String> ReadLines() {
-
-			if ( !this.Exists() ) {
-				yield break;
-			}
-
-			await using var stream = new FileStream( this.FullPath, FileMode.Open, FileAccess.Read, FileShare.Read, 32768, FileOptions.SequentialScan | FileOptions.Asynchronous );
-			using var reader = new StreamReader( stream );
-
-			while ( true ) {
-				var line = await reader.ReadLineAsync().ConfigureAwait( false );
-
-				if ( line is null ) {
-					break;
-				}
-
-				yield return line;
-			}
 		}
 	}
 }

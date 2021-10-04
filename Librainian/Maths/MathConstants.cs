@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,18 +14,18 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MathConstants.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
 
 	using System;
-	using JetBrains.Annotations;
+	using System.Numerics;
 	using Rationals;
 
 	public static class MathConstants {
@@ -44,9 +44,6 @@ namespace Librainian.Maths {
 
 		public const Boolean Yes = true;
 
-		public static readonly Rational MaxiumDecimalValue = ( Rational )Decimal.MaxValue;
-
-		[NotNull]
 		public static readonly Double[] Logfactorialtable = {
 			0.000000000000000, 0.000000000000000, 0.693147180559945, 1.791759469228055, 3.178053830347946, 4.787491742782046, 6.579251212010101, 8.525161361065415,
 			10.604602902745251, 12.801827480081469, 15.104412573075516, 17.502307845873887, 19.987214495661885, 22.552163853123421, 25.191221182738683, 27.899271383840894,
@@ -86,6 +83,10 @@ namespace Librainian.Maths {
 			1134.045231790853000, 1139.570684729984800, 1145.100113817496100, 1150.633503306223700, 1156.170837573242400
 		};
 
+		public static readonly BigInteger MaxiumDecimalValue = ( BigInteger )Decimal.MaxValue;
+
+		public static readonly BigInteger MinimumDecimalValue = ( BigInteger )Decimal.MinValue;
+
 		public static readonly Rational MinusOneOverTwo = new( -1, 2 );
 
 		public static readonly Rational OneOverTwo = new( 1, 2 );
@@ -111,9 +112,6 @@ namespace Librainian.Maths {
 
 			/// <summary>1,099,511,627,776</summary>
 			public const Int64 OneTeraByte = 0x10000000000;
-
 		}
-
 	}
-
 }

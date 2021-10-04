@@ -1,12 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "IOWrapper.cs" last formatted on 2020-08-14 at 8:40 PM.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
@@ -31,16 +34,35 @@ namespace Librainian.FileSystem {
 	using System.Diagnostics;
 	using System.IO;
 	using System.Runtime.InteropServices;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>defrag stuff</summary>
 	/// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
 	public static class IOWrapper {
 
+		private const UInt32 ErrorInsufficientBuffer = 122;
+
+		private const UInt32 FileFlagNoBuffering = 0x20000000;
+
+		private const UInt32 FileReadAttributes = 0x0080;
+
+		private const UInt32 FileShareDelete = 0x00000004;
+
+		// CreateFile constants
+		private const UInt32 FileShareRead = 0x00000001;
+
+		private const UInt32 FileShareWrite = 0x00000002;
+
+		private const UInt32 FileWriteAttributes = 0x0100;
+
+		private const UInt32 GenericRead = 0x80000000;
+
+		private const UInt32 GenericWrite = 0x40000000;
+
+		private const UInt32 OpenExisting = 3;
+
 		/// <summary>Access flags.</summary>
 		[Flags]
-		
 		public enum ACCESS_MASK : UInt32 {
 
 			/// <summary>The right to delete the object.</summary>
@@ -104,13 +126,11 @@ namespace Librainian.FileSystem {
 
 			/// <summary>All possible access rights.</summary>
 			GENERIC_ALL = 0x10000000
-
 		}
 
 		/// <summary>Enumerates the that may apply to files.</summary>
 		/// <remarks>These flags may be passed to CreateFile.</remarks>
 		[Flags]
-		
 		public enum FileAccess : UInt32 {
 
 			/// <summary>Read access.</summary>
@@ -185,39 +205,20 @@ namespace Librainian.FileSystem {
 			FILE_WRITE_ATTRIBUTES = 0x0100, // all
 
 			SPECIFIC_RIGHTS_ALL = 0x00FFFF,
+
 			FILE_ALL_ACCESS = ACCESS_MASK.STANDARD_RIGHTS_REQUIRED | ACCESS_MASK.SYNCHRONIZE | 0x1FF,
+
 			FILE_GENERIC_READ = ACCESS_MASK.STANDARD_RIGHTS_READ | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | ACCESS_MASK.SYNCHRONIZE,
+
 			FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
+
 			FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE
-
 		}
-
-		private const UInt32 ErrorInsufficientBuffer = 122;
-
-		private const UInt32 FileFlagNoBuffering = 0x20000000;
-
-		private const UInt32 FileReadAttributes = 0x0080;
-
-		private const UInt32 FileShareDelete = 0x00000004;
-
-		// CreateFile constants
-		private const UInt32 FileShareRead = 0x00000001;
-
-		private const UInt32 FileShareWrite = 0x00000002;
-
-		private const UInt32 FileWriteAttributes = 0x0100;
-
-		private const UInt32 GenericRead = 0x80000000;
-
-		private const UInt32 GenericWrite = 0x40000000;
-
-		private const UInt32 OpenExisting = 3;
 
 		/// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
 		/// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
 		/// <returns>An array of [virtual cluster, physical cluster]</returns>
-		[JetBrains.Annotations.NotNull]
-		public static Array GetFileMap( [CanBeNull] String? path ) {
+		public static Array GetFileMap( String? path ) {
 			var hFile = IntPtr.Zero;
 			var pAlloc = IntPtr.Zero;
 
@@ -287,21 +288,20 @@ namespace Librainian.FileSystem {
 			finally {
 				hFile.CloseHandle();
 
-				// ReSharper disable once RedundantAssignment
-				hFile = IntPtr.Zero;
+
+				//hFile = IntPtr.Zero;
 
 				Marshal.FreeHGlobal( pAlloc );
 
-				// ReSharper disable once RedundantAssignment
-				pAlloc = IntPtr.Zero;
+
+				//pAlloc = IntPtr.Zero;
 			}
 		}
 
 		/// <summary>Get cluster usage for a device</summary>
 		/// <param name="deviceName">use "c:"</param>
 		/// <returns>a bitarray for each cluster</returns>
-		[JetBrains.Annotations.NotNull]
-		public static BitArray GetVolumeMap( [JetBrains.Annotations.NotNull] String deviceName ) {
+		public static BitArray GetVolumeMap( String deviceName ) {
 			if ( String.IsNullOrWhiteSpace( deviceName ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( deviceName ) );
 			}
@@ -382,7 +382,7 @@ namespace Librainian.FileSystem {
 		/// <param name="vcn">cluster number in file to move</param>
 		/// <param name="lcn">cluster on disk to move to</param>
 		/// <param name="count">for how many clusters</param>
-		public static void MoveFile( [CanBeNull] String? deviceName, [CanBeNull] String? path, Int64 vcn, Int64 lcn, Int32 count ) {
+		public static void MoveFile( String? deviceName, String? path, Int64 vcn, Int64 lcn, Int32 count ) {
 			var hVol = IntPtr.Zero;
 			var hFile = IntPtr.Zero;
 
@@ -391,9 +391,7 @@ namespace Librainian.FileSystem {
 
 				hFile = OpenFile( path );
 
-				var mfd = new MoveFileData {
-					HFile = hFile, StartingVcn = vcn, StartingLcn = lcn, ClusterCount = count
-				};
+				var mfd = new MoveFileData( count, hFile, lcn, vcn );
 
 				var handle = GCHandle.Alloc( mfd, GCHandleType.Pinned );
 				var p = handle.AddrOfPinnedObject();
@@ -414,7 +412,7 @@ namespace Librainian.FileSystem {
 			}
 		}
 
-		public static IntPtr OpenFile( [CanBeNull] String? path ) {
+		public static IntPtr OpenFile( String? path ) {
 			var hFile = NativeMethods.CreateFile( path, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.ReadWrite, IntPtr.Zero,
 												  FileMode.Open, 0, IntPtr.Zero );
 
@@ -425,7 +423,7 @@ namespace Librainian.FileSystem {
 			return hFile.DangerousGetHandle();
 		}
 
-		public static IntPtr OpenVolume( [CanBeNull] String? deviceName ) {
+		public static IntPtr OpenVolume( String? deviceName ) {
 			var hDevice = NativeMethods.CreateFile( @"\\.\" + deviceName, ( System.IO.FileAccess )( FileAccess.FILE_READ_DATA | FileAccess.FILE_WRITE_DATA ), FileShare.Write,
 													IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
@@ -437,18 +435,7 @@ namespace Librainian.FileSystem {
 		}
 
 		/// <summary>input structure for use in MoveFile</summary>
-		public struct MoveFileData {
-
-			public Int32 ClusterCount;
-
-			public IntPtr HFile;
-
-			public Int64 StartingLcn;
-
-			public Int64 StartingVcn;
-
-		}
+		public record MoveFileData( Int32 ClusterCount, IntPtr HFile, Int64 StartingLcn, Int64 StartingVcn );
 
 	}
-
 }

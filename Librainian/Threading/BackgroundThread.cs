@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,95 +23,73 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BackgroundThread.cs" last formatted on 2020-08-14 at 8:46 PM.
+// File "BackgroundThread.cs" last touched on 2021-09-03 at 10:46 AM by Protiguous.
 
 namespace Librainian.Threading {
 
 	using System;
+	using System.ComponentModel;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using System.Threading.Tasks;
+	using Exceptions;
 	using Logging;
 	using Measurement.Time;
 	using Threadsafe;
-	using Utilities;
 
 	/// <summary>
-	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="_signal" /> is Set (<see cref="Poke"/>).
+	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (
+	///     <see cref="Proceed" />).
 	/// </summary>
-	public class BackgroundThread : ABetterClassDispose {
+	public class BackgroundThread : BackgroundWorker {
 
-		//I don't like using "threads".. is this a good use case for them? Would a BackGroundWorker be more suited?
-
-		/// <summary></summary>
-		/// <param name="actionToPerform">Action to perform on each <see cref="_signal" />.</param>
-		/// <param name="autoStart"></param>
-		/// <param name="cancellationTokenSource"></param>
-		public BackgroundThread( [NotNull] Action actionToPerform, Boolean autoStart, CancellationToken cancellationToken ) {
-			
-			this._actionToPerform = actionToPerform ?? throw new ArgumentNullException( nameof( actionToPerform ) );
-			this._cancellationToken = cancellationToken;
-
-			this.thread = new Thread( () => {
-				while ( !this._cancellationToken.IsCancellationRequested ) {
-					if ( this._signal.WaitOne( Seconds.One ) ) {
-						try {
-							this.RunningAction = true;
-							try {
-								this._actionToPerform();
-							}
-							catch ( Exception exception) {
-								exception.Log();
-							}
-						}
-						finally {
-							this.RunningAction = false;
-						}
-					}
-				}
-			} ) {
-				IsBackground = true, Priority = ThreadPriority.BelowNormal
-			};
-
-			if ( autoStart ) {
-				this.Start();
-			}
-		}
+		private VolatileBoolean RunningAction = new(false);
 
 		
+		/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
+		/// <param name="cancellationToken"></param>
+		public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {
+			this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
+			this.cancellationToken = cancellationToken;
+			this.signal = new(false);
+		}
 
-		[NotNull]
-		private Thread thread { get; }
+		private Task ActionToPerform { get; }
 
-		private CancellationToken _cancellationToken { get; }
+		private CancellationToken cancellationToken { get; }
 
-		[NotNull]
-		private Action _actionToPerform { get; }
+		private ManualResetEventSlim signal { get; }
 
+		/// <summary>
+		///     <para>Every second wake up and see if we can get the semaphore.</para>
+		///     <para>If we can, then run the ActionToPerform().</para>
+		/// </summary>
+		/// <param name="e"></param>
+		protected override async void OnDoWork( DoWorkEventArgs e ) {
 
-		/// <summary>True if the loop is currently running.</summary>
-		public VolatileBoolean RunningAction { get; private set; }
+			while ( !this.cancellationToken.IsCancellationRequested ) {
+				if ( !this.signal.Wait( Seconds.One, this.cancellationToken ) ) {
+					continue;
+				}
 
-		[NotNull]
-		private AutoResetEvent _signal { get; } = new( true );
+				try {
+					this.RunningAction.Value = true;
 
-		private void Start() {
-			if ( this.thread.ThreadState != ThreadState.Running ) {
-				this.thread.Start();
+					await this.ActionToPerform.ConfigureAwait( false );
+				}
+				catch ( Exception exception ) {
+					exception.Log( BreakOrDontBreak.Break );
+				}
+				finally {
+					this.RunningAction.Value = false;
+				}
 			}
 		}
 
-		/// <summary>Do anything needed in this method before the loops run.</summary>
-		public virtual void Initialize() { }
+		public Boolean IsRunningAction() => this.RunningAction;
 
 		/// <summary>Set the signal.</summary>
-		public void Poke() => this._signal.Set();
-
-		public override void DisposeManaged() {
-			if ( this.thread.ThreadState == ThreadState.Running ) {
-				this.thread.Join( Seconds.Seven );
-			}
-			base.DisposeManaged();
-		}
+		[Obsolete]
+		public void Proceed() => this.signal.Set();
 
 	}
 

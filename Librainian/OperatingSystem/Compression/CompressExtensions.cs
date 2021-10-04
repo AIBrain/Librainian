@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,9 +23,10 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompressExtensions.cs" last formatted on 2020-08-14 at 8:39 PM.
+// File "CompressExtensions.cs" last touched on 2021-08-23 at 8:25 AM by Protiguous.
 
 #nullable enable
+
 namespace Librainian.OperatingSystem.Compression {
 
 	using System;
@@ -30,19 +34,17 @@ namespace Librainian.OperatingSystem.Compression {
 	using System.IO.Compression;
 	using System.Text;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 
-	/// <summary></summary>
+	
 	public static class CompressExtensions {
 
 		/// <summary>Compresses the data by using <see cref="GZipStream" />.</summary>
 		/// <param name="data"></param>
 		/// <param name="compressionLevel"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static Byte[] Compress( [NotNull] this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
+		public static Byte[] Compress( this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
 			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			using var output = new MemoryStream();
@@ -54,10 +56,9 @@ namespace Librainian.OperatingSystem.Compression {
 			return output.ToArray();
 		}
 
-		[NotNull]
-		public static Byte[] Compress( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
+		public static Byte[] Compress( this String text, Encoding? encoding = null ) {
 			if ( text is null ) {
-				throw new ArgumentNullException( nameof( text ) );
+				throw new ArgumentEmptyException( nameof( text ) );
 			}
 
 			return ( encoding ?? Common.DefaultEncoding ).GetBytes( text ).Compress();
@@ -66,37 +67,24 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string, Gzip compressed and then converted to base64.</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public static async Task<String> CompressAsync( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
+		public static async Task<String> CompressAsync( this String text, Encoding? encoding = null ) {
 			var buffer = ( encoding ?? Common.DefaultEncoding ).GetBytes( text );
 
-#if NET5_0_OR_GREATER
-			await
-#endif
-				using var streamIn = new MemoryStream( buffer );
+			await using var streamIn = new MemoryStream( buffer );
 
-#if NET5_0_OR_GREATER
-			await
-#endif
-				using var streamOut = new MemoryStream();
+			await using var streamOut = new MemoryStream();
 
-#if NET5_0_OR_GREATER
-			await
-#endif
-				using ( var zipStream = new GZipStream( streamOut, CompressionMode.Compress ) ) {
-				var task = streamIn.CopyToAsync( zipStream );
+			await using var zipStream = new GZipStream( streamOut, CompressionMode.Compress );
+			var task = streamIn.CopyToAsync( zipStream );
 
-				await task.ConfigureAwait( false );
-			}
+			await task.ConfigureAwait( false );
 
 			return Convert.ToBase64String( streamOut.ToArray() );
 		}
 
-		[NotNull]
-		public static Byte[] Decompress( [NotNull] this Byte[] data ) {
+		public static Byte[] Decompress( this Byte[] data ) {
 			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			using var memoryStream = new MemoryStream( data );
@@ -113,35 +101,21 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string decompressed (from base64).</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
-		[ItemNotNull]
-		public static async Task<String> DecompressAsync( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
+		public static async Task<String> DecompressAsync( this String text, Encoding? encoding = null ) {
 			var buffer = Convert.FromBase64String( text );
 
-#if NET48
-			using var streamIn = new MemoryStream( buffer );
-			using var streamOut = new MemoryStream();
-
-			using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
-
-			await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
-
-#else
 			await using var streamIn = new MemoryStream( buffer );
 			await using var streamOut = new MemoryStream();
 
-			await using ( var gs = new GZipStream( streamIn, CompressionMode.Decompress ) ) {
-				await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
-			}
-#endif
+			await using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
+			await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
 
 			return ( encoding ?? Common.DefaultEncoding ).GetString( streamOut.ToArray() );
 		}
 
-		[NotNull]
-		public static String DecompressToString( [NotNull] this Byte[] data, [CanBeNull] Encoding? encoding = null ) {
+		public static String DecompressToString( this Byte[] data, Encoding? encoding = null ) {
 			if ( data is null ) {
-				throw new ArgumentNullException( nameof( data ) );
+				throw new ArgumentEmptyException( nameof( data ) );
 			}
 
 			return ( encoding ?? Common.DefaultEncoding ).GetString( data.Decompress() );
@@ -150,11 +124,9 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string decompressed (from base64).</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static String FromCompressedBase64( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
+		public static String FromCompressedBase64( this String text, Encoding? encoding = null ) {
 			if ( text is null ) {
-				throw new ArgumentNullException( nameof( text ) );
+				throw new ArgumentEmptyException( nameof( text ) );
 			}
 
 			var buffer = Convert.FromBase64String( text );
@@ -173,9 +145,7 @@ namespace Librainian.OperatingSystem.Compression {
 		/// <summary>Returns the string compressed (and then returned as a base64 string).</summary>
 		/// <param name="text"></param>
 		/// <param name="encoding"></param>
-		/// <returns></returns>
-		[NotNull]
-		public static String ToCompressedBase64( [NotNull] this String text, [CanBeNull] Encoding? encoding = null ) {
+		public static String ToCompressedBase64( this String text, Encoding? encoding = null ) {
 			using var incoming = new MemoryStream( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ), false );
 
 			using var streamOut = new MemoryStream();

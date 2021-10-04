@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Crc32.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 #nullable enable
@@ -29,7 +29,6 @@ namespace Librainian.Security {
 	using System;
 	using System.Collections.Generic;
 	using System.Security.Cryptography;
-	using JetBrains.Annotations;
 
 	/// <summary>Implements a 32-bit CRC hash algorithm compatible with Zip etc.</summary>
 	/// <remarks>
@@ -45,13 +44,19 @@ namespace Librainian.Security {
 	/// </copyright>
 	public sealed class CRC32 : HashAlgorithm {
 
+		private static UInt32[]? _defaultTable;
+
+		private UInt32 _hash;
+
 		public const UInt32 DefaultPolynomial = 0xEDB88320;
 
 		public const UInt32 DefaultSeed = 0xFFFFFFFFu;
 
-		private static UInt32[]? _defaultTable;
+		private UInt32 Seed { get; }
 
-		private UInt32 _hash;
+		private UInt32[] Table { get; }
+
+		public override Int32 HashSize => 0x20;
 
 		public CRC32() : this( DefaultPolynomial, DefaultSeed ) { }
 
@@ -60,13 +65,6 @@ namespace Librainian.Security {
 			this.Seed = this._hash = seed;
 		}
 
-		private UInt32 Seed { get; }
-
-		private UInt32[] Table { get; }
-
-		public override Int32 HashSize => 0x20;
-
-		[NotNull]
 		private static UInt32[] InitializeTable( UInt32 polynomial ) {
 			if ( _defaultTable != null ) {
 				return _defaultTable;
@@ -98,7 +96,6 @@ namespace Librainian.Security {
 
 		protected override void HashCore( Byte[] buffer, Int32 start, Int32 length ) => this._hash = CalculateHash( this.Table, this._hash, buffer, start, length );
 
-		[NotNull]
 		protected override Byte[] HashFinal() {
 			var hashBuffer = UInt32ToBigEndianBytes( ~this._hash );
 			this.HashValue = hashBuffer;
@@ -106,33 +103,6 @@ namespace Librainian.Security {
 			return hashBuffer;
 		}
 
-		/// <summary></summary>
-		/// <param name="table"> </param>
-		/// <param name="seed">  </param>
-		/// <param name="buffer"></param>
-		/// <param name="start"> </param>
-		/// <param name="size">  </param>
-		/// <returns></returns>
-		public static UInt32 CalculateHash( [NotNull]
-		                                    UInt32[] table, UInt32 seed, [NotNull]
-		                                    IList<Byte> buffer, Int32 start, Int32 size ) {
-			var crc = seed;
-
-			for ( var i = start; i < size - start; i++ ) {
-				crc = ( crc >> 8 ) ^ table[buffer[i] ^ ( crc & 0xff )];
-			}
-
-			return crc;
-		}
-
-		public static UInt32 Compute( [NotNull] Byte[] buffer ) => Compute( DefaultSeed, buffer );
-
-		public static UInt32 Compute( UInt32 seed, [NotNull] Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
-
-		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, [NotNull] Byte[] buffer ) =>
-			~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
-
-		[NotNull]
 		internal static Byte[] UInt32ToBigEndianBytes( UInt32 uint32 ) {
 			var result = BitConverter.GetBytes( uint32 );
 
@@ -143,8 +113,29 @@ namespace Librainian.Security {
 			return result;
 		}
 
+		
+		/// <param name="table"> </param>
+		/// <param name="seed">  </param>
+		/// <param name="buffer"></param>
+		/// <param name="start"> </param>
+		/// <param name="size">  </param>
+		public static UInt32 CalculateHash( UInt32[] table, UInt32 seed, IList<Byte> buffer, Int32 start, Int32 size ) {
+			var crc = seed;
+
+			for ( var i = start; i < size - start; i++ ) {
+				crc = ( crc >> 8 ) ^ table[buffer[i] ^ ( crc & 0xff )];
+			}
+
+			return crc;
+		}
+
+		public static UInt32 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
+
+		public static UInt32 Compute( UInt32 seed, Byte[] buffer ) => Compute( DefaultPolynomial, seed, buffer );
+
+		public static UInt32 Compute( UInt32 polynomial, UInt32 seed, Byte[] buffer ) =>
+			~CalculateHash( InitializeTable( polynomial ), seed, buffer, 0, buffer.Length );
+
 		public override void Initialize() => this._hash = this.Seed;
-
 	}
-
 }

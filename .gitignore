@@ -1,6 +1,6 @@
 ﻿
-# Created by https://www.toptal.com/developers/gitignore/api/jetbrains,visualstudio,rider,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=jetbrains,visualstudio,rider,visualstudiocode
+# Created by https://www.toptal.com/developers/gitignore/api/rider,jetbrains,visualstudio,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=rider,jetbrains,visualstudio,visualstudiocode
 
 ### JetBrains ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -111,6 +111,8 @@ fabric.properties
 
 # User-specific stuff
 
+# Generated files
+
 # Sensitive or high-churn files
 
 # Gradle
@@ -185,6 +187,7 @@ mono_crash.*
 [Rr]eleases/
 x64/
 x86/
+[Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
@@ -192,8 +195,6 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
-
-# Generated files
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -224,6 +225,9 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
 
 # StyleCop
 StyleCopReport.xml
@@ -516,11 +520,11 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-# End of https://www.toptal.com/developers/gitignore/api/jetbrains,visualstudio,rider,visualstudiocode
-Librainian/obj/x64/Debug/net5.0-windows/Librainian.AssemblyInfo.cs
-Librainian/obj/x64/Debug/net5.0-windows/Librainian.AssemblyInfoInputs.cache
-Librainian/obj/x64/Debug/net5.0-windows/Librainian.csproj.CoreCompileInputs.cache
-Librainian/obj/x64/Debug/net5.0-windows/Librainian.csprojAssemblyReference.cache
-Librainian/obj/x64/Release/net5.0-windows/Librainian.AssemblyInfo.cs
-Librainian/obj/x64/Release/net5.0-windows/Librainian.AssemblyInfoInputs.cache
-Librainian/obj/x64/Release/net5.0-windows/Librainian.csprojAssemblyReference.cache
+# Fody - auto-generated XML schema
+FodyWeavers.xsd
+
+### VisualStudio Patch ###
+# Additional files built by Visual Studio
+*.tlog
+
+# End of https://www.toptal.com/developers/gitignore/api/rider,jetbrains,visualstudio,visualstudiocode

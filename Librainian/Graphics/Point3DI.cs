@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,18 +14,17 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Point3DI.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	/// <summary>Represents a location in 3D integer space.</summary>
 	/// <remarks>Culled from the file CPI.Plot3D.cs I don't know where that file came from otherwise I'd attribute it!</remarks>
@@ -75,7 +74,6 @@ namespace Librainian.Graphics {
 		/// <summary>Static comparison.</summary>
 		/// <param name="left"></param>
 		/// <param name="right"> </param>
-		/// <returns></returns>
 		public static Boolean Equals( Point3Di left, Point3Di right ) => left.ApproximatelyEquals( right );
 
 		/// <summary>Determines whether the specified Point3D instances are unequal.</summary>
@@ -108,7 +106,7 @@ namespace Librainian.Graphics {
 		/// <summary>Returns a value indicating whether this instance is equal to a specified object.</summary>
 		/// <param name="obj">An object to compare with this instance.</param>
 		/// <returns>True if the object equals this instance; false otherwise.</returns>
-		public override Boolean Equals( Object obj ) => obj is Point3Di di && this.Equals( di );
+		public override Boolean Equals( Object? obj ) => obj is Point3Di di && this.Equals( di );
 
 		/// <summary>Returns a value indicating whether this instance is equal to a specified Point3D structure.</summary>
 		/// <param name="other">A Point3D structure to compare to this instance.</param>
@@ -117,13 +115,10 @@ namespace Librainian.Graphics {
 
 		/// <summary>Returns the hash code for this instance.</summary>
 		/// <returns>A 32-bit signed integer hash code.</returns>
-		public override Int32 GetHashCode() => ( this.X, this.Y, this.Z ).GetHashCode();
+		public override Int32 GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
 		/// <summary>Returns a String representation of the point in [X,Y,Z] format.</summary>
 		/// <returns>A String representing the point's XYZ coordinates.</returns>
-		[NotNull]
 		public override String ToString() => $"[{this.X}, {this.Y}, {this.Z}]";
-
 	}
-
 }

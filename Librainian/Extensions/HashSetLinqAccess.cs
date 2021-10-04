@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,19 +14,18 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "HashSetLinqAccess.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Extensions {
 
-	using System;
 	using System.Collections.Generic;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>
 	///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
@@ -37,14 +36,13 @@ namespace Librainian.Extensions {
 	///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
 	public static class HashSetLinqAccess {
 
-		[NotNull]
-		public static HashSet<T> AddRange<T>( [NotNull] this HashSet<T> hashSet, [NotNull] IEnumerable<T> range ) {
+		public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
 			if ( Equals( hashSet, null ) ) {
-				throw new ArgumentNullException( nameof( hashSet ) );
+				throw new ArgumentEmptyException( nameof( hashSet ) );
 			}
 
 			if ( Equals( range, null ) ) {
-				throw new ArgumentNullException( nameof( range ) );
+				throw new ArgumentEmptyException( nameof( range ) );
 			}
 
 			foreach ( var item in range ) {
@@ -54,10 +52,9 @@ namespace Librainian.Extensions {
 			return hashSet;
 		}
 
-		[NotNull]
-		public static HashSet<T> ToHashSet<T>( [NotNull] this IEnumerable<T> fromEnumerable, IEqualityComparer<T>? comparer ) {
+		public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T>? comparer ) {
 			if ( fromEnumerable is null ) {
-				throw new ArgumentNullException( nameof( fromEnumerable ) );
+				throw new ArgumentEmptyException( nameof( fromEnumerable ) );
 			}
 
 			comparer ??= EqualityComparer<T>.Default;
@@ -70,7 +67,5 @@ namespace Librainian.Extensions {
 		}
 
 		//public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
-
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "FileAttributeData.cs" last formatted on 2020-08-14 at 8:39 PM.
 
 namespace Librainian.FileSystem {
@@ -27,7 +27,6 @@ namespace Librainian.FileSystem {
 	using System;
 	using System.Diagnostics;
 	using System.IO;
-	using JetBrains.Annotations;
 	using OperatingSystem;
 
 	/// <summary>Modern version of <see cref="NativeMethods.WIN32_FILE_ATTRIBUTE_DATA" />.</summary>
@@ -87,7 +86,7 @@ namespace Librainian.FileSystem {
 			this.FileHashCode = default( Int64? );
 		}
 
-		public Boolean Refresh( [NotNull] String fullPath, Boolean throwOnError = true ) {
+		public Boolean Refresh( String fullPath, Boolean throwOnError = true ) {
 			this.Reset();
 
 			if ( String.IsNullOrWhiteSpace( fullPath ) ) {
@@ -96,7 +95,7 @@ namespace Librainian.FileSystem {
 
 			var handle = NativeMethods.FindFirstFile( fullPath, out var data );
 
-			if ( handle.IsInvalid ) {
+			if ( handle?.IsInvalid == true ) {
 				if ( throwOnError ) {
 					NativeMethods.HandleLastError( fullPath );
 				}
@@ -136,12 +135,9 @@ namespace Librainian.FileSystem {
 
 			//crc32/64?
 			return Task.Run( () => {
-
 				return ( FileAttributes, this.CreationTime ).GetHashCode();
 			} );
 		}
 		*/
-
 	}
-
 }

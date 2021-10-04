@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,49 +23,37 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "PauseableClock.cs" last formatted on 2020-08-14 at 8:37 PM.
+// File "PauseableClock.cs" last touched on 2021-09-28 at 6:45 AM by Protiguous.
 
 namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
 	using System.Timers;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
-	using Rationals;
 	using Threadsafe;
+	using Utilities;
 
 	/// <summary>A 'pause-able' clock.</summary>
 	[JsonObject]
+	[NeedsTesting]
 	public class PauseableClock : IStandardClock {
 
-		/// <summary></summary>
-		private VolatileBoolean _isPaused;
+		private VolatileBoolean _isPaused = new(false);
 
-		/// <summary>Default to year 0.</summary>
-		public PauseableClock() : this( Measurement.Time.Date.Zero, Measurement.Time.Time.Minimum ) { }
-
-		public PauseableClock( Date date, Time time ) {
-			this.Year = date.Year;
-			this.Month = date.Month;
-			this.Day = date.Day;
+		public PauseableClock( TimeClock time ) {
 			this.Hour = time.Hour;
 			this.Minute = time.Minute;
 			this.Second = time.Second;
 			this.Millisecond = time.Millisecond;
+			this.Microsecond = time.Microsecond;
 			this.Timer.Elapsed += this.OnTimerElapsed;
 			this.Resume();
 		}
 
-		/// <summary></summary>
-		[NotNull]
-		private Timer Timer { get; } = new( ( Double )Milliseconds.One.Value ) {
+		private Timer Timer { get; } = new(( Double )Milliseconds.One.Value) {
 			AutoReset = false
 		};
-
-		[JsonProperty]
-		[NotNull]
-		public Day Day { get; private set; }
 
 		[JsonProperty]
 		public Boolean IsPaused {
@@ -71,48 +62,28 @@ namespace Librainian.Measurement.Time.Clocks {
 			private set => this._isPaused = value;
 		}
 
-		[JsonProperty]
-		[CanBeNull]
-		public Month Month { get; private set; }
+		public Action<TimeClock>? OnHour { get; set; }
 
-		[CanBeNull]
-		public Action<DateAndTime>? OnDay { get; set; }
+		public Action<TimeClock>? OnMillisecond { get; set; }
 
-		[CanBeNull]
-		public Action<DateAndTime>? OnHour { get; set; }
+		public Action<TimeClock>? OnMinute { get; set; }
 
-		[CanBeNull]
-		public Action<DateAndTime>? OnMillisecond { get; set; }
+		public Action<TimeClock>? OnMonth { get; set; }
 
-		[CanBeNull]
-		public Action<DateAndTime>? OnMinute { get; set; }
-
-		[CanBeNull]
-		public Action<DateAndTime>? OnMonth { get; set; }
-
-		[CanBeNull]
-		public Action<DateAndTime>? OnSecond { get; set; }
-
-		[CanBeNull]
-		public Action<DateAndTime>? OnYear { get; set; }
+		public Action<TimeClock>? OnSecond { get; set; }
 
 		[JsonProperty]
-		[CanBeNull]
-		public Year Year { get; private set; }
+		public ClockMicrosecond Microsecond { get; private set; }
 
-		/// <summary></summary>
 		[JsonProperty]
 		public ClockHour Hour { get; private set; }
 
-		/// <summary></summary>
 		[JsonProperty]
 		public ClockMillisecond Millisecond { get; private set; }
 
-		/// <summary></summary>
 		[JsonProperty]
 		public ClockMinute Minute { get; private set; }
 
-		/// <summary></summary>
 		[JsonProperty]
 		public ClockSecond Second { get; private set; }
 
@@ -120,26 +91,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public Boolean IsPm() => this.Hour >= 12;
 
-		public Time Time() => new( this.Hour, this.Minute, this.Second, this.Millisecond );
-
-		private Boolean DaysTocked( Boolean fireEvents ) {
-			this.Day = this.Day.Next( out var tocked );
-
-			if ( !tocked ) {
-				return false;
-			}
-
-			try {
-				if ( fireEvents ) {
-					this.OnDay?.Invoke( this.DateAndTime() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return true;
-		}
+		public TimeClock Time() => new(this.Hour, this.Minute, this.Second, this.Millisecond, this.Microsecond);
 
 		private Boolean HoursTocked( Boolean fireEvents ) {
 			this.Hour = this.Hour.Next( out var tocked );
@@ -150,7 +102,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 			try {
 				if ( fireEvents ) {
-					this.OnHour?.Invoke( this.DateAndTime() );
+					this.OnHour?.Invoke( this.Time() );
 				}
 			}
 			catch ( Exception exception ) {
@@ -169,7 +121,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 			try {
 				if ( fireEvents ) {
-					this.OnMillisecond?.Invoke( this.DateAndTime() );
+					this.OnMillisecond?.Invoke( this.Time() );
 				}
 			}
 			catch ( Exception exception ) {
@@ -188,7 +140,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 			try {
 				if ( fireEvents ) {
-					this.OnMinute?.Invoke( this.DateAndTime() );
+					this.OnMinute?.Invoke( this.Time() );
 				}
 			}
 			catch ( Exception exception ) {
@@ -198,26 +150,7 @@ namespace Librainian.Measurement.Time.Clocks {
 			return true;
 		}
 
-		private Boolean MonthsTocked( Boolean fireEvents ) {
-			this.Month = this.Month.Next( out var tocked );
-
-			if ( !tocked ) {
-				return false;
-			}
-
-			try {
-				if ( fireEvents ) {
-					this.OnMonth?.Invoke( this.DateAndTime() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return true;
-		}
-
-		private void OnTimerElapsed( [CanBeNull] Object? sender, [CanBeNull] ElapsedEventArgs elapsedEventArgs ) {
+		private void OnTimerElapsed( Object? sender, ElapsedEventArgs? elapsedEventArgs ) {
 			this.Pause();
 
 			try {
@@ -240,7 +173,7 @@ namespace Librainian.Measurement.Time.Clocks {
 
 			try {
 				if ( fireEvents ) {
-					this.OnSecond?.Invoke( this.DateAndTime() );
+					this.OnSecond?.Invoke( this.Time() );
 				}
 			}
 			catch ( Exception exception ) {
@@ -263,44 +196,18 @@ namespace Librainian.Measurement.Time.Clocks {
 				return;
 			}
 
-			if ( !this.HoursTocked( fireEvents ) ) {
-				return;
-			}
-
-			if ( !this.DaysTocked( fireEvents ) ) {
-				return;
-			}
-
-			if ( !this.MonthsTocked( fireEvents ) ) {
-				return;
-			}
-
-			this.YearsTocked( fireEvents );
-		}
-
-		private void YearsTocked( Boolean fireEvents ) {
-			this.Year = this.Year.Next();
-
-			try {
-				if ( fireEvents ) {
-					this.OnYear?.Invoke( this.DateAndTime() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
+			if ( !this.HoursTocked( fireEvents ) ) { }
 		}
 
 		/// <summary>Advance the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
 		/// <param name="amount">    </param>
 		/// <param name="skipEvents"></param>
-		/// <returns></returns>
 		public Boolean Advance( Milliseconds amount, Boolean skipEvents = true ) {
 			try {
 				this.Pause();
 				var right = amount.Value;
 
-				while ( right > Rational.Zero ) {
+				while ( right > Decimal.Zero ) {
 					this.TickTock( false );
 					right--;
 				}
@@ -311,10 +218,6 @@ namespace Librainian.Measurement.Time.Clocks {
 				this.Resume();
 			}
 		}
-
-		public Date Date() => new( this.Year, this.Month, this.Day );
-
-		public DateAndTime DateAndTime() => new( this.Date(), this.Time() );
 
 		public Boolean Pause() {
 			this.Timer.Stop();
@@ -332,16 +235,12 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		/// <summary>Rewind the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public Boolean Rewind( Milliseconds amount ) {
 			try {
 				this.Pause();
 
 				//TODO
 				throw new NotImplementedException();
-
-				// ReSharper disable once HeuristicUnreachableCode
-				//return default;
 			}
 			finally {
 				this.Resume();

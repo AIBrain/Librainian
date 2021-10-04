@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "LongArray.cs" last formatted on 2020-08-14 at 8:47 PM.
 
 #nullable enable
@@ -29,10 +29,14 @@ namespace Librainian.Threadsafe {
 	using System;
 	using System.Runtime.CompilerServices;
 	using System.Threading;
-	using JetBrains.Annotations;
 
 	/// <summary>A <see cref="Int64" /> array that may be updated atomically</summary>
 	public class LongArray {
+
+		private Int64[] Array { get; }
+
+		/// <summary>Length of the array</summary>
+		public Int32 Length => this.Array.Length;
 
 		/// <summary>Create a new <see cref="LongArray" /> of a given length</summary>
 		/// <param name="length">Length of the array</param>
@@ -46,16 +50,10 @@ namespace Librainian.Threadsafe {
 
 		/// <summary>Create a new <see cref="LongArray" /> with the same length as, and all elements copied from, the given array.</summary>
 		/// <param name="array"></param>
-		public LongArray( [NotNull] Int64[] array ) {
+		public LongArray( Int64[] array ) {
 			this.Array = new Int64[array.Length];
 			array.CopyTo( this.Array, 0 );
 		}
-
-		[NotNull]
-		private Int64[] Array { get; }
-
-		/// <summary>Length of the array</summary>
-		public Int32 Length => this.Array.Length;
 
 		/// <summary>Atomically add the given value to the current value and return the sum</summary>
 		/// <param name="delta">The value to be added</param>
@@ -144,7 +142,5 @@ namespace Librainian.Threadsafe {
 		/// <param name="index">   The index.</param>
 		/// <param name="newValue">The new value</param>
 		public void WriteUnfenced( Int32 index, Int64 newValue ) => this.Array[index] = newValue;
-
 	}
-
 }

@@ -1,4 +1,5 @@
 ﻿[*.cs]
+dotnet_diagnostic.CA1200.severity=warning
 
-# IDE0055: Fix formatting
-dotnet_diagnostic.IDE0055.severity = error
+[*.{cs,vb}]
+dotnet_diagnostic.CA1051.severity=error

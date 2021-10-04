@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ERG.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics.Imaging {
@@ -29,7 +29,6 @@ namespace Librainian.Graphics.Imaging {
 	using System.Drawing.Imaging;
 	using System.Threading.Tasks;
 	using Collections.Sets;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
 	/// <summary> Experimental Resilient Graphics </summary>
@@ -50,40 +49,34 @@ namespace Librainian.Graphics.Imaging {
 		/// <summary>Human readable file header.</summary>
 		public static readonly String Header = "ERG0.1";
 
-		/// <summary>EXIF metadata</summary>
-		[JsonProperty]
-		public readonly ConcurrentDictionary<String, String> Exifs = new();
-
-		public Erg() => this.Checksum = UInt64.MaxValue;
-
 		/// <summary>Checksum of all pages</summary>
 		[JsonProperty]
 		public UInt64 Checksum { get; private set; }
 
+		/// <summary>EXIF metadata</summary>
+		[JsonProperty]
+		public ConcurrentDictionary<String, String> Exifs { get; } = new();
+
 		public UInt32 Height { get; private set; }
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentSet<Pixel> Pixels { get; } = new();
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentSet<Int32> PropertyIdList { get; } = new();
 
 		[JsonProperty]
-		[NotNull]
 		public ConcurrentSet<PropertyItem> PropertyItems { get; } = new();
 
 		public UInt32 Width { get; private set; }
 
-		[NotNull]
+		public Erg() => this.Checksum = UInt64.MaxValue;
+
 		public Task<UInt64> CalculateChecksumAsync() =>
 			Task.Run( () => {
 				unchecked {
 					return ( UInt64 )this.Pixels.GetHashCode();
 				}
 			} );
-
 	}
-
 }

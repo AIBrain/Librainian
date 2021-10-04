@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "AESThenHMAC.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 namespace Librainian.Security {
@@ -28,7 +28,6 @@ namespace Librainian.Security {
 	using System.IO;
 	using System.Security.Cryptography;
 	using System.Text;
-	using JetBrains.Annotations;
 	using Maths;
 
 	/// <summary>
@@ -53,8 +52,6 @@ namespace Librainian.Security {
 		public const Int32 SaltBitSize = 64;
 
 		/// <summary>Helper that generates a random key on each call.</summary>
-		/// <returns></returns>
-		[NotNull]
 		public static Byte[] NewKey() {
 			var key = new Byte[KeyBitSize / 8];
 			Randem.RNG.Value.GetBytes( key );
@@ -68,14 +65,14 @@ namespace Librainian.Security {
 		/// <param name="authKey">The auth key.</param>
 		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 		/// <returns>Decrypted Message</returns>
-		[CanBeNull]
-		public static Byte[]? SimpleDecrypt( [NotNull] Byte[] encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+		public static Byte[]? SimpleDecrypt( Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+
 			//Basic Usage Error Checks
-			if ( cryptKey?.Length != KeyBitSize / 8 ) {
+			if ( cryptKey.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
 			}
 
-			if ( authKey?.Length != KeyBitSize / 8 ) {
+			if ( authKey.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"AuthKey needs to be {KeyBitSize} bit!", nameof( authKey ) );
 			}
 
@@ -112,7 +109,10 @@ namespace Librainian.Security {
 			}
 
 			using var aes = new AesManaged {
-				KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
+				KeySize = KeyBitSize,
+				BlockSize = BlockBitSize,
+				Mode = CipherMode.CBC,
+				Padding = PaddingMode.PKCS7
 			};
 
 			//Grab IV from message
@@ -141,8 +141,7 @@ namespace Librainian.Security {
 		/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
-		[CanBeNull]
-		public static String SimpleDecrypt( [NotNull] String encryptedMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+		public static String? SimpleDecrypt( String encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 			}
@@ -163,8 +162,7 @@ namespace Librainian.Security {
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="ArgumentException">Encrypted Message Required!;encryptedMessage</exception>
 		/// <remarks>Significantly less secure than using random binary keys.</remarks>
-		[CanBeNull]
-		public static String SimpleDecryptWithPassword( [NotNull] String encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+		public static String? SimpleDecryptWithPassword( String encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
 			if ( String.IsNullOrWhiteSpace( encryptedMessage ) ) {
 				throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 			}
@@ -193,8 +191,8 @@ namespace Librainian.Security {
 		/// <returns>Decrypted Message</returns>
 		/// <exception cref="ArgumentException">Must have a password of minimum length;password</exception>
 		/// <remarks>Significantly less secure than using random binary keys.</remarks>
-		[CanBeNull]
-		public static Byte[]? SimpleDecryptWithPassword( [NotNull] Byte[] encryptedMessage, [NotNull] String password, Int32 nonSecretPayloadLength = 0 ) {
+		public static Byte[]? SimpleDecryptWithPassword( Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
+
 			//User Error Checks
 			if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
 				throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
@@ -235,14 +233,14 @@ namespace Librainian.Security {
 		/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
 		/// <returns>Encrypted Message</returns>
 		/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
-		[NotNull]
-		public static Byte[] SimpleEncrypt( [NotNull] this Byte[] secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, Byte[]? nonSecretPayload = null ) {
+		public static Byte[] SimpleEncrypt( this Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
+
 			//User Error Checks
-			if ( cryptKey?.Length != KeyBitSize / 8 ) {
+			if ( cryptKey.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
 			}
 
-			if ( authKey?.Length != KeyBitSize / 8 ) {
+			if ( authKey.Length != KeyBitSize / 8 ) {
 				throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( authKey ) );
 			}
 
@@ -251,14 +249,15 @@ namespace Librainian.Security {
 			}
 
 			//non-secret payload optional
-			if ( nonSecretPayload == null ) {
-				nonSecretPayload = Array.Empty<Byte>();
-			}
+			nonSecretPayload ??= Array.Empty<Byte>();
 
 			Byte[] cipherText;
 
 			using var aes = new AesManaged {
-				KeySize = KeyBitSize, BlockSize = BlockBitSize, Mode = CipherMode.CBC, Padding = PaddingMode.PKCS7
+				KeySize = KeyBitSize,
+				BlockSize = BlockBitSize,
+				Mode = CipherMode.CBC,
+				Padding = PaddingMode.PKCS7
 			};
 
 			aes.GenerateIV();
@@ -277,6 +276,7 @@ namespace Librainian.Security {
 			using ( var hmac = new HMACSHA256( authKey ) ) {
 				using ( var encryptedStream = new MemoryStream() ) {
 					using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
+
 						//Prepend non-secret payload if any
 						binaryWriter.Write( nonSecretPayload );
 
@@ -307,8 +307,7 @@ namespace Librainian.Security {
 		/// <returns>Encrypted Message</returns>
 		/// <exception cref="ArgumentException">Secret Message Required!;secretMessage</exception>
 		/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
-		[NotNull]
-		public static String SimpleEncrypt( [NotNull] String secretMessage, [NotNull] Byte[] cryptKey, [NotNull] Byte[] authKey, [CanBeNull] Byte[] nonSecretPayload = null ) {
+		public static String SimpleEncrypt( String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 			if ( String.IsNullOrEmpty( secretMessage ) ) {
 				throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
 			}
@@ -332,8 +331,7 @@ namespace Librainian.Security {
 		///     Significantly less secure than using random binary keys. Adds additional non secret payload for key generation
 		///     parameters.
 		/// </remarks>
-		[NotNull]
-		public static String SimpleEncryptWithPassword( [NotNull] String secretMessage, [NotNull] String password, [CanBeNull] Byte[] nonSecretPayload = null ) {
+		public static String SimpleEncryptWithPassword( String secretMessage, String password, Byte[]? nonSecretPayload = null ) {
 			if ( String.IsNullOrEmpty( secretMessage ) ) {
 				throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
 			}
@@ -357,8 +355,7 @@ namespace Librainian.Security {
 		///     Significantly less secure than using random binary keys. Adds additional non secret payload for key generation
 		///     parameters.
 		/// </remarks>
-		[NotNull]
-		public static Byte[] SimpleEncryptWithPassword( [NotNull] Byte[] secretMessage, [NotNull] String password, Byte[]? nonSecretPayload = null ) {
+		public static Byte[] SimpleEncryptWithPassword( Byte[] secretMessage, String password, Byte[]? nonSecretPayload = null ) {
 			nonSecretPayload ??= Array.Empty<Byte>();
 
 			//User Error Checks
@@ -375,7 +372,8 @@ namespace Librainian.Security {
 
 			var payload = new Byte[saltier + nonSecretPayload.Length];
 
-            Buffer.BlockCopy( nonSecretPayload, 0, payload, 0, nonSecretPayload.Length );
+			Buffer.BlockCopy( nonSecretPayload, 0, payload, 0, nonSecretPayload.Length );
+
 			//Array.Copy( nonSecretPayload, payload, nonSecretPayload.Length );
 
 			var payloadIndex = nonSecretPayload.Length;
@@ -391,7 +389,8 @@ namespace Librainian.Security {
 				cryptKey = generator.GetBytes( KeyBitSize / 8 );
 
 				//Create Non Secret Payload
-                Buffer.BlockCopy( salt, 0, payload, payloadIndex, salt.Length );
+				Buffer.BlockCopy( salt, 0, payload, payloadIndex, salt.Length );
+
 				//Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
 
 				payloadIndex += salt.Length;
@@ -407,12 +406,11 @@ namespace Librainian.Security {
 
 				//Create Rest of Non Secret Payload
 				Buffer.BlockCopy( salt, 0, payload, payloadIndex, salt.Length );
+
 				//Array.Copy( salt, 0, payload, payloadIndex, salt.Length );
 			}
 
 			return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
 		}
-
 	}
-
 }

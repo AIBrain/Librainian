@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Cookies.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 #nullable enable
@@ -31,11 +31,9 @@ namespace Librainian.Internet.Servers {
 	using System.Globalization;
 	using System.Linq;
 	using System.Net;
-	using JetBrains.Annotations;
 
 	public class Cookies {
 
-		[NotNull]
 		private SortedList<String, Cookie> CookieCollection { get; } = new();
 
 		/// <summary>
@@ -44,8 +42,6 @@ namespace Librainian.Internet.Servers {
 		///     the String is null or empty, an empty cookies collection is returned.
 		/// </summary>
 		/// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
-		/// <returns></returns>
-		[NotNull]
 		public static Cookies FromString( String str ) {
 			var cookies = new Cookies();
 
@@ -68,8 +64,8 @@ namespace Librainian.Internet.Servers {
 					continue;
 				}
 
-				var name = s.Substring( 0, idxEquals ).Trim();
-				var value = s[ ( idxEquals + 1 ).. ].Trim();
+				var name = s[..idxEquals].Trim();
+				var value = s[( idxEquals + 1 )..].Trim();
 				cookies.Add( name, value );
 			}
 
@@ -82,28 +78,24 @@ namespace Librainian.Internet.Servers {
 		/// </summary>
 		/// <param name="name">The cookie's name.</param>
 		/// <param name="value">The cookie's value.</param>
-		public void Add( [CanBeNull] String? name, [CanBeNull] String? value ) => this.Add( name, value, TimeSpan.Zero );
+		public void Add( String? name, String? value ) => this.Add( name, value, TimeSpan.Zero );
 
 		/// <summary>Adds a cookie with the specified name, value, and lifespan.</summary>
 		/// <param name="name">The cookie's name.</param>
 		/// <param name="value">The cookie's value.</param>
 		/// <param name="expireTime">The amount of time before the cookie should expire.</param>
-		public void Add( String name, [CanBeNull] String? value, TimeSpan expireTime ) {
+		public void Add( String name, String? value, TimeSpan expireTime ) {
 			name = name.ToLower( CultureInfo.CurrentCulture );
 			this.CookieCollection[name] = new Cookie( name, value, expireTime );
 		}
 
 		/// <summary>Gets the cookie with the specified name. If the cookie is not found, null is returned;</summary>
 		/// <param name="name">The name of the cookie.</param>
-		/// <returns></returns>
-		[CanBeNull]
-		public Cookie? Get( [NotNull] String name ) => this.CookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
+		public Cookie? Get( String name ) => this.CookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
 		/// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
 		/// <param name="name">The name of the cookie.</param>
-		/// <returns></returns>
-		[NotNull]
-        public String GetValue( [NotNull] String name ) {
+		public String GetValue( String name ) {
 			var cookie = this.Get( name );
 
 			return cookie?.Value ?? String.Empty;
@@ -117,14 +109,11 @@ namespace Librainian.Internet.Servers {
 		///     A String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n". There is no
 		///     leading or trailing "\r\n".
 		/// </returns>
-		[NotNull]
 		public override String ToString() {
 			var cookiesStr = this.CookieCollection.Values.Select( cookie =>
 																	  $"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 )cookie.Expire.TotalSeconds )}; Path=/" );
 
 			return String.Join( "\r\n", cookiesStr );
 		}
-
 	}
-
 }

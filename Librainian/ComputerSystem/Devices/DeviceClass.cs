@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "DeviceClass.cs" last formatted on 2020-08-14 at 8:31 PM.
 
 namespace Librainian.ComputerSystem.Devices {
@@ -31,9 +31,8 @@ namespace Librainian.ComputerSystem.Devices {
 	using System.Runtime.InteropServices;
 	using System.Text;
 	using Exceptions.Warnings;
-	using JetBrains.Annotations;
 	using OperatingSystem;
-	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>A generic base class for physical device classes.</summary>
 	public abstract class DeviceClass : ABetterClassDispose {
@@ -42,13 +41,16 @@ namespace Librainian.ComputerSystem.Devices {
 
 		private IntPtr _deviceInfoSet;
 
+		/// <summary>Gets the device class's guid.</summary>
+		public Guid ClassGuid => this._classGuid;
+
 		/// <summary>Initializes a new instance of the DeviceClass class.</summary>
 		/// <param name="classGuid"> A device class Guid.</param>
 		/// <param name="hwndParent">
 		///     The handle of the top-level window to be used for any user interface or IntPtr.Zero for no
 		///     handle.
 		/// </param>
-		private DeviceClass( Guid classGuid, IntPtr hwndParent ) {
+		private DeviceClass( Guid classGuid, IntPtr hwndParent ) : base( nameof( DeviceClass ) ) {
 			this._classGuid = classGuid;
 
 			this._deviceInfoSet = NativeMethods.SetupDiGetClassDevs( ref this._classGuid, "" /*was 0*/, hwndParent,
@@ -63,14 +65,10 @@ namespace Librainian.ComputerSystem.Devices {
 
 		protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
 
-		/// <summary>Gets the device class's guid.</summary>
-		public Guid ClassGuid => this._classGuid;
-
-		[NotNull]
 		protected virtual Device CreateDevice(
-			[NotNull] DeviceClass deviceClass,
+			DeviceClass deviceClass,
 			NativeMethods.SP_DEVINFO_DATA deviceInfoData,
-			[CanBeNull] String? path,
+			String? path,
 			Int32 index,
 			Int32 disknum = -1
 		) =>
@@ -94,14 +92,14 @@ namespace Librainian.ComputerSystem.Devices {
 			return devData;
 		}
 
-		[CanBeNull]
-		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, [CanBeNull] String? defaultValue ) {
+		internal String? GetProperty( NativeMethods.SP_DEVINFO_DATA devData, UInt32 property, String? defaultValue ) {
 			const Int32 propertyBufferSize = 1024;
 
 			var propertyBuffer = new Byte[propertyBufferSize];
 
 			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
 																  out var requiredSize ) ) {
+
 				//Marshal.FreeHGlobal( propertyBuffer );
 				var error = Marshal.GetLastWin32Error();
 
@@ -125,6 +123,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
 																  out var requiredSize ) ) {
+
 				//Marshal.FreeHGlobal( propertyBuffer );
 				var error = Marshal.GetLastWin32Error();
 
@@ -148,6 +147,7 @@ namespace Librainian.ComputerSystem.Devices {
 
 			if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
 																  out var requiredSize ) ) {
+
 				//Marshal.FreeHGlobal( propertyBuffer );
 				var error = Marshal.GetLastWin32Error();
 
@@ -179,7 +179,6 @@ namespace Librainian.ComputerSystem.Devices {
 		/// <summary>Gets the list of devices of this device class.</summary>
 		/// <returns>The devices.</returns>
 		/// <exception cref="Win32Exception"></exception>
-		[NotNull]
 		public IEnumerable<Device> GetDevices() {
 			var devices = new HashSet<Device>();
 			var index = 0;
@@ -235,6 +234,7 @@ namespace Librainian.ComputerSystem.Devices {
 				Marshal.FreeHGlobal( buffer );
 
 				if ( this._classGuid.Equals( new Guid( NativeMethods.GUID_DEVINTERFACE_DISK ) ) ) {
+
 					// Find disks
 					var hFile = NativeMethods.CreateFile( devicePath, 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
 
@@ -263,11 +263,13 @@ namespace Librainian.ComputerSystem.Devices {
 					if ( bytesReturned > 0 ) {
 						var toStructure = Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
 
-						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER? ) toStructure ?? throw new Warning($"Unable to {nameof(Marshal)}.{nameof(Marshal.PtrToStructure)} for device.");
+						disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER? )toStructure ?? throw new UnknownWarning( $"Unable to {nameof( Marshal )}.{nameof( Marshal.PtrToStructure )} for device." );
 					}
 					else {
 						disknum = new NativeMethods.STORAGE_DEVICE_NUMBER {
-							DeviceNumber = -1, DeviceType = -1, PartitionNumber = -1
+							DeviceNumber = -1,
+							DeviceType = -1,
+							PartitionNumber = -1
 						};
 					}
 
@@ -288,7 +290,5 @@ namespace Librainian.ComputerSystem.Devices {
 
 			return devices;
 		}
-
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "UBigInteger.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 #nullable enable
@@ -30,6 +30,7 @@ namespace Librainian.Maths.Numbers {
 	using System.Diagnostics;
 	using System.Globalization;
 	using System.Numerics;
+	using Exceptions;
 	using Extensions;
 	using JetBrains.Annotations;
 	using Rationals;
@@ -39,8 +40,6 @@ namespace Librainian.Maths.Numbers {
 	/// </summary>
 	[Immutable]
 	public struct UBigInteger : IComparable, IComparable<UBigInteger> {
-
-		private BigInteger InternalValue { get; }
 
 		/// <summary>
 		///     <para>The lowest <see cref="UBigInteger" /> that is higher than <see cref="Zero" />.</para>
@@ -57,7 +56,10 @@ namespace Librainian.Maths.Numbers {
 		/// <summary>0</summary>
 		public static readonly UBigInteger Zero = new( 0 );
 
+		private BigInteger InternalValue { get; }
+
 		private UBigInteger( BigInteger value ) {
+
 			//value.Should().BeGreaterOrEqualTo(expected: BigInteger.Zero);
 
 			if ( value < BigInteger.Zero ) {
@@ -69,10 +71,11 @@ namespace Librainian.Maths.Numbers {
 
 		public UBigInteger( UInt64 value ) => this.InternalValue = value;
 
-		public UBigInteger( [NotNull] Byte[] bytes ) {
+		public UBigInteger( Byte[] bytes ) {
+
 			// http: //stackoverflow.com/questions/5649190/byte-to-unsigned-biginteger
 			if ( bytes is null ) {
-				throw new ArgumentNullException( nameof( bytes ) );
+				throw new ArgumentEmptyException( nameof( bytes ) );
 			}
 
 			var bytesWith00Attheendnd = new Byte[bytes.Length + 1];
@@ -88,6 +91,7 @@ namespace Librainian.Maths.Numbers {
 		}
 
 		public UBigInteger( Int64 value ) {
+
 			//value.Should().BeGreaterOrEqualTo(expected: 0);
 
 			if ( value < 0 ) {
@@ -161,9 +165,9 @@ namespace Librainian.Maths.Numbers {
 
 		public static Boolean operator >=( UBigInteger left, UBigInteger right ) => left.InternalValue >= right.InternalValue;
 
-		public static UBigInteger Parse( [NotNull] String number, NumberStyles style ) {
+		public static UBigInteger Parse( String number, NumberStyles style ) {
 			if ( number is null ) {
-				throw new ArgumentNullException( nameof( number ) );
+				throw new ArgumentEmptyException( nameof( number ) );
 			}
 
 			return new UBigInteger( BigInteger.Parse( number, style ) );
@@ -174,9 +178,9 @@ namespace Librainian.Maths.Numbers {
 		[Pure]
 		public Int32 CompareTo( Object? obj ) =>
 			obj switch {
-				null                    => throw new ArgumentNullException( nameof( obj ) ),
+				null => throw new ArgumentEmptyException( nameof( obj ) ),
 				UBigInteger uBigInteger => this.InternalValue.CompareTo( uBigInteger ),
-				var _                       => throw new InvalidCastException( $"Error casting {nameof( obj )} to a {nameof( UBigInteger )}" )
+				var _ => throw new InvalidCastException( $"Error casting {nameof( obj )} to a {nameof( UBigInteger )}" )
 			};
 
 		public Int32 CompareTo( UBigInteger number ) => this.InternalValue.CompareTo( number.InternalValue );
@@ -185,14 +189,10 @@ namespace Librainian.Maths.Numbers {
 
 		public Int32 CompareTo( UInt64 other ) => this.InternalValue.CompareTo( other );
 
-		[NotNull]
 		public Byte[] ToByteArray() => this.InternalValue.ToByteArray();
 
 		public override String ToString() => this.InternalValue.ToString();
 
-		[CanBeNull]
-		public String ToString( [NotNull] String format ) => this.InternalValue.ToString( format );
-
+		public String ToString( String format ) => this.InternalValue.ToString( format );
 	}
-
 }

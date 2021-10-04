@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BackgroundThreadQueue.cs" last formatted on 2020-08-14 at 8:46 PM.
+// File "BackgroundThreadQueue.cs" last touched on 2021-09-11 at 6:58 AM by Protiguous.
 
 #nullable enable
 
@@ -29,9 +32,9 @@ namespace Librainian.Threading {
 	using System;
 	using System.Collections.Concurrent;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Threadsafe;
-	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     Yah.. old class.
@@ -43,14 +46,15 @@ namespace Librainian.Threading {
 
 		private Thread? thread;
 
-		[NotNull]
+		public BackgroundThreadQueue() : base( nameof( BackgroundThreadQueue<T> ) ) { }
+
 		private BlockingCollection<T> MessageQueue { get; } = new();
 
 		private CancellationToken Token { get; set; }
 
-		private void ProcessQueue( [NotNull] Action<T> action ) {
+		private void ProcessQueue( Action<T> action ) {
 			if ( action is null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			try {
@@ -72,13 +76,17 @@ namespace Librainian.Threading {
 					}
 				}
 			}
-			catch ( OperationCanceledException ) { }
-			catch ( ObjectDisposedException ) { }
+			catch ( OperationCanceledException ) {
+				this._quit = true;
+			}
+			catch ( ObjectDisposedException ) {
+				this._quit = true;
+			}
 		}
 
 		/// <summary>Same as <see cref="Enqueue" />.</summary>
 		/// <param name="message"></param>
-		public void Add( [CanBeNull] T message ) => this.MessageQueue.Add( message, this.Token );
+		public void Add( T? message ) => this.MessageQueue.Add( message, this.Token );
 
 		public void Cancel() {
 			this._quit = true;
@@ -89,17 +97,17 @@ namespace Librainian.Threading {
 
 		/// <summary>Same as <see cref="Add" />.</summary>
 		/// <param name="message"></param>
-		public void Enqueue( [CanBeNull] T message ) => this.MessageQueue.Add( message, this.Token );
+		public void Enqueue( T? message ) => this.MessageQueue.Add( message, this.Token );
 
-		/// <summary></summary>
+		
 		/// <param name="each">Action to perform (poke into <see cref="MessageQueue" />).</param>
-		/// <param name="token"></param>
-		public void Start( [NotNull] Action<T> each, CancellationToken token ) {
+		/// <param name="cancellationToken"></param>
+		public void Start( Action<T> each, CancellationToken cancellationToken ) {
 			if ( each is null ) {
-				throw new ArgumentNullException( nameof( each ) );
+				throw new ArgumentEmptyException( nameof( each ) );
 			}
 
-			this.Token = token;
+			this.Token = cancellationToken;
 
 			this.thread = new Thread( () => this.ProcessQueue( each ) ) {
 				IsBackground = true

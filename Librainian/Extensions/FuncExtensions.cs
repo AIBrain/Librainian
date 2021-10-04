@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,19 +14,20 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "FuncExtensions.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Extensions {
 
 	using System;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Runtime.CompilerServices;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Storage = System.Collections.Concurrent.ConcurrentDictionary<System.Object, System.Object>;
 
 	/// <summary>http://www.jaylee.org/post/2013/04/22/Immutable-Data-and-Memoization-in-CSharp-Part-2.aspx</summary>
@@ -35,43 +36,43 @@ namespace Librainian.Extensions {
 		public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new();
 
 		// Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
-		[CanBeNull]
 		public static TResult? ApplyMemoized<TSource, TResult, TParam>(
-			[NotNull] this TSource source,
-			[NotNull] Func<TSource, TParam, TResult> selector,
-			[NotNull] TParam param
+			[DisallowNull] this TSource source,
+			Func<TSource, TParam, TResult> selector,
+			[DisallowNull] TParam param
 		) {
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			if ( selector == null ) {
-				throw new ArgumentNullException( nameof( selector ) );
+				throw new ArgumentEmptyException( nameof( selector ) );
 			}
 
 			if ( param is null ) {
-				throw new ArgumentNullException( nameof( param ) );
+				throw new ArgumentEmptyException( nameof( param ) );
 			}
 
 			return selector.AsWeakMemoized( source )( param );
 		}
 
-		[NotNull]
-		public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( [NotNull] this Func<TSource, TParam, TResult> selector, [NotNull] TSource source ) {
+		public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, [DisallowNull] TSource source ) {
 			if ( selector == null ) {
-				throw new ArgumentNullException( nameof( selector ) );
+				throw new ArgumentEmptyException( nameof( selector ) );
 			}
 
 			if ( source is null ) {
-				throw new ArgumentNullException( nameof( source ) );
+				throw new ArgumentEmptyException( nameof( source ) );
 			}
 
 			return param => {
+
 				// Get the dictionary that associates delegates to a parameter, on the specified source
 				var values = WeakResults.GetOrCreateValue( source );
 
 				var key = new {
-					selector, param
+					selector,
+					param
 				};
 
 				// Get the result for the combination source/selector/param
@@ -86,13 +87,11 @@ namespace Librainian.Extensions {
 				}
 
 				if ( res != null ) {
-					return ( TResult? ) res;
+					return ( TResult? )res;
 				}
 
 				return default;
 			};
 		}
-
 	}
-
 }

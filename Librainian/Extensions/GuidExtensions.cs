@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,22 +14,22 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "GuidExtensions.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Extensions {
 
 	using System;
+	using System.IO;
 	using System.Linq;
 	using System.Text.RegularExpressions;
+	using Exceptions;
 	using FileSystem;
-	using FileSystem.Pri.LongPath;
-	using JetBrains.Annotations;
 	using Logging;
 	using Maths.Numbers;
 
@@ -49,10 +49,9 @@ namespace Librainian.Extensions {
 		///     <see cref="Converters.ConverterExtensions.ToPath" />
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
-		public static Guid FromPath( [NotNull] this DirectoryInfo path ) {
+		public static Guid FromPath( this DirectoryInfo path ) {
 			if ( path == null ) {
-				throw new ArgumentNullException( nameof( path ) );
+				throw new ArgumentEmptyException( nameof( path ) );
 			}
 
 			var s = path.ToPaths().ToList();
@@ -100,11 +99,11 @@ namespace Librainian.Extensions {
 		///     <see langword="true" /> if <paramref name="s" /> was converted successfully; otherwise, <see langword="false" />
 		///     .
 		/// </value>
-		/// <exception cref="ArgumentNullException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
+		/// <exception cref="ArgumentEmptyException">Thrown if <pararef name="s" /> is <see langword="null" />.</exception>
 		/// <remarks>Original code at https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94072</remarks>
-		public static Boolean IsGuid( [NotNull] this String s ) {
+		public static Boolean IsGuid( this String s ) {
 			if ( s is null ) {
-				throw new ArgumentNullException( nameof( s ) );
+				throw new ArgumentEmptyException( nameof( s ) );
 			}
 
 			var match = InGuidFormat.Match( s );
@@ -115,7 +114,6 @@ namespace Librainian.Extensions {
 		/// <summary>merge two guids</summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
 		public static Guid Munge( this Guid left, Guid right ) {
 			const Int32 bytecount = 16;
 			var destByte = new Byte[bytecount];
@@ -134,7 +132,6 @@ namespace Librainian.Extensions {
 		/// <summary>Untested.</summary>
 		/// <param name="guid">  </param>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public static Guid Next( this Guid guid, Int64 amount = 1 ) {
 			var bytes = guid.ToByteArray();
 			var uBigInteger = new UBigInteger( bytes );
@@ -149,7 +146,6 @@ namespace Librainian.Extensions {
 		/// <summary>Untested.</summary>
 		/// <param name="guid">  </param>
 		/// <param name="amount"></param>
-		/// <returns></returns>
 		public static Guid Previous( this Guid guid, Int64 amount = 1 ) {
 			var bytes = guid.ToByteArray();
 			var uBigInteger = new UBigInteger( bytes );
@@ -160,7 +156,5 @@ namespace Librainian.Extensions {
 
 			return next;
 		}
-
 	}
-
 }

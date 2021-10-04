@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,15 +14,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ManipulationExtensions.cs" last formatted on 2020-08-14 at 8:34 PM.
-
-
 
 namespace Librainian.Graphics.Manipulation {
 
@@ -31,7 +29,6 @@ namespace Librainian.Graphics.Manipulation {
 	using System.Drawing.Imaging;
 	using System.IO;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Maths;
 
 	public static class ManipulationExtensions {
@@ -40,9 +37,7 @@ namespace Librainian.Graphics.Manipulation {
 		/// <param name="image"></param>
 		/// <param name="rectangle"></param>
 		/// <param name="pixelateSize"></param>
-		/// <returns></returns>
-		[NotNull]
-		private static Bitmap Pixelate( [NotNull] this Bitmap image, Rectangle rectangle, Int32 pixelateSize ) {
+		private static Bitmap Pixelate( this Image image, Rectangle rectangle, Int32 pixelateSize ) {
 			var pixelated = new Bitmap( image.Width, image.Height );
 
 			// make an exact copy of the bitmap provided
@@ -80,11 +75,9 @@ namespace Librainian.Graphics.Manipulation {
 			return pixelated;
 		}
 
-		[CanBeNull]
-		public static Bitmap LoadAndResize( [NotNull] this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
+		public static Bitmap? LoadAndResize( this String document, Single multiplier ) => LoadAndResize( new Document( document ), multiplier );
 
-		[CanBeNull]
-		public static Bitmap LoadAndResize( [CanBeNull] Document document, Single multiplier ) {
+		public static Bitmap? LoadAndResize( Document? document, Single multiplier ) {
 			if ( !multiplier.IsNumber() ) {
 				return default( Bitmap );
 			}
@@ -103,8 +96,8 @@ namespace Librainian.Graphics.Manipulation {
 			}
 		}
 
-		[NotNull]
-		public static Bitmap MakeGrayscale( [NotNull] this Bitmap original ) {
+		public static Bitmap MakeGrayscale( this Bitmap original ) {
+
 			//create a blank bitmap the same size as original
 			var newBitmap = new Bitmap( original.Width, original.Height );
 
@@ -142,7 +135,5 @@ namespace Librainian.Graphics.Manipulation {
 
 			return newBitmap;
 		}
-
 	}
-
 }

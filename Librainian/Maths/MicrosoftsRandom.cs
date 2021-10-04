@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,19 +14,18 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "MicrosoftsRandom.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Maths {
 
 	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>Based from Microsoft Reference random.cs sources. This is purely for learning purposes.</summary>
 	public class MicrosoftsRandom {
@@ -46,7 +45,7 @@ namespace Librainian.Maths {
 		private static Int32 inextp;
 
 		[ThreadStatic]
-		private static Int32[] SeedArray;
+		private static Int32[]? SeedArray;
 
 		private MicrosoftsRandom() : this( Middle ) { }
 
@@ -80,11 +79,11 @@ namespace Librainian.Maths {
 
 		public static void Seed( Int32 seed ) {
 			unchecked {
-				if ( SeedArray.Length != SpecialLength ) {
+				if ( SeedArray is not { Length: SpecialLength } ) {
 					SeedArray = new Int32[SpecialLength];
 				}
 
-				var mj = Middle - ( seed ^ Thread.CurrentThread.ManagedThreadId.GetHashCode() );
+				var mj = Middle - ( seed ^ Environment.CurrentManagedThreadId.GetHashCode() );
 
 				SeedArray[Special] = mj;
 
@@ -140,9 +139,9 @@ namespace Librainian.Maths {
 	**Exceptions: None
 	==============================================================================*/
 
-		public virtual void NextBytes( [NotNull] Byte[] buffer ) {
+		public virtual void NextBytes( Byte[] buffer ) {
 			if ( buffer is null ) {
-				throw new ArgumentNullException( nameof( buffer ) );
+				throw new ArgumentEmptyException( nameof( buffer ) );
 			}
 
 			for ( var i = 0; i < buffer.Length; i++ ) {
@@ -158,7 +157,5 @@ namespace Librainian.Maths {
 	**Arugments:  buffer -- the array to be filled.
 	**Exceptions: None
 	==============================================================================*/
-
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "DynamicContext.cs" last formatted on 2020-08-14 at 8:44 PM.
 
 namespace Librainian.Persistence {
@@ -29,16 +29,18 @@ namespace Librainian.Persistence {
 	using System.Dynamic;
 	using System.Runtime.Serialization;
 	using System.Security.Permissions;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://stackoverflow.com/a/4857322/956364" />
 	[JsonObject]
 	[Serializable]
 	public class DynamicContext : DynamicObject, ISerializable {
 
-		protected DynamicContext( [NotNull] SerializationInfo info, StreamingContext context ) {
+		private Dictionary<String, Object> Context { get; } = new();
+
+		protected DynamicContext( SerializationInfo info, StreamingContext context ) {
+
 			// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
 			foreach ( var entry in info ) {
 				this.Context.Add( entry.Name, entry.Value );
@@ -47,23 +49,19 @@ namespace Librainian.Persistence {
 
 		public DynamicContext() { }
 
-		private Dictionary<String, Object> Context { get; } = new();
-
 		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
-		public virtual void GetObjectData( [CanBeNull] SerializationInfo info, StreamingContext context ) {
+		public virtual void GetObjectData( SerializationInfo? info, StreamingContext context ) {
 			foreach ( var kvp in this.Context ) {
 				info.AddValue( kvp.Key, kvp.Value );
 			}
 		}
 
-		public override Boolean TryGetMember( GetMemberBinder binder, [CanBeNull] out Object result ) => this.Context.TryGetValue( binder.Name, out result );
+		public override Boolean TryGetMember( GetMemberBinder binder, out Object? result ) => this.Context.TryGetValue( binder.Name, out result );
 
-		public override Boolean TrySetMember( SetMemberBinder binder, [CanBeNull] Object? value ) {
+		public override Boolean TrySetMember( SetMemberBinder binder, Object? value ) {
 			this.Context.Add( binder.Name, value );
 
 			return true;
 		}
-
 	}
-
 }

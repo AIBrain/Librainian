@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,22 +14,23 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "DocumentInfo.cs" last formatted on 2021-02-07 at 2:48 PM.
 
 namespace Librainian.Persistence {
+
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Exceptions;
 	using FileSystem;
-	using JetBrains.Annotations;
 	using Logging;
 	using Newtonsoft.Json;
 
@@ -41,26 +42,9 @@ namespace Librainian.Persistence {
 	[JsonObject]
 	public class DocumentInfo : IEquatable<DocumentInfo> {
 
-		public DocumentInfo( [NotNull] Document document ) {
-			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
-			}
-
-			this.Reset();
-
-			this.AbsolutePath = document.FullPath;
-
-			this.Length = document.Length;
-			this.CreationTimeUtc = document.CreationTimeUtc;
-			this.LastWriteTimeUtc = document.LastWriteTimeUtc;
-
-			this.LastScanned = null;
-		}
-
 		/// <summary>
 		///     "drive:\folder\file.ext"
 		/// </summary>
-		[NotNull]
 		[JsonProperty]
 		public String AbsolutePath { get; private set; }
 
@@ -96,13 +80,23 @@ namespace Librainian.Persistence {
 		[JsonProperty]
 		public UInt64? Length { get; private set; }
 
-		public Boolean Equals( [CanBeNull] DocumentInfo? other ) => Equals( this, other );
-
-		public static Boolean? AreEitherDifferent( [NotNull] DocumentInfo? left, [NotNull] DocumentInfo? right ) {
-			if ( left is null || right is null ) {
-				return true;
+		public DocumentInfo( Document document ) {
+			if ( document is null ) {
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
+			this.Reset();
+
+			this.AbsolutePath = document.FullPath;
+
+			this.Length = document.GetLength();
+			this.CreationTimeUtc = document.CreationTimeUtc;
+			this.LastWriteTimeUtc = document.LastWriteTimeUtc;
+
+			this.LastScanned = null;
+		}
+
+		public static Boolean? AreEitherDifferent( DocumentInfo left, DocumentInfo right ) {
 			if ( left.Length != right.Length ) {
 				return true;
 			}
@@ -126,9 +120,6 @@ namespace Librainian.Persistence {
 			return false;
 		}
 
-		[NotNull]
-		public static Task<Int32> CalcHarkerHashInt32Async( [NotNull] Document document, CancellationToken token ) => Task.Run( () => document.CalcHashInt32(), token );
-
 		/// <summary>
 		///     <para>Static comparison test. Compares file lengths and hashes.</para>
 		///     <para>
@@ -139,8 +130,7 @@ namespace Librainian.Persistence {
 		/// </summary>
 		/// <param name="left"> </param>
 		/// <param name="right"></param>
-		/// <returns></returns>
-		public static Boolean Equals( [CanBeNull] DocumentInfo? left, [CanBeNull] DocumentInfo? right ) {
+		public static Boolean Equals( DocumentInfo? left, DocumentInfo? right ) {
 			if ( left is null || right is null ) {
 				return false;
 			}
@@ -169,12 +159,18 @@ namespace Librainian.Persistence {
 			return left.CRC64 == right.CRC64; //Okay, we've compared by 3 different hashes. File should be unique by now.
 		}
 
-		public static Boolean operator !=( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => !Equals( left, right );
+		public static Boolean operator !=( DocumentInfo? left, DocumentInfo? right ) => !Equals( left, right );
 
-		public static Boolean operator ==( [CanBeNull] DocumentInfo left, [CanBeNull] DocumentInfo right ) => Equals( left, right );
+		public static Boolean operator ==( DocumentInfo? left, DocumentInfo? right ) => Equals( left, right );
+
+		public Boolean Equals( DocumentInfo? other ) => Equals( this, other );
 
 		public override Boolean Equals( Object? obj ) => Equals( this, obj as DocumentInfo );
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		// ReSharper disable once NonReadonlyMemberInGetHashCode
 		public override Int32 GetHashCode() => this.Length?.GetHashCode() ?? 0;
 
@@ -182,20 +178,20 @@ namespace Librainian.Persistence {
 		///     Attempt to read all hashes at the same time (and thereby efficiently use the disk caching?)
 		/// </summary>
 		/// <param name="document"></param>
-		/// <param name="token">   </param>
-		/// <returns></returns>
-		public async Task GetHashesAsync( [NotNull] Document document, CancellationToken token ) {
+		/// <param name="cancellationToken">   </param>
+		public async Task GetHashesAsync( Document document, CancellationToken cancellationToken ) {
 			if ( document is null ) {
-				throw new ArgumentNullException( nameof( document ) );
+				throw new ArgumentEmptyException( nameof( document ) );
 			}
 
-			$"[{Thread.CurrentThread.ManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
+			var watch = Stopwatch.StartNew();
+			$"[{Environment.CurrentManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
-			var addHash = Task.Run( document.CalculateHarkerHashInt32, token );
-			var crc32 = document.CRC32( token ).AsValueTask().AsTask();
-			var crc64 = document.CRC64( token ).AsValueTask().AsTask();
+			var addHash = document.HarkerHash32( cancellationToken ).AsValueTask().AsTask();
+			var crc32 = document.CRC32( cancellationToken ).AsValueTask().AsTask();
+			var crc64 = document.CRC64( cancellationToken ).AsValueTask().AsTask();
 
-			await Task.WhenAll( crc32, crc64, addHash ).ConfigureAwait( false );
+			await Task.WhenAll( addHash, crc32, crc64 ).ConfigureAwait( false );
 
 			this.AddHash = addHash.Result;
 
@@ -203,7 +199,10 @@ namespace Librainian.Persistence {
 
 			this.CRC64 = crc64.Result;
 
-			$"[{Thread.CurrentThread.ManagedThreadId}] Completed hashings on {this.AbsolutePath}...".Verbose();
+			watch.Stop();
+
+			$"[{Environment.CurrentManagedThreadId}] Completed hashings on {this.AbsolutePath}...at {3 * await document.Size( cancellationToken ).ConfigureAwait( false ) / ( Decimal )watch.ElapsedMilliseconds:F} bytes per millisecond."
+				.Verbose();
 		}
 
 		/// <summary>
@@ -224,32 +223,31 @@ namespace Librainian.Persistence {
 		/// <summary>
 		///     Looks at the entire document.
 		/// </summary>
-		/// <returns></returns>
-		public async Task ScanAsync( CancellationToken token ) {
+		public async Task ScanAsync( CancellationToken cancellationToken ) {
 			try {
-				var record = MainDocumentTable.DocumentInfos[this.AbsolutePath];
+				var record = MainDocumentTable.DocumentInfos[ this.AbsolutePath ];
 
 				var needScanned = AreEitherDifferent( this, record );
 
 				if ( needScanned == true ) {
 					var document = new Document( this.AbsolutePath );
 
-					this.Length = document.Length;
+					this.Length = await document.Length( cancellationToken ).ConfigureAwait( false );
 					this.CreationTimeUtc = document.CreationTimeUtc;
 					this.LastWriteTimeUtc = document.LastWriteTimeUtc;
 
-					await this.GetHashesAsync( document, token ).ConfigureAwait( false );
+					await this.GetHashesAsync( document, cancellationToken ).ConfigureAwait( false );
 
 					this.LastScanned = DateTime.UtcNow;
 
-					var copy = new DocumentInfo( document ) {
+					var documentInfo = new DocumentInfo( document ) {
 						LastScanned = this.LastScanned,
 						CRC32 = this.CRC32,
 						CRC64 = this.CRC64,
 						AddHash = this.AddHash
 					};
 
-					MainDocumentTable.DocumentInfos[this.AbsolutePath] = copy;
+					MainDocumentTable.DocumentInfos[ this.AbsolutePath ] = documentInfo;
 				}
 			}
 			catch ( Exception exception ) {
@@ -257,8 +255,6 @@ namespace Librainian.Persistence {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.AbsolutePath}={this.Length?.ToString() ?? "toscan"} bytes";
-
 	}
 }

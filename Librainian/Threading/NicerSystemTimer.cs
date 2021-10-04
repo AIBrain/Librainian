@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,21 +14,22 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// 
+//
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "NicerSystemTimer.cs" last formatted on 2021-02-08 at 1:32 AM.
 
 namespace Librainian.Threading {
+
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
-	using Utilities;
+	using Exceptions;
+	using Utilities.Disposables;
 	using Timer = System.Timers.Timer;
 
 	/// <summary>
@@ -36,15 +37,19 @@ namespace Librainian.Threading {
 	/// </summary>
 	public class NicerSystemTimer : ABetterClassDispose {
 
+		private ReaderWriterLockSlim? access { get; set; }
+
+		private Timer? Timer { get; set; }
+
 		/// <summary>
 		///     Perform an <paramref name="action" /> after the given interval (in <paramref name="milliseconds" />).
 		/// </summary>
 		/// <param name="action">      </param>
 		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
 		/// <param name="milliseconds"></param>
-		public NicerSystemTimer( [NotNull] Action action, Boolean repeat, Double? milliseconds = null ) {
+		public NicerSystemTimer( Action action, Boolean repeat, Double? milliseconds = null ) : base( nameof( NicerSystemTimer ) ) {
 			if ( action == null ) {
-				throw new ArgumentNullException( nameof( action ) );
+				throw new ArgumentEmptyException( nameof( action ) );
 			}
 
 			this.access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
@@ -73,14 +78,9 @@ namespace Librainian.Threading {
 			this.Timer.Start();
 		}
 
-		[NotNull]
-		private ReaderWriterLockSlim? access { get; set; }
-
-		[CanBeNull]
-		private Timer? Timer { get; set; }
-
 		public override void DisposeManaged() {
 			using ( this.Timer ) {
+				this.Timer?.Stop();
 				this.Timer = null;
 			}
 
@@ -90,6 +90,5 @@ namespace Librainian.Threading {
 
 			base.DisposeManaged();
 		}
-
 	}
 }

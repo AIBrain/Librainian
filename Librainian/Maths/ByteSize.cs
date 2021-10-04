@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ByteSize.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 #nullable enable
@@ -28,7 +28,7 @@ namespace Librainian.Maths {
 
 	using System;
 	using System.Globalization;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	/// <summary>Represents a byte size value.</summary>
 	/// <remarks>Source: https://github.com/omar/ByteSize/blob/master/src/ByteSizeLib/ByteSize.cs </remarks>
@@ -72,9 +72,9 @@ namespace Librainian.Maths {
 
 		public Double KiloBytes => this.Bytes / BytesInKiloByte;
 
-		[NotNull]
 		public String LargestWholeNumberSymbol {
 			get {
+
 				// Absolute value is used to deal with negative values
 				if ( Math.Abs( this.PetaBytes ) >= 1 ) {
 					return PetaByteSymbol;
@@ -106,6 +106,7 @@ namespace Librainian.Maths {
 
 		public Double LargestWholeNumberValue {
 			get {
+
 				// Absolute value is used to deal with negative values
 				if ( Math.Abs( this.PetaBytes ) >= 1 ) {
 					return this.PetaBytes;
@@ -142,6 +143,7 @@ namespace Librainian.Maths {
 		public Double TeraBytes => this.Bytes / BytesInTeraByte;
 
 		public ByteSize( Double byteSize ) : this() {
+
 			// Get ceiling because bits are whole units
 			this.Bits = ( Int64 )Math.Ceiling( byteSize * BitsInByte );
 
@@ -187,9 +189,10 @@ namespace Librainian.Maths {
 		public static Boolean operator >=( ByteSize b1, ByteSize b2 ) => b1.Bits >= b2.Bits;
 
 		public static ByteSize Parse( String s ) {
+
 			// Arg checking
 			if ( String.IsNullOrWhiteSpace( s ) ) {
-				throw new ArgumentNullException( nameof( s ), "String is null or whitespace" );
+				throw new ArgumentEmptyException( nameof( s ) );
 			}
 
 			// Get the index of the first non-digit character
@@ -217,8 +220,8 @@ namespace Librainian.Maths {
 			var lastNumber = num;
 
 			// Cut the input string in half
-			var numberPart = s.Substring( 0, lastNumber ).Trim();
-			var sizePart = s[ lastNumber.. ].Trim();
+			var numberPart = s[..lastNumber].Trim();
+			var sizePart = s[lastNumber..].Trim();
 
 			// Get the numeric part
 			if ( !Double.TryParse( numberPart, NumberStyles.Float | NumberStyles.AllowThousands, NumberFormatInfo.CurrentInfo, out var number ) ) {
@@ -236,7 +239,8 @@ namespace Librainian.Maths {
 
 					return FromBits( ( Int64 )number );
 
-				case "B": return FromBytes( number );
+				case "B":
+					return FromBytes( number );
 
 				case "KB":
 				case "kB":
@@ -263,11 +267,12 @@ namespace Librainian.Maths {
 				case "pb":
 					return FromPetaBytes( number );
 
-				default: throw new FormatException( $"Bytes of magnitude '{sizePart}' is not supported." );
+				default:
+					throw new FormatException( $"Bytes of magnitude '{sizePart}' is not supported." );
 			}
 		}
 
-		public static Boolean TryParse( [CanBeNull] String? s, out ByteSize result ) {
+		public static Boolean TryParse( String? s, out ByteSize result ) {
 			try {
 				result = Parse( s );
 
@@ -311,13 +316,10 @@ namespace Librainian.Maths {
 		///     giga, tera) used is the largest metric prefix such that
 		///     the corresponding value is greater than or equal to one.
 		/// </summary>
-		[NotNull]
 		public override String ToString() => this.ToString( "0.##", CultureInfo.CurrentCulture );
 
-		[NotNull]
-		public String ToString( [CanBeNull] String? format ) => this.ToString( format, CultureInfo.CurrentCulture );
+		public String ToString( String? format ) => this.ToString( format, CultureInfo.CurrentCulture );
 
-		[NotNull]
 		public String ToString( String format, IFormatProvider provider ) {
 			if ( !format.Contains( "#" ) && !format.Contains( "0" ) ) {
 				format = "0.## " + format;
@@ -356,7 +358,5 @@ namespace Librainian.Maths {
 
 			Boolean Has( String s ) => format.IndexOf( s, StringComparison.CurrentCultureIgnoreCase ) != -1;
 		}
-
 	}
-
 }

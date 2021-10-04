@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "ObjectExtensions.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 #nullable enable
@@ -28,8 +28,10 @@ namespace Librainian.Threading {
 
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Reflection;
-	using JetBrains.Annotations;
+	using Exceptions;
+	using Utilities;
 
 	/// <summary>
 	///     Code pulled from
@@ -38,17 +40,20 @@ namespace Librainian.Threading {
 	/// <remarks>
 	///     TODO Needs some serious testing.
 	/// </remarks>
+	[NeedsTesting]
 	public static class ObjectExtensions {
 
-		private static MethodInfo MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance )!;
+		[NeedsTesting]
+		private static MethodInfo? MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
+		[NeedsTesting]
 		private static void CopyFields(
-			[NotNull] this Object original,
-			[NotNull] IDictionary<Object, Object> visited,
-			[NotNull] Object destination,
-			[NotNull] IReflect reflect,
+			this Object original,
+			IDictionary<Object, Object?> visited,
+			Object? destination,
+			IReflect reflect,
 			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-			[CanBeNull] Func<FieldInfo, Boolean>? filter = null
+			Func<FieldInfo, Boolean>? filter = null
 		) {
 			var fields = reflect.GetFields( bindingFlags );
 
@@ -64,8 +69,8 @@ namespace Librainian.Threading {
 			}
 		}
 
-		[CanBeNull]
-		private static Object? InternalCopy( [CanBeNull] Object? originalObject, [NotNull] IDictionary<Object, Object> visits ) {
+		[NeedsTesting]
+		private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object?> visits ) {
 			if ( originalObject is null ) {
 				return null;
 			}
@@ -84,26 +89,20 @@ namespace Librainian.Threading {
 				return null;
 			}
 
-			var copy = MemberwiseCloneMethod.Invoke( originalObject, null );
+			var copy = MemberwiseCloneMethod?.Invoke( originalObject, null );
 
 			if ( reflect.IsArray ) {
 				var elementsType = reflect.GetElementType();
 
 				if ( elementsType != null /*&& !elementsType.IsPrimitive()*/ ) {
-					//why skip primitives?
+
+					//TODO why skip primitives?
+
 					if ( copy is Array clonedArray ) {
 						for ( var index = 0; index < clonedArray.Length; index++ ) {
 							clonedArray.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
 						}
 					}
-
-					/*
-					clonedArray.ForEach( ( section, index ) => {
-						if ( index != null ) {
-							section.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
-						}
-					} );
-					*/
 				}
 			}
 
@@ -114,11 +113,12 @@ namespace Librainian.Threading {
 			return copy;
 		}
 
+		[NeedsTesting]
 		private static void RecursiveCopyBaseTypePrivateFields(
-			[CanBeNull] Object? originalObject,
-			[CanBeNull] IDictionary<Object, Object> visited,
-			[CanBeNull] Object? destination,
-			[NotNull] Type typeToReflect
+			Object? originalObject,
+			IDictionary<Object, Object?> visited,
+			Object? destination,
+			Type typeToReflect
 		) {
 			if ( originalObject is null ) {
 				return;
@@ -135,20 +135,19 @@ namespace Librainian.Threading {
 			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
 		}
 
+		[NeedsTesting]
+		public static T? Copy<T>( this T? original ) =>
+					( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
+
 		/// <summary>Returns a deep copy of this object.</summary>
 		/// <param name="original"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		public static Object? DeepCopy<T>( [CanBeNull] this T original ) => InternalCopy( original, new Dictionary<Object, Object>( new ReferenceEqualityComparer() ) );
+		[NeedsTesting]
+		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object?>( new ReferenceEqualComparer<Object?>() ) );
 
-		[CanBeNull]
-		public static T? Copy<T>( [CanBeNull] this T original ) =>
-			( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
-
-		[CanBeNull]
-		public static Object? GetPrivateFieldValue<T>( [NotNull] this T instance, [NotNull] String fieldName ) {
+		[NeedsTesting]
+		public static Object? GetPrivateFieldValue<T>( [DisallowNull] this T instance, String fieldName ) {
 			if ( instance is null ) {
-				throw new ArgumentNullException( nameof( instance ) );
+				throw new ArgumentEmptyException( nameof( instance ) );
 			}
 
 			if ( String.IsNullOrWhiteSpace( fieldName ) ) {
@@ -165,13 +164,12 @@ namespace Librainian.Threading {
 			return info.GetValue( instance );
 		}
 
-		public static Boolean IsPrimitive<T>( [CanBeNull] this T type ) =>
+		[NeedsTesting]
+		public static Boolean IsPrimitive<T>( this T? type ) =>
 			type switch {
-				null     => false,
+				null => false,
 				String _ => true,
-				_        => type.GetType().IsPrimitive
+				var _ => type.GetType().IsPrimitive
 			};
-
 	}
-
 }

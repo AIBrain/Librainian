@@ -1,6 +1,9 @@
 // Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,18 +23,24 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NullStream.cs" last formatted on 2020-08-14 at 8:33 PM.
+// File "NullStream.cs" last touched on 2021-09-11 at 7:10 AM by Protiguous.
 
 namespace Librainian.Extensions {
 
 	using System;
 	using System.IO;
 
+	/// <summary>
+	///     <para>
+	///         A stream that you can write to the NULL device, from <see cref="long.MinValue" />
+	///         (-9,223,372,036,854,775,808) up to <see cref="long.MaxValue" /> 9,223,372,036,854,775,807 bytes.
+	///     </para>
+	/// </summary>
 	public class NullStream : Stream {
 
 		private Int64 _length;
 
-		private Int64 _position;
+		private Int64 _position = Int64.MinValue;
 
 		public override Boolean CanRead => false;
 
@@ -53,7 +62,7 @@ namespace Librainian.Extensions {
 			}
 		}
 
-		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback callback, Object state ) =>
+		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) =>
 			throw new NotImplementedException( "This stream doesn't support reading." );
 
 		public override void Flush() { }
@@ -65,12 +74,8 @@ namespace Librainian.Extensions {
 				SeekOrigin.Begin => offset,
 				SeekOrigin.Current => this.Position + offset,
 				SeekOrigin.End => this.Length + offset,
-				_ => this.Position
+				var _ => this.Position
 			};
-
-			if ( newPosition < 0 ) {
-				throw new ArgumentException( "Attempt to seek before start of stream." );
-			}
 
 			this.Position = newPosition;
 

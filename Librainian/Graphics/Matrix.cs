@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,28 +14,27 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Matrix.cs" last formatted on 2020-08-14 at 8:34 PM.
 
 namespace Librainian.Graphics {
 
 	using System;
-	using JetBrains.Annotations;
 
 	public class Matrix {
 
-		protected readonly Int32 Cols;
+		protected Int32 Cols { get; }
 
-		protected readonly Single[,] matrix;
+		protected Single[,] matrix { get; }
 
-		protected readonly Int32 Rows;
+		protected Int32 Rows { get; }
 
-		protected Matrix( [NotNull] Single[,] matrix ) {
+		protected Matrix( Single[,] matrix ) {
 			this.matrix = matrix;
 			this.Rows = matrix.GetLength( 0 );
 			this.Cols = matrix.GetLength( 1 );
@@ -47,8 +46,7 @@ namespace Librainian.Graphics {
 			this.Cols = cols;
 		}
 
-		[NotNull]
-		private static Single[,] Multiply( [NotNull] Matrix matrix1, [NotNull] Matrix matrix2 ) {
+		private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
 			var m1Cols = matrix1.Cols;
 
 			if ( m1Cols != matrix2.Rows ) {
@@ -76,8 +74,7 @@ namespace Librainian.Graphics {
 			return m3;
 		}
 
-		[NotNull]
-		protected static Single[,] Multiply( [NotNull] Matrix matrix, Single scalar ) {
+		protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
 			var rows = matrix.Rows;
 			var cols = matrix.Cols;
 			var m1 = matrix.matrix;
@@ -92,13 +89,10 @@ namespace Librainian.Graphics {
 			return m2;
 		}
 
-		[NotNull]
-		public static Matrix operator *( [NotNull] Matrix m, Single scalar ) => new( Multiply( m, scalar ) );
+		public static Matrix operator *( Matrix m, Single scalar ) => new( Multiply( m, scalar ) );
 
-		[NotNull]
-		public static Matrix operator *( [NotNull] Matrix m1, [NotNull] Matrix m2 ) => new( Multiply( m1, m2 ) );
+		public static Matrix operator *( Matrix m1, Matrix m2 ) => new( Multiply( m1, m2 ) );
 
-		[NotNull]
 		public override String ToString() {
 			var res = "";
 
@@ -118,7 +112,5 @@ namespace Librainian.Graphics {
 
 			return $"({res})";
 		}
-
 	}
-
 }

@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,377 +17,286 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "DatabaseServer.cs" last formatted on 2021-01-01 at 9:38 AM.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
 namespace Librainian.Databases {
+
 	using System;
+	using System.Collections;
 	using System.Collections.Generic;
 	using System.Data;
 	using System.Data.Common;
 	using System.Diagnostics;
+	using System.Diagnostics.Contracts;
 	using System.Linq;
 	using System.Threading;
-	using Collections.Sets;
+	using System.Threading.Tasks;
+	using System.Xml;
+	using Configuration;
 	using Converters;
-	using Exceptions.Warnings;
-	using Internet;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Maths;
+	using Measurement.Frequency;
 	using Measurement.Time;
+	using Measurement.Time.Clocks;
 	using Microsoft.Data.SqlClient;
+	using Microsoft.Data.SqlClient.Server;
 	using Parsing;
 	using PooledAwait;
+	using Threading;
+	using Threadsafe;
 	using Utilities;
+	using Utilities.Disposables;
 
-	public class DatabaseServer : ABetterClassDispose, IDatabase {
+	public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
+
 		/// <summary>
-		///     <para>Create a database object to the specified server.</para>
+		///     Defaults to 10 attempts.
 		/// </summary>
-		public DatabaseServer( [NotNull] SqlConnectionStringBuilder builder, [CanBeNull] String? useDatabase = null, CancellationToken? token = default ) : this(
-			builder.ConnectionString, useDatabase, token ) {
-			if ( builder == null ) {
-				throw new ArgumentNullException( nameof( builder ) );
-			}
+		public const Int32 DefaultRetries = 10;
+
+		/// <summary>
+		///     The number of sql connections open across ALL threads.
+		/// </summary>
+		private static Int64 ConnectionCounter;
+
+		static DatabaseServer() {
+			DefaultConnectionTimeout = Minutes.One;
+			DefaultExecuteTimeout = Minutes.One;
+
+			DefaultTimeBetweenRetries = Minutes.One;
+
+			var sqlRetryLogicOption = new SqlRetryLogicOption {
+				NumberOfTries = DefaultRetries,
+				DeltaTime = DefaultTimeBetweenRetries,
+				MaxTimeInterval = DefaultConnectionTimeout
+			};
+
+			RetryProvider = SqlConfigurableRetryFactory.CreateIncrementalRetryProvider( sqlRetryLogicOption ) ??
+							throw new InvalidOperationException( $"{nameof( SqlConfigurableRetryFactory )} was null or invalid!" );
 		}
 
-		/// <summary></summary>
-		/// <param name="connectionString"></param>
-		/// <param name="useDatabase"></param>
-		/// <param name="token"></param>
-		/// <exception cref="InvalidOperationException"></exception>
-		public DatabaseServer( String connectionString, [CanBeNull] String? useDatabase = null, CancellationToken? token = default ) {
-			this.Token = token ?? CancellationToken.None;
-			this.ConnectionString = connectionString ?? throw new ArgumentNullException( nameof( connectionString ) );
-
-			useDatabase = useDatabase.Trimmed();
-
-			if ( !String.IsNullOrWhiteSpace( useDatabase ) ) {
-				var builder = new SqlConnectionStringBuilder( connectionString ) {
-					InitialCatalog = useDatabase.SmartBracket()
-				};
-
-				this.ConnectionString = builder.ConnectionString;
+		public DatabaseServer( IValidatedConnectionString validatedConnectionString, IApplicationSetting applicationSetting ) {
+			if ( validatedConnectionString == null ) {
+				throw new ArgumentNullException( nameof( validatedConnectionString ) );
 			}
+
+			this.ConnectionString = validatedConnectionString.Value;
+			this.ApplicationSetting = applicationSetting ?? throw new ArgumentNullException( nameof( applicationSetting ) );
+
+			if ( String.IsNullOrWhiteSpace( this.ConnectionString ) ) {
+				throw new NullException( nameof( this.ConnectionString ) );
+			}
+
+			this.EnteredCommandSemaphore = DatabaseCommandSemaphores.Wait( DefaultMaximumTimeout() );
+			if ( !this.EnteredCommandSemaphore ) {
+				throw new InvalidOperationException( "Timeout waiting to create SQL command object." );
+			}
+
+			this.Command = new SqlCommand();
+			AppContext.SetSwitch( "Switch.Microsoft.Data.SqlClient.EnableRetryLogic", true );
 		}
 
-		private SqlConnection Connection { get; set; }
+		private static SqlRetryLogicBaseProvider RetryProvider { get; }
 
-		[NotNull]
-		private String ConnectionString { get; }
+		private SqlCommand Command { get; }
 
-		private CancellationToken Token { get; }
+		private SqlConnection? Connection { get; set; }
 
-		/// <summary>The parameter collection for this database connection.</summary>
-		[NotNull]
-		internal ConcurrentHashset<SqlParameter> ParameterSet { get; } = new();
+		private String? ConnectionString { get; init; }
+
+		private Stopwatch TimeSinceLastConnectAttempt { get; } = Stopwatch.StartNew();
+
+		/// <summary>
+		///     A debugging aid. EACH database call will delay upon opening a connection.
+		/// </summary>
+		public static IQuantityOfTime? ArtificialDatabaseDelay { get; set; }
+
+		/// <summary>
+		///     Defaults to 1 minute.
+		/// </summary>
+		public static TimeSpan DefaultExecuteTimeout { get; set; }
+
+		/// <summary>
+		///     Defaults to 1 minute.
+		/// </summary>
+		public static TimeSpan DefaultConnectionTimeout { get; set; }
+
+		public static TimeSpan DefaultTimeBetweenRetries { get; set; }
+
+		public IApplicationSetting ApplicationSetting { get; }
+
+		/// <summary>
+		///     Defaults to 3 seconds.
+		/// </summary>
+		public TimeSpan? SlowQueriesTakeLongerThan { get; set; } = Seconds.Three;
+
+		public Stopwatch? StopWatch { get; private set; }
+
+		private VolatileBoolean EnteredConnectionSemaphore { get; } = new( false );
+
+		/// <summary>
+		///     Allow this many concurrent async operations.
+		/// </summary>
+		private static SemaphoreSlim DatabaseConnectionSemaphores { get; } = new( 1024, 1024 );
+
+		private static SemaphoreSlim DatabaseCommandSemaphores { get; } = new( 1024, 1024 );
+
+		private VolatileBoolean EnteredCommandSemaphore { get; }
 
 		/// <summary>
 		///     Set to 1 minute by default.
 		/// </summary>
-		public TimeSpan CommandTimeout { get; set; } = Minutes.One;
+		public TimeSpan CommandTimeout { get; set; } //= DefaultExecuteTimeout;
 
-		[CanBeNull]
-		public String? Sproc { get; set; }
-
-		public Int32? ExecuteNonQuery( String query, Int32 retries, CommandType commandType, params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
-			}
-
-			this.Sproc = query;
-
-			TryAgain:
-			--retries;
-
-			try {
-				using var command = new SqlCommand {
-					Connection = this.OpenConnection(), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = commandType, CommandText = query
-				};
-
-				return command.PopulateParameters( parameters ).ExecuteNonQuery();
-			}
-			catch ( InvalidOperationException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				if ( retries.Any() ) {
-					goto TryAgain;
-				}
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				if ( retries.Any() ) {
-					goto TryAgain;
-				}
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				if ( retries.Any() ) {
-					goto TryAgain;
-				}
-			}
-
-			return default( Int32? );
-		}
-
-		/// <summary>
-		///     Opens a connection, runs the query, and returns the number of rows affected.
-		/// </summary>
-		/// <param name="query"></param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public Int32? ExecuteNonQuery( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
-			}
-
-			this.Sproc = query;
-
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				return command.PopulateParameters( parameters ).ExecuteNonQuery();
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-
-			return default( Int32? );
-		}
+		public String? Query { get; set; }
 
 		/// <summary>
 		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <exception cref="SqlException"></exception>
-		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
-			this.Sproc = sproc ?? throw new ArgumentNullException( nameof( sproc ) );
-
-			try {
-				await using var command = new SqlCommand( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
-
-				if ( task is null ) {
-					throw new InvalidOperationException( $"Error executing database query {sproc.DoubleQuote()}." );
-				}
-
-				return await task.ConfigureAwait( false );
-			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( sproc, parameters ) );
-				}
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( sproc, parameters ) );
-			}
-
-			return default( Int32? );
-		}
-
-		/// <summary>
-		///     Execute the stored procedure "<paramref name="sproc" />" with the optional parameters
-		///     <paramref name="parameters" />.
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <exception cref="SqlException"></exception>
-		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> ExecuteNonQueryAsync( [NotNull] String sproc, [CanBeNull] params SqlParameter?[]? parameters ) {
-			this.Sproc = sproc ?? throw new ArgumentNullException( nameof( sproc ) );
-
-			try {
-				await using var command = new SqlCommand( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
-
-				if ( task is null ) {
-					throw new InvalidOperationException( $"Error executing database query {sproc.DoubleQuote()}." );
-				}
-
-				return await task.ConfigureAwait( false );
-			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( sproc, parameters ) );
-				}
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( sproc, parameters ) );
-			}
-
-			return default( Int32? );
-		}
-
-		/// <summary>
-		///     Execute the stored procedure "<paramref name="sproc" />" with the optional parameters
-		///     <paramref name="parameters" />.
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <exception cref="SqlException"></exception>
-		/// <exception cref="DbException"></exception>
-		public async PooledValueTask<Int32?> RunSprocAsync( [NotNull] String sproc, [CanBeNull] params SqlParameter?[]? parameters ) {
-			this.Sproc = sproc ?? throw new ArgumentNullException( nameof( sproc ) );
-
-			try {
-				await using var command = new SqlCommand( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
-
-				if ( task is null ) {
-					throw new InvalidOperationException( $"Error executing database query {sproc.DoubleQuote()}." );
-				}
-
-				return await task.ConfigureAwait( false );
-			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( sproc, parameters ) );
-				}
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( sproc, parameters ) );
-			}
-
-			return default( Int32? );
-		}
-
-		/// <summary>Returns a <see cref="DataTable" /></summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
-		/// <param name="table">      </param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public Boolean ExecuteReader( String query, CommandType commandType, [NotNull] out DataTable table, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
-			}
-
-			this.Sproc = query;
-
-			table = new DataTable();
-
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				using var bob = command.PopulateParameters( parameters ).ExecuteReader();
-
-				if ( bob is null ) {
-					return false;
-				}
-
-				table.BeginLoadData();
-				table.Load( bob );
-				table.EndLoadData();
-
-				return true;
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-
-			return false;
-		}
-
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		public async PooledValueTask<DataTableReader?> ExecuteReaderAsyncDataReader(
-			[NotNull] String query,
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="SqlException"></exception>
+		/// <exception cref="DbException"></exception>
+		public async PooledValueTask<Int32?> ExecuteNonQueryAsync(
+			String query,
 			CommandType commandType,
-			[CanBeNull] params SqlParameter?[]? parameters
+			CancellationToken cancellationToken,
+			params SqlParameter[]? parameters
+		) {
+			this.Query = query;
+			$"ExecuteNonQueryAsync {this.Query.DoubleQuote()} starting..".Verbose();
+
+			var retries = DefaultRetries;
+
+		TryAgain:
+			try {
+				await this.PopulateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
+				return await this.Command.ExecuteNonQueryAsync( cancellationToken )!.ConfigureAwait( false );
+			}
+			catch ( Exception exception ) {
+				$"Query {this.Query.DoubleQuote()} timed out.".Verbose();
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
+			finally {
+				$"ExecuteNonQueryAsync {this.Query.DoubleQuote()} done.".Verbose();
+			}
+
+			return default( Int32? );
+		}
+
+		/// <summary>
+		///     Execute the stored procedure " <paramref name="query" />" with the optional parameters
+		///     <paramref name="parameters" />.
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="SqlException"></exception>
+		/// <exception cref="DbException"></exception>
+		public PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters ) =>
+			this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters );
+
+		/// <param name="query">      </param>
+		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"> </param>
+		[NeedsTesting]
+		public async Task<DataTableReader?> ExecuteReaderAsync(
+			String query,
+			CommandType commandType,
+			CancellationToken cancellationToken,
+			params SqlParameter[]? parameters
 		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
+				throw new NullException( nameof( query ) );
 			}
 
-			this.Sproc = query;
+			this.Query = query;
+
+			var retries = DefaultRetries;
+
+		TryAgain:
 
 			try {
-				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
+				await this.PopulateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
 
-				using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
+				await using var readerAsync = await this.Command.ExecuteReaderAsync( cancellationToken ).ConfigureAwait( false );
 
-				if ( reader != null ) {
-					await using var readerAsync = await reader.ConfigureAwait( false );
+				if ( readerAsync != null ) {
 					using var table = readerAsync.ToDataTable();
 
 					return table.CreateDataReader();
 				}
 			}
 			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
 			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
 			}
 
 			return default( DataTableReader? );
 		}
 
-		/// <summary>Returns a <see cref="DataTable" /></summary>
+		/// <summary>
+		///     Returns a <see cref="DataTable" />
+		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public async PooledValueTask<DataTable> ExecuteReaderDataTableAsync(
-			[NotNull] String query,
+		public async Task<DataTable> ExecuteReaderDataTableAsync(
+			String query,
 			CommandType commandType,
-			[CanBeNull] params SqlParameter?[]? parameters
+			CancellationToken cancellationToken,
+			params SqlParameter[]? parameters
 		) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
+				throw new NullException( nameof( query ) );
 			}
 
-			this.Sproc = query;
+			this.Query = query;
 
+			var retries = DefaultRetries;
+
+		TryAgain:
 			var table = new DataTable();
 
 			try {
-				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
+				await this.PopulateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
 
-				using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
+				using var reader = this.Command.ExecuteReaderAsync( cancellationToken );
 
 				if ( reader != null ) {
 					table.BeginLoadData();
@@ -395,13 +304,14 @@ namespace Librainian.Databases {
 					table.EndLoadData();
 				}
 			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-				table.Clear();
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-				table.Clear();
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
 			}
 
 			return table;
@@ -412,616 +322,834 @@ namespace Librainian.Databases {
 		/// </summary>
 		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
 		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		/// <exception cref="SqlException"></exception>
-		/// <exception cref="DbException"></exception>
-		[CanBeNull]
-		public T? ExecuteScalar<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+		public async Task<T?> ExecuteScalarAsync<T>( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
+				throw new NullException( nameof( query ) );
 			}
 
-			this.Sproc = query;
+			this.Query = query;
+
+			var retries = DefaultRetries;
+
+		TryAgain:
 
 			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
+				await this.PopulateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
 
-				var sqlCommand = command.PopulateParameters( parameters );
-				var scalar = sqlCommand.ExecuteScalar();
+				var result = await this.Command.ExecuteScalarAsync( cancellationToken ).ConfigureAwait( false );
 
-				if ( scalar is null ) {
-					return default( T? );
-				}
-
-				return scalar.Cast<Object, T>();
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				throw;
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				throw;
-			}
-		}
-
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
-			}
-
-			this.Sproc = query;
-
-			try {
-				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				using var scalar = command.PopulateParameters( parameters ).ExecuteScalarAsync( this.Token );
-
-				if ( scalar is null ) {
-					throw new InvalidOperationException(
-						$"Exception calling {nameof( command.ExecuteScalarAsync ).DoubleQuote()} on command {command.CommandText.DoubleQuote()}." );
-				}
-
-				var result = await scalar.ConfigureAwait( false );
-
-				var cast = result.Cast<Object, T>();
-
-				return cast;
+				return result is null ? default( T? ) : result.Cast<Object, T>();
 			}
 			catch ( InvalidCastException exception ) {
 				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
-				exception.Log( Rebuild( query, parameters ) );
+				exception.Log();
 
 				throw;
 			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
 
-				throw;
+				exception.Log();
 			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
 
-				throw;
-			}
+			return default( T? );
 		}
 
 		/// <summary>
-		///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="sproc" />.
-		///     <para>Note: Include the parameters after the sproc.</para>
-		///     <para>Can throw exceptions on connecting or executing the sproc.</para>
+		///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="query" />.
+		///     <para>Note: Include the parameters after the query.</para>
+		///     <para>Can throw exceptions on connecting or executing the query.</para>
 		/// </summary>
-		/// <param name="sproc"></param>
+		/// <param name="query">      </param>
 		/// <param name="commandType"></param>
-		/// <param name="table"></param>
-		/// <param name="parameters"></param>
-		public async PooledValueTask<Boolean> FillTableAsync(
-			[NotNull] String sproc,
+		/// <param name="table">      </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="progress"></param>
+		/// <param name="parameters"> </param>
+		public async Task<Boolean> FillTableAsync(
+			String query,
 			CommandType commandType,
-			[NotNull] DataTable table,
-			[CanBeNull] params SqlParameter?[]? parameters
+			DataTable table,
+			CancellationToken cancellationToken,
+			IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null,
+			params SqlParameter[]? parameters
 		) {
 			if ( table is null ) {
-				throw new ArgumentNullException( nameof( table ) );
+				throw new NullException( nameof( table ) );
 			}
 
-			this.Sproc = sproc;
+			this.Query = query;
 
-			if ( String.IsNullOrWhiteSpace( sproc ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sproc ) );
-			}
+			var retriesLeft = DefaultRetries;
 
+		TryAgain:
 			table.Clear();
 
-			using var dataAdapter = new SqlDataAdapter( sproc, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-				AcceptChangesDuringFill = false,
-				FillLoadOption = LoadOption.OverwriteChanges,
-				MissingMappingAction = MissingMappingAction.Passthrough,
-				MissingSchemaAction = MissingSchemaAction.Add,
-				SelectCommand = {
-					CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = commandType
+			try {
+				var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+				if ( status.IsBad() ) {
+					return false;
 				}
-			};
 
-			var _ = dataAdapter.SelectCommand?.PopulateParameters( parameters );
+				var connection = this.Connection;
+				if ( connection is null ) {
+					return false;
+				}
 
-			dataAdapter.Fill( table );
+				using var dataAdapter = new SqlDataAdapter( query, connection ) {
+					AcceptChangesDuringFill = false,
+					FillLoadOption = LoadOption.OverwriteChanges,
+					MissingMappingAction = MissingMappingAction.Passthrough,
+					MissingSchemaAction = MissingSchemaAction.Add,
+					SelectCommand = {
+						CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds, CommandType = commandType
+					}
+				};
+
+				if ( parameters != null ) {
+					dataAdapter.SelectCommand?.Parameters?.AddRange( parameters );
+				}
+
+				dataAdapter.Fill( table );
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
 
 			return true;
 		}
 
-		/// <summary>
-		///     <para>Run a query, no rows expected to be read.</para>
-		///     <para>Does not catch any exceptions.</para>
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"></param>
-		public async PooledValueTask NonQueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( sproc ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sproc ) );
+		public async Task<DatabaseServer> QueryAdhocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+			if ( String.IsNullOrWhiteSpace( query ) ) {
+				throw new NullException( nameof( query ) );
 			}
 
-			this.Sproc = $"Executing SQL command {sproc}.";
+			this.Query = query;
+			var retries = DefaultRetries;
 
-			await using var command = new SqlCommand {
-				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandType = commandType,
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
-				CommandText = sproc
-			};
+		TryAgain:
 
-			var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
+			try {
+				await this.PopulateCommand( CommandType.Text, cancellationToken, parameters ).ConfigureAwait( false );
 
-			if ( task == null ) {
-				throw new InvalidOperationException(
-					$"Exception calling {nameof( command.ExecuteNonQueryAsync ).DoubleQuote()} on command {command.CommandText.DoubleQuote()}." );
+				var task = this.Command.ExecuteNonQueryAsync( cancellationToken );
+				if ( task != null ) {
+					_ = await task.ConfigureAwait( false );
+				}
 			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
 
-			await task.ConfigureAwait( false );
-		}
-
-		[NotNull]
-		public DataTableReader QueryAdHoc( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( sql ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sql ) );
-			}
-
-			this.Sproc = $"Executing AdHoc SQL: {sql.DoubleQuote()}.";
-
-			using var command = new SqlCommand {
-				Connection = this.OpenConnection(), CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds, CommandType = CommandType.Text, CommandText = sql
-			};
-
-			using var reader = command.PopulateParameters( parameters ).ExecuteReader();
-			using var table = ( reader ?? throw new InvalidOperationException() ).ToDataTable();
-
-			return table.CreateDataReader();
-		}
-
-		public async PooledValueTask<DataTableReader> QueryAdhocReaderAsync( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( sql ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sql ) );
-			}
-
-			this.Sproc = $"Executing AdHoc SQL: {sql.DoubleQuote()}.";
-
-			await using var command = new SqlCommand {
-				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
-				CommandType = CommandType.Text,
-				CommandText = sql
-			};
-
-			var execute = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
-
-			if ( execute != null ) {
-				await using var reader = await execute.ConfigureAwait( false );
-				using var table = reader.ToDataTable();
-
-				return table.CreateDataReader();
-			}
-
-			return new DataTableReader( new DataTable() );
-		}
-
-		public async PooledValueTask<DatabaseServer> QueryAdhocAsync( [NotNull] String sql, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( sql ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sql ) );
-			}
-
-			this.Sproc = $"Executing AdHoc SQL: {sql.DoubleQuote()}.";
-
-			await using var command = new SqlCommand {
-				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
-				CommandType = CommandType.Text,
-				CommandText = sql
-			};
-
-			var task = command.PopulateParameters( parameters ).ExecuteNonQueryAsync( this.Token );
-
-			//TODO throw if null task?
-
-			if ( task != null ) {
-				await task.ConfigureAwait( false );
+				exception.Log();
 			}
 
 			return this;
 		}
 
-		/// <summary>
-		///     Simplest possible database connection.
-		///     <para>Connect and then run <paramref name="sproc" />.</para>
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"></param>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String sproc, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( sproc ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sproc ) );
-			}
-
-			this.Sproc = sproc;
-
-			await using var command = new SqlCommand {
-				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandType = commandType,
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
-				CommandText = sproc
-			};
-
-			using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
-
-			return reader != null ? await reader.ConfigureAwait( false ) : default( SqlDataReader? );
-		}
-
-		/// <summary>
-		///     Simplest possible database connection.
-		///     <para>Connect and then run <paramref name="sproc" />.</para>
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="parameters"></param>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="InvalidOperationException"></exception>
-		public async PooledValueTask<SqlDataReader?> QueryAsync( [NotNull] String sproc, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( sproc ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( sproc ) );
-			}
-
-			this.Sproc = sproc;
-
-			await using var command = new SqlCommand {
-				Connection = await this.OpenConnectionAsync().ConfigureAwait( false ),
-				CommandType = CommandType.StoredProcedure,
-				CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
-				CommandText = sproc
-			};
-
-			using var reader = command.PopulateParameters( parameters ).ExecuteReaderAsync( this.Token );
-
-			return reader != null ? await reader.ConfigureAwait( false ) : default( SqlDataReader? );
-		}
-
-		/// <summary>Returns a <see cref="DataTable" /></summary>
-		/// <param name="query">     </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		[CanBeNull]
-		[ItemCanBeNull]
-		public IEnumerable<TResult>? QueryList<TResult>( String query, CommandType commandType, [CanBeNull] params SqlParameter[] parameters ) {
+		public async Task<DataTableReader?> QueryAdhocReaderAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
+				throw new NullException( nameof( query ) );
 			}
 
-			this.Sproc = query;
+			this.Query = query;
+			var retries = DefaultRetries;
+
+		TryAgain:
 
 			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
+				await this.PopulateCommand( CommandType.Text, cancellationToken, parameters ).ConfigureAwait( false );
 
-				var reader = command.PopulateParameters( parameters ).ExecuteReader();
+				var task = this.Command.ExecuteReaderAsync( cancellationToken );
+				if ( task != null ) {
+					await using var reader = await task.ConfigureAwait( false );
 
-				if ( reader != null ) {
-					return GenericPopulatorExtensions.CreateList<TResult>( reader );
-				}
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-
-			return default( IEnumerable<TResult>? );
-		}
-
-		public void UseDatabase( [NotNull] String dbName ) {
-			if ( String.IsNullOrWhiteSpace( dbName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( dbName ) );
-			}
-
-			using var _ = this.QueryAdHoc( $"USE {dbName.SmartBracket()};" );
-		}
-
-		public async PooledValueTask UseDatabaseAsync( [NotNull] String dbName ) {
-			if ( String.IsNullOrWhiteSpace( dbName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( dbName ) );
-			}
-
-			await using var _ = await this.QueryAdhocReaderAsync( $"USE {dbName.SmartBracket()};" ).ConfigureAwait( false );
-		}
-
-		/// <summary>
-		///     Opens a connection, runs the <paramref name="sproc" />, and returns the number of rows affected.
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public Int32? ExecuteNonQuery( [NotNull] String sproc, [CanBeNull] params SqlParameter?[]? parameters ) =>
-			this.ExecuteNonQuery( sproc, CommandType.StoredProcedure, parameters );
-
-		/// <summary>
-		///     Execute the stored procedure "<paramref name="sproc" />" with the optional parameters
-		///     <paramref name="parameters" />.
-		/// </summary>
-		/// <param name="sproc"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <exception cref="SqlException"></exception>
-		/// <exception cref="DbException"></exception>
-		public Int32? RunStoredProcedure( [NotNull] String sproc, [CanBeNull] params SqlParameter?[]? parameters ) {
-			try {
-				this.Sproc = sproc ?? throw new ArgumentNullException( nameof( sproc ) );
-
-				using var command = new SqlCommand( sproc, this.OpenConnection() ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				return command.PopulateParameters( parameters ).ExecuteNonQuery();
-			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log( Rebuild( sproc, parameters ) );
-				}
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( sproc, parameters ) );
-			}
-
-			return default( Int32? );
-		}
-
-		[Pure]
-		private SqlConnection OpenConnection() {
-			this.Connection = new SqlConnection( this.ConnectionString );
-
-			this.Connection.Open();
-
-			return this.Connection;
-		}
-
-		[Pure]
-		private async PooledValueTask<SqlConnection> OpenConnectionAsync() {
-			this.Connection = new SqlConnection( this.ConnectionString );
-
-			using var open = this.Connection.OpenAsync( this.Token );
-
-			if ( open is null ) {
-				throw new InvalidOperationException( $"Error opening connection to {this.Connection.DataSource.DoubleQuote()}." );
-			}
-
-			await open.ConfigureAwait( false );
-
-			return this.Connection;
-		}
-
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="parameters"> </param>
-		/// <returns></returns>
-		public async PooledValueTask<T?> ExecuteScalarAsync<T>( String query, [CanBeNull] params SqlParameter[] parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentNullException( nameof( query ) );
-			}
-
-			this.Sproc = query;
-
-			try {
-				await using var command = new SqlCommand( query, await this.OpenConnectionAsync().ConfigureAwait( false ) ) {
-					CommandType = CommandType.StoredProcedure, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				using var scalar = command.PopulateParameters( parameters ).ExecuteScalarAsync( this.Token );
-
-				if ( scalar is null ) {
-					throw new InvalidOperationException(
-						$"Exception calling {nameof( command.ExecuteScalarAsync ).DoubleQuote()} on command {command.CommandText.DoubleQuote()}." );
-				}
-
-				var result = await scalar.ConfigureAwait( false );
-
-				var cast = result.Cast<Object, T>();
-
-				return cast;
-			}
-			catch ( InvalidCastException exception ) {
-				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
-				exception.Log( Rebuild( query, parameters ) );
-
-				throw;
-			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				throw;
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-
-				throw;
-			}
-		}
-
-		[CanBeNull]
-		public DataTableReader? ExecuteDataReader( [NotNull] String query, CommandType commandType, [CanBeNull] params SqlParameter?[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
-			}
-
-			this.Sproc = query;
-
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType, CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds
-				};
-
-				using var reader = command.PopulateParameters( parameters ).ExecuteReader( CommandBehavior.CloseConnection );
-
-				if ( reader != null ) {
 					using var table = reader.ToDataTable();
 
 					return table.CreateDataReader();
 				}
 			}
-			catch ( SqlException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
-			}
-			catch ( DbException exception ) {
-				exception.Log( Rebuild( query, parameters ) );
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
 			}
 
 			return default( DataTableReader? );
 		}
 
-#if VERBOSE
-
-		~DatabaseServer() => $"Warning: We have an undisposed Database() connection somewhere. This could cause a memory leak. Query={this.Sproc.DoubleQuote()}".Log();
-
-#endif
-
-		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-		public override void DisposeManaged() {
-			using ( this.Connection ) { }
-		}
-
-		[DebuggerStepThrough]
-		[NotNull]
-		private static String Rebuild( [NotNull] String query, [CanBeNull] IEnumerable<SqlParameter?>? parameters = null ) {
+		/// <summary>
+		///     Simplest possible database connection.
+		///     <para>Connect and then run <paramref name="query" />.</para>
+		/// </summary>
+		/// <param name="query">      </param>
+		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"> </param>
+		/// <exception cref="NullException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="InvalidCastException"></exception>
+		public async Task<SqlDataReader?> QueryAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( query ) );
+				throw new NullException( nameof( query ) );
 			}
 
-			if ( parameters is null ) {
-				return $"exec {query}";
-			}
+			this.Query = query;
+			var retries = DefaultRetries;
 
-			return
-				$"exec {query} {parameters.Where( parameter => parameter != null ).Select( parameter => $"{parameter!.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings( "," )}; ";
-		}
-
-		public static async PooledValueTask<Boolean> CreateDatabase( [NotNull] String databaseName, [NotNull] String connectionString ) {
-			databaseName = databaseName.Trimmed() ?? throw new ArgumentEmptyException( nameof( databaseName ) );
-			connectionString = connectionString.Trimmed() ?? throw new ArgumentEmptyException( nameof( connectionString ) );
+		TryAgain:
 
 			try {
-				using var db = new DatabaseServer( connectionString, "master" );
+				await this.PopulateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
 
-				await db.QueryAdhocReaderAsync( $"create database {databaseName.SmartBracket()};" ).ConfigureAwait( false );
+				await using var result = await this.Command.ExecuteReaderAsync( cancellationToken ).ConfigureAwait( false );
+
+				return result;
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
+
+			return default( SqlDataReader? );
+		}
+
+		/// <summary>
+		///     Returns a <see cref="DataTable" />
+		/// </summary>
+		/// <param name="query">      </param>
+		/// <param name="commandType"></param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"> </param>
+		public async Task<IEnumerable<TResult>?> QueryListAsync<TResult>(
+			String query,
+			CommandType commandType,
+			CancellationToken cancellationToken,
+			params SqlParameter[]? parameters
+		) {
+			if ( String.IsNullOrWhiteSpace( query ) ) {
+				throw new ArgumentEmptyException( nameof( query ) );
+			}
+
+			this.Query = query;
+			var retries = DefaultRetries;
+
+		TryAgain:
+
+			try {
+				await this.PopulateCommand( commandType, cancellationToken, parameters ).ConfigureAwait( false );
+
+				var reader = await this.Command.ExecuteReaderAsync( cancellationToken ).ConfigureAwait( false );
+
+				if ( reader != null ) {
+					return GenericPopulatorExtensions.CreateList<TResult>( reader );
+				}
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
+
+			return default( IEnumerable<TResult>? );
+		}
+
+		/// <summary>
+		///     Execute the stored procedure <paramref name="query" /> with the optional <paramref name="parameters" />.
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="SqlException"></exception>
+		/// <exception cref="DbException"></exception>
+		public PooledValueTask<Int32?> RunSprocAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
+			this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters );
+
+		public async Task UseDatabaseAsync( String databaseName, CancellationToken cancellationToken ) {
+			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
+				throw new NullException( nameof( databaseName ) );
+			}
+
+			await using var _ = await this.QueryAdhocReaderAsync( $"USE {databaseName.SmartBraces()};", cancellationToken ).ConfigureAwait( false );
+		}
+
+		public static TimeSpan DefaultMaximumTimeout() => DefaultConnectionTimeout + DefaultExecuteTimeout;
+
+		~DatabaseServer() {
+			new InvalidOperationException(
+				$"Warning: We have an undisposed {nameof( DatabaseServer )} connection somewhere. This could cause a memory leak. Query={this.Query.DoubleQuote()}" ).Log(
+				BreakOrDontBreak.Break );
+			this.DisposeAsync().AsTask().Wait( DefaultMaximumTimeout() );
+		}
+
+		private static void ConnectionOnInfoMessage( Object sender, SqlInfoMessageEventArgs e ) =>
+			$"{nameof( SqlInfoMessageEventArgs )} {nameof( e.Message )}={e.Message}".Verbose();
+
+		[DebuggerStepThrough]
+		private static String Rebuild( String query, IEnumerable<SqlParameter>? parameters = null ) {
+			if ( String.IsNullOrWhiteSpace( query ) ) {
+				throw new ArgumentEmptyException( nameof( query ) );
+			}
+
+			return parameters is null ? $"exec {query}" :
+				$"exec {query} {parameters.Select( parameter => $"{parameter.ParameterName}={parameter.Value?.ToString().SingleQuote() ?? String.Empty}" ).ToStrings( ", " )}; ";
+		}
+
+		private void BreakOnSlowQueries() {
+			var stopWatch = this.StopWatch;
+			if ( stopWatch is null ) {
+				return;
+			}
+
+			stopWatch.Stop();
+			if ( Debugger.IsAttached && this.SlowQueriesTakeLongerThan is not null && stopWatch.Elapsed >= this.SlowQueriesTakeLongerThan ) {
+				$"Query {this.Query.DoubleQuote()} took {stopWatch.Elapsed.Simpler()}.".DebugLine();
+			}
+		}
+
+		private void CloseConnection() {
+			try {
+				using ( this.Connection ) {
+					//if ( connection.State == ConnectionState.Open ) {
+					this.Connection?.Close();
+					//}
+				}
+
+				if ( this.EnteredConnectionSemaphore ) {
+					DatabaseConnectionSemaphores.Release();
+				}
+
+				if ( this.EnteredCommandSemaphore ) {
+					DatabaseCommandSemaphores.Release();
+				}
+			}
+			catch ( InvalidOperationException ) {
+				/* swallow */
+			}
+			catch ( SqlException exception ) {
+				exception.Log( BreakOrDontBreak.Break );
+			}
+			finally {
+				Interlocked.Decrement( ref ConnectionCounter );
+				this.Connection = default( SqlConnection? );
+			}
+		}
+
+		private void OnRetrying( Object? sender, SqlRetryingEventArgs e ) {
+			$"Retrying SQL {this.Query.DoubleQuote()}. Retry count={e.RetryCount}.".Verbose();
+
+			e.Cancel = this.IsDisposed;
+		}
+
+		/// <summary>
+		///     Create a sql server database connection via async.
+		/// </summary>
+		[Pure]
+		private async PooledValueTask<Status> OpenConnectionAsync(
+			CancellationToken cancellationToken,
+			Int32 retriesLeft = DefaultRetries,
+			IProgress<(TimeSpan Elapsed, ConnectionState State)>? progress = null
+		) {
+			Debug.Assert( !String.IsNullOrWhiteSpace( this.ConnectionString ) );
+			if ( String.IsNullOrWhiteSpace( this.ConnectionString ) ) {
+				throw new NullException( nameof( this.ConnectionString ) );
+			}
+
+			//WaitAgain:
+
+			try {
+				if ( !retriesLeft.Any() ) {
+					return Status.Stop;
+				}
+
+				this.EnteredConnectionSemaphore.Value = await DatabaseConnectionSemaphores.WaitAsync( DefaultConnectionTimeout, cancellationToken ).ConfigureAwait( false );
+				if ( !this.EnteredConnectionSemaphore ) {
+					//if ( cancellationToken.IsCancellationRequested ) {
+					return Status.Timeout;
+
+					//}
+					//"Timeout waiting for database access. Retrying again.".Verbose();
+					//goto WaitAgain;
+				}
+
+				--retriesLeft;
+
+				if ( this.SlowQueriesTakeLongerThan is not null ) {
+					this.StopWatch = Stopwatch.StartNew();
+				}
+
+				if ( this.Connection is null ) {
+					this.Connection = new SqlConnection( this.ConnectionString );
+					this.Connection.InfoMessage += ConnectionOnInfoMessage;
+				}
+
+				if ( this.Connection.RetryLogicProvider is null ) {
+					this.Connection.RetryLogicProvider = RetryProvider;
+					this.Connection.RetryLogicProvider.Retrying = this.OnRetrying;
+				}
+
+				if ( ArtificialDatabaseDelay is not null ) {
+					await Task.Delay( ArtificialDatabaseDelay.ToSeconds(), cancellationToken ).ConfigureAwait( false );
+				}
+
+				if ( cancellationToken.IsCancellationRequested ) {
+					return Status.Cancel;
+				}
+
+				FluentTimer? timer = null;
+
+				if ( progress is not null ) {
+					var stopwatch = Stopwatch.StartNew();
+					var sqlConnection = this.Connection;
+					timer = FluentTimer.Create( Fps.Thirty, () => progress.Report( (stopwatch.Elapsed, sqlConnection.State) ) ).AutoReset( true );
+				}
+
+				try {
+					this.TimeSinceLastConnectAttempt.Restart();
+
+					//$"Opening connection for {this.Query}..".Verbose();
+					await this.Connection.OpenAsync( cancellationToken ).ConfigureAwait( false );
+
+					/*
+					while ( this.Connection?.State == ConnectionState.Connecting ) {
+						"awaiting for connection state to become open..".Verbose();
+						await Task.Delay( Milliseconds.One, cancellationToken ).ConfigureAwait( false );
+					}
+					*/
+
+					var counter = Interlocked.Increment( ref ConnectionCounter );
+					$"{counter} active database connections.".Verbose();
+					return Status.Continue;
+				}
+				catch ( InvalidOperationException exception ) {
+					if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+						await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+						var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+						if ( status.IsBad() ) {
+							throw;
+						}
+					}
+
+					exception.Log();
+				}
+				catch ( SqlException exception ) {
+					if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+						await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+						var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+						if ( status.IsBad() ) {
+							throw;
+						}
+					}
+
+					exception.Log();
+				}
+				catch ( Exception exception ) {
+					if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+						await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+						var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+						if ( status.IsBad() ) {
+							throw;
+						}
+					}
+
+					exception.Log();
+				}
+
+				using ( timer ) { }
+			}
+			catch ( InvalidOperationException exception ) {
+				if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+					if ( status.IsBad() ) {
+						throw;
+					}
+				}
+
+				exception.Log();
+			}
+			catch ( SqlException exception ) {
+				if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+					if ( status.IsBad() ) {
+						throw;
+					}
+				}
+
+				exception.Log();
+			}
+			catch ( DbException exception ) {
+				if ( exception.AttemptQueryAgain( ref retriesLeft ) ) {
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					var status = await this.OpenConnectionAsync( cancellationToken, retriesLeft, progress ).ConfigureAwait( false );
+					if ( status.IsBad() ) {
+						throw;
+					}
+				}
+
+				exception.Log();
+			}
+			catch ( TaskCanceledException cancelled ) {
+				$"Open database connection was {cancelled.DoubleQuote()}.".Verbose();
+
+				//cancelled.Log( BreakOrDontBreak.DontBreak );
+			}
+
+			return Status.Unknown;
+		}
+
+		internal static DataTable CreateDataTable<T>( String columnName, IEnumerable<T> rows ) {
+			if ( String.IsNullOrWhiteSpace( columnName ) ) {
+				throw new ArgumentEmptyException( nameof( columnName ) );
+			}
+
+			DataTable table = new();
+			table.Columns.Add( columnName, typeof( T ) );
+			foreach ( var row in rows ) {
+				table.Rows.Add( row );
+			}
+
+			return table;
+		}
+
+		internal static IEnumerable<SqlDataRecord> CreateSqlDataRecords<T>( String columnName, SqlDbType sqlDbType, IEnumerable<T> rows ) {
+			var metaData = new SqlMetaData[1];
+			metaData[0] = new SqlMetaData( columnName, sqlDbType );
+			SqlDataRecord record = new( metaData );
+			foreach ( var row in rows ) {
+				if ( row is not null ) {
+					record.SetValue( 0, row );
+				}
+
+				yield return record;
+			}
+		}
+
+		/// <summary>
+		///     Try a best guess for the <see cref="SqlDbType" /> of <paramref name="type" />.
+		///     <para>
+		///         <remarks>Try <paramref name="type" /> ?? SqlDbType.Variant</remarks>
+		///     </para>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="type"></param>
+		public static SqlDbType TranslateToSqlDbType<T>( T type ) {
+			return type switch {
+				String s => s.Length.Between( 1, 4000 ) ? SqlDbType.NVarChar : SqlDbType.NText,
+				UInt64 => SqlDbType.BigInt,
+				Int64 => SqlDbType.BigInt,
+				Int32 => SqlDbType.Int,
+				UInt32 => SqlDbType.Int,
+				Byte[] bytes => bytes.Length.Between( 1, 8000 ) ? SqlDbType.VarBinary : SqlDbType.Image,
+				Boolean => SqlDbType.Bit,
+				Char => SqlDbType.NChar,
+				DateTime => SqlDbType.DateTime2,
+				Decimal => SqlDbType.Decimal,
+				Single => SqlDbType.Float,
+				Guid => SqlDbType.UniqueIdentifier,
+				Byte => SqlDbType.TinyInt,
+				Int16 => SqlDbType.SmallInt,
+				XmlDocument => SqlDbType.Xml,
+				Date => SqlDbType.Date,
+				TimeSpan => SqlDbType.Time,
+				TimeClock => SqlDbType.Time,
+				DateTimeOffset => SqlDbType.DateTimeOffset,
+				var _ => SqlDbType.Variant
+			};
+		}
+
+		public async Task<Boolean> CreateDatabase( String databaseName, IValidatedConnectionString connectionString, CancellationToken cancellationToken ) {
+			databaseName = databaseName.Trimmed() ?? throw new ArgumentEmptyException( nameof( databaseName ) );
+
+			var retries = DefaultRetries;
+
+		TryAgain:
+
+			try {
+#pragma warning disable ConfigureAwaitEnforcer // ConfigureAwaitEnforcer
+				await using var database = new DatabaseServer( connectionString, this.ApplicationSetting );
+#pragma warning restore ConfigureAwaitEnforcer // ConfigureAwaitEnforcer
+
+				await database.QueryAdhocReaderAsync( $"create database {databaseName.SmartBraces()};", cancellationToken ).ConfigureAwait( false );
 
 				return true;
 			}
-			catch ( SqlException exception ) {
-				if ( !exception.PossibleTimeout() ) {
-					exception.Log();
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
 				}
+
+				exception.Log( BreakOrDontBreak.Break );
 			}
 
 			return false;
 		}
 
-		[NotNull]
-		public static SqlConnectionStringBuilder PopulateConnectionStringBuilder(
-			[NotNull] String serverName,
-			[NotNull] String instanceName,
-			TimeSpan connectTimeout,
-			[CanBeNull] Credentials? credentials = default
-		) {
-			if ( String.IsNullOrWhiteSpace( serverName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( serverName ) );
+		public override ValueTask DisposeManagedAsync() {
+			this.BreakOnSlowQueries();
+			this.CloseConnection();
+			using ( this.Command ) { }
+
+			return ValueTask.CompletedTask;
+		}
+
+		/// <summary>
+		///     <para>Returns the first column of the first row.</para>
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		public async Task<T?> ExecuteScalarAsync<T>( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
+			await this.ExecuteScalarAsync<T?>( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
+
+		/// <summary>
+		///     Execute the stored procedure " <paramref name="query" />" with the optional <paramref name="parameters" />.
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="SqlException"></exception>
+		/// <exception cref="DbException"></exception>
+		public async FireAndForget BeginQuery( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
+			await this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters );
+
+		public String? GetConnectionString() => this.ConnectionString;
+
+		public async Task<IDictionary?> GetStats( CancellationToken cancellationToken ) {
+			try {
+				var status = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
+				if ( status.IsBad() ) {
+					return default( IDictionary? );
+				}
+
+				return this.Connection?.RetrieveStatistics();
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+			finally {
+				await this.DisposeManagedAsync().ConfigureAwait( false );
 			}
 
-			if ( String.IsNullOrWhiteSpace( instanceName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( instanceName ) );
+			return default( IDictionary? );
+		}
+
+		[NeedsTesting]
+		public async PooledValueTask PopulateCommand( CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+			if ( String.IsNullOrWhiteSpace( this.Query ) ) {
+				throw new NullException( nameof( this.Query ) );
 			}
 
-			var builder = new SqlConnectionStringBuilder {
-				DataSource = $@"{serverName}\{instanceName}",
-				
-				//AsynchronousProcessing = true,
-				ApplicationIntent = ApplicationIntent.ReadWrite,
-				ConnectRetryCount = 3,
-				ConnectTimeout = ( Int32 ) connectTimeout.TotalSeconds,
-				ConnectRetryInterval = 1,
-				PacketSize = 4096,
-				Pooling = true
-			};
+			var status = await this.OpenConnectionAsync( cancellationToken ).ConfigureAwait( false );
 
-			//security
-			if ( String.IsNullOrWhiteSpace( credentials?.Username ) ) {
-				builder.Remove( nameof( builder.UserID ) );
-				builder.Remove( nameof( builder.Password ) );
-				builder.IntegratedSecurity = true;
-			}
-			else {
-				builder.Remove( "Integrated Security" );
-				builder.Remove( "Authentication" );
-				builder.IntegratedSecurity = false;
-				builder.UserID = credentials.UserID;
-				builder.Password = credentials.Password;
+			if ( status.IsBad() ) {
+				throw new InvalidOperationException( "Error connecting to database server." );
 			}
 
-			return builder;
+			//$"Setting command value for query {this.Query.DoubleQuote()}..".Verbose();
+			this.Command.CommandType = commandType;
+			this.Command.CommandText = this.Query;
+			this.Command.Connection = this.Connection;
+			this.Command.CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds;
+
+			if ( this.Command.Parameters is null || parameters?.Length.Any() != true || parameters.Length == this.Command.Parameters.Count ) {
+				return;
+			}
+
+			foreach ( var parameter in parameters ) {
+				//$"Adding parameter {parameter.ParameterName} to command object..".Verbose();
+				this.Command.Parameters.Add( parameter );
+			}
+		}
+
+		/// <summary>
+		///     Simplest possible database connection.
+		///     <para>Connect and then run <paramref name="query" />.</para>
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		/// <exception cref="NullException"></exception>
+		/// <exception cref="InvalidOperationException"></exception>
+		public async Task<SqlDataReader?> QueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+			if ( String.IsNullOrWhiteSpace( query ) ) {
+				throw new NullException( nameof( query ) );
+			}
+
+			this.Query = query;
+			var retries = DefaultRetries;
+
+		TryAgain:
+
+			try {
+				await this.PopulateCommand( CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
+
+				return await this.Command.ExecuteReaderAsync( cancellationToken ).ConfigureAwait( false );
+			}
+			catch ( InvalidCastException exception ) {
+				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
+				exception.Log();
+
+				throw;
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
+
+			return default( SqlDataReader? );
 		}
 
 		/*
-        [NotNull]
-        [DebuggerStepThrough]
-        public static async PooledValueTask StartAnySQLBrowsers( TimeSpan timeout ) {
-            await PooledValueTask.Run( () => {
-                "Searching for any database servers...".Log();
 
-                var machines = new ConcurrentHashset<String> {
-                    "Thor", Dns.GetHostName(), "127.0.0.1" //my development servers' names. Feel free to add your server.
-                };
+		/// <summary>
+		///     Returns a <see cref="DataTable" />
+		/// </summary>
+		/// <param name="query">      </param>
+		/// <param name="commandType"></param>
+		/// <param name="table">      </param>
+		/// <param name="parameters"> </param>
+		public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[]? parameters ) {
+			if ( String.IsNullOrWhiteSpace( query ) ) {
+				throw new ArgumentEmptyException( nameof( query ) );
+			}
 
-                var stopwatch = Stopwatch.StartNew();
+			this.Query = query;
 
-                var services = machines.Where( s => !String.IsNullOrWhiteSpace( s ) ).Select( machineName => {
-                    var service = new ServiceController {
-                        ServiceName = "SQLBrowser", MachineName = machineName
-                    };
+			var retries = DefaultRetries;
 
-                    if ( service.Status != ServiceControllerStatus.Running ) {
-                        service.Start();
-                    }
+		TryAgain:
+			table = new DataTable();
 
-                    return service;
-                } ).ToList();
+			try {
+				this.CreateCommand( commandType, parameters );
 
-                while ( stopwatch.Elapsed < timeout ) {
-                    var notRunningYet = services.Where( controller =>
-                        controller?.Status.In( ServiceControllerStatus.StartPending, ServiceControllerStatus.Running ) == false );
+				using var dataReader = this.Command.ExecuteReader();
 
-                    Parallel.ForEach( notRunningYet, controller => controller?.WaitForStatus( ServiceControllerStatus.Running, timeout ) );
+				if ( dataReader is null ) {
+					return false;
+				}
 
-                    if ( services.Any( controller => controller?.Status.In( ServiceControllerStatus.Running ) == true ) ) {
-                        return;
-                    }
-                }
-            } ).ConfigureAwait( false );
-        }
-        */
+				table.BeginLoadData();
+				table.Load( dataReader );
+				table.EndLoadData();
+
+				return true;
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries );
+					goto TryAgain;
+				}
+
+				exception.Log(  );
+			}
+			finally {
+				this.CloseConnection();
+			}
+
+			return false;
+		}
+		*/
+		/*
+		public void UseDatabase( String databaseName ) {
+			if ( String.IsNullOrWhiteSpace( databaseName ) ) {
+				throw new NullException( "Value cannot be null or whitespace.", nameof( databaseName ) );
+			}
+
+			using var _ = this.QueryAdHoc( $"USE {databaseName.SmartBraces()};" );
+		}
+		*/
+
+		/// <summary>
+		///     Execute the stored procedure " <paramref name="query" />" with the optional parameters
+		///     <paramref name="parameters" />.
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="cancellationToken"></param>
+		/// <param name="parameters"></param>
+		/// <exception cref="InvalidOperationException"></exception>
+		/// <exception cref="SqlException"></exception>
+		/// <exception cref="DbException"></exception>
+		public async Task<Int32?> RunStoredProcedureAsync( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
+			this.Query = query;
+			var retries = DefaultRetries;
+
+		TryAgain:
+
+			try {
+				await this.PopulateCommand( CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
+
+				return await this.Command.ExecuteNonQueryAsync( cancellationToken ).ConfigureAwait( false );
+			}
+			catch ( Exception exception ) {
+				if ( exception.AttemptQueryAgain( ref retries ) ) {
+					this.CloseConnection();
+					await Task.Delay( DefaultTimeBetweenRetries, cancellationToken ).ConfigureAwait( false );
+					goto TryAgain;
+				}
+
+				exception.Log();
+			}
+
+			return default( Int32? );
+		}
+
+		/*
+		private static void ValueChangedHandler( AsyncLocalValueChangedArgs<SqlConnection?> obj ) {
+			$"Thread {Environment.CurrentManagedThreadId}: was {( obj.PreviousValue?.ToString() ).SmartQuote()} to {( obj.CurrentValue?.ToString() ).SmartQuote()}."
+				.Verbose();
+		}
+		*/
+		/*
+
+		/// <summary>
+		///     Opens a connection, runs the <paramref name="query" />, and returns the number of rows affected.
+		/// </summary>
+		/// <param name="query">     </param>
+		/// <param name="parameters"></param>
+		public Int32? ExecuteNonQuery( String query, params SqlParameter[]? parameters ) => this.ExecuteNonQuery( query, DefaultRetries, CommandType.StoredProcedure, parameters );
+		*/
+
 	}
+
 }

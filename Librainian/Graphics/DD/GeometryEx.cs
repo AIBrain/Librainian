@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,26 +17,28 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "GeometryEx.cs" last formatted on 2020-08-14 at 8:34 PM.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 namespace Librainian.Graphics.DD {
 
 	using System;
-	using System.Drawing;
 
 	public static class GeometryEx {
 
+		/*
 		public static Intersection IntersectionOf( Line line, Polygon polygon ) {
 			switch ( polygon.Length ) {
-				case 0: return Intersection.None;
+				case 0:
+					return Intersection.None;
 
-				case 1: return IntersectionOf( polygon[0], line );
+				case 1:
+					return IntersectionOf( polygon[0], line );
 			}
 
 			var tangent = false;
@@ -43,7 +48,8 @@ namespace Librainian.Graphics.DD {
 				var intersection = IntersectionOf( line, new Line( polygon[index], polygon[index2] ) );
 
 				switch ( intersection ) {
-					case Intersection.Intersection: return intersection;
+					case Intersection.Intersection:
+						return intersection;
 
 					case Intersection.Tangent:
 						tangent = true;
@@ -54,8 +60,9 @@ namespace Librainian.Graphics.DD {
 
 			return tangent ? Intersection.Tangent : IntersectionOf( line.P1, polygon );
 		}
+		*/
 
-		public static Intersection IntersectionOf( PointF point, Line line ) {
+		public static Intersection IntersectionOf( PointR point, Line line ) {
 			var bottomY = Math.Min( line.Y1, line.Y2 );
 			var topY = Math.Max( line.Y1, line.Y2 );
 			var heightIsRight = point.Y >= bottomY && point.Y <= topY;
@@ -75,7 +82,9 @@ namespace Librainian.Graphics.DD {
 			return onLine && heightIsRight ? Intersection.Tangent : Intersection.None;
 		}
 
+		/*
 		public static Intersection IntersectionOf( Line line1, Line line2 ) {
+
 			// Fail if either line segment is zero-length.
 			if ( Math.Abs( line1.X1 - line1.X2 ) < Single.Epsilon && Math.Abs( line1.Y1 - line1.Y2 ) < Single.Epsilon ||
 				 Math.Abs( line2.X1 - line2.X2 ) < Single.Epsilon && Math.Abs( line2.Y1 - line2.Y2 ) < Single.Epsilon ) {
@@ -93,8 +102,12 @@ namespace Librainian.Graphics.DD {
 			}
 
 			// (1) Translate the system so that point A is on the origin.
-			line1.X2 -= line1.X1;
-			line1.Y2 -= line1.Y1;
+			//line1.X2 -= line1.X1;
+			//line1.Y2 -= line1.Y1;
+			line1 = line1 with {
+				P2 = line1.P2 with { X = line1.P2.X - line1.X1, Y = line1.P2.Y - line1.Y1 }
+			};
+
 			line2.X1 -= line1.X1;
 			line2.Y1 -= line1.Y1;
 			line2.X2 -= line1.X1;
@@ -129,10 +142,12 @@ namespace Librainian.Graphics.DD {
 			// (4) Apply the discovered position to line A-B in the original coordinate system.
 			return Intersection.Intersection;
 		}
+		*/
 
-		public static Intersection IntersectionOf( PointF point, Polygon polygon ) {
+		public static Intersection IntersectionOf( PointR point, Polygon polygon ) {
 			switch ( polygon.Length ) {
-				case 0: return Intersection.None;
+				case 0:
+					return Intersection.None;
 
 				case 1:
 
@@ -142,7 +157,8 @@ namespace Librainian.Graphics.DD {
 
 					return Intersection.None;
 
-				case 2: return IntersectionOf( point, new Line( polygon[0], polygon[1] ) );
+				case 2:
+					return IntersectionOf( point, new Line( polygon[0], polygon[1] ) );
 			}
 
 			var counter = 0;
@@ -180,7 +196,5 @@ namespace Librainian.Graphics.DD {
 
 			return counter % 2 == 1 ? Intersection.Containment : Intersection.None;
 		}
-
 	}
-
 }

@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "SpatialExtensions.cs" last formatted on 2020-08-14 at 8:37 PM.
 
 namespace Librainian.Measurement.Spatial {
@@ -47,8 +47,7 @@ namespace Librainian.Measurement.Spatial {
 			return radians;
 		}
 
-		[CanBeNull]
-		public static T Clamp<T>( [NotNull] this T val, [CanBeNull] T min, [CanBeNull] T max ) where T : IComparable<T> =>
+		public static T? Clamp<T>( this T val, T? min, T? max ) where T : IComparable<T> =>
 			val.CompareTo( min ) < 0 ? min : val.CompareTo( max ) > 0 ? max : val;
 
 		public static Single Clamp01( this Single value ) => Clamp( value, 0.0f, 1.0f );
@@ -62,7 +61,6 @@ namespace Librainian.Measurement.Spatial {
 		///     to 10 degrees should work like 350, 351, 352, ....359,
 		///     0, 1, 2, 3....10. And not the other way around going 350, 349, 348.....200...1000, 12, 11, 10.
 		/// </remarks>
-		/// <returns></returns>
 		public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
 			var dif = To180Angle( to - from );
 			dif *= Clamp01( portion );
@@ -102,7 +100,8 @@ namespace Librainian.Measurement.Spatial {
 													   distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
 
 			return new GeoLocation {
-				Latitude = RadiansToDegrees( endLatRads ), Longitude = RadiansToDegrees( endLonRads )
+				Latitude = RadiansToDegrees( endLatRads ),
+				Longitude = RadiansToDegrees( endLonRads )
 			};
 		}
 
@@ -112,7 +111,6 @@ namespace Librainian.Measurement.Spatial {
 		///     (east) and go counter-clockwise.
 		/// </summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Double MathAngleToCompassAngle( Double angle ) {
 			angle = 90.0f - angle;
 
@@ -124,7 +122,6 @@ namespace Librainian.Measurement.Spatial {
 		/// <summary>Clockwise from a top-down view.</summary>
 		/// <param name="degrees"></param>
 		/// <param name="byAmount"></param>
-		/// <returns></returns>
 		public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
 			if ( Single.IsNaN( byAmount ) ) {
 				return degrees;
@@ -140,7 +137,6 @@ namespace Librainian.Measurement.Spatial {
 		/// <summary>Clockwise from a top-down view.</summary>
 		/// <param name="degrees"></param>
 		/// <param name="byAmount"></param>
-		/// <returns></returns>
 		public static Degrees RotateRight( this Degrees degrees, Single byAmount = 1 ) {
 			if ( Single.IsNaN( byAmount ) ) {
 				return degrees;
@@ -155,7 +151,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>Convert angle between -180 and 180 degrees If you want the angle to be between -180 and 180</summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Single To180Angle( this Single angle ) {
 			while ( angle < -180.0f ) {
 				angle += 360.0f;
@@ -170,7 +165,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>And for a Vector with 3 angles</summary>
 		/// <param name="angles"></param>
-		/// <returns></returns>
 		public static Vector3 To180Angle( Vector3 angles ) {
 			angles.X = To180Angle( angles.X );
 			angles.Y = To180Angle( angles.Y );
@@ -181,7 +175,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>When you have an angle in degrees, that you want to convert in the range of 0-360</summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Double To360Angle( this Double angle ) {
 			while ( angle < 0.0 ) {
 				angle += 360.0;
@@ -196,7 +189,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>When you have an angle in degrees, that you want to convert in the range of 0-360</summary>
 		/// <param name="angle"></param>
-		/// <returns></returns>
 		public static Single To360Angle( this Single angle ) {
 			while ( angle < 0.0f ) {
 				angle += 360.0f;
@@ -211,7 +203,6 @@ namespace Librainian.Measurement.Spatial {
 
 		/// <summary>To do the same for a vector of 3 angles</summary>
 		/// <param name="angles"></param>
-		/// <returns></returns>
 		public static Vector3 To360Angle( this Vector3 angles ) {
 			angles.X = To360Angle( angles.X );
 			angles.Y = To360Angle( angles.Y );
@@ -223,7 +214,5 @@ namespace Librainian.Measurement.Spatial {
 		public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new( degrees.Value += DegreesToRadians( angle ) );
 
 		public static Degrees TurnRight( this Degrees degrees, Single angle ) => new( degrees.Value -= DegreesToRadians( angle ) );
-
 	}
-
 }

@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,43 +17,44 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ThreadingExtensions.cs" last formatted on 2020-10-12 at 4:26 PM.
+//
+// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
 #nullable enable
 
 namespace Librainian.Threading {
+
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Linq;
 	using System.Reflection;
+	using System.Runtime.CompilerServices;
 	using System.Runtime.InteropServices;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Logging;
 	using Maths;
 
 	public static class ThreadingExtensions {
-		
+
 		public static Boolean IsRunningFromNUnit { get; } =
 			AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName?.ToLowerInvariant().StartsWith( "nunit.framework" ) == true );
 
 		/// <summary>Only allow a delegate to run X times.</summary>
 		/// <param name="action">      </param>
 		/// <param name="callsAllowed"></param>
-		/// <returns></returns>
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-		[NotNull]
-		public static Action ActionBarrier( [NotNull] this Action action, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier( this Action action, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
@@ -64,11 +68,9 @@ namespace Librainian.Threading {
 		/// <param name="action">      </param>
 		/// <param name="parameter">   </param>
 		/// <param name="callsAllowed"></param>
-		/// <returns></returns>
 		/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 		/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
-		[NotNull]
-		public static Action ActionBarrier<T>( [NotNull] this Action<T> action, [CanBeNull] T parameter, Int64? callsAllowed = null ) {
+		public static Action ActionBarrier<T>( this Action<T?> action, T? parameter, Int64? callsAllowed = null ) {
 			var context = new ContextCallOnlyXTimes( callsAllowed ?? 1 );
 
 			return () => {
@@ -96,8 +98,7 @@ namespace Librainian.Threading {
 		/// <summary>About X bytes by polling the object's fields.</summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="obj"></param>
-		/// <returns></returns>
-		public static UInt64 CalcSizeInBytes<T>( [CanBeNull] this T obj ) {
+		public static UInt64 CalcSizeInBytes<T>( this T? obj ) {
 			if ( obj is null ) {
 				return 0;
 			}
@@ -158,13 +159,58 @@ namespace Librainian.Threading {
 			Thread.EndCriticalRegion();
 		}
 
+		public static TaskAwaiter<Int32> GetAwaiter( this Process process ) {
+			var tcs = new TaskCompletionSource<Int32>();
+			process.EnableRaisingEvents = true;
+			process.Exited += ( _, _ ) => tcs.TrySetResult( process.ExitCode );
+			if ( process.HasExited ) {
+				tcs.TrySetResult( process.ExitCode );
+			}
+
+			return tcs.Task.GetAwaiter();
+		}
+
+		/// <summary>
+		/// Asynchronously wait until cancellation is requested.
+		/// </summary>
+		/// <param name="cancellationToken"></param>
+		public static TaskAwaiter GetAwaiter( this CancellationToken cancellationToken ) {
+			var tcs = new TaskCompletionSource<Boolean>();
+			Task t = tcs.Task;
+			if ( cancellationToken.IsCancellationRequested ) {
+				tcs.SetResult( true );
+			}
+			else {
+				cancellationToken.Register( s => ( s as TaskCompletionSource<Boolean> )?.SetResult( true ), tcs );
+			}
+
+			return t.GetAwaiter();
+		}
+
+		/// <summary>
+		/// Asynchronously wait for all <paramref name="tasks"/>.
+		/// </summary>
+		/// <param name="tasks"></param>
+		public static TaskAwaiter GetAwaiter( this Task[] tasks ) => Task.WhenAll( tasks ).GetAwaiter();
+
+		/// <summary>
+		/// Asynchronously wait for all <paramref name="tasks"/>.
+		/// </summary>
+		/// <param name="tasks"></param>
+		public static TaskAwaiter GetAwaiter( this IEnumerable<Task> tasks ) => Task.WhenAll( tasks ).GetAwaiter();
+
+		/// <summary>
+		/// Asynchronously wait a <see cref="TimeSpan"/>.
+		/// </summary>
+		public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
+
 		public static Int32 GetMaximumActiveWorkerThreads() {
-			ThreadPool.GetMaxThreads( out _, out var maxPortThreads );
+			ThreadPool.GetMaxThreads( out var _, out var maxPortThreads );
 
 			return maxPortThreads;
 		}
 
-		public static UInt64 GetSizeOfPrimitive<T>( [CanBeNull] this T obj ) =>
+		public static UInt64 GetSizeOfPrimitive<T>( this T? obj ) =>
 			( UInt64 )( obj switch {
 				Boolean => sizeof( Boolean ),
 				Byte => sizeof( Byte ),
@@ -179,33 +225,29 @@ namespace Librainian.Threading {
 				Single => sizeof( Single ),
 				Double => sizeof( Double ),
 				Decimal => sizeof( Decimal ),
-				String s => sizeof( Char ) * s.Length,
-				{ } => sizeof( Int32 ),	//BUG 4 ?? 8. sizeof(Pointer)
-				_ => 0
+				String s => sizeof( Char ) * s.Length, { } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
+				var _ => 0
 			} );
 
 		/// <summary>returns Marshal.SizeOf( typeof( T ) );</summary>
 		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
 		[DebuggerStepThrough]
 		public static Int32 MarshalSizeOf<T>() where T : struct => Marshal.SizeOf( typeof( T ) );
 
 		/// <summary>boxed returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
-		/// <returns></returns>
-		public static Int32 MarshalSizeOf( [NotNull] this Object obj ) => Marshal.SizeOf( obj );
+		public static Int32 MarshalSizeOf( this Object obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>generic returns Marshal.SizeOf( obj )</summary>
 		/// <param name="obj"></param>
-		/// <returns></returns>
-		public static Int32 MarshalSizeOf<T>( [NotNull] this T obj ) => Marshal.SizeOf( obj );
+		public static Int32 MarshalSizeOf<T>( [DisallowNull] this T obj ) => Marshal.SizeOf( obj );
 
 		/// <summary>Repeat the <paramref name="action" /><paramref name="times" />.
 		/// <para>Swallows <see cref="Exception"/>.</para>
 		/// </summary>
 		/// <param name="times"> </param>
 		/// <param name="action"></param>
-		public static void Repeat( this Int32 times, [NotNull] Action action ) {
+		public static void Repeat( this Int32 times, Action action ) {
 			for ( var i = 0; i < Math.Abs( times ); i++ ) {
 				try {
 					action();
@@ -219,7 +261,7 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="times"></param>
-		public static void Repeat( [NotNull] this Action action, Int32 times ) {
+		public static void Repeat( this Action action, Int32 times ) {
 			for ( var i = 0; i < Math.Abs( times ); i++ ) {
 				try {
 					action();
@@ -233,11 +275,18 @@ namespace Librainian.Threading {
 		/// </summary>
 		/// <param name="action"></param>
 		/// <param name="counter"></param>
-		public static void RepeatAction( [NotNull] this Action action, Int32 counter ) => Parallel.For( 1, counter, i => {
-			try {
+		public static void RepeatAction( this Action action, Int32 counter, Boolean useTryCatch ) => Parallel.For( 1, counter, i => {
+			if ( useTryCatch ) {
+				try {
+					action();
+				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
+			}
+			else {
 				action();
 			}
-			catch ( Exception ) { }
 		} );
 
 		/// <summary>
@@ -248,11 +297,10 @@ namespace Librainian.Threading {
 		/// <param name="output">     </param>
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
-		/// <returns></returns>
-		public static Boolean Run( [NotNull] this IEnumerable<Action> actions, [CanBeNull] Action<String>? output = null, [CanBeNull] String? description = null,
+		public static Boolean Run( this IEnumerable<Action> actions, Action<String>? output = null, String? description = null,
 			Boolean inParallel = true ) {
 			if ( actions is null ) {
-				throw new ArgumentNullException( nameof( actions ) );
+				throw new ArgumentEmptyException( nameof( actions ) );
 			}
 
 			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
@@ -277,11 +325,10 @@ namespace Librainian.Threading {
 		/// <param name="output">     </param>
 		/// <param name="description"></param>
 		/// <param name="inParallel"> </param>
-		/// <returns></returns>
-		public static Boolean Run( [NotNull] this IEnumerable<Func<Boolean>> functions, [CanBeNull] Action<String>? output = null, [CanBeNull] String? description = null,
+		public static Boolean Run( this IEnumerable<Func<Boolean>> functions, Action<String>? output = null, String? description = null,
 			Boolean inParallel = true ) {
 			if ( functions is null ) {
-				throw new ArgumentNullException( nameof( functions ) );
+				throw new ArgumentEmptyException( nameof( functions ) );
 			}
 
 			if ( output != null && !String.IsNullOrWhiteSpace( description ) ) {
@@ -314,7 +361,8 @@ namespace Librainian.Threading {
 		}
 
 		public sealed class ContextCallOnlyXTimes {
-			public Int64 CallsAllowed;
+
+			internal Int64 CallsAllowed;
 
 			public ContextCallOnlyXTimes( Int64 times ) {
 				if ( times <= 0 ) {
@@ -324,44 +372,5 @@ namespace Librainian.Threading {
 				this.CallsAllowed = times;
 			}
 		}
-
-		/*
-
-				/// <summary>
-				/// Creates a new Task that mirrors the supplied task but that will be canceled after the specified timeout.
-				/// </summary>
-				/// <typeparam name="TResult">Specifies the type of data contained in the task.</typeparam>
-				/// <param name="task">   The task.</param>
-				/// <param name="timeout">The timeout.</param>
-				/// <returns>The new Task that may time out.</returns>
-				/// <see cref="http://stackoverflow.com/a/20639723/956364"/>
-				public static Task<TResult> WithTimeout<TResult>( this Task<TResult> task, TimeSpan timeout ) {
-					var result = new TaskCompletionSource<TResult>( task.AsyncState );
-					var timer = new Timer( state =>
-									( ( TaskCompletionSource<TResult> )state ).TrySetCanceled(),
-									result, timeout, TimeSpan.FromMilliseconds( -1 ) );
-					task.ContinueWith( t => {
-						timer.Dispose();
-						result.TrySetFromTask( t );
-					}, TaskContinuationOptions.ExecuteSynchronously );
-					return result.Task;
-				}
-		*/
-		/*
-
-				/// <summary>
-				/// a fire-and-forget wrapper for an <see cref="Action"/>.
-				/// </summary>
-				/// <param name="action"></param>
-				/// <param name="next">  </param>
-				/// <returns></returns>
-				public static void Then( this Action action, Action next ) {
-					if ( action is null ) {
-						throw new ArgumentNullException( "action" );
-					}
-					action.Spawn(); //does this even make sense?
-					next.Spawn();
-				}
-		*/
 	}
 }

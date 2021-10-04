@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,41 +14,39 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Hash.cs" last formatted on 2020-08-14 at 8:36 PM.
 
 namespace Librainian.Financial.Currency.BTC {
 
 	using System;
 	using System.Linq;
-	using JetBrains.Annotations;
 
-	/// <summary></summary>
+	
 	/// <see cref="http://github.com/mb300sd/Bitcoin-Tool" />
 	public class Hash {
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage( "Design", "CA1051:Do not declare visible instance fields", Justification = "<Pending>" )]
 		public readonly Byte[] HashBytes;
 
-		public Hash( [CanBeNull] Byte[] b ) => this.HashBytes = b;
-
-		public Byte this[ Int32 i ] {
+		public Byte this[Int32 i] {
 			get => this.HashBytes[i];
 
 			set => this.HashBytes[i] = value;
 		}
 
-		[CanBeNull]
-		public static implicit operator Byte[]( [NotNull] Hash hash ) => hash.HashBytes;
+		public Hash( Byte[] b ) => this.HashBytes = b;
 
-		[NotNull]
-		public static implicit operator Hash( [CanBeNull] Byte[] bytes ) => new( bytes );
+		public static implicit operator Byte[]( Hash hash ) => hash.HashBytes;
 
-		public override Boolean Equals( Object obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
+		public static implicit operator Hash( Byte[] bytes ) => new( bytes );
+
+		public override Boolean Equals( Object? obj ) => obj is Hash hash1 && this.HashBytes.SequenceEqual( hash1.HashBytes );
 
 		public override Int32 GetHashCode() {
 			if ( this.HashBytes.Length >= 4 ) {
@@ -57,7 +55,5 @@ namespace Librainian.Financial.Currency.BTC {
 
 			return this.HashBytes.GetHashCode();
 		}
-
 	}
-
 }

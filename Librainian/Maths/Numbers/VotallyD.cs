@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,19 +17,20 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "VotallyD.cs" last formatted on 2021-03-05 at 1:05 PM.
 
 namespace Librainian.Maths.Numbers {
+
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -38,8 +39,6 @@ namespace Librainian.Maths.Numbers {
 	[JsonObject]
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class VotallyD : ICloneable {
-		/// <summary>No vote for either.</summary>
-		public static readonly VotallyD Zero = new();
 
 		/// <summary>ONLY used in the getter and setter.</summary>
 		[JsonProperty]
@@ -49,10 +48,8 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private Double _bVotes;
 
-		public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
-			this.A = votesForA;
-			this.B = votesForB;
-		}
+		/// <summary>No vote for either.</summary>
+		public static readonly VotallyD Zero = new();
 
 		public Double A {
 			get => Thread.VolatileRead( ref this._aVotes );
@@ -85,16 +82,18 @@ namespace Librainian.Maths.Numbers {
 
 		public Boolean IsAWinning => this.A > this.B;
 
-		Object ICloneable.Clone() => this.Clone();
+		public VotallyD( Double votesForA = 0, Double votesForB = 0 ) {
+			this.A = votesForA;
+			this.B = votesForB;
+		}
 
-		[NotNull]
-		public static VotallyD Combine( [NotNull] VotallyD left, [NotNull] VotallyD right ) {
+		public static VotallyD Combine( VotallyD left, VotallyD right ) {
 			if ( left is null ) {
-				throw new ArgumentNullException( nameof( left ) );
+				throw new ArgumentEmptyException( nameof( left ) );
 			}
 
 			if ( right is null ) {
-				throw new ArgumentNullException( nameof( right ) );
+				throw new ArgumentEmptyException( nameof( right ) );
 			}
 
 			var result = left;
@@ -109,6 +108,8 @@ namespace Librainian.Maths.Numbers {
 
 			return votes.Near( 0 ) ? 0 : this.A / votes;
 		}
+
+		public VotallyD Clone() => new( this.A, this.B );
 
 		/// <summary>
 		///     <para>Increments the votes for candidate <see cref="A" /> by <paramref name="votes" />.</para>
@@ -140,7 +141,6 @@ namespace Librainian.Maths.Numbers {
 
 		public Boolean IsTied() => this.A.Near( this.B );
 
-		[NotNull]
 		public override String ToString() => $"A has {this.ChanceA():P1} and B has {this.ChanceB:P1} of {this.Votes:F1} votes.";
 
 		/// <summary>
@@ -165,7 +165,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
-		public VotallyD Clone() => new( this.A, this.B );
+		Object ICloneable.Clone() => this.Clone();
 	}
 }

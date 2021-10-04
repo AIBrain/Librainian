@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Urls.cs" last formatted on 2020-08-14 at 8:33 PM.
 
 namespace Librainian.Extensions {
@@ -27,25 +27,22 @@ namespace Librainian.Extensions {
 	using System;
 	using System.Net;
 	using System.Text;
-	using JetBrains.Annotations;
+	using Exceptions;
 
 	public static class Urls {
 
 		/// <summary>Check that a String is not null or empty</summary>
 		/// <param name="input">String to check</param>
 		/// <returns>Boolean</returns>
-		public static Boolean HasValue( [CanBeNull] this String? input ) => !String.IsNullOrEmpty( input );
+		public static Boolean HasValue( this String? input ) => !String.IsNullOrEmpty( input );
 
-		[CanBeNull]
-		public static String HtmlDecode( [CanBeNull] this String? input ) => WebUtility.HtmlDecode( input );
+		public static String? HtmlDecode( this String? input ) => WebUtility.HtmlDecode( input );
 
-		[CanBeNull]
-		public static String HtmlEncode( [NotNull] this String input ) => WebUtility.HtmlEncode( input );
+		public static String HtmlEncode( this String input ) => WebUtility.HtmlEncode( input );
 
-		public static Boolean IsNameOnlyQueryString( [CanBeNull] this String? res ) => !String.IsNullOrEmpty( res ) && res[0] == '?';
+		public static Boolean IsNameOnlyQueryString( this String? res ) => !String.IsNullOrEmpty( res ) && res[0] == '?';
 
-		[CanBeNull]
-		public static Uri UrlDecode( [NotNull] this String input ) {
+		public static Uri UrlDecode( this String input ) {
 			if ( String.IsNullOrWhiteSpace( input ) ) {
 				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
 			}
@@ -57,10 +54,9 @@ namespace Librainian.Extensions {
 		///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
 		///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
 		/// </summary>
-		[NotNull]
-		public static Uri UrlEncode( [NotNull] this String input ) {
+		public static Uri UrlEncode( this String input ) {
 			if ( input is null ) {
-				throw new ArgumentNullException( nameof( input ) );
+				throw new ArgumentEmptyException( nameof( input ) );
 			}
 
 			const Int32 maxLength = 32766;
@@ -81,7 +77,5 @@ namespace Librainian.Extensions {
 
 			return new Uri( sb.ToString() );
 		}
-
 	}
-
 }

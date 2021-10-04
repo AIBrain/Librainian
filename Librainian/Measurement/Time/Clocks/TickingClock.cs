@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TickingClock.cs" last formatted on 2020-08-27 at 7:45 PM.
+// File "TickingClock.cs" last touched on 2021-09-28 at 6:36 AM by Protiguous.
 
 #nullable enable
 
@@ -28,9 +31,8 @@ namespace Librainian.Measurement.Time.Clocks {
 
 	using System;
 	using System.Timers;
-	using JetBrains.Annotations;
 	using Newtonsoft.Json;
-	using Utilities;
+	using Utilities.Disposables;
 
 	/// <summary>
 	///     <para>Starts a forward-ticking clock at the given time with settable events.</para>
@@ -57,18 +59,21 @@ namespace Librainian.Measurement.Time.Clocks {
 		public enum Granularity {
 
 			Microseconds,
+
 			Milliseconds,
+
 			Seconds,
+
 			Minutes,
+
 			Hours
 
 		}
 
-		/// <summary></summary>
-		[CanBeNull]
+		
 		private Timer? _timer;
 
-		public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) {
+		public TickingClock( DateTime time, Granularity granularity = Granularity.Seconds ) : base( nameof( TickingClock ) ) {
 			this.Hour = ( ClockHour )time.Hour;
 			this.Minute = ( ClockMinute )time.Minute;
 			this.Second = ( ClockSecond )time.Second;
@@ -77,8 +82,14 @@ namespace Librainian.Measurement.Time.Clocks {
 			this.ResetTimer( granularity );
 		}
 
-		public TickingClock( Time time, Granularity granularity = Granularity.Seconds ) {
-			this.Hour = time.Hour;
+		public TickingClock( TimeClock time, Granularity granularity = Granularity.Seconds ) : base( nameof( TickingClock ) ) {
+			if ( time.Hour.Value > ClockHour.MaximumValue ) {
+				this.Hour = ClockHour.Maximum;
+			}
+			else {
+				this.Hour = time.Hour;
+			}
+
 			this.Minute = time.Minute;
 			this.Second = time.Second;
 			this.Millisecond = time.Millisecond;
@@ -89,35 +100,31 @@ namespace Librainian.Measurement.Time.Clocks {
 		[JsonProperty]
 		public ClockMicrosecond Microsecond { get; private set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action<ClockHour>? OnHourTick { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action? OnMillisecondTick { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action? OnMinuteTick { get; set; }
 
-		[CanBeNull]
 		[JsonProperty]
 		public Action? OnSecondTick { get; set; }
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public ClockHour Hour { get; private set; }
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public ClockMillisecond Millisecond { get; private set; }
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public ClockMinute Minute { get; private set; }
 
-		/// <summary></summary>
+		
 		[JsonProperty]
 		public ClockSecond Second { get; private set; }
 
@@ -125,31 +132,26 @@ namespace Librainian.Measurement.Time.Clocks {
 
 		public Boolean IsPm() => this.Hour.Value >= 12;
 
-		public Time Time() {
+		public TimeClock Time() {
 			try {
 				this._timer?.Stop(); //stop the timer so the seconds don't tick while we get the values.
 
-				return new Time( this.Hour.Value, this.Minute.Value, this.Second.Value );
+				return new TimeClock( this.Hour, this.Minute, this.Second, this.Millisecond, this.Microsecond );
 			}
 			finally {
 				this._timer?.Start();
 			}
 		}
 
-		private void OnHourElapsed( [CanBeNull]
-		                            Object? sender, [CanBeNull]
-		                            ElapsedEventArgs? e ) {
+		private void OnHourElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Hour = this.Hour.Next( out var tocked );
 
 			if ( tocked ) {
 				this.OnHourTick?.Invoke( this.Hour );
 			}
-
 		}
 
-		private void OnMillisecondElapsed( [CanBeNull]
-		                                   Object? sender, [CanBeNull]
-		                                   ElapsedEventArgs e ) {
+		private void OnMillisecondElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Millisecond = this.Millisecond.Next( out var tocked );
 
 			if ( tocked ) {
@@ -157,12 +159,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
 				this.OnSecondElapsed( sender, e );
 			}
-
 		}
 
-		private void OnMinuteElapsed( [CanBeNull]
-		                              Object? sender, [CanBeNull]
-		                              ElapsedEventArgs e ) {
+		private void OnMinuteElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Minute = this.Minute.Next( out var tocked );
 
 			if ( tocked ) {
@@ -170,12 +169,9 @@ namespace Librainian.Measurement.Time.Clocks {
 
 				this.OnHourElapsed( sender, e );
 			}
-
 		}
 
-		private void OnSecondElapsed( [CanBeNull]
-		                              Object? sender, [CanBeNull]
-		                              ElapsedEventArgs e ) {
+		private void OnSecondElapsed( Object? sender, ElapsedEventArgs? e ) {
 			this.Second = this.Second.Next( out var tocked );
 
 			if ( tocked ) {
@@ -183,7 +179,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 				this.OnMinuteElapsed( sender, e );
 			}
-
 		}
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
@@ -201,7 +196,6 @@ namespace Librainian.Measurement.Time.Clocks {
 			switch ( granularity ) {
 				case Granularity.Milliseconds:
 
-					
 					this._timer = new Timer( ( Double )Milliseconds.One.Value ) {
 						AutoReset = true
 					};
@@ -212,7 +206,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 				case Granularity.Seconds:
 
-					
 					this._timer = new Timer( ( Double )Seconds.One.Value ) {
 						AutoReset = true
 					};
@@ -223,7 +216,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 				case Granularity.Minutes:
 
-					
 					this._timer = new Timer( ( Double )Minutes.One.Value ) {
 						AutoReset = true
 					};
@@ -234,7 +226,6 @@ namespace Librainian.Measurement.Time.Clocks {
 
 				case Granularity.Hours:
 
-					
 					this._timer = new Timer( ( Double )Hours.One.Value ) {
 						AutoReset = true
 					};

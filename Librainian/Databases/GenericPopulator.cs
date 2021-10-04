@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "GenericPopulator.cs" last formatted on 2020-08-14 at 8:32 PM.
 
 namespace Librainian.Databases {
@@ -28,15 +28,16 @@ namespace Librainian.Databases {
 	using System.Collections.Generic;
 	using System.Data;
 	using System.Linq.Expressions;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Microsoft.Data.SqlClient;
+	using Utilities;
 
+	[NeedsTesting]
 	public static class GenericPopulator<T> {
 
-		[CanBeNull]
-		public static Func<SqlDataReader, T> GetReader( [NotNull] IDataRecord reader ) {
+		public static Func<SqlDataReader, T>? GetReader( IDataRecord reader ) {
 			if ( reader == null ) {
-				throw new ArgumentNullException( nameof( reader ) );
+				throw new ArgumentEmptyException( nameof( reader ) );
 			}
 
 			var readerColumns = new List<String>();
@@ -61,17 +62,19 @@ namespace Librainian.Databases {
 			var memberBindings = new List<MemberBinding>();
 
 			foreach ( var prop in typeof( T ).GetProperties() ) {
+
 				// determine the default value of the property
-				Object defaultValue = null;
+				Object? defaultValue = null;
 
 				if ( prop.PropertyType.IsValueType ) {
 					defaultValue = Activator.CreateInstance( prop.PropertyType );
 				}
-				else if (prop.PropertyType.Name.ToLower().Equals("string", StringComparison.Ordinal)) {
+				else if ( prop.PropertyType.Name.ToLower().Equals( "string", StringComparison.Ordinal ) ) {
 					defaultValue = String.Empty;
 				}
 
 				if ( readerColumns.Contains( prop.Name ) ) {
+
 					// build the Call expression to retrieve the data value from the reader
 					var indexExpression = Expression.Constant( reader.GetOrdinal( prop.Name ) );
 					var getValueExp = Expression.Call( readerParam, readerGetValue, indexExpression );
@@ -97,23 +100,20 @@ namespace Librainian.Databases {
 
 			return ( Func<SqlDataReader, T> )resDelegate;
 		}
-
 	}
 
 	public static class GenericPopulatorExtensions {
 
-		[NotNull]
-		public static List<T> CreateList<T>( [NotNull] SqlDataReader reader ) {
+		public static List<T> CreateList<T>( SqlDataReader reader ) {
 			var results = new List<T>();
 			var readRow = GenericPopulator<T>.GetReader( reader );
-
-			while ( reader.Read() ) {
-				results.Add( readRow( reader ) );
+			if ( readRow != null ) {
+				while ( reader.Read() ) {
+					results.Add( readRow( reader ) );
+				}
 			}
 
 			return results;
 		}
-
 	}
-
 }

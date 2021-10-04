@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Credits.cs" last formatted on 2020-08-14 at 8:35 PM.
 
 namespace Librainian.Maths.Numbers {
@@ -27,7 +27,7 @@ namespace Librainian.Maths.Numbers {
 	using System;
 	using System.Diagnostics;
 	using System.Threading;
-	using JetBrains.Annotations;
+	using Exceptions;
 	using Newtonsoft.Json;
 
 	/// <summary>
@@ -37,9 +37,6 @@ namespace Librainian.Maths.Numbers {
 	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 	public class Credits {
 
-		/// <summary>No credits.</summary>
-		public static readonly Credits Zero = new();
-
 		/// <summary>ONLY used in the getter and setter.</summary>
 		[JsonProperty]
 		private UInt64 _currentCredits;
@@ -48,10 +45,8 @@ namespace Librainian.Maths.Numbers {
 		[JsonProperty]
 		private UInt64 _lifetimeCredits;
 
-		public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
-			this.CurrentCredits = currentCredits;
-			this.LifetimeCredits = lifetimeCredits;
-		}
+		/// <summary>No credits.</summary>
+		public static readonly Credits Zero = new();
 
 		public UInt64 CurrentCredits {
 			get => Thread.VolatileRead( ref this._currentCredits );
@@ -65,14 +60,18 @@ namespace Librainian.Maths.Numbers {
 			private set => Thread.VolatileWrite( ref this._lifetimeCredits, value );
 		}
 
-		[NotNull]
-		public static Credits Combine( [NotNull] Credits left, [NotNull] Credits right ) {
+		public Credits( UInt64 currentCredits = 0, UInt64 lifetimeCredits = 0 ) {
+			this.CurrentCredits = currentCredits;
+			this.LifetimeCredits = lifetimeCredits;
+		}
+
+		public static Credits Combine( Credits left, Credits right ) {
 			if ( left is null ) {
-				throw new ArgumentNullException( nameof( left ) );
+				throw new ArgumentEmptyException( nameof( left ) );
 			}
 
 			if ( right is null ) {
-				throw new ArgumentNullException( nameof( right ) );
+				throw new ArgumentEmptyException( nameof( right ) );
 			}
 
 			return new Credits( left.CurrentCredits + right.CurrentCredits, left.LifetimeCredits + right.LifetimeCredits );
@@ -83,7 +82,6 @@ namespace Librainian.Maths.Numbers {
 			this.LifetimeCredits += credits;
 		}
 
-		[NotNull]
 		public Credits Clone() => new( this.CurrentCredits, this.LifetimeCredits );
 
 		public void SubtractCredits( UInt64 credits = 1 ) {
@@ -97,9 +95,6 @@ namespace Librainian.Maths.Numbers {
 			}
 		}
 
-		[NotNull]
 		public override String ToString() => $"{this.CurrentCredits:N0} credits ({this.LifetimeCredits:N0} lifetime credits).";
-
 	}
-
 }

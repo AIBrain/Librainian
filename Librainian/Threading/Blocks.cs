@@ -4,9 +4,9 @@
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,12 +14,12 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
+//
 // File "Blocks.cs" last formatted on 2020-08-14 at 8:46 PM.
 
 namespace Librainian.Threading {
@@ -28,12 +28,10 @@ namespace Librainian.Threading {
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
-	using JetBrains.Annotations;
 	using Measurement.Time;
 
 	public static class Blocks {
 
-		[NotNull]
 		public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
 			var lastItem = DateTime.MinValue;
 
@@ -58,28 +56,31 @@ namespace Librainian.Threading {
 			///     Multiple producers consumed in smoothly ( <see cref="Environment.ProcessorCount" /> *
 			///     <see cref="Environment.ProcessorCount" /> ).
 			/// </summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeEverything( CancellationToken? token ) =>
 				new() {
-					SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount, EnsureOrdered = true,
+					SingleProducerConstrained = false,
+					MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount,
+					EnsureOrdered = true,
 					CancellationToken = token ?? CancellationToken.None
 				};
 
 			/// <summary>Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).</summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
 				new() {
-					SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1, EnsureOrdered = true,
+					SingleProducerConstrained = false,
+					MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1,
+					EnsureOrdered = true,
 					CancellationToken = token ?? CancellationToken.None
 				};
 
 			/// <summary>Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).</summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
 				new() {
-					SingleProducerConstrained = false, MaxDegreeOfParallelism = 1, EnsureOrdered = true, CancellationToken = token ?? CancellationToken.None
+					SingleProducerConstrained = false,
+					MaxDegreeOfParallelism = 1,
+					EnsureOrdered = true,
+					CancellationToken = token ?? CancellationToken.None
 				};
-
 		}
 
 		public static class SingleProducer {
@@ -87,24 +88,24 @@ namespace Librainian.Threading {
 			/// <summary>
 			///     <para>Single producer consumed in smoothly (Environment.ProcessorCount - 1).</para>
 			/// </summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
 				new() {
-					SingleProducerConstrained = false, MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1, EnsureOrdered = true,
+					SingleProducerConstrained = false,
+					MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1,
+					EnsureOrdered = true,
 					CancellationToken = token ?? CancellationToken.None
 				};
 
 			/// <summary>
 			///     <para>Single producer consumed in serial (one at a time).</para>
 			/// </summary>
-			[NotNull]
 			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
 				new() {
-					SingleProducerConstrained = true, MaxDegreeOfParallelism = 1, EnsureOrdered = true, CancellationToken = token ?? CancellationToken.None
+					SingleProducerConstrained = true,
+					MaxDegreeOfParallelism = 1,
+					EnsureOrdered = true,
+					CancellationToken = token ?? CancellationToken.None
 				};
-
 		}
-
 	}
-
 }

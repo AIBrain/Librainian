@@ -1,6 +1,9 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
@@ -20,35 +23,35 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "AbandonableTask.cs" last formatted on 2020-08-14 at 8:46 PM.
+// File "AbandonableTask.cs" last touched on 2021-09-28 at 6:42 AM by Protiguous.
 
 namespace Librainian.Threading {
 
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using JetBrains.Annotations;
+	using Exceptions;
+	using Utilities;
 
-	/// <summary></summary>
-	/// <see cref="http://stackoverflow.com/a/4749401/956364" />
+	/// <summary>
+	///     <see cref="http://stackoverflow.com/a/4749401/956364" />
+	/// </summary>
+	[NeedsTesting]
 	public sealed class AbandonableTask {
 
-		private AbandonableTask( CancellationToken cancellationToken, [CanBeNull] Action beginWork, [NotNull] Action blockingWork, [CanBeNull] Action<Task> afterComplete ) {
-			this._cancellationToken = cancellationToken;
+		private AbandonableTask( Action? beginWork, Action blockingWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
 			this._beginWork = beginWork;
-			this._blockingWork = blockingWork ?? throw new ArgumentNullException( nameof( blockingWork ) );
+			this._blockingWork = blockingWork ?? throw new ArgumentEmptyException( nameof( blockingWork ) );
 			this.AfterComplete = afterComplete;
+			this._cancellationToken = cancellationToken;
 		}
 
-		[CanBeNull]
 		private Action? _beginWork { get; }
 
-		[CanBeNull]
 		private Action? _blockingWork { get; }
 
 		private CancellationToken _cancellationToken { get; }
 
-		[CanBeNull]
 		public Action<Task>? AfterComplete { get; }
 
 		private void RunTask() {
@@ -64,18 +67,12 @@ namespace Librainian.Threading {
 			}
 		}
 
-		[NotNull]
-		public static Task Start(
-			CancellationToken cancellationToken,
-			[NotNull] Action blockingWork,
-			[CanBeNull] Action beginWork = null,
-			[CanBeNull] Action<Task> afterComplete = null
-		) {
+		public static Task Start( Action blockingWork, Action? beginWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
 			if ( blockingWork is null ) {
-				throw new ArgumentNullException( nameof( blockingWork ) );
+				throw new ArgumentEmptyException( nameof( blockingWork ) );
 			}
 
-			var worker = new AbandonableTask( cancellationToken, beginWork, blockingWork, afterComplete );
+			var worker = new AbandonableTask( beginWork, blockingWork, afterComplete, cancellationToken );
 			var outerTask = new Task( worker.RunTask, cancellationToken );
 			outerTask.Start();
 

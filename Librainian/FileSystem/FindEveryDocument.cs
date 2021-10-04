@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+//
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,136 +17,196 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-// 
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "FindEveryDocument.cs" last formatted on 2020-08-14 at 8:39 PM.
-
+//
+// File "FindEveryDocument.cs" last touched on 2021-03-07 at 5:15 AM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.FileSystem {
 
 	using System;
-	using System.Collections.Generic;
+	using System.IO;
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Threading.Tasks.Dataflow;
 	using ComputerSystem.Devices;
-	using JetBrains.Annotations;
+	using Exceptions;
+	using Measurement.Time;
 	using Parsing;
-	using Utilities;
+	using Threadsafe;
+	using Utilities.Disposables;
 
+	/// <summary>
+	///     <para>Scan every drive.</para>
+	///     <para>Scan every folder.</para>
+	///     <para>Scan every document.</para>
+	///     <para>await <see cref="StartScanning" /> to start the scan.</para>
+	///     <para>Cancel scanning via <see cref="CancellationTokenSource" />.</para>
+	/// </summary>
 	public class FindEveryDocument : ABetterClassDispose {
 
-		public FindEveryDocument( [NotNull] BufferBlock<Document> documentsFound, [NotNull] IProgress<Single> progress ) {
-			this.DocumentsFound = documentsFound ?? throw new ArgumentNullException( nameof( documentsFound ) );
-			this.Progress = progress ?? throw new ArgumentNullException( nameof( progress ) );
-		}
+		private VolatileBoolean _pauseScanning;
 
-		private BufferBlock<Document>? DocumentsFound { get; }
+		private CancellationTokenSource CancellationTokenSource { get; } = new();
+
+		/// <summary>
+		///     A reference to the out parameter in the ctor.
+		/// </summary>
+		private BufferBlock<IDocument> DocumentsFound { get; }
 
 		private ActionBlock<Disk>? DrivesFound { get; set; }
 
 		private ActionBlock<IFolder>? FoldersFound { get; set; }
 
-		private String? Status { get; set; }
+		public String? CurrentStatus { get; private set; }
 
-		public CancellationTokenSource CancellationTokenSource { get; } = new();
+		public IProgress<(Single counter, String message)> Progress { get; }
 
-		/// <summary>A list of drives that exist in the system.</summary>
-		[NotNull]
-		public List<Disk> PossibleDrives { get; } = new( ParsingConstants.English.Alphabet.Uppercase.Length );
+		public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
 
-		public IProgress<Single> Progress { get; }
+		public FindEveryDocument( IProgress<(Single, String)> progress, out BufferBlock<IDocument> documentsFound ) : base( nameof( FindEveryDocument ) ) {
+			this.Progress = progress ?? throw new ArgumentEmptyException( nameof( progress ) );
+			documentsFound = new BufferBlock<IDocument>();
+			this.DocumentsFound = documentsFound;
+		}
+
+		private void SetCurrentStatus( String? message ) => this.CurrentStatus = message;
 
 		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
 		public override void DisposeManaged() { }
 
-		[NotNull]
-		public Task StartScanning() {
-			return Task.Run( () => {
-				ScanDisks();
+		public void PauseScanning() => this._pauseScanning.Value = true;
 
-				Int64 counter = 0;
+		public void ResumeScanning() => this._pauseScanning.Value = false;
 
-				this.DrivesFound = new ActionBlock<Disk>( disk => counter = ScanDisk( disk, counter ) );
+		public async Task StartScanning() {
+			Int64 counter = 0;
 
-				this.FoldersFound = new ActionBlock<IFolder>( parent => {
-					if ( parent == null ) {
-						return;
-					}
+			this.SetCurrentStatus( "Creating ActionBlocks.." );
 
-					Parallel.ForEach( parent.BetterGetFolders().AsParallel(), folder => counter = ScanFolders( folder, counter ) );
+			this.DrivesFound = new ActionBlock<Disk>( async disk => await ScanDisk( disk ).ConfigureAwait( false ) );
 
-					Parallel.ForEach( parent.GetDocuments().AsParallel(), document => counter = ScanDocuments( document, counter ) );
+			this.FoldersFound = new ActionBlock<IFolder>( async parent => {
+				await PauseWhilePaused().ConfigureAwait( false );
 
-				} );
-			}, this.CancellationTokenSource.Token );
+				await foreach ( var folder in parent.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ).ConfigureAwait( false ) ) {
+					await AddFoundFolder( folder ).ConfigureAwait( false );
+				}
 
-			void ScanDisks() {
+				await foreach ( var document in parent.EnumerateDocuments( "*.*", this.CancellationToken ).ConfigureAwait( false ) ) {
+					await AddFoundDocument( document ).ConfigureAwait( false );
+				}
+			} );
+
+			ScanAllDisks();
+
+			try {
+				var drivesFound = this.DrivesFound;
+				if ( drivesFound != null ) {
+					await drivesFound.Completion.ConfigureAwait( false );
+				}
+			}
+			catch ( TaskCanceledException ) { }
+
+			try {
+				var foldersFound = this.FoldersFound;
+				if ( foldersFound != null ) {
+					await foldersFound.Completion.ConfigureAwait( false );
+				}
+			}
+			catch ( TaskCanceledException ) { }
+
+			try {
+				await this.DocumentsFound.Completion.ConfigureAwait( false );
+			}
+			catch ( TaskCanceledException ) { }
+
+			void ScanAllDisks() {
+				this.SetCurrentStatus( "Scanning over drives.." );
 				foreach ( var drive in ParsingConstants.English.Alphabet.Uppercase.Select( ch => new Disk( ch ) ).Where( drive => drive.Exists() && drive.Info.IsReady ) ) {
-					if ( this.CancellationTokenSource.IsCancellationRequested ) {
+					if ( this.CancellationToken.IsCancellationRequested ) {
 						return;
 					}
-					this.PossibleDrives.Add( drive );
+
+					this.SetCurrentStatus( $"Found drive {drive.DriveLetter.ToString().SmartQuote()}." );
+
+					this.DrivesFound?.Post( drive );
 				}
 
-				this.PossibleDrives.TrimExcess();
+				this.DrivesFound?.Complete();
 			}
 
-			Int64 ScanDisk( Disk disk, Int64 counter ) {
+			async Task ScanDisk( Disk disk ) {
 				var root = new Folder( disk.Info.RootDirectory.FullName );
+				this.SetCurrentStatus( $"Found root folder {root.FullPath.SmartQuote()}." );
 
-				Parallel.ForEach( root.BetterGetFolders().AsParallel(), folder => {
-					if ( this.CancellationTokenSource.IsCancellationRequested ) {
-						return;
-					}
+				await PauseWhilePaused().ConfigureAwait( false );
 
-                    this.Status = $"Found folder `{folder.FullPath}`.";
-                    this.FoldersFound?.Post( folder );
+				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, this.CancellationToken ).ConfigureAwait( false ) ) {
+					await PauseWhilePaused().ConfigureAwait( false );
 
-                    Interlocked.Increment( ref counter );
-					this.Progress.Report( counter );
-				} );
+					this.SetCurrentStatus( $"Found main folder {folder.FullPath.SmartQuote()}." );
+					this.FoldersFound?.Post( folder );
 
-				return counter;
+					Interlocked.Increment( ref counter );
+					this.Progress.Report( (counter, $"Found main folder {folder.FullPath.SmartQuote()}.") );
+				}
 			}
 
-			Int64 ScanFolders( IFolder folder, Int64 counter ) {
-				if ( this.CancellationTokenSource.IsCancellationRequested ) {
-					return counter;
+			async Task AddFoundFolder( IFolder folder ) {
+				await PauseWhilePaused().ConfigureAwait( false );
+
+				if ( this.CancellationToken.IsCancellationRequested ) {
+					return;
 				}
 
-				this.Status = $"Found folder `{folder.FullPath}`.";
+				this.SetCurrentStatus( $"Found sub folder {folder.FullPath.SmartQuote()}." );
 				this.FoldersFound?.Post( folder );
 
 				Interlocked.Increment( ref counter );
-				this.Progress.Report( counter );
-
-				return counter;
+				this.Progress.Report( (counter, $"Found sub folder {folder.FullPath.SmartQuote()}.") );
 			}
 
-			Int64 ScanDocuments( Document document, Int64 counter ) {
-				if ( this.CancellationTokenSource.IsCancellationRequested ) {
-					return counter;
+			async Task AddFoundDocument( IDocument document ) {
+				await PauseWhilePaused().ConfigureAwait( false );
+				if ( this.CancellationToken.IsCancellationRequested ) {
+					return;
 				}
 
-				this.Status = $"Found document `{document.FullPath}`.";
-				this.DocumentsFound?.Post( document );
+				this.SetCurrentStatus( $"Found document {document.FullPath.SmartQuote()}." );
+				this.DocumentsFound.Post( document );
 
 				Interlocked.Increment( ref counter );
 
-				this.Progress.Report( counter );
+				this.Progress.Report( (counter, $"Found document {document.FullPath.SmartQuote()}.") );
+			}
 
-				return counter;
+			async Task PauseWhilePaused() {
+				if ( this._pauseScanning ) {
+					this.SetCurrentStatus( "Paused.." );
+
+					while ( this._pauseScanning ) {
+						try {
+							await Task.Delay( Seconds.One, this.CancellationToken ).ConfigureAwait( false );
+						}
+						catch ( TaskCanceledException ) { }
+					}
+					this.SetCurrentStatus( "Resuming.." );
+				}
 			}
 		}
 
+		public void StopScanning() {
+			this.CancellationTokenSource.Cancel( false );
+			this.DrivesFound.Complete();
+			this.FoldersFound.Complete();
+			this.ResumeScanning();
+		}
 	}
-
 }
