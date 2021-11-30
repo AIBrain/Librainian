@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<IsPackable>false</IsPackable>
 		<Platforms>x64</Platforms>
@@ -22,16 +22,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.1" />
-		<PackageReference Include="FluentAssertions" Version="6.1.0" />
+		<PackageReference Include="AsyncAwaitBestPractices" Version="6.0.3" />
+		<PackageReference Include="FluentAssertions" Version="6.2.0" />
 		<PackageReference Include="JetBrains.DotMemoryUnit" Version="3.1.20200127.214830" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+		<PackageReference Include="Moq" Version="4.16.1" />
+		<PackageReference Include="NodaTime.Testing" Version="3.0.9" />
 		<PackageReference Include="NUnit" Version="3.13.2" />
+		<PackageReference Include="System.Text.Json" Version="6.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Librainian\Librainian.csproj" />
-	  <ProjectReference Include="..\..\Others\BigDecimal\BigDecimal\BigDecimal.csproj" />
 	</ItemGroup>
 
 </Project>

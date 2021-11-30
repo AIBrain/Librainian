@@ -20,102 +20,99 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BackgroundThreadQueue.cs" last touched on 2021-09-11 at 6:58 AM by Protiguous.
+// File "BackgroundThreadQueue.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Threading;
-	using Exceptions;
-	using Threadsafe;
-	using Utilities.Disposables;
+using System;
+using System.Collections.Concurrent;
+using System.Threading;
+using Exceptions;
+using Threadsafe;
+using Utilities.Disposables;
 
-	/// <summary>
-	///     Yah.. old class.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public class BackgroundThreadQueue<T> : ABetterClassDispose {
+/// <summary>
+///     Yah.. old class.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class BackgroundThreadQueue<T> : ABetterClassDispose {
 
-		private VolatileBoolean _quit;
+	private VolatileBoolean _quit;
 
-		private Thread? thread;
+	private Thread? thread;
 
-		public BackgroundThreadQueue() : base( nameof( BackgroundThreadQueue<T> ) ) { }
+	public BackgroundThreadQueue() : base( nameof( BackgroundThreadQueue<T> ) ) { }
 
-		private BlockingCollection<T> MessageQueue { get; } = new();
+	private BlockingCollection<T> MessageQueue { get; } = new();
 
-		private CancellationToken Token { get; set; }
+	private CancellationToken Token { get; set; }
 
-		private void ProcessQueue( Action<T> action ) {
-			if ( action is null ) {
-				throw new ArgumentEmptyException( nameof( action ) );
+	private void ProcessQueue( Action<T> action ) {
+		if ( action is null ) {
+			throw new NullException( nameof( action ) );
+		}
+
+		try {
+			var consume = this.MessageQueue.GetConsumingEnumerable( this.Token );
+
+			if ( this._quit ) {
+				return;
 			}
 
-			try {
-				var consume = this.MessageQueue.GetConsumingEnumerable( this.Token );
+			foreach ( var item in consume ) {
+				if ( this._quit ) {
+					return; //check after blocking
+				}
+
+				action( item );
 
 				if ( this._quit ) {
-					return;
+					return; //check before blocking
 				}
-
-				foreach ( var item in consume ) {
-					if ( this._quit ) {
-						return; //check after blocking
-					}
-
-					action( item );
-
-					if ( this._quit ) {
-						return; //check before blocking
-					}
-				}
-			}
-			catch ( OperationCanceledException ) {
-				this._quit = true;
-			}
-			catch ( ObjectDisposedException ) {
-				this._quit = true;
 			}
 		}
-
-		/// <summary>Same as <see cref="Enqueue" />.</summary>
-		/// <param name="message"></param>
-		public void Add( T? message ) => this.MessageQueue.Add( message, this.Token );
-
-		public void Cancel() {
+		catch ( OperationCanceledException ) {
 			this._quit = true;
-			this.MessageQueue.CompleteAdding();
+		}
+		catch ( ObjectDisposedException ) {
+			this._quit = true;
+		}
+	}
+
+	/// <summary>Same as <see cref="Enqueue" />.</summary>
+	/// <param name="message"></param>
+	public void Add( T? message ) => this.MessageQueue.Add( message, this.Token );
+
+	public void Cancel() {
+		this._quit = true;
+		this.MessageQueue.CompleteAdding();
+	}
+
+	public override void DisposeManaged() => this.Cancel();
+
+	/// <summary>Same as <see cref="Add" />.</summary>
+	/// <param name="message"></param>
+	public void Enqueue( T? message ) => this.MessageQueue.Add( message, this.Token );
+
+	/// <param name="each">Action to perform (poke into <see cref="MessageQueue" />).</param>
+	/// <param name="cancellationToken"></param>
+	public void Start( Action<T> each, CancellationToken cancellationToken ) {
+		if ( each is null ) {
+			throw new NullException( nameof( each ) );
 		}
 
-		public override void DisposeManaged() => this.Cancel();
+		this.Token = cancellationToken;
 
-		/// <summary>Same as <see cref="Add" />.</summary>
-		/// <param name="message"></param>
-		public void Enqueue( T? message ) => this.MessageQueue.Add( message, this.Token );
+		this.thread = new Thread( () => this.ProcessQueue( each ) ) {
+			IsBackground = true
+		};
 
-		
-		/// <param name="each">Action to perform (poke into <see cref="MessageQueue" />).</param>
-		/// <param name="cancellationToken"></param>
-		public void Start( Action<T> each, CancellationToken cancellationToken ) {
-			if ( each is null ) {
-				throw new ArgumentEmptyException( nameof( each ) );
-			}
-
-			this.Token = cancellationToken;
-
-			this.thread = new Thread( () => this.ProcessQueue( each ) ) {
-				IsBackground = true
-			};
-
-			this.thread.Start();
-		}
-
+		this.thread.Start();
 	}
 
 }

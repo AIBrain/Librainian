@@ -25,29 +25,28 @@
 //
 // File "TestPartitions.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests.OperatingSystem {
+namespace LibrainianUnitTests.OperatingSystem;
 
-	using System;
-	using Librainian.Maths;
-	using Librainian.OperatingSystem;
-	using NUnit.Framework;
+using System;
+using Librainian.Maths;
+using Librainian.OperatingSystem;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class TestPartitions {
+[TestFixture]
+public static class TestPartitions {
 
-		[Test]
-		public static void Test_Search_For_SSD() {
-			foreach ( var disk in Byte.MinValue.To( 26 ) ) {
-				var isDiskSSD = disk.IsDiskSSD();
+	[Test]
+	public static void Test_Search_For_SSD() {
+		foreach ( var disk in Byte.MinValue.To( 26 ) ) {
+			var isDiskSSD = disk.IsDiskSSD();
 
-				var rotates = disk.IsRotateDevice();
+			var rotates = disk.IsRotateDevice();
 
-				if ( isDiskSSD == true ) {
-					Console.WriteLine( $"Disk {disk} is an SSD." );
-				}
-				else if ( rotates == true ) {
-					Console.WriteLine( $"Disk {disk} rotates." );
-				}
+			if ( isDiskSSD == true ) {
+				TestContext.WriteLine( $"Disk {disk} is an SSD." );
+			}
+			else if ( rotates == true ) {
+				TestContext.WriteLine( $"Disk {disk} rotates." );
 			}
 		}
 	}

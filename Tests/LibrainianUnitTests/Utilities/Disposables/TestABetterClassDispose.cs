@@ -23,61 +23,106 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TestABetterClassDispose.cs" last touched on 2021-07-22 at 5:54 AM by Protiguous.
+// File "TestABetterClassDispose.cs" last touched on 2021-11-13 at 9:22 AM by Protiguous.
 
-namespace LibrainianUnitTests.Utilities.Disposables {
+namespace LibrainianUnitTests.Utilities.Disposables;
 
-	using System;
-	using System.Diagnostics.CodeAnalysis;
-	using Librainian;
-	using Librainian.Maths;
-	using Librainian.Utilities.Disposables;
-	using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using Librainian;
+using Librainian.Maths;
+using Librainian.Measurement.Time;
+using Librainian.Utilities.Disposables;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class TestABetterClassDispose {
+[TestFixture]
+public class TestABetterClassDispose {
 
-		private static Int32 N => 65536 * 256;
+	private static Int32 N => MathConstants.Sizes.OneMegaByte;
 
-		[Test]
-		public void TestDisposeMultipleTimesLongerLife() {
-			ForceGC();
-			foreach ( var i in 1.To( N ) ) {
-				using var testAbcd = new TestABCD( i );
-			}
+	private static Stopwatch SloppyBenchmarker { get; } = Stopwatch.StartNew();
 
-			ForceGC();
-			this.Nop();
+	private static void ForceGC() => GC.Collect( 2, GCCollectionMode.Forced, true );
+
+	[Test]
+	public void TestDisposeScopedDispose() {
+		ForceGC();
+
+		SloppyBenchmarker.Restart();
+		foreach ( var i in 1.To( N ) ) {
+			using var testAbcd = new TestABCD( i );
 		}
 
-		private static void ForceGC() => GC.Collect( 2, GCCollectionMode.Forced, true );
+		GC.WaitForPendingFinalizers();
 
-		[Test]
-		public void TestDisposeMultipleTimesExplicitly() {
-			ForceGC();
-			foreach ( var i in 1.To( N ) )
-            {
-                using var testAbcd = new TestABCD( i );
-                testAbcd.DisposeManaged();
-            }
+		SloppyBenchmarker.Stop();
 
-			ForceGC();
-			this.Nop();
+		TestContext.WriteLine( $"Test {nameof( this.TestDisposeScopedDispose )} took {SloppyBenchmarker.Elapsed.Simpler()}" );
+	}
+
+	[Test]
+	public void TestDisposeStatementWithDispose() {
+		ForceGC();
+		SloppyBenchmarker.Restart();
+
+		foreach ( var i in 1.To( N ) ) {
+			using var testAbcd = new TestABCD( i );
+			testAbcd.DisposeManaged();
 		}
 
-		public class TestABCD : ABetterClassDispose {
+		GC.WaitForPendingFinalizers();
 
-			private readonly Int32 _value;
+		SloppyBenchmarker.Stop();
 
-			public TestABCD( Int32 val ) : base( nameof( TestABCD ) ) => this._value = val;
+		TestContext.WriteLine( $"Test {nameof( this.TestDisposeStatementWithDispose )} took {SloppyBenchmarker.Elapsed.Simpler()}" );
+	}
 
-			/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-			public override void DisposeManaged() {
-				if ( this._value % 1024 == 1024 ) {
-					Console.WriteLine( this._value );
-				}
+	[Test]
+	[SuppressMessage( "ReSharper", "ConvertToUsingDeclaration" )]
+	public void TestDisposeUsingStatement() {
+		ForceGC();
+		SloppyBenchmarker.Restart();
+		foreach ( var i in 1.To( N ) ) {
+			using ( var testAbcd = new TestABCD( i ) ) {
+				testAbcd.DisposeManaged();
 			}
+		}
 
+		GC.WaitForPendingFinalizers();
+		SloppyBenchmarker.Stop();
+
+		TestContext.WriteLine( $"Test {nameof( this.TestDisposeUsingStatementWithoutDispose )} took {SloppyBenchmarker.Elapsed.Simpler()}" );
+	}
+
+	[Test]
+	[SuppressMessage( "ReSharper", "ConvertToUsingDeclaration" )]
+	public void TestDisposeUsingStatementWithoutDispose() {
+		ForceGC();
+		SloppyBenchmarker.Restart();
+		foreach ( var i in 1.To( N ) ) {
+			using ( var testAbcd = new TestABCD( i ) ) {
+				testAbcd.Nop();
+			}
+		}
+
+		GC.WaitForPendingFinalizers();
+		SloppyBenchmarker.Stop();
+
+		TestContext.WriteLine( $"Test {nameof( this.TestDisposeUsingStatementWithoutDispose )} took {SloppyBenchmarker.Elapsed.Simpler()}" );
+	}
+
+	public class TestABCD : ABetterClassDispose {
+
+		private readonly Int32 _value;
+
+		public TestABCD( Int32 val ) : base( nameof( TestABCD ) ) => this._value = val;
+
+		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+		public override void DisposeManaged() {
+			if ( this._value % 128 == 0 ) {
+				this._value.Nop();
+			}
 		}
 
 	}

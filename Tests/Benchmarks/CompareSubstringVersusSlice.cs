@@ -25,31 +25,29 @@
 // 
 // File "CompareSubstringVersusSlice.cs" last touched on 2021-08-23 at 6:25 AM by Protiguous.
 
-namespace Benchmarks {
+namespace Benchmarks;
 
-	using System;
-	using BenchmarkDotNet.Attributes;
+using System;
+using BenchmarkDotNet.Attributes;
 
-	[MemoryDiagnoser]
-	public class CompareSubstringVersusSlice {
+[MemoryDiagnoser]
+public class CompareSubstringVersusSlice {
 
-		private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
+	private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
 
-		[Benchmark]
-		public String GetCity() {
-			var cityAndPostalCode = Default_TestAddress.Substring( 37, 15 );
-			var city = cityAndPostalCode.Substring( 7, 8 );
-			return city;
-		}
+	[Benchmark]
+	public String GetCity() {
+		var cityAndPostalCode = Default_TestAddress.Substring( 37, 15 );
+		var city = cityAndPostalCode.Substring( 7, 8 );
+		return city;
+	}
 
-		[Benchmark]
-		public String GetCity2() {
-			ReadOnlySpan<Char> addressAsSpan = Default_TestAddress;
-			var cityAndPostalCode = addressAsSpan.Slice( 37, 15 );
-			var city = cityAndPostalCode.Slice( 7, 8 );
-			return city.ToString();
-		}
-
+	[Benchmark]
+	public String GetCity2() {
+		ReadOnlySpan<Char> addressAsSpan = Default_TestAddress;
+		var cityAndPostalCode = addressAsSpan.Slice( 37, 15 );
+		var city = cityAndPostalCode.Slice( 7, 8 );
+		return city.ToString();
 	}
 
 }

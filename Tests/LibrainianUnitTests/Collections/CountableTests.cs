@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,105 +17,61 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "CountableTests.cs" last touched on 2021-10-25 at 7:16 AM by Protiguous.
 
-// ReSharper disable once CheckNamespace
+namespace LibrainianUnitTests.Collections;
 
-namespace Librainian {
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Librainian;
+using Librainian.Collections;
+using Librainian.Maths;
+using NUnit.Framework;
 
-	using System;
-	using System.ComponentModel;
-	using Parsing;
+[TestFixture]
+public static class CountableTests {
 
-	public enum Status : Int16 {
+	private static Int32 Threads { get; } = Environment.ProcessorCount;
 
-		[Description( Symbols.SkullAndCrossbones )]
-		Fatal = -Flawless,
+	[Test]
+	public static void AddNameThreadSafetyTest() {
+		var countable = new Countable<String>();
 
-		[Description( Symbols.Exception )]
-		Exception = Error - 1,
+		var threads = new List<Thread>( Threads );
 
-		[Description( Symbols.Error )]
-		Error = Warning - 1,
+		foreach ( var thread in 1.To( Threads ).Select( _ => new Thread( () => Many( ref countable ) ) ) ) {
+			threads.Add( thread );
+			thread.Start();
+		}
 
-		[Description( Symbols.Warning )]
-		Warning = Skip - 1,
+		Parallel.ForEach( threads.AsParallel(), thread => thread.Join() );
 
-		[Description( Symbols.Fail )]
-		Skip = -Advance,
+		1.Nop();
+		//Assert.AreEqual( expected: Threads * Threads, actual: list.Count );
+	}
 
-		[Description( Symbols.BlackStar )]
-		Cancel = -Continue,
+	private static void Many( ref Countable<String> countable ) {
+		foreach ( var _ in 1.To( Threads * Threads ) ) {
+			var length = ( Int32 ) Randem.NextByte( 2, 3 );
+			var key = length.RandomPronounceableString();
+			var number = Randem.NextBigInteger( 128 );
 
-		[Description( Symbols.Timeout )]
-		Timeout = Stop - 1,
-
-		[Description( Symbols.StopSign )]
-		Stop = -Start,
-
-		[Description( Symbols.StopSign )]
-		Halt = -Proceed,
-
-		[Description( Symbols.StopSign )]
-		Done = Negative - 1,
-
-		[Description( Symbols.FailBig )]
-		Negative = No - 1,
-
-		[Description( Symbols.Fail )]
-		No = -Yes,
-
-		[Description( Symbols.Fail )]
-		Bad = -Good,
-
-		[Description( Symbols.BlackStar )]
-		Failure = -Success,
-
-		[Description( Symbols.Unknown )]
-		Unknown = 0,
-
-		[Description( Symbols.Unknown )]
-		None = Unknown,
-
-		[Description( Symbols.WhiteStar )]
-		Success = 1,
-
-		[Description( Symbols.WhiteStar )]
-		Okay = Success + 1,
-
-		[Description( Symbols.CheckMark )]
-		Good = Okay + 1,
-
-		[Description( Symbols.CheckMark )]
-		Yes = Good + 1,
-
-		[Description( Symbols.CheckMark )]
-		Positive,
-
-		[Description( Symbols.CheckMark )]
-		Continue,
-
-		[Description( Symbols.CheckMark )]
-		Go,
-
-		[Description( Symbols.CheckMark )]
-		Start,
-
-		[Description( Symbols.CheckMark )]
-		Proceed,
-
-		[Description( Symbols.CheckMark )]
-		Advance,
-
-		[Description( Symbols.CheckMark )]
-		Flawless
-
+			if ( Randem.NextBoolean() ) {
+				countable.Add( key, number );
+			}
+			else {
+				countable.Subtract( key, number );
+			}
+		}
 	}
 
 }

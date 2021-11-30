@@ -23,29 +23,48 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MathsTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "MathsTests.cs" last touched on 2021-11-18 at 7:53 AM by Protiguous.
 
-namespace LibrainianUnitTests.Maths {
+namespace LibrainianUnitTests.Maths;
 
-	using System.Numerics;
-	using Librainian.Maths;
-	using NUnit.Framework;
+using System.Numerics;
+using FluentAssertions;
+using Librainian.Maths;
+using Librainian.Parsing;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class MathsTests {
+[TestFixture]
+public static class MathsTests {
 
-		//[Test]
-		public static void TestOperations() {
-			var test = new[] {
-				new BigInteger( 7 ), new BigInteger( 8 ), new BigInteger( 9 )
-			};
+	//[Test]
+	public static void TestOperations() {
+		var test = new[] {
+			new BigInteger( 7 ), new BigInteger( 8 ), new BigInteger( 9 )
+		};
 
-			var shouldBe = test.Sum();
+		var shouldBe = test.Sum();
 
-			var result = HumanCalculator.Operate( HumanCalculator.Operation.Addition, test );
-			Assert.True( result == shouldBe );
+		var result = HumanCalculator.Operate( MathOperation.Addition, test );
+		Assert.True( result == shouldBe );
+	}
+
+	[Test]
+	public static void TestUselessHalfPlusDubble() {
+		var l = ParsingConstants.English.Alphabet.Lowercase.Length;
+		l.Should().Be( 26 );
+
+		var min = l.Half().Half();
+		min.Should().Be( 6 );
+
+		var max = l.Dubble().Dubble();
+		max.Should().Be( 104 );
+
+		foreach ( var n in min.To( max ) ) {
+			var low = n.Half();
+			var high = n.Dubble();
+			var mid = ( low + high ).Half();
+			TestContext.WriteLine( mid );
 		}
-
 	}
 
 }

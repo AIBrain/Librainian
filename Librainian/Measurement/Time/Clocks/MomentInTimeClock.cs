@@ -20,57 +20,55 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MomentInTimeClock.cs" last touched on 2021-09-28 at 6:38 AM by Protiguous.
+// File "MomentInTimeClock.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
-	using Utilities;
+using System;
+using Extensions;
+using Newtonsoft.Json;
+using Utilities;
 
-	/// <summary>A clock that stays at the set moment in time.</summary>
-	[JsonObject]
-	[Immutable]
-	[NeedsTesting]
-	public class MomentInTimeClock : IStandardClock {
+/// <summary>A clock that stays at the set moment in time.</summary>
+[JsonObject]
+[Immutable]
+[NeedsTesting]
+public class MomentInTimeClock : IStandardClock {
 
-		public MomentInTimeClock() : this( TimeClock.Now() ) { }
+	public MomentInTimeClock() : this( TimeClock.Now() ) { }
 
-		public MomentInTimeClock( TimeClock time ) {
-			this.Hour = time.Hour;
-			this.Minute = time.Minute;
-			this.Second = time.Second;
-			this.Millisecond = time.Millisecond;
-			this.Microsecond = time.Microsecond;
-		}
-
-		public MomentInTimeClock( DateTime time ) : this( ( TimeClock )time ) { }
-
-		[JsonProperty]
-		public ClockMicrosecond Microsecond { get; }
-
-		[JsonProperty]
-		public ClockHour Hour { get; }
-
-		[JsonProperty]
-		public ClockMillisecond Millisecond { get; }
-
-		[JsonProperty]
-		public ClockMinute Minute { get; }
-
-		[JsonProperty]
-		public ClockSecond Second { get; }
-
-		public Boolean IsAm() => !this.IsPm();
-
-		public Boolean IsPm() => this.Hour.Value >= 12;
-
-		public TimeClock Time() => new(this.Hour, this.Minute, this.Second, this.Millisecond, this.Microsecond);
-
+	public MomentInTimeClock( TimeClock time ) {
+		this.Hour = time.Hour;
+		this.Minute = time.Minute;
+		this.Second = time.Second;
+		this.Millisecond = time.Millisecond;
+		this.Microsecond = time.Microsecond;
 	}
+
+	public MomentInTimeClock( DateTime time ) : this( ( TimeClock )time ) { }
+
+	[JsonProperty]
+	public ClockMicrosecond Microsecond { get; }
+
+	[JsonProperty]
+	public ClockHour Hour { get; }
+
+	[JsonProperty]
+	public ClockMillisecond Millisecond { get; }
+
+	[JsonProperty]
+	public ClockMinute Minute { get; }
+
+	[JsonProperty]
+	public ClockSecond Second { get; }
+
+	public Boolean IsAm() => !this.IsPm();
+
+	public Boolean IsPm() => this.Hour.Value >= 12;
+
+	public TimeClock Time() => new(this.Hour, this.Minute, this.Second, this.Millisecond, this.Microsecond);
 
 }

@@ -20,143 +20,140 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompressExtensions.cs" last touched on 2021-08-23 at 8:25 AM by Protiguous.
+// File "CompressExtensions.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
 #nullable enable
 
-namespace Librainian.OperatingSystem.Compression {
+namespace Librainian.OperatingSystem.Compression;
 
-	using System;
-	using System.IO;
-	using System.IO.Compression;
-	using System.Text;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
+using System.Threading.Tasks;
+using Exceptions;
 
-	
-	public static class CompressExtensions {
+public static class CompressExtensions {
 
-		/// <summary>Compresses the data by using <see cref="GZipStream" />.</summary>
-		/// <param name="data"></param>
-		/// <param name="compressionLevel"></param>
-		public static Byte[] Compress( this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
-			if ( data is null ) {
-				throw new ArgumentEmptyException( nameof( data ) );
-			}
-
-			using var output = new MemoryStream();
-
-			using var compress = new GZipStream( output, compressionLevel );
-
-			compress.Write( data, 0, data.Length );
-
-			return output.ToArray();
+	/// <summary>Compresses the data by using <see cref="GZipStream" />.</summary>
+	/// <param name="data"></param>
+	/// <param name="compressionLevel"></param>
+	public static Byte[] Compress( this Byte[] data, CompressionLevel compressionLevel = CompressionLevel.Optimal ) {
+		if ( data is null ) {
+			throw new NullException( nameof( data ) );
 		}
 
-		public static Byte[] Compress( this String text, Encoding? encoding = null ) {
-			if ( text is null ) {
-				throw new ArgumentEmptyException( nameof( text ) );
-			}
+		using var output = new MemoryStream();
 
-			return ( encoding ?? Common.DefaultEncoding ).GetBytes( text ).Compress();
+		using var compress = new GZipStream( output, compressionLevel );
+
+		compress.Write( data, 0, data.Length );
+
+		return output.ToArray();
+	}
+
+	public static Byte[] Compress( this String text, Encoding? encoding = null ) {
+		if ( text is null ) {
+			throw new NullException( nameof( text ) );
 		}
 
-		/// <summary>Returns the string, Gzip compressed and then converted to base64.</summary>
-		/// <param name="text"></param>
-		/// <param name="encoding"></param>
-		public static async Task<String> CompressAsync( this String text, Encoding? encoding = null ) {
-			var buffer = ( encoding ?? Common.DefaultEncoding ).GetBytes( text );
+		return ( encoding ?? Common.DefaultEncoding ).GetBytes( text ).Compress();
+	}
 
-			await using var streamIn = new MemoryStream( buffer );
+	/// <summary>Returns the string, Gzip compressed and then converted to base64.</summary>
+	/// <param name="text"></param>
+	/// <param name="encoding"></param>
+	public static async Task<String> CompressAsync( this String text, Encoding? encoding = null ) {
+		var buffer = ( encoding ?? Common.DefaultEncoding ).GetBytes( text );
 
-			await using var streamOut = new MemoryStream();
+		await using var streamIn = new MemoryStream( buffer );
 
-			await using var zipStream = new GZipStream( streamOut, CompressionMode.Compress );
-			var task = streamIn.CopyToAsync( zipStream );
+		await using var streamOut = new MemoryStream();
 
-			await task.ConfigureAwait( false );
+		await using var zipStream = new GZipStream( streamOut, CompressionMode.Compress );
+		var task = streamIn.CopyToAsync( zipStream );
 
-			return Convert.ToBase64String( streamOut.ToArray() );
+		await task.ConfigureAwait( false );
+
+		return Convert.ToBase64String( streamOut.ToArray() );
+	}
+
+	public static Byte[] Decompress( this Byte[] data ) {
+		if ( data is null ) {
+			throw new NullException( nameof( data ) );
 		}
 
-		public static Byte[] Decompress( this Byte[] data ) {
-			if ( data is null ) {
-				throw new ArgumentEmptyException( nameof( data ) );
-			}
+		using var memoryStream = new MemoryStream( data );
 
-			using var memoryStream = new MemoryStream( data );
+		using var decompress = new GZipStream( memoryStream, CompressionMode.Decompress );
 
-			using var decompress = new GZipStream( memoryStream, CompressionMode.Decompress );
+		using var output = new MemoryStream();
 
-			using var output = new MemoryStream();
+		decompress.CopyTo( output );
 
-			decompress.CopyTo( output );
+		return output.ToArray();
+	}
 
-			return output.ToArray();
+	/// <summary>Returns the string decompressed (from base64).</summary>
+	/// <param name="text"></param>
+	/// <param name="encoding"></param>
+	public static async Task<String> DecompressAsync( this String text, Encoding? encoding = null ) {
+		var buffer = Convert.FromBase64String( text );
+
+		await using var streamIn = new MemoryStream( buffer );
+		await using var streamOut = new MemoryStream();
+
+		await using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
+		await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
+
+		return ( encoding ?? Common.DefaultEncoding ).GetString( streamOut.ToArray() );
+	}
+
+	public static String DecompressToString( this Byte[] data, Encoding? encoding = null ) {
+		if ( data is null ) {
+			throw new NullException( nameof( data ) );
 		}
 
-		/// <summary>Returns the string decompressed (from base64).</summary>
-		/// <param name="text"></param>
-		/// <param name="encoding"></param>
-		public static async Task<String> DecompressAsync( this String text, Encoding? encoding = null ) {
-			var buffer = Convert.FromBase64String( text );
+		return ( encoding ?? Common.DefaultEncoding ).GetString( data.Decompress() );
+	}
 
-			await using var streamIn = new MemoryStream( buffer );
-			await using var streamOut = new MemoryStream();
-
-			await using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
-			await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
-
-			return ( encoding ?? Common.DefaultEncoding ).GetString( streamOut.ToArray() );
+	/// <summary>Returns the string decompressed (from base64).</summary>
+	/// <param name="text"></param>
+	/// <param name="encoding"></param>
+	public static String FromCompressedBase64( this String text, Encoding? encoding = null ) {
+		if ( text is null ) {
+			throw new NullException( nameof( text ) );
 		}
 
-		public static String DecompressToString( this Byte[] data, Encoding? encoding = null ) {
-			if ( data is null ) {
-				throw new ArgumentEmptyException( nameof( data ) );
-			}
+		var buffer = Convert.FromBase64String( text );
 
-			return ( encoding ?? Common.DefaultEncoding ).GetString( data.Decompress() );
-		}
+		using var streamIn = new MemoryStream( buffer );
 
-		/// <summary>Returns the string decompressed (from base64).</summary>
-		/// <param name="text"></param>
-		/// <param name="encoding"></param>
-		public static String FromCompressedBase64( this String text, Encoding? encoding = null ) {
-			if ( text is null ) {
-				throw new ArgumentEmptyException( nameof( text ) );
-			}
+		using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
 
-			var buffer = Convert.FromBase64String( text );
+		using var streamOut = new MemoryStream();
 
-			using var streamIn = new MemoryStream( buffer );
+		gs.CopyTo( streamOut );
 
-			using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
+		return ( encoding ?? Common.DefaultEncoding ).GetString( streamOut.ToArray() );
+	}
 
-			using var streamOut = new MemoryStream();
+	/// <summary>Returns the string compressed (and then returned as a base64 string).</summary>
+	/// <param name="text"></param>
+	/// <param name="encoding"></param>
+	public static String ToCompressedBase64( this String text, Encoding? encoding = null ) {
+		using var incoming = new MemoryStream( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ), false );
 
-			gs.CopyTo( streamOut );
+		using var streamOut = new MemoryStream();
 
-			return ( encoding ?? Common.DefaultEncoding ).GetString( streamOut.ToArray() );
-		}
+		using var destination = new GZipStream( streamOut, CompressionLevel.Fastest );
 
-		/// <summary>Returns the string compressed (and then returned as a base64 string).</summary>
-		/// <param name="text"></param>
-		/// <param name="encoding"></param>
-		public static String ToCompressedBase64( this String text, Encoding? encoding = null ) {
-			using var incoming = new MemoryStream( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ), false );
+		incoming.CopyTo( destination );
 
-			using var streamOut = new MemoryStream();
-
-			using var destination = new GZipStream( streamOut, CompressionLevel.Fastest );
-
-			incoming.CopyTo( destination );
-
-			return Convert.ToBase64String( streamOut.ToArray() );
-		}
-
+		return Convert.ToBase64String( streamOut.ToArray() );
 	}
 
 }

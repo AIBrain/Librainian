@@ -20,30 +20,28 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IABetterClassDisposeAsync.cs" last touched on 2021-09-12 at 3:26 AM by Protiguous.
+// File "IABetterClassDisposeAsync.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
 
-namespace Librainian.Utilities.Disposables {
+namespace Librainian.Utilities.Disposables;
 
-	using System;
-	using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 
-	public interface IABetterClassDisposeAsync : IAsyncDisposable {
+public interface IABetterClassDisposeAsync : IAsyncDisposable {
 
-		Boolean HasDisposedManaged { get; set; }
+	Boolean HasDisposedManaged { get; set; }
 
-		Boolean HasDisposedNative { get; set; }
+	Boolean HasDisposedNative { get; set; }
 
-		Boolean HasSuppressedFinalize { get; set; }
+	Boolean HasSuppressedFinalize { get; set; }
 
-		Boolean IsDisposed { get; }
+	Boolean IsDisposed { get; }
 
-		ValueTask DisposeManagedAsync();
+	ValueTask DisposeManagedAsync();
 
-		ValueTask DisposeNativeAsync();
-
-	}
+	ValueTask DisposeNativeAsync();
 
 }

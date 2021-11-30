@@ -25,39 +25,37 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace LibrainianUnitTests.Linguistics {
+namespace LibrainianUnitTests.Linguistics;
 
-	using System;
-	using System.Linq;
-	using FluentAssertions;
-	using Librainian.Extensions;
-	using Librainian.Linguistics;
-	using NUnit.Framework;
+using System;
+using System.Linq;
+using FluentAssertions;
+using Librainian.Extensions;
+using Librainian.Linguistics;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class SentenceTests {
+[TestFixture]
+public static class SentenceTests {
 
-		public const String Sample = "the quick brown fox jumped over the lazy dog";
+	public const String Sample = "the quick brown fox jumped over the lazy dog";
 
-		public static Sentence SampleLengthTest() {
-			var sentence = Sentence.Parse( Sample );
+	public static Sentence SampleLengthTest() {
+		var sentence = Sentence.Parse( Sample );
 
-			sentence.Count().Should()?.Be( 9 );
+		sentence.Count().Should()?.Be( 9 );
 
-			return sentence;
-		}
+		return sentence;
+	}
 
-		[Test]
-		public static void CombinationsTest() {
-			var sentence = SampleLengthTest();
+	[Test]
+	public static void CombinationsTest() {
+		var sentence = SampleLengthTest();
 
-			var seq = sentence.ToArray();
+		var seq = sentence.ToArray();
 
-			var bob = seq.PowerSet();
+		var bob = seq.PowerSet();
 
-			bob.SelectMany( words => words ).Count().Should()?.Be( 2304 ); //is 2304 correct?
-		}
-
+		bob.SelectMany( words => words ).Count().Should()?.Be( 2304 ); //is 2304 correct?
 	}
 
 }

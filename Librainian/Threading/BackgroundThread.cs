@@ -20,77 +20,73 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "BackgroundThread.cs" last touched on 2021-09-03 at 10:46 AM by Protiguous.
+// File "BackgroundThread.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.ComponentModel;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using Logging;
-	using Measurement.Time;
-	using Threadsafe;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
+using Logging;
+using Measurement.Time;
+using Threadsafe;
+
+/// <summary>
+///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (
+///     <see cref="Proceed" />).
+/// </summary>
+public class BackgroundThread : BackgroundWorker {
+
+	private readonly VolatileBoolean RunningAction = new(false);
+
+	/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
+	/// <param name="cancellationToken"></param>
+	public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {
+		this.ActionToPerform = actionToPerform ?? throw new NullException( nameof( actionToPerform ) );
+		this.cancellationToken = cancellationToken;
+		this.signal = new(false);
+	}
+
+	private Task ActionToPerform { get; }
+
+	private CancellationToken cancellationToken { get; }
+
+	private ManualResetEventSlim signal { get; }
 
 	/// <summary>
-	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (
-	///     <see cref="Proceed" />).
+	///     <para>Every second wake up and see if we can get the semaphore.</para>
+	///     <para>If we can, then run the ActionToPerform().</para>
 	/// </summary>
-	public class BackgroundThread : BackgroundWorker {
+	/// <param name="e"></param>
+	protected override async void OnDoWork( DoWorkEventArgs e ) {
+		while ( !this.cancellationToken.IsCancellationRequested ) {
+			if ( !this.signal.Wait( Seconds.One, this.cancellationToken ) ) {
+				continue;
+			}
 
-		private VolatileBoolean RunningAction = new(false);
+			try {
+				this.RunningAction.Value = true;
 
-		
-		/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
-		/// <param name="cancellationToken"></param>
-		public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {
-			this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
-			this.cancellationToken = cancellationToken;
-			this.signal = new(false);
-		}
-
-		private Task ActionToPerform { get; }
-
-		private CancellationToken cancellationToken { get; }
-
-		private ManualResetEventSlim signal { get; }
-
-		/// <summary>
-		///     <para>Every second wake up and see if we can get the semaphore.</para>
-		///     <para>If we can, then run the ActionToPerform().</para>
-		/// </summary>
-		/// <param name="e"></param>
-		protected override async void OnDoWork( DoWorkEventArgs e ) {
-
-			while ( !this.cancellationToken.IsCancellationRequested ) {
-				if ( !this.signal.Wait( Seconds.One, this.cancellationToken ) ) {
-					continue;
-				}
-
-				try {
-					this.RunningAction.Value = true;
-
-					await this.ActionToPerform.ConfigureAwait( false );
-				}
-				catch ( Exception exception ) {
-					exception.Log( BreakOrDontBreak.Break );
-				}
-				finally {
-					this.RunningAction.Value = false;
-				}
+				await this.ActionToPerform.ConfigureAwait( false );
+			}
+			catch ( Exception exception ) {
+				exception.Log( BreakOrDontBreak.Break );
+			}
+			finally {
+				this.RunningAction.Value = false;
 			}
 		}
-
-		public Boolean IsRunningAction() => this.RunningAction;
-
-		/// <summary>Set the signal.</summary>
-		[Obsolete]
-		public void Proceed() => this.signal.Set();
-
 	}
+
+	public Boolean IsRunningAction() => this.RunningAction;
+
+	/// <summary>Set the signal.</summary>
+	[Obsolete]
+	public void Proceed() => this.signal.Set();
 
 }

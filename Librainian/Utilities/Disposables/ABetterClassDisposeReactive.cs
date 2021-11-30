@@ -20,172 +20,170 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ABetterClassDisposeReactive.cs" last touched on 2021-09-11 at 3:30 AM by Protiguous.
+// File "ABetterClassDisposeReactive.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
 
-namespace Librainian.Utilities.Disposables {
+namespace Librainian.Utilities.Disposables;
 
-	using System;
-	using System.Diagnostics;
-	using System.Runtime.CompilerServices;
-	using System.Threading;
-	using ReactiveUI;
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using ReactiveUI;
+
+/// <summary>
+///     <para>A class for easier implementation the proper <see cref="IDisposable" /> pattern.</para>
+///     <para>Implement overrides on <see cref="DisposeManaged" />, and <see cref="DisposeNative" /> as needed.</para>
+///     <code></code>
+/// </summary>
+/// <remarks>ABCD (hehe).</remarks>
+/// <copyright>Created by Protiguous.</copyright>
+public abstract class ABetterClassDisposeReactive : ReactiveObject, IABetterClassDispose {
+
+	private Int32 _hasDisposedManaged;
+
+	private Int32 _hasDisposedNative;
+
+	private Int32 _hasSuppressedFinalize;
+
+	public Boolean HasDisposedManaged {
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		get => Interlocked.CompareExchange( ref this._hasDisposedManaged, 0, 0 ) == 1;
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		set {
+			if ( this.HasDisposedManaged ) {
+				return; //don't allow the setting to be changed once it has been set.
+			}
+
+			_ = Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
+		}
+	}
+
+	public Boolean HasDisposedNative {
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		get => Interlocked.CompareExchange( ref this._hasDisposedNative, 0, 0 ) == 1;
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		set {
+			if ( this.HasDisposedNative ) {
+				return; //don't allow the setting to be changed once it has been set.
+			}
+
+			_ = Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
+		}
+	}
+
+	public Boolean HasSuppressedFinalize {
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		get => Interlocked.CompareExchange( ref this._hasSuppressedFinalize, 0, 0 ) == 1;
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining )]
+		[DebuggerStepThrough]
+		set {
+			if ( this.HasSuppressedFinalize ) {
+				return; //don't allow the setting to be changed once it has been set.
+			}
+
+			_ = Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
+		}
+	}
+
+	/// <summary>Can be changed to a property, if desired.</summary>
+	public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
 
 	/// <summary>
-	///     <para>A class for easier implementation the proper <see cref="IDisposable" /> pattern.</para>
-	///     <para>Implement overrides on <see cref="DisposeManaged" />, and <see cref="DisposeNative" /> as needed.</para>
-	///     <code></code>
+	///     <para>
+	///         Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> for
+	///         this object.
+	///     </para>
+	///     <para>Note: Calling <see cref="Dispose()" /> multiple times has no effect beyond the first call.</para>
 	/// </summary>
-	/// <remarks>ABCD (hehe).</remarks>
-	/// <copyright>Created by Protiguous.</copyright>
-	public abstract class ABetterClassDisposeReactive : ReactiveObject, IABetterClassDispose {
-
-		private Int32 _hasDisposedManaged;
-
-		private Int32 _hasDisposedNative;
-
-		private Int32 _hasSuppressedFinalize;
-
-		public Boolean HasDisposedManaged {
-			[MethodImpl( MethodImplOptions.AggressiveInlining )]
-			[DebuggerStepThrough]
-			get => Interlocked.CompareExchange( ref this._hasDisposedManaged, 0, 0 ) == 1;
-
-			[MethodImpl( MethodImplOptions.AggressiveInlining )]
-			[DebuggerStepThrough]
-			set {
-				if ( this.HasDisposedManaged ) {
-					return; //don't allow the setting to be changed once it has been set.
-				}
-
-				_ = Interlocked.Exchange( ref this._hasDisposedManaged, value ? 1 : 0 );
+	[DebuggerStepThrough]
+	public void Dispose() {
+		if ( !this.HasDisposedManaged ) {
+			try {
+				this.DisposeManaged(); //Any derived class should have overloaded this method and disposed of any managed objects inside.
+			}
+			catch ( Exception exception ) {
+				Debug.WriteLine( exception );
+			}
+			finally {
+				this.HasDisposedManaged = true;
 			}
 		}
 
-		public Boolean HasDisposedNative {
-			[MethodImpl( MethodImplOptions.AggressiveInlining )]
-			[DebuggerStepThrough]
-			get => Interlocked.CompareExchange( ref this._hasDisposedNative, 0, 0 ) == 1;
-
-			[MethodImpl( MethodImplOptions.AggressiveInlining )]
-			[DebuggerStepThrough]
-			set {
-				if ( this.HasDisposedNative ) {
-					return; //don't allow the setting to be changed once it has been set.
-				}
-
-				_ = Interlocked.Exchange( ref this._hasDisposedNative, value ? 1 : 0 );
+		if ( !this.HasDisposedNative ) {
+			try {
+				this.DisposeNative(); //Any derived class should overload this method.
+			}
+			catch ( Exception exception ) {
+				Debug.WriteLine( exception );
+			}
+			finally {
+				this.HasDisposedNative = true;
 			}
 		}
 
-		public Boolean HasSuppressedFinalize {
-			[MethodImpl( MethodImplOptions.AggressiveInlining )]
-			[DebuggerStepThrough]
-			get => Interlocked.CompareExchange( ref this._hasSuppressedFinalize, 0, 0 ) == 1;
-
-			[MethodImpl( MethodImplOptions.AggressiveInlining )]
-			[DebuggerStepThrough]
-			set {
-				if ( this.HasSuppressedFinalize ) {
-					return; //don't allow the setting to be changed once it has been set.
-				}
-
-				_ = Interlocked.Exchange( ref this._hasSuppressedFinalize, value ? 1 : 0 );
+		if ( this.IsDisposed && !this.HasSuppressedFinalize ) {
+			try {
+				GC.SuppressFinalize( this );
+			}
+			catch ( Exception exception ) {
+				Debug.WriteLine( exception );
+			}
+			finally {
+				this.HasSuppressedFinalize = true;
 			}
 		}
-
-		/// <summary>Can be changed to a property, if desired.</summary>
-		public Boolean IsDisposed => this.HasDisposedManaged && this.HasDisposedNative;
-
-		/// <summary>
-		///     <para>
-		///         Disposes of managed resources, then unmanaged resources, and then calls <see cref="GC.SuppressFinalize" /> for
-		///         this object.
-		///     </para>
-		///     <para>Note: Calling <see cref="Dispose()" /> multiple times has no effect beyond the first call.</para>
-		/// </summary>
-		[DebuggerStepThrough]
-		public void Dispose() {
-			if ( !this.HasDisposedManaged ) {
-				try {
-					this.DisposeManaged(); //Any derived class should have overloaded this method and disposed of any managed objects inside.
-				}
-				catch ( Exception exception ) {
-					Debug.WriteLine( exception );
-				}
-				finally {
-					this.HasDisposedManaged = true;
-				}
-			}
-
-			if ( !this.HasDisposedNative ) {
-				try {
-					this.DisposeNative(); //Any derived class should overload this method.
-				}
-				catch ( Exception exception ) {
-					Debug.WriteLine( exception );
-				}
-				finally {
-					this.HasDisposedNative = true;
-				}
-			}
-
-			if ( this.IsDisposed && !this.HasSuppressedFinalize ) {
-				try {
-					GC.SuppressFinalize( this );
-				}
-				catch ( Exception exception ) {
-					Debug.WriteLine( exception );
-				}
-				finally {
-					this.HasSuppressedFinalize = true;
-				}
-			}
-		}
-
-		/// <summary>
-		///     Just calls <see cref="Dispose()" />. The parameter <paramref name="dispose" /> has no effect with this design.
-		/// </summary>
-		/// <param name="dispose"></param>
-		[DebuggerStepThrough]
-		public void Dispose( Boolean dispose ) => this.Dispose();
-
-		/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
-		/// <example>
-		///     <code>using var bob = new DisposableType();</code>
-		/// </example>
-		[DebuggerStepThrough]
-		public virtual void DisposeManaged() { }
-
-		/// <summary>
-		///     Dispose of COM objects, handles, etc in this method.
-		/// </summary>
-		[DebuggerStepThrough]
-		public virtual void DisposeNative() =>
-			/*make this virtual so it is optional*/
-			this.HasDisposedNative = true;
-
-		~ABetterClassDisposeReactive() {
-			this.Dispose();
-		}
-
-		/*
-
-        /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
-        [CanBeNull]
-        private String? DisposeHint { get; set; }
-        */
-
-		/*
-
-        /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
-        /// <param name="hint"></param>
-        [Conditional( "DEBUG" )]
-        public void SetDisposeHint( [CanBeNull] String? hint ) => this.DisposeHint = hint;
-        */
-
 	}
+
+	/// <summary>
+	///     Just calls <see cref="Dispose()" />. The parameter <paramref name="dispose" /> has no effect with this design.
+	/// </summary>
+	/// <param name="dispose"></param>
+	[DebuggerStepThrough]
+	public void Dispose( Boolean dispose ) => this.Dispose();
+
+	/// <summary>Override this method to dispose of any <see cref="IDisposable" /> managed fields or properties.</summary>
+	/// <example>
+	///     <code>using var bob = new DisposableType();</code>
+	/// </example>
+	[DebuggerStepThrough]
+	public virtual void DisposeManaged() { }
+
+	/// <summary>
+	///     Dispose of COM objects, handles, etc in this method.
+	/// </summary>
+	[DebuggerStepThrough]
+	public virtual void DisposeNative() =>
+		/*make this virtual so it is optional*/
+		this.HasDisposedNative = true;
+
+	~ABetterClassDisposeReactive() {
+		this.Dispose();
+	}
+
+	/*
+
+    /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
+    [CanBeNull]
+    private String? DisposeHint { get; set; }
+    */
+
+	/*
+
+    /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
+    /// <param name="hint"></param>
+    [Conditional( "DEBUG" )]
+    public void SetDisposeHint( [CanBeNull] String? hint ) => this.DisposeHint = hint;
+    */
 
 }

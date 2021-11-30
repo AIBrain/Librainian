@@ -23,49 +23,58 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "UsableSemaphoreThrottleTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "UsableSemaphoreThrottleTests.cs" last touched on 2021-10-25 at 7:28 AM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using System.Threading.Tasks;
-	using Librainian.Threading;
-	using NUnit.Framework;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Librainian.Exceptions;
+using Librainian.Threading;
+using NUnit.Framework;
 
-	public class UsableSemaphoreThrottleTests {
+[TestFixture]
+public class UsableSemaphoreThrottleTests {
 
-		private static async Task<TimeSpan> DoThings( IUsableSemaphore throttle, TimeSpan taskTimeSpan ) {
-			if ( throttle is null ) {
-				throw new ArgumentNullException( nameof( throttle ) );
-			}
-
-			using var wrapper = await throttle.WaitAsync().ConfigureAwait( true );
-			await Task.Delay( taskTimeSpan ).ConfigureAwait( true );
-
-			return wrapper.Elapsed;
+	private static async Task<TimeSpan> DoThings( IUsableSemaphore throttle, TimeSpan taskTimeSpan, CancellationToken cancellationToken ) {
+		if ( throttle is null ) {
+			throw new NullException( nameof( throttle ) );
 		}
 
-		[Theory]
-		[TestCase( 500, 100 )]
-		[TestCase( 100, 500 )]
-		public async Task WaitSemaphoreThrottleAsync( Int32 semaphoreMilliseconds, Int32 taskMilliseconds ) {
-			var semaphoreTimeSpan = TimeSpan.FromMilliseconds( semaphoreMilliseconds );
-			var taskTimeSpan = TimeSpan.FromMilliseconds( taskMilliseconds );
+		using var wrapper = await throttle.WaitAsync( cancellationToken ).ConfigureAwait( true );
 
-			using var throttle = new UsableSemaphoreThrottle( semaphoreTimeSpan, 2 );
-			var taskA = DoThings( throttle, taskTimeSpan );
-			var taskB = DoThings( throttle, taskTimeSpan );
-			var taskC = DoThings( throttle, taskTimeSpan );
-
-			await Task.WhenAll( taskA, taskB, taskC ).ConfigureAwait( true );
-
-			Assert.True( taskA.Result > taskTimeSpan );
-			Assert.True( taskA.Result < taskB.Result );
-
-			Assert.True( taskB.Result > taskTimeSpan + semaphoreTimeSpan );
-			Assert.True( taskB.Result < taskC.Result );
+		if ( wrapper is null ) {
+			throw new NullException( nameof( wrapper ) );
 		}
 
+		await Task.Delay( taskTimeSpan, cancellationToken ).ConfigureAwait( true );
+
+		return wrapper.Elapsed;
+	}
+
+	[Theory]
+	[TestCase( 500, 100 )]
+	[TestCase( 100, 500 )]
+	public async Task WaitSemaphoreThrottleAsync( Int32 semaphoreMilliseconds, Int32 taskMilliseconds ) {
+		var cancellationTokenSource = new CancellationTokenSource();
+		var cancellationToken = cancellationTokenSource.Token;
+
+		var semaphoreTimeSpan = TimeSpan.FromMilliseconds( semaphoreMilliseconds );
+		var taskTimeSpan = TimeSpan.FromMilliseconds( taskMilliseconds );
+
+		using var throttle = new UsableSemaphoreThrottle( semaphoreTimeSpan, 2 );
+		var taskA = DoThings( throttle, taskTimeSpan, cancellationToken );
+		var taskB = DoThings( throttle, taskTimeSpan, cancellationToken );
+		var taskC = DoThings( throttle, taskTimeSpan, cancellationToken );
+
+		await Task.WhenAll( taskA, taskB, taskC ).ConfigureAwait( true );
+
+		Assert.True( taskA.Result > taskTimeSpan );
+		Assert.True( taskA.Result < taskB.Result );
+
+		Assert.True( taskB.Result > taskTimeSpan + semaphoreTimeSpan );
+		Assert.True( taskB.Result < taskC.Result );
 	}
 
 }

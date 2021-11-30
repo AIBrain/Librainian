@@ -23,26 +23,40 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "PasswordTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "PasswordTests.cs" last touched on 2021-10-25 at 8:02 AM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using Librainian.Maths;
-	using Librainian.Security;
-	using NUnit.Framework;
+using Librainian.Maths;
+using Librainian.Parsing;
+using Librainian.Security;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class PasswordTests {
+[TestFixture]
+public static class PasswordTests {
 
-		[Test]
-		public static void TestAFew() {
-			foreach ( var _ in 1.To( 26 ) ) {
-				var test = PronounceablePasswordCreator.Generate( 3.Next( 15 ) );
-				Console.WriteLine( test );
-			}
+	[Test]
+	public static void TestAFewPronounceablePasswords() {
+		var l = ParsingConstants.English.Alphabet.Lowercase.Length;
+		var min = l.Half().Half();
+		var max = l.Dubble();
+
+		foreach ( var _ in min.To( max ) ) {
+			var test = min.Next( max ).GeneratePassword().Capitialize();
+			TestContext.WriteLine( test );
 		}
+	}
 
+	[Test]
+	public static void TestAFewPronounceablePasswordPhrases() {
+		var l = ParsingConstants.English.Alphabet.Lowercase.Length;
+		var min = l.Half().Half();
+		var max = l.Dubble().Dubble();
+
+		foreach ( var _ in min.To( max ) ) {
+			var test = PronounceablePasswordCreator.GeneratePasswordPhrase( min.Next( max ) ).Capitialize();
+			TestContext.WriteLine( test );
+		}
 	}
 
 }

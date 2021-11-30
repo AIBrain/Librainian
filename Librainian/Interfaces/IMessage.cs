@@ -20,57 +20,38 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IMessage.cs" last touched on 2021-09-08 at 1:53 PM by Protiguous.
+// File "IMessage.cs" last formatted on 2021-11-11 at 12:57 PM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces;
 
-	using System;
-	using Parsing;
+using System;
+using Parsing;
 
-	public interface IMessage : IColored, IDisposable {
+public interface IMessage : IColored, IHasDate, IProcessedMessage, IDisposable {
 
-		/// <summary>The data for this message. Usually a string.</summary>
-		String Data { get; init; }
+	/// <summary>The data for this message. Usually a string.</summary>
+	String Data { get; init; }
 
-		/// <summary>The UTC when this message was created.</summary>
-		DateTime Date { get; }
+	/// <summary>
+	///     The message's source identifier.. (like the user's name)
+	/// </summary>
+	String? Description { get; set; }
 
-		/// <summary>
-		///     The message's source identifier.. (like the user's name)
-		/// </summary>
-		String? Description { get; set; }
+	/// <summary>Guid assigned on message creation.</summary>
+	Guid ID { get; }
 
-		/// <summary>Guid assigned on message creation.</summary>
-		Guid ID { get; }
+	/// <summary>This message is in reference to.</summary>
+	Guid ReferenceMessageID { get; set; }
 
-		Boolean Processed { get; set; }
+	SourceRecord Source { get; set; }
 
-		DateTime? ProcessingEnded { get; set; }
-
-		DateTime? ProcessingStarted { get; set; }
-
-		/// <summary>This message is in reference to.</summary>
-		Guid ReferenceMessageID { get; set; }
-
-		SourceRecord Source { get; set; }
-
-		TimeSpan? ProcessingTime() {
-			if ( this.ProcessingStarted is null || this.ProcessingEnded is null ) {
-				return default( TimeSpan? );
-			}
-
-			return this.ProcessingEnded.Value - this.ProcessingStarted.Value;
-		}
-
-		/// <summary>
-		///     Default layout for <see cref="IMessage" /> interface.
-		///     <para>"override" in derived class to change what is shown.</para>
-		/// </summary>
-		String ToString() => $"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description}){Environment.NewLine}{Symbols.VerticalEllipsis}{this.Data}";
-
-	}
+	/// <summary>
+	///     Default layout for <see cref="IMessage" /> interface.
+	///     <para>"override" in derived class to change what is shown.</para>
+	/// </summary>
+	String ToString() => $"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description}){Environment.NewLine}{Symbols.VerticalEllipsis}{this.Data}";
 
 }

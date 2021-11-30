@@ -23,59 +23,54 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CountableIntegersTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "CountableIntegersTests.cs" last touched on 2021-10-13 at 4:10 PM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using System.Threading.Tasks;
-	using Librainian.Collections;
-	using Librainian.Maths;
-	using Librainian.Measurement.Time;
-	using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
+using Librainian.Collections;
+using Librainian.Maths;
+using Librainian.Measurement.Time;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class CountableIntegersTests {
+[TestFixture]
+public static class CountableIntegersTests {
 
-		public static Countable<String> Countable { get; } = new( Seconds.One, Seconds.One );
+	public static Countable<String> Countable { get; } = new(Seconds.One, Seconds.One);
 
-		//[Theory]
-		//public static void Setup() { }
+	[Test]
+	public static void TestAdding() {
+		var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
+			var key = Randem.NextString( 2 );
+			Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+		} ), () => Parallel.For( 0, 102400, l => {
+			var key = Randem.NextString( 2 );
+			Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+		} ), () => Parallel.For( 0, 102400, l => {
+			var key = Randem.NextString( 2 );
+			Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+		} ) ) );
 
-		[Test]
-		public static void TestAdding() {
-			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Add( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ) ) );
+		var timeTaken = bob.TimeStatement();
+		TestContext.WriteLine( timeTaken.Simpler() );
+	}
 
-			TimeSpan timeTaken = bob.TimeStatement();
-			Console.WriteLine( timeTaken.Simpler() );
-		}
+	[Test]
+	public static void TestSubtracting() {
+		var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
+			var key = Randem.NextString( 2 );
+			Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+		} ), () => Parallel.For( 0, 102400, l => {
+			var key = Randem.NextString( 2 );
+			Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+		} ), () => Parallel.For( 0, 102400, l => {
+			var key = Randem.NextString( 2 );
+			Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
+		} ) ) );
 
-		[Test]
-		public static void TestSubtracting() {
-			var bob = new Action( () => Parallel.Invoke( () => Parallel.For( 0, 102400, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ), () => Parallel.For( 0, 102400, l => {
-				var key = Randem.NextString( 2 );
-				Countable.Subtract( key, Randem.NextBigInteger( Randem.NextByte( 1, 255 ) ) );
-			} ) ) );
-
-			TimeSpan timeTaken = bob.TimeStatement();
-			Console.WriteLine( timeTaken.Simpler() );
-		}
-
+		var timeTaken = bob.TimeStatement();
+		TestContext.WriteLine( timeTaken.Simpler() );
 	}
 
 }

@@ -20,63 +20,60 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Time.cs" last touched on 2021-09-28 at 6:34 AM by Protiguous.
+// File "TimeClock.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para></para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	public record TimeClock(ClockHour Hour, ClockMinute Minute, ClockSecond Second, ClockMillisecond Millisecond, ClockMicrosecond Microsecond) : IStandardClock {
+/// <summary>
+///     <para></para>
+/// </summary>
+[JsonObject]
+[Immutable]
+public record TimeClock( ClockHour Hour, ClockMinute Minute, ClockSecond Second, ClockMillisecond Millisecond, ClockMicrosecond Microsecond ) : IStandardClock {
 
-		/// <param name="dateTime"></param>
-		public TimeClock( DateTime dateTime ) : this( new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ),
-			new ClockSecond( ( Byte )dateTime.Second ), new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0 ) { }
+	/// <param name="dateTime"></param>
+	public TimeClock( DateTime dateTime ) : this( new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ),
+		new ClockSecond( ( Byte )dateTime.Second ), new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0 ) { }
 
-		public static TimeClock Minimum { get; } = new(0, 0, 0, 0, 0);
+	public static TimeClock Minimum { get; } = new(0, 0, 0, 0, 0);
 
-		public static TimeClock Maximum { get; } = new(new ClockHour( Hours.InOneDay - 1 ), new ClockMinute( Minutes.InOneHour - 1 ), new ClockSecond( Seconds.InOneMinute - 1 ),
-			new ClockMillisecond( Milliseconds.InOneSecond - 1 ), Microseconds.InOneMillisecond - 1);
+	public static TimeClock Maximum { get; } = new(new ClockHour( Hours.InOneDay - 1 ), new ClockMinute( Minutes.InOneHour - 1 ), new ClockSecond( Seconds.InOneMinute - 1 ),
+		new ClockMillisecond( Milliseconds.InOneSecond - 1 ), Microseconds.InOneMillisecond - 1);
 
-		public static implicit operator TimeClock( DateTime dateTime ) =>
-			new(new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ), new ClockSecond( ( Byte )dateTime.Second ),
-				new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0);
+	public Boolean IsAm() => this.Hour.Value < 12;
 
-		
-		/// <param name="date"></param>
-		public static implicit operator DateTime( TimeClock date ) =>
-			new(DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value, date.Second.Value, date.Millisecond.Value);
+	public Boolean IsPm() => !this.IsAm();
 
-		/// <summary>Get the local system's computer time.</summary>
-		public static TimeClock Now() {
-			var now = DateTime.Now;
+	public TimeClock Time() => this;
 
-			return new TimeClock( new ClockHour( ( Byte )now.Hour ), new ClockMinute( ( Byte )now.Minute ), new ClockSecond( ( Byte )now.Second ),
-				new ClockMillisecond( ( UInt16 )now.Millisecond ), 0 );
-		}
+	public static implicit operator TimeClock( DateTime dateTime ) =>
+		new(new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ), new ClockSecond( ( Byte )dateTime.Second ),
+			new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0);
 
-		public static TimeClock UtcNow() {
-			var now = DateTime.UtcNow;
+	/// <param name="date"></param>
+	public static implicit operator DateTime( TimeClock date ) =>
+		new(DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value, date.Second.Value, date.Millisecond.Value);
 
-			return new TimeClock( new ClockHour( ( Byte )now.Hour ), new ClockMinute( ( Byte )now.Minute ), new ClockSecond( ( Byte )now.Second ),
-				new ClockMillisecond( ( UInt16 )now.Millisecond ), 0 );
-		}
+	/// <summary>Get the local system's computer time.</summary>
+	public static TimeClock Now() {
+		var now = DateTime.Now;
 
-		public Boolean IsAm() => this.Hour.Value < 12;
+		return new TimeClock( new ClockHour( ( Byte )now.Hour ), new ClockMinute( ( Byte )now.Minute ), new ClockSecond( ( Byte )now.Second ),
+			new ClockMillisecond( ( UInt16 )now.Millisecond ), 0 );
+	}
 
-		public Boolean IsPm() => !this.IsAm();
+	public static TimeClock UtcNow() {
+		var now = DateTime.UtcNow;
 
-		public TimeClock Time() => this;
-
+		return new TimeClock( new ClockHour( ( Byte )now.Hour ), new ClockMinute( ( Byte )now.Minute ), new ClockSecond( ( Byte )now.Second ),
+			new ClockMillisecond( ( UInt16 )now.Millisecond ), 0 );
 	}
 
 }

@@ -1584,9 +1584,9 @@
 			<param name="arrayIndex">
 				The zero-based index in <paramref name="array" /> at which copying begins.
 			</param>
-			<exception cref="T:System.ArgumentEmptyException"><paramref name="array" /> is null.</exception>
+			<exception cref="T:System.NullException"><paramref name="array" /> is null.</exception>
 			<exception cref="T:System.ArgumentOutOfRangeException"><paramref name="arrayIndex" /> is less than 0.</exception>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				<paramref name="arrayIndex" /> is equal to or greater than the length of <paramref name="array" />.
 				-or-The number of elements in the source
 				<see cref="T:Microsoft.Isam.Esent.Collections.Generic.PersistentDictionary`2" /> is greater
@@ -1618,7 +1618,7 @@
 			</summary>
 			<param name="key">The object to use as the key of the element to add.</param>
 			<param name="value">The object to use as the value of the element to add.</param>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				An element with the same key already exists in the
 				<see cref="T:Microsoft.Isam.Esent.Collections.Generic.PersistentDictionary`2" />.
 			</exception>
@@ -2030,9 +2030,9 @@
 			<param name="arrayIndex">
 				The zero-based index in <paramref name="array" /> at which copying begins.
 			</param>
-			<exception cref="T:System.ArgumentEmptyException"><paramref name="array" /> is null.</exception>
+			<exception cref="T:System.NullException"><paramref name="array" /> is null.</exception>
 			<exception cref="T:System.ArgumentOutOfRangeException"><paramref name="arrayIndex" /> is less than 0.</exception>
-			<exception cref="T:System.ArgumentException">
+			<exception cref="T:System.NullException">
 				<paramref name="array" /> is multidimensional.-or-<paramref name="arrayIndex" /> is equal to or greater than the length of
 				<paramref name="array" />.-or-The number of elements in the source
 				<see cref="T:System.Collections.Generic.ICollection`1" />

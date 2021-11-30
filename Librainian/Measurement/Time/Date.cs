@@ -20,44 +20,42 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Date.cs" last touched on 2021-09-26 at 10:18 AM by Protiguous.
+// File "Date.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>
-	///     <see cref="Years" />, <see cref="Months" />, and <see cref="Days" />.
-	/// </summary>
-	[Immutable]
-	[JsonObject]
-	public record Date( Years Years, Months Months, Days Days ) {
+/// <summary>
+///     <see cref="Years" />, <see cref="Months" />, and <see cref="Days" />.
+/// </summary>
+[Immutable]
+[JsonObject]
+public record Date( Years Years, Months Months, Days Days ) {
 
-		public static readonly Date Zero = new(Years.Zero, Months.Zero, Days.Zero);
+	public static readonly Date Zero = new(Years.Zero, Months.Zero, Days.Zero);
 
-		public Date( DateTime dateTime ) : this( new Years( dateTime.Year ), new Months( dateTime.Month ), new Days( dateTime.Day ) ) { }
+	public Date( DateTime dateTime ) : this( new Years( dateTime.Year ), new Months( dateTime.Month ), new Days( dateTime.Day ) ) { }
 
-		public static Date Now => new(DateTime.Now);
+	public static Date Now => new(DateTime.Now);
 
-		public static Date UtcNow => new(DateTime.UtcNow);
+	public static Date UtcNow => new(DateTime.UtcNow);
 
-		public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default( DateTime? );
+	public static implicit operator DateTime?( Date date ) => TimeExtensions.TryConvertToDateTime( date, out var dateTime ) ? dateTime : default( DateTime? );
 
-		public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
+	public static Boolean operator <( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() < right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public static Boolean operator <=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() <= right.ToSpanOfTime().CalcTotalPlanckTimes();
+	public static Boolean operator <=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() <= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public static Boolean operator >( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() > right.ToSpanOfTime().CalcTotalPlanckTimes();
+	public static Boolean operator >( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() > right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
+	public static Boolean operator >=( Date left, Date right ) => left.ToSpanOfTime().CalcTotalPlanckTimes() >= right.ToSpanOfTime().CalcTotalPlanckTimes();
 
-		public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
-
-	}
+	public Boolean TryConvertToDateTime( out DateTime? dateTime ) => TimeExtensions.TryConvertToDateTime( this, out dateTime );
 
 }

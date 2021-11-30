@@ -20,78 +20,76 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ClockHour.cs" last touched on 2021-10-02 at 7:08 AM by Protiguous.
+// File "ClockHour.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
-	using Utilities;
+using System;
+using Extensions;
+using Newtonsoft.Json;
+using Utilities;
 
-	/// <summary>
-	///     <para>A simple record for an <see cref="ClockHour" />.</para>
-	/// </summary>
-	[JsonObject]
-	[Immutable]
-	[NeedsTesting]
-	public record ClockHour : IClockPart {
+/// <summary>
+///     <para>A simple record for an <see cref="ClockHour" />.</para>
+/// </summary>
+[JsonObject]
+[Immutable]
+[NeedsTesting]
+public record ClockHour : IClockPart {
 
-		public const Byte MaximumValue = 24;
+	public const Byte MaximumValue = 24;
 
-		public const Byte MinimumValue = 1;
+	public const Byte MinimumValue = 1;
 
-		public ClockHour( Byte value ) {
-			if ( value is < MinimumValue or > MaximumValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
-			}
-
-			this.Value = value;
+	public ClockHour( Byte value ) {
+		if ( value is < MinimumValue or > MaximumValue ) {
+			throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
 		}
 
-		public Byte Value { get; init; }
+		this.Value = value;
+	}
 
-		public static ClockHour Maximum { get; } = new(MaximumValue);
+	public Byte Value { get; init; }
 
-		public static ClockHour Minimum { get; } = new(MinimumValue);
+	public static ClockHour Maximum { get; } = new(MaximumValue);
 
-		public static implicit operator Byte( ClockHour value ) => value.Value;
+	public static ClockHour Minimum { get; } = new(MinimumValue);
 
-		public static implicit operator ClockHour( Byte value ) => new(value);
+	public static implicit operator Byte( ClockHour value ) => value.Value;
 
-		/// <summary>Provide the next <see cref="ClockHour" />.</summary>
-		public ClockHour Next( out Boolean tocked ) {
-			var next = this.Value + 1;
+	public static implicit operator ClockHour( Byte value ) => new(value);
 
-			if ( next > Maximum ) {
-				tocked = true;
+	/// <summary>Provide the next <see cref="ClockHour" />.</summary>
+	public ClockHour Next( out Boolean tocked ) {
+		var next = this.Value + 1;
 
-				return Minimum;
-			}
+		if ( next > Maximum ) {
+			tocked = true;
 
-			tocked = false;
-
-			return ( ClockHour )next;
+			return Minimum;
 		}
 
-		/// <summary>Provide the previous <see cref="ClockHour" />.</summary>
-		public ClockHour Previous( out Boolean tocked ) {
-			var next = this.Value - 1;
+		tocked = false;
 
-			if ( next < Minimum ) {
-				tocked = true;
+		return ( ClockHour )next;
+	}
 
-				return Maximum;
-			}
+	/// <summary>Provide the previous <see cref="ClockHour" />.</summary>
+	public ClockHour Previous( out Boolean tocked ) {
+		var next = this.Value - 1;
 
-			tocked = false;
+		if ( next < Minimum ) {
+			tocked = true;
 
-			return ( ClockHour )next;
+			return Maximum;
 		}
 
+		tocked = false;
+
+		return ( ClockHour )next;
 	}
 
 }

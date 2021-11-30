@@ -20,79 +20,77 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ClockDay.cs" last touched on 2021-09-27 at 6:15 AM by Protiguous.
+// File "ClockDay.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
-	using Utilities;
+using System;
+using Extensions;
+using Newtonsoft.Json;
+using Utilities;
 
-	/// <summary>A simple record for a ClockDay of the month.</summary>
-	[JsonObject]
-	[Immutable]
-	[NeedsTesting]
-	public record ClockDay : IClockPart {
+/// <summary>A simple record for a ClockDay of the month.</summary>
+[JsonObject]
+[Immutable]
+[NeedsTesting]
+public record ClockDay : IClockPart {
 
-		public const Byte MaximumValue = 31;
+	public const Byte MaximumValue = 31;
 
-		public const Byte MinimumValue = 1;
+	public const Byte MinimumValue = 1;
 
-		public ClockDay( Byte value ) {
-			if ( value is < MinimumValue or > MaximumValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
-			}
-
-			this.Value = value;
+	public ClockDay( Byte value ) {
+		if ( value is < MinimumValue or > MaximumValue ) {
+			throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
 		}
 
-		/// <summary>31</summary>
-		public static ClockDay Maximum { get; } = new(MaximumValue);
+		this.Value = value;
+	}
 
-		/// <summary>1</summary>
-		public static ClockDay Minimum { get; } = new(MinimumValue);
+	/// <summary>31</summary>
+	public static ClockDay Maximum { get; } = new(MaximumValue);
 
-		[JsonProperty]
-		public Byte Value { get; init; }
+	/// <summary>1</summary>
+	public static ClockDay Minimum { get; } = new(MinimumValue);
 
-		public static implicit operator Byte( ClockDay value ) => value.Value;
+	[JsonProperty]
+	public Byte Value { get; init; }
 
-		public static implicit operator ClockDay( Byte value ) => new(value);
+	public static implicit operator Byte( ClockDay value ) => value.Value;
 
-		/// <summary>Provide the next <see cref="ClockDay" />.</summary>
-		public ClockDay Next( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value + 1;
+	public static implicit operator ClockDay( Byte value ) => new(value);
 
-			if ( next > MaximumValue ) {
-				tocked = true;
+	/// <summary>Provide the next <see cref="ClockDay" />.</summary>
+	public ClockDay Next( out Boolean tocked ) {
+		tocked = false;
+		var next = this.Value + 1;
 
-				return Minimum;
-			}
+		if ( next > MaximumValue ) {
+			tocked = true;
 
-			return ( ClockDay )next;
+			return Minimum;
 		}
 
-		public static explicit operator ClockDay( Int32 v ) => new(( Byte )v);
+		return ( ClockDay )next;
+	}
 
-		/// <summary>Provide the previous <see cref="ClockDay" />.</summary>
-		public ClockDay Previous( out Boolean tocked ) {
-			tocked = false;
-			var next = this.Value - 1;
+	public static explicit operator ClockDay( Int32 v ) => new(( Byte )v);
 
-			if ( next < MinimumValue ) {
-				tocked = true;
+	/// <summary>Provide the previous <see cref="ClockDay" />.</summary>
+	public ClockDay Previous( out Boolean tocked ) {
+		tocked = false;
+		var next = this.Value - 1;
 
-				return Maximum;
-			}
+		if ( next < MinimumValue ) {
+			tocked = true;
 
-			return ( ClockDay )next;
+			return Maximum;
 		}
 
+		return ( ClockDay )next;
 	}
 
 }

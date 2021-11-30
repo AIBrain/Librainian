@@ -20,72 +20,70 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NullStream.cs" last touched on 2021-09-11 at 7:10 AM by Protiguous.
+// File "NullStream.cs" last touched on 2021-10-13 at 4:25 PM by Protiguous.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.IO;
+using System;
+using System.IO;
 
-	/// <summary>
-	///     <para>
-	///         A stream that you can write to the NULL device, from <see cref="long.MinValue" />
-	///         (-9,223,372,036,854,775,808) up to <see cref="long.MaxValue" /> 9,223,372,036,854,775,807 bytes.
-	///     </para>
-	/// </summary>
-	public class NullStream : Stream {
+/// <summary>
+///     <para>
+///         A stream that you can write to the NULL device, from <see cref="long.MinValue" />
+///         (-9,223,372,036,854,775,808) up to <see cref="long.MaxValue" /> 9,223,372,036,854,775,807 bytes.
+///     </para>
+/// </summary>
+public class NullStream : Stream {
 
-		private Int64 _length;
+	private Int64 _length;
 
-		private Int64 _position = Int64.MinValue;
+	private Int64 _position = Int64.MinValue;
 
-		public override Boolean CanRead => false;
+	public override Boolean CanRead => false;
 
-		public override Boolean CanSeek => true;
+	public override Boolean CanSeek => true;
 
-		public override Boolean CanWrite => true;
+	public override Boolean CanWrite => true;
 
-		public override Int64 Length => this._length;
+	public override Int64 Length => this._length;
 
-		public override Int64 Position {
-			get => this._position;
+	public override Int64 Position {
+		get => this._position;
 
-			set {
-				this._position = value;
+		set {
+			this._position = value;
 
-				if ( this._position > this._length ) {
-					this._length = this._position;
-				}
+			if ( this._position > this._length ) {
+				this._length = this._position;
 			}
 		}
-
-		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) =>
-			throw new NotImplementedException( "This stream doesn't support reading." );
-
-		public override void Flush() { }
-
-		public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => throw new NotImplementedException( "This stream doesn't support reading." );
-
-		public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
-			var newPosition = origin switch {
-				SeekOrigin.Begin => offset,
-				SeekOrigin.Current => this.Position + offset,
-				SeekOrigin.End => this.Length + offset,
-				var _ => this.Position
-			};
-
-			this.Position = newPosition;
-
-			return newPosition;
-		}
-
-		public override void SetLength( Int64 value ) => this._length = value;
-
-		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
-
 	}
+
+	public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) =>
+		throw new NotImplementedException( "This stream doesn't support reading." );
+
+	public override void Flush() { }
+
+	public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) => throw new NotImplementedException( "This stream doesn't support reading." );
+
+	public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
+		var newPosition = origin switch {
+			SeekOrigin.Begin => offset,
+			SeekOrigin.Current => this.Position + offset,
+			SeekOrigin.End => this.Length + offset,
+			var _ => this.Position
+		};
+
+		this.Position = newPosition;
+
+		return newPosition;
+	}
+
+	public override void SetLength( Int64 value ) => this._length = value;
+
+	public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
 
 }

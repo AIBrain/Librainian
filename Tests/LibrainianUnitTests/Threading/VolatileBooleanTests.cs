@@ -25,26 +25,24 @@
 // 
 // File "VolatileBooleanTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests.Threading {
+namespace LibrainianUnitTests.Threading;
 
-	using Librainian.Threadsafe;
-	using NUnit.Framework;
+using Librainian.Threadsafe;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class VolatileBooleanTests {
+[TestFixture]
+public class VolatileBooleanTests {
 
-		[Test]
-		public void DefaultCtorEqualsFalse() => Assert.False( new VolatileBoolean() );
+	[Test]
+	public void DefaultCtorEqualsFalse() => Assert.False( new VolatileBoolean() );
 
-		[Test]
-		public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
+	[Test]
+	public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
 
-		[Test]
-		public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
+	[Test]
+	public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
 
-		[Test]
-		public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
-
-	}
+	[Test]
+	public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
 
 }

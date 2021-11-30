@@ -25,73 +25,85 @@
 // 
 // File "ParsingTests.cs" last touched on 2021-05-13 at 1:09 PM by Protiguous.
 
-namespace LibrainianUnitTests.Parsing {
+namespace LibrainianUnitTests.Parsing;
 
-	using System;
-	using System.Linq;
-	using FluentAssertions;
-	using Librainian.Parsing;
-	using NUnit.Framework;
+using System;
+using System.Linq;
+using FluentAssertions;
+using Librainian.Parsing;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class ParsingTests {
+[TestFixture]
+public class ParsingTests {
 
-		[Test]
-		public void ConfirmcAtLikeCaT() {
-			const String? left = "cAt";
-			const String? right = "CaT";
-			left.Like( right ).Should().BeTrue();
-		}
+	[Test]
+	public void AssertcAtLikeCaT() {
+		const String? left = "cAt";
+		const String? right = "CaT";
+		left.Like( right ).Should().BeTrue();
+	}
 
-		[Test]
-		public void ConfirmcAtNotSameCaT() {
-			const String? left = "cAt";
-			const String? right = "CaT";
-			left.Same( right ).Should().BeFalse();
-		}
+	[Test]
+	public void AssertcAtNotSameCaT() {
+		const String? left = "cAt";
+		const String? right = "CaT";
+		left.Same( right ).Should().BeFalse();
+	}
 
-		[Test]
-		public void ConfirmStringEmptyStringLikeEmptyString() {
-			var left = String.Empty;
-			var right = String.Empty;
-			left.Like( right ).Should().BeTrue();
-		}
+	[Test]
+	public void AssertStringEmptyStringLikeEmptyString() {
+		var left = String.Empty;
+		const String right = "";
+		left.Like( right ).Should().BeTrue();
+	}
 
-		[Test]
-		public void ConfirmStringEmptyStringNotLikeNull() {
-			const String? left = default( String? );
-			var right = String.Empty;
-			right.Like( left ).Should().BeFalse();
-		}
+	[Test]
+	public void AssertStringEmptyStringNotLikeNull() {
+		const String? left = default( String? );
+		var right = String.Empty;
+		right.Like( left ).Should().BeFalse();
+	}
 
-		[Test]
-		public void ConfirmStringLimitShorter() {
-			var chars = ParsingConstants.English.Alphabet.Lowercase.Take( 6 ).ToArray();
-			var s = new String( chars );
-			s.Should().Be( "abcdef" );
-		}
+	[Test]
+	public void AssertStringLimitShorter() {
+		var chars = ParsingConstants.English.Alphabet.Lowercase.Take( 6 ).ToArray();
+		var s = new String( chars );
+		s.Should().Be( "abcdef" );
+	}
 
-		[Test]
-		public void ConfirmStringLeft() {
-			var chars = ParsingConstants.English.Alphabet.Lowercase.Left( 6 );
-			var s = new String( chars );
-			s.Should().Be( "abcdef" );
-		}
+	[Test]
+	public void AssertStringLeft() {
+		var chars = ParsingConstants.English.Alphabet.Lowercase.Left( 6 );
+		var s = new String( chars );
+		s.Should().Be( "abcdef" );
+	}
 
-		[Test]
-		public void ConfirmStringRight() {
-			var chars = ParsingConstants.English.Alphabet.Lowercase.Right( 6 );
-			var s = new String( chars );
-			s.Should().Be( "uvwxyz" );
-		}
+	[Test]
+	public void AssertStringRight() {
+		var chars = ParsingConstants.English.Alphabet.Uppercase.Right( 6 );
+		var s = new String( chars );
+		s.Should().Be( "UVWXYZ" );
+	}
 
-		[Test]
-		public void ConfirmStringNullLikeNull() {
-			var left = "".Trim().NullIfBlank();
-			const String? right = default( String? );
-			left?.Like( right ).Should().BeTrue();
-		}
+	[Test]
+	public void AssertStringNullIsLikeNull() {
+		const String? left  = default( String );
+		const String? right = default( String? );
+		left.Like( right, ParsingExtensions.CompareOptions.NullAreEqual ).Should().BeTrue();
+	}
 
+	[Test]
+	public void AssertStringNullNotLikeNull() {
+		const String? left  = default( String );
+		const String? right = default( String? );
+		left.Like( right, ParsingExtensions.CompareOptions.NullsAreNotEqual ).Should().BeFalse();
+	}
+
+	[Test]
+	public void AssertStringNullNotLikeNullByDefault() {
+		const String? left  = default( String );
+		const String? right = default( String? );
+		left.Like( right ).Should().BeFalse();
 	}
 
 }

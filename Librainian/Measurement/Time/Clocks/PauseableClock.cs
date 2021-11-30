@@ -20,233 +20,231 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "PauseableClock.cs" last touched on 2021-09-28 at 6:45 AM by Protiguous.
+// File "PauseableClock.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using System.Timers;
-	using Logging;
-	using Newtonsoft.Json;
-	using Threadsafe;
-	using Utilities;
+using System;
+using System.Timers;
+using Logging;
+using Newtonsoft.Json;
+using Threadsafe;
+using Utilities;
 
-	/// <summary>A 'pause-able' clock.</summary>
-	[JsonObject]
-	[NeedsTesting]
-	public class PauseableClock : IStandardClock {
+/// <summary>A 'pause-able' clock.</summary>
+[JsonObject]
+[NeedsTesting]
+public class PauseableClock : IStandardClock {
 
-		private VolatileBoolean _isPaused = new(false);
+	private VolatileBoolean _isPaused = new(false);
 
-		public PauseableClock( TimeClock time ) {
-			this.Hour = time.Hour;
-			this.Minute = time.Minute;
-			this.Second = time.Second;
-			this.Millisecond = time.Millisecond;
-			this.Microsecond = time.Microsecond;
-			this.Timer.Elapsed += this.OnTimerElapsed;
+	public PauseableClock( TimeClock time ) {
+		this.Hour = time.Hour;
+		this.Minute = time.Minute;
+		this.Second = time.Second;
+		this.Millisecond = time.Millisecond;
+		this.Microsecond = time.Microsecond;
+		this.Timer.Elapsed += this.OnTimerElapsed;
+		this.Resume();
+	}
+
+	private Timer Timer { get; } = new(( Double )Milliseconds.One.Value) {
+		AutoReset = false
+	};
+
+	[JsonProperty]
+	public Boolean IsPaused {
+		get => this._isPaused;
+
+		private set => this._isPaused = value;
+	}
+
+	public Action<TimeClock>? OnHour { get; set; }
+
+	public Action<TimeClock>? OnMillisecond { get; set; }
+
+	public Action<TimeClock>? OnMinute { get; set; }
+
+	public Action<TimeClock>? OnMonth { get; set; }
+
+	public Action<TimeClock>? OnSecond { get; set; }
+
+	[JsonProperty]
+	public ClockMicrosecond Microsecond { get; private set; }
+
+	[JsonProperty]
+	public ClockHour Hour { get; private set; }
+
+	[JsonProperty]
+	public ClockMillisecond Millisecond { get; private set; }
+
+	[JsonProperty]
+	public ClockMinute Minute { get; private set; }
+
+	[JsonProperty]
+	public ClockSecond Second { get; private set; }
+
+	public Boolean IsAm() => !this.IsPm();
+
+	public Boolean IsPm() => this.Hour >= 12;
+
+	public TimeClock Time() => new(this.Hour, this.Minute, this.Second, this.Millisecond, this.Microsecond);
+
+	private Boolean HoursTocked( Boolean fireEvents ) {
+		this.Hour = this.Hour.Next( out var tocked );
+
+		if ( !tocked ) {
+			return false;
+		}
+
+		try {
+			if ( fireEvents ) {
+				this.OnHour?.Invoke( this.Time() );
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return true;
+	}
+
+	private Boolean MillisecondsTocked( Boolean fireEvents ) {
+		this.Millisecond = this.Millisecond.Next( out var tocked );
+
+		if ( !tocked ) {
+			return false;
+		}
+
+		try {
+			if ( fireEvents ) {
+				this.OnMillisecond?.Invoke( this.Time() );
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return true;
+	}
+
+	private Boolean MinutesTocked( Boolean fireEvents ) {
+		this.Minute = this.Minute.Next( out var tocked );
+
+		if ( !tocked ) {
+			return false;
+		}
+
+		try {
+			if ( fireEvents ) {
+				this.OnMinute?.Invoke( this.Time() );
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return true;
+	}
+
+	private void OnTimerElapsed( Object? sender, ElapsedEventArgs? elapsedEventArgs ) {
+		this.Pause();
+
+		try {
+			this.TickTock();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+		finally {
 			this.Resume();
 		}
+	}
 
-		private Timer Timer { get; } = new(( Double )Milliseconds.One.Value) {
-			AutoReset = false
-		};
+	private Boolean SecondsTocked( Boolean fireEvents ) {
+		this.Second = this.Second.Next( out var tocked );
 
-		[JsonProperty]
-		public Boolean IsPaused {
-			get => this._isPaused;
-
-			private set => this._isPaused = value;
+		if ( !tocked ) {
+			return false;
 		}
 
-		public Action<TimeClock>? OnHour { get; set; }
-
-		public Action<TimeClock>? OnMillisecond { get; set; }
-
-		public Action<TimeClock>? OnMinute { get; set; }
-
-		public Action<TimeClock>? OnMonth { get; set; }
-
-		public Action<TimeClock>? OnSecond { get; set; }
-
-		[JsonProperty]
-		public ClockMicrosecond Microsecond { get; private set; }
-
-		[JsonProperty]
-		public ClockHour Hour { get; private set; }
-
-		[JsonProperty]
-		public ClockMillisecond Millisecond { get; private set; }
-
-		[JsonProperty]
-		public ClockMinute Minute { get; private set; }
-
-		[JsonProperty]
-		public ClockSecond Second { get; private set; }
-
-		public Boolean IsAm() => !this.IsPm();
-
-		public Boolean IsPm() => this.Hour >= 12;
-
-		public TimeClock Time() => new(this.Hour, this.Minute, this.Second, this.Millisecond, this.Microsecond);
-
-		private Boolean HoursTocked( Boolean fireEvents ) {
-			this.Hour = this.Hour.Next( out var tocked );
-
-			if ( !tocked ) {
-				return false;
+		try {
+			if ( fireEvents ) {
+				this.OnSecond?.Invoke( this.Time() );
 			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
 
-			try {
-				if ( fireEvents ) {
-					this.OnHour?.Invoke( this.Time() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
+		return true;
+	}
+
+	private void TickTock( Boolean fireEvents = true ) {
+		if ( !this.MillisecondsTocked( fireEvents ) ) {
+			return;
+		}
+
+		if ( !this.SecondsTocked( fireEvents ) ) {
+			return;
+		}
+
+		if ( !this.MinutesTocked( fireEvents ) ) {
+			return;
+		}
+
+		if ( !this.HoursTocked( fireEvents ) ) { }
+	}
+
+	/// <summary>Advance the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
+	/// <param name="amount">    </param>
+	/// <param name="skipEvents"></param>
+	public Boolean Advance( Milliseconds amount, Boolean skipEvents = true ) {
+		try {
+			this.Pause();
+			var right = amount.Value;
+
+			while ( right > Decimal.Zero ) {
+				this.TickTock( false );
+				right--;
 			}
 
 			return true;
 		}
-
-		private Boolean MillisecondsTocked( Boolean fireEvents ) {
-			this.Millisecond = this.Millisecond.Next( out var tocked );
-
-			if ( !tocked ) {
-				return false;
-			}
-
-			try {
-				if ( fireEvents ) {
-					this.OnMillisecond?.Invoke( this.Time() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return true;
+		finally {
+			this.Resume();
 		}
+	}
 
-		private Boolean MinutesTocked( Boolean fireEvents ) {
-			this.Minute = this.Minute.Next( out var tocked );
+	public Boolean Pause() {
+		this.Timer.Stop();
+		this.IsPaused = true;
 
-			if ( !tocked ) {
-				return false;
-			}
+		return this.IsPaused;
+	}
 
-			try {
-				if ( fireEvents ) {
-					this.OnMinute?.Invoke( this.Time() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
+	public Boolean Resume() {
+		this.IsPaused = false;
+		this.Timer.Start();
 
-			return true;
-		}
+		return !this.IsPaused;
+	}
 
-		private void OnTimerElapsed( Object? sender, ElapsedEventArgs? elapsedEventArgs ) {
+	/// <summary>Rewind the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
+	/// <param name="amount"></param>
+	public Boolean Rewind( Milliseconds amount ) {
+		try {
 			this.Pause();
 
-			try {
-				this.TickTock();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-			finally {
-				this.Resume();
-			}
+			//TODO
+			throw new NotImplementedException();
 		}
-
-		private Boolean SecondsTocked( Boolean fireEvents ) {
-			this.Second = this.Second.Next( out var tocked );
-
-			if ( !tocked ) {
-				return false;
-			}
-
-			try {
-				if ( fireEvents ) {
-					this.OnSecond?.Invoke( this.Time() );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return true;
+		finally {
+			this.Resume();
 		}
-
-		private void TickTock( Boolean fireEvents = true ) {
-			if ( !this.MillisecondsTocked( fireEvents ) ) {
-				return;
-			}
-
-			if ( !this.SecondsTocked( fireEvents ) ) {
-				return;
-			}
-
-			if ( !this.MinutesTocked( fireEvents ) ) {
-				return;
-			}
-
-			if ( !this.HoursTocked( fireEvents ) ) { }
-		}
-
-		/// <summary>Advance the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
-		/// <param name="amount">    </param>
-		/// <param name="skipEvents"></param>
-		public Boolean Advance( Milliseconds amount, Boolean skipEvents = true ) {
-			try {
-				this.Pause();
-				var right = amount.Value;
-
-				while ( right > Decimal.Zero ) {
-					this.TickTock( false );
-					right--;
-				}
-
-				return true;
-			}
-			finally {
-				this.Resume();
-			}
-		}
-
-		public Boolean Pause() {
-			this.Timer.Stop();
-			this.IsPaused = true;
-
-			return this.IsPaused;
-		}
-
-		public Boolean Resume() {
-			this.IsPaused = false;
-			this.Timer.Start();
-
-			return !this.IsPaused;
-		}
-
-		/// <summary>Rewind the clock by <paramref name="amount" /><see cref="Milliseconds" />.</summary>
-		/// <param name="amount"></param>
-		public Boolean Rewind( Milliseconds amount ) {
-			try {
-				this.Pause();
-
-				//TODO
-				throw new NotImplementedException();
-			}
-			finally {
-				this.Resume();
-			}
-		}
-
 	}
 
 }

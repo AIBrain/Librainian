@@ -20,47 +20,45 @@
 // 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "SortOrder.cs" last touched on 2021-10-02 at 7:38 AM by Protiguous.
+// File "SortOrder.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
 
-namespace Librainian.Measurement {
+namespace Librainian.Measurement;
 
-	using System;
+using System;
 
-	public static class SortOrder {
+public static class SortOrder {
 
-		/// <summary>
-		///     1
-		/// </summary>
-		public const SByte After = 1;
+	/// <summary>
+	///     1
+	/// </summary>
+	public const SByte After = 1;
 
-		/// <summary>
-		///     -1
-		/// </summary>
-		public const SByte Before = -1;
+	/// <summary>
+	///     -1
+	/// </summary>
+	public const SByte Before = -1;
 
-		/// <summary>
-		///     Default to <see cref="NullsFirst" /> in a sort operation.
-		/// </summary>
-		public const SByte NullsDefault = NullsFirst;
+	/// <summary>
+	///     Default to <see cref="NullsFirst" /> in a sort operation.
+	/// </summary>
+	public const SByte NullsDefault = NullsFirst;
 
-		/// <summary>
-		///     Return nulls first in a sort operation.
-		/// </summary>
-		public const SByte NullsFirst = Before;
+	/// <summary>
+	///     Return nulls first in a sort operation.
+	/// </summary>
+	public const SByte NullsFirst = Before;
 
-		/// <summary>
-		///     Return nulls last in a sort operation.
-		/// </summary>
-		public const SByte NullsLast = After;
+	/// <summary>
+	///     Return nulls last in a sort operation.
+	/// </summary>
+	public const SByte NullsLast = After;
 
-		/// <summary>
-		///     0
-		/// </summary>
-		public const SByte Same = 0;
-
-	}
+	/// <summary>
+	///     0
+	/// </summary>
+	public const SByte Same = 0;
 
 }

@@ -1,13 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code
-//  (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting.
+// 
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -15,192 +17,197 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.com/Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "DocumentExtensions.cs" last formatted on 2021-02-24 at 8:00 AM.
+// 
+// File "DocumentExtensions.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Text.RegularExpressions;
-	using System.Threading.Tasks;
-	using JetBrains.Annotations;
-	using Maths;
-	using Measurement.Time;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+using Maths;
+using Measurement.Time;
 
-	public static class DocumentExtensions {
+public static class DocumentExtensions {
 
-		private static async Task InternalCopyWithProgress( IDocument source, IDocument destination, IProgress<Decimal>? progress,
-			IProgress<TimeSpan>? eta, Char[] buffer, Decimal bytesToBeCopied, Stopwatch? begin ) {
-			using var reader = new StreamReader( source.FullPath );
+	private static async Task InternalCopyWithProgress(
+		IDocument source,
+		IDocument destination,
+		IProgress<Decimal>? progress,
+		IProgress<TimeSpan>? eta,
+		Char[] buffer,
+		Decimal bytesToBeCopied,
+		Stopwatch? begin
+	) {
+		using var reader = new StreamReader( source.FullPath );
 
 #if NET5_0_OR_GREATER
 #endif
-			var writer = new StreamWriter( destination.FullPath, false );
-			await using var _ = writer.ConfigureAwait( false );
+		var writer = new StreamWriter( destination.FullPath, false );
+		await using var _ = writer.ConfigureAwait( false );
 
-			Int32 numRead;
+		Int32 numRead;
 
-			while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
-				await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
-				var bytesCopied = ( UInt64 )numRead;
+		while ( ( numRead = await reader.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ).Any() ) {
+			await writer.WriteAsync( buffer, 0, numRead ).ConfigureAwait( false );
+			var bytesCopied = ( UInt64 )numRead;
 
-				var percent = bytesCopied / bytesToBeCopied;
+			var percent = bytesCopied / bytesToBeCopied;
 
-				progress?.Report( percent );
-				eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
-			}
+			progress?.Report( percent );
+			eta?.Report( begin.Elapsed.EstimateTimeRemaining( percent ) );
+		}
+	}
+
+	[Pure]
+	public static Boolean BadlyNamedFile( this Document document, out BadlyNamedReason badlyNamedReason ) {
+		//TODO This actually needs fleshed out with a whole host of options to decide what constitutes a "bad" file name
+
+		var currentExtension = Path.GetExtension( document.FullPath );
+		if ( !String.IsNullOrWhiteSpace( currentExtension ) ) {
+			badlyNamedReason = BadlyNamedReason.MissingExtension;
+			return true;
 		}
 
-		[Pure]
-		public static Boolean BadlyNamedFile( this Document document, out BadlyNamedReason badlyNamedReason ) {
-
-			//TODO This actually needs fleshed out with a whole host of options to decide what constitutes a "bad" file name
-
-			var currentExtension = Path.GetExtension( document.FullPath );
-			if ( !String.IsNullOrWhiteSpace( currentExtension ) ) {
-				badlyNamedReason = BadlyNamedReason.MissingExtension;
-				return true;
-			}
-
-			var withoutExtension = Path.GetFileNameWithoutExtension( document.FullPath );
-			var anotherExtension = Path.GetExtension( withoutExtension );
-			if ( !String.IsNullOrWhiteSpace( anotherExtension ) ) {
-				badlyNamedReason = BadlyNamedReason.MultipleExtensions;
-				return true;
-			}
-
-			var justName = Path.GetFileName( document.FileName );
-
-			var regex = new Regex( "", RegexOptions.Compiled );
-			if ( regex.IsMatch( justName ) ) { }
-
-			badlyNamedReason = BadlyNamedReason.NotNamedBadly;
-			return false;
+		var withoutExtension = Path.GetFileNameWithoutExtension( document.FullPath );
+		var anotherExtension = Path.GetExtension( withoutExtension );
+		if ( !String.IsNullOrWhiteSpace( anotherExtension ) ) {
+			badlyNamedReason = BadlyNamedReason.MultipleExtensions;
+			return true;
 		}
 
-		/*
+		var justName = Path.GetFileName( document.FileName );
 
-        /// <summary>
-        /// Returns the <paramref name="filename" /> with any invalid chars removed.
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        [NotNull]
-        public static String CleanupForFileName(this String filename) {
-            filename = filename ?? String.Empty;
+		var regex = new Regex( "", RegexOptions.Compiled );
+		if ( regex.IsMatch( justName ) ) { }
 
-            var sb = new StringBuilder(filename.Length);
+		badlyNamedReason = BadlyNamedReason.NotNamedBadly;
+		return false;
+	}
 
-            foreach (var c in filename.Where(c => !InvalidFileNameChars.Contains(c))) { sb.Append(c); }
+	/*
 
-            return sb.ToString();
-        }
-        */
+    /// <summary>
+    /// Returns the <paramref name="filename" /> with any invalid chars removed.
+    /// </summary>
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    [NotNull]
+    public static String CleanupForFileName(this String filename) {
+        filename = filename ?? String.Empty;
 
-		/*
+        var sb = new StringBuilder(filename.Length);
 
-        /// <summary>
-        /// Any result less than 1 is an error of some sort.
-        /// </summary>
-        /// <param name="source">              </param>
-        /// <param name="destination">         </param>
-        /// <param name="overwriteDestination"></param>
-        /// <param name="deleteSource">        </param>
-        /// <param name="progress">            </param>
-        /// <param name="eta">                 </param>
-        /// <returns></returns>
-        public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
-            IProgress<TimeSpan> eta = null ) {
-            if ( source is null ) { throw new ArgumentEmptyException( nameof( source ) ); }
+        foreach (var c in filename.Where(c => !InvalidFileNameChars.Contains(c))) { sb.Append(c); }
 
-            if ( destination is null ) { throw new ArgumentEmptyException( nameof( destination ) ); }
+        return sb.ToString();
+    }
+    */
 
-            try {
-                var begin = Stopwatch.StartNew();
+	/*
 
-                if ( !source.Exists() ) { return ResultCode.FailureSourceDoesNotExist; }
+    /// <summary>
+    /// Any result less than 1 is an error of some sort.
+    /// </summary>
+    /// <param name="source">              </param>
+    /// <param name="destination">         </param>
+    /// <param name="overwriteDestination"></param>
+    /// <param name="deleteSource">        </param>
+    /// <param name="progress">            </param>
+    /// <param name="eta">                 </param>
+    /// <returns></returns>
+    public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
+        IProgress<TimeSpan> eta = null ) {
+        if ( source is null ) { throw new NullException( nameof( source ) ); }
 
-                if ( overwriteDestination && destination.Exists() ) { destination.Delete(); }
+        if ( destination is null ) { throw new NullException( nameof( destination ) ); }
 
-                var sourceInfo = source.Info;
-                var sourceLength = source.Size();
+        try {
+            var begin = Stopwatch.StartNew();
 
-                if ( !sourceLength.Any() ) { return ResultCode.FailureSourceIsEmpty; }
+            if ( !source.Exists() ) { return ResultCode.FailureSourceDoesNotExist; }
 
-                var bytesToBeCopied = ( Single )sourceLength;
-                UInt64 bytesCopied = 0;
+            if ( overwriteDestination && destination.Exists() ) { destination.Delete(); }
 
-                var buffer = Buffers.Value;
+            var sourceInfo = source.Info;
+            var sourceLength = source.Size();
 
-                try { await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).NoUI(); }
-                catch ( Exception exception ) {
-                    exception.Log();
+            if ( !sourceLength.Any() ) { return ResultCode.FailureSourceIsEmpty; }
 
-                    return ResultCode.FailureOnCopy;
-                }
+            var bytesToBeCopied = ( Single )sourceLength;
+            UInt64 bytesCopied = 0;
 
-                if ( !destination.Exists() ) { return ResultCode.FailureDestinationDoesNotExist; }
+            var buffer = Buffers.Value;
 
-                if ( bytesCopied != ( UInt64 )bytesToBeCopied ) { return ResultCode.FailureDestinationSizeIsDifferent; }
-
-                try { File.SetAttributes( destination.FullPathWithFileName, sourceInfo.Attributes ); }
-                catch ( Exception exception ) {
-                    exception.Log();
-
-                    return ResultCode.FailureUnableToSetFileAttributes;
-                }
-
-                try { File.SetCreationTimeUtc( destination.FullPathWithFileName, sourceInfo.CreationTimeUtc ); }
-                catch ( Exception exception ) {
-                    exception.Log();
-
-                    return ResultCode.FailureUnableToSetFileCreationTime;
-                }
-
-                try { File.SetLastWriteTimeUtc( destination.FullPathWithFileName, sourceInfo.LastWriteTimeUtc ); }
-                catch ( Exception exception ) {
-                    exception.Log();
-
-                    return ResultCode.FailureUnableToSetLastWriteTime;
-                }
-
-                try { File.SetLastAccessTimeUtc( destination.FullPathWithFileName, sourceInfo.LastAccessTimeUtc ); }
-                catch ( Exception exception ) {
-                    exception.Log();
-
-                    return ResultCode.FailureUnableToSetLastAccessTime;
-                }
-
-                if ( !deleteSource ) { return ResultCode.Success; }
-
-                try { File.Delete( source.FullPathWithFileName ); }
-                catch ( Exception exception ) {
-                    exception.Log();
-
-                    return ResultCode.FailureUnableToDeleteSourceDocument;
-                }
-
-                return ResultCode.Success;
-            }
+            try { await InternalCopyWithProgress( source, destination, progress, eta, buffer, bytesToBeCopied, begin ).NoUI(); }
             catch ( Exception exception ) {
                 exception.Log();
 
-                return ResultCode.FailureUnknown;
+                return ResultCode.FailureOnCopy;
             }
-        }
-        */
 
-		/*
-        public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
-            await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
-        */
-	}
+            if ( !destination.Exists() ) { return ResultCode.FailureDestinationDoesNotExist; }
+
+            if ( bytesCopied != ( UInt64 )bytesToBeCopied ) { return ResultCode.FailureDestinationSizeIsDifferent; }
+
+            try { File.SetAttributes( destination.FullPathWithFileName, sourceInfo.Attributes ); }
+            catch ( Exception exception ) {
+                exception.Log();
+
+                return ResultCode.FailureUnableToSetFileAttributes;
+            }
+
+            try { File.SetCreationTimeUtc( destination.FullPathWithFileName, sourceInfo.CreationTimeUtc ); }
+            catch ( Exception exception ) {
+                exception.Log();
+
+                return ResultCode.FailureUnableToSetFileCreationTime;
+            }
+
+            try { File.SetLastWriteTimeUtc( destination.FullPathWithFileName, sourceInfo.LastWriteTimeUtc ); }
+            catch ( Exception exception ) {
+                exception.Log();
+
+                return ResultCode.FailureUnableToSetLastWriteTime;
+            }
+
+            try { File.SetLastAccessTimeUtc( destination.FullPathWithFileName, sourceInfo.LastAccessTimeUtc ); }
+            catch ( Exception exception ) {
+                exception.Log();
+
+                return ResultCode.FailureUnableToSetLastAccessTime;
+            }
+
+            if ( !deleteSource ) { return ResultCode.Success; }
+
+            try { File.Delete( source.FullPathWithFileName ); }
+            catch ( Exception exception ) {
+                exception.Log();
+
+                return ResultCode.FailureUnableToDeleteSourceDocument;
+            }
+
+            return ResultCode.Success;
+        }
+        catch ( Exception exception ) {
+            exception.Log();
+
+            return ResultCode.FailureUnknown;
+        }
+    }
+    */
+
+	/*
+    public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
+        await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
+    */
+
 }

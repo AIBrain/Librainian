@@ -27,22 +27,22 @@
 
 #nullable enable
 
-namespace LibrainianUnitTests.Persistence {
+namespace LibrainianUnitTests.Persistence;
 
-	using System;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Librainian.FileSystem;
-	using Librainian.Measurement.Time;
-	using Librainian.Persistence;
-	using Librainian.Persistence.InIFiles;
-	using NUnit.Framework;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Librainian.FileSystem;
+using Librainian.Measurement.Time;
+using Librainian.Persistence;
+using Librainian.Persistence.InIFiles;
+using NUnit.Framework;
 
 
-	[TestFixture]
-	public class JSONFileTests {
+[TestFixture]
+public class JSONFileTests {
 
-		public const String IniTestData = @"
+	public const String IniTestData = @"
 [ Section 1  ]
 ;This is a comment
 data1=value1
@@ -76,54 +76,52 @@ data33   =   3
 
 ";
 
-		public IniFile Ini { get; } = new();
+	public IniFile Ini { get; } = new();
 
-		public JSONFile Json { get; } = new();
+	public JSONFile Json { get; } = new();
 
-		private CancellationTokenSource? CancellationTokenSource { get; set; }
+	private CancellationTokenSource? CancellationTokenSource { get; set; }
 
-		public CancellationTokenSource CreateCancelToken() {
-			this.CancellationTokenSource ??= new CancellationTokenSource( Minutes.Ten );
+	public CancellationTokenSource CreateCancelToken() {
+		this.CancellationTokenSource ??= new CancellationTokenSource( Minutes.Ten );
 
-			Assert.NotNull( this.CancellationTokenSource );
-			return this.CancellationTokenSource;
+		Assert.NotNull( this.CancellationTokenSource );
+		return this.CancellationTokenSource;
+	}
+
+	private CancellationToken GetCancellationToken() => this.CreateCancelToken().Token;
+
+	[Test]
+	public void Test_load_from_string() {
+		this.Ini.Add( IniTestData );
+		this.Ini.Add( IniTestData );
+		this.Ini.Add( IniTestData );
+		this.Ini.Add( IniTestData );
+		this.Ini.Add( IniTestData );
+	}
+
+	[Test]
+	public async Task Test_load_from_string_and_save_temp() {
+		this.Test_load_from_string();
+
+		this.Json.Document = await this.CreateTempDocument().ConfigureAwait( false );
+		Assert.True( !await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
+
+		if ( await this.Json.Write( this.GetCancellationToken() ).ConfigureAwait( false ) ) {
+			Assert.True( await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
 		}
 
-		private CancellationToken GetCancellationToken() => this.CreateCancelToken().Token;
+		await this.Json.Document.Delete( this.GetCancellationToken() ).ConfigureAwait( false );
+		Assert.True( !await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
+	}
 
-		[Test]
-		public void Test_load_from_string() {
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
-			this.Ini.Add( IniTestData );
+	public async Task<Document> CreateTempDocument() {
+		var temp = Document.GetTempDocument( "config" );
+		if ( await temp.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) ) {
+			throw new InvalidOperationException();
 		}
 
-		[Test]
-		public async Task Test_load_from_string_and_save_temp() {
-			this.Test_load_from_string();
-
-			this.Json.Document = await this.CreateTempDocument().ConfigureAwait( false );
-			Assert.True( !await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
-
-			if ( await this.Json.Write( this.GetCancellationToken() ).ConfigureAwait( false ) ) {
-				Assert.True( await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
-			}
-
-			await this.Json.Document.Delete( this.GetCancellationToken() ).ConfigureAwait( false );
-			Assert.True( !await this.Json.Document.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) );
-		}
-
-		public async Task<Document> CreateTempDocument() {
-			var temp = Document.GetTempDocument( "config" );
-			if ( await temp.Exists( this.GetCancellationToken() ).ConfigureAwait( false ) ) {
-				throw new InvalidOperationException();
-			}
-
-			return ( Document )temp;
-		}
-
+		return ( Document )temp;
 	}
 
 }
