@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ParsingExtensions.cs" last touched on 2021-10-13 at 4:30 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ParsingExtensions.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 #nullable enable
 
@@ -64,7 +63,7 @@ public static class ParsingExtensions {
 		new( () => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ) );
 
 	public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new( () => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
-		 RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ) );
+		   RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ) );
 
 	public static Lazy<Regex> RegexByWordBreak { get; } = new( () => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
@@ -88,9 +87,7 @@ public static class ParsingExtensions {
 
 	private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new( () => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ) );
 
-	/// <summary>
-	///     Return list of all <see cref="Char" /> that are <see cref="Char.IsLetter(Char)" />
-	/// </summary>
+	/// <summary>Return list of all <see cref="Char" /> that are <see cref="Char.IsLetter(Char)" /></summary>
 	[Pure]
 	public static IEnumerable<Char> AllLetters() => AllPossibleLetters.Value;
 
@@ -98,41 +95,35 @@ public static class ParsingExtensions {
 		new( () => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ) );
 
 	/// <summary>
-	///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
-	///     <para>Does not do any string trimming. Just truncate.</para>
+	/// Return <paramref name="self" />, up the <paramref name="maxlength" />.
+	/// <para>Does not do any string trimming. Just truncate.</para>
 	/// </summary>
-	/// <remarks>
-	///     <seealso cref="Left" />
-	/// </remarks>
+	/// <remarks><seealso cref="Left" /></remarks>
 	/// <param name="self"></param>
 	/// <param name="maxlength"></param>
 	[Pure]
 	public static String? LimitLength( this String? self, UInt32 maxlength ) => self?[ ..( Int32 )Math.Min( maxlength, ( UInt32 )self.Length ) ];
 
 	/// <summary>
-	///     Returns the <paramref name="count" /> from the beginning of the string.
-	///     <para>
-	///         <code>"abc123".Left(3) == "abc"</code>
-	///     </para>
-	///     <para>Does not Trim().</para>
-	///     <para>Null returns <see cref="String.Empty" /></para>
+	/// Returns the <paramref name="count" /> from the beginning of the string.
+	/// <para>
+	/// <code>"abc123".Left(3) == "abc"</code>
+	/// </para>
+	/// <para>Does not Trim().</para>
+	/// <para>Null returns <see cref="String.Empty" /></para>
 	/// </summary>
-	/// <remarks>
-	///     <seealso cref="LimitLength" />
-	/// </remarks>
+	/// <remarks><seealso cref="LimitLength" /></remarks>
 	[Pure]
 	public static String? Left( this String? self, UInt32 count ) => self?[ ..( Int32 )Math.Min( count, ( UInt32 )self.Length ) ];
 
 	/// <summary>
-	///     Returns the <paramref name="count" /> from the end of the string.
-	///     <para>
-	///         <code>"abc123".Right(3) == "123"</code>
-	///     </para>
-	///     <para>
-	///         <remarks>If <paramref name="count" /> is greater then the length, the full string is returned.</remarks>
-	///     </para>
-	///     <para>Does not Trim().</para>
-	///     <para>Null returns null.</para>
+	/// Returns the <paramref name="count" /> from the end of the string.
+	/// <para>
+	/// <code>"abc123".Right(3) == "123"</code>
+	/// </para>
+	/// <para><remarks>If <paramref name="count" /> is greater then the length, the full string is returned.</remarks></para>
+	/// <para>Does not Trim().</para>
+	/// <para>Null returns null.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="count"></param>
@@ -153,15 +144,13 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Returns the <paramref name="count" /> from the end of the string.
-	///     <para>
-	///         <code>"abc123".Right(3) == "123"</code>
-	///     </para>
-	///     <para>
-	///         <remarks>If <paramref name="count" /> is greater then the length, the full string is returned.</remarks>
-	///     </para>
-	///     <para>Does not Trim().</para>
-	///     <para>Null returns <see cref="String.Empty" /></para>
+	/// Returns the <paramref name="count" /> from the end of the string.
+	/// <para>
+	/// <code>"abc123".Right(3) == "123"</code>
+	/// </para>
+	/// <para><remarks>If <paramref name="count" /> is greater then the length, the full string is returned.</remarks></para>
+	/// <para>Does not Trim().</para>
+	/// <para>Null returns <see cref="String.Empty" /></para>
 	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="count"></param>
@@ -192,8 +181,8 @@ public static class ParsingExtensions {
 	public static String SingleQuote( this String? self ) => $"{ParsingConstants.Strings.SingleQuote}{self.Trimmed()}{ParsingConstants.Strings.SingleQuote}";
 
 	/// <summary>
-	///     Add the left [ and right ] brackets if they're not already on the string.
-	///     <para>An empty or whitepsace string returns an empty string.</para>
+	/// Add the left [ and right ] brackets if they're not already on the string.
+	/// <para>An empty or whitepsace string returns an empty string.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
@@ -206,8 +195,8 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Add the left [ and right ] brackets if they're not already on the string.
-	///     <para>An empty or whitepsace string throws <see cref="NullException" />.</para>
+	/// Add the left [ and right ] brackets if they're not already on the string.
+	/// <para>An empty or whitepsace string throws <see cref="NullException" />.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	/// <exception cref="NullException"></exception>
@@ -225,16 +214,16 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Remove the first char and the last char.
-	///     <para>Does not perform any length or range checks.</para>
-	///     <para>Will return null if empty.</para>
+	/// Remove the first char and the last char.
+	/// <para>Does not perform any length or range checks.</para>
+	/// <para>Will return null if empty.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	public static String? TrimLeftAndRightChar( this String self ) => self[ 1..^1 ].Trimmed();
 
 	/// <summary>
-	///     Add the left ` and/or right ” brackets if they're not already on the string.
-	///     <para>An empty or whitepsace string throws <see cref="NullException" />.</para>
+	/// Add the left ` and/or right ” brackets if they're not already on the string.
+	/// <para>An empty or whitepsace string throws <see cref="NullException" />.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	/// <exception cref="NullException"></exception>
@@ -297,9 +286,7 @@ public static class ParsingExtensions {
 			var _ => self.ToString()?.Trim().NullIfEmpty()
 		};
 
-	/// <summary>
-	///     Returns a double quoted (") prefix and suffix (if the <paramref name="self" /> is not already double quoted).
-	/// </summary>
+	/// <summary>Returns a double quoted (") prefix and suffix (if the <paramref name="self" /> is not already double quoted).</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
@@ -314,8 +301,8 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
-	///     <para>TODO faster? slower? Needs benchmarking compared to <see cref="LimitAndTrim" />.</para>
+	/// Return <paramref name="self" />, up the <paramref name="maxlength" />.
+	/// <para>TODO faster? slower? Needs benchmarking compared to <see cref="LimitAndTrim" />.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="maxlength"></param>
@@ -328,7 +315,8 @@ public static class ParsingExtensions {
 		var length = Math.Min( maxlength, self.Length );
 		return new StringBuilder( self, length ) {
 			Length = length
-		}.ToString().TrimEnd();
+		}.ToString()
+			 .TrimEnd();
 	}
 
 	/// <summary>Add dashes to a pascal-cased String</summary>
@@ -363,13 +351,10 @@ public static class ParsingExtensions {
 		NoIdeaToUnderscore.Value.Replace( LowerUnderscore.Value.Replace( UpperToUnderscore.Value.Replace( self, "$1_$2" ), "$1_$2" ), Symbols.Underscore );
 
 	/// <summary>
-	///     <para>Returns the rest of the string after <paramref name="splitter" />.</para>
-	///     <para>If <paramref name="self" /> is null then null is returned.</para>
-	///     <para>If <paramref name="self" /> is <see cref="String.Empty" />, then <see cref="String.Empty" /> is returned.</para>
-	///     <para>
-	///         If <paramref name="splitter" /> is null or <see cref="String.Empty" />, then <paramref name="self" /> is
-	///         returned.
-	///     </para>
+	/// <para>Returns the rest of the string after <paramref name="splitter" />.</para>
+	/// <para>If <paramref name="self" /> is null then null is returned.</para>
+	/// <para>If <paramref name="self" /> is <see cref="String.Empty" />, then <see cref="String.Empty" /> is returned.</para>
+	/// <para>If <paramref name="splitter" /> is null or <see cref="String.Empty" />, then <paramref name="self" /> is returned.</para>
 	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="splitter"></param>
@@ -411,15 +396,12 @@ public static class ParsingExtensions {
 		};
 
 	/// <summary>
-	///     <para>Return the substring from 0 to the index of the splitter.</para>
-	///     <para>If <paramref name="self" /> is null then null is returned.</para>
-	///     <para>If <paramref name="self" /> is <see cref="String.Empty" />, then <see cref="String.Empty" /> is returned.</para>
-	///     <para>
-	///         If <paramref name="splitter" /> is null or <see cref="String.Empty" />, then <paramref name="self" /> is
-	///         returned.
-	///     </para>
+	/// <para>Return the substring from 0 to the index of the splitter.</para>
+	/// <para>If <paramref name="self" /> is null then null is returned.</para>
+	/// <para>If <paramref name="self" /> is <see cref="String.Empty" />, then <see cref="String.Empty" /> is returned.</para>
+	/// <para>If <paramref name="splitter" /> is null or <see cref="String.Empty" />, then <paramref name="self" /> is returned.</para>
 	/// </summary>
-	/// <param name="self">       </param>
+	/// <param name="self"></param>
 	/// <param name="splitter"></param>
 	/// <param name="comparison"></param>
 	[Pure]
@@ -439,9 +421,7 @@ public static class ParsingExtensions {
 		return self[ ..self.IndexOf( splitter, comparison ) ];
 	}
 
-	/// <summary>
-	///     Appends <paramref name="element" /> after <paramref name="sequence" />.
-	/// </summary>
+	/// <summary>Appends <paramref name="element" /> after <paramref name="sequence" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="sequence"></param>
 	/// <param name="element"></param>
@@ -471,12 +451,12 @@ public static class ParsingExtensions {
 	public static UInt32 Count( this String text, Char character ) => ( UInt32 )text.Count( c => c == character );
 
 	/// <summary>
-	///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
-	///     integer represents the code point of a character in the
-	///     source String. Includes an optional threshhold which can be used to indicate the maximum allowable distance.
+	/// Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each integer
+	/// represents the code point of a character in the source String. Includes an optional threshhold which can be used to
+	/// indicate the maximum allowable distance.
 	/// </summary>
-	/// <param name="source">   An array of the code points of the first String</param>
-	/// <param name="target">   An array of the code points of the second String</param>
+	/// <param name="source">An array of the code points of the first String</param>
+	/// <param name="target">An array of the code points of the second String</param>
 	/// <param name="threshold">Maximum allowable distance</param>
 	/// <returns>Int.MaxValue if threshhold exceeded; otherwise the Damerau-Leveshteim distance between the strings</returns>
 	[Pure]
@@ -517,6 +497,7 @@ public static class ParsingExtensions {
 		var jm1 = 0;
 
 		for ( var j = 1; j <= maxj; j++ ) {
+
 			// Rotate
 			var dSwap = dMinus2;
 			dMinus2 = dMinus1;
@@ -592,13 +573,11 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Case insensitive String-end comparison.</para>
-	///     <para>( true example: cAt == CaT )</para>
-	///     <para>
-	///         <see cref="StringComparison.InvariantCultureIgnoreCase" />
-	///     </para>
+	/// <para>Case insensitive String-end comparison.</para>
+	/// <para>( true example: cAt == CaT )</para>
+	/// <para><see cref="StringComparison.InvariantCultureIgnoreCase" /></para>
 	/// </summary>
-	/// <param name="source"> </param>
+	/// <param name="source"></param>
 	/// <param name="compare"></param>
 	[Pure]
 	public static Boolean EndsLike( this String source, String compare ) => source.EndsWith( compare, StringComparison.InvariantCultureIgnoreCase );
@@ -625,7 +604,7 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Escapes a String according to the URI data String rules given in RFC 3986.</para>
+	/// <para>Escapes a String according to the URI data String rules given in RFC 3986.</para>
 	/// </summary>
 	/// <param name="value">The value to escape.</param>
 	/// <returns>The escaped value.</returns>
@@ -634,17 +613,18 @@ public static class ParsingExtensions {
 	/// <see cref="http://www.ietf.org/rfc/rfc2396.txt" />
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/vstudio/bb968786(v=vs.100).aspx" />
 	/// <remarks>
-	///     <para>
-	///         The <see cref="Uri.EscapeDataString" /> method is <i>supposed</i> to take on RFC 3986 behavior if certain
-	///         elements are present in a .config file. Even if this actually
-	///         worked (which in my experiments it <i>doesn't</i>), we can't rely on every host actually having this
-	///         configuration element present.
-	///     </para>
+	/// <para>
+	/// The <see cref="Uri.EscapeDataString" /> method is <i>supposed</i> to take on RFC 3986 behavior if certain elements are
+	/// present in a .config file. Even if this actually worked (which in my experiments it <i>doesn't</i>), we can't rely on
+	/// every host actually having this configuration element present.
+	/// </para>
 	/// </remarks>
 	[Pure]
 	public static Uri EscapeUriDataStringRfc3986( this String value ) {
-		// Start with RFC 2396 escaping by calling the .NET method to do the work. This MAY sometimes exhibit RFC 3986 behavior (according to the documentation). If it does, the escaping we do that follows it will be
-		// a no-op since the characters we search for to replace can't possibly exist in the String.
+
+		// Start with RFC 2396 escaping by calling the .NET method to do the work. This MAY sometimes exhibit RFC 3986 behavior
+		// (according to the documentation). If it does, the escaping we do that follows it will be a no-op since the
+		// characters we search for to replace can't possibly exist in the String.
 		var escaped = new StringBuilder( Uri.EscapeDataString( value ) );
 
 		// Upgrade the escaping to RFC 3986, if necessary.
@@ -690,10 +670,9 @@ public static class ParsingExtensions {
 	[Pure]
 	public static Word? FirstWord( this String? sentence ) => sentence.ToWords().FirstOrDefault();
 
-	/// <param name="rational">      </param>
+	/// <param name="rational"></param>
 	/// <param name="numberOfDigits"></param>
-	/// <seealso
-	///     cref="http://kashfarooq.wordpress.com/2011/08/01/calculating-pi-in-c-part-3-using-the-net-4-bigrational-class/" />
+	/// <seealso cref="http://kashfarooq.wordpress.com/2011/08/01/calculating-pi-in-c-part-3-using-the-net-4-bigrational-class/" />
 	[Pure]
 	public static String Format( this Rational rational, Int32 numberOfDigits ) {
 		var numeratorShiftedToEnoughDigits = rational.Numerator * BigInteger.Pow( new BigInteger( 10 ), numberOfDigits );
@@ -737,12 +716,11 @@ public static class ParsingExtensions {
 		}
 	}
 
-	/// <summary>
-	///     Where did this function come from?
-	/// </summary>
+	/// <summary>Where did this function come from?</summary>
 	/// <param name="s"></param>
 	[Pure]
 	public static String FullSoundex( this String s ) {
+
 		// the encoding information
 		//const String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		const String codes = "0123012D02245501262301D202";
@@ -750,7 +728,8 @@ public static class ParsingExtensions {
 		// i need a capitalized String
 		s = s.ToUpper( CultureInfo.CurrentCulture );
 
-		// i'm building the coded String using a String builder because i think this is probably the fastest and least intensive way
+		// i'm building the coded String using a String builder because i think this is probably the fastest and least
+		// intensive way
 		var coded = new StringBuilder( s.Length * 2, s.Length * 2 );
 
 		// do the encoding
@@ -789,7 +768,7 @@ public static class ParsingExtensions {
 	private static Lazy<Regex> SoundExPart3 { get; } = new( () => new Regex( "[D0]", RegexOptions.Compiled ), true );
 
 	/// <summary>Return possible variants of a name for name matching.</summary>
-	/// <param name="input">  String to convert</param>
+	/// <param name="input">String to convert</param>
 	/// <param name="culture">The culture to use for conversion</param>
 	/// <returns>IEnumerable&lt;String&gt;</returns>
 	[Pure]
@@ -828,8 +807,8 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Add a space Before Each Capital Letter. then lowercase the whole string.
-	///     <para>See also: <see cref="AddSpacesBeforeUppercase" /></para>
+	/// Add a space Before Each Capital Letter. then lowercase the whole string.
+	/// <para>See also: <see cref="AddSpacesBeforeUppercase" /></para>
 	/// </summary>
 	/// <param name="word"></param>
 	[Pure]
@@ -842,8 +821,8 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     .NET Char class already provides an static IsDigit method however it behaves differently depending on if char
-	///     is a Latin or not.
+	/// .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a
+	/// Latin or not.
 	/// </summary>
 	/// <param name="c"></param>
 	[Pure]
@@ -870,13 +849,15 @@ public static class ParsingExtensions {
 	public static Boolean IsUpperCase( this String inputString ) => ParsingConstants.UpperCaseRegeEx.IsMatch( inputString );
 
 	/// <summary>
-	///     <para>String sentence = "10 cats, 20 dogs, 40 fish and 1 programmer.";</para>
-	///     <para>
-	///         Should return:
-	///         <list type="">
-	///             <item>10</item> <item>20</item> <item>40</item> <item>1</item>
-	///         </list>
-	///     </para>
+	/// <para>String sentence = "10 cats, 20 dogs, 40 fish and 1 programmer.";</para>
+	/// <para>Should return:
+	/// <list type="">
+	/// <item>10</item>
+	/// <item>20</item>
+	/// <item>40</item>
+	/// <item>1</item>
+	/// </list>
+	/// </para>
 	/// </summary>
 	/// <param name="sentence"></param>
 	[DebuggerStepThrough]
@@ -903,15 +884,13 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Case insensitive string comparison.</para>
-	///     <para>( for example: cAt == CaT is true )</para>
-	///     <para>( for example: CaT == CaT is true )</para>
-	///     <para>( Like( null, null ) is false )</para>
-	///     <para>
-	///         Default comparison is <see cref="StringComparison.OrdinalIgnoreCase" />
-	///     </para>
+	/// <para>Case insensitive string comparison.</para>
+	/// <para>( for example: cAt == CaT is true )</para>
+	/// <para>( for example: CaT == CaT is true )</para>
+	/// <para>( Like( null, null ) is false )</para>
+	/// <para>Default comparison is <see cref="StringComparison.OrdinalIgnoreCase" /></para>
 	/// </summary>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="right"></param>
 	/// <param name="compareOptions"></param>
 	/// <param name="comparison"></param>
@@ -961,12 +940,9 @@ public static class ParsingExtensions {
 		IgnoreTrailingWhitespace = 0b1000,
 
 		IgnoreAllWhitespace = 0b10000
-
 	}
 
-	/// <summary>
-	///     Strips ALL whitespace from <paramref name="value" />, returning null if needed.
-	/// </summary>
+	/// <summary>Strips ALL whitespace from <paramref name="value" />, returning null if needed.</summary>
 	/// <param name="value"></param>
 	[Pure]
 	public static String? StripAllWhitespace( this String? value ) {
@@ -983,13 +959,11 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Case (ordinal) sensitive comparison.</para>
-	///     <para>( for example: cAt == cAt is true )</para>
-	///     <para>( for example: cAt == CaT is false )</para>
-	///     <para>( Same(null, null ) is true )</para>
-	///     <para>
-	///         <see cref="StringComparison.Ordinal" />
-	///     </para>
+	/// <para>Case (ordinal) sensitive comparison.</para>
+	/// <para>( for example: cAt == cAt is true )</para>
+	/// <para>( for example: cAt == CaT is false )</para>
+	/// <para>( Same(null, null ) is true )</para>
+	/// <para><see cref="StringComparison.Ordinal" /></para>
 	/// </summary>
 	/// <param name="left"></param>
 	/// <param name="right"></param>
@@ -1063,7 +1037,7 @@ public static class ParsingExtensions {
 	[Pure]
 	public static Int32 NumberOfDigits( this BigInteger number ) => number.ToString().Length;
 
-	/// <summary>Repeats <paramref name="c" /> <paramref name="count" /> times.</summary>
+	/// <summary>Repeats <paramref name="c" /><paramref name="count" /> times.</summary>
 	/// <param name="c"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
@@ -1071,15 +1045,14 @@ public static class ParsingExtensions {
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static String Repeat( this Char c, Int32 count ) => new( c, count );
 
-	/// <summary>Repeats the first char of the string <paramref name="self" /> <paramref name="count" /> times.</summary>
+	/// <summary>Repeats the first char of the string <paramref name="self" /><paramref name="count" /> times.</summary>
 	/// <param name="self"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
 	[Pure]
 	public static String Repeat( this String? self, Int32 count ) => Enumerable.Repeat( self, count ).ToStrings( null );
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="self"></param>
 	/// <param name="count"></param>
 	/// <param name="index"></param>
@@ -1098,8 +1071,8 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Combine <paramref name="left" />, <paramref name="middlePadding" /> <paramref name="count" /> times, and the
-	///     <paramref name="right" /> strings.
+	/// Combine <paramref name="left" />, <paramref name="middlePadding" /><paramref name="count" /> times, and the <paramref
+	/// name="right" /> strings.
 	/// </summary>
 	/// <param name="left"></param>
 	/// <param name="right"></param>
@@ -1147,6 +1120,7 @@ public static class ParsingExtensions {
 	[Pure]
 	public static String RemoveSurroundingQuotes( this String input ) {
 		if ( input.StartsWith( ParsingConstants.Chars.DoubleQuote ) && input.EndsWith( ParsingConstants.Chars.DoubleQuote ) ) {
+
 			// remove leading/trailing quotes
 			return input[ 1..^1 ];
 		}
@@ -1154,16 +1128,13 @@ public static class ParsingExtensions {
 		return input;
 	}
 
-	/// <summary>
-	///     Repeats the supplied string the specified number of times, putting the separator string between each
-	///     repetition.
-	/// </summary>
-	/// <param name="self">       The extended string.</param>
+	/// <summary>Repeats the supplied string the specified number of times, putting the separator string between each repetition.</summary>
+	/// <param name="self">The extended string.</param>
 	/// <param name="repetitions">The number of repetitions of the string to make. Must not be negative.</param>
-	/// <param name="separator">  The separator string to place between each repetition. Must not be null.</param>
+	/// <param name="separator">The separator string to place between each repetition. Must not be null.</param>
 	/// <returns>
-	///     The subject string, repeated n times, where n = repetitions. Between each repetition will be the separator
-	///     string. If n is 0, this method will return String.Empty.
+	/// The subject string, repeated n times, where n = repetitions. Between each repetition will be the separator string. If n
+	/// is 0, this method will return String.Empty.
 	/// </returns>
 	[Pure]
 	public static String RepeatString( this String self, Int32 repetitions, String separator = "" ) {
@@ -1197,11 +1168,11 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     <para>
-	///         Replace all instances of the string <paramref name="needle" /> in the string <paramref name="haystack" />
-	///         with the string <paramref name="replacement" />.
-	///     </para>
-	///     <see cref="StringComparison.OrdinalIgnoreCase" /> by default.
+	/// <para>
+	/// Replace all instances of the string <paramref name="needle" /> in the string <paramref name="haystack" /> with the
+	/// string <paramref name="replacement" />.
+	/// </para>
+	/// <see cref="StringComparison.OrdinalIgnoreCase" /> by default.
 	/// </summary>
 	/// <param name="haystack"></param>
 	/// <param name="needle"></param>
@@ -1286,16 +1257,16 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>Case sensitive ( <see cref="StringComparison.Ordinal" />) string comparison.</summary>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="right"></param>
 	[Pure]
 	public static Boolean Is( this String? left, String? right ) => ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.Ordinal );
 
 	/// <summary>Compute a Similarity between two strings. <br /> 1. 0 is a full, bit for bit match. <br /></summary>
-	/// <param name="source">      </param>
-	/// <param name="compare">     </param>
+	/// <param name="source"></param>
+	/// <param name="compare"></param>
 	/// <param name="timeout"></param>
-	/// <param name="cancellationToken">     </param>
+	/// <param name="cancellationToken"></param>
 	/// <param name="matchReasons">preferably an empty queue</param>
 	/// <remarks>The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
 	[Pure]
@@ -1460,6 +1431,7 @@ public static class ParsingExtensions {
 		similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
 
 		if ( stopwatch.Elapsed > timeout ) {
+
 			//TODO
 		}
 
@@ -1483,10 +1455,13 @@ public static class ParsingExtensions {
 			throw new NullException( nameof( s ) );
 		}
 
-		var res = Enumerable.Range( 0, s.Length ).Select( index => new {
-			index,
-			ch = s[ index ]
-		} ).GroupBy( f => f.index / chunks ).Select( g => String.Join( "", g.Select( z => z.ch ) ) );
+		var res = Enumerable.Range( 0, s.Length )
+							.Select( index => new {
+								index,
+								ch = s[ index ]
+							} )
+							.GroupBy( f => f.index / chunks )
+							.Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 		return res;
 	}
@@ -1529,6 +1504,7 @@ public static class ParsingExtensions {
 			var isAllowed = false;
 
 			foreach ( var allowedTag in allowedTags ) {
+
 				// Determine if it is an allowed tag "<tag>" , "<tag " and "</tag"
 				var offset = htmlTag.IndexOf( '<' + allowedTag + '>', StringComparison.Ordinal );
 
@@ -1591,21 +1567,20 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>Just <see cref="String.Substring(Int32)" /> with a minimum length check.</summary>
-	/// <param name="s">    </param>
+	/// <param name="s"></param>
 	/// <param name="count"></param>
 	[Pure]
 	public static String Sub( this String s, Int32 count ) => s[ ..Math.Min( count, s.Length ) ];
 
 	/// <summary>
-	///     Performs the same action as <see cref="String.Substring(Int32)" /> but counting from the end of the string
-	///     (instead of the start).
+	/// Performs the same action as <see cref="String.Substring(Int32)" /> but counting from the end of the string (instead of
+	/// the start).
 	/// </summary>
-	/// <param name="self">    The extended string.</param>
+	/// <param name="self">The extended string.</param>
 	/// <param name="endIndex">The zero-based starting character position (from the end) of a substring in this instance.</param>
 	/// <returns>Returns the original string with <paramref name="endIndex" /> characters removed from the end.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">
-	///     Thrown if endIndex is greater than the length of the string (or
-	///     negative).
+	/// Thrown if endIndex is greater than the length of the string (or negative).
 	/// </exception>
 	[Pure]
 	public static String SubstringFromEnd( this String self, Int32 endIndex ) {
@@ -1621,19 +1596,17 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Performs the same action as <see cref="String.Substring(Int32, Int32)" /> but counting from the end of the
-	///     string (instead of the start).
+	/// Performs the same action as <see cref="String.Substring(Int32, Int32)" /> but counting from the end of the string
+	/// (instead of the start).
 	/// </summary>
-	/// <param name="self">    The extended string.</param>
+	/// <param name="self">The extended string.</param>
 	/// <param name="endIndex">The zero-based starting character position (from the end) of a substring in this instance.</param>
-	/// <param name="length">  The number of characters in the substring.</param>
+	/// <param name="length">The number of characters in the substring.</param>
 	/// <returns>
-	///     Returns <paramref name="length" /> characters of the subject string, counting backwards from
-	///     <paramref name="endIndex" />.
+	/// Returns <paramref name="length" /> characters of the subject string, counting backwards from <paramref name="endIndex" />.
 	/// </returns>
 	/// <exception cref="ArgumentOutOfRangeException">
-	///     Thrown if endIndex is greater than the length of the string (or
-	///     negative).
+	/// Thrown if endIndex is greater than the length of the string (or negative).
 	/// </exception>
 	[Pure]
 	public static String SubstringFromEnd( this String self, Int32 endIndex, Int32 length ) {
@@ -1680,7 +1653,7 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>Converts a String to pascal case with the option to remove underscores</summary>
-	/// <param name="text">             String to convert</param>
+	/// <param name="text">String to convert</param>
 	/// <param name="removeUnderscores">Option to remove underscores</param>
 	/// <param name="cultureInfo"></param>
 	[Pure]
@@ -1902,14 +1875,13 @@ public static class ParsingExtensions {
 	[Pure]
 	public static IEnumerable<String> ToSplit( this String? sentence ) =>
 		RegexByWordBreak.Value.Split( $"{ParsingConstants.Strings.Singlespace}{sentence}{ParsingConstants.Strings.Singlespace}" )
-						.ToStrings( ParsingConstants.Strings.Singlespace ).Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+						.ToStrings( ParsingConstants.Strings.Singlespace )
+						.Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
 	[Pure]
 	public static IEnumerable<Word> ToWords( this String? sentence ) => sentence.ToSplit().Select( s => new Word( s ) );
 
-	/// <summary>
-	///     Needs unit tests.
-	/// </summary>
+	/// <summary>Needs unit tests.</summary>
 	/// <param name="s"></param>
 	/// <param name="maximumLength"></param>
 	[Pure]
@@ -1928,7 +1900,7 @@ public static class ParsingExtensions {
 	public static String Utf8ByteArrayToString( this Byte[] characters ) => new UTF8Encoding().GetString( characters );
 
 	/// <summary>Returns <paramref name="self" /> but culled to a maximum length of <paramref name="maxLength" /> characters.</summary>
-	/// <param name="self">     The extended string.</param>
+	/// <param name="self">The extended string.</param>
 	/// <param name="maxLength">The maximum desired length of the string.</param>
 	/// <returns>A string containing the first <c>Min(this.Length, maxLength)</c> characters from the extended string.</returns>
 	[Pure]
@@ -2065,12 +2037,10 @@ public static class ParsingExtensions {
 
 	public static Boolean Contains( this String value, String find, StringComparison comparisonType = StringComparison.Ordinal ) => value.Contains( find, comparisonType );
 
-	/// <summary>
-	///     //TODO This function needs unit tests.
-	/// </summary>
+	/// <summary>//TODO This function needs unit tests.</summary>
 	/// <remarks>
-	///     <code>const String test = "   Hello, World! ";</code>
-	///     <code>Console.WriteLine( ParsingExtensionsToo.Trim( test.ToCharArray() ).ToArray() );</code>
+	/// <code>const String test = "   Hello, World! ";</code>
+	/// <code>Console.WriteLine( ParsingExtensionsToo.Trim( test.ToCharArray() ).ToArray() );</code>
 	/// </remarks>
 	/// <param name="source"></param>
 	public static Span<Char> Trim( this Span<Char> source ) {
@@ -2098,8 +2068,7 @@ public static class ParsingExtensions {
 		return source.Slice( start, 1 + ( end - start ) );
 	}
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="self"></param>
 	/// <param name="startingChar"></param>
 	/// <param name="comparison"></param>
@@ -2114,8 +2083,7 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Return only English alphabet letters in <paramref name="value" />.
-	///     <remarks>Strip all non-English alphabet letters.</remarks>
+	/// Return only English alphabet letters in <paramref name="value" />. <remarks>Strip all non-English alphabet letters.</remarks>
 	/// </summary>
 	/// <param name="value"></param>
 	public static String OnlyEnglishLetters( this String value ) {
@@ -2166,14 +2134,14 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Returns a String with the <paramref name="separator" /> between each item of an <paramref name="list" />.</para>
-	///     <para>If no separator is given, it defaults to ", ".</para>
-	///     <para>Additonally, <paramref name="atTheEnd" /> can optionally be added to the returned string.</para>
+	/// <para>Returns a String with the <paramref name="separator" /> between each item of an <paramref name="list" />.</para>
+	/// <para>If no separator is given, it defaults to ", ".</para>
+	/// <para>Additonally, <paramref name="atTheEnd" /> can optionally be added to the returned string.</para>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list"></param>
 	/// <param name="separator">Defaults to ", ".</param>
-	/// <param name="atTheEnd">  </param>
+	/// <param name="atTheEnd"></param>
 	/// <param name="trimEnd"></param>
 	[DebuggerStepThrough]
 	[Pure]
@@ -2200,7 +2168,7 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Returns a <see cref="Status" /> if <paramref name="value" /> starts with any of <paramref name="ofThese" />.
+	/// Returns a <see cref="Status" /> if <paramref name="value" /> starts with any of <paramref name="ofThese" />.
 	/// </summary>
 	/// <param name="value"></param>
 	/// <param name="ofThese"></param>
@@ -2243,5 +2211,4 @@ public static class ParsingExtensions {
 
 		return self[ 1.. ];
 	}
-
 }

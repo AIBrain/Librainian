@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "NumberExtensions.cs" last touched on 2021-10-13 at 4:27 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "NumberExtensions.cs" last formatted on 2021-11-30 at 7:19 PM by Protiguous.
 
 #nullable enable
 
@@ -427,7 +426,7 @@ public static class NumberExtensions {
 	/// <returns>Input value with reversed bits</returns>
 	public static UInt32 ReverseBits( this UInt32 source ) =>
 		( UInt32 )( ( BitReverseTable256[ source & 0xff ] << 24 ) | ( BitReverseTable256[ ( source >> 8 ) & 0xff ] << 16 ) |
-		            ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
+					 ( BitReverseTable256[ ( source >> 16 ) & 0xff ] << 8 ) | BitReverseTable256[ ( source >> 24 ) & 0xff ] );
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 	/// <param name="source">Source value to reverse</param>
@@ -494,8 +493,8 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 102.To(204)) { Console.WriteLine(i); }</summary>
 	/// <param name="start"></param>
-	/// <param name="end">  </param>
-	/// <param name="step"> </param>
+	/// <param name="end"></param>
+	/// <param name="step"></param>
 	public static IEnumerable<Byte> To( this Byte start, Byte end, Byte step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -523,8 +522,8 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="begin"></param>
-	/// <param name="end">  </param>
-	/// <param name="step"> </param>
+	/// <param name="end"></param>
+	/// <param name="step"></param>
 	public static IEnumerable<UInt64> To( this Int32 begin, UInt64 end, UInt64 step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -558,8 +557,8 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="begin">inclusive</param>
-	/// <param name="end">  inclusive</param>
-	/// <param name="step"> </param>
+	/// <param name="end">inclusive</param>
+	/// <param name="step"></param>
 	[Pure]
 	public static IEnumerable<Int32> To( this Int32 begin, Int32 end, Int32 step = 1 ) {
 		if ( step == 0 ) {
@@ -585,7 +584,7 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="from"></param>
-	/// <param name="end"> </param>
+	/// <param name="end"></param>
 	/// <param name="step"></param>
 	[Pure]
 	public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
@@ -615,7 +614,7 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="begin"></param>
-	/// <param name="end"> </param>
+	/// <param name="end"></param>
 	/// <param name="step"></param>
 	[Pure]
 	public static IEnumerable<Int64> To( this Int64 begin, Int64 end, Int64 step = 1 ) {
@@ -645,7 +644,7 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="from"></param>
-	/// <param name="end">  </param>
+	/// <param name="end"></param>
 	/// <param name="step"></param>
 	[Pure]
 	public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger end, UInt64 step = 1 ) {
@@ -667,7 +666,7 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="begin"></param>
-	/// <param name="end">  </param>
+	/// <param name="end"></param>
 	/// <param name="step"></param>
 	[Pure]
 	public static IEnumerable<BigInteger> To( this Int64 begin, BigInteger end, UInt64 step = 1 ) {
@@ -691,8 +690,8 @@ public static class NumberExtensions {
 
 	/// <summary>Example: foreach (var i in 10240.To(20448)) { Console.WriteLine(i); }</summary>
 	/// <param name="begin"></param>
-	/// <param name="end">   </param>
-	/// <param name="step"> </param>
+	/// <param name="end"></param>
+	/// <param name="step"></param>
 	[Pure]
 	public static IEnumerable<Rational> To( this Int32 begin, Rational end, Rational step ) {
 		if ( step == 0 ) {
@@ -714,17 +713,16 @@ public static class NumberExtensions {
 	}
 
 	/// <summary>
-	///     Return each <see cref="DateTime" /> between <paramref name="from" /> and <paramref name="to" />, stepped by a
-	///     <see cref="TimeSpan" /> ( <paramref name="step" />).
+	/// Return each <see cref="DateTime" /> between <paramref name="from" /> and <paramref name="to" />, stepped by a <see
+	/// cref="TimeSpan" /> ( <paramref name="step" />).
 	/// </summary>
 	/// <param name="from"></param>
-	/// <param name="to">  </param>
+	/// <param name="to"></param>
 	/// <param name="step"></param>
 	/// <remarks>//TODO Untested code!</remarks>
 	/// <example>
-	///     var now = DateTime.UtcNow; var then = now.AddMinutes( 10 ); var minutes = now.To( then, TimeSpan.FromMinutes( 1 )
-	///     ); foreach ( var dateTime in minutes ) {
-	///     Console.WriteLine( dateTime ); }
+	/// var now = DateTime.UtcNow; var then = now.AddMinutes( 10 ); var minutes = now.To( then, TimeSpan.FromMinutes( 1 ) );
+	/// foreach ( var dateTime in minutes ) { Console.WriteLine( dateTime ); }
 	/// </example>
 	[Pure]
 	public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
@@ -817,5 +815,4 @@ public static class NumberExtensions {
 	public static String ToHexNumberString( this IEnumerable<Byte> value ) => Bits.ToString( value.Reverse().ToArray() ).Replace( "-", "" ).ToLower();
 
 	public static String ToHexNumberString( this UInt256 value ) => value.ToByteArray().ToHexNumberString();
-
 }

@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ThreadingExtensions.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ThreadingExtensions.cs" last formatted on 2021-11-30 at 7:23 PM by Protiguous.
 
 #nullable enable
 
@@ -49,8 +48,16 @@ public static class ThreadingExtensions {
 	public static Boolean IsRunningFromNUnit { get; } =
 		AppDomain.CurrentDomain.GetAssemblies().Any( assembly => assembly.FullName?.ToLowerInvariant().StartsWith( "nunit.framework" ) == true );
 
+	private static void ThreadYieldFor( this TimeSpan timeSpan ) {
+		var stopwatch = Stopwatch.StartNew();
+
+		while ( stopwatch.Elapsed < timeSpan ) {
+			Thread.Yield();
+		}
+	}
+
 	/// <summary>Only allow a delegate to run X times.</summary>
-	/// <param name="action">      </param>
+	/// <param name="action"></param>
 	/// <param name="callsAllowed"></param>
 	/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 	/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
@@ -65,8 +72,8 @@ public static class ThreadingExtensions {
 	}
 
 	/// <summary>Only allow a delegate to run X times.</summary>
-	/// <param name="action">      </param>
-	/// <param name="parameter">   </param>
+	/// <param name="action"></param>
+	/// <param name="parameter"></param>
 	/// <param name="callsAllowed"></param>
 	/// <example>var barWithBarrier = ThreadingExtensions.ActionBarrier(Bar, remainingCallsAllowed: 2 );</example>
 	/// <remarks>Calling the delegate more often than <paramref name="callsAllowed" /> should just NOP.</remarks>
@@ -81,10 +88,10 @@ public static class ThreadingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Thread.BeginThreadAffinity();</para>
-	///     <para>Thread.BeginCriticalRegion();</para>
-	///     <para>...</para>
-	///     <see cref="End" />
+	/// <para>Thread.BeginThreadAffinity();</para>
+	/// <para>Thread.BeginCriticalRegion();</para>
+	/// <para>...</para>
+	/// <see cref="End" />
 	/// </summary>
 	public static void Begin( Boolean lowPriority = true ) {
 		Thread.BeginThreadAffinity();
@@ -148,12 +155,10 @@ public static class ThreadingExtensions {
 	}
 
 	/// <summary>
-	///     <para>
-	///         <see cref="Begin" />
-	///     </para>
-	///     <para>...</para>
-	///     <para>Thread.EndThreadAffinity();</para>
-	///     <para>Thread.EndCriticalRegion();</para>
+	/// <para><see cref="Begin" /></para>
+	/// <para>...</para>
+	/// <para>Thread.EndThreadAffinity();</para>
+	/// <para>Thread.EndCriticalRegion();</para>
 	/// </summary>
 	public static void End() {
 		Thread.EndThreadAffinity();
@@ -171,9 +176,7 @@ public static class ThreadingExtensions {
 		return tcs.Task.GetAwaiter();
 	}
 
-	/// <summary>
-	///     Asynchronously wait until cancellation is requested.
-	/// </summary>
+	/// <summary>Asynchronously wait until cancellation is requested.</summary>
 	/// <param name="cancellationToken"></param>
 	public static TaskAwaiter GetAwaiter( this CancellationToken cancellationToken ) {
 		var tcs = new TaskCompletionSource<Boolean>();
@@ -188,21 +191,15 @@ public static class ThreadingExtensions {
 		return t.GetAwaiter();
 	}
 
-	/// <summary>
-	///     Asynchronously wait for all <paramref name="tasks" />.
-	/// </summary>
+	/// <summary>Asynchronously wait for all <paramref name="tasks" />.</summary>
 	/// <param name="tasks"></param>
 	public static TaskAwaiter GetAwaiter( this Task[] tasks ) => Task.WhenAll( tasks ).GetAwaiter();
 
-	/// <summary>
-	///     Asynchronously wait for all <paramref name="tasks" />.
-	/// </summary>
+	/// <summary>Asynchronously wait for all <paramref name="tasks" />.</summary>
 	/// <param name="tasks"></param>
 	public static TaskAwaiter GetAwaiter( this IEnumerable<Task> tasks ) => Task.WhenAll( tasks ).GetAwaiter();
 
-	/// <summary>
-	///     Asynchronously wait a <see cref="TimeSpan" />.
-	/// </summary>
+	/// <summary>Asynchronously wait a <see cref="TimeSpan" />.</summary>
 	public static TaskAwaiter GetAwaiter( this TimeSpan timeSpan ) => Task.Delay( timeSpan ).GetAwaiter();
 
 	public static Int32 GetMaximumActiveWorkerThreads() {
@@ -226,8 +223,7 @@ public static class ThreadingExtensions {
 			Single => sizeof( Single ),
 			Double => sizeof( Double ),
 			Decimal => sizeof( Decimal ),
-			String s => sizeof( Char ) * s.Length,
-			{ } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
+			String s => sizeof( Char ) * s.Length, { } => sizeof( Int32 ), //BUG 4 ?? 8. sizeof(Pointer)
 			var _ => 0
 		} );
 
@@ -245,10 +241,10 @@ public static class ThreadingExtensions {
 	public static Int32 MarshalSizeOf<T>( [DisallowNull] this T obj ) => Marshal.SizeOf( obj );
 
 	/// <summary>
-	///     Repeat the <paramref name="action" /><paramref name="times" />.
-	///     <para>Swallows <see cref="Exception" />.</para>
+	/// Repeat the <paramref name="action" /><paramref name="times" />.
+	/// <para>Swallows <see cref="Exception" />.</para>
 	/// </summary>
-	/// <param name="times"> </param>
+	/// <param name="times"></param>
 	/// <param name="action"></param>
 	public static void Repeat( this Int32 times, Action action ) {
 		for ( var i = 0; i < Math.Abs( times ); i++ ) {
@@ -260,7 +256,7 @@ public static class ThreadingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Swallows <see cref="Exception" />.</para>
+	/// <para>Swallows <see cref="Exception" />.</para>
 	/// </summary>
 	/// <param name="action"></param>
 	/// <param name="times"></param>
@@ -274,7 +270,7 @@ public static class ThreadingExtensions {
 	}
 
 	/// <summary>
-	///     <para>Swallows <see cref="Exception" />.</para>
+	/// <para>Swallows <see cref="Exception" />.</para>
 	/// </summary>
 	/// <param name="action"></param>
 	/// <param name="counter"></param>
@@ -295,13 +291,12 @@ public static class ThreadingExtensions {
 		} );
 
 	/// <summary>
-	///     Run each <see cref="Action" />, optionally in parallel (defaults to true), optionally printing feedback
-	///     through an action.
+	/// Run each <see cref="Action" />, optionally in parallel (defaults to true), optionally printing feedback through an action.
 	/// </summary>
-	/// <param name="actions">      </param>
-	/// <param name="output">     </param>
+	/// <param name="actions"></param>
+	/// <param name="output"></param>
 	/// <param name="description"></param>
-	/// <param name="inParallel"> </param>
+	/// <param name="inParallel"></param>
 	public static Boolean Run( this IEnumerable<Action> actions, Action<String>? output = null, String? description = null, Boolean inParallel = true ) {
 		if ( actions is null ) {
 			throw new NullException( nameof( actions ) );
@@ -325,10 +320,10 @@ public static class ThreadingExtensions {
 	}
 
 	/// <summary>Run each <see cref="Func{Boolean}" /> in parallel, optionally printing feedback through an action.</summary>
-	/// <param name="functions">      </param>
-	/// <param name="output">     </param>
+	/// <param name="functions"></param>
+	/// <param name="output"></param>
 	/// <param name="description"></param>
-	/// <param name="inParallel"> </param>
+	/// <param name="inParallel"></param>
 	public static Boolean Run( this IEnumerable<Func<Boolean>> functions, Action<String>? output = null, String? description = null, Boolean inParallel = true ) {
 		if ( functions is null ) {
 			throw new NullException( nameof( functions ) );
@@ -374,15 +369,5 @@ public static class ThreadingExtensions {
 
 			this.CallsAllowed = times;
 		}
-
 	}
-
-	private static void ThreadYieldFor( this TimeSpan timeSpan ) {
-		var stopwatch = Stopwatch.StartNew();
-
-		while ( stopwatch.Elapsed < timeSpan ) {
-			Thread.Yield();
-		}
-	}
-
 }

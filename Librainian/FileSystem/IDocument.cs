@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "IDocument.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "IDocument.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -49,8 +48,8 @@ using PooledAwait;
 public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
 	/// <summary>
-	///     Largest amount of memory that will be allocated for file reads.
-	///     <para>1 gibibyte</para>
+	/// Largest amount of memory that will be allocated for file reads.
+	/// <para>1 gibibyte</para>
 	/// </summary>
 	public const Int32 MaximumBufferSize = 1024 * 1024 * 1024;
 
@@ -67,17 +66,17 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	public Boolean DeleteAfterClose { get; set; }
 
 	/// <summary>
-	///     <para>Just the file's name, including the extension.</para>
+	/// <para>Just the file's name, including the extension.</para>
 	/// </summary>
 	/// <example>
-	///     <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
+	/// <code>new Document("C:\Temp\Test.text").FileName() == "Test.text"</code>
 	/// </example>
 	/// <see cref="Pri.LongPath.Path.GetFileName" />
 	public String FileName { get; }
 
 	/// <summary>
-	///     Represents the fully qualified path of the file.
-	///     <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
+	/// Represents the fully qualified path of the file.
+	/// <para>Fully qualified "Drive:\Path\Folder\Filename.Ext"</para>
 	/// </summary>
 	public String FullPath { get; }
 
@@ -96,7 +95,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	public DateTime? LastWriteTimeUtc { get; set; }
 
 	/// <summary>
-	///     <para>Just the file's name, including the extension.</para>
+	/// <para>Just the file's name, including the extension.</para>
 	/// </summary>
 	/// <see cref="Pri.LongPath.Path.GetFileNameWithoutExtension" />
 	public String Name { get; }
@@ -111,8 +110,8 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	StreamWriter? WriterStream { get; set; }
 
 	/// <summary>
-	///     <para>If the file does not exist, it is created.</para>
-	///     <para>Then the <paramref name="text" /> is appended to the file.</para>
+	/// <para>If the file does not exist, it is created.</para>
+	/// <para>Then the <paramref name="text" /> is appended to the file.</para>
 	/// </summary>
 	/// <param name="text"></param>
 	/// <param name="cancellationToken"></param>
@@ -145,12 +144,12 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	public IAsyncEnumerable<UInt64> AsUInt64( CancellationToken cancellationToken );
 
 	/// <summary>
-	///     <para>Clone the entire document to the <paramref name="destination" /> as quickly as possible.</para>
-	///     <para>this will OVERWRITE any <see cref="destination" /> file.</para>
+	/// <para>Clone the entire document to the <paramref name="destination" /> as quickly as possible.</para>
+	/// <para>this will OVERWRITE any <see cref="destination" /> file.</para>
 	/// </summary>
 	/// <param name="destination"></param>
-	/// <param name="progress">   </param>
-	/// <param name="eta">        </param>
+	/// <param name="progress"></param>
+	/// <param name="eta"></param>
 	/// <param name="cancellationToken"></param>
 	public PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
 		IDocument destination,
@@ -180,8 +179,8 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	void DisposeManaged();
 
 	/// <summary>
-	///     <para>Downloads (replaces) the local document with the specified <paramref name="source" />.</para>
-	///     <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
+	/// <para>Downloads (replaces) the local document with the specified <paramref name="source" />.</para>
+	/// <para>Note: will replace the content of the this <see cref="IDocument" />.</para>
 	/// </summary>
 	/// <param name="source"></param>
 	public PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> DownloadFile( Uri source );
@@ -189,7 +188,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	//TODO PooledValueTask<UInt64?> RealSizeOnDisk( CancellationToken cancellationToken );
 	//TODO PooledValueTask<UInt64?> AllocatedSizeOnDisk( CancellationToken cancellationToken );
 	/// <summary>
-	///     <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
+	/// <para>To compare the contents of two <see cref="IDocument" /> use SameContent( IDocument,IDocument).</para>
 	/// </summary>
 	/// <param name="other"></param>
 	public Boolean Equals( Object other );
@@ -199,7 +198,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	public PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
 
 	/// <summary>
-	///     <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
+	/// <para>Computes the extension of the <see cref="FileName" />, including the prefix ".".</para>
 	/// </summary>
 	public String Extension();
 
@@ -207,9 +206,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <returns>A <see cref="IEnumerator" /> that can be used to iterate through the collection.</returns>
 	IAsyncEnumerator<Byte> GetEnumerator();
 
-	/// <summary>
-	///     Synchronous version.
-	/// </summary>
+	/// <summary>Synchronous version.</summary>
 	Boolean GetExists();
 
 	/// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="Document.FullPath" />.</summary>
@@ -220,19 +217,15 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <summary>(file name, not contents)</summary>
 	public Int32 GetHashCode();
 
-	/// <summary>
-	///     Synchronous version.
-	/// </summary>
+	/// <summary>Synchronous version.</summary>
 	/// <returns></returns>
 	UInt64? GetLength();
 
 	void GetObjectData( SerializationInfo info, StreamingContext context );
 
 	/// <summary>
-	///     <para>
-	///         Can we allocate a full 2GB buffer?
-	///     </para>
-	///     <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
+	/// <para>Can we allocate a full 2GB buffer?</para>
+	/// <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
 	/// </summary>
 	public PooledValueTask<Int32?> GetOptimalBufferSize( CancellationToken cancellationToken );
 
@@ -251,7 +244,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
 	/// <summary>Attempt to start the process.</summary>
 	/// <param name="arguments"></param>
-	/// <param name="verb">     "runas" is elevated</param>
+	/// <param name="verb">"runas" is elevated</param>
 	/// <param name="useShell"></param>
 	public PooledValueTask<Process?> Launch( String? arguments = null, String verb = "runas", Boolean useShell = false );
 
@@ -262,7 +255,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
     /// <summary>Returns the <see cref="WebClient" /> if a file copy was started.</summary>
     /// <param name="destination"></param>
-    /// <param name="onProgress"> </param>
+    /// <param name="onProgress"></param>
     /// <param name="onCompleted"></param>
     /// <returns></returns>
     (PooledValueTask? task, Exception? exception, Status Exception) Copy( [NotNull] IDocument destination,
@@ -272,18 +265,16 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
 	PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken cancellationToken );
 
-	/// <summary>
-	///     Attempt to return an object Deserialized from a JSON text file.
-	/// </summary>
+	/// <summary>Attempt to return an object Deserialized from a JSON text file.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="progress"></param>
 	/// <param name="cancellationToken"></param>
 	public PooledValueTask<(Status status, T? obj)> LoadJSON<T>( IProgress<ZeroToOne>? progress, CancellationToken cancellationToken );
 
 	/// <summary>
-	///     Opens an existing file or creates a new file for writing.
-	///     <para>Should be able to read and write from <see cref="FileStream" />.</para>
-	///     <para>If there is any error opening or creating the file, <see cref="Document.Writer" /> will be null.</para>
+	/// Opens an existing file or creates a new file for writing.
+	/// <para>Should be able to read and write from <see cref="FileStream" />.</para>
+	/// <para>If there is any error opening or creating the file, <see cref="Document.Writer" /> will be null.</para>
 	/// </summary>
 	public PooledValueTask<FileStream?> OpenWriter( Boolean deleteIfAlreadyExists, CancellationToken cancellationToken, FileShare sharingOptions = FileShare.None );
 
@@ -291,13 +282,11 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
 	public PooledValueTask<String> ReadStringAsync();
 
-	/// <summary>
-	///     Releases the <see cref="FileStream" /> opened by <see cref="OpenWriter" />.
-	/// </summary>
+	/// <summary>Releases the <see cref="FileStream" /> opened by <see cref="OpenWriter" />.</summary>
 	public void ReleaseWriter();
 
 	/// <summary>
-	///     <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
+	/// <para>Performs a byte by byte file comparison, but ignores the <see cref="IDocument" /> file names.</para>
 	/// </summary>
 	/// <param name="right"></param>
 	/// <param name="cancellationToken"></param>
@@ -313,9 +302,9 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	public PooledValueTask<Boolean> SameContent( Document? right, CancellationToken cancellationToken );
 
 	/// <summary>
-	///     <para>If the file does not exist, return <see cref="Status.Error" />.</para>
-	///     <para>If an exception happens, return <see cref="Status.Exception" />.</para>
-	///     <para>Otherwise, return <see cref="Status.Success" />.</para>
+	/// <para>If the file does not exist, return <see cref="Status.Error" />.</para>
+	/// <para>If an exception happens, return <see cref="Status.Exception" />.</para>
+	/// <para>Otherwise, return <see cref="Status.Success" />.</para>
 	/// </summary>
 	/// <param name="value"></param>
 	/// <param name="cancellationToken"></param>
@@ -333,9 +322,9 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	StreamReader StreamReader();
 
 	/// <summary>
-	///     Open the file for writing and return a <see cref="Document.StreamWriter" />.
-	///     <para>Optional <paramref name="encoding" />. Defaults to <see cref="Encoding.Unicode" />.</para>
-	///     <para>Optional buffersize. Defaults to 1 MB.</para>
+	/// Open the file for writing and return a <see cref="Document.StreamWriter" />.
+	/// <para>Optional <paramref name="encoding" />. Defaults to <see cref="Encoding.Unicode" />.</para>
+	/// <para>Optional buffersize. Defaults to 1 MB.</para>
 	/// </summary>
 	Task<StreamWriter?> StreamWriter( CancellationToken cancellationToken, Encoding? encoding = null, UInt32 bufferSize = MathConstants.Sizes.OneMegaByte );
 
@@ -347,7 +336,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	String ToString();
 
 	/// <summary>
-	///     <para>Returns true if this <see cref="Document" /> no longer seems to exist.</para>
+	/// <para>Returns true if this <see cref="Document" /> no longer seems to exist.</para>
 	/// </summary>
 	/// <param name="delayBetweenRetries"></param>
 	/// <param name="cancellationToken"></param>
@@ -360,5 +349,4 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <summary>Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.</summary>
 	/// <param name="destination"></param>
 	PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( Uri destination );
-
 }

@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Shufflings.cs" last touched on 2021-10-13 at 4:24 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Shufflings.cs" last formatted on 2021-11-30 at 7:16 PM by Protiguous.
 
 #nullable enable
 
@@ -40,14 +39,13 @@ using Logging;
 using Maths;
 
 public static class Shufflings {
-
 	/*
 
     /// <summary>
-    ///     <para>Shuffle an array[] in <paramref name="iterations" />.</para>
+    /// <para>Shuffle an array[] in <paramref name="iterations" />.</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="array">     </param>
+    /// <param name="array"></param>
     /// <param name="iterations"></param>
     /// <example>Deck.Shuffle( 7 );</example>
     [Obsolete( "Broken and untested. Just an idea to learn with. Meant to work with large arrays. See also Shuffle<List>()" )]
@@ -115,14 +113,15 @@ public static class Shufflings {
     }
     */
 
-	/// <summary>
-	///     Not a true random. Just enough to supposedly throw the <paramref name="sequence" /> out of strict order.
-	/// </summary>
+	/// <summary>Not a true random. Just enough to supposedly throw the <paramref name="sequence" /> out of strict order.</summary>
 	/// <param name="sequence"></param>
 	/// <typeparam name="T"></typeparam>
 	public static IEnumerable<T> AsRandom<T>( this IEnumerable<T> sequence ) =>
-		sequence.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism )
-		        .WithMergeOptions( ParallelMergeOptions.AutoBuffered );
+		sequence.AsParallel()
+				.AsUnordered()
+				.WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
+				.WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+				.WithMergeOptions( ParallelMergeOptions.AutoBuffered );
 
 	/// <summary>Take a buffer and scramble.</summary>
 	/// <param name="buffer"></param>
@@ -139,7 +138,7 @@ public static class Shufflings {
 				goto retry;
 			}
 
-			( var a, var b ) = ( buffer[ indexa ], buffer[ indexb ] );
+			(var a, var b) = (buffer[ indexa ], buffer[ indexb ]);
 			buffer[ indexa ] = b;
 			buffer[ indexb ] = a;
 		}
@@ -160,20 +159,20 @@ public static class Shufflings {
 				goto retry;
 			}
 
-			( var a, var b ) = ( list[ indexa ], list[ indexb ] );
+			(var a, var b) = (list[ indexa ], list[ indexb ]);
 			list[ indexa ] = b;
 			list[ indexb ] = a;
 		}
 	}
 
 	/// <summary>
-	///     <para>Shuffle a list in <paramref name="iterations" />.</para>
+	/// <para>Shuffle a list in <paramref name="iterations" />.</para>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="list">            </param>
-	/// <param name="iterations">      </param>
-	/// <param name="shufflingType">   </param>
-	/// <param name="forHowLong">      </param>
+	/// <param name="list"></param>
+	/// <param name="iterations"></param>
+	/// <param name="shufflingType"></param>
+	/// <param name="forHowLong"></param>
 	/// <param name="token"></param>
 	/// <example>Deck.Shuffle( 7 );</example>
 	public static void Shuffle<T>(
@@ -238,8 +237,8 @@ public static class Shufflings {
 
 	/// <summary>Untested for speed and cpu/threading impact. Also, a lot of elements will/could NOT be shuffled much.</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="list">         </param>
-	/// <param name="iterations">   </param>
+	/// <param name="list"></param>
+	/// <param name="iterations"></param>
 	public static void ShuffleByBags<T>( ref List<T> list, UInt32 iterations ) {
 		if ( list is null ) {
 			throw new NullException( nameof( list ) );
@@ -249,8 +248,11 @@ public static class Shufflings {
 			return;
 		}
 
-		var bag = new ConcurrentBag<T>( list.AsParallel().AsUnordered().WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
-		                                    .WithExecutionMode( ParallelExecutionMode.ForceParallelism ).WithMergeOptions( ParallelMergeOptions.AutoBuffered ) );
+		var bag = new ConcurrentBag<T>( list.AsParallel()
+											.AsUnordered()
+											.WithDegreeOfParallelism( Environment.ProcessorCount - 1 )
+											.WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+											.WithMergeOptions( ParallelMergeOptions.AutoBuffered ) );
 
 		while ( iterations.Any() ) {
 			iterations--;
@@ -293,8 +295,8 @@ public static class Shufflings {
     */
 
 	/// <summary>
-	///     Not cryptographically guaranteed or tested to be the most performant, but it *should* shuffle *well enough* in
-	///     reasonable time.
+	/// Not cryptographically guaranteed or tested to be the most performant, but it *should* shuffle *well enough* in
+	/// reasonable time.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list">The list to be shuffled.</param>
@@ -347,5 +349,4 @@ public static class Shufflings {
 			//TODO Benchmark list = list.OrderBy( _ => Randem.NextDouble() ).ThenBy( _ => Randem.NextDouble() ).ToList();
 		}
 	}
-
 }

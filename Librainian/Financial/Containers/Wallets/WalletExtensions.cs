@@ -1,29 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "WalletExtensions.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "WalletExtensions.cs" last formatted on 2021-11-30 at 7:18 PM by Protiguous.
 
 #nullable enable
 
@@ -96,13 +95,13 @@ public static class WalletExtensions {
 		}
 
 		if ( bankNotes != null ) {
-			foreach ( ( var bankNote, var quantity ) in bankNotes ) {
+			foreach ( (var bankNote, var quantity) in bankNotes ) {
 				wallet.Deposit( bankNote, quantity );
 			}
 		}
 
 		if ( coins != null ) {
-			foreach ( ( var coin, var quantity ) in coins ) {
+			foreach ( (var coin, var quantity) in coins ) {
 				wallet.Deposit( coin, quantity );
 			}
 		}
@@ -133,8 +132,8 @@ public static class WalletExtensions {
 	}
 
 	/// <summary>
-	///     Adds the optimal amount of <see cref="IBankNote" /> and <see cref="ICoin" />. Returns any unused portion of
-	///     the money (fractions of the smallest <see cref="ICoin" />).
+	/// Adds the optimal amount of <see cref="IBankNote" /> and <see cref="ICoin" />. Returns any unused portion of the money
+	/// (fractions of the smallest <see cref="ICoin" />).
 	/// </summary>
 	/// <param name="wallet"></param>
 	/// <param name="amount"></param>
@@ -168,14 +167,14 @@ public static class WalletExtensions {
 	}
 
 	/// <summary>
-	///     Transfer everything FROM the <paramref name="source" /><see cref="Wallet" /> into <paramref name="target" />
-	///     <see cref="Wallet" />.
+	/// Transfer everything FROM the <paramref name="source" /><see cref="Wallet" /> into <paramref name="target" /><see
+	/// cref="Wallet" />.
 	/// </summary>
 	/// <param name="source"></param>
 	/// <param name="target"></param>
 	public static Task StartTransfer( this Wallet source, Wallet target, CancellationToken cancellationToken ) =>
 		Task.Run( () => {
-			foreach ( ( var denomination, var quantity ) in source ) {
+			foreach ( (var denomination, var quantity) in source ) {
 				if ( cancellationToken.IsCancellationRequested ) {
 					break;
 				}
@@ -187,9 +186,8 @@ public static class WalletExtensions {
 		}, cancellationToken );
 
 	/// <summary>
-	///     Given the <paramref name="amount" />, return the optimal amount of <see cref="IBankNote" /> and
-	///     <see cref="ICoin" /> ( <see cref="Wallet.Total" />) it would take to
-	///     <see cref="Wallet" /> the <paramref name="amount" />.
+	/// Given the <paramref name="amount" />, return the optimal amount of <see cref="IBankNote" /> and <see cref="ICoin" /> (
+	/// <see cref="Wallet.Total" />) it would take to <see cref="Wallet" /> the <paramref name="amount" />.
 	/// </summary>
 	/// <param name="amount"></param>
 	/// <param name="leftOverAmount">Fractions of Dollars/Pennies not accounted for. OfficeSpace, Superman III"...</param>
@@ -247,7 +245,7 @@ public static class WalletExtensions {
 			}
 		}
 
-		return transferred.Select( pair => ( pair.Key, pair.Value ) );
+		return transferred.Select( pair => (pair.Key, pair.Value) );
 	}
 
 	public static Boolean Transfer( this Wallet source, Wallet target, (IDenomination, UInt64) denominationAndAmount ) {
@@ -259,7 +257,7 @@ public static class WalletExtensions {
 			throw new NullException( nameof( target ) );
 		}
 
-		( var denomination, var quantity ) = denominationAndAmount;
+		(var denomination, var quantity) = denominationAndAmount;
 
 		return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
 	}
@@ -273,7 +271,7 @@ public static class WalletExtensions {
 			throw new NullException( nameof( target ) );
 		}
 
-		( var denomination, var quantity ) = denominationAndAmount;
+		(var denomination, var quantity) = denominationAndAmount;
 
 		return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
 	}
@@ -287,9 +285,8 @@ public static class WalletExtensions {
 			throw new NullException( nameof( target ) );
 		}
 
-		( var denomination, var quantity ) = denominationAndAmount;
+		(var denomination, var quantity) = denominationAndAmount;
 
 		return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity ) > 0m;
 	}
-
 }

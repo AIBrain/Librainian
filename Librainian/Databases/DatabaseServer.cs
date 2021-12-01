@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "DatabaseServer.cs" last touched on 2021-10-13 at 4:25 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "DatabaseServer.cs" last formatted on 2021-11-30 at 7:16 PM by Protiguous.
 
 #nullable enable
 
@@ -59,14 +58,10 @@ using Utilities.Disposables;
 
 public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
-	/// <summary>
-	///     Defaults to 10 attempts.
-	/// </summary>
+	/// <summary>Defaults to 10 attempts.</summary>
 	public const Int32 DefaultRetries = 10;
 
-	/// <summary>
-	///     The number of sql connections open across ALL threads.
-	/// </summary>
+	/// <summary>The number of sql connections open across ALL threads.</summary>
 	private static Int64 ConnectionCounter;
 
 	static DatabaseServer() {
@@ -76,11 +71,13 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		DefaultTimeBetweenRetries = Minutes.One;
 
 		var sqlRetryLogicOption = new SqlRetryLogicOption {
-			NumberOfTries = DefaultRetries, DeltaTime = DefaultTimeBetweenRetries, MaxTimeInterval = DefaultConnectionTimeout
+			NumberOfTries = DefaultRetries,
+			DeltaTime = DefaultTimeBetweenRetries,
+			MaxTimeInterval = DefaultConnectionTimeout
 		};
 
 		RetryProvider = SqlConfigurableRetryFactory.CreateIncrementalRetryProvider( sqlRetryLogicOption ) ??
-		                throw new InvalidOperationException( $"{nameof( SqlConfigurableRetryFactory )} was null or invalid!" );
+						throw new InvalidOperationException( $"{nameof( SqlConfigurableRetryFactory )} was null or invalid!" );
 	}
 
 	public DatabaseServer( IValidatedConnectionString validatedConnectionString, IApplicationSetting applicationSetting ) {
@@ -114,56 +111,43 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
 	private Stopwatch TimeSinceLastConnectAttempt { get; } = Stopwatch.StartNew();
 
-	/// <summary>
-	///     A debugging aid. EACH database call will delay upon opening a connection.
-	/// </summary>
+	/// <summary>A debugging aid. EACH database call will delay upon opening a connection.</summary>
 	public static IQuantityOfTime? ArtificialDatabaseDelay { get; set; }
 
-	/// <summary>
-	///     Defaults to 1 minute.
-	/// </summary>
+	/// <summary>Defaults to 1 minute.</summary>
 	public static TimeSpan DefaultExecuteTimeout { get; set; }
 
-	/// <summary>
-	///     Defaults to 1 minute.
-	/// </summary>
+	/// <summary>Defaults to 1 minute.</summary>
 	public static TimeSpan DefaultConnectionTimeout { get; set; }
 
 	public static TimeSpan DefaultTimeBetweenRetries { get; set; }
 
 	public IApplicationSetting ApplicationSetting { get; }
 
-	/// <summary>
-	///     Defaults to 3 seconds.
-	/// </summary>
+	/// <summary>Defaults to 3 seconds.</summary>
 	public TimeSpan? SlowQueriesTakeLongerThan { get; set; } = Seconds.Three;
 
 	public Stopwatch? StopWatch { get; private set; }
 
-	private VolatileBoolean EnteredConnectionSemaphore { get; } = new(false);
+	private VolatileBoolean EnteredConnectionSemaphore { get; } = new( false );
 
-	/// <summary>
-	///     Allow this many concurrent async operations.
-	/// </summary>
-	private static SemaphoreSlim DatabaseConnectionSemaphores { get; } = new(1024, 1024);
+	/// <summary>Allow this many concurrent async operations.</summary>
+	private static SemaphoreSlim DatabaseConnectionSemaphores { get; } = new( 1024, 1024 );
 
-	private static SemaphoreSlim DatabaseCommandSemaphores { get; } = new(1024, 1024);
+	private static SemaphoreSlim DatabaseCommandSemaphores { get; } = new( 1024, 1024 );
 
 	private VolatileBoolean EnteredCommandSemaphore { get; }
 
-	/// <summary>
-	///     Set to 1 minute by default.
-	/// </summary>
+	/// <summary>Set to 1 minute by default.</summary>
 	public TimeSpan CommandTimeout { get; set; } //= DefaultExecuteTimeout;
 
 	public String? Query { get; set; }
 
-	/// <summary>
-	/// </summary>
-	/// <param name="query">      </param>
+	/// <summary></summary>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="SqlException"></exception>
 	/// <exception cref="DbException"></exception>
@@ -174,6 +158,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		params SqlParameter[]? parameters
 	) {
 		this.Query = query;
+
 		//$"ExecuteNonQueryAsync {this.Query.DoubleQuote()} starting..".Verbose();
 
 		var retries = DefaultRetries;
@@ -193,18 +178,14 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
 			exception.Log();
 		}
-		finally {
-			//$"ExecuteNonQueryAsync {this.Query.DoubleQuote()} done.".Verbose();
-		}
 
 		return default( Int32? );
 	}
 
 	/// <summary>
-	///     Execute the stored procedure " <paramref name="query" />" with the optional parameters
-	///     <paramref name="parameters" />.
+	/// Execute the stored procedure " <paramref name="query" />" with the optional parameters <paramref name="parameters" />.
 	/// </summary>
-	/// <param name="query">     </param>
+	/// <param name="query"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="parameters"></param>
 	/// <exception cref="InvalidOperationException"></exception>
@@ -213,10 +194,10 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	public PooledValueTask<Int32?> ExecuteNonQueryAsync( String query, CancellationToken cancellationToken, params SqlParameter[] parameters ) =>
 		this.ExecuteNonQueryAsync( query, CommandType.StoredProcedure, cancellationToken, parameters );
 
-	/// <param name="query">      </param>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	[NeedsTesting]
 	public async Task<DataTableReader?> ExecuteReaderAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 		if ( String.IsNullOrWhiteSpace( query ) ) {
@@ -262,13 +243,11 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		return default( DataTableReader? );
 	}
 
-	/// <summary>
-	///     Returns a <see cref="DataTable" />
-	/// </summary>
-	/// <param name="query">      </param>
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 		if ( String.IsNullOrWhiteSpace( query ) ) {
 			throw new NullException( nameof( query ) );
@@ -306,12 +285,12 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	}
 
 	/// <summary>
-	///     <para>Returns the first column of the first row.</para>
+	/// <para>Returns the first column of the first row.</para>
 	/// </summary>
-	/// <param name="query">      </param>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	public async Task<T?> ExecuteScalarAsync<T>( String query, CommandType commandType, CancellationToken cancellationToken, params SqlParameter[]? parameters ) {
 		if ( String.IsNullOrWhiteSpace( query ) ) {
 			throw new NullException( nameof( query ) );
@@ -331,6 +310,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 			return result is null ? default( T? ) : result.Cast<Object, T>();
 		}
 		catch ( InvalidCastException exception ) {
+
 			//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 			exception.Log();
 
@@ -350,16 +330,16 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	}
 
 	/// <summary>
-	///     Overwrites the <paramref name="table" /> contents with data from the <paramref name="query" />.
-	///     <para>Note: Include the parameters after the query.</para>
-	///     <para>Can throw exceptions on connecting or executing the query.</para>
+	/// Overwrites the <paramref name="table" /> contents with data from the <paramref name="query" />.
+	/// <para>Note: Include the parameters after the query.</para>
+	/// <para>Can throw exceptions on connecting or executing the query.</para>
 	/// </summary>
-	/// <param name="query">      </param>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
-	/// <param name="table">      </param>
+	/// <param name="table"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="progress"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	public async Task<Boolean> FillTableAsync(
 		String query,
 		CommandType commandType,
@@ -396,7 +376,8 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 				MissingMappingAction = MissingMappingAction.Passthrough,
 				MissingSchemaAction = MissingSchemaAction.Add,
 				SelectCommand = {
-					CommandTimeout = ( Int32 )this.CommandTimeout.TotalSeconds, CommandType = commandType
+					CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds,
+					CommandType = commandType
 				}
 			};
 
@@ -486,13 +467,13 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	}
 
 	/// <summary>
-	///     Simplest possible database connection.
-	///     <para>Connect and then run <paramref name="query" />.</para>
+	/// Simplest possible database connection.
+	/// <para>Connect and then run <paramref name="query" />.</para>
 	/// </summary>
-	/// <param name="query">      </param>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	/// <exception cref="NullException"></exception>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="InvalidCastException"></exception>
@@ -526,13 +507,11 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		return default( SqlDataReader? );
 	}
 
-	/// <summary>
-	///     Returns a <see cref="DataTable" />
-	/// </summary>
-	/// <param name="query">      </param>
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="parameters"> </param>
+	/// <param name="parameters"></param>
 	public async Task<IEnumerable<TResult>?> QueryListAsync<TResult>(
 		String query,
 		CommandType commandType,
@@ -570,10 +549,8 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		return default( IEnumerable<TResult>? );
 	}
 
-	/// <summary>
-	///     Execute the stored procedure <paramref name="query" /> with the optional <paramref name="parameters" />.
-	/// </summary>
-	/// <param name="query">     </param>
+	/// <summary>Execute the stored procedure <paramref name="query" /> with the optional <paramref name="parameters" />.</summary>
+	/// <param name="query"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="parameters"></param>
 	/// <exception cref="InvalidOperationException"></exception>
@@ -594,8 +571,8 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
 	~DatabaseServer() {
 		new InvalidOperationException(
-				$"Warning: We have an undisposed {nameof( DatabaseServer )} connection somewhere. This could cause a memory leak. Query={this.Query.DoubleQuote()}" )
-			.Log( BreakOrDontBreak.Break );
+			$"Warning: We have an undisposed {nameof( DatabaseServer )} connection somewhere. This could cause a memory leak. Query={this.Query.DoubleQuote()}" ).Log(
+			BreakOrDontBreak.Break );
 		this.DisposeAsync().AsTask().Wait( DefaultMaximumTimeout() );
 	}
 
@@ -627,8 +604,10 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	private void CloseConnection() {
 		try {
 			using ( this.Connection ) {
+
 				//if ( connection.State == ConnectionState.Open ) {
 				this.Connection?.Close();
+
 				//}
 			}
 
@@ -658,9 +637,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		e.Cancel = this.IsDisposed;
 	}
 
-	/// <summary>
-	///     Create a sql server database connection via async.
-	/// </summary>
+	/// <summary>Create a sql server database connection via async.</summary>
 	[Pure]
 	private async PooledValueTask<Status> OpenConnectionAsync(
 		CancellationToken cancellationToken,
@@ -681,6 +658,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
 			this.EnteredConnectionSemaphore.Value = await DatabaseConnectionSemaphores.WaitAsync( DefaultConnectionTimeout, cancellationToken ).ConfigureAwait( false );
 			if ( !this.EnteredConnectionSemaphore ) {
+
 				//if ( cancellationToken.IsCancellationRequested ) {
 				return Status.Timeout;
 
@@ -718,7 +696,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 			if ( progress is not null ) {
 				var stopwatch = Stopwatch.StartNew();
 				var sqlConnection = this.Connection;
-				timer = FluentTimer.Create( Fps.Thirty, () => progress.Report( ( stopwatch.Elapsed, sqlConnection.State ) ) ).AutoReset( true );
+				timer = FluentTimer.Create( Fps.Thirty, () => progress.Report( (stopwatch.Elapsed, sqlConnection.State) ) ).AutoReset( true );
 			}
 
 			try {
@@ -833,7 +811,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	internal static IEnumerable<SqlDataRecord> CreateSqlDataRecords<T>( String columnName, SqlDbType sqlDbType, IEnumerable<T> rows ) {
 		var metaData = new SqlMetaData[ 1 ];
 		metaData[ 0 ] = new SqlMetaData( columnName, sqlDbType );
-		SqlDataRecord record = new(metaData);
+		SqlDataRecord record = new( metaData );
 		foreach ( var row in rows ) {
 			if ( row is not null ) {
 				record.SetValue( 0, row );
@@ -844,10 +822,8 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	}
 
 	/// <summary>
-	///     Try a best guess for the <see cref="SqlDbType" /> of <paramref name="type" />.
-	///     <para>
-	///         <remarks>Try <paramref name="type" /> ?? SqlDbType.Variant</remarks>
-	///     </para>
+	/// Try a best guess for the <see cref="SqlDbType" /> of <paramref name="type" />.
+	/// <para><remarks>Try <paramref name="type" /> ?? SqlDbType.Variant</remarks></para>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="type"></param>
@@ -914,18 +890,18 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	}
 
 	/// <summary>
-	///     <para>Returns the first column of the first row.</para>
+	/// <para>Returns the first column of the first row.</para>
 	/// </summary>
-	/// <param name="query">     </param>
+	/// <param name="query"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="parameters"></param>
 	public async Task<T?> ExecuteScalarAsync<T>( String query, CancellationToken cancellationToken, params SqlParameter[]? parameters ) =>
 		await this.ExecuteScalarAsync<T?>( query, CommandType.StoredProcedure, cancellationToken, parameters ).ConfigureAwait( false );
 
 	/// <summary>
-	///     Execute the stored procedure " <paramref name="query" />" with the optional <paramref name="parameters" />.
+	/// Execute the stored procedure " <paramref name="query" />" with the optional <paramref name="parameters" />.
 	/// </summary>
-	/// <param name="query">     </param>
+	/// <param name="query"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="parameters"></param>
 	/// <exception cref="InvalidOperationException"></exception>
@@ -978,16 +954,17 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		}
 
 		foreach ( var parameter in parameters ) {
+
 			//$"Adding parameter {parameter.ParameterName} to command object..".Verbose();
 			this.Command.Parameters.Add( parameter );
 		}
 	}
 
 	/// <summary>
-	///     Simplest possible database connection.
-	///     <para>Connect and then run <paramref name="query" />.</para>
+	/// Simplest possible database connection.
+	/// <para>Connect and then run <paramref name="query" />.</para>
 	/// </summary>
-	/// <param name="query">     </param>
+	/// <param name="query"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="parameters"></param>
 	/// <exception cref="NullException"></exception>
@@ -1008,6 +985,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 			return await this.Command.ExecuteReaderAsync( cancellationToken ).ConfigureAwait( false );
 		}
 		catch ( InvalidCastException exception ) {
+
 			//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
 			exception.Log();
 
@@ -1028,13 +1006,11 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 
 	/*
 
-	/// <summary>
-	///     Returns a <see cref="DataTable" />
-	/// </summary>
-	/// <param name="query">      </param>
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query"></param>
 	/// <param name="commandType"></param>
-	/// <param name="table">      </param>
-	/// <param name="parameters"> </param>
+	/// <param name="table"></param>
+	/// <param name="parameters"></param>
 	public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[]? parameters ) {
 		if ( String.IsNullOrWhiteSpace( query ) ) {
 			throw new NullException( nameof( query ) );
@@ -1089,10 +1065,9 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	*/
 
 	/// <summary>
-	///     Execute the stored procedure " <paramref name="query" />" with the optional parameters
-	///     <paramref name="parameters" />.
+	/// Execute the stored procedure " <paramref name="query" />" with the optional parameters <paramref name="parameters" />.
 	/// </summary>
-	/// <param name="query">     </param>
+	/// <param name="query"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="parameters"></param>
 	/// <exception cref="InvalidOperationException"></exception>
@@ -1130,12 +1105,9 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	*/
 	/*
 
-	/// <summary>
-	///     Opens a connection, runs the <paramref name="query" />, and returns the number of rows affected.
-	/// </summary>
-	/// <param name="query">     </param>
+	/// <summary>Opens a connection, runs the <paramref name="query" />, and returns the number of rows affected.</summary>
+	/// <param name="query"></param>
 	/// <param name="parameters"></param>
 	public Int32? ExecuteNonQuery( String query, params SqlParameter[]? parameters ) => this.ExecuteNonQuery( query, DefaultRetries, CommandType.StoredProcedure, parameters );
 	*/
-
 }

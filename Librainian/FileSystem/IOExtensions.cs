@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "IOExtensions.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "IOExtensions.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -106,8 +105,10 @@ public static class IOExtensions {
 		Boolean aReparsePoint,
 		String filterMode
 	) {
+
 		// first make sure that the name matches the search pattern
 		if ( NativeMethods.PathMatchSpec( name, searchPattern ) ) {
+
 			// then we build our filter attributes enumeration
 			var filterAttributes = new FileAttributes();
 
@@ -197,11 +198,11 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait(); Example: await WriteTextAsync( fullPath:
-	///     fullPath, text: message );
+	/// Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait(); Example: await WriteTextAsync( fullPath: fullPath,
+	/// text: message );
 	/// </summary>
 	/// <param name="fileInfo"></param>
-	/// <param name="text">    </param>
+	/// <param name="text"></param>
 	/// <param name="waitfor"></param>
 	public static async Task<(Status, Exception?)> AppendTextAsync( this FileInfo fileInfo, String text, TimeSpan? waitfor = null ) {
 		try {
@@ -219,31 +220,31 @@ public static class IOExtensions {
 
 			await sourceStream.FlushAsync().ConfigureAwait( false );
 
-			return ( Status.Success, default( Exception? ) );
+			return (Status.Success, default( Exception? ));
 		}
 		catch ( UnauthorizedAccessException exception ) {
 			exception.Log();
-			return ( Status.Exception, exception );
+			return (Status.Exception, exception);
 		}
 		catch ( NullException exception ) {
 			exception.Log();
-			return ( Status.Exception, exception );
+			return (Status.Exception, exception);
 		}
 		catch ( DirectoryNotFoundException exception ) {
 			exception.Log();
-			return ( Status.Exception, exception );
+			return (Status.Exception, exception);
 		}
 		catch ( PathTooLongException exception ) {
 			exception.Log();
-			return ( Status.Exception, exception );
+			return (Status.Exception, exception);
 		}
 		catch ( SecurityException exception ) {
 			exception.Log();
-			return ( Status.Exception, exception );
+			return (Status.Exception, exception);
 		}
 		catch ( IOException exception ) {
 			exception.Log();
-			return ( Status.Exception, exception );
+			return (Status.Exception, exception);
 		}
 	}
 
@@ -321,6 +322,7 @@ public static class IOExtensions {
 	/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
 	/// <param name="fileInfo"></param>
 	public static IEnumerable<UInt16> AsUInt16Array( this FileInfo fileInfo ) {
+
 		// TODO this needs a unit test for endianness
 		if ( fileInfo is null ) {
 			throw new NullException( nameof( fileInfo ) );
@@ -360,13 +362,13 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     No guarantee of return order. Also, because of the way the operating system works (random-access), a directory can
-	///     be created or deleted after a search.
+	/// No guarantee of return order. Also, because of the way the operating system works (random-access), a directory can be
+	/// created or deleted after a search.
 	/// </summary>
-	/// <param name="target">       </param>
+	/// <param name="target"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="searchPattern"></param>
-	/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
+	/// <param name="searchOption">Defaults to <see cref="SearchOption.AllDirectories" /></param>
 	public static async IAsyncEnumerable<Folder> BetterEnumerateDirectories(
 		this DirectoryInfo target,
 		[EnumeratorCancellation] CancellationToken cancellationToken,
@@ -396,6 +398,7 @@ public static class IOExtensions {
 			}
 
 			if ( hFindFile?.IsInvalid != false ) {
+
 				//BUG or == true ?
 				break;
 			}
@@ -405,6 +408,7 @@ public static class IOExtensions {
 			}
 
 			if ( findData.cFileName != null ) {
+
 				// Fix with @"\\?\" +System.IO.PathTooLongException?
 				if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
 					$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".Break( "poor man's debug" );
@@ -480,8 +484,7 @@ public static class IOExtensions {
 				// if directory...
 				if ( getDirectories && recurse && ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory ) {
 
-					// ...and if we are performing a recursive search...
-					// ... populate the subdirectory list
+					// ...and if we are performing a recursive search... ... populate the subdirectory list
 					var fullName = Path.Combine( path, lpFindFileData.cFileName );
 					subDirectoryList.Add( new PathInformation( fullName ) );
 				}
@@ -605,9 +608,9 @@ public static class IOExtensions {
 	}
 
 	/// <summary>Before: @"c:\hello\world". After: @"c:\hello\world\23468923475634836.extension"</summary>
-	/// <param name="info">         </param>
+	/// <param name="info"></param>
 	/// <param name="withExtension"></param>
-	/// <param name="toBase">       </param>
+	/// <param name="toBase"></param>
 	public static FileInfo DateAndTimeAsFile( this DirectoryInfo info, String? withExtension, Int32 toBase = 16 ) {
 		if ( info is null ) {
 			throw new NullException( nameof( info ) );
@@ -621,9 +624,9 @@ public static class IOExtensions {
 	}
 
 	/// <summary>If the <paramref name="directoryInfo" /> does not exist, attempt to create it.</summary>
-	/// <param name="directoryInfo">      </param>
-	/// <param name="requestReadAccess">  </param>
-	/// <param name="requestWriteAccess"> </param>
+	/// <param name="directoryInfo"></param>
+	/// <param name="requestReadAccess"></param>
+	/// <param name="requestWriteAccess"></param>
 	public static DirectoryInfo? Ensure( this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
 		if ( directoryInfo is null ) {
 			throw new NullException( nameof( directoryInfo ) );
@@ -691,15 +694,14 @@ public static class IOExtensions {
 	//TODO This needs rewritten as a whole drive file searcher using tasks.
 
 	/// <summary>
-	///     Search the <paramref name="folder" /> for any files matching the
-	///     <paramref name="fileSearchPatterns" /> .
+	/// Search the <paramref name="folder" /> for any files matching the <paramref name="fileSearchPatterns" /> .
 	/// </summary>
-	/// <param name="folder">    The folder to start the search.</param>
+	/// <param name="folder">The folder to start the search.</param>
 	/// <param name="fileSearchPatterns">List of patterns to search for.</param>
-	/// <param name="cancelToken">      </param>
-	/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
-	/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
-	/// <param name="searchStyle">       </param>
+	/// <param name="cancelToken"></param>
+	/// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
+	/// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
+	/// <param name="searchStyle"></param>
 	public static async Task FindFiles(
 		this Folder folder,
 		IReadOnlyCollection<String> fileSearchPatterns,
@@ -734,11 +736,10 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     <para>
-	///         The code does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems as
-	///         cluster size is always zero (GetDiskFreeSpaceW and
-	///         GetDiskFreeSpace return -1 even with UAC disabled.)
-	///     </para>
+	/// <para>
+	/// The code does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems as cluster size
+	/// is always zero (GetDiskFreeSpaceW and GetDiskFreeSpace return -1 even with UAC disabled.)
+	/// </para>
 	/// </summary>
 	/// <param name="info"></param>
 	/// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
@@ -760,19 +761,19 @@ public static class IOExtensions {
 		DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
 
 	/// <summary>
-	///     Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the
-	///     <see cref="FileSystemInfo.FullPath" /> .
+	/// Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the <see
+	/// cref="FileSystemInfo.FullPath" /> .
 	/// </summary>
-	/// <param name="path">         </param>
+	/// <param name="path"></param>
 	/// <param name="searchPattern"></param>
-	/// <param name="searchOption"> </param>
+	/// <param name="searchOption"></param>
 	public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
 		if ( String.IsNullOrWhiteSpace( path ) ) {
-			throw new NullException(  nameof( path ) );
+			throw new NullException( nameof( path ) );
 		}
 
 		if ( String.IsNullOrWhiteSpace( searchPattern ) ) {
-			throw new NullException(  nameof( searchPattern ) );
+			throw new NullException( nameof( searchPattern ) );
 		}
 
 		var dir = new DirectoryInfo( path );
@@ -793,8 +794,8 @@ public static class IOExtensions {
 
 	/// <summary>Warning, this could OOM on a large folder structure.</summary>
 	/// <param name="startingFolder"></param>
-	/// <param name="foldersFound">  Warning, this could OOM on a *large* folder structure.</param>
-	/// <param name="cancellationToken">  </param>
+	/// <param name="foldersFound">Warning, this could OOM on a *large* folder structure.</param>
+	/// <param name="cancellationToken"></param>
 	public static async Task<Boolean> GrabAllFolders( this Folder startingFolder, ConcurrentSet<Folder> foldersFound, CancellationToken cancellationToken ) {
 		if ( startingFolder is null ) {
 			throw new NullException( nameof( startingFolder ) );
@@ -816,6 +817,7 @@ public static class IOExtensions {
 			if ( foldersFound.Add( startingFolder ) ) {
 				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.AllDirectories, cancellationToken ).ConfigureAwait( false ) ) {
 					if ( foldersFound.Add( subFolder ) ) {
+
 						//recurse into
 						await GrabAllFolders( subFolder, foldersFound, cancellationToken ).ConfigureAwait( false );
 					}
@@ -836,13 +838,12 @@ public static class IOExtensions {
 
 	/*
 
-	
-	/// <param name="startingFolder">        </param>
+	/// <param name="startingFolder"></param>
 	/// <param name="documentSearchPatterns"></param>
-	/// <param name="onEachDocumentFound">   Warning, this could OOM on a large folder structure.</param>
-	/// <param name="cancellation">          </param>
-	/// <param name="progressFolders">       </param>
-	/// <param name="progressDocuments">     </param>
+	/// <param name="onEachDocumentFound">Warning, this could OOM on a large folder structure.</param>
+	/// <param name="cancellation"></param>
+	/// <param name="progressFolders"></param>
+	/// <param name="progressDocuments"></param>
 	/// <returns></returns>
 	public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, [CanBeNull] IEnumerable<String>? documentSearchPatterns,
 		[NotNull] Action<Document> onEachDocumentFound, [CanBeNull] IProgress<Int64>? progressFolders, [CanBeNull] IProgress<Int64>? progressDocuments,
@@ -1006,7 +1007,7 @@ public static class IOExtensions {
 	}
 
 	/// <summary>Before: "hello.txt". After: "hello 345680969061906730476346.txt"</summary>
-	/// <param name="info">        </param>
+	/// <param name="info"></param>
 	/// <param name="newExtension"></param>
 	public static FileInfo PlusDateTime( this FileInfo info, String? newExtension = null ) {
 		if ( info is null ) {
@@ -1025,10 +1026,10 @@ public static class IOExtensions {
 	}
 
 	/// <summary>untested. is this written correctly? would it read from a *slow* media but not block the calling function?</summary>
-	/// <param name="filePath">          </param>
-	/// <param name="bufferSize">        </param>
+	/// <param name="filePath"></param>
+	/// <param name="bufferSize"></param>
 	/// <param name="fileMissingRetries"></param>
-	/// <param name="retryDelay">        </param>
+	/// <param name="retryDelay"></param>
 	public static async Task<String> ReadTextAsync( String filePath, Int32? bufferSize = 65536, Int32? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
 		if ( String.IsNullOrWhiteSpace( filePath ) ) {
 			throw new NullException( nameof( filePath ) );
@@ -1073,8 +1074,8 @@ public static class IOExtensions {
 	/// <summary>Retry the <paramref name="ioFunction" /> if an <see cref="IOException" /> occurs.</summary>
 	/// <typeparam name="TResult"></typeparam>
 	/// <param name="ioFunction"></param>
-	/// <param name="tryFor">    </param>
-	/// <param name="cancellationToken">     </param>
+	/// <param name="tryFor"></param>
+	/// <param name="cancellationToken"></param>
 	/// <exception cref="IOException"></exception>
 	public static TResult? ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken cancellationToken ) where TResult : class {
 		var stopwatch = Stopwatch.StartNew();
@@ -1101,9 +1102,9 @@ public static class IOExtensions {
 	/// <summary>Retry the <paramref name="ioFunction" /> if an <see cref="IOException" /> occurs.</summary>
 	/// <typeparam name="TResult"></typeparam>
 	/// <param name="ioFunction"></param>
-	/// <param name="tryFor">    </param>
+	/// <param name="tryFor"></param>
 	/// <param name="result"></param>
-	/// <param name="cancellationToken">     </param>
+	/// <param name="cancellationToken"></param>
 	/// <exception cref="IOException"></exception>
 	public static Boolean ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result, CancellationToken cancellationToken ) where TResult : struct {
 		var stopwatch = Stopwatch.StartNew();
@@ -1131,9 +1132,9 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     <para>performs a byte by byte file comparison</para>
+	/// <para>performs a byte by byte file comparison</para>
 	/// </summary>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="right"></param>
 	/// <exception cref="NullException"></exception>
 	/// <exception cref="SecurityException"></exception>
@@ -1164,9 +1165,9 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     <para>performs a byte by byte file comparison</para>
+	/// <para>performs a byte by byte file comparison</para>
 	/// </summary>
-	/// <param name="leftFileName"> </param>
+	/// <param name="leftFileName"></param>
 	/// <param name="rightFileName"></param>
 	/// <exception cref="NullException"></exception>
 	/// <exception cref="SecurityException"></exception>
@@ -1201,9 +1202,9 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     <para>performs a byte by byte file comparison</para>
+	/// <para>performs a byte by byte file comparison</para>
 	/// </summary>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="rightFile"></param>
 	/// <param name="cancellationToken"></param>
 	/// <exception cref="NullException"></exception>
@@ -1226,9 +1227,9 @@ public static class IOExtensions {
 	}
 
 	/// <summary>
-	///     <para>performs a byte by byte file comparison</para>
+	/// <para>performs a byte by byte file comparison</para>
 	/// </summary>
-	/// <param name="right"> </param>
+	/// <param name="right"></param>
 	/// <param name="left"></param>
 	/// <exception cref="NullException"></exception>
 	/// <exception cref="SecurityException"></exception>
@@ -1251,10 +1252,10 @@ public static class IOExtensions {
 
 	/// <summary>Search all possible drives for any files matching the <paramref name="fileSearchPatterns" /> .</summary>
 	/// <param name="fileSearchPatterns">List of patterns to search for.</param>
-	/// <param name="cancellationToken">      </param>
-	/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
-	/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
-	/// <param name="searchStyle">       </param>
+	/// <param name="cancellationToken"></param>
+	/// <param name="onFindFile"><see cref="Action" /> to perform when a file is found.</param>
+	/// <param name="onEachDirectory"><see cref="Action" /> to perform on each folder found.</param>
+	/// <param name="searchStyle"></param>
 	public static void SearchAllDrives(
 		this IReadOnlyCollection<String> fileSearchPatterns,
 		CancellationToken cancellationToken,
@@ -1267,15 +1268,19 @@ public static class IOExtensions {
 		}
 
 		try {
-			DriveInfo.GetDrives().AsParallel().WithDegreeOfParallelism( 26 ).WithExecutionMode( ParallelExecutionMode.ForceParallelism ).ForAll( async drive => {
-				if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
-					return;
-				}
+			DriveInfo.GetDrives()
+					 .AsParallel()
+					 .WithDegreeOfParallelism( 26 )
+					 .WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+					 .ForAll( async drive => {
+						 if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
+							 return;
+						 }
 
-				$"Scanning [{drive.VolumeLabel}]".Info();
-				var root = new Folder( drive.RootDirectory.FullName );
-				await root.FindFiles( fileSearchPatterns, cancellationToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
-			} );
+						 $"Scanning [{drive.VolumeLabel}]".Info();
+						 var root = new Folder( drive.RootDirectory.FullName );
+						 await root.FindFiles( fileSearchPatterns, cancellationToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
+					 } );
 		}
 		catch ( UnauthorizedAccessException ) { }
 		catch ( DirectoryNotFoundException ) { }
@@ -1312,6 +1317,7 @@ public static class IOExtensions {
 		//remove the fake .tif extension?
 		//OR remove the fake .jpg extension?
 		if ( !fileNameWithoutExtension.GetExtension().IsNullOrEmpty() ) {
+
 			// ReSharper disable once AssignNullToNotNullAttribute
 			fileNameWithoutExtension = fileNameWithoutExtension.GetFileNameWithoutExtension();
 
@@ -1372,7 +1378,7 @@ public static class IOExtensions {
 		FileShare fileShare = FileShare.ReadWrite
 	) {
 		if ( String.IsNullOrWhiteSpace( filePath ) ) {
-			throw new NullException(  nameof( filePath ) );
+			throw new NullException( nameof( filePath ) );
 		}
 
 		//TODO
@@ -1392,6 +1398,7 @@ public static class IOExtensions {
 			}
 		}
 		catch ( IOException ) {
+
 			// IOExcception is thrown if the file is in use by another process.
 			if ( bePatient ) {
 				if ( !Thread.Yield() ) {
@@ -1406,7 +1413,7 @@ public static class IOExtensions {
 	}
 
 	/// <summary>Returns a temporary <see cref="Document" /> (but does not create the file in the file system).</summary>
-	/// <param name="folder">   </param>
+	/// <param name="folder"></param>
 	/// <param name="extension">If no extension is given, a random <see cref="Guid" /> is used.</param>
 	/// <param name="deleteAfterClose"></param>
 	/// <exception cref="NullException"></exception>
@@ -1426,20 +1433,21 @@ public static class IOExtensions {
 	}
 
 	/// <summary>Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.</summary>
-	/// <param name="filePath">  The full file path to be opened</param>
-	/// <param name="fileMode">  Required file mode enum value(see MSDN documentation)</param>
+	/// <param name="filePath">The full file path to be opened</param>
+	/// <param name="fileMode">Required file mode enum value(see MSDN documentation)</param>
 	/// <param name="fileAccess">Required file access enum value(see MSDN documentation)</param>
-	/// <param name="fileShare"> Required file share enum value(see MSDN documentation)</param>
+	/// <param name="fileShare">Required file share enum value(see MSDN documentation)</param>
 	/// <returns>
-	///     A valid FileStream object for the opened file, or null if the File could not be opened after the required
-	///     attempts
+	/// A valid FileStream object for the opened file, or null if the File could not be opened after the required attempts
 	/// </returns>
 	public static FileStream? TryOpen( String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+
 		//TODO
 		try {
 			return File.Open( filePath, fileMode, fileAccess, fileShare );
 		}
 		catch ( IOException ) {
+
 			// IOExcception is thrown if the file is in use by another process.
 		}
 
@@ -1454,7 +1462,7 @@ public static class IOExtensions {
 		FileShare fileShare = FileShare.ReadWrite
 	) {
 		if ( String.IsNullOrWhiteSpace( filePath ) ) {
-			throw new NullException(  nameof( filePath ) );
+			throw new NullException( nameof( filePath ) );
 		}
 
 		//TODO
@@ -1466,6 +1474,7 @@ public static class IOExtensions {
 			}
 		}
 		catch ( IOException ) {
+
 			// IOExcception is thrown if the file is in use by another process.
 			if ( !bePatient ) {
 				return default( FileStream? );
@@ -1487,11 +1496,13 @@ public static class IOExtensions {
 		FileAccess fileAccess = FileAccess.Write,
 		FileShare fileShare = FileShare.ReadWrite
 	) {
+
 		//TODO
 		try {
 			return File.Open( filePath, fileMode, fileAccess, fileShare );
 		}
 		catch ( IOException ) {
+
 			// IOExcception is thrown if the file is in use by another process.
 		}
 
@@ -1533,7 +1544,7 @@ public static class IOExtensions {
 
 	/// <summary>(does not create path)</summary>
 	/// <param name="basePath"></param>
-	/// <param name="d">       </param>
+	/// <param name="d"></param>
 	public static DirectoryInfo WithShortDatePath( this DirectoryInfo basePath, DateTime d ) {
 		var path = basePath.FullName.CombinePaths( d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
 
@@ -1542,7 +1553,6 @@ public static class IOExtensions {
 
 	[Serializable]
 	public record FileInformation( String Name, PathInformation Path ) {
-
 		public FileAttributes Attributes { get; set; }
 
 		public DateTime? CreationTime { get; set; }
@@ -1556,12 +1566,10 @@ public static class IOExtensions {
 		public PathInformation? Parent { get; set; }
 
 		public PathInformation Path { get; set; } = Path;
-
 	}
 
 	[Serializable]
 	public record PathInformation( String Path ) {
-
 		public FileAttributes Attributes { get; set; }
 
 		public DateTime CreationTime { get; set; }
@@ -1571,7 +1579,5 @@ public static class IOExtensions {
 		public DateTime LastWriteTime { get; set; }
 
 		public PathInformation? Parent { get; set; }
-
 	}
-
 }

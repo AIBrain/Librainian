@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "DatabaseExtensions.cs" last formatted on 2021-11-10 at 8:07 AM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "DatabaseExtensions.cs" last formatted on 2021-11-30 at 7:16 PM by Protiguous.
 
 #nullable enable
 
@@ -57,9 +56,7 @@ public static class DatabaseExtensions {
 
 	private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new();
 
-	/// <summary>
-	///     Return a dictionary of fields and their index.
-	/// </summary>
+	/// <summary>Return a dictionary of fields and their index.</summary>
 	/// <param name="reader"></param>
 	private static FieldDictionary GetFieldNames( this IDataReader reader ) {
 		var dictionary = new FieldDictionary( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
@@ -121,9 +118,7 @@ public static class DatabaseExtensions {
 
 	/*
 
-    /// <summary>
-    /// Converts a DataTable to a list with generic objects
-    /// </summary>
+    /// <summary>Converts a DataTable to a list with generic objects</summary>
     /// <typeparam name="T">Generic object</typeparam>
     /// <param name="table">DataTable</param>
     /// <returns>List with generic objects</returns>
@@ -196,14 +191,12 @@ public static class DatabaseExtensions {
 		}
 
 		return exception.Message.Contains( "server was not found", StringComparison.CurrentCultureIgnoreCase ) ||
-		       exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
-		       exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
-		       exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
+			   exception.Message.Contains( "was not accessible", StringComparison.CurrentCultureIgnoreCase ) ||
+			   exception.Message.Contains( "timed out", StringComparison.CurrentCultureIgnoreCase ) ||
+			   exception.Message.Contains( "requires an open and available Connection", StringComparison.CurrentCultureIgnoreCase ) || exception.HResult == -2146233079;
 	}
 
-	/// <summary>
-	///     Enumerates all SQL Server instances on the machine.
-	/// </summary>
+	/// <summary>Enumerates all SQL Server instances on the machine.</summary>
 	public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
 		const String query = @"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = 'instanceID'";
 
@@ -239,13 +232,12 @@ public static class DatabaseExtensions {
 	}
 
 	/// <summary>
-	///     Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given
-	///     <paramref name="key" />.
-	///     <para>Returns the key.</para>
+	/// Add the <paramref name="connectionString" /> to the <paramref name="file" /> under the given <paramref name="key" />.
+	/// <para>Returns the key.</para>
 	/// </summary>
-	/// <param name="file">            </param>
+	/// <param name="file"></param>
 	/// <param name="connectionString"></param>
-	/// <param name="key">             </param>
+	/// <param name="key"></param>
 	public static async Task<String> FileSet( this ConcurrentDictionaryFile<String, String> file, String connectionString, String key = "PrimeConnectionString" ) {
 		if ( file is null ) {
 			throw new NullException( nameof( file ) );
@@ -315,9 +307,7 @@ public static class DatabaseExtensions {
 		return default( String? );
 	}
 
-	/// <summary>
-	///     Method returns the correct SQL namespace to use to detect SQL Server instances.
-	/// </summary>
+	/// <summary>Method returns the correct SQL namespace to use to detect SQL Server instances.</summary>
 	/// <returns>namespace to use to detect SQL Server instances</returns>
 	public static IEnumerable<String> GetCorrectWmiNameSpaces() {
 		const String root = "root\\Microsoft\\sqlserver";
@@ -325,6 +315,7 @@ public static class DatabaseExtensions {
 		var namespaces = new List<String>();
 
 		try {
+
 			// Enumerate all WMI instances of __namespace WMI class.
 			var objectGetOptions = new ObjectGetOptions {
 				Timeout = Seconds.Ten
@@ -350,6 +341,7 @@ public static class DatabaseExtensions {
 	}
 
 	public static dynamic? GetDataSources() {
+
 		//var services = ServiceController.GetServices().Where( service => service.ServiceName.StartsWith( "MSSQL$" ) );
 		//return services;
 
@@ -358,9 +350,7 @@ public static class DatabaseExtensions {
 		return availableSqlServers;
 	}
 
-	/// <summary>
-	///     method extracts the instance name from the service name
-	/// </summary>
+	/// <summary>method extracts the instance name from the service name</summary>
 	/// <param name="serviceName"></param>
 	public static String GetInstanceNameFromServiceName( String? serviceName ) {
 		if ( String.IsNullOrEmpty( serviceName ) ) {
@@ -385,10 +375,8 @@ public static class DatabaseExtensions {
 		return TypeDictionary[ type ];
 	}
 
-	/// <summary>
-	///     Returns the WMI property value for a given property name for a particular SQL Server service Name
-	/// </summary>
-	/// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
+	/// <summary>Returns the WMI property value for a given property name for a particular SQL Server service Name</summary>
+	/// <param name="serviceName">The service name for the SQL Server engine serivce to query for</param>
 	/// <param name="wmiNamespace">The wmi namespace to connect to</param>
 	/// <param name="propertyName">The property name whose value is required</param>
 	public static String GetWmiPropertyValueForEngineService( String serviceName, String wmiNamespace, String propertyName ) {
@@ -459,11 +447,9 @@ public static class DatabaseExtensions {
 	}
 	*/
 
-	/// <summary>
-	///     Convert our IList to a DataSet
-	/// </summary>
+	/// <summary>Convert our IList to a DataSet</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="list">      </param>
+	/// <param name="list"></param>
 	/// <param name="exampleSet"></param>
 	/// <returns>DataSet</returns>
 	/// <copyright>
@@ -577,9 +563,7 @@ public static class DatabaseExtensions {
 		return table;
 	}
 
-	/// <summary>
-	///     To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.
-	/// </summary>
+	/// <summary>To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.</summary>
 	/// <param name="dataReader"></param>
 	public static DataTable ToDataTable( this SqlDataReader dataReader ) {
 		using var table = new DataTable();
@@ -590,9 +574,7 @@ public static class DatabaseExtensions {
 		return table;
 	}
 
-	/// <summary>
-	///     Warning: Untested.
-	/// </summary>
+	/// <summary>Warning: Untested.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list"></param>
 	public static DataTable ToDataTable3<T>( this IEnumerable<T> list ) {
@@ -625,8 +607,8 @@ public static class DatabaseExtensions {
 	}
 
 	/// <summary>
-	///     <para>Warning: Untested and possibly buggy.</para>
-	///     Convert our <paramref name="list" /> to a <see cref="DataTable" />.
+	/// <para>Warning: Untested and possibly buggy.</para>
+	/// Convert our <paramref name="list" /> to a <see cref="DataTable" />.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list"></param>
@@ -732,7 +714,7 @@ public static class DatabaseExtensions {
 			throw new NullException( nameof( parameterName ) );
 		}
 
-		return new(parameterName, sqlDbType, size);
+		return new( parameterName, sqlDbType, size );
 	}
 
 	/*
@@ -759,7 +741,7 @@ public static class DatabaseExtensions {
             /// </summary>
             /// <typeparam name="T1"></typeparam>
             /// <typeparam name="T2"></typeparam>
-            /// <param name="obj">  </param>
+            /// <param name="obj"></param>
             /// <param name="items"></param>
             /// <returns></returns>
             /// <copyright>
@@ -803,9 +785,7 @@ public static class DatabaseExtensions {
 
 	/*
 
-            /// <summary>
-            /// Returns the total time taken for a simple query. (connect + execute + fetch...)
-            /// </summary>
+            /// <summary>Returns the total time taken for a simple query. (connect + execute + fetch...)</summary>
             /// <returns></returns>
             [Obsolete( "No access to a local Server atm." )]
             public static TimeSpan EasyPing( SQLQuery db ) {
@@ -840,10 +820,10 @@ public static class DatabaseExtensions {
 	/*
 
 	/// <summary>
-	///     Performs two adhoc selects on the database.
-	///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
+	/// Performs two adhoc selects on the database.
+	/// <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
 	/// </summary>
-	/// <param name="test">             </param>
+	/// <param name="test"></param>
 	/// <param name="applicationName"></param>
 	/// <param name="cancellationToken"></param>
 	public static async PooledValueTask<SqlServerInfo?> TryGetResponse(
@@ -918,9 +898,7 @@ public static class DatabaseExtensions {
 
 	/*
 
-            /// <summary>
-            /// Returns the total time taken for a simple query. (connect + execute + fetch...)
-            /// </summary>
+            /// <summary>Returns the total time taken for a simple query. (connect + execute + fetch...)</summary>
             /// <returns></returns>
             [Obsolete( "No access to a local Server atm." )]
             public static TimeSpan Ping() {
@@ -950,5 +928,4 @@ public static class DatabaseExtensions {
                 return stopwatch.Elapsed;
             }
     */
-
 }

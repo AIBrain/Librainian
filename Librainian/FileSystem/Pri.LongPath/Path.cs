@@ -1,29 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Path.cs" last touched on 2021-10-13 at 4:25 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Path.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -65,8 +64,8 @@ public static class Path {
 	}
 
 	/// <summary>
-	///     <para>Throws if the <paramref name="path" /> is blank.</para>
-	///     <para>Checks if the <paramref name="path" /> starts with \\?\</para>
+	/// <para>Throws if the <paramref name="path" /> is blank.</para>
+	/// <para>Checks if the <paramref name="path" /> starts with \\?\</para>
 	/// </summary>
 	/// <param name="path"></param>
 	[DebuggerStepThrough]
@@ -85,9 +84,9 @@ public static class Path {
 	public static String ChangeExtension( this String filename, String? extension ) => System.IO.Path.ChangeExtension( filename.ThrowIfBlank(), extension );
 
 	/// <summary>
-	///     <para>Throws if blank.</para>
-	///     <para>Checks if the <paramref name="path" /> starts with \\?\</para>
-	///     <para>If it doesn't, it calls <see cref="AddLongPathPrefix" />.</para>
+	/// <para>Throws if blank.</para>
+	/// <para>Checks if the <paramref name="path" /> starts with \\?\</para>
+	/// <para>If it doesn't, it calls <see cref="AddLongPathPrefix" />.</para>
 	/// </summary>
 	/// <param name="path"></param>
 	public static String CheckAddLongPathPrefix( this String path ) {
@@ -100,12 +99,11 @@ public static class Path {
 		var maxPathLimit = PriNativeMethods.MAX_PATH;
 
 		if ( Uri.TryCreate( path, UriKind.Absolute, out var uri ) && uri.IsUnc ) {
-			// What's going on here?
-			// Empirical evidence shows that Windows has trouble dealing with UNC paths
-			// longer than MAX_PATH *minus* the length of the "\\hostname\" prefix.
-			// See the following tests:
-			//  - UncDirectoryTests.TestDirectoryCreateNearMaxPathLimit
-			//  - UncDirectoryTests.TestDirectoryEnumerateDirectoriesNearMaxPathLimit
+
+			// What's going on here? Empirical evidence shows that Windows has trouble dealing with UNC paths longer than
+			// MAX_PATH *minus* the length of the "\\hostname\" prefix. See the following tests:
+			// - UncDirectoryTests.TestDirectoryCreateNearMaxPathLimit
+			// - UncDirectoryTests.TestDirectoryEnumerateDirectoriesNearMaxPathLimit
 			var rootPathLength = 3 + uri.Host.Length;
 			maxPathLimit -= rootPathLength;
 		}
@@ -218,8 +216,8 @@ public static class Path {
 	public static String? GetFileNameWithoutExtension( this String? path ) => System.IO.Path.GetFileNameWithoutExtension( path );
 
 	/// <summary>
-	///     <para>If the <paramref name="path" /> is UNC, then leave it UNC.</para>
-	///     <para>Otherwise, normalize it, and then remove the long path prefix.</para>
+	/// <para>If the <paramref name="path" /> is UNC, then leave it UNC.</para>
+	/// <para>Otherwise, normalize it, and then remove the long path prefix.</para>
 	/// </summary>
 	/// <param name="path"></param>
 	[DebuggerStepThrough]
@@ -244,8 +242,8 @@ public static class Path {
 	}
 
 	/// <summary>
-	///     Returns just the unique random file name (no path) with an optional <paramref name="extension" />.
-	///     <remarks>Does not create a file.</remarks>
+	/// Returns just the unique random file name (no path) with an optional <paramref name="extension" />. <remarks>Does not
+	/// create a file.</remarks>
 	/// </summary>
 	/// <param name="extension"></param>
 	public static String GetRandomFileName( String? extension = null ) {
@@ -275,7 +273,7 @@ public static class Path {
 					var num = 2;
 
 					while ( rootLength >= length ||
-					        ( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) && --num <= 0 ) {
+							( path[ rootLength ] == System.IO.Path.DirectorySeparatorChar || path[ rootLength ] == System.IO.Path.AltDirectorySeparatorChar ) && --num <= 0 ) {
 						++rootLength;
 					}
 				}
@@ -326,10 +324,8 @@ public static class Path {
 	public static Boolean IsPathRooted( this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
 
 	/// <summary>
-	///     Normalizes path and adds the \\?\ long path prefix.
-	///     <para>
-	///         <remarks>Makes a DLL call to kernel32.dll.GetFullPathNameW.</remarks>
-	///     </para>
+	/// Normalizes path and adds the \\?\ long path prefix.
+	/// <para><remarks>Makes a DLL call to kernel32.dll.GetFullPathNameW.</remarks></para>
 	/// </summary>
 	/// <param name="path"></param>
 	/// <param name="parameterName"></param>
@@ -337,14 +333,13 @@ public static class Path {
 	public static String NormalizeLongPath( this String path, String parameterName = "path" ) => path.CheckAddLongPathPrefix();
 
 	/// <summary>
-	///     <para>Trim whitespace from the <paramref name="path" />.</para>
-	///     <para>If the <paramref name="path" /> is null, empty or whitespace then return <see cref="String.Empty" />.</para>
-	///     <para>If the <paramref name="path" /> doesn't start with "\\?\UNC\", then return the rest of the path.</para>
-	///     <para>
-	///         If the <paramref name="path" /> starts with "\\?\UNC\", then return the rest of the \\
-	///         <paramref name="path" />.
-	///     </para>
-	///     <para>Otherwise just return the path as is.</para>
+	/// <para>Trim whitespace from the <paramref name="path" />.</para>
+	/// <para>If the <paramref name="path" /> is null, empty or whitespace then return <see cref="String.Empty" />.</para>
+	/// <para>If the <paramref name="path" /> doesn't start with "\\?\UNC\", then return the rest of the path.</para>
+	/// <para>
+	/// If the <paramref name="path" /> starts with "\\?\UNC\", then return the rest of the \\ <paramref name="path" />.
+	/// </para>
+	/// <para>Otherwise just return the path as is.</para>
 	/// </summary>
 	/// <param name="path"></param>
 	public static String RemoveLongPathPrefix( this String path ) {
@@ -359,11 +354,13 @@ public static class Path {
 		}
 
 		if ( !path.StartsWith( LongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) {
+
 			// \\?\
 			return path;
 		}
 
 		if ( path.StartsWith( UNCLongPathPrefix, StringComparison.OrdinalIgnoreCase ) ) {
+
 			// \\?\UNC\
 			return $@"\\{path[ UNCLongPathPrefix.Length.. ]}";
 		}
@@ -388,8 +385,7 @@ public static class Path {
 		return path;
 	}
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="path"></param>
 	/// <exception cref="InvalidOperationException"></exception>
 	public static void ThrowIfInvalidPathChars( ref String path ) {
@@ -399,9 +395,7 @@ public static class Path {
 		}
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="path"></param>
 	/// <param name="result"></param>
 	/// <returns></returns>
@@ -424,5 +418,4 @@ public static class Path {
 
 		return false;
 	}
-
 }

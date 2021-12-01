@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "SecurityExtensions.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "SecurityExtensions.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 #nullable enable
 
@@ -106,8 +105,8 @@ public static class SecurityExtensions {
 			Debug.Assert( !String.IsNullOrEmpty( DefaultIv ) );
 			Debug.Assert( !String.IsNullOrEmpty( DefaultKey ) );
 
-			var ivBytes = encoding.GetBytes( ( iv[ ..8 ] ) );
-			var keybytes = encoding.GetBytes( ( key[ ..8 ] ) );
+			var ivBytes = encoding.GetBytes( iv[ ..8 ] );
+			var keybytes = encoding.GetBytes( key[ ..8 ] );
 			var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
 
 			using var ms = new MemoryStream();
@@ -171,6 +170,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String DecryptRSA( this String inputString, Int32 keySize, String xmlString ) {
+
 		// TODO: Add Proper Exception Handlers
 		if ( inputString is null ) {
 			throw new NullException( nameof( inputString ) );
@@ -189,10 +189,9 @@ public static class SecurityExtensions {
 		for ( var i = 0; i < iterations; i++ ) {
 			var encryptedBytes = Convert.FromBase64String( inputString.Substring( base64BlockSize * i, base64BlockSize ) );
 
-			// Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after
-			// encryption and before decryption. If you do not require compatibility with
-			// Microsoft Cryptographic API (CAPI) and/or other vendors. Comment out the next
-			// line and the corresponding one in the EncryptString function.
+			// Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes after encryption and before
+			// decryption. If you do not require compatibility with Microsoft Cryptographic API (CAPI) and/or other vendors.
+			// Comment out the next line and the corresponding one in the EncryptString function.
 			Array.Reverse( encryptedBytes );
 			arrayList.AddRange( rsaCryptoServiceProvider.Decrypt( encryptedBytes, true ) );
 		}
@@ -205,6 +204,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String DecryptStringUsingRegistryKey( this String decryptValue, String privateKey ) {
+
 		// this is the variable that will be returned to the user
 		if ( decryptValue is null ) {
 			throw new NullException( nameof( decryptValue ) );
@@ -216,7 +216,8 @@ public static class SecurityExtensions {
 
 		var decryptedValue = String.Empty;
 
-		// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
+		// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public
+		// key. Parameter value of 1 indicates RSA provider type
 		// - 13 would indicate DSA provider
 		var csp = new CspParameters( 1 ) {
 			KeyContainerName = privateKey,
@@ -228,6 +229,7 @@ public static class SecurityExtensions {
 		// Supply the provider name
 
 		try {
+
 			//Create new RSA object passing our key info
 			var rsa = new RSACryptoServiceProvider( csp );
 
@@ -250,9 +252,7 @@ public static class SecurityExtensions {
 		return decryptedValue;
 	}
 
-	/// <summary>
-	///     Uses <see cref="TripleDES.Create()" /> to encrypt a string and return the bytes as a Base64 string.
-	/// </summary>
+	/// <summary>Uses <see cref="TripleDES.Create()" /> to encrypt a string and return the bytes as a Base64 string.</summary>
 	/// <param name="value"></param>
 	/// <param name="encoding"></param>
 	/// <param name="iv"></param>
@@ -318,6 +318,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String EncryptRSA( this String inputString, Int32 dwKeySize, String xmlString ) {
+
 		// TODO: Add Proper Exception Handlers
 		if ( inputString is null ) {
 			throw new NullException( nameof( inputString ) );
@@ -332,8 +333,8 @@ public static class SecurityExtensions {
 		var keySize = dwKeySize / 8;
 		var bytes = Encoding.Unicode.GetBytes( inputString );
 
-		// The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int
-		// maxLength = ( keySize ) - 2 - ( 2 * SHA1.Create().ComputeHash( rawBytes ).Length );
+		// The hash function in use by the .NET RSACryptoServiceProvider here is SHA1 int maxLength = ( keySize ) - 2 - ( 2 *
+		// SHA1.Create().ComputeHash( rawBytes ).Length );
 		var maxLength = keySize - 42;
 		var dataLength = bytes.Length;
 		var iterations = dataLength / maxLength;
@@ -344,14 +345,12 @@ public static class SecurityExtensions {
 			Buffer.BlockCopy( bytes, maxLength * i, tempBytes, 0, tempBytes.Length );
 			var encryptedBytes = rsaCryptoServiceProvider.Encrypt( tempBytes, true );
 
-			// Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes. It
-			// does this after encryption and before decryption. If you do not require
-			// compatibility with Microsoft Cryptographic API (CAPI) and/or other vendors
-			// Comment out the next line and the corresponding one in the DecryptString function.
+			// Be aware the RSACryptoServiceProvider reverses the order of encrypted bytes. It does this after encryption and
+			// before decryption. If you do not require compatibility with Microsoft Cryptographic API (CAPI) and/or other
+			// vendors Comment out the next line and the corresponding one in the DecryptString function.
 			Array.Reverse( encryptedBytes );
 
-			// Why convert to base 64? Because it is the largest power-of-two base printable
-			// using only ASCII characters
+			// Why convert to base 64? Because it is the largest power-of-two base printable using only ASCII characters
 			stringBuilder.Append( Convert.ToBase64String( encryptedBytes ) );
 		}
 
@@ -359,6 +358,7 @@ public static class SecurityExtensions {
 	}
 
 	public static String EncryptStringUsingRegistryKey( this String stringToEncrypt, String publicKey ) {
+
 		// this is the variable that will be returned to the user
 		if ( stringToEncrypt is null ) {
 			throw new NullException( nameof( stringToEncrypt ) );
@@ -370,7 +370,8 @@ public static class SecurityExtensions {
 
 		var encryptedValue = String.Empty;
 
-		// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public key. Parameter value of 1 indicates RSA provider type
+		// Create the CspParameters object which is used to create the RSA provider without it generating a new private/public
+		// key. Parameter value of 1 indicates RSA provider type
 		// - 13 would indicate DSA provider
 		var csp = new CspParameters( 1 ) {
 			KeyContainerName = publicKey,
@@ -382,13 +383,15 @@ public static class SecurityExtensions {
 		// Supply the provider name
 
 		try {
+
 			//Create new RSA object passing our key info
 			var rsa = new RSACryptoServiceProvider( csp );
 
 			// Before encrypting the value we must convert it over to byte array
 			var bytesToEncrypt = Encoding.UTF8.GetBytes( stringToEncrypt );
 
-			// Encrypt our byte array. The false parameter has to do with padding (not to clear on this point but you can look it up and decide which is better for your use)
+			// Encrypt our byte array. The false parameter has to do with padding (not to clear on this point but you can look
+			// it up and decide which is better for your use)
 			var bytesEncrypted = rsa.Encrypt( bytesToEncrypt, false );
 
 			// Extract our encrypted byte array into a String value to return to our user
@@ -453,7 +456,10 @@ public static class SecurityExtensions {
 
 		using var process = new Process {
 			StartInfo = {
-				FileName = "md5sum.exe", Arguments = file.FullName, UseShellExecute = false, RedirectStandardOutput = true
+				FileName = "md5sum.exe",
+				Arguments = file.FullName,
+				UseShellExecute = false,
+				RedirectStandardOutput = true
 			}
 		};
 
@@ -492,10 +498,10 @@ public static class SecurityExtensions {
 	}
 
 	/// <summary>
-	///     <para>Compute the SHA-256 hash for the <paramref name="input" /></para>
-	///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+	/// <para>Compute the SHA-256 hash for the <paramref name="input" /></para>
+	/// <para>Defaults to <see cref="Encoding.UTF8" /></para>
 	/// </summary>
-	/// <param name="input">   </param>
+	/// <param name="input"></param>
 	/// <param name="encoding"></param>
 	public static Byte[] Sha256( this String input, Encoding? encoding = null ) {
 		if ( input is null ) {
@@ -508,10 +514,10 @@ public static class SecurityExtensions {
 	}
 
 	/// <summary>
-	///     <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
-	///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+	/// <para>Compute the SHA-384 hash for the <paramref name="input" /></para>
+	/// <para>Defaults to <see cref="Encoding.UTF8" /></para>
 	/// </summary>
-	/// <param name="input">   </param>
+	/// <param name="input"></param>
 	/// <param name="encoding"></param>
 	public static Byte[] Sha384( this String input, Encoding? encoding = null ) {
 		if ( input is null ) {
@@ -532,10 +538,10 @@ public static class SecurityExtensions {
 	}
 
 	/// <summary>
-	///     <para>Compute the SHA-512 hash for the <paramref name="input" /></para>
-	///     <para>Defaults to <see cref="Encoding.UTF8" /></para>
+	/// <para>Compute the SHA-512 hash for the <paramref name="input" /></para>
+	/// <para>Defaults to <see cref="Encoding.UTF8" /></para>
 	/// </summary>
-	/// <param name="input">   </param>
+	/// <param name="input"></param>
 	/// <param name="encoding"></param>
 	public static Byte[] Sha512( this String input, Encoding? encoding = null ) {
 		if ( input is null ) {
@@ -606,7 +612,10 @@ public static class SecurityExtensions {
 
 			var p = new Process {
 				StartInfo = {
-					FileName = "md5sum.exe", Arguments = $"\"{document.FullPath}\"", UseShellExecute = false, RedirectStandardOutput = true
+					FileName = "md5sum.exe",
+					Arguments = $"\"{document.FullPath}\"",
+					UseShellExecute = false,
+					RedirectStandardOutput = true
 				}
 			};
 
@@ -625,11 +634,11 @@ public static class SecurityExtensions {
 	}
 
 	/// <summary>Attempt to decrypt an encrypted version of the file with the given password and salt.</summary>
-	/// <param name="input">            </param>
-	/// <param name="output">           </param>
-	/// <param name="password">              Must be between 1 and 32767 bytes.</param>
-	/// <param name="reportProgress">   </param>
-	/// <param name="salt">             </param>
+	/// <param name="input"></param>
+	/// <param name="output"></param>
+	/// <param name="password">Must be between 1 and 32767 bytes.</param>
+	/// <param name="reportProgress"></param>
+	/// <param name="salt"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns>Returns true if all is successful</returns>
 	public static async Task<(Status status, List<Exception> exceptions)> TryDecryptFile(
@@ -722,7 +731,6 @@ public static class SecurityExtensions {
 				reportProgress.Report( progress );
 
 				await outputStream.WriteAsync( buffer, cancellationToken ).ConfigureAwait( false );
-
 			} while ( true );
 		}
 		catch ( AggregateException aggregateException ) {
@@ -741,11 +749,11 @@ public static class SecurityExtensions {
 	}
 
 	/// <summary>Attempt to encrypt a file with the given password and salt.</summary>
-	/// <param name="input">            </param>
-	/// <param name="output">           </param>
-	/// <param name="password">              Must be between 1 and 32767 bytes.</param>
-	/// <param name="reportProgress">   </param>
-	/// <param name="salt">             </param>
+	/// <param name="input"></param>
+	/// <param name="output"></param>
+	/// <param name="password">Must be between 1 and 32767 bytes.</param>
+	/// <param name="reportProgress"></param>
+	/// <param name="salt"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns>Returns true if all is successful</returns>
 	public static async Task<(Status status, List<Exception> exceptions, Byte[]? keyBytes, Byte[]? ivBytes)> TryEncryptFile(
@@ -842,7 +850,6 @@ public static class SecurityExtensions {
 				reportProgress.Report( progress );
 
 				await cryptoStream.WriteAsync( buffer, cancellationToken ).ConfigureAwait( false );
-
 			} while ( true );
 
 			inputStream.Close();
@@ -863,5 +870,4 @@ public static class SecurityExtensions {
 
 		return (await output.Exists( cancellationToken ).ConfigureAwait( false ) ? Status.Success : Status.Failure, exceptions, keyBytes, ivBytes);
 	}
-
 }

@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "NativeMethods.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "NativeMethods.cs" last formatted on 2021-11-30 at 7:20 PM by Protiguous.
 
 #nullable enable
 
@@ -48,9 +47,7 @@ using Microsoft.Win32.SafeHandles;
 [SuppressMessage( "ReSharper", "FieldCanBeMadeReadOnly.Global" )]
 public static class NativeMethods {
 
-	/// <summary>
-	///     https://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx
-	/// </summary>
+	/// <summary>https://msdn.microsoft.com/en-us/library/windows/desktop/aa363854(v=vs.85).aspx</summary>
 	/// <param name="TotalFileSize"></param>
 	/// <param name="TotalBytesTransferred"></param>
 	/// <param name="StreamSize"></param>
@@ -89,7 +86,6 @@ public static class NativeMethods {
 		TOP_DOWN = 0x100000,
 
 		WRITE_WATCH = 0x200000
-
 	}
 
 	/// <summary>The reason that CopyProgressRoutine was called.</summary>
@@ -99,11 +95,10 @@ public static class NativeMethods {
 		CALLBACK_CHUNK_FINISHED = 0x00000000,
 
 		/// <summary>
-		///     Another stream was created and is about to be copied. this is the callback reason given when the callback
-		///     routine is first invoked.
+		/// Another stream was created and is about to be copied. this is the callback reason given when the callback routine
+		/// is first invoked.
 		/// </summary>
 		CALLBACK_STREAM_SWITCH = 0x00000001
-
 	}
 
 	public enum ErrorCodes {
@@ -113,7 +108,6 @@ public static class NativeMethods {
 		ERROR_PATH_NOT_FOUND = 3,
 
 		ERROR_ACCESS_DENIED = 5
-
 	}
 
 	public enum FILE_INFO_BY_HANDLE_CLASS {
@@ -161,7 +155,6 @@ public static class NativeMethods {
 		FileIdExtdDirectoryRestartInfo = 20, // 0x14
 
 		MaximumFileInfoByHandlesClass
-
 	}
 
 	[Flags]
@@ -170,7 +163,6 @@ public static class NativeMethods {
 		FindFirstExCaseSensitive,
 
 		FindFirstExLargeFetch
-
 	}
 
 	public enum FINDEX_INFO_LEVELS {
@@ -180,7 +172,6 @@ public static class NativeMethods {
 		FindExInfoBasic = 1,
 
 		FindExInfoMaxInfoLevel = 2
-
 	}
 
 	public enum FINDEX_SEARCH_OPS {
@@ -192,7 +183,6 @@ public static class NativeMethods {
 		FindExSearchLimitToDevices,
 
 		FindExSearchMaxSearchOp
-
 	}
 
 	[Flags]
@@ -203,7 +193,6 @@ public static class NativeMethods {
 		HEAP_GENERATE_EXCEPTIONS = 0x4,
 
 		HEAP_ZERO_MEMORY = 0x8
-
 	}
 
 	public enum IconSize : Byte {
@@ -211,7 +200,6 @@ public static class NativeMethods {
 		Small = ICON_SMALL,
 
 		Big = ICON_BIG
-
 	}
 
 	[Flags]
@@ -238,7 +226,6 @@ public static class NativeMethods {
 		NOCACHE_Modifierflag = 0x200,
 
 		WRITECOMBINE_Modifierflag = 0x400
-
 	}
 
 	public enum PLATFORM_ID {
@@ -252,7 +239,6 @@ public static class NativeMethods {
 		PlatformIDOsf = 600,
 
 		PlatformIDVms = 700
-
 	}
 
 	public enum PNP_VETO_TYPE {
@@ -282,7 +268,6 @@ public static class NativeMethods {
 		NonDisableable,
 
 		LegacyDriver
-
 	}
 
 	[Flags]
@@ -353,7 +338,6 @@ public static class NativeMethods {
 		SvTypeDomainEnum = 0x80000000,
 
 		SvTypeAll = 0xFFFFFFFF
-
 	}
 
 	internal const Int32 CREATE_ALWAYS = 2;
@@ -476,7 +460,7 @@ public static class NativeMethods {
 
 	public const Int32 WM_SETICON = 0x80;
 
-	private static readonly IntPtr NegativeOneIntPtr = new(-1);
+	private static readonly IntPtr NegativeOneIntPtr = new( -1 );
 
 	[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode )]
 	public static extern Boolean PathMatchSpec( [In] String pszFileParam, [In] String pszSpec );
@@ -718,37 +702,34 @@ public static class NativeMethods {
 	public static extern Boolean FindClose( IntPtr hFindFile );
 
 	/// <summary>
-	///     Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW,
-	///     FindFirstFileNameTransactedW, FindFirstFileTransacted,
-	///     FindFirstStreamTransactedW, or FindFirstStreamW functions.
+	/// Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW,
+	/// FindFirstFileNameTransactedW, FindFirstFileTransacted, FindFirstStreamTransactedW, or FindFirstStreamW functions.
 	/// </summary>
 	/// <param name="hFindFile">The file search handle.</param>
 	/// <returns>
-	///     If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.To get
-	///     extended error information, call GetLastError.
+	/// If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.To get extended
+	/// error information, call GetLastError.
 	/// </returns>
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true )]
 	[return: MarshalAs( UnmanagedType.Bool )]
 	public static extern Boolean FindClose( [In] SafeSearchHandle hFindFile );
 
 	/// <summary>
-	///     Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if
-	///     wildcards are used).
+	/// Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if wildcards
+	/// are used).
 	/// </summary>
 	/// <param name="lpFileName">
-	///     The directory or path, and the file name, which can include wildcard characters, for example,
-	///     an asterisk (*) or a question mark (?).
+	/// The directory or path, and the file name, which can include wildcard characters, for example, an asterisk (*) or a
+	/// question mark (?).
 	/// </param>
 	/// <param name="lpFindData">
-	///     A pointer to the WIN32_FIND_DATA structure that receives information about a found file or
-	///     directory.
+	/// A pointer to the WIN32_FIND_DATA structure that receives information about a found file or directory.
 	/// </param>
 	/// <returns>
-	///     If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or
-	///     FindClose, and the lpFindFileData parameter contains
-	///     information about the first file or directory found. If the function fails or fails to locate files from the search
-	///     String in the lpFileName parameter, the return value is
-	///     INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+	/// If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or FindClose,
+	/// and the lpFindFileData parameter contains information about the first file or directory found. If the function fails or
+	/// fails to locate files from the search String in the lpFileName parameter, the return value is INVALID_HANDLE_VALUE and
+	/// the contents of lpFindFileData are indeterminate.
 	/// </returns>
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364418%28VS.85%29.aspx" />
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
@@ -767,14 +748,12 @@ public static class NativeMethods {
 	/// <summary>Continues a file search from a previous call to the FindFirstFile or FindFirstFileEx function.</summary>
 	/// <param name="hFindFile">The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx function.</param>
 	/// <param name="lpFindData">
-	///     A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory. The
-	///     structure can be used in subsequent calls
-	///     to FindNextFile to indicate from which file to continue the search.
+	/// A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory. The
+	/// structure can be used in subsequent calls to FindNextFile to indicate from which file to continue the search.
 	/// </param>
 	/// <returns>
-	///     If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains information about
-	///     the next file or directory found. If the function fails,
-	///     the return value is zero and the contents of lpFindFileData are indeterminate.
+	/// If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains information about the
+	/// next file or directory found. If the function fails, the return value is zero and the contents of lpFindFileData are indeterminate.
 	/// </returns>
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/aa364428%28VS.85%29.aspx" />
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
@@ -802,26 +781,23 @@ public static class NativeMethods {
 	public static extern Int32 GetBestInterface( UInt32 destAddr, out UInt32 bestIfIndex );
 
 	/// <summary>
-	///     <para>
-	///         Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted
-	///         operation.
-	///     </para>
-	///     <para>
-	///         If the file is located on a volume that supports compression and the file is compressed, the value obtained
-	///         is the compressed size of the specified file.
-	///     </para>
-	///     <para>
-	///         If the file is located on a volume that supports sparse files and the file is a sparse file, the value
-	///         obtained is the sparse size of the specified file.
-	///     </para>
+	/// <para>Retrieves the actual number of bytes of disk storage used to store a specified file as a transacted operation.</para>
+	/// <para>
+	/// If the file is located on a volume that supports compression and the file is compressed, the value obtained is the
+	/// compressed size of the specified file.
+	/// </para>
+	/// <para>
+	/// If the file is located on a volume that supports sparse files and the file is a sparse file, the value obtained is the
+	/// sparse size of the specified file.
+	/// </para>
 	/// </summary>
-	/// <param name="lpFileName">    </param>
+	/// <param name="lpFileName"></param>
 	/// <param name="lpFileSizeHigh"></param>
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/windows/desktop/aa364930(v=vs.85).aspx" />
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern UInt32 GetCompressedFileSizeW(
-		[In] [MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
-		[Out] [MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
+		[In][MarshalAs( UnmanagedType.LPWStr )] String lpFileName,
+		[Out][MarshalAs( UnmanagedType.U4 )] out UInt32 lpFileSizeHigh
 	);
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
@@ -848,7 +824,7 @@ public static class NativeMethods {
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, PreserveSig = true )]
 	public static extern UInt32 GetDiskFreeSpaceW(
-		[In] [MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName,
+		[In][MarshalAs( UnmanagedType.LPWStr )] String lpRootPathName,
 		out UInt32 lpSectorsPerCluster,
 		out UInt32 lpBytesPerSector,
 		out UInt32 lpNumberOfFreeClusters,
@@ -975,22 +951,21 @@ public static class NativeMethods {
 	);
 
 	/// <summary>
-	///     Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates.
-	///     Call NetApiBufferFree to free the memory that other
-	///     network management functions return.
+	/// Netapi32.dll : The NetApiBufferFree function frees the memory that the NetApiBufferAllocate function allocates. Call
+	/// NetApiBufferFree to free the memory that other network management functions return.
 	/// </summary>
 	[DllImport( "netapi32.dll", EntryPoint = "NetApiBufferFree", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Int32 NetApiBufferFree( IntPtr buffer );
 
 	/// <summary>The NetServerEnum function lists all servers of the specified type that are visible in a domain.</summary>
-	/// <param name="servername">  </param>
-	/// <param name="level">       </param>
-	/// <param name="bufptr">      </param>
-	/// <param name="prefmaxlen">  </param>
-	/// <param name="entriesread"> </param>
+	/// <param name="servername"></param>
+	/// <param name="level"></param>
+	/// <param name="bufptr"></param>
+	/// <param name="prefmaxlen"></param>
+	/// <param name="entriesread"></param>
 	/// <param name="totalentries"></param>
-	/// <param name="servertype">  </param>
-	/// <param name="domain">      </param>
+	/// <param name="servertype"></param>
+	/// <param name="domain"></param>
 	/// <param name="resumeHandle"></param>
 	/// <see cref="http://www.pinvoke.net/default.aspx/netapi32.netserverenum" />
 	[DllImport( "netapi32.dll", EntryPoint = "NetServerEnum", CharSet = CharSet.Unicode, SetLastError = true )]
@@ -1010,7 +985,7 @@ public static class NativeMethods {
 	public static extern IntPtr OpenFileMapping( Int32 dwDesiredAccess, Boolean bInheritHandle, [MarshalAs( UnmanagedType.LPWStr )] String lpName );
 
 	[DllImport( "shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-	public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )] [Out] StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
+	public static extern Boolean PathCompactPathEx( [MarshalAs( UnmanagedType.LPWStr )][Out] StringBuilder pszOut, String szPath, Int32 cchMax, Int32 dwFlags );
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean QueryPerformanceCounter( out Int64 value );
@@ -1031,11 +1006,11 @@ public static class NativeMethods {
 	public static extern IntPtr SendMessage( IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp );
 
 	/// <summary>
-	///     <code>
-	/// Process process = Process.Start("notepad");
-	/// Icon icon = new Icon( @"C:\Icons\FilePath.ico" );
-	/// process.WaitForInputIdle();
-	/// SendMessage( process.MainWindowHandle, WM_SETICON, ICON_BIG, icon.Handle);
+	/// <code>
+	///Process process = Process.Start("notepad");
+	///Icon icon = new Icon( @"C:\Icons\FilePath.ico" );
+	///process.WaitForInputIdle();
+	///SendMessage( process.MainWindowHandle, WM_SETICON, ICON_BIG, icon.Handle);
 	/// </code>
 	/// </summary>
 	/// <param name="hwnd"></param>
@@ -1060,7 +1035,7 @@ public static class NativeMethods {
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean SetFileTime( SafeFileHandle hFile, ref Int64 lpCreationTime, ref Int64 lpLastAccessTime, ref Int64 lpLastWriteTime );
 
-	/// <param name="hThread">             </param>
+	/// <param name="hThread"></param>
 	/// <param name="dwThreadAffinityMask"></param>
 	/// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
@@ -1121,10 +1096,10 @@ public static class NativeMethods {
 	);
 
 	/// <summary>
-	///     <code>
-	/// Process process = Process.Start("notepad");
-	/// process.WaitForInputIdle();
-	/// SetWindowText(process.MainWindowHandle, "Hello!");
+	/// <code>
+	///Process process = Process.Start("notepad");
+	///process.WaitForInputIdle();
+	///SetWindowText(process.MainWindowHandle, "Hello!");
 	/// </code>
 	/// </summary>
 	[DllImport( "user32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = false )]
@@ -1173,6 +1148,7 @@ public static class NativeMethods {
 			return DateTime.FromFileTimeUtc( fileTime );
 		}
 		catch ( ArgumentOutOfRangeException ) {
+
 			//return DateTime.FromFileTimeUtc( 0xFFFFFFFF ); //shouldn't this actually be null or something?
 			return default( DateTime? );
 		}
@@ -1197,11 +1173,12 @@ public static class NativeMethods {
 	*/
 
 	/*
+
 	/// <summary>this must be used if NETRESOURCE is defined as a struct???</summary>
 	/// <param name="netResource"></param>
-	/// <param name="password">   </param>
-	/// <param name="username">   </param>
-	/// <param name="flags">      </param>
+	/// <param name="password"></param>
+	/// <param name="username"></param>
+	/// <param name="flags"></param>
 	/// <returns></returns>
 	[DllImport( "mpr.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Int32 WNetAddConnection2( ref NetResource netResource, [MarshalAs( UnmanagedType.LPWStr )] String password,
@@ -1283,7 +1260,6 @@ public static class NativeMethods {
 
 		[SecurityCritical]
 		protected override Boolean ReleaseHandle() => FindClose( this.handle );
-
 	}
 
 	public interface IHandle {
@@ -1291,7 +1267,6 @@ public static class NativeMethods {
 		/// <summary>Returns the value of the handle field.</summary>
 		/// <returns>An IntPtr representing the value of the handle field.</returns>
 		IntPtr DangerousGetHandle();
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1318,7 +1293,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
 		public String cAlternateFileName;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1349,7 +1323,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 8 )]
 		public Byte[] CurrentTaskFile;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1359,7 +1332,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
 		public UInt16[] data;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1371,7 +1343,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.U1 )]
 		public readonly Boolean IncursSeekPenalty;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1382,7 +1353,6 @@ public static class NativeMethods {
 		public readonly Int64 StartingOffset;
 
 		public readonly Int64 ExtentLength;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1419,12 +1389,11 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 1 )]
 		public readonly String FileName;
-
 	}
 
 	/// <summary>
-	///     Win32 FILETIME structure. The win32 documentation says: "Contains a 64-bit value representing the number of
-	///     100-nanosecond intervals since January 1, 1601 (UTC)."
+	/// Win32 FILETIME structure. The win32 documentation says: "Contains a 64-bit value representing the number of
+	/// 100-nanosecond intervals since January 1, 1601 (UTC)."
 	/// </summary>
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/ms724284%28VS.85%29.aspx" />
 	[StructLayout( LayoutKind.Sequential )]
@@ -1433,7 +1402,6 @@ public static class NativeMethods {
 		public readonly UInt32 dwLowDateTime;
 
 		public readonly UInt32 dwHighDateTime;
-
 	}
 
 	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
@@ -1454,9 +1422,9 @@ public static class NativeMethods {
 		// just for demonstration
 		public static LargeInteger FromInt64( Int64 value ) =>
 			new() {
-				Low = ( Int32 )value, High = ( Int32 )( value >> 32 )
+				Low = ( Int32 )value,
+				High = ( Int32 )( value >> 32 )
 			};
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1479,7 +1447,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.LPWStr )]
 		public readonly String sv101_comment;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1492,7 +1459,6 @@ public static class NativeMethods {
 		public Guid InterfaceClassGuid;
 
 		private readonly IntPtr Reserved;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, Pack = 2 )]
@@ -1501,7 +1467,6 @@ public static class NativeMethods {
 		public Int32 cbSize;
 
 		public readonly Int16 devicePath;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1514,7 +1479,6 @@ public static class NativeMethods {
 		public readonly UInt32 devInst;
 
 		public IntPtr reserved;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1525,7 +1489,6 @@ public static class NativeMethods {
 		public Int32 DeviceNumber;
 
 		public Int32 PartitionNumber;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1537,7 +1500,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValArray, SizeConst = 1 )]
 		public readonly Byte[] AdditionalParameters;
-
 	}
 
 	[StructLayout( LayoutKind.Sequential )]
@@ -1564,13 +1526,11 @@ public static class NativeMethods {
 			this.nFileSizeHigh = findData.nFileSizeHigh;
 			this.nFileSizeLow = findData.nFileSizeLow;
 		}
-
 	}
 
 	/// <summary>
-	///     The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
-	///     FindFirstFile, FindFirstFileEx, or FindNextFile
-	///     function."
+	/// The Win32 find data structure. The documentation says: "Contains information about the file that is found by the
+	/// FindFirstFile, FindFirstFileEx, or FindNextFile function."
 	/// </summary>
 	/// <see cref="http://msdn.microsoft.com/en-us/Library/aa365740%28VS.85%29.aspx" />
 	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
@@ -1597,7 +1557,6 @@ public static class NativeMethods {
 
 		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 14 )]
 		public readonly String cAlternateFileName;
-
 	}
 
 	/// <summary>Base class for all native handles.</summary>
@@ -1609,8 +1568,8 @@ public static class NativeMethods {
 		/// <summary>Initializes a new instance of the <see cref="HANDLE" /> class and assigns an existing handle.</summary>
 		/// <param name="preexistingHandle">An <see cref="IntPtr" /> object that represents the pre-existing handle to use.</param>
 		/// <param name="ownsHandle">
-		///     <see langword="true" /> to reliably release the handle during the finalization phase;
-		///     otherwise, <see langword="false" /> (not recommended).
+		/// <see langword="true" /> to reliably release the handle during the finalization phase; otherwise, <see
+		/// langword="false" /> (not recommended).
 		/// </param>
 		protected HANDLE( IntPtr preexistingHandle, Boolean ownsHandle = true ) : base( ownsHandle ) => this.SetHandle( preexistingHandle );
 
@@ -1627,8 +1586,8 @@ public static class NativeMethods {
 		public Boolean Equals( HANDLE? other ) => Equals( this, other );
 
 		/// <summary>
-		///     Internal method that actually releases the handle. this is called by <see cref="ReleaseHandle" /> for valid
-		///     handles and afterwards zeros the handle.
+		/// Internal method that actually releases the handle. this is called by <see cref="ReleaseHandle" /> for valid handles
+		/// and afterwards zeros the handle.
 		/// </summary>
 		/// <returns><c>true</c> to indicate successful release of the handle; <c>false</c> otherwise.</returns>
 		protected virtual Boolean InternalReleaseHandle() => true;
@@ -1649,10 +1608,10 @@ public static class NativeMethods {
 		}
 
 		/// <summary>
-		///     <para>Static compirson method.</para>
-		///     <para>True if <paramref name="left" /> and <paramref name="right" /> are the same instance.</para>
-		///     <para>False if either <see cref="HANDLE" /> is default (null).</para>
-		///     <para>True if handles are equal, false otherwise.</para>
+		/// <para>Static compirson method.</para>
+		/// <para>True if <paramref name="left" /> and <paramref name="right" /> are the same instance.</para>
+		/// <para>False if either <see cref="HANDLE" /> is default (null).</para>
+		/// <para>True if handles are equal, false otherwise.</para>
 		/// </summary>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
@@ -1687,13 +1646,11 @@ public static class NativeMethods {
 
 		// ReSharper disable once NonReadonlyMemberInGetHashCode
 		public override Int32 GetHashCode() => this.handle.GetHashCode();
-
 	}
 
 	/// <summary>
-	///     Represents a self-closing file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW,
-	///     FindFirstFileNameTransactedW, FindFirstFileTransacted,
-	///     FindFirstStreamTransactedW, or FindFirstStreamW functions.
+	/// Represents a self-closing file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW,
+	/// FindFirstFileNameTransactedW, FindFirstFileTransacted, FindFirstStreamTransactedW, or FindFirstStreamW functions.
 	/// </summary>
 	public class SafeSearchHandle : HANDLE {
 
@@ -1712,7 +1669,5 @@ public static class NativeMethods {
 
 			return FindClose( this );
 		}
-
 	}
-
 }

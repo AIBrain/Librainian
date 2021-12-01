@@ -1,29 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Randem.cs" last touched on 2021-10-25 at 7:20 AM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Randem.cs" last formatted on 2021-11-30 at 7:19 PM by Protiguous.
 
 #nullable enable
 
@@ -53,35 +52,29 @@ public static class Randem {
 
 	private const Byte MiddleByte = Byte.MaxValue / 2;
 
+	/// <summary>A Double-sized byte buffer per-thread.</summary>
+	private static readonly ThreadLocal<Byte[]> ThreadLocalByteBuffer = new( () => new Byte[ sizeof( Double ) ], true );
+
 	public const Byte One = 1;
 
 	public const Byte Zero = 0;
 
-	/// <summary>
-	///     A Double-sized byte buffer per-thread.
-	/// </summary>
-	private static readonly ThreadLocal<Byte[]> ThreadLocalByteBuffer = new(() => new Byte[ sizeof( Double ) ], true);
-
 	internal static ConcurrentStack<Int32> PollResponses { get; } = new();
 
-	/// <summary>
-	///     Provide to each thread its own <see cref="Random" /> with a random seed.
-	/// </summary>
+	/// <summary>Provide to each thread its own <see cref="Random" /> with a random seed.</summary>
 	internal static ThreadLocal<Random> ThreadSafeRandom { get; } =
-		new(() => new Random( HashCode.Combine( DateTime.UtcNow.GetHashCode(), Environment.CurrentManagedThreadId.GetHashCode() ) ));
+		new( () => new Random( HashCode.Combine( DateTime.UtcNow.GetHashCode(), Environment.CurrentManagedThreadId.GetHashCode() ) ) );
 
 	//internal static AsyncLocal<Random> ThreadSafeRandomAsync { get; } = new(); //TOD O. If this is used in async, then it still needs initialized. So maybe not use it?
 
 	public static ConcurrentDictionary<Type, String[]> EnumDictionary { get; } = new();
 
 	/// <summary>
-	///     <para>More cryptographically strong than <see cref="Random" />.</para>
+	/// <para>More cryptographically strong than <see cref="Random" />.</para>
 	/// </summary>
-	public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new(RandomNumberGenerator.Create, true);
+	public static ThreadLocal<RandomNumberGenerator> RNG { get; } = new( RandomNumberGenerator.Create, true );
 
-	/// <summary>
-	///     A thread-local (threadsafe) <see cref="Random" />.
-	/// </summary>
+	/// <summary>A thread-local (threadsafe) <see cref="Random" />.</summary>
 	private static Random Instance() => ThreadSafeRandom.Value!;
 
 	public static String BinaryString( Int32 length ) {
@@ -95,25 +88,19 @@ public static class Randem {
 		return String.Concat( bytes.Select( b => b <= MiddleByte ? Zero : One ) );
 	}
 
-	/// <summary>
-	///     Chooses a random element in the given collection <paramref name="items" />.
-	/// </summary>
+	/// <summary>Chooses a random element in the given collection <paramref name="items" />.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="items">The collection of items to choose a random element from.</param>
 	/// <returns>A randomly chosen element in the given collection <paramref name="items" />.</returns>
 	public static T Choose<T>( params T[] items ) => items[ items.Length.NextInt() ];
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <returns>A randomly chosen element in the given set of items.</returns>
 	public static T? Choose<T>( this T? a ) => a;
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -124,9 +111,7 @@ public static class Randem {
 			var _ => b
 		};
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -139,9 +124,7 @@ public static class Randem {
 			var _ => c
 		};
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -156,9 +139,7 @@ public static class Randem {
 			var _ => d
 		};
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -175,9 +156,7 @@ public static class Randem {
 			var _ => e
 		};
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -199,9 +178,7 @@ public static class Randem {
 		};
 	}
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -225,9 +202,7 @@ public static class Randem {
 		};
 	}
 
-	/// <summary>
-	///     Chooses a random element in the given set of items.
-	/// </summary>
+	/// <summary>Chooses a random element in the given set of items.</summary>
 	/// <typeparam name="T">The Type of element.</typeparam>
 	/// <param name="a">The first item.</param>
 	/// <param name="b">The second item.</param>
@@ -319,9 +294,7 @@ public static class Randem {
 		return BitConverter.ToInt64( data, 0 );
 	}
 
-	/// <summary>
-	///     memoize?
-	/// </summary>
+	/// <summary>memoize?</summary>
 	/// <typeparam name="T"></typeparam>
 	public static String[] GetNames<T>() {
 		var key = typeof( T );
@@ -342,7 +315,7 @@ public static class Randem {
 
 		var compressed = buffer.Compress();
 
-		var result = compressed.LongLength / ( Decimal ) buffer.LongLength;
+		var result = compressed.LongLength / ( Decimal )buffer.LongLength;
 
 		return result;
 	}
@@ -375,16 +348,14 @@ public static class Randem {
 		return BitConverter.ToUInt64( data, 0 );
 	}
 
-	/// <summary>
-	///     Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .
-	/// </summary>
+	/// <summary>Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .</summary>
 	/// <param name="minValue">The inclusive lower bound of the random number returned.</param>
 	/// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
 	public static Int32 Next( this Int32 minValue, Int32 maxValue ) => Instance().Next( minValue, maxValue );
 
 	/// <summary>
-	///     <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
+	/// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
 	/// </summary>
 	/// <param name="maxValue"></param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -393,51 +364,41 @@ public static class Randem {
 	public static String Next( this String[] strings ) => strings[ strings.Length.Next() ];
 
 	/// <summary>
-	///     <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
+	/// <para>Returns a nonnegative random number less than <paramref name="maxValue" />.</para>
 	/// </summary>
 	/// <param name="maxValue"></param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
-	public static UInt16 Next( this UInt16 maxValue ) => ( UInt16 ) Instance().Next( maxValue );
+	public static UInt16 Next( this UInt16 maxValue ) => ( UInt16 )Instance().Next( maxValue );
 
-	/// <summary>
-	///     Generate a random number between <paramref name="range.Min" /> and <paramref name="range.Max" /> .
-	/// </summary>
+	/// <summary>Generate a random number between <paramref name="range.Min" /> and <paramref name="range.Max" /> .</summary>
 	/// <param name="range"></param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
 	public static Int32 Next( this Int32Range range ) => Instance().Next( range.Minimum, range.Maximum );
 
-	/// <summary>
-	///     Returns a nonnegative random number.
-	/// </summary>
-	public static UInt32 Next() => ( UInt32 ) ( Instance().NextDouble() * UInt32.MaxValue );
+	/// <summary>Returns a nonnegative random number.</summary>
+	public static UInt32 Next() => ( UInt32 )( Instance().NextDouble() * UInt32.MaxValue );
 
-	/// <summary>
-	///     Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .
-	/// </summary>
+	/// <summary>Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .</summary>
 	/// <param name="minValue">The inclusive lower bound of the random number returned.</param>
 	/// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
 	public static UInt64 Next( this UInt64 minValue, UInt64 maxValue ) {
 		var min = Math.Min( minValue, maxValue );
 		var max = Math.Max( minValue, maxValue );
 
-		return min + ( UInt64 ) ( Instance().NextDouble() * ( max - min ) );
+		return min + ( UInt64 )( Instance().NextDouble() * ( max - min ) );
 	}
 
-	/// <summary>
-	///     Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .
-	/// </summary>
+	/// <summary>Generate a random number between <paramref name="minValue" /> and <paramref name="maxValue" /> .</summary>
 	/// <param name="minValue">The inclusive lower bound of the random number returned.</param>
 	/// <param name="maxValue">The exclusive upper bound of the random number returned.</param>
 	public static Int64 Next( this Int64 minValue, Int64 maxValue ) {
 		var min = Math.Min( minValue, maxValue );
 		var max = Math.Max( minValue, maxValue );
 
-		return min + ( Int64 ) ( Instance().NextDouble() * ( max - min ) );
+		return min + ( Int64 )( Instance().NextDouble() * ( max - min ) );
 	}
 
-	/// <summary>
-	///     Needs unit tests.
-	/// </summary>
+	/// <summary>Needs unit tests.</summary>
 	/// <param name="numberOfDigits"></param>
 	public static BigInteger NextBigInteger( this UInt16 numberOfDigits ) {
 		if ( numberOfDigits <= 0 ) {
@@ -450,9 +411,7 @@ public static class Randem {
 		return new BigInteger( buffer );
 	}
 
-	/// <summary>
-	///     Needs unit tests.
-	/// </summary>
+	/// <summary>Needs unit tests.</summary>
 	/// <param name="numberOfDigits"></param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
 	public static BigInteger NextBigIntegerPositive( this UInt16 numberOfDigits ) {
@@ -467,9 +426,7 @@ public static class Randem {
 		return new BigInteger( buffer );
 	}
 
-	/// <summary>
-	///     Needs unit tests.
-	/// </summary>
+	/// <summary>Needs unit tests.</summary>
 	/// <param name="numberOfDigits"></param>
 	public static BigInteger NextBigIntegerSecure( this UInt16 numberOfDigits ) {
 		if ( numberOfDigits <= 0 ) {
@@ -486,12 +443,12 @@ public static class Randem {
 	public static Boolean NextBoolean() => Instance().NextDouble() >= 0.5;
 
 	/// <summary>
-	///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+	/// <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
 	/// </summary>
-	public static Byte NextByte( this Byte min, Byte max ) => ( Byte ) ( min + Instance().NextDouble() * ( max - min ) );
+	public static Byte NextByte( this Byte min, Byte max ) => ( Byte )( min + Instance().NextDouble() * ( max - min ) );
 
 	/// <summary>
-	///     <para>Returns a random <see cref="Byte" />.</para>
+	/// <para>Returns a random <see cref="Byte" />.</para>
 	/// </summary>
 	public static Byte NextByte() {
 		var buffer = new Byte[ 1 ];
@@ -501,14 +458,14 @@ public static class Randem {
 	}
 
 	/// <summary>
-	///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+	/// <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
 	/// </summary>
 	public static IEnumerable<Byte> NextBytes( this Byte min, Byte max ) {
 		yield return min.NextByte( max );
 	}
 
 	/// <summary>
-	///     <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
+	/// <para>Returns a random <see cref="Byte" /> between <paramref name="min" /> and <paramref name="max" />.</para>
 	/// </summary>
 	public static void NextBytes( this Byte min, Byte max, ref Byte[] buffer ) {
 		if ( buffer == null ) {
@@ -532,9 +489,7 @@ public static class Randem {
 		Instance().NextBytes( buffer );
 	}
 
-	/// <summary>
-	///     Untested.
-	/// </summary>
+	/// <summary>Untested.</summary>
 	/// <param name="range"></param>
 	public static Char NextChar( this Char[] range ) {
 		if ( range is null ) {
@@ -544,29 +499,26 @@ public static class Randem {
 		return range[ 0.Next( range.Length ) ];
 	}
 
-	/// <summary>
-	/// </summary>
-	/// <param name="alpha">  </param>
-	/// <param name="lowEnd"> </param>
+	/// <summary></summary>
+	/// <param name="alpha"></param>
+	/// <param name="lowEnd"></param>
 	/// <param name="highEnd"></param>
 	public static Color NextColor( Byte alpha = 255, Byte lowEnd = 0, Byte highEnd = 255 ) =>
 		Color.FromArgb( alpha, Next( lowEnd, highEnd ), Next( lowEnd, highEnd ), Next( lowEnd, highEnd ) );
 
 	public static DateTime NextDateTime( this DateTime value, TimeSpan timeSpan ) =>
-		value + new Milliseconds( ( Decimal ) ( timeSpan.TotalMilliseconds * Instance().NextDouble() ) );
+		value + new Milliseconds( ( Decimal )( timeSpan.TotalMilliseconds * Instance().NextDouble() ) );
 
 	public static DateTime NextDateTime( this DateTime earlier, DateTime later ) {
 		var range = earlier > later ? earlier - later : later - earlier;
 
-		return earlier + new Milliseconds( ( Decimal ) range.TotalMilliseconds );
+		return earlier + new Milliseconds( ( Decimal )range.TotalMilliseconds );
 	}
 
 	public static DateTimeOffset NextDateTimeOffset( this DateTimeOffset value, TimeSpan timeSpan ) =>
-		value + new Milliseconds( ( Decimal ) ( timeSpan.TotalMilliseconds * Instance().NextDouble() ) );
+		value + new Milliseconds( ( Decimal )( timeSpan.TotalMilliseconds * Instance().NextDouble() ) );
 
-	/// <summary>
-	///     Between <see cref="Decimal.Zero" /> and <see cref="Decimal.One" />.
-	/// </summary>
+	/// <summary>Between <see cref="Decimal.Zero" /> and <see cref="Decimal.One" />.</summary>
 	public static Decimal NextDecimal() {
 		do {
 			try {
@@ -577,7 +529,7 @@ public static class Randem {
 	}
 
 	/// <summary>
-	///     <para>Returns a random Decimal between <paramref name="minimum" /> and <paramref name="maximum" />.</para>
+	/// <para>Returns a random Decimal between <paramref name="minimum" /> and <paramref name="maximum" />.</para>
 	/// </summary>
 	/// <param name="minimum"></param>
 	/// <param name="maximum"></param>
@@ -586,32 +538,29 @@ public static class Randem {
 
 	public static Decimal NextDecimal( this DecimalRange decimalRange ) => decimalRange.Minimum.NextDecimal( decimalRange.Maximum );
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	public static Decimal NextDecimalFullRange() {
 		do {
 			try {
-				return new Decimal( RandomInt32(), RandomInt32(), RandomInt32(), NextBoolean(), ( Byte ) 0.Next( 29 ) );
+				return new Decimal( RandomInt32(), RandomInt32(), RandomInt32(), NextBoolean(), ( Byte )0.Next( 29 ) );
 			}
 			catch ( ArgumentOutOfRangeException ) { }
 		} while ( true );
 	}
 
-	public static Degrees NextDegrees() => new(NextSingle( Degrees.MinimumValue, Degrees.MaximumValue ));
+	public static Degrees NextDegrees() => new( NextSingle( Degrees.MinimumValue, Degrees.MaximumValue ) );
 
 	/// <summary>
-	///     <para>Returns a random digit between 0 and 9.</para>
+	/// <para>Returns a random digit between 0 and 9.</para>
 	/// </summary>
 	/// <note>10 mod 10 is 0.</note>
 	/// <note>255 mod 10 is 5.</note>
 	public static Digit NextDigit() {
-		var n = ( Byte ) ( NextByte() % 10 );
+		var n = ( Byte )( NextByte() % 10 );
 		return n;
 	}
 
-	/// <summary>
-	///     Returns a random digit (0,1,2,3,4,5,6,7,8,9) between <paramref name="min" /> and <paramref name="max" />.
-	/// </summary>
+	/// <summary>Returns a random digit (0,1,2,3,4,5,6,7,8,9) between <paramref name="min" /> and <paramref name="max" />.</summary>
 	/// <param name="min"></param>
 	/// <param name="max"></param>
 	public static Digit NextDigit( this Digit min, Digit max ) {
@@ -631,7 +580,7 @@ public static class Randem {
 			Byte result;
 
 			do {
-				result = ( Byte ) NextDigit();
+				result = ( Byte )NextDigit();
 			} while ( min > result || result > max );
 
 			return new Digit( result );
@@ -650,9 +599,7 @@ public static class Randem {
 
 	//public static Double NextDouble( this PairOfDoubles variance ) => NextDouble( variance.Low, variance.High );
 
-	/// <summary>
-	///     Returns a random Double between <paramref name="min" /> and <paramref name="max" />.
-	/// </summary>
+	/// <summary>Returns a random Double between <paramref name="min" /> and <paramref name="max" />.</summary>
 	/// <param name="min"></param>
 	/// <param name="max"></param>
 	/// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -703,13 +650,10 @@ public static class Randem {
 		return result;
 	}
 
-	/// <summary>
-	///     Returns a random Double between 0 and 1
-	/// </summary>
+	/// <summary>Returns a random Double between 0 and 1</summary>
 	public static Double NextDouble() => Instance().NextDouble();
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <typeparam name="T"></typeparam>
 	public static T? NextEnum<T>() where T : struct {
 		if ( !typeof( T ).IsEnum ) {
@@ -719,56 +663,44 @@ public static class Randem {
 		var names = GetNames<T>();
 		var picked = names[ Instance().Next( 0, names.Length ) ];
 
-		return ( T ) Enum.Parse( typeof( T ), picked );
+		return ( T )Enum.Parse( typeof( T ), picked );
 	}
 
 	/// <summary>
-	///     Returns a random <see cref="Single" /> between <paramref name="range.Min" /> and <paramref name="range.Max" /> .
+	/// Returns a random <see cref="Single" /> between <paramref name="range.Min" /> and <paramref name="range.Max" /> .
 	/// </summary>
 	/// <param name="range"></param>
-	public static Single NextFloat( this SingleRange range ) => ( Single ) ( range.Min + Instance().NextDouble() * range.Length );
+	public static Single NextFloat( this SingleRange range ) => ( Single )( range.Min + Instance().NextDouble() * range.Length );
 
-	/// <summary>
-	///     Returns a random float between <paramref name="minimum" /> and <paramref name="maximum" />.
-	/// </summary>
+	/// <summary>Returns a random float between <paramref name="minimum" /> and <paramref name="maximum" />.</summary>
 	/// <param name="minimum"></param>
 	/// <param name="maximum"></param>
 	public static Single NextFloat( Single minimum = 0, Single maximum = 1 ) => RandomSingle( minimum, maximum );
 
 	public static Guid NextGuid() => Guid.NewGuid();
 
-	/// <summary>
-	///     Gets a non-negative random whole number less than the specified <paramref cref="maximum" />.
-	/// </summary>
+	/// <summary>Gets a non-negative random whole number less than the specified <paramref cref="maximum" />.</summary>
 	/// <param name="maximum">The exclusive upper bound the random number to be generated.</param>
 	/// <returns>A non-negative random integer less than the specified <paramref cref="maximum" />.</returns>
 	public static Int32 NextInt( this Int32 maximum ) => Instance().Next( maximum );
 
-	/// <summary>
-	///     Gets a random number within a specified range.
-	/// </summary>
+	/// <summary>Gets a random number within a specified range.</summary>
 	/// <param name="min">The inclusive lower bound of the random number returned.</param>
 	/// <param name="max">The exclusive upper bound of the random number returned.</param>
 	/// <returns>A random integer within a specified range.</returns>
 	public static Int32 NextInt( this Int32 min, Int32 max ) => Instance().Next( min, max );
 
-	/// <summary>
-	///     Return a random number somewhere in the full range of 0 to <see cref="Int16" />.
-	/// </summary>
-	public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 ) ( min + Instance().NextDouble() * ( max - min ) );
+	/// <summary>Return a random number somewhere in the full range of 0 to <see cref="Int16" />.</summary>
+	public static Int16 NextInt16( this Int16 min, Int16 max ) => ( Int16 )( min + Instance().NextDouble() * ( max - min ) );
 
-	/// <summary>
-	///     Returns a random Single between <paramref name="min" /> and <paramref name="max" />.
-	/// </summary>
+	/// <summary>Returns a random Single between <paramref name="min" /> and <paramref name="max" />.</summary>
 	/// <param name="min"></param>
 	/// <param name="max"></param>
 	public static Single NextSingle( Single min = 0, Single max = 1 ) => RandomSingle( min, max );
 
 	public static Single NextSingle( this SingleRange singleRange ) => NextSingle( singleRange.Min, singleRange.Max );
 
-	/// <summary>
-	///     Return a random <see cref="SpanOfTime" /> between <paramref name="min" /> and <paramref name="max" />.
-	/// </summary>
+	/// <summary>Return a random <see cref="SpanOfTime" /> between <paramref name="min" /> and <paramref name="max" />.</summary>
 	/// <param name="min"></param>
 	/// <param name="max"></param>
 	public static SpanOfTime NextSpan( this SpanOfTime min, SpanOfTime max ) {
@@ -782,7 +714,7 @@ public static class Randem {
 		var range = tpMax.Value - tpMin.Value;
 
 		do {
-			var numberOfDigits = ( UInt16 ) 1.Next( $"{range}".Length );
+			var numberOfDigits = ( UInt16 )1.Next( $"{range}".Length );
 
 			var amount = numberOfDigits.NextBigIntegerPositive(); //BUG here
 
@@ -794,29 +726,19 @@ public static class Randem {
 		} while ( true ); //BUG fix this horribleness.
 	}
 
-	/// <summary>
-	///     Generate a random String.
-	/// </summary>
-	/// <param name="length"> How many characters long.</param>
-	/// <param name="lowers">
-	///     <see cref="ParsingConstants.English.Alphabet.Lowercase" />
-	/// </param>
-	/// <param name="uppers">
-	///     <see cref="ParsingConstants.English.Alphabet.Uppercase" />
-	/// </param>
-	/// <param name="numbers">
-	///     <see cref="ParsingConstants.English.Numbers" />
-	/// </param>
-	/// <param name="symbols">
-	///     <see cref="ParsingConstants.Strings.Symbols" />
-	/// </param>
+	/// <summary>Generate a random String.</summary>
+	/// <param name="length">How many characters long.</param>
+	/// <param name="lowers"><see cref="ParsingConstants.English.Alphabet.Lowercase" /></param>
+	/// <param name="uppers"><see cref="ParsingConstants.English.Alphabet.Uppercase" /></param>
+	/// <param name="numbers"><see cref="ParsingConstants.English.Numbers" /></param>
+	/// <param name="symbols"><see cref="ParsingConstants.Strings.Symbols" /></param>
 	public static String NextString( Int32 length, Boolean lowers = true, Boolean uppers = false, Boolean numbers = false, Boolean symbols = false ) {
 		if ( !length.Any() ) {
 			return String.Empty;
 		}
 
 		var toParseLength = ( lowers ? ParsingConstants.English.Alphabet.Lowercase.Length : 0 ) + ( uppers ? ParsingConstants.English.Alphabet.Uppercase.Length : 0 ) +
-		                    ( numbers ? ParsingConstants.English.Numbers.Length : 0 ) + ( symbols ? ParsingConstants.Strings.Symbols.Length : 0 );
+							( numbers ? ParsingConstants.English.Numbers.Length : 0 ) + ( symbols ? ParsingConstants.Strings.Symbols.Length : 0 );
 
 		var sb = new StringBuilder( toParseLength, toParseLength );
 
@@ -845,9 +767,7 @@ public static class Randem {
 		return new String( ParallelEnumerable.Range( 0, length ).AsUnordered().Select( _ => charPool[ 0.Next( charPool.Length ) ] ).ToArray() );
 	}
 
-	/// <summary>
-	///     Returns a random TimeSpan between <paramref name="minValue" /> and <paramref name="maxValue" /> .
-	/// </summary>
+	/// <summary>Returns a random TimeSpan between <paramref name="minValue" /> and <paramref name="maxValue" /> .</summary>
 	/// <param name="minValue"></param>
 	/// <param name="maxValue"></param>
 	public static TimeSpan NextTimeSpan( this TimeSpan minValue, TimeSpan maxValue ) {
@@ -869,15 +789,15 @@ public static class Randem {
 
 				var next = range * Instance().NextDouble();
 
-				return min + TimeSpan.FromTicks( ( Int64 ) next );
+				return min + TimeSpan.FromTicks( ( Int64 )next );
 			}
 			catch ( ArgumentOutOfRangeException ) { }
 		} while ( true );
 	}
 
 	/// <summary>
-	///     Returns a random <see cref="TimeSpan" /> between <paramref name="minMilliseconds" /> and
-	///     <paramref name="maxMilliseconds" /> .
+	/// Returns a random <see cref="TimeSpan" /> between <paramref name="minMilliseconds" /> and <paramref
+	/// name="maxMilliseconds" /> .
 	/// </summary>
 	/// <param name="minMilliseconds"></param>
 	/// <param name="maxMilliseconds"></param>
@@ -906,14 +826,11 @@ public static class Randem {
 
 	public static Guid RandomGuid() => Guid.NewGuid();
 
-	public static Int16 RandomInt16( Int16 min = Int16.MinValue, Int16 max = Int16.MaxValue ) => ( Int16 ) ( min + Instance().NextDouble() * ( max - min ) );
+	public static Int16 RandomInt16( Int16 min = Int16.MinValue, Int16 max = Int16.MaxValue ) => ( Int16 )( min + Instance().NextDouble() * ( max - min ) );
 
 	/// <summary>
-	///     Return a random number in the full range of <see cref="Int32" /> between
-	///     <param name="min"></param>
-	///     and
-	///     <param name="max"></param>
-	///     .
+	/// Return a random number in the full range of <see cref="Int32" /> between <param name="min"></param> and <param
+	/// name="max"></param> .
 	/// </summary>
 	/// <param name="min"></param>
 	/// <param name="max"></param>
@@ -925,34 +842,29 @@ public static class Randem {
 		return result;
 	}
 
-	/// <summary>
-	///     Return a random number somewhere in the full range of <see cref="Int32" />.
-	/// </summary>
+	/// <summary>Return a random number somewhere in the full range of <see cref="Int32" />.</summary>
 	public static Int32 RandomInt32() {
 		var buffer = new Byte[ sizeof( Int32 ) ];
 		Instance().NextBytes( buffer );
 		return BitConverter.ToInt32( buffer, 0 );
 	}
 
-	/// <summary>
-	///     Return a random number somewhere in the full range of <see cref="Int32" />.
-	/// </summary>
+	/// <summary>Return a random number somewhere in the full range of <see cref="Int32" />.</summary>
 	public static Int32 RandomInt32Alt( Int32 min = Int32.MinValue, Int32 max = Int32.MaxValue ) {
 		var buffer = new Byte[ sizeof( Int32 ) ];
 		Instance().NextBytes( buffer );
 
 		//TODO This needs tested/confirmed.
 		var sample = 1.0d / BitConverter.ToInt32( buffer, 0 );
-		var range = ( Int64 ) max - min;
-		return ( Int32 ) ( sample * range + min );
+		var range = ( Int64 )max - min;
+		return ( Int32 )( sample * range + min );
 	}
 
-	public static Int64 RandomInt64( Int64 min = Int64.MinValue, Int64 max = Int64.MaxValue ) => ( Int64 ) ( min + Instance().NextDouble() * ( max - min ) );
+	public static Int64 RandomInt64( Int64 min = Int64.MinValue, Int64 max = Int64.MaxValue ) => ( Int64 )( min + Instance().NextDouble() * ( max - min ) );
 
-	/// <summary>
-	///     Generates a uniformly random integer in the range [0, bound).
-	/// </summary>
+	/// <summary>Generates a uniformly random integer in the range [0, bound).</summary>
 	public static BigInteger RandomIntegerBelow( this RandomNumberGenerator source, BigInteger bound ) {
+
 		//Contract.Requires<NullException>( source != null );
 		//Contract.Requires<NullException>( bound > 0 );
 
@@ -971,6 +883,7 @@ public static class Randem {
 		//Contract.Assert( validityBound >= bound );
 
 		while ( true ) {
+
 			//generate a uniformly random value in [0, 2^(buffer.Length * 8 - 1))
 			source.GetBytes( buffer );
 			buffer[ ^1 ] &= 0x7F; //force sign bit to positive
@@ -985,15 +898,11 @@ public static class Randem {
 		}
 	}
 
-	/// <summary>
-	///     Return the <paramref name="enumerable" /> in a random order (shuffle).
-	/// </summary>
+	/// <summary>Return the <paramref name="enumerable" /> in a random order (shuffle).</summary>
 	/// <param name="enumerable"></param>
 	public static IEnumerable<T> Randomize<T>( this IEnumerable<T> enumerable ) => enumerable.OrderBy( _ => Next() );
 
-	/// <summary>
-	///     Generate a pronounceable pseudorandom string.
-	/// </summary>
+	/// <summary>Generate a pronounceable pseudorandom string.</summary>
 	/// <param name="aboutLength">Length of the returned string.</param>
 	public static String RandomPronounceableString( this Int32 aboutLength ) {
 		if ( aboutLength < 1 ) {
@@ -1016,8 +925,7 @@ public static class Randem {
 		return word.ToString();
 	}
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="wordCount"></param>
 	/// <returns></returns>
 	public static String RandomSentence( Byte wordCount = 7 ) {
@@ -1033,11 +941,9 @@ public static class Randem {
 		return list.ToStrings( ParsingConstants.Chars.Space, ParsingConstants.Chars.Period ).Capitialize() ?? String.Empty;
 	}
 
-	public static Single RandomSingle( Single min = Single.MinValue, Single max = Single.MaxValue ) => ( Single ) ( min + Instance().NextDouble() * ( max - min ) );
+	public static Single RandomSingle( Single min = Single.MinValue, Single max = Single.MaxValue ) => ( Single )( min + Instance().NextDouble() * ( max - min ) );
 
-	/// <summary>
-	///     Given the string <paramref name="pool" />, return the letters in a random order.
-	/// </summary>
+	/// <summary>Given the string <paramref name="pool" />, return the letters in a random order.</summary>
 	/// <param name="pool"></param>
 	public static String RandomString( this String pool ) {
 		var result = new StringBuilder( pool.Length );
@@ -1059,16 +965,15 @@ public static class Randem {
 	*/
 
 	/// <summary>
-	///     Generate a random String using a limited set of defaults. Default <paramref name="length" /> is 10. Default
-	///     <paramref name="lowerCase" /> is true. Default
-	///     <paramref name="upperCase" /> is false. Default <paramref name="numbers" /> is false. Default
-	///     <paramref name="symbols" /> is false.
+	/// Generate a random String using a limited set of defaults. Default <paramref name="length" /> is 10. Default <paramref
+	/// name="lowerCase" /> is true. Default <paramref name="upperCase" /> is false. Default <paramref name="numbers" /> is
+	/// false. Default <paramref name="symbols" /> is false.
 	/// </summary>
-	/// <param name="length">   </param>
+	/// <param name="length"></param>
 	/// <param name="lowerCase"></param>
 	/// <param name="upperCase"></param>
-	/// <param name="numbers">  </param>
-	/// <param name="symbols">  </param>
+	/// <param name="numbers"></param>
+	/// <param name="symbols"></param>
 	public static String RandomString( Int32 length = 16, Boolean lowerCase = true, Boolean upperCase = false, Boolean numbers = false, Boolean symbols = false ) {
 		var charPool = String.Concat( lowerCase ? ParsingConstants.English.Alphabet.Lowercase : String.Empty,
 			upperCase ? ParsingConstants.English.Alphabet.Uppercase : String.Empty, numbers ? ParsingConstants.English.Numbers : String.Empty,
@@ -1093,18 +998,11 @@ public static class Randem {
 		var low = avglength.Half();
 		var high = avglength + low;
 
-		return new(RandomPronounceableString( low.Next( high ) ));
+		return new( RandomPronounceableString( low.Next( high ) ) );
 	}
 
-	/// <summary>
-	///     Generate two random numbers about halfway of
-	///     <param name="goal"></param>
-	///     .
-	/// </summary>
-	/// <remarks>
-	///     Given one number, return two random numbers that add up to
-	///     <param name="goal"></param>
-	/// </remarks>
+	/// <summary>Generate two random numbers about halfway of <param name="goal"></param> .</summary>
+	/// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
 	public static void Split( this Int32 goal, out Int32 lowResult, out Int32 highResult ) {
 		var half = goal.Half();
 		var quarter = half.Half();
@@ -1125,13 +1023,10 @@ public static class Randem {
 	}
 
 	/// <summary>
-	///     <para>Generate two random numbers about halfway of <paramref name="goal" />.</para>
-	///     <para>Also, return a random number between <paramref name="lowResult" /> and <paramref name="highResult" /></para>
+	/// <para>Generate two random numbers about halfway of <paramref name="goal" />.</para>
+	/// <para>Also, return a random number between <paramref name="lowResult" /> and <paramref name="highResult" /></para>
 	/// </summary>
-	/// <remarks>
-	///     Given one number, return two random numbers that add up to
-	///     <param name="goal"></param>
-	/// </remarks>
+	/// <remarks>Given one number, return two random numbers that add up to <param name="goal"></param></remarks>
 	public static Decimal Split( this Decimal goal, out Decimal lowResult, out Decimal highResult ) {
 		var half = goal.Half();
 		var quarter = half.Half();
@@ -1152,5 +1047,4 @@ public static class Randem {
 
 		return lowResult.NextDecimal( highResult );
 	}
-
 }

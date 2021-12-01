@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "PriCommon.cs" last formatted on 2021-11-11 at 12:57 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "PriCommon.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -60,7 +59,7 @@ public static class PriCommon {
 
 		var _ = PriNativeMethods.FormatMessage(
 			PriNativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS | PriNativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | PriNativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY, IntPtr.Zero,
-			( Int32 ) errorCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
+			( Int32 )errorCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
 
 		return buffer.ToString();
 	}
@@ -72,7 +71,7 @@ public static class PriCommon {
 
 		var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
 
-		if ( errorCode != ( Int32 ) PriNativeMethods.ERROR.ERROR_SUCCESS ) {
+		if ( errorCode != ( Int32 )PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 			throw GetExceptionFromWin32Error( errorCode );
 		}
 
@@ -90,7 +89,7 @@ public static class PriCommon {
 	public static Exception GetExceptionFromLastWin32Error() => GetExceptionFromLastWin32Error( "path" );
 
 	public static Exception GetExceptionFromLastWin32Error( String parameterName ) =>
-		GetExceptionFromWin32Error( ( PriNativeMethods.ERROR ) Marshal.GetLastWin32Error(), parameterName );
+		GetExceptionFromWin32Error( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), parameterName );
 
 	public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode ) => GetExceptionFromWin32Error( errorCode, "path" );
 
@@ -114,7 +113,7 @@ public static class PriCommon {
 
 		var errorCode = TryGetFileAttributes( normalizedPath, out var fileAttributes );
 
-		if ( errorCode != ( Int32 ) PriNativeMethods.ERROR.ERROR_SUCCESS ) {
+		if ( errorCode != ( Int32 )PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 			throw GetExceptionFromWin32Error( errorCode );
 		}
 
@@ -123,9 +122,7 @@ public static class PriCommon {
 
 	public static Boolean IsPathDots( this String path ) => path is "." or "..";
 
-	/// <summary>
-	///     Checks if <paramref name="path" /> starts with \\?\UNC\
-	/// </summary>
+	/// <summary>Checks if <paramref name="path" /> starts with \\?\UNC\</summary>
 	/// <param name="path"></param>
 	[DebuggerStepThrough]
 	public static Boolean IsPathUnc( this String path ) {
@@ -155,8 +152,7 @@ public static class PriCommon {
 
 	public static String NormalizeSearchPattern( this String searchPattern ) => String.IsNullOrEmpty( searchPattern ) || searchPattern == "." ? "*" : searchPattern;
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="path"></param>
 	/// <param name="fileAttributes"></param>
 	public static void SetAttributes( this String path, FileAttributes fileAttributes ) {
@@ -192,8 +188,8 @@ public static class PriCommon {
 		Byte[] OwnerBinary = null, GroupBinary = null, SaclBinary = null, DaclBinary = null;
 		Privilege securityPrivilege = null;
 
-		// Demand unmanaged code permission
-		// The integrator layer is free to assert this permission and, in turn, demand another permission of its caller
+		// Demand unmanaged code permission The integrator layer is free to assert this permission and, in turn, demand another
+		// permission of its caller
 
 		//new SecurityPermission( SecurityPermissionFlag.UnmanagedCode ).Demand();
 
@@ -297,8 +293,7 @@ public static class PriCommon {
 		return path;
 	}
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="path"></param>
 	/// <exception cref="NullException"></exception>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -309,8 +304,7 @@ public static class PriCommon {
 		}
 	}
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="errorCode"></param>
 	/// <param name="byteArray"></param>
 	/// <exception cref="InvalidOperationException"></exception>
@@ -321,10 +315,9 @@ public static class PriCommon {
 	public static void ThrowIfError( PriNativeMethods.ERROR errorCode, IntPtr byteArray ) {
 		if ( errorCode == PriNativeMethods.ERROR.ERROR_SUCCESS ) {
 			if ( IntPtr.Zero.Equals( byteArray ) ) {
-				//
-				// This means that the object doesn't have a security descriptor. And thus we throw
-				// a specific exception for the caller to catch and handle properly.
-				//
+
+				// This means that the object doesn't have a security descriptor. And thus we throw a specific exception for
+				// the caller to catch and handle properly.
 				throw new InvalidOperationException( "Object does not have security descriptor," );
 			}
 		}
@@ -353,8 +346,7 @@ public static class PriCommon {
 		}
 	}
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	/// <param name="errorCode"></param>
 	/// <param name="maybeFullPath"></param>
 	/// <exception cref="NullException"></exception>
@@ -487,9 +479,8 @@ public static class PriCommon {
 			PriNativeMethods.SetErrorMode( errorMode );
 		}
 
-		attributes = ( FileAttributes ) PriNativeMethods.INVALID_FILE_ATTRIBUTES;
+		attributes = ( FileAttributes )PriNativeMethods.INVALID_FILE_ATTRIBUTES;
 
-		return ( PriNativeMethods.ERROR ) Marshal.GetLastWin32Error();
+		return ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
 	}
-
 }

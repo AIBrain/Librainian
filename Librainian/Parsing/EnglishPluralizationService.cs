@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "EnglishPluralizationService.cs" last touched on 2021-10-13 at 4:29 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "EnglishPluralizationService.cs" last formatted on 2021-11-30 at 7:20 PM by Protiguous.
 
 #nullable enable
 
@@ -39,10 +38,7 @@ using System.Text.RegularExpressions;
 using Collections;
 using Exceptions;
 
-/// <summary>
-///     Originally based from
-///     https://github.com/doctorcode-org/DoctorCode.Pluralization/blob/master/DoctorCode.Pluralization/EnglishPluralizationService.cs
-/// </summary>
+/// <summary>Originally based from https://github.com/doctorcode-org/DoctorCode.Pluralization/blob/master/DoctorCode.Pluralization/EnglishPluralizationService.cs</summary>
 public class EnglishPluralizationService : PluralizationService {
 
 	private readonly IDictionary<String, String> _assimilatedClassicalInflectionDictionary = new Dictionary<String, String> {
@@ -464,7 +460,7 @@ public class EnglishPluralizationService : PluralizationService {
 	};
 
 	/// <summary>
-	///     this list contains all the plural words that being treated as singluar form, for example, "they" -> "they"
+	/// this list contains all the plural words that being treated as singluar form, for example, "they" -&gt; "they"
 	/// </summary>
 	private readonly List<String> _knownConflictingPluralList = new() {
 		"they",
@@ -628,8 +624,8 @@ public class EnglishPluralizationService : PluralizationService {
 	};
 
 	/// <summary>
-	///     this list contains the words ending with "se" and we special case these words since we need to add a rule for "ses"
-	///     singularize to "s"
+	/// this list contains the words ending with "se" and we special case these words since we need to add a rule for "ses"
+	/// singularize to "s"
 	/// </summary>
 	private readonly IDictionary<String, String> _wordsEndingWithSeDictionary = new Dictionary<String, String> {
 		{
@@ -892,7 +888,6 @@ public class EnglishPluralizationService : PluralizationService {
 	};
 
 	public EnglishPluralizationService( CultureInfo? cultureInfo = null ) : base( cultureInfo ) {
-
 		this.IrregularPluralsPluralizationService = new StringBidirectionalDictionary( this._irregularPluralsDictionary );
 		this.AssimilatedClassicalInflectionPluralizationService = new StringBidirectionalDictionary( this._assimilatedClassicalInflectionDictionary );
 		this.OSuffixPluralizationService = new StringBidirectionalDictionary( this._oSuffixDictionary );
@@ -906,22 +901,30 @@ public class EnglishPluralizationService : PluralizationService {
 		this.IrregularVerbPluralizationService = new StringBidirectionalDictionary( this._irregularVerbList );
 
 		this.KnownSingluarWords = new List<String>( this._irregularPluralsDictionary.Keys.Concat( this._assimilatedClassicalInflectionDictionary.Keys )
-		                                                .Concat( this._oSuffixDictionary.Keys ).Concat( this._classicalInflectionDictionary.Keys )
-		                                                .Concat( this._irregularVerbList.Keys ).Concat( this._irregularPluralsDictionary.Keys )
-		                                                .Concat( this._wordsEndingWithSeDictionary.Keys ).Concat( this._wordsEndingWithSisDictionary.Keys )
-		                                                .Concat( this._wordsEndingWithSusDictionary.Keys ).Concat( this._wordsEndingWithInxAnxYnxDictionary.Keys )
-		                                                .Concat( this._uninflectiveWordList )
-		                                                .Except( this._knownConflictingPluralList ) ); // see the _knowConflictingPluralList comment above
+														.Concat( this._oSuffixDictionary.Keys )
+														.Concat( this._classicalInflectionDictionary.Keys )
+														.Concat( this._irregularVerbList.Keys )
+														.Concat( this._irregularPluralsDictionary.Keys )
+														.Concat( this._wordsEndingWithSeDictionary.Keys )
+														.Concat( this._wordsEndingWithSisDictionary.Keys )
+														.Concat( this._wordsEndingWithSusDictionary.Keys )
+														.Concat( this._wordsEndingWithInxAnxYnxDictionary.Keys )
+														.Concat( this._uninflectiveWordList )
+														.Except( this._knownConflictingPluralList ) ); // see the _knowConflictingPluralList comment above
 
 		this.KnownPluralWords = new List<String>( this._irregularPluralsDictionary.Values.Concat( this._assimilatedClassicalInflectionDictionary.Values )
-		                                              .Concat( this._oSuffixDictionary.Values ).Concat( this._classicalInflectionDictionary.Values )
-		                                              .Concat( this._irregularVerbList.Values ).Concat( this._irregularPluralsDictionary.Values )
-		                                              .Concat( this._wordsEndingWithSeDictionary.Values ).Concat( this._wordsEndingWithSisDictionary.Values )
-		                                              .Concat( this._wordsEndingWithSusDictionary.Values ).Concat( this._wordsEndingWithInxAnxYnxDictionary.Values )
-		                                              .Concat( this._uninflectiveWordList ) );
+													  .Concat( this._oSuffixDictionary.Values )
+													  .Concat( this._classicalInflectionDictionary.Values )
+													  .Concat( this._irregularVerbList.Values )
+													  .Concat( this._irregularPluralsDictionary.Values )
+													  .Concat( this._wordsEndingWithSeDictionary.Values )
+													  .Concat( this._wordsEndingWithSisDictionary.Values )
+													  .Concat( this._wordsEndingWithSusDictionary.Values )
+													  .Concat( this._wordsEndingWithInxAnxYnxDictionary.Values )
+													  .Concat( this._uninflectiveWordList ) );
 	}
 
-	private Lazy<Regex> AlpaLazy { get; } = new(() => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ));
+	private Lazy<Regex> AlpaLazy { get; } = new( () => new Regex( "[^a-zA-Z\\s]", RegexOptions.Compiled ) );
 
 	private StringBidirectionalDictionary AssimilatedClassicalInflectionPluralizationService { get; }
 
@@ -949,19 +952,18 @@ public class EnglishPluralizationService : PluralizationService {
 
 	public static PluralizationService Default { get; } = new EnglishPluralizationService( new CultureInfo( "en" ) );
 
-	/// <summary>
-	///     separate one combine word in to two parts, prefix word and the last word(suffix word)
-	/// </summary>
+	/// <summary>separate one combine word in to two parts, prefix word and the last word(suffix word)</summary>
 	/// <param name="word"></param>
 	/// <param name="prefixWord"></param>
 	private static String GetSuffixWord( String word, out String prefixWord ) {
+
 		// use the last space to separate the words
 		var lastSpaceIndex = word.LastIndexOf( ' ' );
 		prefixWord = word[ ..( lastSpaceIndex + 1 ) ];
 
 		return word[ ( lastSpaceIndex + 1 ).. ];
 
-		//
+
 	}
 
 	private static Boolean IsCapitalized( String word ) => !String.IsNullOrEmpty( word ) && Char.IsUpper( word, 0 );
@@ -999,45 +1001,48 @@ public class EnglishPluralizationService : PluralizationService {
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"man"
-		}, s => s.Remove( s.Length - 2, 2 ) + "en", this.Culture, out var newSuffixWord ) ) {
+				"man"
+			}, s => s.Remove( s.Length - 2, 2 ) + "en", this.Culture, out var newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		// handle irregular inflections for common suffixes, e.g. "mouse" -> "mice"
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"louse", "mouse"
-		}, s => s.Remove( s.Length - 4, 4 ) + "ice", this.Culture, out newSuffixWord ) ) {
+				"louse",
+				"mouse"
+			}, s => s.Remove( s.Length - 4, 4 ) + "ice", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"tooth"
-		}, s => s.Remove( s.Length - 4, 4 ) + "eeth", this.Culture, out newSuffixWord ) ) {
+				"tooth"
+			}, s => s.Remove( s.Length - 4, 4 ) + "eeth", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"goose"
-		}, s => s.Remove( s.Length - 4, 4 ) + "eese", this.Culture, out newSuffixWord ) ) {
+				"goose"
+			}, s => s.Remove( s.Length - 4, 4 ) + "eese", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"foot"
-		}, s => s.Remove( s.Length - 3, 3 ) + "eet", this.Culture, out newSuffixWord ) ) {
+				"foot"
+			}, s => s.Remove( s.Length - 3, 3 ) + "eet", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"zoon"
-		}, s => s.Remove( s.Length - 3, 3 ) + "oa", this.Culture, out newSuffixWord ) ) {
+				"zoon"
+			}, s => s.Remove( s.Length - 3, 3 ) + "oa", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"cis", "sis", "xis"
-		}, s => s.Remove( s.Length - 2, 2 ) + "es", this.Culture, out newSuffixWord ) ) {
+				"cis",
+				"sis",
+				"xis"
+			}, s => s.Remove( s.Length - 2, 2 ) + "es", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1047,20 +1052,20 @@ public class EnglishPluralizationService : PluralizationService {
 		}
 
 		// Handle the classical variants of modern inflections
-		//
 		if ( this.ClassicalInflectionPluralizationService.ExistsInSingle( suffixWord ) ) {
 			return prefixWord + this.ClassicalInflectionPluralizationService.GetPlural( suffixWord );
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"trix"
-		}, s => s.Remove( s.Length - 1, 1 ) + "ces", this.Culture, out newSuffixWord ) ) {
+				"trix"
+			}, s => s.Remove( s.Length - 1, 1 ) + "ces", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"eau", "ieu"
-		}, s => s + "x", this.Culture, out newSuffixWord ) ) {
+				"eau",
+				"ieu"
+			}, s => s + "x", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1070,36 +1075,40 @@ public class EnglishPluralizationService : PluralizationService {
 
 		// [cs]h and ss that take es as plural form
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ch", "sh", "ss"
-		}, s => s + "es", this.Culture, out newSuffixWord ) ) {
+				"ch",
+				"sh",
+				"ss"
+			}, s => s + "es", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		// f, fe that take ves as plural form
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"alf",
-			"elf",
-			"olf",
-			"eaf",
-			"arf"
-		}, s => s.EndsWith( "deaf", true, this.Culture ) ? s : s.Remove( s.Length - 1, 1 ) + "ves", this.Culture, out newSuffixWord ) ) {
+				"alf",
+				"elf",
+				"olf",
+				"eaf",
+				"arf"
+			}, s => s.EndsWith( "deaf", true, this.Culture ) ? s : s.Remove( s.Length - 1, 1 ) + "ves", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"nife", "life", "wife"
-		}, s => s.Remove( s.Length - 2, 2 ) + "ves", this.Culture, out newSuffixWord ) ) {
+				"nife",
+				"life",
+				"wife"
+			}, s => s.Remove( s.Length - 2, 2 ) + "ves", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		// y takes ys as plural form if preceded by a vowel, but ies if preceded by a consonant, e.g. stays, skies
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ay",
-			"ey",
-			"iy",
-			"oy",
-			"uy"
-		}, s => s + "s", this.Culture, out newSuffixWord ) ) {
+				"ay",
+				"ey",
+				"iy",
+				"oy",
+				"uy"
+			}, s => s + "s", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1113,12 +1122,12 @@ public class EnglishPluralizationService : PluralizationService {
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ao",
-			"eo",
-			"io",
-			"oo",
-			"uo"
-		}, s => s + "s", this.Culture, out newSuffixWord ) ) {
+				"ao",
+				"eo",
+				"io",
+				"oo",
+				"uo"
+			}, s => s + "s", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1136,6 +1145,7 @@ public class EnglishPluralizationService : PluralizationService {
 
 	[SuppressMessage( "Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase" )]
 	private String InternalSingularize( String word ) {
+
 		// words that we know of
 
 		var single = this.UserDictionary.GetSingle( word );
@@ -1175,8 +1185,7 @@ public class EnglishPluralizationService : PluralizationService {
 			return prefixWord + this.IrregularPluralsPluralizationService.GetSingle( suffixWord );
 		}
 
-		// handle singluarization for words ending with sis and pluralized to ses,
-		// e.g. "ses" -> "sis"
+		// handle singluarization for words ending with sis and pluralized to ses, e.g. "ses" -> "sis"
 		if ( this.WordsEndingWithSisPluralizationService.ExistsInPlural( suffixWord ) ) {
 			return prefixWord + this.WordsEndingWithSisPluralizationService.GetSingle( suffixWord );
 		}
@@ -1192,46 +1201,49 @@ public class EnglishPluralizationService : PluralizationService {
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"men"
-		}, s => s.Remove( s.Length - 2, 2 ) + "an", this.Culture, out var newSuffixWord ) ) {
+				"men"
+			}, s => s.Remove( s.Length - 2, 2 ) + "an", this.Culture, out var newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		// handle irregular inflections for common suffixes, e.g. "mouse" -> "mice"
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"lice", "mice"
-		}, s => s.Remove( s.Length - 3, 3 ) + "ouse", this.Culture, out newSuffixWord ) ) {
+				"lice",
+				"mice"
+			}, s => s.Remove( s.Length - 3, 3 ) + "ouse", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"teeth"
-		}, s => s.Remove( s.Length - 4, 4 ) + "ooth", this.Culture, out newSuffixWord ) ) {
+				"teeth"
+			}, s => s.Remove( s.Length - 4, 4 ) + "ooth", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"geese"
-		}, s => s.Remove( s.Length - 4, 4 ) + "oose", this.Culture, out newSuffixWord ) ) {
+				"geese"
+			}, s => s.Remove( s.Length - 4, 4 ) + "oose", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"feet"
-		}, s => s.Remove( s.Length - 3, 3 ) + "oot", this.Culture, out newSuffixWord ) ) {
+				"feet"
+			}, s => s.Remove( s.Length - 3, 3 ) + "oot", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"zoa"
-		}, s => s.Remove( s.Length - 2, 2 ) + "oon", this.Culture, out newSuffixWord ) ) {
+				"zoa"
+			}, s => s.Remove( s.Length - 2, 2 ) + "oon", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		// [cs]h and ss that take es as plural form, this is being moved up since the sses will be override by the ses
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ches", "shes", "sses"
-		}, s => s.Remove( s.Length - 2, 2 ), this.Culture, out newSuffixWord ) ) {
+				"ches",
+				"shes",
+				"sses"
+			}, s => s.Remove( s.Length - 2, 2 ), this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1241,20 +1253,20 @@ public class EnglishPluralizationService : PluralizationService {
 		}
 
 		// Handle the classical variants of modern inflections
-		//
 		if ( this.ClassicalInflectionPluralizationService.ExistsInPlural( suffixWord ) ) {
 			return prefixWord + this.ClassicalInflectionPluralizationService.GetSingle( suffixWord );
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"trices"
-		}, s => s.Remove( s.Length - 3, 3 ) + "x", this.Culture, out newSuffixWord ) ) {
+				"trices"
+			}, s => s.Remove( s.Length - 3, 3 ) + "x", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"eaux", "ieux"
-		}, s => s.Remove( s.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
+				"eaux",
+				"ieux"
+			}, s => s.Remove( s.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1264,33 +1276,35 @@ public class EnglishPluralizationService : PluralizationService {
 
 		// f, fe that take ves as plural form
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"alves",
-			"elves",
-			"olves",
-			"eaves",
-			"arves"
-		}, s => s.Remove( s.Length - 3, 3 ) + "f", this.Culture, out newSuffixWord ) ) {
+				"alves",
+				"elves",
+				"olves",
+				"eaves",
+				"arves"
+			}, s => s.Remove( s.Length - 3, 3 ) + "f", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"nives", "lives", "wives"
-		}, s => s.Remove( s.Length - 3, 3 ) + "fe", this.Culture, out newSuffixWord ) ) {
+				"nives",
+				"lives",
+				"wives"
+			}, s => s.Remove( s.Length - 3, 3 ) + "fe", this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		// y takes ys as plural form if preceded by a vowel, but ies if preceded by a consonant, e.g. stays, skies
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ays",
-			"eys",
-			"iys",
-			"oys",
-			"uys"
-		}, s => s.Remove( s.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
+				"ays",
+				"eys",
+				"iys",
+				"oys",
+				"uys"
+			}, s => s.Remove( s.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
-		//
+
 
 		if ( suffixWord.EndsWith( "ies", true, this.Culture ) ) {
 			return prefixWord + suffixWord.Remove( suffixWord.Length - 3, 3 ) + "y";
@@ -1302,26 +1316,28 @@ public class EnglishPluralizationService : PluralizationService {
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"aos",
-			"eos",
-			"ios",
-			"oos",
-			"uos"
-		}, s => suffixWord.Remove( suffixWord.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
+				"aos",
+				"eos",
+				"ios",
+				"oos",
+				"uos"
+			}, s => suffixWord.Remove( suffixWord.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
-		//
+
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ces"
-		}, s => s.Remove( s.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
+				"ces"
+			}, s => s.Remove( s.Length - 1, 1 ), this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
 		if ( PluralizationServiceUtil.TryInflectOnSuffixInWord( suffixWord, new List<String> {
-			"ces", "ses", "xes"
-		}, s => s.Remove( s.Length - 2, 2 ), this.Culture, out newSuffixWord ) ) {
+				"ces",
+				"ses",
+				"xes"
+			}, s => s.Remove( s.Length - 2, 2 ), this.Culture, out newSuffixWord ) ) {
 			return prefixWord + newSuffixWord;
 		}
 
@@ -1342,8 +1358,8 @@ public class EnglishPluralizationService : PluralizationService {
 	}
 
 	private Boolean IsAlphabets( String word ) {
-		// return false when the word is "[\s]*" or leading or tailing with spaces
-		// or contains non alphabetical characters
+
+		// return false when the word is "[\s]*" or leading or tailing with spaces or contains non alphabetical characters
 		if ( String.IsNullOrEmpty( word.Trim() ) || !word.Equals( word.Trim(), StringComparison.Ordinal ) || this.AlpaLazy.Value.IsMatch( word ) ) {
 			return false;
 		}
@@ -1351,10 +1367,7 @@ public class EnglishPluralizationService : PluralizationService {
 		return true;
 	}
 
-	/// <summary>
-	///     return true when the word is "[\s]*" or leading or tailing with spaces
-	///     or contains non alphabetical characters
-	/// </summary>
+	/// <summary>return true when the word is "[\s]*" or leading or tailing with spaces or contains non alphabetical characters</summary>
 	/// <param name="word"></param>
 	private Boolean IsNoOpWord( String word ) => !this.IsAlphabets( word ) || word.Length <= 1 || this._pronounList.Contains( word.ToLowerInvariant() );
 
@@ -1363,10 +1376,7 @@ public class EnglishPluralizationService : PluralizationService {
 		!word.ToLower( this.Culture ).Equals( word, StringComparison.Ordinal ) && word.EndsWith( "ese", false, this.Culture ) ||
 		this._uninflectiveWordList.Contains( word.ToLowerInvariant() );
 
-	/// <summary>
-	///     captalize the return word if the parameter is capitalized
-	///     if word is "Table", then return "Tables"
-	/// </summary>
+	/// <summary>captalize the return word if the parameter is capitalized if word is "Table", then return "Tables"</summary>
 	/// <param name="word"></param>
 	/// <param name="action"></param>
 	public static String Capitalize( String word, Func<String, String> action ) {
@@ -1389,8 +1399,8 @@ public class EnglishPluralizationService : PluralizationService {
 	}
 
 	/// <summary>
-	///     This method allow you to add word to internal PluralizationService of English.
-	///     If the singluar or the plural value was already added by this method, then an NullException will be thrown.
+	/// This method allow you to add word to internal PluralizationService of English. If the singluar or the plural value was
+	/// already added by this method, then an NullException will be thrown.
 	/// </summary>
 	/// <param name="singular"></param>
 	/// <param name="plural"></param>
@@ -1444,5 +1454,4 @@ public class EnglishPluralizationService : PluralizationService {
 
 		//EDesignUtil.CheckArgumentNull<string>(word, "word");
 		Capitalize( word, this.InternalSingularize );
-
 }

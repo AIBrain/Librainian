@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ZipStorer.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ZipStorer.cs" last formatted on 2021-11-30 at 7:20 PM by Protiguous.
 
 #nullable enable
 
@@ -37,28 +36,9 @@ using System.Text;
 using Exceptions;
 using Utilities.Disposables;
 
-/// <summary>
-///     Class for compression/decompression file. Represents a Zip file.
-/// </summary>
+/// <summary>Class for compression/decompression file. Represents a Zip file.</summary>
 /// <see cref="http://zipstorer.codeplex.com/" />
 public class ZipStorer : ABetterClassDispose {
-
-	/// <summary>
-	///     Compression method enumeration
-	/// </summary>
-	public enum Compression {
-
-		/// <summary>
-		///     Uncompressed storage
-		/// </summary>
-		Store = 0,
-
-		/// <summary>
-		///     Deflate compression method
-		/// </summary>
-		Deflate = 8
-
-	}
 
 	private static readonly UInt32[] CrcTable;
 
@@ -88,6 +68,7 @@ public class ZipStorer : ABetterClassDispose {
 
 	// Static constructor. Just invoked once in order to create the CRC32 lookup table.
 	static ZipStorer() {
+
 		// Generate CRC32 table
 		CrcTable = new UInt32[ 256 ];
 
@@ -107,24 +88,31 @@ public class ZipStorer : ABetterClassDispose {
 		}
 	}
 
-	public ZipStorer() : base( nameof( ZipStorer ) ) { }
+	public ZipStorer() : base( nameof( ZipStorer ) ) {
+	}
 
-	/// <summary>
-	///     True if UTF8 encoding for filename and comments, false if default (CP 437)
-	/// </summary>
+	/// <summary>Compression method enumeration</summary>
+	public enum Compression {
+
+		/// <summary>Uncompressed storage</summary>
+		Store = 0,
+
+		/// <summary>Deflate compression method</summary>
+		Deflate = 8
+	}
+
+	/// <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
 	public Boolean EncodeUtf8 { get; }
 
-	/// <summary>
-	///     Force deflate algorithm even if it inflates the stored file. Off by default.
-	/// </summary>
+	/// <summary>Force deflate algorithm even if it inflates the stored file. Off by default.</summary>
 	public Boolean ForceDeflating { get; }
 
 	private static UInt32 DateTimeToDosTime( DateTime dt ) =>
 		( UInt32 )( ( dt.Second / 2 ) | ( dt.Minute << 5 ) | ( dt.Hour << 11 ) | ( dt.Day << 16 ) | ( dt.Month << 21 ) | ( ( dt.Year - 1980 ) << 25 ) );
 
 	private static DateTime DosTimeToDateTime( UInt32 dt ) =>
-		new(( Int32 )( dt >> 25 ) + 1980, ( Int32 )( dt >> 21 ) & 15, ( Int32 )( dt >> 16 ) & 31, ( Int32 )( dt >> 11 ) & 31, ( Int32 )( dt >> 5 ) & 63,
-			( Int32 )( dt & 31 ) * 2);
+		new( ( Int32 )( dt >> 25 ) + 1980, ( Int32 )( dt >> 21 ) & 15, ( Int32 )( dt >> 16 ) & 31, ( Int32 )( dt >> 11 ) & 31, ( Int32 )( dt >> 5 ) & 63,
+			( Int32 )( dt & 31 ) * 2 );
 
 	// Replaces backslashes with slashes to store in zip header
 	private static String NormalizedFilename( String _filename ) {
@@ -197,6 +185,7 @@ public class ZipStorer : ABetterClassDispose {
 			} while ( this._zipFileStream.Position > 0 );
 		}
 		catch {
+
 			// ignored
 		}
 
@@ -241,6 +230,7 @@ public class ZipStorer : ABetterClassDispose {
 
 		// Verify for real compression
 		if ( zfe.Method == Compression.Deflate && !this.ForceDeflating && source.CanSeek && zfe.CompressedSize > zfe.FileSize ) {
+
 			// Start operation again with Store algorithm
 			zfe.Method = Compression.Store;
 			this._zipFileStream.Position = posStart;
@@ -336,11 +326,9 @@ public class ZipStorer : ABetterClassDispose {
 		zfe.HeaderSize = ( UInt32 )( this._zipFileStream.Position - pos );
 	}
 
-	/// <summary>
-	///     Method to create a new storage file
-	/// </summary>
+	/// <summary>Method to create a new storage file</summary>
 	/// <param name="filename">Full path of Zip file to create</param>
-	/// <param name="comment"> General comment for Zip file</param>
+	/// <param name="comment">General comment for Zip file</param>
 	/// <returns>A valid ZipStorer object</returns>
 	public static ZipStorer Create( String filename, String? comment ) {
 		Stream stream = new FileStream( filename, FileMode.Create, FileAccess.ReadWrite );
@@ -352,25 +340,23 @@ public class ZipStorer : ABetterClassDispose {
 		return zip;
 	}
 
-	/// <summary>
-	///     Method to create a new zip storage in a stream
-	/// </summary>
-	/// <param name="stream"> </param>
+	/// <summary>Method to create a new zip storage in a stream</summary>
+	/// <param name="stream"></param>
 	/// <param name="comment"></param>
 	/// <returns>A valid ZipStorer object</returns>
 	public static ZipStorer Create( Stream? stream, String? comment ) {
 		var zip = new ZipStorer {
-			_comment = comment, _zipFileStream = stream, _access = FileAccess.Write
+			_comment = comment,
+			_zipFileStream = stream,
+			_access = FileAccess.Write
 		};
 
 		return zip;
 	}
 
-	/// <summary>
-	///     Method to open an existing storage file
-	/// </summary>
+	/// <summary>Method to open an existing storage file</summary>
 	/// <param name="filename">Full path of Zip file to open</param>
-	/// <param name="access">  File access mode as used in FileStream constructor</param>
+	/// <param name="access">File access mode as used in FileStream constructor</param>
 	/// <returns>A valid ZipStorer object</returns>
 	public static ZipStorer Open( String filename, FileAccess access ) {
 		var stream = new FileStream( filename, FileMode.Open, access == FileAccess.Read ? FileAccess.Read : FileAccess.ReadWrite ) as Stream;
@@ -381,9 +367,7 @@ public class ZipStorer : ABetterClassDispose {
 		return zip;
 	}
 
-	/// <summary>
-	///     Method to open an existing storage from stream
-	/// </summary>
+	/// <summary>Method to open an existing storage from stream</summary>
 	/// <param name="stream">Already opened stream with zip contents</param>
 	/// <param name="access">File access mode for stream operations</param>
 	/// <returns>A valid ZipStorer object</returns>
@@ -393,7 +377,8 @@ public class ZipStorer : ABetterClassDispose {
 		}
 
 		var zip = new ZipStorer {
-			_zipFileStream = stream, _access = access
+			_zipFileStream = stream,
+			_access = access
 		};
 
 		//zip.FileName = _filename;
@@ -405,10 +390,8 @@ public class ZipStorer : ABetterClassDispose {
 		throw new InvalidDataException();
 	}
 
-	/// <summary>
-	///     Removes one of many files in storage. It creates a new Zip file.
-	/// </summary>
-	/// <param name="zip"> Reference to the current Zip object</param>
+	/// <summary>Removes one of many files in storage. It creates a new Zip file.</summary>
+	/// <param name="zip">Reference to the current Zip object</param>
 	/// <param name="zfes">List of Entries to remove from storage</param>
 	/// <returns>True if success, false if not</returns>
 	/// <remarks>This method only works for storage of type FileStream</remarks>
@@ -459,13 +442,11 @@ public class ZipStorer : ABetterClassDispose {
 		return true;
 	}
 
-	/// <summary>
-	///     Add full contents of a file into the Zip storage
-	/// </summary>
-	/// <param name="method">       Compression method</param>
-	/// <param name="pathname">     Full path of file to add to Zip storage</param>
+	/// <summary>Add full contents of a file into the Zip storage</summary>
+	/// <param name="method">Compression method</param>
+	/// <param name="pathname">Full path of file to add to Zip storage</param>
 	/// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
-	/// <param name="comment">      Comment for stored file</param>
+	/// <param name="comment">Comment for stored file</param>
 	public void AddFile( Compression method, String pathname, String filenameInZip, String? comment ) {
 		if ( this._access == FileAccess.Read ) {
 			throw new InvalidOperationException( "Writing is not allowed" );
@@ -476,14 +457,12 @@ public class ZipStorer : ABetterClassDispose {
 		stream.Close();
 	}
 
-	/// <summary>
-	///     Add full contents of a stream into the Zip storage
-	/// </summary>
-	/// <param name="method">       Compression method</param>
+	/// <summary>Add full contents of a stream into the Zip storage</summary>
+	/// <param name="method">Compression method</param>
 	/// <param name="filenameInZip">Filename and path as desired in Zip directory</param>
-	/// <param name="source">       Stream object containing the data to store in Zip</param>
-	/// <param name="modTime">      Modification time of the data to store</param>
-	/// <param name="comment">      Comment for stored file</param>
+	/// <param name="source">Stream object containing the data to store in Zip</param>
+	/// <param name="modTime">Modification time of the data to store</param>
+	/// <param name="comment">Comment for stored file</param>
 	public void AddStream( Compression method, String filenameInZip, Stream source, DateTime modTime, String? comment ) {
 		if ( this._access == FileAccess.Read ) {
 			throw new InvalidOperationException( "Writing is not allowed" );
@@ -510,8 +489,8 @@ public class ZipStorer : ABetterClassDispose {
 			ModifyTime = modTime
 		};
 
-		// Even though we write the header now, it will have to be rewritten, since we don't know compressed size or crc. to be updated later offset within file of the
-		// start of this local record
+		// Even though we write the header now, it will have to be rewritten, since we don't know compressed size or crc. to be
+		// updated later offset within file of the start of this local record
 
 		// Write local header
 		this.WriteLocalHeader( ref zfe );
@@ -526,9 +505,7 @@ public class ZipStorer : ABetterClassDispose {
 		this._files.Add( zfe );
 	}
 
-	/// <summary>
-	///     Updates central directory (if pertinent) and close the Zip storage
-	/// </summary>
+	/// <summary>Updates central directory (if pertinent) and close the Zip storage</summary>
 	/// <remarks>This is a required step, unless automatic dispose is used</remarks>
 	public void Close() {
 		if ( this._access != FileAccess.Read ) {
@@ -562,15 +539,11 @@ public class ZipStorer : ABetterClassDispose {
 		this._zipFileStream = null;
 	}
 
-	/// <summary>
-	///     Dispose any disposable members. Closes the Zip file stream.
-	/// </summary>
+	/// <summary>Dispose any disposable members. Closes the Zip file stream.</summary>
 	public override void DisposeManaged() => this.Close();
 
-	/// <summary>
-	///     Copy the contents of a stored file into a physical file
-	/// </summary>
-	/// <param name="zfe">     Entry information of file to extract</param>
+	/// <summary>Copy the contents of a stored file into a physical file</summary>
+	/// <param name="zfe">Entry information of file to extract</param>
 	/// <param name="filename">Name of file to store uncompressed data</param>
 	/// <returns>True if success, false if not.</returns>
 	/// <remarks>Unique compression methods are Store and Deflate</remarks>
@@ -607,10 +580,8 @@ public class ZipStorer : ABetterClassDispose {
 		return result;
 	}
 
-	/// <summary>
-	///     Copy the contents of a stored file into an opened stream
-	/// </summary>
-	/// <param name="zfe">   Entry information of file to extract</param>
+	/// <summary>Copy the contents of a stored file into an opened stream</summary>
+	/// <param name="zfe">Entry information of file to extract</param>
 	/// <param name="stream">Stream to store the uncompressed data</param>
 	/// <returns>True if success, false if not.</returns>
 	/// <remarks>Unique compression methods are Store and Deflate</remarks>
@@ -666,9 +637,7 @@ public class ZipStorer : ABetterClassDispose {
 		return true;
 	}
 
-	/// <summary>
-	///     Read all the file records in the central directory
-	/// </summary>
+	/// <summary>Read all the file records in the central directory</summary>
 	/// <returns>List of all entries in directory</returns>
 	public List<ZipFileEntry> ReadCentralDir() {
 		if ( this._centralDirImage is null ) {
@@ -721,72 +690,45 @@ public class ZipStorer : ABetterClassDispose {
 		return result;
 	}
 
-	/// <summary>
-	///     Represents an entry in Zip file directory
-	/// </summary>
+	/// <summary>Represents an entry in Zip file directory</summary>
 	public struct ZipFileEntry {
 
-		/// <summary>
-		///     User comment for file
-		/// </summary>
+		/// <summary>User comment for file</summary>
 		public String Comment { get; set; }
 
-		/// <summary>
-		///     Compressed file size
-		/// </summary>
+		/// <summary>Compressed file size</summary>
 		public UInt32 CompressedSize { get; set; }
 
-		/// <summary>
-		///     32-bit checksum of entire file
-		/// </summary>
+		/// <summary>32-bit checksum of entire file</summary>
 		public UInt32 Crc32 { get; set; }
 
-		/// <summary>
-		///     True if UTF8 encoding for filename and comments, false if default (CP 437)
-		/// </summary>
+		/// <summary>True if UTF8 encoding for filename and comments, false if default (CP 437)</summary>
 		public Boolean EncodeUtf8 { get; set; }
 
-		/// <summary>
-		///     Full path and filename as stored in Zip
-		/// </summary>
+		/// <summary>Full path and filename as stored in Zip</summary>
 		public String FilenameInZip { get; set; }
 
-		/// <summary>
-		///     Offset of file inside Zip storage
-		/// </summary>
+		/// <summary>Offset of file inside Zip storage</summary>
 		public UInt32 FileOffset { get; set; }
 
-		/// <summary>
-		///     Original file size
-		/// </summary>
+		/// <summary>Original file size</summary>
 		public UInt32 FileSize { get; set; }
 
-		/// <summary>
-		///     Offset of header information inside Zip storage
-		/// </summary>
+		/// <summary>Offset of header information inside Zip storage</summary>
 		public UInt32 HeaderOffset { get; set; }
 
-		/// <summary>
-		///     Size of header information
-		/// </summary>
+		/// <summary>Size of header information</summary>
 		public UInt32 HeaderSize { get; set; }
 
-		/// <summary>
-		///     Compression method
-		/// </summary>
+		/// <summary>Compression method</summary>
 		public Compression Method { get; set; }
 
-		/// <summary>
-		///     Last modification time of file
-		/// </summary>
+		/// <summary>Last modification time of file</summary>
 		public DateTime ModifyTime { get; set; }
 
-		/// <summary>
-		///     Overridden method
-		/// </summary>
+		/// <summary>Overridden method</summary>
 		/// <returns>Filename in Zip</returns>
 		public override String ToString() => this.FilenameInZip;
-
 	}
 
 	/* Local file header:
@@ -867,5 +809,4 @@ public class ZipStorer : ABetterClassDispose {
 	  value is put in the data descriptor and in the central
 	  directory.
 	*/
-
 }

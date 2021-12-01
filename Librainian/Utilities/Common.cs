@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Common.cs" last formatted on 2021-11-11 at 1:42 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Common.cs" last formatted on 2021-11-30 at 7:23 PM by Protiguous.
 
 #nullable enable
 
@@ -120,10 +119,8 @@ public static class Common {
 	public static Boolean Between( this UInt64 target, UInt64 startInclusive, UInt64 endInclusive ) => target >= startInclusive && target <= endInclusive;
 
 	/// <summary>
-	///     Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between
-	///     <paramref
-	///         name="min" />
-	///     and <paramref name="max" />.
+	/// Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between <paramref
+	/// name="min" /> and <paramref name="max" />.
 	/// </summary>
 	/// <param name="self">The extended T.</param>
 	/// <param name="min">The minimum value of the <typeparamref name="T" /> that can be returned.</param>
@@ -172,13 +169,11 @@ public static class Common {
 	}
 
 	[Pure]
-	public static UInt64 LengthReal( this String? s ) => s is null ? 0 : ( UInt64 ) new StringInfo( s ).LengthInTextElements;
+	public static UInt64 LengthReal( this String? s ) => s is null ? 0 : ( UInt64 )new StringInfo( s ).LengthInTextElements;
 
 	/// <summary>
-	///     Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using
-	///     <see
-	///         cref="Newtonsoft.Json.JsonConvert" />
-	///     .
+	/// Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using <see
+	/// cref="Newtonsoft.Json.JsonConvert" /> .
 	/// </summary>
 	/// <param name="bob"></param>
 	[Pure]
@@ -196,13 +191,12 @@ public static class Common {
 	public static void Nop() { }
 
 	/// <summary>
-	///     <para>Works like the SQL "nullif" function.</para>
-	///     <para>
-	///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null for classes or the default
-	///         value for
-	///         value types.
-	///     </para>
-	///     <para>Otherwise return <paramref name="left" />.</para>
+	/// <para>Works like the SQL "nullif" function.</para>
+	/// <para>
+	/// If <paramref name="left" /> is equal to <paramref name="right" /> then return null for classes or the default value for
+	/// value types.
+	/// </para>
+	/// <para>Otherwise return <paramref name="left" />.</para>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="left"></param>
@@ -210,7 +204,7 @@ public static class Common {
 	[DebuggerStepThrough]
 	public static T? NullIf<T>( this T? left, T? right ) where T : class => Comparer<T>.Default.Compare( left, right ) == 0 ? null : left;
 
-	public static void Swap<T>( ref T left, ref T right ) => ( left, right ) = ( right, left );
+	public static void Swap<T>( ref T left, ref T right ) => (left, right) = (right, left);
 
 	/// <summary>Given (T left, T right), Return (T right, T left).</summary>
 	/// <typeparam name="T"></typeparam>
@@ -218,11 +212,11 @@ public static class Common {
 	/// <param name="right"></param>
 	[Pure]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static (T? right, T? left) Swap<T>( this T? left, T? right ) => ( right, left );
+	public static (T? right, T? left) Swap<T>( this T? left, T? right ) => (right, left);
 
 	[Pure]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static (T? right, T? left) Swap<T>( (T? left, T? right) tuple ) => ( tuple.right, tuple.left );
+	public static (T? right, T? left) Swap<T>( (T? left, T? right) tuple ) => (tuple.right, tuple.left);
 
 	/// <summary>Swap the two indexes</summary>
 	/// <typeparam name="T"></typeparam>
@@ -253,7 +247,7 @@ public static class Common {
 			throw new OutOfRangeException( $"{nameof( index2 )} cannot be higher than {length - 1}." );
 		}
 
-		( array[ index1 ], array[ index2 ] ) = ( array[ index2 ], array[ index1 ] );
+		(array[ index1 ], array[ index2 ]) = (array[ index2 ], array[ index1 ]);
 	}
 
 	/// <summary>Swap <paramref name="left" /> with <paramref name="right" />.</summary>
@@ -262,12 +256,11 @@ public static class Common {
 	/// <param name="right"></param>
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static void SwapNullable<T>( ref T? left, ref T? right ) => ( left, right ) = ( right, left );
+	public static void SwapNullable<T>( ref T? left, ref T? right ) => (left, right) = (right, left);
 
 	/// <summary>
-	///     Convert any number of strings into a Key (keys to use for caching) Using the reasoning that a string lookup will
-	///     match
-	///     sooner by having the most selective "key" first.
+	/// Convert any number of strings into a Key (keys to use for caching) Using the reasoning that a string lookup will match
+	/// sooner by having the most selective "key" first.
 	/// </summary>
 	/// <param name="keys"></param>
 	/// <returns></returns>
@@ -277,10 +270,9 @@ public static class Common {
 	/// <typeparam name="T"></typeparam>
 	public static class Cache<T> where T : notnull, new() {
 
-		private static ThreadLocal<T> LocalCache { get; } = new(() => new T(), false);
+		private static ThreadLocal<T> LocalCache { get; } = new( () => new T(), false );
 
 		public static T? Instance { get; } = LocalCache.Value;
-
 	}
 
 	/// <summary>Only create 1 instance of <see cref="T" /> per all threads. (only unique when using this method!)</summary>
@@ -288,7 +280,5 @@ public static class Common {
 	public static class CacheGlobal<T> where T : notnull, new() {
 
 		public static T Instance { get; } = new();
-
 	}
-
 }

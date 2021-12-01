@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Audio.cs" last touched on 2021-10-13 at 4:28 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Audio.cs" last formatted on 2021-11-30 at 7:20 PM by Protiguous.
 
 namespace Librainian.OperatingSystem;
 
@@ -42,7 +41,6 @@ public static class Audio {
 		eAll,
 
 		EDataFlow_enum_count
-
 	}
 
 	public enum ERole {
@@ -54,10 +52,86 @@ public static class Audio {
 		eCommunications,
 
 		ERole_enum_count
+	}
 
+	[Guid( "F4B1A599-7266-4319-A8CA-E70ACB11E8CD" )]
+	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IAudioSessionControl {
+
+		[PreserveSig]
+		Int32 GetDisplayName( [MarshalAs( UnmanagedType.LPWStr )] out String pRetVal );
+
+		Int32 NotImpl1();
+
+		// the rest is not implemented
+	}
+
+	[Guid( "E2F5BB11-0570-40CA-ACDD-3AA01277DEE8" )]
+	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IAudioSessionEnumerator {
+
+		[PreserveSig]
+		Int32 GetCount( out Int32 SessionCount );
+
+		[PreserveSig]
+		Int32 GetSession( Int32 SessionCount, out IAudioSessionControl Session );
+	}
+
+	[Guid( "77AA99A0-1BD6-484F-8BC7-2C654C9A9B6F" )]
+	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IAudioSessionManager2 {
+
+		[PreserveSig]
+		Int32 GetSessionEnumerator( out IAudioSessionEnumerator SessionEnum );
+
+		Int32 NotImpl1();
+
+		Int32 NotImpl2();
+
+		// the rest is not implemented
+	}
+
+	[Guid( "D666063F-1587-4E43-81F1-B948E807363F" )]
+	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMMDevice {
+
+		[PreserveSig]
+		Int32 Activate( ref Guid iid, Int32 dwClsCtx, IntPtr pActivationParams, [MarshalAs( UnmanagedType.IUnknown )] out Object ppInterface );
+
+		// the rest is not implemented
+	}
+
+	[Guid( "A95664D2-9614-4F35-A746-DE8DB63617E6" )]
+	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMMDeviceEnumerator {
+
+		[PreserveSig]
+		Int32 GetDefaultAudioEndpoint( EDataFlow dataFlow, ERole role, out IMMDevice ppDevice );
+
+		Int32 NotImpl1();
+
+		// the rest is not implemented
+	}
+
+	[Guid( "87CE5498-68D6-44E5-9215-6DA47EF883D8" )]
+	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface ISimpleAudioVolume {
+
+		[PreserveSig]
+		Int32 GetMasterVolume( out Single pfLevel );
+
+		[PreserveSig]
+		Int32 GetMute( out Boolean pbMute );
+
+		[PreserveSig]
+		Int32 SetMasterVolume( Single fLevel, ref Guid eventContext );
+
+		[PreserveSig]
+		Int32 SetMute( Boolean bMute, ref Guid eventContext );
 	}
 
 	public static IEnumerable<String?> EnumerateApplications() {
+
 		// get the speakers (1st render + multimedia) device
 
 		if ( new MMDeviceEnumerator() is not IMMDeviceEnumerator deviceEnumerator ) {
@@ -108,6 +182,7 @@ public static class Audio {
 	}
 
 	public static ISimpleAudioVolume? GetVolumeObject( String? name ) {
+
 		// get the speakers (1st render + multimedia) device
 
 		if ( new MMDeviceEnumerator() is not IMMDeviceEnumerator deviceEnumerator ) {
@@ -164,90 +239,7 @@ public static class Audio {
 		volume?.SetMasterVolume( level / 100, ref guid );
 	}
 
-	[Guid( "F4B1A599-7266-4319-A8CA-E70ACB11E8CD" )]
-	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IAudioSessionControl {
-
-		[PreserveSig]
-		Int32 GetDisplayName( [MarshalAs( UnmanagedType.LPWStr )] out String pRetVal );
-
-		Int32 NotImpl1();
-
-		// the rest is not implemented
-
-	}
-
-	[Guid( "E2F5BB11-0570-40CA-ACDD-3AA01277DEE8" )]
-	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IAudioSessionEnumerator {
-
-		[PreserveSig]
-		Int32 GetCount( out Int32 SessionCount );
-
-		[PreserveSig]
-		Int32 GetSession( Int32 SessionCount, out IAudioSessionControl Session );
-
-	}
-
-	[Guid( "77AA99A0-1BD6-484F-8BC7-2C654C9A9B6F" )]
-	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IAudioSessionManager2 {
-
-		[PreserveSig]
-		Int32 GetSessionEnumerator( out IAudioSessionEnumerator SessionEnum );
-
-		Int32 NotImpl1();
-
-		Int32 NotImpl2();
-
-		// the rest is not implemented
-
-	}
-
-	[Guid( "D666063F-1587-4E43-81F1-B948E807363F" )]
-	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IMMDevice {
-
-		[PreserveSig]
-		Int32 Activate( ref Guid iid, Int32 dwClsCtx, IntPtr pActivationParams, [MarshalAs( UnmanagedType.IUnknown )] out Object ppInterface );
-
-		// the rest is not implemented
-
-	}
-
-	[Guid( "A95664D2-9614-4F35-A746-DE8DB63617E6" )]
-	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface IMMDeviceEnumerator {
-
-		[PreserveSig]
-		Int32 GetDefaultAudioEndpoint( EDataFlow dataFlow, ERole role, out IMMDevice ppDevice );
-
-		Int32 NotImpl1();
-
-		// the rest is not implemented
-
-	}
-
-	[Guid( "87CE5498-68D6-44E5-9215-6DA47EF883D8" )]
-	[InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
-	public interface ISimpleAudioVolume {
-
-		[PreserveSig]
-		Int32 GetMasterVolume( out Single pfLevel );
-
-		[PreserveSig]
-		Int32 GetMute( out Boolean pbMute );
-
-		[PreserveSig]
-		Int32 SetMasterVolume( Single fLevel, ref Guid eventContext );
-
-		[PreserveSig]
-		Int32 SetMute( Boolean bMute, ref Guid eventContext );
-
-	}
-
 	[ComImport]
 	[Guid( "BCDE0395-E52F-467C-8E3D-C4579291692E" )]
 	public class MMDeviceEnumerator { }
-
 }

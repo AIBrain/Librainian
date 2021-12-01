@@ -1,29 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "DeviceClass.cs" last touched on 2021-10-13 at 4:24 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "DeviceClass.cs" last formatted on 2021-11-30 at 7:16 PM by Protiguous.
 
 namespace Librainian.ComputerSystem.Devices;
 
@@ -46,10 +45,9 @@ public abstract class DeviceClass : ABetterClassDispose {
 	private IntPtr _deviceInfoSet;
 
 	/// <summary>Initializes a new instance of the DeviceClass class.</summary>
-	/// <param name="classGuid"> A device class Guid.</param>
+	/// <param name="classGuid">A device class Guid.</param>
 	/// <param name="hwndParent">
-	///     The handle of the top-level window to be used for any user interface or IntPtr.Zero for no
-	///     handle.
+	/// The handle of the top-level window to be used for any user interface or IntPtr.Zero for no handle.
 	/// </param>
 	private DeviceClass( Guid classGuid, IntPtr hwndParent ) : base( nameof( DeviceClass ) ) {
 		this._classGuid = classGuid;
@@ -64,13 +62,14 @@ public abstract class DeviceClass : ABetterClassDispose {
 		}
 	}
 
-	protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) { }
+	protected DeviceClass( Guid classGuid ) : this( classGuid, IntPtr.Zero ) {
+	}
 
 	/// <summary>Gets the device class's guid.</summary>
 	public Guid ClassGuid => this._classGuid;
 
 	protected virtual Device CreateDevice( DeviceClass deviceClass, NativeMethods.SP_DEVINFO_DATA deviceInfoData, String? path, Int32 index, Int32 disknum = -1 ) =>
-		new(deviceClass, deviceInfoData, path, index, disknum);
+		new( deviceClass, deviceInfoData, path, index, disknum );
 
 	internal NativeMethods.SP_DEVINFO_DATA GetInfo( Int32 dnDevInst ) {
 		var sb = new StringBuilder( 1024 );
@@ -96,7 +95,8 @@ public abstract class DeviceClass : ABetterClassDispose {
 		var propertyBuffer = new Byte[ propertyBufferSize ];
 
 		if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
-			out var requiredSize ) ) {
+				out var requiredSize ) ) {
+
 			//Marshal.FreeHGlobal( propertyBuffer );
 			var error = Marshal.GetLastWin32Error();
 
@@ -119,7 +119,8 @@ public abstract class DeviceClass : ABetterClassDispose {
 		var propertyBuffer = new Byte[ propertyBufferSize ];
 
 		if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
-			out var requiredSize ) ) {
+				out var requiredSize ) ) {
+
 			//Marshal.FreeHGlobal( propertyBuffer );
 			var error = Marshal.GetLastWin32Error();
 
@@ -142,7 +143,8 @@ public abstract class DeviceClass : ABetterClassDispose {
 		var propertyBuffer = new Byte[ propertyBufferSize ];
 
 		if ( !NativeMethods.SetupDiGetDeviceRegistryProperty( this._deviceInfoSet, ref devData, property, out var propertyRegDataType, propertyBuffer, propertyBufferSize,
-			out var requiredSize ) ) {
+				out var requiredSize ) ) {
+
 			//Marshal.FreeHGlobal( propertyBuffer );
 			var error = Marshal.GetLastWin32Error();
 
@@ -229,8 +231,10 @@ public abstract class DeviceClass : ABetterClassDispose {
 			Marshal.FreeHGlobal( buffer );
 
 			if ( this._classGuid.Equals( new Guid( NativeMethods.GUID_DEVINTERFACE_DISK ) ) ) {
+
 				// Find disks
-				var hFile = NativeMethods.CreateFile( devicePath ?? throw new NullException(nameof(devicePath)), 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero );
+				var hFile = NativeMethods.CreateFile( devicePath ?? throw new NullException( nameof( devicePath ) ), 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0,
+					IntPtr.Zero );
 
 				if ( hFile.IsInvalid ) {
 					throw new Win32Exception( Marshal.GetLastWin32Error() );
@@ -243,7 +247,7 @@ public abstract class DeviceClass : ABetterClassDispose {
 
 				try {
 					if ( !NativeMethods.DeviceIoControl( hFile.DangerousGetHandle(), NativeMethods.IOCTL_STORAGE_GET_DEVICE_NUMBER, IntPtr.Zero, 0, numBuffer, numBufSize,
-						out bytesReturned, IntPtr.Zero ) ) {
+							out bytesReturned, IntPtr.Zero ) ) {
 						Console.WriteLine( "IOCTL failed." );
 					}
 				}
@@ -258,11 +262,13 @@ public abstract class DeviceClass : ABetterClassDispose {
 					var toStructure = Marshal.PtrToStructure( numBuffer, typeof( NativeMethods.STORAGE_DEVICE_NUMBER ) );
 
 					disknum = ( NativeMethods.STORAGE_DEVICE_NUMBER? )toStructure ??
-					          throw new UnknownWarning( $"Unable to {nameof( Marshal )}.{nameof( Marshal.PtrToStructure )} for device." );
+							  throw new UnknownWarning( $"Unable to {nameof( Marshal )}.{nameof( Marshal.PtrToStructure )} for device." );
 				}
 				else {
 					disknum = new NativeMethods.STORAGE_DEVICE_NUMBER {
-						DeviceNumber = -1, DeviceType = -1, PartitionNumber = -1
+						DeviceNumber = -1,
+						DeviceType = -1,
+						PartitionNumber = -1
 					};
 				}
 
@@ -283,5 +289,4 @@ public abstract class DeviceClass : ABetterClassDispose {
 
 		return devices;
 	}
-
 }

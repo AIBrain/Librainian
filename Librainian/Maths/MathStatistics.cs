@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "MathStatistics.cs" last touched on 2021-10-13 at 4:27 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "MathStatistics.cs" last formatted on 2021-11-30 at 7:19 PM by Protiguous.
 
 namespace Librainian.Maths;
 
@@ -42,12 +41,11 @@ public static class MathStatistics {
 		values.DefaultIfEmpty().Aggregate( ( ema, nextQuote ) => alpha * nextQuote + ( 1 - alpha ) * ema );
 
 	/// <summary>
-	///     <para>
-	///         In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or
-	///         typical value of a set of numbers by using the product of their
-	///         values (as opposed to the arithmetic mean which uses their sum).
-	///     </para>
-	///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
+	/// <para>
+	/// In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value
+	/// of a set of numbers by using the product of their values (as opposed to the arithmetic mean which uses their sum).
+	/// </para>
+	/// <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
 	/// </summary>
 	/// <param name="data"></param>
 	/// <param name="items"></param>
@@ -63,12 +61,11 @@ public static class MathStatistics {
 	}
 
 	/// <summary>
-	///     <para>
-	///         In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or
-	///         typical value of a set of numbers by using the product of their
-	///         values (as opposed to the arithmetic mean which uses their sum).
-	///     </para>
-	///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
+	/// <para>
+	/// In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value
+	/// of a set of numbers by using the product of their values (as opposed to the arithmetic mean which uses their sum).
+	/// </para>
+	/// <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
 	/// </summary>
 	/// <param name="data"></param>
 	/// <param name="items"></param>
@@ -84,12 +81,11 @@ public static class MathStatistics {
 	}
 
 	/// <summary>
-	///     <para>
-	///         In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or
-	///         typical value of a set of numbers by using the product of their
-	///         values (as opposed to the arithmetic mean which uses their sum).
-	///     </para>
-	///     <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
+	/// <para>
+	/// In mathematics, the geometric mean is a type of mean or average, which indicates the central tendency or typical value
+	/// of a set of numbers by using the product of their values (as opposed to the arithmetic mean which uses their sum).
+	/// </para>
+	/// <para>The geometric mean is defined as the nth root of the product of n numbers.</para>
 	/// </summary>
 	/// <param name="data"></param>
 	/// <param name="items"></param>
@@ -297,14 +293,12 @@ public static class MathStatistics {
 
 		// if P is -0.1 then a chance of 0.01 will return default; a chance of 0.90 will return false
 
-		// if P is 0.1 then a chance of 0.01 will return true a chance of 0.05 will return true
-		// a chance of 0.09 will return true a chance of 0.10 will return false a chance of 0.50
-		// will return false a chance of 0.90 will return false
+		// if P is 0.1 then a chance of 0.01 will return true a chance of 0.05 will return true a chance of 0.09 will return
+		// true a chance of 0.10 will return false a chance of 0.50 will return false a chance of 0.90 will return false
 
-		// if P is 0.89 then a chance of 0.01 will return true a chance of 0.05 will return true
-		// a chance of 0.09 will return true a chance of 0.10 will return true a chance of 0.50
-		// will return true a chance of 0.85 will return true a chance of 0.89 will return true
-		// a chance of 0.90 will return false
+		// if P is 0.89 then a chance of 0.01 will return true a chance of 0.05 will return true a chance of 0.09 will return
+		// true a chance of 0.10 will return true a chance of 0.50 will return true a chance of 0.85 will return true a chance
+		// of 0.89 will return true a chance of 0.90 will return false
 	}
 
 	public static Double Slope( this List<TimeProgression> data ) {
@@ -342,5 +336,4 @@ public static class MathStatistics {
 
 		return ( Decimal )Math.Sqrt( decimals.Average( v => Math.Pow( ( Double )( v - avg ), 2 ) ) );
 	}
-
 }

@@ -1,29 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "IOWrapper.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "IOWrapper.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -41,6 +40,27 @@ using OperatingSystem;
 /// <see cref="http://blogs.msdn.com/b/jeffrey_wall/archive/2004/09/13/229137.aspx" />
 public static class IOWrapper {
 
+	private const UInt32 ErrorInsufficientBuffer = 122;
+
+	private const UInt32 FileFlagNoBuffering = 0x20000000;
+
+	private const UInt32 FileReadAttributes = 0x0080;
+
+	private const UInt32 FileShareDelete = 0x00000004;
+
+	// CreateFile constants
+	private const UInt32 FileShareRead = 0x00000001;
+
+	private const UInt32 FileShareWrite = 0x00000002;
+
+	private const UInt32 FileWriteAttributes = 0x0100;
+
+	private const UInt32 GenericRead = 0x80000000;
+
+	private const UInt32 GenericWrite = 0x40000000;
+
+	private const UInt32 OpenExisting = 3;
+
 	/// <summary>Access flags.</summary>
 	[Flags]
 	public enum ACCESS_MASK : UInt32 {
@@ -49,8 +69,8 @@ public static class IOWrapper {
 		DELETE = 0x00010000,
 
 		/// <summary>
-		///     The right to read the information in the object's security descriptor, not including the information in the
-		///     system access control list (SACL).
+		/// The right to read the information in the object's security descriptor, not including the information in the system
+		/// access control list (SACL).
 		/// </summary>
 		READ_CONTROL = 0x00020000,
 
@@ -61,9 +81,8 @@ public static class IOWrapper {
 		WRITE_OWNER = 0x00080000,
 
 		/// <summary>
-		///     The right to use the object for synchronization. this enables a thread to wait until the object is in the signaled
-		///     state. Some object types do not support this access
-		///     right.
+		/// The right to use the object for synchronization. this enables a thread to wait until the object is in the signaled
+		/// state. Some object types do not support this access right.
 		/// </summary>
 		SYNCHRONIZE = 0x00100000,
 
@@ -86,9 +105,8 @@ public static class IOWrapper {
 		SPECIFIC_RIGHTS_ALL = 0x0000FFFF,
 
 		/// <summary>
-		///     Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right
-		///     only if the SE_SECURITY_NAME privilege is enabled in
-		///     the access token of the requesting thread.
+		/// Controls the ability to get or set the SACL in an object's security descriptor. The system grants this access right
+		/// only if the SE_SECURITY_NAME privilege is enabled in the access token of the requesting thread.
 		/// </summary>
 		ACCESS_SYSTEM_SECURITY = 0x01000000,
 
@@ -106,7 +124,6 @@ public static class IOWrapper {
 
 		/// <summary>All possible access rights.</summary>
 		GENERIC_ALL = 0x10000000
-
 	}
 
 	/// <summary>Enumerates the that may apply to files.</summary>
@@ -127,8 +144,8 @@ public static class IOWrapper {
 		GENERIC_ALL = ACCESS_MASK.GENERIC_ALL,
 
 		/// <summary>
-		///     For a file object, the right to read the corresponding file data. For a directory object, the right to read
-		///     the corresponding directory data.
+		/// For a file object, the right to read the corresponding file data. For a directory object, the right to read the
+		/// corresponding directory data.
 		/// </summary>
 		FILE_READ_DATA = 0x0001, // file & pipe
 
@@ -136,8 +153,8 @@ public static class IOWrapper {
 		FILE_LIST_DIRECTORY = 0x0001, // directory
 
 		/// <summary>
-		///     For a file object, the right to write data to the file. For a directory object, the right to create a file in
-		///     the directory ( <see cref="FILE_ADD_FILE" />).
+		/// For a file object, the right to write data to the file. For a directory object, the right to create a file in the
+		/// directory ( <see cref="FILE_ADD_FILE" />).
 		/// </summary>
 		FILE_WRITE_DATA = 0x0002, // file & pipe
 
@@ -145,10 +162,9 @@ public static class IOWrapper {
 		FILE_ADD_FILE = 0x0002, // directory
 
 		/// <summary>
-		///     For a file object, the right to append data to the file. (For local files, write operations will not overwrite
-		///     existing data if this flag is specified without
-		///     <see cref="FILE_WRITE_DATA" />.) For a directory object, the right to create a subdirectory (
-		///     <see cref="FILE_ADD_SUBDIRECTORY" />).
+		/// For a file object, the right to append data to the file. (For local files, write operations will not overwrite
+		/// existing data if this flag is specified without <see cref="FILE_WRITE_DATA" />.) For a directory object, the right
+		/// to create a subdirectory ( <see cref="FILE_ADD_SUBDIRECTORY" />).
 		/// </summary>
 		FILE_APPEND_DATA = 0x0004, // file
 
@@ -165,18 +181,20 @@ public static class IOWrapper {
 		FILE_WRITE_EA = 0x0010, // file & directory
 
 		/// <summary>
-		///     For a native code file, the right to execute the file. this access right given to scripts may cause the script
-		///     to be executable, depending on the script interpreter.
+		/// For a native code file, the right to execute the file. this access right given to scripts may cause the script to
+		/// be executable, depending on the script interpreter.
 		/// </summary>
 		FILE_EXECUTE = 0x0020, // file
 
 		/// <summary>
-		///     For a directory, the right to traverse the directory. By default, users are assigned the
-		///     BYPASS_TRAVERSE_CHECKING privilege, which ignores the FILE_TRAVERSE access right.
+		/// For a directory, the right to traverse the directory. By default, users are assigned the BYPASS_TRAVERSE_CHECKING
+		/// privilege, which ignores the FILE_TRAVERSE access right.
 		/// </summary>
 		FILE_TRAVERSE = 0x0020, // directory
 
-		/// <summary>For a directory, the right to delete a directory and all the files it contains, including read-only files.</summary>
+		/// <summary>
+		/// For a directory, the right to delete a directory and all the files it contains, including read-only files.
+		/// </summary>
 		FILE_DELETE_CHILD = 0x0040, // directory
 
 		/// <summary>The right to read file attributes.</summary>
@@ -194,29 +212,7 @@ public static class IOWrapper {
 		FILE_GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | ACCESS_MASK.SYNCHRONIZE,
 
 		FILE_GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | ACCESS_MASK.SYNCHRONIZE
-
 	}
-
-	private const UInt32 ErrorInsufficientBuffer = 122;
-
-	private const UInt32 FileFlagNoBuffering = 0x20000000;
-
-	private const UInt32 FileReadAttributes = 0x0080;
-
-	private const UInt32 FileShareDelete = 0x00000004;
-
-	// CreateFile constants
-	private const UInt32 FileShareRead = 0x00000001;
-
-	private const UInt32 FileShareWrite = 0x00000002;
-
-	private const UInt32 FileWriteAttributes = 0x0100;
-
-	private const UInt32 GenericRead = 0x80000000;
-
-	private const UInt32 GenericWrite = 0x40000000;
-
-	private const UInt32 OpenExisting = 3;
 
 	/// <summary>returns a 2*number of extents array - the vcn and the lcn as pairs</summary>
 	/// <param name="path">file to get the map for ex: "c:\windows\explorer.exe"</param>
@@ -304,7 +300,7 @@ public static class IOWrapper {
 	/// <returns>a bitarray for each cluster</returns>
 	public static BitArray GetVolumeMap( String deviceName ) {
 		if ( String.IsNullOrWhiteSpace( deviceName ) ) {
-			throw new NullException(  nameof( deviceName ) );
+			throw new NullException( nameof( deviceName ) );
 		}
 
 		var pAlloc = IntPtr.Zero;
@@ -318,8 +314,8 @@ public static class IOWrapper {
 			var handle = GCHandle.Alloc( i64, GCHandleType.Pinned );
 			var p = handle.AddrOfPinnedObject();
 
-			// alloc off more than enough for my machine 64 megs == 67108864 bytes == 536870912
-			// bits == cluster count NTFS 4k clusters == 2147483648 k of storage == 2097152 megs
+			// alloc off more than enough for my machine 64 megs == 67108864 bytes == 536870912 bits == cluster count NTFS 4k
+			// clusters == 2147483648 k of storage == 2097152 megs
 			// == 2048 gig disk storage
 			const Int32 q = 1024 * 1024 * 64; // 1024 bytes == 1k * 1024 == 1 meg * 64 == 64 megs
 
@@ -437,5 +433,4 @@ public static class IOWrapper {
 
 	/// <summary>input structure for use in MoveFile</summary>
 	public record MoveFileData( Int32 ClusterCount, IntPtr HFile, Int64 StartingLcn, Int64 StartingVcn );
-
 }

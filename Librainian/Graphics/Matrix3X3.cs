@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Matrix3X3.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Matrix3X3.cs" last formatted on 2021-11-30 at 7:18 PM by Protiguous.
 
 namespace Librainian.Graphics;
 
@@ -58,8 +57,7 @@ public class Matrix3X3 : ICloneable {
 
 	/// <summary>Initializes a new instance of the <see cref="Matrix3X3" /> class.</summary>
 	/// <param name="coefficients">
-	///     The coefficients to initialise. The number of elements of the array should be equal to 9,
-	///     else an exception will be thrown
+	/// The coefficients to initialise. The number of elements of the array should be equal to 9, else an exception will be thrown
 	/// </param>
 	public Matrix3X3( Double[] coefficients ) {
 		if ( coefficients.GetLength( 0 ) != 9 ) {
@@ -88,6 +86,7 @@ public class Matrix3X3 : ICloneable {
 	/// <value>The determinant</value>
 	public Double Determinant {
 		get {
+
 			// |a b c| In general, for a 3X3 matrix |d e f| |g h i|
 			//
 			// The determinant can be found as follows: a(ei-fh) - b(di-fg) + c(dh-eg)
@@ -115,8 +114,7 @@ public class Matrix3X3 : ICloneable {
 	}
 
 	/// <summary>
-	///     Gets a value indicating whether this matrix is affine. This will be true if the right column (M13, M23, M33)
-	///     is 0 0 1
+	/// Gets a value indicating whether this matrix is affine. This will be true if the right column (M13, M23, M33) is 0 0 1
 	/// </summary>
 	/// <value><c>true</c> if this instance is affine; otherwise, <c>false</c>.</value>
 	public Boolean IsAffine => this._coeffs[ _M13 ].Near( 0 ) && this._coeffs[ _M23 ].Near( 0 ) && this._coeffs[ _M33 ].Near( 1 );
@@ -225,6 +223,7 @@ public class Matrix3X3 : ICloneable {
 	/// <summary>Gets the inverse of this matrix. If the matrix is singular, this method will throw an exception</summary>
 	/// <returns>The inverse</returns>
 	public Matrix3X3 Inverse() {
+
 		// Taken from http://everything2.com/index.pl?node_id=1271704
 		//                                                  a b c
 		//In general, the inverse matrix of a 3X3 matrix    d e f
@@ -285,8 +284,9 @@ public class Matrix3X3 : ICloneable {
 	/*
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="Matrix3X3"/> class. The IAffineTransformCoefficients passed in is used to populate coefficients M11, M12, M21, M22, M31, M32. The remaining column (M13,
-            /// M23, M33) is populated with homogenous values 0 0 1.
+            /// Initializes a new instance of the <see cref="Matrix3X3" /> class. The IAffineTransformCoefficients passed in is
+            /// used to populate coefficients M11, M12, M21, M22, M31, M32. The remaining column (M13, M23, M33) is populated
+            /// with homogenous values 0 0 1.
             /// </summary>
             /// <param name="affineMatrix">The IAffineTransformCoefficients used to populate M11, M12, M21, M22, M31, M32</param>
             public Matrix3X3( IAffineTransformCoefficients affineTransform ) {
@@ -306,6 +306,7 @@ public class Matrix3X3 : ICloneable {
 	/// <summary>Multiplies the current matrix by the 3x3 matrix passed in</summary>
 	/// <param name="right"></param>
 	public void Multiply( Matrix3X3 right ) {
+
 		// Get coeffs
 		var a = this._coeffs[ _M11 ];
 		var b = this._coeffs[ _M12 ];
@@ -354,5 +355,4 @@ public class Matrix3X3 : ICloneable {
 		this._coeffs[ 7 ] *= scalar;
 		this._coeffs[ 8 ] *= scalar;
 	}
-
 }

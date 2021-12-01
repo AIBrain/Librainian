@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "FindEveryDocument.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "FindEveryDocument.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -43,11 +42,11 @@ using Threadsafe;
 using Utilities.Disposables;
 
 /// <summary>
-///     <para>Scan every drive.</para>
-///     <para>Scan every folder.</para>
-///     <para>Scan every document.</para>
-///     <para>await <see cref="StartScanning" /> to start the scan.</para>
-///     <para>Cancel scanning via <see cref="CancellationTokenSource" />.</para>
+/// <para>Scan every drive.</para>
+/// <para>Scan every folder.</para>
+/// <para>Scan every document.</para>
+/// <para>await <see cref="StartScanning" /> to start the scan.</para>
+/// <para>Cancel scanning via <see cref="CancellationTokenSource" />.</para>
 /// </summary>
 public class FindEveryDocument : ABetterClassDispose {
 
@@ -61,20 +60,18 @@ public class FindEveryDocument : ABetterClassDispose {
 
 	private CancellationTokenSource CancellationTokenSource { get; } = new();
 
-	/// <summary>
-	///     A reference to the out parameter in the ctor.
-	/// </summary>
+	/// <summary>A reference to the out parameter in the ctor.</summary>
 	private BufferBlock<IDocument> DocumentsFound { get; }
 
 	private ActionBlock<Disk>? DrivesFound { get; set; }
 
 	private ActionBlock<IFolder>? FoldersFound { get; set; }
 
+	public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
+
 	public String? CurrentStatus { get; private set; }
 
 	public IProgress<(Single counter, String message)> Progress { get; }
-
-	public CancellationToken CancellationToken => this.CancellationTokenSource.Token;
 
 	private void SetCurrentStatus( String? message ) => this.CurrentStatus = message;
 
@@ -155,7 +152,7 @@ public class FindEveryDocument : ABetterClassDispose {
 				this.FoldersFound?.Post( folder );
 
 				Interlocked.Increment( ref counter );
-				this.Progress.Report( ( counter, $"Found main folder {folder.FullPath.SmartQuote()}." ) );
+				this.Progress.Report( (counter, $"Found main folder {folder.FullPath.SmartQuote()}.") );
 			}
 		}
 
@@ -170,7 +167,7 @@ public class FindEveryDocument : ABetterClassDispose {
 			this.FoldersFound?.Post( folder );
 
 			Interlocked.Increment( ref counter );
-			this.Progress.Report( ( counter, $"Found sub folder {folder.FullPath.SmartQuote()}." ) );
+			this.Progress.Report( (counter, $"Found sub folder {folder.FullPath.SmartQuote()}.") );
 		}
 
 		async Task AddFoundDocument( IDocument document ) {
@@ -184,7 +181,7 @@ public class FindEveryDocument : ABetterClassDispose {
 
 			Interlocked.Increment( ref counter );
 
-			this.Progress.Report( ( counter, $"Found document {document.FullPath.SmartQuote()}." ) );
+			this.Progress.Report( (counter, $"Found document {document.FullPath.SmartQuote()}.") );
 		}
 
 		async Task PauseWhilePaused() {
@@ -209,5 +206,4 @@ public class FindEveryDocument : ABetterClassDispose {
 		this.FoldersFound.Complete();
 		this.ResumeScanning();
 	}
-
 }

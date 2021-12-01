@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "PersistenceExtensions.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "PersistenceExtensions.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 #nullable enable
 
@@ -55,12 +54,10 @@ using Newtonsoft.Json.Serialization;
 public static class PersistenceExtensions {
 
 	/// <summary>
-	///     <para><see cref="Folder" /> to store application data.</para>
-	///     <para>
-	///         <see cref="Environment.SpecialFolder.LocalApplicationData" />
-	///     </para>
+	/// <para><see cref="Folder" /> to store application data.</para>
+	/// <para><see cref="Environment.SpecialFolder.LocalApplicationData" /></para>
 	/// </summary>
-	public static readonly Lazy<Folder> LocalDataFolder = new(() => {
+	public static readonly Lazy<Folder> LocalDataFolder = new( () => {
 		var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
 		if ( !folder.Info.Exists ) {
@@ -68,15 +65,17 @@ public static class PersistenceExtensions {
 		}
 
 		return folder;
-	});
+	} );
 
-	public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new(() => new JsonSerializer {
-		ReferenceLoopHandling = ReferenceLoopHandling.Serialize, PreserveReferencesHandling = PreserveReferencesHandling.All
-	}, true);
+	public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
+		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+		PreserveReferencesHandling = PreserveReferencesHandling.All
+	}, true );
 
-	public static readonly ThreadLocal<StreamingContext> StreamingContexts = new(() => new StreamingContext( StreamingContextStates.All ), true);
+	public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
 
-	public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new(() => new JsonSerializerSettings {
+	public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
+
 		//TODO ContractResolver needs testing
 		ContractResolver = new MyContractResolver(),
 		TypeNameHandling = TypeNameHandling.Auto,
@@ -84,7 +83,7 @@ public static class PersistenceExtensions {
 		DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
 		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 		PreserveReferencesHandling = PreserveReferencesHandling.All
-	}, true);
+	}, true );
 
 	/// <summary>Bascially just calls <see cref="FromJSON{T}" />.</summary>
 	/// <typeparam name="T"></typeparam>
@@ -116,6 +115,7 @@ public static class PersistenceExtensions {
 		}
 
 		try {
+
 			//Report.Enter();
 			var stopwatch = Stopwatch.StartNew();
 
@@ -149,7 +149,7 @@ public static class PersistenceExtensions {
 								return;
 							}
 
-							( var key, var value ) = line.Deserialize<(TKey, TValue)>();
+							(var key, var value) = line.Deserialize<(TKey, TValue)>();
 
 							toDictionary[ key ] = value;
 						}
@@ -193,7 +193,7 @@ public static class PersistenceExtensions {
 	}
 
 	/// <summary>Can the file be read from at this moment in time ?</summary>
-	/// <param name="isf">     </param>
+	/// <param name="isf"></param>
 	/// <param name="document"></param>
 	public static Boolean FileCanBeRead( this IsolatedStorageFile isf, Document document ) {
 		if ( isf is null ) {
@@ -261,9 +261,8 @@ public static class PersistenceExtensions {
 	/// <param name="self"></param>
 	/// <exception cref="NullException"></exception>
 	/// <exception cref="InvalidDataContractException">
-	///     the type being serialized does not conform to data contract rules. For example, the
-	///     <see cref="DataContractAttribute" /> attribute
-	///     has not been applied to the type.
+	/// the type being serialized does not conform to data contract rules. For example, the <see cref="DataContractAttribute"
+	/// /> attribute has not been applied to the type.
 	/// </exception>
 	/// <exception cref="SerializationException">there is a problem with the instance being serialized.</exception>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -286,16 +285,16 @@ public static class PersistenceExtensions {
 	}
 
 	/// <summary>
-	///     <para>Persist the <paramref name="dictionary" /> into <paramref name="folder" />.</para>
+	/// <para>Persist the <paramref name="dictionary" /> into <paramref name="folder" />.</para>
 	/// </summary>
 	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TValue"></typeparam>
 	/// <param name="dictionary"></param>
-	/// <param name="folder">    </param>
+	/// <param name="folder"></param>
 	/// <param name="calledWhat"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="progress">  </param>
-	/// <param name="extension"> </param>
+	/// <param name="progress"></param>
+	/// <param name="extension"></param>
 	public static async Task<Boolean> SerializeDictionary<TKey, TValue>(
 		this IDictionary<TKey, TValue> dictionary,
 		Folder folder,
@@ -309,6 +308,7 @@ public static class PersistenceExtensions {
 		}
 
 		try {
+
 			//Report.Enter();
 			var stopwatch = Stopwatch.StartNew();
 
@@ -335,7 +335,7 @@ public static class PersistenceExtensions {
 			foreach ( var pair in dictionary ) {
 				currentLine++;
 
-				var data = ( pair.Key, pair.Value ).Serialize();
+				var data = (pair.Key, pair.Value).Serialize();
 
 				var hereNow = DateTime.UtcNow.ToGuid();
 
@@ -405,12 +405,12 @@ public static class PersistenceExtensions {
 	/*
 
 	/// <summary>
-	///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use
-	///     <see cref="TryLoad{TSource}" /> to load an object.
+	/// Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use <see
+	/// cref="TryLoad{TSource}" /> to load an object.
 	/// </summary>
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="objectToSerialize"></param>
-	/// <param name="attribute">        </param>
+	/// <param name="attribute"></param>
 	/// <param name="destination"></param>
 	/// <param name="compression"></param>
 	/// <returns></returns>
@@ -441,7 +441,7 @@ public static class PersistenceExtensions {
 
 	/// <summary>Return this object as a JSON string or null.</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="self">       </param>
+	/// <param name="self"></param>
 	/// <param name="formatting"></param>
 	public static String? ToJSON<T>( this T? self, Formatting formatting = Formatting.None ) =>
 		self is null ? default( String? ) : JsonConvert.SerializeObject( self, formatting, Jss.Value );
@@ -449,15 +449,15 @@ public static class PersistenceExtensions {
 	/*
 
 	/// <summary>
-	///     <para>
-	///         Attempts to deserialize an NTFS alternate stream with the <paramref name="attribute" /> to the file
-	///         <paramref name="location" />.
-	///     </para>
+	/// <para>
+	/// Attempts to deserialize an NTFS alternate stream with the <paramref name="attribute" /> to the file <paramref
+	/// name="location" />.
+	/// </para>
 	/// </summary>
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="attribute"></param>
-	/// <param name="value">    </param>
-	/// <param name="location"> </param>
+	/// <param name="value"></param>
+	/// <param name="location"></param>
 	/// <see cref="TrySave{TKey}" />
 	/// <returns></returns>
 	public static Boolean TryLoad<TSource>([NotNull] this String attribute, out TSource value, String location = null) {
@@ -492,9 +492,9 @@ public static class PersistenceExtensions {
 
 	/// <summary>Persist the <paramref name="self" /> to a JSON text file.</summary>
 	/// <typeparam name="TKey"></typeparam>
-	/// <param name="self">    </param>
-	/// <param name="document">  </param>
-	/// <param name="overwrite"> </param>
+	/// <param name="self"></param>
+	/// <param name="document"></param>
+	/// <param name="overwrite"></param>
 	/// <param name="formatting"></param>
 	/// <returns></returns>
 	public static Boolean TrySave<TKey>( [CanBeNull] this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
@@ -540,7 +540,5 @@ public static class PersistenceExtensions {
 
 			return list;
 		}
-
 	}
-
 }

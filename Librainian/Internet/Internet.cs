@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Internet.cs" last touched on 2021-10-13 at 4:27 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Internet.cs" last formatted on 2021-11-30 at 7:18 PM by Protiguous.
 
 namespace Librainian.Internet;
 
@@ -39,10 +38,6 @@ using FileSystem;
 using Logging;
 
 public static class Internet {
-
-	private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new();
-
-	internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new(() => new WebClientWithTimeout(), true);
 
 	public interface IDownloader {
 
@@ -70,8 +65,7 @@ public static class Internet {
 		Task? Task { get; set; }
 
 		/// <summary>
-		///     The length of time to wait before the download is cancelled. See also:
-		///     <seealso cref="UnderlyingDownloader.Forever" />.
+		/// The length of time to wait before the download is cancelled. See also: <seealso cref="UnderlyingDownloader.Forever" />.
 		/// </summary>
 		TimeSpan Timeout { get; set; }
 
@@ -91,8 +85,11 @@ public static class Internet {
 		/// <exception cref="AbandonedMutexException">An abandoned mutex often indicates a serious coding error.</exception>
 		/// <exception cref="Exception"></exception>
 		Boolean Wait( TimeSpan forHowLong, CancellationToken cancellationToken );
-
 	}
+
+	private static ConcurrentDictionary<Guid, IDownloader> DownloadRequests { get; } = new();
+
+	internal static ThreadLocal<WebClientWithTimeout> WebClients { get; } = new( () => new WebClientWithTimeout(), true );
 
 	public class FileDownloader : UnderlyingDownloader {
 
@@ -100,8 +97,8 @@ public static class Internet {
 		/// <param name="source">The url of the data source to download.</param>
 		/// <param name="destination">The local document to download to.</param>
 		/// <param name="waitifBusy">
-		///     If true and <see cref="WebClient.IsBusy" /> is true, when block until false. Otherwise
-		///     <see cref="InvalidOperationException" /> will be thrown.
+		/// If true and <see cref="WebClient.IsBusy" /> is true, when block until false. Otherwise <see
+		/// cref="InvalidOperationException" /> will be thrown.
 		/// </param>
 		/// <param name="timeout">Time to wait before a download is cancelled.</param>
 		/// <param name="cancellationToken"></param>
@@ -125,7 +122,7 @@ public static class Internet {
 			}
 		}
 
-		public sealed override Boolean Start() {
+		public override sealed Boolean Start() {
 			this.Downloaded.Reset();
 
 			this.Client.DownloadFileCompleted += ( sender, args ) => {
@@ -148,7 +145,6 @@ public static class Internet {
 
 			return base.Start();
 		}
-
 	}
 
 	public abstract class UnderlyingDownloader : IDownloader {
@@ -201,19 +197,19 @@ public static class Internet {
 
 		public WebClientWithTimeout Client { get; }
 
-		public ManualResetEventSlim Downloaded { get; } = new(false);
-
-		/// <summary>The unique identifier assigned to this download.</summary>
-		public Guid Id { get; }
-
 		public ICredentials? Credentials { get; set; }
 
 		public Byte[]? DestinationBuffer { get; set; }
 
 		public Document DestinationDocument { get; set; }
 
+		public ManualResetEventSlim Downloaded { get; } = new( false );
+
 		/// <summary>The amount of time passed since the download was started. See also: <seealso cref="WhenStarted" />.</summary>
 		public Stopwatch? Elasped { get; set; }
+
+		/// <summary>The unique identifier assigned to this download.</summary>
+		public Guid Id { get; }
 
 		public Action? OnCancelled { get; set; }
 
@@ -242,6 +238,18 @@ public static class Internet {
 			}
 
 			return this.IsBusy();
+		}
+
+		public (Status responseCode, Int64 fileLength) GetContentLength() {
+			if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
+				request.Method = "HEAD";
+
+				using var response = request.GetResponse();
+
+				return (Status.Success, response.ContentLength);
+			}
+
+			return (Status.Error, default( Int64 ));
 		}
 
 		/// <summary>Returns true if the web request is in progress.</summary>
@@ -293,19 +301,5 @@ public static class Internet {
 				}
 			}
 		}
-
-		public (Status responseCode, Int64 fileLength) GetContentLength() {
-			if ( WebRequest.Create( this.Source ) is HttpWebRequest request ) {
-				request.Method = "HEAD";
-
-				using var response = request.GetResponse();
-
-				return ( Status.Success, response.ContentLength );
-			}
-
-			return ( Status.Error, default( Int64 ) );
-		}
-
 	}
-
 }

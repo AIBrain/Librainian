@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "Logging.cs" last formatted on 2021-11-10 at 8:05 AM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "Logging.cs" last formatted on 2021-11-30 at 7:18 PM by Protiguous.
 
 #nullable enable
 
@@ -41,15 +40,11 @@ public static class Logging {
 
 	//private static readonly ILogger<Type>? _logger;
 
-	[DebuggerStepThrough]
-	[Conditional( "DEBUG" )]
-	public static void BreakIf( this Boolean condition, String? message = null ) => condition.BreakIfTrue( message );
-
 	/// <summary>
-	///     <para>Write to debug the first 50 chars of the object we broke on.</para>
-	///     <para>Then write to debug the reason we broke on.</para>
-	///     <para>Then Debugger.Break if a Debugger is attached.</para>
-	///     <remarks>This method is Conditional on Debug.</remarks>
+	/// <para>Write to debug the first 50 chars of the object we broke on.</para>
+	/// <para>Then write to debug the reason we broke on.</para>
+	/// <para>Then Debugger.Break if a Debugger is attached.</para>
+	/// <remarks>This method is Conditional on Debug.</remarks>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="brokeOn"></param>
@@ -72,6 +67,10 @@ public static class Logging {
 	}
 
 	[DebuggerStepThrough]
+	[Conditional( "DEBUG" )]
+	public static void BreakIf( this Boolean condition, String? message = null ) => condition.BreakIfTrue( message );
+
+	[DebuggerStepThrough]
 	public static void BreakIfFalse( this Boolean condition, String? message = null ) {
 		if ( !condition ) {
 			message.Break( $"{nameof( condition )} was false." );
@@ -88,13 +87,13 @@ public static class Logging {
 	[DebuggerStepThrough]
 	public static (Color fore, Color back) Colors( this LogLevel loggingLevel ) =>
 		loggingLevel switch {
-			LogLevel.Trace => ( Color.Green, Color.White ),
-			LogLevel.Debug => ( Color.DarkSeaGreen, Color.White ),
-			LogLevel.Information => ( Color.Black, Color.White ),
-			LogLevel.Warning => ( Color.Goldenrod, Color.White ),
-			LogLevel.Error => ( Color.Red, Color.White ),
-			LogLevel.Critical => ( Color.DarkRed, Color.Aqua ),
-			LogLevel.None => ( Color.White, Color.DarkBlue ),
+			LogLevel.Trace => (Color.Green, Color.White),
+			LogLevel.Debug => (Color.DarkSeaGreen, Color.White),
+			LogLevel.Information => (Color.Black, Color.White),
+			LogLevel.Warning => (Color.Goldenrod, Color.White),
+			LogLevel.Error => (Color.Red, Color.White),
+			LogLevel.Critical => (Color.DarkRed, Color.Aqua),
+			LogLevel.None => (Color.White, Color.DarkBlue),
 			var _ => throw new ArgumentOutOfRangeException( nameof( loggingLevel ), loggingLevel, null )
 		};
 
@@ -151,11 +150,10 @@ public static class Logging {
 	}
 
 	/*
+
 	/// <summary>
-	///     Write
-	///     <param name="self"></param>
-	///     as JSON to debug.
-	///     <para>Append <paramref name="more" /> if it has text.</para>
+	/// Write <param name="self"></param> as JSON to debug.
+	/// <para>Append <paramref name="more" /> if it has text.</para>
 	/// </summary>
 	/// <typeparam name="TT"></typeparam>
 	/// <typeparam name="TM"></typeparam>
@@ -205,8 +203,8 @@ public static class Logging {
 	}
 
 	/// <summary>
-	///     Write a message to System.Diagnostics.Trace.
-	///     <para>See also <see cref="TraceLine" />.</para>
+	/// Write a message to System.Diagnostics.Trace.
+	/// <para>See also <see cref="TraceLine" />.</para>
 	/// </summary>
 	/// <param name="message"></param>
 	[Conditional( "TRACE" )]
@@ -214,8 +212,8 @@ public static class Logging {
 	public static void Trace( this String message ) => System.Diagnostics.Trace.Write( message );
 
 	/// <summary>
-	///     Write a message to System.Diagnostics.TraceLine.
-	///     <para>See also <see cref="Trace" />.</para>
+	/// Write a message to System.Diagnostics.TraceLine.
+	/// <para>See also <see cref="Trace" />.</para>
 	/// </summary>
 	/// <param name="message"></param>
 	[Conditional( "TRACE" )]
@@ -236,5 +234,4 @@ public static class Logging {
 	[Conditional( "VERBOSE" )]
 	[DebuggerStepThrough]
 	public static void Verbose( this String message ) => System.Diagnostics.Trace.WriteLine( message );
-
 }

@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ByteSize.cs" last touched on 2021-10-13 at 4:27 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ByteSize.cs" last formatted on 2021-11-30 at 7:19 PM by Protiguous.
 
 #nullable enable
 
@@ -34,9 +33,8 @@ using System.Globalization;
 using Exceptions;
 
 /// <summary>Represents a byte size value.</summary>
-/// <remarks>Source: https://github.com/omar/ByteSize/blob/master/src/ByteSizeLib/ByteSize.cs </remarks>
+/// <remarks>Source: https://github.com/omar/ByteSize/blob/master/src/ByteSizeLib/ByteSize.cs</remarks>
 public record ByteSize : IComparable<ByteSize> {
-
 	public const Int64 BitsInByte = 8;
 
 	public const String BitSymbol = "b";
@@ -68,6 +66,7 @@ public record ByteSize : IComparable<ByteSize> {
 	public static readonly ByteSize MinValue = FromBits( 0 );
 
 	public ByteSize( Double byteSize ) {
+
 		// Get ceiling because bits are whole units
 		this.Bits = ( Int64 )Math.Ceiling( byteSize * BitsInByte );
 
@@ -84,6 +83,7 @@ public record ByteSize : IComparable<ByteSize> {
 
 	public String LargestWholeNumberSymbol {
 		get {
+
 			// Absolute value is used to deal with negative values
 			if ( Math.Abs( this.PetaBytes ) >= 1 ) {
 				return PetaByteSymbol;
@@ -115,6 +115,7 @@ public record ByteSize : IComparable<ByteSize> {
 
 	public Double LargestWholeNumberValue {
 		get {
+
 			// Absolute value is used to deal with negative values
 			if ( Math.Abs( this.PetaBytes ) >= 1 ) {
 				return this.PetaBytes;
@@ -156,31 +157,31 @@ public record ByteSize : IComparable<ByteSize> {
 
 	public static Boolean Equals( ByteSize? left, ByteSize? right ) => left?.Bits == right?.Bits;
 
-	public static ByteSize FromBits( Int64 value ) => new(value / ( Double )BitsInByte);
+	public static ByteSize FromBits( Int64 value ) => new( value / ( Double )BitsInByte );
 
-	public static ByteSize FromBytes( Double value ) => new(value);
+	public static ByteSize FromBytes( Double value ) => new( value );
 
-	public static ByteSize FromGigaBytes( Double value ) => new(value * BytesInGigaByte);
+	public static ByteSize FromGigaBytes( Double value ) => new( value * BytesInGigaByte );
 
-	public static ByteSize FromKiloBytes( Double value ) => new(value * BytesInKiloByte);
+	public static ByteSize FromKiloBytes( Double value ) => new( value * BytesInKiloByte );
 
-	public static ByteSize FromMegaBytes( Double value ) => new(value * BytesInMegaByte);
+	public static ByteSize FromMegaBytes( Double value ) => new( value * BytesInMegaByte );
 
-	public static ByteSize FromPetaBytes( Double value ) => new(value * BytesInPetaByte);
+	public static ByteSize FromPetaBytes( Double value ) => new( value * BytesInPetaByte );
 
-	public static ByteSize FromTeraBytes( Double value ) => new(value * BytesInTeraByte);
+	public static ByteSize FromTeraBytes( Double value ) => new( value * BytesInTeraByte );
 
-	public static ByteSize operator -( ByteSize b ) => new(-b.Bytes);
+	public static ByteSize operator -( ByteSize b ) => new( -b.Bytes );
 
-	public static ByteSize operator -( ByteSize b1, ByteSize b2 ) => new(b1.Bytes - b2.Bytes);
+	public static ByteSize operator -( ByteSize b1, ByteSize b2 ) => new( b1.Bytes - b2.Bytes );
 
-	public static ByteSize operator --( ByteSize b ) => new(b.Bytes - 1);
+	public static ByteSize operator --( ByteSize b ) => new( b.Bytes - 1 );
 
 	//public static Boolean operator !=( ByteSize b1, ByteSize b2 ) => b1.Bits != b2.Bits;
 
-	public static ByteSize operator +( ByteSize b1, ByteSize b2 ) => new(b1.Bytes + b2.Bytes);
+	public static ByteSize operator +( ByteSize b1, ByteSize b2 ) => new( b1.Bytes + b2.Bytes );
 
-	public static ByteSize operator ++( ByteSize b ) => new(b.Bytes + 1);
+	public static ByteSize operator ++( ByteSize b ) => new( b.Bytes + 1 );
 
 	public static Boolean operator <( ByteSize b1, ByteSize b2 ) => b1.Bits < b2.Bits;
 
@@ -193,6 +194,7 @@ public record ByteSize : IComparable<ByteSize> {
 	public static Boolean operator >=( ByteSize b1, ByteSize b2 ) => b1.Bits >= b2.Bits;
 
 	public static ByteSize Parse( String? s ) {
+
 		// Arg checking
 		if ( String.IsNullOrWhiteSpace( s ) ) {
 			throw new NullException( nameof( s ) );
@@ -288,7 +290,7 @@ public record ByteSize : IComparable<ByteSize> {
 		}
 	}
 
-	public ByteSize Add( ByteSize bs ) => new(this.Bytes + bs.Bytes);
+	public ByteSize Add( ByteSize bs ) => new( this.Bytes + bs.Bytes );
 
 	public ByteSize AddBits( Int64 value ) => this + FromBits( value );
 
@@ -308,12 +310,11 @@ public record ByteSize : IComparable<ByteSize> {
 
 	//public virtual Boolean Equals( ByteSize? value ) => Equals( this, value );
 
-	public ByteSize Subtract( ByteSize bs ) => new(this.Bytes - bs.Bytes);
+	public ByteSize Subtract( ByteSize bs ) => new( this.Bytes - bs.Bytes );
 
 	/// <summary>
-	///     Converts the value of the current ByteSize object to a string. The metric prefix symbol (bit, byte, kilo, mega,
-	///     giga, tera) used is the largest metric prefix such that
-	///     the corresponding value is greater than or equal to one.
+	/// Converts the value of the current ByteSize object to a string. The metric prefix symbol (bit, byte, kilo, mega, giga,
+	/// tera) used is the largest metric prefix such that the corresponding value is greater than or equal to one.
 	/// </summary>
 	public override String ToString() => this.ToString( "0.##", CultureInfo.CurrentCulture );
 
@@ -359,5 +360,4 @@ public record ByteSize : IComparable<ByteSize> {
 	}
 
 	public override Int32 GetHashCode() => HashCode.Combine( this.Bits );
-
 }

@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "LeanStringBuilder.cs" last touched on 2021-10-13 at 4:30 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "LeanStringBuilder.cs" last formatted on 2021-11-30 at 7:21 PM by Protiguous.
 
 #nullable enable
 
@@ -36,9 +35,9 @@ using System.Linq;
 using Newtonsoft.Json;
 
 /// <summary>
-///     Optimized for .Add()ing many! strings.
-///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
-///     <para>Won't throw exceptions on null or empty strings being added.</para>
+/// Optimized for .Add()ing many! strings.
+/// <para>Doesn't realize the final string until <see cref="ToString" />.</para>
+/// <para>Won't throw exceptions on null or empty strings being added.</para>
 /// </summary>
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
@@ -55,32 +54,24 @@ public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
 	private String? _compiled;
 
 	/// <summary>
-	///     Optimized for .Add()ing many! strings.
-	///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
-	///     <para>Won't throw exceptions on null or empty strings being added.</para>
+	/// Optimized for .Add()ing many! strings.
+	/// <para>Doesn't realize the final string until <see cref="ToString" />.</para>
+	/// <para>Won't throw exceptions on null or empty strings being added.</para>
 	/// </summary>
 	public LeanStringBuilder( Int32 initialCapacity = InitialCapacity ) => this._parts = new List<Char[]>( initialCapacity );
-
-	/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
-	/// <param name="other">An object to compare with this object.</param>
-	/// <returns>
-	///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
-	///     <see langword="false" />.
-	/// </returns>
-	public Boolean Equals( LeanStringBuilder? other ) => Equals( this, other );
 
 	private void ClearCompiled() => this._compiled = null;
 
 	/// <summary>
-	///     Optimized for .Add()ing many! strings.
-	///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
-	///     <para>Won't throw exceptions on null or empty strings being added.</para>
+	/// Optimized for .Add()ing many! strings.
+	/// <para>Doesn't realize the final string until <see cref="ToString" />.</para>
+	/// <para>Won't throw exceptions on null or empty strings being added.</para>
 	/// </summary>
-	public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new(initialCapacity);
+	public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new( initialCapacity );
 
 	/// <summary>
-	///     static comparison of <paramref name="left" /> <see cref="LeanStringBuilder" /> vs <paramref name="right" />
-	///     <see cref="LeanStringBuilder" />.
+	/// static comparison of <paramref name="left" /><see cref="LeanStringBuilder" /> vs <paramref name="right" /><see
+	/// cref="LeanStringBuilder" />.
 	/// </summary>
 	/// <param name="left"></param>
 	/// <param name="right"></param>
@@ -110,8 +101,7 @@ public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
 	/// <param name="left">The first value to compare.</param>
 	/// <param name="right">The second value to compare.</param>
 	/// <returns>
-	///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
-	///     false.
+	/// true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.
 	/// </returns>
 	public static Boolean operator ==( LeanStringBuilder? left, LeanStringBuilder? right ) => Equals( left, right );
 
@@ -147,15 +137,22 @@ public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
 		this.ClearCompiled();
 	}
 
-	/// <summary>Determines whether the specified object is equal to the current object.</summary>
-	/// <param name="obj">The object to compare with the current object. </param>
+	/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+	/// <param name="other">An object to compare with this object.</param>
 	/// <returns>
-	///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-	///     <see langword="false" />.
+	/// <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see
+	/// langword="false" />.
+	/// </returns>
+	public Boolean Equals( LeanStringBuilder? other ) => Equals( this, other );
+
+	/// <summary>Determines whether the specified object is equal to the current object.</summary>
+	/// <param name="obj">The object to compare with the current object.</param>
+	/// <returns>
+	/// <see langword="true" /> if the specified object is equal to the current object; otherwise, <see langword="false" />.
 	/// </returns>
 	public override Boolean Equals( Object? obj ) => Equals( this, obj as LeanStringBuilder );
 
-	/// <summary>Serves as the default hash function. </summary>
+	/// <summary>Serves as the default hash function.</summary>
 	/// <returns>A hash code for the current object.</returns>
 	public override Int32 GetHashCode() => this._parts.GetHashCode();
 
@@ -182,5 +179,4 @@ public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
 
 		return this;
 	}
-
 }

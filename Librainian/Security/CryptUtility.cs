@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "CryptUtility.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "CryptUtility.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 namespace Librainian.Security;
 
@@ -33,9 +32,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 
-/// <summary>
-///     Where did this class come from?
-/// </summary>
+/// <summary>Where did this class come from?</summary>
 public static class CryptUtility {
 
 	/// <summary>Return one component of a color</summary>
@@ -58,6 +55,7 @@ public static class CryptUtility {
 	/// <param name="keys">The keys to combine</param>
 	/// <returns>The resulting key stream</returns>
 	private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
+
 		//Xor the keys an their passwords
 		var keyStreams = new MemoryStream[ keys.Count ];
 
@@ -69,15 +67,18 @@ public static class CryptUtility {
 		var resultKeyStream = new MemoryStream();
 
 		//Find length of longest stream
-		var maxLength = keyStreams.Select( stream => stream.Length ).Concat( new Int64[] {
-			0
-		} ).Max();
+		var maxLength = keyStreams.Select( stream => stream.Length )
+								  .Concat( new Int64[] {
+									  0
+								  } )
+								  .Max();
 
 		for ( Int64 n = 0; n <= maxLength; n++ ) {
 			foreach ( var stream in keyStreams ) {
 				var readByte = stream.ReadByte();
 
 				if ( readByte < 0 ) {
+
 					//end of stream - close the file
 					//the last loop (n==maxLength) will close the last stream
 					using ( stream ) {
@@ -85,6 +86,7 @@ public static class CryptUtility {
 					}
 				}
 				else {
+
 					//copy a byte into the result key
 					resultKeyStream.WriteByte( ( Byte )readByte );
 				}
@@ -95,6 +97,7 @@ public static class CryptUtility {
 	}
 
 	private static Byte GetReverseKeyByte( Stream keyStream ) {
+
 		//jump to reverse-read position and read from the end of the stream
 		var keyPosition = keyStream.Position;
 		keyStream.Seek( -keyPosition, SeekOrigin.End );
@@ -116,6 +119,7 @@ public static class CryptUtility {
 		Int32 currentByte;
 
 		while ( ( currentByte = fileStream.ReadByte() ) >= 0 ) {
+
 			//combine the key-byte with the corresponding password-byte
 			currentByte ^= key.Password[ passwordIndex ];
 
@@ -159,5 +163,4 @@ public static class CryptUtility {
 
 		return color;
 	}
-
 }

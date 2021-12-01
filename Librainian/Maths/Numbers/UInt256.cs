@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "UInt256.cs" last touched on 2021-10-13 at 4:27 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "UInt256.cs" last formatted on 2021-11-30 at 7:18 PM by Protiguous.
 
 #nullable enable
 
@@ -37,10 +36,9 @@ using Exceptions;
 using JetBrains.Annotations;
 
 /// <summary>
-///     <para>Pulled from the BitcoinSharp project.</para>
+/// <para>Pulled from the BitcoinSharp project.</para>
 /// </summary>
 public record UInt256 : IComparable<UInt256> {
-
 	private readonly Int32 _hashCode;
 
 	private readonly UInt64 _part1; // parts are big-endian
@@ -65,7 +63,7 @@ public record UInt256 : IComparable<UInt256> {
 			throw new NullException( nameof( value ) );
 		}
 
-		if ( value[ 32 ] is > 32 and not (33 and 0) ) {
+		if ( value[ 32 ] is > 32 and not ( 33 and 0 ) ) {
 			throw new ArgumentOutOfRangeException( nameof( value ) );
 		}
 
@@ -79,7 +77,7 @@ public record UInt256 : IComparable<UInt256> {
 		this._part3 = value.ToUInt64( 8 );
 		this._part4 = value.ToUInt64( 0 );
 
-		this._hashCode = ( this._part1, this._part2, this._part3, this._part4 ).GetHashCode();
+		this._hashCode = (this._part1, this._part2, this._part3, this._part4).GetHashCode();
 	}
 
 	public UInt256( Int32 value ) : this( value.GetBytes() ) {
@@ -104,7 +102,7 @@ public record UInt256 : IComparable<UInt256> {
 		}
 	}
 
-	public static UInt256 Zero { get; } = new(Array.Empty<Byte>());
+	public static UInt256 Zero { get; } = new( Array.Empty<Byte>() );
 
 	public Int32 CompareTo( UInt256 other ) {
 		if ( this == other ) {
@@ -149,33 +147,33 @@ public record UInt256 : IComparable<UInt256> {
 		}
 	}
 
-	public static implicit operator UInt256( Byte value ) => new(value);
+	public static implicit operator UInt256( Byte value ) => new( value );
 
-	public static implicit operator UInt256( Int32 value ) => new(value);
+	public static implicit operator UInt256( Int32 value ) => new( value );
 
-	public static implicit operator UInt256( Int64 value ) => new(value);
+	public static implicit operator UInt256( Int64 value ) => new( value );
 
-	public static implicit operator UInt256( SByte value ) => new(value);
+	public static implicit operator UInt256( SByte value ) => new( value );
 
-	public static implicit operator UInt256( Int16 value ) => new(value);
+	public static implicit operator UInt256( Int16 value ) => new( value );
 
-	public static implicit operator UInt256( UInt32 value ) => new(value);
+	public static implicit operator UInt256( UInt32 value ) => new( value );
 
-	public static implicit operator UInt256( UInt64 value ) => new(value);
+	public static implicit operator UInt256( UInt64 value ) => new( value );
 
-	public static implicit operator UInt256( UInt16 value ) => new(value);
+	public static implicit operator UInt256( UInt16 value ) => new( value );
 
 	public static Double Log( UInt256 value, Double baseValue ) => BigInteger.Log( value.ToBigInteger(), baseValue );
 
 	//public static Boolean operator !=( UInt256 left, UInt256 right ) => !( left == right );
 
-	public static UInt256 operator %( UInt256 dividend, UInt256 divisor ) => new(dividend.ToBigInteger() % divisor.ToBigInteger());
+	public static UInt256 operator %( UInt256 dividend, UInt256 divisor ) => new( dividend.ToBigInteger() % divisor.ToBigInteger() );
 
-	public static UInt256 operator *( UInt256 left, UInt256 right ) => new(left.ToBigInteger() * right.ToBigInteger());
+	public static UInt256 operator *( UInt256 left, UInt256 right ) => new( left.ToBigInteger() * right.ToBigInteger() );
 
-	public static UInt256 operator /( UInt256 dividend, UInt256 divisor ) => new(dividend.ToBigInteger() / divisor.ToBigInteger());
+	public static UInt256 operator /( UInt256 dividend, UInt256 divisor ) => new( dividend.ToBigInteger() / divisor.ToBigInteger() );
 
-	public static UInt256 operator ~( UInt256 value ) => new(~value._part1, ~value._part2, ~value._part3, ~value._part4);
+	public static UInt256 operator ~( UInt256 value ) => new( ~value._part1, ~value._part2, ~value._part3, ~value._part4 );
 
 	public static Boolean operator <( UInt256 left, UInt256 right ) {
 		if ( left._part1 < right._part1 ) {
@@ -251,17 +249,17 @@ public record UInt256 : IComparable<UInt256> {
 		return left == right;
 	}
 
-	public static UInt256 operator >> ( UInt256 value, Int32 shift ) => new(value.ToBigInteger() >> shift);
+	public static UInt256 operator >>( UInt256 value, Int32 shift ) => new( value.ToBigInteger() >> shift );
 
-	public static UInt256 Parse( String? value ) => new(BigInteger.Parse( "0" + value ).ToByteArray());
+	public static UInt256 Parse( String? value ) => new( BigInteger.Parse( "0" + value ).ToByteArray() );
 
-	public static UInt256 Parse( String? value, IFormatProvider? provider ) => new(BigInteger.Parse( "0" + value, provider ).ToByteArray());
+	public static UInt256 Parse( String? value, IFormatProvider? provider ) => new( BigInteger.Parse( "0" + value, provider ).ToByteArray() );
 
-	public static UInt256 Parse( String? value, NumberStyles style ) => new(BigInteger.Parse( "0" + value, style ).ToByteArray());
+	public static UInt256 Parse( String? value, NumberStyles style ) => new( BigInteger.Parse( "0" + value, style ).ToByteArray() );
 
-	public static UInt256 Parse( String? value, NumberStyles style, IFormatProvider? provider ) => new(BigInteger.Parse( "0" + value, style, provider ).ToByteArray());
+	public static UInt256 Parse( String? value, NumberStyles style, IFormatProvider? provider ) => new( BigInteger.Parse( "0" + value, style, provider ).ToByteArray() );
 
-	public static UInt256 Pow( UInt256 value, Int32 exponent ) => new(BigInteger.Pow( value.ToBigInteger(), exponent ));
+	public static UInt256 Pow( UInt256 value, Int32 exponent ) => new( BigInteger.Pow( value.ToBigInteger(), exponent ) );
 
 	/*
 	public override Boolean Equals( Object? obj ) {
@@ -276,7 +274,7 @@ public record UInt256 : IComparable<UInt256> {
 	[Pure]
 	public override Int32 GetHashCode() => this._hashCode;
 
-	public BigInteger ToBigInteger() => new(this.ToByteArray().Concat( 0 ));
+	public BigInteger ToBigInteger() => new( this.ToByteArray().Concat( 0 ) );
 
 	public Byte[] ToByteArray() {
 		var buffer = new Byte[ 32 ];
@@ -313,5 +311,4 @@ public record UInt256 : IComparable<UInt256> {
 	}
 
 	public override String ToString() => this.ToHexNumberString();
-
 }

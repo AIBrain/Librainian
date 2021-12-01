@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "AESThenHMAC.cs" last formatted on 2021-11-12 at 4:43 AM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "AESThenHMAC.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 namespace Librainian.Security;
 
@@ -35,10 +34,8 @@ using Exceptions;
 using Maths;
 
 /// <summary>
-///     This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright
-///     restrictions.
-///     <remarks>https://gist.github.com/4336842</remarks>
-///     <remarks>http://creativecommons.org/publicdomain/mark/1.0/</remarks>
+/// This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright
+/// restrictions. <remarks>https://gist.github.com/4336842</remarks><remarks>http://creativecommons.org/publicdomain/mark/1.0/</remarks>
 /// </summary>
 public static class AESThenHmac {
 
@@ -69,6 +66,7 @@ public static class AESThenHmac {
 	/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 	/// <returns>Decrypted Message</returns>
 	public static Byte[]? SimpleDecrypt( Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
+
 		//Basic Usage Error Checks
 		if ( cryptKey.Length != KeyBitSize / 8 ) {
 			throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bits.", nameof( cryptKey ) );
@@ -158,8 +156,7 @@ public static class AESThenHmac {
 	}
 
 	/// <summary>
-	///     Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys derived from a password
-	///     (PBKDF2).
+	/// Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys derived from a password (PBKDF2).
 	/// </summary>
 	/// <param name="encryptedMessage">The encrypted message.</param>
 	/// <param name="password">The password.</param>
@@ -187,8 +184,7 @@ public static class AESThenHmac {
 	}
 
 	/// <summary>
-	///     Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys derived from a password
-	///     (PBKDF2).
+	/// Simple Authentication (HMAC) and then Descryption (AES) of a UTF8 Message using keys derived from a password (PBKDF2).
 	/// </summary>
 	/// <param name="encryptedMessage">The encrypted message.</param>
 	/// <param name="password">The password.</param>
@@ -197,6 +193,7 @@ public static class AESThenHmac {
 	/// <exception cref="NullException">Must have a password of minimum length;password</exception>
 	/// <remarks>Significantly less secure than using random binary keys.</remarks>
 	public static Byte[]? SimpleDecryptWithPassword( Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
+
 		//User Error Checks
 		if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
 			throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters.", nameof( password ) );
@@ -236,8 +233,11 @@ public static class AESThenHmac {
 	/// <param name="authKey">The auth key.</param>
 	/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
 	/// <returns>Encrypted Message</returns>
-	/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
+	/// <remarks>
+	/// Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64
+	/// </remarks>
 	public static Byte[] SimpleEncrypt( this Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
+
 		//User Error Checks
 		if ( cryptKey.Length != KeyBitSize / 8 ) {
 			throw new ArgumentException( $"Key needs to be {KeyBitSize} bits.", nameof( cryptKey ) );
@@ -279,6 +279,7 @@ public static class AESThenHmac {
 		using ( var hmac = new HMACSHA256( authKey ) ) {
 			using var memoryStream = new MemoryStream();
 			using var binaryWriter = new BinaryWriter( memoryStream );
+
 			//Prepend non-secret payload if any
 			binaryWriter.Write( nonSecretPayload );
 
@@ -306,7 +307,9 @@ public static class AESThenHmac {
 	/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
 	/// <returns>Encrypted Message</returns>
 	/// <exception cref="NullException">Secret Message Required!;secretMessage</exception>
-	/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
+	/// <remarks>
+	/// Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64
+	/// </remarks>
 	public static String SimpleEncrypt( String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 		if ( String.IsNullOrEmpty( secretMessage ) ) {
 			throw new ArgumentException( "Secret message required.", nameof( secretMessage ) );
@@ -319,8 +322,7 @@ public static class AESThenHmac {
 	}
 
 	/// <summary>
-	///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password
-	///     (PBKDF2).
+	/// Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password (PBKDF2).
 	/// </summary>
 	/// <param name="secretMessage">The secret message.</param>
 	/// <param name="password">The password.</param>
@@ -328,8 +330,7 @@ public static class AESThenHmac {
 	/// <returns>Encrypted Message</returns>
 	/// <exception cref="NullException">password</exception>
 	/// <remarks>
-	///     Significantly less secure than using random binary keys. Adds additional non secret payload for key generation
-	///     parameters.
+	/// Significantly less secure than using random binary keys. Adds additional non secret payload for key generation parameters.
 	/// </remarks>
 	public static String SimpleEncryptWithPassword( String secretMessage, String password, Byte[]? nonSecretPayload = null ) {
 		if ( String.IsNullOrEmpty( secretMessage ) ) {
@@ -343,8 +344,7 @@ public static class AESThenHmac {
 	}
 
 	/// <summary>
-	///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password
-	///     (PBKDF2)
+	/// Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password (PBKDF2)
 	/// </summary>
 	/// <param name="secretMessage">The secret message.</param>
 	/// <param name="password">The password.</param>
@@ -352,8 +352,7 @@ public static class AESThenHmac {
 	/// <returns>Encrypted Message</returns>
 	/// <exception cref="NullException">Must have a password of minimum length;password</exception>
 	/// <remarks>
-	///     Significantly less secure than using random binary keys. Adds additional non secret payload for key generation
-	///     parameters.
+	/// Significantly less secure than using random binary keys. Adds additional non secret payload for key generation parameters.
 	/// </remarks>
 	public static Byte[] SimpleEncryptWithPassword( Byte[] secretMessage, String password, Byte[]? nonSecretPayload = null ) {
 		nonSecretPayload ??= Array.Empty<Byte>();
@@ -412,5 +411,4 @@ public static class AESThenHmac {
 
 		return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
 	}
-
 }

@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "PathInternal.cs" last touched on 2021-10-13 at 4:26 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "PathInternal.cs" last formatted on 2021-11-30 at 7:17 PM by Protiguous.
 
 #nullable enable
 
@@ -31,7 +30,6 @@ namespace Librainian.FileSystem;
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -123,8 +121,7 @@ public static class PathInternal {
 	public static Boolean IsValidDriveChar( this Char value ) => value is >= 'A' and <= 'Z' or >= 'a' and <= 'z';
 
 	/// <summary>
-	///     Returns the trimmed <paramref name="path" /> or throws <see cref="NullException" /> if null, empty, or
-	///     whitespace.
+	/// Returns the trimmed <paramref name="path" /> or throws <see cref="NullException" /> if null, empty, or whitespace.
 	/// </summary>
 	/// <param name="path"></param>
 	/// <exception cref="NullException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
@@ -139,8 +136,8 @@ public static class PathInternal {
 	}
 
 	/// <summary>
-	///     Trims <paramref name="path" /> and throws <see cref="NullException" /> if null, empty, or whitespace.
-	///     <para>Returns true if the <paramref name="path" /> was blank.</para>
+	/// Trims <paramref name="path" /> and throws <see cref="NullException" /> if null, empty, or whitespace.
+	/// <para>Returns true if the <paramref name="path" /> was blank.</para>
 	/// </summary>
 	/// <param name="path"></param>
 	/// <exception cref="NullException">Gets thrown if the <paramref name="path" /> is null, empty, or whitespace.</exception>
@@ -148,62 +145,41 @@ public static class PathInternal {
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean TrimAndThrowIfBlank( ref String? path ) {
 		if ( String.IsNullOrEmpty( path = path?.Trim() ) ) {
-			throw new NullException(  nameof( path ) );
+			throw new NullException( nameof( path ) );
 		}
 
 		return false;
-
 	}
 
 	public static class Constants {
 
-		/// <summary>
-		///     \
-		/// </summary>
+		/// <summary>\</summary>
 		public const Char Backslash = '\\';
 
-		/// <summary>
-		///     \\.\
-		/// </summary>
+		/// <summary>\\.\</summary>
 		public const String DevicePathPrefix = TwoBackslashes + @".\";
 
-		/// <summary>
-		///     \\?\
-		/// </summary>
+		/// <summary>\\?\</summary>
 		public const String ExtendedPathPrefix = TwoBackslashes + @"?\";
 
 		public const Char Forwardslash = '/';
 
-		/// <summary>
-		///     255
-		/// </summary>
+		/// <summary>255</summary>
 		public const UInt32 MaxComponentLength = Byte.MaxValue;
 
-		/// <summary>
-		///     [Maximum] value could be 32767, but this gives a little wiggle room of 32512.
-		/// </summary>
+		/// <summary>[Maximum] value could be 32767, but this gives a little wiggle room of 32512.</summary>
 		public const UInt16 MaxPathLength = ( UInt16 )( Int16.MaxValue - MaxComponentLength );
 
-		/// <summary>
-		///     \\
-		/// </summary>
+		/// <summary>\\</summary>
 		public const String TwoBackslashes = @"\\";
 
-		/// <summary>
-		///     \\?\UNC\
-		/// </summary>
+		/// <summary>\\?\UNC\</summary>
 		public const String UncExtendedPathPrefix = TwoBackslashes + UncExtendedPrefixToInsert;
 
-		/// <summary>
-		///     ?\UNC\
-		/// </summary>
+		/// <summary>?\UNC\</summary>
 		public const String UncExtendedPrefixToInsert = @"?\UNC\";
 
-		/// <summary>
-		///     \\
-		/// </summary>
+		/// <summary>\\</summary>
 		public const String UncPathPrefix = TwoBackslashes;
-
 	}
-
 }

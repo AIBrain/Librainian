@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ControlExtensions.cs" last touched on 2021-10-13 at 4:25 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ControlExtensions.cs" last formatted on 2021-11-30 at 7:16 PM by Protiguous.
 
 #nullable enable
 
@@ -56,45 +55,13 @@ using Utilities;
 
 public static class ControlExtensions {
 
-	/// <summary>
-	///     Allows the form's size and location to be persisted after shown event.
-	/// </summary>
-	/// <param name="form"></param>
-	public static void PersistPlacement<TForm>( this TForm form ) where TForm : Form {
-		form.Shown += ( _, _ ) => form.InvokeAction( SizeAndLocation );
-
-		void SizeAndLocation() {
-			try {
-				form.SuspendLayout();
-				form.WindowState = FormWindowState.Normal;
-				form.StartPosition = FormStartPosition.WindowsDefaultBounds;
-
-				form.LoadLocation();
-				form.LoadSize();
-
-				if ( !form.IsFullyVisibleOnAnyScreen() ) {
-					form.WindowState = FormWindowState.Normal;
-					form.StartPosition = FormStartPosition.CenterScreen;
-				}
-
-				form.ResumeLayout( true );
-
-				form.LocationChanged += ( _, _ ) => form.InvokeAction( form.SaveLocation );
-				form.SizeChanged += ( _, _ ) => form.InvokeAction( form.SaveSize );
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-		}
-	}
-
 	[DebuggerStepThrough]
 	public static void Append( this RichTextBox box, String text, Color color, params Object[]? args ) =>
-		box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
+			box.AppendText( $"{text}", color == Color.Empty ? box.ForeColor : color, args );
 
 	[DebuggerStepThrough]
 	public static void AppendLine( this RichTextBox box, String text, Color color, params Object[] args ) =>
-		box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
+			box.AppendText( $"{text}\n", color == Color.Empty ? box.ForeColor : color, args );
 
 	[DebuggerStepThrough]
 	public static void AppendText( this RichTextBox box, String text, Color color, params Object[]? args ) {
@@ -138,15 +105,11 @@ public static class ControlExtensions {
 		Byte Blue() => ( Byte )( thisColor.B * blendToPercent + blendToColor.B * i );
 	}
 
-	/// <summary>
-	///     Just changes the cursor to the <see cref="Cursors.WaitCursor" />.
-	/// </summary>
+	/// <summary>Just changes the cursor to the <see cref="Cursors.WaitCursor" />.</summary>
 	/// <param name="control"></param>
 	public static void BusyCursor( this Control control ) => control.InvokeAction( () => control.Cursor = Cursors.WaitCursor );
 
-	/// <summary>
-	///     Threadsafe <see cref="CheckBox.Checked" /> check.
-	/// </summary>
+	/// <summary>Threadsafe <see cref="CheckBox.Checked" /> check.</summary>
 	/// <param name="control"></param>
 	public static Boolean? Checked( this CheckBox? control ) {
 		return control?.InvokeFunction( Target );
@@ -154,11 +117,9 @@ public static class ControlExtensions {
 		Boolean? Target() => control.CheckState == CheckState.Indeterminate ? default( Boolean? ) : control.Checked;
 	}
 
-	/// <summary>
-	///     Safely set the <see cref="CheckBox.Checked" /> of the control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="CheckBox.Checked" /> of the control across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="refreshOrInvalidate"></param>
 	public static CheckBox Checked( this CheckBox control, Boolean? value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
 		if ( control is null ) {
@@ -182,21 +143,38 @@ public static class ControlExtensions {
 	}
 
 	/// <summary>
-	///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+	/// <para>A threadsafe <see cref="Button.PerformClick" />.</para>
 	/// </summary>
 	/// <param name="control"></param>
-	/// <param name="delay">  </param>
+	/// <param name="delay"></param>
 	/// <see cref="Push" />
 	public static void Click( this Button control, TimeSpan? delay = null ) {
 		var _ = control.Push( delay ); //swallow the async
 	}
 
+	/// <summary></summary>
+	/// <param name="topLeftX"></param>
+	/// <param name="topLeftY"></param>
+	/// <param name="bottomRightX"></param>
+	/// <param name="bottomRightY"></param>
+	/// <param name="nWidthEllipse"></param>
+	/// <param name="nHeightEllipse"></param>
+	/// <returns></returns>
+	/// <code>
+	///protected override void OnPaint(PaintEventArgs pevent) {
+	///base.OnPaint( pevent);
+	///Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
+	///}
+	/// </code>
+	[DllImport( DLL.GDI32, EntryPoint = "CreateRoundRectRgn" )]
+	public static extern IntPtr CreateRoundRectRgn( Int32 topLeftX, Int32 topLeftY, Int32 bottomRightX, Int32 bottomRightY, Int32 nWidthEllipse, Int32 nHeightEllipse );
+
 	/// <summary>
-	///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the
-	///     lightForeColor is returned. If the BackColor is light, then
-	///     the darkForeColor is returned.
+	/// Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the lightForeColor
+	/// is returned. If the BackColor is light, then the darkForeColor is returned.
 	/// </summary>
 	public static Color DetermineForecolor( this Color thisColor, Color lightForeColor, Color darkForeColor ) {
+
 		// Counting the perceptive luminance - human eye favors green color...
 		return A() < 0.5 ? darkForeColor : lightForeColor;
 
@@ -210,17 +188,14 @@ public static class ControlExtensions {
 	}
 
 	/// <summary>
-	///     Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the White is
-	///     returned. If the BackColor is light, then the Black
-	///     is returned.
+	/// Returns a contrasting ForeColor for the specified BackColor. If the source BackColor is dark, then the White is
+	/// returned. If the BackColor is light, then the Black is returned.
 	/// </summary>
 	public static Color DetermineForecolor( this Color thisColor ) => DetermineForecolor( thisColor, Color.White, Color.Black );
 
-	/// <summary>
-	///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="Control.Enabled" /> of the control across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="refreshOrInvalidate"></param>
 	public static void Enabled( this Control? control, Boolean value, RefreshOrInvalidate refreshOrInvalidate = RefreshOrInvalidate.Refresh ) {
 		control?.InvokeAction( () => {
@@ -240,11 +215,9 @@ public static class ControlExtensions {
 		} );
 	}
 
-	/// <summary>
-	///     Safely set the <see cref="Control.Enabled" /> of the control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="Control.Enabled" /> of the control across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Enabled( this ToolStripProgressBar control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
 		if ( control is null ) {
@@ -265,9 +238,7 @@ public static class ControlExtensions {
 		}
 	}
 
-	/// <summary>
-	///     Flashes the control.
-	/// </summary>
+	/// <summary>Flashes the control.</summary>
 	/// <param name="control"></param>
 	/// <param name="spanOff">How long to keep the control off before it resets.</param>
 	public static void Flash( this Control control, TimeSpan? spanOff = null ) {
@@ -277,14 +248,12 @@ public static class ControlExtensions {
 
 		spanOff ??= Milliseconds.FiveHundred;
 		FluentTimer.Create( spanOff.Value,
-			           () => control.InvokeAction( () => ( control.ForeColor, control.BackColor ) = ( control.BackColor, control.ForeColor ), RefreshOrInvalidate.Refresh ) )
-		           .Once()
-		           .Start();
+					   () => control.InvokeAction( () => (control.ForeColor, control.BackColor) = (control.BackColor, control.ForeColor), RefreshOrInvalidate.Refresh ) )
+				   .Once()
+				   .Start();
 	}
 
-	/// <summary>
-	///     Flash a control while the text is blank.
-	/// </summary>
+	/// <summary>Flash a control while the text is blank.</summary>
 	/// <param name="input"></param>
 	/// <param name="control"></param>
 	/// <param name="cancellationToken"></param>
@@ -299,9 +268,7 @@ public static class ControlExtensions {
 			}
 		}, cancellationToken );
 
-	/// <summary>
-	///     Set <see cref="Control.Focus" /> across threads.
-	/// </summary>
+	/// <summary>Set <see cref="Control.Focus" /> across threads.</summary>
 	/// <param name="control"></param>
 	[DebuggerStepThrough]
 	public static void Fokus( this Control control ) =>
@@ -311,9 +278,7 @@ public static class ControlExtensions {
 			}
 		} );
 
-	/// <summary>
-	///     Threadsafe <see cref="Control.ForeColor" /> check.
-	/// </summary>
+	/// <summary>Threadsafe <see cref="Control.ForeColor" /> check.</summary>
 	/// <param name="control"></param>
 	public static Color ForeColor( this Control control ) {
 		var func = new Func<Color>( () => control.ForeColor );
@@ -321,47 +286,18 @@ public static class ControlExtensions {
 		return control.InvokeFunction( func );
 	}
 
-	/// <summary>
-	///     Safely set the <see cref="Control.ForeColor" /> of the control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="Control.ForeColor" /> of the control across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	[DebuggerStepThrough]
 	public static void ForeColor( this Control control, Color value, RefreshOrInvalidate redraw ) => control.InvokeAction( () => control.ForeColor = value, redraw );
 
-	/*
 	/// <summary>
-	///     wpf, I think
-	/// </summary>
-	/// <param name="window"></param>
-	public static void FullScreen( this Window window ) {
-		window.WindowState = WindowState.Maximized;
-		window.WindowStyle = WindowStyle.None;
-	}
-	*/
-
-	/*
-	/// <summary>
-	///     wpf, I think
-	/// </summary>
-	/// <param name="window"></param>
-	/// <param name="icon"></param>
-	/// <param name="redraw"></param>
-	public static void Icon( this Window window, ImageSource icon, RefreshOrInvalidate redraw ) {
-		window.Dispatcher?.InvokeAsync( Action, DispatcherPriority.Background, CancellationToken.None );
-
-		void Action() {
-			window.Icon = icon;
-		}
-	}
-	*/
-
-	/// <summary>
-	///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
+	/// <para>Perform an <see cref="Action" /> on the control's thread.</para>
 	/// </summary>
 	/// <param name="control"></param>
-	/// <param name="action"> </param>
+	/// <param name="action"></param>
 	/// <param name="redraw"></param>
 	/// <seealso />
 	[DebuggerStepThrough]
@@ -379,6 +315,7 @@ public static class ControlExtensions {
 			if ( control.IsDisposed ) {
 				return;
 			}
+
 			if ( redraw.HasFlag( RefreshOrInvalidate.Refresh ) ) {
 				control.Invalidate();
 			}
@@ -405,55 +342,6 @@ public static class ControlExtensions {
 		}
 		*/
 	}
-
-	public static TResult? SafeInvoke<T, TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
-		if ( synchronizeInvoke.InvokeRequired ) {
-			var result = synchronizeInvoke.BeginInvoke( call, new Object[] {
-				synchronizeInvoke
-			} );
-			var endResult = synchronizeInvoke.EndInvoke( result );
-			return ( TResult? )endResult;
-		}
-
-		return call( synchronizeInvoke );
-	}
-
-	public static void SafeInvoke<T>( this T isi, Action<T> call ) where T : ISynchronizeInvoke {
-		if ( isi.InvokeRequired ) {
-			var _ = isi.BeginInvoke( call, new Object[] {
-				isi
-			} );
-		}
-		else {
-			call( isi );
-		}
-	}
-
-	/*
-
-	/// <summary>
-	///     <para>Perform an <see cref="Action" /> on the control's thread.</para>
-	/// </summary>
-	/// <param name="control"></param>
-	/// <param name="action"> </param>
-	/// <param name="thing">  </param>
-	/// <seealso />
-	public static void InvokeAction<T>( [NotNull] this Control control, [NotNull] Action<T> action, [CanBeNull] T thing ) {
-		if ( control.InvokeRequired ) {
-			if ( !control.IsDisposed ) {
-				if ( thing is null ) {
-					control.Invoke( action );
-				}
-				else {
-					control.Invoke( action, thing );
-				}
-			}
-		}
-		else {
-			action( thing );
-		}
-	}
-	*/
 
 	public static T? InvokeFunction<T>( this Control? control, Func<T?> function ) {
 		if ( control is null ) {
@@ -500,32 +388,24 @@ public static class ControlExtensions {
 		} );
 	}
 
-	/// <summary>
-	///     Threadsafe get.
-	/// </summary>
+	/// <summary>Threadsafe get.</summary>
 	/// <param name="control"></param>
 	public static Int32 Maximum( this ProgressBar control ) => control.InvokeFunction( () => control.Maximum );
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Maximum" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Maximum( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) =>
 		control.InvokeAction( () => control.Maximum = value, redraw );
 
-	/// <summary>
-	///     Threadsafe get.
-	/// </summary>
+	/// <summary>Threadsafe get.</summary>
 	/// <param name="control"></param>
 	public static Int32 Minimum( this ProgressBar control ) => control.InvokeFunction( () => control.Minimum );
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Minimum" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Minimum( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 		control.InvokeAction( () => control.Minimum = value, redraw );
@@ -533,10 +413,10 @@ public static class ControlExtensions {
 	public static Boolean Nope( this DialogResult result ) => result.In( DialogResult.Abort, DialogResult.Cancel );
 
 	/// <summary>
-	///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+	/// <para>A threadsafe <see cref="Button.PerformClick" />.</para>
 	/// </summary>
 	/// <param name="control"></param>
-	/// <param name="delay">  </param>
+	/// <param name="delay"></param>
 	/// <see cref="Push" />
 	public static async Task PerformClick( this Button control, TimeSpan? delay = null ) {
 		await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
@@ -544,17 +424,70 @@ public static class ControlExtensions {
 		control.InvokeAction( control.PerformClick, RefreshOrInvalidate.Neither );
 	}
 
-	/// <summary>
-	///     Threadsafe <see cref="Button.PerformClick" />.
-	/// </summary>
+	/// <summary>Allows the form's size and location to be persisted after shown event.</summary>
+	/// <param name="form"></param>
+	public static void PersistPlacement<TForm>( this TForm form ) where TForm : Form {
+		form.Shown += ( _, _ ) => form.InvokeAction( SizeAndLocation );
+
+		void SizeAndLocation() {
+			try {
+				form.SuspendLayout();
+				form.WindowState = FormWindowState.Normal;
+				form.StartPosition = FormStartPosition.WindowsDefaultBounds;
+
+				form.LoadLocation();
+				form.LoadSize();
+
+				if ( !form.IsFullyVisibleOnAnyScreen() ) {
+					form.WindowState = FormWindowState.Normal;
+					form.StartPosition = FormStartPosition.CenterScreen;
+				}
+
+				form.ResumeLayout( true );
+
+				form.LocationChanged += ( _, _ ) => form.InvokeAction( form.SaveLocation );
+				form.SizeChanged += ( _, _ ) => form.InvokeAction( form.SaveSize );
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+		}
+	}
+
+	/*
+
+	/// <summary>wpf, I think</summary>
+	/// <param name="window"></param>
+	public static void FullScreen( this Window window ) {
+		window.WindowState = WindowState.Maximized;
+		window.WindowStyle = WindowStyle.None;
+	}
+	*/
+
+	/*
+
+	/// <summary>wpf, I think</summary>
+	/// <param name="window"></param>
+	/// <param name="icon"></param>
+	/// <param name="redraw"></param>
+	public static void Icon( this Window window, ImageSource icon, RefreshOrInvalidate redraw ) {
+		window.Dispatcher?.InvokeAsync( Action, DispatcherPriority.Background, CancellationToken.None );
+
+		void Action() {
+			window.Icon = icon;
+		}
+	}
+	*/
+
+	/// <summary>Threadsafe <see cref="Button.PerformClick" />.</summary>
 	/// <param name="control"></param>
 	public static void Press( this Button control ) => control.InvokeAction( control.PerformClick );
 
 	/// <summary>
-	///     <para>A threadsafe <see cref="Button.PerformClick" />.</para>
+	/// <para>A threadsafe <see cref="Button.PerformClick" />.</para>
 	/// </summary>
-	/// <param name="control">   </param>
-	/// <param name="delay">     </param>
+	/// <param name="control"></param>
+	/// <param name="delay"></param>
 	/// <param name="afterClick"></param>
 	public static async FireAndForget Push( this Button? control, TimeSpan? delay = null, Action? afterClick = null ) {
 		await Task.Delay( delay ?? Milliseconds.One ).ConfigureAwait( false );
@@ -563,9 +496,7 @@ public static class ControlExtensions {
 		afterClick?.Invoke();
 	}
 
-	/// <summary>
-	///     Threadsafe <see cref="Control.Refresh" />.
-	/// </summary>
+	/// <summary>Threadsafe <see cref="Control.Refresh" />.</summary>
 	/// <param name="control"></param>
 	public static void Redraw( this Control control ) => control.InvokeAction( control.Refresh );
 
@@ -595,11 +526,9 @@ public static class ControlExtensions {
 		return true;
 	}
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	public static void Reset( this ProgressBar control, Int32? value = null ) {
 		if ( control is null ) {
 			throw new NullException( nameof( control ) );
@@ -608,9 +537,7 @@ public static class ControlExtensions {
 		control.Value( value ?? control.Minimum() );
 	}
 
-	/// <summary>
-	///     Just changes the cursor to the <see cref="Cursors.Default" />.
-	/// </summary>
+	/// <summary>Just changes the cursor to the <see cref="Cursors.Default" />.</summary>
 	/// <param name="control"></param>
 	public static void ResetCursor( this Control control ) {
 		control.InvokeAction( Action );
@@ -621,19 +548,64 @@ public static class ControlExtensions {
 		}
 	}
 
+	public static TResult? SafeInvoke<T, TResult>( this T synchronizeInvoke, Func<T, TResult> call ) where T : ISynchronizeInvoke {
+		if ( synchronizeInvoke.InvokeRequired ) {
+			var result = synchronizeInvoke.BeginInvoke( call, new Object[] {
+				synchronizeInvoke
+			} );
+			var endResult = synchronizeInvoke.EndInvoke( result );
+			return ( TResult? )endResult;
+		}
+
+		return call( synchronizeInvoke );
+	}
+
+	public static void SafeInvoke<T>( this T isi, Action<T> call ) where T : ISynchronizeInvoke {
+		if ( isi.InvokeRequired ) {
+			var _ = isi.BeginInvoke( call, new Object[] {
+				isi
+			} );
+		}
+		else {
+			call( isi );
+		}
+	}
+
+	/*
+
 	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
+	/// <para>Perform an <see cref="Action" /> on the control's thread.</para>
 	/// </summary>
 	/// <param name="control"></param>
+	/// <param name="action"></param>
+	/// <param name="thing"></param>
+	/// <seealso />
+	public static void InvokeAction<T>( [NotNull] this Control control, [NotNull] Action<T> action, [CanBeNull] T thing ) {
+		if ( control.InvokeRequired ) {
+			if ( !control.IsDisposed ) {
+				if ( thing is null ) {
+					control.Invoke( action );
+				}
+				else {
+					control.Invoke( action, thing );
+				}
+			}
+		}
+		else {
+			action( thing );
+		}
+	}
+	*/
+
+	/// <summary>Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.</summary>
+	/// <param name="control"></param>
 	/// <param name="minimum"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="maximum"></param>
 	/// <see cref="Values" />
 	public static void Set( this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum ) => control.Values( minimum, value, maximum );
 
-	/// <summary>
-	///     Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.
-	/// </summary>
+	/// <summary>Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.</summary>
 	/// <param name="control"></param>
 	/// <param name="redraw"></param>
 	public static void Step( this ProgressBar control, RefreshOrInvalidate redraw ) {
@@ -646,43 +618,35 @@ public static class ControlExtensions {
 		}
 	}
 
-	/// <summary>
-	///     Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.
-	/// </summary>
+	/// <summary>Safely perform the <see cref="ProgressBar.PerformStep" /> across threads.</summary>
 	/// <param name="control"></param>
 	/// <param name="redraw"></param>
 	public static void Step( this ToolStripProgressBar control, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 		control.GetCurrentParent()?.InvokeAction( control.PerformStep, redraw );
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Step" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Step" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Step( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 		control.InvokeAction( () => control.Step = value, redraw );
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Style" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Style" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Style( this ProgressBar control, ProgressBarStyle value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 		control.InvokeAction( () => control.Style = value, redraw );
 
 	/// <summary>
-	///     <para>Safely get the <see cref="Control.Text" /> of a <see cref="Control" /> across threads.</para>
+	/// <para>Safely get the <see cref="Control.Text" /> of a <see cref="Control" /> across threads.</para>
 	/// </summary>
 	/// <param name="control"></param>
 	public static String? Text( this Control? control ) => control.InvokeFunction( () => control?.Text );
 
-	/// <summary>
-	///     Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ToolStripItem.Text" /> of the control across threads.</summary>
 	/// <param name="toolStripItem"></param>
-	/// <param name="value">        </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Text( this ToolStripItem? toolStripItem, String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
 		if ( toolStripItem?.IsDisposed != false ) {
@@ -704,11 +668,11 @@ public static class ControlExtensions {
 	}
 
 	/// <summary>
-	///     <para>Safely set the <see cref="Control.Text" /> of a control across threads.</para>
+	/// <para>Safely set the <see cref="Control.Text" /> of a control across threads.</para>
 	/// </summary>
 	/// <remarks></remarks>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Text( this Control? control, String? value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) =>
 		control?.InvokeAction( () => control.Text = value, redraw );
@@ -751,8 +715,7 @@ public static class ControlExtensions {
 	public static Int32 ToBGR( this Color thisColor ) => ( thisColor.B << 16 ) | ( thisColor.G << 8 ) | ( thisColor.R << 0 );
 
 	/// <summary>
-	///     Returns <see cref="CheckState.Checked" /> if true, on, set, checked, or 1. Otherwise
-	///     <see cref="CheckState.Unchecked" />.
+	/// Returns <see cref="CheckState.Checked" /> if true, on, set, checked, or 1. Otherwise <see cref="CheckState.Unchecked" />.
 	/// </summary>
 	/// <param name="s"></param>
 	public static CheckState ToCheckState( this String s ) =>
@@ -761,11 +724,9 @@ public static class ControlExtensions {
 
 	public static Int32 ToRGB( this Color thisColor ) => thisColor.ToArgb() & 0xFFFFFF;
 
-	/// <summary>
-	///     Safely set the <see cref="Control.Enabled" /> and <see cref="Control.Visible" /> of a control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="Control.Enabled" /> and <see cref="Control.Visible" /> of a control across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Usable( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 		control.InvokeAction( () => {
@@ -774,23 +735,17 @@ public static class ControlExtensions {
 		}, redraw );
 	}
 
-	/// <summary>
-	///     Threadsafe Value get.
-	/// </summary>
+	/// <summary>Threadsafe Value get.</summary>
 	/// <param name="control"></param>
 	public static Decimal Value( this NumericUpDown control ) => control.InvokeFunction( () => control.Value );
 
-	/// <summary>
-	///     Threadsafe Value get.
-	/// </summary>
+	/// <summary>Threadsafe Value get.</summary>
 	/// <param name="control"></param>
 	public static Int32 Value( this ProgressBar control ) => control.InvokeFunction( () => control.Value );
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Value( this ProgressBar control, Int32 value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
 		control.InvokeAction( Action, redraw );
@@ -807,12 +762,10 @@ public static class ControlExtensions {
 		}
 	}
 
-	/// <summary>
-	///     Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="ProgressBar.Value" /> of the <see cref="ProgressBar" /> across threads.</summary>
 	/// <param name="control"></param>
 	/// <param name="minimum"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="maximum"></param>
 	/// <param name="redraw"></param>
 	public static void Values( this ProgressBar control, Int32 minimum, Int32 value, Int32 maximum, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) {
@@ -829,11 +782,9 @@ public static class ControlExtensions {
 		control.Value( value.ForceBounds( lowEnd, highEnd ), redraw );
 	}
 
-	/// <summary>
-	///     Safely set the <see cref="Control.Visible" /> of the control across threads.
-	/// </summary>
+	/// <summary>Safely set the <see cref="Control.Visible" /> of the control across threads.</summary>
 	/// <param name="control"></param>
-	/// <param name="value">  </param>
+	/// <param name="value"></param>
 	/// <param name="redraw"></param>
 	public static void Visible( this Control control, Boolean value, RefreshOrInvalidate redraw = RefreshOrInvalidate.Invalidate ) =>
 		control.InvokeAction( () => control.Visible = value, redraw );
@@ -841,23 +792,4 @@ public static class ControlExtensions {
 	public static Boolean Yes( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
 
 	public static Boolean Yup( this DialogResult result ) => result.In( DialogResult.Yes, DialogResult.OK );
-
-	/// <summary>
-	/// </summary>
-	/// <param name="topLeftX"></param>
-	/// <param name="topLeftY"></param>
-	/// <param name="bottomRightX"></param>
-	/// <param name="bottomRightY"></param>
-	/// <param name="nWidthEllipse"></param>
-	/// <param name="nHeightEllipse"></param>
-	/// <returns></returns>
-	/// <code>
-	///  protected override void OnPaint(PaintEventArgs pevent) {
-	/// 		base.OnPaint( pevent);
-	/// 		Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, this.Width, this.Height, 30, 30));	//30 is width, height of ellipse
-	///  }
-	///  </code>
-	[DllImport( DLL.GDI32, EntryPoint = "CreateRoundRectRgn" )]
-	public static extern IntPtr CreateRoundRectRgn( Int32 topLeftX, Int32 topLeftY, Int32 bottomRightX, Int32 bottomRightY, Int32 nWidthEllipse, Int32 nHeightEllipse );
-
 }

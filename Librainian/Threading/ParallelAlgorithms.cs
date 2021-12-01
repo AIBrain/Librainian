@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ParallelAlgorithms.cs" last touched on 2021-10-13 at 4:31 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ParallelAlgorithms.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 namespace Librainian.Threading;
 
@@ -39,8 +38,8 @@ public static class ParallelAlgorithms {
 	/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
 	/// <typeparam name="TResult">The type of the data returned.</typeparam>
 	/// <param name="fromInclusive">The start of the range, inclusive.</param>
-	/// <param name="toExclusive">  The end of the range, exclusive.</param>
-	/// <param name="body">         The function to execute for each element.</param>
+	/// <param name="toExclusive">The end of the range, exclusive.</param>
+	/// <param name="body">The function to execute for each element.</param>
 	/// <returns>The result computed.</returns>
 	public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, Func<Int32, TResult> body ) =>
 		fromInclusive.SpeculativeFor( toExclusive, CPU.AllExceptOne, body );
@@ -48,11 +47,12 @@ public static class ParallelAlgorithms {
 	/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
 	/// <typeparam name="TResult">The type of the data returned.</typeparam>
 	/// <param name="fromInclusive">The start of the range, inclusive.</param>
-	/// <param name="toExclusive">  The end of the range, exclusive.</param>
-	/// <param name="options">      The options to use for processing the loop.</param>
-	/// <param name="body">         The function to execute for each element.</param>
+	/// <param name="toExclusive">The end of the range, exclusive.</param>
+	/// <param name="options">The options to use for processing the loop.</param>
+	/// <param name="body">The function to execute for each element.</param>
 	/// <returns>The result computed.</returns>
 	public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, ParallelOptions options, Func<Int32, TResult> body ) {
+
 		// Validate parameters; the Parallel.For we delegate to will validate the rest
 		if ( body is null ) {
 			throw new NullException( nameof( body ) );
@@ -63,6 +63,7 @@ public static class ParallelAlgorithms {
 
 		// Run all bodies in parallel, stopping as soon as one has completed.
 		Parallel.For( fromInclusive, toExclusive, options, ( i, loopState ) => {
+
 			// Run an iteration. When it completes, store (box) the result, and cancel the rest
 			Interlocked.CompareExchange( ref result, body( i ), null );
 			loopState.Stop();
@@ -80,7 +81,7 @@ public static class ParallelAlgorithms {
 	/// <typeparam name="TSource">The type of the data in the source.</typeparam>
 	/// <typeparam name="TResult">The type of the data returned.</typeparam>
 	/// <param name="source">The input elements to be processed.</param>
-	/// <param name="body">  The function to execute for each element.</param>
+	/// <param name="body">The function to execute for each element.</param>
 	/// <returns>The result computed.</returns>
 	public static TResult SpeculativeForEach<TSource, TResult>( this IEnumerable<TSource> source, Func<TSource, TResult> body ) =>
 		source.SpeculativeForEach( CPU.AllExceptOne, body );
@@ -88,11 +89,12 @@ public static class ParallelAlgorithms {
 	/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
 	/// <typeparam name="TSource">The type of the data in the source.</typeparam>
 	/// <typeparam name="TResult">The type of the data returned.</typeparam>
-	/// <param name="source"> The input elements to be processed.</param>
+	/// <param name="source">The input elements to be processed.</param>
 	/// <param name="options">The options to use for processing the loop.</param>
-	/// <param name="body">   The function to execute for each element.</param>
+	/// <param name="body">The function to execute for each element.</param>
 	/// <returns>The result computed.</returns>
 	public static TResult SpeculativeForEach<TSource, TResult>( this IEnumerable<TSource> source, ParallelOptions options, Func<TSource, TResult> body ) {
+
 		// Validate parameters; the Parallel.ForEach we delegate to will validate the rest
 		if ( body is null ) {
 			throw new NullException( nameof( body ) );
@@ -103,6 +105,7 @@ public static class ParallelAlgorithms {
 
 		// Run all bodies in parallel, stopping as soon as one has completed.
 		Parallel.ForEach( source, options, ( item, loopState ) => {
+
 			// Run an iteration. When it completes, store (box) the result, and cancel the rest
 			Interlocked.CompareExchange( ref result, body( item ), null );
 			loopState.Stop();
@@ -116,24 +119,19 @@ public static class ParallelAlgorithms {
 		throw new InvalidOperationException();
 	}
 
-	/// <summary>
-	///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
-	///     completes.
-	/// </summary>
+	/// <summary>Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.</summary>
 	/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
 	/// <param name="functions">The functions to be executed.</param>
 	/// <returns>A result from executing one of the functions.</returns>
 	public static T SpeculativeInvoke<T>( params Func<T>[] functions ) => CPU.AllExceptOne.SpeculativeInvoke( functions );
 
-	/// <summary>
-	///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
-	///     completes.
-	/// </summary>
+	/// <summary>Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE completes.</summary>
 	/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
-	/// <param name="options">  The options to use for the execution.</param>
+	/// <param name="options">The options to use for the execution.</param>
 	/// <param name="functions">The functions to be executed.</param>
 	/// <returns>A result from executing one of the functions.</returns>
 	public static T SpeculativeInvoke<T>( this ParallelOptions options, params Func<T>[] functions ) {
+
 		// Validate parameters
 		if ( options is null ) {
 			throw new NullException( nameof( options ) );
@@ -149,14 +147,14 @@ public static class ParallelAlgorithms {
 
 	/// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
 	/// <param name="processBlock">
-	///     The action to invoke for every block, supplied with the start and end indices of the rows
-	///     and columns.
+	/// The action to invoke for every block, supplied with the start and end indices of the rows and columns.
 	/// </param>
-	/// <param name="numRows">           The number of rows in the matrix.</param>
-	/// <param name="numColumns">        The number of columns in the matrix.</param>
-	/// <param name="numBlocksPerRow">   Partition the matrix into this number of blocks along the rows.</param>
+	/// <param name="numRows">The number of rows in the matrix.</param>
+	/// <param name="numColumns">The number of columns in the matrix.</param>
+	/// <param name="numBlocksPerRow">Partition the matrix into this number of blocks along the rows.</param>
 	/// <param name="numBlocksPerColumn">Partition the matrix into this number of blocks along the columns.</param>
 	public static void Wavefront( this Action<Int32, Int32, Int32, Int32> processBlock, Int32 numRows, Int32 numColumns, Int32 numBlocksPerRow, Int32 numBlocksPerColumn ) {
+
 		// Validate parameters
 		if ( numRows <= 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( numRows ) );
@@ -195,9 +193,10 @@ public static class ParallelAlgorithms {
 
 	/// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
 	/// <param name="processRowColumnCell">The action to invoke for every cell, supplied with the row and column indices.</param>
-	/// <param name="numRows">             The number of rows in the matrix.</param>
-	/// <param name="numColumns">          The number of columns in the matrix.</param>
+	/// <param name="numRows">The number of rows in the matrix.</param>
+	/// <param name="numColumns">The number of columns in the matrix.</param>
 	public static void Wavefront( this Action<Int32, Int32> processRowColumnCell, Int32 numRows, Int32 numColumns ) {
+
 		// Validate parameters
 		if ( numRows <= 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( numRows ) );
@@ -221,6 +220,7 @@ public static class ParallelAlgorithms {
 			prevTaskInCurrentRow = null;
 
 			for ( var column = 0; column < numColumns; column++ ) {
+
 				// In-scope locals for being captured in the task closures
 				Int32 j = row, i = column;
 
@@ -228,11 +228,14 @@ public static class ParallelAlgorithms {
 				Task curTask;
 
 				if ( row == 0 && column == 0 ) {
+
 					// Upper-left task kicks everything off, having no dependencies
 					curTask = Task.Run( () => processRowColumnCell( j, i ) );
 				}
 				else if ( row == 0 || column == 0 ) {
-					// Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only on the task to their left
+
+					// Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only
+					// on the task to their left
 					var antecedent = column == 0 ? prevTaskRow[ 0 ] : prevTaskInCurrentRow;
 
 					curTask = antecedent?.ContinueWith( p => {
@@ -260,5 +263,4 @@ public static class ParallelAlgorithms {
 		// Wait for the last task to be done.
 		prevTaskInCurrentRow?.Wait();
 	}
-
 }

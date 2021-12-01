@@ -1,29 +1,28 @@
 // Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "PronounceablePasswordCreator.cs" last touched on 2021-10-25 at 7:32 AM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "PronounceablePasswordCreator.cs" last formatted on 2021-11-30 at 7:22 PM by Protiguous.
 
 namespace Librainian.Security;
 
@@ -33,16 +32,15 @@ using System.Text;
 using Maths;
 using Parsing;
 
-//  This password generator gives you a list of "pronounceable" passwords. It is modeled after Morrie Gasser's original generator described in
-//           Gasser, M., A Random Word Generator for Pronouncable Passwords, MTR-3006,
-//            The MITRE Corporation, Bedford, MA 01730, ESD-TR-75-97, HQ Electronic Systems Division, Hanscom AFB, MA 01731. NTIS AD A 017676.
-//  except that Morrie's used a second-order approximation to English and this generator uses a third-order approximation.
-// A descendant of Gasser's generator was added to the Multics operating system by Project Guardian in the mid 70s, and I believe Digital's VMS
-// added a similar feature in the 80s.
-// FIPS Standard 181 describes a similar digraph-based generator, derived from Gasser's.
-// The first digraph-based password generator I know of was written by Daniel J. Edwards about 1965 for MIT's CTSS
-// timesharing system. Over the years I have implemented versions in Multics PL/I, Tandem TAL, C++, Java, and JavaScript.
-// C# version by Richard Hazrrison : http://chateau-logic.com http://zaretto.com
+// This password generator gives you a list of "pronounceable" passwords. It is modeled after Morrie Gasser's original
+// generator described in Gasser, M., A Random Word Generator for Pronouncable Passwords, MTR-3006, The MITRE Corporation,
+// Bedford, MA 01730, ESD-TR-75-97, HQ Electronic Systems Division, Hanscom AFB, MA 01731. NTIS AD A 017676. except that
+// Morrie's used a second-order approximation to English and this generator uses a third-order approximation. A descendant of
+// Gasser's generator was added to the Multics operating system by Project Guardian in the mid 70s, and I believe Digital's VMS
+// added a similar feature in the 80s. FIPS Standard 181 describes a similar digraph-based generator, derived from Gasser's.
+// The first digraph-based password generator I know of was written by Daniel J. Edwards about 1965 for MIT's CTSS timesharing
+// system. Over the years I have implemented versions in Multics PL/I, Tandem TAL, C++, Java, and JavaScript. C# version by
+// Richard Hazrrison : http://chateau-logic.com http://zaretto.com
 /// <summary>Random Password Generator, see http://www.multicians.org/thvv/gpw.html</summary>
 public static class PronounceablePasswordCreator {
 
@@ -54,7 +52,7 @@ public static class PronounceablePasswordCreator {
 		Int32 c3;
 
 		var password = new StringBuilder( requiredLength, requiredLength );
-		var weightedRandom = ( Int64 ) ( Randem.NextDouble() * GpwData.Sigma );
+		var weightedRandom = ( Int64 )( Randem.NextDouble() * GpwData.Sigma );
 		Int64 sum = 0;
 
 		var finished = false;
@@ -91,7 +89,7 @@ public static class PronounceablePasswordCreator {
 				break;
 			}
 
-			weightedRandom = ( Int64 ) ( Randem.NextDouble() * sum );
+			weightedRandom = ( Int64 )( Randem.NextDouble() * sum );
 
 			sum = 0;
 
@@ -130,5 +128,4 @@ public static class PronounceablePasswordCreator {
 
 		return String.Join( ParsingConstants.Chars.Space, words );
 	}
-
 }

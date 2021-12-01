@@ -1,29 +1,28 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// 
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// 
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// 
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-// 
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories,
+// or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten
+// by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to
+// those Authors. If you find your code unattributed in this source code, please let us know so we can properly attribute you
+// and include the proper license and/or copyright(s). If you want to use any of our code in a commercial project, you must
+// contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-// 
+//
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
-// 
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT
+// responsible for Anything You Do With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT
+// responsible for Anything You Do With Your Computer. ====================================================================
+//
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.com/Software/"
-// Our GitHub address is "https://github.com/Protiguous".
-// 
-// File "ConsoleWindow2.cs" last touched on 2021-10-13 at 4:24 PM by Protiguous.
+// For business inquiries, please contact me at Protiguous@Protiguous.com. Our software can be found at
+// "https://Protiguous.com/Software/" Our GitHub address is "https://github.com/Protiguous".
+//
+// File "ConsoleWindow2.cs" last formatted on 2021-11-30 at 7:16 PM by Protiguous.
 
 namespace Librainian.Controls;
 
@@ -40,6 +39,23 @@ using Logging;
 [SuppressMessage( "ReSharper", "InconsistentNaming" )]
 public class ConsoleWindow2 {
 
+	private const Int32 MY_CODE_PAGE = 437;
+
+	private const Int32 STD_ERROR_HANDLE = -12;
+
+	private const Int32 STD_OUTPUT_HANDLE = -11;
+
+	private static readonly IntPtr InvalidHandleValue = new( -1 );
+
+	private enum StdHandle {
+
+		Input = -10,
+
+		Output = -11,
+
+		Error = -12
+	}
+
 	[Flags]
 	public enum DesiredAccess : UInt32 {
 
@@ -50,16 +66,7 @@ public class ConsoleWindow2 {
 		GenericExecute = 0x20000000,
 
 		GenericAll = 0x10000000
-
 	}
-
-	private const Int32 MY_CODE_PAGE = 437;
-
-	private const Int32 STD_ERROR_HANDLE = -12;
-
-	private const Int32 STD_OUTPUT_HANDLE = -11;
-
-	private static readonly IntPtr InvalidHandleValue = new(-1);
 
 	[DllImport( "kernel32.dll", EntryPoint = nameof( AllocConsole ), SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall )]
 	private static extern Int32 AllocConsole();
@@ -141,7 +148,7 @@ public class ConsoleWindow2 {
 		var outStream = Console.OpenStandardOutput();
 		var errStream = Console.OpenStandardError();
 		var encoding = Encoding.GetEncoding( MY_CODE_PAGE );
-		StreamWriter standardOutput = new(outStream, encoding), standardError = new(errStream, encoding);
+		StreamWriter standardOutput = new( outStream, encoding ), standardError = new( errStream, encoding );
 		Screen? screen = null;
 		try {
 			screen = screenNum switch {
@@ -173,7 +180,8 @@ public class ConsoleWindow2 {
 			Console.SetError( standardError );
 			if ( breakRedirection ) {
 				var coord = new COORD {
-					X = ( Int16 )bufferWidth, Y = ( Int16 )bufferHeight
+					X = ( Int16 )bufferWidth,
+					Y = ( Int16 )bufferHeight
 				};
 				SetConsoleScreenBufferSize( stdOut, coord );
 			}
@@ -208,22 +216,10 @@ public class ConsoleWindow2 {
 		SetStdHandle( StdHandle.Error, stdErr = GetConsoleStandardError() );
 	}
 
-	private enum StdHandle {
-
-		Input = -10,
-
-		Output = -11,
-
-		Error = -12
-
-	}
-
 	public struct COORD {
 
 		public Int16 X { get; set; }
 
 		public Int16 Y { get; set; }
-
 	}
-
 }
