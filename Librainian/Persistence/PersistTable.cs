@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Azos.Serialization.Arow;
 using Exceptions;
 using FileSystem;
 using JetBrains.Annotations;
@@ -48,6 +49,7 @@ using Newtonsoft.Json;
 using OperatingSystem.Compression;
 using Parsing;
 using Utilities.Disposables;
+using static System.Environment;
 
 /// <summary>
 /// <para>Allows the <see cref="PersistentDictionary{TKey,TValue}" /> class to persist almost any object by using Newtonsoft.Json.</para>
@@ -58,10 +60,10 @@ using Utilities.Disposables;
 [JsonObject]
 public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey, TValue?> where TKey : IComparable<TKey> {
 
-	public PersistTable( Environment.SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, tableName ) ) {
+	public PersistTable( SpecialFolder specialFolder, String tableName ) : this( new Folder( specialFolder, null, tableName ) ) {
 	}
 
-	public PersistTable( Environment.SpecialFolder specialFolder, String? subFolder, String tableName ) : this( new Folder( specialFolder, subFolder, tableName ) ) {
+	public PersistTable( SpecialFolder specialFolder, String? subFolder, String tableName ) : this( new Folder( specialFolder, subFolder, tableName ) ) {
 	}
 
 	public PersistTable( Folder folder, String tableName ) : this( Path.Combine( folder.FullPath, tableName ) ) {
@@ -74,12 +76,16 @@ public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey,
 		try {
 			this.Folder = folder ?? throw new NullException( nameof( folder ) );
 
-			this.Folder.Info.Create();
 			this.Folder.Info.Refresh();
 
 			if ( !this.Folder.Info.Exists ) {
-				throw new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." );
+				this.Folder.Create( CancellationToken.None).GetAwaiter().GetResult();
+				this.Folder.Refresh( CancellationToken.None ).GetAwaiter().GetResult();
+				if ( !this.Folder.Info.Exists ) {
+					throw new FolderNotFoundException( this.Folder );
+				}
 			}
+
 
 			var customConfig = new DatabaseConfig {
 				CreatePathIfNotExist = true,
@@ -93,9 +99,7 @@ public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey,
 			}
 		}
 		catch ( Exception exception ) {
-			exception.Log();
-
-			throw;
+			throw exception.Log();
 		}
 	}
 
@@ -216,7 +220,7 @@ public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey,
 
 	public async Task Initialize( CancellationToken cancellationToken ) {
 		if ( !await this.Folder.Create( cancellationToken ).ConfigureAwait( false ) ) {
-			throw new DirectoryNotFoundException( $"Unable to find or create the folder {this.Folder.FullPath.SmartQuote()}." );
+			throw new FolderNotFoundException( this.Folder );
 		}
 	}
 

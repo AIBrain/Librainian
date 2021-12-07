@@ -107,12 +107,12 @@ public static class Logging {
 	[DebuggerStepThrough]
 	public static void DebugNoLine<T>( this T? self ) => Debug.Write( self );
 
-	/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
+	/// <summary>Write line to <see cref="System.Diagnostics.Debug" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	[DebuggerStepThrough]
 	public static void Error<T>( this T? self ) => self.DebugLine();
 
-	/// <summary>Write to <see cref="System.Diagnostics.Debug" />.</summary>
+	/// <summary>Write line to <see cref="System.Diagnostics.Debug" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	[DebuggerStepThrough]
 	public static void Fatal<T>( this T? self ) => self.DebugLine();

@@ -48,6 +48,7 @@ using Parsing;
 using PooledAwait;
 using Pri.LongPath;
 using Utilities.Disposables;
+using static System.Environment;
 using Path = System.IO.Path;
 
 [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
@@ -61,7 +62,7 @@ public class Folder : ABetterClassDispose, IFolder {
 	/// <param name="fullPath"></param>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public Folder( String fullPath ) : base( ( fullPath = CleanPath( fullPath ) ).ThrowIfBlank() ) {
 		var directoryInfo = new DirectoryInfo( fullPath );
@@ -71,21 +72,21 @@ public class Folder : ABetterClassDispose, IFolder {
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
-	public Folder( Environment.SpecialFolder specialFolder ) : this( Environment.GetFolderPath( specialFolder ) ) { }
+	public Folder( SpecialFolder specialFolder ) : this( GetFolderPath( specialFolder ) ) { }
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
-	public Folder( Environment.SpecialFolder specialFolder, String subFolder ) : this( Environment.GetFolderPath( specialFolder ).CombinePaths( subFolder ) ) { }
+	public Folder( SpecialFolder specialFolder, String subFolder ) : this( GetFolderPath( specialFolder ).CombinePaths( subFolder ) ) { }
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
-	public Folder( Environment.SpecialFolder specialFolder, String? applicationName, String subFolder ) : this( Environment.GetFolderPath( specialFolder )
+	public Folder( SpecialFolder specialFolder, String? applicationName, String subFolder ) : this( GetFolderPath( specialFolder )
 		.CombinePaths( applicationName ?? AppDomain.CurrentDomain.FriendlyName, subFolder ) ) { }
 
 	/// <summary>
@@ -97,44 +98,43 @@ public class Folder : ABetterClassDispose, IFolder {
 	/// <param name="subFolders"></param>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	[DebuggerStepThrough]
-	public Folder( Environment.SpecialFolder specialFolder, String? companyName, String? applicationName, params String[] subFolders ) : this( Environment
-		.GetFolderPath( specialFolder )
+	public Folder( SpecialFolder specialFolder, String? companyName, String? applicationName, params String[] subFolders ) : this( GetFolderPath( specialFolder )
 		.CombinePaths( companyName ?? throw new InvalidOperationException( $"Empty {nameof( companyName )}." ),
 			applicationName ?? throw new InvalidOperationException( $"Empty {nameof( applicationName )}." ), subFolders.ToStrings( @"\" ) ) ) { }
 
 	[DebuggerStepThrough]
-	public Folder( Environment.SpecialFolder specialFolder, params String[] subFolders ) : this( Environment.GetFolderPath( specialFolder )
+	public Folder( SpecialFolder specialFolder, params String[] subFolders ) : this( GetFolderPath( specialFolder )
 																											.CombinePaths( subFolders
 																												.Select( fullpath => CleanPath( fullpath ) )
 																												.ToStrings( FolderSeparatorChar ) ) ) { }
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	[DebuggerStepThrough]
 	public Folder( String fullPath, String subFolder ) : this( fullPath.CombinePaths( subFolder ) ) { }
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	[DebuggerStepThrough]
 	public Folder( IFolder folder, String subFolder ) : this( folder.FullPath.CombinePaths( subFolder ) ) { }
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	[DebuggerStepThrough]
 	public Folder( IDocument document, String subFolder ) : this( document.ContainingingFolder().FullPath.CombinePaths( subFolder ) ) { }
 
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	[DebuggerStepThrough]
 	public Folder( FileSystemInfo fileSystemInfo ) : this( fileSystemInfo.FullName ) { }
@@ -266,7 +266,7 @@ public class Folder : ABetterClassDispose, IFolder {
 	/// <returns></returns>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	/// <exception cref="SecurityException"></exception>
 	public static IFolder GetTempFolder() => new Folder( Path.GetTempPath() );
@@ -279,7 +279,7 @@ public class Folder : ABetterClassDispose, IFolder {
 			throw new NullException( nameof( folder ) );
 		}
 
-		var windowsFolder = Environment.GetFolderPath( Environment.SpecialFolder.Windows );
+		var windowsFolder = GetFolderPath( SpecialFolder.Windows );
 
 		Process.Start( $@"{windowsFolder}\explorer.exe", $"/e,\"{folder.FullPath}\"" );
 	}

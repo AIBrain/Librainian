@@ -297,7 +297,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
 	/// <exception cref="IOException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public PooledValueTask<Boolean> SameContent( Document? right, CancellationToken cancellationToken );
 

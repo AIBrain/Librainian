@@ -33,6 +33,7 @@ using System.Net;
 using System.Net.Cache;
 using System.Threading;
 using System.Threading.Tasks;
+using Azos.Serialization.Arow;
 using Exceptions;
 using FileSystem;
 using Logging;
@@ -122,7 +123,7 @@ public static class Internet {
 			}
 		}
 
-		public override sealed Boolean Start() {
+		public sealed override Boolean Start() {
 			this.Downloaded.Reset();
 
 			this.Client.DownloadFileCompleted += ( sender, args ) => {
@@ -276,29 +277,10 @@ public static class Internet {
 				return this.Downloaded.Wait( forHowLong, cancellationToken );
 			}
 			catch ( Exception exception ) {
-				switch ( exception ) {
-					case ArgumentOutOfRangeException _: {
-						return false;
-					}
-
-					case ObjectDisposedException _: {
-						return false;
-					}
-
-					case AbandonedMutexException _: {
-						return false;
-					}
-
-					case InvalidOperationException _: {
-						return false;
-					}
-
-					default: {
-						exception.Log();
-
-						throw;
-					}
-				}
+				return exception switch {
+					ArgumentOutOfRangeException _ or ObjectDisposedException _ or AbandonedMutexException _ or InvalidOperationException _ => false,
+					var _ => throw exception.Log(),
+				};
 			}
 		}
 	}

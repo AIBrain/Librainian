@@ -220,7 +220,7 @@ public static class PersistenceExtensions {
 		catch ( NullException exception ) {
 			exception.Log();
 		}
-		catch ( DirectoryNotFoundException exception ) {
+		catch ( FolderNotFoundException exception ) {
 			exception.Log();
 		}
 		catch ( FileNotFoundException exception ) {
@@ -313,7 +313,7 @@ public static class PersistenceExtensions {
 			var stopwatch = Stopwatch.StartNew();
 
 			if ( !await folder.Create( cancellationToken ).ConfigureAwait( false ) ) {
-				throw new DirectoryNotFoundException( folder.FullPath );
+				throw new FolderNotFoundException( folder );
 			}
 
 			var itemCount = ( UInt64 )dictionary.Count;

@@ -39,6 +39,7 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using ComputerSystem.Devices;
+using Exceptions;
 using FileSystem;
 using Graphics;
 using Microsoft.Win32.SafeHandles;
@@ -1119,10 +1120,10 @@ public static class NativeMethods {
 	[DoesNotReturn]
 	public static void ThrowFileNotFound( String fullPath ) => throw new FileNotFoundException( $"The file \"{fullPath}\" was not found.", fullPath );
 
-	/// <summary>Throw a useful <see cref="DirectoryNotFoundException" />.</summary>
+	/// <summary>Throw a useful <see cref="FolderNotFoundException" />.</summary>
 	[DebuggerStepThrough]
 	[DoesNotReturn]
-	public static void ThrowPathNotFound( String fullPath ) => throw new DirectoryNotFoundException( $"The path for file \"{fullPath}\" was not found." );
+	public static void ThrowPathNotFound( String fullPath ) => throw new FolderNotFoundException( new Folder( fullPath ) );
 
 	[DebuggerStepThrough]
 	public static DateTime ToDateTime( this Filetime time ) {

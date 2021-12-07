@@ -260,7 +260,7 @@ public static class FolderExtensions {
 
 			return !Directory.Exists( folder.FullPath );
 		}
-		catch ( DirectoryNotFoundException ) { }
+		catch ( FolderNotFoundException ) { }
 		catch ( PathTooLongException ) { }
 		catch ( IOException ) {
 

@@ -72,14 +72,14 @@ public static class IOExtensions {
 			}
 		}
 		catch ( UnauthorizedAccessException ) { }
-		catch ( DirectoryNotFoundException ) { }
+		catch ( FolderNotFoundException ) { }
 		catch ( IOException ) { }
 		catch ( SecurityException ) { }
 		catch ( AggregateException aggregateException ) {
 			aggregateException.Handle( exception => {
 				switch ( exception ) {
 					case UnauthorizedAccessException:
-					case DirectoryNotFoundException:
+					case FolderNotFoundException:
 					case IOException:
 					case SecurityException:
 						return true;
@@ -177,14 +177,14 @@ public static class IOExtensions {
 			}
 		}
 		catch ( UnauthorizedAccessException ) { }
-		catch ( DirectoryNotFoundException ) { }
+		catch ( FolderNotFoundException ) { }
 		catch ( IOException ) { }
 		catch ( SecurityException ) { }
 		catch ( AggregateException aggregateException ) {
 			aggregateException.Handle( exception => {
 				switch ( exception ) {
 					case UnauthorizedAccessException _:
-					case DirectoryNotFoundException _:
+					case FolderNotFoundException _:
 					case IOException _:
 					case SecurityException _:
 						return true;
@@ -230,7 +230,7 @@ public static class IOExtensions {
 			exception.Log();
 			return (Status.Exception, exception);
 		}
-		catch ( DirectoryNotFoundException exception ) {
+		catch ( FolderNotFoundException exception ) {
 			exception.Log();
 			return (Status.Exception, exception);
 		}
@@ -1143,7 +1143,7 @@ public static class IOExtensions {
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
 	/// <exception cref="IOException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public static Boolean SameContent( this FileInfo? left, FileInfo? right ) {
 		if ( left is null || right is null ) {
@@ -1176,7 +1176,7 @@ public static class IOExtensions {
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
 	/// <exception cref="IOException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public static Boolean SameContent( this String? leftFileName, String? rightFileName ) {
 		if ( leftFileName is null || rightFileName is null ) {
@@ -1214,7 +1214,7 @@ public static class IOExtensions {
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
 	/// <exception cref="IOException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public static async Task<Boolean> SameContent( this Document? left, FileInfo? rightFile, CancellationToken cancellationToken ) {
 		if ( left is null || rightFile is null ) {
@@ -1238,7 +1238,7 @@ public static class IOExtensions {
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="NotSupportedException"></exception>
 	/// <exception cref="IOException"></exception>
-	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FolderNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public static async Task<Boolean> SameContent( this FileInfo? leftFile, Document? right, CancellationToken cancellationToken ) {
 		if ( leftFile is null || right is null ) {
@@ -1283,14 +1283,14 @@ public static class IOExtensions {
 					 } );
 		}
 		catch ( UnauthorizedAccessException ) { }
-		catch ( DirectoryNotFoundException ) { }
+		catch ( FolderNotFoundException ) { }
 		catch ( IOException ) { }
 		catch ( SecurityException ) { }
 		catch ( AggregateException exception ) {
 			exception.Handle( ex => {
 				switch ( ex ) {
 					case UnauthorizedAccessException _:
-					case DirectoryNotFoundException _:
+					case FolderNotFoundException _:
 					case IOException _:
 					case SecurityException _: {
 						return true;

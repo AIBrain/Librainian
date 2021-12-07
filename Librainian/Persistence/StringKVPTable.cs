@@ -87,7 +87,7 @@ public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, St
 			this.Folder.Info.Refresh();
 
 			if ( !this.Folder.Info.Exists ) {
-				throw new DirectoryNotFoundException( $"Unable to find or create the folder {this.Folder.FullPath.SmartQuote()}." );
+				throw new FolderNotFoundException( this.Folder );
 			}
 
 			var customConfig = new DatabaseConfig {
@@ -265,10 +265,10 @@ public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, St
 
 	public async PooledValueTask<Status> Initialize( CancellationToken cancellationToken ) {
 		if ( String.IsNullOrWhiteSpace( this.Dictionary.Database?.ToString() ) ) {
-			new DirectoryNotFoundException( $"Unable to find or create the folder `{this.Folder.FullPath}`." ).Log();
+			new FolderNotFoundException( this.Folder ).Log();
 			return Status.Exception;
 		}
-
+		 
 		if ( await this.TestForReadWriteAccess( cancellationToken ).ConfigureAwait( false ) ) {
 			new IOException( $"Read/write permissions denied in folder {this.Folder.FullPath}." ).Log();
 			return Status.Exception;

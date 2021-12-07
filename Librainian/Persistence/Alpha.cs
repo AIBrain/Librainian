@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using Exceptions;
 using FileSystem;
 using Logging;
+using Measurement.Time;
 using Parsing;
 
 /// <summary>The *last* data storage class your program will ever need. Haha, I wish.</summary>
@@ -85,11 +86,13 @@ public static class Alpha {
 	public static class Storage {
 
 		static Storage() {
-			if ( !RootPath.Info.Exists ) {
-				RootPath.Info.Create();
-				RootPath.Info.Refresh();
-				if ( !RootPath.Info.Exists ) {
-					throw new DirectoryNotFoundException( RootPath.FullPath );
+			//TODO This doesn't belong in here.
+			if ( !RootPath.ExistsSync() ) {
+				var cancellationTokenSource = new CancellationTokenSource( Seconds.Thirty );
+				RootPath.Create( cancellationTokenSource.Token ).GetAwaiter().GetResult();
+				RootPath.Refresh( cancellationTokenSource.Token ).GetAwaiter().GetResult();
+				if ( !RootPath.ExistsSync() ) {
+					throw new FolderNotFoundException( RootPath );
 				}
 			}
 
