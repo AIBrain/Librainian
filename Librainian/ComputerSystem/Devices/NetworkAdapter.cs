@@ -24,165 +24,164 @@
 
 #nullable enable
 
-namespace Librainian.ComputerSystem.Devices {
+namespace Librainian.ComputerSystem.Devices;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Management;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Converters;
-	using Measurement.Time;
-	using OperatingSystem;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management;
+using System.Threading;
+using System.Threading.Tasks;
+using Converters;
+using Measurement.Time;
+using OperatingSystem;
 
-	/// <summary>Module Name: NetworkAdapter.cs Project: CSWMIEnableDisableNetworkAdapter Copyright (c) Microsoft Corporation.</summary>
-	public class NetworkAdapter {
+/// <summary>Module Name: NetworkAdapter.cs Project: CSWMIEnableDisableNetworkAdapter Copyright (c) Microsoft Corporation.</summary>
+public class NetworkAdapter {
 
-		/// <summary>The DeviceID of the NetworkAdapter</summary>
-		public Int32 DeviceId { get; }
+	/// <summary>The DeviceID of the NetworkAdapter</summary>
+	public Int32 DeviceId { get; }
 
-		/// <summary>The ProductName of the NetworkAdapter</summary>
-		public String? Name { get; }
+	/// <summary>The ProductName of the NetworkAdapter</summary>
+	public String? Name { get; }
 
-		/// <summary>The Net Connection Status Value</summary>
-		public Int32 NetConnectionStatus { get; }
+	/// <summary>The Net Connection Status Value</summary>
+	public Int32 NetConnectionStatus { get; }
 
-		/// <summary>The NetEnabled status of the NetworkAdapter</summary>
-		public Int32 NetEnabled { get; }
+	/// <summary>The NetEnabled status of the NetworkAdapter</summary>
+	public Int32 NetEnabled { get; }
 
-		public NetworkAdapter( Int32 deviceId, String? name, Int32 netEnabled, Int32 netConnectionStatus ) {
+	public NetworkAdapter( Int32 deviceId, String? name, Int32 netEnabled, Int32 netConnectionStatus ) {
+		this.DeviceId = deviceId;
+		this.Name = name;
+		this.NetEnabled = netEnabled;
+		this.NetConnectionStatus = netConnectionStatus;
+	}
+
+	public NetworkAdapter( Int32 deviceId ) {
+		var strWQuery = $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {deviceId}";
+
+		try {
+			var networkAdapters = strWQuery.WmiQuery();
+
+			//OfType() instead of Cast()??
+			var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
+
+			if ( crtNetworkAdapter == null ) {
+				return;
+			}
+
 			this.DeviceId = deviceId;
-			this.Name = name;
-			this.NetEnabled = netEnabled;
-			this.NetConnectionStatus = netConnectionStatus;
+
+			this.Name = crtNetworkAdapter["ProductName"]?.ToString();
+
+			this.NetEnabled = crtNetworkAdapter[nameof( this.NetEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled;
+
+			this.NetConnectionStatus = crtNetworkAdapter[nameof( this.NetConnectionStatus )].ToIntOrThrow();
+		}
+		catch ( NullReferenceException ) {
+
+			// If there is no a network adapter which deviceid equates to the argument
+			// "deviceId" just to construct a none exists network adapter
+			this.DeviceId = -1;
+			this.Name = String.Empty;
+			this.NetEnabled = 0;
+			this.NetConnectionStatus = -1;
+		}
+	}
+
+	/// <summary>Enum the Operation result of Enable and Disable Network Adapter</summary>
+	public enum EnumEnableDisableResult {
+
+		Fail = -1,
+
+		Unknow,
+
+		Success
+	}
+
+	/// <summary>Enum the NetEnabled Status</summary>
+	public enum EnumNetEnabledStatus {
+
+		Disabled = -1,
+
+		Unknown,
+
+		Enabled
+	}
+
+	/// <summary>List all the NetworkAdapters</summary>
+	/// <returns>The list of all NetworkAdapter of the machine</returns>
+	public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
+		var networkAdapters =
+			"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'".WmiQuery();
+
+		foreach ( var o in networkAdapters ) {
+			if ( o is ManagementObject moNetworkAdapter ) {
+				yield return new NetworkAdapter( moNetworkAdapter["DeviceID"].ToIntOrThrow(), moNetworkAdapter["ProductName"]?.ToString(),
+					moNetworkAdapter[nameof( NetEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
+						( Int32 )EnumNetEnabledStatus.Disabled, moNetworkAdapter[nameof( NetConnectionStatus )].ToIntOrThrow() );
+			}
+		}
+	}
+
+	/// <summary>Enable Or Disable The NetworkAdapter</summary>
+	/// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
+	public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( String strOperation, CancellationToken cancellationToken ) {
+		if ( String.IsNullOrWhiteSpace( strOperation ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( strOperation ) );
 		}
 
-		public NetworkAdapter( Int32 deviceId ) {
-			var strWQuery = $"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {deviceId}";
+		strOperation = strOperation.Trim();
 
+		EnumEnableDisableResult resultEnableDisableNetworkAdapter;
+		ManagementObject crtNetworkAdapter;
+
+		using ( crtNetworkAdapter = new ManagementObject() ) {
 			try {
-				var networkAdapters = strWQuery.WmiQuery();
+				var networkAdapters =
+					$"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}".WmiQuery();
 
-				//OfType() instead of Cast()??
-				var crtNetworkAdapter = networkAdapters.Cast<ManagementBaseObject>().Select( o => o as ManagementObject ).FirstOrDefault();
-
-				if ( crtNetworkAdapter == null ) {
-					return;
+				foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters
+				                                select o as ManagementObject ) {
+					crtNetworkAdapter = networkAdapter;
 				}
 
-				this.DeviceId = deviceId;
+				crtNetworkAdapter.InvokeMethod( strOperation, Array.Empty<Object>() );
 
-				this.Name = crtNetworkAdapter["ProductName"]?.ToString();
+				await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
 
-				this.NetEnabled = crtNetworkAdapter[nameof( this.NetEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled : ( Int32 )EnumNetEnabledStatus.Disabled;
+				while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled :
+					       ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
+					await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
+				}
 
-				this.NetConnectionStatus = crtNetworkAdapter[nameof( this.NetConnectionStatus )].ToIntOrThrow();
+				resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Success;
 			}
 			catch ( NullReferenceException ) {
 
-				// If there is no a network adapter which deviceid equates to the argument
-				// "deviceId" just to construct a none exists network adapter
-				this.DeviceId = -1;
-				this.Name = String.Empty;
-				this.NetEnabled = 0;
-				this.NetConnectionStatus = -1;
+				// If there is a NullReferenceException, the result of the enable or disable network
+				// adapter operation will be fail
+				resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Fail;
 			}
 		}
 
-		/// <summary>Enum the Operation result of Enable and Disable Network Adapter</summary>
-		public enum EnumEnableDisableResult {
+		return resultEnableDisableNetworkAdapter;
+	}
 
-			Fail = -1,
+	/// <summary>Get the NetworkAdapter NetEnabled Property</summary>
+	/// <returns>Whether the NetworkAdapter is enabled</returns>
+	public Int32 GetNetEnabled() {
+		var netEnabled = ( Int32 )EnumNetEnabledStatus.Unknown;
 
-			Unknow,
-
-			Success
-		}
-
-		/// <summary>Enum the NetEnabled Status</summary>
-		public enum EnumNetEnabledStatus {
-
-			Disabled = -1,
-
-			Unknown,
-
-			Enabled
-		}
-
-		/// <summary>List all the NetworkAdapters</summary>
-		/// <returns>The list of all NetworkAdapter of the machine</returns>
-		public static IEnumerable<NetworkAdapter> GetAllNetworkAdapters() {
-			var networkAdapters =
-				"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE Manufacturer <> \'Microsoft\'".WmiQuery();
-
-			foreach ( var o in networkAdapters ) {
-				if ( o is ManagementObject moNetworkAdapter ) {
-					yield return new NetworkAdapter( moNetworkAdapter["DeviceID"].ToIntOrThrow(), moNetworkAdapter["ProductName"]?.ToString(),
-													 moNetworkAdapter[nameof( NetEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
-														 ( Int32 )EnumNetEnabledStatus.Disabled, moNetworkAdapter[nameof( NetConnectionStatus )].ToIntOrThrow() );
-				}
+		try {
+			foreach ( var o in $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}".WmiQuery() ) {
+				netEnabled = o is ManagementObject networkAdapter && networkAdapter[nameof( netEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
+					( Int32 )EnumNetEnabledStatus.Disabled;
 			}
 		}
+		catch ( NullReferenceException ) { }
 
-		/// <summary>Enable Or Disable The NetworkAdapter</summary>
-		/// <returns>Whether the NetworkAdapter was enabled or disabled successfully</returns>
-		public async Task<EnumEnableDisableResult> EnableOrDisableNetworkAdapter( String strOperation, CancellationToken cancellationToken ) {
-			if ( String.IsNullOrWhiteSpace( strOperation ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( strOperation ) );
-			}
-
-			strOperation = strOperation.Trim();
-
-			EnumEnableDisableResult resultEnableDisableNetworkAdapter;
-			ManagementObject crtNetworkAdapter;
-
-			using ( crtNetworkAdapter = new ManagementObject() ) {
-				try {
-					var networkAdapters =
-						$"SELECT DeviceID, ProductName, NetEnabled, NetConnectionStatus FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}".WmiQuery();
-
-					foreach ( var networkAdapter in from ManagementBaseObject o in networkAdapters
-													select o as ManagementObject ) {
-						crtNetworkAdapter = networkAdapter;
-					}
-
-					crtNetworkAdapter.InvokeMethod( strOperation, Array.Empty<Object>() );
-
-					await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
-
-					while ( this.GetNetEnabled() != ( strOperation.Equals( "Enable", StringComparison.OrdinalIgnoreCase ) ? ( Int32 )EnumNetEnabledStatus.Enabled :
-														  ( Int32 )EnumNetEnabledStatus.Disabled ) ) {
-						await Task.Delay( Milliseconds.OneHundred, cancellationToken ).ConfigureAwait( false );
-					}
-
-					resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Success;
-				}
-				catch ( NullReferenceException ) {
-
-					// If there is a NullReferenceException, the result of the enable or disable network
-					// adapter operation will be fail
-					resultEnableDisableNetworkAdapter = EnumEnableDisableResult.Fail;
-				}
-			}
-
-			return resultEnableDisableNetworkAdapter;
-		}
-
-		/// <summary>Get the NetworkAdapter NetEnabled Property</summary>
-		/// <returns>Whether the NetworkAdapter is enabled</returns>
-		public Int32 GetNetEnabled() {
-			var netEnabled = ( Int32 )EnumNetEnabledStatus.Unknown;
-
-			try {
-				foreach ( var o in $"SELECT NetEnabled FROM Win32_NetworkAdapter WHERE DeviceID = {this.DeviceId}".WmiQuery() ) {
-					netEnabled = o is ManagementObject networkAdapter && networkAdapter[nameof( netEnabled )].ToBoolean() ? ( Int32 )EnumNetEnabledStatus.Enabled :
-									 ( Int32 )EnumNetEnabledStatus.Disabled;
-				}
-			}
-			catch ( NullReferenceException ) { }
-
-			return netEnabled;
-		}
+		return netEnabled;
 	}
 }

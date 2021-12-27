@@ -25,70 +25,69 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using System.Linq;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Linq;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="ClockSecond" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public record ClockSecond : IClockPart {
-		public const Byte MaximumValue = 59;
+/// <summary>A simple struct for a <see cref="ClockSecond" />.</summary>
+[JsonObject]
+[Immutable]
+public record ClockSecond : IClockPart {
+	public const Byte MaximumValue = 59;
 
-		public const Byte MinimumValue = 0;
+	public const Byte MinimumValue = 0;
 
-		public static readonly Byte[] ValidSeconds = Enumerable.Range( MinimumValue, MaximumValue ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
+	public static readonly Byte[] ValidSeconds = Enumerable.Range( MinimumValue, MaximumValue ).Select( i => ( Byte )i ).OrderBy( b => b ).ToArray();
 
-		public ClockSecond( Byte value ) {
-			if ( value > MaximumValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
-			}
-
-			this.Value = value;
+	public ClockSecond( Byte value ) {
+		if ( value > MaximumValue ) {
+			throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
 		}
 
-		public static ClockSecond Maximum { get; } = new( MaximumValue );
+		this.Value = value;
+	}
 
-		public static ClockSecond Minimum { get; } = new( MinimumValue );
+	public static ClockSecond Maximum { get; } = new( MaximumValue );
 
-		[JsonProperty]
-		public Byte Value { get; init; }
+	public static ClockSecond Minimum { get; } = new( MinimumValue );
 
-		public static implicit operator Byte( ClockSecond value ) => value.Value;
+	[JsonProperty]
+	public Byte Value { get; init; }
 
-		public static implicit operator ClockSecond( Byte value ) => new( value );
+	public static implicit operator Byte( ClockSecond value ) => value.Value;
 
-		/// <summary>Provide the next second.</summary>
-		public ClockSecond Next( out Boolean tocked ) {
-			var next = this.Value + 1;
+	public static implicit operator ClockSecond( Byte value ) => new( value );
 
-			if ( next > MaximumValue ) {
-				tocked = true;
+	/// <summary>Provide the next second.</summary>
+	public ClockSecond Next( out Boolean tocked ) {
+		var next = this.Value + 1;
 
-				return Minimum;
-			}
+		if ( next > MaximumValue ) {
+			tocked = true;
 
-			tocked = false;
-
-			return ( ClockSecond )next;
+			return Minimum;
 		}
 
-		/// <summary>Provide the previous second.</summary>
-		public ClockSecond Previous( out Boolean tocked ) {
-			var next = this.Value - 1;
+		tocked = false;
 
-			if ( next < MinimumValue ) {
-				tocked = true;
+		return ( ClockSecond )next;
+	}
 
-				return Maximum;
-			}
+	/// <summary>Provide the previous second.</summary>
+	public ClockSecond Previous( out Boolean tocked ) {
+		var next = this.Value - 1;
 
-			tocked = false;
+		if ( next < MinimumValue ) {
+			tocked = true;
 
-			return ( ClockSecond )next;
+			return Maximum;
 		}
+
+		tocked = false;
+
+		return ( ClockSecond )next;
 	}
 }

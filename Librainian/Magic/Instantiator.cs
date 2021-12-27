@@ -22,163 +22,162 @@
 //
 // File "Instantiator.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Magic {
+namespace Librainian.Magic;
 
-	using System;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Linq.Expressions;
-	using Exceptions;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Linq.Expressions;
+using Exceptions;
 
-	/// <typeparam name="T"></typeparam>
-	/// <example>
-	///     <code>var cat = Instantiator&lt;ReaderWriterLockSlim&gt;.New("furry", isCute: true);</code>
-	/// </example>
-	public static class Instantiator<T> {
+/// <typeparam name="T"></typeparam>
+/// <example>
+///     <code>var cat = Instantiator&lt;ReaderWriterLockSlim&gt;.New("furry", isCute: true);</code>
+/// </example>
+public static class Instantiator<T> {
 
-		static Instantiator() =>
-			Debug.Assert( typeof( T ).IsValueType || typeof( T ).IsClass && !typeof( T ).IsAbstract,
-						  String.Concat( "The type ", typeof( T ).Name, " is not constructable." ) );
+	static Instantiator() =>
+		Debug.Assert( typeof( T ).IsValueType || typeof( T ).IsClass && !typeof( T ).IsAbstract,
+			String.Concat( "The type ", typeof( T ).Name, " is not constructable." ) );
 
-		private static Expression<TDelegate> CreateLambdaExpression<TDelegate>( params Type[] argTypes ) {
-			if ( argTypes is null ) {
-				throw new ArgumentEmptyException( nameof( argTypes ) );
-			}
-
-			var paramExpressions = new ParameterExpression[argTypes.Length];
-
-			for ( var i = 0; i < paramExpressions.Length; i++ ) {
-				paramExpressions[i] = Expression.Parameter( argTypes[i], String.Concat( "arg", i ) );
-			}
-
-			var ctorInfo = typeof( T ).GetConstructor( argTypes );
-
-			if ( ctorInfo is null ) {
-				throw new ArgumentException(
-					String.Concat( "The type ", typeof( T ).Name, " has no constructor with the argument type(s) ",
-								   String.Join( ", ", argTypes.Select( t => t.Name ).ToArray() ), "." ), nameof( argTypes ) );
-			}
-
-			return Expression.Lambda<TDelegate>( Expression.New( ctorInfo, paramExpressions.Select( expression => expression as Expression ) ), paramExpressions );
+	private static Expression<TDelegate> CreateLambdaExpression<TDelegate>( params Type[] argTypes ) {
+		if ( argTypes is null ) {
+			throw new ArgumentEmptyException( nameof( argTypes ) );
 		}
 
-		/// <summary>Create a new instance of type <see cref="T" /> with no parameters.</summary>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New() => InstantiatorImpl.CtorFunc();
+		var paramExpressions = new ParameterExpression[argTypes.Length];
 
-		/// <summary>Create a new instance of type <see cref="T" /> with one parameter.</summary>
-		/// <typeparam name="TA"></typeparam>
-		/// <param name="valueA"></param>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New<TA>( TA? valueA ) => InstantiatorImpl<TA>.CtorFunc( valueA );
-
-		/// <summary>Create a new instance of type <see cref="T" /> with two parameters.</summary>
-		/// <typeparam name="TA"></typeparam>
-		/// <typeparam name="TB"></typeparam>
-		/// <param name="valueA"></param>
-		/// <param name="valueB"></param>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New<TA, TB>( TA? valueA, TB? valueB ) => InstantiatorImpl<TA, TB>.CtorFunc( valueA, valueB );
-
-		/// <summary>Create a new instance of type <see cref="T" /> with three parameters.</summary>
-		/// <typeparam name="TA"></typeparam>
-		/// <typeparam name="TB"></typeparam>
-		/// <typeparam name="TC"></typeparam>
-		/// <param name="valueA"></param>
-		/// <param name="valueB"></param>
-		/// <param name="valueC"></param>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New<TA, TB, TC>( TA? valueA, TB? valueB, TC? valueC ) =>
-			InstantiatorImpl<TA, TB, TC>.CtorFunc( valueA, valueB, valueC );
-
-		/// <summary>Create a new instance of type <see cref="T" /> with four parameters.</summary>
-		/// <typeparam name="TA"></typeparam>
-		/// <typeparam name="TB"></typeparam>
-		/// <typeparam name="TC"></typeparam>
-		/// <typeparam name="TD"></typeparam>
-		/// <param name="valueA"></param>
-		/// <param name="valueB"></param>
-		/// <param name="valueC"></param>
-		/// <param name="valueD"></param>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New<TA, TB, TC, TD>( TA? valueA, TB? valueB, TC? valueC, TD? valueD ) =>
-			InstantiatorImpl<TA, TB, TC, TD>.CtorFunc( valueA, valueB, valueC, valueD );
-
-		/// <summary>Create a new instance of type <see cref="T" /> with five parameters.</summary>
-		/// <typeparam name="TA"></typeparam>
-		/// <typeparam name="TB"></typeparam>
-		/// <typeparam name="TC"></typeparam>
-		/// <typeparam name="TD"></typeparam>
-		/// <typeparam name="TE"></typeparam>
-		/// <param name="valueA"></param>
-		/// <param name="valueB"></param>
-		/// <param name="valueC"></param>
-		/// <param name="valueD"></param>
-		/// <param name="valueE"></param>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New<TA, TB, TC, TD, TE>( TA? valueA, TB? valueB, TC? valueC, TD? valueD, TE? valueE ) =>
-			InstantiatorImpl<TA, TB, TC, TD, TE>.CtorFunc( valueA, valueB, valueC, valueD, valueE );
-
-		/// <summary>Create a new instance of type <see cref="T" /> with six parameters.</summary>
-		/// <typeparam name="TA"></typeparam>
-		/// <typeparam name="TB"></typeparam>
-		/// <typeparam name="TC"></typeparam>
-		/// <typeparam name="TD"></typeparam>
-		/// <typeparam name="TE"></typeparam>
-		/// <typeparam name="TF"></typeparam>
-		/// <param name="valueA"></param>
-		/// <param name="valueB"></param>
-		/// <param name="valueC"></param>
-		/// <param name="valueD"></param>
-		/// <param name="valueE"></param>
-		/// <param name="valueF"></param>
-		[return: System.Diagnostics.CodeAnalysis.NotNull]
-		public static T New<TA, TB, TC, TD, TE, TF>(
-			TA? valueA,
-			TB? valueB,
-			TC? valueC,
-			TD? valueD,
-			TE? valueE,
-			TF? valueF
-		) =>
-			InstantiatorImpl<TA, TB, TC, TD, TE, TF>.CtorFunc( valueA, valueB, valueC, valueD, valueE, valueF );
-
-		private static class InstantiatorImpl {
-
-			public static readonly Func<T> CtorFunc = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
+		for ( var i = 0; i < paramExpressions.Length; i++ ) {
+			paramExpressions[i] = Expression.Parameter( argTypes[i], String.Concat( "arg", i ) );
 		}
 
-		private static class InstantiatorImpl<TA> {
+		var ctorInfo = typeof( T ).GetConstructor( argTypes );
 
-			public static readonly Func<TA, T> CtorFunc = CreateLambdaExpression<Func<TA, T>>( typeof( TA ) ).Compile();
+		if ( ctorInfo is null ) {
+			throw new ArgumentException(
+				String.Concat( "The type ", typeof( T ).Name, " has no constructor with the argument type(s) ",
+					String.Join( ", ", argTypes.Select( t => t.Name ).ToArray() ), "." ), nameof( argTypes ) );
 		}
 
-		private static class InstantiatorImpl<TA, TB> {
+		return Expression.Lambda<TDelegate>( Expression.New( ctorInfo, paramExpressions.Select( expression => expression as Expression ) ), paramExpressions );
+	}
 
-			public static readonly Func<TA, TB, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, T>>( typeof( TA ), typeof( TB ) ).Compile();
-		}
+	/// <summary>Create a new instance of type <see cref="T" /> with no parameters.</summary>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New() => InstantiatorImpl.CtorFunc();
 
-		private static class InstantiatorImpl<TA, TB, TC> {
+	/// <summary>Create a new instance of type <see cref="T" /> with one parameter.</summary>
+	/// <typeparam name="TA"></typeparam>
+	/// <param name="valueA"></param>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New<TA>( TA? valueA ) => InstantiatorImpl<TA>.CtorFunc( valueA );
 
-			public static readonly Func<TA, TB, TC, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, TC, T>>( typeof( TA ), typeof( TB ), typeof( TC ) ).Compile();
-		}
+	/// <summary>Create a new instance of type <see cref="T" /> with two parameters.</summary>
+	/// <typeparam name="TA"></typeparam>
+	/// <typeparam name="TB"></typeparam>
+	/// <param name="valueA"></param>
+	/// <param name="valueB"></param>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New<TA, TB>( TA? valueA, TB? valueB ) => InstantiatorImpl<TA, TB>.CtorFunc( valueA, valueB );
 
-		private static class InstantiatorImpl<TA, TB, TC, TD> {
+	/// <summary>Create a new instance of type <see cref="T" /> with three parameters.</summary>
+	/// <typeparam name="TA"></typeparam>
+	/// <typeparam name="TB"></typeparam>
+	/// <typeparam name="TC"></typeparam>
+	/// <param name="valueA"></param>
+	/// <param name="valueB"></param>
+	/// <param name="valueC"></param>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New<TA, TB, TC>( TA? valueA, TB? valueB, TC? valueC ) =>
+		InstantiatorImpl<TA, TB, TC>.CtorFunc( valueA, valueB, valueC );
 
-			public static readonly Func<TA, TB, TC, TD, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, TC, TD, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ) )
-				.Compile();
-		}
+	/// <summary>Create a new instance of type <see cref="T" /> with four parameters.</summary>
+	/// <typeparam name="TA"></typeparam>
+	/// <typeparam name="TB"></typeparam>
+	/// <typeparam name="TC"></typeparam>
+	/// <typeparam name="TD"></typeparam>
+	/// <param name="valueA"></param>
+	/// <param name="valueB"></param>
+	/// <param name="valueC"></param>
+	/// <param name="valueD"></param>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New<TA, TB, TC, TD>( TA? valueA, TB? valueB, TC? valueC, TD? valueD ) =>
+		InstantiatorImpl<TA, TB, TC, TD>.CtorFunc( valueA, valueB, valueC, valueD );
 
-		private static class InstantiatorImpl<TA, TB, TC, TD, TE> {
+	/// <summary>Create a new instance of type <see cref="T" /> with five parameters.</summary>
+	/// <typeparam name="TA"></typeparam>
+	/// <typeparam name="TB"></typeparam>
+	/// <typeparam name="TC"></typeparam>
+	/// <typeparam name="TD"></typeparam>
+	/// <typeparam name="TE"></typeparam>
+	/// <param name="valueA"></param>
+	/// <param name="valueB"></param>
+	/// <param name="valueC"></param>
+	/// <param name="valueD"></param>
+	/// <param name="valueE"></param>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New<TA, TB, TC, TD, TE>( TA? valueA, TB? valueB, TC? valueC, TD? valueD, TE? valueE ) =>
+		InstantiatorImpl<TA, TB, TC, TD, TE>.CtorFunc( valueA, valueB, valueC, valueD, valueE );
 
-			public static readonly Func<TA, TB, TC, TD, TE, T> CtorFunc =
-				CreateLambdaExpression<Func<TA, TB, TC, TD, TE, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ), typeof( TE ) ).Compile();
-		}
+	/// <summary>Create a new instance of type <see cref="T" /> with six parameters.</summary>
+	/// <typeparam name="TA"></typeparam>
+	/// <typeparam name="TB"></typeparam>
+	/// <typeparam name="TC"></typeparam>
+	/// <typeparam name="TD"></typeparam>
+	/// <typeparam name="TE"></typeparam>
+	/// <typeparam name="TF"></typeparam>
+	/// <param name="valueA"></param>
+	/// <param name="valueB"></param>
+	/// <param name="valueC"></param>
+	/// <param name="valueD"></param>
+	/// <param name="valueE"></param>
+	/// <param name="valueF"></param>
+	[return: System.Diagnostics.CodeAnalysis.NotNull]
+	public static T New<TA, TB, TC, TD, TE, TF>(
+		TA? valueA,
+		TB? valueB,
+		TC? valueC,
+		TD? valueD,
+		TE? valueE,
+		TF? valueF
+	) =>
+		InstantiatorImpl<TA, TB, TC, TD, TE, TF>.CtorFunc( valueA, valueB, valueC, valueD, valueE, valueF );
 
-		private static class InstantiatorImpl<TA, TB, TC, TD, TE, TF> {
+	private static class InstantiatorImpl {
 
-			public static readonly Func<TA, TB, TC, TD, TE, TF, T> CtorFunc =
-				CreateLambdaExpression<Func<TA, TB, TC, TD, TE, TF, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ), typeof( TE ), typeof( TF ) ).Compile();
-		}
+		public static readonly Func<T> CtorFunc = Expression.Lambda<Func<T>>( Expression.New( typeof( T ) ) ).Compile();
+	}
+
+	private static class InstantiatorImpl<TA> {
+
+		public static readonly Func<TA, T> CtorFunc = CreateLambdaExpression<Func<TA, T>>( typeof( TA ) ).Compile();
+	}
+
+	private static class InstantiatorImpl<TA, TB> {
+
+		public static readonly Func<TA, TB, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, T>>( typeof( TA ), typeof( TB ) ).Compile();
+	}
+
+	private static class InstantiatorImpl<TA, TB, TC> {
+
+		public static readonly Func<TA, TB, TC, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, TC, T>>( typeof( TA ), typeof( TB ), typeof( TC ) ).Compile();
+	}
+
+	private static class InstantiatorImpl<TA, TB, TC, TD> {
+
+		public static readonly Func<TA, TB, TC, TD, T> CtorFunc = CreateLambdaExpression<Func<TA, TB, TC, TD, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ) )
+			.Compile();
+	}
+
+	private static class InstantiatorImpl<TA, TB, TC, TD, TE> {
+
+		public static readonly Func<TA, TB, TC, TD, TE, T> CtorFunc =
+			CreateLambdaExpression<Func<TA, TB, TC, TD, TE, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ), typeof( TE ) ).Compile();
+	}
+
+	private static class InstantiatorImpl<TA, TB, TC, TD, TE, TF> {
+
+		public static readonly Func<TA, TB, TC, TD, TE, TF, T> CtorFunc =
+			CreateLambdaExpression<Func<TA, TB, TC, TD, TE, TF, T>>( typeof( TA ), typeof( TB ), typeof( TC ), typeof( TD ), typeof( TE ), typeof( TF ) ).Compile();
 	}
 }

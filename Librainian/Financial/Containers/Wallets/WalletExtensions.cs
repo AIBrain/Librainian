@@ -27,271 +27,270 @@
 
 #nullable enable
 
-namespace Librainian.Financial.Containers.Wallets {
+namespace Librainian.Financial.Containers.Wallets;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using System.Threading.Tasks.Dataflow;
-	using Currency;
-	using Currency.BankNotes;
-	using Currency.Coins;
-	using Exceptions;
-	using Extensions;
-	using Maths;
-	using Threading;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
+using Currency;
+using Currency.BankNotes;
+using Currency.Coins;
+using Exceptions;
+using Extensions;
+using Maths;
+using Threading;
 
-	public static class WalletExtensions {
+public static class WalletExtensions {
 
-		public static HashSet<IDenomination> PossibleDenominations { get; } = new();
+	public static HashSet<IDenomination> PossibleDenominations { get; } = new();
 
-		static WalletExtensions() {
-			foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
-				PossibleDenominations.Add( denomination );
-			}
-
-			foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
-				PossibleDenominations.Add( denomination );
-			}
+	static WalletExtensions() {
+		foreach ( var denomination in typeof( IBankNote ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
+			PossibleDenominations.Add( denomination );
 		}
 
-		private static Task StartDeposit( Wallet wallet, Dictionary<IDenomination, UInt64> dictionary ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
-			}
-
-			var actionBlock = new ActionBlock<KeyValuePair<IDenomination, UInt64>>( pair => wallet.Deposit( pair.Key, pair.Value ),
-				Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
-
-			Parallel.ForEach( dictionary, pair => actionBlock.Post( pair ) );
-			actionBlock.Complete();
-
-			return actionBlock.Completion;
+		foreach ( var denomination in typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<IDenomination>() ) {
+			PossibleDenominations.Add( denomination );
 		}
+	}
+
+	private static Task StartDeposit( Wallet wallet, Dictionary<IDenomination, UInt64> dictionary ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
+		}
+
+		var actionBlock = new ActionBlock<KeyValuePair<IDenomination, UInt64>>( pair => wallet.Deposit( pair.Key, pair.Value ),
+			Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
+
+		Parallel.ForEach( dictionary, pair => actionBlock.Post( pair ) );
+		actionBlock.Complete();
+
+		return actionBlock.Completion;
+	}
 
 		
-		/// <param name="wallet"></param>
-		/// <param name="message"></param>
-		public static Boolean Deposit( this Wallet wallet, TransactionMessage message ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
-			}
-
-			return message.Denomination switch {
-				IBankNote bankNote => wallet.Deposit( bankNote, message.Quantity ),
-				ICoin coin => wallet.Deposit( coin, message.Quantity ) > Decimal.Zero,
-				var _ => throw new InvalidOperationException( $"Unknown denomination {message.Denomination}" )
-			};
+	/// <param name="wallet"></param>
+	/// <param name="message"></param>
+	public static Boolean Deposit( this Wallet wallet, TransactionMessage message ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
 		}
 
-		/// <summary>Deposit <paramref name="bankNotes" /> and <paramref name="coins" /> into this wallet.</summary>
-		/// <param name="wallet"></param>
-		/// <param name="bankNotes"></param>
-		/// <param name="coins"></param>
-		public static void Deposit( this Wallet wallet, IEnumerable<(IBankNote, UInt64)>? bankNotes = null,
-			IEnumerable<(ICoin, UInt64)>? coins = null ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
-			}
+		return message.Denomination switch {
+			IBankNote bankNote => wallet.Deposit( bankNote, message.Quantity ),
+			ICoin coin => wallet.Deposit( coin, message.Quantity ) > Decimal.Zero,
+			var _ => throw new InvalidOperationException( $"Unknown denomination {message.Denomination}" )
+		};
+	}
 
-			if ( bankNotes != null ) {
-				foreach ( (var bankNote, var quantity) in bankNotes ) {
-					wallet.Deposit( bankNote, quantity );
+	/// <summary>Deposit <paramref name="bankNotes" /> and <paramref name="coins" /> into this wallet.</summary>
+	/// <param name="wallet"></param>
+	/// <param name="bankNotes"></param>
+	/// <param name="coins"></param>
+	public static void Deposit( this Wallet wallet, IEnumerable<(IBankNote, UInt64)>? bankNotes = null,
+		IEnumerable<(ICoin, UInt64)>? coins = null ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
+		}
+
+		if ( bankNotes != null ) {
+			foreach ( (var bankNote, var quantity) in bankNotes ) {
+				wallet.Deposit( bankNote, quantity );
+			}
+		}
+
+		if ( coins != null ) {
+			foreach ( (var coin, var quantity) in coins ) {
+				wallet.Deposit( coin, quantity );
+			}
+		}
+	}
+
+	public static void Fund( this Wallet wallet, params (IDenomination, UInt64)[]? sourceAmounts ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
+		}
+
+		if ( sourceAmounts is null ) {
+			return;
+		}
+
+		Parallel.ForEach( sourceAmounts, pair => wallet.Deposit( pair.Item1, pair.Item2 ) );
+	}
+
+	public static void Fund( this Wallet wallet, IEnumerable<(IDenomination, UInt64)>? sourceAmounts ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
+		}
+
+		if ( sourceAmounts is null ) {
+			return;
+		}
+
+		Parallel.ForEach( sourceAmounts, pair => wallet.Deposit( pair.Item1, pair.Item2 ) );
+	}
+
+	/// <summary>
+	///     Adds the optimal amount of <see cref="IBankNote" /> and <see cref="ICoin" />. Returns any unused portion of
+	///     the money (fractions of the smallest <see cref="ICoin" />).
+	/// </summary>
+	/// <param name="wallet"></param>
+	/// <param name="amount"></param>
+	public static async Task<Decimal> Fund( this Wallet wallet, Decimal amount ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
+		}
+
+		var optimal = amount.ToOptimal( out var leftOverFund );
+
+		await StartDeposit( wallet, optimal ).ConfigureAwait( false );
+
+		return leftOverFund;
+	}
+
+	/// <summary>Create a TPL dataflow task for depositing large volumes of money.</summary>
+	/// <param name="wallet"></param>
+	/// <param name="sourceAmounts"></param>
+	public static Task StartDeposit( Wallet wallet, IEnumerable<(IDenomination, UInt64)>? sourceAmounts ) {
+		if ( wallet is null ) {
+			throw new ArgumentEmptyException( nameof( wallet ) );
+		}
+
+		var actionBlock = new ActionBlock<(IDenomination, UInt64)>( pair => wallet.Deposit( pair.Item1, pair.Item2 ),
+			Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
+
+		Parallel.ForEach( sourceAmounts, pair => actionBlock.Post( pair ) );
+		actionBlock.Complete();
+
+		return actionBlock.Completion;
+	}
+
+	/// <summary>
+	///     Transfer everything FROM the <paramref name="source" /><see cref="Wallet" /> into <paramref name="target" />
+	///     <see cref="Wallet" />.
+	/// </summary>
+	/// <param name="source"></param>
+	/// <param name="target"></param>
+	public static Task StartTransfer( this Wallet source, Wallet target, CancellationToken cancellationToken ) =>
+		Task.Run( () => {
+			foreach ( (var denomination, var quantity) in source ) {
+				if ( cancellationToken.IsCancellationRequested ) {
+					break;
+				}
+
+				if ( source.TryWithdraw( denomination, quantity ) ) {
+					target.Deposit( denomination, quantity );
 				}
 			}
+		}, cancellationToken );
 
-			if ( coins != null ) {
-				foreach ( (var coin, var quantity) in coins ) {
-					wallet.Deposit( coin, quantity );
-				}
+	/// <summary>
+	///     Given the <paramref name="amount" />, return the optimal amount of <see cref="IBankNote" /> and
+	///     <see cref="ICoin" /> ( <see cref="Wallet.Total" />) it would take to
+	///     <see cref="Wallet" /> the <paramref name="amount" />.
+	/// </summary>
+	/// <param name="amount"></param>
+	/// <param name="leftOverAmount">Fractions of Dollars/Pennies not accounted for. OfficeSpace, Superman III"...</param>
+	public static Dictionary<IDenomination, UInt64> ToOptimal( this Decimal amount, out Decimal leftOverAmount ) {
+		var denominations = new List<IDenomination>( PossibleDenominations );
+		var optimal = denominations.ToDictionary<IDenomination, IDenomination, UInt64>( denomination => denomination, denomination => 0 );
+
+		leftOverAmount = amount;
+
+		while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
+			var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
+			denominations.Remove( highestBill );
+
+			var count = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
+
+			if ( count.Any() ) {
+				optimal[highestBill] += count;
+				leftOverAmount -= count * highestBill.FaceValue;
 			}
 		}
 
-		public static void Fund( this Wallet wallet, params (IDenomination, UInt64)[]? sourceAmounts ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
-			}
+		var empties = optimal.Where( pair => !pair.Value.Any() ).Select( pair => pair.Key );
 
-			if ( sourceAmounts is null ) {
-				return;
-			}
-
-			Parallel.ForEach( sourceAmounts, pair => wallet.Deposit( pair.Item1, pair.Item2 ) );
+		foreach ( var empty in empties ) {
+			optimal.Remove( empty );
 		}
 
-		public static void Fund( this Wallet wallet, IEnumerable<(IDenomination, UInt64)>? sourceAmounts ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
-			}
+		return optimal;
+	}
 
-			if ( sourceAmounts is null ) {
-				return;
-			}
-
-			Parallel.ForEach( sourceAmounts, pair => wallet.Deposit( pair.Item1, pair.Item2 ) );
+	public static IEnumerable<(IDenomination, UInt64)> Transfer( this Wallet source, Wallet target ) {
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
 		}
 
-		/// <summary>
-		///     Adds the optimal amount of <see cref="IBankNote" /> and <see cref="ICoin" />. Returns any unused portion of
-		///     the money (fractions of the smallest <see cref="ICoin" />).
-		/// </summary>
-		/// <param name="wallet"></param>
-		/// <param name="amount"></param>
-		public static async Task<Decimal> Fund( this Wallet wallet, Decimal amount ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
-			}
-
-			var optimal = amount.ToOptimal( out var leftOverFund );
-
-			await StartDeposit( wallet, optimal ).ConfigureAwait( false );
-
-			return leftOverFund;
+		if ( target is null ) {
+			throw new ArgumentEmptyException( nameof( target ) );
 		}
 
-		/// <summary>Create a TPL dataflow task for depositing large volumes of money.</summary>
-		/// <param name="wallet"></param>
-		/// <param name="sourceAmounts"></param>
-		public static Task StartDeposit( Wallet wallet, IEnumerable<(IDenomination, UInt64)>? sourceAmounts ) {
-			if ( wallet is null ) {
-				throw new ArgumentEmptyException( nameof( wallet ) );
+		var transferred = new ConcurrentDictionary<IDenomination, UInt64>();
+
+		foreach ( var pair in source.GetNotesGrouped() ) {
+			if ( source.Transfer( target, pair ) ) {
+				var denomination = pair.Key;
+				var count = pair.Value;
+				transferred.AddOrUpdate( denomination, count, ( _, running ) => running + count );
 			}
-
-			var actionBlock = new ActionBlock<(IDenomination, UInt64)>( pair => wallet.Deposit( pair.Item1, pair.Item2 ),
-				Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
-
-			Parallel.ForEach( sourceAmounts, pair => actionBlock.Post( pair ) );
-			actionBlock.Complete();
-
-			return actionBlock.Completion;
 		}
 
-		/// <summary>
-		///     Transfer everything FROM the <paramref name="source" /><see cref="Wallet" /> into <paramref name="target" />
-		///     <see cref="Wallet" />.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="target"></param>
-		public static Task StartTransfer( this Wallet source, Wallet target, CancellationToken cancellationToken ) =>
-			Task.Run( () => {
-				foreach ( (var denomination, var quantity) in source ) {
-					if ( cancellationToken.IsCancellationRequested ) {
-						break;
-					}
-
-					if ( source.TryWithdraw( denomination, quantity ) ) {
-						target.Deposit( denomination, quantity );
-					}
-				}
-			}, cancellationToken );
-
-		/// <summary>
-		///     Given the <paramref name="amount" />, return the optimal amount of <see cref="IBankNote" /> and
-		///     <see cref="ICoin" /> ( <see cref="Wallet.Total" />) it would take to
-		///     <see cref="Wallet" /> the <paramref name="amount" />.
-		/// </summary>
-		/// <param name="amount"></param>
-		/// <param name="leftOverAmount">Fractions of Dollars/Pennies not accounted for. OfficeSpace, Superman III"...</param>
-		public static Dictionary<IDenomination, UInt64> ToOptimal( this Decimal amount, out Decimal leftOverAmount ) {
-			var denominations = new List<IDenomination>( PossibleDenominations );
-			var optimal = denominations.ToDictionary<IDenomination, IDenomination, UInt64>( denomination => denomination, denomination => 0 );
-
-			leftOverAmount = amount;
-
-			while ( leftOverAmount > Decimal.Zero && denominations.Any() ) {
-				var highestBill = denominations.OrderByDescending( denomination => denomination.FaceValue ).First();
-				denominations.Remove( highestBill );
-
-				var count = ( UInt64 )( leftOverAmount / highestBill.FaceValue );
-
-				if ( count.Any() ) {
-					optimal[highestBill] += count;
-					leftOverAmount -= count * highestBill.FaceValue;
-				}
+		foreach ( var pair in source.GetCoinsGrouped() ) {
+			if ( source.Transfer( target, pair ) ) {
+				var denomination = pair.Key;
+				var count = pair.Value;
+				transferred.AddOrUpdate( denomination, count, ( _, running ) => running + count );
 			}
-
-			var empties = optimal.Where( pair => !pair.Value.Any() ).Select( pair => pair.Key );
-
-			foreach ( var empty in empties ) {
-				optimal.Remove( empty );
-			}
-
-			return optimal;
 		}
 
-		public static IEnumerable<(IDenomination, UInt64)> Transfer( this Wallet source, Wallet target ) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
+		return transferred.Select( pair => (pair.Key, pair.Value) );
+	}
 
-			if ( target is null ) {
-				throw new ArgumentEmptyException( nameof( target ) );
-			}
-
-			var transferred = new ConcurrentDictionary<IDenomination, UInt64>();
-
-			foreach ( var pair in source.GetNotesGrouped() ) {
-				if ( source.Transfer( target, pair ) ) {
-					var denomination = pair.Key;
-					var count = pair.Value;
-					transferred.AddOrUpdate( denomination, count, ( _, running ) => running + count );
-				}
-			}
-
-			foreach ( var pair in source.GetCoinsGrouped() ) {
-				if ( source.Transfer( target, pair ) ) {
-					var denomination = pair.Key;
-					var count = pair.Value;
-					transferred.AddOrUpdate( denomination, count, ( _, running ) => running + count );
-				}
-			}
-
-			return transferred.Select( pair => (pair.Key, pair.Value) );
+	public static Boolean Transfer( this Wallet source, Wallet target, (IDenomination, UInt64) denominationAndAmount ) {
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
 		}
 
-		public static Boolean Transfer( this Wallet source, Wallet target, (IDenomination, UInt64) denominationAndAmount ) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
-
-			if ( target is null ) {
-				throw new ArgumentEmptyException( nameof( target ) );
-			}
-
-			(var denomination, var quantity) = denominationAndAmount;
-
-			return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
+		if ( target is null ) {
+			throw new ArgumentEmptyException( nameof( target ) );
 		}
 
-		public static Boolean Transfer( this Wallet source, Wallet target, KeyValuePair<IBankNote, UInt64> denominationAndAmount ) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
+		(var denomination, var quantity) = denominationAndAmount;
 
-			if ( target is null ) {
-				throw new ArgumentEmptyException( nameof( target ) );
-			}
+		return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
+	}
 
-			(var denomination, var quantity) = denominationAndAmount;
-
-			return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
+	public static Boolean Transfer( this Wallet source, Wallet target, KeyValuePair<IBankNote, UInt64> denominationAndAmount ) {
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
 		}
 
-		public static Boolean Transfer( this Wallet source, Wallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
-
-			if ( target is null ) {
-				throw new ArgumentEmptyException( nameof( target ) );
-			}
-
-			(var denomination, var quantity) = denominationAndAmount;
-
-			return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity ) > 0m;
+		if ( target is null ) {
+			throw new ArgumentEmptyException( nameof( target ) );
 		}
+
+		(var denomination, var quantity) = denominationAndAmount;
+
+		return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity );
+	}
+
+	public static Boolean Transfer( this Wallet source, Wallet target, KeyValuePair<ICoin, UInt64> denominationAndAmount ) {
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
+		}
+
+		if ( target is null ) {
+			throw new ArgumentEmptyException( nameof( target ) );
+		}
+
+		(var denomination, var quantity) = denominationAndAmount;
+
+		return source.TryWithdraw( denomination, quantity ) && target.Deposit( denomination, quantity ) > 0m;
 	}
 }

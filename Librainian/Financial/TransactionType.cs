@@ -22,12 +22,11 @@
 //
 // File "TransactionType.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial {
+namespace Librainian.Financial; 
 
-	public enum TransactionType {
+public enum TransactionType {
 
-		Deposit,
+	Deposit,
 
-		Withdraw
-	}
+	Withdraw
 }

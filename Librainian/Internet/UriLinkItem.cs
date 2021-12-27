@@ -25,9 +25,8 @@
 //
 // File "UriLinkItem.cs" last touched on 2021-07-31 at 7:34 AM by Protiguous.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
+using System;
 
-	public record UriLinkItem( Uri Href, String Text );
-}
+public record UriLinkItem( Uri Href, String Text );

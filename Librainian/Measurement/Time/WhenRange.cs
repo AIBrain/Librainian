@@ -23,50 +23,49 @@
 //
 // File "WhenRange.cs" last formatted on 2021-01-31 at 4:52 PM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using Newtonsoft.Json;
+using Newtonsoft.Json;
+
+/// <summary>
+///     Represents a <see cref="UniversalDateTime" /> range with minimum and maximum values.
+/// </summary>
+[JsonObject]
+public record WhenRange() {
 
 	/// <summary>
-	///     Represents a <see cref="UniversalDateTime" /> range with minimum and maximum values.
+	///     Initializes a new instance of the <see cref="WhenRange" /> struct
 	/// </summary>
-	[JsonObject]
-	public record WhenRange() {
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="WhenRange" /> struct
-		/// </summary>
-		/// <param name="min">Minimum value of the range</param>
-		/// <param name="max">Maximum value of the range</param>
-		public WhenRange( UniversalDateTime min, UniversalDateTime max ) : this() {
-			if ( min < max ) {
-				this.Min = min;
-				this.Max = max;
-			}
-			else {
-				this.Min = max;
-				this.Max = min;
-			}
+	/// <param name="min">Minimum value of the range</param>
+	/// <param name="max">Maximum value of the range</param>
+	public WhenRange( UniversalDateTime min, UniversalDateTime max ) : this() {
+		if ( min < max ) {
+			this.Min = min;
+			this.Max = max;
 		}
-
-		/// <summary>
-		///     Maximum value
-		/// </summary>
-		[JsonProperty]
-		public UniversalDateTime Max { get; init; }
-
-		/// <summary>
-		///     Minimum value
-		/// </summary>
-		[JsonProperty]
-		public UniversalDateTime Min { get; init; }
-
-		/// <summary>
-		///     Length of the range (difference between maximum and minimum values).
-		/// </summary>
-		public SpanOfTime Length() {
-			var δ = this.Max.Value - this.Min.Value;
-			return new SpanOfTime( δ );
+		else {
+			this.Min = max;
+			this.Max = min;
 		}
+	}
+
+	/// <summary>
+	///     Maximum value
+	/// </summary>
+	[JsonProperty]
+	public UniversalDateTime Max { get; init; }
+
+	/// <summary>
+	///     Minimum value
+	/// </summary>
+	[JsonProperty]
+	public UniversalDateTime Min { get; init; }
+
+	/// <summary>
+	///     Length of the range (difference between maximum and minimum values).
+	/// </summary>
+	public SpanOfTime Length() {
+		var δ = this.Max.Value - this.Min.Value;
+		return new SpanOfTime( δ );
 	}
 }

@@ -25,47 +25,45 @@
 // 
 // File "MaxMemTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests.Persistence {
+namespace LibrainianUnitTests.Persistence;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Threading;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 
-	//[TestFixture]
-	public static class MaxMemTests {
+//[TestFixture]
+public static class MaxMemTests {
 
-		//[Test]
-		public static void test_max_ReaderWriterLockSlim() {
-			GC.Collect( 2, GCCollectionMode.Forced, true, true );
-			GC.Collect( 2, GCCollectionMode.Forced, true, true );
+	//[Test]
+	public static void test_max_ReaderWriterLockSlim() {
+		GC.Collect( 2, GCCollectionMode.Forced, true, true );
+		GC.Collect( 2, GCCollectionMode.Forced, true, true );
 
-			const Int32 limit = Int32.MaxValue / 2;
+		const Int32 limit = Int32.MaxValue / 2;
 
-			var list = new List<ReaderWriterLockSlim>( limit );
+		var list = new List<ReaderWriterLockSlim>( limit );
 
-			for ( var i = 0; i < limit; i++ ) {
-				try {
-					list.Add( new ReaderWriterLockSlim() ); //134,217,728
-				}
-                catch ( OutOfMemoryException ) {
-                    Console.WriteLine( "Trimming list.." );
-                    list.TrimExcess();
-                    Console.Write( "Collecting garbage.." );
-                    GC.Collect( 2, GCCollectionMode.Forced, true, true );
-                    Console.WriteLine( "collected." );
-                }
-				catch ( Exception exception ) {
-					Debug.WriteLine( exception.ToString() );
+		for ( var i = 0; i < limit; i++ ) {
+			try {
+				list.Add( new ReaderWriterLockSlim() ); //134,217,728
+			}
+			catch ( OutOfMemoryException ) {
+				Console.WriteLine( "Trimming list.." );
+				list.TrimExcess();
+				Console.Write( "Collecting garbage.." );
+				GC.Collect( 2, GCCollectionMode.Forced, true, true );
+				Console.WriteLine( "collected." );
+			}
+			catch ( Exception exception ) {
+				Debug.WriteLine( exception.ToString() );
 
-					break;
-				}
-
+				break;
 			}
 
-			Console.WriteLine( $"ReaderWriterLockSlim count={list.Count}." );
 		}
 
+		Console.WriteLine( $"ReaderWriterLockSlim count={list.Count}." );
 	}
 
 }

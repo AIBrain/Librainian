@@ -22,88 +22,87 @@
 //
 // File "PasswordExtensions.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence; 
 
-	//using System;
-	//using System.Configuration;
-	//using System.IO;
-	//using OperatingSystem.FileSystem;
+//using System;
+//using System.Configuration;
+//using System.IO;
+//using OperatingSystem.FileSystem;
 
-	//public static class PasswordExtensions {
-	//	/// <summary>Set a static <paramref name="key" /> to the <paramref name="value" />.</summary>
-	//	/// <param name="key"></param>
-	//	/// <param name="value"></param>
-	//	/// <returns></returns>
-	//	public static Boolean Settings( String key, String value ) => Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
+//public static class PasswordExtensions {
+//	/// <summary>Set a static <paramref name="key" /> to the <paramref name="value" />.</summary>
+//	/// <param name="key"></param>
+//	/// <param name="value"></param>
+//	/// <returns></returns>
+//	public static Boolean Settings( String key, String value ) => Environment.SpecialFolder.LocalApplicationData.Settings( key, value );
 
-	//	/// <summary>Set a static <paramref name="key" /> to the <paramref name="value" />.</summary>
-	//	/// <param name="specialFolder"></param>
-	//	/// <param name="key"></param>
-	//	/// <param name="value"></param>
-	//	/// <returns></returns>
-	//	public static Boolean Settings( this Environment.SpecialFolder specialFolder, String key, String value ) {
-	//		try {
-	//			var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
-	//			var settings = configFile.AppSettings.Settings;
-	//			if ( settings[ key ] == null ) {
-	//				settings.Add( key, value );
-	//			}
-	//			else {
-	//				settings[ key ].Value = value;
-	//			}
-	//			configFile.Save( ConfigurationSaveMode.Modified );
+//	/// <summary>Set a static <paramref name="key" /> to the <paramref name="value" />.</summary>
+//	/// <param name="specialFolder"></param>
+//	/// <param name="key"></param>
+//	/// <param name="value"></param>
+//	/// <returns></returns>
+//	public static Boolean Settings( this Environment.SpecialFolder specialFolder, String key, String value ) {
+//		try {
+//			var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
+//			var settings = configFile.AppSettings.Settings;
+//			if ( settings[ key ] == null ) {
+//				settings.Add( key, value );
+//			}
+//			else {
+//				settings[ key ].Value = value;
+//			}
+//			configFile.Save( ConfigurationSaveMode.Modified );
 
-	//			ConfigurationManager.RefreshSection( configFile.AppSettings.SectionInformation.Name );
+//			ConfigurationManager.RefreshSection( configFile.AppSettings.SectionInformation.Name );
 
-	//			return true;
-	//		}
-	//		catch ( ConfigurationErrorsException exception ) {
-	//			exception.Log();
-	//		}
-	//		return false;
-	//	}
+//			return true;
+//		}
+//		catch ( ConfigurationErrorsException exception ) {
+//			exception.Log();
+//		}
+//		return false;
+//	}
 
-	//	/// <summary>Return the value of the given <paramref name="key" />.</summary>
-	//	/// <param name="key"></param>
-	//	/// <returns></returns>
-	//	public static String Settings( String key ) => Environment.SpecialFolder.LocalApplicationData.Settings( key );
+//	/// <summary>Return the value of the given <paramref name="key" />.</summary>
+//	/// <param name="key"></param>
+//	/// <returns></returns>
+//	public static String Settings( String key ) => Environment.SpecialFolder.LocalApplicationData.Settings( key );
 
-	//	/// <summary>Return the value of the given <paramref name="key" />.</summary>
-	//	/// <param name="specialFolder"></param>
-	//	/// <param name="key"></param>
-	//	/// <returns></returns>
-	//	public static String Settings( this Environment.SpecialFolder specialFolder, String key ) {
-	//		try {
-	//			var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
-	//			return configFile.AppSettings.Settings[ key ]?.Value;
-	//		}
-	//		catch ( ConfigurationErrorsException exception ) {
-	//			exception.Log();
-	//			return default;
-	//		}
-	//	}
+//	/// <summary>Return the value of the given <paramref name="key" />.</summary>
+//	/// <param name="specialFolder"></param>
+//	/// <param name="key"></param>
+//	/// <returns></returns>
+//	public static String Settings( this Environment.SpecialFolder specialFolder, String key ) {
+//		try {
+//			var configFile = ConfigurationManager.OpenExeConfiguration( specialFolder.GetStaticFile().FullPath );
+//			return configFile.AppSettings.Settings[ key ]?.Value;
+//		}
+//		catch ( ConfigurationErrorsException exception ) {
+//			exception.Log();
+//			return default;
+//		}
+//	}
 
-	//	public static void TestStaticStorage() {
-	//		const String phraseToTest = "Hello world";
+//	public static void TestStaticStorage() {
+//		const String phraseToTest = "Hello world";
 
-	//		Settings( nameof( phraseToTest ), phraseToTest );
+//		Settings( nameof( phraseToTest ), phraseToTest );
 
-	//		//Assert.AreEqual( phraseToTest, Settings( nameof( phraseToTest ) ) );
-	//	}
+//		//Assert.AreEqual( phraseToTest, Settings( nameof( phraseToTest ) ) );
+//	}
 
-	//	private static Document GetStaticFile( this Environment.SpecialFolder specialFolder ) {
-	//		var path = Path.Combine( Environment.GetFolderPath( specialFolder ), nameof( Settings ) );
-	//		if ( !Directory.Exists( path ) ) {
-	//			Directory.CreateDirectory( path );
-	//		}
-	//		var destinationFile = Path.Combine( path, "StaticSettings.exe" );
+//	private static Document GetStaticFile( this Environment.SpecialFolder specialFolder ) {
+//		var path = Path.Combine( Environment.GetFolderPath( specialFolder ), nameof( Settings ) );
+//		if ( !Directory.Exists( path ) ) {
+//			Directory.CreateDirectory( path );
+//		}
+//		var destinationFile = Path.Combine( path, "StaticSettings.exe" );
 
-	//		if ( File.Exists( destinationFile ) ) {
-	//			return new Document( destinationFile );
-	//		}
+//		if ( File.Exists( destinationFile ) ) {
+//			return new Document( destinationFile );
+//		}
 
-	//		using ( File.Create( destinationFile ) ) { }
-	//		return new Document( destinationFile );
-	//	}
-	//}
-}
+//		using ( File.Create( destinationFile ) ) { }
+//		return new Document( destinationFile );
+//	}
+//}

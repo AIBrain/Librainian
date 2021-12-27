@@ -22,24 +22,23 @@
 //
 // File "RoundTo.cs" last formatted on 2020-08-14 at 8:38 PM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time; 
 
-	/// <summary>
-	///     <para>Used for rounding precision</para>
-	/// </summary>
-	/// <copyright>https: //github.com/FluentDateTime/FluentDateTime/blob/master/FluentDateTime/RoundTo.cs</copyright>
-	public enum RoundTo {
+/// <summary>
+///     <para>Used for rounding precision</para>
+/// </summary>
+/// <copyright>https: //github.com/FluentDateTime/FluentDateTime/blob/master/FluentDateTime/RoundTo.cs</copyright>
+public enum RoundTo {
 
-		/// <summary>Second precision.</summary>
-		Second,
+	/// <summary>Second precision.</summary>
+	Second,
 
-		/// <summary>Minute precision.</summary>
-		Minute,
+	/// <summary>Minute precision.</summary>
+	Minute,
 
-		/// <summary>Hour precision.</summary>
-		Hour,
+	/// <summary>Hour precision.</summary>
+	Hour,
 
-		/// <summary>Day precision.</summary>
-		Day
-	}
+	/// <summary>Day precision.</summary>
+	Day
 }

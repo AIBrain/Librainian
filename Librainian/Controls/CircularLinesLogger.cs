@@ -25,158 +25,157 @@
 //
 // File "CircularLinesLogger.cs" last touched on 2021-08-07 at 1:55 AM by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Drawing;
-	using System.Linq;
-	using System.Text;
-	using Maths;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using Maths;
+
+/// <summary>
+///     A circular buffer style logging class which stores N items for display in a Rich Text Box.
+/// </summary>
+/// <see cref="http://stackoverflow.com/a/55540909/956364" />
+public class CircularLinesLogger {
+
+	private readonly Color _defaultColor = Color.White;
+
+	private readonly Queue<LogEntry> _lines;
+
+	private readonly Object _logLock = new();
+
+	private readonly UInt32 _maxEntries;
+
+	private UInt32 _entryNumber;
 
 	/// <summary>
-	///     A circular buffer style logging class which stores N items for display in a Rich Text Box.
+	///     Create an instance of the Logger class which stores <paramref name="maximumEntries" /> log entries.
 	/// </summary>
-	/// <see cref="http://stackoverflow.com/a/55540909/956364" />
-	public class CircularLinesLogger {
+	public CircularLinesLogger( UInt32 maximumEntries ) {
+		this._lines = new Queue<LogEntry>();
+		this._maxEntries = maximumEntries;
+	}
 
-		private readonly Color _defaultColor = Color.White;
+	private static String ColorToRichColorString( Color c ) => $"\\red{c.R}\\green{c.G}\\blue{c.B};";
 
-		private readonly Queue<LogEntry> _lines;
+	private Dictionary<Color, ColorTableItem> BuildRichTextColorTable() {
+		var uniqueColors = new Dictionary<Color, ColorTableItem>();
+		var index = 0u;
 
-		private readonly Object _logLock = new();
+		uniqueColors.Add( this._defaultColor, new ColorTableItem( index++, ColorToRichColorString( this._defaultColor ) ) );
 
-		private readonly UInt32 _maxEntries;
-
-		private UInt32 _entryNumber;
-
-		/// <summary>
-		///     Create an instance of the Logger class which stores <paramref name="maximumEntries" /> log entries.
-		/// </summary>
-		public CircularLinesLogger( UInt32 maximumEntries ) {
-			this._lines = new Queue<LogEntry>();
-			this._maxEntries = maximumEntries;
+		foreach ( var c in this._lines.Select( l => l.EntryColor ).Distinct().Where( c => c != this._defaultColor ) ) {
+			uniqueColors.Add( c, new ColorTableItem( index++, ColorToRichColorString( c ) ) );
 		}
 
-		private static String ColorToRichColorString( Color c ) => $"\\red{c.R}\\green{c.G}\\blue{c.B};";
+		return uniqueColors;
+	}
 
-		private Dictionary<Color, ColorTableItem> BuildRichTextColorTable() {
-			var uniqueColors = new Dictionary<Color, ColorTableItem>();
-			var index = 0u;
+	/// <summary>
+	///     Adds <paramref name="text" /> as a log entry.
+	/// </summary>
+	public void AddToLog( String text ) => this.AddToLog( text, this._defaultColor );
 
-			uniqueColors.Add( this._defaultColor, new ColorTableItem( index++, ColorToRichColorString( this._defaultColor ) ) );
-
-			foreach ( var c in this._lines.Select( l => l.EntryColor ).Distinct().Where( c => c != this._defaultColor ) ) {
-				uniqueColors.Add( c, new ColorTableItem( index++, ColorToRichColorString( c ) ) );
+	/// <summary>
+	///     Adds <paramref name="text" /> as a log entry, and specifies a color to display it in.
+	/// </summary>
+	public void AddToLog( String text, Color entryColor ) {
+		lock ( this._logLock ) {
+			if ( this._entryNumber >= UInt32.MaxValue ) {
+				this._entryNumber = 0;
+			}
+			else {
+				++this._entryNumber;
 			}
 
-			return uniqueColors;
-		}
+			var logEntry = new LogEntry {
+				EntryId = this._entryNumber,
+				EntryTimeStamp = DateTime.Now,
+				EntryText = text,
+				EntryColor = entryColor
+			};
+			this._lines.Enqueue( logEntry );
 
-		/// <summary>
-		///     Adds <paramref name="text" /> as a log entry.
-		/// </summary>
-		public void AddToLog( String text ) => this.AddToLog( text, this._defaultColor );
-
-		/// <summary>
-		///     Adds <paramref name="text" /> as a log entry, and specifies a color to display it in.
-		/// </summary>
-		public void AddToLog( String text, Color entryColor ) {
-			lock ( this._logLock ) {
-				if ( this._entryNumber >= UInt32.MaxValue ) {
-					this._entryNumber = 0;
-				}
-				else {
-					++this._entryNumber;
-				}
-
-				var logEntry = new LogEntry {
-					EntryId = this._entryNumber,
-					EntryTimeStamp = DateTime.Now,
-					EntryText = text,
-					EntryColor = entryColor
-				};
-				this._lines.Enqueue( logEntry );
-
-				while ( this._lines.Count > this._maxEntries ) {
-					this._lines.Dequeue();
-				}
+			while ( this._lines.Count > this._maxEntries ) {
+				this._lines.Dequeue();
 			}
 		}
+	}
 
-		public void AppendToLog( String text ) {
-			lock ( this._logLock ) {
-				if ( !this._lines.Any() ) {
-					this.AddToLog( text );
-					return;
-				}
+	public void AppendToLog( String text ) {
+		lock ( this._logLock ) {
+			if ( !this._lines.Any() ) {
+				this.AddToLog( text );
+				return;
+			}
 
-				var entry = this._lines.Last();
-				entry.EntryText += $" {text}";
-				if ( entry.EntryText.Length > 65536 ) {
-					entry.EntryText = entry.EntryText[entry.EntryText.Length.Half()..];
-				}
+			var entry = this._lines.Last();
+			entry.EntryText += $" {text}";
+			if ( entry.EntryText.Length > 65536 ) {
+				entry.EntryText = entry.EntryText[entry.EntryText.Length.Half()..];
+			}
+		}
+	}
+
+	public String AsText() {
+		StringBuilder sb = new();
+		lock ( this._logLock ) {
+			foreach ( var logEntry in this._lines ) {
+				sb.AppendLine( $"{logEntry.EntryText}" );
 			}
 		}
 
-		public String AsText() {
-			StringBuilder sb = new();
-			lock ( this._logLock ) {
-				foreach ( var logEntry in this._lines ) {
-					sb.AppendLine( $"{logEntry.EntryText}" );
+		return sb.ToString();
+	}
+
+	/// <summary>
+	///     Clears the entire log.
+	/// </summary>
+	public void Clear() {
+		lock ( this._logLock ) {
+			this._lines.Clear();
+		}
+	}
+
+	/// <summary>
+	///     Retrieve the contents of the log as rich text, suitable for populating a
+	///     <see cref="System.Windows.Forms.RichTextBox.Rtf" /> property.
+	/// </summary>
+	/// <param name="includeEntryNumbers">Option to prepend line numbers to each entry.</param>
+	[Obsolete( "Does not work" )]
+	public String GetLogAsRichText( Boolean includeEntryNumbers ) {
+		lock ( this._logLock ) {
+			var sb = new StringBuilder();
+
+			var uniqueColors = this.BuildRichTextColorTable();
+			sb.AppendLine( $@"{{\rtf1{{\colortbl;{String.Join( "", uniqueColors.Select( d => d.Value.RichColor ) )}}}" );
+
+			foreach ( var entry in this._lines ) {
+				if ( includeEntryNumbers ) {
+					sb.Append( $"\\cf1 {entry.EntryId}. " );
 				}
+
+				sb.Append( $"\\cf1 {entry.EntryTimeStamp.ToShortDateString()} {entry.EntryTimeStamp.ToShortTimeString()}: " );
+
+				var richColor = $"\\cf{uniqueColors[entry.EntryColor].Index + 1}";
+				sb.Append( $"{richColor} {entry.EntryText}\\par" ).AppendLine();
 			}
 
 			return sb.ToString();
 		}
-
-		/// <summary>
-		///     Clears the entire log.
-		/// </summary>
-		public void Clear() {
-			lock ( this._logLock ) {
-				this._lines.Clear();
-			}
-		}
-
-		/// <summary>
-		///     Retrieve the contents of the log as rich text, suitable for populating a
-		///     <see cref="System.Windows.Forms.RichTextBox.Rtf" /> property.
-		/// </summary>
-		/// <param name="includeEntryNumbers">Option to prepend line numbers to each entry.</param>
-		[Obsolete( "Does not work" )]
-		public String GetLogAsRichText( Boolean includeEntryNumbers ) {
-			lock ( this._logLock ) {
-				var sb = new StringBuilder();
-
-				var uniqueColors = this.BuildRichTextColorTable();
-				sb.AppendLine( $@"{{\rtf1{{\colortbl;{String.Join( "", uniqueColors.Select( d => d.Value.RichColor ) )}}}" );
-
-				foreach ( var entry in this._lines ) {
-					if ( includeEntryNumbers ) {
-						sb.Append( $"\\cf1 {entry.EntryId}. " );
-					}
-
-					sb.Append( $"\\cf1 {entry.EntryTimeStamp.ToShortDateString()} {entry.EntryTimeStamp.ToShortTimeString()}: " );
-
-					var richColor = $"\\cf{uniqueColors[entry.EntryColor].Index + 1}";
-					sb.Append( $"{richColor} {entry.EntryText}\\par" ).AppendLine();
-				}
-
-				return sb.ToString();
-			}
-		}
-
-		private record LogEntry {
-			public Color EntryColor;
-
-			public UInt32 EntryId;
-
-			public String? EntryText;
-
-			public DateTime EntryTimeStamp;
-		}
-
-		private record ColorTableItem( UInt32 Index, String RichColor );
 	}
+
+	private record LogEntry {
+		public Color EntryColor;
+
+		public UInt32 EntryId;
+
+		public String? EntryText;
+
+		public DateTime EntryTimeStamp;
+	}
+
+	private record ColorTableItem( UInt32 Index, String RichColor );
 }

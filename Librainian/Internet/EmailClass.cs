@@ -22,28 +22,27 @@
 //
 // File "EmailClass.cs" last formatted on 2020-08-22 at 3:52 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using Parsing;
-	using Parsing.Validation;
+using System;
+using Parsing;
+using Parsing.Validation;
 
-	public class EmailClass {
+public class EmailClass {
 
-		public String Email { get; }
+	public String Email { get; }
 
-		/// <summary>
-		/// Throws <see cref="InvalidOperationException"/> if <paramref name="email"/> is not a valid possible email address.
-		/// </summary>
-		/// <param name="email"></param>
-		public EmailClass( String email ) {
-			if ( !email.IsValidEmailAddress() ) {
-				throw new InvalidOperationException( $"Invalid email address given. ({email.DoubleQuote()})" );
-			}
-
-			this.Email = email;
+	/// <summary>
+	/// Throws <see cref="InvalidOperationException"/> if <paramref name="email"/> is not a valid possible email address.
+	/// </summary>
+	/// <param name="email"></param>
+	public EmailClass( String email ) {
+		if ( !email.IsValidEmailAddress() ) {
+			throw new InvalidOperationException( $"Invalid email address given. ({email.DoubleQuote()})" );
 		}
 
-		public Boolean Valid() => this.Email.IsValidEmailAddress();
+		this.Email = email;
 	}
+
+	public Boolean Valid() => this.Email.IsValidEmailAddress();
 }

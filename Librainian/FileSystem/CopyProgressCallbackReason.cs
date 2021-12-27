@@ -22,14 +22,13 @@
 //
 // File "CopyProgressCallbackReason.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
+using System;
 
-	public enum CopyProgressCallbackReason : UInt32 {
+public enum CopyProgressCallbackReason : UInt32 {
 
-		CallbackChunkFinished = 0x00000000,
+	CallbackChunkFinished = 0x00000000,
 
-		CallbackStreamSwitch = 0x00000001
-	}
+	CallbackStreamSwitch = 0x00000001
 }

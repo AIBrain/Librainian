@@ -24,119 +24,118 @@
 
 #nullable enable
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Text;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 
-	/// <summary>Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/</summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	public class Binary : IEnumerable<Boolean> {
+/// <summary>Based from Hamming code found at http://maciejlis.com/hamming-code-algorithm-c-sharp/</summary>
+[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+public class Binary : IEnumerable<Boolean> {
 
-		public List<Boolean> Booleans { get; }
+	public List<Boolean> Booleans { get; }
 
-		public Int32 Length => this.Booleans.Count;
+	public Int32 Length => this.Booleans.Count;
 
-		public Boolean this[Int32 index] {
-			get => this.Booleans[index];
+	public Boolean this[Int32 index] {
+		get => this.Booleans[index];
 
-			set => this.Booleans[index] = value;
-		}
-
-		public Binary( IReadOnlyCollection<Boolean> booleans ) {
-			this.Booleans = booleans.ToList();
-			this.Booleans.Capacity = this.Booleans.Count;
-		}
-
-		public Binary( IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> )binary ) { }
-
-		public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
-
-		public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
-
-		public static Binary Concatenate( Binary a, Binary b ) {
-			var result = new Binary( new Boolean[a.Length + b.Length] );
-			var n = 0;
-
-			foreach ( var bit in a ) {
-				result[n] = bit;
-				++n;
-			}
-
-			foreach ( var bit in b ) {
-				result[n] = bit;
-				++n;
-			}
-
-			return result;
-		}
-
-		public static IEnumerable<Boolean> ConvertToBinary( Int32 value ) {
-			var binaryString = Convert.ToString( value, 2 );
-
-			return binaryString.Select( c => c == '1' );
-		}
-
-		public static IEnumerable<Boolean> ConvertToBinary( Int32 value, Int32 minSize ) {
-			var toBinary = new List<Boolean>( ConvertToBinary( value ) );
-
-			while ( toBinary.Count != minSize ) {
-				toBinary.Insert( 0, false );
-			}
-
-			return toBinary;
-		}
-
-		public static Binary operator &( Binary a, Binary b ) {
-			if ( a.Length != b.Length ) {
-				throw new ArgumentException( "Binaries must have same length" );
-			}
-
-			var result = new Boolean[a.Length];
-
-			for ( var i = 0; i < a.Length; i++ ) {
-				result[i] = a[i] & b[i];
-			}
-
-			return new Binary( result );
-		}
-
-		public static Binary operator ^( Binary a, Binary b ) => Xor( a, b );
-
-		public static Binary Xor( Binary a, Binary b ) {
-			if ( a.Length != b.Length ) {
-				throw new ArgumentException( "Binaries must have same length" );
-			}
-
-			var result = new Boolean[a.Length];
-
-			for ( var i = 0; i < a.Length; i++ ) {
-				result[i] = a[i] ^ b[i];
-			}
-
-			return new Binary( result );
-		}
-
-		public Int32 CountOnes() => this.Booleans.Count( bit => bit );
-
-		public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
-
-		public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
-
-		public override String ToString() {
-			var stringBuilder = new StringBuilder( this.Length, this.Length );
-
-			foreach ( var bit in this.Booleans ) {
-				stringBuilder.Append( bit ? '1' : '0' );
-			}
-
-			return stringBuilder.ToString();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
+		set => this.Booleans[index] = value;
 	}
+
+	public Binary( IReadOnlyCollection<Boolean> booleans ) {
+		this.Booleans = booleans.ToList();
+		this.Booleans.Capacity = this.Booleans.Count;
+	}
+
+	public Binary( IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> )binary ) { }
+
+	public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
+
+	public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
+
+	public static Binary Concatenate( Binary a, Binary b ) {
+		var result = new Binary( new Boolean[a.Length + b.Length] );
+		var n = 0;
+
+		foreach ( var bit in a ) {
+			result[n] = bit;
+			++n;
+		}
+
+		foreach ( var bit in b ) {
+			result[n] = bit;
+			++n;
+		}
+
+		return result;
+	}
+
+	public static IEnumerable<Boolean> ConvertToBinary( Int32 value ) {
+		var binaryString = Convert.ToString( value, 2 );
+
+		return binaryString.Select( c => c == '1' );
+	}
+
+	public static IEnumerable<Boolean> ConvertToBinary( Int32 value, Int32 minSize ) {
+		var toBinary = new List<Boolean>( ConvertToBinary( value ) );
+
+		while ( toBinary.Count != minSize ) {
+			toBinary.Insert( 0, false );
+		}
+
+		return toBinary;
+	}
+
+	public static Binary operator &( Binary a, Binary b ) {
+		if ( a.Length != b.Length ) {
+			throw new ArgumentException( "Binaries must have same length" );
+		}
+
+		var result = new Boolean[a.Length];
+
+		for ( var i = 0; i < a.Length; i++ ) {
+			result[i] = a[i] & b[i];
+		}
+
+		return new Binary( result );
+	}
+
+	public static Binary operator ^( Binary a, Binary b ) => Xor( a, b );
+
+	public static Binary Xor( Binary a, Binary b ) {
+		if ( a.Length != b.Length ) {
+			throw new ArgumentException( "Binaries must have same length" );
+		}
+
+		var result = new Boolean[a.Length];
+
+		for ( var i = 0; i < a.Length; i++ ) {
+			result[i] = a[i] ^ b[i];
+		}
+
+		return new Binary( result );
+	}
+
+	public Int32 CountOnes() => this.Booleans.Count( bit => bit );
+
+	public Int32 CountZeroes() => this.Booleans.Count( bit => !bit );
+
+	public IEnumerator<Boolean> GetEnumerator() => this.Booleans.GetEnumerator();
+
+	public override String ToString() {
+		var stringBuilder = new StringBuilder( this.Length, this.Length );
+
+		foreach ( var bit in this.Booleans ) {
+			stringBuilder.Append( bit ? '1' : '0' );
+		}
+
+		return stringBuilder.ToString();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() => this.Booleans.GetEnumerator();
 }

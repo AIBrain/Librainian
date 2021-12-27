@@ -22,11 +22,9 @@
 //
 // File "ICoin.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Financial.Currency.BTC {
+namespace Librainian.Financial.Currency.BTC; 
 
-	
-	/// <see cref="http://wikipedia.org/wiki/Bitcoin" />
-	/// <see cref="http://en.bitcoin.it/wiki/FAQ" />
-	/// <see cref="http://bitcoin.it/wiki/Units" />
-	public interface ICoin : IDenomination { }
-}
+/// <see cref="http://wikipedia.org/wiki/Bitcoin" />
+/// <see cref="http://en.bitcoin.it/wiki/FAQ" />
+/// <see cref="http://bitcoin.it/wiki/Units" />
+public interface ICoin : IDenomination { }

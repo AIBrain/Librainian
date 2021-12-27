@@ -22,17 +22,16 @@
 //
 // File "SearchStyle.cs" last formatted on 2020-08-14 at 8:40 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem; 
 
-	public enum SearchStyle {
-
-		
-		FilesFirst,
+public enum SearchStyle {
 
 		
-		FoldersFirst,
+	FilesFirst,
 
-		/// <summary>as-is</summary>
-		FirstFound
-	}
+		
+	FoldersFirst,
+
+	/// <summary>as-is</summary>
+	FirstFound
 }

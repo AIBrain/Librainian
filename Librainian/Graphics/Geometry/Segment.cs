@@ -25,28 +25,27 @@
 //
 // File "Segment.cs" last touched on 2021-07-07 at 6:51 AM by Protiguous.
 
-namespace Librainian.Graphics.Geometry {
+namespace Librainian.Graphics.Geometry;
 
-	using System;
-	using System.Diagnostics;
-	using DDD;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using DDD;
+using Extensions;
+using Newtonsoft.Json;
 
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public record Segment( CoordinateF P1, CoordinateF P2 ) {
-		public Single X1 => this.P1.X;
+[Immutable]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[JsonObject]
+public record Segment( CoordinateF P1, CoordinateF P2 ) {
+	public Single X1 => this.P1.X;
 
-		public Single X2 => this.P2.X;
+	public Single X2 => this.P2.X;
 
-		public Single Y1 => this.P1.Y;
+	public Single Y1 => this.P1.Y;
 
-		public Single Y2 => this.P2.Y;
+	public Single Y2 => this.P2.Y;
 
-		public Single Z1 => this.P1.Z;
+	public Single Z1 => this.P1.Z;
 
-		public Single Z2 => this.P2.Z;
-	}
+	public Single Z2 => this.P2.Z;
 }

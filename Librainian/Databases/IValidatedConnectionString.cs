@@ -25,12 +25,11 @@
 //
 // File "IValidatedConnectionString.cs" last touched on 2021-08-27 at 5:15 PM by Protiguous.
 
-namespace Librainian.Databases {
+namespace Librainian.Databases;
 
-	using System;
+using System;
 
-	public interface IValidatedConnectionString {
+public interface IValidatedConnectionString {
 
-		String Value { get; }
-	}
+	String Value { get; }
 }

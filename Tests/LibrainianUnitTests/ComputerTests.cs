@@ -25,41 +25,39 @@
 // 
 // File "ComputerTests.cs" last touched on 2021-04-30 at 11:34 AM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using System.Diagnostics;
-	using System.Management;
-	using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.Management;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class ComputerTests {
+[TestFixture]
+public static class ComputerTests {
 
-		[Test]
-		public static void OutputRAMInformation() {
-			var searcher = new ManagementObjectSearcher( "select * from Win32_PhysicalMemory" );
+	[Test]
+	public static void OutputRAMInformation() {
+		var searcher = new ManagementObjectSearcher( "select * from Win32_PhysicalMemory" );
 
-			var ram = 1;
+		var ram = 1;
 
-			foreach ( var o in searcher.Get() ) {
-				var managementObject = ( ManagementObject )o;
-				Debug.WriteLine( $"RAM #{ram}:" );
+		foreach ( var o in searcher.Get() ) {
+			var managementObject = ( ManagementObject )o;
+			Debug.WriteLine( $"RAM #{ram}:" );
 
-				if ( managementObject != null ) {
-					foreach ( var property in managementObject.Properties ) {
-						if ( property != null ) {
-							Debug.WriteLine( $"{property.Name} = {property.Value}" );
-						}
+			if ( managementObject != null ) {
+				foreach ( var property in managementObject.Properties ) {
+					if ( property != null ) {
+						Debug.WriteLine( $"{property.Name} = {property.Value}" );
 					}
 				}
-
-				Debug.WriteLine( "---------------------------------" );
-				Debug.WriteLine( Environment.NewLine );
-
-				ram++; // Increment our ram chip count
 			}
-		}
 
+			Debug.WriteLine( "---------------------------------" );
+			Debug.WriteLine( Environment.NewLine );
+
+			ram++; // Increment our ram chip count
+		}
 	}
 
 }

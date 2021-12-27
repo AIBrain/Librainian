@@ -25,54 +25,53 @@
 //
 // File "StreamString.cs" last touched on 2021-06-16 at 9:24 PM by Protiguous.
 
-namespace Librainian.OperatingSystem.Streams {
+namespace Librainian.OperatingSystem.Streams;
 
-	using System;
-	using System.IO;
-	using System.Text;
+using System;
+using System.IO;
+using System.Text;
 
 	
-	/// <see cref="http://github.com/firepacket/anark.it/" />
-	public class StreamString {
+/// <see cref="http://github.com/firepacket/anark.it/" />
+public class StreamString {
 
-		private Stream? IOStream { get; }
+	private Stream? IOStream { get; }
 
-		private UnicodeEncoding StreamEncoding { get; }
+	private UnicodeEncoding StreamEncoding { get; }
 
-		public StreamString( Stream? ioStream ) {
-			this.IOStream = ioStream;
-			this.StreamEncoding = new UnicodeEncoding();
+	public StreamString( Stream? ioStream ) {
+		this.IOStream = ioStream;
+		this.StreamEncoding = new UnicodeEncoding();
+	}
+
+	public String? ReadString() {
+		var ioStream = this.IOStream;
+
+		if ( ioStream is null ) {
+			return default( String? );
 		}
 
-		public String? ReadString() {
-			var ioStream = this.IOStream;
+		var len = ioStream.ReadByte() * 256;
+		len += ioStream.ReadByte();
+		var inBuffer = new Byte[len];
+		ioStream.Read( inBuffer, 0, len );
 
-			if ( ioStream is null ) {
-				return default( String? );
-			}
+		return this.StreamEncoding.GetString( inBuffer );
+	}
 
-			var len = ioStream.ReadByte() * 256;
-			len += ioStream.ReadByte();
-			var inBuffer = new Byte[len];
-			ioStream.Read( inBuffer, 0, len );
+	public Int32 WriteString( String outString ) {
+		var outBuffer = this.StreamEncoding.GetBytes( outString );
+		var len = outBuffer.Length;
 
-			return this.StreamEncoding.GetString( inBuffer );
+		if ( len > UInt16.MaxValue ) {
+			len = UInt16.MaxValue;
 		}
 
-		public Int32 WriteString( String outString ) {
-			var outBuffer = this.StreamEncoding.GetBytes( outString );
-			var len = outBuffer.Length;
+		this.IOStream?.WriteByte( ( Byte )( len / 256 ) );
+		this.IOStream?.WriteByte( ( Byte )( len & 255 ) );
+		this.IOStream?.Write( outBuffer, 0, len );
+		this.IOStream?.Flush();
 
-			if ( len > UInt16.MaxValue ) {
-				len = UInt16.MaxValue;
-			}
-
-			this.IOStream?.WriteByte( ( Byte )( len / 256 ) );
-			this.IOStream?.WriteByte( ( Byte )( len & 255 ) );
-			this.IOStream?.Write( outBuffer, 0, len );
-			this.IOStream?.Flush();
-
-			return outBuffer.Length + 2;
-		}
+		return outBuffer.Length + 2;
 	}
 }

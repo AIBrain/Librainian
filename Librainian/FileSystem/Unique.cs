@@ -22,299 +22,298 @@
 //
 // File "Unique.cs" last formatted on 2020-08-14 at 8:40 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Net;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using Internet;
-	using Logging;
-	using Newtonsoft.Json;
-	using Parsing;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
+using Internet;
+using Logging;
+using Newtonsoft.Json;
+using Parsing;
+
+/// <summary>
+///     <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
+///     <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>
+///     <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
+///     <para>Locations should be case-sensitive (<see cref="Equals(Object)" />).</para>
+///     <para>It's...<see cref="Unique" />!</para>
+/// <see cref="Location"/>
+/// </summary>
+[Serializable]
+public class Unique : IEquatable<Unique> {
+
+	private const Int32 EOFMarker = -1;
+
+	[JsonProperty]
+	private readonly Uri? u;
+
+	/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
+	public static readonly Unique Empty = new();
+
+	//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
 
 	/// <summary>
-	///     <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
-	///     <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>
-	///     <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
-	///     <para>Locations should be case-sensitive (<see cref="Equals(Object)" />).</para>
-	///     <para>It's...<see cref="Unique" />!</para>
-	/// <see cref="Location"/>
+	///     The location/directory/path/file/name/whatever.ext
+	///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
 	/// </summary>
-	[Serializable]
-	public class Unique : IEquatable<Unique> {
+	[JsonIgnore]
+	public Uri? U => this.u;
 
-		private const Int32 EOFMarker = -1;
+	/// <summary>Just an easier to use mnemonic.</summary>
+	[JsonIgnore]
+	public String? AbsolutePath => this.U?.AbsolutePath;
 
-		[JsonProperty]
-		private readonly Uri? u;
-
-		/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
-		public static readonly Unique Empty = new();
-
-		//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
-
-		/// <summary>
-		///     The location/directory/path/file/name/whatever.ext
-		///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
-		/// </summary>
-		[JsonIgnore]
-		public Uri? U => this.u;
-
-		/// <summary>Just an easier to use mnemonic.</summary>
-		[JsonIgnore]
-		public String? AbsolutePath => this.U?.AbsolutePath;
-
-		/// <summary>What effect will this have down the road?</summary>
-		private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
+	/// <summary>What effect will this have down the road?</summary>
+	private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
 
 		
-		/// <param name="location"></param>
-		/// <exception cref="ArgumentEmptyException">When <paramref name="location" /> was parsed down to nothing.</exception>
-		/// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>
-		protected Unique( TrimmedString location ) {
-			if ( location.IsEmpty() ) {
-				throw new ArgumentEmptyException( "Location cannot be null or whitespace." );
-			}
-
-			if ( Uri.TryCreate( location, UriKind.Absolute, out var uri ) ) {
-				this.u = uri;
-			}
-			else {
-				throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
-			}
+	/// <param name="location"></param>
+	/// <exception cref="ArgumentEmptyException">When <paramref name="location" /> was parsed down to nothing.</exception>
+	/// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>
+	protected Unique( TrimmedString location ) {
+		if ( location.IsEmpty() ) {
+			throw new ArgumentEmptyException( "Location cannot be null or whitespace." );
 		}
 
-		/// <summary>Static (Ordinal) comparison.</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( Unique? left, Unique? right ) {
-			if ( ReferenceEquals( left, right ) ) {
+		if ( Uri.TryCreate( location, UriKind.Absolute, out var uri ) ) {
+			this.u = uri;
+		}
+		else {
+			throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
+		}
+	}
+
+	/// <summary>Static (Ordinal) comparison.</summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( Unique? left, Unique? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
+		}
+
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
+	}
+
+	public static Boolean operator !=( Unique? left, Unique? right ) => !Equals( left, right );
+
+	public static Boolean operator ==( Unique? left, Unique? right ) => Equals( left, right );
+
+	public static Boolean TryCreate( TrimmedString location, out Unique unique ) {
+		if ( !location.IsEmpty() ) {
+			try {
+				unique = new Unique( location );
+
 				return true;
 			}
-
-			if ( left is null || right is null ) {
-				return false;
-			}
-
-			return String.Equals( left.AbsolutePath, right.AbsolutePath, StringComparison.Ordinal );
+			catch ( ArgumentEmptyException ) { }
+			catch ( UriFormatException ) { }
 		}
 
-		public static Boolean operator !=( Unique? left, Unique? right ) => !Equals( left, right );
+		unique = Empty;
 
-		public static Boolean operator ==( Unique? left, Unique? right ) => Equals( left, right );
+		return false;
+	}
 
-		public static Boolean TryCreate( TrimmedString location, out Unique unique ) {
-			if ( !location.IsEmpty() ) {
-				try {
-					unique = new Unique( location );
-
-					return true;
-				}
-				catch ( ArgumentEmptyException ) { }
-				catch ( UriFormatException ) { }
-			}
-
+	/// <summary>If the <paramref name="uri" /> is parsed, then <paramref name="unique" /> will never be null.</summary>
+	/// <param name="uri"></param>
+	/// <param name="unique"></param>
+	public static Boolean TryCreate( Uri? uri, out Unique unique ) {
+		if ( uri is null ) {
 			unique = Empty;
 
 			return false;
 		}
 
-		/// <summary>If the <paramref name="uri" /> is parsed, then <paramref name="unique" /> will never be null.</summary>
-		/// <param name="uri"></param>
-		/// <param name="unique"></param>
-		public static Boolean TryCreate( Uri? uri, out Unique unique ) {
-			if ( uri is null ) {
-				unique = Empty;
+		if ( uri.IsAbsoluteUri ) {
+			unique = new Unique( uri.AbsoluteUri );
 
-				return false;
-			}
-
-			if ( uri.IsAbsoluteUri ) {
-				unique = new Unique( uri.AbsoluteUri );
-
-				return true;
-			}
-
-			unique = Empty;
-
-			return false;
+			return true;
 		}
 
-		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
-		public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken cancellationToken ) {
-			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
+		unique = Empty;
 
-			using var stream = client.OpenRead( this.U );
+		return false;
+	}
 
-			while ( stream.CanRead ) {
-				var a = stream.ReadByte();
+	/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Byte" />.</summary>
+	public IEnumerable<Byte> AsBytes( TimeSpan timeout, CancellationToken cancellationToken ) {
+		using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
 
-				if ( a == EOFMarker ) {
-					yield break;
-				}
+		using var stream = client.OpenRead( this.U );
 
-				yield return ( Byte )a;
-			}
-		}
+		while ( stream.CanRead ) {
+			var a = stream.ReadByte();
 
-		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
-		public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken cancellationToken ) {
-			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
-
-			using var stream = client.OpenRead( this.U );
-
-			while ( stream.CanRead ) {
-				var a = stream.ReadByte();
-
-				if ( a == EOFMarker ) {
-					yield break;
-				}
-
-				var b = stream.ReadByte();
-
-				if ( b == EOFMarker ) {
-					yield return BitConverter.ToInt16( new[] {
-						( Byte )a
-					}, 0 );
-
-					yield break;
-				}
-
-				yield return BitConverter.ToInt16( new[] {
-					( Byte )a, ( Byte )b
-				}, 0 );
-			}
-		}
-
-		/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
-		public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken cancellationToken ) {
-			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
-
-			using var stream = client.OpenRead( this.U );
-
-			if ( stream.CanRead != true ) {
+			if ( a == EOFMarker ) {
 				yield break;
 			}
 
-			while ( true ) {
-				var a = stream.ReadByte();
-
-				if ( a == EOFMarker ) {
-					yield break;
-				}
-
-				var b = stream.ReadByte();
-
-				if ( b == EOFMarker ) {
-					yield return BitConverter.ToInt32( new[] {
-						( Byte )a
-					}, 0 );
-
-					yield break;
-				}
-
-				var c = stream.ReadByte();
-
-				if ( c == EOFMarker ) {
-					yield return BitConverter.ToInt32( new[] {
-						( Byte )a, ( Byte )b
-					}, 0 );
-
-					yield break;
-				}
-
-				var d = stream.ReadByte();
-
-				if ( d == EOFMarker ) {
-					yield return BitConverter.ToInt32( new[] {
-						( Byte )a, ( Byte )b, ( Byte )c
-					}, 0 );
-
-					yield break;
-				}
-
-				yield return BitConverter.ToInt32( new[] {
-					( Byte )a, ( Byte )b, ( Byte )c, ( Byte )d
-				}, 0 );
-			}
+			yield return ( Byte )a;
 		}
-
-		public Boolean Equals( Unique? other ) => Equals( this, other );
-
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as Unique );
-
-		public override Int32 GetHashCode() => this.U.GetHashCode();
-
-		/// <summary>Legacy name for a windows folder.</summary>
-		public Boolean IsDirectory() => this.ToDirectoryInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
-
-		public Boolean IsFile() => !this.ToFileInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
-
-		/// <summary>Is this a windows folder (directory)?</summary>
-		public Boolean IsFolder() => this.IsDirectory();
-
-		/// <summary>
-		///     <para>Gets the size in bytes of the location.</para>
-		///     <para>A value of -1 indicates an error, timeout, or exception.</para>
-		/// </summary>
-		/// <param name="timeout"></param>
-		/// <param name="cancellationToken"></param>
-		public async Task<Int64> Length( TimeSpan timeout, CancellationToken cancellationToken ) {
-			try {
-				using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
-
-				try {
-					await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
-
-					var header = client.ResponseHeaders["Content-Length"];
-
-					if ( Int64.TryParse( header, out var result ) ) {
-						return result;
-					}
-				}
-				catch ( WebException exception ) {
-					exception.Log();
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return -1;
-		}
-
-		public DirectoryInfo? ToDirectoryInfo() {
-			try {
-				if ( this.U.IsFile ) {
-					return new DirectoryInfo( this.AbsolutePath );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return default( DirectoryInfo? );
-		}
-
-		public FileInfo? ToFileInfo() {
-			try {
-				if ( this.U.IsFile ) {
-					return new FileInfo( this.AbsolutePath );
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return default( FileInfo? );
-		}
-
-		/// <summary>Returns a string that represents the current object.</summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() => $"{this.AbsolutePath}";
 	}
+
+	/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int16" />.</summary>
+	public IEnumerable<Int32> AsInt16( TimeSpan timeout, CancellationToken cancellationToken ) {
+		using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
+
+		using var stream = client.OpenRead( this.U );
+
+		while ( stream.CanRead ) {
+			var a = stream.ReadByte();
+
+			if ( a == EOFMarker ) {
+				yield break;
+			}
+
+			var b = stream.ReadByte();
+
+			if ( b == EOFMarker ) {
+				yield return BitConverter.ToInt16( new[] {
+					( Byte )a
+				}, 0 );
+
+				yield break;
+			}
+
+			yield return BitConverter.ToInt16( new[] {
+				( Byte )a, ( Byte )b
+			}, 0 );
+		}
+	}
+
+	/// <summary>Enumerates the <see cref="Document" /> as a sequence of <see cref="Int32" />.</summary>
+	public IEnumerable<Int32> AsInt32( TimeSpan timeout, CancellationToken cancellationToken ) {
+		using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
+
+		using var stream = client.OpenRead( this.U );
+
+		if ( stream.CanRead != true ) {
+			yield break;
+		}
+
+		while ( true ) {
+			var a = stream.ReadByte();
+
+			if ( a == EOFMarker ) {
+				yield break;
+			}
+
+			var b = stream.ReadByte();
+
+			if ( b == EOFMarker ) {
+				yield return BitConverter.ToInt32( new[] {
+					( Byte )a
+				}, 0 );
+
+				yield break;
+			}
+
+			var c = stream.ReadByte();
+
+			if ( c == EOFMarker ) {
+				yield return BitConverter.ToInt32( new[] {
+					( Byte )a, ( Byte )b
+				}, 0 );
+
+				yield break;
+			}
+
+			var d = stream.ReadByte();
+
+			if ( d == EOFMarker ) {
+				yield return BitConverter.ToInt32( new[] {
+					( Byte )a, ( Byte )b, ( Byte )c
+				}, 0 );
+
+				yield break;
+			}
+
+			yield return BitConverter.ToInt32( new[] {
+				( Byte )a, ( Byte )b, ( Byte )c, ( Byte )d
+			}, 0 );
+		}
+	}
+
+	public Boolean Equals( Unique? other ) => Equals( this, other );
+
+	public override Boolean Equals( Object? obj ) => Equals( this, obj as Unique );
+
+	public override Int32 GetHashCode() => this.U.GetHashCode();
+
+	/// <summary>Legacy name for a windows folder.</summary>
+	public Boolean IsDirectory() => this.ToDirectoryInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
+
+	public Boolean IsFile() => !this.ToFileInfo()?.Attributes.HasFlag( FileAttributes.Directory ) ?? false;
+
+	/// <summary>Is this a windows folder (directory)?</summary>
+	public Boolean IsFolder() => this.IsDirectory();
+
+	/// <summary>
+	///     <para>Gets the size in bytes of the location.</para>
+	///     <para>A value of -1 indicates an error, timeout, or exception.</para>
+	/// </summary>
+	/// <param name="timeout"></param>
+	/// <param name="cancellationToken"></param>
+	public async Task<Int64> Length( TimeSpan timeout, CancellationToken cancellationToken ) {
+		try {
+			using var client = new WebClient().SetTimeoutAndCancel( timeout, cancellationToken );
+
+			try {
+				await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
+
+				var header = client.ResponseHeaders["Content-Length"];
+
+				if ( Int64.TryParse( header, out var result ) ) {
+					return result;
+				}
+			}
+			catch ( WebException exception ) {
+				exception.Log();
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return -1;
+	}
+
+	public DirectoryInfo? ToDirectoryInfo() {
+		try {
+			if ( this.U.IsFile ) {
+				return new DirectoryInfo( this.AbsolutePath );
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return default( DirectoryInfo? );
+	}
+
+	public FileInfo? ToFileInfo() {
+		try {
+			if ( this.U.IsFile ) {
+				return new FileInfo( this.AbsolutePath );
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return default( FileInfo? );
+	}
+
+	/// <summary>Returns a string that represents the current object.</summary>
+	/// <returns>A string that represents the current object.</returns>
+	public override String ToString() => $"{this.AbsolutePath}";
 }

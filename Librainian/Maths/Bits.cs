@@ -22,85 +22,84 @@
 //
 // File "Bits.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths;
 
-	using System;
-	using System.Linq;
-	using Exceptions;
-	using Numbers;
+using System;
+using System.Linq;
+using Exceptions;
+using Numbers;
 
-	public static class Bits {
+public static class Bits {
 
-		public static Boolean IsLittleEndian => BitConverter.IsLittleEndian;
+	public static Boolean IsLittleEndian => BitConverter.IsLittleEndian;
 
-		private static UInt64 ToUInt64( this Byte[] value, Int32 startIndex = 0 ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
-
-			return BitConverter.ToUInt64( Order( value ), startIndex );
+	private static UInt64 ToUInt64( this Byte[] value, Int32 startIndex = 0 ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
+		return BitConverter.ToUInt64( Order( value ), startIndex );
+	}
 
-		public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
+	public static Byte[] GetBytes( this Int16 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
+	public static Byte[] GetBytes( this UInt16 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
+	public static Byte[] GetBytes( this Int32 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
+	public static Byte[] GetBytes( this UInt32 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
+	public static Byte[] GetBytes( this Int64 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
+	public static Byte[] GetBytes( this UInt64 value ) => Order( BitConverter.GetBytes( value ) );
 
-		public static Byte[] Order( this Byte[] value ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+	public static Byte[] GetBytes( this UInt256 value ) => value.ToByteArray();
 
-			return IsLittleEndian ? value : value.Reverse().ToArray();
+	public static Byte[] Order( this Byte[] value ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+		return IsLittleEndian ? value : value.Reverse().ToArray();
+	}
 
-			return BitConverter.ToInt32( Order( value ), startIndex );
+	public static Int32 ToInt32( this Byte[] value, Int32 startIndex = 0 ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public static String ToString( this Byte[] value, Int32 startIndex = 0 ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+		return BitConverter.ToInt32( Order( value ), startIndex );
+	}
 
-			return BitConverter.ToString( Order( value ), startIndex );
+	public static String ToString( this Byte[] value, Int32 startIndex = 0 ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+		return BitConverter.ToString( Order( value ), startIndex );
+	}
 
-			return BitConverter.ToUInt16( Order( value ), startIndex );
+	public static UInt16 ToUInt16( this Byte[] value, Int32 startIndex = 0 ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public static UInt256 ToUInt256( this Byte[] value ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+		return BitConverter.ToUInt16( Order( value ), startIndex );
+	}
 
-			return new UInt256( value );
+	public static UInt256 ToUInt256( this Byte[] value ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public static UInt32 ToUInt32( this Byte[] value, Int32 startIndex = 0 ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+		return new UInt256( value );
+	}
 
-			return BitConverter.ToUInt32( Order( value ), startIndex );
+	public static UInt32 ToUInt32( this Byte[] value, Int32 startIndex = 0 ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
+
+		return BitConverter.ToUInt32( Order( value ), startIndex );
 	}
 }

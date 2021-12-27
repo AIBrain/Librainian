@@ -25,85 +25,84 @@
 //
 // File "ZeroToOne.cs" last touched on 2021-03-07 at 8:43 AM by Protiguous.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Diagnostics;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Extensions;
+using Newtonsoft.Json;
+
+/// <summary>
+///     Restricts the value to between 0.0 and 1.0.
+/// </summary>
+[Immutable]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[JsonObject]
+public struct ZeroToOne {
+
+	public const Single MaximumValue = 1;
+
+	public const Single MidValue = ( MinimumValue + MaximumValue ) / 2f;
+
+	public const Single MinimumValue = 0;
+
+	[field: JsonProperty( "v" )]
+	private Single Value { get; }
 
 	/// <summary>
-	///     Restricts the value to between 0.0 and 1.0.
+	///     <para>Restricts the value to between 0.0 and 1.0.</para>
 	/// </summary>
-	[Immutable]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public struct ZeroToOne {
-
-		public const Single MaximumValue = 1;
-
-		public const Single MidValue = ( MinimumValue + MaximumValue ) / 2f;
-
-		public const Single MinimumValue = 0;
-
-		[field: JsonProperty( "v" )]
-		private Single Value { get; }
-
-		/// <summary>
-		///     <para>Restricts the value to between 0.0 and 1.0.</para>
-		/// </summary>
-		/// <param name="value"></param>
-		public ZeroToOne( Single value ) {
-			value = value switch {
-				> MaximumValue => MaximumValue,
-				< MinimumValue => MinimumValue,
-				var _ => value
-			};
-			this.Value = value;
-		}
-
-		/// <summary>
-		///     Return a new <see cref="ZeroToOne" /> with the value of <paramref name="left" /> moved closer to the value of
-		///     <paramref name="right" /> .
-		/// </summary>
-		/// <param name="left"> The current value.</param>
-		/// <param name="right">The value to move closer towards.</param>
-		/// <returns>
-		///     Returns a new <see cref="ZeroToOne" /> with the value of <paramref name="left" /> moved closer to the value of
-		///     <paramref name="right" /> .
-		/// </returns>
-		public static ZeroToOne Add( ZeroToOne left, ZeroToOne right ) => new( ( left + right ) / 2f );
-
-		public static implicit operator Single( ZeroToOne value ) => value.Value;
-
-		public static implicit operator ZeroToOne( Decimal value ) => new( ( Single )value );
-
-		public static implicit operator ZeroToOne( Double value ) => new( ( Single )value );
-
-		public static implicit operator ZeroToOne( Single value ) => new( value );
-
-		public static ZeroToOne? Parse( String value ) {
-			if ( Single.TryParse( value, out var sin ) ) {
-				return ( Decimal )sin;
-			}
-
-			if ( Double.TryParse( value, out var dob ) ) {
-				return ( Decimal )dob;
-			}
-
-			if ( Decimal.TryParse( value, out var dec ) ) {
-				return dec;
-			}
-
-			return default( ZeroToOne? );
-		}
-
-		/// <summary>
-		///     Attempt to parse <paramref name="value" />, otherwise return null.
-		/// </summary>
-		/// <param name="value"></param>
-		public static ZeroToOne? TryParse( String value ) => Decimal.TryParse( value, out var result ) ? result : default( ZeroToOne? );
-
-		public override String ToString() => $"{( Single )this:P}";
+	/// <param name="value"></param>
+	public ZeroToOne( Single value ) {
+		value = value switch {
+			> MaximumValue => MaximumValue,
+			< MinimumValue => MinimumValue,
+			var _ => value
+		};
+		this.Value = value;
 	}
+
+	/// <summary>
+	///     Return a new <see cref="ZeroToOne" /> with the value of <paramref name="left" /> moved closer to the value of
+	///     <paramref name="right" /> .
+	/// </summary>
+	/// <param name="left"> The current value.</param>
+	/// <param name="right">The value to move closer towards.</param>
+	/// <returns>
+	///     Returns a new <see cref="ZeroToOne" /> with the value of <paramref name="left" /> moved closer to the value of
+	///     <paramref name="right" /> .
+	/// </returns>
+	public static ZeroToOne Add( ZeroToOne left, ZeroToOne right ) => new( ( left + right ) / 2f );
+
+	public static implicit operator Single( ZeroToOne value ) => value.Value;
+
+	public static implicit operator ZeroToOne( Decimal value ) => new( ( Single )value );
+
+	public static implicit operator ZeroToOne( Double value ) => new( ( Single )value );
+
+	public static implicit operator ZeroToOne( Single value ) => new( value );
+
+	public static ZeroToOne? Parse( String value ) {
+		if ( Single.TryParse( value, out var sin ) ) {
+			return ( Decimal )sin;
+		}
+
+		if ( Double.TryParse( value, out var dob ) ) {
+			return ( Decimal )dob;
+		}
+
+		if ( Decimal.TryParse( value, out var dec ) ) {
+			return dec;
+		}
+
+		return default( ZeroToOne? );
+	}
+
+	/// <summary>
+	///     Attempt to parse <paramref name="value" />, otherwise return null.
+	/// </summary>
+	/// <param name="value"></param>
+	public static ZeroToOne? TryParse( String value ) => Decimal.TryParse( value, out var result ) ? result : default( ZeroToOne? );
+
+	public override String ToString() => $"{this.Value:P}";
 }

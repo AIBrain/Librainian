@@ -25,18 +25,17 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System.Collections.Generic;
-	using System.Diagnostics.CodeAnalysis;
-	using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public class Sequence<TType> {
+[JsonObject]
+public class Sequence<TType> {
 
-		[JsonProperty]
-		public List<TType> Tokens { get; } = new();
+	[JsonProperty]
+	public List<TType> Tokens { get; } = new();
 
-		public void Enqueue( [DisallowNull] TType token ) => this.Tokens.Add( token );
-	}
+	public void Enqueue( [DisallowNull] TType token ) => this.Tokens.Add( token );
 }

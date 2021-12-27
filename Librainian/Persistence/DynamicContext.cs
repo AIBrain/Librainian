@@ -22,46 +22,45 @@
 //
 // File "DynamicContext.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Dynamic;
-	using System.Runtime.Serialization;
-	using System.Security.Permissions;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+using Newtonsoft.Json;
 
 	
-	/// <see cref="http://stackoverflow.com/a/4857322/956364" />
-	[JsonObject]
-	[Serializable]
-	public class DynamicContext : DynamicObject, ISerializable {
+/// <see cref="http://stackoverflow.com/a/4857322/956364" />
+[JsonObject]
+[Serializable]
+public class DynamicContext : DynamicObject, ISerializable {
 
-		private Dictionary<String, Object> Context { get; } = new();
+	private Dictionary<String, Object> Context { get; } = new();
 
-		protected DynamicContext( SerializationInfo info, StreamingContext context ) {
+	protected DynamicContext( SerializationInfo info, StreamingContext context ) {
 
-			// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
-			foreach ( var entry in info ) {
-				this.Context.Add( entry.Name, entry.Value );
-			}
+		// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
+		foreach ( var entry in info ) {
+			this.Context.Add( entry.Name, entry.Value );
 		}
+	}
 
-		public DynamicContext() { }
+	public DynamicContext() { }
 
-		[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
-		public virtual void GetObjectData( SerializationInfo? info, StreamingContext context ) {
-			foreach ( var kvp in this.Context ) {
-				info.AddValue( kvp.Key, kvp.Value );
-			}
+	[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
+	public virtual void GetObjectData( SerializationInfo? info, StreamingContext context ) {
+		foreach ( var kvp in this.Context ) {
+			info.AddValue( kvp.Key, kvp.Value );
 		}
+	}
 
-		public override Boolean TryGetMember( GetMemberBinder binder, out Object? result ) => this.Context.TryGetValue( binder.Name, out result );
+	public override Boolean TryGetMember( GetMemberBinder binder, out Object? result ) => this.Context.TryGetValue( binder.Name, out result );
 
-		public override Boolean TrySetMember( SetMemberBinder binder, Object? value ) {
-			this.Context.Add( binder.Name, value );
+	public override Boolean TrySetMember( SetMemberBinder binder, Object? value ) {
+		this.Context.Add( binder.Name, value );
 
-			return true;
-		}
+		return true;
 	}
 }

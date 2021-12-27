@@ -22,24 +22,23 @@
 //
 // File "ItemCategory.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Shopping {
+namespace Librainian.Financial.Containers.Shopping; 
 
-	/// <summary>
-	///     Obviously there are thousands of real categories that should be loaded from a json document. But this is just
-	///     a sample/experimental class.
-	/// </summary>
-	public enum ItemCategory {
+/// <summary>
+///     Obviously there are thousands of real categories that should be loaded from a json document. But this is just
+///     a sample/experimental class.
+/// </summary>
+public enum ItemCategory {
 
-		Invalid = -1,
+	Invalid = -1,
 
-		Other,
+	Other,
 
-		Book,
+	Book,
 
-		Food,
+	Food,
 
-		Medical,
+	Medical,
 
-		Import
-	}
+	Import
 }

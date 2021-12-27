@@ -24,216 +24,105 @@
 
 #nullable enable
 
-namespace Librainian.Databases {
+namespace Librainian.Databases;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Data;
-	using System.Data.Common;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using Extensions;
-	using Logging;
-	using Maths;
-	using Microsoft.Data.SqlClient;
-	using Utilities.Disposables;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
+using Extensions;
+using Logging;
+using Maths;
+using Microsoft.Data.SqlClient;
+using Utilities.Disposables;
 
-	public class DurableDatabase : ABetterClassDispose {
+public class DurableDatabase : ABetterClassDispose {
 
-		private String ConnectionString { get; }
+	private String ConnectionString { get; }
 
-		private UInt16 Retries { get; }
+	private UInt16 Retries { get; }
 
-		private ThreadLocal<SqlConnection> SqlConnections { get; }
+	private ThreadLocal<SqlConnection> SqlConnections { get; }
 
-		public CancellationTokenSource CancelConnection { get; } = new();
+	public CancellationTokenSource CancelConnection { get; } = new();
 
-		/// <summary>A database connection attempts to stay connected in the event of an unwanted disconnect.</summary>
-		/// <param name="connectionString"></param>
-		/// <param name="retries">         </param>
-		/// <exception cref="InvalidOperationException"></exception>
-		/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.
-		/// It probably doesn't help, as experience shows a database connection should be as short as possible.
-		/// </remarks>
-		public DurableDatabase( String connectionString, UInt16 retries ) : base( nameof( DurableDatabase ) ) {
-			if ( String.IsNullOrWhiteSpace( connectionString ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
-			}
-
-			this.Retries = retries;
-			this.ConnectionString = connectionString;
-
-			this.SqlConnections = new ThreadLocal<SqlConnection>( () => {
-				var connection = new SqlConnection( this.ConnectionString );
-				connection.StateChange += this.SqlConnection_StateChange;
-
-				return connection;
-			}, true );
-
-			var test = this.OpenConnection(); //try/start the current thread's open;
-
-			if ( test == null ) {
-				var builder = new SqlConnectionStringBuilder( this.ConnectionString );
-
-				throw new InvalidOperationException( $"Unable to connect to {builder.DataSource}" );
-			}
+	/// <summary>A database connection attempts to stay connected in the event of an unwanted disconnect.</summary>
+	/// <param name="connectionString"></param>
+	/// <param name="retries">         </param>
+	/// <exception cref="InvalidOperationException"></exception>
+	/// <remarks>This has not been tested if it makes a noticable difference versus SQL Server connection pooling.
+	/// It probably doesn't help, as experience shows a database connection should be as short as possible.
+	/// </remarks>
+	public DurableDatabase( String connectionString, UInt16 retries ) : base( nameof( DurableDatabase ) ) {
+		if ( String.IsNullOrWhiteSpace( connectionString ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( connectionString ) );
 		}
 
-		private SqlConnection? OpenConnection() {
-			var sqlConnectionsValue = this.SqlConnections.Value;
-			if ( sqlConnectionsValue!.State == ConnectionState.Open ) {
-				return this.SqlConnections.Value;
-			}
+		this.Retries = retries;
+		this.ConnectionString = connectionString;
 
-			try {
-				sqlConnectionsValue.Open();
+		this.SqlConnections = new ThreadLocal<SqlConnection>( () => {
+			var connection = new SqlConnection( this.ConnectionString );
+			connection.StateChange += this.SqlConnection_StateChange;
 
-				return sqlConnectionsValue;
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
+			return connection;
+		}, true );
 
-			return default( SqlConnection? );
+		var test = this.OpenConnection(); //try/start the current thread's open;
+
+		if ( test == null ) {
+			var builder = new SqlConnectionStringBuilder( this.ConnectionString );
+
+			throw new InvalidOperationException( $"Unable to connect to {builder.DataSource}" );
+		}
+	}
+
+	private SqlConnection? OpenConnection() {
+		var sqlConnectionsValue = this.SqlConnections.Value;
+		if ( sqlConnectionsValue!.State == ConnectionState.Open ) {
+			return this.SqlConnections.Value;
 		}
 
-		/// <summary>Return true if connected.</summary>
-		/// <param name="sender"></param>
-		private Boolean ReOpenConnection( Object? sender ) {
-			if ( this.CancelConnection.IsCancellationRequested ) {
-				return false;
-			}
+		try {
+			sqlConnectionsValue.Open();
 
-			if ( sender is not SqlConnection connection ) {
-				return false;
-			}
+			return sqlConnectionsValue;
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
 
-			var retries = this.Retries;
+		return default( SqlConnection? );
+	}
 
-			do {
-				retries--;
-
-				try {
-					if ( this.CancelConnection.IsCancellationRequested ) {
-						return false;
-					}
-
-					connection.Open();
-
-					if ( connection.State == ConnectionState.Open ) {
-						return true;
-					}
-				}
-				catch ( SqlException exception ) {
-					exception.Log();
-				}
-				catch ( DbException exception ) {
-					exception.Log();
-				}
-			} while ( retries > 0 );
-
+	/// <summary>Return true if connected.</summary>
+	/// <param name="sender"></param>
+	private Boolean ReOpenConnection( Object? sender ) {
+		if ( this.CancelConnection.IsCancellationRequested ) {
 			return false;
 		}
 
-		private void SqlConnection_StateChange( Object? sender, StateChangeEventArgs e ) {
-			switch ( e.CurrentState ) {
-				case ConnectionState.Closed:
-					this.ReOpenConnection( sender );
-
-					break;
-
-				case ConnectionState.Open:
-					break; //do nothing
-
-				case ConnectionState.Connecting:
-					Thread.SpinWait( 99 ); //TODO pooa. then test.
-
-					break;
-
-				case ConnectionState.Executing:
-					break; //do nothing
-
-				case ConnectionState.Fetching:
-					break; //do nothing
-
-				case ConnectionState.Broken:
-					this.ReOpenConnection( sender );
-
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+		if ( sender is not SqlConnection connection ) {
+			return false;
 		}
 
-		public override void DisposeManaged() {
-			if ( !this.CancelConnection.IsCancellationRequested ) {
-				this.CancelConnection.Cancel();
-			}
+		var retries = this.Retries;
 
-			foreach ( var connection in this.SqlConnections.Values ) {
-				if ( connection == null ) {
-					throw new InvalidOperationException( $"{nameof( connection )} is null." );
-				}
-
-				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-				switch ( connection.State ) {
-					case ConnectionState.Open: {
-							connection.Close();
-
-							break;
-						}
-
-					case ConnectionState.Closed: {
-							break;
-						}
-
-					case ConnectionState.Connecting: {
-							connection.Close();
-
-							break;
-						}
-
-					case ConnectionState.Executing: {
-							connection.Close();
-
-							break;
-						}
-
-					case ConnectionState.Fetching: {
-							connection.Close();
-
-							break;
-						}
-
-					case ConnectionState.Broken: {
-							connection.Close();
-
-							break;
-						}
-				}
-			}
-		}
-
-		/// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
-		public Int32? ExecuteNonQuery( String query, params SqlParameter[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
-			}
+		do {
+			retries--;
 
 			try {
-				var open = this.OpenConnection();
-				if ( open != null ) {
-					using var command = new SqlCommand( query, open ) {
-						CommandType = CommandType.Text
-					};
+				if ( this.CancelConnection.IsCancellationRequested ) {
+					return false;
+				}
 
-					if ( parameters != null ) {
-						command.Parameters?.AddRange( parameters );
-					}
+				connection.Open();
 
-					return command.ExecuteNonQuery();
+				if ( connection.State == ConnectionState.Open ) {
+					return true;
 				}
 			}
 			catch ( SqlException exception ) {
@@ -242,23 +131,102 @@ namespace Librainian.Databases {
 			catch ( DbException exception ) {
 				exception.Log();
 			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
+		} while ( retries > 0 );
 
-			return default( Int32? );
+		return false;
+	}
+
+	private void SqlConnection_StateChange( Object? sender, StateChangeEventArgs e ) {
+		switch ( e.CurrentState ) {
+			case ConnectionState.Closed:
+				this.ReOpenConnection( sender );
+
+				break;
+
+			case ConnectionState.Open:
+				break; //do nothing
+
+			case ConnectionState.Connecting:
+				Thread.SpinWait( 99 ); //TODO pooa. then test.
+
+				break;
+
+			case ConnectionState.Executing:
+				break; //do nothing
+
+			case ConnectionState.Fetching:
+				break; //do nothing
+
+			case ConnectionState.Broken:
+				this.ReOpenConnection( sender );
+
+				break;
+
+			default:
+				throw new ArgumentOutOfRangeException();
+		}
+	}
+
+	public override void DisposeManaged() {
+		if ( !this.CancelConnection.IsCancellationRequested ) {
+			this.CancelConnection.Cancel();
 		}
 
-		public Int32? ExecuteNonQuery( String query, Int32 retries, params SqlParameter[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
+		foreach ( var connection in this.SqlConnections.Values ) {
+			if ( connection == null ) {
+				throw new InvalidOperationException( $"{nameof( connection )} is null." );
 			}
 
-		TryAgain:
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+			switch ( connection.State ) {
+				case ConnectionState.Open: {
+					connection.Close();
 
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = CommandType.StoredProcedure
+					break;
+				}
+
+				case ConnectionState.Closed: {
+					break;
+				}
+
+				case ConnectionState.Connecting: {
+					connection.Close();
+
+					break;
+				}
+
+				case ConnectionState.Executing: {
+					connection.Close();
+
+					break;
+				}
+
+				case ConnectionState.Fetching: {
+					connection.Close();
+
+					break;
+				}
+
+				case ConnectionState.Broken: {
+					connection.Close();
+
+					break;
+				}
+			}
+		}
+	}
+
+	/// <summary>Opens and then closes a <see cref="SqlConnection" />.</summary>
+	public Int32? ExecuteNonQuery( String query, params SqlParameter[]? parameters ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
+		}
+
+		try {
+			var open = this.OpenConnection();
+			if ( open != null ) {
+				using var command = new SqlCommand( query, open ) {
+					CommandType = CommandType.Text
 				};
 
 				if ( parameters != null ) {
@@ -267,380 +235,411 @@ namespace Librainian.Databases {
 
 				return command.ExecuteNonQuery();
 			}
-			catch ( InvalidOperationException ) {
-
-				//timeout probably
-				retries--;
-
-				if ( retries.Any() ) {
-					goto TryAgain;
-				}
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-
-			return default( Int32? );
 		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return default( Int32? );
+	}
+
+	public Int32? ExecuteNonQuery( String query, Int32 retries, params SqlParameter[]? parameters ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
+		}
+
+		TryAgain:
+
+		try {
+			using var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = CommandType.StoredProcedure
+			};
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
+			}
+
+			return command.ExecuteNonQuery();
+		}
+		catch ( InvalidOperationException ) {
+
+			//timeout probably
+			retries--;
+
+			if ( retries.Any() ) {
+				goto TryAgain;
+			}
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+
+		return default( Int32? );
+	}
 
 		
-		public Boolean ExecuteNonQuery( String query ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
-			}
-
-			try {
-				using var sqlcommand = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = CommandType.Text
-				};
-
-				sqlcommand.ExecuteNonQuery();
-
-				return true;
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return false;
+	public Boolean ExecuteNonQuery( String query ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
 		}
 
-		public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
-			}
+		try {
+			using var sqlcommand = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = CommandType.Text
+			};
 
-			try {
-				var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType
-				};
-				await using var asyncDisposable = command.ConfigureAwait( false );
+			sqlcommand.ExecuteNonQuery();
 
-				if ( parameters != null ) {
-					command.Parameters?.AddRange( parameters );
-				}
-
-				return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-
-			return default( Int32? );
+			return true;
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 		}
 
-		/// <summary>Returns a <see cref="DataTable" /></summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="table">      </param>
-		/// <param name="parameters"> </param>
-		public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
-			}
+		return false;
+	}
 
-			using DataTable local = new();
-
-			table = local;
-
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType
-				};
-
-				if ( parameters != null ) {
-					command.Parameters?.AddRange( parameters );
-				}
-
-				table.BeginLoadData();
-
-				using ( var reader = command.ExecuteReader() ) {
-					if ( reader != null ) {
-						table.Load( reader );
-					}
-				}
-
-				table.EndLoadData();
-
-				return true;
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return false;
+	public async Task<Int32?> ExecuteNonQueryAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
 		}
 
-		/// <summary>Returns a <see cref="DataTable" /></summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		public DataTable ExecuteReader( String query, CommandType commandType, params SqlParameter[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
+		try {
+			var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType
+			};
+			await using var asyncDisposable = command.ConfigureAwait( false );
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
 			}
 
-			var table = new DataTable();
+			return await command.ExecuteNonQueryAsync().ConfigureAwait( false );
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
 
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType
-				};
+		return default( Int32? );
+	}
 
-				if ( parameters != null ) {
-					command.Parameters?.AddRange( parameters );
-				}
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query">      </param>
+	/// <param name="commandType"></param>
+	/// <param name="table">      </param>
+	/// <param name="parameters"> </param>
+	public Boolean ExecuteReader( String query, CommandType commandType, out DataTable table, params SqlParameter[]? parameters ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
+		}
 
-				table.BeginLoadData();
+		using DataTable local = new();
 
-				using ( var reader = command.ExecuteReader() ) {
+		table = local;
+
+		try {
+			using var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType
+			};
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
+			}
+
+			table.BeginLoadData();
+
+			using ( var reader = command.ExecuteReader() ) {
+				if ( reader != null ) {
 					table.Load( reader );
 				}
-
-				table.EndLoadData();
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
 			}
 
-			return table;
+			table.EndLoadData();
+
+			return true;
 		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return false;
+	}
+
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query">      </param>
+	/// <param name="commandType"></param>
+	/// <param name="parameters"> </param>
+	public DataTable ExecuteReader( String query, CommandType commandType, params SqlParameter[]? parameters ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
+		}
+
+		var table = new DataTable();
+
+		try {
+			using var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType
+			};
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
+			}
+
+			table.BeginLoadData();
+
+			using ( var reader = command.ExecuteReader() ) {
+				table.Load( reader );
+			}
+
+			table.EndLoadData();
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return table;
+	}
 
 		
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		public async Task<DataTableReader?> ExecuteReaderAsyncDataReader( String? query, CommandType commandType, params SqlParameter[]? parameters ) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
-			}
-
-			try {
-				DataTable table;
-
-				var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType
-				};
-				await using ( command.ConfigureAwait( false ) ) {
-					if ( parameters != null ) {
-						command.Parameters?.AddRange( parameters );
-					}
-
-					var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
-					await using var _ = reader.ConfigureAwait( false );
-					table = reader.ToDataTable();
-				}
-
-				return table.CreateDataReader();
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-
-			return default( DataTableReader );
+	/// <param name="query">      </param>
+	/// <param name="commandType"></param>
+	/// <param name="parameters"> </param>
+	public async Task<DataTableReader?> ExecuteReaderAsyncDataReader( String? query, CommandType commandType, params SqlParameter[]? parameters ) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
 		}
 
-		/// <summary>Returns a <see cref="DataTable" /></summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
-			using var table = new DataTable();
+		try {
+			DataTable table;
 
-			try {
-				var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType
-				};
-				await using var _ = command.ConfigureAwait( false );
-
+			var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType
+			};
+			await using ( command.ConfigureAwait( false ) ) {
 				if ( parameters != null ) {
 					command.Parameters?.AddRange( parameters );
 				}
 
-				table.BeginLoadData();
-
-				var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false );
-				await using ( reader.ConfigureAwait( false ) ) {
-					table.Load( reader );
-				}
-
-				table.EndLoadData();
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
+				var reader = await command.ExecuteReaderAsync().ConfigureAwait( false );
+				await using var _ = reader.ConfigureAwait( false );
+				table = reader.ToDataTable();
 			}
 
-			return table;
+			return table.CreateDataReader();
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
 		}
 
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		public (Status status, TResult result) ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[]? parameters ) {
-			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType
-				};
+		return default( DataTableReader );
+	}
 
-				if ( parameters != null ) {
-					command.Parameters?.AddRange( parameters );
-				}
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query">      </param>
+	/// <param name="commandType"></param>
+	/// <param name="parameters"> </param>
+	public async Task<DataTable> ExecuteReaderDataTableAsync( String query, CommandType commandType, params SqlParameter[]? parameters ) {
+		using var table = new DataTable();
 
-				var scalar = command.ExecuteScalar();
+		try {
+			var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType
+			};
+			await using var _ = command.ConfigureAwait( false );
 
-				if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return (Status.Success, default( TResult ));
-				}
-
-				if ( scalar is TResult result1 ) {
-					return (Status.Success, result1);
-				}
-
-				if ( scalar.TryCast<TResult>( out var result ) ) {
-					return (Status.Success, result);
-				}
-
-				return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
 			}
 
-			return default( (Status status, TResult result) );
+			table.BeginLoadData();
+
+			var reader = await command.ExecuteReaderAsync( this.CancelConnection.Token ).ConfigureAwait( false );
+			await using ( reader.ConfigureAwait( false ) ) {
+				table.Load( reader );
+			}
+
+			table.EndLoadData();
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 		}
 
-		/// <summary>
-		///     <para>Returns the first column of the first row.</para>
-		/// </summary>
-		/// <param name="query">      </param>
-		/// <param name="commandType"></param>
-		/// <param name="parameters"> </param>
-		public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>(
-			String query,
-			CommandType commandType,
-			params SqlParameter[]? parameters
-		) {
-			if ( String.IsNullOrWhiteSpace( query ) ) {
-				throw new ArgumentEmptyException( nameof( query ) );
+		return table;
+	}
+
+	/// <summary>
+	///     <para>Returns the first column of the first row.</para>
+	/// </summary>
+	/// <param name="query">      </param>
+	/// <param name="commandType"></param>
+	/// <param name="parameters"> </param>
+	public (Status status, TResult result) ExecuteScalar<TResult>( String query, CommandType commandType, params SqlParameter[]? parameters ) {
+		try {
+			using var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType
+			};
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
 			}
 
-			try {
-				var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = commandType,
-					CommandTimeout = 0
-				};
-				await using var _ = command.ConfigureAwait( false );
+			var scalar = command.ExecuteScalar();
 
-				if ( parameters != null ) {
-					command.Parameters?.AddRange( parameters );
-				}
+			if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+				return (Status.Success, default( TResult ));
+			}
+
+			if ( scalar is TResult result1 ) {
+				return (Status.Success, result1);
+			}
+
+			if ( scalar.TryCast<TResult>( out var result ) ) {
+				return (Status.Success, result);
+			}
+
+			return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+
+		return default( (Status status, TResult result) );
+	}
+
+	/// <summary>
+	///     <para>Returns the first column of the first row.</para>
+	/// </summary>
+	/// <param name="query">      </param>
+	/// <param name="commandType"></param>
+	/// <param name="parameters"> </param>
+	public async Task<(Status status, TResult result)> ExecuteScalarAsync<TResult>(
+		String query,
+		CommandType commandType,
+		params SqlParameter[]? parameters
+	) {
+		if ( String.IsNullOrWhiteSpace( query ) ) {
+			throw new ArgumentEmptyException( nameof( query ) );
+		}
+
+		try {
+			var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = commandType,
+				CommandTimeout = 0
+			};
+			await using var _ = command.ConfigureAwait( false );
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
+			}
 
 			TryAgain:
-				Object scalar;
+			Object scalar;
 
-				try {
-					scalar = await command.ExecuteScalarAsync().ConfigureAwait( false );
-				}
-				catch ( SqlException exception ) {
-					if ( exception.Number == DatabaseErrors.Deadlock ) {
-						goto TryAgain;
-					}
-
-					throw;
-				}
-
-				if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
-					return (Status.Success, default( TResult ));
-				}
-
-				if ( scalar is TResult scalarAsync ) {
-					return (Status.Success, scalarAsync);
-				}
-
-				if ( scalar.TryCast<TResult>( out var result ) ) {
-					return (Status.Success, result);
-				}
-
-				return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
-			}
-			catch ( InvalidCastException exception ) {
-
-				//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
-				exception.Log();
-			}
-			catch ( SqlException exception ) {
-				exception.Log();
-			}
-
-			return default( (Status status, TResult result) );
-		}
-
-		/// <summary>Returns a <see cref="DataTable" /></summary>
-		/// <param name="query">     </param>
-		/// <param name="parameters"></param>
-		public IEnumerable<TResult?>? QueryList<TResult>( String query, params SqlParameter[]? parameters ) {
 			try {
-				using var command = new SqlCommand( query, this.OpenConnection() ) {
-					CommandType = CommandType.StoredProcedure
-				};
-
-				if ( parameters != null ) {
-					command.Parameters?.AddRange( parameters );
-				}
-
-				using var reader = command.ExecuteReader();
-
-				var data = GenericPopulatorExtensions.CreateList<TResult>( reader );
-
-				return data;
+				scalar = await command.ExecuteScalarAsync().ConfigureAwait( false );
 			}
 			catch ( SqlException exception ) {
-				exception.Log();
-			}
-			catch ( DbException exception ) {
-				exception.Log();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
+				if ( exception.Number == DatabaseErrors.Deadlock ) {
+					goto TryAgain;
+				}
+
+				throw;
 			}
 
-			return default( IEnumerable<TResult> );
+			if ( scalar == null || scalar == DBNull.Value || Convert.IsDBNull( scalar ) ) {
+				return (Status.Success, default( TResult ));
+			}
+
+			if ( scalar is TResult scalarAsync ) {
+				return (Status.Success, scalarAsync);
+			}
+
+			if ( scalar.TryCast<TResult>( out var result ) ) {
+				return (Status.Success, result);
+			}
+
+			return (Status.Success, ( TResult )Convert.ChangeType( scalar, typeof( TResult ) ));
 		}
+		catch ( InvalidCastException exception ) {
+
+			//TIP: check for SQLServer returning a Double when you expect a Single (float in SQL).
+			exception.Log();
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+
+		return default( (Status status, TResult result) );
+	}
+
+	/// <summary>Returns a <see cref="DataTable" /></summary>
+	/// <param name="query">     </param>
+	/// <param name="parameters"></param>
+	public IEnumerable<TResult?>? QueryList<TResult>( String query, params SqlParameter[]? parameters ) {
+		try {
+			using var command = new SqlCommand( query, this.OpenConnection() ) {
+				CommandType = CommandType.StoredProcedure
+			};
+
+			if ( parameters != null ) {
+				command.Parameters?.AddRange( parameters );
+			}
+
+			using var reader = command.ExecuteReader();
+
+			var data = GenericPopulatorExtensions.CreateList<TResult>( reader );
+
+			return data;
+		}
+		catch ( SqlException exception ) {
+			exception.Log();
+		}
+		catch ( DbException exception ) {
+			exception.Log();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return default( IEnumerable<TResult> );
 	}
 }

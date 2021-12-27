@@ -22,24 +22,23 @@
 //
 // File "SerializableExceptionWithoutCustomProperties.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Newtonsoft.Json;
+using System;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
-	// Important: This attribute is NOT inherited from Exception, and MUST be specified otherwise serialization will fail with a SerializationException stating that "Type X in Assembly Y is not marked as serializable."
-	[JsonObject]
-	[Serializable]
-	public class SerializableExceptionWithoutCustomProperties : Exception {
+// Important: This attribute is NOT inherited from Exception, and MUST be specified otherwise serialization will fail with a SerializationException stating that "Type X in Assembly Y is not marked as serializable."
+[JsonObject]
+[Serializable]
+public class SerializableExceptionWithoutCustomProperties : Exception {
 
-		// Without this constructor, deserialization will fail
-		protected SerializableExceptionWithoutCustomProperties( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
+	// Without this constructor, deserialization will fail
+	protected SerializableExceptionWithoutCustomProperties( SerializationInfo info, StreamingContext context ) : base( info, context ) { }
 
-		public SerializableExceptionWithoutCustomProperties() { }
+	public SerializableExceptionWithoutCustomProperties() { }
 
-		public SerializableExceptionWithoutCustomProperties( String? message ) : base( message ) { }
+	public SerializableExceptionWithoutCustomProperties( String? message ) : base( message ) { }
 
-		public SerializableExceptionWithoutCustomProperties( String? message, Exception? innerException ) : base( message, innerException ) { }
-	}
+	public SerializableExceptionWithoutCustomProperties( String? message, Exception? innerException ) : base( message, innerException ) { }
 }

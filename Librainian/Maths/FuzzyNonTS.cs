@@ -22,84 +22,83 @@
 //
 // File "FuzzyNonTS.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths;
 
-	using System;
-	using Newtonsoft.Json;
+using System;
+using Newtonsoft.Json;
 
-	/// <summary>A Double number, constrained between 0 and 1. Not thread safe!</summary>
-	[JsonObject]
-	public class FuzzyNonTs {
+/// <summary>A Double number, constrained between 0 and 1. Not thread safe!</summary>
+[JsonObject]
+public class FuzzyNonTs {
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _value;
+	/// <summary>ONLY used in the getter and setter.</summary>
+	[JsonProperty]
+	private Double _value;
 
-		public const Double MaxValue = 1D;
+	public const Double MaxValue = 1D;
 
-		public const Double MinValue = 0D;
+	public const Double MinValue = 0D;
 
-		public static FuzzyNonTs Falser { get; } = new( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
+	public static FuzzyNonTs Falser { get; } = new( new FuzzyNonTs( 0.5D ) - new FuzzyNonTs( 0.5D ) / 2 );
 
-		public static FuzzyNonTs Truer { get; } = new( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
+	public static FuzzyNonTs Truer { get; } = new( new FuzzyNonTs( 0.5D ) + new FuzzyNonTs( 0.5D ) / 2 );
 
-		public static FuzzyNonTs Undecided { get; } = new( 0.5D );
+	public static FuzzyNonTs Undecided { get; } = new( 0.5D );
 
-		public Double Value {
-			get => this._value;
+	public Double Value {
+		get => this._value;
 
-			set {
-				var correctedvalue = value;
+		set {
+			var correctedvalue = value;
 
-				if ( value > MaxValue ) {
-					correctedvalue = MaxValue;
-				}
-				else if ( value < MinValue ) {
-					correctedvalue = MinValue;
-				}
-
-				this._value = correctedvalue;
+			if ( value > MaxValue ) {
+				correctedvalue = MaxValue;
 			}
+			else if ( value < MinValue ) {
+				correctedvalue = MinValue;
+			}
+
+			this._value = correctedvalue;
 		}
-
-		public FuzzyNonTs( Double value ) => this.Value = value;
-
-		public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
-
-		public static FuzzyNonTs Combine( FuzzyNonTs? value1, FuzzyNonTs? value2 ) => new( ( value1 + value2 ) / 2D );
-
-		public static FuzzyNonTs Combine( FuzzyNonTs? value1, Double value2 ) => new( ( value1 + value2 ) / 2D );
-
-		public static FuzzyNonTs Combine( Double value1, FuzzyNonTs? value2 ) => new( ( value1 + value2 ) / 2D );
-
-		public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
-
-		public static implicit operator Double( FuzzyNonTs special ) => special.Value;
-
-		public static Boolean IsFalser( FuzzyNonTs special ) => special.Value <= Falser.Value;
-
-		public static Boolean IsTruer( FuzzyNonTs special ) => special.Value >= Truer.Value;
-
-		public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
-
-		public static FuzzyNonTs Parse( String value ) => new( Double.Parse( value ) );
-
-		public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
-
-		public void MoreLikely( FuzzyNonTs? towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
-
-		public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
-
-		/// <summary>Initializes a random number between 0 and 1 within a range, default is <see cref="LowMiddleHigh.Middle"/></summary>
-		public void Randomize( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
-			this.Value = lmh switch {
-				LowMiddleHigh.Low => Randem.NextDouble() / 10,
-				LowMiddleHigh.Middle => ( 1 - Randem.NextDouble() / 10 ) / 2,
-				LowMiddleHigh.High => 1 - Randem.NextDouble() / 10,
-				var _ => Randem.NextDouble()
-			};
-		}
-
-		public override String ToString() => $"{this.Value:R}";
 	}
+
+	public FuzzyNonTs( Double value ) => this.Value = value;
+
+	public FuzzyNonTs( LowMiddleHigh lmh = LowMiddleHigh.Middle ) => this.Randomize( lmh );
+
+	public static FuzzyNonTs Combine( FuzzyNonTs? value1, FuzzyNonTs? value2 ) => new( ( value1 + value2 ) / 2D );
+
+	public static FuzzyNonTs Combine( FuzzyNonTs? value1, Double value2 ) => new( ( value1 + value2 ) / 2D );
+
+	public static FuzzyNonTs Combine( Double value1, FuzzyNonTs? value2 ) => new( ( value1 + value2 ) / 2D );
+
+	public static Double Combine( Double value1, Double value2 ) => ( value1 + value2 ) / 2D;
+
+	public static implicit operator Double( FuzzyNonTs special ) => special.Value;
+
+	public static Boolean IsFalser( FuzzyNonTs special ) => special.Value <= Falser.Value;
+
+	public static Boolean IsTruer( FuzzyNonTs special ) => special.Value >= Truer.Value;
+
+	public static Boolean IsUndecided( FuzzyNonTs special ) => !IsTruer( special ) && !IsFalser( special );
+
+	public static FuzzyNonTs Parse( String value ) => new( Double.Parse( value ) );
+
+	public void LessLikely() => this.Value = ( this.Value + MinValue ) / 2D;
+
+	public void MoreLikely( FuzzyNonTs? towards = null ) => this.Value = ( this.Value + ( towards ?? MaxValue ) ) / 2D;
+
+	public void MoreLikely( Double towards ) => this.Value = ( this.Value + ( towards >= MinValue ? towards : MaxValue ) ) / 2D;
+
+	/// <summary>Initializes a random number between 0 and 1 within a range, default is <see cref="LowMiddleHigh.Middle"/></summary>
+	public void Randomize( LowMiddleHigh lmh = LowMiddleHigh.Middle ) {
+		this.Value = lmh switch {
+			LowMiddleHigh.Low => Randem.NextDouble() / 10,
+			LowMiddleHigh.Middle => ( 1 - Randem.NextDouble() / 10 ) / 2,
+			LowMiddleHigh.High => 1 - Randem.NextDouble() / 10,
+			var _ => Randem.NextDouble()
+		};
+	}
+
+	public override String ToString() => $"{this.Value:R}";
 }

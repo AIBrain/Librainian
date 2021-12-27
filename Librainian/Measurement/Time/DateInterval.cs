@@ -25,35 +25,34 @@
 //
 // File "DateInterval.cs" last formatted on 2021-03-06 at 8:40 AM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
+using System;
 
-	/// <summary>
-	///     Used when calculating the difference between two <see cref="DateTime" /> instances with the
-	///     <see cref="DateSpan" /> struct.
-	/// </summary>
-	public enum DateInterval {
+/// <summary>
+///     Used when calculating the difference between two <see cref="DateTime" /> instances with the
+///     <see cref="DateSpan" /> struct.
+/// </summary>
+public enum DateInterval {
 
-		/// <summary>Years</summary>
-		Years,
+	/// <summary>Years</summary>
+	Years,
 
-		/// <summary>Months</summary>
-		Months,
+	/// <summary>Months</summary>
+	Months,
 
-		/// <summary>Weeks</summary>
-		Weeks,
+	/// <summary>Weeks</summary>
+	Weeks,
 
-		/// <summary>Days</summary>
-		Days,
+	/// <summary>Days</summary>
+	Days,
 
-		/// <summary>Hours</summary>
-		Hours,
+	/// <summary>Hours</summary>
+	Hours,
 
-		/// <summary>Minutes</summary>
-		Minutes,
+	/// <summary>Minutes</summary>
+	Minutes,
 
-		/// <summary>Seconds</summary>
-		Seconds
-	}
+	/// <summary>Seconds</summary>
+	Seconds
 }

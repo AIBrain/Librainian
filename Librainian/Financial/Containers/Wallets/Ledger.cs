@@ -22,30 +22,29 @@
 //
 // File "Ledger.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Wallets {
+namespace Librainian.Financial.Containers.Wallets;
 
-	using System;
-	using System.Collections.Concurrent;
-	using Logging;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using Logging;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public class Ledger {
+[JsonObject]
+public class Ledger {
 
-		[JsonProperty]
-		public ConcurrentQueue<TransactionMessage> Transactions { get; } = new();
+	[JsonProperty]
+	public ConcurrentQueue<TransactionMessage> Transactions { get; } = new();
 
-		public Boolean TryAdd( TransactionMessage transaction ) {
-			try {
-				this.Transactions.Enqueue( transaction );
+	public Boolean TryAdd( TransactionMessage transaction ) {
+		try {
+			this.Transactions.Enqueue( transaction );
 
-				return true;
-			}
-			catch ( Exception exception ) {
-				exception.Log();
+			return true;
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 
-				return false;
-			}
+			return false;
 		}
 	}
 }

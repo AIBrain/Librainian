@@ -22,36 +22,35 @@
 //
 // File "CashDrawer.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Wallets {
+namespace Librainian.Financial.Containers.Wallets;
 
-	using System;
-	using System.Linq;
-	using Currency.BankNotes;
-	using Currency.Coins;
-	using Exceptions;
+using System;
+using System.Linq;
+using Currency.BankNotes;
+using Currency.Coins;
+using Exceptions;
 
-	public class CashDrawer : Wallet {
+public class CashDrawer : Wallet {
 
-		//TODO add in semaphore & readerwriterlockslim? or does Wallet already handle these?
+	//TODO add in semaphore & readerwriterlockslim? or does Wallet already handle these?
 
-		public CashDrawer( Guid id ) : base( id ) { }
+	public CashDrawer( Guid id ) : base( id ) { }
 
-		public Boolean Fund( params IBankNote[] bankNotes ) {
-			if ( bankNotes == null ) {
-				throw new ArgumentEmptyException( nameof( bankNotes ) );
-			}
-
-			return bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) ) == 0;
+	public Boolean Fund( params IBankNote[] bankNotes ) {
+		if ( bankNotes == null ) {
+			throw new ArgumentEmptyException( nameof( bankNotes ) );
 		}
 
-		public Boolean Fund( params ICoin[] coins ) {
-			if ( coins == null ) {
-				throw new ArgumentEmptyException( nameof( coins ) );
-			}
-
-			return coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 ) == 0;
-		}
-
-		public Decimal RunningTotal() => this.Total();
+		return bankNotes.LongCount( bankNote => !this.Deposit( bankNote, 1 ) ) == 0;
 	}
+
+	public Boolean Fund( params ICoin[] coins ) {
+		if ( coins == null ) {
+			throw new ArgumentEmptyException( nameof( coins ) );
+		}
+
+		return coins.LongCount( coin => this.Deposit( coin, 1 ) != 1 ) == 0;
+	}
+
+	public Decimal RunningTotal() => this.Total();
 }

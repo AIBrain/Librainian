@@ -22,31 +22,30 @@
 //
 // File "CaptchaSite.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using Newtonsoft.Json;
+using System;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public class CaptchaSite {
+[JsonObject]
+public class CaptchaSite {
 
-		[JsonProperty]
-		public CaptchaStatus CaptchaStatus { get; set; }
+	[JsonProperty]
+	public CaptchaStatus CaptchaStatus { get; set; }
 
-		/// <summary>URI of the captcha.</summary>
-		[JsonProperty]
-		public Uri? Location { get; set; }
+	/// <summary>URI of the captcha.</summary>
+	[JsonProperty]
+	public Uri? Location { get; set; }
 
-		/// <summary>A count of the requests to scrape this captcha.</summary>
-		[JsonProperty]
-		public UInt64 RequestCount { get; set; }
+	/// <summary>A count of the requests to scrape this captcha.</summary>
+	[JsonProperty]
+	public UInt64 RequestCount { get; set; }
 
-		/// <summary>A count of the responses for this url.</summary>
-		[JsonProperty]
-		public UInt64 ResponseCount { get; set; }
+	/// <summary>A count of the responses for this url.</summary>
+	[JsonProperty]
+	public UInt64 ResponseCount { get; set; }
 
-		/// <summary>When this website was added.</summary>
-		[JsonProperty]
-		public DateTime WhenAdded { get; set; }
-	}
+	/// <summary>When this website was added.</summary>
+	[JsonProperty]
+	public DateTime WhenAdded { get; set; }
 }

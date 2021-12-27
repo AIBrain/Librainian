@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 //
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 //
@@ -25,61 +25,40 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Linguistics {
+namespace Librainian.Parsing;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Exceptions;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+
+public static class LinguisticExtensions {
+
 
 	/// <summary>
-	///     <para>A <see cref="Page" /> is a sequence of <see cref="Paragraph" /> .</para>
+	///     <para>Remove duplicate words ONLY if the previous word was the same word.</para>
 	/// </summary>
-	/// <see cref="Book"></see>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	[Serializable]
-	public class Page : IEquatable<Page>, IEnumerable<Paragraph> {
-
-		[JsonProperty]
-		private HashSet<Author> Authors { get; } = new();
-
-		[JsonProperty]
-		private List<Paragraph> Paragraphs { get; } = new();
-
-		public static Page Empty { get; } = new();
-
-		private Page() { }
-
-		public Page( IEnumerable<Paragraph> paragraphs ) {
-			if ( paragraphs is null ) {
-				throw new ArgumentEmptyException( nameof( paragraphs ) );
-			}
-
-			this.Add( paragraphs );
+	/// <example>Example: "My cat cat likes likes to to to eat food." Should become "My cat likes to eat food."</example>
+	/// <param name="s"></param>
+	[Pure]
+	public static String RemoveDoubleWords( this String? s ) {
+		if ( String.IsNullOrEmpty( s ) ) {
+			return String.Empty;
 		}
 
-		public void Add( Paragraph paragraph ) => this.Paragraphs.Add( paragraph );
+		var words = s.ToWords().ToList();
+		var result = new List<String>( words.Count );
 
-		public void Add( IEnumerable<Paragraph> paragraphs ) => this.Paragraphs.AddRange( paragraphs );
+		String? previous = default;
 
-		public Boolean Equals( Page? other ) {
-			if ( other is null ) {
-				return false;
+		foreach ( var word in words ) {
+			if ( !String.Equals( word, previous, StringComparison.Ordinal ) ) {
+				result.Add( word );
 			}
 
-			return ReferenceEquals( this, other ) || this.Paragraphs.SequenceEqual( other.Paragraphs );
+			previous = word;
 		}
 
-		public IEnumerable<Author> GetAuthors() => this.Authors;
-
-		public IEnumerator<Paragraph> GetEnumerator() => this.Paragraphs.GetEnumerator();
-
-		public override Int32 GetHashCode() => this.Paragraphs.GetHashCode();
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+		return result.ToStrings( ParsingConstants.Strings.Singlespace );
 	}
 }

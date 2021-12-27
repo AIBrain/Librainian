@@ -22,151 +22,150 @@
 //
 // File "SimpleWallet.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Financial.Currency.USD {
+namespace Librainian.Financial.Currency.USD;
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using JetBrains.Annotations;
-	using Utilities.Disposables;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using JetBrains.Annotations;
+using Utilities.Disposables;
 
-	/// <summary>A simple, thread-safe,  Decimal-based wallet.</summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
+/// <summary>A simple, thread-safe,  Decimal-based wallet.</summary>
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
 
-		private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
+	private readonly ReaderWriterLockSlim _access = new( LockRecursionPolicy.SupportsRecursion );
 
-		private Decimal _balance;
+	private Decimal _balance;
 
 		
-		/// <exception cref="TimeoutException"></exception>
-		public Decimal Balance {
-			get {
-				try {
-					if ( !this._access.TryEnterReadLock( this.Timeout ) ) {
-						throw new TimeoutException( "Unable to get balance" );
-					}
-
-					return this._balance;
-				}
-				finally {
-					if ( this._access.IsReadLockHeld ) {
-						this._access.ExitReadLock();
-					}
-				}
-			}
-
-			private set {
-				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-					throw new TimeoutException( "Unable to set the balance" );
-				}
-
-				this._balance = value;
-				this._access.ExitWriteLock();
-				this.OnAnyUpdate?.Invoke( value );
-			}
-		}
-
-		[UsedImplicitly]
-		public String Formatted => this.ToString();
-
-		public Action<Decimal>? OnAfterDeposit { get; set; }
-
-		public Action<Decimal>? OnAfterWithdraw { get; set; }
-
-		public Action<Decimal>? OnAnyUpdate { get; set; }
-
-		public Action<Decimal>? OnBeforeDeposit { get; set; }
-
-		public Action<Decimal>? OnBeforeWithdraw { get; set; }
-
-		/// <summary>
-		///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
-		///     <para>Defaults to one minute.</para>
-		/// </summary>
-		public TimeSpan Timeout { get; set; }
-
-		public SimpleWallet() : base( nameof( SimpleWallet ) ) => this.Timeout = TimeSpan.FromMinutes( 1 );
-
-		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-		public override void DisposeManaged() {
-			using ( this._access ) { }
-		}
-
-		public override String ToString() => this.Balance.ToString( "C" );
-
-		/// <summary>Add any (+-)amount directly to the balance.</summary>
-		/// <param name="amount"></param>
-		public Boolean TryAdd( Decimal amount ) => throw new NotImplementedException();
-
-		public Boolean TryAdd( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
-
-		public Boolean TryDeposit( Decimal amount ) {
-			if ( amount < Decimal.Zero ) {
-				return false;
-			}
-
+	/// <exception cref="TimeoutException"></exception>
+	public Decimal Balance {
+		get {
 			try {
-				var onBeforeDeposit = this.OnBeforeDeposit;
-				onBeforeDeposit?.Invoke( amount );
-				this.Balance += amount;
+				if ( !this._access.TryEnterReadLock( this.Timeout ) ) {
+					throw new TimeoutException( "Unable to get balance" );
+				}
 
-				return true;
+				return this._balance;
 			}
 			finally {
-				this.OnAfterDeposit?.Invoke( amount );
+				if ( this._access.IsReadLockHeld ) {
+					this._access.ExitReadLock();
+				}
 			}
 		}
 
-		public Boolean TryTransfer( Decimal amount, ref Currency.SimpleWallet intoWallet ) => throw new NotImplementedException();
-
-		public void TryUpdateBalance( Currency.SimpleWallet simpleWallet ) => throw new NotImplementedException();
-
-		public Boolean TryUpdateBalance( Decimal amount ) {
-			try {
-				if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
-					return false;
-				}
-
-				this._balance = amount;
-
-				return true;
+		private set {
+			if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+				throw new TimeoutException( "Unable to set the balance" );
 			}
-			finally {
-				if ( this._access.IsWriteLockHeld ) {
-					this._access.ExitWriteLock();
-				}
 
-				this.OnAnyUpdate?.Invoke( amount );
-			}
+			this._balance = value;
+			this._access.ExitWriteLock();
+			this.OnAnyUpdate?.Invoke( value );
 		}
-
-		public Boolean TryWithdraw( Decimal amount ) {
-			if ( amount < Decimal.Zero ) {
-				return false;
-			}
-
-			try {
-				var onBeforeWithdraw = this.OnBeforeWithdraw;
-				onBeforeWithdraw?.Invoke( amount );
-
-				if ( !this._access.TryEnterWriteLock( this.Timeout ) || this._balance < amount ) {
-					return false;
-				}
-
-				this._balance -= amount;
-
-				return true;
-			}
-			finally {
-				if ( this._access.IsWriteLockHeld ) {
-					this._access.ExitWriteLock();
-				}
-
-				this.OnAfterWithdraw?.Invoke( amount );
-			}
-		}
-
-		public Boolean TryWithdraw( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
 	}
+
+	[UsedImplicitly]
+	public String Formatted => this.ToString();
+
+	public Action<Decimal>? OnAfterDeposit { get; set; }
+
+	public Action<Decimal>? OnAfterWithdraw { get; set; }
+
+	public Action<Decimal>? OnAnyUpdate { get; set; }
+
+	public Action<Decimal>? OnBeforeDeposit { get; set; }
+
+	public Action<Decimal>? OnBeforeWithdraw { get; set; }
+
+	/// <summary>
+	///     <para>Timeout went reading or writing to the b<see cref="Balance" />.</para>
+	///     <para>Defaults to one minute.</para>
+	/// </summary>
+	public TimeSpan Timeout { get; set; }
+
+	public SimpleWallet() : base( nameof( SimpleWallet ) ) => this.Timeout = TimeSpan.FromMinutes( 1 );
+
+	/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+	public override void DisposeManaged() {
+		using ( this._access ) { }
+	}
+
+	public override String ToString() => this.Balance.ToString( "C" );
+
+	/// <summary>Add any (+-)amount directly to the balance.</summary>
+	/// <param name="amount"></param>
+	public Boolean TryAdd( Decimal amount ) => throw new NotImplementedException();
+
+	public Boolean TryAdd( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
+
+	public Boolean TryDeposit( Decimal amount ) {
+		if ( amount < Decimal.Zero ) {
+			return false;
+		}
+
+		try {
+			var onBeforeDeposit = this.OnBeforeDeposit;
+			onBeforeDeposit?.Invoke( amount );
+			this.Balance += amount;
+
+			return true;
+		}
+		finally {
+			this.OnAfterDeposit?.Invoke( amount );
+		}
+	}
+
+	public Boolean TryTransfer( Decimal amount, ref Currency.SimpleWallet intoWallet ) => throw new NotImplementedException();
+
+	public void TryUpdateBalance( Currency.SimpleWallet simpleWallet ) => throw new NotImplementedException();
+
+	public Boolean TryUpdateBalance( Decimal amount ) {
+		try {
+			if ( !this._access.TryEnterWriteLock( this.Timeout ) ) {
+				return false;
+			}
+
+			this._balance = amount;
+
+			return true;
+		}
+		finally {
+			if ( this._access.IsWriteLockHeld ) {
+				this._access.ExitWriteLock();
+			}
+
+			this.OnAnyUpdate?.Invoke( amount );
+		}
+	}
+
+	public Boolean TryWithdraw( Decimal amount ) {
+		if ( amount < Decimal.Zero ) {
+			return false;
+		}
+
+		try {
+			var onBeforeWithdraw = this.OnBeforeWithdraw;
+			onBeforeWithdraw?.Invoke( amount );
+
+			if ( !this._access.TryEnterWriteLock( this.Timeout ) || this._balance < amount ) {
+				return false;
+			}
+
+			this._balance -= amount;
+
+			return true;
+		}
+		finally {
+			if ( this._access.IsWriteLockHeld ) {
+				this._access.ExitWriteLock();
+			}
+
+			this.OnAfterWithdraw?.Invoke( amount );
+		}
+	}
+
+	public Boolean TryWithdraw( Currency.SimpleWallet wallet ) => throw new NotImplementedException();
 }

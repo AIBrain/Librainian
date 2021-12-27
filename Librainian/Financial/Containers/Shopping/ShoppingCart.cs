@@ -22,60 +22,59 @@
 //
 // File "ShoppingCart.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Shopping {
+namespace Librainian.Financial.Containers.Shopping;
 
-	using System;
-	using System.Linq;
-	using Collections.Lists;
-	using Maths;
-	using Newtonsoft.Json;
-	using Utilities.Disposables;
+using System;
+using System.Linq;
+using Collections.Lists;
+using Maths;
+using Newtonsoft.Json;
+using Utilities.Disposables;
 
-	/// <summary>Just a concept class.</summary>
-	[JsonObject]
-	public class ShoppingCart : ABetterClassDispose {
+/// <summary>Just a concept class.</summary>
+[JsonObject]
+public class ShoppingCart : ABetterClassDispose {
 
-		public ShoppingCart() : base( nameof( ShoppingCart ) ) {
+	public ShoppingCart() : base( nameof( ShoppingCart ) ) {
 			
-		}
-
-		[JsonProperty]
-		private ConcurrentList<ShoppingItem> Items { get; } = new(); //TODO make this a dictionary of Item.Counts
-
-		public Boolean Add( ShoppingItem item ) => this.Items.TryAdd( item );
-
-		public UInt32 AddItems( params ShoppingItem[]? items ) {
-			if ( items is null ) {
-				return 0;
-			}
-
-			return ( UInt32 )items.Count( this.Add );
-		}
-
-		public UInt32 AddItems( ShoppingItem? item, UInt32 quantity = 1 ) {
-			UInt32 added = 0;
-
-			if ( item is not null ) {
-				while ( quantity.Any() ) {
-					if ( this.Add( item ) ) {
-						added++;
-					}
-
-					quantity--;
-				}
-			}
-
-			return added;
-		}
-
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			using ( this.Items ) { }
-		}
-
-		/// <summary>Removes the first <paramref name="item" /> from the list.</summary>
-		/// <param name="item"></param>
-		public Boolean RemoveItem( ShoppingItem? item ) => this.Items.Remove( item );
-
 	}
+
+	[JsonProperty]
+	private ConcurrentList<ShoppingItem> Items { get; } = new(); //TODO make this a dictionary of Item.Counts
+
+	public Boolean Add( ShoppingItem item ) => this.Items.TryAdd( item );
+
+	public UInt32 AddItems( params ShoppingItem[]? items ) {
+		if ( items is null ) {
+			return 0;
+		}
+
+		return ( UInt32 )items.Count( this.Add );
+	}
+
+	public UInt32 AddItems( ShoppingItem? item, UInt32 quantity = 1 ) {
+		UInt32 added = 0;
+
+		if ( item is not null ) {
+			while ( quantity.Any() ) {
+				if ( this.Add( item ) ) {
+					added++;
+				}
+
+				quantity--;
+			}
+		}
+
+		return added;
+	}
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		using ( this.Items ) { }
+	}
+
+	/// <summary>Removes the first <paramref name="item" /> from the list.</summary>
+	/// <param name="item"></param>
+	public Boolean RemoveItem( ShoppingItem? item ) => this.Items.Remove( item );
+
 }

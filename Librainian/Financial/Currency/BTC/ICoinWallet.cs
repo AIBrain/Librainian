@@ -25,47 +25,46 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Financial.Currency.BTC {
+namespace Librainian.Financial.Currency.BTC;
 
-	using System;
-	using System.Collections.Generic;
-	using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 
-	public interface ICoinWallet {
+public interface ICoinWallet {
 
-		/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
-		IEnumerable<ICoin> Coins {
-			[NotNull]
-			get;
-		}
-
-		IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
-			[NotNull]
-			get;
-		}
-
-		Guid ID { get; }
-
-		Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
-
-		Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
-
-		/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
-		Decimal Total { get; }
-
-		Boolean Contains( ICoin coin );
-
-		UInt64 Count( ICoin coin );
-
-		IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
-
-		/// <summary>
-		///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
-		///     <see cref="CoinWallet" /> .
-		/// </summary>
-		/// <param name="coin"></param>
-		/// <param name="quantity"></param>
-		/// <remarks>Locks the wallet.</remarks>
-		Boolean TryWithdraw( ICoin coin, UInt64 quantity );
+	/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
+	IEnumerable<ICoin> Coins {
+		[NotNull]
+		get;
 	}
+
+	IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
+		[NotNull]
+		get;
+	}
+
+	Guid ID { get; }
+
+	Action<KeyValuePair<ICoin, UInt64>>? OnDeposit { get; set; }
+
+	Action<KeyValuePair<ICoin, UInt64>>? OnWithdraw { get; set; }
+
+	/// <summary>Return the total amount of money contained in this <see cref="CoinWallet" />.</summary>
+	Decimal Total { get; }
+
+	Boolean Contains( ICoin coin );
+
+	UInt64 Count( ICoin coin );
+
+	IEnumerator<KeyValuePair<ICoin, UInt64>> GetEnumerator();
+
+	/// <summary>
+	///     Attempt to <see cref="CoinWallet.TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
+	///     <see cref="CoinWallet" /> .
+	/// </summary>
+	/// <param name="coin"></param>
+	/// <param name="quantity"></param>
+	/// <remarks>Locks the wallet.</remarks>
+	Boolean TryWithdraw( ICoin coin, UInt64 quantity );
 }

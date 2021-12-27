@@ -23,72 +23,71 @@
 //
 // File "Formatter.cs" last formatted on 2021-02-03 at 4:07 PM.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using System.Globalization;
+using System;
+using System.Globalization;
+
+/// <summary>
+///     Base class for expandable formatters.
+/// </summary>
+/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara</remarks>
+public abstract class Formatter : IFormatProvider, ICustomFormatter {
 
 	/// <summary>
-	///     Base class for expandable formatters.
+	///     Gets the culture.
 	/// </summary>
-	/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara</remarks>
-	public abstract class Formatter : IFormatProvider, ICustomFormatter {
+	/// <value>The culture.</value>
+	public CultureInfo Culture { get; }
 
-		/// <summary>
-		///     Gets the culture.
-		/// </summary>
-		/// <value>The culture.</value>
-		public CultureInfo Culture { get; }
+	/// <summary>
+	///     Initializes a new instance of the <see cref="Formatter" /> class.
+	/// </summary>
+	/// <param name="culture">The culture.</param>
+	protected Formatter( CultureInfo? culture = null ) => this.Culture = culture ?? CultureInfo.CurrentCulture;
 
-		/// <summary>
-		///     Initializes a new instance of the <see cref="Formatter" /> class.
-		/// </summary>
-		/// <param name="culture">The culture.</param>
-		protected Formatter( CultureInfo? culture = null ) => this.Culture = culture ?? CultureInfo.CurrentCulture;
+	/// <summary>
+	///     Helper method that can be used inside the Format method to handle unrecognized formats.
+	/// </summary>
+	/// <param name="format">A format string containing formatting specifications.</param>
+	/// <param name="arg">   An object to format.</param>
+	/// <returns>
+	///     The string representation of the value of <paramref name="arg" />, formatted as specified by
+	///     <paramref name="format" />.
+	/// </returns>
+	protected String HandleOtherFormats( String? format, Object? arg ) =>
+		( arg as IFormattable )?.ToString( format, this.Culture ) ?? arg?.ToString() ?? String.Empty;
 
-		/// <summary>
-		///     Helper method that can be used inside the Format method to handle unrecognized formats.
-		/// </summary>
-		/// <param name="format">A format string containing formatting specifications.</param>
-		/// <param name="arg">   An object to format.</param>
-		/// <returns>
-		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
-		///     <paramref name="format" />.
-		/// </returns>
-		protected String HandleOtherFormats( String? format, Object? arg ) =>
-			( arg as IFormattable )?.ToString( format, this.Culture ) ?? arg?.ToString() ?? String.Empty;
+	/// <summary>
+	///     Gets a default instance of a composite formatter.
+	/// </summary>
+	/// <param name="culture">The culture.</param>
+	/// <returns>A composite formatter.</returns>
+	public static Formatter Default( CultureInfo? culture = null ) => new CompositeFormatter( culture );
 
-		/// <summary>
-		///     Gets a default instance of a composite formatter.
-		/// </summary>
-		/// <param name="culture">The culture.</param>
-		/// <returns>A composite formatter.</returns>
-		public static Formatter Default( CultureInfo? culture = null ) => new CompositeFormatter( culture );
+	/// <summary>
+	///     Converts the value of a specified object to an equivalent string representation using specified format and
+	///     culture-specific formatting information.
+	/// </summary>
+	/// <param name="format">        A format string containing formatting specifications.</param>
+	/// <param name="arg">           An object to format.</param>
+	/// <param name="formatProvider">An object that supplies format information about the current instance.</param>
+	/// <returns>
+	///     The string representation of the value of <paramref name="arg" />, formatted as specified by
+	///     <paramref name="format" /> and <paramref name="formatProvider" />.
+	/// </returns>
+	public abstract String Format( String? format, Object? arg, IFormatProvider? formatProvider );
 
-		/// <summary>
-		///     Converts the value of a specified object to an equivalent string representation using specified format and
-		///     culture-specific formatting information.
-		/// </summary>
-		/// <param name="format">        A format string containing formatting specifications.</param>
-		/// <param name="arg">           An object to format.</param>
-		/// <param name="formatProvider">An object that supplies format information about the current instance.</param>
-		/// <returns>
-		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
-		///     <paramref name="format" /> and <paramref name="formatProvider" />.
-		/// </returns>
-		public abstract String Format( String? format, Object? arg, IFormatProvider? formatProvider );
-
-		/// <summary>
-		///     Returns an object that provides formatting services for the specified type.
-		/// </summary>
-		/// <param name="formatType">An object that specifies the type of format object to return.</param>
-		/// <returns>
-		///     An instance of the object specified by <paramref name="formatType" />, if the IFormatProvider implementation can
-		///     supply that type of object; otherwise,
-		///     <see
-		///         langword="null" />
-		///     .
-		/// </returns>
-		public virtual Object? GetFormat( Type? formatType ) => formatType == typeof( ICustomFormatter ) ? this : null;
-	}
+	/// <summary>
+	///     Returns an object that provides formatting services for the specified type.
+	/// </summary>
+	/// <param name="formatType">An object that specifies the type of format object to return.</param>
+	/// <returns>
+	///     An instance of the object specified by <paramref name="formatType" />, if the IFormatProvider implementation can
+	///     supply that type of object; otherwise,
+	///     <see
+	///         langword="null" />
+	///     .
+	/// </returns>
+	public virtual Object? GetFormat( Type? formatType ) => formatType == typeof( ICustomFormatter ) ? this : null;
 }

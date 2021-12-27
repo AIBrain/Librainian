@@ -22,20 +22,19 @@
 //
 // File "FileWatchingEvents.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.IO;
+using System;
+using System.IO;
 
-	public record FileWatchingEvents {
-		public Action<FileSystemEventArgs>? OnChanged { get; set; }
+public record FileWatchingEvents {
+	public Action<FileSystemEventArgs>? OnChanged { get; set; }
 
-		public Action<FileSystemEventArgs>? OnCreated { get; set; }
+	public Action<FileSystemEventArgs>? OnCreated { get; set; }
 
-		public Action<FileSystemEventArgs>? OnDeleted { get; set; }
+	public Action<FileSystemEventArgs>? OnDeleted { get; set; }
 
-		public Action<ErrorEventArgs>? OnError { get; set; }
+	public Action<ErrorEventArgs>? OnError { get; set; }
 
-		public Action<FileSystemEventArgs>? OnRenamed { get; set; }
-	}
+	public Action<FileSystemEventArgs>? OnRenamed { get; set; }
 }

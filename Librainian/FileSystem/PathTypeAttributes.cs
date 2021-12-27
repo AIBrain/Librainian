@@ -22,29 +22,28 @@
 //
 // File "PathTypeAttributes.cs" last formatted on 2020-08-14 at 8:40 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
+using System;
 
-	/// <summary>
-	///     Defines if this path leads to a <see cref="Document" />, <see cref="Folder" />, <see cref="Uri" />,
-	///     <see cref="UNC" />, or is <see cref="Unknown" />.
-	///     <para>Optionally, the path can be set to <see cref="DeleteAfterClose" />.</para>
-	/// </summary>
-	[Flags]
-	public enum PathTypeAttributes : UInt32 {
+/// <summary>
+///     Defines if this path leads to a <see cref="Document" />, <see cref="Folder" />, <see cref="Uri" />,
+///     <see cref="UNC" />, or is <see cref="Unknown" />.
+///     <para>Optionally, the path can be set to <see cref="DeleteAfterClose" />.</para>
+/// </summary>
+[Flags]
+public enum PathTypeAttributes : UInt32 {
 
-		Unknown = 0b0,
+	Unknown = 0b0,
 
-		Document = 0b1,
+	Document = 0b1,
 
-		Folder = 0b10,
+	Folder = 0b10,
 
-		DeleteAfterClose = 0b100,
+	DeleteAfterClose = 0b100,
 
-		Uri = 0b1000,
+	Uri = 0b1000,
 
-		/// <summary>Is this really the same as a Uri? Are there subtle differences?</summary>
-		URL = 0b1000, UNC = 0b10000
-	}
+	/// <summary>Is this really the same as a Uri? Are there subtle differences?</summary>
+	URL = 0b1000, UNC = 0b10000
 }

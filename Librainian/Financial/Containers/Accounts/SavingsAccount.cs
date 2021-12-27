@@ -22,19 +22,18 @@
 //
 // File "SavingsAccount.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Accounts {
+namespace Librainian.Financial.Containers.Accounts;
 
-	using System;
-	using Banking;
-	using Newtonsoft.Json;
-	using Wallets;
+using System;
+using Banking;
+using Newtonsoft.Json;
+using Wallets;
 
-	[JsonObject]
-	public class SavingsAccount : BankAccount {
+[JsonObject]
+public class SavingsAccount : BankAccount {
 
-		[JsonProperty]
-		public Ledger Ledger { get; }
+	[JsonProperty]
+	public Ledger Ledger { get; }
 
-		public SavingsAccount( Guid id ) : base( id ) => this.Ledger = new Ledger();
-	}
+	public SavingsAccount( Guid id ) : base( id ) => this.Ledger = new Ledger();
 }

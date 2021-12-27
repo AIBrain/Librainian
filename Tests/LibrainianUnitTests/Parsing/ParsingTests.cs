@@ -23,75 +23,80 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ParsingTests.cs" last touched on 2021-05-13 at 1:09 PM by Protiguous.
+// File "ParsingTests.cs" last touched on 2021-12-25 at 8:21 PM by Protiguous.
 
-namespace LibrainianUnitTests.Parsing {
+namespace LibrainianUnitTests.Parsing;
 
-	using System;
-	using System.Linq;
-	using FluentAssertions;
-	using Librainian.Parsing;
-	using NUnit.Framework;
+using System;
+using System.Linq;
+using FluentAssertions;
+using Librainian.Parsing;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class ParsingTests {
+[TestFixture]
+public class ParsingTests {
 
-		[Test]
-		public void ConfirmcAtLikeCaT() {
-			const String? left = "cAt";
-			const String? right = "CaT";
-			left.Like( right ).Should().BeTrue();
-		}
+	[Test]
+	public void ConfirmcAtLikeCaT() {
+		const String? left = "cAt";
+		const String? right = "CaT";
+		left.Like( right ).Should().BeTrue();
+	}
 
-		[Test]
-		public void ConfirmcAtNotSameCaT() {
-			const String? left = "cAt";
-			const String? right = "CaT";
-			left.Same( right ).Should().BeFalse();
-		}
+	[Test]
+	public void ConfirmcAtNotSameCaT() {
+		const String? left = "cAt";
+		const String? right = "CaT";
+		left.Same( right ).Should().BeFalse();
+	}
 
-		[Test]
-		public void ConfirmStringEmptyStringLikeEmptyString() {
-			var left = String.Empty;
-			var right = String.Empty;
-			left.Like( right ).Should().BeTrue();
-		}
+	[Test]
+	public void ConfirmStringEmptyStringLikeEmptyString() {
+		var left = String.Empty;
+		var right = String.Empty;
+		left.Like( right ).Should().BeTrue();
+	}
 
-		[Test]
-		public void ConfirmStringEmptyStringNotLikeNull() {
-			const String? left = default( String? );
-			var right = String.Empty;
-			right.Like( left ).Should().BeFalse();
-		}
+	[Test]
+	public void ConfirmStringEmptyStringNotLikeNull() {
+		const String? left = default( String? );
+		var right = String.Empty;
+		right.Like( left ).Should().BeFalse();
+	}
 
-		[Test]
-		public void ConfirmStringLimitShorter() {
-			var chars = ParsingConstants.English.Alphabet.Lowercase.Take( 6 ).ToArray();
-			var s = new String( chars );
-			s.Should().Be( "abcdef" );
-		}
+	[Test]
+	public void ConfirmStringLeft() {
+		var chars = ParsingConstants.English.Alphabet.Lowercase.Left( 6 );
+		var s = new String( chars );
+		s.Should().Be( "abcdef" );
+	}
 
-		[Test]
-		public void ConfirmStringLeft() {
-			var chars = ParsingConstants.English.Alphabet.Lowercase.Left( 6 );
-			var s = new String( chars );
-			s.Should().Be( "abcdef" );
-		}
+	[Test]
+	public void ConfirmStringLimitShorter() {
+		var chars = ParsingConstants.English.Alphabet.Lowercase.Take( 6 ).ToArray();
+		var s = new String( chars );
+		s.Should().Be( "abcdef" );
+	}
 
-		[Test]
-		public void ConfirmStringRight() {
-			var chars = ParsingConstants.English.Alphabet.Lowercase.Right( 6 );
-			var s = new String( chars );
-			s.Should().Be( "uvwxyz" );
-		}
+	[Test]
+	public void ConfirmStringNullLikeNull() {
+		var left = "".Trim().NullIfBlank();
+		const String? right = default( String? );
+		left?.Like( right ).Should().BeTrue();
+	}
 
-		[Test]
-		public void ConfirmStringNullLikeNull() {
-			var left = "".Trim().NullIfBlank();
-			const String? right = default( String? );
-			left?.Like( right ).Should().BeTrue();
-		}
+	[Test]
+	public void ConfirmStringRight() {
+		var chars = ParsingConstants.English.Alphabet.Lowercase.Right( 6 );
+		var s = new String( chars );
+		s.Should().Be( "uvwxyz" );
+	}
 
+	[Test]
+	public void TestUnDoubleWording() {
+		var test = "My cat cat likes likes to to to eat food.";
+		var result = test.RemoveDoubleWords();
+		result.Should().Be( "My cat likes to eat food." );
 	}
 
 }

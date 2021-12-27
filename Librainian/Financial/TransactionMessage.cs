@@ -22,31 +22,30 @@
 //
 // File "TransactionMessage.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial {
+namespace Librainian.Financial;
 
-	using System;
-	using Currency;
-	using Newtonsoft.Json;
+using System;
+using Currency;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[Serializable]
-	public record TransactionMessage {
-		[JsonProperty]
-		public DateTime Date { get; set; }
+[JsonObject]
+[Serializable]
+public record TransactionMessage {
+	[JsonProperty]
+	public DateTime Date { get; set; }
 
-		[JsonProperty]
-		public IDenomination? Denomination { get; init; }
+	[JsonProperty]
+	public IDenomination? Denomination { get; init; }
 
-		[JsonProperty]
-		public Guid ID { get; set; }
+	[JsonProperty]
+	public Guid ID { get; set; }
 
-		[JsonProperty]
-		public UInt64 Quantity { get; set; }
+	[JsonProperty]
+	public UInt64 Quantity { get; set; }
 
-		[JsonProperty]
-		public Guid ReferenceID { get; set; }
+	[JsonProperty]
+	public Guid ReferenceID { get; set; }
 
-		[JsonProperty]
-		public TransactionType TransactionType { get; set; }
-	}
+	[JsonProperty]
+	public TransactionType TransactionType { get; set; }
 }

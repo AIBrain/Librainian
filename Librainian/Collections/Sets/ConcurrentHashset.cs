@@ -24,118 +24,117 @@
 
 #nullable enable
 
-namespace Librainian.Collections.Sets {
+namespace Librainian.Collections.Sets;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Exceptions;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+
+/// <summary>
+///     Threadsafe set. Does not allow nulls inside the set.
+///     <para>Add will not throw an <see cref="ArgumentEmptyException" /> on <see cref="Add" />ing a null.</para>
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <remarks>Class designed by Rick Harker</remarks>
+/// //TODO someday add in set theory.. someday.. ISet
+[Serializable]
+[JsonObject]
+public class ConcurrentHashset<T> : IEnumerable<T> where T : notnull {
+
+	[JsonProperty]
+	private ConcurrentDictionary<T, Object?> Set { get; }
+
+	public Int32 Count => this.Set.Count;
+
+	/// <summary>Gets the item in the set or throws.</summary>
+	/// <param name="index"></param>
+	/// <exception cref="IndexOutOfRangeException"></exception>
+	public T this[Int32 index] {
+		[NotNull]
+		get {
+			if ( index < 0 ) {
+				throw new IndexOutOfRangeException( $"The index {index} is less than 0." );
+			}
+
+			var list = this.Set.Keys;
+
+			if ( index > list.Count ) {
+				throw new IndexOutOfRangeException( $"The index {index} is greater than items in set ({list.Count})." );
+			}
+
+			//TODO Is this any better than var list = this.Set.Keys.ToList()?
+			//TODO Will this skip work?
+			//TODO Is it off by -1?
+			return list.Skip( index ).First();
+		}
+	}
+
+	[DebuggerStepThrough]
+	public ConcurrentHashset( IEnumerable<T> list ) : this( Environment.ProcessorCount ) => this.AddRange( list );
+
+	[DebuggerStepThrough]
+	public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object?>( concurrency, capacity );
+
+	[DebuggerStepThrough]
+	public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object?>();
+
+	[DebuggerStepThrough]
+	public void Add( T item ) => this.Set[item] = null;
+
+	[DebuggerStepThrough]
+	public void AddRange( IEnumerable<T> items ) {
+		if ( items == null ) {
+			throw new ArgumentEmptyException( nameof( items ) );
+		}
+
+		Parallel.ForEach( items.AsParallel(), this.Add );
+	}
+
+	[DebuggerStepThrough]
+	public void Clear() => this.Set.Clear();
+
+	[DebuggerStepThrough]
+	public Boolean Contains( T item ) => this.Set.ContainsKey( item );
+
+	public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
+
+	[DebuggerStepThrough]
+	public Boolean Remove( T item ) => this.Set.TryRemove( item, out var _ );
 
 	/// <summary>
-	///     Threadsafe set. Does not allow nulls inside the set.
-	///     <para>Add will not throw an <see cref="ArgumentEmptyException" /> on <see cref="Add" />ing a null.</para>
+	///     Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" />
+	///     <paramref name="right" />)
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <remarks>Class designed by Rick Harker</remarks>
-	/// //TODO someday add in set theory.. someday.. ISet
-	[Serializable]
-	[JsonObject]
-	public class ConcurrentHashset<T> : IEnumerable<T> where T : notnull {
-
-		[JsonProperty]
-		private ConcurrentDictionary<T, Object?> Set { get; }
-
-		public Int32 Count => this.Set.Count;
-
-		/// <summary>Gets the item in the set or throws.</summary>
-		/// <param name="index"></param>
-		/// <exception cref="IndexOutOfRangeException"></exception>
-		public T this[Int32 index] {
-			[NotNull]
-			get {
-				if ( index < 0 ) {
-					throw new IndexOutOfRangeException( $"The index {index} is less than 0." );
-				}
-
-				var list = this.Set.Keys;
-
-				if ( index > list.Count ) {
-					throw new IndexOutOfRangeException( $"The index {index} is greater than items in set ({list.Count})." );
-				}
-
-				//TODO Is this any better than var list = this.Set.Keys.ToList()?
-				//TODO Will this skip work?
-				//TODO Is it off by -1?
-				return list.Skip( index ).First();
-			}
-		}
-
-		[DebuggerStepThrough]
-		public ConcurrentHashset( IEnumerable<T> list ) : this( Environment.ProcessorCount ) => this.AddRange( list );
-
-		[DebuggerStepThrough]
-		public ConcurrentHashset( Int32 concurrency, Int32 capacity = 11 ) => this.Set = new ConcurrentDictionary<T, Object?>( concurrency, capacity );
-
-		[DebuggerStepThrough]
-		public ConcurrentHashset() => this.Set = new ConcurrentDictionary<T, Object?>();
-
-		[DebuggerStepThrough]
-		public void Add( T item ) => this.Set[item] = null;
-
-		[DebuggerStepThrough]
-		public void AddRange( IEnumerable<T> items ) {
-			if ( items == null ) {
-				throw new ArgumentEmptyException( nameof( items ) );
-			}
-
-			Parallel.ForEach( items.AsParallel(), this.Add );
-		}
-
-		[DebuggerStepThrough]
-		public void Clear() => this.Set.Clear();
-
-		[DebuggerStepThrough]
-		public Boolean Contains( T item ) => this.Set.ContainsKey( item );
-
-		public IEnumerator<T> GetEnumerator() => this.Set.Keys.GetEnumerator();
-
-		[DebuggerStepThrough]
-		public Boolean Remove( T item ) => this.Set.TryRemove( item, out var _ );
-
-		/// <summary>
-		///     Replace left with right. ( <see cref="Remove" /><paramref name="left" />, then <see cref="Add" />
-		///     <paramref name="right" />)
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		public void Replace( T left, T right ) {
-			this.Remove( left );
-			this.Add( right );
-		}
-
-		/// <summary>Set the tag on an item.</summary>
-		/// <param name="item"></param>
-		/// <param name="tag"></param>
-		public Boolean Tag( T item, Object? tag ) {
-			this.Set[item] = tag;
-
-			return true;
-		}
-
-		/// <summary>Get the tag on an item.</summary>
-		/// <param name="item"></param>
-		public Object? Tag( T item ) {
-			this.Set.TryGetValue( item, out var tag );
-
-			return tag;
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+	/// <param name="left"> </param>
+	/// <param name="right"></param>
+	public void Replace( T left, T right ) {
+		this.Remove( left );
+		this.Add( right );
 	}
+
+	/// <summary>Set the tag on an item.</summary>
+	/// <param name="item"></param>
+	/// <param name="tag"></param>
+	public Boolean Tag( T item, Object? tag ) {
+		this.Set[item] = tag;
+
+		return true;
+	}
+
+	/// <summary>Get the tag on an item.</summary>
+	/// <param name="item"></param>
+	public Object? Tag( T item ) {
+		this.Set.TryGetValue( item, out var tag );
+
+		return tag;
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

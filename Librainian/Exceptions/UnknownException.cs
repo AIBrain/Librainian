@@ -25,36 +25,35 @@
 //
 // File "UnknownException.cs" last touched on 2021-04-25 at 6:15 AM by Protiguous.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
+using System;
+
+/// <inheritdoc />
+/// <summary>
+///     <para>Something should not have happened, but it did.</para>
+/// </summary>
+[Serializable]
+public class UnknownException : Exception {
 
 	/// <inheritdoc />
 	/// <summary>
 	///     <para>Something should not have happened, but it did.</para>
 	/// </summary>
-	[Serializable]
-	public class UnknownException : Exception {
+	public UnknownException() { }
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		public UnknownException() { }
+	/// <inheritdoc />
+	/// <summary>
+	///     <para>Something should not have happened, but it did.</para>
+	/// </summary>
+	/// <param name="message"></param>
+	public UnknownException( String? message ) : base( message ) { }
 
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		public UnknownException( String? message ) : base( message ) { }
-
-		/// <inheritdoc />
-		/// <summary>
-		///     <para>Something should not have happened, but it did.</para>
-		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="innerException"></param>
-		public UnknownException( String? message, Exception? innerException ) : base( message, innerException ) { }
-	}
+	/// <inheritdoc />
+	/// <summary>
+	///     <para>Something should not have happened, but it did.</para>
+	/// </summary>
+	/// <param name="message"></param>
+	/// <param name="innerException"></param>
+	public UnknownException( String? message, Exception? innerException ) : base( message, innerException ) { }
 }

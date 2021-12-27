@@ -22,17 +22,16 @@
 //
 // File "AsyncLazy.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 
-	/// <summary>TODO This class needs tested.</summary>
-	/// <typeparam name="T"></typeparam>
-	public class AsyncLazy<T> : Lazy<Task<T>> {
+/// <summary>TODO This class needs tested.</summary>
+/// <typeparam name="T"></typeparam>
+public class AsyncLazy<T> : Lazy<Task<T>> {
 
-		public AsyncLazy( Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }
+	public AsyncLazy( Func<T> valueFactory ) : base( () => Task.Run( valueFactory ) ) { }
 
-		public AsyncLazy( Func<Task<T>> taskFactory ) : base( () => Task.Run( taskFactory ) ) { }
-	}
+	public AsyncLazy( Func<Task<T>> taskFactory ) : base( () => Task.Run( taskFactory ) ) { }
 }

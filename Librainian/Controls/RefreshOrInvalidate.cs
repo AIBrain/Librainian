@@ -25,14 +25,13 @@
 //
 // File "RefreshOrInvalidate.cs" last touched on 2021-07-17 at 3:37 PM by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls; 
 
-	public enum RefreshOrInvalidate {
+public enum RefreshOrInvalidate {
 
-		Neither = 0,
+	Neither = 0,
 
-		Invalidate,
+	Invalidate,
 
-		Refresh
-	}
+	Refresh
 }

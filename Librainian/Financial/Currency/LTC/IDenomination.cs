@@ -22,12 +22,11 @@
 //
 // File "IDenomination.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Financial.Currency.LTC {
+namespace Librainian.Financial.Currency.LTC;
 
-	using System;
+using System;
 
-	public interface IDenomination {
+public interface IDenomination {
 
-		Decimal FaceValue { get; }
-	}
+	Decimal FaceValue { get; }
 }

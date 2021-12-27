@@ -22,43 +22,42 @@
 //
 // File "CardinalDirection.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Spatial {
+namespace Librainian.Measurement.Spatial; 
 
-	public enum CardinalDirection {
+public enum CardinalDirection {
 
-		/// <summary>0 (is equal to 360)</summary>
-		North = 0,
+	/// <summary>0 (is equal to 360)</summary>
+	North = 0,
 
-		/// <summary>22</summary>
-		NorthNorthEast = ( North + NorthEast ) / 2, NorthEast = ( North + East ) / 2,
+	/// <summary>22</summary>
+	NorthNorthEast = ( North + NorthEast ) / 2, NorthEast = ( North + East ) / 2,
 
-		EastNorthEast = ( East + NorthEast ) / 2,
+	EastNorthEast = ( East + NorthEast ) / 2,
 
-		East = 90,
+	East = 90,
 
-		EastSouthEast = ( East + SouthEast ) / 2,
+	EastSouthEast = ( East + SouthEast ) / 2,
 
-		SouthEast = ( South + East ) / 2,
+	SouthEast = ( South + East ) / 2,
 
-		SouthSouthEast = ( South + SouthEast ) / 2,
+	SouthSouthEast = ( South + SouthEast ) / 2,
 
-		South = 180,
+	South = 180,
 
-		SouthSouthWest = ( South + SouthWest ) / 2,
+	SouthSouthWest = ( South + SouthWest ) / 2,
 
-		SouthWest = ( South + West ) / 2,
+	SouthWest = ( South + West ) / 2,
 
-		WestSouthWest = ( West + SouthWest ) / 2,
+	WestSouthWest = ( West + SouthWest ) / 2,
 
-		West = 270,
+	West = 270,
 
-		WestNorthWest = ( West + NorthWest ) / 2,
+	WestNorthWest = ( West + NorthWest ) / 2,
 
-		NorthWest = ( FullNorth + West ) / 2,
+	NorthWest = ( FullNorth + West ) / 2,
 
-		NorthNorthWest = ( FullNorth + NorthWest ) / 2,
+	NorthNorthWest = ( FullNorth + NorthWest ) / 2,
 
-		/// <summary>360</summary>
-		FullNorth = 360
-	}
+	/// <summary>360</summary>
+	FullNorth = 360
 }

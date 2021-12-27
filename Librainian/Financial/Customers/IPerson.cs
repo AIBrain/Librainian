@@ -22,13 +22,12 @@
 //
 // File "IPerson.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial.Customers {
+namespace Librainian.Financial.Customers;
 
-	using System.Collections.Generic;
-	using Containers.Wallets;
+using System.Collections.Generic;
+using Containers.Wallets;
 
-	internal interface IPerson {
+internal interface IPerson {
 
-		List<Wallet> Wallets { get; }
-	}
+	List<Wallet> Wallets { get; }
 }

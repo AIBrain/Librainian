@@ -25,18 +25,17 @@
 //
 // File "LUID_AND_ATTRIBUTES.cs" last formatted on 2021-03-05 at 6:30 AM.
 
-namespace Librainian.FileSystem.Pri.LongPath {
+namespace Librainian.FileSystem.Pri.LongPath;
 
-	using System;
-	using System.Diagnostics.CodeAnalysis;
-	using System.Runtime.InteropServices;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
-	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-	public struct LUID_AND_ATTRIBUTES {
+[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+public struct LUID_AND_ATTRIBUTES {
 
-		public LUID Luid;
+	public LUID Luid;
 
-		public UInt32 Attributes;
-	}
+	public UInt32 Attributes;
 }

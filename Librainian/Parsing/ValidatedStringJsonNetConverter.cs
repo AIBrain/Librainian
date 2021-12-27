@@ -24,28 +24,27 @@
 
 #nullable enable
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using Newtonsoft.Json;
-	using Validation;
+using System;
+using Newtonsoft.Json;
+using Validation;
 
-	[Serializable]
-	[JsonObject]
-	public class ValidatedStringJsonNetConverter : JsonConverter {
+[Serializable]
+[JsonObject]
+public class ValidatedStringJsonNetConverter : JsonConverter {
 
-		public override Boolean CanConvert( Type objectType ) {
-			if ( objectType.IsSubclassOf( typeof( ValidatedString ) ) ) {
-				return true;
-			}
-
-			return objectType == typeof( ValidatedString );
+	public override Boolean CanConvert( Type objectType ) {
+		if ( objectType.IsSubclassOf( typeof( ValidatedString ) ) ) {
+			return true;
 		}
 
-		public override Object ReadJson( JsonReader reader, Type objectType, Object? existingValue, JsonSerializer? serializer ) =>
-			Activator.CreateInstance( objectType, reader.Value );
-
-		public override void WriteJson( JsonWriter writer, Object? value, JsonSerializer? serializer ) =>
-			writer.WriteValue( ( ( ValidatedString )value ).Value );
+		return objectType == typeof( ValidatedString );
 	}
+
+	public override Object ReadJson( JsonReader reader, Type objectType, Object? existingValue, JsonSerializer? serializer ) =>
+		Activator.CreateInstance( objectType, reader.Value );
+
+	public override void WriteJson( JsonWriter writer, Object? value, JsonSerializer? serializer ) =>
+		writer.WriteValue( ( ( ValidatedString )value ).Value );
 }

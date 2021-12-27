@@ -22,16 +22,15 @@
 //
 // File "Ten.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial.Currency.BankNotes {
+namespace Librainian.Financial.Currency.BankNotes;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public sealed class Ten : IBankNote {
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public sealed class Ten : IBankNote {
 
-		public Decimal FaceValue => 10.00M;
+	public Decimal FaceValue => 10.00M;
 
-		public override String ToString() => $"{this.FaceValue:C}";
-	}
+	public override String ToString() => $"{this.FaceValue:C}";
 }

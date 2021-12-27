@@ -22,27 +22,26 @@
 //
 // File "TranslateGuidUInt64.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Converters {
+namespace Librainian.Converters;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct TranslateGuidUInt64 {
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct TranslateGuidUInt64 {
 
-		[FieldOffset( 0 )] // bytes 0..15 == 16 bytes
-		public Guid guid;
+	[FieldOffset( 0 )] // bytes 0..15 == 16 bytes
+	public Guid guid;
 
-		[FieldOffset( 0 )]
-		public readonly UInt64 Low; //0..7
+	[FieldOffset( 0 )]
+	public readonly UInt64 Low; //0..7
 
-		[FieldOffset( sizeof( UInt64 ) )]
-		public readonly UInt64 High; //8..15
+	[FieldOffset( sizeof( UInt64 ) )]
+	public readonly UInt64 High; //8..15
 
-		public TranslateGuidUInt64( UInt64 high, UInt64 low ) {
-			this.guid = Guid.Empty;
-			this.Low = low;
-			this.High = high;
-		}
+	public TranslateGuidUInt64( UInt64 high, UInt64 low ) {
+		this.guid = Guid.Empty;
+		this.Low = low;
+		this.High = high;
 	}
 }

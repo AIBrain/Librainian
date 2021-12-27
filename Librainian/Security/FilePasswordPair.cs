@@ -24,9 +24,8 @@
 //
 // File "FilePasswordPair.cs" last formatted on 2021-02-10 at 11:08 AM.
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
+using System;
 
-	public record FilePasswordPair( String FileName, String Password );
-}
+public record FilePasswordPair( String FileName, String Password );

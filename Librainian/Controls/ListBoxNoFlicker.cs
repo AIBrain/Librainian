@@ -25,32 +25,31 @@
 //
 // File "ListBoxNoFlicker.cs" last touched on 2021-07-17 at 3:23 PM by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System.Windows.Forms;
+using System.Windows.Forms;
 
-	public class ListBoxNoFlicker : ListBox {
+public class ListBoxNoFlicker : ListBox {
 
-		//public ListBoxNoFlicker() => this.SetStyle( ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true );
+	//public ListBoxNoFlicker() => this.SetStyle( ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true );
 
-		public ListBoxNoFlicker() {
-			/*
-			this.SetStyle(
-				ControlStyles.OptimizedDoubleBuffer |
-				ControlStyles.ResizeRedraw |
-				ControlStyles.UserPaint,
-				true );
-			*/
-		}
-
+	public ListBoxNoFlicker() {
 		/*
-		protected override CreateParams CreateParams {
-			get {
-				CreateParams cp = base.CreateParams;
-				cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
-				return cp;
-			}
-		}
+		this.SetStyle(
+			ControlStyles.OptimizedDoubleBuffer |
+			ControlStyles.ResizeRedraw |
+			ControlStyles.UserPaint,
+			true );
 		*/
 	}
+
+	/*
+	protected override CreateParams CreateParams {
+		get {
+			CreateParams cp = base.CreateParams;
+			cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+			return cp;
+		}
+	}
+	*/
 }

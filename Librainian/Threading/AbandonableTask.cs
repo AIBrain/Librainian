@@ -25,60 +25,58 @@
 // 
 // File "AbandonableTask.cs" last touched on 2021-09-28 at 6:42 AM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using Utilities;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
+using Utilities;
 
-	/// <summary>
-	///     <see cref="http://stackoverflow.com/a/4749401/956364" />
-	/// </summary>
-	[NeedsTesting]
-	public sealed class AbandonableTask {
+/// <summary>
+///     <see cref="http://stackoverflow.com/a/4749401/956364" />
+/// </summary>
+[NeedsTesting]
+public sealed class AbandonableTask {
 
-		private AbandonableTask( Action? beginWork, Action blockingWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
-			this._beginWork = beginWork;
-			this._blockingWork = blockingWork ?? throw new ArgumentEmptyException( nameof( blockingWork ) );
-			this.AfterComplete = afterComplete;
-			this._cancellationToken = cancellationToken;
+	private AbandonableTask( Action? beginWork, Action blockingWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
+		this._beginWork = beginWork;
+		this._blockingWork = blockingWork ?? throw new ArgumentEmptyException( nameof( blockingWork ) );
+		this.AfterComplete = afterComplete;
+		this._cancellationToken = cancellationToken;
+	}
+
+	private Action? _beginWork { get; }
+
+	private Action? _blockingWork { get; }
+
+	private CancellationToken _cancellationToken { get; }
+
+	public Action<Task>? AfterComplete { get; }
+
+	private void RunTask() {
+		this._beginWork?.Invoke();
+
+		var innerTask = new Task( this._blockingWork, this._cancellationToken, TaskCreationOptions.LongRunning );
+		innerTask.Start();
+
+		innerTask.Wait( this._cancellationToken );
+
+		if ( innerTask.IsCompleted ) {
+			this.AfterComplete?.Invoke( innerTask );
+		}
+	}
+
+	public static Task Start( Action blockingWork, Action? beginWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
+		if ( blockingWork is null ) {
+			throw new ArgumentEmptyException( nameof( blockingWork ) );
 		}
 
-		private Action? _beginWork { get; }
+		var worker = new AbandonableTask( beginWork, blockingWork, afterComplete, cancellationToken );
+		var outerTask = new Task( worker.RunTask, cancellationToken );
+		outerTask.Start();
 
-		private Action? _blockingWork { get; }
-
-		private CancellationToken _cancellationToken { get; }
-
-		public Action<Task>? AfterComplete { get; }
-
-		private void RunTask() {
-			this._beginWork?.Invoke();
-
-			var innerTask = new Task( this._blockingWork, this._cancellationToken, TaskCreationOptions.LongRunning );
-			innerTask.Start();
-
-			innerTask.Wait( this._cancellationToken );
-
-			if ( innerTask.IsCompleted ) {
-				this.AfterComplete?.Invoke( innerTask );
-			}
-		}
-
-		public static Task Start( Action blockingWork, Action? beginWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
-			if ( blockingWork is null ) {
-				throw new ArgumentEmptyException( nameof( blockingWork ) );
-			}
-
-			var worker = new AbandonableTask( beginWork, blockingWork, afterComplete, cancellationToken );
-			var outerTask = new Task( worker.RunTask, cancellationToken );
-			outerTask.Start();
-
-			return outerTask;
-		}
-
+		return outerTask;
 	}
 
 }

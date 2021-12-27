@@ -22,16 +22,15 @@
 //
 // File "Intersection.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Graphics.DD {
+namespace Librainian.Graphics.DD; 
 
-	public enum Intersection {
+public enum Intersection {
 
-		None,
+	None,
 
-		Tangent,
+	Tangent,
 
-		Intersection,
+	Intersection,
 
-		Containment
-	}
+	Containment
 }

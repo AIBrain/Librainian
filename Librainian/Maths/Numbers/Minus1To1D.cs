@@ -25,61 +25,60 @@
 //
 // File "Minus1To1D.cs" last touched on 2021-03-07 at 10:12 AM by Protiguous.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using Newtonsoft.Json;
+using System;
+using Newtonsoft.Json;
 
-	/// <summary>Restricts the value to between -1.0 and 1.0</summary>
-	[JsonObject]
-	public struct Minus1To1D {
+/// <summary>Restricts the value to between -1.0 and 1.0</summary>
+[JsonObject]
+public struct Minus1To1D {
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		private Double _value;
+	/// <summary>ONLY used in the getter and setter.</summary>
+	private Double _value;
 
-		public const Double MaxValue = 1D;
+	public const Double MaxValue = 1D;
 
-		public const Double MidValue = 0D;
+	public const Double MidValue = 0D;
 
-		public const Double MinValue = -1D;
+	public const Double MinValue = -1D;
 
-		public Double Value {
-			get => this._value;
+	public Double Value {
+		get => this._value;
 
-			set =>
-				this._value = value > MaxValue ? MaxValue :
-					value < MinValue ? MinValue : value;
-		}
-
-		/// <summary>
-		///     <para>Initializes a random number between -1.0 and 1.0</para>
-		///     <para>Restricts the value to between -1.0 and 1.0</para>
-		/// </summary>
-		/// <param name="value"></param>
-		public Minus1To1D( Double? value = null ) : this() {
-			value ??= Randem.NextDouble( MinValue );
-
-			this.Value = value.Value;
-		}
-
-		/// <summary>
-		///     Return a new <see cref="Minus1To1D" /> with the value of <paramref name="value1" /> moved closer to the value
-		///     of <paramref name="value2" /> .
-		/// </summary>
-		/// <param name="value1">The current value.</param>
-		/// <param name="value2">The value to move closer towards.</param>
-		/// <returns>
-		///     Returns a new <see cref="Minus1To1D" /> with the value of <paramref name="value1" /> moved closer to the value
-		///     of <paramref name="value2" /> .
-		/// </returns>
-		public static Minus1To1D Combine( Minus1To1D value1, Minus1To1D value2 ) => new( ( value1 + value2 ) / 2D );
-
-		public static implicit operator Double( Minus1To1D special ) => special.Value;
-
-		public static implicit operator Minus1To1D( Double value ) => new( value );
-
-		public static Minus1To1D Parse( String value ) => new( Double.Parse( value ) );
-
-		public override String ToString() => $"{this.Value:P}";
+		set =>
+			this._value = value > MaxValue ? MaxValue :
+				value < MinValue ? MinValue : value;
 	}
+
+	/// <summary>
+	///     <para>Initializes a random number between -1.0 and 1.0</para>
+	///     <para>Restricts the value to between -1.0 and 1.0</para>
+	/// </summary>
+	/// <param name="value"></param>
+	public Minus1To1D( Double? value = null ) : this() {
+		value ??= Randem.NextDouble( MinValue );
+
+		this.Value = value.Value;
+	}
+
+	/// <summary>
+	///     Return a new <see cref="Minus1To1D" /> with the value of <paramref name="value1" /> moved closer to the value
+	///     of <paramref name="value2" /> .
+	/// </summary>
+	/// <param name="value1">The current value.</param>
+	/// <param name="value2">The value to move closer towards.</param>
+	/// <returns>
+	///     Returns a new <see cref="Minus1To1D" /> with the value of <paramref name="value1" /> moved closer to the value
+	///     of <paramref name="value2" /> .
+	/// </returns>
+	public static Minus1To1D Combine( Minus1To1D value1, Minus1To1D value2 ) => new( ( value1 + value2 ) / 2D );
+
+	public static implicit operator Double( Minus1To1D special ) => special.Value;
+
+	public static implicit operator Minus1To1D( Double value ) => new( value );
+
+	public static Minus1To1D Parse( String value ) => new( Double.Parse( value ) );
+
+	public override String ToString() => $"{this.Value:P}";
 }

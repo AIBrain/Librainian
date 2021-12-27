@@ -25,103 +25,102 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Measurement {
+namespace Librainian.Measurement;
 
-	using System;
-	using System.Diagnostics;
-	using System.Runtime;
-	using System.Threading;
-	using Exceptions;
-	using Logging;
-	using Time;
+using System;
+using System.Diagnostics;
+using System.Runtime;
+using System.Threading;
+using Exceptions;
+using Logging;
+using Time;
+
+/// <summary>
+///     Originally based upon the idea from
+///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
+/// </summary>
+/// <see cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
+public static class Benchmark {
+
+	public enum AorB {
+
+		Unknown,
+
+		MethodA,
+
+		MethodB,
+
+		Same
+	}
+
+	/// <summary>For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.</summary>
+	/// <param name="method"></param>
+	/// <param name="runFor">Defaults to 1 second.</param>
+	/// <returns>Returns how many rounds are ran in the time given.</returns>
+	public static UInt64 GetBenchmark( Action method, TimeSpan? runFor ) {
+		if ( method is null ) {
+			throw new ArgumentEmptyException( nameof( method ) );
+		}
+
+		GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+		GC.Collect( GC.MaxGeneration, GCCollectionMode.Forced, true, true );
+
+		var oldPriorityClass = Process.GetCurrentProcess().PriorityClass;
+		Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+
+		var oldPriority = Thread.CurrentThread.Priority;
+		Thread.CurrentThread.Priority = ThreadPriority.Highest;
+
+		runFor ??= Seconds.One;
+
+		try {
+			method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
+
+			var rounds = 0UL;
+
+			var stopwatch = Stopwatch.StartNew();
+
+			while ( stopwatch.Elapsed < runFor ) {
+
+				method.Invoke();
+
+				++rounds;
+
+			}
+
+			return rounds;
+		}
+		catch ( Exception exception ) {
+			throw exception.Log( BreakOrDontBreak.Break );
+		}
+		finally {
+			Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
+			Thread.CurrentThread.Priority = oldPriority;
+		}
+	}
 
 	/// <summary>
-	///     Originally based upon the idea from
-	///     <see cref="http://github.com/EBrown8534/Framework/blob/master/Evbpc.Framework/Utilities/BenchmarkResult.cs" />.
+	/// A quick (2 seconds) <strong>primitive</strong> test for which method runs more times in the given timespan.
+	/// <para>For a better, more accurate test, use BenchmarkDotNet nuget.</para>
 	/// </summary>
-	/// <see cref="http://github.com/PerfDotNet/BenchmarkDotNet" />
-	public static class Benchmark {
-
-		public enum AorB {
-
-			Unknown,
-
-			MethodA,
-
-			MethodB,
-
-			Same
+	/// <param name="methodA"></param>
+	/// <param name="methodB"></param>
+	/// <param name="runfor">Defaults to 1 second.</param>
+	public static AorB WhichIsFaster( Action methodA, Action methodB, TimeSpan? runfor = null ) {
+		if ( methodA is null ) {
+			throw new ArgumentEmptyException( nameof( methodA ) );
 		}
 
-		/// <summary>For benchmarking methods that are too fast for individual <see cref="Stopwatch" /> start and stops.</summary>
-		/// <param name="method"></param>
-		/// <param name="runFor">Defaults to 1 second.</param>
-		/// <returns>Returns how many rounds are ran in the time given.</returns>
-		public static UInt64 GetBenchmark( Action method, TimeSpan? runFor ) {
-			if ( method is null ) {
-				throw new ArgumentEmptyException( nameof( method ) );
-			}
-
-			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-			GC.Collect( GC.MaxGeneration, GCCollectionMode.Forced, true, true );
-
-			var oldPriorityClass = Process.GetCurrentProcess().PriorityClass;
-			Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-
-			var oldPriority = Thread.CurrentThread.Priority;
-			Thread.CurrentThread.Priority = ThreadPriority.Highest;
-
-			runFor ??= Seconds.One;
-
-			try {
-				method.Invoke(); //jit per Eric Lippert (http://codereview.stackexchange.com/questions/125539/benchmarking-things-in-c)
-
-				var rounds = 0UL;
-
-				var stopwatch = Stopwatch.StartNew();
-
-				while ( stopwatch.Elapsed < runFor ) {
-
-					method.Invoke();
-
-					++rounds;
-
-				}
-
-				return rounds;
-			}
-			catch ( Exception exception ) {
-				throw exception.Log( BreakOrDontBreak.Break );
-			}
-			finally {
-				Process.GetCurrentProcess().PriorityClass = oldPriorityClass;
-				Thread.CurrentThread.Priority = oldPriority;
-			}
+		if ( methodB is null ) {
+			throw new ArgumentEmptyException( nameof( methodB ) );
 		}
 
-		/// <summary>
-		/// A quick (2 seconds) <strong>primitive</strong> test for which method runs more times in the given timespan.
-		/// <para>For a better, more accurate test, use BenchmarkDotNet nuget.</para>
-		/// </summary>
-		/// <param name="methodA"></param>
-		/// <param name="methodB"></param>
-		/// <param name="runfor">Defaults to 1 second.</param>
-		public static AorB WhichIsFaster( Action methodA, Action methodB, TimeSpan? runfor = null ) {
-			if ( methodA is null ) {
-				throw new ArgumentEmptyException( nameof( methodA ) );
-			}
+		runfor ??= Seconds.One;
 
-			if ( methodB is null ) {
-				throw new ArgumentEmptyException( nameof( methodB ) );
-			}
+		var a = GetBenchmark( methodA, runfor );
 
-			runfor ??= Seconds.One;
+		var b = GetBenchmark( methodB, runfor );
 
-			var a = GetBenchmark( methodA, runfor );
-
-			var b = GetBenchmark( methodB, runfor );
-
-			return a > b ? AorB.MethodA : b > a ? AorB.MethodB : AorB.Same;
-		}
+		return a > b ? AorB.MethodA : b > a ? AorB.MethodB : AorB.Same;
 	}
 }

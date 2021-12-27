@@ -25,13 +25,12 @@
 //
 // File "SourceRecord.cs" last touched on 2021-03-30 at 11:56 AM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces;
 
-	using System;
+using System;
 
-	public record SourceRecord( Sources Source, SourcePosition Position ) {
-		public override String ToString() => $"{this.Source}.{this.Position}";
+public record SourceRecord( Sources Source, SourcePosition Position ) {
+	public override String ToString() => $"{this.Source}.{this.Position}";
 
-		public static SourceRecord Create( Sources Source, SourcePosition Position ) => new( Source, Position );
-	}
+	public static SourceRecord Create( Sources Source, SourcePosition Position ) => new( Source, Position );
 }

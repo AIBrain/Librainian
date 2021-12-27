@@ -25,30 +25,29 @@
 //
 // File "Inches.cs" last touched on 2021-07-31 at 7:37 AM by Protiguous.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using ExtendedNumerics;
-	using Newtonsoft.Json;
+using ExtendedNumerics;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public record Inches {
-		public Inches( BigDecimal inches ) => this.Value = inches;
+[JsonObject]
+public record Inches {
+	public Inches( BigDecimal inches ) => this.Value = inches;
 
-		public Inches( Millimeters millimeters ) => this.Value = millimeters.Value * Millimeters.PerInch;
+	public Inches( Millimeters millimeters ) => this.Value = millimeters.Value * Millimeters.PerInch;
 
-		public Inches( Centimeters centimeters ) => this.Value = centimeters.Value * Centimeters.PerInch;
+	public Inches( Centimeters centimeters ) => this.Value = centimeters.Value * Centimeters.PerInch;
 
-		/// <summary>One <see cref="Inches" /> .</summary>
-		public static Inches One { get; } = new( 1 );
+	/// <summary>One <see cref="Inches" /> .</summary>
+	public static Inches One { get; } = new( 1 );
 
-		/// <summary>Two <see cref="Inches" /> .</summary>
-		public static Inches Two { get; } = new( 2 );
+	/// <summary>Two <see cref="Inches" /> .</summary>
+	public static Inches Two { get; } = new( 2 );
 
-		[JsonProperty]
-		public BigDecimal Value { get; }
+	[JsonProperty]
+	public BigDecimal Value { get; }
 
-		public static implicit operator Millimeters( Inches inches ) => new( inches.Value * Millimeters.PerInch );
+	public static implicit operator Millimeters( Inches inches ) => new( inches.Value * Millimeters.PerInch );
 
-		public static implicit operator Centimeters( Inches inches ) => new( inches.Value * Centimeters.PerInch );
-	}
+	public static implicit operator Centimeters( Inches inches ) => new( inches.Value * Centimeters.PerInch );
 }

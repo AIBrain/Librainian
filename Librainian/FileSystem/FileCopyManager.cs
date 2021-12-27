@@ -27,57 +27,56 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
 
-	public class FileCopyManager {
+public class FileCopyManager {
 
-		private ConcurrentDictionary<Document, Task<FileCopyData>> SourceFilesToBeCopied { get; } = new();
+	private ConcurrentDictionary<Document, Task<FileCopyData>> SourceFilesToBeCopied { get; } = new();
 
-		public IAsyncEnumerable<Task<FileCopyData>> FilesToBeCopied() => this.SourceFilesToBeCopied.Values.ToAsyncEnumerable();
+	public IAsyncEnumerable<Task<FileCopyData>> FilesToBeCopied() => this.SourceFilesToBeCopied.Values.ToAsyncEnumerable();
 
-		/// <summary>
-		///     Each <see cref="SourceFilesToBeCopied" /> still needs to be awaited.
-		/// </summary>
-		/// <param name="sourceFiles"></param>
-		/// <param name="destinationFolder"></param>
-		/// <param name="overwriteDestination"></param>
-		/// <param name="cancellationToken"></param>
-		public async Task LoadFilesToBeCopied(
-			IAsyncEnumerable<Document> sourceFiles,
-			IFolder destinationFolder,
-			Boolean overwriteDestination,
-			CancellationToken cancellationToken
-		) {
-			if ( sourceFiles is null ) {
-				throw new ArgumentEmptyException( nameof( sourceFiles ) );
+	/// <summary>
+	///     Each <see cref="SourceFilesToBeCopied" /> still needs to be awaited.
+	/// </summary>
+	/// <param name="sourceFiles"></param>
+	/// <param name="destinationFolder"></param>
+	/// <param name="overwriteDestination"></param>
+	/// <param name="cancellationToken"></param>
+	public async Task LoadFilesToBeCopied(
+		IAsyncEnumerable<Document> sourceFiles,
+		IFolder destinationFolder,
+		Boolean overwriteDestination,
+		CancellationToken cancellationToken
+	) {
+		if ( sourceFiles is null ) {
+			throw new ArgumentEmptyException( nameof( sourceFiles ) );
+		}
+
+		await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
+			var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
+
+			if ( overwriteDestination && await destinationDocument.Exists( cancellationToken ).ConfigureAwait( false ) ) {
+				await destinationDocument.Delete( cancellationToken ).ConfigureAwait( false );
 			}
 
-			await foreach ( var sourceFile in sourceFiles.WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
-				var destinationDocument = new Document( destinationFolder, sourceFile.FileName );
+			var fileCopyData = new FileCopyData( sourceFile, destinationDocument ) {
+				Exceptions = null,
+				DataCopied = null,
+				OnCompleted = null,
+				SourceSize = default( UInt64 ),
+				WhenCompleted = null,
+				WhenStarted = null
+			};
 
-				if ( overwriteDestination && await destinationDocument.Exists( cancellationToken ).ConfigureAwait( false ) ) {
-					await destinationDocument.Delete( cancellationToken ).ConfigureAwait( false );
-				}
-
-				var fileCopyData = new FileCopyData( sourceFile, destinationDocument ) {
-					Exceptions = null,
-					DataCopied = null,
-					OnCompleted = null,
-					SourceSize = default( UInt64 ),
-					WhenCompleted = null,
-					WhenStarted = null
-				};
-
-				this.SourceFilesToBeCopied[sourceFile] = fileCopyData.Source.Copy( fileCopyData, cancellationToken );
-			}
+			this.SourceFilesToBeCopied[sourceFile] = fileCopyData.Source.Copy( fileCopyData, cancellationToken );
 		}
 	}
 }

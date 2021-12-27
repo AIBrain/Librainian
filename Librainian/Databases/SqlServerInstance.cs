@@ -24,25 +24,24 @@
 //
 // File "SqlServerInstance.cs" last formatted on 2021-02-12 at 11:44 AM.
 
-namespace Librainian.Databases {
+namespace Librainian.Databases;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public record SqlServerInstance {
-		public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record SqlServerInstance {
+	public String ConnectToThis => $"{this.MachineName}\\{this.InstanceName}";
 
-		public String? Edition { get; set; }
+	public String? Edition { get; set; }
 
-		public String? InstanceName { get; set; }
+	public String? InstanceName { get; set; }
 
-		public String? MachineName { get; set; }
+	public String? MachineName { get; set; }
 
-		public String? ServiceName { get; set; }
+	public String? ServiceName { get; set; }
 
-		public Version? Version { get; set; }
+	public Version? Version { get; set; }
 
-		public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
-	}
+	public override String ToString() => $"{this.ServiceName} {this.InstanceName} {this.Version} {this.Edition}";
 }

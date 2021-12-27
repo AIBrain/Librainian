@@ -25,8 +25,6 @@
 // 
 // File "IGetDatabase.cs" last touched on 2021-09-23 at 7:02 AM by Protiguous.
 
-namespace Librainian.Databases {
+namespace Librainian.Databases; 
 
-	public interface IGetDatabase { }
-
-}
+public interface IGetDatabase { }

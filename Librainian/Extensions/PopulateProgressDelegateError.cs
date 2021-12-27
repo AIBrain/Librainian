@@ -22,9 +22,8 @@
 //
 // File "PopulateProgressDelegateError.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
+using System;
 
-	public delegate void PopulateProgressDelegateError( Object sender, PopulateProgressEventArgs e );
-}
+public delegate void PopulateProgressDelegateError( Object sender, PopulateProgressEventArgs e );

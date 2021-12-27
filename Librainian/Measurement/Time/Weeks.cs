@@ -27,122 +27,121 @@
 
 #nullable enable
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Exceptions;
-	using ExtendedNumerics;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using Exceptions;
+using ExtendedNumerics;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public record Weeks( BigDecimal Value ) : IQuantityOfTime, IComparable<Weeks>, IComparable<IQuantityOfTime> {
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record Weeks( BigDecimal Value ) : IQuantityOfTime, IComparable<Weeks>, IComparable<IQuantityOfTime> {
 
-		/// <summary>
-		///     52
-		/// </summary>
-		public const Byte InOneCommonYear = 52;
+	/// <summary>
+	///     52
+	/// </summary>
+	public const Byte InOneCommonYear = 52;
 
-		/// <summary>
-		///     4.345
-		/// </summary>
-		public const Decimal InOneMonth = 4.345m;
+	/// <summary>
+	///     4.345
+	/// </summary>
+	public const Decimal InOneMonth = 4.345m;
 
-		/// <summary>
-		///     One <see cref="Weeks" />.
-		/// </summary>
-		public static Weeks One { get; } = new( 1 );
+	/// <summary>
+	///     One <see cref="Weeks" />.
+	/// </summary>
+	public static Weeks One { get; } = new( 1 );
 
-		/// <summary>
-		/// </summary>
-		public static Weeks Ten { get; } = new( 10 );
+	/// <summary>
+	/// </summary>
+	public static Weeks Ten { get; } = new( 10 );
 
-		/// <summary>
-		/// </summary>
-		public static Weeks Thousand { get; } = new( 1000 );
+	/// <summary>
+	/// </summary>
+	public static Weeks Thousand { get; } = new( 1000 );
 
-		/// <summary>
-		///     Zero <see cref="Weeks" />.
-		/// </summary>
-		public static Weeks Zero { get; } = new( 0 );
+	/// <summary>
+	///     Zero <see cref="Weeks" />.
+	/// </summary>
+	public static Weeks Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( Weeks? other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( Weeks? other ) {
+		if ( other is null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		public Int32 CompareTo( IQuantityOfTime? other ) {
-			if ( other is null ) {
-				return SortOrder.Before;
-			}
-
-			if ( ReferenceEquals( this, other ) ) {
-				return SortOrder.Same;
-			}
-
-			return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );
-		}
-
-		public IQuantityOfTime ToFinerGranularity() => new Days( this.Value * Days.InOneWeek );
-
-		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneWeek );
-
-		public Seconds ToSeconds() => new( this.Value * Seconds.InOneWeek );
-
-		/// <summary>
-		///     Return this value in <see cref="Months" />.
-		/// </summary>
-		public IQuantityOfTime ToCoarserGranularity() => this.ToMonths();
-
-		TimeSpan IQuantityOfTime.ToTimeSpan() => this.ToSeconds();
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public TimeSpan? ToTimeSpan() => this.ToSeconds();
-
-		public static Weeks Combine( Weeks left, Weeks right ) => new( left.Value + right.Value );
-
-		public static Weeks Combine( Weeks left, BigDecimal weeks ) => new( left.Value + weeks );
-
-		public static Weeks Combine( Weeks left, BigInteger weeks ) => new( left.Value + weeks );
-
-		public static implicit operator Days( Weeks weeks ) => weeks.ToDays();
-
-		public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
-
-		public static implicit operator SpanOfTime( Weeks weeks ) => new( weeks: weeks );
-
-		public static Weeks operator -( Weeks days ) => new( days.Value * -1 );
-
-		public static Weeks operator -( Weeks left, Weeks right ) => Combine( left, -right );
-
-		public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
-
-		public static Weeks operator +( Weeks left, BigDecimal weeks ) => Combine( left, weeks );
-
-		public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
-
-		public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
-
-		public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
-
-		public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
-
-		public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
-
-		public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
-
-		public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
-
-		public Days ToDays() => new( this.Value * Days.InOneWeek );
-
-		public Months ToMonths() => new( this.Value / InOneMonth );
-
-		public override String ToString() => $"{this.Value} week" + ( this.Value == 1 ? String.Empty : "s" );
+		return this.Value.CompareTo( other.Value );
 	}
+
+	public Int32 CompareTo( IQuantityOfTime? other ) {
+		if ( other is null ) {
+			return SortOrder.Before;
+		}
+
+		if ( ReferenceEquals( this, other ) ) {
+			return SortOrder.Same;
+		}
+
+		return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );
+	}
+
+	public IQuantityOfTime ToFinerGranularity() => new Days( this.Value * Days.InOneWeek );
+
+	public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneWeek );
+
+	public Seconds ToSeconds() => new( this.Value * Seconds.InOneWeek );
+
+	/// <summary>
+	///     Return this value in <see cref="Months" />.
+	/// </summary>
+	public IQuantityOfTime ToCoarserGranularity() => this.ToMonths();
+
+	TimeSpan IQuantityOfTime.ToTimeSpan() => this.ToSeconds();
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+	public TimeSpan? ToTimeSpan() => this.ToSeconds();
+
+	public static Weeks Combine( Weeks left, Weeks right ) => new( left.Value + right.Value );
+
+	public static Weeks Combine( Weeks left, BigDecimal weeks ) => new( left.Value + weeks );
+
+	public static Weeks Combine( Weeks left, BigInteger weeks ) => new( left.Value + weeks );
+
+	public static implicit operator Days( Weeks weeks ) => weeks.ToDays();
+
+	public static implicit operator Months( Weeks weeks ) => weeks.ToMonths();
+
+	public static implicit operator SpanOfTime( Weeks weeks ) => new( weeks: weeks );
+
+	public static Weeks operator -( Weeks days ) => new( days.Value * -1 );
+
+	public static Weeks operator -( Weeks left, Weeks right ) => Combine( left, -right );
+
+	public static Weeks operator +( Weeks left, Weeks right ) => Combine( left, right );
+
+	public static Weeks operator +( Weeks left, BigDecimal weeks ) => Combine( left, weeks );
+
+	public static Weeks operator +( Weeks left, BigInteger weeks ) => Combine( left, weeks );
+
+	public static Boolean operator <( Weeks left, Weeks right ) => left.Value < right.Value;
+
+	public static Boolean operator <( Weeks left, Days right ) => left < ( Weeks )right;
+
+	public static Boolean operator <( Weeks left, Months right ) => ( Months )left < right;
+
+	public static Boolean operator >( Weeks left, Months right ) => ( Months )left > right;
+
+	public static Boolean operator >( Weeks left, Days right ) => left > ( Weeks )right;
+
+	public static Boolean operator >( Weeks left, Weeks right ) => left.Value > right.Value;
+
+	public Days ToDays() => new( this.Value * Days.InOneWeek );
+
+	public Months ToMonths() => new( this.Value / InOneMonth );
+
+	public override String ToString() => $"{this.Value} week" + ( this.Value == 1 ? String.Empty : "s" );
 }

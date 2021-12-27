@@ -22,15 +22,14 @@
 //
 // File "ReferenceEqualityComparer.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-	public class ReferenceEqualComparer<T> : EqualityComparer<T> {
+public class ReferenceEqualComparer<T> : EqualityComparer<T> {
 
-		public override Boolean Equals( T? x, T? y ) => ReferenceEquals( x, y );
+	public override Boolean Equals( T? x, T? y ) => ReferenceEquals( x, y );
 
-		public override Int32 GetHashCode( T obj ) => obj?.GetHashCode() ?? 0;
-	}
+	public override Int32 GetHashCode( T obj ) => obj?.GetHashCode() ?? 0;
 }

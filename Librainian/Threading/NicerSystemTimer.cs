@@ -23,72 +23,71 @@
 //
 // File "NicerSystemTimer.cs" last formatted on 2021-02-08 at 1:32 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using Exceptions;
-	using Utilities.Disposables;
-	using Timer = System.Timers.Timer;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using Exceptions;
+using Utilities.Disposables;
+using Timer = System.Timers.Timer;
+
+/// <summary>
+///     Updated the code.
+/// </summary>
+public class NicerSystemTimer : ABetterClassDispose {
+
+	private ReaderWriterLockSlim? access { get; set; }
+
+	private Timer? Timer { get; set; }
 
 	/// <summary>
-	///     Updated the code.
+	///     Perform an <paramref name="action" /> after the given interval (in <paramref name="milliseconds" />).
 	/// </summary>
-	public class NicerSystemTimer : ABetterClassDispose {
-
-		private ReaderWriterLockSlim? access { get; set; }
-
-		private Timer? Timer { get; set; }
-
-		/// <summary>
-		///     Perform an <paramref name="action" /> after the given interval (in <paramref name="milliseconds" />).
-		/// </summary>
-		/// <param name="action">      </param>
-		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
-		/// <param name="milliseconds"></param>
-		public NicerSystemTimer( Action action, Boolean repeat, Double? milliseconds = null ) : base( nameof( NicerSystemTimer ) ) {
-			if ( action == null ) {
-				throw new ArgumentEmptyException( nameof( action ) );
-			}
-
-			this.access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
-
-			this.Timer = new Timer {
-				AutoReset = false,
-				Interval = milliseconds.GetValueOrDefault( 1 )
-			};
-
-			this.Timer.Elapsed += ( _, _ ) => {
-				try {
-					if ( this.access.TryEnterReadLock( 0 ) ) {
-						this.Timer.Stop();
-						action.Invoke();
-					}
-
-					if ( repeat ) {
-						this.Timer.Start();
-					}
-				}
-				catch ( Exception exception ) {
-					Debug.WriteLine( exception );
-				}
-			};
-
-			this.Timer.Start();
+	/// <param name="action">      </param>
+	/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
+	/// <param name="milliseconds"></param>
+	public NicerSystemTimer( Action action, Boolean repeat, Double? milliseconds = null ) : base( nameof( NicerSystemTimer ) ) {
+		if ( action == null ) {
+			throw new ArgumentEmptyException( nameof( action ) );
 		}
 
-		public override void DisposeManaged() {
-			using ( this.Timer ) {
-				this.Timer?.Stop();
-				this.Timer = null;
-			}
+		this.access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
-			using ( this.access ) {
-				this.access = null;
-			}
+		this.Timer = new Timer {
+			AutoReset = false,
+			Interval = milliseconds.GetValueOrDefault( 1 )
+		};
 
-			base.DisposeManaged();
+		this.Timer.Elapsed += ( _, _ ) => {
+			try {
+				if ( this.access.TryEnterReadLock( 0 ) ) {
+					this.Timer.Stop();
+					action.Invoke();
+				}
+
+				if ( repeat ) {
+					this.Timer.Start();
+				}
+			}
+			catch ( Exception exception ) {
+				Debug.WriteLine( exception );
+			}
+		};
+
+		this.Timer.Start();
+	}
+
+	public override void DisposeManaged() {
+		using ( this.Timer ) {
+			this.Timer?.Stop();
+			this.Timer = null;
 		}
+
+		using ( this.access ) {
+			this.access = null;
+		}
+
+		base.DisposeManaged();
 	}
 }

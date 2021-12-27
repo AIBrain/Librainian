@@ -22,16 +22,15 @@
 //
 // File "ISerializeDeserialize.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Databases.MMF {
+namespace Librainian.Databases.MMF;
 
-	using System;
+using System;
 
-	public interface ISerializeDeserialize<T> {
+public interface ISerializeDeserialize<T> {
 
-		T BytesToObject( Byte[] bytes );
+	T BytesToObject( Byte[] bytes );
 
-		Boolean CanSerializeType();
+	Boolean CanSerializeType();
 
-		Byte[] ObjectToBytes( T data );
-	}
+	Byte[] ObjectToBytes( T data );
 }

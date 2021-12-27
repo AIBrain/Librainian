@@ -25,28 +25,27 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Graphics.DD {
+namespace Librainian.Graphics.DD;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
-	public record Polygon( PointR[] Points ) : IEnumerable<PointR> {
+public record Polygon( PointR[] Points ) : IEnumerable<PointR> {
 
-		public Int32 Length => this.Points.Length;
+	public Int32 Length => this.Points.Length;
 
-		public PointR this[Int32 index] {
-			get => this.Points[index];
+	public PointR this[Int32 index] {
+		get => this.Points[index];
 
-			set => this.Points[index] = value;
-		}
-
-		public static implicit operator PointR[]( Polygon polygon ) => polygon.Points;
-
-		public static implicit operator Polygon( PointR[] points ) => new( points );
-
-		public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
-
-		IEnumerator<PointR> IEnumerable<PointR>.GetEnumerator() => ( IEnumerator<PointR> )this.Points.GetEnumerator();
+		set => this.Points[index] = value;
 	}
+
+	public static implicit operator PointR[]( Polygon polygon ) => polygon.Points;
+
+	public static implicit operator Polygon( PointR[] points ) => new( points );
+
+	public IEnumerator GetEnumerator() => this.Points.GetEnumerator();
+
+	IEnumerator<PointR> IEnumerable<PointR>.GetEnumerator() => ( IEnumerator<PointR> )this.Points.GetEnumerator();
 }

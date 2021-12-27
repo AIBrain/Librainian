@@ -25,22 +25,21 @@
 //
 // File "Threadsafer.cs" last formatted on 2021-03-05 at 5:24 AM.
 
-namespace Librainian.Threadsafe {
+namespace Librainian.Threadsafe;
 
-	using System;
-	using System.Threading;
-	using JetBrains.Annotations;
+using System;
+using System.Threading;
+using JetBrains.Annotations;
 
-	/// <summary>
-	/// I don't think this is doing what I envision.. I want a FUNC()tion per thread. Each thread to return its own value.
-	/// </summary>
-	/// <typeparam name="TFunc"></typeparam>
-	[NotNull]
-	[UsedImplicitly]
-	public static class Threadsafer<TFunc> where TFunc : notnull {
+/// <summary>
+/// I don't think this is doing what I envision.. I want a FUNC()tion per thread. Each thread to return its own value.
+/// </summary>
+/// <typeparam name="TFunc"></typeparam>
+[NotNull]
+[UsedImplicitly]
+public static class Threadsafer<TFunc> where TFunc : notnull {
 
-		private static ThreadLocal<Func<TFunc>> PerThreadCache { get; } = new();
+	private static ThreadLocal<Func<TFunc>> PerThreadCache { get; } = new();
 
-		public static Func<TFunc>? Get() => PerThreadCache.Value;
-	}
+	public static Func<TFunc>? Get() => PerThreadCache.Value;
 }

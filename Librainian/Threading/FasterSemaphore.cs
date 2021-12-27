@@ -22,25 +22,24 @@
 //
 // File "FasterSemaphore.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
+using System;
+using System.Threading;
 
-	public sealed class FasterSemaphore {
+public sealed class FasterSemaphore {
 
-		private Object locker { get; } = new();
+	private Object locker { get; } = new();
 
-		public void Release() {
-			lock ( this.locker ) {
-				Monitor.Pulse( this.locker );
-			}
+	public void Release() {
+		lock ( this.locker ) {
+			Monitor.Pulse( this.locker );
 		}
+	}
 
-		public void Wait() {
-			lock ( this.locker ) {
-				Monitor.Wait( this.locker );
-			}
+	public void Wait() {
+		lock ( this.locker ) {
+			Monitor.Wait( this.locker );
 		}
 	}
 }

@@ -22,59 +22,58 @@
 //
 // File "DriveExtensions.cs" last formatted on 2020-08-14 at 8:31 PM.
 
-namespace Librainian.ComputerSystem.Devices {
+namespace Librainian.ComputerSystem.Devices;
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Exceptions;
 
-	public static class DriveExtensions {
+public static class DriveExtensions {
 
-		public static List<DriveType> FixedDriveTypes { get; } = new( new[] {
-			DriveType.Fixed
-		} );
+	public static List<DriveType> FixedDriveTypes { get; } = new( new[] {
+		DriveType.Fixed
+	} );
 
-		/// <summary>Drives that have "disks" able to be "removed".</summary>
-		public static List<DriveType> FleetingDriveTypes { get; } = new( new[] {
-			DriveType.Ram, DriveType.Network, DriveType.CDRom, DriveType.Removable
-		} );
+	/// <summary>Drives that have "disks" able to be "removed".</summary>
+	public static List<DriveType> FleetingDriveTypes { get; } = new( new[] {
+		DriveType.Ram, DriveType.Network, DriveType.CDRom, DriveType.Removable
+	} );
 
-		static DriveExtensions() {
-			FleetingDriveTypes.TrimExcess();
-			FixedDriveTypes.TrimExcess();
+	static DriveExtensions() {
+		FleetingDriveTypes.TrimExcess();
+		FixedDriveTypes.TrimExcess();
+	}
+
+	public static Boolean IsFixed( this Disk disk ) {
+		if ( disk is null ) {
+			throw new ArgumentEmptyException( nameof( disk ) );
 		}
 
-		public static Boolean IsFixed( this Disk disk ) {
-			if ( disk is null ) {
-				throw new ArgumentEmptyException( nameof( disk ) );
-			}
+		return FixedDriveTypes.Contains( disk.Info.DriveType );
+	}
 
-			return FixedDriveTypes.Contains( disk.Info.DriveType );
+	public static Boolean IsFixed( this DriveInfo drive ) {
+		if ( drive is null ) {
+			throw new ArgumentEmptyException( nameof( drive ) );
 		}
 
-		public static Boolean IsFixed( this DriveInfo drive ) {
-			if ( drive is null ) {
-				throw new ArgumentEmptyException( nameof( drive ) );
-			}
+		return FixedDriveTypes.Contains( drive.DriveType );
+	}
 
-			return FixedDriveTypes.Contains( drive.DriveType );
+	public static Boolean IsFleeting( this Disk disk ) {
+		if ( disk is null ) {
+			throw new ArgumentEmptyException( nameof( disk ) );
 		}
 
-		public static Boolean IsFleeting( this Disk disk ) {
-			if ( disk is null ) {
-				throw new ArgumentEmptyException( nameof( disk ) );
-			}
+		return FleetingDriveTypes.Contains( disk.Info.DriveType );
+	}
 
-			return FleetingDriveTypes.Contains( disk.Info.DriveType );
+	public static Boolean IsFleeting( this DriveInfo drive ) {
+		if ( drive is null ) {
+			throw new ArgumentEmptyException( nameof( drive ) );
 		}
 
-		public static Boolean IsFleeting( this DriveInfo drive ) {
-			if ( drive is null ) {
-				throw new ArgumentEmptyException( nameof( drive ) );
-			}
-
-			return FleetingDriveTypes.Contains( drive.DriveType );
-		}
+		return FleetingDriveTypes.Contains( drive.DriveType );
 	}
 }

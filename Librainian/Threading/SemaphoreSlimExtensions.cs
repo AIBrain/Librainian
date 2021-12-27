@@ -22,36 +22,35 @@
 //
 // File "SemaphoreSlimExtensions.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
 
-	public static class SemaphoreSlimExtensions {
+public static class SemaphoreSlimExtensions {
 
-		public static async Task<IDisposable> UseWaitAsync( this SemaphoreSlim semaphore, CancellationToken cancelToken = default ) {
-			if ( semaphore is null ) {
-				throw new ArgumentEmptyException( nameof( semaphore ) );
-			}
-
-			await semaphore.WaitAsync( cancelToken ).ConfigureAwait( false );
-
-			return new ReleaseWrapper( semaphore );
+	public static async Task<IDisposable> UseWaitAsync( this SemaphoreSlim semaphore, CancellationToken cancelToken = default ) {
+		if ( semaphore is null ) {
+			throw new ArgumentEmptyException( nameof( semaphore ) );
 		}
 
-		private class ReleaseWrapper : IDisposable {
+		await semaphore.WaitAsync( cancelToken ).ConfigureAwait( false );
 
-			private SemaphoreSlim? _semaphore;
+		return new ReleaseWrapper( semaphore );
+	}
 
-			public ReleaseWrapper( SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
+	private class ReleaseWrapper : IDisposable {
 
-			public void Dispose() {
-				using ( this._semaphore ) {
-					this._semaphore?.Release();
-					this._semaphore = null;
-				}
+		private SemaphoreSlim? _semaphore;
+
+		public ReleaseWrapper( SemaphoreSlim semaphore ) => this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
+
+		public void Dispose() {
+			using ( this._semaphore ) {
+				this._semaphore?.Release();
+				this._semaphore = null;
 			}
 		}
 	}

@@ -25,10 +25,8 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Graphics.DD {
+namespace Librainian.Graphics.DD;
 
-	using System;
+using System;
 
-	public record PointR( Single X, Single Y );
-
-}
+public record PointR( Single X, Single Y );

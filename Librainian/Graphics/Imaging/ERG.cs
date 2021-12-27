@@ -22,61 +22,60 @@
 //
 // File "ERG.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Graphics.Imaging {
+namespace Librainian.Graphics.Imaging;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Drawing.Imaging;
-	using System.Threading.Tasks;
-	using Collections.Sets;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Drawing.Imaging;
+using System.Threading.Tasks;
+using Collections.Sets;
+using Newtonsoft.Json;
 
-	/// <summary> Experimental Resilient Graphics </summary>
-	/// <remarks>Just for fun & learning.</remarks>
-	/// <remarks>
-	///     Prefer native file system compression over encoding/compression speed (assuming local cpu will be 'faster' than
-	///     network transfer speed).
-	///     <para>Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.</para>
-	///     <para>Checksums are used on each pixel to guard against (detect but not fix) corruption.</para>
-	/// </remarks>
-	/// <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
-	/// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
-	[JsonObject]
-	public class Erg {
+/// <summary> Experimental Resilient Graphics </summary>
+/// <remarks>Just for fun & learning.</remarks>
+/// <remarks>
+///     Prefer native file system compression over encoding/compression speed (assuming local cpu will be 'faster' than
+///     network transfer speed).
+///     <para>Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay.</para>
+///     <para>Checksums are used on each pixel to guard against (detect but not fix) corruption.</para>
+/// </remarks>
+/// <remarks> 60 frames per second allows 16.67 milliseconds per frame.</remarks>
+/// <remarks> 1920x1080 pixels = 2,052,000 possible pixels ...so about 8 nanoseconds per pixel? </remarks>
+[JsonObject]
+public class Erg {
 
-		public static readonly String Extension = ".erg";
+	public static readonly String Extension = ".erg";
 
-		/// <summary>Human readable file header.</summary>
-		public static readonly String Header = "ERG0.1";
+	/// <summary>Human readable file header.</summary>
+	public static readonly String Header = "ERG0.1";
 
-		/// <summary>Checksum of all pages</summary>
-		[JsonProperty]
-		public UInt64 Checksum { get; private set; }
+	/// <summary>Checksum of all pages</summary>
+	[JsonProperty]
+	public UInt64 Checksum { get; private set; }
 
-		/// <summary>EXIF metadata</summary>
-		[JsonProperty]
-		public ConcurrentDictionary<String, String> Exifs { get; } = new();
+	/// <summary>EXIF metadata</summary>
+	[JsonProperty]
+	public ConcurrentDictionary<String, String> Exifs { get; } = new();
 
-		public UInt32 Height { get; private set; }
+	public UInt32 Height { get; private set; }
 
-		[JsonProperty]
-		public ConcurrentSet<Pixel> Pixels { get; } = new();
+	[JsonProperty]
+	public ConcurrentSet<Pixel> Pixels { get; } = new();
 
-		[JsonProperty]
-		public ConcurrentSet<Int32> PropertyIdList { get; } = new();
+	[JsonProperty]
+	public ConcurrentSet<Int32> PropertyIdList { get; } = new();
 
-		[JsonProperty]
-		public ConcurrentSet<PropertyItem> PropertyItems { get; } = new();
+	[JsonProperty]
+	public ConcurrentSet<PropertyItem> PropertyItems { get; } = new();
 
-		public UInt32 Width { get; private set; }
+	public UInt32 Width { get; private set; }
 
-		public Erg() => this.Checksum = UInt64.MaxValue;
+	public Erg() => this.Checksum = UInt64.MaxValue;
 
-		public Task<UInt64> CalculateChecksumAsync() =>
-			Task.Run( () => {
-				unchecked {
-					return ( UInt64 )this.Pixels.GetHashCode();
-				}
-			} );
-	}
+	public Task<UInt64> CalculateChecksumAsync() =>
+		Task.Run( () => {
+			unchecked {
+				return ( UInt64 )this.Pixels.GetHashCode();
+			}
+		} );
 }

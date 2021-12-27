@@ -22,14 +22,13 @@
 //
 // File "IUsableSemaphore.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 
-	/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
-	public interface IUsableSemaphore : IDisposable {
+/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
+public interface IUsableSemaphore : IDisposable {
 
-		Task<IUsableSemaphoreWrapper> WaitAsync();
-	}
+	Task<IUsableSemaphoreWrapper> WaitAsync();
 }

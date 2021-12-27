@@ -22,38 +22,37 @@
 //
 // File "HighResolutionDateTime.cs" last formatted on 2020-08-14 at 8:38 PM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using OperatingSystem;
+using System;
+using OperatingSystem;
 
-	/// <summary>From https://manski.net/2014/07/high-resolution-clock-in-csharp/</summary>
-	public static class HighResolutionDateTime {
+/// <summary>From https://manski.net/2014/07/high-resolution-clock-in-csharp/</summary>
+public static class HighResolutionDateTime {
 
-		public static Boolean IsAvailable { get; }
+	public static Boolean IsAvailable { get; }
 
-		public static DateTime UtcNow {
-			get {
-				if ( !IsAvailable ) {
-					throw new InvalidOperationException( "High resolution clock is not available." );
-				}
-
-				NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
-
-				return DateTime.FromFileTimeUtc( filetime );
+	public static DateTime UtcNow {
+		get {
+			if ( !IsAvailable ) {
+				throw new InvalidOperationException( "High resolution clock is not available." );
 			}
+
+			NativeMethods.GetSystemTimePreciseAsFileTime( out var filetime );
+
+			return DateTime.FromFileTimeUtc( filetime );
 		}
+	}
 
-		static HighResolutionDateTime() {
-			try {
-				NativeMethods.GetSystemTimePreciseAsFileTime( out var _ );
-				IsAvailable = true;
-			}
-			catch ( EntryPointNotFoundException ) {
+	static HighResolutionDateTime() {
+		try {
+			NativeMethods.GetSystemTimePreciseAsFileTime( out var _ );
+			IsAvailable = true;
+		}
+		catch ( EntryPointNotFoundException ) {
 
-				// Not running Windows 8 or higher.
-				IsAvailable = false;
-			}
+			// Not running Windows 8 or higher.
+			IsAvailable = false;
 		}
 	}
 }

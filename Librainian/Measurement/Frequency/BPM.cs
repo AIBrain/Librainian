@@ -25,61 +25,60 @@
 //
 // File "BPM.cs" last touched on 2021-07-31 at 7:37 AM by Protiguous.
 
-namespace Librainian.Measurement.Frequency {
+namespace Librainian.Measurement.Frequency;
 
-	using System;
-	using Newtonsoft.Json;
-	using Time;
+using System;
+using Newtonsoft.Json;
+using Time;
 
-	/// <summary>BPM. Beats Per Minute</summary>
-	[JsonObject]
-	public record Bpm( Decimal Value ) {
+/// <summary>BPM. Beats Per Minute</summary>
+[JsonObject]
+public record Bpm( Decimal Value ) {
 
-		/// <summary>Ten <see cref="Bpm" /> s.</summary>
-		public static Bpm Fifteen { get; } = new( 15 );
+	/// <summary>Ten <see cref="Bpm" /> s.</summary>
+	public static Bpm Fifteen { get; } = new( 15 );
 
-		/// <summary>Five <see cref="Bpm" /> s.</summary>
-		public static Bpm Five { get; } = new( 5 );
+	/// <summary>Five <see cref="Bpm" /> s.</summary>
+	public static Bpm Five { get; } = new( 5 );
 
-		/// <summary>Five Hundred <see cref="Bpm" /> s.</summary>
-		public static Bpm FiveHundred { get; } = new( 500 );
+	/// <summary>Five Hundred <see cref="Bpm" /> s.</summary>
+	public static Bpm FiveHundred { get; } = new( 500 );
 
-		/// <summary>111. 1 Hertz <see cref="Bpm" />.</summary>
-		public static Bpm Hertz111 { get; } = new( 9 );
+	/// <summary>111. 1 Hertz <see cref="Bpm" />.</summary>
+	public static Bpm Hertz111 { get; } = new( 9 );
 
 		
-		public static Bpm MaxValue { get; } = new( UInt64.MaxValue );
+	public static Bpm MaxValue { get; } = new( UInt64.MaxValue );
 
-		/// <summary>About zero. :P</summary>
-		public static Bpm MinValue { get; } = new( Decimal.MinValue );
+	/// <summary>About zero. :P</summary>
+	public static Bpm MinValue { get; } = new( Decimal.MinValue );
 
-		/// <summary>One <see cref="Bpm" />.</summary>
-		public static Bpm One { get; } = new( 1 );
+	/// <summary>One <see cref="Bpm" />.</summary>
+	public static Bpm One { get; } = new( 1 );
 
-		/// <summary>One Thousand Nine <see cref="Bpm" /> (Prime).</summary>
-		public static Bpm OneThousandNine { get; } = new( 1009 );
+	/// <summary>One Thousand Nine <see cref="Bpm" /> (Prime).</summary>
+	public static Bpm OneThousandNine { get; } = new( 1009 );
 
-		/// <summary>Ten <see cref="Bpm" /> s.</summary>
-		public static Bpm Ten { get; } = new( 10 );
+	/// <summary>Ten <see cref="Bpm" /> s.</summary>
+	public static Bpm Ten { get; } = new( 10 );
 
-		/// <summary>Three <see cref="Bpm" /> s.</summary>
-		public static Bpm Three { get; } = new( 3 );
+	/// <summary>Three <see cref="Bpm" /> s.</summary>
+	public static Bpm Three { get; } = new( 3 );
 
-		/// <summary>Three Three Three <see cref="Bpm" />.</summary>
-		public static Bpm ThreeHundredThirtyThree { get; } = new( 333 );
+	/// <summary>Three Three Three <see cref="Bpm" />.</summary>
+	public static Bpm ThreeHundredThirtyThree { get; } = new( 333 );
 
-		/// <summary>Two <see cref="Bpm" /> s.</summary>
-		public static Bpm Two { get; } = new( 2 );
+	/// <summary>Two <see cref="Bpm" /> s.</summary>
+	public static Bpm Two { get; } = new( 2 );
 
-		/// <summary>Two Hundred <see cref="Bpm" />.</summary>
-		public static Bpm TwoHundred { get; } = new( 200 );
+	/// <summary>Two Hundred <see cref="Bpm" />.</summary>
+	public static Bpm TwoHundred { get; } = new( 200 );
 
-		/// <summary>Two Hundred Eleven <see cref="Bpm" /> (Prime).</summary>
-		public static Bpm TwoHundredEleven { get; } = new( 211 );
+	/// <summary>Two Hundred Eleven <see cref="Bpm" /> (Prime).</summary>
+	public static Bpm TwoHundredEleven { get; } = new( 211 );
 
-		/// <summary>Two Thousand Three <see cref="Bpm" /> (Prime).</summary>
-		public static Bpm TwoThousandThree { get; } = new( 2003 );
+	/// <summary>Two Thousand Three <see cref="Bpm" /> (Prime).</summary>
+	public static Bpm TwoThousandThree { get; } = new( 2003 );
 
-		public static implicit operator TimeSpan( Bpm bpm ) => TimeSpan.FromMilliseconds( ( Double )bpm.Value / Seconds.InOneMinute );
-	}
+	public static implicit operator TimeSpan( Bpm bpm ) => TimeSpan.FromMilliseconds( ( Double )bpm.Value / Seconds.InOneMinute );
 }

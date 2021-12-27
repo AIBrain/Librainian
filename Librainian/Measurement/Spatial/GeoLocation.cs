@@ -25,13 +25,12 @@
 //
 // File "GeoLocation.cs" last formatted on 2021-03-06 at 6:43 AM.
 
-namespace Librainian.Measurement.Spatial {
+namespace Librainian.Measurement.Spatial;
 
-	using System;
+using System;
 
-	public record GeoLocation {
-		public Double Latitude { get; set; }
+public record GeoLocation {
+	public Double Latitude { get; set; }
 
-		public Double Longitude { get; set; }
-	}
+	public Double Longitude { get; set; }
 }

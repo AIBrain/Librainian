@@ -25,149 +25,148 @@
 //
 // File "Job.cs" last touched on 2021-06-18 at 5:40 PM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Diagnostics;
-	using System.Runtime.CompilerServices;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using Extensions;
-	using Logging;
-	using Maths;
-	using Measurement.Frequency;
-	using Utilities;
-	using Utilities.Disposables;
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
+using Extensions;
+using Logging;
+using Maths;
+using Measurement.Frequency;
+using Utilities;
+using Utilities.Disposables;
+
+/// <summary>
+///     <para>
+///         A task with a maximum time to run before a cancel is thrown (<see cref="TaskCanceledException" /> which
+///         sometimes can be thrown as <see cref="OperationCanceledException" />, I think).
+///     </para>
+/// </summary>
+[NeedsTesting]
+public class Job<T> : ABetterClassDispose {
+
+	private Stopwatch _stopwatch { get; }
+
+	/// <summary>Set to cancel this job with the <see cref="MaxRunningTime" />.</summary>
+	public CancellationTokenSource CTS { get; }
+
+	/// <summary>Query the <see cref="ETR" />.</summary>
+	public TimeSpan EstimatedTimeRemaining() => this.MaxRunningTime - this.Elapsed();
+
+	public TimeSpan MaxRunningTime { get; private set; }
+
+	public IProgress<Single> Progress { get; }
+
+	public T? Result { get; private set; }
+
+	/// <summary>Call await on this task.</summary>
+	public Task TheTask { get; } = null!;
 
 	/// <summary>
-	///     <para>
-	///         A task with a maximum time to run before a cancel is thrown (<see cref="TaskCanceledException" /> which
-	///         sometimes can be thrown as <see cref="OperationCanceledException" />, I think).
-	///     </para>
 	/// </summary>
-	[NeedsTesting]
-	public class Job<T> : ABetterClassDispose {
+	/// <param name="maxRuntime"></param>
+	/// <param name="progress">Update this progress after each <see cref="Step" />.</param>
+	private Job( TimeSpan maxRuntime, IProgress<Single> progress ) : base( nameof( Job<T> ) ) {
+		this.MaxRunningTime = maxRuntime;
+		this.Progress = progress;
+		this.CTS = new CancellationTokenSource( this.MaxRunningTime );
+		this._stopwatch = Stopwatch.StartNew();
+		this.Timer = FluentTimer.Create( Fps.Sixty ).AutoReset().AndStart();
+	}
 
-		private Stopwatch _stopwatch { get; }
+	private FluentTimer Timer { get; set; }
 
-		/// <summary>Set to cancel this job with the <see cref="MaxRunningTime" />.</summary>
-		public CancellationTokenSource CTS { get; }
-
-		/// <summary>Query the <see cref="ETR" />.</summary>
-		public TimeSpan EstimatedTimeRemaining() => this.MaxRunningTime - this.Elapsed();
-
-		public TimeSpan MaxRunningTime { get; private set; }
-
-		public IProgress<Single> Progress { get; }
-
-		public T? Result { get; private set; }
-
-		/// <summary>Call await on this task.</summary>
-		public Task TheTask { get; } = null!;
-
-		/// <summary>
-		/// </summary>
-		/// <param name="maxRuntime"></param>
-		/// <param name="progress">Update this progress after each <see cref="Step" />.</param>
-		private Job( TimeSpan maxRuntime, IProgress<Single> progress ) : base( nameof( Job<T> ) ) {
-			this.MaxRunningTime = maxRuntime;
-			this.Progress = progress;
-			this.CTS = new CancellationTokenSource( this.MaxRunningTime );
-			this._stopwatch = Stopwatch.StartNew();
-			this.Timer = FluentTimer.Create( Fps.Sixty ).AutoReset().AndStart();
+	public Job( Func<T> func, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
+		if ( func is null ) {
+			throw new ArgumentEmptyException( nameof( func ) );
 		}
 
-		private FluentTimer Timer { get; set; }
+		T? result = default;
 
-		public Job( Func<T> func, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
-			if ( func is null ) {
-				throw new ArgumentEmptyException( nameof( func ) );
-			}
+		this.TheTask = new Task( () => result = func.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( _ => this.Done( result ),
+			TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
+	}
 
-			T? result = default;
-
-			this.TheTask = new Task( () => result = func.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( _ => this.Done( result ),
-				TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
+	public Job( Action action, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
+		if ( action is null ) {
+			throw new ArgumentEmptyException( nameof( action ) );
 		}
 
-		public Job( Action action, TimeSpan maxRuntime, IProgress<Single> progress ) : this( maxRuntime, progress ) {
-			if ( action is null ) {
-				throw new ArgumentEmptyException( nameof( action ) );
-			}
+		this.TheTask = new Task( () => action.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( _ => this.Done( default( T ) ),
+			TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
+	}
 
-			this.TheTask = new Task( () => action.Trap(), this.CTS.Token, TaskCreationOptions.PreferFairness ).ContinueWith( _ => this.Done( default( T ) ),
-				TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously );
+	private void Done( T? result ) {
+		this._stopwatch.Stop();
+		$"Job (Task.Id={this.TheTask.Id}) is done.".Verbose();
+
+		this.Result = result;
+	}
+
+	public static implicit operator Task( Job<T> job ) {
+		if ( job is null ) {
+			throw new ArgumentEmptyException( nameof( job ) );
 		}
 
-		private void Done( T? result ) {
-			this._stopwatch.Stop();
-			$"Job (Task.Id={this.TheTask.Id}) is done.".Verbose();
+		return job.TheTask;
+	}
 
-			this.Result = result;
+	/// <summary>
+	///     Move the <see cref="EstimatedTimeRemaining" /> TODO Needs tested..am I thinking right about this? Has no
+	///     effect if the task is <see cref="IsDone" />.
+	/// </summary>
+	/// <param name="timeSpan"></param>
+	public void AdjustETR( TimeSpan timeSpan ) {
+		if ( !this.IsDone() ) {
+			this.MaxRunningTime = ( this.Elapsed() + timeSpan ).Half();
+		}
+	}
+
+	/// <summary>
+	///     Increase the <see cref="MaxRunningTime" /> by a <paramref name="amountOfTime" />. Has no effect if the task is
+	///     done.
+	/// </summary>
+	/// <param name="amountOfTime"></param>
+	public void ChangeRemainingTime( TimeSpan amountOfTime ) {
+		if ( !this.IsDone() ) {
+			this.MaxRunningTime += amountOfTime;
+
+			//var stillLeft = this.Elapsed() - this.MaxRunningTime;
+			this.CTS.CancelAfter( this.MaxRunningTime );
+		}
+	}
+
+	[MethodImpl( MethodImplOptions.Synchronized )]
+	public override void DisposeManaged() {
+		base.DisposeManaged();
+		if ( !this.CTS.IsCancellationRequested ) {
+			this.CTS.Cancel( true );
 		}
 
-		public static implicit operator Task( Job<T> job ) {
-			if ( job is null ) {
-				throw new ArgumentEmptyException( nameof( job ) );
-			}
+		this.Timer.Stop();
+	}
 
-			return job.TheTask;
+	/// <summary>
+	///     How long the <see cref="Job{T}" /> has been running.
+	/// </summary>
+	public TimeSpan Elapsed() => this._stopwatch.Elapsed;
+
+	/// <summary>Query the <see cref="EstimatedTimeRemaining" />.</summary>
+	public TimeSpan ETR() => this.EstimatedTimeRemaining();
+
+	public Boolean IsDone() => this.TheTask.IsDone();
+
+	/// <summary>aka Run()</summary>
+	public async Task Task() {
+		try {
+			await this.TheTask.ConfigureAwait( false );
 		}
-
-		/// <summary>
-		///     Move the <see cref="EstimatedTimeRemaining" /> TODO Needs tested..am I thinking right about this? Has no
-		///     effect if the task is <see cref="IsDone" />.
-		/// </summary>
-		/// <param name="timeSpan"></param>
-		public void AdjustETR( TimeSpan timeSpan ) {
-			if ( !this.IsDone() ) {
-				this.MaxRunningTime = ( this.Elapsed() + timeSpan ).Half();
-			}
-		}
-
-		/// <summary>
-		///     Increase the <see cref="MaxRunningTime" /> by a <paramref name="amountOfTime" />. Has no effect if the task is
-		///     done.
-		/// </summary>
-		/// <param name="amountOfTime"></param>
-		public void ChangeRemainingTime( TimeSpan amountOfTime ) {
-			if ( !this.IsDone() ) {
-				this.MaxRunningTime += amountOfTime;
-
-				//var stillLeft = this.Elapsed() - this.MaxRunningTime;
-				this.CTS.CancelAfter( this.MaxRunningTime );
-			}
-		}
-
-		[MethodImpl( MethodImplOptions.Synchronized )]
-		public override void DisposeManaged() {
-			base.DisposeManaged();
-			if ( !this.CTS.IsCancellationRequested ) {
-				this.CTS.Cancel( true );
-			}
-
-			this.Timer.Stop();
-		}
-
-		/// <summary>
-		///     How long the <see cref="Job{T}" /> has been running.
-		/// </summary>
-		public TimeSpan Elapsed() => this._stopwatch.Elapsed;
-
-		/// <summary>Query the <see cref="EstimatedTimeRemaining" />.</summary>
-		public TimeSpan ETR() => this.EstimatedTimeRemaining();
-
-		public Boolean IsDone() => this.TheTask.IsDone();
-
-		/// <summary>aka Run()</summary>
-		public async Task Task() {
-			try {
-				await this.TheTask.ConfigureAwait( false );
-			}
-			catch ( TaskCanceledException ) {
-				this.Result = default( T );
-			}
+		catch ( TaskCanceledException ) {
+			this.Result = default( T );
 		}
 	}
 }

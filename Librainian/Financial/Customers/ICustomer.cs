@@ -22,7 +22,6 @@
 //
 // File "ICustomer.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial.Customers {
+namespace Librainian.Financial.Customers; 
 
-	internal interface ICustomer : IPerson { }
-}
+internal interface ICustomer : IPerson { }

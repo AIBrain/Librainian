@@ -27,21 +27,20 @@
 
 #nullable enable
 
-namespace Librainian.Exceptions.Warnings {
+namespace Librainian.Exceptions.Warnings;
 
-	using System;
-	using System.Runtime.Serialization;
+using System;
+using System.Runtime.Serialization;
 
-	/// <summary><see cref="Warning" />: What the code just tried to do is <see cref="NotAllowedWarning" />.</summary>
-	[Serializable]
-	public class NotAllowedWarning : Warning {
+/// <summary><see cref="Warning" />: What the code just tried to do is <see cref="NotAllowedWarning" />.</summary>
+[Serializable]
+public class NotAllowedWarning : Warning {
 
-		protected NotAllowedWarning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+	protected NotAllowedWarning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public NotAllowedWarning() : this( nameof( NotAllowedWarning ) ) { }
+	public NotAllowedWarning() : this( nameof( NotAllowedWarning ) ) { }
 
-		public NotAllowedWarning( String message ) : base( message ) { }
+	public NotAllowedWarning( String message ) : base( message ) { }
 
-		public NotAllowedWarning( String message, Exception? inner ) : base( message, inner ) { }
-	}
+	public NotAllowedWarning( String message, Exception? inner ) : base( message, inner ) { }
 }

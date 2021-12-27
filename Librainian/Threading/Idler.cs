@@ -25,124 +25,123 @@
 //
 // File "Idler.cs" last touched on 2021-04-25 at 10:38 AM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using System.Windows.Forms;
-	using Collections.Sets;
-	using Exceptions;
-	using Extensions;
-	using Logging;
-	using Utilities.Disposables;
+using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Collections.Sets;
+using Exceptions;
+using Extensions;
+using Logging;
+using Utilities.Disposables;
 
-	public enum JobStatus {
+public enum JobStatus {
 
-		Exception = -1,
+	Exception = -1,
 
-		Unknown = 0,
+	Unknown = 0,
 
-		Running = 1,
+	Running = 1,
 
-		Finished
+	Finished
+}
+
+public interface IIdler {
+
+	/// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
+	/// <param name="name"></param>
+	/// <param name="action"> </param>
+	void Add( String name, Action action );
+
+	Boolean Any();
+
+	/// <summary>
+	///     Run any remaining jobs.
+	///     <para>Will exit while loop if <see cref="CancellationToken" /> is signaled to cancel.</para>
+	/// </summary>
+	void Finish();
+}
+
+public class Idler : ABetterClassDispose, IIdler {
+
+	private ConcurrentDictionary<String, Action> Jobs { get; } = new();
+
+	private ConcurrentHashset<Task> Runners { get; } = new();
+
+	private CancellationToken Token { get; }
+
+	public Idler( CancellationToken cancellationToken ) : base( nameof( Idler ) ) {
+		this.Token = cancellationToken;
+
+		//this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
+		Application.Idle += this.OnIdle;
 	}
 
-	public interface IIdler {
+	/// <summary>Pull next <see cref="Action" /> to run from the queue and execute it.</summary>
+	private void NextJob() {
+		if ( !this.Any() || this.Token.IsCancellationRequested ) {
+			return;
+		}
 
-		/// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
-		/// <param name="name"></param>
-		/// <param name="action"> </param>
-		void Add( String name, Action action );
+		var job = this.Jobs.Keys.FirstOrDefault();
 
-		Boolean Any();
+		if ( job is null || !this.Jobs.TryRemove( job, out var jack ) ) {
+			return;
+		}
 
-		/// <summary>
-		///     Run any remaining jobs.
-		///     <para>Will exit while loop if <see cref="CancellationToken" /> is signaled to cancel.</para>
-		/// </summary>
-		void Finish();
+		try {
+
+			$"{nameof(Idler)}: Running next job..".Verbose();
+			jack.Execute();
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+		finally {
+			this.Nop();
+
+			$"{nameof( Idler )}: Done with job.".Verbose();
+		}
 	}
 
-	public class Idler : ABetterClassDispose, IIdler {
+	private void OnIdle( Object? sender, EventArgs? e ) => this.NextJob();
 
-		private ConcurrentDictionary<String, Action> Jobs { get; } = new();
+	private void RemoveHandler() {
+		if ( !this.IsDisposed ) {
+			Application.Idle -= this.OnIdle;
+		}
+	}
 
-		private ConcurrentHashset<Task> Runners { get; } = new();
-
-		private CancellationToken Token { get; }
-
-		public Idler( CancellationToken cancellationToken ) : base( nameof( Idler ) ) {
-			this.Token = cancellationToken;
-
-			//this.Jobs.CollectionChanged += ( sender, args ) => this.NextJob();
-			Application.Idle += this.OnIdle;
+	/// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
+	/// <param name="name"></param>
+	/// <param name="action"> </param>
+	public void Add( String name, Action action ) {
+		if ( action is null ) {
+			throw new ArgumentEmptyException( nameof( action ) );
 		}
 
-		/// <summary>Pull next <see cref="Action" /> to run from the queue and execute it.</summary>
-		private void NextJob() {
-			if ( !this.Any() || this.Token.IsCancellationRequested ) {
-				return;
-			}
-
-			var job = this.Jobs.Keys.FirstOrDefault();
-
-			if ( job is null || !this.Jobs.TryRemove( job, out var jack ) ) {
-				return;
-			}
-
-			try {
-
-				$"{nameof(Idler)}: Running next job..".Verbose();
-				jack.Execute();
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-			finally {
-				this.Nop();
-
-				$"{nameof( Idler )}: Done with job.".Verbose();
-			}
+		if ( String.IsNullOrWhiteSpace( name ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
 		}
 
-		private void OnIdle( Object? sender, EventArgs? e ) => this.NextJob();
+		Error.Trap( () => this.Jobs.TryAdd( name, action ) );
+	}
 
-		private void RemoveHandler() {
-			if ( !this.IsDisposed ) {
-				Application.Idle -= this.OnIdle;
-			}
-		}
+	public Boolean Any() => this.Jobs.Any();
 
-		/// <summary>Add an <paramref name="action" /> as a job to be ran on the next <see cref="Application.Idle" /> event.</summary>
-		/// <param name="name"></param>
-		/// <param name="action"> </param>
-		public void Add( String name, Action action ) {
-			if ( action is null ) {
-				throw new ArgumentEmptyException( nameof( action ) );
-			}
+	public override void DisposeManaged() => this.RemoveHandler();
 
-			if ( String.IsNullOrWhiteSpace( name ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
-			}
-
-			Error.Trap( () => this.Jobs.TryAdd( name, action ) );
-		}
-
-		public Boolean Any() => this.Jobs.Any();
-
-		public override void DisposeManaged() => this.RemoveHandler();
-
-		/// <summary>
-		///     Run any remaining jobs.
-		///     <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
-		/// </summary>
-		public void Finish() {
-			while ( this.Any() && !this.Token.IsCancellationRequested ) {
-				this.NextJob();
-			}
+	/// <summary>
+	///     Run any remaining jobs.
+	///     <para>Will exit prematurely if <see cref="Token" /> is signaled to cancel.</para>
+	/// </summary>
+	public void Finish() {
+		while ( this.Any() && !this.Token.IsCancellationRequested ) {
+			this.NextJob();
 		}
 	}
 }

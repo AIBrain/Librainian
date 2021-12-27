@@ -25,13 +25,12 @@
 //
 // File "GeoLocationF.cs" last formatted on 2021-03-06 at 6:44 AM.
 
-namespace Librainian.Measurement.Spatial {
+namespace Librainian.Measurement.Spatial;
 
-	using System;
+using System;
 
-	public record GeoLocationF {
-		public Single Latitude { get; set; }
+public record GeoLocationF {
+	public Single Latitude { get; set; }
 
-		public Single Longitude { get; set; }
-	}
+	public Single Longitude { get; set; }
 }

@@ -22,25 +22,24 @@
 //
 // File "PairOfDoubles.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using Extensions;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[Immutable]
-	public struct PairOfDoubles {
+[JsonObject]
+[Immutable]
+public struct PairOfDoubles {
 
-		[JsonProperty]
-		public Double High { get; private set; }
+	[JsonProperty]
+	public Double High { get; private set; }
 
-		[JsonProperty]
-		public Double Low { get; private set; }
+	[JsonProperty]
+	public Double Low { get; private set; }
 
-		public PairOfDoubles( Double low, Double high ) : this() {
-			this.Low = Math.Min( low, high );
-			this.High = Math.Max( low, high );
-		}
+	public PairOfDoubles( Double low, Double high ) : this() {
+		this.Low = Math.Min( low, high );
+		this.High = Math.Max( low, high );
 	}
 }

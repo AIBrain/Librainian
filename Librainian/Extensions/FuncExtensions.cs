@@ -22,76 +22,75 @@
 //
 // File "FuncExtensions.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Diagnostics.CodeAnalysis;
-	using System.Runtime.CompilerServices;
-	using Exceptions;
-	using Storage = System.Collections.Concurrent.ConcurrentDictionary<System.Object, System.Object>;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using Exceptions;
+using Storage = System.Collections.Concurrent.ConcurrentDictionary<System.Object, System.Object>;
 
-	/// <summary>http://www.jaylee.org/post/2013/04/22/Immutable-Data-and-Memoization-in-CSharp-Part-2.aspx</summary>
-	public static class FuncExtensions {
+/// <summary>http://www.jaylee.org/post/2013/04/22/Immutable-Data-and-Memoization-in-CSharp-Part-2.aspx</summary>
+public static class FuncExtensions {
 
-		public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new();
+	public static ConditionalWeakTable<Object, Storage> WeakResults { get; } = new();
 
-		// Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
-		public static TResult? ApplyMemoized<TSource, TResult, TParam>(
-			[DisallowNull] this TSource source,
-			Func<TSource, TParam, TResult> selector,
-			[DisallowNull] TParam param
-		) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
-
-			if ( selector == null ) {
-				throw new ArgumentEmptyException( nameof( selector ) );
-			}
-
-			if ( param is null ) {
-				throw new ArgumentEmptyException( nameof( param ) );
-			}
-
-			return selector.AsWeakMemoized( source )( param );
+	// Since is not possible to implicitly make a Func<T,U> out of a method group, let's use the source as a function type inference.
+	public static TResult? ApplyMemoized<TSource, TResult, TParam>(
+		[DisallowNull] this TSource source,
+		Func<TSource, TParam, TResult> selector,
+		[DisallowNull] TParam param
+	) {
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
 		}
 
-		public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, [DisallowNull] TSource source ) {
-			if ( selector == null ) {
-				throw new ArgumentEmptyException( nameof( selector ) );
-			}
+		if ( selector == null ) {
+			throw new ArgumentEmptyException( nameof( selector ) );
+		}
 
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
+		if ( param is null ) {
+			throw new ArgumentEmptyException( nameof( param ) );
+		}
 
-			return param => {
+		return selector.AsWeakMemoized( source )( param );
+	}
 
-				// Get the dictionary that associates delegates to a parameter, on the specified source
-				var values = WeakResults.GetOrCreateValue( source );
+	public static Func<TParam, TResult?> AsWeakMemoized<TSource, TResult, TParam>( this Func<TSource, TParam, TResult> selector, [DisallowNull] TSource source ) {
+		if ( selector == null ) {
+			throw new ArgumentEmptyException( nameof( selector ) );
+		}
 
-				var key = new {
-					selector,
-					param
-				};
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
+		}
 
-				// Get the result for the combination source/selector/param
-				var cached = values.TryGetValue( key, out var res );
+		return param => {
 
-				if ( !cached ) {
-					res = selector( source, param );
+			// Get the dictionary that associates delegates to a parameter, on the specified source
+			var values = WeakResults.GetOrCreateValue( source );
 
-					if ( res != null ) {
-						values[key] = res;
-					}
-				}
+			var key = new {
+				selector,
+				param
+			};
+
+			// Get the result for the combination source/selector/param
+			var cached = values.TryGetValue( key, out var res );
+
+			if ( !cached ) {
+				res = selector( source, param );
 
 				if ( res != null ) {
-					return ( TResult? )res;
+					values[key] = res;
 				}
+			}
 
-				return default;
-			};
-		}
+			if ( res != null ) {
+				return ( TResult? )res;
+			}
+
+			return default;
+		};
 	}
 }

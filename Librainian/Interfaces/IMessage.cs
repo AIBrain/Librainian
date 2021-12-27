@@ -25,52 +25,50 @@
 // 
 // File "IMessage.cs" last touched on 2021-09-08 at 1:53 PM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces;
 
-	using System;
-	using Parsing;
+using System;
+using Parsing;
 
-	public interface IMessage : IColored, IDisposable {
+public interface IMessage : IColored, IDisposable {
 
-		/// <summary>The data for this message. Usually a string.</summary>
-		String Data { get; init; }
+	/// <summary>The data for this message. Usually a string.</summary>
+	String Data { get; init; }
 
-		/// <summary>The UTC when this message was created.</summary>
-		DateTime Date { get; }
+	/// <summary>The UTC when this message was created.</summary>
+	DateTime Date { get; }
 
-		/// <summary>
-		///     The message's source identifier.. (like the user's name)
-		/// </summary>
-		String? Description { get; set; }
+	/// <summary>
+	///     The message's source identifier.. (like the user's name)
+	/// </summary>
+	String? Description { get; set; }
 
-		/// <summary>Guid assigned on message creation.</summary>
-		Guid ID { get; }
+	/// <summary>Guid assigned on message creation.</summary>
+	Guid ID { get; }
 
-		Boolean Processed { get; set; }
+	Boolean Processed { get; set; }
 
-		DateTime? ProcessingEnded { get; set; }
+	DateTime? ProcessingEnded { get; set; }
 
-		DateTime? ProcessingStarted { get; set; }
+	DateTime? ProcessingStarted { get; set; }
 
-		/// <summary>This message is in reference to.</summary>
-		Guid ReferenceMessageID { get; set; }
+	/// <summary>This message is in reference to.</summary>
+	Guid ReferenceMessageID { get; set; }
 
-		SourceRecord Source { get; set; }
+	SourceRecord Source { get; set; }
 
-		TimeSpan? ProcessingTime() {
-			if ( this.ProcessingStarted is null || this.ProcessingEnded is null ) {
-				return default( TimeSpan? );
-			}
-
-			return this.ProcessingEnded.Value - this.ProcessingStarted.Value;
+	TimeSpan? ProcessingTime() {
+		if ( this.ProcessingStarted is null || this.ProcessingEnded is null ) {
+			return default( TimeSpan? );
 		}
 
-		/// <summary>
-		///     Default layout for <see cref="IMessage" /> interface.
-		///     <para>"override" in derived class to change what is shown.</para>
-		/// </summary>
-		String ToString() => $"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description}){Environment.NewLine}{Symbols.VerticalEllipsis}{this.Data}";
-
+		return this.ProcessingEnded.Value - this.ProcessingStarted.Value;
 	}
+
+	/// <summary>
+	///     Default layout for <see cref="IMessage" /> interface.
+	///     <para>"override" in derived class to change what is shown.</para>
+	/// </summary>
+	String ToString() => $"{nameof( Message )} {this.ID:D} from {this.Source:G} ({this.Description}){Environment.NewLine}{Symbols.VerticalEllipsis}{this.Data}";
 
 }

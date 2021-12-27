@@ -24,145 +24,144 @@
 
 #nullable enable
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using System.Text.RegularExpressions;
-	using Exceptions;
+using System;
+using System.Text.RegularExpressions;
+using Exceptions;
+
+/// <summary>
+///     A custom formatter for byte sizes (things like files, network bandwidth, etc.) that will automatically
+///     determine the best abbreviation.
+/// </summary>
+/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara </remarks>
+public class ByteSizeFormatter : Formatter {
+
+	private static readonly String[] Suffixes = {
+		" B", " KB", " MB", " GB", " TB", " PB", " EB"
+	};
 
 	/// <summary>
-	///     A custom formatter for byte sizes (things like files, network bandwidth, etc.) that will automatically
-	///     determine the best abbreviation.
+	///     Converts the string representation of a byte size to its 64-bit signed integer equivalent. A return value
+	///     indicates whether the conversion succeeded.
 	/// </summary>
-	/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara </remarks>
-	public class ByteSizeFormatter : Formatter {
+	/// <param name="input">A string containing a byte size to convert.</param>
+	/// <param name="bytes">
+	///     When this method returns, contains the 64-bit signed integer value equivalent of the value contained in
+	///     <paramref name="input" />, if the conversion succeeded,
+	///     or zero if the conversion failed. The conversion fails if the <paramref name="input" /> parameter is null or Empty,
+	///     or is not of the correct format. This parameter is passed
+	///     uninitialized; any value originally supplied in result will be overwritten.
+	/// </param>
+	/// <returns>
+	///     <see langword="true" /> if <paramref name="input" /> was converted successfully; otherwise,
+	///     <see langword="false" />.
+	/// </returns>
+	/// <exception cref="InvalidOperationException"></exception>
+	public static Boolean TryParse( String input, out Int64 bytes ) {
+		const String expr = @"^\s*(?<num>\d+(?:\.\d+)?)\s*(?<mod>[kKmMgGtTpPeEyY]?[bB])?\s*$";
+		var match = Regex.Match( input, expr );
+		bytes = 0;
 
-		private static readonly String[] Suffixes = {
-			" B", " KB", " MB", " GB", " TB", " PB", " EB"
-		};
-
-		/// <summary>
-		///     Converts the string representation of a byte size to its 64-bit signed integer equivalent. A return value
-		///     indicates whether the conversion succeeded.
-		/// </summary>
-		/// <param name="input">A string containing a byte size to convert.</param>
-		/// <param name="bytes">
-		///     When this method returns, contains the 64-bit signed integer value equivalent of the value contained in
-		///     <paramref name="input" />, if the conversion succeeded,
-		///     or zero if the conversion failed. The conversion fails if the <paramref name="input" /> parameter is null or Empty,
-		///     or is not of the correct format. This parameter is passed
-		///     uninitialized; any value originally supplied in result will be overwritten.
-		/// </param>
-		/// <returns>
-		///     <see langword="true" /> if <paramref name="input" /> was converted successfully; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		/// <exception cref="InvalidOperationException"></exception>
-		public static Boolean TryParse( String input, out Int64 bytes ) {
-			const String expr = @"^\s*(?<num>\d+(?:\.\d+)?)\s*(?<mod>[kKmMgGtTpPeEyY]?[bB])?\s*$";
-			var match = Regex.Match( input, expr );
-			bytes = 0;
-
-			if ( !match.Success ) {
-				return false;
-			}
-
-			Int64 mult = 1;
-
-			switch ( match.Groups["mod"].Value.ToUpper() ) {
-				case "B":
-				case "":
-					break;
-
-				case "KB":
-					mult = 1024;
-
-					break;
-
-				case "MB":
-					mult = ( Int64 )Math.Pow( 1024, 2 );
-
-					break;
-
-				case "GB":
-					mult = ( Int64 )Math.Pow( 1024, 3 );
-
-					break;
-
-				case "TB":
-					mult = ( Int64 )Math.Pow( 1024, 4 );
-
-					break;
-
-				case "PB":
-					mult = ( Int64 )Math.Pow( 1024, 5 );
-
-					break;
-
-				case "EB":
-					mult = ( Int64 )Math.Pow( 1024, 6 );
-
-					break;
-
-				case "YB":
-					mult = ( Int64 )Math.Pow( 1024, 7 );
-
-					break;
-
-				default:
-					throw new InvalidOperationException();
-			}
-
-			bytes = ( Int64 )Math.Round( Single.Parse( match.Groups["num"].Value ) * mult );
-
-			return true;
+		if ( !match.Success ) {
+			return false;
 		}
 
-		/// <summary>
-		///     Converts the value of a specified object to an equivalent string representation using specified format and
-		///     culture-specific formatting information.
-		/// </summary>
-		/// <param name="format">A format string containing formatting specifications.</param>
-		/// <param name="arg">An object to format.</param>
-		/// <param name="formatProvider">An object that supplies format information about the current instance.</param>
-		/// <returns>
-		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
-		///     <paramref name="format" /> and <paramref name="formatProvider" />.
-		/// </returns>
-		public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
-			if ( format == null ) {
-				throw new ArgumentEmptyException( nameof( format ) );
-			}
+		Int64 mult = 1;
 
-			Int64 bytes;
+		switch ( match.Groups["mod"].Value.ToUpper() ) {
+			case "B":
+			case "":
+				break;
 
-			try {
-				bytes = Convert.ToInt64( arg );
-			}
-			catch {
-				return this.HandleOtherFormats( format, arg );
-			}
+			case "KB":
+				mult = 1024;
 
-			if ( bytes == 0 ) {
-				return "0" + Suffixes[0];
-			}
+				break;
 
-			var m = Regex.Match( format, @"^[B|b](?<prec>\d+)?$" );
+			case "MB":
+				mult = ( Int64 )Math.Pow( 1024, 2 );
 
-			if ( !m.Success ) {
-				return this.HandleOtherFormats( format, arg );
-			}
+				break;
 
-			var prec = m.Groups["prec"].Success ? Byte.Parse( m.Groups["prec"].Value ) : 0;
-			var place = Convert.ToInt32( Math.Floor( Math.Log( bytes, 1024 ) ) );
+			case "GB":
+				mult = ( Int64 )Math.Pow( 1024, 3 );
 
-			if ( place >= Suffixes.Length ) {
-				place = Suffixes.Length - 1;
-			}
+				break;
 
-			var num = Math.Round( bytes / Math.Pow( 1024, place ), 1 );
+			case "TB":
+				mult = ( Int64 )Math.Pow( 1024, 4 );
 
-			return $"{num.ToString( "F" + prec )}{Suffixes[place]}";
+				break;
+
+			case "PB":
+				mult = ( Int64 )Math.Pow( 1024, 5 );
+
+				break;
+
+			case "EB":
+				mult = ( Int64 )Math.Pow( 1024, 6 );
+
+				break;
+
+			case "YB":
+				mult = ( Int64 )Math.Pow( 1024, 7 );
+
+				break;
+
+			default:
+				throw new InvalidOperationException();
 		}
+
+		bytes = ( Int64 )Math.Round( Single.Parse( match.Groups["num"].Value ) * mult );
+
+		return true;
+	}
+
+	/// <summary>
+	///     Converts the value of a specified object to an equivalent string representation using specified format and
+	///     culture-specific formatting information.
+	/// </summary>
+	/// <param name="format">A format string containing formatting specifications.</param>
+	/// <param name="arg">An object to format.</param>
+	/// <param name="formatProvider">An object that supplies format information about the current instance.</param>
+	/// <returns>
+	///     The string representation of the value of <paramref name="arg" />, formatted as specified by
+	///     <paramref name="format" /> and <paramref name="formatProvider" />.
+	/// </returns>
+	public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
+		if ( format == null ) {
+			throw new ArgumentEmptyException( nameof( format ) );
+		}
+
+		Int64 bytes;
+
+		try {
+			bytes = Convert.ToInt64( arg );
+		}
+		catch {
+			return this.HandleOtherFormats( format, arg );
+		}
+
+		if ( bytes == 0 ) {
+			return "0" + Suffixes[0];
+		}
+
+		var m = Regex.Match( format, @"^[B|b](?<prec>\d+)?$" );
+
+		if ( !m.Success ) {
+			return this.HandleOtherFormats( format, arg );
+		}
+
+		var prec = m.Groups["prec"].Success ? Byte.Parse( m.Groups["prec"].Value ) : 0;
+		var place = Convert.ToInt32( Math.Floor( Math.Log( bytes, 1024 ) ) );
+
+		if ( place >= Suffixes.Length ) {
+			place = Suffixes.Length - 1;
+		}
+
+		var num = Math.Round( bytes / Math.Pow( 1024, place ), 1 );
+
+		return $"{num.ToString( "F" + prec )}{Suffixes[place]}";
 	}
 }

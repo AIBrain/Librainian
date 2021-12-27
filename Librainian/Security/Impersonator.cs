@@ -24,63 +24,62 @@
 
 #nullable enable
 
-namespace Librainian.Security {
-	/*
-    using System;
-    using System.ComponentModel;
-    using System.Runtime.InteropServices;
-    using System.Security.Principal;
-    using JetBrains.Annotations;
-    using OperatingSystem;
-    using Utilities;
+namespace Librainian.Security; 
+/*
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
+using JetBrains.Annotations;
+using OperatingSystem;
+using Utilities;
 
-    
-    public class Impersonator : ABetterClassDispose {
-        [CanBeNull]
-        private WindowsImpersonationContext _impersonationContext;
 
-        private const Int32 Logon32LogonInteractive = 2;
+public class Impersonator : ABetterClassDispose {
+    [CanBeNull]
+    private WindowsImpersonationContext _impersonationContext;
 
-        private const Int32 Logon32ProviderDefault = 0;
+    private const Int32 Logon32LogonInteractive = 2;
 
-        public Impersonator( [CanBeNull] String? userName, [CanBeNull] String? domainName, [CanBeNull] String? password ) =>
-            this.ImpersonateValidUser( userName, domainName, password );
+    private const Int32 Logon32ProviderDefault = 0;
 
-        private void ImpersonateValidUser( [CanBeNull] String? userName, [CanBeNull] String? domain, [CanBeNull] String? password ) {
-            var token = IntPtr.Zero;
-            var tokenDuplicate = IntPtr.Zero;
+    public Impersonator( [CanBeNull] String? userName, [CanBeNull] String? domainName, [CanBeNull] String? password ) =>
+        this.ImpersonateValidUser( userName, domainName, password );
 
-            try {
-                if ( !PriNativeMethods.RevertToSelf() ) {
+    private void ImpersonateValidUser( [CanBeNull] String? userName, [CanBeNull] String? domain, [CanBeNull] String? password ) {
+        var token = IntPtr.Zero;
+        var tokenDuplicate = IntPtr.Zero;
+
+        try {
+            if ( !PriNativeMethods.RevertToSelf() ) {
+                throw new Win32Exception( Marshal.GetLastWin32Error() );
+            }
+            else {
+                if ( PriNativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
                     throw new Win32Exception( Marshal.GetLastWin32Error() );
                 }
                 else {
-                    if ( PriNativeMethods.LogonUser( userName, domain, password, Logon32LogonInteractive, Logon32ProviderDefault, ref token ) == 0 ) {
+                    if ( PriNativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
                         throw new Win32Exception( Marshal.GetLastWin32Error() );
                     }
                     else {
-                        if ( PriNativeMethods.DuplicateToken( token, 2, ref tokenDuplicate ) == 0 ) {
-                            throw new Win32Exception( Marshal.GetLastWin32Error() );
-                        }
-                        else {
-                            var tempWindowsIdentity = new WindowsIdentity( tokenDuplicate );
-                            this._impersonationContext = tempWindowsIdentity.Impersonate();
-                        }
+                        var tempWindowsIdentity = new WindowsIdentity( tokenDuplicate );
+                        this._impersonationContext = tempWindowsIdentity.Impersonate();
                     }
                 }
             }
-            finally {
-                if ( token != IntPtr.Zero ) {
-                    token.CloseHandle();
-                }
+        }
+        finally {
+            if ( token != IntPtr.Zero ) {
+                token.CloseHandle();
+            }
 
-                if ( tokenDuplicate != IntPtr.Zero ) {
-                    tokenDuplicate.CloseHandle();
-                }
+            if ( tokenDuplicate != IntPtr.Zero ) {
+                tokenDuplicate.CloseHandle();
             }
         }
-
-        public override void DisposeManaged() => this._impersonationContext.Undo();
     }
-	*/
+
+    public override void DisposeManaged() => this._impersonationContext.Undo();
 }
+*/

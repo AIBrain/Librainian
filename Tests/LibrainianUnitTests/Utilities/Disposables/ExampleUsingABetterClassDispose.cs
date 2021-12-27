@@ -27,64 +27,62 @@
 
 #nullable enable
 
-namespace LibrainianUnitTests.Utilities.Disposables {
+namespace LibrainianUnitTests.Utilities.Disposables;
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using Librainian.Utilities.Disposables;
-	using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using System.IO;
+using Librainian.Utilities.Disposables;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class ExampleUsingABetterClassDispose : ABetterClassDispose {
+[TestFixture]
+public class ExampleUsingABetterClassDispose : ABetterClassDispose {
 
-		private MemoryStream? _memoryStream = new();
+	private MemoryStream? _memoryStream = new();
 
-		private SysComObject? _sysComObject = new();
+	private SysComObject? _sysComObject = new();
 
-		public ExampleUsingABetterClassDispose() : base( nameof( ExampleUsingABetterClassDispose ) ) => this._sysComObject?.ReserveMemory();
+	public ExampleUsingABetterClassDispose() : base( nameof( ExampleUsingABetterClassDispose ) ) => this._sysComObject?.ReserveMemory();
 
-		[Test]
-		public override void DisposeManaged() {
-			using ( this._memoryStream ) {
-				this._memoryStream = null;
-			}
-
-			base.DisposeManaged();
+	[Test]
+	public override void DisposeManaged() {
+		using ( this._memoryStream ) {
+			this._memoryStream = null;
 		}
 
-		[Test]
-		public override void DisposeNative() {
-			this._sysComObject?.ReleaseMemory();
-			this._sysComObject = null;
-			base.DisposeNative();
-		}
-
+		base.DisposeManaged();
 	}
 
-	/// <summary>
-	///     A fake COM interface object.
-	/// </summary>
-	public class SysComObject {
+	[Test]
+	public override void DisposeNative() {
+		this._sysComObject?.ReleaseMemory();
+		this._sysComObject = null;
+		base.DisposeNative();
+	}
 
-		private static readonly Random RNG = new();
+}
 
-		private Byte[]? fakeInternalMemoryAllocation;
+/// <summary>
+///     A fake COM interface object.
+/// </summary>
+public class SysComObject {
 
-		public SysComObject() => this.fakeInternalMemoryAllocation = null;
+	private static readonly Random RNG = new();
 
-		public void ReleaseMemory() {
-			Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
-			this.fakeInternalMemoryAllocation = null;
-			Debug.Assert( this.fakeInternalMemoryAllocation == null, "" );
-		}
+	private Byte[]? fakeInternalMemoryAllocation;
 
-		public void ReserveMemory() {
-			this.fakeInternalMemoryAllocation = new Byte[ RNG.Next( 128, 256 ) ];
-			Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
-			Debug.WriteLine( $"{this.fakeInternalMemoryAllocation.Length} bytes allocated to fake COM object." );
-		}
+	public SysComObject() => this.fakeInternalMemoryAllocation = null;
 
+	public void ReleaseMemory() {
+		Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
+		this.fakeInternalMemoryAllocation = null;
+		Debug.Assert( this.fakeInternalMemoryAllocation == null, "" );
+	}
+
+	public void ReserveMemory() {
+		this.fakeInternalMemoryAllocation = new Byte[ RNG.Next( 128, 256 ) ];
+		Debug.Assert( this.fakeInternalMemoryAllocation != null, "" );
+		Debug.WriteLine( $"{this.fakeInternalMemoryAllocation.Length} bytes allocated to fake COM object." );
 	}
 
 }

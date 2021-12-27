@@ -23,59 +23,58 @@
 // File "StatusExtensions.cs" last formatted on 2020-08-28 at 1:38 AM.
 
 // ReSharper disable once CheckNamespace
-namespace Librainian {
+namespace Librainian;
 
-	using System;
-	using System.Runtime.CompilerServices;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Parsing;
+using System;
+using System.Runtime.CompilerServices;
+using Extensions;
+using JetBrains.Annotations;
+using Parsing;
 
-	public static class StatusExtensions {
+public static class StatusExtensions {
 
-		static StatusExtensions() {
-			if ( Status.Good.IsBad() ) {
-				throw new InvalidOperationException( "Someone blinked." );
-			}
-
-			if ( Status.Failure.IsGood() ) {
-				throw new InvalidOperationException( "Someone blinked." );
-			}
-
-			if ( Status.Success.IsBad() ) {
-				throw new InvalidOperationException( "Someone blinked." );
-			}
-
-			if ( !Status.Unknown.IsUnknown() ) {
-				throw new InvalidOperationException( "Someone blinked." );
-			}
+	static StatusExtensions() {
+		if ( Status.Good.IsBad() ) {
+			throw new InvalidOperationException( "Someone blinked." );
 		}
 
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean Failed( this Status status ) => status <= Status.Failure;
+		if ( Status.Failure.IsGood() ) {
+			throw new InvalidOperationException( "Someone blinked." );
+		}
 
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsBad( this Status status ) => status.Failed();
+		if ( Status.Success.IsBad() ) {
+			throw new InvalidOperationException( "Someone blinked." );
+		}
 
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsGood( this Status status ) => status.Succeeded();
-
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || !status.IsBad() && !status.IsGood();
-
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean Succeeded( this Status status ) => status >= Status.Success;
-
-		[Pure]
-		public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
-
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Status ToStatus( this Boolean status ) => status ? Status.Success : Status.Failure;
+		if ( !Status.Unknown.IsUnknown() ) {
+			throw new InvalidOperationException( "Someone blinked." );
+		}
 	}
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean Failed( this Status status ) => status <= Status.Failure;
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean IsBad( this Status status ) => status.Failed();
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean IsGood( this Status status ) => status.Succeeded();
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || !status.IsBad() && !status.IsGood();
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean Succeeded( this Status status ) => status >= Status.Success;
+
+	[Pure]
+	public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Status ToStatus( this Boolean status ) => status ? Status.Success : Status.Failure;
 }

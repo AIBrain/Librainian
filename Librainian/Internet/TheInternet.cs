@@ -25,95 +25,94 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Net;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using FileSystem;
-	using Logging;
-	using Maths.Numbers;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using Exceptions;
+using FileSystem;
+using Logging;
+using Maths.Numbers;
 
-	public static class TheInternet {
+public static class TheInternet {
 
-		/// <summary>
-		///     <para>Attempt to download the address to a local temp file.</para>
-		///     <para>Reports progress via <paramref name="reportProgress" /> by a <see cref="ZeroToOne" />.</para>
-		/// </summary>
-		/// <param name="address"></param>
-		/// <param name="reportProgress"></param>
-		/// <param name="timeOut"></param>
-		/// <param name="credentials"></param>
-		/// <param name="onWebException"></param>
-		public static async Task<IDocument?> DownloadAsync( Uri address, TimeSpan timeOut, IProgress<ZeroToOne>? reportProgress = null,
-			ICredentials? credentials = null, Action<Uri, WebExceptionStatus>? onWebException = null ) {
-			if ( address is null ) {
-				throw new ArgumentEmptyException( nameof( address ) );
-			}
-
-			try {
-				reportProgress?.Report( ZeroToOne.MinimumValue );
-
-				var tempDocument = Document.GetTempDocument();
-
-				using var webclient = new WebClient {
-					Credentials = credentials
-				};
-
-				webclient.DownloadProgressChanged += ( sender, args ) => {
-					var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
-					reportProgress?.Report( progress );
-				};
-
-				var timeoutTask = Task.Delay( timeOut );
-				var downloadTask = webclient.DownloadFileTaskAsync( address, tempDocument.FullPath );
-
-				var task = await Task.WhenAny( timeoutTask, downloadTask ).ConfigureAwait( false );
-
-				if ( task.Id == timeoutTask.Id ) {
-					webclient.CancelAsync();
-				}
-
-				return tempDocument;
-			}
-			catch ( WebException exception ) {
-				try {
-					onWebException?.Invoke( address, exception.Status );
-				}
-				catch ( Exception exception2 ) {
-					exception2.Log();
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-			finally {
-				reportProgress?.Report( ZeroToOne.MaximumValue );
-			}
-
-			return default( IDocument );
+	/// <summary>
+	///     <para>Attempt to download the address to a local temp file.</para>
+	///     <para>Reports progress via <paramref name="reportProgress" /> by a <see cref="ZeroToOne" />.</para>
+	/// </summary>
+	/// <param name="address"></param>
+	/// <param name="reportProgress"></param>
+	/// <param name="timeOut"></param>
+	/// <param name="credentials"></param>
+	/// <param name="onWebException"></param>
+	public static async Task<IDocument?> DownloadAsync( Uri address, TimeSpan timeOut, IProgress<ZeroToOne>? reportProgress = null,
+		ICredentials? credentials = null, Action<Uri, WebExceptionStatus>? onWebException = null ) {
+		if ( address is null ) {
+			throw new ArgumentEmptyException( nameof( address ) );
 		}
 
-		public static IEnumerable<Document> FindFile( String filename, IEnumerable<String> locationClues ) {
-			if ( locationClues is null ) {
-				throw new ArgumentEmptyException( nameof( locationClues ) );
+		try {
+			reportProgress?.Report( ZeroToOne.MinimumValue );
+
+			var tempDocument = Document.GetTempDocument();
+
+			using var webclient = new WebClient {
+				Credentials = credentials
+			};
+
+			webclient.DownloadProgressChanged += ( sender, args ) => {
+				var progress = args.BytesReceived / ( Double )args.TotalBytesToReceive;
+				reportProgress?.Report( progress );
+			};
+
+			var timeoutTask = Task.Delay( timeOut );
+			var downloadTask = webclient.DownloadFileTaskAsync( address, tempDocument.FullPath );
+
+			var task = await Task.WhenAny( timeoutTask, downloadTask ).ConfigureAwait( false );
+
+			if ( task.Id == timeoutTask.Id ) {
+				webclient.CancelAsync();
 			}
 
-			if ( String.IsNullOrWhiteSpace( filename ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filename ) );
+			return tempDocument;
+		}
+		catch ( WebException exception ) {
+			try {
+				onWebException?.Invoke( address, exception.Status );
+			}
+			catch ( Exception exception2 ) {
+				exception2.Log();
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+		finally {
+			reportProgress?.Report( ZeroToOne.MaximumValue );
+		}
+
+		return default( IDocument );
+	}
+
+	public static IEnumerable<Document> FindFile( String filename, IEnumerable<String> locationClues ) {
+		if ( locationClues is null ) {
+			throw new ArgumentEmptyException( nameof( locationClues ) );
+		}
+
+		if ( String.IsNullOrWhiteSpace( filename ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filename ) );
+		}
+
+		foreach ( var locationClue in locationClues ) {
+			if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) {
+				continue;
 			}
 
-			foreach ( var locationClue in locationClues ) {
-				if ( !Uri.TryCreate( locationClue, UriKind.Absolute, out var internetAddress ) ) {
-					continue;
-				}
+			//TODO this /totally/ is not finished yet.
 
-				//TODO this /totally/ is not finished yet.
-
-				yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
-			}
+			yield return new Document( internetAddress.ToString() ); //should download file to a document in the user's temp folder.
 		}
 	}
 }

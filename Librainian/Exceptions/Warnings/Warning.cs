@@ -26,44 +26,43 @@
 
 #nullable enable
 
-namespace Librainian.Exceptions.Warnings {
+namespace Librainian.Exceptions.Warnings;
 
-	using System;
-	using System.Diagnostics;
-	using System.Runtime.Serialization;
-	using Logging;
+using System;
+using System.Diagnostics;
+using System.Runtime.Serialization;
+using Logging;
 
-	public class UnknownWarning : Warning {
+public class UnknownWarning : Warning {
 
-		public UnknownWarning( String? message ) : base( message ) {
-			message.Break();
-		}
+	public UnknownWarning( String? message ) : base( message ) {
+		message.Break();
+	}
+}
+
+/// <inheritdoc />
+/// <summary>
+///     <para>Generic Warning</para>
+///     <para><see cref="Debugger.Break" /> if a <see cref="Debugger" /> is attached.</para>
+///     <para>This should be handled, but allow program to continue.</para>
+/// </summary>
+[Serializable]
+public abstract class Warning : Exception {
+
+	protected Warning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+
+	protected Warning() {
+
+		//String.Empty.Break();
 	}
 
-	/// <inheritdoc />
-	/// <summary>
-	///     <para>Generic Warning</para>
-	///     <para><see cref="Debugger.Break" /> if a <see cref="Debugger" /> is attached.</para>
-	///     <para>This should be handled, but allow program to continue.</para>
-	/// </summary>
-	[Serializable]
-	public abstract class Warning : Exception {
+	protected Warning( String? message ) : base( message ) {
 
-		protected Warning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+		//message.Break();
+	}
 
-		protected Warning() {
+	protected Warning( String? message, Exception? inner ) : base( message, inner ) {
 
-			//String.Empty.Break();
-		}
-
-		protected Warning( String? message ) : base( message ) {
-
-			//message.Break();
-		}
-
-		protected Warning( String? message, Exception? inner ) : base( message, inner ) {
-
-			//message.Break();
-		}
+		//message.Break();
 	}
 }

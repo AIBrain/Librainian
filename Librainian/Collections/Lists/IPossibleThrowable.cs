@@ -22,13 +22,12 @@
 //
 // File "IPossibleThrowable.cs" last formatted on 2020-08-14 at 8:31 PM.
 
-namespace Librainian.Collections.Lists {
+namespace Librainian.Collections.Lists;
 
-	using System;
+using System;
 
-	public interface IPossibleThrowable {
+public interface IPossibleThrowable {
 
-		/// <summary>If set to false, anything that would normally throw an <see cref="Exception" /> is ignored.</summary>
-		ThrowSetting ThrowExceptions { get; set; }
-	}
+	/// <summary>If set to false, anything that would normally throw an <see cref="Exception" /> is ignored.</summary>
+	ThrowSetting ThrowExceptions { get; set; }
 }

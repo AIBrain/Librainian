@@ -25,16 +25,15 @@
 //
 // File "TOKEN_PRIVILEGE.cs" last formatted on 2021-03-05 at 6:30 AM.
 
-namespace Librainian.FileSystem.Pri.LongPath {
+namespace Librainian.FileSystem.Pri.LongPath;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	public struct TOKEN_PRIVILEGE {
+[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+public struct TOKEN_PRIVILEGE {
 
-		public UInt32 PrivilegeCount;
+	public UInt32 PrivilegeCount;
 
-		public LUID_AND_ATTRIBUTES Privilege;
-	}
+	public LUID_AND_ATTRIBUTES Privilege;
 }

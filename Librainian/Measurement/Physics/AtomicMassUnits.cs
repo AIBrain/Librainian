@@ -25,134 +25,133 @@
 //
 // File "AtomicMassUnits.cs" last touched on 2021-06-19 at 12:55 AM by Protiguous.
 
-namespace Librainian.Measurement.Physics {
+namespace Librainian.Measurement.Physics;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using ExtendedNumerics;
-	using Extensions;
-	using JetBrains.Annotations;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using ExtendedNumerics;
+using Extensions;
+using JetBrains.Annotations;
 
-	/// <summary>Units of mass and energy in ElectronVolts.</summary>
-	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-	/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
-	/// <see cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record AtomicMassUnits( BigDecimal Value ) : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
-
-		
-		public const Decimal InOneElectronVolt = 0.000000001073544m;
-
-		public const Decimal InOneGigaElectronVolt = 1.073544m;
-
-		public const Decimal InOneKiloElectronVolt = 0.000001073544m;
-
-		public const Decimal InOneMegaElectronVolt = 0.001073544m;
-
-		public const Decimal InOneMilliElectronVolt = 0.000000000001073544m;
-
-		public const Decimal InOneTeraElectronVolt = 1073.544m;
-
-		/// <summary>About 79228162514264337593543950335.</summary>
-		public static readonly AtomicMassUnits MaxValue = new( Decimal.MaxValue );
-
-		/// <summary>About -79228162514264337593543950335.</summary>
-		public static readonly AtomicMassUnits MinValue = new( Decimal.MinValue );
-
-		public static readonly AtomicMassUnits NegativeOne = new( -1m );
+/// <summary>Units of mass and energy in ElectronVolts.</summary>
+/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
+/// <see cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record AtomicMassUnits( BigDecimal Value ) : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
 		
-		public static readonly AtomicMassUnits NegativeZero = new( -Decimal.Zero );
+	public const Decimal InOneElectronVolt = 0.000000001073544m;
+
+	public const Decimal InOneGigaElectronVolt = 1.073544m;
+
+	public const Decimal InOneKiloElectronVolt = 0.000001073544m;
+
+	public const Decimal InOneMegaElectronVolt = 0.001073544m;
+
+	public const Decimal InOneMilliElectronVolt = 0.000000000001073544m;
+
+	public const Decimal InOneTeraElectronVolt = 1073.544m;
+
+	/// <summary>About 79228162514264337593543950335.</summary>
+	public static readonly AtomicMassUnits MaxValue = new( Decimal.MaxValue );
+
+	/// <summary>About -79228162514264337593543950335.</summary>
+	public static readonly AtomicMassUnits MinValue = new( Decimal.MinValue );
+
+	public static readonly AtomicMassUnits NegativeOne = new( -1m );
 
 		
-		public static readonly AtomicMassUnits One = new( 1m );
-
-		public static readonly ElectronVolts OneAtomicUnitEqualsElectronVolt = new MegaElectronVolts( 931.494095m );
-
-		public static readonly AtomicMassUnits OneElectronVoltEqualsAtomicMassUnits = new( InOneElectronVolt );
-
-		public static readonly AtomicMassUnits Zero = new( 0m );
-
-		public AtomicMassUnits( Decimal value ) : this( ( BigDecimal )value ) { }
-
-		[Pure]
-		public Int32 CompareTo( AtomicMassUnits? other ) => this.Value.CompareTo( other?.Value );
-
-		[Pure]
-		public Int32 CompareTo( ElectronVolts? other ) => this.ToElectronVolts().Value.CompareTo( other?.Value );
-
-		public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new( -electronVolts.Value );
-
-		//public static implicit operator AtomicMassUnits( GigaElectronVolts gigaElectronVolts ) {
-		//    return gigaElectronVolts.ToElectronVolts();
-		//}
+	public static readonly AtomicMassUnits NegativeZero = new( -Decimal.Zero );
 
 		
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value * right.Value );
+	public static readonly AtomicMassUnits One = new( 1m );
 
-		//public static implicit operator AtomicMassUnits( MegaElectronVolts megaElectronVolts ) {
-		//    return megaElectronVolts.ToElectronVolts();
-		//}
+	public static readonly ElectronVolts OneAtomicUnitEqualsElectronVolt = new MegaElectronVolts( 931.494095m );
+
+	public static readonly AtomicMassUnits OneElectronVoltEqualsAtomicMassUnits = new( InOneElectronVolt );
+
+	public static readonly AtomicMassUnits Zero = new( 0m );
+
+	public AtomicMassUnits( Decimal value ) : this( ( BigDecimal )value ) { }
+
+	[Pure]
+	public Int32 CompareTo( AtomicMassUnits? other ) => this.Value.CompareTo( other?.Value );
+
+	[Pure]
+	public Int32 CompareTo( ElectronVolts? other ) => this.ToElectronVolts().Value.CompareTo( other?.Value );
+
+	public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new( -electronVolts.Value );
+
+	//public static implicit operator AtomicMassUnits( GigaElectronVolts gigaElectronVolts ) {
+	//    return gigaElectronVolts.ToElectronVolts();
+	//}
 
 		
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new( left.Value * right );
+	/// <param name="left"> </param>
+	/// <param name="right"></param>
+	public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value * right.Value );
 
-		public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) => new( left * right.Value );
+	//public static implicit operator AtomicMassUnits( MegaElectronVolts megaElectronVolts ) {
+	//    return megaElectronVolts.ToElectronVolts();
+	//}
 
-		public static AtomicMassUnits operator *( BigDecimal left, AtomicMassUnits right ) {
-			var res = left * right.Value;
+		
+	/// <param name="left"> </param>
+	/// <param name="right"></param>
+	public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new( left.Value * right );
 
-			return new AtomicMassUnits( res );
-		}
+	public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) => new( left * right.Value );
 
-		public static AtomicMassUnits operator *( BigInteger left, AtomicMassUnits right ) {
-			var res = left * right.Value;
+	public static AtomicMassUnits operator *( BigDecimal left, AtomicMassUnits right ) {
+		var res = left * right.Value;
 
-			return new AtomicMassUnits( res );
-		}
-
-		public static AtomicMassUnits operator /( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value / right.Value );
-
-		public static AtomicMassUnits operator /( AtomicMassUnits left, Decimal right ) => new( left.Value / right );
-
-		public static MegaElectronVolts operator +( AtomicMassUnits left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
-
-		public static GigaElectronVolts operator +( AtomicMassUnits left, GigaElectronVolts right ) => left.ToGigaElectronVolts() + right;
-
-		public static AtomicMassUnits operator +( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value + right.Value );
-
-		public static Boolean operator <( AtomicMassUnits left, AtomicMassUnits right ) => left.Value < right.Value;
-
-		public static Boolean operator >( AtomicMassUnits left, AtomicMassUnits right ) => left.Value > right.Value;
-
-		public Int32 CompareTo( TeraElectronVolts other ) => this.ToTeraElectronVolts().Value.CompareTo( other.Value );
-
-		public Int32 CompareTo( GigaElectronVolts other ) => this.ToGigaElectronVolts().Value.CompareTo( other.Value );
-
-		public Int32 CompareTo( MegaElectronVolts other ) => this.ToMegaElectronVolts().Value.CompareTo( other.Value );
-
-		public Int32 CompareTo( KiloElectronVolts other ) => this.ToKiloElectronVolts().Value.CompareTo( other.Value );
-
-		public Int32 CompareTo( MilliElectronVolts other ) => this.ToMilliElectronVolts().Value.CompareTo( other.Value );
-
-		public AtomicMassUnits ToElectronVolts() => new( this.Value * InOneElectronVolt );
-
-		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
-
-		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
-
-		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
-
-		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
-
-		public override String ToString() => $"{this.Value} u"; //is this not "amu"?
-
-		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
+		return new AtomicMassUnits( res );
 	}
+
+	public static AtomicMassUnits operator *( BigInteger left, AtomicMassUnits right ) {
+		var res = left * right.Value;
+
+		return new AtomicMassUnits( res );
+	}
+
+	public static AtomicMassUnits operator /( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value / right.Value );
+
+	public static AtomicMassUnits operator /( AtomicMassUnits left, Decimal right ) => new( left.Value / right );
+
+	public static MegaElectronVolts operator +( AtomicMassUnits left, MegaElectronVolts right ) => left.ToMegaElectronVolts() + right;
+
+	public static GigaElectronVolts operator +( AtomicMassUnits left, GigaElectronVolts right ) => left.ToGigaElectronVolts() + right;
+
+	public static AtomicMassUnits operator +( AtomicMassUnits left, AtomicMassUnits right ) => new( left.Value + right.Value );
+
+	public static Boolean operator <( AtomicMassUnits left, AtomicMassUnits right ) => left.Value < right.Value;
+
+	public static Boolean operator >( AtomicMassUnits left, AtomicMassUnits right ) => left.Value > right.Value;
+
+	public Int32 CompareTo( TeraElectronVolts other ) => this.ToTeraElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( GigaElectronVolts other ) => this.ToGigaElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( MegaElectronVolts other ) => this.ToMegaElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( KiloElectronVolts other ) => this.ToKiloElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( MilliElectronVolts other ) => this.ToMilliElectronVolts().Value.CompareTo( other.Value );
+
+	public AtomicMassUnits ToElectronVolts() => new( this.Value * InOneElectronVolt );
+
+	public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
+
+	public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
+
+	public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
+
+	public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
+
+	public override String ToString() => $"{this.Value} u"; //is this not "amu"?
+
+	public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
 }

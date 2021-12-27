@@ -24,66 +24,65 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Newtonsoft.Json;
-	using Parsing;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Newtonsoft.Json;
+using Parsing;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
-	public class FolderBagNode : IEquatable<FolderBagNode>, IComparable<FolderBagNode> {
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
+public class FolderBagNode : IEquatable<FolderBagNode>, IComparable<FolderBagNode> {
 
-		[JsonProperty]
-		public String? Data { get; }
+	[JsonProperty]
+	public String? Data { get; }
 
-		public Boolean IsEmpty => !this.SubFolders.Any();
+	public Boolean IsEmpty => !this.SubFolders.Any();
 
-		[JsonProperty]
-		public FolderBagNode? Parent { get; }
+	[JsonProperty]
+	public FolderBagNode? Parent { get; }
 
-		[JsonProperty]
-		public List<FolderBagNode> SubFolders { get; } = new();
+	[JsonProperty]
+	public List<FolderBagNode> SubFolders { get; } = new();
 
-		public FolderBagNode( String? data ) => this.Data = data;
+	public FolderBagNode( String? data ) => this.Data = data;
 
-		public FolderBagNode( String? data, FolderBagNode? parent ) {
-			this.Data = data;
-			this.Parent = parent;
-		}
-
-		/// <summary>Static equality check</summary>
-		/// <param name="left"></param>
-		/// <param name="right"> </param>
-		public static Boolean Equals( FolderBagNode? left, FolderBagNode? right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			if ( left is null || right is null ) {
-				return false;
-			}
-
-			return String.Equals( left.Data, right.Data, StringComparison.Ordinal );
-		}
-
-		public Int32 CompareTo( FolderBagNode? other ) => String.Compare( this.Data, other?.Data, StringComparison.Ordinal );
-
-		public Boolean Equals( FolderBagNode? other ) => Equals( this, other );
-
-		/// <summary>Determines whether the specified object is equal to the current object.</summary>
-		/// <param name="obj">The object to compare with the current object.</param>
-		/// <returns>
-		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as FolderBagNode );
-
-		public override Int32 GetHashCode() => this.Data?.GetHashCode() ?? 0;
-
-		public override String ToString() => this.Data ?? Symbols.Null;
+	public FolderBagNode( String? data, FolderBagNode? parent ) {
+		this.Data = data;
+		this.Parent = parent;
 	}
+
+	/// <summary>Static equality check</summary>
+	/// <param name="left"></param>
+	/// <param name="right"> </param>
+	public static Boolean Equals( FolderBagNode? left, FolderBagNode? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
+		}
+
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		return String.Equals( left.Data, right.Data, StringComparison.Ordinal );
+	}
+
+	public Int32 CompareTo( FolderBagNode? other ) => String.Compare( this.Data, other?.Data, StringComparison.Ordinal );
+
+	public Boolean Equals( FolderBagNode? other ) => Equals( this, other );
+
+	/// <summary>Determines whether the specified object is equal to the current object.</summary>
+	/// <param name="obj">The object to compare with the current object.</param>
+	/// <returns>
+	///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
+	///     <see langword="false" />.
+	/// </returns>
+	public override Boolean Equals( Object? obj ) => Equals( this, obj as FolderBagNode );
+
+	public override Int32 GetHashCode() => this.Data?.GetHashCode() ?? 0;
+
+	public override String ToString() => this.Data ?? Symbols.Null;
 }

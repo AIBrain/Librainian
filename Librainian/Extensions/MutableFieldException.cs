@@ -22,36 +22,35 @@
 //
 // File "MutableFieldException.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Reflection;
-	using System.Runtime.Serialization;
-	using Exceptions;
-	using Newtonsoft.Json;
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
+using Exceptions;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[Serializable]
-	internal class MutableFieldException : ImmutableFailureException {
+[JsonObject]
+[Serializable]
+internal class MutableFieldException : ImmutableFailureException {
 
-		protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
-			if ( serializationInfo is null ) {
-				throw new ArgumentEmptyException( nameof( serializationInfo ) );
-			}
+	protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+		if ( serializationInfo is null ) {
+			throw new ArgumentEmptyException( nameof( serializationInfo ) );
+		}
+	}
+
+	internal MutableFieldException( FieldInfo fieldInfo, Exception? inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
+		if ( fieldInfo is null ) {
+			throw new ArgumentEmptyException( nameof( fieldInfo ) );
+		}
+	}
+
+	private static String FormatMessage( FieldInfo fieldInfo ) {
+		if ( fieldInfo is null ) {
+			throw new ArgumentEmptyException( nameof( fieldInfo ) );
 		}
 
-		internal MutableFieldException( FieldInfo fieldInfo, Exception? inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
-			if ( fieldInfo is null ) {
-				throw new ArgumentEmptyException( nameof( fieldInfo ) );
-			}
-		}
-
-		private static String FormatMessage( FieldInfo fieldInfo ) {
-			if ( fieldInfo is null ) {
-				throw new ArgumentEmptyException( nameof( fieldInfo ) );
-			}
-
-			return $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";
-		}
+		return $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";
 	}
 }

@@ -22,7 +22,6 @@
 //
 // File "Chrome.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Internet.Browser {
+namespace Librainian.Internet.Browser; 
 
-	public class Chrome { }
-}
+public class Chrome { }

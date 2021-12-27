@@ -25,26 +25,25 @@
 //
 // File "Millimeters.cs" last touched on 2021-07-31 at 7:37 AM by Protiguous.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
-	using ExtendedNumerics;
-	using Newtonsoft.Json;
+using System;
+using ExtendedNumerics;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public record Millimeters( BigDecimal Value ) {
-		public const Decimal PerCentimeter = 10m;
+[JsonObject]
+public record Millimeters( BigDecimal Value ) {
+	public const Decimal PerCentimeter = 10m;
 
-		public const Decimal PerMeter = 1000m;
+	public const Decimal PerMeter = 1000m;
 
-		public const Decimal PerInch = Centimeters.PerInch * PerCentimeter;
+	public const Decimal PerInch = Centimeters.PerInch * PerCentimeter;
 
-		/// <summary>One <see cref="Millimeters" /> .</summary>
-		public static readonly Millimeters One = new( 1 );
+	/// <summary>One <see cref="Millimeters" /> .</summary>
+	public static readonly Millimeters One = new( 1 );
 
-		/// <summary>Two <see cref="Millimeters" /> .</summary>
-		public static readonly Millimeters Two = new( 2 );
+	/// <summary>Two <see cref="Millimeters" /> .</summary>
+	public static readonly Millimeters Two = new( 2 );
 
-		public Millimeters( Decimal millimeters ) : this( ( BigDecimal )millimeters ) { }
-	}
+	public Millimeters( Decimal millimeters ) : this( ( BigDecimal )millimeters ) { }
 }

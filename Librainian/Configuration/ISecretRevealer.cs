@@ -25,12 +25,11 @@
 //
 // File "ISecretRevealer.cs" last touched on 2021-08-27 at 11:33 AM by Protiguous.
 
-namespace Librainian.Configuration {
+namespace Librainian.Configuration;
 
-	using System;
+using System;
 
-	public interface ISecretRevealer {
+public interface ISecretRevealer {
 
-		String? GetDatabaseConnectionString();
-	}
+	String? GetDatabaseConnectionString();
 }

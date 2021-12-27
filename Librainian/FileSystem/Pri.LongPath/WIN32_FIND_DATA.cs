@@ -25,42 +25,41 @@
 //
 // File "WIN32_FIND_DATA.cs" last touched on 2021-03-07 at 6:33 PM by Protiguous.
 
-namespace Librainian.FileSystem.Pri.LongPath {
+namespace Librainian.FileSystem.Pri.LongPath;
 
-	using System;
-	using System.Diagnostics.CodeAnalysis;
-	using System.IO;
-	using System.Runtime.InteropServices;
-	using System.Runtime.InteropServices.ComTypes;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
-	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	[SuppressMessage( "ReSharper", "InconsistentNaming" )]
-	public struct WIN32_FIND_DATA {
+[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+[SuppressMessage( "ReSharper", "InconsistentNaming" )]
+public struct WIN32_FIND_DATA {
 
-		public readonly FileAttributes dwFileAttributes;
+	public readonly FileAttributes dwFileAttributes;
 
-		public FILETIME ftCreationTime;
+	public FILETIME ftCreationTime;
 
-		public FILETIME ftLastAccessTime;
+	public FILETIME ftLastAccessTime;
 
-		public FILETIME ftLastWriteTime;
+	public FILETIME ftLastWriteTime;
 
-		public readonly Int32 nFileSizeHigh;
+	public readonly Int32 nFileSizeHigh;
 
-		public readonly Int32 nFileSizeLow;
+	public readonly Int32 nFileSizeLow;
 
-		public readonly Int32 dwReserved0;
+	public readonly Int32 dwReserved0;
 
-		public readonly Int32 dwReserved1;
+	public readonly Int32 dwReserved1;
 
-		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_PATH )]
+	[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_PATH )]
 
-		//BUG Is PriNativeMethods.MAX_PATH correct here? How to handle really long folder names?
-		public readonly String cFileName;
+	//BUG Is PriNativeMethods.MAX_PATH correct here? How to handle really long folder names?
+	public readonly String cFileName;
 
-		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_ALTERNATE )]
-		public readonly String? cAlternate;
+	[MarshalAs( UnmanagedType.ByValTStr, SizeConst = PriNativeMethods.MAX_ALTERNATE )]
+	public readonly String? cAlternate;
 
-		public Boolean? Exists { get; set; }
-	}
+	public Boolean? Exists { get; set; }
 }

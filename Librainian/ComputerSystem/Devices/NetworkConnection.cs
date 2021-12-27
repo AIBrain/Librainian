@@ -22,199 +22,198 @@
 //
 // File "NetworkConnection.cs" last formatted on 2020-08-14 at 8:31 PM.
 
-namespace Librainian.ComputerSystem.Devices {
+namespace Librainian.ComputerSystem.Devices;
 
-	using System;
-	using System.ComponentModel;
-	using System.Diagnostics.CodeAnalysis;
-	using System.Net;
-	using System.Net.NetworkInformation;
-	using System.Runtime.InteropServices;
-	using System.Threading;
-	using Logging;
-	using Measurement.Time;
-	using OperatingSystem;
+using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
+using System.Threading;
+using Logging;
+using Measurement.Time;
+using OperatingSystem;
 
-	public enum ResourceDisplaytype {
+public enum ResourceDisplaytype {
 
-		Generic = 0x0,
+	Generic = 0x0,
 
-		Domain = 0x01,
+	Domain = 0x01,
 
-		Server = 0x02,
+	Server = 0x02,
 
-		Share = 0x03,
+	Share = 0x03,
 
-		File = 0x04,
+	File = 0x04,
 
-		Group = 0x05,
+	Group = 0x05,
 
-		Network = 0x06,
+	Network = 0x06,
 
-		Root = 0x07,
+	Root = 0x07,
 
-		Shareadmin = 0x08,
+	Shareadmin = 0x08,
 
-		Directory = 0x09,
+	Directory = 0x09,
 
-		Tree = 0x0a,
+	Tree = 0x0a,
 
-		Ndscontainer = 0x0b
+	Ndscontainer = 0x0b
+}
+
+public enum ResourceDisplayType {
+
+	GENERIC,
+
+	DOMAIN,
+
+	SERVER,
+
+	SHARE,
+
+	FILE,
+
+	GROUP,
+
+	NETWORK,
+
+	ROOT,
+
+	SHAREADMIN,
+
+	DIRECTORY,
+
+	TREE,
+
+	NDSCONTAINER
+}
+
+public enum ResourceScope {
+
+	Connected = 1,
+
+	GlobalNetwork,
+
+	Remembered,
+
+	Recent,
+
+	Context
+}
+
+public enum ResourceType {
+
+	Any = 0,
+
+	Disk = 1,
+
+	Print = 2,
+
+	Reserved = 8
+}
+
+public enum ResourceUsage {
+
+	CONNECTABLE = 0x00000001,
+
+	CONTAINER = 0x00000002,
+
+	NOLOCALDEVICE = 0x00000004,
+
+	SIBLING = 0x00000008,
+
+	ATTACHED = 0x00000010,
+
+	ALL = CONNECTABLE | CONTAINER | ATTACHED
+}
+
+[StructLayout( LayoutKind.Sequential )]
+[SuppressMessage( "ReSharper", "FieldCanBeMadeReadOnly.Global" )]
+public struct NETRESOURCE {
+
+	public ResourceDisplayType dwDisplayType;
+
+	public ResourceScope dwScope;
+
+	public ResourceType dwType;
+
+	public ResourceUsage dwUsage;
+
+	public String? lpComment;
+
+	public String? lpLocalName;
+
+	public String? lpProvider;
+
+	public String? lpRemoteName;
+}
+
+[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+public class NetResource {
+
+	public ResourceDisplaytype DisplayType;
+
+	[MarshalAs( UnmanagedType.LPWStr )]
+	public String LocalName;
+
+	[MarshalAs( UnmanagedType.LPWStr )]
+	public String Provider;
+
+	[MarshalAs( UnmanagedType.LPWStr )]
+	public String RemoteName;
+
+	public ResourceType ResourceType;
+
+	public ResourceScope Scope;
+
+	public Int32 Usage;
+
+	[field: MarshalAs( UnmanagedType.LPWStr )]
+	public String Comment { get; set; }
+}
+
+public class NetworkConnection : IDisposable {
+
+	private String? NetworkName { get; }
+
+	public NetworkConnection( String? networkName, NetworkCredential credentials ) {
+		this.NetworkName = networkName;
+
+		var netResource = new NetResource {
+			Scope = ResourceScope.GlobalNetwork,
+			ResourceType = ResourceType.Disk,
+			DisplayType = ResourceDisplaytype.Share,
+			RemoteName = networkName
+		};
+
+		var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
+
+		var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
+
+		if ( result != 0 ) {
+			throw new Win32Exception( result, "Error connecting to remote share" );
+		}
 	}
 
-	public enum ResourceDisplayType {
+	~NetworkConnection() => this.Dispose( false );
 
-		GENERIC,
+	protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
 
-		DOMAIN,
+	public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
+		var counter = retries;
 
-		SERVER,
-
-		SHARE,
-
-		FILE,
-
-		GROUP,
-
-		NETWORK,
-
-		ROOT,
-
-		SHAREADMIN,
-
-		DIRECTORY,
-
-		TREE,
-
-		NDSCONTAINER
-	}
-
-	public enum ResourceScope {
-
-		Connected = 1,
-
-		GlobalNetwork,
-
-		Remembered,
-
-		Recent,
-
-		Context
-	}
-
-	public enum ResourceType {
-
-		Any = 0,
-
-		Disk = 1,
-
-		Print = 2,
-
-		Reserved = 8
-	}
-
-	public enum ResourceUsage {
-
-		CONNECTABLE = 0x00000001,
-
-		CONTAINER = 0x00000002,
-
-		NOLOCALDEVICE = 0x00000004,
-
-		SIBLING = 0x00000008,
-
-		ATTACHED = 0x00000010,
-
-		ALL = CONNECTABLE | CONTAINER | ATTACHED
-	}
-
-	[StructLayout( LayoutKind.Sequential )]
-	[SuppressMessage( "ReSharper", "FieldCanBeMadeReadOnly.Global" )]
-	public struct NETRESOURCE {
-
-		public ResourceDisplayType dwDisplayType;
-
-		public ResourceScope dwScope;
-
-		public ResourceType dwType;
-
-		public ResourceUsage dwUsage;
-
-		public String? lpComment;
-
-		public String? lpLocalName;
-
-		public String? lpProvider;
-
-		public String? lpRemoteName;
-	}
-
-	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	public class NetResource {
-
-		public ResourceDisplaytype DisplayType;
-
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String LocalName;
-
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String Provider;
-
-		[MarshalAs( UnmanagedType.LPWStr )]
-		public String RemoteName;
-
-		public ResourceType ResourceType;
-
-		public ResourceScope Scope;
-
-		public Int32 Usage;
-
-		[field: MarshalAs( UnmanagedType.LPWStr )]
-		public String Comment { get; set; }
-	}
-
-	public class NetworkConnection : IDisposable {
-
-		private String? NetworkName { get; }
-
-		public NetworkConnection( String? networkName, NetworkCredential credentials ) {
-			this.NetworkName = networkName;
-
-			var netResource = new NetResource {
-				Scope = ResourceScope.GlobalNetwork,
-				ResourceType = ResourceType.Disk,
-				DisplayType = ResourceDisplaytype.Share,
-				RemoteName = networkName
-			};
-
-			var userName = String.IsNullOrEmpty( credentials.Domain ) ? credentials.UserName : $@"{credentials.Domain}\{credentials.UserName}";
-
-			var result = NativeMethods.WNetAddConnection2( ref netResource, credentials.Password, userName, 0 );
-
-			if ( result != 0 ) {
-				throw new Win32Exception( result, "Error connecting to remote share" );
-			}
+		while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
+			--counter;
+			$"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
+			Thread.Sleep( Seconds.One );
 		}
 
-		~NetworkConnection() => this.Dispose( false );
+		return NetworkInterface.GetIsNetworkAvailable();
+	}
 
-		protected virtual void Dispose( Boolean disposing ) => NativeMethods.WNetCancelConnection2( this.NetworkName, 0, true );
-
-		public static Boolean IsNetworkConnected( Int32 retries = 3 ) {
-			var counter = retries;
-
-			while ( !NetworkInterface.GetIsNetworkAvailable() && counter > 0 ) {
-				--counter;
-				$"Network disconnected. Waiting {Seconds.One}. {counter} retries left...".Info();
-				Thread.Sleep( Seconds.One );
-			}
-
-			return NetworkInterface.GetIsNetworkAvailable();
-		}
-
-		public void Dispose() {
-			this.Dispose( true );
-			GC.SuppressFinalize( this );
-		}
+	public void Dispose() {
+		this.Dispose( true );
+		GC.SuppressFinalize( this );
 	}
 }

@@ -25,18 +25,17 @@
 //
 // File "ApplicationSetting.cs" last touched on 2021-08-27 at 4:23 PM by Protiguous.
 
-namespace Librainian.Configuration {
+namespace Librainian.Configuration;
 
-	using System;
-	using System.Windows.Forms;
+using System;
+using System.Windows.Forms;
 
-	public record ApplicationSetting : IApplicationSetting {
-		public String? GetProductName( String? defaultName = null ) => defaultName ?? Application.ProductName;
+public record ApplicationSetting : IApplicationSetting {
+	public String? GetProductName( String? defaultName = null ) => defaultName ?? Application.ProductName;
 
-		public String? GetCompanyName( String? defaultName = null ) => defaultName ?? Application.CompanyName;
+	public String? GetCompanyName( String? defaultName = null ) => defaultName ?? Application.CompanyName;
 
-		public Version GetVersion( String? defaultVersion = null ) => new( defaultVersion ?? Application.ProductVersion ?? "1.0.0.0" );
+	public Version GetVersion( String? defaultVersion = null ) => new( defaultVersion ?? Application.ProductVersion ?? "1.0.0.0" );
 
-		public Version GetVersion( Version? defaultVersion = null ) => defaultVersion ?? new( Application.ProductVersion ?? "1.0.0.0" );
-	}
+	public Version GetVersion( Version? defaultVersion = null ) => defaultVersion ?? new( Application.ProductVersion ?? "1.0.0.0" );
 }

@@ -25,131 +25,130 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Databases.MMF {
+namespace Librainian.Databases.MMF;
 
-	using System;
-	using System.Runtime.InteropServices;
-	using System.Text;
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
 
-	/// <summary>Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).</summary>
-	/// <typeparam name="T"></typeparam>
-	public class CreateUnsafeSerializer<T> {
+/// <summary>Class which tries to create a ISerializeDeserialize based on pointer movement (unsafe).</summary>
+/// <typeparam name="T"></typeparam>
+public class CreateUnsafeSerializer<T> {
 
-		private Int32 _addCount;
+	private Int32 _addCount;
 
-		private Int32 _ptrSize = sizeof( Int64 );
+	private Int32 _ptrSize = sizeof( Int64 );
 
-		private String _ptrType = "Int64";
+	private String _ptrType = "Int64";
 
-		private Int32 _size;
+	private Int32 _size;
 
-		private Type Type { get; } = typeof( T );
+	private Type Type { get; } = typeof( T );
 
-		private static void BytesToObjectCode( StringBuilder sb, String? typeFullName ) {
-			sb.Append( "public unsafe " ).Append( typeFullName ).Append( " BytesToObject( byte[] bytes )" );
-			sb.Append( '{' );
+	private static void BytesToObjectCode( StringBuilder sb, String? typeFullName ) {
+		sb.Append( "public unsafe " ).Append( typeFullName ).Append( " BytesToObject( byte[] bytes )" );
+		sb.Append( '{' );
 
-			sb.Append( @"
+		sb.Append( @"
                 fixed (byte* srcPtr = &bytes[0])
                 {" );
 
-			sb.Append( "return *(" ).Append( typeFullName ).Append( "*)srcPtr;" );
-			sb.Append( "}}" );
+		sb.Append( "return *(" ).Append( typeFullName ).Append( "*)srcPtr;" );
+		sb.Append( "}}" );
+	}
+
+	private Boolean CanGetSize() {
+		try {
+			this._size = Marshal.SizeOf<T>();
+		}
+		catch ( ArgumentException ) {
+			return false;
 		}
 
-		private Boolean CanGetSize() {
-			try {
-				this._size = Marshal.SizeOf<T>();
-			}
-			catch ( ArgumentException ) {
-				return false;
-			}
+		return true;
+	}
 
-			return true;
-		}
+	private String GenerateCode() {
+		var typeFullName = this.Type.FullName.Replace( '+', '.' );
 
-		private String GenerateCode() {
-			var typeFullName = this.Type.FullName.Replace( '+', '.' );
+		var sb = new StringBuilder();
+		sb.AppendLine( "using System;" );
+		sb.AppendLine();
 
-			var sb = new StringBuilder();
-			sb.AppendLine( "using System;" );
-			sb.AppendLine();
+		var interfaceType = typeof( ISerializeDeserialize<T> );
 
-			var interfaceType = typeof( ISerializeDeserialize<T> );
+		sb.Append( "public class UnsafeConverter : " ).Append( interfaceType.Namespace ).Append( ".ISerializeDeserialize<" ).Append( typeFullName ).Append( '>' );
+		sb.Append( '{' );
+		sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
 
-			sb.Append( "public class UnsafeConverter : " ).Append( interfaceType.Namespace ).Append( ".ISerializeDeserialize<" ).Append( typeFullName ).Append( '>' );
-			sb.Append( '{' );
-			sb.AppendFormat( "public Boolean CanSerializeType(){{return true;}}" );
+		this.ObjectToBytesCode( sb, typeFullName );
+		BytesToObjectCode( sb, typeFullName );
 
-			this.ObjectToBytesCode( sb, typeFullName );
-			BytesToObjectCode( sb, typeFullName );
+		sb.Append( '}' );
 
-			sb.Append( '}' );
+		return sb.ToString();
+	}
 
-			return sb.ToString();
-		}
+	private void GenerateMethodBodyCode( StringBuilder sb ) {
+		this._addCount = 0;
+		var length = this._size;
 
-		private void GenerateMethodBodyCode( StringBuilder sb ) {
+		do {
+			this.MovePointers( sb );
+			this.SetPointerLength( length );
+			sb.AppendFormat( @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", this._ptrType, this._addCount / this._ptrSize );
+			length -= this._ptrSize;
+			this._addCount += this._ptrSize;
+		} while ( length > 0 );
+	}
+
+	private void MovePointers( StringBuilder? sb ) {
+		var modifer = this._addCount / this._ptrSize;
+
+		if ( modifer >= this._ptrSize ) {
+			sb.Append( "dest += " ).Append( this._addCount ).Append( ';' );
+			sb.Append( "src += " ).Append( this._addCount ).Append( ';' );
 			this._addCount = 0;
-			var length = this._size;
-
-			do {
-				this.MovePointers( sb );
-				this.SetPointerLength( length );
-				sb.AppendFormat( @"*(({0}*)dest+{1}) = *(({0}*)src+{1});", this._ptrType, this._addCount / this._ptrSize );
-				length -= this._ptrSize;
-				this._addCount += this._ptrSize;
-			} while ( length > 0 );
 		}
+	}
 
-		private void MovePointers( StringBuilder? sb ) {
-			var modifer = this._addCount / this._ptrSize;
+	private void ObjectToBytesCode( StringBuilder sb, String? typeFullName ) {
+		sb.Append( "public unsafe byte[] ObjectToBytes(" ).Append( typeFullName ).Append( " srcObject)" );
+		sb.Append( '{' );
+		sb.Append( "byte[] buffer = new byte[" ).Append( this._size ).Append( "];" );
 
-			if ( modifer >= this._ptrSize ) {
-				sb.Append( "dest += " ).Append( this._addCount ).Append( ';' );
-				sb.Append( "src += " ).Append( this._addCount ).Append( ';' );
-				this._addCount = 0;
-			}
-		}
-
-		private void ObjectToBytesCode( StringBuilder sb, String? typeFullName ) {
-			sb.Append( "public unsafe byte[] ObjectToBytes(" ).Append( typeFullName ).Append( " srcObject)" );
-			sb.Append( '{' );
-			sb.Append( "byte[] buffer = new byte[" ).Append( this._size ).Append( "];" );
-
-			sb.Append( @"
+		sb.Append( @"
                 fixed (byte* destPtr = &buffer[0])
                 {
                     " );
 
-			sb.Append( "byte* src = (byte*)&srcObject;" );
-			sb.Append( "byte* dest = destPtr;" );
+		sb.Append( "byte* src = (byte*)&srcObject;" );
+		sb.Append( "byte* dest = destPtr;" );
 
-			this.GenerateMethodBodyCode( sb );
+		this.GenerateMethodBodyCode( sb );
 
-			sb.Append( @"}
+		sb.Append( @"}
                 return buffer;}" );
-		}
+	}
 
-		private void SetPointerLength( Int32 length ) {
-			switch ( length ) {
-				case >= 8:
-					this._ptrSize = 8;
-					this._ptrType = "Int64";
-					break;
-				case >= 4:
-					this._ptrSize = 4;
-					this._ptrType = "Int32";
-					break;
-				case >= 2:
-					this._ptrSize = 2;
-					this._ptrType = "Int16";
-					break;
-				default:
-					this._ptrSize = 1;
-					this._ptrType = "byte";
-					break;
-			}
+	private void SetPointerLength( Int32 length ) {
+		switch ( length ) {
+			case >= 8:
+				this._ptrSize = 8;
+				this._ptrType = "Int64";
+				break;
+			case >= 4:
+				this._ptrSize = 4;
+				this._ptrType = "Int32";
+				break;
+			case >= 2:
+				this._ptrSize = 2;
+				this._ptrType = "Int16";
+				break;
+			default:
+				this._ptrSize = 1;
+				this._ptrType = "byte";
+				break;
 		}
 	}
 }

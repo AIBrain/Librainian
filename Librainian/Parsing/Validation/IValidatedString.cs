@@ -22,18 +22,17 @@
 //
 // File "IValidatedString.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing.Validation {
+namespace Librainian.Parsing.Validation;
 
-	using System;
-	using System.Collections.Generic;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public interface IValidatedString : IValidator<String>, IComparable, IEnumerable<Char>, IComparable<String>, IComparable<IValidatedString>, IEquatable<String>,
-										IEquatable<IValidatedString> {
+[JsonObject]
+public interface IValidatedString : IValidator<String>, IComparable, IEnumerable<Char>, IComparable<String>, IComparable<IValidatedString>, IEquatable<String>,
+	IEquatable<IValidatedString> {
 
-		//Int32 Length { get; }
+	//Int32 Length { get; }
 
-		String Value { get; }
-	}
+	String Value { get; }
 }

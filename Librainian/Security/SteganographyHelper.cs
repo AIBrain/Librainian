@@ -22,29 +22,28 @@
 //
 // File "SteganographyHelper.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
+using System;
 
-	public static class SteganographyHelper {
+public static class SteganographyHelper {
 
-		public enum State {
+	public enum State {
 
-			Hiding,
+		Hiding,
 
-			FillingWithZeros
+		FillingWithZeros
+	}
+
+	public static Int32 ReverseBits( this Int32 n ) {
+		var result = 0;
+
+		for ( var i = 0; i < 8; i++ ) {
+			result = result * 2 + n % 2;
+
+			n /= 2;
 		}
 
-		public static Int32 ReverseBits( this Int32 n ) {
-			var result = 0;
-
-			for ( var i = 0; i < 8; i++ ) {
-				result = result * 2 + n % 2;
-
-				n /= 2;
-			}
-
-			return result;
-		}
+		return result;
 	}
 }

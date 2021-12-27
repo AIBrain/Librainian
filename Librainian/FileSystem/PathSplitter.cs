@@ -27,118 +27,117 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.IO;
-	using Exceptions;
-	using Parsing;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using Exceptions;
+using Parsing;
 
-	//using LanguageExt.Prelude;
+//using LanguageExt.Prelude;
 
-	public class PathSplitter {
+public class PathSplitter {
 
-		private List<String> Parts { get; } = new();
+	private List<String> Parts { get; } = new();
 
-		public String FileName { get; }
+	public String FileName { get; }
 
-		/// <summary>Null when equal to (is) the root folder.</summary>
-		public String? OriginalPath { get; }
+	/// <summary>Null when equal to (is) the root folder.</summary>
+	public String? OriginalPath { get; }
 
-		public PathSplitter( IFolder folder ) : this( new Document( folder.FullPath ) ) { }
+	public PathSplitter( IFolder folder ) : this( new Document( folder.FullPath ) ) { }
 
-		public PathSplitter( IDocument document, String newExtension = default ) {
-			if ( document == null ) {
-				throw new ArgumentEmptyException( nameof( document ) );
-			}
-
-			newExtension = newExtension.Trimmed() ?? document.Extension();
-
-			if ( !newExtension.StartsWith( "." ) ) {
-				newExtension = $".{newExtension}";
-			}
-
-			this.FileName = $"{document.JustName()}{newExtension}";
-
-			this.OriginalPath = Path.GetDirectoryName( document.FullPath );
-
-			this.Parts.Clear();
-
-			if ( !String.IsNullOrEmpty( this.OriginalPath ) ) {
-				this.Parts.AddRange( Split( this.OriginalPath ) );
-			}
-
-			this.Parts.TrimExcess();
+	public PathSplitter( IDocument document, String newExtension = default ) {
+		if ( document == null ) {
+			throw new ArgumentEmptyException( nameof( document ) );
 		}
 
-		private static IEnumerable<String> Split( String path ) {
-			if ( String.IsNullOrWhiteSpace( path ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
-			}
+		newExtension = newExtension.Trimmed() ?? document.Extension();
 
-			return path.Split( Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries );
+		if ( !newExtension.StartsWith( "." ) ) {
+			newExtension = $".{newExtension}";
 		}
 
-		public Boolean AddSubFolder( String subfolder ) {
-			subfolder = Folder.CleanPath( subfolder.Trim() );
+		this.FileName = $"{document.JustName()}{newExtension}";
 
-			if ( String.IsNullOrWhiteSpace( subfolder ) ) {
-				return false;
-			}
+		this.OriginalPath = Path.GetDirectoryName( document.FullPath );
 
-			this.Parts.Add( subfolder );
+		this.Parts.Clear();
 
-			return true;
+		if ( !String.IsNullOrEmpty( this.OriginalPath ) ) {
+			this.Parts.AddRange( Split( this.OriginalPath ) );
 		}
 
-		//[DebuggerStepThrough]
-		public Boolean InsertRoot( Folder path ) {
-			if ( path is null ) {
-				throw new ArgumentEmptyException( nameof( path ) );
-			}
+		this.Parts.TrimExcess();
+	}
 
-			this.Parts.Insert( 1, path.FullPath );
-
-			if ( path.FullPath[1] == ':' ) {
-				this.Parts.RemoveAt( 0 ); //inserting a drive:\folder? remove the original drive:\folder part
-			}
-
-			return true;
+	private static IEnumerable<String> Split( String path ) {
+		if ( String.IsNullOrWhiteSpace( path ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
 		}
 
-		/// <summary>Returns the reconstructed path and filename.</summary>
-		[DebuggerStepThrough]
-		public Document Recombined() {
-			var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
+		return path.Split( Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries );
+	}
 
-			return new Document( folder, this.FileName );
+	public Boolean AddSubFolder( String subfolder ) {
+		subfolder = Folder.CleanPath( subfolder.Trim() );
+
+		if ( String.IsNullOrWhiteSpace( subfolder ) ) {
+			return false;
 		}
 
-		/// <summary>Replace the original path, with <paramref name="replacement" /> path, not changing the filename.</summary>
-		/// <param name="replacement"></param>
+		this.Parts.Add( subfolder );
 
-		//[DebuggerStepThrough]
-		public Boolean ReplacePath( IFolder replacement ) {
-			this.Parts.Clear();
-			this.Parts.AddRange( Split( replacement.FullPath ) );
-			this.Parts.TrimExcess();
+		return true;
+	}
 
-			return true;
+	//[DebuggerStepThrough]
+	public Boolean InsertRoot( Folder path ) {
+		if ( path is null ) {
+			throw new ArgumentEmptyException( nameof( path ) );
 		}
 
-		[DebuggerStepThrough]
-		public Boolean SubstituteDrive( Char d ) {
-			var s = this.Parts[0];
+		this.Parts.Insert( 1, path.FullPath );
 
-			if ( s.Length != 2 || !s.EndsWith( ":", StringComparison.Ordinal ) ) {
-				return false;
-			}
-
-			this.Parts[0] = $"{d}:";
-
-			return true;
+		if ( path.FullPath[1] == ':' ) {
+			this.Parts.RemoveAt( 0 ); //inserting a drive:\folder? remove the original drive:\folder part
 		}
+
+		return true;
+	}
+
+	/// <summary>Returns the reconstructed path and filename.</summary>
+	[DebuggerStepThrough]
+	public Document Recombined() {
+		var folder = new Folder( this.Parts.ToStrings( Path.DirectorySeparatorChar ) );
+
+		return new Document( folder, this.FileName );
+	}
+
+	/// <summary>Replace the original path, with <paramref name="replacement" /> path, not changing the filename.</summary>
+	/// <param name="replacement"></param>
+
+	//[DebuggerStepThrough]
+	public Boolean ReplacePath( IFolder replacement ) {
+		this.Parts.Clear();
+		this.Parts.AddRange( Split( replacement.FullPath ) );
+		this.Parts.TrimExcess();
+
+		return true;
+	}
+
+	[DebuggerStepThrough]
+	public Boolean SubstituteDrive( Char d ) {
+		var s = this.Parts[0];
+
+		if ( s.Length != 2 || !s.EndsWith( ":", StringComparison.Ordinal ) ) {
+			return false;
+		}
+
+		this.Parts[0] = $"{d}:";
+
+		return true;
 	}
 }

@@ -23,21 +23,19 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "GetDatabase.cs" last touched on 2021-09-23 at 7:02 AM by Protiguous.
+// File "GetDatabase.cs" last touched on 2021-12-19 at 7:08 AM by Protiguous.
 
-namespace Librainian.Databases {
+namespace Librainian.Databases;
 
-	using System.Threading.Tasks;
-	using Utilities.Disposables;
+using System.Threading.Tasks;
+using Utilities.Disposables;
 
-	public class GetDatabase : ABetterClassDisposeAsync, IGetDatabase {
+public class GetDatabase : ABetterClassDisposeAsync, IGetDatabase {
 
-		public GetDatabase( IDatabaseServer databaseServer ) => this.DatabaseServer = ( DatabaseServer )databaseServer;
+	public GetDatabase( IDatabaseServer databaseServer ) : base( databaseServer.ToString() ) => this.DatabaseServer = ( DatabaseServer ) databaseServer;
 
-		public DatabaseServer DatabaseServer { get; }
+	public DatabaseServer DatabaseServer { get; }
 
-		public override ValueTask DisposeManagedAsync() => this.DatabaseServer.DisposeManagedAsync();
-
-	}
+	public override ValueTask DisposeManagedAsync() => this.DatabaseServer.DisposeManagedAsync();
 
 }

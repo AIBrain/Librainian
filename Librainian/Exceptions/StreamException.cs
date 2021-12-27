@@ -22,30 +22,29 @@
 //
 // File "StreamException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Runtime.Serialization;
+using System;
+using System.Runtime.Serialization;
+
+/// <inheritdoc />
+/// <summary>
+///     <para>Generic error when using a <see cref="System.IO.Stream" />.</para>
+/// </summary>
+[Serializable]
+public class StreamException : Exception {
 
 	/// <inheritdoc />
-	/// <summary>
-	///     <para>Generic error when using a <see cref="System.IO.Stream" />.</para>
-	/// </summary>
-	[Serializable]
-	public class StreamException : Exception {
+	/// <summary>Disallow no message.</summary>
+	private StreamException() { }
 
-		/// <inheritdoc />
-		/// <summary>Disallow no message.</summary>
-		private StreamException() { }
-
-		protected StreamException( SerializationInfo info, StreamingContext context ) : base( info, context ) {
-			if ( info is null ) {
-				throw new ArgumentEmptyException( nameof( info ) );
-			}
+	protected StreamException( SerializationInfo info, StreamingContext context ) : base( info, context ) {
+		if ( info is null ) {
+			throw new ArgumentEmptyException( nameof( info ) );
 		}
-
-		public StreamException( String? message ) : base( message ) { }
-
-		public StreamException( String? message, Exception? innerException ) : base( message, innerException ) { }
 	}
+
+	public StreamException( String? message ) : base( message ) { }
+
+	public StreamException( String? message, Exception? innerException ) : base( message, innerException ) { }
 }

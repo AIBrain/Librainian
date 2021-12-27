@@ -22,31 +22,30 @@
 //
 // File "Windows.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Security {
-	/*
-	using System;
-	using System.Security;
-	using System.Security.Principal;
+namespace Librainian.Security; 
+/*
+using System;
+using System.Security;
+using System.Security.Principal;
 
-	public static class Windows {
+public static class Windows {
 
-		/// <summary>Determine if the current user is in the role of <see cref="WindowsBuiltInRole" />.</summary>
-		/// <param name="role"></param>
-		/// <returns></returns>
-		public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
-			try {
-				using var windowsIdentity = WindowsIdentity.GetCurrent();
+	/// <summary>Determine if the current user is in the role of <see cref="WindowsBuiltInRole" />.</summary>
+	/// <param name="role"></param>
+	/// <returns></returns>
+	public static Boolean IsUserInRole( this WindowsBuiltInRole role ) {
+		try {
+			using var windowsIdentity = WindowsIdentity.GetCurrent();
 
-				var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
+			var windowsPrincipal = new WindowsPrincipal( windowsIdentity );
 
-				return windowsPrincipal.IsInRole( role );
-			}
-			catch ( SecurityException ) { }
-			catch ( ArgumentEmptyException ) { }
-			catch ( ArgumentException ) { }
-
-			return default;
+			return windowsPrincipal.IsInRole( role );
 		}
+		catch ( SecurityException ) { }
+		catch ( ArgumentEmptyException ) { }
+		catch ( ArgumentException ) { }
+
+		return default;
 	}
-	*/
 }
+*/

@@ -25,70 +25,68 @@
 // 
 // File "ClockMinute.cs" last touched on 2021-09-28 at 6:39 AM by Protiguous.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="ClockMinute" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public record ClockMinute : IClockPart {
+/// <summary>A simple struct for a <see cref="ClockMinute" />.</summary>
+[JsonObject]
+[Immutable]
+public record ClockMinute : IClockPart {
 
-		public const Byte MaximumValue = 59;
+	public const Byte MaximumValue = 59;
 
-		public const Byte MinimumValue = 0;
+	public const Byte MinimumValue = 0;
 
-		public ClockMinute( Byte value ) {
-			if ( value > MaximumValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
-			}
-
-			this.Value = value;
+	public ClockMinute( Byte value ) {
+		if ( value > MaximumValue ) {
+			throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
 		}
 
-		public static ClockMinute Maximum { get; } = new(MaximumValue);
+		this.Value = value;
+	}
 
-		public static ClockMinute Minimum { get; } = new(MinimumValue);
+	public static ClockMinute Maximum { get; } = new(MaximumValue);
 
-		[JsonProperty]
-		public Byte Value { get; }
+	public static ClockMinute Minimum { get; } = new(MinimumValue);
 
-		public static implicit operator Byte( ClockMinute value ) => value.Value;
+	[JsonProperty]
+	public Byte Value { get; }
 
-		public static implicit operator ClockMinute( Byte value ) => new(value);
+	public static implicit operator Byte( ClockMinute value ) => value.Value;
 
-		/// <summary>Provide the next minute.</summary>
-		public ClockMinute Next( out Boolean tocked ) {
-			var next = this.Value + 1;
+	public static implicit operator ClockMinute( Byte value ) => new(value);
 
-			if ( next > Maximum ) {
-				tocked = true;
+	/// <summary>Provide the next minute.</summary>
+	public ClockMinute Next( out Boolean tocked ) {
+		var next = this.Value + 1;
 
-				return Minimum;
-			}
+		if ( next > Maximum ) {
+			tocked = true;
 
-			tocked = false;
-
-			return ( ClockMinute )next;
+			return Minimum;
 		}
 
-		/// <summary>Provide the previous minute.</summary>
-		public ClockMinute Previous( out Boolean tocked ) {
-			var next = this.Value - 1;
+		tocked = false;
 
-			if ( next < Minimum ) {
-				tocked = true;
+		return ( ClockMinute )next;
+	}
 
-				return Maximum;
-			}
+	/// <summary>Provide the previous minute.</summary>
+	public ClockMinute Previous( out Boolean tocked ) {
+		var next = this.Value - 1;
 
-			tocked = false;
+		if ( next < Minimum ) {
+			tocked = true;
 
-			return ( ClockMinute )next;
+			return Maximum;
 		}
 
+		tocked = false;
+
+		return ( ClockMinute )next;
 	}
 
 }

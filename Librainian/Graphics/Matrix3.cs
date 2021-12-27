@@ -22,48 +22,47 @@
 //
 // File "Matrix3.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Graphics {
+namespace Librainian.Graphics;
 
-	using System;
+using System;
 
-	public class Matrix3 : Matrix {
+public class Matrix3 : Matrix {
 
-		public Matrix3() : base( 3, 3 ) { }
+	public Matrix3() : base( 3, 3 ) { }
 
-		public Matrix3( Single[,] matrix ) : base( matrix ) {
-			if ( this.Rows != 3 || this.Cols != 3 ) {
-				throw new ArgumentException();
-			}
+	public Matrix3( Single[,] matrix ) : base( matrix ) {
+		if ( this.Rows != 3 || this.Cols != 3 ) {
+			throw new ArgumentException();
 		}
-
-		public static Matrix3 I() =>
-			new( new[,] {
-				{
-					1.0f, 0.0f, 0.0f
-				}, {
-					0.0f, 1.0f, 0.0f
-				}, {
-					0.0f, 0.0f, 1.0f
-				}
-			} );
-
-		public static Matrix3 operator *( Matrix3 mat1, Matrix3 mat2 ) {
-			var m1 = mat1.matrix;
-			var m2 = mat2.matrix;
-			var m3 = new Single[3, 3];
-			m3[0, 0] = m1[0, 0] * m2[0, 0] + m1[0, 1] * m2[1, 0] + m1[0, 2] * m2[2, 0];
-			m3[0, 1] = m1[0, 0] * m2[0, 1] + m1[0, 1] * m2[1, 1] + m1[0, 2] * m2[2, 1];
-			m3[0, 2] = m1[0, 0] * m2[0, 2] + m1[0, 1] * m2[1, 2] + m1[0, 2] * m2[2, 2];
-			m3[1, 0] = m1[1, 0] * m2[0, 0] + m1[1, 1] * m2[1, 0] + m1[1, 2] * m2[2, 0];
-			m3[1, 1] = m1[1, 0] * m2[0, 1] + m1[1, 1] * m2[1, 1] + m1[1, 2] * m2[2, 1];
-			m3[1, 2] = m1[1, 0] * m2[0, 2] + m1[1, 1] * m2[1, 2] + m1[1, 2] * m2[2, 2];
-			m3[2, 0] = m1[2, 0] * m2[0, 0] + m1[2, 1] * m2[1, 0] + m1[2, 2] * m2[2, 0];
-			m3[2, 1] = m1[2, 0] * m2[0, 1] + m1[2, 1] * m2[1, 1] + m1[2, 2] * m2[2, 1];
-			m3[2, 2] = m1[2, 0] * m2[0, 2] + m1[2, 1] * m2[1, 2] + m1[2, 2] * m2[2, 2];
-
-			return new Matrix3( m3 );
-		}
-
-		public static Matrix3 operator *( Matrix3 m, Single scalar ) => new( Multiply( m, scalar ) );
 	}
+
+	public static Matrix3 I() =>
+		new( new[,] {
+			{
+				1.0f, 0.0f, 0.0f
+			}, {
+				0.0f, 1.0f, 0.0f
+			}, {
+				0.0f, 0.0f, 1.0f
+			}
+		} );
+
+	public static Matrix3 operator *( Matrix3 mat1, Matrix3 mat2 ) {
+		var m1 = mat1.matrix;
+		var m2 = mat2.matrix;
+		var m3 = new Single[3, 3];
+		m3[0, 0] = m1[0, 0] * m2[0, 0] + m1[0, 1] * m2[1, 0] + m1[0, 2] * m2[2, 0];
+		m3[0, 1] = m1[0, 0] * m2[0, 1] + m1[0, 1] * m2[1, 1] + m1[0, 2] * m2[2, 1];
+		m3[0, 2] = m1[0, 0] * m2[0, 2] + m1[0, 1] * m2[1, 2] + m1[0, 2] * m2[2, 2];
+		m3[1, 0] = m1[1, 0] * m2[0, 0] + m1[1, 1] * m2[1, 0] + m1[1, 2] * m2[2, 0];
+		m3[1, 1] = m1[1, 0] * m2[0, 1] + m1[1, 1] * m2[1, 1] + m1[1, 2] * m2[2, 1];
+		m3[1, 2] = m1[1, 0] * m2[0, 2] + m1[1, 1] * m2[1, 2] + m1[1, 2] * m2[2, 2];
+		m3[2, 0] = m1[2, 0] * m2[0, 0] + m1[2, 1] * m2[1, 0] + m1[2, 2] * m2[2, 0];
+		m3[2, 1] = m1[2, 0] * m2[0, 1] + m1[2, 1] * m2[1, 1] + m1[2, 2] * m2[2, 1];
+		m3[2, 2] = m1[2, 0] * m2[0, 2] + m1[2, 1] * m2[1, 2] + m1[2, 2] * m2[2, 2];
+
+		return new Matrix3( m3 );
+	}
+
+	public static Matrix3 operator *( Matrix3 m, Single scalar ) => new( Multiply( m, scalar ) );
 }

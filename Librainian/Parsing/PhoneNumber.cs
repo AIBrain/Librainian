@@ -25,25 +25,24 @@
 //
 // File "PhoneNumber.cs" last touched on 2021-07-05 at 7:36 PM by Protiguous.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using System.Text.RegularExpressions;
+using System;
+using System.Text.RegularExpressions;
 
-	/// <summary>
-	///     //TODO This whole concept needs tests.
-	///     <code>PhoneNumber phoneNumber = "555-867-5309";</code>
-	/// </summary>
-	public record PhoneNumber( Int32 AreaCode, Int32 ExchangeCode, Int32 StationCode ) {
-		private static Regex PhoneNumberRegex { get; } = new( @"\(?(\d{3})\)?-? *(\d{3})-? *-?(\d{4})", RegexOptions.IgnoreCase | RegexOptions.Compiled );
+/// <summary>
+///     //TODO This whole concept needs tests.
+///     <code>PhoneNumber phoneNumber = "555-867-5309";</code>
+/// </summary>
+public record PhoneNumber( Int32 AreaCode, Int32 ExchangeCode, Int32 StationCode ) {
+	private static Regex PhoneNumberRegex { get; } = new( @"\(?(\d{3})\)?-? *(\d{3})-? *-?(\d{4})", RegexOptions.IgnoreCase | RegexOptions.Compiled );
 
-		public static implicit operator PhoneNumber( String value ) {
-			var match = PhoneNumberRegex.Match( value );
-			if ( match.Length < 4 ) {
-				throw new FormatException( "Invalid phone number format" );
-			}
-
-			return new PhoneNumber( Int32.Parse( match.Groups[1].Value ), Int32.Parse( match.Groups[2].Value ), Int32.Parse( match.Groups[3].Value ) );
+	public static implicit operator PhoneNumber( String value ) {
+		var match = PhoneNumberRegex.Match( value );
+		if ( match.Length < 4 ) {
+			throw new FormatException( "Invalid phone number format" );
 		}
+
+		return new PhoneNumber( Int32.Parse( match.Groups[1].Value ), Int32.Parse( match.Groups[2].Value ), Int32.Parse( match.Groups[3].Value ) );
 	}
 }

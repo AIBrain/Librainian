@@ -24,126 +24,125 @@
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Diagnostics.CodeAnalysis;
-	using System.IO;
-	using System.Threading;
-	using FileSystem;
-	using Logging;
-	using Measurement.Time;
-	using Persistence;
-	using Utilities.Disposables;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Threading;
+using FileSystem;
+using Logging;
+using Measurement.Time;
+using Persistence;
+using Utilities.Disposables;
 
-	/// <summary>
-	///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".
-	///     <para></para>
-	/// </summary>
-	/// <example>
-	///     <code>using ( new SingleAccess( anyName ) ) { DoCode(); }</code>
-	/// </example>
-	public class SingleAccess : ABetterClassDispose {
+/// <summary>
+///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "name".
+///     <para></para>
+/// </summary>
+/// <example>
+///     <code>using ( new SingleAccess( anyName ) ) { DoCode(); }</code>
+/// </example>
+public class SingleAccess : ABetterClassDispose {
 
-		private Semaphore? Semaphore { get; }
+	private Semaphore? Semaphore { get; }
 
-		public Boolean Snagged { get; private set; }
+	public Boolean Snagged { get; private set; }
 
-		private SingleAccess() : base(nameof( SingleAccess ) ) {
-			/* Disallow private contructor */
+	private SingleAccess() : base(nameof( SingleAccess ) ) {
+		/* Disallow private contructor */
+	}
+
+	/// <summary>Uses a named semaphore to allow only ONE of <paramref name="id" />.</summary>
+	/// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
+	public SingleAccess( Guid id, TimeSpan? timeout = null ) : this( id.ToString( "D" ), timeout ) { }
+
+	/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
+	/// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
+	public SingleAccess( FileSystemInfo name, TimeSpan? timeout = null ) : this( name.FullName, timeout ) { }
+
+	/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
+	/// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
+	public SingleAccess( String name, TimeSpan? timeout = null ) : base( nameof( SingleAccess ) ) {
+		if ( String.IsNullOrWhiteSpace( name ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
 		}
 
-		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="id" />.</summary>
-		/// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
-		public SingleAccess( Guid id, TimeSpan? timeout = null ) : this( id.ToString( "D" ), timeout ) { }
+		try {
+			timeout ??= Minutes.One;
 
-		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
-		/// <example>using ( var snag = new FileSingleton( info ) ) { DoCode(); }</example>
-		public SingleAccess( FileSystemInfo name, TimeSpan? timeout = null ) : this( name.FullName, timeout ) { }
-
-		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="name" />.</summary>
-		/// <example>using ( var snag = new FileSingleton( name ) ) { DoCode(); }</example>
-		public SingleAccess( String name, TimeSpan? timeout = null ) : base( nameof( SingleAccess ) ) {
-			if ( String.IsNullOrWhiteSpace( name ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
-			}
-
-			try {
-				timeout ??= Minutes.One;
-
-				this.Snagged = false;
-				this.Semaphore = new Semaphore( 1, 1, name );
-				this.Snagged = this.Semaphore.WaitOne( timeout.Value );
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
+			this.Snagged = false;
+			this.Semaphore = new Semaphore( 1, 1, name );
+			this.Snagged = this.Semaphore.WaitOne( timeout.Value );
 		}
-
-		public SingleAccess( IDocument document, TimeSpan? timeout = null ) : this( document.FullPath, timeout ) { }
-
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			if ( !this.Snagged ) {
-				return;
-			}
-
-			using ( this.Semaphore ) {
-				try {
-					this.Semaphore?.Release();
-				}
-				finally {
-					this.Snagged = false;
-				}
-			}
+		catch ( Exception exception ) {
+			exception.Log();
 		}
 	}
 
-	/// <summary>
-	///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "self".
-	///     <para></para>
-	/// </summary>
-	/// <example>
-	///     <code>using ( new SingleAccess( anyName ) ) { DoCode(); }</code>
-	/// </example>
-	public class SingleAccess<T> : ABetterClassDispose {
+	public SingleAccess( IDocument document, TimeSpan? timeout = null ) : this( document.FullPath, timeout ) { }
 
-		private Semaphore? Semaphore { get; }
-
-		public Boolean Snagged { get; private set; }
-
-		private SingleAccess():base(nameof( SingleAccess ) ) {
-			/* Disallow private contructor */
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		if ( !this.Snagged ) {
+			return;
 		}
 
-		/// <summary>Uses a named semaphore to allow only ONE of <paramref name="self" />.</summary>
-		/// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
-		public SingleAccess( [DisallowNull] T self, TimeSpan? timeout = null ) : base( nameof( SingleAccess ) ) {
+		using ( this.Semaphore ) {
 			try {
-				timeout ??= Minutes.One;
-
-				this.Snagged = false;
-				this.Semaphore = new Semaphore( 1, 1, self.ToJSON() ); //what happens on a null?
-				this.Snagged = this.Semaphore.WaitOne( timeout.Value );
+				this.Semaphore?.Release();
 			}
-			catch ( Exception exception ) {
-				exception.Log();
+			finally {
+				this.Snagged = false;
 			}
 		}
+	}
+}
 
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			if ( !this.Snagged ) {
-				return;
+/// <summary>
+///     Uses a named <see cref="Semaphore" /> to allow only 1 access to "self".
+///     <para></para>
+/// </summary>
+/// <example>
+///     <code>using ( new SingleAccess( anyName ) ) { DoCode(); }</code>
+/// </example>
+public class SingleAccess<T> : ABetterClassDispose {
+
+	private Semaphore? Semaphore { get; }
+
+	public Boolean Snagged { get; private set; }
+
+	private SingleAccess():base(nameof( SingleAccess ) ) {
+		/* Disallow private contructor */
+	}
+
+	/// <summary>Uses a named semaphore to allow only ONE of <paramref name="self" />.</summary>
+	/// <example>using ( var snag = new FileSingleton( guid ) ) { DoCode(); }</example>
+	public SingleAccess( [DisallowNull] T self, TimeSpan? timeout = null ) : base( nameof( SingleAccess ) ) {
+		try {
+			timeout ??= Minutes.One;
+
+			this.Snagged = false;
+			this.Semaphore = new Semaphore( 1, 1, self.ToJSON() ); //what happens on a null?
+			this.Snagged = this.Semaphore.WaitOne( timeout.Value );
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+	}
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		if ( !this.Snagged ) {
+			return;
+		}
+
+		using ( this.Semaphore ) {
+			try {
+				this.Semaphore?.Release();
 			}
-
-			using ( this.Semaphore ) {
-				try {
-					this.Semaphore?.Release();
-				}
-				finally {
-					this.Snagged = false;
-				}
+			finally {
+				this.Snagged = false;
 			}
 		}
 	}

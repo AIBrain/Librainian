@@ -25,21 +25,20 @@
 //
 // File "Singleton.cs" last touched on 2021-08-20 at 8:00 AM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading; 
 
-	/// <summary>Singleton Pattern. Judith Bishop Nov 2007</summary>
-	/// <remarks>Untested.</remarks>
-	public class Singleton<T> where T : class, new() {
+/// <summary>Singleton Pattern. Judith Bishop Nov 2007</summary>
+/// <remarks>Untested.</remarks>
+public class Singleton<T> where T : class, new() {
 
-		public static T Instance => SingletonCreator.SingleInstance;
+	public static T Instance => SingletonCreator.SingleInstance;
 
-		private Singleton() { }
+	private Singleton() { }
 
-		public static class SingletonCreator {
+	public static class SingletonCreator {
 
-			internal static T SingleInstance { get; } = new();
+		internal static T SingleInstance { get; } = new();
 
-			static SingletonCreator() { }
-		}
+		static SingletonCreator() { }
 	}
 }

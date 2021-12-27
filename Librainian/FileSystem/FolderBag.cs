@@ -24,122 +24,121 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
-	using Exceptions;
-	using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Exceptions;
+using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>A bag of folders, stored somewhat efficiently ?memory-wise? than a list.</para>
-	/// </summary>
-	[JsonObject]
-	public class FolderBag : IEnumerable<Folder> {
+/// <summary>
+///     <para>A bag of folders, stored somewhat efficiently ?memory-wise? than a list.</para>
+/// </summary>
+[JsonObject]
+public class FolderBag : IEnumerable<Folder> {
 
-		[JsonProperty]
-		public List<FolderBagNode> Endings { get; } = new();
+	[JsonProperty]
+	public List<FolderBagNode> Endings { get; } = new();
 
-		[JsonProperty]
-		public List<FolderBagNode> Roots { get; } = new();
+	[JsonProperty]
+	public List<FolderBagNode> Roots { get; } = new();
 
-		public Boolean Add( String folderpath ) {
-			if ( folderpath == null ) {
-				throw new ArgumentEmptyException( nameof( folderpath ) );
-			}
+	public Boolean Add( String folderpath ) {
+		if ( folderpath == null ) {
+			throw new ArgumentEmptyException( nameof( folderpath ) );
+		}
 
+		this.FoundAnotherFolder( new Folder( folderpath ) );
+
+		return true;
+	}
+
+	public UInt64 AddRange( IEnumerable<String> folderpaths ) {
+		if ( folderpaths is null ) {
+			throw new ArgumentEmptyException( nameof( folderpaths ) );
+		}
+
+		var counter = 0UL;
+
+		foreach ( var folderpath in folderpaths ) {
 			this.FoundAnotherFolder( new Folder( folderpath ) );
-
-			return true;
+			counter++;
 		}
 
-		public UInt64 AddRange( IEnumerable<String> folderpaths ) {
-			if ( folderpaths is null ) {
-				throw new ArgumentEmptyException( nameof( folderpaths ) );
-			}
+		return counter;
+	}
 
-			var counter = 0UL;
-
-			foreach ( var folderpath in folderpaths ) {
-				this.FoundAnotherFolder( new Folder( folderpath ) );
-				counter++;
-			}
-
-			return counter;
+	public void FoundAnotherFolder( IFolder folder ) {
+		if ( folder is null ) {
+			throw new ArgumentEmptyException( nameof( folder ) );
 		}
 
-		public void FoundAnotherFolder( IFolder folder ) {
-			if ( folder is null ) {
-				throw new ArgumentEmptyException( nameof( folder ) );
-			}
+		var pathParts = folder.Info.SplitPath().ToList();
 
-			var pathParts = folder.Info.SplitPath().ToList();
+		if ( !pathParts.Any() ) {
+			return;
+		}
 
-			if ( !pathParts.Any() ) {
-				return;
-			}
+		var currentNode = new FolderBagNode( pathParts[0] );
 
-			var currentNode = new FolderBagNode( pathParts[0] );
+		var existingNode = this.Roots.Find( node => FolderBagNode.Equals( node, currentNode ) ); // look for an existing root node
 
-			var existingNode = this.Roots.Find( node => FolderBagNode.Equals( node, currentNode ) ); // look for an existing root node
+		if ( !FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
 
-			if ( !FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
+			// use existing node
+			currentNode = existingNode;
+		}
+		else {
 
-				// use existing node
-				currentNode = existingNode;
+			// didn't find one, add it
+			this.Roots.Add( currentNode );
+		}
+
+		// ReSharper disable once LoopCanBePartlyConvertedToQuery
+		foreach ( var pathPart in pathParts.Skip( 1 ) ) {
+			var nextNode = new FolderBagNode( pathPart, currentNode );
+			existingNode = currentNode?.SubFolders.Find( node => FolderBagNode.Equals( node, nextNode ) );
+
+			if ( FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
+				currentNode?.SubFolders.Add( nextNode ); // didn't find one, add it
 			}
 			else {
-
-				// didn't find one, add it
-				this.Roots.Add( currentNode );
+				nextNode = existingNode; // already there? don't need to add it.
 			}
 
-			// ReSharper disable once LoopCanBePartlyConvertedToQuery
-			foreach ( var pathPart in pathParts.Skip( 1 ) ) {
-				var nextNode = new FolderBagNode( pathPart, currentNode );
-				existingNode = currentNode?.SubFolders.Find( node => FolderBagNode.Equals( node, nextNode ) );
-
-				if ( FolderBagNode.Equals( existingNode, default( FolderBagNode? ) ) ) {
-					currentNode?.SubFolders.Add( nextNode ); // didn't find one, add it
-				}
-				else {
-					nextNode = existingNode; // already there? don't need to add it.
-				}
-
-				currentNode = nextNode;
-			}
-
-			//currentNode.IsEmpty.Should().BeTrue();
-
-			//if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
-
-			if ( currentNode != null ) {
-				this.Endings.Add( currentNode );
-			}
+			currentNode = nextNode;
 		}
 
-		/// <summary>Returns an enumerator that iterates through the collection.</summary>
-		/// <returns>An enumerator that can be used to iterate through the collection.</returns>
-		public IEnumerator<Folder> GetEnumerator() {
-			foreach ( var ending in this.Endings ) {
-				var node = ending;
-				var path = String.Empty;
+		//currentNode.IsEmpty.Should().BeTrue();
 
-				while ( node.Parent != null ) {
-					path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
-					node = node.Parent;
-				}
+		//if ( !currentNode.Data.EndsWith( ":" ) ) { currentNode.Parent.Should().NotBeNull(); }
 
-				//this.Roots.Should().Contain( node );
-				path = String.Concat( node.Data, path );
-
-				yield return new Folder( path );
-			}
+		if ( currentNode != null ) {
+			this.Endings.Add( currentNode );
 		}
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
+
+	/// <summary>Returns an enumerator that iterates through the collection.</summary>
+	/// <returns>An enumerator that can be used to iterate through the collection.</returns>
+	public IEnumerator<Folder> GetEnumerator() {
+		foreach ( var ending in this.Endings ) {
+			var node = ending;
+			var path = String.Empty;
+
+			while ( node.Parent != null ) {
+				path = $"{Path.DirectorySeparatorChar}{node.Data}{path}";
+				node = node.Parent;
+			}
+
+			//this.Roots.Should().Contain( node );
+			path = String.Concat( node.Data, path );
+
+			yield return new Folder( path );
+		}
+	}
+
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

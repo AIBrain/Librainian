@@ -22,119 +22,118 @@
 //
 // File "ArbitraryDecimal.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths.Bigger {
+namespace Librainian.Maths.Bigger;
 
-	using System;
-	using System.Globalization;
+using System;
+using System.Globalization;
 
-	public class ArbitraryDecimal {
+public class ArbitraryDecimal {
 
-		/// <summary>How many digits are *after* the System.Decimal point</summary>
-		private Int32 _decimalPoint;
+	/// <summary>How many digits are *after* the System.Decimal point</summary>
+	private Int32 _decimalPoint;
 
-		/// <summary>Digits in the System.Decimal expansion, one byte per digit</summary>
-		private Byte[] _digits;
+	/// <summary>Digits in the System.Decimal expansion, one byte per digit</summary>
+	private Byte[] _digits;
 
-		/// <summary>Constructs an arbitrary System.Decimal expansion from the given long. The long must not be negative.</summary>
-		public ArbitraryDecimal( Int64 x ) {
-			var tmp = x.ToString( CultureInfo.CurrentCulture );
-			this._digits = new Byte[tmp.Length];
+	/// <summary>Constructs an arbitrary System.Decimal expansion from the given long. The long must not be negative.</summary>
+	public ArbitraryDecimal( Int64 x ) {
+		var tmp = x.ToString( CultureInfo.CurrentCulture );
+		this._digits = new Byte[tmp.Length];
 
-			for ( var i = 0; i < tmp.Length; i++ ) {
-				this._digits[i] = ( Byte )( tmp[i] - '0' );
-			}
-
-			this.Normalize();
+		for ( var i = 0; i < tmp.Length; i++ ) {
+			this._digits[i] = ( Byte )( tmp[i] - '0' );
 		}
 
-		/// <summary>Multiplies the current expansion by the given amount, which should only be 2 or 5.</summary>
-		public void MultiplyBy( Int32 amount ) {
-			var result = new Byte[this._digits.Length + 1];
+		this.Normalize();
+	}
 
-			for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
-				var resultDigit = this._digits[i] * amount + result[i + 1];
-				result[i] = ( Byte )( resultDigit / 10 );
-				result[i + 1] = ( Byte )( resultDigit % 10 );
-			}
+	/// <summary>Multiplies the current expansion by the given amount, which should only be 2 or 5.</summary>
+	public void MultiplyBy( Int32 amount ) {
+		var result = new Byte[this._digits.Length + 1];
 
-			if ( result[0] != 0 ) {
-				this._digits = result;
-			}
-			else {
-				Buffer.BlockCopy( result, 1, this._digits, 0, this._digits.Length );
-			}
-
-			this.Normalize();
+		for ( var i = this._digits.Length - 1; i >= 0; i-- ) {
+			var resultDigit = this._digits[i] * amount + result[i + 1];
+			result[i] = ( Byte )( resultDigit / 10 );
+			result[i + 1] = ( Byte )( resultDigit % 10 );
 		}
 
-		/// <summary>Removes leading/trailing zeroes from the expansion.</summary>
-		public void Normalize() {
-			Int32 first;
-
-			for ( first = 0; first < this._digits.Length; first++ ) {
-				if ( this._digits[first] != 0 ) {
-					break;
-				}
-			}
-
-			Int32 last;
-
-			for ( last = this._digits.Length - 1; last >= 0; last-- ) {
-				if ( this._digits[last] != 0 ) {
-					break;
-				}
-			}
-
-			if ( first == 0 && last == this._digits.Length - 1 ) {
-				return;
-			}
-
-			var tmp = new Byte[last - first + 1];
-
-			for ( var i = 0; i < tmp.Length; i++ ) {
-				tmp[i] = this._digits[i + first];
-			}
-
-			this._decimalPoint -= this._digits.Length - ( last + 1 );
-			this._digits = tmp;
+		if ( result[0] != 0 ) {
+			this._digits = result;
+		}
+		else {
+			Buffer.BlockCopy( result, 1, this._digits, 0, this._digits.Length );
 		}
 
-		/// <summary>
-		///     Shifts the System.Decimal point; a negative value makes the System.Decimal expansion bigger (as fewer digits come
-		///     after the System.Decimal place) and a positive value
-		///     makes the System.Decimal expansion smaller.
-		/// </summary>
-		public void Shift( Int32 amount ) => this._decimalPoint += amount;
+		this.Normalize();
+	}
 
-		/// <summary>Converts the value to a proper System.Decimal String representation.</summary>
-		public override String ToString() {
-			var digitString = new Char[this._digits.Length];
+	/// <summary>Removes leading/trailing zeroes from the expansion.</summary>
+	public void Normalize() {
+		Int32 first;
 
-			for ( var i = 0; i < this._digits.Length; i++ ) {
-				digitString[i] = ( Char )( this._digits[i] + '0' );
+		for ( first = 0; first < this._digits.Length; first++ ) {
+			if ( this._digits[first] != 0 ) {
+				break;
 			}
-
-			// Simplest case - nothing after the System.Decimal point, and last real digit is
-			// non-zero, eg value=35
-			if ( this._decimalPoint == 0 ) {
-				return new String( digitString );
-			}
-
-			// Fairly simple case - nothing after the System.Decimal point, but some 0s to add,
-			// eg value=350
-			if ( this._decimalPoint < 0 ) {
-				return $"{new String( digitString )}{new String( '0', -this._decimalPoint )}";
-			}
-
-			// Nothing before the System.Decimal point, eg 0.035
-			if ( this._decimalPoint >= digitString.Length ) {
-				return $"0.{new String( '0', this._decimalPoint - digitString.Length )}{new String( digitString )}";
-			}
-
-			// Most complicated case - part of the String comes before the System.Decimal point,
-			// part comes after it, eg 3.5
-			return
-				$"{new String( digitString, 0, digitString.Length - this._decimalPoint )}.{new String( digitString, digitString.Length - this._decimalPoint, this._decimalPoint )}";
 		}
+
+		Int32 last;
+
+		for ( last = this._digits.Length - 1; last >= 0; last-- ) {
+			if ( this._digits[last] != 0 ) {
+				break;
+			}
+		}
+
+		if ( first == 0 && last == this._digits.Length - 1 ) {
+			return;
+		}
+
+		var tmp = new Byte[last - first + 1];
+
+		for ( var i = 0; i < tmp.Length; i++ ) {
+			tmp[i] = this._digits[i + first];
+		}
+
+		this._decimalPoint -= this._digits.Length - ( last + 1 );
+		this._digits = tmp;
+	}
+
+	/// <summary>
+	///     Shifts the System.Decimal point; a negative value makes the System.Decimal expansion bigger (as fewer digits come
+	///     after the System.Decimal place) and a positive value
+	///     makes the System.Decimal expansion smaller.
+	/// </summary>
+	public void Shift( Int32 amount ) => this._decimalPoint += amount;
+
+	/// <summary>Converts the value to a proper System.Decimal String representation.</summary>
+	public override String ToString() {
+		var digitString = new Char[this._digits.Length];
+
+		for ( var i = 0; i < this._digits.Length; i++ ) {
+			digitString[i] = ( Char )( this._digits[i] + '0' );
+		}
+
+		// Simplest case - nothing after the System.Decimal point, and last real digit is
+		// non-zero, eg value=35
+		if ( this._decimalPoint == 0 ) {
+			return new String( digitString );
+		}
+
+		// Fairly simple case - nothing after the System.Decimal point, but some 0s to add,
+		// eg value=350
+		if ( this._decimalPoint < 0 ) {
+			return $"{new String( digitString )}{new String( '0', -this._decimalPoint )}";
+		}
+
+		// Nothing before the System.Decimal point, eg 0.035
+		if ( this._decimalPoint >= digitString.Length ) {
+			return $"0.{new String( '0', this._decimalPoint - digitString.Length )}{new String( digitString )}";
+		}
+
+		// Most complicated case - part of the String comes before the System.Decimal point,
+		// part comes after it, eg 3.5
+		return
+			$"{new String( digitString, 0, digitString.Length - this._decimalPoint )}.{new String( digitString, digitString.Length - this._decimalPoint, this._decimalPoint )}";
 	}
 }

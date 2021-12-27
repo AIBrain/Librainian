@@ -22,16 +22,15 @@
 //
 // File "LUID.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.FileSystem.Pri.LongPath {
+namespace Librainian.FileSystem.Pri.LongPath;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
-	public struct LUID {
+[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Unicode )]
+public struct LUID {
 
-		public UInt32 LowPart;
+	public UInt32 LowPart;
 
-		public UInt32 HighPart;
-	}
+	public UInt32 HighPart;
 }

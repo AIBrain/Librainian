@@ -22,51 +22,50 @@
 //
 // File "ConsoleListenerWithTimePrefix.cs" last formatted on 2020-08-28 at 11:52 AM.
 
-namespace Librainian.Logging {
+namespace Librainian.Logging;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
+public class ConsoleListenerWithTimePrefix : ConsoleTraceListener {
 
-		/// <summary>Gets a value indicating whether the trace listener is thread safe.</summary>
-		/// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
-		public override Boolean IsThreadSafe => true;
+	/// <summary>Gets a value indicating whether the trace listener is thread safe.</summary>
+	/// <returns>true if the trace listener is thread safe; otherwise, false. The default is false.</returns>
+	public override Boolean IsThreadSafe => true;
 
-		public ConsoleListenerWithTimePrefix() : base( true ) { }
+	public ConsoleListenerWithTimePrefix() : base( true ) { }
 
-		//TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
-		/// <summary>
-		///     Emits an error message and a detailed error message to the listener you create when you implement the
-		///     <see cref="TraceListener" /> class.
-		/// </summary>
-		/// <param name="message">      A message to emit.</param>
-		/// <param name="detailMessage">A detailed message to emit.</param>
-		public override void Fail( String? message, String? detailMessage ) {
-			base.Fail( message, detailMessage );
-			this.Flush();
-		}
-
-		/// <summary>Writes a message to this instance's <see cref="TextWriterTraceListener.Writer" />.</summary>
-		/// <param name="message">A message to write.</param>
-		[DebuggerStepThrough]
-		public override void Write( String? message ) {
-			Console.Write( message );
-			this.Flush();
-		}
-
-		/// <summary>
-		///     Writes a message to this instance's <see cref="TextWriterTraceListener.Writer" /> followed by a line terminator.
-		///     The default line terminator is a carriage return followed
-		///     by a line feed (\r\n).
-		/// </summary>
-		/// <param name="message">A message to write.</param>
-		[DebuggerStepThrough]
-		public override void WriteLine( String? message ) {
-			Console.WriteLine( message );
-			this.Flush();
-		}
-
-		//private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Environment.CurrentManagedThreadId})] ";
+	//TODO  http://msdn.microsoft.com/en-us/Library/system.diagnostics.consoletracelistener(v=vs.110).aspx
+	/// <summary>
+	///     Emits an error message and a detailed error message to the listener you create when you implement the
+	///     <see cref="TraceListener" /> class.
+	/// </summary>
+	/// <param name="message">      A message to emit.</param>
+	/// <param name="detailMessage">A detailed message to emit.</param>
+	public override void Fail( String? message, String? detailMessage ) {
+		base.Fail( message, detailMessage );
+		this.Flush();
 	}
+
+	/// <summary>Writes a message to this instance's <see cref="TextWriterTraceListener.Writer" />.</summary>
+	/// <param name="message">A message to write.</param>
+	[DebuggerStepThrough]
+	public override void Write( String? message ) {
+		Console.Write( message );
+		this.Flush();
+	}
+
+	/// <summary>
+	///     Writes a message to this instance's <see cref="TextWriterTraceListener.Writer" /> followed by a line terminator.
+	///     The default line terminator is a carriage return followed
+	///     by a line feed (\r\n).
+	/// </summary>
+	/// <param name="message">A message to write.</param>
+	[DebuggerStepThrough]
+	public override void WriteLine( String? message ) {
+		Console.WriteLine( message );
+		this.Flush();
+	}
+
+	//private static String HeaderTimeThread() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} ({Environment.CurrentManagedThreadId})] ";
 }

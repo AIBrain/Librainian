@@ -22,21 +22,20 @@
 //
 // File "TranslateBytesToInt32.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Converters {
+namespace Librainian.Converters;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>Using this struct probably won't end too well.</summary>
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct TranslateBytesToInt32 {
+/// <summary>Using this struct probably won't end too well.</summary>
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct TranslateBytesToInt32 {
 
-		// ReSharper disable once FieldCanBeMadeReadOnly.Global
-		[FieldOffset( 0 )]
-		public Byte[] ByteArray;
+	// ReSharper disable once FieldCanBeMadeReadOnly.Global
+	[FieldOffset( 0 )]
+	public Byte[] ByteArray;
 
-		// ReSharper disable once FieldCanBeMadeReadOnly.Global
-		[FieldOffset( 0 )]
-		public Int32[] IntArray;
-	}
+	// ReSharper disable once FieldCanBeMadeReadOnly.Global
+	[FieldOffset( 0 )]
+	public Int32[] IntArray;
 }

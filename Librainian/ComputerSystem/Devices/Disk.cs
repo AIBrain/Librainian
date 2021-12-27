@@ -25,72 +25,71 @@
 //
 // File "Disk.cs" last touched on 2021-03-07 at 3:46 PM by Protiguous.
 
-namespace Librainian.ComputerSystem.Devices {
+namespace Librainian.ComputerSystem.Devices;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
-	using System.IO;
-	using System.Linq;
-	using System.Runtime.CompilerServices;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Extensions;
-	using FileSystem;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Extensions;
+using FileSystem;
+
+/// <summary>
+///     <para>A Drive contains 1 or more <see cref="Disk" />.</para>
+/// </summary>
+/// <remarks>http://superuser.com/questions/341497/whats-the-difference-between-a-disk-and-a-drive</remarks>
+[Immutable]
+public class Disk {
+
+	public Char DriveLetter { get; }
+
+	public DriveInfo Info { get; }
+
+	public String RootDirectory => this.Info.RootDirectory.Name;
+
+	public Disk( Document document ) : this( document.FullPath[0] ) { }
+
+	public Disk( Folder folder ) : this( folder.FullPath[0] ) { }
+
+	public Disk( String fullpath ) : this( fullpath[0] ) { }
+
+	public Disk( DriveInfo info ) : this( info.RootDirectory.FullName[0] ) { }
+
+	public Disk( Char driveLetter ) {
+		this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
+
+		if ( this.DriveLetter is < 'A' or > 'Z' ) {
+			throw new ArgumentOutOfRangeException( nameof( driveLetter ), driveLetter, $"The specified drive \"{driveLetter}\" is outside of the range A through Z." );
+		}
+
+		this.Info = new DriveInfo( this.DriveLetter.ToString() );
+	}
 
 	/// <summary>
-	///     <para>A Drive contains 1 or more <see cref="Disk" />.</para>
+	///     Assume <see cref="Environment.CurrentDirectory" />.
 	/// </summary>
-	/// <remarks>http://superuser.com/questions/341497/whats-the-difference-between-a-disk-and-a-drive</remarks>
-	[Immutable]
-	public class Disk {
+	public Disk() : this( Environment.CurrentDirectory[0] ) { }
 
-		public Char DriveLetter { get; }
-
-		public DriveInfo Info { get; }
-
-		public String RootDirectory => this.Info.RootDirectory.Name;
-
-		public Disk( Document document ) : this( document.FullPath[0] ) { }
-
-		public Disk( Folder folder ) : this( folder.FullPath[0] ) { }
-
-		public Disk( String fullpath ) : this( fullpath[0] ) { }
-
-		public Disk( DriveInfo info ) : this( info.RootDirectory.FullName[0] ) { }
-
-		public Disk( Char driveLetter ) {
-			this.DriveLetter = Char.ToUpper( driveLetter, CultureInfo.CurrentCulture );
-
-			if ( this.DriveLetter is < 'A' or > 'Z' ) {
-				throw new ArgumentOutOfRangeException( nameof( driveLetter ), driveLetter, $"The specified drive \"{driveLetter}\" is outside of the range A through Z." );
-			}
-
-			this.Info = new DriveInfo( this.DriveLetter.ToString() );
+	public static async IAsyncEnumerable<Disk> GetDrives( [EnumeratorCancellation] CancellationToken cancellationToken ) {
+		await foreach ( var driveInfo in DriveInfo.GetDrives().ToAsyncEnumerable().WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
+			yield return new Disk( driveInfo );
 		}
+	}
 
-		/// <summary>
-		///     Assume <see cref="Environment.CurrentDirectory" />.
-		/// </summary>
-		public Disk() : this( Environment.CurrentDirectory[0] ) { }
+	public IAsyncEnumerable<IFolder> EnumerateFolders( CancellationToken cancellationToken, String? searchPattern = "*" ) {
+		var root = new Folder( this.Info.RootDirectory.FullName );
 
-		public static async IAsyncEnumerable<Disk> GetDrives( [EnumeratorCancellation] CancellationToken cancellationToken ) {
-			await foreach ( var driveInfo in DriveInfo.GetDrives().ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {
-				yield return new Disk( driveInfo );
-			}
-		}
-
-		public IAsyncEnumerable<IFolder> EnumerateFolders( CancellationToken cancellationToken, String? searchPattern = "*" ) {
-			var root = new Folder( this.Info.RootDirectory.FullName );
-
-			return root.EnumerateFolders( searchPattern, SearchOption.TopDirectoryOnly, cancellationToken );
-		}
+		return root.EnumerateFolders( searchPattern, SearchOption.TopDirectoryOnly, cancellationToken );
+	}
 
 		
-		public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
+	public Boolean Exists() => this.Info.IsReady && !String.IsNullOrWhiteSpace( this.Info.Name );
 
-		public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
+	public UInt64 FreeSpace() => this.Info.IsReady ? ( UInt64 )this.Info.AvailableFreeSpace : 0;
 
-		public override String ToString() => this.DriveLetter.ToString();
-	}
+	public override String ToString() => this.DriveLetter.ToString();
 }

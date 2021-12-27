@@ -22,22 +22,21 @@
 //
 // File "IResourceLoader.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
-	using System.Threading.Tasks;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
-	public interface IResourceLoader<T> {
+public interface IResourceLoader<T> {
 
-		Int32 Available { get; }
+	Int32 Available { get; }
 
-		Int32 Count { get; }
+	Int32 Count { get; }
 
-		Int32 MaxConcurrency { get; }
+	Int32 MaxConcurrency { get; }
 
-		Task<T> GetAsync( CancellationToken cancelToken = default );
+	Task<T> GetAsync( CancellationToken cancelToken = default );
 
-		Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default );
-	}
+	Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default );
 }

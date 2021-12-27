@@ -27,95 +27,93 @@
 
 // ReSharper disable once CheckNamespace
 
-namespace Librainian {
+namespace Librainian;
 
-	using System;
-	using System.ComponentModel;
-	using Parsing;
+using System;
+using System.ComponentModel;
+using Parsing;
 
-	public enum Status : Int16 {
+public enum Status : Int16 {
 
-		[Description( Symbols.SkullAndCrossbones )]
-		Fatal = -Flawless,
+	[Description( Symbols.SkullAndCrossbones )]
+	Fatal = -Flawless,
 
-		[Description( Symbols.Exception )]
-		Exception = Error - 1,
+	[Description( Symbols.Exception )]
+	Exception = Error - 1,
 
-		[Description( Symbols.Error )]
-		Error = Warning - 1,
+	[Description( Symbols.Error )]
+	Error = Warning - 1,
 
-		[Description( Symbols.Warning )]
-		Warning = Skip - 1,
+	[Description( Symbols.Warning )]
+	Warning = Skip - 1,
 
-		[Description( Symbols.Fail )]
-		Skip = -Advance,
+	[Description( Symbols.Fail )]
+	Skip = -Advance,
 
-		[Description( Symbols.BlackStar )]
-		Cancel = -Continue,
+	[Description( Symbols.BlackStar )]
+	Cancel = -Continue,
 
-		[Description( Symbols.Timeout )]
-		Timeout = Stop - 1,
+	[Description( Symbols.Timeout )]
+	Timeout = Stop - 1,
 
-		[Description( Symbols.StopSign )]
-		Stop = -Start,
+	[Description( Symbols.StopSign )]
+	Stop = -Start,
 
-		[Description( Symbols.StopSign )]
-		Halt = -Proceed,
+	[Description( Symbols.StopSign )]
+	Halt = -Proceed,
 
-		[Description( Symbols.StopSign )]
-		Done = Negative - 1,
+	[Description( Symbols.StopSign )]
+	Done = Negative - 1,
 
-		[Description( Symbols.FailBig )]
-		Negative = No - 1,
+	[Description( Symbols.FailBig )]
+	Negative = No - 1,
 
-		[Description( Symbols.Fail )]
-		No = -Yes,
+	[Description( Symbols.Fail )]
+	No = -Yes,
 
-		[Description( Symbols.Fail )]
-		Bad = -Good,
+	[Description( Symbols.Fail )]
+	Bad = -Good,
 
-		[Description( Symbols.BlackStar )]
-		Failure = -Success,
+	[Description( Symbols.BlackStar )]
+	Failure = -Success,
 
-		[Description( Symbols.Unknown )]
-		Unknown = 0,
+	[Description( Symbols.Unknown )]
+	Unknown = 0,
 
-		[Description( Symbols.Unknown )]
-		None = Unknown,
+	[Description( Symbols.Unknown )]
+	None = Unknown,
 
-		[Description( Symbols.WhiteStar )]
-		Success = 1,
+	[Description( Symbols.WhiteStar )]
+	Success = 1,
 
-		[Description( Symbols.WhiteStar )]
-		Okay = Success + 1,
+	[Description( Symbols.WhiteStar )]
+	Okay = Success + 1,
 
-		[Description( Symbols.CheckMark )]
-		Good = Okay + 1,
+	[Description( Symbols.CheckMark )]
+	Good = Okay + 1,
 
-		[Description( Symbols.CheckMark )]
-		Yes = Good + 1,
+	[Description( Symbols.CheckMark )]
+	Yes = Good + 1,
 
-		[Description( Symbols.CheckMark )]
-		Positive,
+	[Description( Symbols.CheckMark )]
+	Positive,
 
-		[Description( Symbols.CheckMark )]
-		Continue,
+	[Description( Symbols.CheckMark )]
+	Continue,
 
-		[Description( Symbols.CheckMark )]
-		Go,
+	[Description( Symbols.CheckMark )]
+	Go,
 
-		[Description( Symbols.CheckMark )]
-		Start,
+	[Description( Symbols.CheckMark )]
+	Start,
 
-		[Description( Symbols.CheckMark )]
-		Proceed,
+	[Description( Symbols.CheckMark )]
+	Proceed,
 
-		[Description( Symbols.CheckMark )]
-		Advance,
+	[Description( Symbols.CheckMark )]
+	Advance,
 
-		[Description( Symbols.CheckMark )]
-		Flawless
-
-	}
+	[Description( Symbols.CheckMark )]
+	Flawless
 
 }

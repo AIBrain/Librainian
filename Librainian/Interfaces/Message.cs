@@ -25,55 +25,53 @@
 // 
 // File "Message.cs" last touched on 2021-09-08 at 1:53 PM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces;
 
-	using System;
-	using System.Drawing;
-	using Utilities.Disposables;
+using System;
+using System.Drawing;
+using Utilities.Disposables;
 
-	public class Message : ABetterClassDispose, IMessage {
+public class Message : ABetterClassDispose, IMessage {
 
-		public Message( SourceRecord source, String data ) : base( nameof( Message ) ) {
-			this.ID = Guid.NewGuid();
-			this.Date = DateTime.UtcNow;
-			this.Source = source;
-			this.Data = data;
-		}
-
-		/// <summary>Optional color to be used.</summary>
-		public Color? BackgroundColor { get; set; }
-
-		/// <summary>The data for this message. Usually a string.</summary>
-		public String Data { get; init; }
-
-		/// <summary>The UTC when this message was created.</summary>
-		public DateTime Date { get; }
-
-		/// <summary>The message's source id.. (like the user's name)</summary>
-		public String? Description { get; set; }
-
-		/// <summary>Optional color to be used.</summary>
-		public Color? ForegroundColor { get; set; }
-
-		/// <summary>Guid assigned on message creation.</summary>
-		public Guid ID { get; }
-
-		//[CanBeNull]
-		//public String? Key { get; set; }
-
-		public Boolean Processed { get; set; }
-
-		public DateTime? ProcessingEnded { get; set; }
-
-		public DateTime? ProcessingStarted { get; set; }
-
-		/// <summary>This message is in reference to.</summary>
-		public Guid ReferenceMessageID { get; set; }
-
-		public SourceRecord Source { get; set; }
-
-		public TimeSpan? ProcessingTime() => this.ProcessingEnded - this.ProcessingStarted;
-
+	public Message( SourceRecord source, String data ) : base( nameof( Message ) ) {
+		this.ID = Guid.NewGuid();
+		this.Date = DateTime.UtcNow;
+		this.Source = source;
+		this.Data = data;
 	}
+
+	/// <summary>Optional color to be used.</summary>
+	public Color? BackgroundColor { get; set; }
+
+	/// <summary>The data for this message. Usually a string.</summary>
+	public String Data { get; init; }
+
+	/// <summary>The UTC when this message was created.</summary>
+	public DateTime Date { get; }
+
+	/// <summary>The message's source id.. (like the user's name)</summary>
+	public String? Description { get; set; }
+
+	/// <summary>Optional color to be used.</summary>
+	public Color? ForegroundColor { get; set; }
+
+	/// <summary>Guid assigned on message creation.</summary>
+	public Guid ID { get; }
+
+	//[CanBeNull]
+	//public String? Key { get; set; }
+
+	public Boolean Processed { get; set; }
+
+	public DateTime? ProcessingEnded { get; set; }
+
+	public DateTime? ProcessingStarted { get; set; }
+
+	/// <summary>This message is in reference to.</summary>
+	public Guid ReferenceMessageID { get; set; }
+
+	public SourceRecord Source { get; set; }
+
+	public TimeSpan? ProcessingTime() => this.ProcessingEnded - this.ProcessingStarted;
 
 }

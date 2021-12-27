@@ -22,16 +22,15 @@
 //
 // File "Penny.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial.Currency.Coins {
+namespace Librainian.Financial.Currency.Coins;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public sealed class Penny : ICoin {
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public sealed class Penny : ICoin {
 
-		public Decimal FaceValue => 0.01M;
+	public Decimal FaceValue => 0.01M;
 
-		public override String ToString() => $"{this.FaceValue:C}";
-	}
+	public override String ToString() => $"{this.FaceValue:C}";
 }

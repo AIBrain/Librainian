@@ -22,114 +22,113 @@
 //
 // File "Degrees.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Spatial {
+namespace Librainian.Measurement.Spatial;
 
-	using System;
-	using System.Diagnostics;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Extensions;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 
-	/// <summary>A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.</summary>
-	/// <see cref="http://wikipedia.org/wiki/Degree_(angle)" />
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	[Immutable]
-	public struct Degrees : IComparable<Degrees> {
+/// <summary>A degree is a measurement of plane angle, representing 1⁄360 of a full rotation.</summary>
+/// <see cref="http://wikipedia.org/wiki/Degree_(angle)" />
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[JsonObject]
+[Immutable]
+public struct Degrees : IComparable<Degrees> {
 
-		[JsonProperty]
-		private volatile Single _value;
+	[JsonProperty]
+	private volatile Single _value;
 
-		/// <summary>Math.PI / 180</summary>
-		public const Single DegreesToRadiansFactor = ( Single )( Math.PI / 180.0f );
+	/// <summary>Math.PI / 180</summary>
+	public const Single DegreesToRadiansFactor = ( Single )( Math.PI / 180.0f );
 
-		/// <summary>360</summary>
-		public const Single MaximumValue = ( Single )CardinalDirection.FullNorth;
+	/// <summary>360</summary>
+	public const Single MaximumValue = ( Single )CardinalDirection.FullNorth;
 
-		/// <summary>Just above Zero. Not Zero. Zero is <see cref="CardinalDirection.FullNorth" />.</summary>
-		public const Single MinimumValue = Single.Epsilon;
+	/// <summary>Just above Zero. Not Zero. Zero is <see cref="CardinalDirection.FullNorth" />.</summary>
+	public const Single MinimumValue = Single.Epsilon;
 
-		/// <summary>One <see cref="Degrees" />.</summary>
-		public static readonly Degrees One = new( 1 );
+	/// <summary>One <see cref="Degrees" />.</summary>
+	public static readonly Degrees One = new( 1 );
 
-		public Single Value {
-			get => this._value;
+	public Single Value {
+		get => this._value;
 
-			set {
-				while ( value < MinimumValue ) {
-					value += MaximumValue; //BUG use math instead, is this even correct?
-				}
-
-				while ( value >= MaximumValue ) {
-					value -= MaximumValue; //BUG use math instead, is this even correct?
-				}
-
-				this._value = value;
-			}
-		}
-
-		public Degrees( Single value ) : this() => this.Value = value;
-
-		//public Boolean SetValue( Single degrees ) {
-		//    this.Value = degrees;
-		//    return true;
-		//}
-		public static Degrees Combine( Degrees left, Single degrees ) => new( left.Value + degrees );
-
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
-
-		public static implicit operator Decimal( Degrees degrees ) => ( Decimal )degrees.Value;
-
-		public static implicit operator Double( Degrees degrees ) => degrees.Value;
-
-		public static implicit operator Radians( Degrees degrees ) => ToRadians( degrees );
-
-		public static implicit operator Single( Degrees degrees ) => degrees.Value;
-
-		public static Degrees operator -( Degrees degrees ) => new( degrees.Value * -1f );
-
-		public static Degrees operator -( Degrees left, Degrees right ) => Combine( left, -right.Value );
-
-		public static Degrees operator -( Degrees left, Single degrees ) => Combine( left, -degrees );
-
-		public static Boolean operator !=( Degrees left, Degrees right ) => !Equals( left, right );
-
-		public static Degrees operator +( Degrees left, Degrees right ) => Combine( left, right.Value );
-
-		public static Degrees operator +( Degrees left, Single degrees ) => Combine( left, degrees );
-
-		public static Boolean operator <( Degrees left, Degrees right ) => left.Value < right.Value;
-
-		public static Boolean operator ==( Degrees left, Degrees right ) => Equals( left, right );
-
-		public static Boolean operator >( Degrees left, Degrees right ) => left.Value > right.Value;
-
-		public static Radians ToRadians( Degrees degrees ) => new( degrees.Value * DegreesToRadiansFactor );
-
-		public static Radians ToRadians( Single degrees ) => new( degrees * DegreesToRadiansFactor );
-
-		public Int32 CompareTo( Degrees other ) => this.Value.CompareTo( other.Value );
-
-		public Boolean Equals( Degrees other ) => Equals( this, other );
-
-		public override Boolean Equals( Object? obj ) {
-			if ( obj is null ) {
-				return false;
+		set {
+			while ( value < MinimumValue ) {
+				value += MaximumValue; //BUG use math instead, is this even correct?
 			}
 
-			return obj is Degrees degrees && Equals( this, degrees );
+			while ( value >= MaximumValue ) {
+				value -= MaximumValue; //BUG use math instead, is this even correct?
+			}
+
+			this._value = value;
 		}
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public Radians ToRadians() => ToRadians( this );
-
-		[Pure]
-		public override String ToString() => $"{this.Value} °";
 	}
+
+	public Degrees( Single value ) : this() => this.Value = value;
+
+	//public Boolean SetValue( Single degrees ) {
+	//    this.Value = degrees;
+	//    return true;
+	//}
+	public static Degrees Combine( Degrees left, Single degrees ) => new( left.Value + degrees );
+
+	/// <summary>
+	///     <para>static equality test</para>
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( Degrees left, Degrees right ) => Math.Abs( left.Value - right.Value ) < Double.Epsilon;
+
+	public static implicit operator Decimal( Degrees degrees ) => ( Decimal )degrees.Value;
+
+	public static implicit operator Double( Degrees degrees ) => degrees.Value;
+
+	public static implicit operator Radians( Degrees degrees ) => ToRadians( degrees );
+
+	public static implicit operator Single( Degrees degrees ) => degrees.Value;
+
+	public static Degrees operator -( Degrees degrees ) => new( degrees.Value * -1f );
+
+	public static Degrees operator -( Degrees left, Degrees right ) => Combine( left, -right.Value );
+
+	public static Degrees operator -( Degrees left, Single degrees ) => Combine( left, -degrees );
+
+	public static Boolean operator !=( Degrees left, Degrees right ) => !Equals( left, right );
+
+	public static Degrees operator +( Degrees left, Degrees right ) => Combine( left, right.Value );
+
+	public static Degrees operator +( Degrees left, Single degrees ) => Combine( left, degrees );
+
+	public static Boolean operator <( Degrees left, Degrees right ) => left.Value < right.Value;
+
+	public static Boolean operator ==( Degrees left, Degrees right ) => Equals( left, right );
+
+	public static Boolean operator >( Degrees left, Degrees right ) => left.Value > right.Value;
+
+	public static Radians ToRadians( Degrees degrees ) => new( degrees.Value * DegreesToRadiansFactor );
+
+	public static Radians ToRadians( Single degrees ) => new( degrees * DegreesToRadiansFactor );
+
+	public Int32 CompareTo( Degrees other ) => this.Value.CompareTo( other.Value );
+
+	public Boolean Equals( Degrees other ) => Equals( this, other );
+
+	public override Boolean Equals( Object? obj ) {
+		if ( obj is null ) {
+			return false;
+		}
+
+		return obj is Degrees degrees && Equals( this, degrees );
+	}
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+	public Radians ToRadians() => ToRadians( this );
+
+	[Pure]
+	public override String ToString() => $"{this.Value} °";
 }

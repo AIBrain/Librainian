@@ -24,19 +24,18 @@
 
 #nullable enable
 
-namespace Librainian.Databases {
+namespace Librainian.Databases;
 
-	using System;
-	using Microsoft.Data.SqlClient;
+using System;
+using Microsoft.Data.SqlClient;
 
-	public record SqlServerInfo( String Version ) {
-		public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }
+public record SqlServerInfo( String Version ) {
+	public SqlConnectionStringBuilder? ConnectionStringBuilder { get; set; }
 
-		public Status Status { get; set; }
+	public Status Status { get; set; }
 
-		/// <summary>
-		///     The datetime on the Server in UTC.
-		/// </summary>
-		public DateTimeOffset? UTCDateTime { get; set; }
-	}
+	/// <summary>
+	///     The datetime on the Server in UTC.
+	/// </summary>
+	public DateTimeOffset? UTCDateTime { get; set; }
 }

@@ -25,89 +25,88 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-	/// <summary>Points to a local file, a directory, a LAN file, or an internet file.</summary>
-	/// <remarks>(Stored internally as a string)</remarks>
-	/// <remarks>Just a concept.. not in use yet.</remarks>
-	public class Location : IEquatable<Location>, IComparable<Location>, IComparable {
+/// <summary>Points to a local file, a directory, a LAN file, or an internet file.</summary>
+/// <remarks>(Stored internally as a string)</remarks>
+/// <remarks>Just a concept.. not in use yet.</remarks>
+public class Location : IEquatable<Location>, IComparable<Location>, IComparable {
 
-		private Int32 HashCode => this.Address.GetHashCode();
+	private Int32 HashCode => this.Address.GetHashCode();
 
-		/// <summary>A local file, LAN, UNC, or a URI.</summary>
-		public String Address { get; }
+	/// <summary>A local file, LAN, UNC, or a URI.</summary>
+	public String Address { get; }
 
-		private Location() => this.Address = String.Empty;
+	private Location() => this.Address = String.Empty;
 
-		public Location( String location ) {
-			if ( String.IsNullOrWhiteSpace( location ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
-			}
-
-			location = location.Trim();
-
-			if ( String.IsNullOrWhiteSpace( location ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
-			}
-
-			this.Address = new Uri( location ).AbsoluteUri;
+	public Location( String location ) {
+		if ( String.IsNullOrWhiteSpace( location ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
 		}
 
-		public static Boolean Equals( Location? left, Location? right ) {
-			if ( left is null || right is null ) {
-				return false;
-			}
+		location = location.Trim();
 
-			return left.HashCode.Equals( right.HashCode ) && left.Address.Equals( right.Address, StringComparison.Ordinal );
+		if ( String.IsNullOrWhiteSpace( location ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
 		}
 
-		public static Boolean operator !=( Location? left, Location? right ) => !Equals( left, right );
-
-		public static Boolean operator <( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) < 0;
-
-		public static Boolean operator <=( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) <= 0;
-
-		public static Boolean operator ==( Location? left, Location? right ) => Equals( left, right );
-
-		public static Boolean operator >( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) > 0;
-
-		public static Boolean operator >=( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) >= 0;
-
-		public Int32 CompareTo( Object? obj ) {
-			if ( obj is null ) {
-				return 1;
-			}
-
-			if ( ReferenceEquals( this, obj ) ) {
-				return 0;
-			}
-
-			if ( obj is Location location ) {
-				return this.CompareTo( location );
-			}
-
-			throw new ArgumentException( $"Object must be of type {nameof( Location )}" );
-		}
-
-		public Int32 CompareTo( Location? other ) {
-			if ( ReferenceEquals( this, other ) ) {
-				return 0;
-			}
-
-			if ( other is null ) {
-				return 1;
-			}
-
-			return String.Compare( this.Address, other.Address, StringComparison.Ordinal );
-		}
-
-		public Boolean Equals( Location? other ) => Equals( this, other );
-
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as Location );
-
-		public override Int32 GetHashCode() => this.HashCode;
+		this.Address = new Uri( location ).AbsoluteUri;
 	}
+
+	public static Boolean Equals( Location? left, Location? right ) {
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		return left.HashCode.Equals( right.HashCode ) && left.Address.Equals( right.Address, StringComparison.Ordinal );
+	}
+
+	public static Boolean operator !=( Location? left, Location? right ) => !Equals( left, right );
+
+	public static Boolean operator <( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) < 0;
+
+	public static Boolean operator <=( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) <= 0;
+
+	public static Boolean operator ==( Location? left, Location? right ) => Equals( left, right );
+
+	public static Boolean operator >( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) > 0;
+
+	public static Boolean operator >=( Location? left, Location? right ) => Comparer<Location>.Default.Compare( left, right ) >= 0;
+
+	public Int32 CompareTo( Object? obj ) {
+		if ( obj is null ) {
+			return 1;
+		}
+
+		if ( ReferenceEquals( this, obj ) ) {
+			return 0;
+		}
+
+		if ( obj is Location location ) {
+			return this.CompareTo( location );
+		}
+
+		throw new ArgumentException( $"Object must be of type {nameof( Location )}" );
+	}
+
+	public Int32 CompareTo( Location? other ) {
+		if ( ReferenceEquals( this, other ) ) {
+			return 0;
+		}
+
+		if ( other is null ) {
+			return 1;
+		}
+
+		return String.Compare( this.Address, other.Address, StringComparison.Ordinal );
+	}
+
+	public Boolean Equals( Location? other ) => Equals( this, other );
+
+	public override Boolean Equals( Object? obj ) => Equals( this, obj as Location );
+
+	public override Int32 GetHashCode() => this.HashCode;
 }

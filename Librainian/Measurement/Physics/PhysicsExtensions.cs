@@ -27,100 +27,99 @@
 
 #nullable enable
 
-namespace Librainian.Measurement.Physics {
+namespace Librainian.Measurement.Physics;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Linq.Expressions;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using Exceptions;
 
-	public static class PhysicsExtensions {
+public static class PhysicsExtensions {
 
-		public static Expression<Func<Decimal, Decimal>> FahrenheitToCelsius { get; } = fahrenheit => ( fahrenheit - 32.0m ) * 5.0m / 9.0m;
+	public static Expression<Func<Decimal, Decimal>> FahrenheitToCelsius { get; } = fahrenheit => ( fahrenheit - 32.0m ) * 5.0m / 9.0m;
 
-		public static String Simpler( this ElectronVolts volts ) {
-			var list = new HashSet<String> {
-				volts.ToTeraElectronVolts().ToString(),
-				volts.ToGigaElectronVolts().ToString(),
-				volts.ToMegaElectronVolts().ToString(),
-				volts.ToElectronVolts().ToString(),
-				volts.ToMilliElectronVolts().ToString()
-			};
+	public static String Simpler( this ElectronVolts volts ) {
+		var list = new HashSet<String> {
+			volts.ToTeraElectronVolts().ToString(),
+			volts.ToGigaElectronVolts().ToString(),
+			volts.ToMegaElectronVolts().ToString(),
+			volts.ToElectronVolts().ToString(),
+			volts.ToMilliElectronVolts().ToString()
+		};
 
-			return list.OrderBy( s => s.Length ).First();
+		return list.OrderBy( s => s.Length ).First();
+	}
+
+	public static String Simpler( this KiloElectronVolts volts ) {
+		var list = new HashSet<String> {
+			volts.ToTeraElectronVolts().ToString(),
+			volts.ToGigaElectronVolts().ToString(),
+			volts.ToMegaElectronVolts().ToString(),
+			volts.ToElectronVolts().ToString(),
+			volts.ToMilliElectronVolts().ToString()
+		};
+
+		return list.OrderBy( s => s.Length ).First();
+	}
+
+	public static String Simpler( this MegaElectronVolts volts ) {
+		var list = new HashSet<String> {
+			volts.ToTeraElectronVolts().ToString(),
+			volts.ToGigaElectronVolts().ToString(),
+			volts.ToMegaElectronVolts().ToString(),
+			volts.ToElectronVolts().ToString(),
+			volts.ToMilliElectronVolts().ToString()
+		};
+
+		return list.OrderBy( s => s.Length ).First();
+	}
+
+	public static String Simpler( this GigaElectronVolts volts ) {
+		var list = new HashSet<String> {
+			volts.ToTeraElectronVolts().ToString(),
+			volts.ToGigaElectronVolts().ToString(),
+			volts.ToMegaElectronVolts().ToString(),
+			volts.ToElectronVolts().ToString(),
+			volts.ToMilliElectronVolts().ToString()
+		};
+
+		return list.OrderBy( s => s.Length ).First();
+	}
+
+	public static String Simpler( this TeraElectronVolts volts ) {
+		var list = new HashSet<String> {
+			volts.ToTeraElectronVolts().ToString(),
+			volts.ToGigaElectronVolts().ToString(),
+			volts.ToMegaElectronVolts().ToString(),
+			volts.ToElectronVolts().ToString(),
+			volts.ToMilliElectronVolts().ToString()
+		};
+
+		return list.OrderBy( s => s.Length ).First();
+	}
+
+	public static MegaElectronVolts Sum( this IEnumerable<ElectronVolts> volts ) {
+		if ( volts is null ) {
+			throw new ArgumentEmptyException( nameof( volts ) );
 		}
 
-		public static String Simpler( this KiloElectronVolts volts ) {
-			var list = new HashSet<String> {
-				volts.ToTeraElectronVolts().ToString(),
-				volts.ToGigaElectronVolts().ToString(),
-				volts.ToMegaElectronVolts().ToString(),
-				volts.ToElectronVolts().ToString(),
-				volts.ToMilliElectronVolts().ToString()
-			};
+		return volts.Aggregate( MegaElectronVolts.Zero, ( current, electronVolts ) => current + electronVolts.ToMegaElectronVolts() );
+	}
 
-			return list.OrderBy( s => s.Length ).First();
+	public static GigaElectronVolts Sum( this IEnumerable<MegaElectronVolts> volts ) {
+		if ( volts is null ) {
+			throw new ArgumentEmptyException( nameof( volts ) );
 		}
 
-		public static String Simpler( this MegaElectronVolts volts ) {
-			var list = new HashSet<String> {
-				volts.ToTeraElectronVolts().ToString(),
-				volts.ToGigaElectronVolts().ToString(),
-				volts.ToMegaElectronVolts().ToString(),
-				volts.ToElectronVolts().ToString(),
-				volts.ToMilliElectronVolts().ToString()
-			};
+		return volts.Aggregate( GigaElectronVolts.Zero, ( current, megaElectronVolts ) => current + megaElectronVolts.ToGigaElectronVolts() );
+	}
 
-			return list.OrderBy( s => s.Length ).First();
+	public static TeraElectronVolts Sum( this IEnumerable<GigaElectronVolts> volts ) {
+		if ( volts is null ) {
+			throw new ArgumentEmptyException( nameof( volts ) );
 		}
 
-		public static String Simpler( this GigaElectronVolts volts ) {
-			var list = new HashSet<String> {
-				volts.ToTeraElectronVolts().ToString(),
-				volts.ToGigaElectronVolts().ToString(),
-				volts.ToMegaElectronVolts().ToString(),
-				volts.ToElectronVolts().ToString(),
-				volts.ToMilliElectronVolts().ToString()
-			};
-
-			return list.OrderBy( s => s.Length ).First();
-		}
-
-		public static String Simpler( this TeraElectronVolts volts ) {
-			var list = new HashSet<String> {
-				volts.ToTeraElectronVolts().ToString(),
-				volts.ToGigaElectronVolts().ToString(),
-				volts.ToMegaElectronVolts().ToString(),
-				volts.ToElectronVolts().ToString(),
-				volts.ToMilliElectronVolts().ToString()
-			};
-
-			return list.OrderBy( s => s.Length ).First();
-		}
-
-		public static MegaElectronVolts Sum( this IEnumerable<ElectronVolts> volts ) {
-			if ( volts is null ) {
-				throw new ArgumentEmptyException( nameof( volts ) );
-			}
-
-			return volts.Aggregate( MegaElectronVolts.Zero, ( current, electronVolts ) => current + electronVolts.ToMegaElectronVolts() );
-		}
-
-		public static GigaElectronVolts Sum( this IEnumerable<MegaElectronVolts> volts ) {
-			if ( volts is null ) {
-				throw new ArgumentEmptyException( nameof( volts ) );
-			}
-
-			return volts.Aggregate( GigaElectronVolts.Zero, ( current, megaElectronVolts ) => current + megaElectronVolts.ToGigaElectronVolts() );
-		}
-
-		public static TeraElectronVolts Sum( this IEnumerable<GigaElectronVolts> volts ) {
-			if ( volts is null ) {
-				throw new ArgumentEmptyException( nameof( volts ) );
-			}
-
-			return volts.Aggregate( TeraElectronVolts.Zero, ( current, gigaElectronVolts ) => current + gigaElectronVolts.ToTeraElectronVolts() );
-		}
+		return volts.Aggregate( TeraElectronVolts.Zero, ( current, gigaElectronVolts ) => current + gigaElectronVolts.ToTeraElectronVolts() );
 	}
 }

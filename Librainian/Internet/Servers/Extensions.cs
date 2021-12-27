@@ -22,14 +22,13 @@
 //
 // File "Extensions.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Internet.Servers {
+namespace Librainian.Internet.Servers;
 
-	using System;
+using System;
 
-	public static class Extensions {
+public static class Extensions {
 
-		/// <summary>Returns the date and time formatted for insertion as the expiration date in a "Set-Cookie" header.</summary>
-		/// <param name="time"></param>
-		public static String ToCookieTime( this DateTime time ) => time.ToString( "dd MMM yyyy hh:mm:ss GMT" );
-	}
+	/// <summary>Returns the date and time formatted for insertion as the expiration date in a "Set-Cookie" header.</summary>
+	/// <param name="time"></param>
+	public static String ToCookieTime( this DateTime time ) => time.ToString( "dd MMM yyyy hh:mm:ss GMT" );
 }

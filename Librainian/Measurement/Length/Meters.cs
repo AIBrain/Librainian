@@ -25,22 +25,21 @@
 //
 // File "Meters.cs" last touched on 2021-04-25 at 6:22 AM by Protiguous.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
-	using ExtendedNumerics;
+using System;
+using ExtendedNumerics;
 
-	public record Meters( BigDecimal Value ) {
-		public Meters( Decimal meters ) : this( ( BigDecimal )meters ) { }
+public record Meters( BigDecimal Value ) {
+	public Meters( Decimal meters ) : this( ( BigDecimal )meters ) { }
 
-		public Meters( Millimeters millimeters ) : this( millimeters.Value / Extensions.MillimetersInSingleCentimeter ) { }
+	public Meters( Millimeters millimeters ) : this( millimeters.Value / Extensions.MillimetersInSingleCentimeter ) { }
 
-		public Meters( Centimeters centimeters ) : this( centimeters.Value / Extensions.CentimetersinSingleMeter ) { }
+	public Meters( Centimeters centimeters ) : this( centimeters.Value / Extensions.CentimetersinSingleMeter ) { }
 
-		public static Meters One => new( 1 );
+	public static Meters One => new( 1 );
 
-		public static Meters Two => new( 2 );
+	public static Meters Two => new( 2 );
 
-		//public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
+	//public override Int32 GetHashCode() => this.Value.GetHashCode();
 }

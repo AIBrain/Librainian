@@ -27,97 +27,96 @@
 
 #nullable enable
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Globalization;
-	using System.Linq;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using Exceptions;
 
-	/// <summary>Pulled from <see cref="http://stackoverflow.com/a/944352/956364" /></summary>
-	public static class EnumExtensions {
+/// <summary>Pulled from <see cref="http://stackoverflow.com/a/944352/956364" /></summary>
+public static class EnumExtensions {
 
-		/// <summary>Returns the text of the [Description("text")] attribute on an enum. Or null if not found.</summary>
-		/// <param name="element"></param>
-		public static String? Description( this Enum element ) {
-			var type = element.GetType();
+	/// <summary>Returns the text of the [Description("text")] attribute on an enum. Or null if not found.</summary>
+	/// <param name="element"></param>
+	public static String? Description( this Enum element ) {
+		var type = element.GetType();
 
-			var memberInfo = type.GetMember( element.ToString() );
+		var memberInfo = type.GetMember( element.ToString() );
 
-			if ( !memberInfo.Any() ) {
-				return default( String? ); //element.ToString();
-			}
-
-			var attributes = memberInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false );
-
-			if ( attributes.Any() ) {
-				return ( attributes[0] as DescriptionAttribute )?.Description;
-			}
-
-			return null;
+		if ( !memberInfo.Any() ) {
+			return default( String? ); //element.ToString();
 		}
 
-		/// <summary>Gets all combined items from an enum value.</summary>
-		public static IEnumerable<T> GetAllSelectedItems<T>( this Enum? value ) {
-			var valueAsInt = Convert.ToInt32( value );
+		var attributes = memberInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false );
 
-			return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T )item;
+		if ( attributes.Any() ) {
+			return ( attributes[0] as DescriptionAttribute )?.Description;
 		}
 
-		/// <summary>Gets all items for an enum value.</summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="value">The value.</param>
-		public static IEnumerable<T> GetAllValues<T>( this Enum value ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
+		return null;
+	}
 
-			return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
+	/// <summary>Gets all combined items from an enum value.</summary>
+	public static IEnumerable<T> GetAllSelectedItems<T>( this Enum? value ) {
+		var valueAsInt = Convert.ToInt32( value );
+
+		return from Object item in Enum.GetValues( typeof( T ) ) let itemAsInt = Convert.ToInt32( item ) where itemAsInt == ( valueAsInt & itemAsInt ) select ( T )item;
+	}
+
+	/// <summary>Gets all items for an enum value.</summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="value">The value.</param>
+	public static IEnumerable<T> GetAllValues<T>( this Enum value ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		/// <summary>Gets all values for an enum type.</summary>
-		/// <typeparam name="T"></typeparam>
-		public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
+		return Enum.GetValues( value.GetType() ).Cast<Object>().Select( item => ( T )item );
+	}
 
-		// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
-		public static T GetAttribute<T>( this Enum value ) where T : Attribute {
-			var type = value.GetType();
-			var memberInfo = type.GetMember( value.ToString() );
-			var attributes = memberInfo[0].GetCustomAttributes( typeof( T ), false );
+	/// <summary>Gets all values for an enum type.</summary>
+	/// <typeparam name="T"></typeparam>
+	public static IEnumerable<T> GetAllValues<T>() where T : struct => Enum.GetValues( typeof( T ) ).Cast<T>();
 
-			return ( T )attributes[0];
-		}
+	// This extension method is broken out so you can use a similar pattern with other MetaData elements in the future. This is your base method for each.
+	public static T GetAttribute<T>( this Enum value ) where T : Attribute {
+		var type = value.GetType();
+		var memberInfo = type.GetMember( value.ToString() );
+		var attributes = memberInfo[0].GetCustomAttributes( typeof( T ), false );
 
-		public static String? GetDescription<T>( this T? e ) where T : IConvertible {
-			if ( e is not Enum ) {
-				return default( String? );
-			}
+		return ( T )attributes[0];
+	}
 
-			var type = e.GetType();
-
-			foreach ( Int32 val in Enum.GetValues( type ) ) {
-				if ( val != e.ToInt32( CultureInfo.InvariantCulture ) ) {
-					continue;
-				}
-
-				var ename = type.GetEnumName( val );
-
-				if ( ename is null ) {
-					continue;
-				}
-
-				var memInfo = type.GetMember( ename );
-
-				if ( memInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
-					return descriptionAttribute.Description;
-				}
-			}
-
+	public static String? GetDescription<T>( this T? e ) where T : IConvertible {
+		if ( e is not Enum ) {
 			return default( String? );
 		}
 
-		public static IEnumerable<T> GetEnums<T>( this T? _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
+		var type = e.GetType();
+
+		foreach ( Int32 val in Enum.GetValues( type ) ) {
+			if ( val != e.ToInt32( CultureInfo.InvariantCulture ) ) {
+				continue;
+			}
+
+			var ename = type.GetEnumName( val );
+
+			if ( ename is null ) {
+				continue;
+			}
+
+			var memInfo = type.GetMember( ename );
+
+			if ( memInfo[0].GetCustomAttributes( typeof( DescriptionAttribute ), false ).FirstOrDefault() is DescriptionAttribute descriptionAttribute ) {
+				return descriptionAttribute.Description;
+			}
+		}
+
+		return default( String? );
 	}
+
+	public static IEnumerable<T> GetEnums<T>( this T? _ ) => Enum.GetValues( typeof( T ) ).Cast<T>();
 }

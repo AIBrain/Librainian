@@ -24,77 +24,76 @@
 
 #nullable enable
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using Exceptions;
-	using Maths;
+using System;
+using Exceptions;
+using Maths;
 
-	public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
+public class LargeSizeFormatProvider : IFormatProvider, ICustomFormatter {
 
-		private const String FileSizeFormat = "fs";
+	private const String FileSizeFormat = "fs";
 
-		private static String? DefaultFormat( String format, Object arg, IFormatProvider? formatProvider ) {
-			var formattableArg = arg as IFormattable;
+	private static String? DefaultFormat( String format, Object arg, IFormatProvider? formatProvider ) {
+		var formattableArg = arg as IFormattable;
 
-			var s = formattableArg?.ToString( format, formatProvider );
+		var s = formattableArg?.ToString( format, formatProvider );
 
-			return s ?? arg.ToString();
-		}
-
-		public String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
-			if ( arg == null ) {
-				throw new ArgumentEmptyException( nameof( arg ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( format ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
-			}
-
-			if ( format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) != true ) {
-				return DefaultFormat( format, arg, formatProvider ) ?? String.Empty;
-			}
-
-			if ( arg is String ) {
-				return DefaultFormat( format, arg, formatProvider ) ?? String.Empty;
-			}
-
-			Single size;
-
-			try {
-				size = Convert.ToUInt64( arg );
-			}
-			catch ( InvalidCastException ) {
-				return DefaultFormat( format, arg, formatProvider ) ?? String.Empty;
-			}
-
-			var suffix = "n/a";
-
-			//TODO add larger sizes
-
-			if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
-				size /= MathConstants.Sizes.OneTeraByte;
-				suffix = "trillion";
-			}
-			else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
-				size /= MathConstants.Sizes.OneGigaByte;
-				suffix = "billion";
-			}
-			else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
-				size /= MathConstants.Sizes.OneMegaByte;
-				suffix = "million";
-			}
-			else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
-				size /= MathConstants.Sizes.OneKiloByte;
-				suffix = "thousand";
-			}
-			else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
-				suffix = "";
-			}
-
-			return $"{size:N3} {suffix}";
-		}
-
-		public Object? GetFormat( Type? formatType ) => formatType != null && formatType == typeof( ICustomFormatter ) ? this : null;
+		return s ?? arg.ToString();
 	}
+
+	public String Format( String? format, Object? arg, IFormatProvider? formatProvider ) {
+		if ( arg == null ) {
+			throw new ArgumentEmptyException( nameof( arg ) );
+		}
+
+		if ( String.IsNullOrWhiteSpace( format ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( format ) );
+		}
+
+		if ( format.StartsWith( FileSizeFormat, StringComparison.CurrentCultureIgnoreCase ) != true ) {
+			return DefaultFormat( format, arg, formatProvider ) ?? String.Empty;
+		}
+
+		if ( arg is String ) {
+			return DefaultFormat( format, arg, formatProvider ) ?? String.Empty;
+		}
+
+		Single size;
+
+		try {
+			size = Convert.ToUInt64( arg );
+		}
+		catch ( InvalidCastException ) {
+			return DefaultFormat( format, arg, formatProvider ) ?? String.Empty;
+		}
+
+		var suffix = "n/a";
+
+		//TODO add larger sizes
+
+		if ( size.Between( MathConstants.Sizes.OneTeraByte, UInt64.MaxValue ) ) {
+			size /= MathConstants.Sizes.OneTeraByte;
+			suffix = "trillion";
+		}
+		else if ( size.Between( MathConstants.Sizes.OneGigaByte, MathConstants.Sizes.OneTeraByte ) ) {
+			size /= MathConstants.Sizes.OneGigaByte;
+			suffix = "billion";
+		}
+		else if ( size.Between( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte ) ) {
+			size /= MathConstants.Sizes.OneMegaByte;
+			suffix = "million";
+		}
+		else if ( size.Between( MathConstants.Sizes.OneKiloByte, MathConstants.Sizes.OneMegaByte ) ) {
+			size /= MathConstants.Sizes.OneKiloByte;
+			suffix = "thousand";
+		}
+		else if ( size.Between( UInt64.MinValue, MathConstants.Sizes.OneKiloByte ) ) {
+			suffix = "";
+		}
+
+		return $"{size:N3} {suffix}";
+	}
+
+	public Object? GetFormat( Type? formatType ) => formatType != null && formatType == typeof( ICustomFormatter ) ? this : null;
 }

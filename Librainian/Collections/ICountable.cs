@@ -25,40 +25,39 @@
 //
 // File "ICountable.cs" last touched on 2021-05-08 at 8:21 AM by Protiguous.
 
-namespace Librainian.Collections {
+namespace Librainian.Collections;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Numerics;
-	using Threadsafe;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using Threadsafe;
 
-	public interface ICountable<in TKey> where TKey : notnull {
+public interface ICountable<in TKey> where TKey : notnull {
 
-		VolatileBoolean IsReadOnly { get; set; }
+	VolatileBoolean IsReadOnly { get; set; }
 
-		TimeSpan ReadTimeout { get; set; }
+	TimeSpan ReadTimeout { get; set; }
 
-		TimeSpan WriteTimeout { get; set; }
+	TimeSpan WriteTimeout { get; set; }
 
-		BigInteger? this[TKey key] { get; set; }
+	BigInteger? this[TKey key] { get; set; }
 
-		Boolean Add( IEnumerable<TKey> keys );
+	Boolean Add( IEnumerable<TKey> keys );
 
-		Boolean Add( TKey key );
+	Boolean Add( TKey key );
 
-		Boolean Add( TKey key, BigInteger amount );
+	Boolean Add( TKey key, BigInteger amount );
 
-		/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
-		Boolean Complete();
+	/// <summary>Mark that this container will now become ReadOnly/immutable. No more adds or subtracts.</summary>
+	Boolean Complete();
 
-		/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
-		Boolean EnableMutable();
+	/// <summary>Mark that this container will now become UnReadOnly/mutable. Allow more adds and subtracts.</summary>
+	Boolean EnableMutable();
 
-		Boolean Subtract( TKey key, BigInteger amount );
+	Boolean Subtract( TKey key, BigInteger amount );
 
-		/// <summary>Return the sum of all values.</summary>
-		BigInteger Sum();
+	/// <summary>Return the sum of all values.</summary>
+	BigInteger Sum();
 
-		void Trim();
-	}
+	void Trim();
 }

@@ -25,18 +25,17 @@
 //
 // File "TranslateDecimalGuid.cs" last formatted on 2021-03-04 at 9:56 PM.
 
-namespace Librainian.Converters {
+namespace Librainian.Converters;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct TranslateDecimalGuid {
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct TranslateDecimalGuid {
 
-		[FieldOffset( 0 )]
-		public Decimal Decimal;
+	[FieldOffset( 0 )]
+	public Decimal Decimal;
 
-		[FieldOffset( 0 )]
-		public Guid Guid;
-	}
+	[FieldOffset( 0 )]
+	public Guid Guid;
 }

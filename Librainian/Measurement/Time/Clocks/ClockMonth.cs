@@ -25,79 +25,78 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Exceptions;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using Exceptions;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="ClockMonth" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public record ClockMonth : IComparable<ClockMonth>, IClockPart {
-		public const Byte MaximumValue = 12;
+/// <summary>A simple struct for a <see cref="ClockMonth" />.</summary>
+[JsonObject]
+[Immutable]
+public record ClockMonth : IComparable<ClockMonth>, IClockPart {
+	public const Byte MaximumValue = 12;
 
-		public const Byte MinimumValue = 1; //TODO um... not 1??
+	public const Byte MinimumValue = 1; //TODO um... not 1??
 
-		public ClockMonth( Byte value ) {
-			if ( value is < MinimumValue or > MaximumValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
-			}
-
-			this.Value = value;
+	public ClockMonth( Byte value ) {
+		if ( value is < MinimumValue or > MaximumValue ) {
+			throw new ArgumentOutOfRangeException( nameof( value ), $"The specified value ({value}) is out of the valid range of {MinimumValue} to {MaximumValue}." );
 		}
 
-		/// <summary>12</summary>
-		public static ClockMonth Maximum { get; } = new( MaximumValue );
+		this.Value = value;
+	}
 
-		/// <summary>1</summary>
-		public static ClockMonth Minimum { get; } = new( MinimumValue );
+	/// <summary>12</summary>
+	public static ClockMonth Maximum { get; } = new( MaximumValue );
 
-		[JsonProperty]
-		public Byte Value { get; init; }
+	/// <summary>1</summary>
+	public static ClockMonth Minimum { get; } = new( MinimumValue );
 
-		public Int32 CompareTo( ClockMonth other ) {
-			if ( other == null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
+	[JsonProperty]
+	public Byte Value { get; init; }
 
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( ClockMonth? other ) {
+		if ( other == null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		public static implicit operator Byte( ClockMonth value ) => value.Value;
+		return this.Value.CompareTo( other.Value );
+	}
 
-		public static implicit operator ClockMonth( Byte value ) => new( value );
+	public static implicit operator Byte( ClockMonth value ) => value.Value;
 
-		/// <summary>Provide the next <see cref="ClockMonth" />.</summary>
-		/// <param name="tocked"></param>
-		public ClockMonth Next( out Boolean tocked ) {
-			var next = this.Value + 1;
+	public static implicit operator ClockMonth( Byte value ) => new( value );
 
-			if ( next > Maximum.Value ) {
-				next = Minimum.Value;
-				tocked = true;
-			}
-			else {
-				tocked = false;
-			}
+	/// <summary>Provide the next <see cref="ClockMonth" />.</summary>
+	/// <param name="tocked"></param>
+	public ClockMonth Next( out Boolean tocked ) {
+		var next = this.Value + 1;
 
-			return ( ClockMonth )next;
+		if ( next > Maximum.Value ) {
+			next = Minimum.Value;
+			tocked = true;
+		}
+		else {
+			tocked = false;
 		}
 
-		/// <summary>Provide the previous <see cref="ClockMonth" />.</summary>
-		public ClockMonth Previous( out Boolean tocked ) {
-			var next = this.Value - 1;
+		return ( ClockMonth )next;
+	}
 
-			if ( next < Minimum.Value ) {
-				next = Maximum.Value;
-				tocked = true;
-			}
-			else {
-				tocked = false;
-			}
+	/// <summary>Provide the previous <see cref="ClockMonth" />.</summary>
+	public ClockMonth Previous( out Boolean tocked ) {
+		var next = this.Value - 1;
 
-			return ( ClockMonth )next;
+		if ( next < Minimum.Value ) {
+			next = Maximum.Value;
+			tocked = true;
 		}
+		else {
+			tocked = false;
+		}
+
+		return ( ClockMonth )next;
 	}
 }

@@ -22,108 +22,107 @@
 //
 // File "BalancedResourceLoader.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
 
-	public class BalancedResourceLoader<T> : IResourceLoader<T> {
+public class BalancedResourceLoader<T> : IResourceLoader<T> {
 
-		private Int32 _index;
+	private Int32 _index;
 
-		private Object _lock { get; } = new();
+	private Object _lock { get; } = new();
 
-		private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new();
+	private Queue<(TaskCompletionSource<T>, CancellationToken)> _queue { get; } = new();
 
-		private IList<IResourceLoader<T>> _resourceLoaders { get; }
+	private IList<IResourceLoader<T>> _resourceLoaders { get; }
 
-		public Int32 Available => this._resourceLoaders.Sum( r => r.Available );
+	public Int32 Available => this._resourceLoaders.Sum( r => r.Available );
 
-		public Int32 Count => this._resourceLoaders.Sum( r => r.Count );
+	public Int32 Count => this._resourceLoaders.Sum( r => r.Count );
 
-		public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
+	public Int32 MaxConcurrency => this._resourceLoaders.Sum( r => r.MaxConcurrency );
 
-		public BalancedResourceLoader( params IResourceLoader<T>[] resourceLoaders ) : this( resourceLoaders as IList<IResourceLoader<T>> ) { }
+	public BalancedResourceLoader( params IResourceLoader<T>[] resourceLoaders ) : this( resourceLoaders as IList<IResourceLoader<T>> ) { }
 
-		public BalancedResourceLoader( IList<IResourceLoader<T>> resourceLoaders ) =>
-			this._resourceLoaders = resourceLoaders ?? throw new ArgumentEmptyException( nameof( resourceLoaders ) );
+	public BalancedResourceLoader( IList<IResourceLoader<T>> resourceLoaders ) =>
+		this._resourceLoaders = resourceLoaders ?? throw new ArgumentEmptyException( nameof( resourceLoaders ) );
 
-		private Boolean GetOrQueue( out Task<T>? resource, Boolean queueOnFailure, CancellationToken cancelToken ) {
-			var i = this._index;
+	private Boolean GetOrQueue( out Task<T>? resource, Boolean queueOnFailure, CancellationToken cancelToken ) {
+		var i = this._index;
 
-			while ( true ) {
-				if ( i >= this._resourceLoaders.Count ) {
-					i = 0;
-				}
-
-				if ( this._resourceLoaders[i].TryGet( out resource, cancelToken ) ) {
-					resource.ContinueWith( this.OnResourceLoaded, cancelToken );
-
-					this._index++;
-
-					return true;
-				}
-
-				i++;
-
-				if ( i != this._index ) {
-					continue;
-				}
-
-				if ( queueOnFailure ) {
-					var tcs = new TaskCompletionSource<T>( TaskCreationOptions.RunContinuationsAsynchronously );
-					cancelToken.Register( () => tcs.TrySetCanceled() );
-
-					this._queue.Enqueue( (tcs, cancelToken) );
-
-					resource = tcs.Task;
-				}
-
-				return false;
+		while ( true ) {
+			if ( i >= this._resourceLoaders.Count ) {
+				i = 0;
 			}
+
+			if ( this._resourceLoaders[i].TryGet( out resource, cancelToken ) ) {
+				resource.ContinueWith( this.OnResourceLoaded, cancelToken );
+
+				this._index++;
+
+				return true;
+			}
+
+			i++;
+
+			if ( i != this._index ) {
+				continue;
+			}
+
+			if ( queueOnFailure ) {
+				var tcs = new TaskCompletionSource<T>( TaskCreationOptions.RunContinuationsAsynchronously );
+				cancelToken.Register( () => tcs.TrySetCanceled() );
+
+				this._queue.Enqueue( (tcs, cancelToken) );
+
+				resource = tcs.Task;
+			}
+
+			return false;
+		}
+	}
+
+	private void OnResourceLoaded( Task<T> task ) {
+		if ( task is null ) {
+			throw new ArgumentEmptyException( nameof( task ) );
 		}
 
-		private void OnResourceLoaded( Task<T> task ) {
-			if ( task is null ) {
-				throw new ArgumentEmptyException( nameof( task ) );
+		Task<T> _resource;
+		(TaskCompletionSource<T>, CancellationToken) _tuple;
+
+		lock ( this._lock ) {
+			if ( this._queue.Count == 0 ) {
+				return;
 			}
 
-			Task<T> _resource;
-			(TaskCompletionSource<T>, CancellationToken) _tuple;
+			_tuple = this._queue.Peek();
 
-			lock ( this._lock ) {
-				if ( this._queue.Count == 0 ) {
-					return;
-				}
-
-				_tuple = this._queue.Peek();
-
-				if ( !this.GetOrQueue( out _resource, false, _tuple.Item2 ) ) {
-					return;
-				}
-
-				this._queue.Dequeue();
+			if ( !this.GetOrQueue( out _resource, false, _tuple.Item2 ) ) {
+				return;
 			}
 
-			_resource.ContinueWith( t => _tuple.Item1.SetFromTask( t ) );
+			this._queue.Dequeue();
 		}
 
-		public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
-			lock ( this._lock ) {
-				this.GetOrQueue( out var resource, true, cancelToken );
+		_resource.ContinueWith( t => _tuple.Item1.SetFromTask( t ) );
+	}
 
-				return resource;
-			}
+	public Task<T> GetAsync( CancellationToken cancelToken = new() ) {
+		lock ( this._lock ) {
+			this.GetOrQueue( out var resource, true, cancelToken );
+
+			return resource;
 		}
+	}
 
-		public Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default ) {
-			lock ( this._lock ) {
-				return this.GetOrQueue( out resource, false, cancelToken );
-			}
+	public Boolean TryGet( out Task<T>? resource, CancellationToken cancelToken = default ) {
+		lock ( this._lock ) {
+			return this.GetOrQueue( out resource, false, cancelToken );
 		}
 	}
 }

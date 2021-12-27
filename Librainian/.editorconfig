@@ -4,7 +4,7 @@
 dotnet_diagnostic.IDE0058.severity = suggestion
 
 # IDE0034: Simplify 'default' expression
-csharp_prefer_simple_default_expression = false
+csharp_prefer_simple_default_expression =false:error
 
 # IDE0055: Fix formatting
 dotnet_diagnostic.ide0055.severity = none
@@ -43,7 +43,7 @@ dotnet_diagnostic.CA2211.severity = error
 dotnet_diagnostic.IDE1006.severity = none
 
 # IDE0078: Use pattern matching
-csharp_style_prefer_pattern_matching = true
+csharp_style_prefer_pattern_matching =true:error
 
 # IDE0078: Use pattern matching
 dotnet_diagnostic.ide0078.severity = error
@@ -300,7 +300,7 @@ resharper_virtual_member_call_in_constructor_highlighting = hint
 resharper_void_method_with_must_use_return_value_attribute_highlighting = error
 
 # IDE0051: Remove unused private members
-dotnet_diagnostic.IDE0051.severity = none
+dotnet_diagnostic.IDE0051.severity =suggestion
 
 # IDE0034: Simplify 'default' expression
 dotnet_diagnostic.IDE0034.severity = none
@@ -355,6 +355,12 @@ dotnet_diagnostic.IDE0005.severity = error
 
 # RCS1213: Remove unused member declaration.
 dotnet_diagnostic.RCS1213.severity = none
+csharp_style_prefer_tuple_swap=true:error
+csharp_style_prefer_extended_property_pattern=true:error
+dotnet_diagnostic.CA1507.severity=error
+dotnet_diagnostic.CA1805.severity=error
+dotnet_diagnostic.IDE0161.severity=error
+dotnet_diagnostic.IDE0120.severity=error
 
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
@@ -385,3 +391,23 @@ dotnet_diagnostic.IDE0046.severity = silent
 
 # IDE0047: Remove unnecessary parentheses
 dotnet_diagnostic.IDE0047.severity = none
+
+[*.{cs,vb}]
+dotnet_style_prefer_is_null_check_over_reference_equality_method=true:error
+dotnet_style_prefer_simplified_interpolation=true:error
+dotnet_style_namespace_match_folder=true:error
+dotnet_style_qualification_for_field=true:error
+dotnet_style_qualification_for_property=true:error
+dotnet_style_qualification_for_method=true:error
+dotnet_style_qualification_for_event=true:error
+dotnet_diagnostic.CA1036.severity=error
+dotnet_diagnostic.CA1700.severity=warning
+dotnet_diagnostic.CA1716.severity=warning
+dotnet_diagnostic.CA1839.severity=warning
+dotnet_diagnostic.CA1846.severity=error
+dotnet_diagnostic.CA1847.severity=error
+dotnet_diagnostic.CA1849.severity=error
+dotnet_diagnostic.CA2002.severity=error
+dotnet_diagnostic.CA2007.severity=silent
+dotnet_diagnostic.CA2011.severity=warning
+dotnet_diagnostic.CA2012.severity=warning

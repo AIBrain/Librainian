@@ -22,77 +22,76 @@
 //
 // File "BigNullStream.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.IO;
-	using Exceptions;
+using System;
+using System.IO;
+using Exceptions;
 
-	/// <inheritdoc />
-	/// <summary>TODO make this class able to use a BigInteger?</summary>
-	public abstract class BigNullStream : Stream {
+/// <inheritdoc />
+/// <summary>TODO make this class able to use a BigInteger?</summary>
+public abstract class BigNullStream : Stream {
 
-		private Int64 _length;
+	private Int64 _length;
 
-		private Int64 _position;
+	private Int64 _position;
 
-		public override Boolean CanRead => false;
+	public override Boolean CanRead => false;
 
-		public override Boolean CanSeek => true;
+	public override Boolean CanSeek => true;
 
-		public override Boolean CanWrite => true;
+	public override Boolean CanWrite => true;
 
-		public override Int64 Length => this._length;
+	public override Int64 Length => this._length;
 
-		public override Int64 Position {
-			get => this._position;
+	public override Int64 Position {
+		get => this._position;
 
-			set {
-				this._position = value;
+		set {
+			this._position = value;
 
-				if ( this._position > this._length ) {
-					this._length = this._position;
-				}
+			if ( this._position > this._length ) {
+				this._length = this._position;
 			}
 		}
-
-		public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) {
-			if ( !this.CanRead ) {
-				throw new StreamReadException( "This stream doesn't support reading." );
-			}
-
-			throw new UnknownException();
-		}
-
-		public override void Flush() { }
-
-		public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
-			if ( !this.CanRead ) {
-				throw new StreamReadException( "This stream doesn't support reading." );
-			}
-
-			throw new UnknownException();
-		}
-
-		public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
-			var newPosition = origin switch {
-				SeekOrigin.Begin => offset,
-				SeekOrigin.Current => this.Position + offset,
-				SeekOrigin.End => this.Length + offset,
-				var _ => this.Position
-			};
-
-			if ( newPosition < 0 ) {
-				throw new ArgumentException( "Attempt to seek before start of stream." );
-			}
-
-			this.Position = newPosition;
-
-			return newPosition;
-		}
-
-		public override void SetLength( Int64 value ) => this._length = value;
-
-		public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
 	}
+
+	public override IAsyncResult BeginRead( Byte[] buffer, Int32 offset, Int32 count, AsyncCallback? callback, Object? state ) {
+		if ( !this.CanRead ) {
+			throw new StreamReadException( "This stream doesn't support reading." );
+		}
+
+		throw new UnknownException();
+	}
+
+	public override void Flush() { }
+
+	public override Int32 Read( Byte[] buffer, Int32 offset, Int32 count ) {
+		if ( !this.CanRead ) {
+			throw new StreamReadException( "This stream doesn't support reading." );
+		}
+
+		throw new UnknownException();
+	}
+
+	public override Int64 Seek( Int64 offset, SeekOrigin origin ) {
+		var newPosition = origin switch {
+			SeekOrigin.Begin => offset,
+			SeekOrigin.Current => this.Position + offset,
+			SeekOrigin.End => this.Length + offset,
+			var _ => this.Position
+		};
+
+		if ( newPosition < 0 ) {
+			throw new ArgumentException( "Attempt to seek before start of stream." );
+		}
+
+		this.Position = newPosition;
+
+		return newPosition;
+	}
+
+	public override void SetLength( Int64 value ) => this._length = value;
+
+	public override void Write( Byte[] buffer, Int32 offset, Int32 count ) => this.Seek( count, SeekOrigin.Current );
 }

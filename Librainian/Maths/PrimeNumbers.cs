@@ -22,131 +22,130 @@
 //
 // File "PrimeNumbers.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-	public static class PrimeNumbers {
+public static class PrimeNumbers {
 
-		public static readonly HashSet<Int32> MemoizedPrimes = new();
+	public static readonly HashSet<Int32> MemoizedPrimes = new();
 
-		public static Int64[][] GoldenPrimes { get; } = {
-			new Int64[] {
-				1, 1
-			},
-			new Int64[] {
-				41, 59
-			},
-			new Int64[] {
-				2377, 1677
-			},
-			new Int64[] {
-				147299, 187507
-			},
-			new Int64[] {
-				9132313, 5952585
-			},
-			new Int64[] {
-				566201239, 643566407
-			},
-			new[] {
-				35104476161, 22071637057
-			},
-			new[] {
-				2176477521929, 294289236153
-			},
-			new[] {
-				134941606358731, 88879354792675
-			},
-			new[] {
-				8366379594239857, 7275288500431249
-			},
-			new[] {
-				518715534842869223, 280042546585394647
-			}
-		};
+	public static Int64[][] GoldenPrimes { get; } = {
+		new Int64[] {
+			1, 1
+		},
+		new Int64[] {
+			41, 59
+		},
+		new Int64[] {
+			2377, 1677
+		},
+		new Int64[] {
+			147299, 187507
+		},
+		new Int64[] {
+			9132313, 5952585
+		},
+		new Int64[] {
+			566201239, 643566407
+		},
+		new[] {
+			35104476161, 22071637057
+		},
+		new[] {
+			2176477521929, 294289236153
+		},
+		new[] {
+			134941606358731, 88879354792675
+		},
+		new[] {
+			8366379594239857, 7275288500431249
+		},
+		new[] {
+			518715534842869223, 280042546585394647
+		}
+	};
 
-		private static Int32 GetSqrtCeiling( Int32 value, Int32 start ) {
-			while ( start * start < value ) {
-				start++;
-			}
-
-			return start;
+	private static Int32 GetSqrtCeiling( Int32 value, Int32 start ) {
+		while ( start * start < value ) {
+			start++;
 		}
 
-		public static IEnumerable<Int32> PotentialPrimes() {
-			yield return 2;
-			yield return 3;
-			var k = 1;
+		return start;
+	}
+
+	public static IEnumerable<Int32> PotentialPrimes() {
+		yield return 2;
+		yield return 3;
+		var k = 1;
 		loop:
 
-			yield return k * 6 - 1;
-			yield return k * 6 + 1;
-			k++;
+		yield return k * 6 - 1;
+		yield return k * 6 + 1;
+		k++;
 
-			goto loop;
+		goto loop;
 
-			// ReSharper disable once IteratorNeverReturns
-		}
+		// ReSharper disable once IteratorNeverReturns
+	}
 
-		/// <summary>Untested. Returns a list of integers that COULD be prime, not that ARE prime.</summary>
-		/// <param name="lowEnd"></param>
-		/// <param name="highEnd"></param>
-		public static IEnumerable<Int32> PotentialPrimes( Int32 lowEnd, Int32 highEnd ) {
-			var k = lowEnd;
+	/// <summary>Untested. Returns a list of integers that COULD be prime, not that ARE prime.</summary>
+	/// <param name="lowEnd"></param>
+	/// <param name="highEnd"></param>
+	public static IEnumerable<Int32> PotentialPrimes( Int32 lowEnd, Int32 highEnd ) {
+		var k = lowEnd;
 
-			yield return k;
+		yield return k;
 		loop:
 
-			yield return k * 6 - 1;
-			yield return k * 6 + 1;
-			k++;
+		yield return k * 6 - 1;
+		yield return k * 6 + 1;
+		k++;
 
-			if ( k >= highEnd ) {
-				yield break;
-			}
-
-			goto loop;
+		if ( k >= highEnd ) {
+			yield break;
 		}
 
-		public static IEnumerable<Int32> Primes() {
+		goto loop;
+	}
 
-			//var memoized = new List<int>();
-			var sqrt = 1;
+	public static IEnumerable<Int32> Primes() {
 
-			var primes = PotentialPrimes().Where( x => {
-				sqrt = GetSqrtCeiling( x, sqrt );
+		//var memoized = new List<int>();
+		var sqrt = 1;
 
-				return MemoizedPrimes.TakeWhile( y => y <= sqrt ).All( y => x % y != 0 );
-			} );
+		var primes = PotentialPrimes().Where( x => {
+			sqrt = GetSqrtCeiling( x, sqrt );
 
-			foreach ( var prime in primes ) {
-				yield return prime;
-				MemoizedPrimes.Add( prime );
-			}
+			return MemoizedPrimes.TakeWhile( y => y <= sqrt ).All( y => x % y != 0 );
+		} );
+
+		foreach ( var prime in primes ) {
+			yield return prime;
+			MemoizedPrimes.Add( prime );
 		}
+	}
 
-		/// <summary>
-		///     Untested. Should return a list of prime numbers between <paramref name="lowEnd" /> and
-		///     <paramref name="highEnd" />
-		/// </summary>
-		/// <param name="lowEnd"></param>
-		/// <param name="highEnd"></param>
-		public static IEnumerable<Int32> Primes( Int32 lowEnd, Int32 highEnd ) {
-			var sqrt = 1;
+	/// <summary>
+	///     Untested. Should return a list of prime numbers between <paramref name="lowEnd" /> and
+	///     <paramref name="highEnd" />
+	/// </summary>
+	/// <param name="lowEnd"></param>
+	/// <param name="highEnd"></param>
+	public static IEnumerable<Int32> Primes( Int32 lowEnd, Int32 highEnd ) {
+		var sqrt = 1;
 
-			var primes = PotentialPrimes( lowEnd, highEnd ).Where( x => {
-				sqrt = GetSqrtCeiling( x, sqrt );
+		var primes = PotentialPrimes( lowEnd, highEnd ).Where( x => {
+			sqrt = GetSqrtCeiling( x, sqrt );
 
-				return MemoizedPrimes.TakeWhile( y => y <= sqrt ).All( y => x % y != 0 );
-			} );
+			return MemoizedPrimes.TakeWhile( y => y <= sqrt ).All( y => x % y != 0 );
+		} );
 
-			foreach ( var prime in primes ) {
-				yield return prime;
-				MemoizedPrimes.Add( prime );
-			}
+		foreach ( var prime in primes ) {
+			yield return prime;
+			MemoizedPrimes.Add( prime );
 		}
 	}
 }

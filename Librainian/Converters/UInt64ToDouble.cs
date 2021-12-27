@@ -22,18 +22,17 @@
 //
 // File "UInt64ToDouble.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Converters {
+namespace Librainian.Converters;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct UInt64ToDouble {
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct UInt64ToDouble {
 
-		[FieldOffset( 0 )]
-		public readonly Double valueDouble;
+	[FieldOffset( 0 )]
+	public readonly Double valueDouble;
 
-		[FieldOffset( 0 )]
-		public readonly UInt64 valueUInt64;
-	}
+	[FieldOffset( 0 )]
+	public readonly UInt64 valueUInt64;
 }

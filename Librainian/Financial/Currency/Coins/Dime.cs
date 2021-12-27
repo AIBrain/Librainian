@@ -22,16 +22,15 @@
 //
 // File "Dime.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial.Currency.Coins {
+namespace Librainian.Financial.Currency.Coins;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public sealed class Dime : ICoin {
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public sealed class Dime : ICoin {
 
-		public Decimal FaceValue => 0.10M;
+	public Decimal FaceValue => 0.10M;
 
-		public override String ToString() => $"{this.FaceValue:C}";
-	}
+	public override String ToString() => $"{this.FaceValue:C}";
 }

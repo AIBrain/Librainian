@@ -24,210 +24,209 @@
 
 #nullable enable
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Diagnostics;
-	using Exceptions;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Measurement;
-	using Newtonsoft.Json;
-	using Rationals;
+using System;
+using System.Diagnostics;
+using Exceptions;
+using Extensions;
+using JetBrains.Annotations;
+using Measurement;
+using Newtonsoft.Json;
+using Rationals;
 
-	/// <summary>
-	///     <para>Restricts the value to between 0.0 and 1.0.</para>
-	/// </summary>
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record Percentage : IComparable<Percentage>, IComparable<Double>, IComparable<Decimal> {
-		public Percentage( Rational numerator, Rational denominator ) : this( ( Decimal )Rational.Divide( numerator, denominator ) ) { }
-		public Percentage( Rational value ) : this( ( Decimal )value ) { }
+/// <summary>
+///     <para>Restricts the value to between 0.0 and 1.0.</para>
+/// </summary>
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record Percentage : IComparable<Percentage>, IComparable<Double>, IComparable<Decimal> {
+	public Percentage( Rational numerator, Rational denominator ) : this( ( Decimal )Rational.Divide( numerator, denominator ) ) { }
+	public Percentage( Rational value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Single value ) : this( ( Decimal )value ) { }
+	public Percentage( Single value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Double value ) : this( ( Decimal )value ) { }
+	public Percentage( Double value ) : this( ( Decimal )value ) { }
 
-		public Percentage( Decimal value ) => this.Value = value;
+	public Percentage( Decimal value ) => this.Value = value;
 
-		public Percentage( Int32 value ) : this( ( Decimal )value ) { }
+	public Percentage( Int32 value ) : this( ( Decimal )value ) { }
 
-		public const Decimal MinimumValue = 0m;
-		public const Decimal MaximumValue = 1m;
+	public const Decimal MinimumValue = 0m;
+	public const Decimal MaximumValue = 1m;
 
-		private readonly Decimal _value;
+	private readonly Decimal _value;
 
-		/// <summary>The number resulting from the division of one number by another.</summary>
-		[JsonProperty]
-		public Decimal Value {
-			get => this._value;
+	/// <summary>The number resulting from the division of one number by another.</summary>
+	[JsonProperty]
+	public Decimal Value {
+		get => this._value;
 
-			init {
-				this._value = value switch {
-					< MinimumValue => MinimumValue,
-					> MaximumValue => MaximumValue,
-					var _ => value
-				};
-			}
+		init {
+			this._value = value switch {
+				< MinimumValue => MinimumValue,
+				> MaximumValue => MaximumValue,
+				var _ => value
+			};
+		}
+	}
+
+	[Pure]
+	public Int32 CompareTo( Decimal other ) => this.Value.CompareTo( other );
+
+	[Pure]
+	public Int32 CompareTo( Double other ) => this.Value.CompareTo( other );
+
+	[Pure]
+	public Int32 CompareTo( Percentage? other ) {
+		if ( other is null ) {
+			return SortOrder.Before;
 		}
 
-		[Pure]
-		public Int32 CompareTo( Decimal other ) => this.Value.CompareTo( other );
+		return this.Value.CompareTo( other.Value );
+	}
 
-		[Pure]
-		public Int32 CompareTo( Double other ) => this.Value.CompareTo( other );
+	//public Boolean Equals( [CanBeNull] Percentage? other ) => Equals( this, other );
 
-		[Pure]
-		public Int32 CompareTo( Percentage? other ) {
-			if ( other is null ) {
-				return SortOrder.Before;
-			}
+	/// <summary>Lerp?</summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Percentage Combine( Percentage left, Percentage right ) =>
+		new( ( left.Value + right.Value ) / 2m );
 
-			return this.Value.CompareTo( other.Value );
+	/// <summary>static comparison</summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( Percentage? left, Percentage? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
 		}
 
-		//public Boolean Equals( [CanBeNull] Percentage? other ) => Equals( this, other );
-
-		/// <summary>Lerp?</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Percentage Combine( Percentage left, Percentage right ) =>
-			new( ( left.Value + right.Value ) / 2m );
-
-		/// <summary>static comparison</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( Percentage? left, Percentage? right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			if ( left is null || right is null ) {
-				return false;
-			}
-
-			return left.Value == right.Value;
-		}
-
-		public static explicit operator Double( Percentage special ) => ( Double )special.Value;
-		public static explicit operator Single( Percentage special ) => ( Single )special.Value;
-
-		public static implicit operator Percentage( Single value ) => new( value );
-
-		public static implicit operator Percentage( Double value ) => new( value );
-
-		public static implicit operator Percentage( Decimal value ) => new( value );
-
-		public static implicit operator Percentage( Int32 value ) => new( value );
-
-		/*
-
-		/// <summary>
-		///     Returns a value that indicates whether two <see cref="T:Librainian.Maths.Numbers.Percentage" /> objects have
-		///     different values.
-		/// </summary>
-		/// <param name="left">The first value to compare.</param>
-		/// <param name="right">The second value to compare.</param>
-		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-		public static Boolean operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
-		*/
-
-		public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
-
-		/*
-
-		/// <summary>
-		///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Maths.Numbers.Percentage" />
-		///     objects are equal.
-		/// </summary>
-		/// <param name="left">The first value to compare.</param>
-		/// <param name="right">The second value to compare.</param>
-		/// <returns>
-		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
-		///     false.
-		/// </returns>
-		public static Boolean operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
-		*/
-
-		public static Percentage? Parse( String value ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
-
-			if ( Decimal.TryParse( value, out var dec ) ) {
-				return new Percentage( dec );
-			}
-
-			if ( Rational.TryParse( value, out var rational ) ) {
-				return new Percentage( rational );
-			}
-
-			if ( Double.TryParse( value, out var dob ) ) {
-				return new Percentage( dob );
-			}
-
-			return default( Percentage );
-		}
-
-		public static Boolean TryParse( String numberString, out Percentage? result ) {
-			if ( Decimal.TryParse( numberString, out var dec ) ) {
-				result = new Percentage( dec );
-
-				return true;
-			}
-			if ( Rational.TryParse( numberString, out var rational ) ) {
-				result = new Percentage( rational );
-
-				return true;
-			}
-
-			if ( Double.TryParse( numberString, out var dob ) ) {
-				result = new Percentage( dob );
-
-				return true;
-			}
-
-			result = default( Percentage );
-
+		if ( left is null || right is null ) {
 			return false;
 		}
 
-		/*
+		return left.Value == right.Value;
+	}
 
-		/// <summary>Determines whether the specified object is equal to the current object.</summary>
-		/// <param name="obj">The object to compare with the current object.</param>
-		/// <returns>
-		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as Percentage );
-		*/
+	public static explicit operator Double( Percentage special ) => ( Double )special.Value;
+	public static explicit operator Single( Percentage special ) => ( Single )special.Value;
 
-		/*
+	public static implicit operator Percentage( Single value ) => new( value );
 
-		/// <summary>Serves as the default hash function.</summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-		*/
+	public static implicit operator Percentage( Double value ) => new( value );
 
-		/*
-		[NotNull]
-		public override String ToString() => $"{this.Value.ToString()}";
-		*/
+	public static implicit operator Percentage( Decimal value ) => new( value );
 
-		public virtual Boolean Equals( Percentage? other ) {
-			if ( other is null ) {
-				return false;
-			}
+	public static implicit operator Percentage( Int32 value ) => new( value );
 
-			if ( ReferenceEquals( this, other ) ) {
-				return true;
-			}
+	/*
 
-			return this.Value == other.Value;
+	/// <summary>
+	///     Returns a value that indicates whether two <see cref="T:Librainian.Maths.Numbers.Percentage" /> objects have
+	///     different values.
+	/// </summary>
+	/// <param name="left">The first value to compare.</param>
+	/// <param name="right">The second value to compare.</param>
+	/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+	public static Boolean operator !=( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => !Equals( left, right );
+	*/
+
+	public static Percentage operator +( Percentage left, Percentage right ) => Combine( left, right );
+
+	/*
+
+	/// <summary>
+	///     Returns a value that indicates whether the values of two <see cref="T:Librainian.Maths.Numbers.Percentage" />
+	///     objects are equal.
+	/// </summary>
+	/// <param name="left">The first value to compare.</param>
+	/// <param name="right">The second value to compare.</param>
+	/// <returns>
+	///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
+	///     false.
+	/// </returns>
+	public static Boolean operator ==( [CanBeNull] Percentage? left, [CanBeNull] Percentage? right ) => Equals( left, right );
+	*/
+
+	public static Percentage? Parse( String value ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
 		}
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+		if ( Decimal.TryParse( value, out var dec ) ) {
+			return new Percentage( dec );
+		}
+
+		if ( Rational.TryParse( value, out var rational ) ) {
+			return new Percentage( rational );
+		}
+
+		if ( Double.TryParse( value, out var dob ) ) {
+			return new Percentage( dob );
+		}
+
+		return default( Percentage );
 	}
+
+	public static Boolean TryParse( String numberString, out Percentage? result ) {
+		if ( Decimal.TryParse( numberString, out var dec ) ) {
+			result = new Percentage( dec );
+
+			return true;
+		}
+		if ( Rational.TryParse( numberString, out var rational ) ) {
+			result = new Percentage( rational );
+
+			return true;
+		}
+
+		if ( Double.TryParse( numberString, out var dob ) ) {
+			result = new Percentage( dob );
+
+			return true;
+		}
+
+		result = default( Percentage );
+
+		return false;
+	}
+
+	/*
+
+	/// <summary>Determines whether the specified object is equal to the current object.</summary>
+	/// <param name="obj">The object to compare with the current object.</param>
+	/// <returns>
+	///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
+	///     <see langword="false" />.
+	/// </returns>
+	public override Boolean Equals( Object? obj ) => Equals( this, obj as Percentage );
+	*/
+
+	/*
+
+	/// <summary>Serves as the default hash function.</summary>
+	/// <returns>A hash code for the current object.</returns>
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
+	*/
+
+	/*
+	[NotNull]
+	public override String ToString() => $"{this.Value.ToString()}";
+	*/
+
+	public virtual Boolean Equals( Percentage? other ) {
+		if ( other is null ) {
+			return false;
+		}
+
+		if ( ReferenceEquals( this, other ) ) {
+			return true;
+		}
+
+		return this.Value == other.Value;
+	}
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
 }

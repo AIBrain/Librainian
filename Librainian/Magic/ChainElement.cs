@@ -22,22 +22,21 @@
 //
 // File "ChainElement.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Magic {
+namespace Librainian.Magic; 
 
-	public class ChainElement {
+public class ChainElement {
 
-		private readonly ChainElement? _next;
+	private readonly ChainElement? _next;
 
-		protected ChainElement( ChainElement? next ) => this._next = next;
+	protected ChainElement( ChainElement? next ) => this._next = next;
 
-		protected ChainElement() { }
+	protected ChainElement() { }
 
-		public T? As<T>( T? defaultValue ) where T : class {
-			if ( this is T ) {
-				return this as T;
-			}
-
-			return this._next != null ? this._next.As( defaultValue ) : defaultValue;
+	public T? As<T>( T? defaultValue ) where T : class {
+		if ( this is T ) {
+			return this as T;
 		}
+
+		return this._next != null ? this._next.As( defaultValue ) : defaultValue;
 	}
 }

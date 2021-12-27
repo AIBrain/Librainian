@@ -25,14 +25,13 @@
 //
 // File "OnOrOff.cs" last touched on 2021-04-19 at 1:54 AM by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
+using System;
 
-	public static class OnOrOff {
+public static class OnOrOff {
 
-		public const Boolean Off = false;
+	public const Boolean Off = false;
 
-		public const Boolean On = true;
-	}
+	public const Boolean On = true;
 }

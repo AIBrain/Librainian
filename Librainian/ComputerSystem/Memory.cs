@@ -22,57 +22,56 @@
 //
 // File "Memory.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.ComputerSystem {
+namespace Librainian.ComputerSystem;
 
-	using System;
-	using System.Diagnostics;
-	using System.Runtime;
-	using Maths;
+using System;
+using System.Diagnostics;
+using System.Runtime;
+using Maths;
 
-	public static class Memory {
+public static class Memory {
 
-		[DebuggerStepThrough]
-		public static Boolean CanAllocateMemory( this Int32 bytesOfRAM, Boolean gc = true ) {
-			try {
-				var megabytes = bytesOfRAM / MathConstants.Sizes.OneMegaByte;
+	[DebuggerStepThrough]
+	public static Boolean CanAllocateMemory( this Int32 bytesOfRAM, Boolean gc = true ) {
+		try {
+			var megabytes = bytesOfRAM / MathConstants.Sizes.OneMegaByte;
 
-				if ( !megabytes.Any() ) {
-					return true; /*zero mb? sure!*/
-				}
-
-				if ( gc ) {
-					GC.Collect( 2, GCCollectionMode.Optimized, true, true );
-				}
-
-				using var _ = new MemoryFailPoint( megabytes );
-
-				return true;
+			if ( !megabytes.Any() ) {
+				return true; /*zero mb? sure!*/
 			}
-			catch ( ArgumentOutOfRangeException ) {
-				return false;
+
+			if ( gc ) {
+				GC.Collect( 2, GCCollectionMode.Optimized, true, true );
 			}
-			catch ( InsufficientMemoryException ) {
-				return false;
-			}
-			catch ( OutOfMemoryException ) {
-				return false;
-			}
+
+			using var _ = new MemoryFailPoint( megabytes );
+
+			return true;
 		}
-
-		public static Int32 LargestCanAllocate( UInt64 maxNeeded = Int32.MaxValue ) {
-			var size = ( Int32 )Math.Min( maxNeeded, Int32.MaxValue );
-
-			do {
-				if ( size.CanAllocateMemory() ) {
-					return size;
-				}
-
-				size -= size / 10; //shave off 1/10 of the value
-
-				if ( size <= 4096 ) {
-					return 4096;
-				}
-			} while ( true );
+		catch ( ArgumentOutOfRangeException ) {
+			return false;
 		}
+		catch ( InsufficientMemoryException ) {
+			return false;
+		}
+		catch ( OutOfMemoryException ) {
+			return false;
+		}
+	}
+
+	public static Int32 LargestCanAllocate( UInt64 maxNeeded = Int32.MaxValue ) {
+		var size = ( Int32 )Math.Min( maxNeeded, Int32.MaxValue );
+
+		do {
+			if ( size.CanAllocateMemory() ) {
+				return size;
+			}
+
+			size -= size / 10; //shave off 1/10 of the value
+
+			if ( size <= 4096 ) {
+				return 4096;
+			}
+		} while ( true );
 	}
 }

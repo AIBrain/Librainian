@@ -25,87 +25,86 @@
 //
 // File "IFolder.cs" last touched on 2021-03-10 at 12:59 AM by Protiguous.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Security;
-	using System.Threading;
-	using ComputerSystem.Devices;
-	using PooledAwait;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security;
+using System.Threading;
+using ComputerSystem.Devices;
+using PooledAwait;
 
-	public interface IFolder : IEquatable<IFolder> {
+public interface IFolder : IEquatable<IFolder> {
 
-		String FullPath { get; }
+	String FullPath { get; }
 
-		/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
-		DirectoryInfo Info { get; }
+	/// <summary>The <see cref="IFolder" /> class is built around <see cref="DirectoryInfo" />.</summary>
+	DirectoryInfo Info { get; }
 
-		String Name { get; }
+	String Name { get; }
 
-		/// <summary>
-		///     <para>Returns True if the folder exists.</para>
-		/// </summary>
-		/// See also:
-		/// <see cref="Delete"></see>
-		PooledValueTask<Boolean> Create( CancellationToken cancellationToken );
+	/// <summary>
+	///     <para>Returns True if the folder exists.</para>
+	/// </summary>
+	/// See also:
+	/// <see cref="Delete"></see>
+	PooledValueTask<Boolean> Create( CancellationToken cancellationToken );
 
-		/// <summary>
-		///     <para>Returns True if the folder no longer exists.</para>
-		/// </summary>
-		/// <see cref="Create"></see>
-		PooledValueTask<Boolean> Delete( CancellationToken cancellationToken );
+	/// <summary>
+	///     <para>Returns True if the folder no longer exists.</para>
+	/// </summary>
+	/// <see cref="Create"></see>
+	PooledValueTask<Boolean> Delete( CancellationToken cancellationToken );
 
-		IAsyncEnumerable<Document> EnumerateDocuments( IEnumerable<String> searchPatterns, CancellationToken cancellationToken );
+	IAsyncEnumerable<Document> EnumerateDocuments( IEnumerable<String> searchPatterns, CancellationToken cancellationToken );
 
-		IAsyncEnumerable<Document> EnumerateDocuments( String? searchPattern, CancellationToken cancellationToken );
+	IAsyncEnumerable<Document> EnumerateDocuments( String? searchPattern, CancellationToken cancellationToken );
 
-		IAsyncEnumerable<Folder> EnumerateFolders( String? searchPattern, SearchOption searchOption, CancellationToken cancellationToken );
+	IAsyncEnumerable<Folder> EnumerateFolders( String? searchPattern, SearchOption searchOption, CancellationToken cancellationToken );
 
-		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
-		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="System.IO.PathTooLongException"></exception>
-		PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
+	/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
+	/// <exception cref="System.IO.IOException"></exception>
+	/// <exception cref="SecurityException"></exception>
+	/// <exception cref="System.IO.PathTooLongException"></exception>
+	PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
 
-		/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
-		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="System.IO.PathTooLongException"></exception>
-		Boolean ExistsSync();
+	/// <summary>Returns true if the <see cref="IFolder" /> currently exists.</summary>
+	/// <exception cref="System.IO.IOException"></exception>
+	/// <exception cref="SecurityException"></exception>
+	/// <exception cref="System.IO.PathTooLongException"></exception>
+	Boolean ExistsSync();
 
-		/// <summary>Free space available to the current user.</summary>
-		PooledValueTask<UInt64> GetAvailableFreeSpace();
+	/// <summary>Free space available to the current user.</summary>
+	PooledValueTask<UInt64> GetAvailableFreeSpace();
 
-		Disk GetDrive();
+	Disk GetDrive();
 
-		/// <summary>
-		/// Sync version
-		/// </summary>
-		Boolean GetExists();
+	/// <summary>
+	/// Sync version
+	/// </summary>
+	Boolean GetExists();
 
-		Int32 GetHashCode();
+	Int32 GetHashCode();
 
-		IFolder? GetParent();
+	IFolder? GetParent();
 
-		/// <summary>
-		///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
-		/// </summary>
-		/// <param name="cancellationToken"></param>
-		PooledValueTask<Boolean> IsEmpty( CancellationToken cancellationToken );
+	/// <summary>
+	///     <para>Check if this <see cref="IFolder" /> contains any <see cref="IFolder" /> or <see cref="Document" /> .</para>
+	/// </summary>
+	/// <param name="cancellationToken"></param>
+	PooledValueTask<Boolean> IsEmpty( CancellationToken cancellationToken );
 
-		void OpenWithExplorer();
+	void OpenWithExplorer();
 
-		PooledValueTask<DirectoryInfo> Refresh( CancellationToken cancellationToken );
+	PooledValueTask<DirectoryInfo> Refresh( CancellationToken cancellationToken );
 
-		/// <summary>
-		///     <para>Shorten the full path with "..."</para>
-		/// </summary>
-		String ToCompactFormat();
+	/// <summary>
+	///     <para>Shorten the full path with "..."</para>
+	/// </summary>
+	String ToCompactFormat();
 
-		/// <summary>Returns a String that represents the current object.</summary>
-		/// <returns>A String that represents the current object.</returns>
-		String ToString();
-	}
+	/// <summary>Returns a String that represents the current object.</summary>
+	/// <returns>A String that represents the current object.</returns>
+	String ToString();
 }

@@ -24,55 +24,54 @@
 
 #nullable enable
 
-namespace Librainian.Persistence.InIFiles {
+namespace Librainian.Persistence.InIFiles;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Linq;
-	using Maths;
-	using Newtonsoft.Json;
-	using Parsing;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Maths;
+using Newtonsoft.Json;
+using Parsing;
 
-	[JsonObject]
-	public class IniSection : IEnumerable<IniLine> {
+[JsonObject]
+public class IniSection : IEnumerable<IniLine> {
 
-		[JsonProperty]
-		private List<IniLine> lines { get; } = new();
+	[JsonProperty]
+	private List<IniLine> lines { get; } = new();
 
-		/// <summary>Gets the number of elements in the collection.</summary>
-		/// <returns>The number of elements in the collection. </returns>
-		public Int32 Count => this.lines.Count;
+	/// <summary>Gets the number of elements in the collection.</summary>
+	/// <returns>The number of elements in the collection. </returns>
+	public Int32 Count => this.lines.Count;
 
-		/// <summary>Gets the element at the specified index in the read-only list.</summary>
-		/// <param name="index">The zero-based index of the element to get. </param>
-		/// <returns>The element at the specified index in the read-only list.</returns>
-		public IniLine this[Int32 index] {
-			get {
-				if ( index <= 0 || index > this.Count ) {
-					throw new ArgumentOutOfRangeException( nameof( index ) );
-				}
-
-				return this.lines[index];
-			}
-		}
-
-		public Boolean Add( String key, String? value ) {
-			if ( String.IsNullOrEmpty( key ) ) {
-				throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
+	/// <summary>Gets the element at the specified index in the read-only list.</summary>
+	/// <param name="index">The zero-based index of the element to get. </param>
+	/// <returns>The element at the specified index in the read-only list.</returns>
+	public IniLine this[Int32 index] {
+		get {
+			if ( index <= 0 || index > this.Count ) {
+				throw new ArgumentOutOfRangeException( nameof( index ) );
 			}
 
-			this.lines.Add( new IniLine( key, value ) );
-
-			return true;
+			return this.lines[index];
 		}
-
-		public Boolean Exists( String key ) => !String.IsNullOrEmpty( key ) && this.lines.Any( pair => pair.Key.Like( key ) );
-
-		public IEnumerator<IniLine> GetEnumerator() => this.lines.GetEnumerator();
-
-		public Boolean Remove( String key ) => this.lines.RemoveAll( pair => pair.Key.Like( key ) ).Any();
-
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
+
+	public Boolean Add( String key, String? value ) {
+		if ( String.IsNullOrEmpty( key ) ) {
+			throw new ArgumentException( "Value cannot be null or empty.", nameof( key ) );
+		}
+
+		this.lines.Add( new IniLine( key, value ) );
+
+		return true;
+	}
+
+	public Boolean Exists( String key ) => !String.IsNullOrEmpty( key ) && this.lines.Any( pair => pair.Key.Like( key ) );
+
+	public IEnumerator<IniLine> GetEnumerator() => this.lines.GetEnumerator();
+
+	public Boolean Remove( String key ) => this.lines.RemoveAll( pair => pair.Key.Like( key ) ).Any();
+
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

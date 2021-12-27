@@ -27,100 +27,99 @@
 
 #nullable enable
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Exceptions;
-	using ExtendedNumerics;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using Exceptions;
+using ExtendedNumerics;
+using Extensions;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record Months( BigDecimal Value ) : IQuantityOfTime, IComparable<Months> {
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record Months( BigDecimal Value ) : IQuantityOfTime, IComparable<Months> {
 
-		/// <summary>
-		///     12
-		/// </summary>
-		public const Byte InOneCommonYear = 12;
+	/// <summary>
+	///     12
+	/// </summary>
+	public const Byte InOneCommonYear = 12;
 
-		/// <summary>
-		///     One <see cref="Months" /> .
-		/// </summary>
-		public static Months One { get; } = new( 1 );
+	/// <summary>
+	///     One <see cref="Months" /> .
+	/// </summary>
+	public static Months One { get; } = new( 1 );
 
-		/// <summary>
-		/// </summary>
-		public static Months Ten { get; } = new( 10 );
+	/// <summary>
+	/// </summary>
+	public static Months Ten { get; } = new( 10 );
 
-		/// <summary>
-		/// </summary>
-		public static Months Thousand { get; } = new( 1000 );
+	/// <summary>
+	/// </summary>
+	public static Months Thousand { get; } = new( 1000 );
 
-		/// <summary>
-		///     Zero <see cref="Months" />
-		/// </summary>
-		public static Months Zero { get; } = new( 0 );
+	/// <summary>
+	///     Zero <see cref="Months" />
+	/// </summary>
+	public static Months Zero { get; } = new( 0 );
 
-		public static Months Twelve { get; } = new( InOneCommonYear );
+	public static Months Twelve { get; } = new( InOneCommonYear );
 
-		public Int32 CompareTo( Months? other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( Months? other ) {
+		if ( other is null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		/// <summary>
-		///     Return this value in <see cref="Weeks" />.
-		/// </summary>
-		public IQuantityOfTime ToFinerGranularity() => this.ToWeeks();
-
-		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneMonth );
-
-		public Seconds ToSeconds() => new( this.Value * Seconds.InOneMonth );
-
-		/// <summary>
-		///     Return this value in <see cref="Years" />.
-		/// </summary>
-		public IQuantityOfTime ToCoarserGranularity() => this.ToYears();
-
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-		public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
-
-		public static Months Combine( Months left, BigDecimal months ) => new( left.Value + months );
-
-		public static Months Combine( Months left, BigInteger months ) => new( left.Value + months );
-
-		public static implicit operator SpanOfTime( Months months ) => new( months: months );
-
-		public static implicit operator Weeks( Months months ) => months.ToWeeks();
-
-		public static Months operator -( Months days ) => new( days.Value * -1 );
-
-		public static Months operator -( Months left, Months right ) => Combine( left, -right );
-
-		public static Months operator -( Months left, BigDecimal months ) => Combine( left, -months );
-
-		public static Months operator +( Months left, Months right ) => Combine( left, right );
-
-		public static Months operator +( Months left, BigDecimal months ) => Combine( left, months );
-
-		public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
-
-		public static Boolean operator >( Months left, Months right ) => left.Value > right.Value;
-
-		public Years ToYears() => new( this.Value / InOneCommonYear );
-
-		public override String ToString() => this.Value == 1 ? $"{this.Value} month" : $"{this.Value} months";
-
-		public static implicit operator Years( Months months ) => months.ToYears();
-
-		public Weeks ToWeeks() => new( this.Value * Weeks.InOneMonth );
+		return this.Value.CompareTo( other.Value );
 	}
+
+	/// <summary>
+	///     Return this value in <see cref="Weeks" />.
+	/// </summary>
+	public IQuantityOfTime ToFinerGranularity() => this.ToWeeks();
+
+	public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneMonth );
+
+	public Seconds ToSeconds() => new( this.Value * Seconds.InOneMonth );
+
+	/// <summary>
+	///     Return this value in <see cref="Years" />.
+	/// </summary>
+	public IQuantityOfTime ToCoarserGranularity() => this.ToYears();
+
+	public TimeSpan ToTimeSpan() => this.ToSeconds();
+
+	public static Months Combine( Months left, Months right ) => Combine( left, right.Value );
+
+	public static Months Combine( Months left, BigDecimal months ) => new( left.Value + months );
+
+	public static Months Combine( Months left, BigInteger months ) => new( left.Value + months );
+
+	public static implicit operator SpanOfTime( Months months ) => new( months: months );
+
+	public static implicit operator Weeks( Months months ) => months.ToWeeks();
+
+	public static Months operator -( Months days ) => new( days.Value * -1 );
+
+	public static Months operator -( Months left, Months right ) => Combine( left, -right );
+
+	public static Months operator -( Months left, BigDecimal months ) => Combine( left, -months );
+
+	public static Months operator +( Months left, Months right ) => Combine( left, right );
+
+	public static Months operator +( Months left, BigDecimal months ) => Combine( left, months );
+
+	public static Boolean operator <( Months left, Months right ) => left.Value < right.Value;
+
+	public static Boolean operator >( Months left, Months right ) => left.Value > right.Value;
+
+	public Years ToYears() => new( this.Value / InOneCommonYear );
+
+	public override String ToString() => this.Value == 1 ? $"{this.Value} month" : $"{this.Value} months";
+
+	public static implicit operator Years( Months months ) => months.ToYears();
+
+	public Weeks ToWeeks() => new( this.Value * Weeks.InOneMonth );
 }

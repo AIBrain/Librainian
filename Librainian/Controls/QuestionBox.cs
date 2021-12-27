@@ -27,37 +27,36 @@
 
 #nullable enable
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
-	using System.Windows.Forms;
-	using Exceptions;
+using System;
+using System.Windows.Forms;
+using Exceptions;
 
-	public partial class QuestionBox : Form {
+public partial class QuestionBox : Form {
 
-		public String Question { get; }
+	public String Question { get; }
 
-		public String? Response { get; set; }
+	public String? Response { get; set; }
 
-		public QuestionBox( String question ) {
-			if ( String.IsNullOrWhiteSpace( question ) ) {
-				throw new ArgumentEmptyException( nameof( question ) );
-			}
-
-			this.InitializeComponent();
-			this.Question = question;
-			this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
-
-			this.Response = default( String? );
-
-			this.Redraw();
-			this.textBoxUserInput?.Focus();
+	public QuestionBox( String question ) {
+		if ( String.IsNullOrWhiteSpace( question ) ) {
+			throw new ArgumentEmptyException( nameof( question ) );
 		}
 
-		private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) => this.Response = this.textBoxUserInput.Text();
+		this.InitializeComponent();
+		this.Question = question;
+		this.textBoxQuestion.Text( this.Question, RefreshOrInvalidate.Refresh );
 
-		private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxUserInput?.Focus();
+		this.Response = default( String? );
 
-		private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = this.textBoxUserInput.Text();
+		this.Redraw();
+		this.textBoxUserInput?.Focus();
 	}
+
+	private void QuestionBox_FormClosing( Object sender, FormClosingEventArgs e ) => this.Response = this.textBoxUserInput.Text();
+
+	private void QuestionBox_Shown( Object sender, EventArgs e ) => this.textBoxUserInput?.Focus();
+
+	private void TextBoxUserInput_TextChanged( Object sender, EventArgs e ) => this.Response = this.textBoxUserInput.Text();
 }

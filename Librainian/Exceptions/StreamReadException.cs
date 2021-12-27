@@ -22,15 +22,14 @@
 //
 // File "StreamReadException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
+using System;
 
-	[Serializable]
-	public class StreamReadException : StreamException {
+[Serializable]
+public class StreamReadException : StreamException {
 
-		public StreamReadException( String? message ) : base( message ) { }
+	public StreamReadException( String? message ) : base( message ) { }
 
-		public StreamReadException( String? message, Exception? innerException ) : base( message, innerException ) { }
-	}
+	public StreamReadException( String? message, Exception? innerException ) : base( message, innerException ) { }
 }

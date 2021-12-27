@@ -24,14 +24,13 @@
 //
 // File "Words.cs" last formatted on 2021-02-12 at 11:45 AM.
 
-namespace Librainian {
+namespace Librainian;
 
-	using System;
+using System;
 
-	public static class Words {
+public static class Words {
 
-		public const String Main = nameof( Main );
+	public const String Main = nameof( Main );
 
-		public const String PrimeConnectionString = nameof( PrimeConnectionString );
-	}
+	public const String PrimeConnectionString = nameof( PrimeConnectionString );
 }

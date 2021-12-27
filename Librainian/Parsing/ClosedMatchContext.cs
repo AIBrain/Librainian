@@ -22,7 +22,6 @@
 //
 // File "ClosedMatchContext.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing; 
 
-	public abstract class ClosedMatchContext { }
-}
+public abstract class ClosedMatchContext { }

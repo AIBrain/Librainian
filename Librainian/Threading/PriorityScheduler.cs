@@ -24,69 +24,68 @@
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Threading;
-	using System.Threading.Tasks;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 	
-	/// <example>
-	///     Task.Run(() =&gt; { //everything here will be executed in a thread whose priority is BelowNormal }, null,
-	///     TaskCreationOptions.None, PriorityScheduler.BelowNormal);
-	/// </example>
-	/// <see cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
-	public class PriorityScheduler : TaskScheduler, IDisposable {
+/// <example>
+///     Task.Run(() =&gt; { //everything here will be executed in a thread whose priority is BelowNormal }, null,
+///     TaskCreationOptions.None, PriorityScheduler.BelowNormal);
+/// </example>
+/// <see cref="http://stackoverflow.com/questions/3836584/lowering-priority-of-task-factory-startnew-thread" />
+public class PriorityScheduler : TaskScheduler, IDisposable {
 
-		private readonly ThreadPriority _priority;
+	private readonly ThreadPriority _priority;
 
-		private readonly BlockingCollection<Task> _tasks = new();
+	private readonly BlockingCollection<Task> _tasks = new();
 
-		private Thread[]? _threads;
+	private Thread[]? _threads;
 
-		public static PriorityScheduler AboveNormal { get; } = new( ThreadPriority.AboveNormal );
+	public static PriorityScheduler AboveNormal { get; } = new( ThreadPriority.AboveNormal );
 
-		public static PriorityScheduler BelowNormal { get; } = new( ThreadPriority.BelowNormal );
+	public static PriorityScheduler BelowNormal { get; } = new( ThreadPriority.BelowNormal );
 
-		public static PriorityScheduler Lowest { get; } = new( ThreadPriority.Lowest );
+	public static PriorityScheduler Lowest { get; } = new( ThreadPriority.Lowest );
 
-		public override Int32 MaximumConcurrencyLevel { get; } = Math.Max( 1, Environment.ProcessorCount );
+	public override Int32 MaximumConcurrencyLevel { get; } = Math.Max( 1, Environment.ProcessorCount );
 
-		public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
+	public PriorityScheduler( ThreadPriority priority ) => this._priority = priority;
 
-		protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
+	protected override IEnumerable<Task> GetScheduledTasks() => this._tasks;
 
-		protected override void QueueTask( Task? task ) {
-			this._tasks.Add( task );
+	protected override void QueueTask( Task? task ) {
+		this._tasks.Add( task );
 
-			if ( this._threads is null ) {
-				this._threads = new Thread[Math.Max( 1, Environment.ProcessorCount )];
+		if ( this._threads is null ) {
+			this._threads = new Thread[Math.Max( 1, Environment.ProcessorCount )];
 
-				var threads = this._threads;
+			var threads = this._threads;
 
-				for ( var i = 0; i < threads.Length; i++ ) {
-					threads[i] = new Thread( () => {
-						foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
-							this.TryExecuteTask( t );
-						}
-					} ) {
-						Name = $"PriorityScheduler: {i}",
-						Priority = this._priority,
-						IsBackground = true
-					};
+			for ( var i = 0; i < threads.Length; i++ ) {
+				threads[i] = new Thread( () => {
+					foreach ( var t in this._tasks.GetConsumingEnumerable() ) {
+						this.TryExecuteTask( t );
+					}
+				} ) {
+					Name = $"PriorityScheduler: {i}",
+					Priority = this._priority,
+					IsBackground = true
+				};
 
-					threads[i].Start();
-				}
+				threads[i].Start();
 			}
 		}
+	}
 
-		protected override Boolean TryExecuteTaskInline( Task? task, Boolean taskWasPreviouslyQueued ) => false;
+	protected override Boolean TryExecuteTaskInline( Task? task, Boolean taskWasPreviouslyQueued ) => false;
 
-		public void Dispose() {
-			this._tasks.Dispose();
-			GC.SuppressFinalize( this );
-		}
+	public void Dispose() {
+		this._tasks.Dispose();
+		GC.SuppressFinalize( this );
 	}
 }

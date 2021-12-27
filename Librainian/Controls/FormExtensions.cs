@@ -27,147 +27,146 @@
 
 #nullable enable
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
-	using System.Drawing;
-	using System.Linq;
-	using System.Windows.Forms;
-	using Exceptions;
-	using Logging;
-	using Microsoft.Win32;
-	using Persistence;
+using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using Exceptions;
+using Logging;
+using Microsoft.Win32;
+using Persistence;
 
-	public static class FormExtensions {
+public static class FormExtensions {
 
-		public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
-
-			var desktopBounds = form.DesktopBounds;
-
-			return Screen.AllScreens.Any( screen => screen.WorkingArea.Contains( desktopBounds ) );
+	public static Boolean IsFullyVisibleOnAnyScreen( this Form form ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
 
-		public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
+		var desktopBounds = form.DesktopBounds;
 
-		public static void LoadLocation( this Form form ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
+		return Screen.AllScreens.Any( screen => screen.WorkingArea.Contains( desktopBounds ) );
+	}
 
-			if ( form.Name is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
+	public static Boolean IsVisibleOnAnyScreen( this Rectangle rect ) => Screen.AllScreens.Any( screen => screen.WorkingArea.IntersectsWith( rect ) );
 
-			var x = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.X ) );
-			var y = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.Y ) );
-
-			if ( x.HasValue && y.HasValue ) {
-				form.InvokeAction( () => form.Location = new( x.Value, y.Value ) );
-			}
+	public static void LoadLocation( this Form form ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
 
-		/// <summary>
-		///     <seealso cref="SaveSize(Form)" />
-		/// </summary>
-		/// <param name="form"></param>
-		public static void LoadSize( this Form form ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
-
-			if ( form.Name is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
-
-			if ( AppRegistry.TheApplication is null ) {
-				throw new InvalidOperationException( "Application registry not set up." );
-			}
-
-			$"Loading form {form.Name} position from registry.".Verbose();
-
-			var width = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Width ) );
-			var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
-
-			if ( width.HasValue && height.HasValue ) {
-				form.Size( new( width.Value, height.Value ) );
-			}
+		if ( form.Name is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
 
-		/// <summary>Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.</summary>
-		/// <remarks></remarks>
-		public static void Location( this Form form, Point location ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
+		var x = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.X ) );
+		var y = AppRegistry.GetInt32( nameof( form.Location ), form.Name, nameof( form.Location.Y ) );
 
-			form.InvokeAction( () => form.Location = new( location.X, location.Y ) );
+		if ( x.HasValue && y.HasValue ) {
+			form.InvokeAction( () => form.Location = new( x.Value, y.Value ) );
+		}
+	}
+
+	/// <summary>
+	///     <seealso cref="SaveSize(Form)" />
+	/// </summary>
+	/// <param name="form"></param>
+	public static void LoadSize( this Form form ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
 
-		public static void SaveLocation( this Form? form ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
-
-			if ( AppRegistry.TheApplication is null ) {
-				throw new InvalidOperationException( "Application registry not set up." );
-			}
-
-			//$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
-
-			AppRegistry.Set( nameof( form.Location ), form.Name ?? throw new InvalidOperationException(), nameof( form.Location.X ),
-				form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.X, RegistryValueKind.DWord );
-
-			AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.Y ),
-				form.WindowState == FormWindowState.Normal ? form.Location.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
+		if ( form.Name is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
 
-		/// <summary>
-		///     <seealso cref="LoadSize(Form)" />
-		/// </summary>
-		/// <param name="form"></param>
-		public static void SaveSize( this Form form ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
-
-			if ( form.Name is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
-
-			if ( AppRegistry.TheApplication is null ) {
-				throw new InvalidOperationException( "Application registry not set up." );
-			}
-
-			$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
-
-			AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
-				form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
-
-			AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
-				form.WindowState == FormWindowState.Normal ? form.Size.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
+		if ( AppRegistry.TheApplication is null ) {
+			throw new InvalidOperationException( "Application registry not set up." );
 		}
 
-		/// <summary>Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.</summary>
-		/// <param name="form"></param>
-		public static Size Size( this Form form ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
+		$"Loading form {form.Name} position from registry.".Verbose();
 
-			return form.InvokeRequired ? form.Invoke( () => form.Size ) : form.Size;
+		var width = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Width ) );
+		var height = AppRegistry.GetInt32( nameof( form.Size ), form.Name, nameof( form.Size.Height ) );
+
+		if ( width.HasValue && height.HasValue ) {
+			form.Size( new( width.Value, height.Value ) );
+		}
+	}
+
+	/// <summary>Safely set the <see cref="Control.Location" /> of a <see cref="Form" /> across threads.</summary>
+	/// <remarks></remarks>
+	public static void Location( this Form form, Point location ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
 
-		/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
-		/// <remarks></remarks>
-		public static void Size( this Form form, Size size ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
+		form.InvokeAction( () => form.Location = new( location.X, location.Y ) );
+	}
 
-			form.InvokeAction( () => form.Size = size );
+	public static void SaveLocation( this Form? form ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
 		}
+
+		if ( AppRegistry.TheApplication is null ) {
+			throw new InvalidOperationException( "Application registry not set up." );
+		}
+
+		//$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
+
+		AppRegistry.Set( nameof( form.Location ), form.Name ?? throw new InvalidOperationException(), nameof( form.Location.X ),
+			form.WindowState == FormWindowState.Normal ? form.Location.X : form.RestoreBounds.X, RegistryValueKind.DWord );
+
+		AppRegistry.Set( nameof( form.Location ), form.Name, nameof( form.Location.Y ),
+			form.WindowState == FormWindowState.Normal ? form.Location.Y : form.RestoreBounds.Y, RegistryValueKind.DWord );
+	}
+
+	/// <summary>
+	///     <seealso cref="LoadSize(Form)" />
+	/// </summary>
+	/// <param name="form"></param>
+	public static void SaveSize( this Form form ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
+		}
+
+		if ( form.Name is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
+		}
+
+		if ( AppRegistry.TheApplication is null ) {
+			throw new InvalidOperationException( "Application registry not set up." );
+		}
+
+		$"Saving form {form.Name} position to registry key {AppRegistry.TheApplication.Name}.".Verbose();
+
+		AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Width ),
+			form.WindowState == FormWindowState.Normal ? form.Size.Width : form.RestoreBounds.Size.Width, RegistryValueKind.DWord );
+
+		AppRegistry.Set( nameof( form.Size ), form.Name, nameof( form.Size.Height ),
+			form.WindowState == FormWindowState.Normal ? form.Size.Height : form.RestoreBounds.Size.Height, RegistryValueKind.DWord );
+	}
+
+	/// <summary>Safely get the <see cref="Form.Size" />() of a <see cref="Form" /> across threads.</summary>
+	/// <param name="form"></param>
+	public static Size Size( this Form form ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
+		}
+
+		return form.InvokeRequired ? form.Invoke( () => form.Size ) : form.Size;
+	}
+
+	/// <summary>Safely set the <see cref="Control.Text" /> of a control across threads.</summary>
+	/// <remarks></remarks>
+	public static void Size( this Form form, Size size ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
+		}
+
+		form.InvokeAction( () => form.Size = size );
 	}
 }

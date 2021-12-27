@@ -22,32 +22,31 @@
 //
 // File "XMLExtensions.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Xml;
-	using System.Xml.Linq;
+using System;
+using System.Collections.Generic;
+using System.Xml;
+using System.Xml.Linq;
 
-	public static class XMLExtensions {
+public static class XMLExtensions {
 
-		private static IEnumerable<XElement> SimpleStreamAxis( String inputUrl, String? elementName ) {
-			using var reader = XmlReader.Create( inputUrl );
+	private static IEnumerable<XElement> SimpleStreamAxis( String inputUrl, String? elementName ) {
+		using var reader = XmlReader.Create( inputUrl );
 
-			reader.MoveToContent();
+		reader.MoveToContent();
 
-			while ( reader.Read() ) {
-				if ( reader.NodeType != XmlNodeType.Element ) {
-					continue;
-				}
+		while ( reader.Read() ) {
+			if ( reader.NodeType != XmlNodeType.Element ) {
+				continue;
+			}
 
-				if ( reader.Name != elementName ) {
-					continue;
-				}
+			if ( reader.Name != elementName ) {
+				continue;
+			}
 
-				if ( XNode.ReadFrom( reader ) is XElement el ) {
-					yield return el;
-				}
+			if ( XNode.ReadFrom( reader ) is XElement el ) {
+				yield return el;
 			}
 		}
 	}

@@ -27,146 +27,144 @@
 
 #nullable enable
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Exceptions;
-	using ExtendedNumerics;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using Exceptions;
+using ExtendedNumerics;
+using Extensions;
+using Newtonsoft.Json;
+
+/// <summary>
+/// </summary>
+/// <see cref="http://wikipedia.org/wiki/Yoctosecond" />
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record Yoctoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Yoctoseconds> {
+
+	/// <summary>
+	///     1000
+	/// </summary>
+	public const UInt16 InOneZeptosecond = 1000;
+
+	public Yoctoseconds( Decimal value ) : this( ( BigDecimal )value ) { }
+
+	public Yoctoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
+
+	public Yoctoseconds( Int64 value ) : this( ( BigInteger )value ) { }
+
+	public Yoctoseconds( BigInteger value ) : this( new BigDecimal( value ) ) { }
+
+	/// <summary>
+	///     <see cref="Five" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Five { get; } = new( 5 );
+
+	/// <summary>
+	///     <see cref="One" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds One { get; } = new( 1 );
+
+	/// <summary>
+	///     <see cref="Seven" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Seven { get; } = new( 7 );
+
+	/// <summary>
+	///     <see cref="Ten" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Ten { get; } = new( 10 );
+
+	/// <summary>
+	///     <see cref="Thirteen" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Thirteen { get; } = new( 13 );
+
+	/// <summary>
+	///     <see cref="Thirty" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Thirty { get; } = new( 30 );
+
+	/// <summary>
+	///     <see cref="Three" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Three { get; } = new( 3 );
+
+	/// <summary>
+	///     <see cref="Two" /><see cref="Yoctoseconds" />.
+	/// </summary>
+	public static Yoctoseconds Two { get; } = new( 2 );
 
 	/// <summary>
 	/// </summary>
-	/// <see cref="http://wikipedia.org/wiki/Yoctosecond" />
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record Yoctoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Yoctoseconds> {
+	public static Yoctoseconds Zero { get; } = new( 0 );
 
-		/// <summary>
-		///     1000
-		/// </summary>
-		public const UInt16 InOneZeptosecond = 1000;
+	public static BigDecimal InOneSecond { get; } = BigDecimal.Parse( "10E24" );
 
-		public Yoctoseconds( Decimal value ) : this( ( BigDecimal )value ) { }
-
-		public Yoctoseconds( Int32 value ) : this( ( BigDecimal )value ) { }
-
-		public Yoctoseconds( Int64 value ) : this( ( BigInteger )value ) { }
-
-		public Yoctoseconds( BigInteger value ) : this( new BigDecimal( value ) ) { }
-
-		/// <summary>
-		///     <see cref="Five" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Five { get; } = new( 5 );
-
-		/// <summary>
-		///     <see cref="One" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds One { get; } = new( 1 );
-
-		/// <summary>
-		///     <see cref="Seven" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Seven { get; } = new( 7 );
-
-		/// <summary>
-		///     <see cref="Ten" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Ten { get; } = new( 10 );
-
-		/// <summary>
-		///     <see cref="Thirteen" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Thirteen { get; } = new( 13 );
-
-		/// <summary>
-		///     <see cref="Thirty" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Thirty { get; } = new( 30 );
-
-		/// <summary>
-		///     <see cref="Three" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Three { get; } = new( 3 );
-
-		/// <summary>
-		///     <see cref="Two" /><see cref="Yoctoseconds" />.
-		/// </summary>
-		public static Yoctoseconds Two { get; } = new( 2 );
-
-		/// <summary>
-		/// </summary>
-		public static Yoctoseconds Zero { get; } = new( 0 );
-
-		public static BigDecimal InOneSecond { get; } = BigDecimal.Parse( "10E24" );
-
-		public Int32 CompareTo( Yoctoseconds? other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( Yoctoseconds? other ) {
+		if ( other is null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		public IQuantityOfTime ToFinerGranularity() => this.ToPlanckTimes();
-
-		public PlanckTimes ToPlanckTimes() => new( ( BigInteger )( this.Value * PlanckTimes.InOneYoctosecond ) );
-
-		public Seconds ToSeconds() => new( this.Value * InOneSecond );
-
-		public IQuantityOfTime ToCoarserGranularity() => this.ToZeptoseconds();
-
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-		public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
-
-		public static Yoctoseconds Combine( Yoctoseconds left, BigDecimal yoctoseconds ) => new( left.Value + yoctoseconds );
-
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		public static Boolean Equals( Yoctoseconds left, Yoctoseconds right ) => left.Value.Equals( right.Value );
-
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.
-		/// </summary>
-		/// <param name="yoctoseconds"></param>
-		public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
-
-		public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new( yoctoseconds );
-
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.
-		/// </summary>
-		/// <param name="yoctoseconds"></param>
-		public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
-
-		public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new( yoctoseconds.Value * -1 );
-
-		public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left, -right );
-
-		public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, -seconds );
-
-		public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
-
-		public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, yoctoseconds );
-
-		public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
-
-		public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
-
-		public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new( ( BigInteger )( yoctoseconds.Value * PlanckTimes.InOneYoctosecond ) );
-
-		public override String ToString() => $"{this.Value} ys";
-
-		public Zeptoseconds ToZeptoseconds() => new( ( BigInteger )( this.Value / InOneZeptosecond ) );
-
+		return this.Value.CompareTo( other.Value );
 	}
+
+	public IQuantityOfTime ToFinerGranularity() => this.ToPlanckTimes();
+
+	public PlanckTimes ToPlanckTimes() => new( ( BigInteger )( this.Value * PlanckTimes.InOneYoctosecond ) );
+
+	public Seconds ToSeconds() => new( this.Value * InOneSecond );
+
+	public IQuantityOfTime ToCoarserGranularity() => this.ToZeptoseconds();
+
+	public TimeSpan ToTimeSpan() => this.ToSeconds();
+
+	public static Yoctoseconds Combine( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right.Value );
+
+	public static Yoctoseconds Combine( Yoctoseconds left, BigDecimal yoctoseconds ) => new( left.Value + yoctoseconds );
+
+	/// <summary>
+	///     <para>static equality test</para>
+	/// </summary>
+	/// <param name="left"> </param>
+	/// <param name="right"></param>
+	public static Boolean Equals( Yoctoseconds left, Yoctoseconds right ) => left.Value.Equals( right.Value );
+
+	/// <summary>
+	///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="PlanckTimes" />.
+	/// </summary>
+	/// <param name="yoctoseconds"></param>
+	public static implicit operator PlanckTimes( Yoctoseconds yoctoseconds ) => ToPlanckTimes( yoctoseconds );
+
+	public static implicit operator SpanOfTime( Yoctoseconds yoctoseconds ) => new( yoctoseconds );
+
+	/// <summary>
+	///     Implicitly convert the number of <paramref name="yoctoseconds" /> to <see cref="Zeptoseconds" />.
+	/// </summary>
+	/// <param name="yoctoseconds"></param>
+	public static implicit operator Zeptoseconds( Yoctoseconds yoctoseconds ) => yoctoseconds.ToZeptoseconds();
+
+	public static Yoctoseconds operator -( Yoctoseconds yoctoseconds ) => new( yoctoseconds.Value * -1 );
+
+	public static Yoctoseconds operator -( Yoctoseconds left, Yoctoseconds right ) => Combine( left, -right );
+
+	public static Yoctoseconds operator -( Yoctoseconds left, Decimal seconds ) => Combine( left, -seconds );
+
+	public static Yoctoseconds operator +( Yoctoseconds left, Yoctoseconds right ) => Combine( left, right );
+
+	public static Yoctoseconds operator +( Yoctoseconds left, Decimal yoctoseconds ) => Combine( left, yoctoseconds );
+
+	public static Boolean operator <( Yoctoseconds left, Yoctoseconds right ) => left.Value < right.Value;
+
+	public static Boolean operator >( Yoctoseconds left, Yoctoseconds right ) => left.Value > right.Value;
+
+	public static PlanckTimes ToPlanckTimes( Yoctoseconds yoctoseconds ) => new( ( BigInteger )( yoctoseconds.Value * PlanckTimes.InOneYoctosecond ) );
+
+	public override String ToString() => $"{this.Value} ys";
+
+	public Zeptoseconds ToZeptoseconds() => new( ( BigInteger )( this.Value / InOneZeptosecond ) );
 
 }

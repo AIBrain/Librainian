@@ -22,21 +22,20 @@
 //
 // File "LogicalDisk.cs" last formatted on 2020-08-14 at 8:31 PM.
 
-namespace Librainian.ComputerSystem.Devices {
+namespace Librainian.ComputerSystem.Devices;
 
-	using System;
-	using System.IO;
+using System;
+using System.IO;
 
-	public class LogicalDisk {
+public class LogicalDisk {
 
-		public String DriveLetter { get; set; }
+	public String DriveLetter { get; set; }
 
-		public DriveType DriveType { get; set; }
+	public DriveType DriveType { get; set; }
 
-		public UInt64 FreeSpace { get; set; }
+	public UInt64 FreeSpace { get; set; }
 
-		public UInt64 TotalSpace { get; set; }
+	public UInt64 TotalSpace { get; set; }
 
-		public String VolumeName { get; set; }
-	}
+	public String VolumeName { get; set; }
 }

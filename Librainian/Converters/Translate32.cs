@@ -22,52 +22,51 @@
 //
 // File "Translate32.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Converters {
+namespace Librainian.Converters;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>
-	///     Struct for combining two <see cref="UInt16" /> (or <see cref="Int16" />) to and from a <see cref="UInt32" /> (or
-	///     <see cref="Int32" />) as easily as possible.
-	/// </summary>
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct Translate32 {
+/// <summary>
+///     Struct for combining two <see cref="UInt16" /> (or <see cref="Int16" />) to and from a <see cref="UInt32" /> (or
+///     <see cref="Int32" />) as easily as possible.
+/// </summary>
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct Translate32 {
 
-		[field: FieldOffset( 0 )]
-		public UInt32 UnsignedValue { get; set; }
+	[field: FieldOffset( 0 )]
+	public UInt32 UnsignedValue { get; set; }
 
-		[field: FieldOffset( 0 )]
-		public Int32 SignedValue { get; set; }
+	[field: FieldOffset( 0 )]
+	public Int32 SignedValue { get; set; }
 
-		[field: FieldOffset( 0 )]
-		public Int16 SignedLow { get; set; }
+	[field: FieldOffset( 0 )]
+	public Int16 SignedLow { get; set; }
 
-		[field: FieldOffset( 0 )]
-		public UInt16 UnsignedLow { get; set; }
+	[field: FieldOffset( 0 )]
+	public UInt16 UnsignedLow { get; set; }
 
-		[field: FieldOffset( sizeof( UInt16 ) )]
-		public UInt16 UnsignedHigh { get; set; }
+	[field: FieldOffset( sizeof( UInt16 ) )]
+	public UInt16 UnsignedHigh { get; set; }
 
-		[field: FieldOffset( sizeof( Int16 ) )]
-		public Int16 SignedHigh { get; set; }
+	[field: FieldOffset( sizeof( Int16 ) )]
+	public Int16 SignedHigh { get; set; }
 
-		public Translate32( Byte a, Byte b, Byte c, Byte d ) : this( BitConverter.ToInt32( new[] {
-			a, b, c, d
-		}, 0 ) ) { }
+	public Translate32( Byte a, Byte b, Byte c, Byte d ) : this( BitConverter.ToInt32( new[] {
+		a, b, c, d
+	}, 0 ) ) { }
 
-		public Translate32( Int16 signedHigh, Int16 signedLow ) : this() {
-			this.SignedHigh = signedHigh;
-			this.SignedLow = signedLow;
-		}
+	public Translate32( Int16 signedHigh, Int16 signedLow ) : this() {
+		this.SignedHigh = signedHigh;
+		this.SignedLow = signedLow;
+	}
 
-		public Translate32( UInt32 unsignedValue ) : this() => this.UnsignedValue = unsignedValue;
+	public Translate32( UInt32 unsignedValue ) : this() => this.UnsignedValue = unsignedValue;
 
-		public Translate32( Int32 signedValue ) : this() => this.SignedValue = signedValue;
+	public Translate32( Int32 signedValue ) : this() => this.SignedValue = signedValue;
 
-		public Translate32( UInt16 unsignedLow, UInt16 unsignedHigh ) : this() {
-			this.UnsignedLow = unsignedLow;
-			this.UnsignedHigh = unsignedHigh;
-		}
+	public Translate32( UInt16 unsignedLow, UInt16 unsignedHigh ) : this() {
+		this.UnsignedLow = unsignedLow;
+		this.UnsignedHigh = unsignedHigh;
 	}
 }

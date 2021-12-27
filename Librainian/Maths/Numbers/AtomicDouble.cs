@@ -22,60 +22,59 @@
 //
 // File "AtomicDouble.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.ComponentModel;
-	using System.Threading;
-	using Exceptions;
-	using Newtonsoft.Json;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using Exceptions;
+using Newtonsoft.Json;
 
-	/// <summary>A Double number thread-safe by <see cref="Interlocked" />.</summary>
-	[JsonObject]
-	[Description( "A Double number thread-safe by Interlocked." )]
-	public struct AtomicDouble {
+/// <summary>A Double number thread-safe by <see cref="Interlocked" />.</summary>
+[JsonObject]
+[Description( "A Double number thread-safe by Interlocked." )]
+public struct AtomicDouble {
 
-		/// <summary>ONLY used in the getter and setter.</summary>
-		[JsonProperty]
-		private Double _value;
+	/// <summary>ONLY used in the getter and setter.</summary>
+	[JsonProperty]
+	private Double _value;
 
-		public Double Value {
-			get => Interlocked.Exchange( ref this._value, this._value );
+	public Double Value {
+		get => Interlocked.Exchange( ref this._value, this._value );
 
-			set => Interlocked.Exchange( ref this._value, value );
-		}
-
-		public AtomicDouble( Double value ) : this() => this.Value = value;
-
-		public static implicit operator Double( AtomicDouble special ) => special.Value;
-
-		public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value - a2.Value );
-
-		public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value * a2.Value );
-
-		public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value + a2.Value );
-
-		public static AtomicDouble operator ++( AtomicDouble a1 ) {
-			a1.Value++;
-
-			return a1;
-		}
-
-		public static AtomicDouble Parse( String value ) {
-			if ( value is null ) {
-				throw new ArgumentEmptyException( nameof( value ) );
-			}
-
-			return new AtomicDouble( Double.Parse( value ) );
-		}
-
-		/// <summary>Resets the value to zero if less than zero;</summary>
-		public void CheckReset() {
-			if ( this.Value < 0 ) {
-				this.Value = 0;
-			}
-		}
-
-		public override String ToString() => $"{this.Value:R}";
+		set => Interlocked.Exchange( ref this._value, value );
 	}
+
+	public AtomicDouble( Double value ) : this() => this.Value = value;
+
+	public static implicit operator Double( AtomicDouble special ) => special.Value;
+
+	public static AtomicDouble operator -( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value - a2.Value );
+
+	public static AtomicDouble operator *( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value * a2.Value );
+
+	public static AtomicDouble operator +( AtomicDouble a1, AtomicDouble a2 ) => new( a1.Value + a2.Value );
+
+	public static AtomicDouble operator ++( AtomicDouble a1 ) {
+		a1.Value++;
+
+		return a1;
+	}
+
+	public static AtomicDouble Parse( String value ) {
+		if ( value is null ) {
+			throw new ArgumentEmptyException( nameof( value ) );
+		}
+
+		return new AtomicDouble( Double.Parse( value ) );
+	}
+
+	/// <summary>Resets the value to zero if less than zero;</summary>
+	public void CheckReset() {
+		if ( this.Value < 0 ) {
+			this.Value = 0;
+		}
+	}
+
+	public override String ToString() => $"{this.Value:R}";
 }

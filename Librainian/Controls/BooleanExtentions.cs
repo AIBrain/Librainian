@@ -25,23 +25,22 @@
 //
 // File "BooleanExtentions.cs" last touched on 2021-05-02 at 11:12 AM by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
+using System;
 
-	[Obsolete( "Don't actually use these lol." )]
-	public static class BooleanExtentions {
+[Obsolete( "Don't actually use these lol." )]
+public static class BooleanExtentions {
 
-		/// <summary>
-		/// Ignores the <paramref name="value"/> and returns false.
-		/// </summary>
-		/// <param name="value"></param>
-		public static Boolean False( this Boolean value ) => false;
+	/// <summary>
+	/// Ignores the <paramref name="value"/> and returns false.
+	/// </summary>
+	/// <param name="value"></param>
+	public static Boolean False( this Boolean value ) => false;
 
-		/// <summary>
-		/// Ignores the <paramref name="value"/> and returns true.
-		/// </summary>
-		/// <param name="value"></param>
-		public static Boolean True( this Boolean value ) => true;
-	}
+	/// <summary>
+	/// Ignores the <paramref name="value"/> and returns true.
+	/// </summary>
+	/// <param name="value"></param>
+	public static Boolean True( this Boolean value ) => true;
 }

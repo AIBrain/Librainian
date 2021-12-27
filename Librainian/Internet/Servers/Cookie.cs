@@ -25,9 +25,8 @@
 //
 // File "Cookie.cs" last touched on 2021-07-31 at 4:52 PM by Protiguous.
 
-namespace Librainian.Internet.Servers {
+namespace Librainian.Internet.Servers;
 
-	using System;
+using System;
 
-	public record Cookie( String Name, String Value, TimeSpan Expire );
-}
+public record Cookie( String Name, String Value, TimeSpan Expire );

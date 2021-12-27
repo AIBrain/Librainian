@@ -25,31 +25,30 @@
 //
 // File "QuickAsync.cs" last touched on 2021-08-28 at 7:12 AM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using PooledAwait;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using PooledAwait;
 
-	public static class QuickAsync {
+public static class QuickAsync {
 
-		public static TaskFactory QuickTaskFactory { get; } = new( TaskCreationOptions.PreferFairness, TaskContinuationOptions.ExecuteSynchronously );
+	public static TaskFactory QuickTaskFactory { get; } = new( TaskCreationOptions.PreferFairness, TaskContinuationOptions.ExecuteSynchronously );
 
-		public static async PooledValueTask<TResult> RunQuickly<TResult>( this Func<Task<TResult>> func, CancellationToken cancellationToken ) =>
-			await QuickTaskFactory.StartNew( func, cancellationToken ).Unwrap().ConfigureAwait( false );
+	public static async PooledValueTask<TResult> RunQuickly<TResult>( this Func<Task<TResult>> func, CancellationToken cancellationToken ) =>
+		await QuickTaskFactory.StartNew( func, cancellationToken ).Unwrap().ConfigureAwait( false );
 
-		public static async PooledValueTask RunQuickly( this Func<Task> func, CancellationToken cancellationToken ) =>
-			await QuickTaskFactory.StartNew( func, cancellationToken ).Unwrap().ConfigureAwait( false );
+	public static async PooledValueTask RunQuickly( this Func<Task> func, CancellationToken cancellationToken ) =>
+		await QuickTaskFactory.StartNew( func, cancellationToken ).Unwrap().ConfigureAwait( false );
 
-		public static async PooledValueTask RunQuickly( this Action func, CancellationToken cancellationToken ) =>
-			await QuickTaskFactory.StartNew( func, cancellationToken ).ConfigureAwait( false );
+	public static async PooledValueTask RunQuickly( this Action func, CancellationToken cancellationToken ) =>
+		await QuickTaskFactory.StartNew( func, cancellationToken ).ConfigureAwait( false );
 
-		public static async PooledValueTask RunQuickly( this CancellationToken cancellationToken, params Action[] actions ) {
-			await foreach ( var action in actions.ToAsyncEnumerable().WithCancellation( cancellationToken ) ) {
-				await QuickTaskFactory.StartNew( action, cancellationToken ).ConfigureAwait( false );
-			}
+	public static async PooledValueTask RunQuickly( this CancellationToken cancellationToken, params Action[] actions ) {
+		await foreach ( var action in actions.ToAsyncEnumerable().WithCancellation( cancellationToken ).ConfigureAwait( false ) ) {
+			await QuickTaskFactory.StartNew( action, cancellationToken ).ConfigureAwait( false );
 		}
 	}
 }

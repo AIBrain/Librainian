@@ -22,39 +22,38 @@
 //
 // File "TaxTable.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Shopping {
+namespace Librainian.Financial.Containers.Shopping;
 
-	using System;
-	using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-	public static class TaxTable {
+public static class TaxTable {
 
-		//TODO this should look up factors like area/state/zip/country, if this were a real project.
-		public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new() {
-			{
-				ItemCategory.Invalid,
-				0m
-			},
-			{
-				ItemCategory.Book,
-				0.06m
-			},
-			{
-				ItemCategory.Food,
-				0.06m
-			},
-			{
-				ItemCategory.Medical,
-				0.06m
-			},
-			{
-				ItemCategory.Import,
-				0.06m
-			},
-			{
-				ItemCategory.Other,
-				0.06m
-			}
-		};
-	}
+	//TODO this should look up factors like area/state/zip/country, if this were a real project.
+	public static Dictionary<ItemCategory, Decimal> Taxes { get; } = new() {
+		{
+			ItemCategory.Invalid,
+			0m
+		},
+		{
+			ItemCategory.Book,
+			0.06m
+		},
+		{
+			ItemCategory.Food,
+			0.06m
+		},
+		{
+			ItemCategory.Medical,
+			0.06m
+		},
+		{
+			ItemCategory.Import,
+			0.06m
+		},
+		{
+			ItemCategory.Other,
+			0.06m
+		}
+	};
 }

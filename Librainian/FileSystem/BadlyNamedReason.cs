@@ -22,43 +22,42 @@
 //
 // File "BadlyNamedReason.cs" last formatted on 2020-10-12 at 2:20 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem; 
 
-	public enum BadlyNamedReason {
+public enum BadlyNamedReason {
 
-		/// <summary>
-		///     AFAIK
-		/// </summary>
-		NotNamedBadly,
+	/// <summary>
+	///     AFAIK
+	/// </summary>
+	NotNamedBadly,
 
-		/// <summary>
-		///     Filenames such as "picture."
-		/// </summary>
-		MissingExtension,
+	/// <summary>
+	///     Filenames such as "picture."
+	/// </summary>
+	MissingExtension,
 
-		/// <summary>
-		///     Filenames such as "picture.jpg.png" or "Picture.xps.doc". (Last extension is most likely correct?)
-		/// </summary>
-		MultipleExtensions,
+	/// <summary>
+	///     Filenames such as "picture.jpg.png" or "Picture.xps.doc". (Last extension is most likely correct?)
+	/// </summary>
+	MultipleExtensions,
 
-		/// <summary>
-		///     Filenames such as ".nuget" or ".dotnet". (Annoying, but how to fix?)
-		/// </summary>
-		StartsWithPeriod,
+	/// <summary>
+	///     Filenames such as ".nuget" or ".dotnet". (Annoying, but how to fix?)
+	/// </summary>
+	StartsWithPeriod,
 
-		/// <summary>
-		///     Filenames such as ".nuget" or ".dotnet". (Annoying, but how to fix?)
-		/// </summary>
-		StartsWithDot = StartsWithPeriod,
+	/// <summary>
+	///     Filenames such as ".nuget" or ".dotnet". (Annoying, but how to fix?)
+	/// </summary>
+	StartsWithDot = StartsWithPeriod,
 
-		/// <summary>
-		///     Filenames such as "UninstalItems - Copy.log" or "UninstalItems - Copy - Copy.log"
-		/// </summary>
-		EndsWithHyphenCopy,
+	/// <summary>
+	///     Filenames such as "UninstalItems - Copy.log" or "UninstalItems - Copy - Copy.log"
+	/// </summary>
+	EndsWithHyphenCopy,
 
-		/// <summary>
-		///     Filenames such as "Document (1).doc", "Document (2).doc", or "Document (3) (4).doc"
-		/// </summary>
-		EndsWithNumbering
-	}
+	/// <summary>
+	///     Filenames such as "Document (1).doc", "Document (2).doc", or "Document (3) (4).doc"
+	/// </summary>
+	EndsWithNumbering
 }

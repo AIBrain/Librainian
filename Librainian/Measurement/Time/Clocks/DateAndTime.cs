@@ -25,12 +25,11 @@
 //
 // File "DateAndTime.cs" last formatted on 2021-03-06 at 8:38 AM.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using Extensions;
-	using Utilities;
+using Extensions;
+using Utilities;
 
-	[Immutable]
-	[NeedsTesting]
-	public record DateAndTime( Date Date, TimeClock Time );
-}
+[Immutable]
+[NeedsTesting]
+public record DateAndTime( Date Date, TimeClock Time );

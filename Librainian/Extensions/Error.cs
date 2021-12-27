@@ -22,154 +22,153 @@
 //
 // File "Error.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Diagnostics;
-	using Exceptions;
-	using JetBrains.Annotations;
-	using Logging;
+using System;
+using System.Diagnostics;
+using Exceptions;
+using JetBrains.Annotations;
+using Logging;
 
-	public static class Error {
+public static class Error {
 
-		/// <summary>
-		///     Wrap an action with a try/catch.
-		///     <returns>Returns true if <paramref name="action" /> had no exception.</returns>
-		/// </summary>
-		/// <param name="action"></param>
-		/// <param name="final"> </param>
-		/// <returns>Returns true if successful.</returns>
-		[DebuggerStepThrough]
-		public static Boolean Trap( [InstantHandle] this Action action, [InstantHandle] Action? final = default( Action? ) ) {
+	/// <summary>
+	///     Wrap an action with a try/catch.
+	///     <returns>Returns true if <paramref name="action" /> had no exception.</returns>
+	/// </summary>
+	/// <param name="action"></param>
+	/// <param name="final"> </param>
+	/// <returns>Returns true if successful.</returns>
+	[DebuggerStepThrough]
+	public static Boolean Trap( [InstantHandle] this Action action, [InstantHandle] Action? final = default( Action? ) ) {
+		try {
+			action();
+
+			return true;
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+		finally {
 			try {
-				action();
-
-				return true;
+				final?.Invoke();
 			}
 			catch ( Exception exception ) {
 				exception.Log();
 			}
-			finally {
-				try {
-					final?.Invoke();
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-			}
-
-			return false;
 		}
 
-		/// <summary>Wrap an each action with a try/catch.</summary>
-		/// <param name="actions"></param>
-		/// <returns>Returns true if successful.</returns>
-		[DebuggerStepThrough]
-		public static Boolean Trap( [InstantHandle] params Action[]? actions ) {
-			try {
-				if ( actions is null ) {
-					if ( Debugger.IsAttached ) {
-						throw new ArgumentEmptyException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
-					}
+		return false;
+	}
 
-					return false;
-				}
-
-				foreach ( var action in actions ) {
-					action.Trap();
-				}
-
-				return true;
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return false;
-		}
-
-		/// <summary>Wrap a function with a try/catch.</summary>
-		/// <param name="func"> </param>
-		/// <param name="final"></param>
-		[DebuggerStepThrough]
-		public static T? Trap<T>( /*[InstantHandle]*/ this Func<T>? func, /*[InstantHandle]*/ Action? final = default( Action? ) ) {
-			if ( func is null ) {
+	/// <summary>Wrap an each action with a try/catch.</summary>
+	/// <param name="actions"></param>
+	/// <returns>Returns true if successful.</returns>
+	[DebuggerStepThrough]
+	public static Boolean Trap( [InstantHandle] params Action[]? actions ) {
+		try {
+			if ( actions is null ) {
 				if ( Debugger.IsAttached ) {
-					throw new ArgumentEmptyException( nameof( func ) );
+					throw new ArgumentEmptyException( $"Null list of {nameof( actions )} given. Unable to execute {nameof( actions )}." );
 				}
 
-				return default( T? );
+				return false;
 			}
 
+			foreach ( var action in actions ) {
+				action.Trap();
+			}
+
+			return true;
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		return false;
+	}
+
+	/// <summary>Wrap a function with a try/catch.</summary>
+	/// <param name="func"> </param>
+	/// <param name="final"></param>
+	[DebuggerStepThrough]
+	public static T? Trap<T>( /*[InstantHandle]*/ this Func<T>? func, /*[InstantHandle]*/ Action? final = default( Action? ) ) {
+		if ( func is null ) {
+			if ( Debugger.IsAttached ) {
+				throw new ArgumentEmptyException( nameof( func ) );
+			}
+
+			return default( T? );
+		}
+
+		try {
+			return func();
+		}
+		catch ( Exception e ) {
+			e.Log();
+		}
+		finally {
 			try {
-				return func();
+				final?.Invoke();
 			}
 			catch ( Exception e ) {
 				e.Log();
 			}
-			finally {
-				try {
-					final?.Invoke();
-				}
-				catch ( Exception e ) {
-					e.Log();
-				}
-			}
-
-			return default( T );
 		}
 
-		/// <summary>Wrap a function with a try/catch.</summary>
-		/// <param name="func">    </param>
-		/// <param name="argument"></param>
-		/// <param name="exception"></param>
-		/// <param name="final">   </param>
-		/// <param name="actions"></param>
-		[DebuggerStepThrough]
-		public static R? Trap<T, R>(
-			[InstantHandle] this Func<T?, R>? func,
-			T? argument,
-			out Exception? exception,
-			[InstantHandle] Action? final = default( Action? ),
-			params Action[]? actions
-		) {
-			if ( func is null ) {
-				if ( Debugger.IsAttached ) {
-					throw new ArgumentEmptyException( nameof( func ) );
-				}
+		return default( T );
+	}
 
-				exception = new ArgumentEmptyException( nameof( func ) );
-
-				return default( R );
+	/// <summary>Wrap a function with a try/catch.</summary>
+	/// <param name="func">    </param>
+	/// <param name="argument"></param>
+	/// <param name="exception"></param>
+	/// <param name="final">   </param>
+	/// <param name="actions"></param>
+	[DebuggerStepThrough]
+	public static R? Trap<T, R>(
+		[InstantHandle] this Func<T?, R>? func,
+		T? argument,
+		out Exception? exception,
+		[InstantHandle] Action? final = default( Action? ),
+		params Action[]? actions
+	) {
+		if ( func is null ) {
+			if ( Debugger.IsAttached ) {
+				throw new ArgumentEmptyException( nameof( func ) );
 			}
 
-			try {
-				exception = default( Exception );
+			exception = new ArgumentEmptyException( nameof( func ) );
 
-				return func( argument );
+			return default( R );
+		}
+
+		try {
+			exception = default( Exception );
+
+			return func( argument );
+		}
+		catch ( Exception e ) {
+			exception = e.Log();
+		}
+		finally {
+			try {
+				if ( actions != null ) {
+					Trap( actions );
+				}
 			}
 			catch ( Exception e ) {
 				exception = e.Log();
 			}
-			finally {
-				try {
-					if ( actions != null ) {
-						Trap( actions );
-					}
-				}
-				catch ( Exception e ) {
-					exception = e.Log();
-				}
 
-				try {
-					final?.Invoke();
-				}
-				catch ( Exception e ) {
-					exception = e.Log();
-				}
+			try {
+				final?.Invoke();
 			}
-
-			return default( R );
+			catch ( Exception e ) {
+				exception = e.Log();
+			}
 		}
+
+		return default( R );
 	}
 }

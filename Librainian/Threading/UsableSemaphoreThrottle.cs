@@ -25,53 +25,52 @@
 //
 // File "UsableSemaphoreThrottle.cs" last touched on 2021-03-07 at 1:44 PM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.Threading.Tasks;
+using Exceptions;
 
-	/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
-	public class UsableSemaphoreThrottle : IUsableSemaphore {
+/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
+public class UsableSemaphoreThrottle : IUsableSemaphore {
 
-		private readonly IUsableSemaphore _semaphore;
+	private readonly IUsableSemaphore _semaphore;
 
-		private readonly IThrottle _throttle;
+	private readonly IThrottle _throttle;
 
-		public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount ) {
-			this._throttle = new Throttle( interval );
-			this._semaphore = new UsableSemaphoreSlim( initialCount );
+	public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount ) {
+		this._throttle = new Throttle( interval );
+		this._semaphore = new UsableSemaphoreSlim( initialCount );
+	}
+
+	public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount, Int32 maxCount ) {
+		this._throttle = new Throttle( interval );
+		this._semaphore = new UsableSemaphoreSlim( initialCount, maxCount );
+	}
+
+	public UsableSemaphoreThrottle( IThrottle throttle, IUsableSemaphore semaphore ) {
+		this._throttle = throttle ?? throw new ArgumentEmptyException( nameof( throttle ) );
+		this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
+	}
+
+	public void Dispose() {
+		this._semaphore.Dispose();
+		GC.SuppressFinalize( this );
+	}
+
+	public async Task<IUsableSemaphoreWrapper> WaitAsync() {
+		IUsableSemaphoreWrapper? wrapper = default;
+
+		try {
+			wrapper = await this._semaphore.WaitAsync().ConfigureAwait( false );
+			await this._throttle.WaitAsync().ConfigureAwait( false );
+
+			return wrapper;
 		}
+		catch ( Exception ) {
+			wrapper?.Dispose();
 
-		public UsableSemaphoreThrottle( TimeSpan interval, Int32 initialCount, Int32 maxCount ) {
-			this._throttle = new Throttle( interval );
-			this._semaphore = new UsableSemaphoreSlim( initialCount, maxCount );
-		}
-
-		public UsableSemaphoreThrottle( IThrottle throttle, IUsableSemaphore semaphore ) {
-			this._throttle = throttle ?? throw new ArgumentEmptyException( nameof( throttle ) );
-			this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
-		}
-
-		public void Dispose() {
-			this._semaphore.Dispose();
-			GC.SuppressFinalize( this );
-		}
-
-		public async Task<IUsableSemaphoreWrapper> WaitAsync() {
-			IUsableSemaphoreWrapper? wrapper = default;
-
-			try {
-				wrapper = await this._semaphore.WaitAsync().ConfigureAwait( false );
-				await this._throttle.WaitAsync().ConfigureAwait( false );
-
-				return wrapper;
-			}
-			catch ( Exception ) {
-				wrapper?.Dispose();
-
-				throw;
-			}
+			throw;
 		}
 	}
 }

@@ -22,260 +22,259 @@
 //
 // File "ParallelAlgorithms.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
 
-	/// <summary>Copyright (c) Microsoft Corporation. All rights reserved. File: ParallelAlgorithms_Wavefront.cs</summary>
-	public static class ParallelAlgorithms {
+/// <summary>Copyright (c) Microsoft Corporation. All rights reserved. File: ParallelAlgorithms_Wavefront.cs</summary>
+public static class ParallelAlgorithms {
 
-		/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
-		/// <typeparam name="TResult">The type of the data returned.</typeparam>
-		/// <param name="fromInclusive">The start of the range, inclusive.</param>
-		/// <param name="toExclusive">  The end of the range, exclusive.</param>
-		/// <param name="body">         The function to execute for each element.</param>
-		/// <returns>The result computed.</returns>
-		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, Func<Int32, TResult> body ) =>
-			fromInclusive.SpeculativeFor( toExclusive, CPU.AllExceptOne, body );
+	/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
+	/// <typeparam name="TResult">The type of the data returned.</typeparam>
+	/// <param name="fromInclusive">The start of the range, inclusive.</param>
+	/// <param name="toExclusive">  The end of the range, exclusive.</param>
+	/// <param name="body">         The function to execute for each element.</param>
+	/// <returns>The result computed.</returns>
+	public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, Func<Int32, TResult> body ) =>
+		fromInclusive.SpeculativeFor( toExclusive, CPU.AllExceptOne, body );
 
-		/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
-		/// <typeparam name="TResult">The type of the data returned.</typeparam>
-		/// <param name="fromInclusive">The start of the range, inclusive.</param>
-		/// <param name="toExclusive">  The end of the range, exclusive.</param>
-		/// <param name="options">      The options to use for processing the loop.</param>
-		/// <param name="body">         The function to execute for each element.</param>
-		/// <returns>The result computed.</returns>
-		public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, ParallelOptions options, Func<Int32, TResult> body ) {
+	/// <summary>Executes a function for each value in a range, returning the first result achieved and ceasing execution.</summary>
+	/// <typeparam name="TResult">The type of the data returned.</typeparam>
+	/// <param name="fromInclusive">The start of the range, inclusive.</param>
+	/// <param name="toExclusive">  The end of the range, exclusive.</param>
+	/// <param name="options">      The options to use for processing the loop.</param>
+	/// <param name="body">         The function to execute for each element.</param>
+	/// <returns>The result computed.</returns>
+	public static TResult? SpeculativeFor<TResult>( this Int32 fromInclusive, Int32 toExclusive, ParallelOptions options, Func<Int32, TResult> body ) {
 
-			// Validate parameters; the Parallel.For we delegate to will validate the rest
-			if ( body is null ) {
-				throw new ArgumentEmptyException( nameof( body ) );
-			}
-
-			// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
-			Object? result = null;
-
-			// Run all bodies in parallel, stopping as soon as one has completed.
-			Parallel.For( fromInclusive, toExclusive, options, ( i, loopState ) => {
-
-				// Run an iteration. When it completes, store (box) the result, and cancel the rest
-				Interlocked.CompareExchange( ref result, body( i ), null );
-				loopState.Stop();
-			} );
-
-			// Return the computed result
-			if ( result != null ) {
-				return ( TResult )result;
-			}
-
-			throw new InvalidOperationException();
+		// Validate parameters; the Parallel.For we delegate to will validate the rest
+		if ( body is null ) {
+			throw new ArgumentEmptyException( nameof( body ) );
 		}
 
-		/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
-		/// <typeparam name="TSource">The type of the data in the source.</typeparam>
-		/// <typeparam name="TResult">The type of the data returned.</typeparam>
-		/// <param name="source">The input elements to be processed.</param>
-		/// <param name="body">  The function to execute for each element.</param>
-		/// <returns>The result computed.</returns>
-		public static TResult SpeculativeForEach<TSource, TResult>( this IEnumerable<TSource> source, Func<TSource, TResult> body ) =>
-			source.SpeculativeForEach( CPU.AllExceptOne, body );
+		// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
+		Object? result = null;
 
-		/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
-		/// <typeparam name="TSource">The type of the data in the source.</typeparam>
-		/// <typeparam name="TResult">The type of the data returned.</typeparam>
-		/// <param name="source"> The input elements to be processed.</param>
-		/// <param name="options">The options to use for processing the loop.</param>
-		/// <param name="body">   The function to execute for each element.</param>
-		/// <returns>The result computed.</returns>
-		public static TResult SpeculativeForEach<TSource, TResult>(
-			this IEnumerable<TSource> source,
-			ParallelOptions options,
-			Func<TSource, TResult> body
-		) {
+		// Run all bodies in parallel, stopping as soon as one has completed.
+		Parallel.For( fromInclusive, toExclusive, options, ( i, loopState ) => {
 
-			// Validate parameters; the Parallel.ForEach we delegate to will validate the rest
-			if ( body is null ) {
-				throw new ArgumentEmptyException( nameof( body ) );
-			}
+			// Run an iteration. When it completes, store (box) the result, and cancel the rest
+			Interlocked.CompareExchange( ref result, body( i ), null );
+			loopState.Stop();
+		} );
 
-			// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
-			Object? result = null;
-
-			// Run all bodies in parallel, stopping as soon as one has completed.
-			Parallel.ForEach( source, options, ( item, loopState ) => {
-
-				// Run an iteration. When it completes, store (box) the result, and cancel the rest
-				Interlocked.CompareExchange( ref result, body( item ), null );
-				loopState.Stop();
-			} );
-
-			// Return the computed result
-			if ( result != null ) {
-				return ( TResult )result;
-			}
-
-			throw new InvalidOperationException();
+		// Return the computed result
+		if ( result != null ) {
+			return ( TResult )result;
 		}
 
-		/// <summary>
-		///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
-		///     completes.
-		/// </summary>
-		/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
-		/// <param name="functions">The functions to be executed.</param>
-		/// <returns>A result from executing one of the functions.</returns>
-		public static T SpeculativeInvoke<T>( params Func<T>[] functions ) => CPU.AllExceptOne.SpeculativeInvoke( functions );
+		throw new InvalidOperationException();
+	}
 
-		/// <summary>
-		///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
-		///     completes.
-		/// </summary>
-		/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
-		/// <param name="options">  The options to use for the execution.</param>
-		/// <param name="functions">The functions to be executed.</param>
-		/// <returns>A result from executing one of the functions.</returns>
-		public static T SpeculativeInvoke<T>( this ParallelOptions options, params Func<T>[] functions ) {
+	/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
+	/// <typeparam name="TSource">The type of the data in the source.</typeparam>
+	/// <typeparam name="TResult">The type of the data returned.</typeparam>
+	/// <param name="source">The input elements to be processed.</param>
+	/// <param name="body">  The function to execute for each element.</param>
+	/// <returns>The result computed.</returns>
+	public static TResult SpeculativeForEach<TSource, TResult>( this IEnumerable<TSource> source, Func<TSource, TResult> body ) =>
+		source.SpeculativeForEach( CPU.AllExceptOne, body );
 
-			// Validate parameters
-			if ( options is null ) {
-				throw new ArgumentEmptyException( nameof( options ) );
-			}
+	/// <summary>Executes a function for each element in a source, returning the first result achieved and ceasing execution.</summary>
+	/// <typeparam name="TSource">The type of the data in the source.</typeparam>
+	/// <typeparam name="TResult">The type of the data returned.</typeparam>
+	/// <param name="source"> The input elements to be processed.</param>
+	/// <param name="options">The options to use for processing the loop.</param>
+	/// <param name="body">   The function to execute for each element.</param>
+	/// <returns>The result computed.</returns>
+	public static TResult SpeculativeForEach<TSource, TResult>(
+		this IEnumerable<TSource> source,
+		ParallelOptions options,
+		Func<TSource, TResult> body
+	) {
 
-			if ( functions is null ) {
-				throw new ArgumentEmptyException( nameof( functions ) );
-			}
-
-			// Speculatively invoke each function
-			return functions.SpeculativeForEach( options, function => function() );
+		// Validate parameters; the Parallel.ForEach we delegate to will validate the rest
+		if ( body is null ) {
+			throw new ArgumentEmptyException( nameof( body ) );
 		}
 
-		/// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
-		/// <param name="processBlock">
-		///     The action to invoke for every block, supplied with the start and end indices of the rows
-		///     and columns.
-		/// </param>
-		/// <param name="numRows">           The number of rows in the matrix.</param>
-		/// <param name="numColumns">        The number of columns in the matrix.</param>
-		/// <param name="numBlocksPerRow">   Partition the matrix into this number of blocks along the rows.</param>
-		/// <param name="numBlocksPerColumn">Partition the matrix into this number of blocks along the columns.</param>
-		public static void Wavefront(
-			this Action<Int32, Int32, Int32, Int32> processBlock,
-			Int32 numRows,
-			Int32 numColumns,
-			Int32 numBlocksPerRow,
-			Int32 numBlocksPerColumn
-		) {
+		// Store one result. We box it if it's a value type to avoid torn writes and enable CompareExchange even for value types.
+		Object? result = null;
 
-			// Validate parameters
-			if ( numRows <= 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( numRows ) );
-			}
+		// Run all bodies in parallel, stopping as soon as one has completed.
+		Parallel.ForEach( source, options, ( item, loopState ) => {
 
-			if ( numColumns <= 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( numColumns ) );
-			}
+			// Run an iteration. When it completes, store (box) the result, and cancel the rest
+			Interlocked.CompareExchange( ref result, body( item ), null );
+			loopState.Stop();
+		} );
 
-			if ( numBlocksPerRow <= 0 || numBlocksPerRow > numRows ) {
-				throw new ArgumentOutOfRangeException( nameof( numBlocksPerRow ) );
-			}
-
-			if ( numBlocksPerColumn <= 0 || numBlocksPerColumn > numColumns ) {
-				throw new ArgumentOutOfRangeException( nameof( numBlocksPerColumn ) );
-			}
-
-			if ( processBlock is null ) {
-				throw new ArgumentEmptyException( nameof( processBlock ) );
-			}
-
-			// Compute the size of each block
-			var rowBlockSize = numRows / numBlocksPerRow;
-			var columnBlockSize = numColumns / numBlocksPerColumn;
-
-			Wavefront( ( row, column ) => {
-				var startI = row * rowBlockSize;
-				var endI = row < numBlocksPerRow - 1 ? startI + rowBlockSize : numRows;
-
-				var startJ = column * columnBlockSize;
-				var endJ = column < numBlocksPerColumn - 1 ? startJ + columnBlockSize : numColumns;
-
-				processBlock( startI, endI, startJ, endJ );
-			}, numBlocksPerRow, numBlocksPerColumn );
+		// Return the computed result
+		if ( result != null ) {
+			return ( TResult )result;
 		}
 
-		/// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
-		/// <param name="processRowColumnCell">The action to invoke for every cell, supplied with the row and column indices.</param>
-		/// <param name="numRows">             The number of rows in the matrix.</param>
-		/// <param name="numColumns">          The number of columns in the matrix.</param>
-		public static void Wavefront( this Action<Int32, Int32> processRowColumnCell, Int32 numRows, Int32 numColumns ) {
+		throw new InvalidOperationException();
+	}
 
-			// Validate parameters
-			if ( numRows <= 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( numRows ) );
-			}
+	/// <summary>
+	///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
+	///     completes.
+	/// </summary>
+	/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
+	/// <param name="functions">The functions to be executed.</param>
+	/// <returns>A result from executing one of the functions.</returns>
+	public static T SpeculativeInvoke<T>( params Func<T>[] functions ) => CPU.AllExceptOne.SpeculativeInvoke( functions );
 
-			if ( numColumns <= 0 ) {
-				throw new ArgumentOutOfRangeException( nameof( numColumns ) );
-			}
+	/// <summary>
+	///     Invokes the specified functions, potentially in parallel, canceling outstanding invocations once ONE
+	///     completes.
+	/// </summary>
+	/// <typeparam name="T">Specifies the type of data returned by the functions.</typeparam>
+	/// <param name="options">  The options to use for the execution.</param>
+	/// <param name="functions">The functions to be executed.</param>
+	/// <returns>A result from executing one of the functions.</returns>
+	public static T SpeculativeInvoke<T>( this ParallelOptions options, params Func<T>[] functions ) {
 
-			if ( processRowColumnCell is null ) {
-				throw new ArgumentEmptyException( nameof( processRowColumnCell ) );
-			}
+		// Validate parameters
+		if ( options is null ) {
+			throw new ArgumentEmptyException( nameof( options ) );
+		}
 
-			// Store the previous row of tasks as well as the previous task in the current row
-			var prevTaskRow = new Task[numColumns];
-			Task prevTaskInCurrentRow = null;
-			var dependencies = new Task[2];
+		if ( functions is null ) {
+			throw new ArgumentEmptyException( nameof( functions ) );
+		}
 
-			// Create a task for each cell
-			for ( var row = 0; row < numRows; row++ ) {
-				prevTaskInCurrentRow = null;
+		// Speculatively invoke each function
+		return functions.SpeculativeForEach( options, function => function() );
+	}
 
-				for ( var column = 0; column < numColumns; column++ ) {
+	/// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
+	/// <param name="processBlock">
+	///     The action to invoke for every block, supplied with the start and end indices of the rows
+	///     and columns.
+	/// </param>
+	/// <param name="numRows">           The number of rows in the matrix.</param>
+	/// <param name="numColumns">        The number of columns in the matrix.</param>
+	/// <param name="numBlocksPerRow">   Partition the matrix into this number of blocks along the rows.</param>
+	/// <param name="numBlocksPerColumn">Partition the matrix into this number of blocks along the columns.</param>
+	public static void Wavefront(
+		this Action<Int32, Int32, Int32, Int32> processBlock,
+		Int32 numRows,
+		Int32 numColumns,
+		Int32 numBlocksPerRow,
+		Int32 numBlocksPerColumn
+	) {
 
-					// In-scope locals for being captured in the task closures
-					Int32 j = row, i = column;
+		// Validate parameters
+		if ( numRows <= 0 ) {
+			throw new ArgumentOutOfRangeException( nameof( numRows ) );
+		}
 
-					// Create a task with the appropriate dependencies.
-					Task curTask;
+		if ( numColumns <= 0 ) {
+			throw new ArgumentOutOfRangeException( nameof( numColumns ) );
+		}
 
-					if ( row == 0 && column == 0 ) {
+		if ( numBlocksPerRow <= 0 || numBlocksPerRow > numRows ) {
+			throw new ArgumentOutOfRangeException( nameof( numBlocksPerRow ) );
+		}
 
-						// Upper-left task kicks everything off, having no dependencies
-						curTask = Task.Run( () => processRowColumnCell( j, i ) );
-					}
-					else if ( row == 0 || column == 0 ) {
+		if ( numBlocksPerColumn <= 0 || numBlocksPerColumn > numColumns ) {
+			throw new ArgumentOutOfRangeException( nameof( numBlocksPerColumn ) );
+		}
 
-						// Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only on the task to their left
-						var antecedent = column == 0 ? prevTaskRow[0] : prevTaskInCurrentRow;
+		if ( processBlock is null ) {
+			throw new ArgumentEmptyException( nameof( processBlock ) );
+		}
 
-						curTask = antecedent?.ContinueWith( p => {
-							p.Wait(); // Necessary only to propagate exceptions
-							processRowColumnCell( j, i );
-						} );
-					}
-					else // row > 0 && column > 0
-					{
-						// All other tasks depend on both the tasks above and to the left
-						dependencies[0] = prevTaskInCurrentRow;
-						dependencies[1] = prevTaskRow[column];
+		// Compute the size of each block
+		var rowBlockSize = numRows / numBlocksPerRow;
+		var columnBlockSize = numColumns / numBlocksPerColumn;
 
-						curTask = Task.Factory.ContinueWhenAll( dependencies, ps => {
-							Task.WaitAll( ps ); // Necessary only to propagate exceptions
-							processRowColumnCell( j, i );
-						} );
-					}
+		Wavefront( ( row, column ) => {
+			var startI = row * rowBlockSize;
+			var endI = row < numBlocksPerRow - 1 ? startI + rowBlockSize : numRows;
 
-					// Keep track of the task just created for future iterations
-					prevTaskRow[column] = prevTaskInCurrentRow = curTask;
+			var startJ = column * columnBlockSize;
+			var endJ = column < numBlocksPerColumn - 1 ? startJ + columnBlockSize : numColumns;
+
+			processBlock( startI, endI, startJ, endJ );
+		}, numBlocksPerRow, numBlocksPerColumn );
+	}
+
+	/// <summary>Process in parallel a matrix where every cell has a dependency on the cell above it and to its left.</summary>
+	/// <param name="processRowColumnCell">The action to invoke for every cell, supplied with the row and column indices.</param>
+	/// <param name="numRows">             The number of rows in the matrix.</param>
+	/// <param name="numColumns">          The number of columns in the matrix.</param>
+	public static void Wavefront( this Action<Int32, Int32> processRowColumnCell, Int32 numRows, Int32 numColumns ) {
+
+		// Validate parameters
+		if ( numRows <= 0 ) {
+			throw new ArgumentOutOfRangeException( nameof( numRows ) );
+		}
+
+		if ( numColumns <= 0 ) {
+			throw new ArgumentOutOfRangeException( nameof( numColumns ) );
+		}
+
+		if ( processRowColumnCell is null ) {
+			throw new ArgumentEmptyException( nameof( processRowColumnCell ) );
+		}
+
+		// Store the previous row of tasks as well as the previous task in the current row
+		var prevTaskRow = new Task[numColumns];
+		Task prevTaskInCurrentRow = null;
+		var dependencies = new Task[2];
+
+		// Create a task for each cell
+		for ( var row = 0; row < numRows; row++ ) {
+			prevTaskInCurrentRow = null;
+
+			for ( var column = 0; column < numColumns; column++ ) {
+
+				// In-scope locals for being captured in the task closures
+				Int32 j = row, i = column;
+
+				// Create a task with the appropriate dependencies.
+				Task curTask;
+
+				if ( row == 0 && column == 0 ) {
+
+					// Upper-left task kicks everything off, having no dependencies
+					curTask = Task.Run( () => processRowColumnCell( j, i ) );
 				}
-			}
+				else if ( row == 0 || column == 0 ) {
 
-			// Wait for the last task to be done.
-			prevTaskInCurrentRow?.Wait();
+					// Tasks in the left-most column depend only on the task above them, and tasks in the top row depend only on the task to their left
+					var antecedent = column == 0 ? prevTaskRow[0] : prevTaskInCurrentRow;
+
+					curTask = antecedent?.ContinueWith( p => {
+						p.Wait(); // Necessary only to propagate exceptions
+						processRowColumnCell( j, i );
+					} );
+				}
+				else // row > 0 && column > 0
+				{
+					// All other tasks depend on both the tasks above and to the left
+					dependencies[0] = prevTaskInCurrentRow;
+					dependencies[1] = prevTaskRow[column];
+
+					curTask = Task.Factory.ContinueWhenAll( dependencies, ps => {
+						Task.WaitAll( ps ); // Necessary only to propagate exceptions
+						processRowColumnCell( j, i );
+					} );
+				}
+
+				// Keep track of the task just created for future iterations
+				prevTaskRow[column] = prevTaskInCurrentRow = curTask;
+			}
 		}
+
+		// Wait for the last task to be done.
+		prevTaskInCurrentRow?.Wait();
 	}
 }

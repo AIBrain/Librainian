@@ -22,54 +22,53 @@
 //
 // File "ValueTypeCheck.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Databases.MMF {
+namespace Librainian.Databases.MMF;
 
-	using System;
-	using System.Linq;
-	using System.Reflection;
-	using System.Runtime.InteropServices;
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-	/// <summary>Check if a Type is a value type</summary>
-	internal class ValueTypeCheck {
+/// <summary>Check if a Type is a value type</summary>
+internal class ValueTypeCheck {
 
-		private Type Type { get; }
+	private Type Type { get; }
 
-		public ValueTypeCheck( Type? objectType ) => this.Type = objectType;
+	public ValueTypeCheck( Type? objectType ) => this.Type = objectType;
 
-		private static Boolean HasMarshalDefinedSize( MemberInfo info ) {
-			var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
+	private static Boolean HasMarshalDefinedSize( MemberInfo info ) {
+		var customAttributes = info.GetCustomAttributes( typeof( MarshalAsAttribute ), true );
 
-			if ( customAttributes.Length == 0 ) {
-				return false;
-			}
-
-			var attribute = ( MarshalAsAttribute )customAttributes[0];
-
-			if ( attribute.Value == UnmanagedType.Currency ) {
-				return true;
-			}
-
-			return attribute.SizeConst > 0;
+		if ( customAttributes.Length == 0 ) {
+			return false;
 		}
 
-		private Boolean FieldSizesAreDefined() =>
-			this.Type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Where( fieldInfo => !fieldInfo.FieldType.IsPrimitive )
-				.All( HasMarshalDefinedSize );
+		var attribute = ( MarshalAsAttribute )customAttributes[0];
 
-		private Boolean PropertySizesAreDefined() {
-			foreach ( var propertyInfo in this.Type.GetProperties( BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic ) ) {
-				if ( !propertyInfo.CanRead || !propertyInfo.CanWrite ) {
-					return false;
-				}
-
-				if ( !propertyInfo.PropertyType.IsPrimitive && !HasMarshalDefinedSize( propertyInfo ) ) {
-					return false;
-				}
-			}
-
+		if ( attribute.Value == UnmanagedType.Currency ) {
 			return true;
 		}
 
-		internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
+		return attribute.SizeConst > 0;
 	}
+
+	private Boolean FieldSizesAreDefined() =>
+		this.Type.GetFields( BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic ).Where( fieldInfo => !fieldInfo.FieldType.IsPrimitive )
+		    .All( HasMarshalDefinedSize );
+
+	private Boolean PropertySizesAreDefined() {
+		foreach ( var propertyInfo in this.Type.GetProperties( BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic ) ) {
+			if ( !propertyInfo.CanRead || !propertyInfo.CanWrite ) {
+				return false;
+			}
+
+			if ( !propertyInfo.PropertyType.IsPrimitive && !HasMarshalDefinedSize( propertyInfo ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	internal Boolean OnlyValueTypes() => this.Type.IsPrimitive || this.PropertySizesAreDefined() && this.FieldSizesAreDefined();
 }

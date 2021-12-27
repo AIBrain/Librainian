@@ -25,38 +25,37 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using System.Numerics;
-	using Exceptions;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Numerics;
+using Exceptions;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>A simple type for a ClockYear.</summary>
-	[JsonObject]
-	[Immutable]
-	public record ClockYear( BigInteger Value ) : IComparable<ClockYear>, IClockPart {
-		public static ClockYear Zero { get; } = new( BigInteger.Zero );
+/// <summary>A simple type for a ClockYear.</summary>
+[JsonObject]
+[Immutable]
+public record ClockYear( BigInteger Value ) : IComparable<ClockYear>, IClockPart {
+	public static ClockYear Zero { get; } = new( BigInteger.Zero );
 
-		public Int32 CompareTo( ClockYear? other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( ClockYear? other ) {
+		if ( other is null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		public static implicit operator ClockYear( BigInteger value ) => new( value );
-
-		public static explicit operator BigInteger( ClockYear value ) => value.Value;
-
-		public static Boolean operator <( ClockYear left, ClockYear right ) => left.Value < right.Value;
-
-		public static Boolean operator >( ClockYear left, ClockYear right ) => left.Value > right.Value;
-
-		public ClockYear Next() => new( this.Value + 1 );
-
-		public ClockYear Previous() => new( this.Value - 1 );
+		return this.Value.CompareTo( other.Value );
 	}
+
+	public static implicit operator ClockYear( BigInteger value ) => new( value );
+
+	public static explicit operator BigInteger( ClockYear value ) => value.Value;
+
+	public static Boolean operator <( ClockYear left, ClockYear right ) => left.Value < right.Value;
+
+	public static Boolean operator >( ClockYear left, ClockYear right ) => left.Value > right.Value;
+
+	public ClockYear Next() => new( this.Value + 1 );
+
+	public ClockYear Previous() => new( this.Value - 1 );
 }

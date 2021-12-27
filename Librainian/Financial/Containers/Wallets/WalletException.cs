@@ -25,33 +25,31 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Financial.Containers.Wallets {
+namespace Librainian.Financial.Containers.Wallets;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Logging;
-	using Newtonsoft.Json;
+using System;
+using System.Runtime.Serialization;
+using Logging;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[Serializable]
-	public class WalletException : InvalidOperationException {
+[JsonObject]
+[Serializable]
+public class WalletException : InvalidOperationException {
 
-		protected WalletException( SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
+	protected WalletException( SerializationInfo info, StreamingContext ctxt ) : base( info, ctxt ) { }
 
-		public WalletException( String? message, Exception? innerException ) : base( message, innerException ) {
-			message.DebugLine();
-			this.Log();
-		}
+	public WalletException( String? message, Exception? innerException ) : base( message, innerException ) {
+		message.DebugLine();
+		this.Log();
+	}
 
-		public WalletException() {
-			this.Log();
-		}
+	public WalletException() {
+		this.Log();
+	}
 
-		public WalletException( String? message ) : base( message ) {
-			message.DebugLine();
-			this.Log();
-		}
-
+	public WalletException( String? message ) : base( message ) {
+		message.DebugLine();
+		this.Log();
 	}
 
 }

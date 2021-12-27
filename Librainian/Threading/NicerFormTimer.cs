@@ -23,60 +23,59 @@
 //
 // File "NicerFormTimer.cs" last formatted on 2021-02-08 at 1:34 AM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Windows.Forms;
-	using Exceptions;
-	using Logging;
-	using Utilities.Disposables;
+using System;
+using System.Windows.Forms;
+using Exceptions;
+using Logging;
+using Utilities.Disposables;
+
+/// <summary>
+///     Updated the code.
+/// </summary>
+public class NicerFormTimer : ABetterClassDispose {
+
+	private Timer? Timer { get; set; }
 
 	/// <summary>
-	///     Updated the code.
+	///     Perform an <paramref name="action" /> after the given interval (in <paramref name="milliseconds" />).
 	/// </summary>
-	public class NicerFormTimer : ABetterClassDispose {
-
-		private Timer? Timer { get; set; }
-
-		/// <summary>
-		///     Perform an <paramref name="action" /> after the given interval (in <paramref name="milliseconds" />).
-		/// </summary>
-		/// <param name="action">      </param>
-		/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
-		/// <param name="milliseconds"></param>
-		public NicerFormTimer( Action action, Boolean repeat, Int32? milliseconds = null ) : base( nameof( NicerFormTimer ) ) {
-			if ( action is null ) {
-				throw new ArgumentEmptyException( nameof( action ) );
-			}
-
-			this.Timer = new Timer {
-				Interval = milliseconds.GetValueOrDefault( 1 )
-			};
-
-			this.Timer.Tick += ( _, _ ) => {
-				try {
-					this.Timer.Stop();
-					action.Invoke();
-
-					if ( repeat ) {
-						this.Timer.Start();
-					}
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-			};
-
-			this.Timer.Start();
+	/// <param name="action">      </param>
+	/// <param name="repeat">      Perform the <paramref name="action" /> again. (Restarts the <see cref="Timer" />.)</param>
+	/// <param name="milliseconds"></param>
+	public NicerFormTimer( Action action, Boolean repeat, Int32? milliseconds = null ) : base( nameof( NicerFormTimer ) ) {
+		if ( action is null ) {
+			throw new ArgumentEmptyException( nameof( action ) );
 		}
 
-		public override void DisposeManaged() {
-			using ( this.Timer ) {
-				this.Timer?.Stop();
-				this.Timer = null;
-			}
+		this.Timer = new Timer {
+			Interval = milliseconds.GetValueOrDefault( 1 )
+		};
 
-			base.DisposeManaged();
+		this.Timer.Tick += ( _, _ ) => {
+			try {
+				this.Timer.Stop();
+				action.Invoke();
+
+				if ( repeat ) {
+					this.Timer.Start();
+				}
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+			}
+		};
+
+		this.Timer.Start();
+	}
+
+	public override void DisposeManaged() {
+		using ( this.Timer ) {
+			this.Timer?.Stop();
+			this.Timer = null;
 		}
+
+		base.DisposeManaged();
 	}
 }

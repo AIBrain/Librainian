@@ -22,41 +22,40 @@
 //
 // File "Throttle.cs" last formatted on 2020-08-14 at 8:47 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 
-	/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
-	public class Throttle : IThrottle {
+/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
+public class Throttle : IThrottle {
 
-		private DateTime _nextTime;
+	private DateTime _nextTime;
 
-		private TimeSpan Interval { get; }
+	private TimeSpan Interval { get; }
 
-		private Object Lock { get; } = new();
+	private Object Lock { get; } = new();
 
-		public Throttle( TimeSpan interval ) {
-			this.Interval = interval;
-			this._nextTime = DateTime.UtcNow.Subtract( interval );
-		}
+	public Throttle( TimeSpan interval ) {
+		this.Interval = interval;
+		this._nextTime = DateTime.UtcNow.Subtract( interval );
+	}
 
-		public Task WaitAsync() {
-			lock ( this.Lock ) {
-				var now = DateTime.UtcNow;
+	public Task WaitAsync() {
+		lock ( this.Lock ) {
+			var now = DateTime.UtcNow;
 
-				this._nextTime = this._nextTime.Add( this.Interval );
+			this._nextTime = this._nextTime.Add( this.Interval );
 
-				if ( this._nextTime > now ) {
-					var delay = this._nextTime - now;
+			if ( this._nextTime > now ) {
+				var delay = this._nextTime - now;
 
-					return Task.Delay( delay );
-				}
-
-				this._nextTime = now;
+				return Task.Delay( delay );
 			}
 
-			return Task.FromResult( true );
+			this._nextTime = now;
 		}
+
+		return Task.FromResult( true );
 	}
 }

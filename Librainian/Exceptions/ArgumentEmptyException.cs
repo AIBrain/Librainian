@@ -25,34 +25,32 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Logging;
+using System;
+using System.Runtime.Serialization;
+using Logging;
 
-	/// <summary>
-	///     Throw when the (string) parameter is null, empty, or whitespace.
-	/// </summary>
-	[Serializable]
-	public class ArgumentEmptyException : Exception {
+/// <summary>
+///     Throw when the (string) parameter is null, empty, or whitespace.
+/// </summary>
+[Serializable]
+public class ArgumentEmptyException : Exception {
 
-		private ArgumentEmptyException() { }
+	private ArgumentEmptyException() { }
 
-		protected ArgumentEmptyException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+	protected ArgumentEmptyException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public ArgumentEmptyException( String? paramName ) {
-			CannotBeEmpty( paramName ).DebugLine();
-			this.Log( BreakOrDontBreak.Break );
-		}
-
-		public ArgumentEmptyException( String? paramName, Exception? innerException ) : base( CannotBeEmpty( paramName ), innerException ) {
-			CannotBeEmpty( paramName ).DebugLine();
-			this.Log( BreakOrDontBreak.Break );
-		}
-
-		private static String CannotBeEmpty( String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
-
+	public ArgumentEmptyException( String? paramName ) {
+		CannotBeEmpty( paramName ).DebugLine();
+		this.Log( BreakOrDontBreak.Break );
 	}
+
+	public ArgumentEmptyException( String? paramName, Exception? innerException ) : base( CannotBeEmpty( paramName ), innerException ) {
+		CannotBeEmpty( paramName ).DebugLine();
+		this.Log( BreakOrDontBreak.Break );
+	}
+
+	private static String CannotBeEmpty( String? paramName ) => $"{paramName} cannot be null, empty, or whitespace.";
 
 }

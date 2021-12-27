@@ -22,30 +22,29 @@
 //
 // File "Extensions.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
+using System;
 
-	public static class Extensions {
+public static class Extensions {
 
-		/// <summary>How many <see cref="Centimeters" /> are in a single <see cref="Meters" /> ? (100)</summary>
-		public const Decimal CentimetersinSingleMeter = 100m;
+	/// <summary>How many <see cref="Centimeters" /> are in a single <see cref="Meters" /> ? (100)</summary>
+	public const Decimal CentimetersinSingleMeter = 100m;
 
-		/// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Centimeters" /> ? (10)</summary>
-		public const Decimal MillimetersInSingleCentimeter = 10m;
+	/// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Centimeters" /> ? (10)</summary>
+	public const Decimal MillimetersInSingleCentimeter = 10m;
 
-		/// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Inches" /> ? (25.4)</summary>
-		public const Decimal MillimetersInSingleInch = 25.4m;
+	/// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Inches" /> ? (25.4)</summary>
+	public const Decimal MillimetersInSingleInch = 25.4m;
 
-		/// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Meters" /> ? (1000)</summary>
-		public const Decimal MillimetersInSingleMeter = CentimetersinSingleMeter * MillimetersInSingleCentimeter;
+	/// <summary>How many <see cref="Millimeters" /> are in a single <see cref="Meters" /> ? (1000)</summary>
+	public const Decimal MillimetersInSingleMeter = CentimetersinSingleMeter * MillimetersInSingleCentimeter;
 
-		public static Int32 Comparison( this Millimeters left, Millimeters right ) => left.Value.CompareTo( right.Value );
+	public static Int32 Comparison( this Millimeters left, Millimeters right ) => left.Value.CompareTo( right.Value );
 
-		//public static Int32 Comparison( this Millimeters millimeters, Centimeters centimeters ) {
-		//    var left = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.
-		//    var right = centimeters.Value;
-		//    return left.CompareTo( right );
-		//}
-	}
+	//public static Int32 Comparison( this Millimeters millimeters, Centimeters centimeters ) {
+	//    var left = new Centimeters( millimeters: millimeters ).Value; //upconvert. less likely to overflow.
+	//    var right = centimeters.Value;
+	//    return left.CompareTo( right );
+	//}
 }

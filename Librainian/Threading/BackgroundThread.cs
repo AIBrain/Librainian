@@ -25,72 +25,70 @@
 // 
 // File "BackgroundThread.cs" last touched on 2021-09-03 at 10:46 AM by Protiguous.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.ComponentModel;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
-	using Logging;
-	using Measurement.Time;
-	using Threadsafe;
+using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
+using Logging;
+using Measurement.Time;
+using Threadsafe;
 
-	/// <summary>
-	///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (
-	///     <see cref="Proceed" />).
-	/// </summary>
-	public class BackgroundThread : BackgroundWorker {
+/// <summary>
+///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (
+///     <see cref="Proceed" />).
+/// </summary>
+public class BackgroundThread : BackgroundWorker {
 
-		private VolatileBoolean RunningAction = new(false);
+	private VolatileBoolean RunningAction = new(false);
 
 		
-		/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
-		/// <param name="cancellationToken"></param>
-		public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {
-			this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
-			this.cancellationToken = cancellationToken;
-			this.signal = new(false);
-		}
+	/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
+	/// <param name="cancellationToken"></param>
+	public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {
+		this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
+		this.cancellationToken = cancellationToken;
+		this.signal = new(false);
+	}
 
-		private Task ActionToPerform { get; }
+	private Task ActionToPerform { get; }
 
-		private CancellationToken cancellationToken { get; }
+	private CancellationToken cancellationToken { get; }
 
-		private ManualResetEventSlim signal { get; }
+	private ManualResetEventSlim signal { get; }
 
-		/// <summary>
-		///     <para>Every second wake up and see if we can get the semaphore.</para>
-		///     <para>If we can, then run the ActionToPerform().</para>
-		/// </summary>
-		/// <param name="e"></param>
-		protected override async void OnDoWork( DoWorkEventArgs e ) {
+	/// <summary>
+	///     <para>Every second wake up and see if we can get the semaphore.</para>
+	///     <para>If we can, then run the ActionToPerform().</para>
+	/// </summary>
+	/// <param name="e"></param>
+	protected override async void OnDoWork( DoWorkEventArgs e ) {
 
-			while ( !this.cancellationToken.IsCancellationRequested ) {
-				if ( !this.signal.Wait( Seconds.One, this.cancellationToken ) ) {
-					continue;
-				}
+		while ( !this.cancellationToken.IsCancellationRequested ) {
+			if ( !this.signal.Wait( Seconds.One, this.cancellationToken ) ) {
+				continue;
+			}
 
-				try {
-					this.RunningAction.Value = true;
+			try {
+				this.RunningAction.Value = true;
 
-					await this.ActionToPerform.ConfigureAwait( false );
-				}
-				catch ( Exception exception ) {
-					exception.Log( BreakOrDontBreak.Break );
-				}
-				finally {
-					this.RunningAction.Value = false;
-				}
+				await this.ActionToPerform.ConfigureAwait( false );
+			}
+			catch ( Exception exception ) {
+				exception.Log( BreakOrDontBreak.Break );
+			}
+			finally {
+				this.RunningAction.Value = false;
 			}
 		}
-
-		public Boolean IsRunningAction() => this.RunningAction;
-
-		/// <summary>Set the signal.</summary>
-		[Obsolete]
-		public void Proceed() => this.signal.Set();
-
 	}
+
+	public Boolean IsRunningAction() => this.RunningAction;
+
+	/// <summary>Set the signal.</summary>
+	[Obsolete]
+	public void Proceed() => this.signal.Set();
 
 }

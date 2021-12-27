@@ -22,75 +22,74 @@
 //
 // File "DeserializeReportStats.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence;
 
-	using System;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Measurement.Time;
-	using Threading;
-	using Utilities.Disposables;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Measurement.Time;
+using Threading;
+using Utilities.Disposables;
 
-	public sealed class DeserializeReportStats : ABetterClassDispose {
+public sealed class DeserializeReportStats : ABetterClassDispose {
 
-		private ThreadLocal<Int64> Gains { get; } = new( true );
+	private ThreadLocal<Int64> Gains { get; } = new( true );
 
-		private Action<DeserializeReportStats> Handler { get; }
+	private Action<DeserializeReportStats> Handler { get; }
 
-		private ThreadLocal<Int64> Losses { get; } = new( true );
+	private ThreadLocal<Int64> Losses { get; } = new( true );
 
-		public Boolean Enabled { get; set; }
+	public Boolean Enabled { get; set; }
 
-		public TimeSpan Timing { get; }
+	public TimeSpan Timing { get; }
 
-		public Int64 Total { get; set; }
+	public Int64 Total { get; set; }
 
-		public DeserializeReportStats( Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) :base(nameof( DeserializeReportStats ) ){
-			this.Gains.Values.Clear();
-			this.Gains.Value = 0;
+	public DeserializeReportStats( Action<DeserializeReportStats>? handler, TimeSpan? timing = null ) :base(nameof( DeserializeReportStats ) ){
+		this.Gains.Values.Clear();
+		this.Gains.Value = 0;
 
-			this.Losses.Values.Clear();
-			this.Losses.Value = 0;
+		this.Losses.Values.Clear();
+		this.Losses.Value = 0;
 
-			this.Total = 0;
-			this.Handler = handler;
-			this.Timing = timing ?? Milliseconds.ThreeHundredThirtyThree;
-		}
-
-		/// <summary>Perform a Report.</summary>
-		private async Task ReportAsync() {
-			if ( !this.Enabled ) {
-				return;
-			}
-
-			this.Handler( this );
-
-			if ( this.Enabled ) {
-				await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
-			}
-		}
-
-		public void AddFailed( Int64 amount = 1 ) => this.Losses.Value += amount;
-
-		public void AddSuccess( Int64 amount = 1 ) => this.Gains.Value += amount;
-
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			this.Gains.Dispose();
-			this.Losses.Dispose();
-		}
-
-		public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
-
-		public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
-
-		public Task StartReporting() {
-			this.Enabled = true;
-
-			return this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) );
-		}
-
-		public void StopReporting() => this.Enabled = false;
+		this.Total = 0;
+		this.Handler = handler;
+		this.Timing = timing ?? Milliseconds.ThreeHundredThirtyThree;
 	}
+
+	/// <summary>Perform a Report.</summary>
+	private async Task ReportAsync() {
+		if ( !this.Enabled ) {
+			return;
+		}
+
+		this.Handler( this );
+
+		if ( this.Enabled ) {
+			await this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) ).ConfigureAwait( false ); //TODO is this correct?
+		}
+	}
+
+	public void AddFailed( Int64 amount = 1 ) => this.Losses.Value += amount;
+
+	public void AddSuccess( Int64 amount = 1 ) => this.Gains.Value += amount;
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		this.Gains.Dispose();
+		this.Losses.Dispose();
+	}
+
+	public Int64 GetGains() => this.Gains.Values.Sum( arg => arg );
+
+	public Int64 GetLoss() => this.Losses.Values.Sum( arg => arg );
+
+	public Task StartReporting() {
+		this.Enabled = true;
+
+		return this.Timing.Then( () => this.ReportAsync().ConfigureAwait( false ) );
+	}
+
+	public void StopReporting() => this.Enabled = false;
 }

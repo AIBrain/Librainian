@@ -22,31 +22,30 @@
 //
 // File "IStandardClock.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
+using System;
 
-	public interface IStandardClock {
-
-		
-		ClockHour Hour { get; }
+public interface IStandardClock {
 
 		
-		ClockMillisecond Millisecond { get; }
+	ClockHour Hour { get; }
 
 		
-		ClockMinute Minute { get; }
+	ClockMillisecond Millisecond { get; }
 
 		
-		ClockSecond Second { get; }
+	ClockMinute Minute { get; }
 
 		
-		Boolean IsAm();
+	ClockSecond Second { get; }
 
 		
-		Boolean IsPm();
+	Boolean IsAm();
 
 		
-		TimeClock Time();
-	}
+	Boolean IsPm();
+
+		
+	TimeClock Time();
 }

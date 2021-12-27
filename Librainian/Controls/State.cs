@@ -25,12 +25,11 @@
 //
 // File "State.cs" last touched on 2021-04-25 at 11:02 AM by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls; 
 
-	public enum State {
+public enum State {
 
-		Disabled,
+	Disabled,
 
-		Enabled
-	}
+	Enabled
 }

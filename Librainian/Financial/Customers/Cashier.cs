@@ -25,24 +25,23 @@
 //
 // File "Cashier.cs" last formatted on 2021-01-01 at 9:38 AM.
 
-namespace Librainian.Financial.Customers {
+namespace Librainian.Financial.Customers;
 
-	using System;
-	using System.Collections.Generic;
-	using Containers.Wallets;
-	using Utilities.Disposables;
+using System;
+using System.Collections.Generic;
+using Containers.Wallets;
+using Utilities.Disposables;
 
-	public class Cashier : ABetterClassDispose, IPerson {
+public class Cashier : ABetterClassDispose, IPerson {
 
-		public List<Wallet> Wallets { get; } = new();
+	public List<Wallet> Wallets { get; } = new();
 
-		public Cashier( Guid cashierID ) : base( nameof( Cashier ) ) => this.Wallets.Add( new Wallet( cashierID ) );
+	public Cashier( Guid cashierID ) : base( nameof( Cashier ) ) => this.Wallets.Add( new Wallet( cashierID ) );
 
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			foreach ( var wallet in this.Wallets ) {
-				wallet.Dispose();
-			}
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		foreach ( var wallet in this.Wallets ) {
+			wallet.Dispose();
 		}
 	}
 }

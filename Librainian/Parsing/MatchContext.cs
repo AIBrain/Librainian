@@ -22,16 +22,15 @@
 //
 // File "MatchContext.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
+using System;
 
-	public abstract class MatchContext<T, TResult> : ClosedMatchContext {
+public abstract class MatchContext<T, TResult> : ClosedMatchContext {
 
-		public abstract ClosedMatchContext Return( TResult result );
+	public abstract ClosedMatchContext Return( TResult result );
 
-		public abstract ClosedMatchContext Return( Func<T, TResult> resultProjection );
+	public abstract ClosedMatchContext Return( Func<T, TResult> resultProjection );
 
-		public abstract IntermediateMatchResultContext<T, TResult> When( Func<T, Boolean> condition );
-	}
+	public abstract IntermediateMatchResultContext<T, TResult> When( Func<T, Boolean> condition );
 }

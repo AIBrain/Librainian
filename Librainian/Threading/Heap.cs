@@ -22,39 +22,38 @@
 //
 // File "Heap.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	public static class Heap {
+public static class Heap {
 
-		[Flags]
-		public enum HeapFlags {
+	[Flags]
+	public enum HeapFlags {
 
-			// ReSharper disable InconsistentNaming
-			HEAP_NO_SERIALIZE = 0x1,
+		// ReSharper disable InconsistentNaming
+		HEAP_NO_SERIALIZE = 0x1,
 
-			HEAP_GENERATE_EXCEPTIONS = 0x4,
+		HEAP_GENERATE_EXCEPTIONS = 0x4,
 
-			HEAP_ZERO_MEMORY = 0x8
+		HEAP_ZERO_MEMORY = 0x8
 
-			// ReSharper restore InconsistentNaming
-		}
-
-		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern IntPtr GetProcessHeap();
-
-		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern IntPtr HeapAlloc( IntPtr hHeap, HeapFlags dwFlags, UInt32 dwSize );
-
-		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern IntPtr HeapCreate( HeapFlags flOptions, UInt32 dwInitialsize, UInt32 dwMaximumSize );
-
-		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern Boolean HeapDestroy( IntPtr hHeap );
-
-		[DllImport( "kernel32.dll", SetLastError = true )]
-		public static extern Boolean HeapFree( IntPtr hHeap, HeapFlags dwFlags, IntPtr lpMem );
+		// ReSharper restore InconsistentNaming
 	}
+
+	[DllImport( "kernel32.dll", SetLastError = true )]
+	public static extern IntPtr GetProcessHeap();
+
+	[DllImport( "kernel32.dll", SetLastError = true )]
+	public static extern IntPtr HeapAlloc( IntPtr hHeap, HeapFlags dwFlags, UInt32 dwSize );
+
+	[DllImport( "kernel32.dll", SetLastError = true )]
+	public static extern IntPtr HeapCreate( HeapFlags flOptions, UInt32 dwInitialsize, UInt32 dwMaximumSize );
+
+	[DllImport( "kernel32.dll", SetLastError = true )]
+	public static extern Boolean HeapDestroy( IntPtr hHeap );
+
+	[DllImport( "kernel32.dll", SetLastError = true )]
+	public static extern Boolean HeapFree( IntPtr hHeap, HeapFlags dwFlags, IntPtr lpMem );
 }

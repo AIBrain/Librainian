@@ -25,173 +25,172 @@
 //
 // File "Surfer.cs" last touched on 2021-08-01 at 3:47 PM by Protiguous.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Net;
-	using System.Net.Cache;
-	using System.Text.RegularExpressions;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Logging;
-	using Utilities.Disposables;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Cache;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Logging;
+using Utilities.Disposables;
 
-	public class Surfer : ABetterClassDispose {
+public class Surfer : ABetterClassDispose {
 
-		private readonly ReaderWriterLockSlim _downloadInProgressAccess = new( LockRecursionPolicy.SupportsRecursion );
+	private readonly ReaderWriterLockSlim _downloadInProgressAccess = new( LockRecursionPolicy.SupportsRecursion );
 
-		private readonly ConcurrentBag<Uri> _pastUrls = new();
+	private readonly ConcurrentBag<Uri> _pastUrls = new();
 
-		private readonly ConcurrentQueue<Uri> _urls = new();
+	private readonly ConcurrentQueue<Uri> _urls = new();
 
-		/// <remarks>Not thread safe.</remarks>
-		private readonly WebClient _webclient;
+	/// <remarks>Not thread safe.</remarks>
+	private readonly WebClient _webclient;
 
-		private Boolean _downloadInProgressStatus;
+	private Boolean _downloadInProgressStatus;
 
-		/// <summary>Returns True if a download is currently in progress</summary>
-		public Boolean DownloadInProgress {
-			get {
-				try {
-					this._downloadInProgressAccess.EnterReadLock();
-
-					return this._downloadInProgressStatus;
-				}
-				finally {
-					this._downloadInProgressAccess.ExitReadLock();
-				}
-			}
-
-			private set {
-				try {
-					this._downloadInProgressAccess.EnterWriteLock();
-					this._downloadInProgressStatus = value;
-				}
-				finally {
-					this._downloadInProgressAccess.ExitWriteLock();
-				}
-			}
-		}
-
-		public Surfer( Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) : base( nameof( Surfer ) ) {
-			this._webclient = new WebClient {
-				CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
-			};
-
-			if ( onDownloadStringCompleted != null ) {
-				this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
-			}
-			else {
-				this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted;
-			}
-
-			//System.Net.WebUtility
-			//System.HttpStyleUriParser
-			/*
-            var urls = new[] { "http://www.google.com", "http://www.yahoo.com" };
-
-            Task.Factory.ContinueWhenAll(
-                urls.Select( url => Task.Run( u => {
-                    using ( var client = new WebClient() ) {
-                        return client.DownloadString( ( String )u );
-                    }
-                }, url ) ).ToArray(), tasks => {
-                    var results = tasks.Select( t => t.Result );
-                    foreach ( var html in results ) {
-                        Console.WriteLine( html );
-                    }
-                } );
-            */
-		}
-
-		private void StartNextDownload() =>
-			Task.Run( () => {
-				Thread.Yield();
-
-				if ( this.DownloadInProgress ) {
-					return;
-				}
-
-				if ( !this._urls.TryDequeue( out var address ) ) {
-					return;
-				}
-
-				this.DownloadInProgress = true;
-				$"Surf(): Starting download: {address.AbsoluteUri}".Info();
-				this._webclient.DownloadStringAsync( address, address );
-			} )
-				.ContinueWith( t => {
-					if ( this._urls.Any() ) {
-						this.StartNextDownload();
-					}
-				} );
-
-		internal void webclient_DownloadStringCompleted( Object? sender, DownloadStringCompletedEventArgs e ) {
-			if ( e.UserState is Uri userState ) {
-				$"Surf(): Download completed on {userState}".Info();
-				this._pastUrls.Add( userState );
-				this.DownloadInProgress = false;
-			}
-
-			this.StartNextDownload();
-		}
-
-		public static IEnumerable<UriLinkItem> ParseLinks( Uri? baseUri, String webpage ) {
-			foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
-				var value = match.Groups[1].Value;
-				var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
-
-				var i = new UriLinkItem( new Uri( baseUri, m2.Success ? m2.Groups[1].Value : String.Empty ),
-					Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ) );
-
-				yield return i;
-			}
-		}
-
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
-
-		/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
-		/// <param name="address"></param>
-		public Boolean Surf( String? address ) {
-			if ( String.IsNullOrWhiteSpace( address ) ) {
-				return false;
-			}
-
+	/// <summary>Returns True if a download is currently in progress</summary>
+	public Boolean DownloadInProgress {
+		get {
 			try {
-				var uri = new Uri( address );
+				this._downloadInProgressAccess.EnterReadLock();
 
-				return this.Surf( uri );
-			}
-			catch ( UriFormatException ) {
-				$"Surf(): Unable to parse address {address}".Info();
-
-				return false;
-			}
-		}
-
-		/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
-		/// <param name="address"></param>
-		public Boolean Surf( Uri? address ) {
-			if ( address is null ) {
-				return false;
-			}
-
-			try {
-				if ( this._pastUrls.Contains( address ) ) {
-					return false;
-				}
-
-				this._urls.Enqueue( address );
-
-				return true;
+				return this._downloadInProgressStatus;
 			}
 			finally {
-				this.StartNextDownload();
+				this._downloadInProgressAccess.ExitReadLock();
 			}
+		}
+
+		private set {
+			try {
+				this._downloadInProgressAccess.EnterWriteLock();
+				this._downloadInProgressStatus = value;
+			}
+			finally {
+				this._downloadInProgressAccess.ExitWriteLock();
+			}
+		}
+	}
+
+	public Surfer( Action<DownloadStringCompletedEventArgs>? onDownloadStringCompleted ) : base( nameof( Surfer ) ) {
+		this._webclient = new WebClient {
+			CachePolicy = new RequestCachePolicy( RequestCacheLevel.Default )
+		};
+
+		if ( onDownloadStringCompleted != null ) {
+			this._webclient.DownloadStringCompleted += ( sender, e ) => onDownloadStringCompleted( e );
+		}
+		else {
+			this._webclient.DownloadStringCompleted += this.webclient_DownloadStringCompleted;
+		}
+
+		//System.Net.WebUtility
+		//System.HttpStyleUriParser
+		/*
+        var urls = new[] { "http://www.google.com", "http://www.yahoo.com" };
+
+        Task.Factory.ContinueWhenAll(
+            urls.Select( url => Task.Run( u => {
+                using ( var client = new WebClient() ) {
+                    return client.DownloadString( ( String )u );
+                }
+            }, url ) ).ToArray(), tasks => {
+                var results = tasks.Select( t => t.Result );
+                foreach ( var html in results ) {
+                    Console.WriteLine( html );
+                }
+            } );
+        */
+	}
+
+	private void StartNextDownload() =>
+		Task.Run( () => {
+			    Thread.Yield();
+
+			    if ( this.DownloadInProgress ) {
+				    return;
+			    }
+
+			    if ( !this._urls.TryDequeue( out var address ) ) {
+				    return;
+			    }
+
+			    this.DownloadInProgress = true;
+			    $"Surf(): Starting download: {address.AbsoluteUri}".Info();
+			    this._webclient.DownloadStringAsync( address, address );
+		    } )
+		    .ContinueWith( t => {
+			    if ( this._urls.Any() ) {
+				    this.StartNextDownload();
+			    }
+		    } );
+
+	internal void webclient_DownloadStringCompleted( Object? sender, DownloadStringCompletedEventArgs e ) {
+		if ( e.UserState is Uri userState ) {
+			$"Surf(): Download completed on {userState}".Info();
+			this._pastUrls.Add( userState );
+			this.DownloadInProgress = false;
+		}
+
+		this.StartNextDownload();
+	}
+
+	public static IEnumerable<UriLinkItem> ParseLinks( Uri? baseUri, String webpage ) {
+		foreach ( Match match in Regex.Matches( webpage, @"(<a.*?>.*?</a>)", RegexOptions.Singleline ) ) {
+			var value = match.Groups[1].Value;
+			var m2 = Regex.Match( value, @"href=\""(.*?)\""", RegexOptions.Singleline );
+
+			var i = new UriLinkItem( new Uri( baseUri, m2.Success ? m2.Groups[1].Value : String.Empty ),
+				Regex.Replace( value, @"\s*<.*?>\s*", "", RegexOptions.Singleline ) );
+
+			yield return i;
+		}
+	}
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() => this._downloadInProgressAccess.Dispose();
+
+	/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
+	/// <param name="address"></param>
+	public Boolean Surf( String? address ) {
+		if ( String.IsNullOrWhiteSpace( address ) ) {
+			return false;
+		}
+
+		try {
+			var uri = new Uri( address );
+
+			return this.Surf( uri );
+		}
+		catch ( UriFormatException ) {
+			$"Surf(): Unable to parse address {address}".Info();
+
+			return false;
+		}
+	}
+
+	/// <summary>Returns True if the address was successfully added to the queue to be downloaded.</summary>
+	/// <param name="address"></param>
+	public Boolean Surf( Uri? address ) {
+		if ( address is null ) {
+			return false;
+		}
+
+		try {
+			if ( this._pastUrls.Contains( address ) ) {
+				return false;
+			}
+
+			this._urls.Enqueue( address );
+
+			return true;
+		}
+		finally {
+			this.StartNextDownload();
 		}
 	}
 }

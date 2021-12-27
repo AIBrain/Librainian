@@ -22,37 +22,36 @@
 //
 // File "EasierSemaphore.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
-	using Exceptions;
+using System;
+using System.Threading;
+using Exceptions;
 
-	public static class EasierSemaphore {
+public static class EasierSemaphore {
 
-		/// <summary>Blocks the current thread until the current <see cref="WaitHandle" /> receives a signal.</summary>
-		public static Token WaitOneThenRelease( this Semaphore semaphore, TimeSpan? timeout = null ) {
-			if ( semaphore is null ) {
-				throw new ArgumentEmptyException( nameof( semaphore ) );
-			}
-
-			if ( timeout.HasValue ) {
-				semaphore.WaitOne( timeout.Value );
-			}
-			else {
-				semaphore.WaitOne();
-			}
-
-			return new Token( semaphore );
+	/// <summary>Blocks the current thread until the current <see cref="WaitHandle" /> receives a signal.</summary>
+	public static Token WaitOneThenRelease( this Semaphore semaphore, TimeSpan? timeout = null ) {
+		if ( semaphore is null ) {
+			throw new ArgumentEmptyException( nameof( semaphore ) );
 		}
 
-		public readonly struct Token : IDisposable {
-
-			private readonly Semaphore _semaphore;
-
-			public Token( Semaphore semaphore ) => this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
-
-			public void Dispose() => this._semaphore.Release();
+		if ( timeout.HasValue ) {
+			semaphore.WaitOne( timeout.Value );
 		}
+		else {
+			semaphore.WaitOne();
+		}
+
+		return new Token( semaphore );
+	}
+
+	public readonly struct Token : IDisposable {
+
+		private readonly Semaphore _semaphore;
+
+		public Token( Semaphore semaphore ) => this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
+
+		public void Dispose() => this._semaphore.Release();
 	}
 }

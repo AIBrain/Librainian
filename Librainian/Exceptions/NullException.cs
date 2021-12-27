@@ -25,22 +25,21 @@
 //
 // File "NullException.cs" last touched on 2021-05-14 at 7:36 AM by Protiguous.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Logging;
+using System;
+using System.Runtime.Serialization;
+using Logging;
 
-	public class NullException : Exception {
+public class NullException : Exception {
 
-		protected NullException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+	protected NullException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		/// <summary>
-		///     Don't pass in a null nameof() lol.
-		/// </summary>
-		/// <param name="nameOfObject"></param>
-		public NullException( String nameOfObject ) {
-			$"{nameOfObject.CannotBeNull()}.".Break();
-		}
+	/// <summary>
+	///     Don't pass in a null nameof() lol.
+	/// </summary>
+	/// <param name="nameOfObject"></param>
+	public NullException( String nameOfObject ) {
+		$"{nameOfObject.CannotBeNull()}.".Break();
 	}
 }

@@ -27,60 +27,59 @@
 
 #nullable enable
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using JetBrains.Annotations;
+using System;
+using JetBrains.Annotations;
 
-	public static partial class ParsingConstants {
+public static partial class ParsingConstants {
 
-		public static class Strings {
+	public static class Strings {
 
-			public const String Astronaut1 = "👨‍🚀";
+		public const String Astronaut1 = "👨‍🚀";
 
-			public const String Astronaut2 = "\U0001f468\u200D\U0001f680";
+		public const String Astronaut2 = "\U0001f468\u200D\U0001f680";
 
-			/// <summary>
-			///     Char x0D
-			/// </summary>
-			public const String CarriageReturn = "\r";
+		/// <summary>
+		///     Char x0D
+		/// </summary>
+		public const String CarriageReturn = "\r";
 
-			public const String CRLF = "\r\n";
+		public const String CRLF = "\r\n";
 
-			/// <summary>
-			///     The " char
-			/// </summary>
-			public const String DoubleQuote = "\"";
+		/// <summary>
+		///     The " char
+		/// </summary>
+		public const String DoubleQuote = "\"";
 
-			/// <summary>
-			///     Two spaces as a <see cref="String" />.
-			/// </summary>
-			[NotNull]
-			public const String Doublespace = Singlespace + Singlespace;
+		/// <summary>
+		///     Two spaces as a <see cref="String" />.
+		/// </summary>
+		[NotNull]
+		public const String Doublespace = Singlespace + Singlespace;
 
-			/// <summary>
-			///     Char x0A
-			/// </summary>
-			public const String LineFeed = "\n";
+		/// <summary>
+		///     Char x0A
+		/// </summary>
+		public const String LineFeed = "\n";
 
-			/// <summary>
-			///     The ' char as a <see cref="String" />.
-			/// </summary>
-			public const String SingleQuote = "'";
+		/// <summary>
+		///     The ' char as a <see cref="String" />.
+		/// </summary>
+		public const String SingleQuote = "'";
 
-			/// <summary>
-			///     A single space char as a <see cref="String" />.
-			/// </summary>
-			public const String Singlespace = " ";
+		/// <summary>
+		///     A single space char as a <see cref="String" />.
+		/// </summary>
+		public const String Singlespace = " ";
 
-			/// <summary> ~`!@#$%^&*()-_=+?:,./\[]{}|' </summary>
-			[NotNull]
-			public const String Symbols = @"~`!@#$%^&*()-_=+<>?:,./\[]{}|'";
+		/// <summary> ~`!@#$%^&*()-_=+?:,./\[]{}|' </summary>
+		[NotNull]
+		public const String Symbols = @"~`!@#$%^&*()-_=+<>?:,./\[]{}|'";
 
-			/// <summary>
-			///     The tab char as a <see cref="String" />.
-			/// </summary>
-			public const String Tab = "\t";
-		}
+		/// <summary>
+		///     The tab char as a <see cref="String" />.
+		/// </summary>
+		public const String Tab = "\t";
 	}
 }

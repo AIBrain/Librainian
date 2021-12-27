@@ -25,14 +25,13 @@
 //
 // File "ISecrectStuff.cs" last touched on 2021-08-27 at 4:23 PM by Protiguous.
 
-namespace Librainian.Configuration {
+namespace Librainian.Configuration;
 
-	using System;
+using System;
 
-	public interface ISecretStuff {
+public interface ISecretStuff {
 
-		String? BackupDatabaseConnectionString { get; set; }
+	String? BackupDatabaseConnectionString { get; set; }
 
-		String? DatabaseConnectionString { get; set; }
-	}
+	String? DatabaseConnectionString { get; set; }
 }

@@ -25,26 +25,25 @@
 //
 // File "MutableBaseException.cs" last formatted on 2021-03-05 at 12:50 PM.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Runtime.Serialization;
+using System;
+using System.Runtime.Serialization;
 
-	[Serializable]
-	public class MutableBaseException : ImmutableFailureException {
+[Serializable]
+public class MutableBaseException : ImmutableFailureException {
 
-		protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+	protected MutableBaseException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		internal MutableBaseException( Type type, Exception inner ) : base( type, FormatMessage( type ), inner ) {
-			if ( type is null ) {
-				throw new ArgumentEmptyException( nameof( type ) );
-			}
-
-			if ( inner is null ) {
-				throw new ArgumentEmptyException( nameof( inner ) );
-			}
+	internal MutableBaseException( Type type, Exception inner ) : base( type, FormatMessage( type ), inner ) {
+		if ( type is null ) {
+			throw new ArgumentEmptyException( nameof( type ) );
 		}
 
-		private static String FormatMessage( Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
+		if ( inner is null ) {
+			throw new ArgumentEmptyException( nameof( inner ) );
+		}
 	}
+
+	private static String FormatMessage( Type type ) => $"'{type}' is mutable because its base type ('[{type.BaseType}]') is mutable.";
 }

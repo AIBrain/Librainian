@@ -22,95 +22,94 @@
 //
 // File "Matrix.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Graphics {
+namespace Librainian.Graphics;
 
-	using System;
+using System;
 
-	public class Matrix {
+public class Matrix {
 
-		protected Int32 Cols { get; }
+	protected Int32 Cols { get; }
 
-		protected Single[,] matrix { get; }
+	protected Single[,] matrix { get; }
 
-		protected Int32 Rows { get; }
+	protected Int32 Rows { get; }
 
-		protected Matrix( Single[,] matrix ) {
-			this.matrix = matrix;
-			this.Rows = matrix.GetLength( 0 );
-			this.Cols = matrix.GetLength( 1 );
+	protected Matrix( Single[,] matrix ) {
+		this.matrix = matrix;
+		this.Rows = matrix.GetLength( 0 );
+		this.Cols = matrix.GetLength( 1 );
+	}
+
+	protected Matrix( Int32 rows, Int32 cols ) {
+		this.matrix = new Single[rows, cols];
+		this.Rows = rows;
+		this.Cols = cols;
+	}
+
+	private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
+		var m1Cols = matrix1.Cols;
+
+		if ( m1Cols != matrix2.Rows ) {
+			throw new ArgumentException();
 		}
 
-		protected Matrix( Int32 rows, Int32 cols ) {
-			this.matrix = new Single[rows, cols];
-			this.Rows = rows;
-			this.Cols = cols;
-		}
+		var m1Rows = matrix1.Rows;
+		var m2Cols = matrix2.Cols;
+		var m1 = matrix1.matrix;
+		var m2 = matrix2.matrix;
+		var m3 = new Single[m1Rows, m2Cols];
 
-		private static Single[,] Multiply( Matrix matrix1, Matrix matrix2 ) {
-			var m1Cols = matrix1.Cols;
+		for ( var i = 0; i < m1Rows; ++i ) {
+			for ( var j = 0; j < m2Cols; ++j ) {
+				Single sum = 0;
 
-			if ( m1Cols != matrix2.Rows ) {
-				throw new ArgumentException();
-			}
-
-			var m1Rows = matrix1.Rows;
-			var m2Cols = matrix2.Cols;
-			var m1 = matrix1.matrix;
-			var m2 = matrix2.matrix;
-			var m3 = new Single[m1Rows, m2Cols];
-
-			for ( var i = 0; i < m1Rows; ++i ) {
-				for ( var j = 0; j < m2Cols; ++j ) {
-					Single sum = 0;
-
-					for ( var it = 0; it < m1Cols; ++it ) {
-						sum += m1[i, it] * m2[it, j];
-					}
-
-					m3[i, j] = sum;
-				}
-			}
-
-			return m3;
-		}
-
-		protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
-			var rows = matrix.Rows;
-			var cols = matrix.Cols;
-			var m1 = matrix.matrix;
-			var m2 = new Single[rows, cols];
-
-			for ( var i = 0; i < rows; ++i ) {
-				for ( var j = 0; j < cols; ++j ) {
-					m2[i, j] = m1[i, j] * scalar;
-				}
-			}
-
-			return m2;
-		}
-
-		public static Matrix operator *( Matrix m, Single scalar ) => new( Multiply( m, scalar ) );
-
-		public static Matrix operator *( Matrix m1, Matrix m2 ) => new( Multiply( m1, m2 ) );
-
-		public override String ToString() {
-			var res = "";
-
-			for ( var i = 0; i < this.Rows; ++i ) {
-				if ( i > 0 ) {
-					res += "|";
+				for ( var it = 0; it < m1Cols; ++it ) {
+					sum += m1[i, it] * m2[it, j];
 				}
 
-				for ( var j = 0; j < this.Cols; ++j ) {
-					if ( j > 0 ) {
-						res += ",";
-					}
+				m3[i, j] = sum;
+			}
+		}
 
-					res += this.matrix[i, j];
-				}
+		return m3;
+	}
+
+	protected static Single[,] Multiply( Matrix matrix, Single scalar ) {
+		var rows = matrix.Rows;
+		var cols = matrix.Cols;
+		var m1 = matrix.matrix;
+		var m2 = new Single[rows, cols];
+
+		for ( var i = 0; i < rows; ++i ) {
+			for ( var j = 0; j < cols; ++j ) {
+				m2[i, j] = m1[i, j] * scalar;
+			}
+		}
+
+		return m2;
+	}
+
+	public static Matrix operator *( Matrix m, Single scalar ) => new( Multiply( m, scalar ) );
+
+	public static Matrix operator *( Matrix m1, Matrix m2 ) => new( Multiply( m1, m2 ) );
+
+	public override String ToString() {
+		var res = "";
+
+		for ( var i = 0; i < this.Rows; ++i ) {
+			if ( i > 0 ) {
+				res += "|";
 			}
 
-			return $"({res})";
+			for ( var j = 0; j < this.Cols; ++j ) {
+				if ( j > 0 ) {
+					res += ",";
+				}
+
+				res += this.matrix[i, j];
+			}
 		}
+
+		return $"({res})";
 	}
 }

@@ -22,31 +22,30 @@
 //
 // File "FourBytes.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>4 byte struct.</summary>
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct FourBytes {
+/// <summary>4 byte struct.</summary>
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct FourBytes {
 
-		[FieldOffset( 0 )]
-		public Int32 W;
+	[FieldOffset( 0 )]
+	public Int32 W;
 
-		[FieldOffset( 0 )]
-		public UInt32 U;
+	[FieldOffset( 0 )]
+	public UInt32 U;
 
-		[FieldOffset( 0 )]
-		public Byte A;
+	[FieldOffset( 0 )]
+	public Byte A;
 
-		[FieldOffset( sizeof( Byte ) )]
-		public Byte B;
+	[FieldOffset( sizeof( Byte ) )]
+	public Byte B;
 
-		[FieldOffset( sizeof( Byte ) + sizeof( Byte ) )]
-		public Byte C;
+	[FieldOffset( sizeof( Byte ) + sizeof( Byte ) )]
+	public Byte C;
 
-		[FieldOffset( sizeof( Byte ) + sizeof( Byte ) + sizeof( Byte ) )]
-		public Byte D;
-	}
+	[FieldOffset( sizeof( Byte ) + sizeof( Byte ) + sizeof( Byte ) )]
+	public Byte D;
 }

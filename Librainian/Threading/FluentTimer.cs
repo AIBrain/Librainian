@@ -27,151 +27,150 @@
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Timers;
-	using Exceptions;
-	using Measurement.Frequency;
-	using Measurement.Time;
-	using Utilities.Disposables;
+using System;
+using System.Timers;
+using Exceptions;
+using Measurement.Frequency;
+using Measurement.Time;
+using Utilities.Disposables;
 
-	public static class FluentTimerExt {
+public static class FluentTimerExt {
 
-		/// <summary>
-		///     <para>Start the <paramref name="timer" />.</para>
-		///     <para>Same as <see cref="Begin" />.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		public static FluentTimer AndStart( this FluentTimer timer ) => timer.Begin();
+	/// <summary>
+	///     <para>Start the <paramref name="timer" />.</para>
+	///     <para>Same as <see cref="Begin" />.</para>
+	/// </summary>
+	/// <param name="timer"></param>
+	/// <exception cref="ArgumentOutOfRangeException"></exception>
+	public static FluentTimer AndStart( this FluentTimer timer ) => timer.Begin();
 
-		/// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
-		/// <param name="timer"></param>
-		/// <param name="set"></param>
-		public static FluentTimer AutoReset( this FluentTimer timer, Boolean set = true ) {
-			if ( timer is null ) {
-				throw new ArgumentEmptyException( nameof( timer ) );
-			}
-
-			timer.Timer.AutoReset = set;
-
-			return timer;
+	/// <summary>Make the <paramref name="timer" /> fire every <see cref="Timer.Interval" />.</summary>
+	/// <param name="timer"></param>
+	/// <param name="set"></param>
+	public static FluentTimer AutoReset( this FluentTimer timer, Boolean set = true ) {
+		if ( timer is null ) {
+			throw new ArgumentEmptyException( nameof( timer ) );
 		}
 
-		/// <summary>
-		///     <para>Start the <paramref name="timer" />.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		public static FluentTimer Begin( this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentEmptyException( nameof( timer ) );
-			}
+		timer.Timer.AutoReset = set;
 
-			timer.Timer.Start();
-
-			return timer;
-		}
-
-
-		public static FluentTimer End( this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentEmptyException( nameof( timer ) );
-			}
-
-			timer.Timer.Stop();
-
-			return timer;
-		}
-
-		public static FluentTimer Once( this FluentTimer timer ) {
-			timer.Timer.AutoReset = false;
-
-			return timer;
-		}
-
-		/// <summary>
-		///     <para>Start the <paramref name="timer" />.</para>
-		/// </summary>
-		/// <param name="timer"></param>
-		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		public static FluentTimer Start( this FluentTimer timer ) => timer.Begin();
-
-		public static FluentTimer Stop( this FluentTimer timer ) {
-			if ( timer is null ) {
-				throw new ArgumentEmptyException( nameof( timer ) );
-			}
-
-			timer.Timer.Stop();
-
-			return timer;
-		}
+		return timer;
 	}
 
-	public class FluentTimer : ABetterClassDispose {
-
-
-		public static FluentTimer Create( Hertz frequency, Action onTick ) => Create( ( TimeSpan )frequency, onTick );
-
-		/// <summary>
-		///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
-		///     <para>Defaults to a one-time tick.</para>
-		/// </summary>
-		/// <param name="interval"> </param>
-		/// <param name="onTick"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public static FluentTimer Create( TimeSpan interval, Action? onTick = null ) {
-			if ( interval < Milliseconds.One ) {
-				interval = Milliseconds.One;
-			}
-
-			var milliseconds = interval.TotalMilliseconds;
-
-			if ( milliseconds <= 0 ) {
-				milliseconds = 1;
-			}
-
-			var create = new FluentTimer( milliseconds ).Once();
-
-			create.Timer.Elapsed += ( sender, args ) => {
-				try {
-					//create.Timer.Stop();
-					onTick?.Invoke();
-				}
-				finally {
-					//if ( create.Timer.AutoReset ) {
-					//	_ = create.Start();
-					//}
-				}
-			};
-
-			return create;
+	/// <summary>
+	///     <para>Start the <paramref name="timer" />.</para>
+	/// </summary>
+	/// <param name="timer"></param>
+	/// <exception cref="ArgumentOutOfRangeException"></exception>
+	public static FluentTimer Begin( this FluentTimer timer ) {
+		if ( timer is null ) {
+			throw new ArgumentEmptyException( nameof( timer ) );
 		}
 
-		internal Timer Timer { get; }
+		timer.Timer.Start();
 
-		/// <summary>
-		///     Defaults to 1 millisecond.
-		/// </summary>
-		public FluentTimer() : this( Milliseconds.One ) { }
+		return timer;
+	}
 
-		public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Decimal )milliseconds ) ) { }
 
-		public FluentTimer( IQuantityOfTime quantityOfTime ) : base( nameof( FluentTimer ) ) {
-			if ( quantityOfTime == null ) {
-				throw new ArgumentEmptyException( nameof( quantityOfTime ) );
-			}
-
-			this.Timer = new Timer( quantityOfTime.ToTimeSpan().TotalMilliseconds );
+	public static FluentTimer End( this FluentTimer timer ) {
+		if ( timer is null ) {
+			throw new ArgumentEmptyException( nameof( timer ) );
 		}
 
-		public override void DisposeManaged() {
-			using ( this.Timer ) {
-				this.Timer.Stop();
-			}
+		timer.Timer.Stop();
 
-			base.DisposeManaged();
+		return timer;
+	}
+
+	public static FluentTimer Once( this FluentTimer timer ) {
+		timer.Timer.AutoReset = false;
+
+		return timer;
+	}
+
+	/// <summary>
+	///     <para>Start the <paramref name="timer" />.</para>
+	/// </summary>
+	/// <param name="timer"></param>
+	/// <exception cref="ArgumentOutOfRangeException"></exception>
+	public static FluentTimer Start( this FluentTimer timer ) => timer.Begin();
+
+	public static FluentTimer Stop( this FluentTimer timer ) {
+		if ( timer is null ) {
+			throw new ArgumentEmptyException( nameof( timer ) );
 		}
+
+		timer.Timer.Stop();
+
+		return timer;
+	}
+}
+
+public class FluentTimer : ABetterClassDispose {
+
+
+	public static FluentTimer Create( Hertz frequency, Action onTick ) => Create( ( TimeSpan )frequency, onTick );
+
+	/// <summary>
+	///     <para>Creates, but does not start, the <see cref="Timer" />.</para>
+	///     <para>Defaults to a one-time tick.</para>
+	/// </summary>
+	/// <param name="interval"> </param>
+	/// <param name="onTick"></param>
+	/// <exception cref="ArgumentException"></exception>
+	public static FluentTimer Create( TimeSpan interval, Action? onTick = null ) {
+		if ( interval < Milliseconds.One ) {
+			interval = Milliseconds.One;
+		}
+
+		var milliseconds = interval.TotalMilliseconds;
+
+		if ( milliseconds <= 0 ) {
+			milliseconds = 1;
+		}
+
+		var create = new FluentTimer( milliseconds ).Once();
+
+		create.Timer.Elapsed += ( sender, args ) => {
+			try {
+				//create.Timer.Stop();
+				onTick?.Invoke();
+			}
+			finally {
+				//if ( create.Timer.AutoReset ) {
+				//	_ = create.Start();
+				//}
+			}
+		};
+
+		return create;
+	}
+
+	internal Timer Timer { get; }
+
+	/// <summary>
+	///     Defaults to 1 millisecond.
+	/// </summary>
+	public FluentTimer() : this( Milliseconds.One ) { }
+
+	public FluentTimer( Double milliseconds ) : this( new Milliseconds( ( Decimal )milliseconds ) ) { }
+
+	public FluentTimer( IQuantityOfTime quantityOfTime ) : base( nameof( FluentTimer ) ) {
+		if ( quantityOfTime == null ) {
+			throw new ArgumentEmptyException( nameof( quantityOfTime ) );
+		}
+
+		this.Timer = new Timer( quantityOfTime.ToTimeSpan().TotalMilliseconds );
+	}
+
+	public override void DisposeManaged() {
+		using ( this.Timer ) {
+			this.Timer.Stop();
+		}
+
+		base.DisposeManaged();
 	}
 }

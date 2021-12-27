@@ -22,12 +22,11 @@
 //
 // File "OpenMatchContext.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
+using System;
 
-	public abstract class OpenMatchContext<T, TResult> : MatchContext<T, TResult> {
+public abstract class OpenMatchContext<T, TResult> : MatchContext<T, TResult> {
 
-		public abstract OpenMatchContext<T, TResult> Guard( Func<T, Boolean> failWhen, Func<T, TResult> failWith );
-	}
+	public abstract OpenMatchContext<T, TResult> Guard( Func<T, Boolean> failWhen, Func<T, TResult> failWith );
 }

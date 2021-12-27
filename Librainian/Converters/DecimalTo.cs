@@ -22,29 +22,28 @@
 //
 // File "DecimalTo.cs" last formatted on 2020-08-14 at 8:32 PM.
 
-namespace Librainian.Converters {
+namespace Librainian.Converters;
 
-	using System;
-	using System.Runtime.InteropServices;
-	using Maths;
+using System;
+using System.Runtime.InteropServices;
+using Maths;
 
-	[StructLayout( LayoutKind.Explicit, Pack = 0 )]
-	public struct DecimalTo {
+[StructLayout( LayoutKind.Explicit, Pack = 0 )]
+public struct DecimalTo {
 
-		[field: FieldOffset( 0 )]
-		public Guid Guid { get; set; }
+	[field: FieldOffset( 0 )]
+	public Guid Guid { get; set; }
 
-		[FieldOffset( 0 )]
+	[FieldOffset( 0 )]
 
-		// ReSharper disable once FieldCanBeMadeReadOnly.Global
-		public Decimal Decimal;
+	// ReSharper disable once FieldCanBeMadeReadOnly.Global
+	public Decimal Decimal;
 
-		/// <summary>Access the first four bytes.</summary>
-		[FieldOffset( 0 )]
-		public FourBytes Bytes4;
+	/// <summary>Access the first four bytes.</summary>
+	[FieldOffset( 0 )]
+	public FourBytes Bytes4;
 
-		/// <summary>Access all eight bytes.</summary>
-		[FieldOffset( 0 )]
-		public EightBytes Bytes8;
-	}
+	/// <summary>Access all eight bytes.</summary>
+	[FieldOffset( 0 )]
+	public EightBytes Bytes8;
 }

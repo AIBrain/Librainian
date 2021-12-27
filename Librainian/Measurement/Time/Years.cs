@@ -27,101 +27,100 @@
 
 #nullable enable
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Exceptions;
-	using ExtendedNumerics;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using Exceptions;
+using ExtendedNumerics;
+using Extensions;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record Years( BigDecimal Value ) : IQuantityOfTime, IComparable<Years>, IComparable<IQuantityOfTime> {
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record Years( BigDecimal Value ) : IQuantityOfTime, IComparable<Years>, IComparable<IQuantityOfTime> {
 
-		/// <summary>
-		///     One <see cref="Years" /> .
-		/// </summary>
-		public static Years One { get; } = new( 1 );
+	/// <summary>
+	///     One <see cref="Years" /> .
+	/// </summary>
+	public static Years One { get; } = new( 1 );
 
-		/// <summary>
-		/// </summary>
-		public static Years Ten { get; } = new( 10 );
+	/// <summary>
+	/// </summary>
+	public static Years Ten { get; } = new( 10 );
 
-		/// <summary>
-		/// </summary>
-		public static Years Thousand { get; } = new( 1000 );
+	/// <summary>
+	/// </summary>
+	public static Years Thousand { get; } = new( 1000 );
 
-		/// <summary>
-		///     Zero <see cref="Years" />
-		/// </summary>
-		public static Years Zero { get; } = new( 0 );
+	/// <summary>
+	///     Zero <see cref="Years" />
+	/// </summary>
+	public static Years Zero { get; } = new( 0 );
 
-		public Int32 CompareTo( Years? other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( Years? other ) {
+		if ( other is null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		public Int32 CompareTo( IQuantityOfTime? other ) {
-			if ( ReferenceEquals( this, other ) ) {
-				return 0;
-			}
-
-			if ( other is null ) {
-				return 1;
-			}
-
-			return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );
-		}
-
-		public IQuantityOfTime ToFinerGranularity() => new Months( this.Value * Months.InOneCommonYear );
-
-		public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneYear );
-
-		public Seconds ToSeconds() => new( this.Value * Seconds.InOneCommonYear );
-
-		public IQuantityOfTime ToCoarserGranularity() => this;
-
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
-
-		public static Years Combine( Years left, BigDecimal years ) => new( left.Value + years );
-
-		public static implicit operator Months( Years years ) => years.ToMonths();
-
-		public static implicit operator SpanOfTime( Years years ) => new( years: years );
-
-		public static Years operator -( Years years ) => new( years.Value * -1 );
-
-		public static Years operator -( Years left, Years right ) => Combine( left, -right );
-
-		public static Years operator -( Years left, BigDecimal years ) => Combine( left, -years );
-
-		public static Years operator +( Years left, Years right ) => Combine( left, right );
-
-		public static Years operator +( Years left, BigDecimal years ) => Combine( left, years );
-
-		public static Years operator +( Years left, BigInteger years ) => Combine( left, years );
-
-		public static Boolean operator <( Years left, Years right ) => left.Value < right.Value;
-
-		public static Boolean operator >( Years left, Years right ) => left.Value > right.Value;
-
-		public Days ToDays() => new( this.Value * Days.InOneCommonYear );
-
-		public Months ToMonths() => new( this.Value * Months.InOneCommonYear );
-
-		public override String ToString() => this.Value == 1 ? $"{this.Value} year" : $"{this.Value} years";
-
-		public Weeks ToWeeks() => new( this.Value * Weeks.InOneCommonYear );
+		return this.Value.CompareTo( other.Value );
 	}
+
+	public Int32 CompareTo( IQuantityOfTime? other ) {
+		if ( ReferenceEquals( this, other ) ) {
+			return 0;
+		}
+
+		if ( other is null ) {
+			return 1;
+		}
+
+		return this.ToPlanckTimes().CompareTo( other.ToPlanckTimes() );
+	}
+
+	public IQuantityOfTime ToFinerGranularity() => new Months( this.Value * Months.InOneCommonYear );
+
+	public PlanckTimes ToPlanckTimes() => new( this.Value * PlanckTimes.InOneYear );
+
+	public Seconds ToSeconds() => new( this.Value * Seconds.InOneCommonYear );
+
+	public IQuantityOfTime ToCoarserGranularity() => this;
+
+	public TimeSpan ToTimeSpan() => this.ToSeconds();
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+	public static Years Combine( Years left, Years right ) => Combine( left, right.Value );
+
+	public static Years Combine( Years left, BigDecimal years ) => new( left.Value + years );
+
+	public static implicit operator Months( Years years ) => years.ToMonths();
+
+	public static implicit operator SpanOfTime( Years years ) => new( years: years );
+
+	public static Years operator -( Years years ) => new( years.Value * -1 );
+
+	public static Years operator -( Years left, Years right ) => Combine( left, -right );
+
+	public static Years operator -( Years left, BigDecimal years ) => Combine( left, -years );
+
+	public static Years operator +( Years left, Years right ) => Combine( left, right );
+
+	public static Years operator +( Years left, BigDecimal years ) => Combine( left, years );
+
+	public static Years operator +( Years left, BigInteger years ) => Combine( left, years );
+
+	public static Boolean operator <( Years left, Years right ) => left.Value < right.Value;
+
+	public static Boolean operator >( Years left, Years right ) => left.Value > right.Value;
+
+	public Days ToDays() => new( this.Value * Days.InOneCommonYear );
+
+	public Months ToMonths() => new( this.Value * Months.InOneCommonYear );
+
+	public override String ToString() => this.Value == 1 ? $"{this.Value} year" : $"{this.Value} years";
+
+	public Weeks ToWeeks() => new( this.Value * Weeks.InOneCommonYear );
 }

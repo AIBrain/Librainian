@@ -25,28 +25,27 @@
 //
 // File "WritableFieldException.cs" last formatted on 2021-03-05 at 12:50 PM.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Reflection;
-	using System.Runtime.Serialization;
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 
-	[Serializable]
-	public class WritableFieldException : ImmutableFailureException {
+[Serializable]
+public class WritableFieldException : ImmutableFailureException {
 
-		public WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
-			if ( serializationInfo is null ) {
-				throw new ArgumentEmptyException( nameof( serializationInfo ) );
-			}
+	public WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+		if ( serializationInfo is null ) {
+			throw new ArgumentEmptyException( nameof( serializationInfo ) );
 		}
-
-		public WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
-			if ( fieldInfo is null ) {
-				throw new ArgumentEmptyException( nameof( fieldInfo ) );
-			}
-		}
-
-		internal static String FormatMessage( FieldInfo fieldInfo ) =>
-			$"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";
 	}
+
+	public WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
+		if ( fieldInfo is null ) {
+			throw new ArgumentEmptyException( nameof( fieldInfo ) );
+		}
+	}
+
+	internal static String FormatMessage( FieldInfo fieldInfo ) =>
+		$"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'makeitget'.";
 }

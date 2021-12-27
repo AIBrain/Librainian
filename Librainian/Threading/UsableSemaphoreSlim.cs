@@ -22,79 +22,78 @@
 //
 // File "UsableSemaphoreSlim.cs" last formatted on 2020-08-14 at 8:47 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Exceptions;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Exceptions;
 
-	public class UsableSemaphoreSlim : IUsableSemaphore {
+public class UsableSemaphoreSlim : IUsableSemaphore {
+
+	private readonly SemaphoreSlim _semaphore;
+
+	public UsableSemaphoreSlim( Int32 initialCount ) => this._semaphore = new SemaphoreSlim( initialCount );
+
+	public UsableSemaphoreSlim( Int32 initialCount, Int32 maxCount ) => this._semaphore = new SemaphoreSlim( initialCount, maxCount );
+
+	public void Dispose() {
+		this._semaphore.Dispose();
+		GC.SuppressFinalize( this );
+	}
+
+	public async Task<IUsableSemaphoreWrapper> WaitAsync() {
+		var wrapper = new UsableSemaphoreWrapper( this._semaphore );
+
+		try {
+			await wrapper.WaitAsync().ConfigureAwait( false );
+
+			return wrapper;
+		}
+		catch ( Exception ) {
+			wrapper.Dispose();
+
+			throw;
+		}
+	}
+
+	private class UsableSemaphoreWrapper : IUsableSemaphoreWrapper {
 
 		private readonly SemaphoreSlim _semaphore;
 
-		public UsableSemaphoreSlim( Int32 initialCount ) => this._semaphore = new SemaphoreSlim( initialCount );
+		private readonly Stopwatch _stopwatch;
 
-		public UsableSemaphoreSlim( Int32 initialCount, Int32 maxCount ) => this._semaphore = new SemaphoreSlim( initialCount, maxCount );
+		private Boolean _isDisposed;
+
+		public TimeSpan Elapsed => this._stopwatch.Elapsed;
+
+		public UsableSemaphoreWrapper( SemaphoreSlim semaphore ) {
+			this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
+			this._stopwatch = new Stopwatch();
+		}
 
 		public void Dispose() {
-			this._semaphore.Dispose();
-			GC.SuppressFinalize( this );
+			if ( this._isDisposed ) {
+				return;
+			}
+
+			if ( this._stopwatch.IsRunning ) {
+				this._stopwatch.Stop();
+				this._semaphore.Release();
+			}
+
+			this._isDisposed = true;
 		}
 
-		public async Task<IUsableSemaphoreWrapper> WaitAsync() {
-			var wrapper = new UsableSemaphoreWrapper( this._semaphore );
-
-			try {
-				await wrapper.WaitAsync().ConfigureAwait( false );
-
-				return wrapper;
-			}
-			catch ( Exception ) {
-				wrapper.Dispose();
-
-				throw;
-			}
-		}
-
-		private class UsableSemaphoreWrapper : IUsableSemaphoreWrapper {
-
-			private readonly SemaphoreSlim _semaphore;
-
-			private readonly Stopwatch _stopwatch;
-
-			private Boolean _isDisposed;
-
-			public TimeSpan Elapsed => this._stopwatch.Elapsed;
-
-			public UsableSemaphoreWrapper( SemaphoreSlim semaphore ) {
-				this._semaphore = semaphore ?? throw new ArgumentEmptyException( nameof( semaphore ) );
-				this._stopwatch = new Stopwatch();
+		public Task WaitAsync() {
+			if ( this._stopwatch.IsRunning ) {
+				throw new InvalidOperationException( "Already Initialized" );
 			}
 
-			public void Dispose() {
-				if ( this._isDisposed ) {
-					return;
-				}
+			this._stopwatch.Start();
 
-				if ( this._stopwatch.IsRunning ) {
-					this._stopwatch.Stop();
-					this._semaphore.Release();
-				}
-
-				this._isDisposed = true;
-			}
-
-			public Task WaitAsync() {
-				if ( this._stopwatch.IsRunning ) {
-					throw new InvalidOperationException( "Already Initialized" );
-				}
-
-				this._stopwatch.Start();
-
-				return this._semaphore.WaitAsync();
-			}
+			return this._semaphore.WaitAsync();
 		}
 	}
 }

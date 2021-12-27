@@ -25,10 +25,9 @@
 //
 // File "BreakOrDontBreak.cs" last touched on 2021-04-12 at 2:01 PM by Protiguous.
 
-namespace Librainian.Logging {
+namespace Librainian.Logging; 
 
-	public enum BreakOrDontBreak {
+public enum BreakOrDontBreak {
 
-		DontBreak, Break
-	}
+	DontBreak, Break
 }

@@ -25,42 +25,40 @@
 // 
 // File "SortOrder.cs" last touched on 2021-10-02 at 7:38 AM by Protiguous.
 
-namespace Librainian.Measurement {
+namespace Librainian.Measurement;
 
-	using System;
+using System;
 
-	public static class SortOrder {
+public static class SortOrder {
 
-		/// <summary>
-		///     1
-		/// </summary>
-		public const SByte After = 1;
+	/// <summary>
+	///     1
+	/// </summary>
+	public const SByte After = 1;
 
-		/// <summary>
-		///     -1
-		/// </summary>
-		public const SByte Before = -1;
+	/// <summary>
+	///     -1
+	/// </summary>
+	public const SByte Before = -1;
 
-		/// <summary>
-		///     Default to <see cref="NullsFirst" /> in a sort operation.
-		/// </summary>
-		public const SByte NullsDefault = NullsFirst;
+	/// <summary>
+	///     Default to <see cref="NullsFirst" /> in a sort operation.
+	/// </summary>
+	public const SByte NullsDefault = NullsFirst;
 
-		/// <summary>
-		///     Return nulls first in a sort operation.
-		/// </summary>
-		public const SByte NullsFirst = Before;
+	/// <summary>
+	///     Return nulls first in a sort operation.
+	/// </summary>
+	public const SByte NullsFirst = Before;
 
-		/// <summary>
-		///     Return nulls last in a sort operation.
-		/// </summary>
-		public const SByte NullsLast = After;
+	/// <summary>
+	///     Return nulls last in a sort operation.
+	/// </summary>
+	public const SByte NullsLast = After;
 
-		/// <summary>
-		///     0
-		/// </summary>
-		public const SByte Same = 0;
-
-	}
+	/// <summary>
+	///     0
+	/// </summary>
+	public const SByte Same = 0;
 
 }

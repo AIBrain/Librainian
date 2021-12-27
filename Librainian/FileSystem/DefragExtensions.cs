@@ -22,42 +22,41 @@
 //
 // File "DefragExtensions.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using ComputerSystem.Devices;
-	using OperatingSystem;
+using System;
+using System.Diagnostics;
+using System.IO;
+using ComputerSystem.Devices;
+using OperatingSystem;
 
-	public static class DefragExtensions {
+public static class DefragExtensions {
 
-		/// <summary>
-		///     The function starts the Defrag.Exe and waits for it to finish. It ensures the process is run with lower
-		///     priority and the spawned process DfrgNtfs is given 'Idle' priority
-		/// </summary>
-		/// <param name="disk">Drive to defrag - format is "c:" for example</param>
-		private static String Defrag( Disk? disk ) {
-			var path = Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "defrag.exe" );
+	/// <summary>
+	///     The function starts the Defrag.Exe and waits for it to finish. It ensures the process is run with lower
+	///     priority and the spawned process DfrgNtfs is given 'Idle' priority
+	/// </summary>
+	/// <param name="disk">Drive to defrag - format is "c:" for example</param>
+	private static String Defrag( Disk? disk ) {
+		var path = Path.Combine( Windows.WindowsSystem32Folder.Value.FullPath, "defrag.exe" );
 
-			var info = new ProcessStartInfo {
-				FileName = path,
-				Arguments = String.Format( "{{{0}}} /O /V /M " + Environment.ProcessorCount, disk ),
-				UseShellExecute = false,
-				CreateNoWindow = true,
-				RedirectStandardOutput = true
-			};
+		var info = new ProcessStartInfo {
+			FileName = path,
+			Arguments = String.Format( "{{{0}}} /O /V /M " + Environment.ProcessorCount, disk ),
+			UseShellExecute = false,
+			CreateNoWindow = true,
+			RedirectStandardOutput = true
+		};
 
-			var defrag = Process.Start( info );
+		var defrag = Process.Start( info );
 
-			if ( defrag is null ) {
-				return String.Empty;
-			}
-
-			defrag.PriorityClass = ProcessPriorityClass.Idle;
-			defrag.WaitForExit();
-
-			return defrag.StandardOutput.ReadToEnd();
+		if ( defrag is null ) {
+			return String.Empty;
 		}
+
+		defrag.PriorityClass = ProcessPriorityClass.Idle;
+		defrag.WaitForExit();
+
+		return defrag.StandardOutput.ReadToEnd();
 	}
 }

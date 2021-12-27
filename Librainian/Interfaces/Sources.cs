@@ -25,131 +25,130 @@
 //
 // File "Sources.cs" last touched on 2021-03-30 at 8:28 AM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces; 
 
-	public enum Sources {
+public enum Sources {
 
-		Unknown = 0,
+	Unknown = 0,
 
-		Default = 1,
+	Default = 1,
 
-		Self,
+	Self,
 
-		/// <summary>
-		///     Just info.
-		/// </summary>
-		Info,
+	/// <summary>
+	///     Just info.
+	/// </summary>
+	Info,
 
-		/// <summary>
-		///     the user typed, pasted, or entered text into the input box
-		/// </summary>
-		UserText,
+	/// <summary>
+	///     the user typed, pasted, or entered text into the input box
+	/// </summary>
+	UserText,
 
-		/// <summary>
-		///     the user clicked a button or interacted with the userinerface in some way.
-		/// </summary>
-		UserAction,
+	/// <summary>
+	///     the user clicked a button or interacted with the userinerface in some way.
+	/// </summary>
+	UserAction,
 
-		/// <summary>
-		///     the user dragged a folder/file over to the ai
-		/// </summary>
-		DragAndDrop,
+	/// <summary>
+	///     the user dragged a folder/file over to the ai
+	/// </summary>
+	DragAndDrop,
 
-		Document,
+	Document,
 
-		Folder,
+	Folder,
 
-		Ear,
+	Ear,
 
-		Mouth,
+	Mouth,
 
-		Tongue,
+	Tongue,
 
-		Throat,
+	Throat,
 
-		AudioIn,
+	AudioIn,
 
-		LineIn,
+	LineIn,
 
-		Aux,
+	Aux,
 
-		/// <summary>
-		///     both ears?
-		/// </summary>
-		Stereo,
+	/// <summary>
+	///     both ears?
+	/// </summary>
+	Stereo,
 
-		Hand,
+	Hand,
 
-		Foot,
+	Foot,
 
-		Wikipedia,
+	Wikipedia,
 
-		Internet,
+	Internet,
 
-		Url,
+	Url,
 
-		Uri,
+	Uri,
 
-		FacebookPerson,
+	FacebookPerson,
 
-		FacebookPost,
+	FacebookPost,
 
-		FacebookVideo,
+	FacebookVideo,
 
-		/// <summary>
-		///     undefined social-internet
-		/// </summary>
-		SocialMediaPerson,
+	/// <summary>
+	///     undefined social-internet
+	/// </summary>
+	SocialMediaPerson,
 
-		SocialMediaPost,
+	SocialMediaPost,
 
-		SocialMediaVideo,
+	SocialMediaVideo,
 
-		RedditUser,
+	RedditUser,
 
-		RedditPost,
+	RedditPost,
 
-		Twitter,
+	Twitter,
 
-		/// <summary>
-		///     a message from an ai
-		/// </summary>
-		AI,
+	/// <summary>
+	///     a message from an ai
+	/// </summary>
+	AI,
 
-		Back,
+	Back,
 
-		Thigh,
+	Thigh,
 
-		Knee,
+	Knee,
 
-		Ankle,
+	Ankle,
 
-		Heel,
+	Heel,
 
-		BigToe,
+	BigToe,
 
-		LittleToe,
+	LittleToe,
 
-		MiddleToe,
+	MiddleToe,
 
-		/// <summary>
-		/// direct message from a discord "user"
-		/// </summary>
-		DiscordUser,
+	/// <summary>
+	/// direct message from a discord "user"
+	/// </summary>
+	DiscordUser,
 
-		/// <summary>
-		/// a message from a discord "channel"
-		/// </summary>
-		DiscordChannel,
+	/// <summary>
+	/// a message from a discord "channel"
+	/// </summary>
+	DiscordChannel,
 
-		/// <summary>
-		/// aka discord "server"
-		/// </summary>
-		DiscordGuild,
+	/// <summary>
+	/// aka discord "server"
+	/// </summary>
+	DiscordGuild,
 
-		/// <summary>
-		/// Message was produced from a cortex.
-		/// </summary>
-		Cortex
-	}
+	/// <summary>
+	/// Message was produced from a cortex.
+	/// </summary>
+	Cortex
 }

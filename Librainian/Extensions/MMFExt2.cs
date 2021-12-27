@@ -22,35 +22,34 @@
 //
 // File "MMFExt2.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.IO;
-	using System.IO.MemoryMappedFiles;
+using System;
+using System.IO;
+using System.IO.MemoryMappedFiles;
 
-	public static class MmfExt2 {
+public static class MmfExt2 {
 
-		public static Boolean Resize( FileInfo source, FileInfo? destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
-			source.Refresh();
+	public static Boolean Resize( FileInfo source, FileInfo? destination, Boolean overwriteDestination = true, Boolean findRoom = true ) {
+		source.Refresh();
 
-			if ( !source.Exists ) {
-				return false;
-			}
-
-			destination.Refresh();
-
-			if ( destination.Exists ) {
-				if ( overwriteDestination ) {
-					destination.Delete();
-				}
-				else {
-					return false;
-				}
-			}
-
-			using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) { }
-
+		if ( !source.Exists ) {
 			return false;
 		}
+
+		destination.Refresh();
+
+		if ( destination.Exists ) {
+			if ( overwriteDestination ) {
+				destination.Delete();
+			}
+			else {
+				return false;
+			}
+		}
+
+		using ( var sourceMappedFile = MemoryMappedFile.CreateFromFile( source.FullName, FileMode.Open, "why?", source.Length, MemoryMappedFileAccess.Read ) ) { }
+
+		return false;
 	}
 }

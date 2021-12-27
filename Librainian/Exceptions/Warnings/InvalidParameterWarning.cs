@@ -22,26 +22,25 @@
 //
 // File "InvalidParameterException.cs" last formatted on 2020-08-28 at 10:49 AM.
 
-namespace Librainian.Exceptions.Warnings {
+namespace Librainian.Exceptions.Warnings;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Logging;
+using System;
+using System.Runtime.Serialization;
+using Logging;
 
-	/// <summary>Use when a parameter is, well.. invalid.</summary>
-	[Serializable]
-	public class InvalidParameterWarning : Warning {
+/// <summary>Use when a parameter is, well.. invalid.</summary>
+[Serializable]
+public class InvalidParameterWarning : Warning {
 
-		private InvalidParameterWarning() { }
+	private InvalidParameterWarning() { }
 
-		protected InvalidParameterWarning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+	protected InvalidParameterWarning( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public InvalidParameterWarning( String message ) : base( message ) {
-			message.Break();
-		}
+	public InvalidParameterWarning( String message ) : base( message ) {
+		message.Break();
+	}
 
-		public InvalidParameterWarning( String message, Exception? inner ) : base( message, inner ) {
-			message.Break();
-		}
+	public InvalidParameterWarning( String message, Exception? inner ) : base( message, inner ) {
+		message.Break();
 	}
 }

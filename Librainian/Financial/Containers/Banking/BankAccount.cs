@@ -22,13 +22,12 @@
 //
 // File "BankAccount.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Banking {
+namespace Librainian.Financial.Containers.Banking;
 
-	using System;
-	using Wallets;
+using System;
+using Wallets;
 
-	public abstract class BankAccount : Wallet, IBankAccount {
+public abstract class BankAccount : Wallet, IBankAccount {
 
-		protected BankAccount( Guid id ) : base( id ) { }
-	}
+	protected BankAccount( Guid id ) : base( id ) { }
 }

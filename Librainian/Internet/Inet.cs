@@ -22,46 +22,45 @@
 //
 // File "Inet.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.IO;
-	using System.Net;
-	using System.Threading.Tasks;
+using System;
+using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 
-	public static class Inet {
+public static class Inet {
 
-		public static async Task<Byte[]> GetUrlContentsAsync( this Uri url ) {
+	public static async Task<Byte[]> GetUrlContentsAsync( this Uri url ) {
 
-			// The downloaded resource ends up in the variable named content.
+		// The downloaded resource ends up in the variable named content.
 
-			await using var content = new MemoryStream();
+		await using var content = new MemoryStream();
 
-			// Send the request to the Internet resource and wait for the response.
+		// Send the request to the Internet resource and wait for the response.
 
-			if ( WebRequest.Create( url ) is HttpWebRequest webReq ) {
-				using var response = await webReq.GetResponseAsync().ConfigureAwait( false );
+		if ( WebRequest.Create( url ) is HttpWebRequest webReq ) {
+			using var response = await webReq.GetResponseAsync().ConfigureAwait( false );
 
-				// Get the data stream that is associated with the specified url.
+			// Get the data stream that is associated with the specified url.
 
-				await
+			await
 
-					using var responseStream = response.GetResponseStream();
+				using var responseStream = response.GetResponseStream();
 
-				// Read the bytes in responseStream and copy them to content.
-				await responseStream.CopyToAsync( content ).ConfigureAwait( false );
+			// Read the bytes in responseStream and copy them to content.
+			await responseStream.CopyToAsync( content ).ConfigureAwait( false );
 
-				// The previous statement abbreviates the following two statements.
+			// The previous statement abbreviates the following two statements.
 
-				// CopyToAsync returns a Task, not a Task<T>.
-				//Task copyTask = responseStream.CopyToAsync(content);
+			// CopyToAsync returns a Task, not a Task<T>.
+			//Task copyTask = responseStream.CopyToAsync(content);
 
-				// When copyTask is completed, content contains a copy of
-				// responseStream.
-				//await copyTask;
-			}
-
-			return content.ToArray();
+			// When copyTask is completed, content contains a copy of
+			// responseStream.
+			//await copyTask;
 		}
+
+		return content.ToArray();
 	}
 }

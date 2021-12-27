@@ -25,170 +25,168 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace LibrainianUnitTests.Collections {
+namespace LibrainianUnitTests.Collections;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Librainian.Collections.Lists;
-	using Librainian.Maths;
-	using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Librainian.Collections.Lists;
+using Librainian.Maths;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class ConcurrentListTests {
+[TestFixture]
+public static class ConcurrentListTests {
 
-		/// <summary>Environment.ProcessorCount * 10240 = 163840</summary>
-		private static Int32 Threads { get; } = Environment.ProcessorCount * 10240;
+	/// <summary>Environment.ProcessorCount * 10240 = 163840</summary>
+	private static Int32 Threads { get; } = Environment.ProcessorCount * 10240;
 
-		private static Int32 AddManyProducts( ICollection<String> list ) {
-			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
+	private static Int32 AddManyProducts( ICollection<String> list ) {
+		if ( list is null ) {
+			throw new ArgumentNullException( nameof( list ) );
+		}
+
+		Parallel.For( 0, Threads, x => list.Add( $"name {x}" ) );
+
+		return list.Count;
+	}
+
+	private static (Int32 added, Int32 removed) AddManyProductsRemoveRandom( ICollection<String> list ) {
+		if ( list is null ) {
+			throw new ArgumentNullException( nameof( list ) );
+		}
+
+		var added = AddManyProducts( list );
+		var removed = 0;
+
+		Parallel.For( 0, added, x => {
+			if ( Randem.NextBoolean() ) {
+				list.Remove( $"name {x}" );
+				Interlocked.Increment( ref removed );
 			}
+		} );
 
-			Parallel.For( 0, Threads, x => list.Add( $"name {x}" ) );
+		return (added, removed);
+	}
 
-			return list.Count;
-		}
+	/*
+    [Test]
+    public static void AddNameThreadSafetyTest() {
+        var list = new ConcurrentList<String>();
 
-		private static (Int32 added, Int32 removed) AddManyProductsRemoveRandom( ICollection<String> list ) {
-			if ( list is null ) {
-				throw new ArgumentNullException( nameof( list ) );
-			}
+        var threads = new List<Thread>( Threads );
 
-			var added = AddManyProducts( list );
-			var removed = 0;
-
-			Parallel.For( 0, added, x => {
-				if ( Randem.NextBoolean() ) {
-					list.Remove( $"name {x}" );
-					Interlocked.Increment( ref removed );
-				}
-			} );
-
-			return (added, removed);
-		}
-
-		/*
-        [Test]
-        public static void AddNameThreadSafetyTest() {
-            var list = new ConcurrentList<String>();
-
-            var threads = new List<Thread>( Threads );
-
-            foreach ( var thread in 1.To( Threads )
-                .Select( selector: i => new Thread( start: () => AddManyProducts( list: list ) ) ) ) {
-                threads.Add( thread );
-                thread.Start();
-            }
-
-            Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
-
-            //Assert.AreEqual( expected: Threads * Threads, actual: list.Count );
+        foreach ( var thread in 1.To( Threads )
+            .Select( selector: i => new Thread( start: () => AddManyProducts( list: list ) ) ) ) {
+            threads.Add( thread );
+            thread.Start();
         }
-        */
 
-		/*
-        [Test]
-        public static async Task TestAFew() {
-            var cancel = new CancellationTokenSource( Minutes.One );
-            var token = cancel.Token;
+        Parallel.ForEach( threads.AsParallel(), thread => thread?.Join() );
 
-            var numbers = new ConcurrentList<Int32>();
-            var create =  * 10240;
-            var workers = new List<Task>( create );
+        //Assert.AreEqual( expected: Threads * Threads, actual: list.Count );
+    }
+    */
 
-            Debug.WriteLine( $"Creating {create} workers..." );
+	/*
+    [Test]
+    public static async Task TestAFew() {
+        var cancel = new CancellationTokenSource( Minutes.One );
+        var token = cancel.Token;
 
-            foreach ( var i in 1.To( create ) ) {
-                var task = Task.Run( async () => {
-                    var rnd = Randem.NextTimeSpan( Milliseconds.One, Milliseconds.NinetySeven );
+        var numbers = new ConcurrentList<Int32>();
+        var create =  * 10240;
+        var workers = new List<Task>( create );
 
-                    if ( i % 2 == 1 ) {
-                        workers.Add( numbers.AddAsync( ( Int32 ) rnd.TotalMilliseconds ) );
+        Debug.WriteLine( $"Creating {create} workers..." );
+
+        foreach ( var i in 1.To( create ) ) {
+            var task = Task.Run( async () => {
+                var rnd = Randem.NextTimeSpan( Milliseconds.One, Milliseconds.NinetySeven );
+
+                if ( i % 2 == 1 ) {
+                    workers.Add( numbers.AddAsync( ( Int32 ) rnd.TotalMilliseconds ) );
+                }
+                else {
+                    var total = workers.Count;
+                    var b = Randem.Next( total );
+
+                    if ( numbers.Remove( b ) ) {
+                        workers.Add( b );
                     }
-                    else {
-                        var total = workers.Count;
-                        var b = Randem.Next( total );
+                }
 
-                        if ( numbers.Remove( b ) ) {
-                            workers.Add( b );
-                        }
-                    }
+                await rnd.Delay().ConfigureAwait( false );
+            }, token );
 
-                    await rnd.Delay().ConfigureAwait( false );
-                }, token );
-
-                workers.Add( task );
-            }
-
-            Debug.WriteLine( $"Waiting for {workers.Count} workers to complete..." );
-
-            while ( workers.Any( worker => worker?.IsDone() == false ) ) {
-                await Task.Delay( 100, token ).ConfigureAwait( false );
-            }
-
-            Debug.WriteLine( $"We now have {numbers.Count} numbers." );
-
-            numbers.Nop();
+            workers.Add( task );
         }
-        */
 
-		[Test]
-		public static void ThreadSafetyTestAddAndRemoves() {
-			var list1 = new ConcurrentList<String>();
+        Debug.WriteLine( $"Waiting for {workers.Count} workers to complete..." );
 
-			using var threads = new ConcurrentList<Thread>( Threads );
+        while ( workers.Any( worker => worker?.IsDone() == false ) ) {
+            await Task.Delay( 100, token ).ConfigureAwait( false );
+        }
 
-			Parallel.ForEach( threads.AsParallel(), thread => {
-				AddManyProductsRemoveRandom( list1 );
+        Debug.WriteLine( $"We now have {numbers.Count} numbers." );
 
-				thread.Start();
-			} );
+        numbers.Nop();
+    }
+    */
 
-			Parallel.ForEach( threads.AsParallel(), thread => thread.Join() );
+	[Test]
+	public static void ThreadSafetyTestAddAndRemoves() {
+		var list1 = new ConcurrentList<String>();
 
-			Assert.AreNotEqual( Threads, list1.Count );
-		}
+		using var threads = new ConcurrentList<Thread>( Threads );
 
-		[Test]
-		public static void ThreadSafetyTestEquals() {
-			var list1 = new ConcurrentList<String>();
-			var list2 = new ConcurrentList<String>();
+		Parallel.ForEach( threads.AsParallel(), thread => {
+			AddManyProductsRemoveRandom( list1 );
 
-			var thread1 = new Thread( () => AddManyProducts( list1 ) );
-			var thread2 = new Thread( () => AddManyProducts( list2 ) );
+			thread.Start();
+		} );
 
-			thread1.Start();
-			thread2.Start();
+		Parallel.ForEach( threads.AsParallel(), thread => thread.Join() );
 
-			thread1.Join();
-			thread2.Join();
+		Assert.AreNotEqual( Threads, list1.Count );
+	}
 
-			Assert.AreEqual( list1.Count, list2.Count );
-		}
+	[Test]
+	public static void ThreadSafetyTestEquals() {
+		var list1 = new ConcurrentList<String>();
+		var list2 = new ConcurrentList<String>();
 
-		[Test]
-		public static void ThreadSafetyTestNotEquals() {
-			var list1 = new ConcurrentList<String>();
-			var list2 = new ConcurrentList<String>();
+		var thread1 = new Thread( () => AddManyProducts( list1 ) );
+		var thread2 = new Thread( () => AddManyProducts( list2 ) );
 
-			var thread1 = new Thread( () => AddManyProducts( list1 ) );
-			var thread2 = new Thread( () => AddManyProducts( list2 ) );
-			var thread3 = new Thread( () => AddManyProducts( list2 ) );
+		thread1.Start();
+		thread2.Start();
 
-			thread1.Start();
-			thread2.Start();
-			thread3.Start();
+		thread1.Join();
+		thread2.Join();
 
-			thread1.Join();
-			thread2.Join();
-			thread3.Join();
+		Assert.AreEqual( list1.Count, list2.Count );
+	}
 
-			Assert.AreNotEqual( list1, list2 );
-		}
+	[Test]
+	public static void ThreadSafetyTestNotEquals() {
+		var list1 = new ConcurrentList<String>();
+		var list2 = new ConcurrentList<String>();
 
+		var thread1 = new Thread( () => AddManyProducts( list1 ) );
+		var thread2 = new Thread( () => AddManyProducts( list2 ) );
+		var thread3 = new Thread( () => AddManyProducts( list2 ) );
+
+		thread1.Start();
+		thread2.Start();
+		thread3.Start();
+
+		thread1.Join();
+		thread2.Join();
+		thread3.Join();
+
+		Assert.AreNotEqual( list1, list2 );
 	}
 
 }

@@ -22,22 +22,21 @@
 //
 // File "Requests.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
+using System;
+using System.Threading;
 
-	/// <summary>Just a wrapper around <see cref="Interlocked" /> for counting requests.</summary>
-	public class Requests {
+/// <summary>Just a wrapper around <see cref="Interlocked" /> for counting requests.</summary>
+public class Requests {
 
-		private Int64 _requests;
+	private Int64 _requests;
 
-		public Boolean Any() => Interlocked.Read( ref this._requests ) > 0;
+	public Boolean Any() => Interlocked.Read( ref this._requests ) > 0;
 
-		public Int64 Count() => Interlocked.Read( ref this._requests );
+	public Int64 Count() => Interlocked.Read( ref this._requests );
 
-		public Int64 MakeRequest( Int64 amount = 1 ) => Interlocked.Add( ref this._requests, amount );
+	public Int64 MakeRequest( Int64 amount = 1 ) => Interlocked.Add( ref this._requests, amount );
 
-		public Int64 UndoRequest( Int64 amount = 1 ) => Interlocked.Add( ref this._requests, -amount );
-	}
+	public Int64 UndoRequest( Int64 amount = 1 ) => Interlocked.Add( ref this._requests, -amount );
 }

@@ -27,32 +27,31 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Threading;
-	using PooledAwait;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using PooledAwait;
 
-	public record FileCopyData( IDocument Source, IDocument Destination ) {
-		public DateTime? WhenStarted { get; init; }
+public record FileCopyData( IDocument Source, IDocument Destination ) {
+	public DateTime? WhenStarted { get; init; }
 
-		public UInt64 SourceSize { get; set; }
+	public UInt64 SourceSize { get; set; }
 
-		public UInt64? BytesCopied { get; set; }
+	public UInt64? BytesCopied { get; set; }
 
-		public IProgress<FileCopyData>? DataCopied { get; set; }
+	public IProgress<FileCopyData>? DataCopied { get; set; }
 
-		public Action<FileCopyData>? OnCompleted { get; set; }
+	public Action<FileCopyData>? OnCompleted { get; set; }
 
-		public DateTime? WhenCompleted { get; set; }
+	public DateTime? WhenCompleted { get; set; }
 
-		public IList<Exception>? Exceptions { get; set; }
+	public IList<Exception>? Exceptions { get; set; }
 
-		public PooledValueTask<FileCopyData>? CopyTask { get; set; }
+	public PooledValueTask<FileCopyData>? CopyTask { get; set; }
 
-		public Status? Status { get; set; }
+	public Status? Status { get; set; }
 
-		public CancellationTokenSource CancellationTokenSource { get; init; } = new();
-	}
+	public CancellationTokenSource CancellationTokenSource { get; init; } = new();
 }

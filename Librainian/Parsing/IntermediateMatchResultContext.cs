@@ -22,14 +22,13 @@
 //
 // File "IntermediateMatchResultContext.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
+using System;
 
-	public abstract class IntermediateMatchResultContext<T, TResult> {
+public abstract class IntermediateMatchResultContext<T, TResult> {
 
-		public abstract MatchContext<T, TResult> Return( TResult result );
+	public abstract MatchContext<T, TResult> Return( TResult result );
 
-		public abstract MatchContext<T, TResult> Return( Func<T, TResult> resultProjection );
-	}
+	public abstract MatchContext<T, TResult> Return( Func<T, TResult> resultProjection );
 }

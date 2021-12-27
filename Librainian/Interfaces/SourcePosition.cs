@@ -25,34 +25,33 @@
 //
 // File "SourcePosition.cs" last touched on 2021-03-30 at 8:29 AM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces; 
 
-	public enum SourcePosition {
+public enum SourcePosition {
 
-		Unknown = 0,
+	Unknown = 0,
 
-		User,
+	User,
 
-		Self,
+	Self,
 
-		Inner,
+	Inner,
 
-		Outer,
+	Outer,
 
-		Left,
+	Left,
 
-		Right,
+	Right,
 
-		Above,
+	Above,
 
-		Below,
+	Below,
 
-		Front,
+	Front,
 
-		Behind,
+	Behind,
 
-		Upper,
+	Upper,
 
-		Lower
-	}
+	Lower
 }

@@ -27,70 +27,69 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Persistence;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Persistence;
 
-	/// <summary>A persisted cache of all found <see cref="Document" />.</summary>
-	public static class MainDocumentTable {
+/// <summary>A persisted cache of all found <see cref="Document" />.</summary>
+public static class MainDocumentTable {
 
-		public static CancellationTokenSource CTS { get; } = new();
+	public static CancellationTokenSource CTS { get; } = new();
 
-		/// <summary>DocumentInfos[StringPath]=DocumentInfo</summary>
-		public static PersistTable<String, DocumentInfo?> DocumentInfos { get; } = new( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
+	/// <summary>DocumentInfos[StringPath]=DocumentInfo</summary>
+	public static PersistTable<String, DocumentInfo?> DocumentInfos { get; } = new( Environment.SpecialFolder.CommonApplicationData, nameof( DocumentInfos ) );
 
-		/// <summary>Documents[StringPath]=Document</summary>
-		public static PersistTable<String, Document> Documents { get; } = new( Environment.SpecialFolder.CommonApplicationData,
-			Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( Documents ) );
+	/// <summary>Documents[StringPath]=Document</summary>
+	public static PersistTable<String, Document> Documents { get; } = new( Environment.SpecialFolder.CommonApplicationData,
+		Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( Documents ) );
 
-		public static StringKVPTable Settings { get; } = new( Environment.SpecialFolder.LocalApplicationData,
-			Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( MainDocumentTable ) );
+	public static StringKVPTable Settings { get; } = new( Environment.SpecialFolder.LocalApplicationData,
+		Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName ), nameof( MainDocumentTable ) );
 
-		/// <summary>Start searching in the givin <paramref name="folder" />, and update our "MFT" with found documents.</summary>
-		/// <param name="folder"></param>
-		/// <param name="folders"></param>
-		/// <param name="reportDocument"></param>
-		public static async Task SearchAsync(
-			IFolder folder,
-			IProgress<IFolder>? folders = null,
-			IProgress<Document>? reportDocument = null
-		) {
+	/// <summary>Start searching in the givin <paramref name="folder" />, and update our "MFT" with found documents.</summary>
+	/// <param name="folder"></param>
+	/// <param name="folders"></param>
+	/// <param name="reportDocument"></param>
+	public static async Task SearchAsync(
+		IFolder folder,
+		IProgress<IFolder>? folders = null,
+		IProgress<Document>? reportDocument = null
+	) {
+		if ( CTS.IsCancellationRequested ) {
+			return;
+		}
+
+		//Update the MFT
+		await foreach ( var document in folder.EnumerateDocuments( "*.*", CTS.Token ).ConfigureAwait( false ) ) {
 			if ( CTS.IsCancellationRequested ) {
 				return;
 			}
 
-			//Update the MFT
-			await foreach ( var document in folder.EnumerateDocuments( "*.*", CTS.Token ).ConfigureAwait( false ) ) {
-				if ( CTS.IsCancellationRequested ) {
-					return;
-				}
+			reportDocument?.Report( document );
+			Documents[document.FullPath] = document;
 
-				reportDocument?.Report( document );
-				Documents[document.FullPath] = document;
+			var docinfo = new DocumentInfo( document );
+			DocumentInfos[document.FullPath] = docinfo;
+			await docinfo.ScanAsync( CTS.Token ).ConfigureAwait( false );
+		}
 
-				var docinfo = new DocumentInfo( document );
-				DocumentInfos[document.FullPath] = docinfo;
-				await docinfo.ScanAsync( CTS.Token ).ConfigureAwait( false );
-			}
+		if ( CTS.IsCancellationRequested ) {
+			return;
+		}
 
+		//And then scan down into any subfolders.
+		await foreach ( var subFolder in folder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CTS.Token ).ConfigureAwait( false ) ) {
 			if ( CTS.IsCancellationRequested ) {
 				return;
 			}
 
-			//And then scan down into any subfolders.
-			await foreach ( var subFolder in folder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CTS.Token ).ConfigureAwait( false ) ) {
-				if ( CTS.IsCancellationRequested ) {
-					return;
-				}
-
-				folders?.Report( subFolder );
-				await SearchAsync( subFolder, folders, reportDocument ).ConfigureAwait( false );
-			}
+			folders?.Report( subFolder );
+			await SearchAsync( subFolder, folders, reportDocument ).ConfigureAwait( false );
 		}
 	}
 }

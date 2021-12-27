@@ -25,18 +25,20 @@
 //
 // File "IApplicationSetting.cs" last touched on 2021-08-27 at 4:30 PM by Protiguous.
 
-namespace Librainian.Configuration {
+namespace Librainian.Configuration;
 
-	using System;
+using System;
 
-	public interface IApplicationSetting {
+public interface IApplicationSetting {
 
-		String? GetCompanyName( String? defaultName = null );
+	String? GetCompanyName( String? defaultName = null );
 
-		String? GetProductName( String? defaultName = null );
+	String? GetProductName( String? defaultName = null );
 
-		Version? GetVersion( String? defaultVersion = null );
+	Version? GetVersion( String? defaultVersion = null );
 
-		Version? GetVersion( Version? defaultVersion = null );
-	}
+	Version? GetVersion( Version? defaultVersion = null );
+
+	public String Info() => $"{this.GetProductName()} by {this.GetCompanyName()}.";
+
 }

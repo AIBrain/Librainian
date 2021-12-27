@@ -22,12 +22,11 @@
 //
 // File "ThrowSetting.cs" last formatted on 2020-08-14 at 8:31 PM.
 
-namespace Librainian.Collections.Lists {
+namespace Librainian.Collections.Lists; 
 
-	public enum ThrowSetting {
+public enum ThrowSetting {
 
-		DontThrowExceptions,
+	DontThrowExceptions,
 
-		Throw
-	}
+	Throw
 }

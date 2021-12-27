@@ -24,72 +24,72 @@
 
 #nullable enable
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.CodeDom.Compiler;
-	using System.IO;
-	using System.Reflection;
-	using Logging;
-	using Microsoft.CSharp;
+using System;
+using System.CodeDom.Compiler;
+using System.IO;
+using System.Reflection;
+using Logging;
+using Microsoft.CSharp;
 
-	/// <summary>TODO this engine needs be revisted.</summary>
-	public class CodeEngine {
+/// <summary>TODO this engine needs be revisted.</summary>
+public class CodeEngine {
 
-		private CompilerResults? _compilerResults;
+	private CompilerResults? _compilerResults;
 
-		private String? _sourceCode = String.Empty;
+	private String? _sourceCode = String.Empty;
 
-		private Object _compileLock { get; } = new();
+	private Object _compileLock { get; } = new();
 
-		private Object _sourceCodeLock { get; } = new();
+	private Object _sourceCodeLock { get; } = new();
 
-		public static CSharpCodeProvider CSharpCodeProvider { get; } = new();
+	public static CSharpCodeProvider CSharpCodeProvider { get; } = new();
 
-		public Guid ID { get; private set; }
+	public Guid ID { get; private set; }
 
-		public Action<String>? Output { get; }
+	public Action<String>? Output { get; }
 
-		public Object[]? Parameters { get; set; }
+	public Object[]? Parameters { get; set; }
 
-		public String? SourceCode {
-			get {
-				lock ( this._sourceCodeLock ) {
-					return this._sourceCode;
-				}
-			}
-
-			set {
-				lock ( this._sourceCodeLock ) {
-					this._sourceCode = value;
-				}
-
-				this.Compile(); //TODO schedule a task to run Compile?
+	public String? SourceCode {
+		get {
+			lock ( this._sourceCodeLock ) {
+				return this._sourceCode;
 			}
 		}
 
-		public String? SourcePath { get; }
-
-		public CodeEngine( String sourcePath, Action<String>? output ) : this( Guid.NewGuid(), sourcePath, output ) { }
-
-		public CodeEngine( Guid id, String sourcePath, Action<String?>? output ) {
-			this.Output = output;
-
-			//if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
-			this.SourcePath = Path.Combine( sourcePath, id + ".cs" );
-
-			if ( !this.Load() ) {
-				this.SourceCode = DefaultCode();
+		set {
+			lock ( this._sourceCodeLock ) {
+				this._sourceCode = value;
 			}
+
+			this.Compile(); //TODO schedule a task to run Compile?
 		}
+	}
 
-		public interface IOutput {
+	public String? SourcePath { get; }
 
-			void Output();
+	public CodeEngine( String sourcePath, Action<String>? output ) : this( Guid.NewGuid(), sourcePath, output ) { }
+
+	public CodeEngine( Guid id, String sourcePath, Action<String?>? output ) {
+		this.Output = output;
+
+		//if ( ID.Equals( Guid.Empty ) ) { throw new InvalidOperationException( "Null guid given" ); }
+		this.SourcePath = Path.Combine( sourcePath, id + ".cs" );
+
+		if ( !this.Load() ) {
+			this.SourceCode = DefaultCode();
 		}
+	}
 
-		private static String DefaultCode() =>
-			@"
+	public interface IOutput {
+
+		void Output();
+	}
+
+	private static String DefaultCode() =>
+		@"
 using System;
 using Libranian;
 
@@ -107,99 +107,98 @@ namespace Coding
     }
 }";
 
-		/// <summary>Prepare the assembly for Run()</summary>
-		private Boolean Compile() {
-			try {
-				CompilerResults? results;
+	/// <summary>Prepare the assembly for Run()</summary>
+	private Boolean Compile() {
+		try {
+			CompilerResults? results;
 
-				lock ( this._compileLock ) {
-					this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters {
-						GenerateInMemory = true,
-						GenerateExecutable = false
-					}, this.SourceCode );
-					results = this._compilerResults;
-				}
-
-				if ( results == null ) {
-					return false;
-				}
-
-				if ( results.Errors?.HasErrors == true ) {
-					"Errors".Break();
-
-					return false;
-				}
-
-				if ( results.Errors?.HasWarnings == true ) {
-					return true;
-				}
-
-				//"".Break();
-
-				return true;
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-
-				return false;
-			}
-		}
-
-		public static Boolean Test( Action<String>? output ) {
-			try {
-				var test = new CodeEngine( Guid.Empty, Path.GetTempPath(), output );
-				test.Run();
-
-				return true;
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-
-				return false;
-			}
-		}
-
-		public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
-
-		public Object? Run() {
 			lock ( this._compileLock ) {
-				if ( this._compilerResults == null ) {
-					this.Compile();
-				}
+				this._compilerResults = CSharpCodeProvider.CompileAssemblyFromSource( new CompilerParameters {
+					GenerateInMemory = true,
+					GenerateExecutable = false
+				}, this.SourceCode );
+				results = this._compilerResults;
+			}
 
-				if ( this._compilerResults == null ) {
-					return default( Object );
-				}
+			if ( results == null ) {
+				return false;
+			}
 
-				if ( this._compilerResults.Errors?.HasErrors == true ) {
-					"".Break();
+			if ( results.Errors?.HasErrors == true ) {
+				"Errors".Break();
 
-					return default( Object );
-				}
+				return false;
+			}
 
-				if ( this._compilerResults.Errors?.HasWarnings == true ) {
-					"".Break();
-				}
+			if ( results.Errors?.HasWarnings == true ) {
+				return true;
+			}
 
-				var loAssembly = this._compilerResults.CompiledAssembly;
-				var loObject = loAssembly?.CreateInstance( "Coding.CodeEngine" );
+			//"".Break();
 
-				if ( loObject is null ) {
-					"".Break();
+			return true;
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 
-					return default( Object );
-				}
+			return false;
+		}
+	}
 
-				try {
-					var loResult = loObject.GetType().InvokeMember( "DynamicCode", BindingFlags.InvokeMethod, null, loObject, this.Parameters );
+	public static Boolean Test( Action<String>? output ) {
+		try {
+			var test = new CodeEngine( Guid.Empty, Path.GetTempPath(), output );
+			test.Run();
 
-					return loResult;
-				}
-				catch ( Exception exception ) {
-					exception.Log();
+			return true;
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 
-					return default( Object );
-				}
+			return false;
+		}
+	}
+
+	public Boolean Load() => String.IsNullOrEmpty( this.SourceCode );
+
+	public Object? Run() {
+		lock ( this._compileLock ) {
+			if ( this._compilerResults == null ) {
+				this.Compile();
+			}
+
+			if ( this._compilerResults == null ) {
+				return default( Object );
+			}
+
+			if ( this._compilerResults.Errors?.HasErrors == true ) {
+				"".Break();
+
+				return default( Object );
+			}
+
+			if ( this._compilerResults.Errors?.HasWarnings == true ) {
+				"".Break();
+			}
+
+			var loAssembly = this._compilerResults.CompiledAssembly;
+			var loObject = loAssembly?.CreateInstance( "Coding.CodeEngine" );
+
+			if ( loObject is null ) {
+				"".Break();
+
+				return default( Object );
+			}
+
+			try {
+				var loResult = loObject.GetType().InvokeMember( "DynamicCode", BindingFlags.InvokeMethod, null, loObject, this.Parameters );
+
+				return loResult;
+			}
+			catch ( Exception exception ) {
+				exception.Log();
+
+				return default( Object );
 			}
 		}
 	}

@@ -25,16 +25,15 @@
 //
 // File "IColored.cs" last touched on 2021-03-30 at 8:17 AM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces;
 
-	using System.Drawing;
+using System.Drawing;
 
-	public interface IColored {
+public interface IColored {
 
-		/// <summary>Optional color to be used.</summary>
-		Color? BackgroundColor { get; set; }
+	/// <summary>Optional color to be used.</summary>
+	Color? BackgroundColor { get; set; }
 
-		/// <summary>Optional color to be used.</summary>
-		Color? ForegroundColor { get; set; }
-	}
+	/// <summary>Optional color to be used.</summary>
+	Color? ForegroundColor { get; set; }
 }

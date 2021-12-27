@@ -25,26 +25,25 @@
 //
 // File "PopulateProgressEventArgs.cs" last formatted on 2021-03-05 at 8:41 AM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
+using System;
 
-	/// <summary>
-	///     Simple EventArg for the two progress events NOTE: There will typically be some errors which is fine as some parts
-	///     of the Registry are not accessible with standard
-	///     security
-	/// </summary>
-	public class PopulateProgressEventArgs : EventArgs {
+/// <summary>
+///     Simple EventArg for the two progress events NOTE: There will typically be some errors which is fine as some parts
+///     of the Registry are not accessible with standard
+///     security
+/// </summary>
+public class PopulateProgressEventArgs : EventArgs {
 
-		public Int32 ItemCount { get; internal set; }
+	public Int32 ItemCount { get; internal set; }
 
-		public String? KeyName { get; }
+	public String? KeyName { get; }
 
-		public PopulateProgressEventArgs( Int32 itemCount, String? keyName = null ) {
-			this.ItemCount = itemCount;
-			this.KeyName = keyName;
-		}
-
-		public PopulateProgressEventArgs() : this( -1 ) { }
+	public PopulateProgressEventArgs( Int32 itemCount, String? keyName = null ) {
+		this.ItemCount = itemCount;
+		this.KeyName = keyName;
 	}
+
+	public PopulateProgressEventArgs() : this( -1 ) { }
 }

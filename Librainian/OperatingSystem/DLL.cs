@@ -25,20 +25,19 @@
 //
 // File "DLL.cs" last touched on 2021-08-01 at 4:06 PM by Protiguous.
 
-namespace Librainian.OperatingSystem {
+namespace Librainian.OperatingSystem;
 
-	using System;
+using System;
 
-	public static class DLL {
+public static class DLL {
 
-		public const String advapi32 = "advapi32.dll";
+	public const String advapi32 = "advapi32.dll";
 
-		public const String coredll = "coredll.dll";
+	public const String coredll = "coredll.dll";
 
-		public const String GDI32 = "gdi32.dll";
+	public const String GDI32 = "gdi32.dll";
 
-		public const String Kernel32 = "kernel32.dll";
+	public const String Kernel32 = "kernel32.dll";
 
-		public const String User32 = "user32.dll";
-	}
+	public const String User32 = "user32.dll";
 }

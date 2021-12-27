@@ -25,18 +25,17 @@
 //
 // File "InvalidException.cs" last touched on 2021-05-14 at 6:27 AM by Protiguous.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Logging;
+using System;
+using System.Runtime.Serialization;
+using Logging;
 
-	public class InvalidException : Exception {
+public class InvalidException : Exception {
 
-		protected InvalidException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
+	protected InvalidException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) { }
 
-		public InvalidException( String? additionalInfo = null ) {
-			$"Something 'invalid' happenned. {additionalInfo}".Break();
-		}
+	public InvalidException( String? additionalInfo = null ) {
+		$"Something 'invalid' happenned. {additionalInfo}".Break();
 	}
 }

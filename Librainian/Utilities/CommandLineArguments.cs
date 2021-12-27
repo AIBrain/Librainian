@@ -25,37 +25,35 @@
 // 
 // File "CommandLineArguments.cs" last touched on 2021-08-01 at 3:51 PM by Protiguous.
 
-namespace Librainian.Utilities {
+namespace Librainian.Utilities;
 
-	using System;
-	using System.Collections.Generic;
-	using CommandLine;
+using System;
+using System.Collections.Generic;
+using CommandLine;
 
-	public class CommandLineArguments {
+public class CommandLineArguments {
 
-		public CommandLineArguments( params String[]? args ) => this.Args = args;
+	public CommandLineArguments( params String[]? args ) => this.Args = args;
 
-		public String[]? Args { get; }
+	public String[]? Args { get; }
 
-		public Status ParseCommandLine( Action<IEnumerable<Error>> HandleErrors, Action<Object> HandleParsed ) {
-			var args = this.Args;
-			if ( args is null ) {
-				return Status.Continue;
-			}
-
-			var parser = Parser.Default?.ParseArguments( args );
-			if ( parser is null ) {
-				return Status.None;
-			}
-
-			if ( parser.WithNotParsed( HandleErrors ) is not null ) {
-				return Status.Error;
-			}
-
-			_ = parser.WithParsed( HandleParsed );
+	public Status ParseCommandLine( Action<IEnumerable<Error>> HandleErrors, Action<Object> HandleParsed ) {
+		var args = this.Args;
+		if ( args is null ) {
 			return Status.Continue;
 		}
 
+		var parser = Parser.Default?.ParseArguments( args );
+		if ( parser is null ) {
+			return Status.None;
+		}
+
+		if ( parser.WithNotParsed( HandleErrors ) is not null ) {
+			return Status.Error;
+		}
+
+		_ = parser.WithParsed( HandleParsed );
+		return Status.Continue;
 	}
 
 }

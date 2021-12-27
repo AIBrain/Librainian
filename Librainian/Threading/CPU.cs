@@ -22,107 +22,106 @@
 //
 // File "CPU.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading.Tasks;
-	using Logging;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Logging;
 
-	public static class CPU {
+public static class CPU {
 
-		/// <summary>
-		///     <para>
-		///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to
-		///         <see cref="Environment.ProcessorCount" />.
-		///     </para>
-		///     <para>1 core to 1</para>
-		///     <para>2 cores to 2</para>
-		///     <para>4 cores to 4</para>
-		///     <para>8 cores to 8</para>
-		///     <para>n cores to n</para>
-		/// </summary>
-		public static ParallelOptions AllCPU { get; } = new() {
-			MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount )
-		};
+	/// <summary>
+	///     <para>
+	///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to
+	///         <see cref="Environment.ProcessorCount" />.
+	///     </para>
+	///     <para>1 core to 1</para>
+	///     <para>2 cores to 2</para>
+	///     <para>4 cores to 4</para>
+	///     <para>8 cores to 8</para>
+	///     <para>n cores to n</para>
+	/// </summary>
+	public static ParallelOptions AllCPU { get; } = new() {
+		MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount )
+	};
 
-		/// <summary>
-		///     <para>
-		///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to
-		///         <see cref="Environment.ProcessorCount" />-1.
-		///     </para>
-		///     <para>1 core to 1</para>
-		///     <para>2 cores to 1</para>
-		///     <para>4 cores to 3</para>
-		///     <para>8 cores to 7</para>
-		///     <para>n cores to n-1</para>
-		/// </summary>
-		public static ParallelOptions AllExceptOne { get; } = new() {
-			MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount - 1 ) //leave the OS a little wiggle room on one CPU
-		};
+	/// <summary>
+	///     <para>
+	///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to
+	///         <see cref="Environment.ProcessorCount" />-1.
+	///     </para>
+	///     <para>1 core to 1</para>
+	///     <para>2 cores to 1</para>
+	///     <para>4 cores to 3</para>
+	///     <para>8 cores to 7</para>
+	///     <para>n cores to n-1</para>
+	/// </summary>
+	public static ParallelOptions AllExceptOne { get; } = new() {
+		MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount - 1 ) //leave the OS a little wiggle room on one CPU
+	};
 
-		/// <summary>
-		///     <para>
-		///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to half of
-		///         <see cref="Environment.ProcessorCount" />.
-		///     </para>
-		///     <para>1 core to 1?</para>
-		///     <para>2 cores to 1</para>
-		///     <para>4 cores to 2</para>
-		///     <para>8 cores to 4</para>
-		///     <para>n cores to n/2</para>
-		/// </summary>
-		public static ParallelOptions CPULight { get; } = new() {
-			MaxDegreeOfParallelism = Environment.ProcessorCount / 2
-		};
+	/// <summary>
+	///     <para>
+	///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to half of
+	///         <see cref="Environment.ProcessorCount" />.
+	///     </para>
+	///     <para>1 core to 1?</para>
+	///     <para>2 cores to 1</para>
+	///     <para>4 cores to 2</para>
+	///     <para>8 cores to 4</para>
+	///     <para>n cores to n/2</para>
+	/// </summary>
+	public static ParallelOptions CPULight { get; } = new() {
+		MaxDegreeOfParallelism = Environment.ProcessorCount / 2
+	};
 
-		/// <summary>
-		///     <para>
-		///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to
-		///         <see cref="Environment.ProcessorCount" /> * 2.
-		///     </para>
-		///     <para>1 core to 2</para>
-		///     <para>2 cores to 4</para>
-		///     <para>4 cores to 8</para>
-		///     <para>8 cores to 16</para>
-		///     <para>n cores to 2n</para>
-		/// </summary>
-		public static ParallelOptions DiskIntensive { get; } = new() {
-			MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount * 2 )
-		};
+	/// <summary>
+	///     <para>
+	///         Sets the <see cref="ParallelOptions.MaxDegreeOfParallelism" /> of a <see cref="ParallelOptions" /> to
+	///         <see cref="Environment.ProcessorCount" /> * 2.
+	///     </para>
+	///     <para>1 core to 2</para>
+	///     <para>2 cores to 4</para>
+	///     <para>4 cores to 8</para>
+	///     <para>8 cores to 16</para>
+	///     <para>n cores to 2n</para>
+	/// </summary>
+	public static ParallelOptions DiskIntensive { get; } = new() {
+		MaxDegreeOfParallelism = Math.Max( 1, Environment.ProcessorCount * 2 )
+	};
 
-		/// <summary>
-		/// Set MaxDegreeOfParallelism to half of maximum CPU processors.
-		/// </summary>
-		public static ParallelOptions HalfOfCPU { get; } = new() {
-			MaxDegreeOfParallelism = Environment.ProcessorCount / 2
-		};
+	/// <summary>
+	/// Set MaxDegreeOfParallelism to half of maximum CPU processors.
+	/// </summary>
+	public static ParallelOptions HalfOfCPU { get; } = new() {
+		MaxDegreeOfParallelism = Environment.ProcessorCount / 2
+	};
 
-		/// <summary>Set the Ideal Processor core to use. (For ALL threads in this process).</summary>
-		/// <remarks>Untested. When would you want this??</remarks>
-		/// <remarks>The primary thread is not necessarily at index zero in the thread array.</remarks>
-		public static void IdealProcessor( this Byte core ) {
-			try {
-				if ( core > Environment.ProcessorCount ) {
-					core = ( Byte )Environment.ProcessorCount;
-				}
+	/// <summary>Set the Ideal Processor core to use. (For ALL threads in this process).</summary>
+	/// <remarks>Untested. When would you want this??</remarks>
+	/// <remarks>The primary thread is not necessarily at index zero in the thread array.</remarks>
+	public static void IdealProcessor( this Byte core ) {
+		try {
+			if ( core > Environment.ProcessorCount ) {
+				core = ( Byte )Environment.ProcessorCount;
+			}
 
-				var processThreads = Process.GetCurrentProcess().Threads;
+			var processThreads = Process.GetCurrentProcess().Threads;
 
-				foreach ( ProcessThread processThread in processThreads ) {
-					try {
-						if ( processThread != null ) {
-							processThread.IdealProcessor = core;
-						}
-					}
-					catch ( Exception exception ) {
-						exception.Log();
+			foreach ( ProcessThread processThread in processThreads ) {
+				try {
+					if ( processThread != null ) {
+						processThread.IdealProcessor = core;
 					}
 				}
+				catch ( Exception exception ) {
+					exception.Log();
+				}
 			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 		}
 	}
 }

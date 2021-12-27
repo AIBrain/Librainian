@@ -22,167 +22,166 @@
 //
 // File "AES.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	public class AES {
+public class AES {
 
-		private IntPtr _algHandle;
+	private IntPtr _algHandle;
 
-		private IntPtr _keyHandle;
+	private IntPtr _keyHandle;
 
-		[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 BCryptCloseAlgorithmProvider( [In] IntPtr phAlgorithm, [In] Int32 dwFlags );
+	[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+	public static extern UInt32 BCryptCloseAlgorithmProvider( [In] IntPtr phAlgorithm, [In] Int32 dwFlags );
 
-		[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 BCryptDecrypt(
-			[In][Out] IntPtr hKey,
-			[In] Byte[] pbInput,
-			[In] Int32 cbInput,
-			[In] IntPtr pPaddingInfo,
-			[In] Byte[] pbIV,
-			[In] Int32 cbIV,
-			[Out] Byte[] pbOutput,
-			[In] Int32 cbOutput,
-			[In][Out] ref Int32 pcbResult,
-			[In] Int32 dwFlags
-		);
+	[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+	public static extern UInt32 BCryptDecrypt(
+		[In][Out] IntPtr hKey,
+		[In] Byte[] pbInput,
+		[In] Int32 cbInput,
+		[In] IntPtr pPaddingInfo,
+		[In] Byte[] pbIV,
+		[In] Int32 cbIV,
+		[Out] Byte[] pbOutput,
+		[In] Int32 cbOutput,
+		[In][Out] ref Int32 pcbResult,
+		[In] Int32 dwFlags
+	);
 
-		[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 BCryptEncrypt(
-			[In][Out] IntPtr hKey,
-			[In] Byte[] pbInput,
-			[In] Int32 cbInput,
-			[In] IntPtr pPaddingInfo,
-			[In] Byte[] pbIV,
-			[In] Int32 cbIV,
-			[Out] Byte[] pbOutput,
-			[In] Int32 cbOutput,
-			[In][Out] ref Int32 pcbResult,
-			[In] Int32 dwFlags
-		);
+	[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+	public static extern UInt32 BCryptEncrypt(
+		[In][Out] IntPtr hKey,
+		[In] Byte[] pbInput,
+		[In] Int32 cbInput,
+		[In] IntPtr pPaddingInfo,
+		[In] Byte[] pbIV,
+		[In] Int32 cbIV,
+		[Out] Byte[] pbOutput,
+		[In] Int32 cbOutput,
+		[In][Out] ref Int32 pcbResult,
+		[In] Int32 dwFlags
+	);
 
-		[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 BCryptGenerateSymmetricKey(
-			[In] IntPtr hAlgorithm,
-			[In][Out] ref IntPtr phKey,
-			[Out] Byte[] pbKeyObject,
-			[In] Int32 cbKeyObject,
-			[In] Byte[] pbSecret,
-			[In] Int32 cbSecret,
-			[In] Int32 dwFlags
-		);
+	[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+	public static extern UInt32 BCryptGenerateSymmetricKey(
+		[In] IntPtr hAlgorithm,
+		[In][Out] ref IntPtr phKey,
+		[Out] Byte[] pbKeyObject,
+		[In] Int32 cbKeyObject,
+		[In] Byte[] pbSecret,
+		[In] Int32 cbSecret,
+		[In] Int32 dwFlags
+	);
 
-		[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 BCryptGetProperty(
-			[In] IntPtr hObject,
-			[In] String pszProperty,
-			[Out] Byte[] pbOutput,
-			[In] Int32 cbOutput,
-			[In][Out] ref Int32 pcbResult,
-			[In] Int32 dwFlags
-		);
+	[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+	public static extern UInt32 BCryptGetProperty(
+		[In] IntPtr hObject,
+		[In] String pszProperty,
+		[Out] Byte[] pbOutput,
+		[In] Int32 cbOutput,
+		[In][Out] ref Int32 pcbResult,
+		[In] Int32 dwFlags
+	);
 
-		[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
-		public static extern UInt32 BCryptOpenAlgorithmProvider( [In][Out] ref IntPtr phAlgorithm, [In] String pszAlgId, [In] String pszImplementation, [In] Int32 dwFlags );
+	[DllImport( "Bcrypt.dll", CharSet = CharSet.Unicode, SetLastError = true )]
+	public static extern UInt32 BCryptOpenAlgorithmProvider( [In][Out] ref IntPtr phAlgorithm, [In] String pszAlgId, [In] String pszImplementation, [In] Int32 dwFlags );
 
-		public UInt32 Close() {
-			var status = BCryptCloseAlgorithmProvider( this._algHandle, 0 );
+	public UInt32 Close() {
+		var status = BCryptCloseAlgorithmProvider( this._algHandle, 0 );
 
-			return status;
-		}
+		return status;
+	}
 
-		public UInt32 Decrypt( Int32 pcbCipherText, Byte[]? pbCipherText ) {
+	public UInt32 Decrypt( Int32 pcbCipherText, Byte[]? pbCipherText ) {
 
-			//Initialize Initialization Vector
-			Byte[] pbIV2 = {
-				0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
-				0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-			};
+		//Initialize Initialization Vector
+		Byte[] pbIV2 = {
+			0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+			0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+		};
 
-			//Initialize Plain Text Byte Count
-			var pcbPlainText = 0;
+		//Initialize Plain Text Byte Count
+		var pcbPlainText = 0;
 
-			//Get Plain Text Byte Count
-			BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, null, 0, ref pcbPlainText, 0 );
+		//Get Plain Text Byte Count
+		BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, null, 0, ref pcbPlainText, 0 );
 
-			//Allocate Plain Text Buffer
-			var pbPlainText = new Byte[pcbPlainText];
+		//Allocate Plain Text Buffer
+		var pbPlainText = new Byte[pcbPlainText];
 
-			//Decrypt The Data
-			var status = BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, pbPlainText, pbPlainText.Length, ref pcbPlainText, 0 );
+		//Decrypt The Data
+		var status = BCryptDecrypt( this._keyHandle, pbCipherText, pcbCipherText, IntPtr.Zero, pbIV2, pbIV2.Length, pbPlainText, pbPlainText.Length, ref pcbPlainText, 0 );
 
-			return status;
-		}
+		return status;
+	}
 
-		public UInt32 Encrypt( Byte[] pbData ) {
+	public UInt32 Encrypt( Byte[] pbData ) {
 
-			//Initialize Data To Encrypt
-			//Byte[] pbData = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+		//Initialize Data To Encrypt
+		//Byte[] pbData = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
 
-			//Initialize Initialization Vector
-			Byte[] pbIV = {
-				0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
-				0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-			}; //16 bytes.
+		//Initialize Initialization Vector
+		Byte[] pbIV = {
+			0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+			0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+		}; //16 bytes.
 
-			//Initialize PaddingInfo
+		//Initialize PaddingInfo
 
-			//Initialize Cipher Text Byte Count
-			var pcbCipherText = 0;
+		//Initialize Cipher Text Byte Count
+		var pcbCipherText = 0;
 
-			//Get Cipher Text Byte Count
-			BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, null, 0, ref pcbCipherText, 0 );
+		//Get Cipher Text Byte Count
+		BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, null, 0, ref pcbCipherText, 0 );
 
-			//Allocate Cipher Text Buffer
-			var pbCipherText = new Byte[pcbCipherText];
+		//Allocate Cipher Text Buffer
+		var pbCipherText = new Byte[pcbCipherText];
 
-			//Encrypt The Data
-			var status = BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, pbCipherText, pcbCipherText, ref pcbCipherText, 0 );
+		//Encrypt The Data
+		var status = BCryptEncrypt( this._keyHandle, pbData, pbData.Length, IntPtr.Zero, pbIV, pbIV.Length, pbCipherText, pcbCipherText, ref pcbCipherText, 0 );
 
-			return status;
-		}
+		return status;
+	}
 
-		public UInt32 Open() {
+	public UInt32 Open() {
 
-			//Open the Algorithm Provider
+		//Open the Algorithm Provider
 
-			//Initialize AlgHandle
-			this._algHandle = IntPtr.Zero;
+		//Initialize AlgHandle
+		this._algHandle = IntPtr.Zero;
 
-			//Initialize Status
-			BCryptOpenAlgorithmProvider( ref this._algHandle, "AES", "Microsoft Primitive Provider", 0 );
+		//Initialize Status
+		BCryptOpenAlgorithmProvider( ref this._algHandle, "AES", "Microsoft Primitive Provider", 0 );
 
-			//Allocate DWORD for ObjectLength
-			var pbObjectLength = new Byte[4];
+		//Allocate DWORD for ObjectLength
+		var pbObjectLength = new Byte[4];
 
-			//Initialize ObjectLength Byte Count
-			var pcbObjectLength = 0;
+		//Initialize ObjectLength Byte Count
+		var pcbObjectLength = 0;
 
-			//Get Algorithm Properties(BCRYPT_OBJECT_LENGTH)
-			BCryptGetProperty( this._algHandle, "ObjectLength", pbObjectLength, pbObjectLength.Length, ref pcbObjectLength, 0 );
+		//Get Algorithm Properties(BCRYPT_OBJECT_LENGTH)
+		BCryptGetProperty( this._algHandle, "ObjectLength", pbObjectLength, pbObjectLength.Length, ref pcbObjectLength, 0 );
 
-			//Initialize KeyHandle
-			this._keyHandle = IntPtr.Zero;
+		//Initialize KeyHandle
+		this._keyHandle = IntPtr.Zero;
 
-			//Initialize Key Object Size with ObjectLength
-			var keyObjectSize = ( pbObjectLength[3] << 24 ) | ( pbObjectLength[2] << 16 ) | ( pbObjectLength[1] << 8 ) | pbObjectLength[0];
+		//Initialize Key Object Size with ObjectLength
+		var keyObjectSize = ( pbObjectLength[3] << 24 ) | ( pbObjectLength[2] << 16 ) | ( pbObjectLength[1] << 8 ) | pbObjectLength[0];
 
-			//Initialize AES Key
-			Byte[] pbKey = {
-				0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
-				0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-			};
+		//Initialize AES Key
+		Byte[] pbKey = {
+			0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
+			0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+		};
 
-			//Allocate KeyObject With Key Object Size
-			var pbKeyObject = new Byte[keyObjectSize];
+		//Allocate KeyObject With Key Object Size
+		var pbKeyObject = new Byte[keyObjectSize];
 
-			//Generate Symmetric Key Object
-			var status = BCryptGenerateSymmetricKey( this._algHandle, ref this._keyHandle, pbKeyObject, keyObjectSize, pbKey, pbKey.Length, 0 );
+		//Generate Symmetric Key Object
+		var status = BCryptGenerateSymmetricKey( this._algHandle, ref this._keyHandle, pbKeyObject, keyObjectSize, pbKey, pbKey.Length, 0 );
 
-			return status;
-		}
+		return status;
 	}
 }

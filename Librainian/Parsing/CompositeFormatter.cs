@@ -25,55 +25,54 @@
 
 #nullable enable
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
-	using System.Linq;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Exceptions;
+
+/// <summary>
+///     Binds multiple formatters together.
+/// </summary>
+/// <seealso cref="Formatter" />
+/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara</remarks>
+internal sealed class CompositeFormatter : Formatter {
+
+	private List<Formatter> _formatters { get; }
 
 	/// <summary>
-	///     Binds multiple formatters together.
+	///     Initializes a new instance of the <see cref="CompositeFormatter" /> class.
 	/// </summary>
-	/// <seealso cref="Formatter" />
-	/// <remarks>From the Vanara.PInvoke project @ https://github.com/dahall/Vanara</remarks>
-	internal sealed class CompositeFormatter : Formatter {
+	/// <param name="culture">   The culture.</param>
+	/// <param name="formatters">The formatters.</param>
+	public CompositeFormatter( CultureInfo? culture = null, params Formatter[] formatters ) : base( culture ) =>
+		this._formatters = new List<Formatter>( formatters );
 
-		private List<Formatter> _formatters { get; }
-
-		/// <summary>
-		///     Initializes a new instance of the <see cref="CompositeFormatter" /> class.
-		/// </summary>
-		/// <param name="culture">   The culture.</param>
-		/// <param name="formatters">The formatters.</param>
-		public CompositeFormatter( CultureInfo? culture = null, params Formatter[] formatters ) : base( culture ) =>
-			this._formatters = new List<Formatter>( formatters );
-
-		/// <summary>
-		///     Adds the specified formatter.
-		/// </summary>
-		/// <param name="formatter">The formatter.</param>
-		public void Add( Formatter formatter ) {
-			if ( formatter == null ) {
-				throw new ArgumentEmptyException( nameof( formatter ) );
-			}
-
-			this._formatters.Add( formatter );
+	/// <summary>
+	///     Adds the specified formatter.
+	/// </summary>
+	/// <param name="formatter">The formatter.</param>
+	public void Add( Formatter formatter ) {
+		if ( formatter == null ) {
+			throw new ArgumentEmptyException( nameof( formatter ) );
 		}
 
-		/// <summary>
-		///     Converts the value of a specified object to an equivalent string representation using specified format and
-		///     culture-specific formatting information.
-		/// </summary>
-		/// <param name="format">        A format string containing formatting specifications.</param>
-		/// <param name="arg">           An object to format.</param>
-		/// <param name="formatProvider">An object that supplies format information about the current instance.</param>
-		/// <returns>
-		///     The string representation of the value of <paramref name="arg" />, formatted as specified by
-		///     <paramref name="format" /> and <paramref name="formatProvider" />.
-		/// </returns>
-		public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) =>
-			this._formatters.Select( formatter => formatter.Format( format, arg, formatProvider ) ).First();
+		this._formatters.Add( formatter );
 	}
+
+	/// <summary>
+	///     Converts the value of a specified object to an equivalent string representation using specified format and
+	///     culture-specific formatting information.
+	/// </summary>
+	/// <param name="format">        A format string containing formatting specifications.</param>
+	/// <param name="arg">           An object to format.</param>
+	/// <param name="formatProvider">An object that supplies format information about the current instance.</param>
+	/// <returns>
+	///     The string representation of the value of <paramref name="arg" />, formatted as specified by
+	///     <paramref name="format" /> and <paramref name="formatProvider" />.
+	/// </returns>
+	public override String Format( String? format, Object? arg, IFormatProvider? formatProvider ) =>
+		this._formatters.Select( formatter => formatter.Format( format, arg, formatProvider ) ).First();
 }

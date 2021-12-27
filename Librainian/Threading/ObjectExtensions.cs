@@ -24,152 +24,151 @@
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics.CodeAnalysis;
-	using System.Reflection;
-	using Exceptions;
-	using Utilities;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Exceptions;
+using Utilities;
 
-	/// <summary>
-	///     Code pulled from
-	///     <see cref="http://raw.githubusercontent.com/Burtsev-Alexey/net-object-deep-copy/master/ObjectExtensions.cs" />
-	/// </summary>
-	/// <remarks>
-	///     TODO Needs some serious testing.
-	/// </remarks>
+/// <summary>
+///     Code pulled from
+///     <see cref="http://raw.githubusercontent.com/Burtsev-Alexey/net-object-deep-copy/master/ObjectExtensions.cs" />
+/// </summary>
+/// <remarks>
+///     TODO Needs some serious testing.
+/// </remarks>
+[NeedsTesting]
+public static class ObjectExtensions {
+
 	[NeedsTesting]
-	public static class ObjectExtensions {
+	private static MethodInfo? MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
 
-		[NeedsTesting]
-		private static MethodInfo? MemberwiseCloneMethod { get; } = typeof( Object ).GetMethod( "MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance );
+	[NeedsTesting]
+	private static void CopyFields(
+		this Object original,
+		IDictionary<Object, Object?> visited,
+		Object? destination,
+		IReflect reflect,
+		BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
+		Func<FieldInfo, Boolean>? filter = null
+	) {
+		var fields = reflect.GetFields( bindingFlags );
 
-		[NeedsTesting]
-		private static void CopyFields(
-			this Object original,
-			IDictionary<Object, Object?> visited,
-			Object? destination,
-			IReflect reflect,
-			BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-			Func<FieldInfo, Boolean>? filter = null
-		) {
-			var fields = reflect.GetFields( bindingFlags );
-
-			foreach ( var field in fields ) {
-				if ( filter?.Invoke( field ) == false ) {
-					continue;
-				}
-
-				//if ( fieldInfo.FieldType.IsPrimitive() ) { continue; }	//why skip a primitive?
-
-				var value = field.GetValue( original );
-				field.SetValue( destination, InternalCopy( value, visited ) );
+		foreach ( var field in fields ) {
+			if ( filter?.Invoke( field ) == false ) {
+				continue;
 			}
+
+			//if ( fieldInfo.FieldType.IsPrimitive() ) { continue; }	//why skip a primitive?
+
+			var value = field.GetValue( original );
+			field.SetValue( destination, InternalCopy( value, visited ) );
+		}
+	}
+
+	[NeedsTesting]
+	private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object?> visits ) {
+		if ( originalObject is null ) {
+			return null;
 		}
 
-		[NeedsTesting]
-		private static Object? InternalCopy( Object? originalObject, IDictionary<Object, Object?> visits ) {
-			if ( originalObject is null ) {
-				return null;
-			}
+		var reflect = originalObject.GetType();
 
-			var reflect = originalObject.GetType();
+		if ( reflect.IsPrimitive() ) {
+			return originalObject;
+		}
 
-			if ( reflect.IsPrimitive() ) {
-				return originalObject;
-			}
+		if ( visits.ContainsKey( originalObject ) ) {
+			return visits[originalObject];
+		}
 
-			if ( visits.ContainsKey( originalObject ) ) {
-				return visits[originalObject];
-			}
+		if ( typeof( Delegate ).IsAssignableFrom( reflect ) ) {
+			return null;
+		}
 
-			if ( typeof( Delegate ).IsAssignableFrom( reflect ) ) {
-				return null;
-			}
+		var copy = MemberwiseCloneMethod?.Invoke( originalObject, null );
 
-			var copy = MemberwiseCloneMethod?.Invoke( originalObject, null );
+		if ( reflect.IsArray ) {
+			var elementsType = reflect.GetElementType();
 
-			if ( reflect.IsArray ) {
-				var elementsType = reflect.GetElementType();
+			if ( elementsType != null /*&& !elementsType.IsPrimitive()*/ ) {
 
-				if ( elementsType != null /*&& !elementsType.IsPrimitive()*/ ) {
+				//TODO why skip primitives?
 
-					//TODO why skip primitives?
-
-					if ( copy is Array clonedArray ) {
-						for ( var index = 0; index < clonedArray.Length; index++ ) {
-							clonedArray.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
-						}
+				if ( copy is Array clonedArray ) {
+					for ( var index = 0; index < clonedArray.Length; index++ ) {
+						clonedArray.SetValue( InternalCopy( clonedArray.GetValue( index ), visits ), index );
 					}
 				}
 			}
-
-			visits.Add( originalObject, copy );
-			originalObject.CopyFields( visits, copy, reflect );
-			RecursiveCopyBaseTypePrivateFields( originalObject, visits, copy, reflect );
-
-			return copy;
 		}
 
-		[NeedsTesting]
-		private static void RecursiveCopyBaseTypePrivateFields(
-			Object? originalObject,
-			IDictionary<Object, Object?> visited,
-			Object? destination,
-			Type typeToReflect
-		) {
-			if ( originalObject is null ) {
-				return;
-			}
-			if ( destination is null ) {
-				return;
-			}
-			if ( typeToReflect.BaseType is null ) {
-				return;
-			}
+		visits.Add( originalObject, copy );
+		originalObject.CopyFields( visits, copy, reflect );
+		RecursiveCopyBaseTypePrivateFields( originalObject, visits, copy, reflect );
 
-			RecursiveCopyBaseTypePrivateFields( originalObject, visited, destination, typeToReflect.BaseType );
-
-			originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
-		}
-
-		[NeedsTesting]
-		public static T? Copy<T>( this T? original ) =>
-					( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
-
-		/// <summary>Returns a deep copy of this object.</summary>
-		/// <param name="original"></param>
-		[NeedsTesting]
-		public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object?>( new ReferenceEqualComparer<Object?>() ) );
-
-		[NeedsTesting]
-		public static Object? GetPrivateFieldValue<T>( [DisallowNull] this T instance, String fieldName ) {
-			if ( instance is null ) {
-				throw new ArgumentEmptyException( nameof( instance ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( fieldName ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fieldName ) );
-			}
-
-			var type = instance.GetType();
-			var info = type.GetField( fieldName, BindingFlags.NonPublic | BindingFlags.Instance );
-
-			if ( info is null ) {
-				throw new ArgumentException( $"{type.FullName} does not contain the private field '{fieldName}'." );
-			}
-
-			return info.GetValue( instance );
-		}
-
-		[NeedsTesting]
-		public static Boolean IsPrimitive<T>( this T? type ) =>
-			type switch {
-				null => false,
-				String _ => true,
-				var _ => type.GetType().IsPrimitive
-			};
+		return copy;
 	}
+
+	[NeedsTesting]
+	private static void RecursiveCopyBaseTypePrivateFields(
+		Object? originalObject,
+		IDictionary<Object, Object?> visited,
+		Object? destination,
+		Type typeToReflect
+	) {
+		if ( originalObject is null ) {
+			return;
+		}
+		if ( destination is null ) {
+			return;
+		}
+		if ( typeToReflect.BaseType is null ) {
+			return;
+		}
+
+		RecursiveCopyBaseTypePrivateFields( originalObject, visited, destination, typeToReflect.BaseType );
+
+		originalObject.CopyFields( visited, destination, typeToReflect.BaseType, BindingFlags.Instance | BindingFlags.NonPublic, info => info.IsPrivate );
+	}
+
+	[NeedsTesting]
+	public static T? Copy<T>( this T? original ) =>
+		( T? )( DeepCopy( original ) ?? throw new NullReferenceException( nameof( original ) ) );
+
+	/// <summary>Returns a deep copy of this object.</summary>
+	/// <param name="original"></param>
+	[NeedsTesting]
+	public static Object? DeepCopy<T>( this T? original ) => InternalCopy( original, new Dictionary<Object, Object?>( new ReferenceEqualComparer<Object?>() ) );
+
+	[NeedsTesting]
+	public static Object? GetPrivateFieldValue<T>( [DisallowNull] this T instance, String fieldName ) {
+		if ( instance is null ) {
+			throw new ArgumentEmptyException( nameof( instance ) );
+		}
+
+		if ( String.IsNullOrWhiteSpace( fieldName ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( fieldName ) );
+		}
+
+		var type = instance.GetType();
+		var info = type.GetField( fieldName, BindingFlags.NonPublic | BindingFlags.Instance );
+
+		if ( info is null ) {
+			throw new ArgumentException( $"{type.FullName} does not contain the private field '{fieldName}'." );
+		}
+
+		return info.GetValue( instance );
+	}
+
+	[NeedsTesting]
+	public static Boolean IsPrimitive<T>( this T? type ) =>
+		type switch {
+			null => false,
+			String _ => true,
+			var _ => type.GetType().IsPrimitive
+		};
 }

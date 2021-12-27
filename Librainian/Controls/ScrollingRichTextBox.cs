@@ -25,73 +25,72 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
-	using System.Runtime.InteropServices;
-	using System.Windows.Forms;
-	using Exceptions;
-	using OperatingSystem;
+using System;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Exceptions;
+using OperatingSystem;
+
+/// <summary>
+///
+/// </summary>
+/// <see cref="http://stackoverflow.com/a/55540909/956364"/>
+public class ScrollingRichTextBox : RichTextBox {
+
+	private const Int32 _SB_BOTTOM = 7;
+
+	private const Int32 _WM_VSCROLL = 277;
+
+	public CircularLinesLogger? CircularLogger { get; set; }
+
+	public enum NewLineOrNot {
+
+		Neither = 0,
+
+		Append,
+
+		NewLine
+	}
+
+	[DllImport( DLL.User32, CharSet = CharSet.Auto )]
+	private static extern IntPtr SendMessage(
+		IntPtr hWnd,
+		UInt32 Msg,
+		IntPtr wParam,
+		IntPtr LParam );
+
+	public Boolean AttachCircularLinesLogger( CircularLinesLogger circularLinesLogger ) {
+		this.CircularLogger = circularLinesLogger ?? throw new ArgumentNullException( nameof( circularLinesLogger ) );
+		return this.CircularLogger is not null;
+	}
 
 	/// <summary>
-	///
+	/// Scrolls to the bottom of the RichTextBox.
 	/// </summary>
-	/// <see cref="http://stackoverflow.com/a/55540909/956364"/>
-	public class ScrollingRichTextBox : RichTextBox {
+	public void ScrollToBottom() => SendMessage( this.Handle, _WM_VSCROLL, new IntPtr( _SB_BOTTOM ), new IntPtr( 0 ) );
 
-		private const Int32 _SB_BOTTOM = 7;
-
-		private const Int32 _WM_VSCROLL = 277;
-
-		public CircularLinesLogger? CircularLogger { get; set; }
-
-		public enum NewLineOrNot {
-
-			Neither = 0,
-
-			Append,
-
-			NewLine
+	public void Write( String message, NewLineOrNot newline = NewLineOrNot.Append ) {
+		if ( this.CircularLogger is null ) {
+			throw new NullException( nameof( this.CircularLogger ) );
 		}
 
-		[DllImport( DLL.User32, CharSet = CharSet.Auto )]
-		private static extern IntPtr SendMessage(
-			IntPtr hWnd,
-			UInt32 Msg,
-			IntPtr wParam,
-			IntPtr LParam );
+		this.CircularLogger.AppendToLog( message );
 
-		public Boolean AttachCircularLinesLogger( CircularLinesLogger circularLinesLogger ) {
-			this.CircularLogger = circularLinesLogger ?? throw new ArgumentNullException( nameof( circularLinesLogger ) );
-			return this.CircularLogger is not null;
-		}
+		this.InvokeAction( () => {
+			var newText = this.CircularLogger.AsText();
 
-		/// <summary>
-		/// Scrolls to the bottom of the RichTextBox.
-		/// </summary>
-		public void ScrollToBottom() => SendMessage( this.Handle, _WM_VSCROLL, new IntPtr( _SB_BOTTOM ), new IntPtr( 0 ) );
-
-		public void Write( String message, NewLineOrNot newline = NewLineOrNot.Append ) {
-			if ( this.CircularLogger is null ) {
-				throw new NullException( nameof( this.CircularLogger ) );
+			//if ( newText.Length > 65536 ) {
+			//	newText = newText[ newText.Length.Half().. ];
+			//}
+			if ( newline == NewLineOrNot.NewLine ) {
+				newText += Environment.NewLine;
 			}
-
-			this.CircularLogger.AppendToLog( message );
-
-			this.InvokeAction( () => {
-				var newText = this.CircularLogger.AsText();
-
-				//if ( newText.Length > 65536 ) {
-				//	newText = newText[ newText.Length.Half().. ];
-				//}
-				if ( newline == NewLineOrNot.NewLine ) {
-					newText += Environment.NewLine;
-				}
-				this.SuspendLayout();
-				this.Text( newText, RefreshOrInvalidate.Neither );
-				this.ResumeLayout();
-				this.ScrollToBottom();
-			}, RefreshOrInvalidate.Invalidate );
-		}
+			this.SuspendLayout();
+			this.Text( newText, RefreshOrInvalidate.Neither );
+			this.ResumeLayout();
+			this.ScrollToBottom();
+		}, RefreshOrInvalidate.Invalidate );
 	}
 }

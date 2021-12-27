@@ -22,18 +22,17 @@
 //
 // File "StringHexPrefix.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing.Validation {
+namespace Librainian.Parsing.Validation;
 
-	using System;
-	using Newtonsoft.Json;
+using System;
+using Newtonsoft.Json;
 
-	/// <summary>be a hexadecimal number (optional 0x or &amp;H prefix)</summary>
-	[Serializable]
-	[JsonObject]
-	public class StringHexPrefix : RegexString {
+/// <summary>be a hexadecimal number (optional 0x or &amp;H prefix)</summary>
+[Serializable]
+[JsonObject]
+public class StringHexPrefix : RegexString {
 
-		public StringHexPrefix( String value ) : base( value, "^(0x|&H)?[0-9a-fA-F]*$" ) { }
+	public StringHexPrefix( String value ) : base( value, "^(0x|&H)?[0-9a-fA-F]*$" ) { }
 
-		public static explicit operator StringHexPrefix( String? str ) => new( str );
-	}
+	public static explicit operator StringHexPrefix( String? str ) => new( str );
 }

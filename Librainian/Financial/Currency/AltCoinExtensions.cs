@@ -22,14 +22,13 @@
 //
 // File "AltCoinExtensions.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Financial.Currency {
+namespace Librainian.Financial.Currency;
 
-	using System;
+using System;
 
-	public static class AltCoinExtensions {
+public static class AltCoinExtensions {
 
-		/// <summary>Always have 8 decimal places showing, even the zeros.</summary>
-		/// <param name="amount"></param>
-		public static String Formatted( this Decimal amount ) => $"{amount:F8}";
-	}
+	/// <summary>Always have 8 decimal places showing, even the zeros.</summary>
+	/// <param name="amount"></param>
+	public static String Formatted( this Decimal amount ) => $"{amount:F8}";
 }

@@ -22,23 +22,22 @@
 //
 // File "MoveFileFlags.cs" last formatted on 2020-08-14 at 8:40 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
+using System;
 
-	[Flags]
-	public enum MoveFileFlags {
+[Flags]
+public enum MoveFileFlags {
 
-		MovefileReplaceExisting = 0x00000001,
+	MovefileReplaceExisting = 0x00000001,
 
-		MovefileCopyAllowed = 0x00000002,
+	MovefileCopyAllowed = 0x00000002,
 
-		MovefileDelayUntilReboot = 0x00000004,
+	MovefileDelayUntilReboot = 0x00000004,
 
-		MovefileWriteThrough = 0x00000008,
+	MovefileWriteThrough = 0x00000008,
 
-		MovefileCreateHardlink = 0x00000010,
+	MovefileCreateHardlink = 0x00000010,
 
-		MovefileFailIfNotTrackable = 0x00000020
-	}
+	MovefileFailIfNotTrackable = 0x00000020
 }

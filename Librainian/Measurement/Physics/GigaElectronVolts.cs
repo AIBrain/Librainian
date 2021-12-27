@@ -25,79 +25,78 @@
 //
 // File "GigaElectronVolts.cs" last touched on 2021-06-19 at 12:58 AM by Protiguous.
 
-namespace Librainian.Measurement.Physics {
+namespace Librainian.Measurement.Physics;
 
-	using System;
-	using System.Diagnostics;
-	using ExtendedNumerics;
-	using Extensions;
+using System;
+using System.Diagnostics;
+using ExtendedNumerics;
+using Extensions;
 
-	/// <summary>Units of mass and energy in <see cref="GigaElectronVolts" />.</summary>
-	/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
-	/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
-	/// <see cref="http://wikipedia.org/wiki/Giga-" />
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record GigaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
-		IComparable<GigaElectronVolts> {
-		public const Decimal InOneElectronVolt = 1E-9m;
+/// <summary>Units of mass and energy in <see cref="GigaElectronVolts" />.</summary>
+/// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
+/// <see cref="http://wikipedia.org/wiki/SI_prefix" />
+/// <see cref="http://wikipedia.org/wiki/Giga-" />
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record GigaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
+	IComparable<GigaElectronVolts> {
+	public const Decimal InOneElectronVolt = 1E-9m;
 
-		public const Decimal InOneGigaElectronVolt = 1E0m;
+	public const Decimal InOneGigaElectronVolt = 1E0m;
 
-		public const Decimal InOneKiloElectronVolt = 1E-6m;
+	public const Decimal InOneKiloElectronVolt = 1E-6m;
 
-		public const Decimal InOneMegaElectronVolt = 1E-3m;
+	public const Decimal InOneMegaElectronVolt = 1E-3m;
 
-		public const Decimal InOneMilliElectronVolt = 1E-12m;
+	public const Decimal InOneMilliElectronVolt = 1E-12m;
 
-		public const Decimal InOneTeraElectronVolt = 1E3m;
-
-		
-		public static readonly GigaElectronVolts One = new( Decimal.One );
+	public const Decimal InOneTeraElectronVolt = 1E3m;
 
 		
-		public static readonly GigaElectronVolts Zero = new( Decimal.Zero );
+	public static readonly GigaElectronVolts One = new( Decimal.One );
 
-		public GigaElectronVolts( Decimal units ) : this( ( BigDecimal )units ) { }
+		
+	public static readonly GigaElectronVolts Zero = new( Decimal.Zero );
 
-		public GigaElectronVolts( Double units ) : this( ( BigDecimal )units ) { }
+	public GigaElectronVolts( Decimal units ) : this( ( BigDecimal )units ) { }
 
-		public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this( megaElectronVolts.ToGigaElectronVolts() ) { }
+	public GigaElectronVolts( Double units ) : this( ( BigDecimal )units ) { }
 
-		public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.ToGigaElectronVolts().Value );
+	public GigaElectronVolts( MegaElectronVolts megaElectronVolts ) : this( megaElectronVolts.ToGigaElectronVolts() ) { }
 
-		public Int32 CompareTo( GigaElectronVolts? other ) => this.Value.CompareTo( other?.Value );
+	public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.ToGigaElectronVolts().Value );
 
-		public Int32 CompareTo( MegaElectronVolts? other ) => this.Value.CompareTo( other?.ToGigaElectronVolts().Value );
+	public Int32 CompareTo( GigaElectronVolts? other ) => this.Value.CompareTo( other?.Value );
 
-		public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToGigaElectronVolts().Value );
+	public Int32 CompareTo( MegaElectronVolts? other ) => this.Value.CompareTo( other?.ToGigaElectronVolts().Value );
 
-		public static GigaElectronVolts operator *( GigaElectronVolts left, BigDecimal right ) => new( left.Value * right );
+	public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToGigaElectronVolts().Value );
 
-		public static GigaElectronVolts operator *( BigDecimal left, GigaElectronVolts right ) => new( left * right.Value );
+	public static GigaElectronVolts operator *( GigaElectronVolts left, BigDecimal right ) => new( left.Value * right );
 
-		public static GigaElectronVolts operator +( MegaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( left ) + right;
+	public static GigaElectronVolts operator *( BigDecimal left, GigaElectronVolts right ) => new( left * right.Value );
 
-		public static GigaElectronVolts operator +( GigaElectronVolts left, GigaElectronVolts right ) => new( left.Value + right.Value );
+	public static GigaElectronVolts operator +( MegaElectronVolts left, GigaElectronVolts right ) => new GigaElectronVolts( left ) + right;
 
-		public static Boolean operator <( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( right.Value ) < 0;
+	public static GigaElectronVolts operator +( GigaElectronVolts left, GigaElectronVolts right ) => new( left.Value + right.Value );
 
-		public static Boolean operator >( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( right.Value ) > 0;
+	public static Boolean operator <( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( right.Value ) < 0;
 
-		public ElectronVolts ToElectronVolts() => new( this.Value * InOneElectronVolt );
+	public static Boolean operator >( GigaElectronVolts left, GigaElectronVolts right ) => left.Value.CompareTo( right.Value ) > 0;
 
-		public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
+	public ElectronVolts ToElectronVolts() => new( this.Value * InOneElectronVolt );
 
-		public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
+	public GigaElectronVolts ToGigaElectronVolts() => new( this.Value * InOneGigaElectronVolt );
 
-		public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
+	public KiloElectronVolts ToKiloElectronVolts() => new( this.Value * InOneKiloElectronVolt );
 
-		public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
+	public MegaElectronVolts ToMegaElectronVolts() => new( this.Value * InOneMegaElectronVolt );
 
-		/// <summary>Returns the fully qualified type name of this instance.</summary>
-		/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
-		public override String ToString() => $"{this.Value} GeV";
+	public MilliElectronVolts ToMilliElectronVolts() => new( this.Value * InOneMilliElectronVolt );
 
-		public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
-	}
+	/// <summary>Returns the fully qualified type name of this instance.</summary>
+	/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
+	public override String ToString() => $"{this.Value} GeV";
+
+	public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
 }

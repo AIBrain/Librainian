@@ -25,40 +25,38 @@
 // 
 // File "MemoryMappedTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests.MMF {
+namespace LibrainianUnitTests.MMF;
 
-	using System;
-	using System.IO.MemoryMappedFiles;
-	using System.Text;
-	using NUnit.Framework;
+using System;
+using System.IO.MemoryMappedFiles;
+using System.Text;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class MemoryMappedTests {
+[TestFixture]
+public class MemoryMappedTests {
 
-		//TODO any tests?
+	//TODO any tests?
 
-		//private var localFilePath = "complete_path_to_large_file";
+	//private var localFilePath = "complete_path_to_large_file";
 
-		public String GetContent( MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
-			using var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read );
-			var contentArray = new Byte[ bytesToReadIn ];
-			memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );
-			var content = Encoding.UTF8.GetString( contentArray );
+	public String GetContent( MemoryMappedFile memoryMappedFile, Int64 beginningByteLocation, Int64 bytesToReadIn ) {
+		using var memoryMappedViewStream = memoryMappedFile.CreateViewStream( beginningByteLocation, bytesToReadIn, MemoryMappedFileAccess.Read );
+		var contentArray = new Byte[ bytesToReadIn ];
+		memoryMappedViewStream.Read( contentArray, 0, contentArray.Length );
+		var content = Encoding.UTF8.GetString( contentArray );
 
-			return content;
-		}
-
-		public void Test() {
-			const Int64 size32 = sizeof( UInt32 );
-			const Int64 multiplier = UInt32.MaxValue;
-			const Int64 biteSize = size32 * multiplier; //that's a 17.18 GB !!
-
-			using var bob = MemoryMappedFile.CreateOrOpen( "test.$$$", biteSize, MemoryMappedFileAccess.ReadWrite );
-			//bob.CreateViewAccessor
-		}
-
-		//using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open)){}
-
+		return content;
 	}
+
+	public void Test() {
+		const Int64 size32 = sizeof( UInt32 );
+		const Int64 multiplier = UInt32.MaxValue;
+		const Int64 biteSize = size32 * multiplier; //that's a 17.18 GB !!
+
+		using var bob = MemoryMappedFile.CreateOrOpen( "test.$$$", biteSize, MemoryMappedFileAccess.ReadWrite );
+		//bob.CreateViewAccessor
+	}
+
+	//using (var memoryMappedFile = MemoryMappedFile.CreateFromFile(localFilePath, FileMode.Open)){}
 
 }

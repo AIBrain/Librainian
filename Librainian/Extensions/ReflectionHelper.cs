@@ -22,61 +22,60 @@
 //
 // File "ReflectionHelper.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Reflection;
-	using Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Exceptions;
 
-	public static class ReflectionHelper {
+public static class ReflectionHelper {
 
-		/// <summary>Find all types in 'assembly' that derive from 'baseType'</summary>
-		/// <owner>jayBaz</owner>
-		public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( this Assembly assembly ) {
-			if ( assembly is null ) {
-				throw new ArgumentEmptyException( nameof( assembly ) );
-			}
-
-			return assembly.GetTypes().Where( type => type.IsSubclassOf( typeof( TBase ) ) );
+	/// <summary>Find all types in 'assembly' that derive from 'baseType'</summary>
+	/// <owner>jayBaz</owner>
+	public static IEnumerable<Type> FindAllTypesThatDeriveFrom<TBase>( this Assembly assembly ) {
+		if ( assembly is null ) {
+			throw new ArgumentEmptyException( nameof( assembly ) );
 		}
 
-		public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( this Type type ) {
-			if ( type is null ) {
-				throw new ArgumentEmptyException( nameof( type ) );
-			}
+		return assembly.GetTypes().Where( type => type.IsSubclassOf( typeof( TBase ) ) );
+	}
 
-			return type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
+	public static IEnumerable<FieldInfo> GetAllDeclaredInstanceFields( this Type type ) {
+		if ( type is null ) {
+			throw new ArgumentEmptyException( nameof( type ) );
 		}
 
-		/// <summary>A typesafe wrapper for Attribute.GetCustomAttribute</summary>
-		/// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
-		public static TAttribute? GetCustomAttribute<TAttribute>( this MemberInfo element ) where TAttribute : Attribute {
-			if ( element is null ) {
-				throw new ArgumentEmptyException( nameof( element ) );
-			}
+		return type.GetFields( BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly );
+	}
 
-			return Attribute.GetCustomAttribute( element, typeof( TAttribute ) ) as TAttribute;
+	/// <summary>A typesafe wrapper for Attribute.GetCustomAttribute</summary>
+	/// <remarks>TODO: add overloads for Assembly, Module, and ParameterInfo</remarks>
+	public static TAttribute? GetCustomAttribute<TAttribute>( this MemberInfo element ) where TAttribute : Attribute {
+		if ( element is null ) {
+			throw new ArgumentEmptyException( nameof( element ) );
 		}
 
-		/// <summary>All types across multiple assemblies</summary>
-		public static IEnumerable<Type> GetTypes( this IEnumerable<Assembly> assemblies ) {
-			if ( assemblies is null ) {
-				throw new ArgumentEmptyException( nameof( assemblies ) );
-			}
+		return Attribute.GetCustomAttribute( element, typeof( TAttribute ) ) as TAttribute;
+	}
 
-			return assemblies.SelectMany( assembly => assembly.GetTypes() );
+	/// <summary>All types across multiple assemblies</summary>
+	public static IEnumerable<Type> GetTypes( this IEnumerable<Assembly> assemblies ) {
+		if ( assemblies is null ) {
+			throw new ArgumentEmptyException( nameof( assemblies ) );
 		}
 
-		/// <summary>Check if the given type has the given attribute on it. Don't look at base classes.</summary>
-		/// <owner>jayBaz</owner>
-		public static Boolean TypeHasAttribute<TAttribute>( this Type type ) where TAttribute : Attribute {
-			if ( type is null ) {
-				throw new ArgumentEmptyException( nameof( type ) );
-			}
+		return assemblies.SelectMany( assembly => assembly.GetTypes() );
+	}
 
-			return Attribute.IsDefined( type, typeof( TAttribute ) );
+	/// <summary>Check if the given type has the given attribute on it. Don't look at base classes.</summary>
+	/// <owner>jayBaz</owner>
+	public static Boolean TypeHasAttribute<TAttribute>( this Type type ) where TAttribute : Attribute {
+		if ( type is null ) {
+			throw new ArgumentEmptyException( nameof( type ) );
 		}
+
+		return Attribute.IsDefined( type, typeof( TAttribute ) );
 	}
 }

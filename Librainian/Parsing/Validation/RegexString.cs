@@ -22,24 +22,23 @@
 //
 // File "RegexString.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing.Validation {
+namespace Librainian.Parsing.Validation;
 
-	using System;
-	using System.Text.RegularExpressions;
-	using Newtonsoft.Json;
+using System;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
-	/// <summary>
-	///     Based from
-	///     https://codereview.stackexchange.com/questions/208291/enforcing-string-validity-with-the-c-type-system
-	/// </summary>
-	[Serializable]
-	[JsonObject]
-	public abstract class RegexString : ValidatedString {
+/// <summary>
+///     Based from
+///     https://codereview.stackexchange.com/questions/208291/enforcing-string-validity-with-the-c-type-system
+/// </summary>
+[Serializable]
+[JsonObject]
+public abstract class RegexString : ValidatedString {
 
-		public String Pattern { get; }
+	public String Pattern { get; }
 
-		protected RegexString( String value, String pattern ) : base(
-					value, s => !String.IsNullOrEmpty( value ) && !String.IsNullOrEmpty( pattern ) && new Regex( pattern ).IsMatch( s ) ) =>
-			this.Pattern = pattern;
-	}
+	protected RegexString( String value, String pattern ) : base(
+		value, s => !String.IsNullOrEmpty( value ) && !String.IsNullOrEmpty( pattern ) && new Regex( pattern ).IsMatch( s ) ) =>
+		this.Pattern = pattern;
 }

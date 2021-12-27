@@ -22,72 +22,71 @@
 //
 // File "PotentialF.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Threading;
-	using Newtonsoft.Json;
+using System;
+using System.Threading;
+using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>Restricts the value to between 0.0 and 1.0.</para>
-	/// </summary>
-	/// <remarks>
-	///     <para>Just wanted a threadsafe wrapper.</para>
-	/// </remarks>
-	[JsonObject]
-	public class PotentialF {
+/// <summary>
+///     <para>Restricts the value to between 0.0 and 1.0.</para>
+/// </summary>
+/// <remarks>
+///     <para>Just wanted a threadsafe wrapper.</para>
+/// </remarks>
+[JsonObject]
+public class PotentialF {
 
 		
-		/// <remarks>ONLY used in the getter and setter.</remarks>
-		[JsonProperty]
-		private Single _value = MinValue;
+	/// <remarks>ONLY used in the getter and setter.</remarks>
+	[JsonProperty]
+	private Single _value = MinValue;
 
-		public const Single MaxValue = 1.0f;
+	public const Single MaxValue = 1.0f;
 
-		public const Single MinValue = 0.0f;
+	public const Single MinValue = 0.0f;
 
-		/// <summary>
-		///     <para>Thread-safe getter and setter.</para>
-		/// </summary>
-		/// <remarks>
-		///     <para>Constrains the value to stay between <see cref="MinValue" /> and <see cref="MaxValue" /> .</para>
-		/// </remarks>
-		public Single Value {
-			get => Thread.VolatileRead( ref this._value );
+	/// <summary>
+	///     <para>Thread-safe getter and setter.</para>
+	/// </summary>
+	/// <remarks>
+	///     <para>Constrains the value to stay between <see cref="MinValue" /> and <see cref="MaxValue" /> .</para>
+	/// </remarks>
+	public Single Value {
+		get => Thread.VolatileRead( ref this._value );
 
-			private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
-		}
-
-		/// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
-		public PotentialF( Boolean randomValue ) {
-			if ( randomValue ) {
-				this.Value = Randem.NextFloat();
-			}
-		}
-
-		/// <summary>Initializes with <paramref name="initialValue" />.</summary>
-		/// <param name="initialValue"></param>
-		public PotentialF( Single initialValue ) => this.Value = initialValue;
-
-		/// <summary>
-		/// Sets the internal value to a random number between <paramref name="min"/> and <paramref name="max"/>, and between 0 and 1.
-		/// </summary>
-		/// <param name="min"></param>
-		/// <param name="max"></param>
-		public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min, max ) ) { }
-
-		public static implicit operator Single( PotentialF special ) => special.Value;
-
-		public static PotentialF Parse( String value ) => new( Single.Parse( value ) );
-
-		public void Add( Single amount ) => this.Value += amount;
-
-		public void Divide( Single amount ) => this.Value /= amount;
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public void Multiply( Single amount ) => this.Value *= amount;
-
-		public override String ToString() => $"{this.Value:P3}";
+		private set => Thread.VolatileWrite( ref this._value, value >= MaxValue ? MaxValue : value <= MinValue ? MinValue : value );
 	}
+
+	/// <summary>Initializes a random number between <see cref="MinValue" /> and <see cref="MaxValue" /></summary>
+	public PotentialF( Boolean randomValue ) {
+		if ( randomValue ) {
+			this.Value = Randem.NextFloat();
+		}
+	}
+
+	/// <summary>Initializes with <paramref name="initialValue" />.</summary>
+	/// <param name="initialValue"></param>
+	public PotentialF( Single initialValue ) => this.Value = initialValue;
+
+	/// <summary>
+	/// Sets the internal value to a random number between <paramref name="min"/> and <paramref name="max"/>, and between 0 and 1.
+	/// </summary>
+	/// <param name="min"></param>
+	/// <param name="max"></param>
+	public PotentialF( Single min, Single max ) : this( Randem.NextFloat( min, max ) ) { }
+
+	public static implicit operator Single( PotentialF special ) => special.Value;
+
+	public static PotentialF Parse( String value ) => new( Single.Parse( value ) );
+
+	public void Add( Single amount ) => this.Value += amount;
+
+	public void Divide( Single amount ) => this.Value /= amount;
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+	public void Multiply( Single amount ) => this.Value *= amount;
+
+	public override String ToString() => $"{this.Value:P3}";
 }

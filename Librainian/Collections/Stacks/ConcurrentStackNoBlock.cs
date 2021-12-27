@@ -22,145 +22,144 @@
 //
 // File "ConcurrentStackNoBlock.cs" last formatted on 2020-08-14 at 8:31 PM.
 
-namespace Librainian.Collections.Stacks {
+namespace Librainian.Collections.Stacks;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Threading;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Threading;
 
-	public class ConcurrentNoBlockStackL<T> {
+public class ConcurrentNoBlockStackL<T> {
 
-		private volatile Node? _head;
+	private volatile Node? _head;
 
-		public ConcurrentNoBlockStackL() => this._head = new Node( default( T ), this._head );
+	public ConcurrentNoBlockStackL() => this._head = new Node( default( T ), this._head );
 
-		public T Pop() {
-			Node? ret;
+	public T Pop() {
+		Node? ret;
 
-			do {
-				ret = this._head;
+		do {
+			ret = this._head;
 
-				if ( ret?.Next is null ) {
-					throw new IndexOutOfRangeException( "Stack is empty" );
-				}
-			} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
-
-			return ret.Item;
-		}
-
-		public void Push( T? item ) {
-			var nodeNew = new Node( item );
-
-			Node? tmp;
-
-			do {
-				tmp = this._head;
-				nodeNew.Next = tmp;
-			} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
-		}
-
-		internal sealed class Node {
-
-			internal readonly T Item;
-
-			internal Node? Next;
-
-			public Node( T? item, Node? next = null ) {
-				this.Item = item;
-				this.Next = next;
+			if ( ret?.Next is null ) {
+				throw new IndexOutOfRangeException( "Stack is empty" );
 			}
-		}
+		} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+
+		return ret.Item;
 	}
 
+	public void Push( T? item ) {
+		var nodeNew = new Node( item );
+
+		Node? tmp;
+
+		do {
+			tmp = this._head;
+			nodeNew.Next = tmp;
+		} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
+	}
+
+	internal sealed class Node {
+
+		internal readonly T Item;
+
+		internal Node? Next;
+
+		public Node( T? item, Node? next = null ) {
+			this.Item = item;
+			this.Next = next;
+		}
+	}
+}
+
 	
-	/// <typeparam name="T"></typeparam>
-	/// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
-	public class ConcurrentStackNoBlock<T> {
+/// <typeparam name="T"></typeparam>
+/// <remarks>http://www.coderbag.com/Concurrent-Programming/Building-Concurrent-Stack</remarks>
+public class ConcurrentStackNoBlock<T> {
 
-		private Node? _head;
+	private Node? _head;
 
-		public Int32 Count { get; private set; }
+	public Int32 Count { get; private set; }
 
-		public ConcurrentStackNoBlock() => this._head = new Node( default( T ), this._head );
+	public ConcurrentStackNoBlock() => this._head = new Node( default( T ), this._head );
 
-		public void Add( T? item ) => this.Push( item );
+	public void Add( T? item ) => this.Push( item );
 
-		public void Add( IEnumerable<T> items ) => Parallel.ForEach( items, CPU.AllExceptOne, this.Push );
+	public void Add( IEnumerable<T> items ) => Parallel.ForEach( items, CPU.AllExceptOne, this.Push );
 
-		public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
+	public void Add( ParallelQuery<T> items ) => items.ForAll( this.Push );
 
-		public Int64 LongCount() => this.Count;
+	public Int64 LongCount() => this.Count;
 
-		public void Push( T? item ) {
-			if ( Equals( default( Object? ), item ) ) {
-				return;
-			}
-
-			var nodeNew = new Node( item );
-
-			Node? tmp;
-
-			do {
-				tmp = this._head;
-				nodeNew.Next = tmp;
-			} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
-
-			++this.Count;
+	public void Push( T? item ) {
+		if ( Equals( default( Object? ), item ) ) {
+			return;
 		}
 
-		public Boolean TryPop( out T? result ) {
-			result = default( T );
+		var nodeNew = new Node( item );
 
-			Node? ret;
+		Node? tmp;
 
-			do {
-				ret = this._head;
+		do {
+			tmp = this._head;
+			nodeNew.Next = tmp;
+		} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
 
-				if ( ret?.Next is null ) {
+		++this.Count;
+	}
 
-					//throw new IndexOutOfRangeException( "Stack is empty" );
-					return false;
-				}
-			} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+	public Boolean TryPop( out T? result ) {
+		result = default( T );
 
-			--this.Count;
-			result = ret.Item;
+		Node? ret;
 
-			return !Equals( result, default( Object? ) );
-		}
+		do {
+			ret = this._head;
 
-		/// <summary>Attempt two <see cref="TryPop" /></summary>
-		/// <param name="itemOne"></param>
-		/// <param name="itemTwo"></param>
-		public Boolean TryPopPop( out T? itemOne, out T? itemTwo ) {
-			if ( !this.TryPop( out itemOne ) ) {
-				itemTwo = default( T );
+			if ( ret?.Next is null ) {
 
+				//throw new IndexOutOfRangeException( "Stack is empty" );
 				return false;
 			}
+		} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
 
-			if ( !this.TryPop( out itemTwo ) ) {
-				this.Push( itemOne );
+		--this.Count;
+		result = ret.Item;
 
-				return false;
-			}
+		return !Equals( result, default( Object? ) );
+	}
 
-			return true;
+	/// <summary>Attempt two <see cref="TryPop" /></summary>
+	/// <param name="itemOne"></param>
+	/// <param name="itemTwo"></param>
+	public Boolean TryPopPop( out T? itemOne, out T? itemTwo ) {
+		if ( !this.TryPop( out itemOne ) ) {
+			itemTwo = default( T );
+
+			return false;
 		}
 
-		internal class Node {
+		if ( !this.TryPop( out itemTwo ) ) {
+			this.Push( itemOne );
 
-			internal T Item;
+			return false;
+		}
 
-			internal Node? Next;
+		return true;
+	}
 
-			public Node( T? item, Node? next = default ) {
-				this.Item = item;
-				this.Next = next;
-			}
+	internal class Node {
+
+		internal T Item;
+
+		internal Node? Next;
+
+		public Node( T? item, Node? next = default ) {
+			this.Item = item;
+			this.Next = next;
 		}
 	}
 }

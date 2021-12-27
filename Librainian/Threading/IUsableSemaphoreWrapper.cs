@@ -22,13 +22,12 @@
 //
 // File "IUsableSemaphoreWrapper.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
+using System;
 
-	/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
-	public interface IUsableSemaphoreWrapper : IDisposable {
+/// <summary>http://www.tomdupont.net/2016/03/how-to-release-semaphore-with-using.html</summary>
+public interface IUsableSemaphoreWrapper : IDisposable {
 
-		TimeSpan Elapsed { get; }
-	}
+	TimeSpan Elapsed { get; }
 }

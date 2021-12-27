@@ -25,25 +25,23 @@
 // 
 // File "IABetterClassDisposeAsync.cs" last touched on 2021-09-12 at 3:26 AM by Protiguous.
 
-namespace Librainian.Utilities.Disposables {
+namespace Librainian.Utilities.Disposables;
 
-	using System;
-	using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 
-	public interface IABetterClassDisposeAsync : IAsyncDisposable {
+public interface IABetterClassDisposeAsync : IAsyncDisposable {
 
-		Boolean HasDisposedManaged { get; set; }
+	Boolean HasDisposedManaged { get; set; }
 
-		Boolean HasDisposedNative { get; set; }
+	Boolean HasDisposedNative { get; set; }
 
-		Boolean HasSuppressedFinalize { get; set; }
+	Boolean HasSuppressedFinalize { get; set; }
 
-		Boolean IsDisposed { get; }
+	Boolean IsDisposed { get; }
 
-		ValueTask DisposeManagedAsync();
+	ValueTask DisposeManagedAsync();
 
-		ValueTask DisposeNativeAsync();
-
-	}
+	ValueTask DisposeNativeAsync();
 
 }

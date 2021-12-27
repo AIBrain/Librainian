@@ -22,42 +22,41 @@
 //
 // File "ISimpleWallet.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Financial.Currency {
+namespace Librainian.Financial.Currency;
 
-	using System;
+using System;
 
-	public interface ISimpleWallet {
+public interface ISimpleWallet {
 
-		Decimal Balance { get; }
+	Decimal Balance { get; }
 
-		Action<Decimal>? OnAfterDeposit { get; set; }
+	Action<Decimal>? OnAfterDeposit { get; set; }
 
-		Action<Decimal>? OnAfterWithdraw { get; set; }
+	Action<Decimal>? OnAfterWithdraw { get; set; }
 
-		Action<Decimal>? OnAnyUpdate { get; set; }
+	Action<Decimal>? OnAnyUpdate { get; set; }
 
-		Action<Decimal>? OnBeforeDeposit { get; set; }
+	Action<Decimal>? OnBeforeDeposit { get; set; }
 
-		Action<Decimal>? OnBeforeWithdraw { get; set; }
+	Action<Decimal>? OnBeforeWithdraw { get; set; }
 
-		/// <summary>Add any (+-)amount directly to the balance.</summary>
-		/// <param name="amount"></param>
-		Boolean TryAdd( Decimal amount );
+	/// <summary>Add any (+-)amount directly to the balance.</summary>
+	/// <param name="amount"></param>
+	Boolean TryAdd( Decimal amount );
 
-		Boolean TryAdd( SimpleWallet wallet );
+	Boolean TryAdd( SimpleWallet wallet );
 
-		/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
-		/// <param name="amount"></param>
-		Boolean TryDeposit( Decimal amount );
+	/// <summary>Attempt to deposit amount (larger than zero) to the <see cref="SimpleWallet.Balance" />.</summary>
+	/// <param name="amount"></param>
+	Boolean TryDeposit( Decimal amount );
 
-		Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet );
+	Boolean TryTransfer( Decimal amount, ref SimpleWallet intoWallet );
 
-		Boolean TryUpdateBalance( Decimal amount );
+	Boolean TryUpdateBalance( Decimal amount );
 
-		void TryUpdateBalance( SimpleWallet simpleWallet );
+	void TryUpdateBalance( SimpleWallet simpleWallet );
 
-		Boolean TryWithdraw( Decimal amount );
+	Boolean TryWithdraw( Decimal amount );
 
-		Boolean TryWithdraw( SimpleWallet wallet );
-	}
+	Boolean TryWithdraw( SimpleWallet wallet );
 }

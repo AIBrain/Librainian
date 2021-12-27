@@ -22,33 +22,32 @@
 //
 // File "Constants.cs" last formatted on 2020-08-14 at 8:38 PM.
 
-namespace Librainian.Measurement {
+namespace Librainian.Measurement;
 
-	using System;
-	using System.Numerics;
-	using JetBrains.Annotations;
-	using Rationals;
+using System;
+using System.Numerics;
+using JetBrains.Annotations;
+using Rationals;
 
-	public static class Constants {
+public static class Constants {
 
-		/// <summary>
-		///     <para>This value is too high. like really high.</para>
-		/// </summary>
-		[NotNull]
-		public const String ValueIsTooHigh = "this value is too high. like really high.";
+	/// <summary>
+	///     <para>This value is too high. like really high.</para>
+	/// </summary>
+	[NotNull]
+	public const String ValueIsTooHigh = "this value is too high. like really high.";
 
-		/// <summary>
-		///     <para>This value is too low. like really low.</para>
-		/// </summary>
-		[NotNull]
-		public const String ValueIsTooLow = "this value is too low. like really low.";
+	/// <summary>
+	///     <para>This value is too low. like really low.</para>
+	/// </summary>
+	[NotNull]
+	public const String ValueIsTooLow = "this value is too low. like really low.";
 
-		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MaxValue (79228162514264337593543950335M)</summary>
-		public static readonly BigInteger MaximumUsefulDecimal = new( Decimal.MaxValue );
+	/// <summary><see cref="BigInteger" /> copy of System.Decimal.MaxValue (79228162514264337593543950335M)</summary>
+	public static readonly BigInteger MaximumUsefulDecimal = new( Decimal.MaxValue );
 
-		/// <summary><see cref="BigInteger" /> copy of System.Decimal.MinValue (-79228162514264337593543950335M)</summary>
-		public static readonly BigInteger MinimumUsefulDecimal = new( Decimal.MinValue );
+	/// <summary><see cref="BigInteger" /> copy of System.Decimal.MinValue (-79228162514264337593543950335M)</summary>
+	public static readonly BigInteger MinimumUsefulDecimal = new( Decimal.MinValue );
 
-		public static readonly Rational OneOverTwo = new( 1, 2 ); //TODO overkill. But correct. lol.
-	}
+	public static readonly Rational OneOverTwo = new( 1, 2 ); //TODO overkill. But correct. lol.
 }

@@ -22,90 +22,89 @@
 //
 // File "Blocks.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using System.Threading.Tasks.Dataflow;
-	using Measurement.Time;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
+using Measurement.Time;
 
-	public static class Blocks {
+public static class Blocks {
 
-		public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
-			var lastItem = DateTime.MinValue;
+	public static IPropagatorBlock<T, T> CreateDelayBlock<T>( SpanOfTime delay ) {
+		var lastItem = DateTime.MinValue;
 
-			return new TransformBlock<T, T>( async x => {
-				var waitTime = lastItem + delay - DateTime.UtcNow;
+		return new TransformBlock<T, T>( async x => {
+			var waitTime = lastItem + delay - DateTime.UtcNow;
 
-				if ( waitTime > TimeSpan.Zero ) {
-					await Task.Delay( waitTime ).ConfigureAwait( false );
-				}
+			if ( waitTime > TimeSpan.Zero ) {
+				await Task.Delay( waitTime ).ConfigureAwait( false );
+			}
 
-				lastItem = DateTime.UtcNow;
+			lastItem = DateTime.UtcNow;
 
-				return x;
-			}, new ExecutionDataflowBlockOptions {
-				BoundedCapacity = 1
-			} );
-		}
+			return x;
+		}, new ExecutionDataflowBlockOptions {
+			BoundedCapacity = 1
+		} );
+	}
 
-		public static class ManyProducers {
+	public static class ManyProducers {
 
-			/// <summary>
-			///     Multiple producers consumed in smoothly ( <see cref="Environment.ProcessorCount" /> *
-			///     <see cref="Environment.ProcessorCount" /> ).
-			/// </summary>
-			public static ExecutionDataflowBlockOptions ConsumeEverything( CancellationToken? token ) =>
-				new() {
-					SingleProducerConstrained = false,
-					MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount,
-					EnsureOrdered = true,
-					CancellationToken = token ?? CancellationToken.None
-				};
+		/// <summary>
+		///     Multiple producers consumed in smoothly ( <see cref="Environment.ProcessorCount" /> *
+		///     <see cref="Environment.ProcessorCount" /> ).
+		/// </summary>
+		public static ExecutionDataflowBlockOptions ConsumeEverything( CancellationToken? token ) =>
+			new() {
+				SingleProducerConstrained = false,
+				MaxDegreeOfParallelism = Environment.ProcessorCount * Environment.ProcessorCount,
+				EnsureOrdered = true,
+				CancellationToken = token ?? CancellationToken.None
+			};
 
-			/// <summary>Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).</summary>
-			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
-				new() {
-					SingleProducerConstrained = false,
-					MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1,
-					EnsureOrdered = true,
-					CancellationToken = token ?? CancellationToken.None
-				};
+		/// <summary>Multiple producers consumed in smoothly (Environment.ProcessorCount - 1).</summary>
+		public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
+			new() {
+				SingleProducerConstrained = false,
+				MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1,
+				EnsureOrdered = true,
+				CancellationToken = token ?? CancellationToken.None
+			};
 
-			/// <summary>Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).</summary>
-			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
-				new() {
-					SingleProducerConstrained = false,
-					MaxDegreeOfParallelism = 1,
-					EnsureOrdered = true,
-					CancellationToken = token ?? CancellationToken.None
-				};
-		}
+		/// <summary>Multiple producers consumed in serial (MaxDegreeOfParallelism = 1).</summary>
+		public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
+			new() {
+				SingleProducerConstrained = false,
+				MaxDegreeOfParallelism = 1,
+				EnsureOrdered = true,
+				CancellationToken = token ?? CancellationToken.None
+			};
+	}
 
-		public static class SingleProducer {
+	public static class SingleProducer {
 
-			/// <summary>
-			///     <para>Single producer consumed in smoothly (Environment.ProcessorCount - 1).</para>
-			/// </summary>
-			public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
-				new() {
-					SingleProducerConstrained = false,
-					MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1,
-					EnsureOrdered = true,
-					CancellationToken = token ?? CancellationToken.None
-				};
+		/// <summary>
+		///     <para>Single producer consumed in smoothly (Environment.ProcessorCount - 1).</para>
+		/// </summary>
+		public static ExecutionDataflowBlockOptions ConsumeSensible( CancellationToken? token ) =>
+			new() {
+				SingleProducerConstrained = false,
+				MaxDegreeOfParallelism = Environment.ProcessorCount > 2 ? Environment.ProcessorCount - 2 : 1,
+				EnsureOrdered = true,
+				CancellationToken = token ?? CancellationToken.None
+			};
 
-			/// <summary>
-			///     <para>Single producer consumed in serial (one at a time).</para>
-			/// </summary>
-			public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
-				new() {
-					SingleProducerConstrained = true,
-					MaxDegreeOfParallelism = 1,
-					EnsureOrdered = true,
-					CancellationToken = token ?? CancellationToken.None
-				};
-		}
+		/// <summary>
+		///     <para>Single producer consumed in serial (one at a time).</para>
+		/// </summary>
+		public static ExecutionDataflowBlockOptions ConsumeSerial( CancellationToken? token ) =>
+			new() {
+				SingleProducerConstrained = true,
+				MaxDegreeOfParallelism = 1,
+				EnsureOrdered = true,
+				CancellationToken = token ?? CancellationToken.None
+			};
 	}
 }

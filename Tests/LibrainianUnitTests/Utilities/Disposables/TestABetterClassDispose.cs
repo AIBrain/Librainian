@@ -25,59 +25,57 @@
 // 
 // File "TestABetterClassDispose.cs" last touched on 2021-07-22 at 5:54 AM by Protiguous.
 
-namespace LibrainianUnitTests.Utilities.Disposables {
+namespace LibrainianUnitTests.Utilities.Disposables;
 
-	using System;
-	using System.Diagnostics.CodeAnalysis;
-	using Librainian;
-	using Librainian.Maths;
-	using Librainian.Utilities.Disposables;
-	using NUnit.Framework;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using Librainian;
+using Librainian.Maths;
+using Librainian.Utilities.Disposables;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class TestABetterClassDispose {
+[TestFixture]
+public class TestABetterClassDispose {
 
-		private static Int32 N => 65536 * 256;
+	private static Int32 N => 65536 * 256;
 
-		[Test]
-		public void TestDisposeMultipleTimesLongerLife() {
-			ForceGC();
-			foreach ( var i in 1.To( N ) ) {
-				using var testAbcd = new TestABCD( i );
-			}
-
-			ForceGC();
-			this.Nop();
+	[Test]
+	public void TestDisposeMultipleTimesLongerLife() {
+		ForceGC();
+		foreach ( var i in 1.To( N ) ) {
+			using var testAbcd = new TestABCD( i );
 		}
 
-		private static void ForceGC() => GC.Collect( 2, GCCollectionMode.Forced, true );
+		ForceGC();
+		this.Nop();
+	}
 
-		[Test]
-		public void TestDisposeMultipleTimesExplicitly() {
-			ForceGC();
-			foreach ( var i in 1.To( N ) )
-            {
-                using var testAbcd = new TestABCD( i );
-                testAbcd.DisposeManaged();
-            }
+	private static void ForceGC() => GC.Collect( 2, GCCollectionMode.Forced, true );
 
-			ForceGC();
-			this.Nop();
+	[Test]
+	public void TestDisposeMultipleTimesExplicitly() {
+		ForceGC();
+		foreach ( var i in 1.To( N ) )
+		{
+			using var testAbcd = new TestABCD( i );
+			testAbcd.DisposeManaged();
 		}
 
-		public class TestABCD : ABetterClassDispose {
+		ForceGC();
+		this.Nop();
+	}
 
-			private readonly Int32 _value;
+	public class TestABCD : ABetterClassDispose {
 
-			public TestABCD( Int32 val ) : base( nameof( TestABCD ) ) => this._value = val;
+		private readonly Int32 _value;
 
-			/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-			public override void DisposeManaged() {
-				if ( this._value % 1024 == 1024 ) {
-					Console.WriteLine( this._value );
-				}
+		public TestABCD( Int32 val ) : base( nameof( TestABCD ) ) => this._value = val;
+
+		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+		public override void DisposeManaged() {
+			if ( this._value % 1024 == 1024 ) {
+				Console.WriteLine( this._value );
 			}
-
 		}
 
 	}

@@ -22,12 +22,11 @@
 //
 // File "Today.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Time.FluentTime {
+namespace Librainian.Measurement.Time.FluentTime;
 
-	using System;
+using System;
 
-	public static class Today {
+public static class Today {
 
-		public static DateTime At( Int32 hour, Int32 minute = 0, Int32 second = 0 ) => AdjustableCurrentTime.Today.At( hour, minute, second );
-	}
+	public static DateTime At( Int32 hour, Int32 minute = 0, Int32 second = 0 ) => AdjustableCurrentTime.Today.At( hour, minute, second );
 }

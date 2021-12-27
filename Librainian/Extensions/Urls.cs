@@ -22,60 +22,59 @@
 //
 // File "Urls.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Net;
-	using System.Text;
-	using Exceptions;
+using System;
+using System.Net;
+using System.Text;
+using Exceptions;
 
-	public static class Urls {
+public static class Urls {
 
-		/// <summary>Check that a String is not null or empty</summary>
-		/// <param name="input">String to check</param>
-		/// <returns>Boolean</returns>
-		public static Boolean HasValue( this String? input ) => !String.IsNullOrEmpty( input );
+	/// <summary>Check that a String is not null or empty</summary>
+	/// <param name="input">String to check</param>
+	/// <returns>Boolean</returns>
+	public static Boolean HasValue( this String? input ) => !String.IsNullOrEmpty( input );
 
-		public static String? HtmlDecode( this String? input ) => WebUtility.HtmlDecode( input );
+	public static String? HtmlDecode( this String? input ) => WebUtility.HtmlDecode( input );
 
-		public static String HtmlEncode( this String input ) => WebUtility.HtmlEncode( input );
+	public static String HtmlEncode( this String input ) => WebUtility.HtmlEncode( input );
 
-		public static Boolean IsNameOnlyQueryString( this String? res ) => !String.IsNullOrEmpty( res ) && res[0] == '?';
+	public static Boolean IsNameOnlyQueryString( this String? res ) => !String.IsNullOrEmpty( res ) && res[0] == '?';
 
-		public static Uri UrlDecode( this String input ) {
-			if ( String.IsNullOrWhiteSpace( input ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
-			}
-
-			return new Uri( WebUtility.UrlDecode( input ) );
+	public static Uri UrlDecode( this String input ) {
+		if ( String.IsNullOrWhiteSpace( input ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( input ) );
 		}
 
-		/// <summary>
-		///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
-		///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
-		/// </summary>
-		public static Uri UrlEncode( this String input ) {
-			if ( input is null ) {
-				throw new ArgumentEmptyException( nameof( input ) );
-			}
+		return new Uri( WebUtility.UrlDecode( input ) );
+	}
 
-			const Int32 maxLength = 32766;
-
-			if ( input.Length <= maxLength ) {
-				return new Uri( Uri.EscapeDataString( input ) );
-			}
-
-			var sb = new StringBuilder( input.Length * 2 );
-			var index = 0;
-
-			while ( index < input.Length ) {
-				var length = Math.Min( input.Length - index, maxLength );
-				var subString = input.Substring( index, length );
-				sb.Append( Uri.EscapeDataString( subString ) );
-				index += subString.Length;
-			}
-
-			return new Uri( sb.ToString() );
+	/// <summary>
+	///     Uses Uri.EscapeDataString() based on recommendations on MSDN http:
+	///     //blogs.msdn.com/b/yangxind/archive/2006/11/09/don-t-use-net-system-uri-unescapedatastring-in-url-decoding.aspx
+	/// </summary>
+	public static Uri UrlEncode( this String input ) {
+		if ( input is null ) {
+			throw new ArgumentEmptyException( nameof( input ) );
 		}
+
+		const Int32 maxLength = 32766;
+
+		if ( input.Length <= maxLength ) {
+			return new Uri( Uri.EscapeDataString( input ) );
+		}
+
+		var sb = new StringBuilder( input.Length * 2 );
+		var index = 0;
+
+		while ( index < input.Length ) {
+			var length = Math.Min( input.Length - index, maxLength );
+			var subString = input.Substring( index, length );
+			sb.Append( Uri.EscapeDataString( subString ) );
+			index += subString.Length;
+		}
+
+		return new Uri( sb.ToString() );
 	}
 }

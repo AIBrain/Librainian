@@ -25,29 +25,28 @@
 //
 // File "IStartable.cs" last touched on 2021-08-02 at 5:00 PM by Protiguous.
 
-namespace Librainian.Interfaces {
+namespace Librainian.Interfaces;
 
-	using System.Threading;
-	using System.Threading.Tasks;
+using System.Threading;
+using System.Threading.Tasks;
 
-	/*
-	public interface IInitializable {
-		internal ValueTask<Status> Initialize( CancellationToken cancellationToken );
+/*
+public interface IInitializable {
+	internal ValueTask<Status> Initialize( CancellationToken cancellationToken );
 
-		Boolean IsInitialized();
+	Boolean IsInitialized();
 
-		public void ThrowIfNotInitialized( String parameter ) {
-			if ( !this.IsInitialized() ) {
-				throw new NotInitializedException( parameter );
-			}
+	public void ThrowIfNotInitialized( String parameter ) {
+		if ( !this.IsInitialized() ) {
+			throw new NotInitializedException( parameter );
 		}
 	}
-	*/
+}
+*/
 
-	public interface IStartable {
+public interface IStartable {
 
-		ValueTask<Status> StartAsync( CancellationToken cancellationToken );
+	ValueTask<Status> StartAsync( CancellationToken cancellationToken );
 
-		ValueTask<Status> StopAsync( CancellationToken cancellationToken );
-	}
+	ValueTask<Status> StopAsync( CancellationToken cancellationToken );
 }

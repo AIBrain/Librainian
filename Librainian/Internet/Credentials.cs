@@ -22,155 +22,154 @@
 //
 // File "Credentials.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Diagnostics;
-	using Exceptions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
-	using Parsing;
+using System;
+using System.Diagnostics;
+using Exceptions;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+using Parsing;
 
-	/// <summary>Simple container for a <see cref="Username" /> and <see cref="Password" />.</summary>
-	[JsonObject]
-	public class Credentials {
+/// <summary>Simple container for a <see cref="Username" /> and <see cref="Password" />.</summary>
+[JsonObject]
+public class Credentials {
 
-		private String? _password;
+	private String? _password;
 
-		private String? _username;
+	private String? _username;
 
-		/// <summary>Alias for <see cref="Username" />.</summary>
-		[JsonIgnore]
-		public String? Name {
-			[CanBeNull]
-			get => this.Username;
+	/// <summary>Alias for <see cref="Username" />.</summary>
+	[JsonIgnore]
+	public String? Name {
+		[CanBeNull]
+		get => this.Username;
 
-			set => this.Username = value;
+		set => this.Username = value;
+	}
+
+	/// <summary>Alias for <see cref="Password" />.</summary>
+	[JsonIgnore]
+	public String? Pass {
+		[CanBeNull]
+		get => this.Password;
+
+		set => this.Password = value;
+	}
+
+	/// <summary>Alias for <see cref="Password" />.</summary>
+	[JsonIgnore]
+	public String? Passcode {
+		[CanBeNull]
+		get => this.Password;
+
+		set => this.Password = value;
+	}
+
+	/// <summary>Alias for <see cref="Password" />.</summary>
+	[JsonIgnore]
+	public String? PassCode {
+		[CanBeNull]
+		get => this.Password;
+
+		set => this.Password = value;
+	}
+
+	/// <summary>The password property.</summary>
+	public String? Password {
+		get => this._password;
+		set => this._password = value.Trimmed();
+	}
+
+	/// <summary>Alias for <see cref="Password" />.</summary>
+	[JsonIgnore]
+	public String? PassWord {
+		[CanBeNull]
+		get => this.Password;
+
+		set => this.Password = value;
+	}
+
+	/// <summary>Alias for <see cref="Username" />.</summary>
+	[JsonIgnore]
+	public String? User {
+		[CanBeNull]
+		get => this.Username;
+
+		set => this.Username = value;
+	}
+
+	/// <summary>Alias for <see cref="Username" />.</summary>
+	[JsonIgnore]
+	public String? Userid {
+		[CanBeNull]
+		get => this.Username;
+
+		set => this.Username = value;
+	}
+
+	/// <summary>Alias for <see cref="Username" />.</summary>
+	[JsonIgnore]
+	public String? UserId {
+		[CanBeNull]
+		get => this.Username;
+
+		set => this.Username = value;
+	}
+
+	/// <summary>Alias for <see cref="Username" />.</summary>
+	[JsonIgnore]
+	public String? UserID {
+		[CanBeNull]
+		get => this.Username;
+
+		set => this.Username = value;
+	}
+
+	/// <summary>The *real* Username instance.</summary>
+	public String? Username {
+		get => this._username;
+		set => this._username = value.Trimmed();
+	}
+
+	/// <summary>Alias for <see cref="Username" />.</summary>
+	[JsonIgnore]
+	public String? UserName {
+		[CanBeNull]
+		get => this.Username;
+
+		set => this.Username = value;
+	}
+
+	/// <summary>
+	///     Populates a <see cref="Credentials" /> object with the given <paramref name="username" /> and
+	///     <paramref name="password" />.
+	///     <para>Call <see cref="Validate" /> to confirm <see cref="Username" /> and <see cref="Password" /> are set.</para>
+	/// </summary>
+	/// <param name="username">Accepts Base64 encoded strings.</param>
+	/// <param name="password">Accepts Base64 encoded strings.</param>
+	public Credentials( String username, String password ) {
+		if ( String.IsNullOrWhiteSpace( username ) ) {
+			throw new ArgumentEmptyException( nameof( username ) );
 		}
 
-		/// <summary>Alias for <see cref="Password" />.</summary>
-		[JsonIgnore]
-		public String? Pass {
-			[CanBeNull]
-			get => this.Password;
-
-			set => this.Password = value;
+		if ( String.IsNullOrWhiteSpace( password ) ) {
+			throw new ArgumentEmptyException( nameof( password ) );
 		}
 
-		/// <summary>Alias for <see cref="Password" />.</summary>
-		[JsonIgnore]
-		public String? Passcode {
-			[CanBeNull]
-			get => this.Password;
+		this.Username = username.EndsWith( "=" ) ? username.FromBase64() : username;
+		this.Password = password.EndsWith( "=" ) ? password.FromBase64() : password;
+	}
 
-			set => this.Password = value;
+	public override String ToString() => $"{this.Username ?? Symbols.Null} : {this.Password ?? Symbols.Null}";
+
+	/// <summary>Ensure <see cref="Username" /> and <see cref="Password" /> are not null, empty, or whitespace.</summary>
+	[DebuggerStepThrough]
+	public Status Validate() {
+		if ( String.IsNullOrWhiteSpace( this.Username ) || String.IsNullOrWhiteSpace( this.Password ) ) {
+			return Status.Failure;
 		}
 
-		/// <summary>Alias for <see cref="Password" />.</summary>
-		[JsonIgnore]
-		public String? PassCode {
-			[CanBeNull]
-			get => this.Password;
-
-			set => this.Password = value;
-		}
-
-		/// <summary>The password property.</summary>
-		public String? Password {
-			get => this._password;
-			set => this._password = value.Trimmed();
-		}
-
-		/// <summary>Alias for <see cref="Password" />.</summary>
-		[JsonIgnore]
-		public String? PassWord {
-			[CanBeNull]
-			get => this.Password;
-
-			set => this.Password = value;
-		}
-
-		/// <summary>Alias for <see cref="Username" />.</summary>
-		[JsonIgnore]
-		public String? User {
-			[CanBeNull]
-			get => this.Username;
-
-			set => this.Username = value;
-		}
-
-		/// <summary>Alias for <see cref="Username" />.</summary>
-		[JsonIgnore]
-		public String? Userid {
-			[CanBeNull]
-			get => this.Username;
-
-			set => this.Username = value;
-		}
-
-		/// <summary>Alias for <see cref="Username" />.</summary>
-		[JsonIgnore]
-		public String? UserId {
-			[CanBeNull]
-			get => this.Username;
-
-			set => this.Username = value;
-		}
-
-		/// <summary>Alias for <see cref="Username" />.</summary>
-		[JsonIgnore]
-		public String? UserID {
-			[CanBeNull]
-			get => this.Username;
-
-			set => this.Username = value;
-		}
-
-		/// <summary>The *real* Username instance.</summary>
-		public String? Username {
-			get => this._username;
-			set => this._username = value.Trimmed();
-		}
-
-		/// <summary>Alias for <see cref="Username" />.</summary>
-		[JsonIgnore]
-		public String? UserName {
-			[CanBeNull]
-			get => this.Username;
-
-			set => this.Username = value;
-		}
-
-		/// <summary>
-		///     Populates a <see cref="Credentials" /> object with the given <paramref name="username" /> and
-		///     <paramref name="password" />.
-		///     <para>Call <see cref="Validate" /> to confirm <see cref="Username" /> and <see cref="Password" /> are set.</para>
-		/// </summary>
-		/// <param name="username">Accepts Base64 encoded strings.</param>
-		/// <param name="password">Accepts Base64 encoded strings.</param>
-		public Credentials( String username, String password ) {
-			if ( String.IsNullOrWhiteSpace( username ) ) {
-				throw new ArgumentEmptyException( nameof( username ) );
-			}
-
-			if ( String.IsNullOrWhiteSpace( password ) ) {
-				throw new ArgumentEmptyException( nameof( password ) );
-			}
-
-			this.Username = username.EndsWith( "=" ) ? username.FromBase64() : username;
-			this.Password = password.EndsWith( "=" ) ? password.FromBase64() : password;
-		}
-
-		public override String ToString() => $"{this.Username ?? Symbols.Null} : {this.Password ?? Symbols.Null}";
-
-		/// <summary>Ensure <see cref="Username" /> and <see cref="Password" /> are not null, empty, or whitespace.</summary>
-		[DebuggerStepThrough]
-		public Status Validate() {
-			if ( String.IsNullOrWhiteSpace( this.Username ) || String.IsNullOrWhiteSpace( this.Password ) ) {
-				return Status.Failure;
-			}
-
-			return Status.Success;
-		}
+		return Status.Success;
 	}
 }

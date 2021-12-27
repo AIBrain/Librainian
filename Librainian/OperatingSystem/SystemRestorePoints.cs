@@ -22,24 +22,23 @@
 //
 // File "SystemRestorePoints.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.OperatingSystem {
+namespace Librainian.OperatingSystem;
 
-	using System;
-	using Microsoft.VisualBasic;
+using System;
+using Microsoft.VisualBasic;
 
-	public static class SystemRestorePoints {
+public static class SystemRestorePoints {
 
-		/// <summary>Untested.</summary>
-		/// <param name="title"></param>
-		public static Boolean CreateRestorePoint( String title = null ) {
-			if ( String.IsNullOrWhiteSpace( title ) ) {
-				var now = DateTime.Now;
-				title = "Restore point at " + now.ToLongDateString() + " " + now.ToLongTimeString();
-			}
-
-			dynamic restorePoint = Interaction.GetObject( "winmgmts:\\\\.\\root\\default:Systemrestore" );
-
-			return restorePoint?.CreateRestorePoint( title, 0, 100 ) == 0;
+	/// <summary>Untested.</summary>
+	/// <param name="title"></param>
+	public static Boolean CreateRestorePoint( String title = null ) {
+		if ( String.IsNullOrWhiteSpace( title ) ) {
+			var now = DateTime.Now;
+			title = "Restore point at " + now.ToLongDateString() + " " + now.ToLongTimeString();
 		}
+
+		dynamic restorePoint = Interaction.GetObject( "winmgmts:\\\\.\\root\\default:Systemrestore" );
+
+		return restorePoint?.CreateRestorePoint( title, 0, 100 ) == 0;
 	}
 }

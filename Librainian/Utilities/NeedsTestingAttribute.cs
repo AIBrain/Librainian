@@ -25,14 +25,12 @@
 // 
 // File "NeedsTestingAttribute.cs" last touched on 2021-06-18 at 5:38 PM by Protiguous.
 
-namespace Librainian.Utilities {
+namespace Librainian.Utilities;
 
-	using System;
+using System;
 
-	/// <summary>
-	///     Mark that this class needs testing and unit testing to confirm it works as expected.
-	/// </summary>
-	[AttributeUsage( AttributeTargets.All )]
-	public class NeedsTestingAttribute : Attribute { }
-
-}
+/// <summary>
+///     Mark that this class needs testing and unit testing to confirm it works as expected.
+/// </summary>
+[AttributeUsage( AttributeTargets.All )]
+public class NeedsTestingAttribute : Attribute { }

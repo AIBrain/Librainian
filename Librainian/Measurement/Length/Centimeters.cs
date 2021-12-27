@@ -25,32 +25,31 @@
 //
 // File "Centimeters.cs" last touched on 2021-07-31 at 7:38 AM by Protiguous.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
-	using ExtendedNumerics;
-	using Newtonsoft.Json;
+using System;
+using ExtendedNumerics;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public record Centimeters( BigDecimal Value ) {
-		public const Decimal PerInch = 2.54m;
+[JsonObject]
+public record Centimeters( BigDecimal Value ) {
+	public const Decimal PerInch = 2.54m;
 
-		/// <summary>One <see cref="Centimeters" /> .</summary>
-		public static readonly Centimeters One = new( 1 );
+	/// <summary>One <see cref="Centimeters" /> .</summary>
+	public static readonly Centimeters One = new( 1 );
 
-		/// <summary>Two <see cref="Centimeters" /> .</summary>
-		public static readonly Centimeters Two = new( 2 );
+	/// <summary>Two <see cref="Centimeters" /> .</summary>
+	public static readonly Centimeters Two = new( 2 );
 
-		//public Centimeters( Millimeters millimeters ) {
-		//    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+	//public Centimeters( Millimeters millimeters ) {
+	//    var val = millimeters.Value / Extensions.MillimetersInSingleCentimeter;
+	//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+	//}
 
-		//public Centimeters( Meters meters ) {
-		//    var val = meters.Value / Extensions.CentimetersinSingleMeter;
-		//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
-		//}
+	//public Centimeters( Meters meters ) {
+	//    var val = meters.Value / Extensions.CentimetersinSingleMeter;
+	//    this.Value = val < MinValue.Value ? MinValue.Value : ( val > MaxValue.Value ? MaxValue.Value : val );
+	//}
 
-		//public override Int32 GetHashCode() => this.Value.GetHashCode();
-	}
+	//public override Int32 GetHashCode() => this.Value.GetHashCode();
 }

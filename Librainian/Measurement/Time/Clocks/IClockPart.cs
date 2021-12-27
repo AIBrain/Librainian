@@ -22,7 +22,6 @@
 //
 // File "IClockPart.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks; 
 
-	public interface IClockPart { }
-}
+public interface IClockPart { }

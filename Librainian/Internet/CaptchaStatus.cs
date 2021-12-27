@@ -25,38 +25,37 @@
 //
 // File "CaptchaStatus.cs" last formatted on 2021-03-05 at 1:21 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet; 
 
-	public enum CaptchaStatus {
+public enum CaptchaStatus {
 
-		Untried = 0,
+	Untried = 0,
 
-		SearchingForChallenge,
+	SearchingForChallenge,
 
-		ChallengeNotFound,
+	ChallengeNotFound,
 
-		ChallengeFound,
+	ChallengeFound,
 
-		LoadingImage,
+	LoadingImage,
 
-		ErrorLoadingImage,
+	ErrorLoadingImage,
 
-		LoadedImage,
+	LoadedImage,
 
-		SolvingImage,
+	SolvingImage,
 
-		SolvedImage,
+	SolvedImage,
 
-		ChallengeNotSolved,
+	ChallengeNotSolved,
 
-		SolvedChallenge,
+	SolvedChallenge,
 
-		NoImageFound,
+	NoImageFound,
 
-		NoImageFoundToBeSolved,
+	NoImageFoundToBeSolved,
 
-		ChallengeStillNotSolved,
+	ChallengeStillNotSolved,
 
-		NoChallengesFound
-	}
+	NoChallengesFound
 }

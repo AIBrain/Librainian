@@ -24,66 +24,65 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Diagnostics;
-	using Maths;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Maths;
+using Newtonsoft.Json;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public record DocumentCopyStatistics {
-		[JsonProperty]
-		public UInt64 BytesCopied { get; set; }
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[JsonObject]
+public record DocumentCopyStatistics {
+	[JsonProperty]
+	public UInt64 BytesCopied { get; set; }
 
-		[JsonProperty]
-		public IDocument? DestinationDocument { get; set; }
+	[JsonProperty]
+	public IDocument? DestinationDocument { get; set; }
 
-		[JsonProperty]
-		public String? DestinationDocumentCRC64 { get; set; }
+	[JsonProperty]
+	public String? DestinationDocumentCRC64 { get; set; }
 
-		[JsonProperty]
-		public IDocument? SourceDocument { get; set; }
+	[JsonProperty]
+	public IDocument? SourceDocument { get; set; }
 
-		[JsonProperty]
-		public String? SourceDocumentCRC64 { get; set; }
+	[JsonProperty]
+	public String? SourceDocumentCRC64 { get; set; }
 
-		[JsonProperty]
-		public DateTime TimeStarted { get; set; }
+	[JsonProperty]
+	public DateTime TimeStarted { get; set; }
 
-		[JsonProperty]
-		public TimeSpan TimeTaken { get; set; }
+	[JsonProperty]
+	public TimeSpan TimeTaken { get; set; }
 
-		public Double BytesPerMillisecond() {
-			if ( Math.Abs( this.TimeTaken.TotalMilliseconds ) < Double.Epsilon ) {
-				return 0;
-			}
-
-			return this.BytesCopied / this.TimeTaken.TotalMilliseconds;
+	public Double BytesPerMillisecond() {
+		if ( Math.Abs( this.TimeTaken.TotalMilliseconds ) < Double.Epsilon ) {
+			return 0;
 		}
 
-		public Double MegabytesPerSecond() {
-			if ( Math.Abs( this.TimeTaken.TotalSeconds ) < Double.Epsilon ) {
-				return 0;
-			}
-
-			var mb = this.BytesCopied / ( Double )MathConstants.Sizes.OneMegaByte;
-
-			return mb / this.TimeTaken.TotalSeconds;
-		}
-
-		public Double MillisecondsPerByte() {
-			if ( this.BytesCopied <= 0 ) {
-				return 0;
-			}
-
-			return this.TimeTaken.TotalMilliseconds / this.BytesCopied;
-		}
-
-		/// <summary>Returns a string that represents the current object.</summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() =>
-			$"{this.SourceDocument?.FileName} copied to {this.DestinationDocument?.ContainingingFolder().FullPath} @ {this.MegabytesPerSecond()}MB/s";
+		return this.BytesCopied / this.TimeTaken.TotalMilliseconds;
 	}
+
+	public Double MegabytesPerSecond() {
+		if ( Math.Abs( this.TimeTaken.TotalSeconds ) < Double.Epsilon ) {
+			return 0;
+		}
+
+		var mb = this.BytesCopied / ( Double )MathConstants.Sizes.OneMegaByte;
+
+		return mb / this.TimeTaken.TotalSeconds;
+	}
+
+	public Double MillisecondsPerByte() {
+		if ( this.BytesCopied <= 0 ) {
+			return 0;
+		}
+
+		return this.TimeTaken.TotalMilliseconds / this.BytesCopied;
+	}
+
+	/// <summary>Returns a string that represents the current object.</summary>
+	/// <returns>A string that represents the current object.</returns>
+	public override String ToString() =>
+		$"{this.SourceDocument?.FileName} copied to {this.DestinationDocument?.ContainingingFolder().FullPath} @ {this.MegabytesPerSecond()}MB/s";
 }

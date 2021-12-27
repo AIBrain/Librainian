@@ -27,50 +27,49 @@
 
 #nullable enable
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using System.Diagnostics;
-	using System.Runtime.CompilerServices;
-	using Exceptions;
-	using JetBrains.Annotations;
+using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using Exceptions;
+using JetBrains.Annotations;
 
-	public interface IQuantityOfTime {
+public interface IQuantityOfTime {
 
-		[DebuggerStepThrough]
-		public Int32 CompareTo( IQuantityOfTime other ) {
-			if ( other is null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
+	[DebuggerStepThrough]
+	public Int32 CompareTo( IQuantityOfTime other ) {
+		if ( other is null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		/// <summary>
-		///     Example: Seconds to Minutes.
-		/// </summary>
-		[DebuggerStepThrough]
-		[Pure]
-		IQuantityOfTime ToCoarserGranularity();
-
-		/// <summary>
-		///     Example: Hours to Minutes.
-		/// </summary>
-		[DebuggerStepThrough]
-		[Pure]
-		IQuantityOfTime ToFinerGranularity();
-
-		[DebuggerStepThrough]
-		[Pure]
-		PlanckTimes ToPlanckTimes();
-
-		[DebuggerStepThrough]
-		[Pure]
-		Seconds ToSeconds();
-
-		[DebuggerStepThrough]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		[Pure]
-		TimeSpan ToTimeSpan();
+		return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
 	}
+
+	/// <summary>
+	///     Example: Seconds to Minutes.
+	/// </summary>
+	[DebuggerStepThrough]
+	[Pure]
+	IQuantityOfTime ToCoarserGranularity();
+
+	/// <summary>
+	///     Example: Hours to Minutes.
+	/// </summary>
+	[DebuggerStepThrough]
+	[Pure]
+	IQuantityOfTime ToFinerGranularity();
+
+	[DebuggerStepThrough]
+	[Pure]
+	PlanckTimes ToPlanckTimes();
+
+	[DebuggerStepThrough]
+	[Pure]
+	Seconds ToSeconds();
+
+	[DebuggerStepThrough]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	[Pure]
+	TimeSpan ToTimeSpan();
 }

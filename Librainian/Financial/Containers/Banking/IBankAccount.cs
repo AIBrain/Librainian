@@ -22,7 +22,6 @@
 //
 // File "IBankAccount.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Banking {
+namespace Librainian.Financial.Containers.Banking; 
 
-	public interface IBankAccount { }
-}
+public interface IBankAccount { }

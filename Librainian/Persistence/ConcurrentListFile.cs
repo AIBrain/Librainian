@@ -25,106 +25,105 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence;
 
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Collections.Lists;
-	using Exceptions;
-	using FileSystem;
-	using Logging;
-	using Maths.Numbers;
-	using Newtonsoft.Json;
-	using PooledAwait;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Collections.Lists;
+using Exceptions;
+using FileSystem;
+using Logging;
+using Maths.Numbers;
+using Newtonsoft.Json;
+using PooledAwait;
 
-	/// <summary>Persist a list to and from a JSON formatted text document.</summary>
-	[JsonObject]
-	public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
+/// <summary>Persist a list to and from a JSON formatted text document.</summary>
+[JsonObject]
+public class ConcurrentListFile<TValue> : ConcurrentList<TValue> {
 
-		/// <summary>disallow constructor without a document/filename</summary>
+	/// <summary>disallow constructor without a document/filename</summary>
 		
-		[JsonProperty]
-		public Document Document { get; set; }
+	[JsonProperty]
+	public Document Document { get; set; }
 
-		private ConcurrentListFile() => throw new NotImplementedException();
+	private ConcurrentListFile() => throw new NotImplementedException();
 
-		/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
-		/// <param name="document"></param>
-		public ConcurrentListFile( Document document ) {
-			if ( document is null ) {
-				throw new ArgumentEmptyException( nameof( document ) );
-			}
-
-			document.ContainingingFolder().Info.Create();
-
-			this.Document = document ?? throw new ArgumentEmptyException( nameof( document ) );
-			this.Read().Wait(); //TODO I don't like this Wait being here.
+	/// <summary>Persist a dictionary to and from a JSON formatted text document.</summary>
+	/// <param name="document"></param>
+	public ConcurrentListFile( Document document ) {
+		if ( document is null ) {
+			throw new ArgumentEmptyException( nameof( document ) );
 		}
 
-		/// <summary>
-		///     Persist a dictionary to and from a JSON formatted text document.
-		///     <para>Defaults to user\appdata\Local\productname\filename</para>
-		/// </summary>
-		/// <param name="filename"></param>
-		public ConcurrentListFile( String filename ) : this( new Document( filename ) ) { }
+		document.ContainingingFolder().Info.Create();
 
-		public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
-			if ( await this.Document.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
-				return false;
-			}
+		this.Document = document ?? throw new ArgumentEmptyException( nameof( document ) );
+		this.Read().Wait(); //TODO I don't like this Wait being here.
+	}
 
-			try {
-				var progress = new Progress<ZeroToOne>( pro => { } );
-				(var status, var data) = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken ).ConfigureAwait( false );
+	/// <summary>
+	///     Persist a dictionary to and from a JSON formatted text document.
+	///     <para>Defaults to user\appdata\Local\productname\filename</para>
+	/// </summary>
+	/// <param name="filename"></param>
+	public ConcurrentListFile( String filename ) : this( new Document( filename ) ) { }
 
-				if ( status.IsGood() ) {
-					await this.AddRangeAsync( data, cancellationToken ).ConfigureAwait( false );
-
-					return true;
-				}
-			}
-			catch ( JsonException exception ) {
-				exception.Log();
-			}
-			catch ( IOException exception ) {
-
-				//file in use by another app
-				exception.Log();
-			}
-			catch ( OutOfMemoryException exception ) {
-
-				//file is huge
-				exception.Log();
-			}
-
+	public async Task<Boolean> Read( CancellationToken cancellationToken = default ) {
+		if ( await this.Document.Exists( cancellationToken ).ConfigureAwait( false ) == false ) {
 			return false;
 		}
 
-		/// <summary>Returns a string that represents the current object.</summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() => $"{this.Count} items";
+		try {
+			var progress = new Progress<ZeroToOne>( pro => { } );
+			(var status, var data) = await this.Document.LoadJSON<IEnumerable<TValue>>( progress, cancellationToken ).ConfigureAwait( false );
 
-		/// <summary>Saves the data to the <see cref="Document" />.</summary>
-		public async PooledValueTask<Boolean> Write() {
-			var document = this.Document;
+			if ( status.IsGood() ) {
+				await this.AddRangeAsync( data, cancellationToken ).ConfigureAwait( false );
 
-			if ( document.ContainingingFolder().Info.Exists == false ) {
-				document.ContainingingFolder().Info.Create();
+				return true;
 			}
-
-			if ( await document.Exists( CancellationToken.None ).ConfigureAwait( false ) ) {
-				await document.Delete( CancellationToken.None ).ConfigureAwait( false );
-			}
-
-			var json = this.ToJSON( Formatting.Indented );
-			if ( json != null ) {
-				await document.AppendText( json, CancellationToken.None ).ConfigureAwait( false );
-			}
-
-			return true;
 		}
+		catch ( JsonException exception ) {
+			exception.Log();
+		}
+		catch ( IOException exception ) {
+
+			//file in use by another app
+			exception.Log();
+		}
+		catch ( OutOfMemoryException exception ) {
+
+			//file is huge
+			exception.Log();
+		}
+
+		return false;
+	}
+
+	/// <summary>Returns a string that represents the current object.</summary>
+	/// <returns>A string that represents the current object.</returns>
+	public override String ToString() => $"{this.Count} items";
+
+	/// <summary>Saves the data to the <see cref="Document" />.</summary>
+	public async PooledValueTask<Boolean> Write() {
+		var document = this.Document;
+
+		if ( document.ContainingingFolder().Info.Exists == false ) {
+			document.ContainingingFolder().Info.Create();
+		}
+
+		if ( await document.Exists( CancellationToken.None ).ConfigureAwait( false ) ) {
+			await document.Delete( CancellationToken.None ).ConfigureAwait( false );
+		}
+
+		var json = this.ToJSON( Formatting.Indented );
+		if ( json != null ) {
+			await document.AppendText( json, CancellationToken.None ).ConfigureAwait( false );
+		}
+
+		return true;
 	}
 }

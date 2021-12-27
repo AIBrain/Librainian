@@ -22,74 +22,73 @@
 //
 // File "BigInt.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Text;
-	using Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Extensions;
 
-	/// <summary>http://codereview.stackexchange.com/a/99085/26303</summary>
-	[Immutable]
-	public class BigInt {
+/// <summary>http://codereview.stackexchange.com/a/99085/26303</summary>
+[Immutable]
+public class BigInt {
 
-		public List<Int32> Integer { get; }
+	public List<Int32> Integer { get; }
 
-		public BigInt( String number ) => this.Integer = CalculateBigInteger( number );
+	public BigInt( String number ) => this.Integer = CalculateBigInteger( number );
 
-		public BigInt( List<Int32>? list ) => this.Integer = list;
+	public BigInt( List<Int32>? list ) => this.Integer = list;
 
-		private static List<Int32> CalculateBigInteger( String number ) => number.Reverse().Select( chararcter => Int32.Parse( chararcter.ToString() ) ).ToList();
+	private static List<Int32> CalculateBigInteger( String number ) => number.Reverse().Select( chararcter => Int32.Parse( chararcter.ToString() ) ).ToList();
 
-		private static Int32 NumberAdd( Int32 value1, Int32 value2, ref Int32 carryOver ) {
-			var addResult = value1 + value2 + carryOver;
-			carryOver = addResult / 10;
-			var addValue = addResult % 10;
+	private static Int32 NumberAdd( Int32 value1, Int32 value2, ref Int32 carryOver ) {
+		var addResult = value1 + value2 + carryOver;
+		carryOver = addResult / 10;
+		var addValue = addResult % 10;
 
-			return addValue;
+		return addValue;
+	}
+
+	public static BigInt Add( BigInt int1, BigInt int2 ) {
+		var result = new List<Int32>();
+
+		var carryOver = 0;
+
+		using IEnumerator<Int32> enumerator1 = int1.Integer.GetEnumerator();
+		using IEnumerator<Int32> enumerator2 = int2.Integer.GetEnumerator();
+
+		enumerator1.MoveNext();
+		enumerator2.MoveNext();
+
+		var hasNext1 = true;
+		var hasNext2 = true;
+
+		while ( hasNext1 || hasNext2 ) {
+			var value = NumberAdd( enumerator1.Current, enumerator2.Current, ref carryOver );
+			result.Add( value );
+
+			hasNext1 = enumerator1.MoveNext();
+			hasNext2 = enumerator2.MoveNext();
 		}
 
-		public static BigInt Add( BigInt int1, BigInt int2 ) {
-			var result = new List<Int32>();
-
-			var carryOver = 0;
-
-			using IEnumerator<Int32> enumerator1 = int1.Integer.GetEnumerator();
-			using IEnumerator<Int32> enumerator2 = int2.Integer.GetEnumerator();
-
-			enumerator1.MoveNext();
-			enumerator2.MoveNext();
-
-			var hasNext1 = true;
-			var hasNext2 = true;
-
-			while ( hasNext1 || hasNext2 ) {
-				var value = NumberAdd( enumerator1.Current, enumerator2.Current, ref carryOver );
-				result.Add( value );
-
-				hasNext1 = enumerator1.MoveNext();
-				hasNext2 = enumerator2.MoveNext();
-			}
-
-			if ( carryOver != 0 ) {
-				result.Add( carryOver );
-			}
-
-			return new BigInt( result );
+		if ( carryOver != 0 ) {
+			result.Add( carryOver );
 		}
 
-		public override String ToString() {
-			var sb = new StringBuilder();
+		return new BigInt( result );
+	}
 
-			foreach ( var number in this.Integer ) {
-				sb.Append( number.ToString() );
-			}
+	public override String ToString() {
+		var sb = new StringBuilder();
 
-			var reverseString = sb.ToString().ToCharArray();
-			Array.Reverse( reverseString );
-
-			return new String( reverseString );
+		foreach ( var number in this.Integer ) {
+			sb.Append( number.ToString() );
 		}
+
+		var reverseString = sb.ToString().ToCharArray();
+		Array.Reverse( reverseString );
+
+		return new String( reverseString );
 	}
 }

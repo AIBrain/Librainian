@@ -22,68 +22,67 @@
 //
 // File "GCNotification.cs" last formatted on 2020-08-14 at 8:46 PM.
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Threading;
+using System;
+using System.Threading;
 
-	/// <summary>From http://www.wintellect.com/cs/blogs/jeffreyr/default.aspx</summary>
-	public static class GcNotification {
+/// <summary>From http://www.wintellect.com/cs/blogs/jeffreyr/default.aspx</summary>
+public static class GcNotification {
 
-		private static Action<Int32>? _sGcDone;
+	private static Action<Int32>? _sGcDone;
 
-		public static event Action<Int32> GcDone {
-			add {
+	public static event Action<Int32> GcDone {
+		add {
 
-				// If there were no registered delegates before, start reporting notifications now
-				if ( _sGcDone is null ) {
+			// If there were no registered delegates before, start reporting notifications now
+			if ( _sGcDone is null ) {
 
-					// ReSharper disable once ObjectCreationAsStatement
-					new GenObject( 0 );
+				// ReSharper disable once ObjectCreationAsStatement
+				new GenObject( 0 );
 
-					// ReSharper disable once ObjectCreationAsStatement
-					new GenObject( 2 );
-				}
-
-				_sGcDone += value;
+				// ReSharper disable once ObjectCreationAsStatement
+				new GenObject( 2 );
 			}
-			remove => _sGcDone -= value;
+
+			_sGcDone += value;
 		}
-
-		private sealed class GenObject {
-
-			private readonly Int32 _mGeneration;
-
-			public GenObject( Int32 generation ) => this._mGeneration = generation;
-
-			~GenObject() {
-
-				// This is the Finalize method If this object is in the generation we want (or
-				// higher), notify the delegates that a GC just completed
-				if ( GC.GetGeneration( this ) >= this._mGeneration ) {
-					var temp = Interlocked.CompareExchange( ref _sGcDone, null, null );
-					temp?.Invoke( this._mGeneration );
-				}
-
-				// Keep reporting notifications if there is at least one delegate registered, the
-				// AppDomain isn't unloading, and the process isn’t shutting down
-				if ( _sGcDone is null || AppDomain.CurrentDomain.IsFinalizingForUnload() || Environment.HasShutdownStarted ) {
-					return;
-				}
-
-				// For Gen 0, create a new object; for Gen 2, resurrect the object & let the GC call
-				// Finalize again the next time Gen 2 is GC'd
-				if ( this._mGeneration == 0 ) {
-
-					// ReSharper disable once ObjectCreationAsStatement
-					new GenObject( 0 );
-				}
-				else {
-					GC.ReRegisterForFinalize( this );
-				}
-			}
-		}
-
-		// The event’s field
+		remove => _sGcDone -= value;
 	}
+
+	private sealed class GenObject {
+
+		private readonly Int32 _mGeneration;
+
+		public GenObject( Int32 generation ) => this._mGeneration = generation;
+
+		~GenObject() {
+
+			// This is the Finalize method If this object is in the generation we want (or
+			// higher), notify the delegates that a GC just completed
+			if ( GC.GetGeneration( this ) >= this._mGeneration ) {
+				var temp = Interlocked.CompareExchange( ref _sGcDone, null, null );
+				temp?.Invoke( this._mGeneration );
+			}
+
+			// Keep reporting notifications if there is at least one delegate registered, the
+			// AppDomain isn't unloading, and the process isn’t shutting down
+			if ( _sGcDone is null || AppDomain.CurrentDomain.IsFinalizingForUnload() || Environment.HasShutdownStarted ) {
+				return;
+			}
+
+			// For Gen 0, create a new object; for Gen 2, resurrect the object & let the GC call
+			// Finalize again the next time Gen 2 is GC'd
+			if ( this._mGeneration == 0 ) {
+
+				// ReSharper disable once ObjectCreationAsStatement
+				new GenObject( 0 );
+			}
+			else {
+				GC.ReRegisterForFinalize( this );
+			}
+		}
+	}
+
+	// The event’s field
 }

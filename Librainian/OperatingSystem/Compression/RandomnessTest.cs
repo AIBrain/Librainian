@@ -22,46 +22,45 @@
 //
 // File "RandomnessTest.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.OperatingSystem.Compression {
+namespace Librainian.OperatingSystem.Compression;
 
-	using System;
-	using Maths;
+using System;
+using Maths;
 
-	//[TestFixture]
-	public static class RandomnessTest {
+//[TestFixture]
+public static class RandomnessTest {
 
-		public static RandomnessFeeder RandomnessFeeder { get; } = new();
+	public static RandomnessFeeder RandomnessFeeder { get; } = new();
 
-		//[OneTimeTearDown]
-		public static void Done() {
-			using ( RandomnessFeeder ) { }
-		}
+	//[OneTimeTearDown]
+	public static void Done() {
+		using ( RandomnessFeeder ) { }
+	}
 
-		//[Test]
-		public static Boolean RunSimulation() {
-			var buffer = new Byte[MathConstants.Sizes.OneMegaByte]; //one megabyte
+	//[Test]
+	public static Boolean RunSimulation() {
+		var buffer = new Byte[MathConstants.Sizes.OneMegaByte]; //one megabyte
 #if TRACE
 
-			//var bufferLength = buffer.LongLength;
+		//var bufferLength = buffer.LongLength;
 #endif
 
-			var counter = 10;
+		var counter = 10;
 
-			while ( counter-- > 0 ) {
+		while ( counter-- > 0 ) {
 
-				//Trace.WriteLine( $"Generating {bufferLength} bytes of data.." );
-				Randem.NextBytes( ref buffer );
+			//Trace.WriteLine( $"Generating {bufferLength} bytes of data.." );
+			Randem.NextBytes( ref buffer );
 
-				//Trace.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
-				//var before = RandomnessFeeding.HowManyBytesFed;
-				RandomnessFeeder.FeedItData( buffer );
+			//Trace.WriteLine( $"Feeding {bufferLength} bytes of data into compressor..." );
+			//var before = RandomnessFeeding.HowManyBytesFed;
+			RandomnessFeeder.FeedItData( buffer );
 
-				//var after = RandomnessFeeding.HowManyBytesFed;
+			//var after = RandomnessFeeding.HowManyBytesFed;
 
-				RandomnessFeeder.Report();
-			}
-
-			return true;
+			RandomnessFeeder.Report();
 		}
+
+		return true;
 	}
 }

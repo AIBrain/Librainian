@@ -22,28 +22,27 @@
 //
 // File "WebClientWithTimeout.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Net;
+using System;
+using System.Net;
 
-	public class WebClientWithTimeout : WebClient {
+public class WebClientWithTimeout : WebClient {
 
-		/// <summary>The <see cref="WebRequest" /> instance.</summary>
-		public WebRequest? Request { get; private set; }
+	/// <summary>The <see cref="WebRequest" /> instance.</summary>
+	public WebRequest? Request { get; private set; }
 
-		public TimeSpan Timeout { get; set; }
+	public TimeSpan Timeout { get; set; }
 
-		public WebClientWithTimeout() : this( Internet.UnderlyingDownloader.Forever ) { }
+	public WebClientWithTimeout() : this( Internet.UnderlyingDownloader.Forever ) { }
 
-		public WebClientWithTimeout( TimeSpan timeout ) => this.Timeout = timeout;
+	public WebClientWithTimeout( TimeSpan timeout ) => this.Timeout = timeout;
 
-		protected override WebRequest GetWebRequest( Uri address ) {
-			this.Request = base.GetWebRequest( address );
+	protected override WebRequest GetWebRequest( Uri address ) {
+		this.Request = base.GetWebRequest( address );
 
-			this.Request.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
+		this.Request.Timeout = ( Int32 )this.Timeout.TotalMilliseconds;
 
-			return this.Request;
-		}
+		return this.Request;
 	}
 }

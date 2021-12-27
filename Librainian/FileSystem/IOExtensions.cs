@@ -27,250 +27,285 @@
 
 #nullable enable
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.ComponentModel;
-	using System.Diagnostics;
-	using System.Globalization;
-	using System.IO;
-	using System.Linq;
-	using System.Runtime.CompilerServices;
-	using System.Security;
-	using System.Text;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Collections.Extensions;
-	using Collections.Sets;
-	using Exceptions;
-	using JetBrains.Annotations;
-	using Logging;
-	using Maths;
-	using Measurement.Time;
-	using OperatingSystem;
-	using Parsing;
-	using Pri.LongPath;
-	using Path = System.IO.Path;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Collections.Extensions;
+using Collections.Sets;
+using Exceptions;
+using JetBrains.Annotations;
+using Logging;
+using Maths;
+using Measurement.Time;
+using OperatingSystem;
+using Parsing;
+using Pri.LongPath;
+using Path = System.IO.Path;
 
-	public static class IOExtensions {
+public static class IOExtensions {
 
-		public const Int32 FsctlSetCompression = 0x9C040;
+	public const Int32 FsctlSetCompression = 0x9C040;
 
-		private static async Task FindEachDocument( IFolder folder, Action<Document>? onFindFile, String searchPattern, CancellationToken cancelToken ) {
-			if ( folder is null ) {
-				throw new ArgumentEmptyException( nameof( folder ) );
-			}
+	private static async Task FindEachDocument( IFolder folder, Action<Document>? onFindFile, String searchPattern, CancellationToken cancelToken ) {
+		if ( folder is null ) {
+			throw new ArgumentEmptyException( nameof( folder ) );
+		}
 
-			try {
-				await foreach ( var file in folder.EnumerateDocuments( searchPattern, cancelToken ).ConfigureAwait( false ) ) {
-					try {
-						onFindFile?.Invoke( file );
-					}
-					catch ( Exception exception ) {
-						exception.Log();
-					}
+		try {
+			await foreach ( var file in folder.EnumerateDocuments( searchPattern, cancelToken ).ConfigureAwait( false ) ) {
+				try {
+					onFindFile?.Invoke( file );
 				}
-			}
-			catch ( UnauthorizedAccessException ) { }
-			catch ( DirectoryNotFoundException ) { }
-			catch ( IOException ) { }
-			catch ( SecurityException ) { }
-			catch ( AggregateException aggregateException ) {
-				aggregateException.Handle( exception => {
-					switch ( exception ) {
-						case UnauthorizedAccessException:
-						case DirectoryNotFoundException:
-						case IOException:
-						case SecurityException:
-							return true;
-					}
-
+				catch ( Exception exception ) {
 					exception.Log();
-
-					return false;
-				} );
+				}
 			}
 		}
-
-		private static Boolean MatchesFilter(
-			FileAttributes fileAttributes,
-			String name,
-			String searchPattern,
-			Boolean aDirectory,
-			Boolean aHidden,
-			Boolean aSystem,
-			Boolean aReadOnly,
-			Boolean aCompressed,
-			Boolean aArchive,
-			Boolean aReparsePoint,
-			String filterMode
-		) {
-
-			// first make sure that the name matches the search pattern
-			if ( NativeMethods.PathMatchSpec( name, searchPattern ) ) {
-
-				// then we build our filter attributes enumeration
-				var filterAttributes = new FileAttributes();
-
-				if ( aDirectory ) {
-					filterAttributes |= FileAttributes.Directory;
+		catch ( UnauthorizedAccessException ) { }
+		catch ( DirectoryNotFoundException ) { }
+		catch ( IOException ) { }
+		catch ( SecurityException ) { }
+		catch ( AggregateException aggregateException ) {
+			aggregateException.Handle( exception => {
+				switch ( exception ) {
+					case UnauthorizedAccessException:
+					case DirectoryNotFoundException:
+					case IOException:
+					case SecurityException:
+						return true;
 				}
 
-				if ( aHidden ) {
-					filterAttributes |= FileAttributes.Hidden;
-				}
+				exception.Log();
 
-				if ( aSystem ) {
-					filterAttributes |= FileAttributes.System;
-				}
+				return false;
+			} );
+		}
+	}
 
-				if ( aReadOnly ) {
-					filterAttributes |= FileAttributes.ReadOnly;
-				}
+	private static Boolean MatchesFilter(
+		FileAttributes fileAttributes,
+		String name,
+		String searchPattern,
+		Boolean aDirectory,
+		Boolean aHidden,
+		Boolean aSystem,
+		Boolean aReadOnly,
+		Boolean aCompressed,
+		Boolean aArchive,
+		Boolean aReparsePoint,
+		String filterMode
+	) {
 
-				if ( aCompressed ) {
-					filterAttributes |= FileAttributes.Compressed;
-				}
+		// first make sure that the name matches the search pattern
+		if ( NativeMethods.PathMatchSpec( name, searchPattern ) ) {
 
-				if ( aReparsePoint ) {
-					filterAttributes |= FileAttributes.ReparsePoint;
-				}
+			// then we build our filter attributes enumeration
+			var filterAttributes = new FileAttributes();
 
-				if ( aArchive ) {
-					filterAttributes |= FileAttributes.Archive;
-				}
-
-				// based on the filtermode, we match the file with our filter attributes a bit differently
-				return filterMode switch {
-					"Include" when ( fileAttributes & filterAttributes ) == filterAttributes => true,
-					"Include" => false,
-					"Exclude" when ( fileAttributes & filterAttributes ) != filterAttributes => true,
-					"Exclude" => false,
-					"Strict" when fileAttributes == filterAttributes => true,
-					"Strict" => false,
-					var _ => false
-				};
+			if ( aDirectory ) {
+				filterAttributes |= FileAttributes.Directory;
 			}
 
-			return false;
+			if ( aHidden ) {
+				filterAttributes |= FileAttributes.Hidden;
+			}
+
+			if ( aSystem ) {
+				filterAttributes |= FileAttributes.System;
+			}
+
+			if ( aReadOnly ) {
+				filterAttributes |= FileAttributes.ReadOnly;
+			}
+
+			if ( aCompressed ) {
+				filterAttributes |= FileAttributes.Compressed;
+			}
+
+			if ( aReparsePoint ) {
+				filterAttributes |= FileAttributes.ReparsePoint;
+			}
+
+			if ( aArchive ) {
+				filterAttributes |= FileAttributes.Archive;
+			}
+
+			// based on the filtermode, we match the file with our filter attributes a bit differently
+			return filterMode switch {
+				"Include" when ( fileAttributes & filterAttributes ) == filterAttributes => true,
+				"Include" => false,
+				"Exclude" when ( fileAttributes & filterAttributes ) != filterAttributes => true,
+				"Exclude" => false,
+				"Strict" when fileAttributes == filterAttributes => true,
+				"Strict" => false,
+				var _ => false
+			};
 		}
 
-		private static async Task ScanForSubFolders(
-			IFolder startingFolder,
-			Action<Document>? onFindFile,
-			Action<Folder>? onEachDirectory,
-			SearchStyle searchStyle,
-			IReadOnlyCollection<String> searchPatterns,
-			CancellationToken cancelToken
-		) {
-			try {
-				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).ConfigureAwait( false ) ) {
-					try {
-						onEachDirectory?.Invoke( subFolder );
-					}
-					catch ( Exception exception ) {
-						exception.Log();
-					}
+		return false;
+	}
 
-					//recurse into
-					await subFolder.FindFiles( searchPatterns, cancelToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
+	private static async Task ScanForSubFolders(
+		IFolder startingFolder,
+		Action<Document>? onFindFile,
+		Action<Folder>? onEachDirectory,
+		SearchStyle searchStyle,
+		IReadOnlyCollection<String> searchPatterns,
+		CancellationToken cancelToken
+	) {
+		try {
+			await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, cancelToken ).ConfigureAwait( false ) ) {
+				try {
+					onEachDirectory?.Invoke( subFolder );
 				}
-			}
-			catch ( UnauthorizedAccessException ) { }
-			catch ( DirectoryNotFoundException ) { }
-			catch ( IOException ) { }
-			catch ( SecurityException ) { }
-			catch ( AggregateException aggregateException ) {
-				aggregateException.Handle( exception => {
-					switch ( exception ) {
-						case UnauthorizedAccessException _:
-						case DirectoryNotFoundException _:
-						case IOException _:
-						case SecurityException _:
-							return true;
-					}
-
+				catch ( Exception exception ) {
 					exception.Log();
-
-					return false;
-				} );
-			}
-		}
-
-		/// <summary>
-		///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait(); Example: await WriteTextAsync( fullPath:
-		///     fullPath, text: message );
-		/// </summary>
-		/// <param name="fileInfo"></param>
-		/// <param name="text">    </param>
-		/// <param name="waitfor"></param>
-		public static async Task<(Status, Exception?)> AppendTextAsync( this FileInfo fileInfo, String text, TimeSpan? waitfor = null ) {
-			try {
-				var buffer = Common.DefaultEncoding.GetBytes( text ).AsMemory( 0 );
-				var length = buffer.Length;
-
-				await using var sourceStream = ReTry( () => new FileStream( fileInfo.FullName, FileMode.Append, FileAccess.Write, FileShare.Write, length, true ),
-					waitfor ?? Seconds.Seven, CancellationToken.None );
-
-				if ( sourceStream is null ) {
-					throw new InvalidOperationException( $"Could not open file {fileInfo.FullName} for reading." );
 				}
 
-				await sourceStream.WriteAsync( buffer ).ConfigureAwait( false );
-
-				await sourceStream.FlushAsync().ConfigureAwait( false );
-
-				return (Status.Success, default( Exception? ));
-			}
-			catch ( UnauthorizedAccessException exception ) {
-				exception.Log();
-				return (Status.Exception, exception);
-			}
-			catch ( ArgumentEmptyException exception ) {
-				exception.Log();
-				return (Status.Exception, exception);
-			}
-			catch ( DirectoryNotFoundException exception ) {
-				exception.Log();
-				return (Status.Exception, exception);
-			}
-			catch ( PathTooLongException exception ) {
-				exception.Log();
-				return (Status.Exception, exception);
-			}
-			catch ( SecurityException exception ) {
-				exception.Log();
-				return (Status.Exception, exception);
-			}
-			catch ( IOException exception ) {
-				exception.Log();
-				return (Status.Exception, exception);
+				//recurse into
+				await subFolder.FindFiles( searchPatterns, cancelToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
 			}
 		}
+		catch ( UnauthorizedAccessException ) { }
+		catch ( DirectoryNotFoundException ) { }
+		catch ( IOException ) { }
+		catch ( SecurityException ) { }
+		catch ( AggregateException aggregateException ) {
+			aggregateException.Handle( exception => {
+				switch ( exception ) {
+					case UnauthorizedAccessException _:
+					case DirectoryNotFoundException _:
+					case IOException _:
+					case SecurityException _:
+						return true;
+				}
 
-		/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
-		/// <param name="fileInfo"></param>
-		/// <remarks>Don't use on large files obviously..</remarks>
-		public static IEnumerable<Byte> AsBytes( this FileInfo fileInfo ) {
-			if ( fileInfo is null ) {
-				throw new ArgumentEmptyException( nameof( fileInfo ) );
-			}
+				exception.Log();
 
-			if ( !fileInfo.Exists ) {
-				yield break;
-			}
+				return false;
+			} );
+		}
+	}
 
-			using var stream = ReTry( () => new FileStream( fileInfo.FullName, FileMode.Open, FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+	/// <summary>
+	///     Example: WriteTextAsync( fullPath: fullPath, text: message ).Wait(); Example: await WriteTextAsync( fullPath:
+	///     fullPath, text: message );
+	/// </summary>
+	/// <param name="fileInfo"></param>
+	/// <param name="text">    </param>
+	/// <param name="waitfor"></param>
+	public static async Task<(Status, Exception?)> AppendTextAsync( this FileInfo fileInfo, String text, TimeSpan? waitfor = null ) {
+		try {
+			var buffer = Common.DefaultEncoding.GetBytes( text ).AsMemory( 0 );
+			var length = buffer.Length;
 
-			if ( stream is null ) {
+			await using var sourceStream = ReTry( () => new FileStream( fileInfo.FullName, FileMode.Append, FileAccess.Write, FileShare.Write, length, true ),
+				waitfor ?? Seconds.Seven, CancellationToken.None );
+
+			if ( sourceStream is null ) {
 				throw new InvalidOperationException( $"Could not open file {fileInfo.FullName} for reading." );
 			}
 
-			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}." );
+			await sourceStream.WriteAsync( buffer ).ConfigureAwait( false );
+
+			await sourceStream.FlushAsync().ConfigureAwait( false );
+
+			return (Status.Success, default( Exception? ));
+		}
+		catch ( UnauthorizedAccessException exception ) {
+			exception.Log();
+			return (Status.Exception, exception);
+		}
+		catch ( ArgumentEmptyException exception ) {
+			exception.Log();
+			return (Status.Exception, exception);
+		}
+		catch ( DirectoryNotFoundException exception ) {
+			exception.Log();
+			return (Status.Exception, exception);
+		}
+		catch ( PathTooLongException exception ) {
+			exception.Log();
+			return (Status.Exception, exception);
+		}
+		catch ( SecurityException exception ) {
+			exception.Log();
+			return (Status.Exception, exception);
+		}
+		catch ( IOException exception ) {
+			exception.Log();
+			return (Status.Exception, exception);
+		}
+	}
+
+	/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
+	/// <param name="fileInfo"></param>
+	/// <remarks>Don't use on large files obviously..</remarks>
+	public static IEnumerable<Byte> AsBytes( this FileInfo fileInfo ) {
+		if ( fileInfo is null ) {
+			throw new ArgumentEmptyException( nameof( fileInfo ) );
+		}
+
+		if ( !fileInfo.Exists ) {
+			yield break;
+		}
+
+		using var stream = ReTry( () => new FileStream( fileInfo.FullName, FileMode.Open, FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+
+		if ( stream is null ) {
+			throw new InvalidOperationException( $"Could not open file {fileInfo.FullName} for reading." );
+		}
+
+		if ( !stream.CanRead ) {
+			throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}." );
+		}
+
+		using var buffered = new BufferedStream( stream );
+
+		do {
+			var b = buffered.ReadByte();
+
+			if ( b == -1 ) {
+				yield break;
 			}
 
+			yield return ( Byte )b;
+		} while ( true );
+	}
+
+	/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
+	/// <param name="filename"></param>
+	public static IEnumerable<Byte> AsBytes( this String filename ) {
+		if ( String.IsNullOrWhiteSpace( filename ) ) {
+			throw new ArgumentEmptyException( nameof( filename ) );
+		}
+
+		if ( !File.Exists( filename ) ) {
+			yield break;
+		}
+
+		var stream = ReTry( () => new FileStream( filename, FileMode.Open, FileAccess.Read ), Seconds.Seven, CancellationToken.None );
+
+		if ( stream is null ) {
+			throw new InvalidOperationException( $"Could not open file {filename} for reading." );
+		}
+
+		if ( !stream.CanRead ) {
+			throw new NotSupportedException( $"Cannot read from file {filename}." );
+		}
+
+		using ( stream ) {
 			using var buffered = new BufferedStream( stream );
 
 			do {
@@ -283,1313 +318,1277 @@ namespace Librainian.FileSystem {
 				yield return ( Byte )b;
 			} while ( true );
 		}
+	}
 
-		/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
-		/// <param name="filename"></param>
-		public static IEnumerable<Byte> AsBytes( this String filename ) {
-			if ( String.IsNullOrWhiteSpace( filename ) ) {
-				throw new ArgumentEmptyException( nameof( filename ) );
-			}
+	/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
+	/// <param name="fileInfo"></param>
+	public static IEnumerable<UInt16> AsUInt16Array( this FileInfo fileInfo ) {
 
-			if ( !File.Exists( filename ) ) {
+		// TODO this needs a unit test for endianness
+		if ( fileInfo is null ) {
+			throw new ArgumentEmptyException( nameof( fileInfo ) );
+		}
+
+		if ( !fileInfo.Exists ) {
+			fileInfo.Refresh(); //check one more time
+
+			if ( !fileInfo.Exists ) {
 				yield break;
-			}
-
-			var stream = ReTry( () => new FileStream( filename, FileMode.Open, FileAccess.Read ), Seconds.Seven, CancellationToken.None );
-
-			if ( stream is null ) {
-				throw new InvalidOperationException( $"Could not open file {filename} for reading." );
-			}
-
-			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file {filename}." );
-			}
-
-			using ( stream ) {
-				using var buffered = new BufferedStream( stream );
-
-				do {
-					var b = buffered.ReadByte();
-
-					if ( b == -1 ) {
-						yield break;
-					}
-
-					yield return ( Byte )b;
-				} while ( true );
 			}
 		}
 
-		/// <summary>Enumerates a <see cref="FileInfo" /> as a sequence of <see cref="Byte" />.</summary>
-		/// <param name="fileInfo"></param>
-		public static IEnumerable<UInt16> AsUInt16Array( this FileInfo fileInfo ) {
+		using var stream = new FileStream( fileInfo.FullName, FileMode.Open );
 
-			// TODO this needs a unit test for endianness
-			if ( fileInfo is null ) {
-				throw new ArgumentEmptyException( nameof( fileInfo ) );
+		if ( !stream.CanRead ) {
+			throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" );
+		}
+
+		using var buffered = new BufferedStream( stream );
+
+		var low = buffered.ReadByte();
+
+		if ( low == -1 ) {
+			yield break;
+		}
+
+		var high = buffered.ReadByte();
+
+		if ( high == -1 ) {
+			yield return ( ( Byte )low ).CombineBytes( 0 );
+
+			yield break;
+		}
+
+		yield return ( ( Byte )low ).CombineBytes( ( Byte )high );
+	}
+
+	/// <summary>
+	///     No guarantee of return order. Also, because of the way the operating system works (random-access), a directory can
+	///     be created or deleted after a search.
+	/// </summary>
+	/// <param name="target">       </param>
+	/// <param name="cancellationToken"></param>
+	/// <param name="searchPattern"></param>
+	/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
+	public static async IAsyncEnumerable<Folder> BetterEnumerateDirectories(
+		this DirectoryInfo target,
+		[EnumeratorCancellation] CancellationToken cancellationToken,
+		String? searchPattern = "*",
+		SearchOption searchOption = SearchOption.AllDirectories
+	) {
+		searchPattern ??= "*";
+
+		var searchPath = Path.Combine( target.FullName, searchPattern );
+
+		var findData = default( WIN32_FIND_DATA );
+
+		var hFindFile = default( NativeMethods.SafeFindHandle );
+
+		try {
+			hFindFile = await Task.Run( () => PriNativeMethods.FindFirstFile( searchPath, out findData ), cancellationToken ).ConfigureAwait( false );
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+		}
+
+		var more = false;
+
+		do {
+			if ( cancellationToken.IsCancellationRequested ) {
+				break;
 			}
 
-			if ( !fileInfo.Exists ) {
-				fileInfo.Refresh(); //check one more time
+			if ( hFindFile?.IsInvalid != false ) {
 
-				if ( !fileInfo.Exists ) {
-					yield break;
+				//BUG or == true ?
+				break;
+			}
+
+			if ( !findData.IsDirectory() || findData.IsParentOrCurrent() || findData.IsReparsePoint() || findData.IsIgnoreFolder() ) {
+				continue;
+			}
+
+			if ( findData.cFileName != null ) {
+
+				// Fix with @"\\?\" +System.IO.PathTooLongException?
+				if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
+					$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".BreakIfDebug( "poor man's debug" );
+
+					//continue; //BUG Needs unit tested for long paths.
+				}
+
+				var subFolder = target.FullName.CombinePaths( findData.cFileName );
+
+				yield return new Folder( subFolder );
+
+				switch ( searchOption ) {
+					case SearchOption.AllDirectories: {
+						var subInfo = new DirectoryInfo( subFolder );
+
+						await foreach ( var info in subInfo.BetterEnumerateDirectories( cancellationToken, searchPattern ).ConfigureAwait( false ) ) {
+							yield return info;
+						}
+
+						break;
+					}
+
+					case SearchOption.TopDirectoryOnly: {
+						break;
+					}
+					default: {
+						throw new ArgumentOutOfRangeException( nameof( searchOption ), searchOption, null );
+					}
 				}
 			}
 
-			using var stream = new FileStream( fileInfo.FullName, FileMode.Open );
-
-			if ( !stream.CanRead ) {
-				throw new NotSupportedException( $"Cannot read from file {fileInfo.FullName}" );
-			}
-
-			using var buffered = new BufferedStream( stream );
-
-			var low = buffered.ReadByte();
-
-			if ( low == -1 ) {
-				yield break;
-			}
-
-			var high = buffered.ReadByte();
-
-			if ( high == -1 ) {
-				yield return ( ( Byte )low ).CombineBytes( 0 );
-
-				yield break;
-			}
-
-			yield return ( ( Byte )low ).CombineBytes( ( Byte )high );
-		}
-
-		/// <summary>
-		///     No guarantee of return order. Also, because of the way the operating system works (random-access), a directory can
-		///     be created or deleted after a search.
-		/// </summary>
-		/// <param name="target">       </param>
-		/// <param name="cancellationToken"></param>
-		/// <param name="searchPattern"></param>
-		/// <param name="searchOption"> Defaults to <see cref="SearchOption.AllDirectories" /></param>
-		public static async IAsyncEnumerable<Folder> BetterEnumerateDirectories(
-			this DirectoryInfo target,
-			[EnumeratorCancellation] CancellationToken cancellationToken,
-			String? searchPattern = "*",
-			SearchOption searchOption = SearchOption.AllDirectories
-		) {
-			searchPattern ??= "*";
-
-			var searchPath = Path.Combine( target.FullName, searchPattern );
-
-			var findData = default( WIN32_FIND_DATA );
-
-			var hFindFile = default( NativeMethods.SafeFindHandle );
-
 			try {
-				hFindFile = await Task.Run( () => PriNativeMethods.FindFirstFile( searchPath, out findData ), cancellationToken ).ConfigureAwait( false );
+				more = await Task.Run( () => hFindFile.FindNextFile( out findData ), cancellationToken ).ConfigureAwait( false );
 			}
 			catch ( Exception exception ) {
 				exception.Log();
 			}
+		} while ( more );
+	}
 
-			var more = false;
+	/*
+	public static List<FileInformation> FastFind( String path, String searchPattern, Boolean getFile, Boolean getDirectories, Boolean recurse, Int32? depth,
+		Boolean parallel, Boolean suppressErrors, Boolean largeFetch, Boolean getHidden, Boolean getSystem, Boolean getReadOnly, Boolean getCompressed, Boolean getArchive,
+		Boolean getReparsePoint, String filterMode ) {
+		PriNativeMethods.FINDEX_ADDITIONAL_FLAGS additionalFlags = 0;
+		if ( largeFetch ) {
+			additionalFlags = PriNativeMethods.FINDEX_ADDITIONAL_FLAGS.FindFirstExLargeFetch;
+		}
 
+		// add prefix to allow for maximum path of up to 32,767 characters
+		String prefixedPath;
+		if ( path.StartsWith( @"\\" ) ) {
+			prefixedPath = path.Replace( @"\\", Path.UNCLongPathPrefix );
+		}
+		else {
+			prefixedPath = Path.LongPathPrefix + path;
+		}
+
+		var handle = PriNativeMethods.FindFirstFileExW( prefixedPath + @"\*", PriNativeMethods.FINDEX_INFO_LEVELS.FindExInfoBasic, out var lpFindFileData,
+			PriNativeMethods.FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags );
+
+		var resultList = new ConcurrentHashset<FileInformation>();
+		var subDirectoryList = new ConcurrentHashset<PathInformation>();
+
+		if ( !handle.IsInvalid ) {
 			do {
-				if ( cancellationToken.IsCancellationRequested ) {
-					break;
-				}
 
-				if ( hFindFile?.IsInvalid != false ) {
-
-					//BUG or == true ?
-					break;
-				}
-
-				if ( !findData.IsDirectory() || findData.IsParentOrCurrent() || findData.IsReparsePoint() || findData.IsIgnoreFolder() ) {
+				// skip "." and ".."
+				if ( lpFindFileData.cFileName == "." || lpFindFileData.cFileName == ".." ) {
 					continue;
 				}
 
-				if ( findData.cFileName != null ) {
+				// if directory...
+				if ( getDirectories && recurse && ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory ) {
 
-					// Fix with @"\\?\" +System.IO.PathTooLongException?
-					if ( findData.cFileName.Length > PriNativeMethods.MAX_PATH ) {
-						$"Found subfolder with length longer than {PriNativeMethods.MAX_PATH}. Debug and see if it works.".BreakIfDebug( "poor man's debug" );
-
-						//continue; //BUG Needs unit tested for long paths.
-					}
-
-					var subFolder = target.FullName.CombinePaths( findData.cFileName );
-
-					yield return new Folder( subFolder );
-
-					switch ( searchOption ) {
-						case SearchOption.AllDirectories: {
-								var subInfo = new DirectoryInfo( subFolder );
-
-								await foreach ( var info in subInfo.BetterEnumerateDirectories( cancellationToken, searchPattern ).ConfigureAwait( false ) ) {
-									yield return info;
-								}
-
-								break;
-							}
-
-						case SearchOption.TopDirectoryOnly: {
-								break;
-							}
-						default: {
-								throw new ArgumentOutOfRangeException( nameof( searchOption ), searchOption, null );
-							}
-					}
+					// ...and if we are performing a recursive search...
+					// ... populate the subdirectory list
+					var fullName = Path.Combine( path, lpFindFileData.cFileName );
+					subDirectoryList.Add( new PathInformation( fullName ) );
 				}
 
-				try {
-					more = await Task.Run( () => hFindFile.FindNextFile( out findData ), cancellationToken ).ConfigureAwait( false );
-				}
-				catch ( Exception exception ) {
-					exception.Log();
-				}
-			} while ( more );
-		}
-
-		/*
-		public static List<FileInformation> FastFind( String path, String searchPattern, Boolean getFile, Boolean getDirectories, Boolean recurse, Int32? depth,
-			Boolean parallel, Boolean suppressErrors, Boolean largeFetch, Boolean getHidden, Boolean getSystem, Boolean getReadOnly, Boolean getCompressed, Boolean getArchive,
-			Boolean getReparsePoint, String filterMode ) {
-			PriNativeMethods.FINDEX_ADDITIONAL_FLAGS additionalFlags = 0;
-			if ( largeFetch ) {
-				additionalFlags = PriNativeMethods.FINDEX_ADDITIONAL_FLAGS.FindFirstExLargeFetch;
-			}
-
-			// add prefix to allow for maximum path of up to 32,767 characters
-			String prefixedPath;
-			if ( path.StartsWith( @"\\" ) ) {
-				prefixedPath = path.Replace( @"\\", Path.UNCLongPathPrefix );
-			}
-			else {
-				prefixedPath = Path.LongPathPrefix + path;
-			}
-
-			var handle = PriNativeMethods.FindFirstFileExW( prefixedPath + @"\*", PriNativeMethods.FINDEX_INFO_LEVELS.FindExInfoBasic, out var lpFindFileData,
-				PriNativeMethods.FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, additionalFlags );
-
-			var resultList = new ConcurrentHashset<FileInformation>();
-			var subDirectoryList = new ConcurrentHashset<PathInformation>();
-
-			if ( !handle.IsInvalid ) {
-				do {
-
-					// skip "." and ".."
-					if ( lpFindFileData.cFileName == "." || lpFindFileData.cFileName == ".." ) {
+				// skip folders if only the getFile parameter is used
+				if ( getFile && !getDirectories ) {
+					if ( ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory ) {
 						continue;
 					}
+				}
 
-					// if directory...
-					if ( getDirectories && recurse && ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory ) {
-
-						// ...and if we are performing a recursive search...
-						// ... populate the subdirectory list
-						var fullName = Path.Combine( path, lpFindFileData.cFileName );
-						subDirectoryList.Add( new PathInformation( fullName ) );
+				// if file matches search pattern and attribute filter, add it to the result list
+				if ( MatchesFilter( lpFindFileData.dwFileAttributes, lpFindFileData.cFileName, searchPattern, getDirectories, getHidden, getSystem, getReadOnly,
+					getCompressed, getArchive, getReparsePoint, filterMode ) ) {
+					Int64? thisFileSize = null;
+					if ( ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) != FileAttributes.Directory ) {
+						thisFileSize = lpFindFileData.nFileSizeHigh * ( 2 ^ 32 ) + lpFindFileData.nFileSizeLow;
 					}
 
-					// skip folders if only the getFile parameter is used
-					if ( getFile && !getDirectories ) {
-						if ( ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) == FileAttributes.Directory ) {
-							continue;
+					var item = new FileInformation( lpFindFileData.cFileName, new PathInformation( Path.Combine( path, lpFindFileData.cFileName ) ) ) {
+						Parent = new PathInformation( path ), Attributes = lpFindFileData.dwFileAttributes, FileSize = thisFileSize,
+						CreationTime = lpFindFileData.ftCreationTime.ToDateTime(), LastAccessTime = lpFindFileData.ftLastAccessTime.ToDateTime(),
+						LastWriteTime = lpFindFileData.ftLastWriteTime.ToDateTime()
+					};
+
+					resultList.Add( item );
+				}
+			} while ( PriNativeMethods.FindNextFile( handle, out lpFindFileData ) );
+
+			// close the file handle
+			handle.Dispose();
+
+			// handle recursive search
+			if ( recurse ) {
+
+				// handle depth of recursion
+				if ( depth > 0 ) {
+					if ( parallel ) {
+						subDirectoryList.AsParallel().ForAll( x => {
+							List<FileInformation> resultSubDirectory = FastFind( x.Path, searchPattern, getFile, getDirectories, recurse, depth - 1, false, suppressErrors,
+								largeFetch, getHidden, getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode );
+							resultList.AddRange( resultSubDirectory );
+						} );
+					}
+					else {
+						foreach ( var directory in subDirectoryList ) {
+							foreach ( var result in FastFind( directory.Path, searchPattern, getFile, getDirectories, recurse, depth - 1, false, suppressErrors,
+								largeFetch, getHidden, getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode ) ) {
+								resultList.Add( result );
+							}
 						}
 					}
+				}
 
-					// if file matches search pattern and attribute filter, add it to the result list
-					if ( MatchesFilter( lpFindFileData.dwFileAttributes, lpFindFileData.cFileName, searchPattern, getDirectories, getHidden, getSystem, getReadOnly,
-						getCompressed, getArchive, getReparsePoint, filterMode ) ) {
-						Int64? thisFileSize = null;
-						if ( ( lpFindFileData.dwFileAttributes & FileAttributes.Directory ) != FileAttributes.Directory ) {
-							thisFileSize = lpFindFileData.nFileSizeHigh * ( 2 ^ 32 ) + lpFindFileData.nFileSizeLow;
-						}
-
-						var item = new FileInformation( lpFindFileData.cFileName, new PathInformation( Path.Combine( path, lpFindFileData.cFileName ) ) ) {
-							Parent = new PathInformation( path ), Attributes = lpFindFileData.dwFileAttributes, FileSize = thisFileSize,
-							CreationTime = lpFindFileData.ftCreationTime.ToDateTime(), LastAccessTime = lpFindFileData.ftLastAccessTime.ToDateTime(),
-							LastWriteTime = lpFindFileData.ftLastWriteTime.ToDateTime()
-						};
-
-						resultList.Add( item );
-					}
-				} while ( PriNativeMethods.FindNextFile( handle, out lpFindFileData ) );
-
-				// close the file handle
-				handle.Dispose();
-
-				// handle recursive search
-				if ( recurse ) {
-
-					// handle depth of recursion
-					if ( depth > 0 ) {
-						if ( parallel ) {
-							subDirectoryList.AsParallel().ForAll( x => {
-								List<FileInformation> resultSubDirectory = FastFind( x.Path, searchPattern, getFile, getDirectories, recurse, depth - 1, false, suppressErrors,
-									largeFetch, getHidden, getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode );
+				// if no depth are specified
+				else if ( depth == null ) {
+					if ( parallel ) {
+						subDirectoryList.AsParallel().ForAll( x => {
+							var resultSubDirectory = new List<FileInformation>();
+							resultSubDirectory = FastFind( x.Path, searchPattern, getFile, getDirectories, recurse, null, false, suppressErrors, largeFetch, getHidden,
+								getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode );
+							lock ( resultListLock ) {
 								resultList.AddRange( resultSubDirectory );
-							} );
-						}
-						else {
-							foreach ( var directory in subDirectoryList ) {
-								foreach ( var result in FastFind( directory.Path, searchPattern, getFile, getDirectories, recurse, depth - 1, false, suppressErrors,
-									largeFetch, getHidden, getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode ) ) {
-									resultList.Add( result );
-								}
 							}
-						}
+						} );
 					}
-
-					// if no depth are specified
-					else if ( depth == null ) {
-						if ( parallel ) {
-							subDirectoryList.AsParallel().ForAll( x => {
-								var resultSubDirectory = new List<FileInformation>();
-								resultSubDirectory = FastFind( x.Path, searchPattern, getFile, getDirectories, recurse, null, false, suppressErrors, largeFetch, getHidden,
-									getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode );
-								lock ( resultListLock ) {
-									resultList.AddRange( resultSubDirectory );
-								}
-							} );
-						}
-						else {
-							foreach ( var directory in subDirectoryList ) {
-								foreach ( var result in FastFind( directory.Path, searchPattern, getFile, getDirectories, recurse, null, false, suppressErrors, largeFetch,
-									getHidden, getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode ) ) {
-									resultList.Add( result );
-								}
+					else {
+						foreach ( var directory in subDirectoryList ) {
+							foreach ( var result in FastFind( directory.Path, searchPattern, getFile, getDirectories, recurse, null, false, suppressErrors, largeFetch,
+								getHidden, getSystem, getReadOnly, getCompressed, getArchive, getReparsePoint, filterMode ) ) {
+								resultList.Add( result );
 							}
 						}
 					}
 				}
 			}
-
-			// error handling
-			else if ( handle.IsInvalid && !suppressErrors ) {
-				Int32 hr = Marshal.GetLastWin32Error();
-				if ( hr != 2 && hr != 0x12 ) {
-
-					//throw new Win32Exception(hr);
-					Console.WriteLine( "{0}:  {1}", path, new Win32Exception( hr ).Message );
-				}
-			}
-
-			return resultList;
 		}
-		*/
 
-		// --------------------------- CopyStream ---------------------------
-		/// <summary>Copies data from a source stream to a target stream.</summary>
-		/// <param name="source">The source stream to copy from.</param>
-		/// <param name="target">The destination stream to copy to.</param>
-		public static void CopyStream( this Stream source, Stream target ) {
-			if ( source is null ) {
-				throw new ArgumentEmptyException( nameof( source ) );
-			}
+		// error handling
+		else if ( handle.IsInvalid && !suppressErrors ) {
+			Int32 hr = Marshal.GetLastWin32Error();
+			if ( hr != 2 && hr != 0x12 ) {
 
-			if ( target is null ) {
-				throw new ArgumentEmptyException( nameof( target ) );
-			}
-
-			if ( !source.CanRead ) {
-				throw new Exception( $"Cannot read from {nameof( source )}" );
-			}
-
-			if ( !target.CanWrite ) {
-				throw new Exception( $"Cannot write to {nameof( target )}" );
-			}
-
-			const Int32 size = 0xffff;
-			var buffer = new Byte[size];
-			Int32 bytesRead;
-
-			while ( ( bytesRead = source.Read( buffer, 0, size ) ) > 0 ) {
-				target.Write( buffer, 0, bytesRead );
+				//throw new Win32Exception(hr);
+				Console.WriteLine( "{0}:  {1}", path, new Win32Exception( hr ).Message );
 			}
 		}
 
-		/// <summary>Before: @"c:\hello\world". After: @"c:\hello\world\23468923475634836.extension"</summary>
-		/// <param name="info">         </param>
-		/// <param name="withExtension"></param>
-		/// <param name="toBase">       </param>
-		public static FileInfo DateAndTimeAsFile( this DirectoryInfo info, String? withExtension, Int32 toBase = 16 ) {
-			if ( info is null ) {
-				throw new ArgumentEmptyException( nameof( info ) );
-			}
+		return resultList;
+	}
+	*/
 
-			var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase );
-			var fileName = $"{now}{withExtension ?? info.Extension}";
-			var path = info.FullName.CombinePaths( fileName );
-
-			return new FileInfo( path );
+	// --------------------------- CopyStream ---------------------------
+	/// <summary>Copies data from a source stream to a target stream.</summary>
+	/// <param name="source">The source stream to copy from.</param>
+	/// <param name="target">The destination stream to copy to.</param>
+	public static void CopyStream( this Stream source, Stream target ) {
+		if ( source is null ) {
+			throw new ArgumentEmptyException( nameof( source ) );
 		}
 
-		/// <summary>If the <paramref name="directoryInfo" /> does not exist, attempt to create it.</summary>
-		/// <param name="directoryInfo">      </param>
-		/// <param name="requestReadAccess">  </param>
-		/// <param name="requestWriteAccess"> </param>
-		public static DirectoryInfo? Ensure( this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
-			if ( directoryInfo is null ) {
-				throw new ArgumentEmptyException( nameof( directoryInfo ) );
-			}
+		if ( target is null ) {
+			throw new ArgumentEmptyException( nameof( target ) );
+		}
 
-			try {
+		if ( !source.CanRead ) {
+			throw new Exception( $"Cannot read from {nameof( source )}" );
+		}
+
+		if ( !target.CanWrite ) {
+			throw new Exception( $"Cannot write to {nameof( target )}" );
+		}
+
+		const Int32 size = 0xffff;
+		var buffer = new Byte[size];
+		Int32 bytesRead;
+
+		while ( ( bytesRead = source.Read( buffer, 0, size ) ) > 0 ) {
+			target.Write( buffer, 0, bytesRead );
+		}
+	}
+
+	/// <summary>Before: @"c:\hello\world". After: @"c:\hello\world\23468923475634836.extension"</summary>
+	/// <param name="info">         </param>
+	/// <param name="withExtension"></param>
+	/// <param name="toBase">       </param>
+	public static FileInfo DateAndTimeAsFile( this DirectoryInfo info, String? withExtension, Int32 toBase = 16 ) {
+		if ( info is null ) {
+			throw new ArgumentEmptyException( nameof( info ) );
+		}
+
+		var now = Convert.ToString( DateTime.UtcNow.ToBinary(), toBase );
+		var fileName = $"{now}{withExtension ?? info.Extension}";
+		var path = info.FullName.CombinePaths( fileName );
+
+		return new FileInfo( path );
+	}
+
+	/// <summary>If the <paramref name="directoryInfo" /> does not exist, attempt to create it.</summary>
+	/// <param name="directoryInfo">      </param>
+	/// <param name="requestReadAccess">  </param>
+	/// <param name="requestWriteAccess"> </param>
+	public static DirectoryInfo? Ensure( this DirectoryInfo directoryInfo, Boolean? requestReadAccess = null, Boolean? requestWriteAccess = null ) {
+		if ( directoryInfo is null ) {
+			throw new ArgumentEmptyException( nameof( directoryInfo ) );
+		}
+
+		try {
+			directoryInfo.Refresh();
+
+			if ( !directoryInfo.Exists ) {
+				directoryInfo.Create();
 				directoryInfo.Refresh();
-
-				if ( !directoryInfo.Exists ) {
-					directoryInfo.Create();
-					directoryInfo.Refresh();
-				}
-
-				if ( requestReadAccess.HasValue ) {
-					directoryInfo.Refresh();
-				}
-
-				if ( requestWriteAccess.HasValue ) {
-					var temp = directoryInfo.FullName.CombinePaths( Path.GetRandomFileName() );
-					File.WriteAllText( temp, "Delete Me!" );
-					File.Delete( temp );
-					directoryInfo.Refresh();
-				}
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-
-				return default( DirectoryInfo? );
 			}
 
-			return directoryInfo;
+			if ( requestReadAccess.HasValue ) {
+				directoryInfo.Refresh();
+			}
+
+			if ( requestWriteAccess.HasValue ) {
+				var temp = directoryInfo.FullName.CombinePaths( Path.GetRandomFileName() );
+				File.WriteAllText( temp, "Delete Me!" );
+				File.Delete( temp );
+				directoryInfo.Refresh();
+			}
+		}
+		catch ( Exception exception ) {
+			exception.Log();
+
+			return default( DirectoryInfo? );
 		}
 
-		public static DateTime FileNameAsDateAndTime( this FileInfo info, DateTime? defaultValue = null ) {
-			if ( info is null ) {
-				throw new ArgumentEmptyException( nameof( info ) );
-			}
+		return directoryInfo;
+	}
 
-			defaultValue ??= DateTime.MinValue;
+	public static DateTime FileNameAsDateAndTime( this FileInfo info, DateTime? defaultValue = null ) {
+		if ( info is null ) {
+			throw new ArgumentEmptyException( nameof( info ) );
+		}
 
-			var now = defaultValue.Value;
-			var fName = info.Name.GetFileNameWithoutExtension();
+		defaultValue ??= DateTime.MinValue;
 
-			if ( String.IsNullOrWhiteSpace( fName ) ) {
-				return now;
-			}
+		var now = defaultValue.Value;
+		var fName = info.Name.GetFileNameWithoutExtension();
 
-			fName = fName.Trim();
-
-			if ( String.IsNullOrWhiteSpace( fName ) ) {
-				return now;
-			}
-
-			if ( Int64.TryParse( fName, NumberStyles.AllowHexSpecifier, null, out var data ) ) {
-				return DateTime.FromBinary( data );
-			}
-
-			if ( Int64.TryParse( fName, NumberStyles.Any, null, out data ) ) {
-				return DateTime.FromBinary( data );
-			}
-
+		if ( String.IsNullOrWhiteSpace( fName ) ) {
 			return now;
 		}
 
-		//TODO This needs rewritten as a whole drive file searcher using tasks.
+		fName = fName.Trim();
 
-		/// <summary>
-		///     Search the <paramref name="folder" /> for any files matching the
-		///     <paramref name="fileSearchPatterns" /> .
-		/// </summary>
-		/// <param name="folder">    The folder to start the search.</param>
-		/// <param name="fileSearchPatterns">List of patterns to search for.</param>
-		/// <param name="cancelToken">      </param>
-		/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
-		/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
-		/// <param name="searchStyle">       </param>
-		public static async Task FindFiles(
-			this Folder folder,
-			IReadOnlyCollection<String> fileSearchPatterns,
-			CancellationToken cancelToken,
-			Action<Document>? onFindFile = null,
-			Action<Folder>? onEachDirectory = null,
-			SearchStyle searchStyle = SearchStyle.FilesFirst
-		) {
-			if ( fileSearchPatterns is null ) {
-				throw new ArgumentEmptyException( nameof( fileSearchPatterns ) );
-			}
-
-			if ( folder is null ) {
-				throw new ArgumentEmptyException( nameof( folder ) );
-			}
-
-			var searchPatterns = fileSearchPatterns.ToList();
-
-			await foreach ( var searchPattern in searchPatterns.ToAsyncEnumerable().WithCancellation( cancelToken ).ConfigureAwait( false ) ) {
-				if ( String.IsNullOrWhiteSpace( searchPattern ) ) {
-					continue;
-				}
-
-				if ( cancelToken.IsCancellationRequested ) {
-					return;
-				}
-
-				await FindEachDocument( folder, onFindFile, searchPattern, cancelToken ).ConfigureAwait( false );
-
-				await ScanForSubFolders( folder, onFindFile, onEachDirectory, searchStyle, searchPatterns, cancelToken ).ConfigureAwait( false );
-			}
+		if ( String.IsNullOrWhiteSpace( fName ) ) {
+			return now;
 		}
 
-		/// <summary>
-		///     <para>
-		///         The code does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems as
-		///         cluster size is always zero (GetDiskFreeSpaceW and
-		///         GetDiskFreeSpace return -1 even with UAC disabled.)
-		///     </para>
-		/// </summary>
-		/// <param name="info"></param>
-		/// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
-		public static UInt64? GetFileSizeOnDiskAlt( this FileInfo info ) {
-			var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullName, out var sectorsPerCluster, out var bytesPerSector, out var _, out var _ );
-
-			if ( result == 0 ) {
-				throw new Win32Exception();
-			}
-
-			var clusterSize = sectorsPerCluster * bytesPerSector;
-			var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var sizeHigh );
-			var size = ( ( Int64 )sizeHigh << 32 ) | losize;
-
-			return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
+		if ( Int64.TryParse( fName, NumberStyles.AllowHexSpecifier, null, out var data ) ) {
+			return DateTime.FromBinary( data );
 		}
 
-		public static DriveInfo? GetLargestEmptiestDrive() =>
-			DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
+		if ( Int64.TryParse( fName, NumberStyles.Any, null, out data ) ) {
+			return DateTime.FromBinary( data );
+		}
 
-		/// <summary>
-		///     Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the
-		///     <see cref="FileSystemInfo.FullPath" /> .
-		/// </summary>
-		/// <param name="path">         </param>
-		/// <param name="searchPattern"></param>
-		/// <param name="searchOption"> </param>
-		public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
-			if ( String.IsNullOrWhiteSpace( path ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
-			}
+		return now;
+	}
 
+	//TODO This needs rewritten as a whole drive file searcher using tasks.
+
+	/// <summary>
+	///     Search the <paramref name="folder" /> for any files matching the
+	///     <paramref name="fileSearchPatterns" /> .
+	/// </summary>
+	/// <param name="folder">    The folder to start the search.</param>
+	/// <param name="fileSearchPatterns">List of patterns to search for.</param>
+	/// <param name="cancelToken">      </param>
+	/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
+	/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
+	/// <param name="searchStyle">       </param>
+	public static async Task FindFiles(
+		this Folder folder,
+		IReadOnlyCollection<String> fileSearchPatterns,
+		CancellationToken cancelToken,
+		Action<Document>? onFindFile = null,
+		Action<Folder>? onEachDirectory = null,
+		SearchStyle searchStyle = SearchStyle.FilesFirst
+	) {
+		if ( fileSearchPatterns is null ) {
+			throw new ArgumentEmptyException( nameof( fileSearchPatterns ) );
+		}
+
+		if ( folder is null ) {
+			throw new ArgumentEmptyException( nameof( folder ) );
+		}
+
+		var searchPatterns = fileSearchPatterns.ToList();
+
+		await foreach ( var searchPattern in searchPatterns.ToAsyncEnumerable().WithCancellation( cancelToken ).ConfigureAwait( false ) ) {
 			if ( String.IsNullOrWhiteSpace( searchPattern ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( searchPattern ) );
+				continue;
 			}
 
-			var dir = new DirectoryInfo( path );
-
-			if ( !dir.Exists ) {
-				return String.Empty;
+			if ( cancelToken.IsCancellationRequested ) {
+				return;
 			}
 
-			var files = Directory.EnumerateFiles( dir.FullName, searchPattern, searchOption );
-			var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
+			await FindEachDocument( folder, onFindFile, searchPattern, cancelToken ).ConfigureAwait( false );
 
-			if ( pickedfile != null && File.Exists( pickedfile ) ) {
-				return new FileInfo( pickedfile ).FullName;
-			}
+			await ScanForSubFolders( folder, onFindFile, onEachDirectory, searchStyle, searchPatterns, cancelToken ).ConfigureAwait( false );
+		}
+	}
 
+	/// <summary>
+	///     <para>
+	///         The code does not work properly on Windows Server 2008 or 2008 R2 or Windows 7 and Vista based systems as
+	///         cluster size is always zero (GetDiskFreeSpaceW and
+	///         GetDiskFreeSpace return -1 even with UAC disabled.)
+	///     </para>
+	/// </summary>
+	/// <param name="info"></param>
+	/// <see cref="http://stackoverflow.com/questions/3750590/get-size-of-file-on-disk" />
+	public static UInt64? GetFileSizeOnDiskAlt( this FileInfo info ) {
+		var result = NativeMethods.GetDiskFreeSpaceW( info.Directory.Root.FullName, out var sectorsPerCluster, out var bytesPerSector, out var _, out var _ );
+
+		if ( result == 0 ) {
+			throw new Win32Exception();
+		}
+
+		var clusterSize = sectorsPerCluster * bytesPerSector;
+		var losize = NativeMethods.GetCompressedFileSizeW( info.FullName, out var sizeHigh );
+		var size = ( ( Int64 )sizeHigh << 32 ) | losize;
+
+		return ( UInt64 )( ( size + clusterSize - 1 ) / clusterSize * clusterSize );
+	}
+
+	public static DriveInfo? GetLargestEmptiestDrive() =>
+		DriveInfo.GetDrives().AsParallel().Where( info => info.IsReady ).OrderByDescending( info => info.AvailableFreeSpace ).FirstOrDefault();
+
+	/// <summary>
+	///     Given the <paramref name="path" /> and <paramref name="searchPattern" /> pick any one file and return the
+	///     <see cref="FileSystemInfo.FullPath" /> .
+	/// </summary>
+	/// <param name="path">         </param>
+	/// <param name="searchPattern"></param>
+	/// <param name="searchOption"> </param>
+	public static String GetRandomFile( String path, String searchPattern = "*.*", SearchOption searchOption = SearchOption.TopDirectoryOnly ) {
+		if ( String.IsNullOrWhiteSpace( path ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( path ) );
+		}
+
+		if ( String.IsNullOrWhiteSpace( searchPattern ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( searchPattern ) );
+		}
+
+		var dir = new DirectoryInfo( path );
+
+		if ( !dir.Exists ) {
 			return String.Empty;
 		}
 
-		/// <summary>Warning, this could OOM on a large folder structure.</summary>
-		/// <param name="startingFolder"></param>
-		/// <param name="foldersFound">  Warning, this could OOM on a *large* folder structure.</param>
-		/// <param name="cancellationToken">  </param>
-		public static async Task<Boolean> GrabAllFolders( this Folder startingFolder, ConcurrentSet<Folder> foldersFound, CancellationToken cancellationToken ) {
-			if ( startingFolder is null ) {
-				throw new ArgumentEmptyException( nameof( startingFolder ) );
-			}
+		var files = Directory.EnumerateFiles( dir.FullName, searchPattern, searchOption );
+		var pickedfile = files.OrderBy( r => Randem.Next() ).FirstOrDefault();
 
-			if ( foldersFound is null ) {
-				throw new ArgumentEmptyException( nameof( foldersFound ) );
-			}
-
-			try {
-				if ( cancellationToken.IsCancellationRequested ) {
-					return false;
-				}
-
-				if ( !await startingFolder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
-					return false;
-				}
-
-				if ( foldersFound.Add( startingFolder ) ) {
-					await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.AllDirectories, cancellationToken ).ConfigureAwait( false ) ) {
-						if ( foldersFound.Add( subFolder ) ) {
-
-							//recurse into
-							await GrabAllFolders( subFolder, foldersFound, cancellationToken ).ConfigureAwait( false );
-						}
-					}
-				}
-
-				return true;
-			}
-			catch ( OutOfMemoryException ) {
-				GC.Collect( 2, GCCollectionMode.Forced, true, true );
-			}
-			catch ( Exception exception ) {
-				exception.Log();
-			}
-
-			return false;
+		if ( pickedfile != null && File.Exists( pickedfile ) ) {
+			return new FileInfo( pickedfile ).FullName;
 		}
 
-		/*
+		return String.Empty;
+	}
 
-		
-		/// <param name="startingFolder">        </param>
-		/// <param name="documentSearchPatterns"></param>
-		/// <param name="onEachDocumentFound">   Warning, this could OOM on a large folder structure.</param>
-		/// <param name="cancellation">          </param>
-		/// <param name="progressFolders">       </param>
-		/// <param name="progressDocuments">     </param>
-		/// <returns></returns>
-		public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, [CanBeNull] IEnumerable<String>? documentSearchPatterns,
-			[NotNull] Action<Document> onEachDocumentFound, [CanBeNull] IProgress<Int64>? progressFolders, [CanBeNull] IProgress<Int64>? progressDocuments,
-			[NotNull] CancellationTokenSource cancellation ) {
-			if ( startingFolder is null ) {
-				throw new ArgumentEmptyException( nameof( startingFolder ) );
-			}
+	/// <summary>Warning, this could OOM on a large folder structure.</summary>
+	/// <param name="startingFolder"></param>
+	/// <param name="foldersFound">  Warning, this could OOM on a *large* folder structure.</param>
+	/// <param name="cancellationToken">  </param>
+	public static async Task<Boolean> GrabAllFolders( this Folder startingFolder, ConcurrentSet<Folder> foldersFound, CancellationToken cancellationToken ) {
+		if ( startingFolder is null ) {
+			throw new ArgumentEmptyException( nameof( startingFolder ) );
+		}
 
-			if ( onEachDocumentFound is null ) {
-				throw new ArgumentEmptyException( nameof( onEachDocumentFound ) );
-			}
+		if ( foldersFound is null ) {
+			throw new ArgumentEmptyException( nameof( foldersFound ) );
+		}
 
-			//if ( foldersFound is null ) {
-			//    throw new ArgumentEmptyException( nameof( foldersFound ) );
-			//}
-
-			if ( cancellation.IsCancellationRequested ) {
+		try {
+			if ( cancellationToken.IsCancellationRequested ) {
 				return false;
 			}
 
-			if ( !startingFolder.Exists() ) {
+			if ( !await startingFolder.Exists( cancellationToken ).ConfigureAwait( false ) ) {
 				return false;
 			}
 
-			//foldersFound.Add( startingFolder );
-			var searchPatterns = documentSearchPatterns ?? new[] {
-				"*.*"
-			};
+			if ( foldersFound.Add( startingFolder ) ) {
+				await foreach ( var subFolder in startingFolder.EnumerateFolders( "*.*", SearchOption.AllDirectories, cancellationToken ).ConfigureAwait( false ) ) {
+					if ( foldersFound.Add( subFolder ) ) {
 
-			Parallel.ForEach( startingFolder.GetFolders( "*" ).AsParallel(), folder => {
-				progressFolders?.Report( 1 );
-				GrabEntireTree( folder, searchPatterns, onEachDocumentFound, progressFolders, progressDocuments, cancellation );
-				progressFolders?.Report( -1 );
-			} );
-
-			//var list = new List<FileInfo>();
-			foreach ( var files in searchPatterns.Select( searchPattern => startingFolder.Info.EnumerateFiles( searchPattern ).OrderBy( info => Randem.Next() ) ) ) {
-				foreach ( var info in files ) {
-					progressDocuments?.Report( 1 );
-					onEachDocumentFound( new Document( info ) );
-
-					if ( cancellation.IsCancellationRequested ) {
-						return false;
+						//recurse into
+						await GrabAllFolders( subFolder, foldersFound, cancellationToken ).ConfigureAwait( false );
 					}
 				}
 			}
-
-			//if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
-			//    return documentsFound.Any();
-			//}
-			//foreach ( var folder in startingFolder.GetFolders() ) {
-			//    GrabEntireTree( folder, searchPatterns, onEachDocumentFound, cancellation );
-			//}
 
 			return true;
 		}
-		*/
-
-		[Pure]
-		public static Boolean IsDirectory( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
-
-		[Pure]
-		public static Boolean IsDirectory( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
-
-		[Pure]
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean IsExtended( this String path ) =>
-			path.Length >= 4 && path[0] == PathInternal.Constants.Backslash && ( path[1] == PathInternal.Constants.Backslash || path[1] == '?' ) && path[2] == '?' &&
-			path[3] == PathInternal.Constants.Backslash;
-
-		[Pure]
-		public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
-
-		[Pure]
-		public static Boolean IsFile( this WIN32_FIND_DATA data ) => !IsDirectory( data );
-
-		/// <summary>Hard coded folders to skip.</summary>
-		/// <param name="data"></param>
-		[Pure]
-		public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
-			data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
-
-		/// <summary>Hard coded folders to skip.</summary>
-		/// <param name="data"></param>
-		[Pure]
-		public static Boolean IsIgnoreFolder( this WIN32_FIND_DATA data ) =>
-			data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
-
-		[Pure]
-		public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName is "." or "..";
-
-		[Pure]
-		public static Boolean IsParentOrCurrent( this WIN32_FIND_DATA data ) => data.cFileName is "." or "..";
-
-		[Pure]
-		public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
-
-		[Pure]
-		public static Boolean IsReparsePoint( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
-
-		/// <summary>Open with Explorer.exe</summary>
-		/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
-		public static Boolean OpenWithExplorer( this DirectoryInfo folder ) {
-			if ( folder is null ) {
-				throw new ArgumentEmptyException( nameof( folder ) );
-			}
-
-			var windows = Windows.WindowsSystem32Folder.Value;
-
-			if ( windows is null ) {
-				return false;
-			}
-
-			var process = Process.Start( $@"{windows.FullPath.CombinePaths( "explorer.exe" )}", $" /separate /select,{folder.FullName.DoubleQuote()} " );
-
-			return process switch {
-				null => false,
-				var _ => process.Responding
-			};
+		catch ( OutOfMemoryException ) {
+			GC.Collect( 2, GCCollectionMode.Forced, true, true );
+		}
+		catch ( Exception exception ) {
+			exception.Log();
 		}
 
-		/// <summary>Open with Explorer.exe</summary>
-		/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
-		public static Boolean OpenWithExplorer( this Folder folder ) {
-			if ( folder is null ) {
-				throw new ArgumentEmptyException( nameof( folder ) );
-			}
+		return false;
+	}
 
-			var windows = Windows.WindowsSystem32Folder.Value;
+	/*
 
-			if ( windows is null ) {
-				return false;
-			}
-
-			var proc = Process.Start( $@"{windows.FullPath.CombinePaths( "explorer.exe" )}", $" /separate /select,{folder.FullPath.DoubleQuote()} " );
-
-			return proc switch {
-				null => false,
-				var _ => proc.Responding
-			};
+	
+	/// <param name="startingFolder">        </param>
+	/// <param name="documentSearchPatterns"></param>
+	/// <param name="onEachDocumentFound">   Warning, this could OOM on a large folder structure.</param>
+	/// <param name="cancellation">          </param>
+	/// <param name="progressFolders">       </param>
+	/// <param name="progressDocuments">     </param>
+	/// <returns></returns>
+	public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, [CanBeNull] IEnumerable<String>? documentSearchPatterns,
+		[NotNull] Action<Document> onEachDocumentFound, [CanBeNull] IProgress<Int64>? progressFolders, [CanBeNull] IProgress<Int64>? progressDocuments,
+		[NotNull] CancellationTokenSource cancellation ) {
+		if ( startingFolder is null ) {
+			throw new ArgumentEmptyException( nameof( startingFolder ) );
 		}
 
-		/// <summary>Open with Explorer.exe</summary>
-		public static Boolean OpenWithExplorer( this Document document ) {
-			if ( document is null ) {
-				throw new ArgumentEmptyException( nameof( document ) );
-			}
-
-			var windows = Windows.WindowsSystem32Folder.Value;
-
-			if ( windows is null ) {
-				return false;
-			}
-
-			var proc = Process.Start( $@"{windows.FullPath.CombinePaths( "explorer.exe" )}", $" /separate /select,{document.FullPath.DoubleQuote()} " );
-
-			return proc switch {
-				null => false,
-				var _ => proc.Responding
-			};
+		if ( onEachDocumentFound is null ) {
+			throw new ArgumentEmptyException( nameof( onEachDocumentFound ) );
 		}
 
-		/// <summary>Before: "hello.txt". After: "hello 345680969061906730476346.txt"</summary>
-		/// <param name="info">        </param>
-		/// <param name="newExtension"></param>
-		public static FileInfo PlusDateTime( this FileInfo info, String? newExtension = null ) {
-			if ( info is null ) {
-				throw new ArgumentEmptyException( nameof( info ) );
-			}
+		//if ( foldersFound is null ) {
+		//    throw new ArgumentEmptyException( nameof( foldersFound ) );
+		//}
 
-			if ( info.Directory is null ) {
-				throw new NullReferenceException( "info.directory" );
-			}
-
-			var now = Convert.ToString( DateTime.UtcNow.ToBinary(), 16 );
-			var formatted = $"{info.Name.GetFileNameWithoutExtension()} {now}{newExtension ?? info.Extension}";
-			var path = info.Directory.FullName.CombinePaths( formatted );
-
-			return new FileInfo( path );
+		if ( cancellation.IsCancellationRequested ) {
+			return false;
 		}
 
-		/// <summary>untested. is this written correctly? would it read from a *slow* media but not block the calling function?</summary>
-		/// <param name="filePath">          </param>
-		/// <param name="bufferSize">        </param>
-		/// <param name="fileMissingRetries"></param>
-		/// <param name="retryDelay">        </param>
-		public static async Task<String> ReadTextAsync( String filePath, Int32? bufferSize = 65536, Int32? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
-			if ( String.IsNullOrWhiteSpace( filePath ) ) {
-				throw new ArgumentEmptyException( nameof( filePath ) );
-			}
+		if ( !startingFolder.Exists() ) {
+			return false;
+		}
 
-			bufferSize ??= 65536;
+		//foldersFound.Add( startingFolder );
+		var searchPatterns = documentSearchPatterns ?? new[] {
+			"*.*"
+		};
 
-			while ( fileMissingRetries > 0 ) {
-				if ( File.Exists( filePath ) ) {
-					break;
+		Parallel.ForEach( startingFolder.GetFolders( "*" ).AsParallel(), folder => {
+			progressFolders?.Report( 1 );
+			GrabEntireTree( folder, searchPatterns, onEachDocumentFound, progressFolders, progressDocuments, cancellation );
+			progressFolders?.Report( -1 );
+		} );
+
+		//var list = new List<FileInfo>();
+		foreach ( var files in searchPatterns.Select( searchPattern => startingFolder.Info.EnumerateFiles( searchPattern ).OrderBy( info => Randem.Next() ) ) ) {
+			foreach ( var info in files ) {
+				progressDocuments?.Report( 1 );
+				onEachDocumentFound( new Document( info ) );
+
+				if ( cancellation.IsCancellationRequested ) {
+					return false;
 				}
-
-				await Task.Delay( retryDelay ?? Seconds.One ).ConfigureAwait( false );
-				fileMissingRetries--;
 			}
+		}
 
+		//if ( cancellation.HaveAnyCancellationsBeenRequested() ) {
+		//    return documentsFound.Any();
+		//}
+		//foreach ( var folder in startingFolder.GetFolders() ) {
+		//    GrabEntireTree( folder, searchPatterns, onEachDocumentFound, cancellation );
+		//}
+
+		return true;
+	}
+	*/
+
+	[Pure]
+	public static Boolean IsDirectory( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
+
+	[Pure]
+	public static Boolean IsDirectory( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
+
+	[Pure]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean IsExtended( this String path ) =>
+		path.Length >= 4 && path[0] == PathInternal.Constants.Backslash && ( path[1] == PathInternal.Constants.Backslash || path[1] == '?' ) && path[2] == '?' &&
+		path[3] == PathInternal.Constants.Backslash;
+
+	[Pure]
+	public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
+
+	[Pure]
+	public static Boolean IsFile( this WIN32_FIND_DATA data ) => !IsDirectory( data );
+
+	/// <summary>Hard coded folders to skip.</summary>
+	/// <param name="data"></param>
+	[Pure]
+	public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
+		data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
+
+	/// <summary>Hard coded folders to skip.</summary>
+	/// <param name="data"></param>
+	[Pure]
+	public static Boolean IsIgnoreFolder( this WIN32_FIND_DATA data ) =>
+		data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
+
+	[Pure]
+	public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName is "." or "..";
+
+	[Pure]
+	public static Boolean IsParentOrCurrent( this WIN32_FIND_DATA data ) => data.cFileName is "." or "..";
+
+	[Pure]
+	public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
+
+	[Pure]
+	public static Boolean IsReparsePoint( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
+
+	/// <summary>Open with Explorer.exe</summary>
+	/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
+	public static Boolean OpenWithExplorer( this DirectoryInfo folder ) {
+		if ( folder is null ) {
+			throw new ArgumentEmptyException( nameof( folder ) );
+		}
+
+		var windows = Windows.WindowsSystem32Folder.Value;
+
+		if ( windows is null ) {
+			return false;
+		}
+
+		var process = Process.Start( $@"{windows.FullPath.CombinePaths( "explorer.exe" )}", $" /separate /select,{folder.FullName.DoubleQuote()} " );
+
+		return process switch {
+			null => false,
+			var _ => process.Responding
+		};
+	}
+
+	/// <summary>Open with Explorer.exe</summary>
+	/// <param name="folder">todo: describe folder parameter on OpenDirectoryWithExplorer</param>
+	public static Boolean OpenWithExplorer( this Folder folder ) {
+		if ( folder is null ) {
+			throw new ArgumentEmptyException( nameof( folder ) );
+		}
+
+		var windows = Windows.WindowsSystem32Folder.Value;
+
+		if ( windows is null ) {
+			return false;
+		}
+
+		var proc = Process.Start( $@"{windows.FullPath.CombinePaths( "explorer.exe" )}", $" /separate /select,{folder.FullPath.DoubleQuote()} " );
+
+		return proc switch {
+			null => false,
+			var _ => proc.Responding
+		};
+	}
+
+	/// <summary>Open with Explorer.exe</summary>
+	public static Boolean OpenWithExplorer( this Document document ) {
+		if ( document is null ) {
+			throw new ArgumentEmptyException( nameof( document ) );
+		}
+
+		var windows = Windows.WindowsSystem32Folder.Value;
+
+		if ( windows is null ) {
+			return false;
+		}
+
+		var proc = Process.Start( $@"{windows.FullPath.CombinePaths( "explorer.exe" )}", $" /separate /select,{document.FullPath.DoubleQuote()} " );
+
+		return proc switch {
+			null => false,
+			var _ => proc.Responding
+		};
+	}
+
+	/// <summary>Before: "hello.txt". After: "hello 345680969061906730476346.txt"</summary>
+	/// <param name="info">        </param>
+	/// <param name="newExtension"></param>
+	public static FileInfo PlusDateTime( this FileInfo info, String? newExtension = null ) {
+		if ( info is null ) {
+			throw new ArgumentEmptyException( nameof( info ) );
+		}
+
+		if ( info.Directory is null ) {
+			throw new NullReferenceException( "info.directory" );
+		}
+
+		var now = Convert.ToString( DateTime.UtcNow.ToBinary(), 16 );
+		var formatted = $"{info.Name.GetFileNameWithoutExtension()} {now}{newExtension ?? info.Extension}";
+		var path = info.Directory.FullName.CombinePaths( formatted );
+
+		return new FileInfo( path );
+	}
+
+	/// <summary>untested. is this written correctly? would it read from a *slow* media but not block the calling function?</summary>
+	/// <param name="filePath">          </param>
+	/// <param name="bufferSize">        </param>
+	/// <param name="fileMissingRetries"></param>
+	/// <param name="retryDelay">        </param>
+	public static async Task<String> ReadTextAsync( String filePath, Int32? bufferSize = 65536, Int32? fileMissingRetries = 10, TimeSpan? retryDelay = null ) {
+		if ( String.IsNullOrWhiteSpace( filePath ) ) {
+			throw new ArgumentEmptyException( nameof( filePath ) );
+		}
+
+		bufferSize ??= 65536;
+
+		while ( fileMissingRetries > 0 ) {
 			if ( File.Exists( filePath ) ) {
-				try {
-					var sb = new StringBuilder( bufferSize.Value );
-					var buffer = new Byte[bufferSize.Value];
-
-					var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true );
-					await using var _ = sourceStream.ConfigureAwait( false );
-
-					Int32 numRead;
-
-					while ( ( numRead = await sourceStream.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ) != 0 ) {
-						var text = Encoding.Unicode.GetString( buffer, 0, numRead );
-						sb.Append( text );
-					}
-
-					return sb.ToString();
-				}
-				catch ( FileNotFoundException exception ) {
-					exception.Log();
-				}
+				break;
 			}
 
-			return String.Empty;
+			await Task.Delay( retryDelay ?? Seconds.One ).ConfigureAwait( false );
+			fileMissingRetries--;
 		}
 
-		/// <summary>Retry the <paramref name="ioFunction" /> if an <see cref="IOException" /> occurs.</summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="ioFunction"></param>
-		/// <param name="tryFor">    </param>
-		/// <param name="cancellationToken">     </param>
-		/// <exception cref="IOException"></exception>
-		public static TResult? ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken cancellationToken ) where TResult : class {
-			var stopwatch = Stopwatch.StartNew();
+		if ( File.Exists( filePath ) ) {
+			try {
+				var sb = new StringBuilder( bufferSize.Value );
+				var buffer = new Byte[bufferSize.Value];
+
+				var sourceStream = new FileStream( filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize.Value, true );
+				await using var _ = sourceStream.ConfigureAwait( false );
+
+				Int32 numRead;
+
+				while ( ( numRead = await sourceStream.ReadAsync( buffer, 0, buffer.Length ).ConfigureAwait( false ) ) != 0 ) {
+					var text = Encoding.Unicode.GetString( buffer, 0, numRead );
+					sb.Append( text );
+				}
+
+				return sb.ToString();
+			}
+			catch ( FileNotFoundException exception ) {
+				exception.Log();
+			}
+		}
+
+		return String.Empty;
+	}
+
+	/// <summary>Retry the <paramref name="ioFunction" /> if an <see cref="IOException" /> occurs.</summary>
+	/// <typeparam name="TResult"></typeparam>
+	/// <param name="ioFunction"></param>
+	/// <param name="tryFor">    </param>
+	/// <param name="cancellationToken">     </param>
+	/// <exception cref="IOException"></exception>
+	public static TResult? ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, CancellationToken cancellationToken ) where TResult : class {
+		var stopwatch = Stopwatch.StartNew();
 		TryAgain:
 
-			if ( cancellationToken.IsCancellationRequested ) {
+		if ( cancellationToken.IsCancellationRequested ) {
+			return default( TResult? );
+		}
+
+		try {
+			return ioFunction();
+		}
+		catch ( IOException exception ) {
+			exception.Message.Error();
+
+			if ( stopwatch.Elapsed > tryFor ) {
 				return default( TResult? );
 			}
 
-			try {
-				return ioFunction();
-			}
-			catch ( IOException exception ) {
-				exception.Message.Error();
-
-				if ( stopwatch.Elapsed > tryFor ) {
-					return default( TResult? );
-				}
-
-				goto TryAgain;
-			}
+			goto TryAgain;
 		}
+	}
 
-		/// <summary>Retry the <paramref name="ioFunction" /> if an <see cref="IOException" /> occurs.</summary>
-		/// <typeparam name="TResult"></typeparam>
-		/// <param name="ioFunction"></param>
-		/// <param name="tryFor">    </param>
-		/// <param name="result"></param>
-		/// <param name="cancellationToken">     </param>
-		/// <exception cref="IOException"></exception>
-		public static Boolean ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result, CancellationToken cancellationToken )
-			where TResult : struct {
-			var stopwatch = Stopwatch.StartNew();
+	/// <summary>Retry the <paramref name="ioFunction" /> if an <see cref="IOException" /> occurs.</summary>
+	/// <typeparam name="TResult"></typeparam>
+	/// <param name="ioFunction"></param>
+	/// <param name="tryFor">    </param>
+	/// <param name="result"></param>
+	/// <param name="cancellationToken">     </param>
+	/// <exception cref="IOException"></exception>
+	public static Boolean ReTry<TResult>( this Func<TResult> ioFunction, TimeSpan tryFor, out TResult? result, CancellationToken cancellationToken )
+		where TResult : struct {
+		var stopwatch = Stopwatch.StartNew();
 		TryAgain:
 
-			if ( cancellationToken.IsCancellationRequested ) {
+		if ( cancellationToken.IsCancellationRequested ) {
+			result = null;
+			return false;
+		}
+
+		try {
+			result = ioFunction();
+			return true;
+		}
+		catch ( IOException exception ) {
+			exception.Message.Error();
+
+			if ( stopwatch.Elapsed > tryFor ) {
 				result = null;
 				return false;
 			}
 
-			try {
-				result = ioFunction();
-				return true;
-			}
-			catch ( IOException exception ) {
-				exception.Message.Error();
+			goto TryAgain;
+		}
+	}
 
-				if ( stopwatch.Elapsed > tryFor ) {
-					result = null;
-					return false;
+	/// <summary>
+	///     <para>performs a byte by byte file comparison</para>
+	/// </summary>
+	/// <param name="left"> </param>
+	/// <param name="right"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	/// <exception cref="SecurityException"></exception>
+	/// <exception cref="ArgumentException"></exception>
+	/// <exception cref="UnauthorizedAccessException"></exception>
+	/// <exception cref="PathTooLongException"></exception>
+	/// <exception cref="NotSupportedException"></exception>
+	/// <exception cref="IOException"></exception>
+	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FileNotFoundException"></exception>
+	public static Boolean SameContent( this FileInfo? left, FileInfo? right ) {
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		if ( !left.Exists || !right.Exists ) {
+			return false;
+		}
+
+		if ( left.Length != right.Length ) {
+			return false;
+		}
+
+		var lba = left.AsBytes(); //.ToArray();
+		var rba = right.AsBytes(); //.ToArray();
+
+		return lba.SequenceEqual( rba );
+	}
+
+	/// <summary>
+	///     <para>performs a byte by byte file comparison</para>
+	/// </summary>
+	/// <param name="leftFileName"> </param>
+	/// <param name="rightFileName"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	/// <exception cref="SecurityException"></exception>
+	/// <exception cref="ArgumentException"></exception>
+	/// <exception cref="UnauthorizedAccessException"></exception>
+	/// <exception cref="PathTooLongException"></exception>
+	/// <exception cref="NotSupportedException"></exception>
+	/// <exception cref="IOException"></exception>
+	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FileNotFoundException"></exception>
+	public static Boolean SameContent( this String? leftFileName, String? rightFileName ) {
+		if ( leftFileName is null || rightFileName is null ) {
+			return false;
+		}
+
+		if ( !File.Exists( leftFileName ) ) {
+			return false;
+		}
+
+		if ( !File.Exists( rightFileName ) ) {
+			return false;
+		}
+
+		if ( leftFileName.Length != rightFileName.Length ) {
+			return false;
+		}
+
+		var lba = leftFileName.AsBytes().ToArray();
+		var rba = rightFileName.AsBytes().ToArray();
+
+		return lba.SequenceEqual( rba );
+	}
+
+	/// <summary>
+	///     <para>performs a byte by byte file comparison</para>
+	/// </summary>
+	/// <param name="left"> </param>
+	/// <param name="rightFile"></param>
+	/// <param name="cancellationToken"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	/// <exception cref="SecurityException"></exception>
+	/// <exception cref="ArgumentException"></exception>
+	/// <exception cref="UnauthorizedAccessException"></exception>
+	/// <exception cref="PathTooLongException"></exception>
+	/// <exception cref="NotSupportedException"></exception>
+	/// <exception cref="IOException"></exception>
+	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FileNotFoundException"></exception>
+	public static async Task<Boolean> SameContent( this Document? left, FileInfo? rightFile, CancellationToken cancellationToken ) {
+		if ( left is null || rightFile is null ) {
+			return false;
+		}
+
+		var right = new Document( rightFile.FullName );
+
+		return await left.SameContent( right, cancellationToken ).ConfigureAwait( false );
+	}
+
+	/// <summary>
+	///     <para>performs a byte by byte file comparison</para>
+	/// </summary>
+	/// <param name="right"> </param>
+	/// <param name="left"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	/// <exception cref="SecurityException"></exception>
+	/// <exception cref="ArgumentException"></exception>
+	/// <exception cref="UnauthorizedAccessException"></exception>
+	/// <exception cref="PathTooLongException"></exception>
+	/// <exception cref="NotSupportedException"></exception>
+	/// <exception cref="IOException"></exception>
+	/// <exception cref="DirectoryNotFoundException"></exception>
+	/// <exception cref="FileNotFoundException"></exception>
+	public static async Task<Boolean> SameContent( this FileInfo? leftFile, Document? right, CancellationToken cancellationToken ) {
+		if ( leftFile is null || right is null ) {
+			return false;
+		}
+
+		var left = new Document( leftFile.FullName );
+
+		return await left.SameContent( right, cancellationToken ).ConfigureAwait( false );
+	}
+
+	/// <summary>Search all possible drives for any files matching the <paramref name="fileSearchPatterns" /> .</summary>
+	/// <param name="fileSearchPatterns">List of patterns to search for.</param>
+	/// <param name="cancellationToken">      </param>
+	/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
+	/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
+	/// <param name="searchStyle">       </param>
+	public static void SearchAllDrives(
+		this IReadOnlyCollection<String> fileSearchPatterns,
+		CancellationToken cancellationToken,
+		Action<Document>? onFindFile = null,
+		Action<Folder>? onEachDirectory = null,
+		SearchStyle searchStyle = SearchStyle.FilesFirst
+	) {
+		if ( fileSearchPatterns is null ) {
+			throw new ArgumentEmptyException( nameof( fileSearchPatterns ) );
+		}
+
+		try {
+			DriveInfo.GetDrives()
+			         .AsParallel()
+			         .WithDegreeOfParallelism( 26 )
+			         .WithExecutionMode( ParallelExecutionMode.ForceParallelism )
+			         .ForAll( async drive => {
+				         if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
+					         return;
+				         }
+
+				         $"Scanning [{drive.VolumeLabel}]".Info();
+				         var root = new Folder( drive.RootDirectory.FullName );
+				         await root.FindFiles( fileSearchPatterns, cancellationToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
+			         } );
+		}
+		catch ( UnauthorizedAccessException ) { }
+		catch ( DirectoryNotFoundException ) { }
+		catch ( IOException ) { }
+		catch ( SecurityException ) { }
+		catch ( AggregateException exception ) {
+			exception.Handle( ex => {
+				switch ( ex ) {
+					case UnauthorizedAccessException _:
+					case DirectoryNotFoundException _:
+					case IOException _:
+					case SecurityException _: {
+						return true;
+					}
 				}
+
+				ex.Log();
+
+				return false;
+			} );
+		}
+	}
+
+	public static String SimplifyFileName( this Document document ) {
+		if ( document is null ) {
+			throw new ArgumentEmptyException( nameof( document ) );
+		}
+
+		var fileNameWithoutExtension = document.FileName.GetFileNameWithoutExtension();
+
+		TryAgain:
+
+		//check for a double extension (image.jpg.tif),
+		//remove the fake .tif extension?
+		//OR remove the fake .jpg extension?
+		if ( !fileNameWithoutExtension.GetExtension().IsNullOrEmpty() ) {
+
+			// ReSharper disable once AssignNullToNotNullAttribute
+			fileNameWithoutExtension = fileNameWithoutExtension.GetFileNameWithoutExtension();
+
+			goto TryAgain;
+		}
+
+		//TODO we have the document, see if we can just chop off down to a nonexistent filename.. just get rid of (3) then (2) then (1)
+
+		var splitIntoWords = fileNameWithoutExtension.Split( ' ', StringSplitOptions.RemoveEmptyEntries ).ToList();
+
+		if ( splitIntoWords.Count >= 2 ) {
+			var list = splitIntoWords.ToList();
+			var lastWord = list.TakeLast();
+
+			//check for a copy indicator
+			if ( lastWord.Like( "Copy" ) ) {
+				fileNameWithoutExtension = list.ToStrings( " " );
+				fileNameWithoutExtension = fileNameWithoutExtension.Trim();
+
+				goto TryAgain;
+			}
+
+			//check for a trailing "-" or "_"
+			if ( lastWord.Like( "-" ) || lastWord.Like( "_" ) ) {
+				fileNameWithoutExtension = list.ToStrings( " " );
+				fileNameWithoutExtension = fileNameWithoutExtension.Trim();
+
+				goto TryAgain;
+			}
+
+			//check for duplicate "word word" at the string's ending.
+			var nextlastWord = list.TakeLast();
+
+			if ( lastWord.Like( nextlastWord ) ) {
+				fileNameWithoutExtension = list.ToStrings( " " ) + " " + lastWord;
+				fileNameWithoutExtension = fileNameWithoutExtension.Trim();
 
 				goto TryAgain;
 			}
 		}
 
-		/// <summary>
-		///     <para>performs a byte by byte file comparison</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		/// <exception cref="ArgumentEmptyException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="UnauthorizedAccessException"></exception>
-		/// <exception cref="PathTooLongException"></exception>
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="IOException"></exception>
-		/// <exception cref="DirectoryNotFoundException"></exception>
-		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( this FileInfo? left, FileInfo? right ) {
-			if ( left is null || right is null ) {
-				return false;
-			}
+		return $"{fileNameWithoutExtension}{document.Extension()}";
+	}
 
-			if ( !left.Exists || !right.Exists ) {
-				return false;
-			}
-
-			if ( left.Length != right.Length ) {
-				return false;
-			}
-
-			var lba = left.AsBytes(); //.ToArray();
-			var rba = right.AsBytes(); //.ToArray();
-
-			return lba.SequenceEqual( rba );
+	public static IEnumerable<String> ToPaths( this DirectoryInfo directoryInfo ) {
+		if ( directoryInfo is null ) {
+			throw new ArgumentEmptyException( nameof( directoryInfo ) );
 		}
 
-		/// <summary>
-		///     <para>performs a byte by byte file comparison</para>
-		/// </summary>
-		/// <param name="leftFileName"> </param>
-		/// <param name="rightFileName"></param>
-		/// <exception cref="ArgumentEmptyException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="UnauthorizedAccessException"></exception>
-		/// <exception cref="PathTooLongException"></exception>
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="IOException"></exception>
-		/// <exception cref="DirectoryNotFoundException"></exception>
-		/// <exception cref="FileNotFoundException"></exception>
-		public static Boolean SameContent( this String? leftFileName, String? rightFileName ) {
-			if ( leftFileName is null || rightFileName is null ) {
-				return false;
-			}
+		return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
+	}
 
-			if ( !File.Exists( leftFileName ) ) {
-				return false;
-			}
-
-			if ( !File.Exists( rightFileName ) ) {
-				return false;
-			}
-
-			if ( leftFileName.Length != rightFileName.Length ) {
-				return false;
-			}
-
-			var lba = leftFileName.AsBytes().ToArray();
-			var rba = rightFileName.AsBytes().ToArray();
-
-			return lba.SequenceEqual( rba );
+	public static MemoryStream TryCopyStream(
+		String filePath,
+		Boolean bePatient = true,
+		FileMode fileMode = FileMode.Open,
+		FileAccess fileAccess = FileAccess.Read,
+		FileShare fileShare = FileShare.ReadWrite
+	) {
+		if ( String.IsNullOrWhiteSpace( filePath ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filePath ) );
 		}
-
-		/// <summary>
-		///     <para>performs a byte by byte file comparison</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="rightFile"></param>
-		/// <param name="cancellationToken"></param>
-		/// <exception cref="ArgumentEmptyException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="UnauthorizedAccessException"></exception>
-		/// <exception cref="PathTooLongException"></exception>
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="IOException"></exception>
-		/// <exception cref="DirectoryNotFoundException"></exception>
-		/// <exception cref="FileNotFoundException"></exception>
-		public static async Task<Boolean> SameContent( this Document? left, FileInfo? rightFile, CancellationToken cancellationToken ) {
-			if ( left is null || rightFile is null ) {
-				return false;
-			}
-
-			var right = new Document( rightFile.FullName );
-
-			return await left.SameContent( right, cancellationToken ).ConfigureAwait( false );
-		}
-
-		/// <summary>
-		///     <para>performs a byte by byte file comparison</para>
-		/// </summary>
-		/// <param name="right"> </param>
-		/// <param name="left"></param>
-		/// <exception cref="ArgumentEmptyException"></exception>
-		/// <exception cref="SecurityException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="UnauthorizedAccessException"></exception>
-		/// <exception cref="PathTooLongException"></exception>
-		/// <exception cref="NotSupportedException"></exception>
-		/// <exception cref="IOException"></exception>
-		/// <exception cref="DirectoryNotFoundException"></exception>
-		/// <exception cref="FileNotFoundException"></exception>
-		public static async Task<Boolean> SameContent( this FileInfo? leftFile, Document? right, CancellationToken cancellationToken ) {
-			if ( leftFile is null || right is null ) {
-				return false;
-			}
-
-			var left = new Document( leftFile.FullName );
-
-			return await left.SameContent( right, cancellationToken ).ConfigureAwait( false );
-		}
-
-		/// <summary>Search all possible drives for any files matching the <paramref name="fileSearchPatterns" /> .</summary>
-		/// <param name="fileSearchPatterns">List of patterns to search for.</param>
-		/// <param name="cancellationToken">      </param>
-		/// <param name="onFindFile">        <see cref="Action" /> to perform when a file is found.</param>
-		/// <param name="onEachDirectory">   <see cref="Action" /> to perform on each folder found.</param>
-		/// <param name="searchStyle">       </param>
-		public static void SearchAllDrives(
-			this IReadOnlyCollection<String> fileSearchPatterns,
-			CancellationToken cancellationToken,
-			Action<Document>? onFindFile = null,
-			Action<Folder>? onEachDirectory = null,
-			SearchStyle searchStyle = SearchStyle.FilesFirst
-		) {
-			if ( fileSearchPatterns is null ) {
-				throw new ArgumentEmptyException( nameof( fileSearchPatterns ) );
-			}
-
-			try {
-				DriveInfo.GetDrives()
-						 .AsParallel()
-						 .WithDegreeOfParallelism( 26 )
-						 .WithExecutionMode( ParallelExecutionMode.ForceParallelism )
-						 .ForAll( async drive => {
-							 if ( !drive.IsReady || drive.DriveType == DriveType.NoRootDirectory || !drive.RootDirectory.Exists ) {
-								 return;
-							 }
-
-							 $"Scanning [{drive.VolumeLabel}]".Info();
-							 var root = new Folder( drive.RootDirectory.FullName );
-							 await root.FindFiles( fileSearchPatterns, cancellationToken, onFindFile, onEachDirectory, searchStyle ).ConfigureAwait( false );
-						 } );
-			}
-			catch ( UnauthorizedAccessException ) { }
-			catch ( DirectoryNotFoundException ) { }
-			catch ( IOException ) { }
-			catch ( SecurityException ) { }
-			catch ( AggregateException exception ) {
-				exception.Handle( ex => {
-					switch ( ex ) {
-						case UnauthorizedAccessException _:
-						case DirectoryNotFoundException _:
-						case IOException _:
-						case SecurityException _: {
-								return true;
-							}
-					}
-
-					ex.Log();
-
-					return false;
-				} );
-			}
-		}
-
-		public static String SimplifyFileName( this Document document ) {
-			if ( document is null ) {
-				throw new ArgumentEmptyException( nameof( document ) );
-			}
-
-			var fileNameWithoutExtension = document.FileName.GetFileNameWithoutExtension();
-
-		TryAgain:
-
-			//check for a double extension (image.jpg.tif),
-			//remove the fake .tif extension?
-			//OR remove the fake .jpg extension?
-			if ( !fileNameWithoutExtension.GetExtension().IsNullOrEmpty() ) {
-
-				// ReSharper disable once AssignNullToNotNullAttribute
-				fileNameWithoutExtension = fileNameWithoutExtension.GetFileNameWithoutExtension();
-
-				goto TryAgain;
-			}
-
-			//TODO we have the document, see if we can just chop off down to a nonexistent filename.. just get rid of (3) then (2) then (1)
-
-			var splitIntoWords = fileNameWithoutExtension.Split( ' ', StringSplitOptions.RemoveEmptyEntries ).ToList();
-
-			if ( splitIntoWords.Count >= 2 ) {
-				var list = splitIntoWords.ToList();
-				var lastWord = list.TakeLast();
-
-				//check for a copy indicator
-				if ( lastWord.Like( "Copy" ) ) {
-					fileNameWithoutExtension = list.ToStrings( " " );
-					fileNameWithoutExtension = fileNameWithoutExtension.Trim();
-
-					goto TryAgain;
-				}
-
-				//check for a trailing "-" or "_"
-				if ( lastWord.Like( "-" ) || lastWord.Like( "_" ) ) {
-					fileNameWithoutExtension = list.ToStrings( " " );
-					fileNameWithoutExtension = fileNameWithoutExtension.Trim();
-
-					goto TryAgain;
-				}
-
-				//check for duplicate "word word" at the string's ending.
-				var nextlastWord = list.TakeLast();
-
-				if ( lastWord.Like( nextlastWord ) ) {
-					fileNameWithoutExtension = list.ToStrings( " " ) + " " + lastWord;
-					fileNameWithoutExtension = fileNameWithoutExtension.Trim();
-
-					goto TryAgain;
-				}
-			}
-
-			return $"{fileNameWithoutExtension}{document.Extension()}";
-		}
-
-		public static IEnumerable<String> ToPaths( this DirectoryInfo directoryInfo ) {
-			if ( directoryInfo is null ) {
-				throw new ArgumentEmptyException( nameof( directoryInfo ) );
-			}
-
-			return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
-		}
-
-		public static MemoryStream TryCopyStream(
-			String filePath,
-			Boolean bePatient = true,
-			FileMode fileMode = FileMode.Open,
-			FileAccess fileAccess = FileAccess.Read,
-			FileShare fileShare = FileShare.ReadWrite
-		) {
-			if ( String.IsNullOrWhiteSpace( filePath ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filePath ) );
-			}
 
 		//TODO
 		TryAgain:
-			var memoryStream = new MemoryStream();
+		var memoryStream = new MemoryStream();
 
-			try {
-				if ( File.Exists( filePath ) ) {
-					using var fileStream = File.Open( filePath, fileMode, fileAccess, fileShare );
+		try {
+			if ( File.Exists( filePath ) ) {
+				using var fileStream = File.Open( filePath, fileMode, fileAccess, fileShare );
 
-					var length = ( Int32 )fileStream.Length;
+				var length = ( Int32 )fileStream.Length;
 
-					if ( length > 0 ) {
-						fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
-						memoryStream.Seek( 0, SeekOrigin.Begin );
-					}
+				if ( length > 0 ) {
+					fileStream.CopyTo( memoryStream, length ); //BUG int-long possible issue.
+					memoryStream.Seek( 0, SeekOrigin.Begin );
 				}
 			}
-			catch ( IOException ) {
-
-				// IOExcception is thrown if the file is in use by another process.
-				if ( bePatient ) {
-					if ( !Thread.Yield() ) {
-						Thread.Sleep( 0 );
-					}
-
-					goto TryAgain;
-				}
-			}
-
-			return memoryStream;
 		}
+		catch ( IOException ) {
 
-		/// <summary>Returns a temporary <see cref="Document" /> (but does not create the file in the file system).</summary>
-		/// <param name="folder">   </param>
-		/// <param name="extension">If no extension is given, a random <see cref="Guid" /> is used.</param>
-		/// <param name="deleteAfterClose"></param>
-		/// <exception cref="ArgumentEmptyException"></exception>
-		public static Document TryGetTempDocument( this Folder folder, String? extension = null, Boolean deleteAfterClose = false ) {
-			if ( folder is null ) {
-				throw new ArgumentEmptyException( nameof( folder ) );
-			}
-
-			var randomFileName = Guid.NewGuid().ToString();
-			extension = extension.Trimmed() ?? Guid.NewGuid().ToString();
-
-			if ( !extension.StartsWith( ".", StringComparison.OrdinalIgnoreCase ) ) {
-				extension = $".{extension}";
-			}
-
-			return new Document( folder.FullPath, $"{randomFileName}{extension}", deleteAfterClose );
-		}
-
-		/// <summary>Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.</summary>
-		/// <param name="filePath">  The full file path to be opened</param>
-		/// <param name="fileMode">  Required file mode enum value(see MSDN documentation)</param>
-		/// <param name="fileAccess">Required file access enum value(see MSDN documentation)</param>
-		/// <param name="fileShare"> Required file share enum value(see MSDN documentation)</param>
-		/// <returns>
-		///     A valid FileStream object for the opened file, or null if the File could not be opened after the required
-		///     attempts
-		/// </returns>
-		public static FileStream? TryOpen( String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
-
-			//TODO
-			try {
-				return File.Open( filePath, fileMode, fileAccess, fileShare );
-			}
-			catch ( IOException ) {
-
-				// IOExcception is thrown if the file is in use by another process.
-			}
-
-			return default( FileStream? );
-		}
-
-		public static FileStream? TryOpenForReading(
-			String filePath,
-			Boolean bePatient = true,
-			FileMode fileMode = FileMode.Open,
-			FileAccess fileAccess = FileAccess.Read,
-			FileShare fileShare = FileShare.ReadWrite
-		) {
-			if ( String.IsNullOrWhiteSpace( filePath ) ) {
-				throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filePath ) );
-			}
-
-		//TODO
-		TryAgain:
-
-			try {
-				if ( File.Exists( filePath ) ) {
-					return File.Open( filePath, fileMode, fileAccess, fileShare );
-				}
-			}
-			catch ( IOException ) {
-
-				// IOExcception is thrown if the file is in use by another process.
-				if ( !bePatient ) {
-					return default( FileStream? );
-				}
-
+			// IOExcception is thrown if the file is in use by another process.
+			if ( bePatient ) {
 				if ( !Thread.Yield() ) {
 					Thread.Sleep( 0 );
 				}
 
 				goto TryAgain;
 			}
-
-			return default( FileStream? );
 		}
 
-		public static FileStream? TryOpenForWriting(
-			String? filePath,
-			FileMode fileMode = FileMode.Create,
-			FileAccess fileAccess = FileAccess.Write,
-			FileShare fileShare = FileShare.ReadWrite
-		) {
+		return memoryStream;
+	}
 
-			//TODO
-			try {
+	/// <summary>Returns a temporary <see cref="Document" /> (but does not create the file in the file system).</summary>
+	/// <param name="folder">   </param>
+	/// <param name="extension">If no extension is given, a random <see cref="Guid" /> is used.</param>
+	/// <param name="deleteAfterClose"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	public static Document TryGetTempDocument( this Folder folder, String? extension = null, Boolean deleteAfterClose = false ) {
+		if ( folder is null ) {
+			throw new ArgumentEmptyException( nameof( folder ) );
+		}
+
+		var randomFileName = Guid.NewGuid().ToString();
+		extension = extension.Trimmed() ?? Guid.NewGuid().ToString();
+
+		if ( !extension.StartsWith( ".", StringComparison.OrdinalIgnoreCase ) ) {
+			extension = $".{extension}";
+		}
+
+		return new Document( folder.FullPath, $"{randomFileName}{extension}", deleteAfterClose );
+	}
+
+	/// <summary>Tries to open a file, with a user defined number of attempt and Sleep delay between attempts.</summary>
+	/// <param name="filePath">  The full file path to be opened</param>
+	/// <param name="fileMode">  Required file mode enum value(see MSDN documentation)</param>
+	/// <param name="fileAccess">Required file access enum value(see MSDN documentation)</param>
+	/// <param name="fileShare"> Required file share enum value(see MSDN documentation)</param>
+	/// <returns>
+	///     A valid FileStream object for the opened file, or null if the File could not be opened after the required
+	///     attempts
+	/// </returns>
+	public static FileStream? TryOpen( String? filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare ) {
+
+		//TODO
+		try {
+			return File.Open( filePath, fileMode, fileAccess, fileShare );
+		}
+		catch ( IOException ) {
+
+			// IOExcception is thrown if the file is in use by another process.
+		}
+
+		return default( FileStream? );
+	}
+
+	public static FileStream? TryOpenForReading(
+		String filePath,
+		Boolean bePatient = true,
+		FileMode fileMode = FileMode.Open,
+		FileAccess fileAccess = FileAccess.Read,
+		FileShare fileShare = FileShare.ReadWrite
+	) {
+		if ( String.IsNullOrWhiteSpace( filePath ) ) {
+			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( filePath ) );
+		}
+
+		//TODO
+		TryAgain:
+
+		try {
+			if ( File.Exists( filePath ) ) {
 				return File.Open( filePath, fileMode, fileAccess, fileShare );
 			}
-			catch ( IOException ) {
+		}
+		catch ( IOException ) {
 
-				// IOExcception is thrown if the file is in use by another process.
+			// IOExcception is thrown if the file is in use by another process.
+			if ( !bePatient ) {
+				return default( FileStream? );
 			}
 
-			return default( FileStream? );
+			if ( !Thread.Yield() ) {
+				Thread.Sleep( 0 );
+			}
+
+			goto TryAgain;
 		}
 
-		public static Int32? TurnOnCompression( this FileInfo info ) {
-			if ( info is null ) {
-				throw new ArgumentEmptyException( nameof( info ) );
-			}
+		return default( FileStream? );
+	}
+
+	public static FileStream? TryOpenForWriting(
+		String? filePath,
+		FileMode fileMode = FileMode.Create,
+		FileAccess fileAccess = FileAccess.Write,
+		FileShare fileShare = FileShare.ReadWrite
+	) {
+
+		//TODO
+		try {
+			return File.Open( filePath, fileMode, fileAccess, fileShare );
+		}
+		catch ( IOException ) {
+
+			// IOExcception is thrown if the file is in use by another process.
+		}
+
+		return default( FileStream? );
+	}
+
+	public static Int32? TurnOnCompression( this FileInfo info ) {
+		if ( info is null ) {
+			throw new ArgumentEmptyException( nameof( info ) );
+		}
+
+		if ( !info.Exists ) {
+			info.Refresh();
 
 			if ( !info.Exists ) {
-				info.Refresh();
-
-				if ( !info.Exists ) {
-					return default( Int32? );
-				}
+				return default( Int32? );
 			}
-
-			var lpBytesReturned = 0;
-			Int16 compressionFormatDefault = 1;
-
-			using var fileStream = File.Open( info.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None );
-
-			var success = false;
-
-			try {
-				fileStream.SafeFileHandle.DangerousAddRef( ref success );
-
-				NativeMethods.DeviceIoControl( fileStream.SafeFileHandle.DangerousGetHandle(), FsctlSetCompression, ref compressionFormatDefault, sizeof( Int16 ), IntPtr.Zero,
-					0, ref lpBytesReturned, IntPtr.Zero );
-			}
-			finally {
-				fileStream.SafeFileHandle.DangerousRelease();
-			}
-
-			return lpBytesReturned;
 		}
 
-		/// <summary>(does not create path)</summary>
-		/// <param name="basePath"></param>
-		/// <param name="d">       </param>
-		public static DirectoryInfo WithShortDatePath( this DirectoryInfo basePath, DateTime d ) {
-			var path = basePath.FullName.CombinePaths( d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
+		var lpBytesReturned = 0;
+		Int16 compressionFormatDefault = 1;
 
-			return new DirectoryInfo( path );
+		using var fileStream = File.Open( info.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None );
+
+		var success = false;
+
+		try {
+			fileStream.SafeFileHandle.DangerousAddRef( ref success );
+
+			NativeMethods.DeviceIoControl( fileStream.SafeFileHandle.DangerousGetHandle(), FsctlSetCompression, ref compressionFormatDefault, sizeof( Int16 ), IntPtr.Zero,
+				0, ref lpBytesReturned, IntPtr.Zero );
+		}
+		finally {
+			fileStream.SafeFileHandle.DangerousRelease();
 		}
 
-		[Serializable]
-		public record FileInformation( String Name, PathInformation Path ) {
+		return lpBytesReturned;
+	}
 
-			public FileAttributes Attributes { get; set; }
+	/// <summary>(does not create path)</summary>
+	/// <param name="basePath"></param>
+	/// <param name="d">       </param>
+	public static DirectoryInfo WithShortDatePath( this DirectoryInfo basePath, DateTime d ) {
+		var path = basePath.FullName.CombinePaths( d.Year.ToString(), d.DayOfYear.ToString(), d.Hour.ToString() );
 
-			public DateTime? CreationTime { get; set; }
+		return new DirectoryInfo( path );
+	}
 
-			public Int64? FileSize { get; set; }
+	[Serializable]
+	public record FileInformation( String Name, PathInformation Path ) {
 
-			public DateTime? LastAccessTime { get; set; }
+		public FileAttributes Attributes { get; set; }
 
-			public DateTime? LastWriteTime { get; set; }
+		public DateTime? CreationTime { get; set; }
 
-			public PathInformation? Parent { get; set; }
+		public Int64? FileSize { get; set; }
 
-			public PathInformation Path { get; set; } = Path;
+		public DateTime? LastAccessTime { get; set; }
 
-		}
+		public DateTime? LastWriteTime { get; set; }
 
-		[Serializable]
-		public record PathInformation( String Path ) {
+		public PathInformation? Parent { get; set; }
 
-			public FileAttributes Attributes { get; set; }
+		public PathInformation Path { get; set; } = Path;
 
-			public DateTime CreationTime { get; set; }
+	}
 
-			public DateTime LastAccessTime { get; set; }
+	[Serializable]
+	public record PathInformation( String Path ) {
 
-			public DateTime LastWriteTime { get; set; }
+		public FileAttributes Attributes { get; set; }
 
-			public PathInformation? Parent { get; set; }
+		public DateTime CreationTime { get; set; }
 
-		}
+		public DateTime LastAccessTime { get; set; }
+
+		public DateTime LastWriteTime { get; set; }
+
+		public PathInformation? Parent { get; set; }
+
 	}
 }

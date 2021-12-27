@@ -22,23 +22,22 @@
 //
 // File "IValidator.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.Parsing.Validation {
+namespace Librainian.Parsing.Validation;
 
-	using System;
+using System;
 
-	public interface IValidator<T> {
+public interface IValidator<T> {
 
-		/// <summary>
-		///     Cached value of <see cref="ValidateFunc" />.
-		///     <para>Should be manually set in the derived ctor.</para>
-		///     <para>Example: <code>this.Validated = this.Validate( this.Value );</code></para>
-		/// </summary>
-		Boolean? Validated { get; }
+	/// <summary>
+	///     Cached value of <see cref="ValidateFunc" />.
+	///     <para>Should be manually set in the derived ctor.</para>
+	///     <para>Example: <code>this.Validated = this.Validate( this.Value );</code></para>
+	/// </summary>
+	Boolean? Validated { get; }
 
-		/// <summary>
-		///     <para>Function to run to validate.</para>
-		///     <para>Should be manually set in the derived ctor.</para>
-		/// </summary>
-		Func<T, Boolean> ValidateFunc { get; set; }
-	}
+	/// <summary>
+	///     <para>Function to run to validate.</para>
+	///     <para>Should be manually set in the derived ctor.</para>
+	/// </summary>
+	Func<T, Boolean> ValidateFunc { get; set; }
 }

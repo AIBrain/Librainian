@@ -25,9 +25,8 @@
 //
 // File "TimeProgression.cs" last formatted on 2021-03-06 at 6:30 AM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
+using System;
 
-	public record TimeProgression( Double MillisecondsPassed, Double Progress );
-}
+public record TimeProgression( Double MillisecondsPassed, Double Progress );

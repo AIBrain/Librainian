@@ -25,21 +25,21 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace LibrainianUnitTests.Persistence {
+namespace LibrainianUnitTests.Persistence;
 
-	using System;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using FluentAssertions;
-	using Librainian.FileSystem;
-	using Librainian.Measurement.Time;
-	using Librainian.Persistence.InIFiles;
-	using NUnit.Framework;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Librainian.FileSystem;
+using Librainian.Measurement.Time;
+using Librainian.Persistence.InIFiles;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class IniFileTests {
+[TestFixture]
+public class IniFileTests {
 
-		public const String IniTestData = @"
+	public const String IniTestData = @"
 [ Section 1  ]
 ;This is a comment
 data1=value1
@@ -73,52 +73,50 @@ data33   =   3
 
 ";
 
-		private static IniFile? Ini1;
+	private static IniFile? Ini1;
 
-		private static IniFile? Ini2;
+	private static IniFile? Ini2;
 
-		private static IniFile? Ini3;
+	private static IniFile? Ini3;
 
-		[Test]
-		public async Task test_load_from_file() {
-			var cancellationTokenSource = new CancellationTokenSource( Minutes.One );
+	[Test]
+	public async Task test_load_from_file() {
+		var cancellationTokenSource = new CancellationTokenSource( Minutes.One );
 
-			//prepare file
-			var config = Document.GetTempDocument( "config" );
-			var doc = await config.AppendText( IniTestData, cancellationTokenSource.Token ).ConfigureAwait( false );
+		//prepare file
+		var config = Document.GetTempDocument( "config" );
+		var doc = await config.AppendText( IniTestData, cancellationTokenSource.Token ).ConfigureAwait( false );
 
-			doc.Should()?.Be( config );
+		doc.Should()?.Be( config );
 
-			Ini2 = new IniFile {
-				["Greetings", "Hello"] = "world",
-				["Greeting", "Hello"] = "world",
-				["Greetings", "Hello"] = "World!"
-			};
+		Ini2 = new IniFile {
+			["Greetings", "Hello"] = "world",
+			["Greeting", "Hello"] = "world",
+			["Greetings", "Hello"] = "World!"
+		};
 
-			var test = Ini2["Greetings", "Hello"];
+		var test = Ini2["Greetings", "Hello"];
 
-			test.Should()?.Be( "World!" );
+		test.Should()?.Be( "World!" );
 
-			Ini3 = new IniFile( doc );
+		Ini3 = new IniFile( doc );
 
-			Console.WriteLine( Ini3 );
+		Console.WriteLine( Ini3 );
+	}
+
+	[Test]
+	public static async Task test_save_from_string() {
+		var cancellationTokenSource = new CancellationTokenSource( Minutes.One );
+
+		Ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
+		var temp = Document.GetTempDocument( "config" );
+		var saved = await Ini1.Save( temp, cancellationTokenSource.Token ).ConfigureAwait( false );
+		if ( saved ) {
+			Console.Write( "File saved to: " );
+			Console.WriteLine( temp.FullPath );
 		}
-
-		[Test]
-		public static async Task test_save_from_string() {
-			var cancellationTokenSource = new CancellationTokenSource( Minutes.One );
-
-			Ini1 = new IniFile( IniTestData, cancellationTokenSource.Token );
-			var temp = Document.GetTempDocument( "config" );
-			var saved = await Ini1.Save( temp, cancellationTokenSource.Token ).ConfigureAwait( false );
-			if ( saved ) {
-				Console.Write( "File saved to: " );
-				Console.WriteLine( temp.FullPath );
-			}
-			else {
-				Console.WriteLine( "File not saved." );
-			}
-
+		else {
+			Console.WriteLine( "File not saved." );
 		}
 
 	}

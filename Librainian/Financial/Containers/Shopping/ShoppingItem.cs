@@ -22,69 +22,68 @@
 //
 // File "ShoppingItem.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Shopping {
+namespace Librainian.Financial.Containers.Shopping;
 
-	using System;
-	using Exceptions;
-	using Exceptions.Warnings;
-	using Extensions;
-	using Newtonsoft.Json;
-	using Utilities.Disposables;
+using System;
+using Exceptions;
+using Exceptions.Warnings;
+using Extensions;
+using Newtonsoft.Json;
+using Utilities.Disposables;
 
-	[JsonObject]
-	[Immutable]
-	public record ShoppingItem : ABetterRecordDispose {
+[JsonObject]
+[Immutable]
+public record ShoppingItem : ABetterRecordDispose {
 
-		[JsonProperty]
-		public ItemCategory Category { get; }
+	[JsonProperty]
+	public ItemCategory Category { get; }
 
-		[JsonProperty]
-		public String? Description { get; private set; }
+	[JsonProperty]
+	public String? Description { get; private set; }
 
-		[JsonProperty]
-		public Guid ItemID { get; }
+	[JsonProperty]
+	public Guid ItemID { get; }
 
-		[JsonProperty]
-		public Decimal Price { get; private set; }
+	[JsonProperty]
+	public Decimal Price { get; private set; }
 
-		[JsonProperty]
-		public Boolean TaxExempt { get; protected set; }
+	[JsonProperty]
+	public Boolean TaxExempt { get; protected set; }
 
-		[JsonProperty]
-		public Boolean Voided { get; private set; }
+	[JsonProperty]
+	public Boolean Voided { get; private set; }
 
-		public ShoppingItem( ItemCategory category, Guid itemID ) {
-			if ( category == ItemCategory.Invalid ) {
-				throw new ArgumentEmptyException( nameof( category ) );
-			}
-
-			if ( itemID == Guid.Empty ) {
-				throw new InvalidParameterWarning( "", new ArgumentEmptyException( nameof( itemID ) ) );
-			}
-
-			this.Category = category;
-			this.ItemID = itemID;
+	public ShoppingItem( ItemCategory category, Guid itemID ) {
+		if ( category == ItemCategory.Invalid ) {
+			throw new ArgumentEmptyException( nameof( category ) );
 		}
 
-		/// <summary>Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.</summary>
-		/// <param name="left"></param>
-		/// <param name="right"> </param>
-		public static Boolean Equals( ShoppingItem? left, ShoppingItem? right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			if ( left is null || right is null ) {
-				return false;
-			}
-
-			return left.Category == right.Category && left.ItemID == right.ItemID;
+		if ( itemID == Guid.Empty ) {
+			throw new InvalidParameterWarning( "", new ArgumentEmptyException( nameof( itemID ) ) );
 		}
 
-		/// <summary>Serves as the default hash function.</summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => (this.Category, this.ItemID).GetHashCode();
-
-		public Boolean IsValidData() => this.Category != ItemCategory.Invalid && !this.ItemID.Equals( Guid.Empty );
+		this.Category = category;
+		this.ItemID = itemID;
 	}
+
+	/// <summary>Static comparison. Compares <see cref="ItemID" /> and <see cref="Category" />.</summary>
+	/// <param name="left"></param>
+	/// <param name="right"> </param>
+	public static Boolean Equals( ShoppingItem? left, ShoppingItem? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
+		}
+
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		return left.Category == right.Category && left.ItemID == right.ItemID;
+	}
+
+	/// <summary>Serves as the default hash function.</summary>
+	/// <returns>A hash code for the current object.</returns>
+	public override Int32 GetHashCode() => (this.Category, this.ItemID).GetHashCode();
+
+	public Boolean IsValidData() => this.Category != ItemCategory.Invalid && !this.ItemID.Equals( Guid.Empty );
 }

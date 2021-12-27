@@ -22,7 +22,6 @@
 //
 // File "Store.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Financial {
+namespace Librainian.Financial; 
 
-	public class Store { }
-}
+public class Store { }

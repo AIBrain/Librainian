@@ -22,17 +22,16 @@
 //
 // File "IQuantityOfDistance.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
-	using ExtendedNumerics;
-	using JetBrains.Annotations;
+using System;
+using ExtendedNumerics;
+using JetBrains.Annotations;
 
-	public interface IQuantityOfDistance {
+public interface IQuantityOfDistance {
 
-		[Pure]
-		BigDecimal ToMeters();
+	[Pure]
+	BigDecimal ToMeters();
 
-		String ToString();
-	}
+	String ToString();
 }

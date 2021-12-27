@@ -25,25 +25,23 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Graphics.DD {
+namespace Librainian.Graphics.DD;
 
-	using System;
+using System;
 
-	public record Line( PointR P1, PointR P2 ) {
+public record Line( PointR P1, PointR P2 ) {
 
-		public Single X1 => this.P1.X;
+	public Single X1 => this.P1.X;
 
-		public Single X2 => this.P2.X;
+	public Single X2 => this.P2.X;
 
-		public Single Y1 => this.P1.Y;
+	public Single Y1 => this.P1.Y;
 
-		public Single Y2 => this.P2.Y;
+	public Single Y2 => this.P2.Y;
 
-		public void Deconstruct( out PointR P1, out PointR P2 ) {
-			P1 = this.P1;
-			P2 = this.P2;
-		}
-
+	public void Deconstruct( out PointR P1, out PointR P2 ) {
+		P1 = this.P1;
+		P2 = this.P2;
 	}
 
 }

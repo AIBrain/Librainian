@@ -25,70 +25,69 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
-	using Extensions;
-	using Newtonsoft.Json;
+using System;
+using Extensions;
+using Newtonsoft.Json;
 
-	/// <summary>A simple struct for a <see cref="ClockMillisecond" />.</summary>
-	[JsonObject]
-	[Immutable]
-	public record ClockMillisecond : IClockPart {
-		public const UInt16 MaximumValue = 999;
+/// <summary>A simple struct for a <see cref="ClockMillisecond" />.</summary>
+[JsonObject]
+[Immutable]
+public record ClockMillisecond : IClockPart {
+	public const UInt16 MaximumValue = 999;
 
-		public const UInt16 MinimumValue = 0;
+	public const UInt16 MinimumValue = 0;
 
-		public ClockMillisecond( UInt16 value ) {
-			if ( value > MaximumValue ) {
-				value = MaximumValue; //or throw outofRangeException?
-			}
-
-			this.Value = value;
+	public ClockMillisecond( UInt16 value ) {
+		if ( value > MaximumValue ) {
+			value = MaximumValue; //or throw outofRangeException?
 		}
 
-		public static ClockMillisecond Maximum { get; } = new( MaximumValue );
+		this.Value = value;
+	}
 
-		public static ClockMillisecond Minimum { get; } = new( MinimumValue );
+	public static ClockMillisecond Maximum { get; } = new( MaximumValue );
 
-		[JsonProperty]
-		public UInt16 Value { get; }
+	public static ClockMillisecond Minimum { get; } = new( MinimumValue );
 
-		public static implicit operator UInt16( ClockMillisecond value ) => value.Value;
+	[JsonProperty]
+	public UInt16 Value { get; }
 
-		public static implicit operator ClockMillisecond( UInt16 value ) => new( value );
+	public static implicit operator UInt16( ClockMillisecond value ) => value.Value;
 
-		/// <summary>
-		///     Provide the next <see cref="ClockMillisecond" />.
-		/// </summary>
-		/// <param name="tocked">True when the <see cref="Value" /> went higher than <see cref="Maximum" />.</param>
-		public ClockMillisecond Next( out Boolean tocked ) {
-			var next = this.Value + 1;
+	public static implicit operator ClockMillisecond( UInt16 value ) => new( value );
 
-			if ( next > MaximumValue ) {
-				tocked = true;
+	/// <summary>
+	///     Provide the next <see cref="ClockMillisecond" />.
+	/// </summary>
+	/// <param name="tocked">True when the <see cref="Value" /> went higher than <see cref="Maximum" />.</param>
+	public ClockMillisecond Next( out Boolean tocked ) {
+		var next = this.Value + 1;
 
-				return Minimum;
-			}
+		if ( next > MaximumValue ) {
+			tocked = true;
 
-			tocked = false;
-
-			return ( ClockMillisecond )next;
+			return Minimum;
 		}
 
-		/// <summary>Provide the previous <see cref="ClockMillisecond" />.</summary>
-		public ClockMillisecond Previous( out Boolean tocked ) {
-			var next = this.Value - 1;
+		tocked = false;
 
-			if ( next < MinimumValue ) {
-				tocked = true;
+		return ( ClockMillisecond )next;
+	}
 
-				return Maximum;
-			}
+	/// <summary>Provide the previous <see cref="ClockMillisecond" />.</summary>
+	public ClockMillisecond Previous( out Boolean tocked ) {
+		var next = this.Value - 1;
 
-			tocked = false;
+		if ( next < MinimumValue ) {
+			tocked = true;
 
-			return ( ClockMillisecond )next;
+			return Maximum;
 		}
+
+		tocked = false;
+
+		return ( ClockMillisecond )next;
 	}
 }

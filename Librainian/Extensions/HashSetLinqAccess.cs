@@ -22,50 +22,49 @@
 //
 // File "HashSetLinqAccess.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System.Collections.Generic;
-	using Exceptions;
+using System.Collections.Generic;
+using Exceptions;
 
-	/// <summary>
-	///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
-	///     provided by the others: ToList(), ToArray(), ToDictionary()..
-	///     Now ToHashSet() is available. UPDATE: These might be available in the newer Libraries.
-	/// </summary>
-	/// <seealso
-	///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
-	public static class HashSetLinqAccess {
+/// <summary>
+///     This extension method class will add a ToHashSet <typeparamref name="&gt;" /> in exactly the same way it is
+///     provided by the others: ToList(), ToArray(), ToDictionary()..
+///     Now ToHashSet() is available. UPDATE: These might be available in the newer Libraries.
+/// </summary>
+/// <seealso
+///     cref="http://blogs.windowsclient.net/damonwildercarr/archive/2008/09/10/expose-new-linq-operations-from-the-screaming-hashset-lt-t-gt-collection.aspx" />
+public static class HashSetLinqAccess {
 
-		public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
-			if ( Equals( hashSet, null ) ) {
-				throw new ArgumentEmptyException( nameof( hashSet ) );
-			}
-
-			if ( Equals( range, null ) ) {
-				throw new ArgumentEmptyException( nameof( range ) );
-			}
-
-			foreach ( var item in range ) {
-				hashSet.Add( item );
-			}
-
-			return hashSet;
+	public static HashSet<T> AddRange<T>( this HashSet<T> hashSet, IEnumerable<T> range ) {
+		if ( Equals( hashSet, null ) ) {
+			throw new ArgumentEmptyException( nameof( hashSet ) );
 		}
 
-		public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T>? comparer ) {
-			if ( fromEnumerable is null ) {
-				throw new ArgumentEmptyException( nameof( fromEnumerable ) );
-			}
-
-			comparer ??= EqualityComparer<T>.Default;
-
-			if ( fromEnumerable is HashSet<T> set ) {
-				return set;
-			}
-
-			return new HashSet<T>( fromEnumerable, comparer );
+		if ( Equals( range, null ) ) {
+			throw new ArgumentEmptyException( nameof( range ) );
 		}
 
-		//public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
+		foreach ( var item in range ) {
+			hashSet.Add( item );
+		}
+
+		return hashSet;
 	}
+
+	public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable, IEqualityComparer<T>? comparer ) {
+		if ( fromEnumerable is null ) {
+			throw new ArgumentEmptyException( nameof( fromEnumerable ) );
+		}
+
+		comparer ??= EqualityComparer<T>.Default;
+
+		if ( fromEnumerable is HashSet<T> set ) {
+			return set;
+		}
+
+		return new HashSet<T>( fromEnumerable, comparer );
+	}
+
+	//public static HashSet<T> ToHashSet<T>( this IEnumerable<T> fromEnumerable ) => ToHashSet( fromEnumerable, EqualityComparer<T>.Default );
 }

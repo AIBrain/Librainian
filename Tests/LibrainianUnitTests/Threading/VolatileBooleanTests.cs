@@ -25,26 +25,47 @@
 // 
 // File "VolatileBooleanTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests.Threading {
+namespace LibrainianUnitTests.Threading;
 
-	using Librainian.Threadsafe;
-	using NUnit.Framework;
+using System.Threading.Tasks;
+using Librainian.Threading;
+using Librainian.Threadsafe;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class VolatileBooleanTests {
+[TestFixture]
+public class VolatileBooleanTests {
 
-		[Test]
-		public void DefaultCtorEqualsFalse() => Assert.False( new VolatileBoolean() );
+	[Test]
+	public void DefaultCtorEqualsFalse() => Assert.False( new VolatileBoolean() );
 
-		[Test]
-		public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
+	[Test]
+	public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
 
-		[Test]
-		public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
+	[Test]
+	public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
 
-		[Test]
-		public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
+	[Test]
+	public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
 
+}
+
+[TestFixture]
+public class ThreadingTests {
+
+	[Test]
+	public async Task TestAsyncLockVersion1() {
+		using var @lock = new AsyncLock();
+		using var releaser = await @lock.LockAsync();
+		TestContext.WriteLine( $"{nameof( this.TestAsyncLockVersion1 )} ran." );
 	}
+
+	[Test]
+	public void DefaultEqualsFalse() => Assert.False( new VolatileBoolean( default ) );
+
+	[Test]
+	public void FalseEqualsFalse() => Assert.False( new VolatileBoolean( false ) );
+
+	[Test]
+	public void TrueEqualsTrue() => Assert.True( new VolatileBoolean( true ) );
 
 }

@@ -24,160 +24,159 @@
 
 #nullable enable
 
-namespace Librainian.Parsing {
+namespace Librainian.Parsing;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Newtonsoft.Json;
+
+/// <summary>
+///     Optimized for .Add()ing many! strings.
+///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
+///     <para>Won't throw exceptions on null or empty strings being added.</para>
+/// </summary>
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[JsonObject]
+[Serializable]
+public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
+
+	private const Int32 InitialCapacity = 8;
+
+	[JsonProperty]
+	private readonly List<Char[]> _parts;
+
+	private Int32 _charCount;
+
+	private String? _compiled;
 
 	/// <summary>
 	///     Optimized for .Add()ing many! strings.
 	///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
 	///     <para>Won't throw exceptions on null or empty strings being added.</para>
 	/// </summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	[Serializable]
-	public class LeanStringBuilder : IEquatable<LeanStringBuilder> {
+	public LeanStringBuilder( Int32 initialCapacity = InitialCapacity ) => this._parts = new List<Char[]>( initialCapacity );
 
-		private const Int32 InitialCapacity = 8;
+	private void ClearCompiled() => this._compiled = null;
 
-		[JsonProperty]
-		private readonly List<Char[]> _parts;
+	/// <summary>
+	///     Optimized for .Add()ing many! strings.
+	///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
+	///     <para>Won't throw exceptions on null or empty strings being added.</para>
+	/// </summary>
+	public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new( initialCapacity );
 
-		private Int32 _charCount;
-
-		private String? _compiled;
-
-		/// <summary>
-		///     Optimized for .Add()ing many! strings.
-		///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
-		///     <para>Won't throw exceptions on null or empty strings being added.</para>
-		/// </summary>
-		public LeanStringBuilder( Int32 initialCapacity = InitialCapacity ) => this._parts = new List<Char[]>( initialCapacity );
-
-		private void ClearCompiled() => this._compiled = null;
-
-		/// <summary>
-		///     Optimized for .Add()ing many! strings.
-		///     <para>Doesn't realize the final string until <see cref="ToString" />.</para>
-		///     <para>Won't throw exceptions on null or empty strings being added.</para>
-		/// </summary>
-		public static LeanStringBuilder Create( Int32 initialCapacity = InitialCapacity ) => new( initialCapacity );
-
-		/// <summary>
-		///     static comparison of <paramref name="left" /> <see cref="LeanStringBuilder" /> vs <paramref name="right" />
-		///     <see cref="LeanStringBuilder" />.
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( LeanStringBuilder? left, LeanStringBuilder? right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			if ( left is null || right is null || left._charCount != right._charCount || left._parts.Count != right._parts.Count ) {
-				return false;
-			}
-
-			if ( left._compiled != null && right._compiled != null ) {
-				return left._compiled.Equals( right._compiled, StringComparison.Ordinal );
-			}
-
-			return left._parts.SequenceEqual( right._parts );
+	/// <summary>
+	///     static comparison of <paramref name="left" /> <see cref="LeanStringBuilder" /> vs <paramref name="right" />
+	///     <see cref="LeanStringBuilder" />.
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( LeanStringBuilder? left, LeanStringBuilder? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
 		}
 
-		/// <summary>Returns a value that indicates whether two <see cref="LeanStringBuilder" /> objects have different values.</summary>
-		/// <param name="left">The first value to compare.</param>
-		/// <param name="right">The second value to compare.</param>
-		/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-		public static Boolean operator !=( LeanStringBuilder? left, LeanStringBuilder? right ) => !Equals( left, right );
+		if ( left is null || right is null || left._charCount != right._charCount || left._parts.Count != right._parts.Count ) {
+			return false;
+		}
 
-		/// <summary>Returns a value that indicates whether the values of two <see cref="LeanStringBuilder" /> objects are equal.</summary>
-		/// <param name="left">The first value to compare.</param>
-		/// <param name="right">The second value to compare.</param>
-		/// <returns>
-		///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
-		///     false.
-		/// </returns>
-		public static Boolean operator ==( LeanStringBuilder? left, LeanStringBuilder? right ) => Equals( left, right );
+		if ( left._compiled != null && right._compiled != null ) {
+			return left._compiled.Equals( right._compiled, StringComparison.Ordinal );
+		}
 
-		public LeanStringBuilder Add( String? item ) => this.Add( item?.ToCharArray() );
+		return left._parts.SequenceEqual( right._parts );
+	}
 
-		public LeanStringBuilder Add( Char[]? chars ) {
-			if ( chars is null ) {
-				return this;
-			}
+	/// <summary>Returns a value that indicates whether two <see cref="LeanStringBuilder" /> objects have different values.</summary>
+	/// <param name="left">The first value to compare.</param>
+	/// <param name="right">The second value to compare.</param>
+	/// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
+	public static Boolean operator !=( LeanStringBuilder? left, LeanStringBuilder? right ) => !Equals( left, right );
 
-			if ( chars.Length == 0 ) {
-				return this;
-			}
+	/// <summary>Returns a value that indicates whether the values of two <see cref="LeanStringBuilder" /> objects are equal.</summary>
+	/// <param name="left">The first value to compare.</param>
+	/// <param name="right">The second value to compare.</param>
+	/// <returns>
+	///     true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise,
+	///     false.
+	/// </returns>
+	public static Boolean operator ==( LeanStringBuilder? left, LeanStringBuilder? right ) => Equals( left, right );
 
-			this._charCount += chars.Length; //*2 ??
-			this._parts.Add( chars );
-			this.ClearCompiled();
+	public LeanStringBuilder Add( String? item ) => this.Add( item?.ToCharArray() );
 
+	public LeanStringBuilder Add( Char[]? chars ) {
+		if ( chars is null ) {
 			return this;
 		}
 
-		public LeanStringBuilder Append( String? item ) => this.Add( item?.ToCharArray() );
-
-		public LeanStringBuilder Append( Char[]? chars ) => this.Add( chars );
-
-		public LeanStringBuilder Append<T>( T? obj ) => this.Add( obj?.ToString() );
-
-		public LeanStringBuilder Append( Boolean value ) => this.Append( value ? "True" : "False" );
-
-		public void Clear() {
-			this._charCount = 0;
-			this._parts.Clear();
-			this.ClearCompiled();
-		}
-
-		/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
-		/// <param name="other">An object to compare with this object.</param>
-		/// <returns>
-		///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		public Boolean Equals( LeanStringBuilder? other ) => Equals( this, other );
-
-		/// <summary>Determines whether the specified object is equal to the current object.</summary>
-		/// <param name="obj">The object to compare with the current object. </param>
-		/// <returns>
-		///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
-		///     <see langword="false" />.
-		/// </returns>
-		public override Boolean Equals( Object? obj ) => Equals( this, obj as LeanStringBuilder );
-
-		/// <summary>Serves as the default hash function. </summary>
-		/// <returns>A hash code for the current object.</returns>
-		public override Int32 GetHashCode() => this._parts.GetHashCode();
-
-		public override String ToString() {
-			if ( !String.IsNullOrEmpty( this._compiled ) ) {
-				return this._compiled;
-			}
-
-			this.TrimExcess();
-			var final = new Char[this._charCount];
-			var offest = 0;
-
-			foreach ( var t in this._parts ) {
-				var l = t.Length * 2; //*2 because char are 2 bytes??
-				Buffer.BlockCopy( t, 0, final, offest, l );
-				offest += l;
-			}
-
-			return this._compiled = new String( final );
-		}
-
-		public LeanStringBuilder TrimExcess() {
-			this._parts.TrimExcess();
-
+		if ( chars.Length == 0 ) {
 			return this;
 		}
+
+		this._charCount += chars.Length; //*2 ??
+		this._parts.Add( chars );
+		this.ClearCompiled();
+
+		return this;
+	}
+
+	public LeanStringBuilder Append( String? item ) => this.Add( item?.ToCharArray() );
+
+	public LeanStringBuilder Append( Char[]? chars ) => this.Add( chars );
+
+	public LeanStringBuilder Append<T>( T? obj ) => this.Add( obj?.ToString() );
+
+	public LeanStringBuilder Append( Boolean value ) => this.Append( value ? "True" : "False" );
+
+	public void Clear() {
+		this._charCount = 0;
+		this._parts.Clear();
+		this.ClearCompiled();
+	}
+
+	/// <summary>Indicates whether the current object is equal to another object of the same type.</summary>
+	/// <param name="other">An object to compare with this object.</param>
+	/// <returns>
+	///     <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise,
+	///     <see langword="false" />.
+	/// </returns>
+	public Boolean Equals( LeanStringBuilder? other ) => Equals( this, other );
+
+	/// <summary>Determines whether the specified object is equal to the current object.</summary>
+	/// <param name="obj">The object to compare with the current object. </param>
+	/// <returns>
+	///     <see langword="true" /> if the specified object  is equal to the current object; otherwise,
+	///     <see langword="false" />.
+	/// </returns>
+	public override Boolean Equals( Object? obj ) => Equals( this, obj as LeanStringBuilder );
+
+	/// <summary>Serves as the default hash function. </summary>
+	/// <returns>A hash code for the current object.</returns>
+	public override Int32 GetHashCode() => this._parts.GetHashCode();
+
+	public override String ToString() {
+		if ( !String.IsNullOrEmpty( this._compiled ) ) {
+			return this._compiled;
+		}
+
+		this.TrimExcess();
+		var final = new Char[this._charCount];
+		var offest = 0;
+
+		foreach ( var t in this._parts ) {
+			var l = t.Length * 2; //*2 because char are 2 bytes??
+			Buffer.BlockCopy( t, 0, final, offest, l );
+			offest += l;
+		}
+
+		return this._compiled = new String( final );
+	}
+
+	public LeanStringBuilder TrimExcess() {
+		this._parts.TrimExcess();
+
+		return this;
 	}
 }

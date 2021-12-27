@@ -25,36 +25,35 @@
 //
 // File "NotInitializedException.cs" last touched on 2021-06-05 at 11:03 AM by Protiguous.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Logging;
+using System;
+using System.Runtime.Serialization;
+using Logging;
 
-	/// <summary>
-	///     Throw when the object has not been initialized.
-	///     <para><see cref="Logging.Log{T}" /> gets called.</para>
-	/// </summary>
-	[Serializable]
-	public class NotInitializedException : Exception {
+/// <summary>
+///     Throw when the object has not been initialized.
+///     <para><see cref="Logging.Log{T}" /> gets called.</para>
+/// </summary>
+[Serializable]
+public class NotInitializedException : Exception {
 
-		public String Parameter { get; }
+	public String Parameter { get; }
 
-		/// <summary>Initializes a new instance of the <see cref="NotInitializedException" /> class with serialized data.</summary>
-		/// <param name="info">
-		///     The <see cref="SerializationInfo" /> instance that holds the serialized object data about the
-		///     exception being thrown.
-		/// </param>
-		/// <param name="context">
-		///     The <see cref="StreamingContext" /> instance that contains contextual information about the
-		///     source or destination.
-		/// </param>
-		/// <remarks>This constructor overload is provided in order to adhere to custom exception design best practice guidelines.</remarks>
-		protected NotInitializedException( SerializationInfo info, StreamingContext context ) : base( info, context ) => this.Parameter = "ParamFromSerialization";
+	/// <summary>Initializes a new instance of the <see cref="NotInitializedException" /> class with serialized data.</summary>
+	/// <param name="info">
+	///     The <see cref="SerializationInfo" /> instance that holds the serialized object data about the
+	///     exception being thrown.
+	/// </param>
+	/// <param name="context">
+	///     The <see cref="StreamingContext" /> instance that contains contextual information about the
+	///     source or destination.
+	/// </param>
+	/// <remarks>This constructor overload is provided in order to adhere to custom exception design best practice guidelines.</remarks>
+	protected NotInitializedException( SerializationInfo info, StreamingContext context ) : base( info, context ) => this.Parameter = "ParamFromSerialization";
 
-		public NotInitializedException( String paramName ) {
-			this.Parameter = paramName;
-			this.Log( BreakOrDontBreak.Break );
-		}
+	public NotInitializedException( String paramName ) {
+		this.Parameter = paramName;
+		this.Log( BreakOrDontBreak.Break );
 	}
 }

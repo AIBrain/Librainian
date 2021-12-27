@@ -22,82 +22,81 @@
 //
 // File "IPHelperInvoke.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>http://pastebin.com/u9159Ys8</summary>
-	public static class IPHelperInvoke {
+/// <summary>http://pastebin.com/u9159Ys8</summary>
+public static class IPHelperInvoke {
 
-		public const Int32 ErrorBufferOverflow = 111;
+	public const Int32 ErrorBufferOverflow = 111;
 
-		public const Int32 MaxAdapterAddressLength = 8;
+	public const Int32 MaxAdapterAddressLength = 8;
 
-		public const Int32 MaxAdapterDescriptionLength = 128;
+	public const Int32 MaxAdapterDescriptionLength = 128;
 
-		public const Int32 MaxAdapterNameLength = 256;
+	public const Int32 MaxAdapterNameLength = 256;
 
-		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
-		public struct IPAdapterInfo {
+	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+	public struct IPAdapterInfo {
 
-			internal IntPtr Next;
+		internal IntPtr Next;
 
-			public readonly Int32 ComboIndex;
+		public readonly Int32 ComboIndex;
 
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterNameLength + 4 )]
-			public readonly String AdapterName;
+		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterNameLength + 4 )]
+		public readonly String AdapterName;
 
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterDescriptionLength + 4 )]
-			public readonly String AdapterDescription;
+		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = MaxAdapterDescriptionLength + 4 )]
+		public readonly String AdapterDescription;
 
-			public UInt32 AddressLength;
+		public UInt32 AddressLength;
 
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = MaxAdapterAddressLength )]
-			public Byte[] Address;
+		[MarshalAs( UnmanagedType.ByValArray, SizeConst = MaxAdapterAddressLength )]
+		public Byte[] Address;
 
-			public Int32 Index;
+		public Int32 Index;
 
-			public UInt32 Type;
+		public UInt32 Type;
 
-			public UInt32 DhcpEnabled;
+		public UInt32 DhcpEnabled;
 
-			private readonly IntPtr CurrentIpAddress;
+		private readonly IntPtr CurrentIpAddress;
 
-			public IPAddrString IpAddressList;
+		public IPAddrString IpAddressList;
 
-			public IPAddrString GatewayList;
+		public IPAddrString GatewayList;
 
-			public IPAddrString DhcpServer;
+		public IPAddrString DhcpServer;
 
-			public readonly Boolean HaveWins;
+		public readonly Boolean HaveWins;
 
-			public IPAddrString PrimaryWinsServer;
+		public IPAddrString PrimaryWinsServer;
 
-			public IPAddrString SecondaryWinsServer;
+		public IPAddrString SecondaryWinsServer;
 
-			public Int32 LeaseObtained;
+		public Int32 LeaseObtained;
 
-			public Int32 LeaseExpires;
-		}
+		public Int32 LeaseExpires;
+	}
 
-		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
-		public struct IPAddressString {
+	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+	public struct IPAddressString {
 
-			[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 16 )]
-			public readonly String Address;
-		}
+		[MarshalAs( UnmanagedType.ByValTStr, SizeConst = 16 )]
+		public readonly String Address;
+	}
 
-		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
-		public struct IPAddrString {
+	[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+	public struct IPAddrString {
 
-			private readonly IntPtr Next;
+		private readonly IntPtr Next;
 
-			public IPAddressString IpAddress;
+		public IPAddressString IpAddress;
 
-			public IPAddressString IpMask;
+		public IPAddressString IpMask;
 
-			public readonly Int32 Context;
-		}
+		public readonly Int32 Context;
 	}
 }

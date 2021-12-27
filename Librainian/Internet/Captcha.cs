@@ -25,49 +25,48 @@
 //
 // File "Captcha.cs" last formatted on 2021-01-01 at 9:38 AM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Collections.Concurrent;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public class Captcha {
+[JsonObject]
+public class Captcha {
 
-		[JsonProperty]
-		private CaptchaStatus _status;
+	[JsonProperty]
+	private CaptchaStatus _status;
 
-		[JsonProperty]
-		public String? ChallengeElementID { get; set; }
+	[JsonProperty]
+	public String? ChallengeElementID { get; set; }
 
-		[JsonProperty]
-		public String? FormID { get; set; }
+	[JsonProperty]
+	public String? FormID { get; set; }
 
-		[JsonProperty]
-		public Uri? ImageUri { get; set; }
+	[JsonProperty]
+	public Uri? ImageUri { get; set; }
 
-		[JsonProperty]
-		public String? ResponseElementID { get; set; }
+	[JsonProperty]
+	public String? ResponseElementID { get; set; }
 
-		public CaptchaStatus Status {
-			get => this._status;
+	public CaptchaStatus Status {
+		get => this._status;
 
-			set {
-				if ( !Equals( this._status, value ) ) {
-					this.StatusHistory.TryAdd( DateTime.Now, value );
-				}
-
-				this._status = value;
+		set {
+			if ( !Equals( this._status, value ) ) {
+				this.StatusHistory.TryAdd( DateTime.Now, value );
 			}
+
+			this._status = value;
 		}
-
-		[JsonProperty]
-		public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new();
-
-		[JsonProperty]
-		public String? SubmitID { get; set; }
-
-		[JsonProperty]
-		public Uri? Uri { get; set; }
 	}
+
+	[JsonProperty]
+	public ConcurrentDictionary<DateTime, CaptchaStatus> StatusHistory { get; } = new();
+
+	[JsonProperty]
+	public String? SubmitID { get; set; }
+
+	[JsonProperty]
+	public Uri? Uri { get; set; }
 }

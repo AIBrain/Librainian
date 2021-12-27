@@ -22,145 +22,144 @@
 //
 // File "CryptUtility.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Drawing;
-	using System.IO;
-	using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 
-	/// <summary>
-	/// Where did this class come from?
-	/// </summary>
+/// <summary>
+/// Where did this class come from?
+/// </summary>
 
-	public static class CryptUtility {
+public static class CryptUtility {
 
-		/// <summary>Return one component of a color</summary>
-		/// <param name="pixelColor">The Color</param>
-		/// <param name="colorComponent">The component to return (0-R, 1-G, 2-B)</param>
-		/// <returns>The requested component</returns>
-		private static Byte GetColorComponent( Color pixelColor, Int32 colorComponent ) {
-			Byte returnValue = colorComponent switch {
-				0 => pixelColor.R,
-				1 => pixelColor.G,
-				2 => pixelColor.B,
-				var _ => 0
-			};
+	/// <summary>Return one component of a color</summary>
+	/// <param name="pixelColor">The Color</param>
+	/// <param name="colorComponent">The component to return (0-R, 1-G, 2-B)</param>
+	/// <returns>The requested component</returns>
+	private static Byte GetColorComponent( Color pixelColor, Int32 colorComponent ) {
+		Byte returnValue = colorComponent switch {
+			0 => pixelColor.R,
+			1 => pixelColor.G,
+			2 => pixelColor.B,
+			var _ => 0
+		};
 
-			return returnValue;
+		return returnValue;
+	}
+
+	//--------------------------------------------- combining the keys
+	/// <summary>Combines all key files and passwords into one key stream</summary>
+	/// <param name="keys">The keys to combine</param>
+	/// <returns>The resulting key stream</returns>
+	private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
+
+		//Xor the keys an their passwords
+		var keyStreams = new MemoryStream[keys.Count];
+
+		for ( var n = 0; n < keys.Count; n++ ) {
+			keyStreams[n] = CreateKeyStream( keys[n] );
 		}
 
-		//--------------------------------------------- combining the keys
-		/// <summary>Combines all key files and passwords into one key stream</summary>
-		/// <param name="keys">The keys to combine</param>
-		/// <returns>The resulting key stream</returns>
-		private static MemoryStream GetKeyStream( IReadOnlyList<FilePasswordPair> keys ) {
+		//Buffer for the resulting stream
+		var resultKeyStream = new MemoryStream();
 
-			//Xor the keys an their passwords
-			var keyStreams = new MemoryStream[keys.Count];
+		//Find length of longest stream
+		var maxLength = keyStreams.Select( stream => stream.Length ).Concat( new Int64[] {
+			0
+		} ).Max();
 
-			for ( var n = 0; n < keys.Count; n++ ) {
-				keyStreams[n] = CreateKeyStream( keys[n] );
-			}
+		for ( Int64 n = 0; n <= maxLength; n++ ) {
+			foreach ( var stream in keyStreams ) {
+				var readByte = stream.ReadByte();
 
-			//Buffer for the resulting stream
-			var resultKeyStream = new MemoryStream();
+				if ( readByte < 0 ) {
 
-			//Find length of longest stream
-			var maxLength = keyStreams.Select( stream => stream.Length ).Concat( new Int64[] {
-				0
-			} ).Max();
-
-			for ( Int64 n = 0; n <= maxLength; n++ ) {
-				foreach ( var stream in keyStreams ) {
-					var readByte = stream.ReadByte();
-
-					if ( readByte < 0 ) {
-
-						//end of stream - close the file
-						//the last loop (n==maxLength) will close the last stream
-						using ( stream ) {
-							stream.Close();
-						}
-					}
-					else {
-
-						//copy a byte into the result key
-						resultKeyStream.WriteByte( ( Byte )readByte );
+					//end of stream - close the file
+					//the last loop (n==maxLength) will close the last stream
+					using ( stream ) {
+						stream.Close();
 					}
 				}
-			}
+				else {
 
-			return resultKeyStream;
-		}
-
-		private static Byte GetReverseKeyByte( Stream keyStream ) {
-
-			//jump to reverse-read position and read from the end of the stream
-			var keyPosition = keyStream.Position;
-			keyStream.Seek( -keyPosition, SeekOrigin.End );
-			var reverseKeyByte = ( Byte )keyStream.ReadByte();
-
-			//jump back to normal read position
-			keyStream.Seek( keyPosition, SeekOrigin.Begin );
-
-			return reverseKeyByte;
-		}
-
-		/// <summary>Combines key file and password using XOR</summary>
-		/// <param name="key">The key/password pair to combine</param>
-		/// <returns>The stream created from key and password</returns>
-		public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
-			var fileStream = new FileStream( key.FileName, FileMode.Open );
-			var resultStream = new MemoryStream();
-			var passwordIndex = 0;
-			Int32 currentByte;
-
-			while ( ( currentByte = fileStream.ReadByte() ) >= 0 ) {
-
-				//combine the key-byte with the corresponding password-byte
-				currentByte ^= key.Password[passwordIndex];
-
-				//add the result to the key stream
-				resultStream.WriteByte( ( Byte )currentByte );
-
-				//proceed to the next letter or repeat the password
-				passwordIndex++;
-
-				if ( passwordIndex == key.Password.Length ) {
-					passwordIndex = 0;
+					//copy a byte into the result key
+					resultKeyStream.WriteByte( ( Byte )readByte );
 				}
 			}
-
-			fileStream.Close();
-
-			resultStream.Seek( 0, SeekOrigin.Begin );
-
-			return resultStream;
 		}
 
-		/// <summary>Changees one component of a color</summary>
-		/// <param name="pixelColor">The Color</param>
-		/// <param name="colorComponent">The component to change (0-R, 1-G, 2-B)</param>
-		/// <param name="newValue">New value of the component</param>
-		public static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
-			pixelColor = colorComponent switch {
-				0 => Color.FromArgb( newValue, pixelColor.G, pixelColor.B ),
-				1 => Color.FromArgb( pixelColor.R, newValue, pixelColor.B ),
-				2 => Color.FromArgb( pixelColor.R, pixelColor.G, newValue ),
-				var _ => pixelColor
-			};
-		}
+		return resultKeyStream;
+	}
 
-		public static String UnTrimColorString( String color, Int32 desiredLength ) {
-			var difference = desiredLength - color.Length;
+	private static Byte GetReverseKeyByte( Stream keyStream ) {
 
-			if ( difference > 0 ) {
-				color = new String( '0', difference ) + color;
+		//jump to reverse-read position and read from the end of the stream
+		var keyPosition = keyStream.Position;
+		keyStream.Seek( -keyPosition, SeekOrigin.End );
+		var reverseKeyByte = ( Byte )keyStream.ReadByte();
+
+		//jump back to normal read position
+		keyStream.Seek( keyPosition, SeekOrigin.Begin );
+
+		return reverseKeyByte;
+	}
+
+	/// <summary>Combines key file and password using XOR</summary>
+	/// <param name="key">The key/password pair to combine</param>
+	/// <returns>The stream created from key and password</returns>
+	public static MemoryStream CreateKeyStream( FilePasswordPair key ) {
+		var fileStream = new FileStream( key.FileName, FileMode.Open );
+		var resultStream = new MemoryStream();
+		var passwordIndex = 0;
+		Int32 currentByte;
+
+		while ( ( currentByte = fileStream.ReadByte() ) >= 0 ) {
+
+			//combine the key-byte with the corresponding password-byte
+			currentByte ^= key.Password[passwordIndex];
+
+			//add the result to the key stream
+			resultStream.WriteByte( ( Byte )currentByte );
+
+			//proceed to the next letter or repeat the password
+			passwordIndex++;
+
+			if ( passwordIndex == key.Password.Length ) {
+				passwordIndex = 0;
 			}
-
-			return color;
 		}
+
+		fileStream.Close();
+
+		resultStream.Seek( 0, SeekOrigin.Begin );
+
+		return resultStream;
+	}
+
+	/// <summary>Changees one component of a color</summary>
+	/// <param name="pixelColor">The Color</param>
+	/// <param name="colorComponent">The component to change (0-R, 1-G, 2-B)</param>
+	/// <param name="newValue">New value of the component</param>
+	public static void SetColorComponent( ref Color pixelColor, Int32 colorComponent, Int32 newValue ) {
+		pixelColor = colorComponent switch {
+			0 => Color.FromArgb( newValue, pixelColor.G, pixelColor.B ),
+			1 => Color.FromArgb( pixelColor.R, newValue, pixelColor.B ),
+			2 => Color.FromArgb( pixelColor.R, pixelColor.G, newValue ),
+			var _ => pixelColor
+		};
+	}
+
+	public static String UnTrimColorString( String color, Int32 desiredLength ) {
+		var difference = desiredLength - color.Length;
+
+		if ( difference > 0 ) {
+			color = new String( '0', difference ) + color;
+		}
+
+		return color;
 	}
 }

@@ -25,27 +25,25 @@
 //
 // File "IMessageWriter.cs" last touched on 2021-05-04 at 3:51 PM by Protiguous.
 
-namespace Librainian.Utilities {
+namespace Librainian.Utilities;
 
-	using System;
+using System;
 
-	public interface IMessageWriter {
+public interface IMessageWriter {
 
-		void Write( String message );
+	void Write( String message );
 
-		void WriteLine( String message, params Object[] args );
-	}
+	void WriteLine( String message, params Object[] args );
+}
 
-	public class MessageWriter {
+public class MessageWriter {
 
-		public MessageWriter( IMessageWriter messageWriter ) {
+	public MessageWriter( IMessageWriter messageWriter ) {
 			
-		}
-
-		public void Write( String message ) => throw new NotImplementedException();
-
-		public void WriteLine( String message, params Object[] args ) => throw new NotImplementedException();
-
 	}
+
+	public void Write( String message ) => throw new NotImplementedException();
+
+	public void WriteLine( String message, params Object[] args ) => throw new NotImplementedException();
 
 }

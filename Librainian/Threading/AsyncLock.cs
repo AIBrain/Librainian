@@ -27,63 +27,62 @@
 
 #nullable enable
 
-namespace Librainian.Threading {
+namespace Librainian.Threading;
 
-	using System;
-	using System.Diagnostics;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Maths;
-	using Measurement.Time;
-	using Utilities.Disposables;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Maths;
+using Measurement.Time;
+using Utilities.Disposables;
 
-	/// <summary>Usage: private  AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) { /*...*/ }</summary>
-	public sealed class AsyncLock : ABetterClassDispose {
+/// <summary>Usage: private  AsyncLock _lock = new AsyncLock(); using( var releaser = await _lock.LockAsync() ) { /*...*/ }</summary>
+public sealed class AsyncLock : ABetterClassDispose {
 
-		private Task<IDisposable?> _releaser { get; }
+	private Task<IDisposable?> _releaser { get; }
 
-		private SemaphoreSlim Semaphore { get; } = new( 1 );
+	private SemaphoreSlim Semaphore { get; } = new( 1 );
 
-		public AsyncLock() : base( nameof( AsyncLock ) ) {
-			if ( new Releaser( this ) is IDisposable jane ) {
-				var releaser = Task.FromResult( jane );
+	public AsyncLock() : base( nameof( AsyncLock ) ) {
+		if ( new Releaser( this ) is IDisposable jane ) {
+			var releaser = Task.FromResult( jane );
 
-				this._releaser = releaser!;
+			this._releaser = releaser!;
+		}
+		else {
+			throw new InvalidOperationException( "Something broke." );
+		}
+	}
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		using ( this.Semaphore ) { }
+	}
+
+	public async Task<IDisposable?> LockAsync() {
+		var wait = this.Semaphore.WaitAsync( Minutes.Ten );
+
+		if ( wait.IsCompleted ) {
+			return await this._releaser.ConfigureAwait( false );
+		}
+
+		return wait.ContinueWith( ( _, state ) => state as IDisposable, await this._releaser.ConfigureAwait( false ), CancellationToken.None,
+			TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default );
+	}
+
+	private sealed class Releaser : ABetterClassDispose {
+
+		private AsyncLock ToRelease { get; }
+
+		internal Releaser( AsyncLock toRelease ) : base(nameof( Releaser ) ) => this.ToRelease = toRelease;
+
+		public override void DisposeManaged() {
+			if ( !this.ToRelease.Semaphore.CurrentCount.Any() ) {
+				this.ToRelease.Semaphore.Release();
 			}
 			else {
-				throw new InvalidOperationException( "Something broke." );
-			}
-		}
-
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			using ( this.Semaphore ) { }
-		}
-
-		public Task<IDisposable?> LockAsync() {
-			var wait = this.Semaphore.WaitAsync( Minutes.Ten );
-
-			if ( wait.IsCompleted ) {
-				return this._releaser;
-			}
-
-			return wait.ContinueWith( ( _, state ) => state as IDisposable, this._releaser.Result, CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously,
-				TaskScheduler.Default );
-		}
-
-		private sealed class Releaser : ABetterClassDispose {
-
-			private AsyncLock toRelease { get; }
-
-			internal Releaser( AsyncLock? toRelease ) : base(nameof( Releaser ) ) => this.toRelease = toRelease;
-
-			public override void DisposeManaged() {
-				if ( !this.toRelease.Semaphore.CurrentCount.Any() ) {
-					this.toRelease.Semaphore.Release();
-				}
-				else {
-					Debugger.Break();
-				}
+				Debugger.Break();
 			}
 		}
 	}

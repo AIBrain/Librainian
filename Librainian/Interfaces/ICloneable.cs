@@ -28,15 +28,14 @@
 #nullable enable
 
 // ReSharper disable once CheckNamespace
-namespace System {
+namespace System; 
 
-	/// <summary>
-	///     Why is the preexisting System.ICloneable not a generic interface?
-	///     I'm guessing it was introduced before generics.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public interface ICloneable<out T> {
+/// <summary>
+///     Why is the preexisting System.ICloneable not a generic interface?
+///     I'm guessing it was introduced before generics.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface ICloneable<out T> {
 
-		T Clone();
-	}
+	T Clone();
 }

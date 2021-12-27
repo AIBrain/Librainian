@@ -25,24 +25,23 @@
 //
 // File "Errors.cs" last touched on 2021-06-15 at 1:49 PM by Protiguous.
 
-namespace Librainian.Exceptions {
+namespace Librainian.Exceptions;
 
-	using System;
-	using Parsing;
+using System;
+using Parsing;
 
-	public static class Errors {
+public static class Errors {
 
-		public static String SomethingBadHappened => "Something bad happened.";
+	public static String SomethingBadHappened => "Something bad happened.";
 
-		public static String SomethingInvalidHappened => "Something invalid happened.";
+	public static String SomethingInvalidHappened => "Something invalid happened.";
 
-		public static String SomethingNullHappened => "Something null happened: ";
+	public static String SomethingNullHappened => "Something null happened: ";
 
-		public static String CannotBeNull( this String name ) {
-			if ( String.IsNullOrEmpty( name ) ) {
-				name = ParsingConstants.Chars.NullChar.ToString();
-			}
-			return $"{name} cannot be null.";
+	public static String CannotBeNull( this String name ) {
+		if ( String.IsNullOrEmpty( name ) ) {
+			name = ParsingConstants.Chars.NullChar.ToString();
 		}
+		return $"{name} cannot be null.";
 	}
 }

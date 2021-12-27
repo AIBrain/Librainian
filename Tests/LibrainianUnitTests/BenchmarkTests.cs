@@ -25,47 +25,45 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using System.Threading;
-	using FluentAssertions;
-	using Librainian.Measurement;
-	using NUnit.Framework;
+using System;
+using System.Threading;
+using FluentAssertions;
+using Librainian.Measurement;
+using NUnit.Framework;
 
-	/// <summary>
-	///     These tests assume some jitter around 16ms.
-	/// </summary>
-	[TestFixture]
-	public static class BenchmarkTests {
+/// <summary>
+///     These tests assume some jitter around 16ms.
+/// </summary>
+[TestFixture]
+public static class BenchmarkTests {
 
-		private const Int32 Jitter = 16;
+	private const Int32 Jitter = 16;
 
-		[Test]
-		public static void TestBenchmarking_MethodA() {
-			static void a() => Thread.Sleep( Jitter / 2 );
-			static void b() => Thread.Sleep( Jitter * 2 );
+	[Test]
+	public static void TestBenchmarking_MethodA() {
+		static void a() => Thread.Sleep( Jitter / 2 );
+		static void b() => Thread.Sleep( Jitter * 2 );
 
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
-		}
+		var result = Benchmark.WhichIsFaster( a, b );
+		var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
+	}
 
-		[Test]
-		public static void TestBenchmarking_MethodB() {
-			static void a() => Thread.Sleep( Jitter * 2 );
-			static void b() => Thread.Sleep( Jitter / 2 );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
-		}
+	[Test]
+	public static void TestBenchmarking_MethodB() {
+		static void a() => Thread.Sleep( Jitter * 2 );
+		static void b() => Thread.Sleep( Jitter / 2 );
+		var result = Benchmark.WhichIsFaster( a, b );
+		var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
+	}
 
-		[Test]
-		public static void TestBenchmarking_Same() {
-			static void a() => Thread.Sleep( Jitter );
-			static void b() => Thread.Sleep( Jitter );
-			var result = Benchmark.WhichIsFaster( a, b );
-			var _ = result.Should()!.BeOneOf( Benchmark.AorB.Same, Benchmark.AorB.MethodA, Benchmark.AorB.MethodB );
-		}
-
+	[Test]
+	public static void TestBenchmarking_Same() {
+		static void a() => Thread.Sleep( Jitter );
+		static void b() => Thread.Sleep( Jitter );
+		var result = Benchmark.WhichIsFaster( a, b );
+		var _ = result.Should()!.BeOneOf( Benchmark.AorB.Same, Benchmark.AorB.MethodA, Benchmark.AorB.MethodB );
 	}
 
 }

@@ -25,32 +25,31 @@
 //
 // File "FSConstants.cs" last formatted on 2021-03-05 at 12:51 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Runtime.CompilerServices;
+using System;
+using System.Runtime.CompilerServices;
 
-	/// <summary>constants lifted from winioctl.h from platform sdk</summary>
-	internal static class FSConstants {
+/// <summary>constants lifted from winioctl.h from platform sdk</summary>
+internal static class FSConstants {
 
-		private const UInt32 FileAnyAccess = 0;
+	private const UInt32 FileAnyAccess = 0;
 
-		private const UInt32 FileDeviceFileSystem = 0x00000009;
+	private const UInt32 FileDeviceFileSystem = 0x00000009;
 
-		private const UInt32 FileSpecialAccess = FileAnyAccess;
+	private const UInt32 FileSpecialAccess = FileAnyAccess;
 
-		private const UInt32 MethodBuffered = 0;
+	private const UInt32 MethodBuffered = 0;
 
-		private const UInt32 MethodNeither = 3;
+	private const UInt32 MethodNeither = 3;
 
-		public static readonly UInt32 FsctlGetRetrievalPointers = CTL_CODE( FileDeviceFileSystem, 28, MethodNeither, FileAnyAccess );
+	public static readonly UInt32 FsctlGetRetrievalPointers = CTL_CODE( FileDeviceFileSystem, 28, MethodNeither, FileAnyAccess );
 
-		public static readonly UInt32 FsctlGetVolumeBitmap = CTL_CODE( FileDeviceFileSystem, 27, MethodNeither, FileAnyAccess );
+	public static readonly UInt32 FsctlGetVolumeBitmap = CTL_CODE( FileDeviceFileSystem, 27, MethodNeither, FileAnyAccess );
 
-		public static readonly UInt32 FsctlMoveFile = CTL_CODE( FileDeviceFileSystem, 29, MethodBuffered, FileSpecialAccess );
+	public static readonly UInt32 FsctlMoveFile = CTL_CODE( FileDeviceFileSystem, 29, MethodBuffered, FileSpecialAccess );
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
-			( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
-	}
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	private static UInt32 CTL_CODE( UInt32 deviceType, UInt32 function, UInt32 method, UInt32 access ) =>
+		( deviceType << 16 ) | ( access << 14 ) | ( function << 2 ) | method;
 }

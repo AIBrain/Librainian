@@ -22,25 +22,24 @@
 //
 // File "BufferExtensions.cs" last formatted on 2020-08-14 at 8:39 PM.
 
-namespace Librainian.FileSystem {
+namespace Librainian.FileSystem;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using Maths;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Maths;
 
-	/// <summary>For copying or moving a <see cref="Document" /> using largest possible buffer.</summary>
-	public static class BufferExtensions {
+/// <summary>For copying or moving a <see cref="Document" /> using largest possible buffer.</summary>
+public static class BufferExtensions {
 
-		/// <summary>Largest 2^power this will try.</summary>
-		private const Byte SizeHigh = 32;
+	/// <summary>Largest 2^power this will try.</summary>
+	private const Byte SizeHigh = 32;
 
-		/// <summary>Smallest 2^power this will try.</summary>
-		private const Byte SizeLow = 0;
+	/// <summary>Smallest 2^power this will try.</summary>
+	private const Byte SizeLow = 0;
 
-		/// <summary>Just some common buffer sizes we might use.</summary>
-		private static readonly HashSet<Int32> BufferSizes = new( SizeLow.To( SizeHigh ).Select( b => ( Int32 )Math.Pow( 2, b ) ) );
+	/// <summary>Just some common buffer sizes we might use.</summary>
+	private static readonly HashSet<Int32> BufferSizes = new( SizeLow.To( SizeHigh ).Select( b => ( Int32 )Math.Pow( 2, b ) ) );
 
-		public const Int32 DefaultBufferSize = 4096;
-	}
+	public const Int32 DefaultBufferSize = 4096;
 }

@@ -22,40 +22,39 @@
 //
 // File "WWWManager.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Net;
-	using System.Threading;
-	using System.Threading.Tasks.Dataflow;
+using System;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks.Dataflow;
 
-	[Obsolete( "Needs rewriting" )]
-	public class WwwManager {
+[Obsolete( "Needs rewriting" )]
+public class WwwManager {
 
-		public static readonly ThreadLocal<WebClient> WebClients = new( () => {
-			var webClient = new WebClient();
-			webClient.Headers.Add( "user-agent", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15" );
+	public static readonly ThreadLocal<WebClient> WebClients = new( () => {
+		var webClient = new WebClient();
+		webClient.Headers.Add( "user-agent", "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15" );
 
-			return webClient;
-		}, true );
+		return webClient;
+	}, true );
 
-		public BufferBlock<Tuple<Uri, String>> DownloadedStrings { get; }
+	public BufferBlock<Tuple<Uri, String>> DownloadedStrings { get; }
 
-		public ActionBlock<String> StringsToDownload { get; }
+	public ActionBlock<String> StringsToDownload { get; }
 
-		//public void
-		public WwwManager() {
-			this.StringsToDownload = new ActionBlock<String>( StartDownloadingString );
-			this.DownloadedStrings = new BufferBlock<Tuple<Uri, String>>();
-		}
+	//public void
+	public WwwManager() {
+		this.StringsToDownload = new ActionBlock<String>( StartDownloadingString );
+		this.DownloadedStrings = new BufferBlock<Tuple<Uri, String>>();
+	}
 
-		private static void StartDownloadingString( String? address ) {
-			if ( Uri.TryCreate( address, UriKind.Absolute, out var uri ) ) {
-				var webclient = WebClients.Value;
-				var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );
+	private static void StartDownloadingString( String? address ) {
+		if ( Uri.TryCreate( address, UriKind.Absolute, out var uri ) ) {
+			var webclient = WebClients.Value;
+			var stringTaskAsync = webclient.DownloadStringTaskAsync( uri );
 
-				//stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple<Uri, String>( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
-			}
+			//stringTaskAsync.ContinueWith( task => this.DownloadedStrings.TryPost( new Tuple<Uri, String>( uri, stringTaskAsync.Result ) ), continuationOptions: TaskContinuationOptions.OnlyOnRanToCompletion );
 		}
 	}
 }

@@ -25,22 +25,21 @@
 //
 // File "AdjustableCurrentTime.cs" last formatted on 2021-03-07 at 1:09 PM.
 
-namespace Librainian.Measurement.Time.FluentTime {
+namespace Librainian.Measurement.Time.FluentTime;
 
-	using System;
+using System;
 
-	public static class AdjustableCurrentTime {
+public static class AdjustableCurrentTime {
 
-		private static DateTime? _overrideNow;
+	private static DateTime? _overrideNow;
 
-		public static DateTime Now => _overrideNow ?? DateTime.Now;
+	public static DateTime Now => _overrideNow ?? DateTime.Now;
 
-		public static DateTime Today => _overrideNow?.Date ?? DateTime.Today;
+	public static DateTime Today => _overrideNow?.Date ?? DateTime.Today;
 
-		public static DateTime UtcNow => _overrideNow ?? DateTime.UtcNow;
+	public static DateTime UtcNow => _overrideNow ?? DateTime.UtcNow;
 
-		public static void Reset() => _overrideNow = null;
+	public static void Reset() => _overrideNow = null;
 
-		public static void SetNow( DateTime now ) => _overrideNow = now;
-	}
+	public static void SetNow( DateTime now ) => _overrideNow = now;
 }

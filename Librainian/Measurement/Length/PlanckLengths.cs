@@ -22,63 +22,62 @@
 //
 // File "PlanckLengths.cs" last formatted on 2020-08-26 at 6:11 AM.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
-	using System.Diagnostics;
-	using Maths.Numbers;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Maths.Numbers;
+using Newtonsoft.Json;
 
-	/// <summary>
-	/// <see cref="http://wikipedia.org/wiki/Plank_length" />
-	/// </summary>
-	///
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[JsonObject]
-	public struct PlanckLengths : IComparable<PlanckLengths> {
+/// <summary>
+/// <see cref="http://wikipedia.org/wiki/Plank_length" />
+/// </summary>
+///
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[JsonObject]
+public struct PlanckLengths : IComparable<PlanckLengths> {
 
-		/// <summary>One <see cref="PlanckLengths" />.</summary>
-		public static readonly PlanckLengths One = new( 1 );
+	/// <summary>One <see cref="PlanckLengths" />.</summary>
+	public static readonly PlanckLengths One = new( 1 );
 
-		/// <summary>Two <see cref="PlanckLengths" />.</summary>
-		public static readonly PlanckLengths Two = new( 2 );
+	/// <summary>Two <see cref="PlanckLengths" />.</summary>
+	public static readonly PlanckLengths Two = new( 2 );
 
-		/// <summary>Zero <see cref="PlanckLengths" />.</summary>
-		public static readonly PlanckLengths Zero = new( 0 );
+	/// <summary>Zero <see cref="PlanckLengths" />.</summary>
+	public static readonly PlanckLengths Zero = new( 0 );
 
-		[JsonProperty]
-		public UBigInteger Value { get; }
+	[JsonProperty]
+	public UBigInteger Value { get; }
 
-		public PlanckLengths( UBigInteger planckLengths ) : this() => this.Value = planckLengths;
+	public PlanckLengths( UBigInteger planckLengths ) : this() => this.Value = planckLengths;
 
-		public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( PlanckLengths other ) => this.Value.CompareTo( other.Value );
 
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
 
-		public override String ToString() => $"{this.Value}";
+	public override String ToString() => $"{this.Value}";
 
-		//public static implicit operator Span( PlanckUnits milliseconds ) {
-		//    return Span.FromMilliseconds( milliseconds: milliseconds.Value );
-		//}
+	//public static implicit operator Span( PlanckUnits milliseconds ) {
+	//    return Span.FromMilliseconds( milliseconds: milliseconds.Value );
+	//}
 
-		//public static Boolean operator <( PlanckUnits left, PlanckUnits right ) {
-		//    return left.Value.CompareTo( right.Value ) < 0;
-		//}
+	//public static Boolean operator <( PlanckUnits left, PlanckUnits right ) {
+	//    return left.Value.CompareTo( right.Value ) < 0;
+	//}
 
-		//public static Boolean operator <( PlanckUnits left, Seconds right ) {
-		//    return left.Comparison( right ) < 0;
-		//}
+	//public static Boolean operator <( PlanckUnits left, Seconds right ) {
+	//    return left.Comparison( right ) < 0;
+	//}
 
-		//public static Boolean operator <( PlanckUnits left, Minutes right ) {
-		//    return left.Comparison( right ) < 0;
-		//}
+	//public static Boolean operator <( PlanckUnits left, Minutes right ) {
+	//    return left.Comparison( right ) < 0;
+	//}
 
-		//public static Boolean operator >( PlanckUnits left, PlanckUnits right ) {
-		//    return left.Value.CompareTo( right.Value ) > 0;
-		//}
+	//public static Boolean operator >( PlanckUnits left, PlanckUnits right ) {
+	//    return left.Value.CompareTo( right.Value ) > 0;
+	//}
 
-		//public static Boolean operator >( PlanckUnits left, Seconds right ) {
-		//    return left.Comparison( right ) > 0;
-		//}
-	}
+	//public static Boolean operator >( PlanckUnits left, Seconds right ) {
+	//    return left.Comparison( right ) > 0;
+	//}
 }

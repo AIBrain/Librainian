@@ -25,12 +25,11 @@
 // Our software can be found at "https://Protiguous.com/Software"
 // Our GitHub address is "https://github.com/Protiguous".
 
-namespace Librainian.Financial.Currency {
+namespace Librainian.Financial.Currency;
 
-	using System;
+using System;
 
-	public interface IDenomination {
+public interface IDenomination {
 
-		Decimal FaceValue { get; }
-	}
+	Decimal FaceValue { get; }
 }

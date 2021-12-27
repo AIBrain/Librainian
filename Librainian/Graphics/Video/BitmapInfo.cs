@@ -22,46 +22,45 @@
 //
 // File "BitmapInfo.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Graphics.Video {
+namespace Librainian.Graphics.Video;
 
-	using System;
-	using System.Drawing;
-	using Exceptions;
-	using Utilities.Disposables;
+using System;
+using System.Drawing;
+using Exceptions;
+using Utilities.Disposables;
 
-	public class BitmapInfo : ABetterClassDispose {
+public class BitmapInfo : ABetterClassDispose {
 
-		public BitmapInfo() : base( nameof( BitmapInfo ) ) {
+	public BitmapInfo() : base( nameof( BitmapInfo ) ) {
 			
+	}
+
+	//count of frames in the AVI stream, or 0
+	public Int32 AviCountFrames { get; set; }
+
+	//position of the frame in the AVI stream, or -1
+	public Int32 AviPosition { get; set; }
+
+	//uncompressed image
+	public Bitmap? Bitmap { get; set; }
+
+	//how many bytes will be hidden in this image
+	public Int64 MessageBytesToHide { get; set; }
+
+	//path and name of the bitmap file
+	public String? SourceFileName { get; set; }
+
+	/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
+	public override void DisposeManaged() {
+		using ( this.Bitmap ) { }
+	}
+
+	public void LoadBitmap( String sourceFileName ) {
+		if ( String.IsNullOrWhiteSpace( sourceFileName ) ) {
+			throw new NullException( nameof( sourceFileName ) );
 		}
 
-		//count of frames in the AVI stream, or 0
-		public Int32 AviCountFrames { get; set; }
-
-		//position of the frame in the AVI stream, or -1
-		public Int32 AviPosition { get; set; }
-
-		//uncompressed image
-		public Bitmap? Bitmap { get; set; }
-
-		//how many bytes will be hidden in this image
-		public Int64 MessageBytesToHide { get; set; }
-
-		//path and name of the bitmap file
-		public String? SourceFileName { get; set; }
-
-		/// <summary>Dispose of any <see cref="IDisposable" /> (managed) fields or properties in this method.</summary>
-		public override void DisposeManaged() {
-			using ( this.Bitmap ) { }
-		}
-
-		public void LoadBitmap( String sourceFileName ) {
-			if ( String.IsNullOrWhiteSpace( sourceFileName ) ) {
-				throw new NullException( nameof( sourceFileName ) );
-			}
-
-			this.Bitmap = new Bitmap( sourceFileName );
-			this.SourceFileName = sourceFileName;
-		}
+		this.Bitmap = new Bitmap( sourceFileName );
+		this.SourceFileName = sourceFileName;
 	}
 }

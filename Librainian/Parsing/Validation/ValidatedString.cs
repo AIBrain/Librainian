@@ -24,132 +24,131 @@
 
 #nullable enable
 
-namespace Librainian.Parsing.Validation {
+namespace Librainian.Parsing.Validation;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Security;
-	using Exceptions;
-	using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security;
+using Exceptions;
+using Newtonsoft.Json;
 
-	[Serializable]
-	[JsonObject]
-	[JsonConverter( typeof( ValidatedStringJsonNetConverter ) )]
-	public class ValidatedString : IValidatedString {
+[Serializable]
+[JsonObject]
+[JsonConverter( typeof( ValidatedStringJsonNetConverter ) )]
+public class ValidatedString : IValidatedString {
 
-		/// <inheritdoc />
-		public Boolean? Validated { get; }
+	/// <inheritdoc />
+	public Boolean? Validated { get; }
 
-		/// <inheritdoc />
-		public Func<String, Boolean> ValidateFunc { get; set; }
+	/// <inheritdoc />
+	public Func<String, Boolean> ValidateFunc { get; set; }
 
-		public String Value { get; }
+	public String Value { get; }
 
-		public Int32 Length => this.Value.Length;
+	public Int32 Length => this.Value.Length;
 
-		public Char this[Int32 index] => this.Value[index];
+	public Char this[Int32 index] => this.Value[index];
 
-		public ValidatedString( String value, Func<String, Boolean> validationFunc ) {
-			this.Value = value ?? throw new ArgumentEmptyException( nameof( value ) );
-			this.ValidateFunc = validationFunc ?? throw new ArgumentEmptyException( nameof( validationFunc ) );
-			this.Validated = this.ValidateFunc( this.Value );
-		}
-
-		[SecuritySafeCritical]
-		public static Int32 Compare( ValidatedString left, IValidatedString right, StringComparison comparisonType = StringComparison.CurrentCulture ) =>
-			comparisonType == StringComparison.CurrentCulture ? String.CompareOrdinal( left, right.Value ) : String.Compare( left.Value, right.Value, comparisonType );
-
-		public static Int32 Compare( ValidatedString left, Int32 leftIndex, IValidatedString right, Int32 rightIndex, Int32 length ) =>
-			String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, StringComparison.Ordinal );
-
-		[SecuritySafeCritical]
-		public static Int32 Compare(
-			ValidatedString left,
-			Int32 leftIndex,
-			IValidatedString right,
-			Int32 rightIndex,
-			Int32 length,
-			StringComparison comparisonType
-		) =>
-			String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, comparisonType );
-
-		public static Int32 CompareOrdinal( ValidatedString strA, IValidatedString right ) => String.CompareOrdinal( strA.Value, right.Value );
-
-		[SecuritySafeCritical]
-		public static Int32 CompareOrdinal( ValidatedString strA, Int32 indexA, IValidatedString strB, Int32 indexB, Int32 length ) =>
-			String.CompareOrdinal( strA.Value, indexA, strB.Value, indexB, length );
-
-		/// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( IValidatedString? left, IValidatedString? right ) {
-			if ( ReferenceEquals( left, right ) ) {
-				return true;
-			}
-
-			if ( left is null || right is null ) {
-				return false;
-			}
-
-			if ( left.Value.Length != right.Value.Length ) {
-				return false;
-			}
-
-			return left.SequenceEqual( right.Value );
-		}
-
-		/// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( String? left, IValidatedString? right ) {
-			if ( left is null && right is null ) {
-				return true;
-			}
-
-			if ( left is null || right?.Value is null ) {
-				return false;
-			}
-
-			return left.SequenceEqual( right.Value );
-		}
-
-		/// <summary>Static comparison for <see cref="IValidatedString" /> and <see cref="String" />.</summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( IValidatedString? left, String? right ) {
-			if ( left?.Value is null || right is null ) {
-				return false;
-			}
-
-			return left.Value.SequenceEqual( right );
-		}
-
-		public static implicit operator String?( ValidatedString? str ) => str?.Value;
-
-		public static Boolean operator !=( ValidatedString? left, IValidatedString? right ) => !Equals( left, right?.Value );
-
-		public static Boolean operator ==( ValidatedString? left, IValidatedString? right ) => Equals( left, right?.Value );
-
-		public Int32 CompareTo( String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
-
-		public Int32 CompareTo( IValidatedString? other ) => String.Compare( this.Value, other?.Value, StringComparison.Ordinal );
-
-		public Boolean Equals( String? other ) => Equals( this, other );
-
-		public Boolean Equals( IValidatedString? other ) => Equals( this.Value, other );
-
-		public override Boolean Equals( Object? obj ) => Equals( this.Value, obj as IValidatedString );
-
-		public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> )this.Value ).GetEnumerator();
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
-
-		public override String ToString() => this.Value;
-
-		Int32 IComparable.CompareTo( Object? obj ) => String.Compare( this.Value, obj as String, StringComparison.Ordinal );
-
-		IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Value ).GetEnumerator();
+	public ValidatedString( String value, Func<String, Boolean> validationFunc ) {
+		this.Value = value ?? throw new ArgumentEmptyException( nameof( value ) );
+		this.ValidateFunc = validationFunc ?? throw new ArgumentEmptyException( nameof( validationFunc ) );
+		this.Validated = this.ValidateFunc( this.Value );
 	}
+
+	[SecuritySafeCritical]
+	public static Int32 Compare( ValidatedString left, IValidatedString right, StringComparison comparisonType = StringComparison.CurrentCulture ) =>
+		comparisonType == StringComparison.CurrentCulture ? String.CompareOrdinal( left, right.Value ) : String.Compare( left.Value, right.Value, comparisonType );
+
+	public static Int32 Compare( ValidatedString left, Int32 leftIndex, IValidatedString right, Int32 rightIndex, Int32 length ) =>
+		String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, StringComparison.Ordinal );
+
+	[SecuritySafeCritical]
+	public static Int32 Compare(
+		ValidatedString left,
+		Int32 leftIndex,
+		IValidatedString right,
+		Int32 rightIndex,
+		Int32 length,
+		StringComparison comparisonType
+	) =>
+		String.Compare( left.Value, leftIndex, right.Value, rightIndex, length, comparisonType );
+
+	public static Int32 CompareOrdinal( ValidatedString strA, IValidatedString right ) => String.CompareOrdinal( strA.Value, right.Value );
+
+	[SecuritySafeCritical]
+	public static Int32 CompareOrdinal( ValidatedString strA, Int32 indexA, IValidatedString strB, Int32 indexB, Int32 length ) =>
+		String.CompareOrdinal( strA.Value, indexA, strB.Value, indexB, length );
+
+	/// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( IValidatedString? left, IValidatedString? right ) {
+		if ( ReferenceEquals( left, right ) ) {
+			return true;
+		}
+
+		if ( left is null || right is null ) {
+			return false;
+		}
+
+		if ( left.Value.Length != right.Value.Length ) {
+			return false;
+		}
+
+		return left.SequenceEqual( right.Value );
+	}
+
+	/// <summary>Static comparison for two <see cref="IValidatedString" />.</summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( String? left, IValidatedString? right ) {
+		if ( left is null && right is null ) {
+			return true;
+		}
+
+		if ( left is null || right?.Value is null ) {
+			return false;
+		}
+
+		return left.SequenceEqual( right.Value );
+	}
+
+	/// <summary>Static comparison for <see cref="IValidatedString" /> and <see cref="String" />.</summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( IValidatedString? left, String? right ) {
+		if ( left?.Value is null || right is null ) {
+			return false;
+		}
+
+		return left.Value.SequenceEqual( right );
+	}
+
+	public static implicit operator String?( ValidatedString? str ) => str?.Value;
+
+	public static Boolean operator !=( ValidatedString? left, IValidatedString? right ) => !Equals( left, right?.Value );
+
+	public static Boolean operator ==( ValidatedString? left, IValidatedString? right ) => Equals( left, right?.Value );
+
+	public Int32 CompareTo( String? other ) => String.Compare( this.Value, other, StringComparison.Ordinal );
+
+	public Int32 CompareTo( IValidatedString? other ) => String.Compare( this.Value, other?.Value, StringComparison.Ordinal );
+
+	public Boolean Equals( String? other ) => Equals( this, other );
+
+	public Boolean Equals( IValidatedString? other ) => Equals( this.Value, other );
+
+	public override Boolean Equals( Object? obj ) => Equals( this.Value, obj as IValidatedString );
+
+	public IEnumerator<Char> GetEnumerator() => ( ( IEnumerable<Char> )this.Value ).GetEnumerator();
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
+
+	public override String ToString() => this.Value;
+
+	Int32 IComparable.CompareTo( Object? obj ) => String.Compare( this.Value, obj as String, StringComparison.Ordinal );
+
+	IEnumerator IEnumerable.GetEnumerator() => ( ( IEnumerable )this.Value ).GetEnumerator();
 }

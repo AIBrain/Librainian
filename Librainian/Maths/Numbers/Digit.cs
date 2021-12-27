@@ -18,134 +18,133 @@
 
 #nullable enable
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Runtime.CompilerServices;
-	using Extensions;
+using System;
+using System.Runtime.CompilerServices;
+using Extensions;
 
-	/// <summary>
-	/// Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
-	/// </summary>
-	[Immutable]
-	public record Digit : IComparable<Digit> {
-		public const Byte MaximumValue = 9;
+/// <summary>
+/// Valid numbers are 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
+/// </summary>
+[Immutable]
+public record Digit : IComparable<Digit> {
+	public const Byte MaximumValue = 9;
 
-		public const Byte MinimumValue = 0;
+	public const Byte MinimumValue = 0;
 
-		public Digit( Byte value ) {
-			if ( value > MaximumValue ) {
-				throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
-			}
-
-			this.Value = value;
+	public Digit( Byte value ) {
+		if ( value > MaximumValue ) {
+			throw new ArgumentOutOfRangeException( nameof( value ), "Out of range" );
 		}
 
-		public static Digit[] AllDigits { get; } = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-
-		public static Digit Eight { get; } = new( 8 );
-
-		public static Digit Five { get; } = new( 5 );
-
-		public static Digit Four { get; } = new( 4 );
-
-		public static Digit Nine { get; } = new( 9 );
-
-		public static Digit One { get; } = new( 1 );
-
-		public static Digit Seven { get; } = new( 7 );
-
-		public static Digit Six { get; } = new( 6 );
-
-		public static Digit Three { get; } = new( 3 );
-
-		public static Digit Two { get; } = new( 2 );
-
-		public static Digit Zero { get; } = new( 0 );
-
-		public Byte Value { get; init; }
-
-		public Int32 CompareTo( Digit? other ) => this.Value.CompareTo( other?.Value );
-
-		public virtual Boolean Equals( Digit? other ) {
-			if ( other is null ) {
-				return false;
-			}
-
-			if ( ReferenceEquals( this, other ) ) {
-				return true;
-			}
-
-			return this.Value == other.Value;
-		}
-
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		public static Boolean Equals( Digit left, Digit right ) => left.Value == right.Value;
-
-		public static explicit operator Byte( Digit digit ) => digit.Value;
-
-		public static implicit operator Digit( Byte value ) => new( value );
-
-		public static Boolean operator <( Digit left, Digit right ) => left.Value < right.Value;
-
-		public static Boolean operator <( Digit left, SByte right ) => left.Value < right;
-
-		public static Boolean operator <( Digit left, Byte right ) => left.Value < right;
-
-		public static Boolean operator <( Byte left, Digit right ) => left < right.Value;
-
-		public static Boolean operator <( SByte left, Digit right ) => left < right.Value;
-
-		public static Boolean operator <=( Digit left, Digit right ) => left.Value <= right.Value;
-
-		public static Boolean operator <=( Digit left, SByte right ) => left.Value <= right;
-
-		public static Boolean operator <=( Digit left, Byte right ) => left.Value <= right;
-
-		public static Boolean operator <=( Byte left, Digit right ) => left <= right.Value;
-
-		public static Boolean operator <=( SByte left, Digit right ) => left <= right.Value;
-
-		public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
-
-		public static Boolean operator >( Digit left, SByte right ) => left.Value > right;
-
-		public static Boolean operator >( Digit left, Byte right ) => left.Value > right;
-
-		public static Boolean operator >( Byte left, Digit right ) => left > right.Value;
-
-		public static Boolean operator >( SByte left, Digit right ) => left > right.Value;
-
-		public static Boolean operator >=( Digit left, Digit right ) => left.Value >= right.Value;
-
-		public static Boolean operator >=( Digit left, SByte right ) => left.Value >= right;
-
-		public static Boolean operator >=( Digit left, Byte right ) => left.Value >= right;
-
-		public static Boolean operator >=( Byte left, Digit right ) => left >= right.Value;
-
-		public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
-
-		public Boolean Equals( Byte other ) => this.Value.Equals( other );
-
-		public String Number() => this.Value.ToString();
-
-		public override String ToString() {
-			return this.Value switch {
-				0 => nameof( Zero ),
-				1 => nameof( One ),
-				2 => nameof( Two ),
-				3 => nameof( Three ),
-				4 => nameof( Four ),
-				5 => nameof( Five ),
-				6 => nameof( Six ),
-				7 => nameof( Seven ),
-				8 => nameof( Eight ),
-				9 => nameof( Nine ),
-				var _ => throw new ArgumentOutOfRangeException( nameof( this.Value ), "Invalid internal value!" )
-			};
-		}
-
-		public override Int32 GetHashCode() => this.Value.GetHashCode();
+		this.Value = value;
 	}
+
+	public static Digit[] AllDigits { get; } = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+	public static Digit Eight { get; } = new( 8 );
+
+	public static Digit Five { get; } = new( 5 );
+
+	public static Digit Four { get; } = new( 4 );
+
+	public static Digit Nine { get; } = new( 9 );
+
+	public static Digit One { get; } = new( 1 );
+
+	public static Digit Seven { get; } = new( 7 );
+
+	public static Digit Six { get; } = new( 6 );
+
+	public static Digit Three { get; } = new( 3 );
+
+	public static Digit Two { get; } = new( 2 );
+
+	public static Digit Zero { get; } = new( 0 );
+
+	public Byte Value { get; init; }
+
+	public Int32 CompareTo( Digit? other ) => this.Value.CompareTo( other?.Value );
+
+	public virtual Boolean Equals( Digit? other ) {
+		if ( other is null ) {
+			return false;
+		}
+
+		if ( ReferenceEquals( this, other ) ) {
+			return true;
+		}
+
+		return this.Value == other.Value;
+	}
+
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static Boolean Equals( Digit left, Digit right ) => left.Value == right.Value;
+
+	public static explicit operator Byte( Digit digit ) => digit.Value;
+
+	public static implicit operator Digit( Byte value ) => new( value );
+
+	public static Boolean operator <( Digit left, Digit right ) => left.Value < right.Value;
+
+	public static Boolean operator <( Digit left, SByte right ) => left.Value < right;
+
+	public static Boolean operator <( Digit left, Byte right ) => left.Value < right;
+
+	public static Boolean operator <( Byte left, Digit right ) => left < right.Value;
+
+	public static Boolean operator <( SByte left, Digit right ) => left < right.Value;
+
+	public static Boolean operator <=( Digit left, Digit right ) => left.Value <= right.Value;
+
+	public static Boolean operator <=( Digit left, SByte right ) => left.Value <= right;
+
+	public static Boolean operator <=( Digit left, Byte right ) => left.Value <= right;
+
+	public static Boolean operator <=( Byte left, Digit right ) => left <= right.Value;
+
+	public static Boolean operator <=( SByte left, Digit right ) => left <= right.Value;
+
+	public static Boolean operator >( Digit left, Digit right ) => left.Value > right.Value;
+
+	public static Boolean operator >( Digit left, SByte right ) => left.Value > right;
+
+	public static Boolean operator >( Digit left, Byte right ) => left.Value > right;
+
+	public static Boolean operator >( Byte left, Digit right ) => left > right.Value;
+
+	public static Boolean operator >( SByte left, Digit right ) => left > right.Value;
+
+	public static Boolean operator >=( Digit left, Digit right ) => left.Value >= right.Value;
+
+	public static Boolean operator >=( Digit left, SByte right ) => left.Value >= right;
+
+	public static Boolean operator >=( Digit left, Byte right ) => left.Value >= right;
+
+	public static Boolean operator >=( Byte left, Digit right ) => left >= right.Value;
+
+	public static Boolean operator >=( SByte left, Digit right ) => left >= right.Value;
+
+	public Boolean Equals( Byte other ) => this.Value.Equals( other );
+
+	public String Number() => this.Value.ToString();
+
+	public override String ToString() {
+		return this.Value switch {
+			0 => nameof( Zero ),
+			1 => nameof( One ),
+			2 => nameof( Two ),
+			3 => nameof( Three ),
+			4 => nameof( Four ),
+			5 => nameof( Five ),
+			6 => nameof( Six ),
+			7 => nameof( Seven ),
+			8 => nameof( Eight ),
+			9 => nameof( Nine ),
+			var _ => throw new ArgumentOutOfRangeException( nameof( this.Value ), "Invalid internal value!" )
+		};
+	}
+
+	public override Int32 GetHashCode() => this.Value.GetHashCode();
 }

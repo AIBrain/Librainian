@@ -24,96 +24,95 @@
 
 #nullable enable
 
-namespace Librainian.Internet.Servers {
+namespace Librainian.Internet.Servers;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Globalization;
-	using System.Linq;
-	using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net;
 
-	public class Cookies {
+public class Cookies {
 
-		private SortedList<String, Cookie> CookieCollection { get; } = new();
+	private SortedList<String, Cookie> CookieCollection { get; } = new();
 
-		/// <summary>
-		///     Returns a Cookies instance populated by parsing the specified String. The String should be the value of the
-		///     "Cookie" header that was received from the remote client. If
-		///     the String is null or empty, an empty cookies collection is returned.
-		/// </summary>
-		/// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
-		public static Cookies FromString( String str ) {
-			var cookies = new Cookies();
+	/// <summary>
+	///     Returns a Cookies instance populated by parsing the specified String. The String should be the value of the
+	///     "Cookie" header that was received from the remote client. If
+	///     the String is null or empty, an empty cookies collection is returned.
+	/// </summary>
+	/// <param name="str">The value of the "Cookie" header sent by the remote client.</param>
+	public static Cookies FromString( String str ) {
+		var cookies = new Cookies();
 
-			str = WebUtility.UrlDecode( str );
+		str = WebUtility.UrlDecode( str );
 
 #if NETCORE || NETSTANDARD
 			var parts = str.Split( ';', StringSplitOptions.RemoveEmptyEntries );
 #else
-			if ( String.IsNullOrEmpty( str ) ) {
-				return cookies;
-			}
-
-			var parts = str.Split( ';' );
-#endif
-
-			foreach ( var s in parts ) {
-				var idxEquals = s.IndexOf( '=' );
-
-				if ( idxEquals < 1 ) {
-					continue;
-				}
-
-				var name = s[..idxEquals].Trim();
-				var value = s[( idxEquals + 1 )..].Trim();
-				cookies.Add( name, value );
-			}
-
+		if ( String.IsNullOrEmpty( str ) ) {
 			return cookies;
 		}
 
-		/// <summary>
-		///     Adds a cookie with the specified name and value. The cookie is set to expire immediately at the end of the
-		///     browsing session.
-		/// </summary>
-		/// <param name="name">The cookie's name.</param>
-		/// <param name="value">The cookie's value.</param>
-		public void Add( String? name, String? value ) => this.Add( name, value, TimeSpan.Zero );
+		var parts = str.Split( ';' );
+#endif
 
-		/// <summary>Adds a cookie with the specified name, value, and lifespan.</summary>
-		/// <param name="name">The cookie's name.</param>
-		/// <param name="value">The cookie's value.</param>
-		/// <param name="expireTime">The amount of time before the cookie should expire.</param>
-		public void Add( String name, String? value, TimeSpan expireTime ) {
-			name = name.ToLower( CultureInfo.CurrentCulture );
-			this.CookieCollection[name] = new Cookie( name, value, expireTime );
+		foreach ( var s in parts ) {
+			var idxEquals = s.IndexOf( '=' );
+
+			if ( idxEquals < 1 ) {
+				continue;
+			}
+
+			var name = s[..idxEquals].Trim();
+			var value = s[( idxEquals + 1 )..].Trim();
+			cookies.Add( name, value );
 		}
 
-		/// <summary>Gets the cookie with the specified name. If the cookie is not found, null is returned;</summary>
-		/// <param name="name">The name of the cookie.</param>
-		public Cookie? Get( String name ) => this.CookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
+		return cookies;
+	}
 
-		/// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
-		/// <param name="name">The name of the cookie.</param>
-		public String GetValue( String name ) {
-			var cookie = this.Get( name );
+	/// <summary>
+	///     Adds a cookie with the specified name and value. The cookie is set to expire immediately at the end of the
+	///     browsing session.
+	/// </summary>
+	/// <param name="name">The cookie's name.</param>
+	/// <param name="value">The cookie's value.</param>
+	public void Add( String? name, String? value ) => this.Add( name, value, TimeSpan.Zero );
 
-			return cookie?.Value ?? String.Empty;
-		}
+	/// <summary>Adds a cookie with the specified name, value, and lifespan.</summary>
+	/// <param name="name">The cookie's name.</param>
+	/// <param name="value">The cookie's value.</param>
+	/// <param name="expireTime">The amount of time before the cookie should expire.</param>
+	public void Add( String name, String? value, TimeSpan expireTime ) {
+		name = name.ToLower( CultureInfo.CurrentCulture );
+		this.CookieCollection[name] = new Cookie( name, value, expireTime );
+	}
 
-		/// <summary>
-		///     Returns a String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n".
-		///     There is no leading or trailing "\r\n".
-		/// </summary>
-		/// <returns>
-		///     A String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n". There is no
-		///     leading or trailing "\r\n".
-		/// </returns>
-		public override String ToString() {
-			var cookiesStr = this.CookieCollection.Values.Select( cookie =>
-																	  $"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 )cookie.Expire.TotalSeconds )}; Path=/" );
+	/// <summary>Gets the cookie with the specified name. If the cookie is not found, null is returned;</summary>
+	/// <param name="name">The name of the cookie.</param>
+	public Cookie? Get( String name ) => this.CookieCollection.TryGetValue( name, out var cookie ) ? cookie : null;
 
-			return String.Join( "\r\n", cookiesStr );
-		}
+	/// <summary>Gets the value of the cookie with the specified name. If the cookie is not found, an empty String is returned;</summary>
+	/// <param name="name">The name of the cookie.</param>
+	public String GetValue( String name ) {
+		var cookie = this.Get( name );
+
+		return cookie?.Value ?? String.Empty;
+	}
+
+	/// <summary>
+	///     Returns a String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n".
+	///     There is no leading or trailing "\r\n".
+	/// </summary>
+	/// <returns>
+	///     A String of "Set-Cookie: ..." headers (one for each cookie in the collection) separated by "\r\n". There is no
+	///     leading or trailing "\r\n".
+	/// </returns>
+	public override String ToString() {
+		var cookiesStr = this.CookieCollection.Values.Select( cookie =>
+			$"Set-Cookie: {cookie.Name}={cookie.Value}{( cookie.Expire == TimeSpan.Zero ? "" : "; Max-Age=" + ( Int64 )cookie.Expire.TotalSeconds )}; Path=/" );
+
+		return String.Join( "\r\n", cookiesStr );
 	}
 }

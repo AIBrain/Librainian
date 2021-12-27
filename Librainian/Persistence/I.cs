@@ -24,61 +24,60 @@
 
 #nullable enable
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence;
 
-	using System;
-	using System.Diagnostics;
-	using Exceptions;
-	using FileSystem;
-	using Microsoft.VisualBasic;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using Exceptions;
+using FileSystem;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 
-	/// <summary>[K]ey and a [U]nique location. (an [I]ndexer of storage locations)</summary>
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Serializable]
-	[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, /*ItemNullValueHandling = NullValueHandling.Ignore,*/
-				 ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
-	public class I {
+/// <summary>[K]ey and a [U]nique location. (an [I]ndexer of storage locations)</summary>
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Serializable]
+[JsonObject( MemberSerialization.OptIn, IsReference = false, ItemIsReference = false, /*ItemNullValueHandling = NullValueHandling.Ignore,*/
+	ItemReferenceLoopHandling = ReferenceLoopHandling.Ignore )]
+public class I {
 
-		[JsonProperty]
-		public String K { get; }
+	[JsonProperty]
+	public String K { get; }
 
-		[JsonProperty]
-		public Unique U { get; }
+	[JsonProperty]
+	public Unique U { get; }
 
-		public I( String key, Uri pointer ) {
-			this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
+	public I( String key, Uri pointer ) {
+		this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
 
-			if ( pointer is null ) {
-				throw new ArgumentEmptyException( nameof( pointer ) );
-			}
-
-			if ( !pointer.IsAbsoluteUri ) {
-				throw new ArgumentException( $"Uri pointer must be absolute. K={Strings.Left( this.K, 20 )}" );
-			}
-
-			this.U = pointer.ToUnique();
+		if ( pointer is null ) {
+			throw new ArgumentEmptyException( nameof( pointer ) );
 		}
+
+		if ( !pointer.IsAbsoluteUri ) {
+			throw new ArgumentException( $"Uri pointer must be absolute. K={Strings.Left( this.K, 20 )}" );
+		}
+
+		this.U = pointer.ToUnique();
+	}
 
 		
-		/// <param name="key"></param>
-		/// <param name="pointer"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public I( String key, String? pointer ) {
-			this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
+	/// <param name="key"></param>
+	/// <param name="pointer"></param>
+	/// <exception cref="ArgumentException"></exception>
+	public I( String key, String? pointer ) {
+		this.K = key ?? throw new ArgumentEmptyException( nameof( key ) );
 
-			if ( !Uri.TryCreate( pointer, UriKind.Absolute, out var uri ) ) {
-				throw new ArgumentException();
-			}
-
-			if ( !uri.IsAbsoluteUri ) {
-				throw new ArgumentException( $"Uri pointer must be absolute for key {Strings.Left( this.K, 20 )}" );
-			}
-
-			Unique.TryCreate( uri, out var u );
-			this.U = u;
+		if ( !Uri.TryCreate( pointer, UriKind.Absolute, out var uri ) ) {
+			throw new ArgumentException();
 		}
 
-		public override String ToString() => this.K.Length > 42 ? $"{Strings.Left( this.K, 20 )}..{Strings.Right( this.K, 20 )}={this.U}" : $"{this.K}";
+		if ( !uri.IsAbsoluteUri ) {
+			throw new ArgumentException( $"Uri pointer must be absolute for key {Strings.Left( this.K, 20 )}" );
+		}
+
+		Unique.TryCreate( uri, out var u );
+		this.U = u;
 	}
+
+	public override String ToString() => this.K.Length > 42 ? $"{Strings.Left( this.K, 20 )}..{Strings.Right( this.K, 20 )}={this.U}" : $"{this.K}";
 }

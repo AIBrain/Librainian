@@ -24,154 +24,153 @@
 
 #nullable enable
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
-	using Exceptions;
+using System;
+using Exceptions;
 
-	/// <summary>
-	///     <para>Mersenne Twister random number generator; from <see cref="http://takel.jp/mt/MersenneTwister.cs" /></para>
-	/// </summary>
-	internal class MersenneTwister : Random {
+/// <summary>
+///     <para>Mersenne Twister random number generator; from <see cref="http://takel.jp/mt/MersenneTwister.cs" /></para>
+/// </summary>
+internal class MersenneTwister : Random {
 
-		private const UInt32 LowerMask = 0b1111111111111111111111111111111;
+	private const UInt32 LowerMask = 0b1111111111111111111111111111111;
 
-		private const Int32 M = 0b110001101;
+	private const Int32 M = 0b110001101;
 
-		private const UInt32 MatrixA = 0b10011001000010001011000011011111;
+	private const UInt32 MatrixA = 0b10011001000010001011000011011111;
 
-		private const Int32 N = 0b1001110000;
+	private const Int32 N = 0b1001110000;
 
-		private const UInt32 TemperingMaskB = 0x9d2c5680;
+	private const UInt32 TemperingMaskB = 0x9d2c5680;
 
-		private const UInt32 TemperingMaskC = 0xefc60000;
+	private const UInt32 TemperingMaskC = 0xefc60000;
 
-		private const UInt32 UpperMask = 0x80000000;
+	private const UInt32 UpperMask = 0x80000000;
 
-		private static readonly UInt32[] Mag01 = {
-			0x0, MatrixA
-		};
+	private static readonly UInt32[] Mag01 = {
+		0x0, MatrixA
+	};
 
-		private readonly UInt32[] _mt = new UInt32[N]; /* the array for the state vector  */
+	private readonly UInt32[] _mt = new UInt32[N]; /* the array for the state vector  */
 
-		private Int16 _mti;
+	private Int16 _mti;
 
-		public MersenneTwister( UInt32 seed ) {
-			/* setting initial seeds to mt[N] using         */
-			/* the generator Line 25 of Table 1 in          */
-			/* [KNUTH 1981, The Art of Computer Programming */
-			/*    Vol. 2 (2nd Ed.), pp102]                  */
-			this._mt[0] = seed & 0xffffffffU;
+	public MersenneTwister( UInt32 seed ) {
+		/* setting initial seeds to mt[N] using         */
+		/* the generator Line 25 of Table 1 in          */
+		/* [KNUTH 1981, The Art of Computer Programming */
+		/*    Vol. 2 (2nd Ed.), pp102]                  */
+		this._mt[0] = seed & 0xffffffffU;
 
-			for ( this._mti = 1; this._mti < N; ++this._mti ) {
-				this._mt[this._mti] = ( 69069 * this._mt[this._mti - 1] ) & 0xffffffffU;
+		for ( this._mti = 1; this._mti < N; ++this._mti ) {
+			this._mt[this._mti] = ( 69069 * this._mt[this._mti - 1] ) & 0xffffffffU;
+		}
+	}
+
+	/// <summary>a default initial seed is used</summary>
+	public MersenneTwister() : this( 4357 ) { }
+
+	private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
+
+	private static UInt32 TEMPERING_SHIFT_S( UInt32 y ) => y << 7;
+
+	private static UInt32 TEMPERING_SHIFT_T( UInt32 y ) => y << 15;
+
+	private static UInt32 TEMPERING_SHIFT_U( UInt32 y ) => y >> 11;
+
+	protected UInt32 GenerateUInt() {
+		UInt32 y;
+
+		/* mag01[x] = x * MATRIX_A  for x=0,1 */
+		if ( this._mti >= N ) /* generate N words at one time */ {
+			Int16 kk = 0;
+
+			for ( ; kk < N - M; ++kk ) {
+				y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
+				this._mt[kk] = this._mt[kk + M] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
 			}
+
+			for ( ; kk < N - 1; ++kk ) {
+				y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
+				this._mt[kk] = this._mt[kk + ( M - N )] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
+			}
+
+			y = ( this._mt[N - 1] & UpperMask ) | ( this._mt[0] & LowerMask );
+			this._mt[N - 1] = this._mt[M - 1] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
+
+			this._mti = 0;
 		}
 
-		/// <summary>a default initial seed is used</summary>
-		public MersenneTwister() : this( 4357 ) { }
+		y = this._mt[this._mti++];
+		y ^= TEMPERING_SHIFT_U( y );
+		y ^= TEMPERING_SHIFT_S( y ) & TemperingMaskB;
+		y ^= TEMPERING_SHIFT_T( y ) & TemperingMaskC;
+		y ^= TEMPERING_SHIFT_L( y );
 
-		private static UInt32 TEMPERING_SHIFT_L( UInt32 y ) => y >> 18;
+		return y;
+	}
 
-		private static UInt32 TEMPERING_SHIFT_S( UInt32 y ) => y << 7;
+	public override Int32 Next() => this.Next( Int32.MaxValue );
 
-		private static UInt32 TEMPERING_SHIFT_T( UInt32 y ) => y << 15;
-
-		private static UInt32 TEMPERING_SHIFT_U( UInt32 y ) => y >> 11;
-
-		protected UInt32 GenerateUInt() {
-			UInt32 y;
-
-			/* mag01[x] = x * MATRIX_A  for x=0,1 */
-			if ( this._mti >= N ) /* generate N words at one time */ {
-				Int16 kk = 0;
-
-				for ( ; kk < N - M; ++kk ) {
-					y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
-					this._mt[kk] = this._mt[kk + M] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
-				}
-
-				for ( ; kk < N - 1; ++kk ) {
-					y = ( this._mt[kk] & UpperMask ) | ( this._mt[kk + 1] & LowerMask );
-					this._mt[kk] = this._mt[kk + ( M - N )] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
-				}
-
-				y = ( this._mt[N - 1] & UpperMask ) | ( this._mt[0] & LowerMask );
-				this._mt[N - 1] = this._mt[M - 1] ^ ( y >> 1 ) ^ Mag01[y & 0x1];
-
-				this._mti = 0;
-			}
-
-			y = this._mt[this._mti++];
-			y ^= TEMPERING_SHIFT_U( y );
-			y ^= TEMPERING_SHIFT_S( y ) & TemperingMaskB;
-			y ^= TEMPERING_SHIFT_T( y ) & TemperingMaskC;
-			y ^= TEMPERING_SHIFT_L( y );
-
-			return y;
+	public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
+		if ( maxValue > 1 ) {
+			return ( Int32 )( this.NextDouble() * maxValue );
 		}
 
-		public override Int32 Next() => this.Next( Int32.MaxValue );
-
-		public override Int32 Next( Int32 maxValue ) /* throws ArgumentOutOfRangeException */ {
-			if ( maxValue > 1 ) {
-				return ( Int32 )( this.NextDouble() * maxValue );
-			}
-
-			if ( maxValue < 0 ) {
-				throw new ArgumentOutOfRangeException();
-			}
-
-			return 0;
+		if ( maxValue < 0 ) {
+			throw new ArgumentOutOfRangeException();
 		}
 
-		public override Int32 Next( Int32 minValue, Int32 maxValue ) {
-			if ( maxValue < minValue ) {
-				throw new ArgumentOutOfRangeException();
-			}
+		return 0;
+	}
 
-			if ( maxValue == minValue ) {
-				return minValue;
-			}
-
-			return this.Next( maxValue - minValue ) + minValue;
+	public override Int32 Next( Int32 minValue, Int32 maxValue ) {
+		if ( maxValue < minValue ) {
+			throw new ArgumentOutOfRangeException();
 		}
+
+		if ( maxValue == minValue ) {
+			return minValue;
+		}
+
+		return this.Next( maxValue - minValue ) + minValue;
+	}
 
 		
-		/// <param name="buffer"></param>
-		/// <exception cref="ArgumentEmptyException"></exception>
-		public override void NextBytes( Byte[] buffer ) {
-			if ( buffer is null ) {
-				throw new ArgumentEmptyException( nameof( buffer ) );
-			}
-
-			var bufLen = buffer.Length;
-
-			for ( var idx = 0; idx < bufLen; ++idx ) {
-				buffer[idx] = ( Byte )this.Next( 256 );
-			}
+	/// <param name="buffer"></param>
+	/// <exception cref="ArgumentEmptyException"></exception>
+	public override void NextBytes( Byte[] buffer ) {
+		if ( buffer is null ) {
+			throw new ArgumentEmptyException( nameof( buffer ) );
 		}
 
-		public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )UInt32.MaxValue + 1 );
+		var bufLen = buffer.Length;
 
-		public virtual UInt32 NextUInt() => this.GenerateUInt();
-
-		public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
-
-		public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
-			if ( minValue >= maxValue ) {
-				throw new ArgumentOutOfRangeException();
-			}
-
-			return ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / ( maxValue - minValue ) ) + minValue );
+		for ( var idx = 0; idx < bufLen; ++idx ) {
+			buffer[idx] = ( Byte )this.Next( 256 );
 		}
-
-		/* Period parameters */
-		/* constant vector a */
-		/* most significant w-r bits */
-
-		/* least significant r bits */
-		/* Tempering parameters */
-		/* initializing the array with a NONZERO seed */
 	}
+
+	public override Double NextDouble() => ( Double )this.GenerateUInt() / ( ( UInt64 )UInt32.MaxValue + 1 );
+
+	public virtual UInt32 NextUInt() => this.GenerateUInt();
+
+	public virtual UInt32 NextUInt( UInt32 maxValue ) => ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / maxValue ) );
+
+	public virtual UInt32 NextUInt( UInt32 minValue, UInt32 maxValue ) /* throws ArgumentOutOfRangeException */ {
+		if ( minValue >= maxValue ) {
+			throw new ArgumentOutOfRangeException();
+		}
+
+		return ( UInt32 )( this.GenerateUInt() / ( ( Double )UInt32.MaxValue / ( maxValue - minValue ) ) + minValue );
+	}
+
+	/* Period parameters */
+	/* constant vector a */
+	/* most significant w-r bits */
+
+	/* least significant r bits */
+	/* Tempering parameters */
+	/* initializing the array with a NONZERO seed */
 }

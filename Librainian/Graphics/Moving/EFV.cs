@@ -22,99 +22,98 @@
 //
 // File "EFV.cs" last formatted on 2020-08-14 at 8:34 PM.
 
-namespace Librainian.Graphics.Moving {
+namespace Librainian.Graphics.Moving;
 
-	using System;
-	using System.Collections.Concurrent;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-	/// <summary> Experimental Full Video </summary>
-	/// <remarks>
-	///     Just for fun & learning. Prefer compression over [decoding/display] speed (assuming local cpu will be 'faster' than
-	///     network transfer speed). Compressions must be
-	///     lossless. Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay. Checksums are
-	///     used on each <see cref="Pixelyx" /> to guard against (detect but
-	///     not fix) corruption.
-	/// </remarks>
-	[JsonObject]
-	public class Efv {
+/// <summary> Experimental Full Video </summary>
+/// <remarks>
+///     Just for fun & learning. Prefer compression over [decoding/display] speed (assuming local cpu will be 'faster' than
+///     network transfer speed). Compressions must be
+///     lossless. Allow 'pages' of animation, each with their own delay. Default should be page 0 = 0 delay. Checksums are
+///     used on each <see cref="Pixelyx" /> to guard against (detect but
+///     not fix) corruption.
+/// </remarks>
+[JsonObject]
+public class Efv {
 
-		public static readonly String Extension = ".efv";
+	public static readonly String Extension = ".efv";
 
-		/// <summary>Human readable file header.</summary>
-		public static readonly String Header = "EFV0.1";
+	/// <summary>Human readable file header.</summary>
+	public static readonly String Header = "EFV0.1";
 
-		/// <summary>Checksum guard</summary>
-		[JsonProperty]
-		public UInt64 Checksum { get; set; }
+	/// <summary>Checksum guard</summary>
+	[JsonProperty]
+	public UInt64 Checksum { get; set; }
 
-		/// <summary>For each item here, draw them too.</summary>
-		/// <remarks>I need to stop coding while I'm asleep.</remarks>
-		[JsonProperty]
-		public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples { get; } = new();
+	/// <summary>For each item here, draw them too.</summary>
+	/// <remarks>I need to stop coding while I'm asleep.</remarks>
+	[JsonProperty]
+	public ConcurrentDictionary<UInt64, IList<UInt64>> Dopples { get; } = new();
 
-		[JsonProperty]
-		public UInt16 Height { get; set; }
+	[JsonProperty]
+	public UInt16 Height { get; set; }
 
-		[JsonProperty]
-		public ConcurrentDictionary<UInt64, Pixelyx> Pixels { get; } = new();
+	[JsonProperty]
+	public ConcurrentDictionary<UInt64, Pixelyx> Pixels { get; } = new();
 
-		[JsonProperty]
-		public UInt16 Width { get; set; }
+	[JsonProperty]
+	public UInt16 Width { get; set; }
 
-		public Efv() => this.Checksum = UInt64.MaxValue;
+	public Efv() => this.Checksum = UInt64.MaxValue;
 
-		public Boolean Add( Pixelyx pixelyx ) {
-			var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
+	public Boolean Add( Pixelyx pixelyx ) {
+		var rgbMatchesJustNotTimestamp = this.Pixels.Where( pair => Pixelyx.Equal( pair.Value, pixelyx ) );
 
-			foreach ( var pair in rgbMatchesJustNotTimestamp ) {
+		foreach ( var pair in rgbMatchesJustNotTimestamp ) {
 
-				//TODO this.Dopples[pixelyx.Timestamp] ??= new List<UInt64>();
+			//TODO this.Dopples[pixelyx.Timestamp] ??= new List<UInt64>();
 
-				this.Dopples[pixelyx.Timestamp].Add( pair.Value.Timestamp );
-			}
-
-			this.Pixels[pixelyx.Timestamp] = pixelyx;
-
-			return true;
+			this.Dopples[pixelyx.Timestamp].Add( pair.Value.Timestamp );
 		}
 
-		public Int32 CalculateChecksum() {
-			var sum = 0;
+		this.Pixels[pixelyx.Timestamp] = pixelyx;
 
-			foreach ( var pixelyx in this.Pixels ) {
-				unchecked {
-					sum += pixelyx.GetHashCode();
-				}
+		return true;
+	}
+
+	public Int32 CalculateChecksum() {
+		var sum = 0;
+
+		foreach ( var pixelyx in this.Pixels ) {
+			unchecked {
+				sum += pixelyx.GetHashCode();
 			}
-
-			return this.Pixels.Count + sum;
 		}
 
-		public Task<UInt64> CalculateChecksumAsync() =>
-			Task.Run( () => {
-				unchecked {
-					return ( UInt64 )this.Pixels.GetHashCode();
-				}
-			} );
+		return this.Pixels.Count + sum;
+	}
 
-		public Pixelyx? Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
-
-		public Pixelyx? Get( UInt16 x, UInt16 y ) {
-			if ( x == 0 ) {
-				throw new ArgumentException( "x" );
+	public Task<UInt64> CalculateChecksumAsync() =>
+		Task.Run( () => {
+			unchecked {
+				return ( UInt64 )this.Pixels.GetHashCode();
 			}
+		} );
 
-			if ( y == 0 ) {
-				throw new ArgumentException( "y" );
-			}
+	public Pixelyx? Get( UInt64 index ) => this.Pixels.TryGetValue( index, out var pixelyx ) ? pixelyx : null;
 
-			var index = ( UInt64 )( this.Height * y + x );
-
-			return this.Get( index );
+	public Pixelyx? Get( UInt16 x, UInt16 y ) {
+		if ( x == 0 ) {
+			throw new ArgumentException( "x" );
 		}
+
+		if ( y == 0 ) {
+			throw new ArgumentException( "y" );
+		}
+
+		var index = ( UInt64 )( this.Height * y + x );
+
+		return this.Get( index );
 	}
 }

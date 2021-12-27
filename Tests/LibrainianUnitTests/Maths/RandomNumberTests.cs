@@ -25,23 +25,21 @@
 // 
 // File "RandomNumberTests.cs" last touched on 2021-06-11 at 7:24 AM by Protiguous.
 
-namespace LibrainianUnitTests.Maths {
+namespace LibrainianUnitTests.Maths;
 
-	using NUnit.Framework;
+using NUnit.Framework;
 
-	[TestFixture]
-	public class RandomNumberTests {
+[TestFixture]
+public class RandomNumberTests {
 
-		/*
-		[Test]
-		public void AddBitsMethod() {
-			var size = Randem.NextUInt64();
+	/*
+	[Test]
+	public void AddBitsMethod() {
+		var size = Randem.NextUInt64();
 
-			Assert.AreEqual( 2, size.Bytes );
-			Assert.AreEqual( 16, size.Bits );
-		}
-		*/
-
+		Assert.AreEqual( 2, size.Bytes );
+		Assert.AreEqual( 16, size.Bits );
 	}
+	*/
 
 }

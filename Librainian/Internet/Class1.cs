@@ -25,30 +25,29 @@
 //
 // File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
 
-namespace Librainian.Internet {
+namespace Librainian.Internet;
 
-	using System;
-	using System.Net;
-	using System.Threading.Tasks;
-	using Newtonsoft.Json.Linq;
-	using RestSharp;
+using System;
+using System.Net;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
-	public static class Weather {
+public static class Weather {
 
-		public static async Task<Double?> GetTemperature( Double latitude, Double longitude ) {
-			const String apiUrl = "https://api.weather.gov/";
-			var coordinates = $"{latitude},{longitude}";
-			var requestPath = $"points/{coordinates}/forecast/hourly";
-			var client = new RestClient( apiUrl );
-			var request = new RestRequest( requestPath );
-			var response = await client.GetAsync<dynamic>( request ).ConfigureAwait( false );
-			if ( response.StatusCode == HttpStatusCode.OK ) {
-				var obj = JObject.Parse( response.Content );
-				var period = obj.properties.periods[0];
-				return ( Double )period.temperature;
-			}
-
-			return null;
+	public static async Task<Double?> GetTemperature( Double latitude, Double longitude ) {
+		const String apiUrl = "https://api.weather.gov/";
+		var coordinates = $"{latitude},{longitude}";
+		var requestPath = $"points/{coordinates}/forecast/hourly";
+		var client = new RestClient( apiUrl );
+		var request = new RestRequest( requestPath );
+		var response = await client.GetAsync<dynamic>( request ).ConfigureAwait( false );
+		if ( response.StatusCode == HttpStatusCode.OK ) {
+			var obj = JObject.Parse( response.Content );
+			var period = obj.properties.periods[0];
+			return ( Double )period.temperature;
 		}
+
+		return null;
 	}
 }

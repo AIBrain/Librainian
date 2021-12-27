@@ -22,27 +22,26 @@
 //
 // File "OSExtensions.cs" last formatted on 2020-08-14 at 8:41 PM.
 
-namespace Librainian.OperatingSystem {
+namespace Librainian.OperatingSystem;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	public static class OSExtensions {
+public static class OSExtensions {
 
-		/// <summary>Execute the <paramref name="command" /> in a CMD.EXE context.</summary>
-		/// <param name="command"></param>
-		/// <param name="createWindow"></param>
-		public static String? CmdExecute( String? command, Boolean createWindow = true ) {
-			using var process = Process.Start( new ProcessStartInfo( "cmd.exe", $"/c {command}" ) {
-				RedirectStandardOutput = true,
-				UseShellExecute = false,
-				RedirectStandardError = true,
-				CreateNoWindow = !createWindow
-			} );
+	/// <summary>Execute the <paramref name="command" /> in a CMD.EXE context.</summary>
+	/// <param name="command"></param>
+	/// <param name="createWindow"></param>
+	public static String? CmdExecute( String? command, Boolean createWindow = true ) {
+		using var process = Process.Start( new ProcessStartInfo( "cmd.exe", $"/c {command}" ) {
+			RedirectStandardOutput = true,
+			UseShellExecute = false,
+			RedirectStandardError = true,
+			CreateNoWindow = !createWindow
+		} );
 
-			using var standardOutput = process?.StandardOutput;
+		using var standardOutput = process?.StandardOutput;
 
-			return standardOutput?.ReadToEnd().Trim();
-		}
+		return standardOutput?.ReadToEnd().Trim();
 	}
 }

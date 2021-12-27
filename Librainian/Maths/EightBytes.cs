@@ -22,29 +22,28 @@
 //
 // File "EightBytes.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Maths {
+namespace Librainian.Maths;
 
-	using System;
-	using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>8 byte struct.</summary>
-	[StructLayout( LayoutKind.Sequential )]
-	public struct EightBytes {
+/// <summary>8 byte struct.</summary>
+[StructLayout( LayoutKind.Sequential )]
+public struct EightBytes {
 
-		public Byte A { get; set; }
+	public Byte A { get; set; }
 
-		public Byte B { get; set; }
+	public Byte B { get; set; }
 
-		public Byte C { get; set; }
+	public Byte C { get; set; }
 
-		public Byte D { get; set; }
+	public Byte D { get; set; }
 
-		public Byte E { get; set; }
+	public Byte E { get; set; }
 
-		public Byte F { get; set; }
+	public Byte F { get; set; }
 
-		public Byte G { get; set; }
+	public Byte G { get; set; }
 
-		public Byte H { get; set; }
-	}
+	public Byte H { get; set; }
 }

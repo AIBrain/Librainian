@@ -22,12 +22,11 @@
 //
 // File "TaxableShoppingItem.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Shopping {
+namespace Librainian.Financial.Containers.Shopping;
 
-	using System;
+using System;
 
-	public record TaxableShoppingItem : ShoppingItem {
+public record TaxableShoppingItem : ShoppingItem {
 
-		public TaxableShoppingItem( ItemCategory category, Guid itemID ) : base( category, itemID ) => this.TaxExempt = false;
-	}
+	public TaxableShoppingItem( ItemCategory category, Guid itemID ) : base( category, itemID ) => this.TaxExempt = false;
 }

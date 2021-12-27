@@ -25,102 +25,101 @@
 //
 // File "Feet.cs" last formatted on 2021-01-01 at 9:38 AM.
 
-namespace Librainian.Measurement.Length {
+namespace Librainian.Measurement.Length;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using ExtendedNumerics;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using ExtendedNumerics;
+using Newtonsoft.Json;
 
-	/// <summary>
-	///     <para>A foot (plural: feet) is a unit of length.</para>
-	///     <para>Since 1960 the term has usually referred to the international foot,</para>
-	///     <para>defined as being one third of a yard, making it 0.3048 meters exactly.</para>
-	///     <para>The foot is subdivided into 12 inches.</para>
-	/// </summary>
-	/// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public record Feet( BigDecimal Value ) : IQuantityOfDistance, IComparable<Feet> {
+/// <summary>
+///     <para>A foot (plural: feet) is a unit of length.</para>
+///     <para>Since 1960 the term has usually referred to the international foot,</para>
+///     <para>defined as being one third of a yard, making it 0.3048 meters exactly.</para>
+///     <para>The foot is subdivided into 12 inches.</para>
+/// </summary>
+/// <see cref="http://wikipedia.org/wiki/Foot_(unit)" />
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public record Feet( BigDecimal Value ) : IQuantityOfDistance, IComparable<Feet> {
 
-		/// <summary>60</summary>
-		public const Byte InOneYard = 3;
+	/// <summary>60</summary>
+	public const Byte InOneYard = 3;
 
-		public const Decimal FeetPerMeter = 3.28084m;
+	public const Decimal FeetPerMeter = 3.28084m;
 
-		public Feet( Int64 value ) : this( ( Decimal )value ) { }
+	public Feet( Int64 value ) : this( ( Decimal )value ) { }
 
-		public Feet( BigInteger value ) : this( ( BigDecimal )value ) { }
+	public Feet( BigInteger value ) : this( ( BigDecimal )value ) { }
 
-		/// <summary><see cref="Five" /> .</summary>
-		public static Feet Five { get; } = new( 5M );
+	/// <summary><see cref="Five" /> .</summary>
+	public static Feet Five { get; } = new( 5M );
 
-		/// <summary><see cref="One" /> .</summary>
-		public static Feet One { get; } = new( 1M );
+	/// <summary><see cref="One" /> .</summary>
+	public static Feet One { get; } = new( 1M );
 
-		/// <summary><see cref="Seven" /> .</summary>
-		public static Feet Seven { get; } = new( 7M );
+	/// <summary><see cref="Seven" /> .</summary>
+	public static Feet Seven { get; } = new( 7M );
 
-		/// <summary><see cref="Ten" /> .</summary>
-		public static Feet Ten { get; } = new( 10M );
+	/// <summary><see cref="Ten" /> .</summary>
+	public static Feet Ten { get; } = new( 10M );
 
-		/// <summary><see cref="Thirteen" /> .</summary>
-		public static Feet Thirteen { get; } = new( 13M );
+	/// <summary><see cref="Thirteen" /> .</summary>
+	public static Feet Thirteen { get; } = new( 13M );
 
-		/// <summary><see cref="Thirty" /> .</summary>
-		public static Feet Thirty { get; } = new( 30M );
+	/// <summary><see cref="Thirty" /> .</summary>
+	public static Feet Thirty { get; } = new( 30M );
 
-		/// <summary><see cref="Three" /> .</summary>
-		public static Feet Three { get; } = new( 3M );
+	/// <summary><see cref="Three" /> .</summary>
+	public static Feet Three { get; } = new( 3M );
 
-		/// <summary><see cref="Two" /> .</summary>
-		public static Feet Two { get; } = new( 2M );
+	/// <summary><see cref="Two" /> .</summary>
+	public static Feet Two { get; } = new( 2M );
 
 		
-		public static Feet Zero { get; } = new( 0M );
+	public static Feet Zero { get; } = new( 0M );
 
-		public BigDecimal ToMeters() => this.Value / FeetPerMeter;
+	public BigDecimal ToMeters() => this.Value / FeetPerMeter;
 
-		public override String ToString() => $"{this.Value} feet";
+	public override String ToString() => $"{this.Value} feet";
 
-		public static Feet Combine( Feet left, BigDecimal feet ) => new( left.Value + feet );
+	public static Feet Combine( Feet left, BigDecimal feet ) => new( left.Value + feet );
 
-		public static Feet Combine( Feet left, BigInteger seconds ) => new( left.Value + seconds );
+	public static Feet Combine( Feet left, BigInteger seconds ) => new( left.Value + seconds );
 
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
-		public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
+	/// <summary>
+	///     <para>static equality test</para>
+	/// </summary>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	public static Boolean Equals( Feet left, Feet right ) => left.Value == right.Value;
 
-		public static Feet operator -( Feet feet ) => new( feet.Value * -1 );
+	public static Feet operator -( Feet feet ) => new( feet.Value * -1 );
 
-		public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
+	public static Feet operator -( Feet left, Feet right ) => Combine( left, -right.Value );
 
-		public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, -seconds );
+	public static Feet operator -( Feet left, Decimal seconds ) => Combine( left, -seconds );
 
-		public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
+	public static Feet operator +( Feet left, Feet right ) => Combine( left, right.Value );
 
-		public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, seconds );
+	public static Feet operator +( Feet left, Decimal seconds ) => Combine( left, seconds );
 
-		public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
+	public static Feet operator +( Feet left, BigInteger seconds ) => Combine( left, seconds );
 
-		public static Boolean operator <( Feet left, Feet right ) => left.Value < right.Value;
+	public static Boolean operator <( Feet left, Feet right ) => left.Value < right.Value;
 
-		public static Boolean operator >( Feet left, Feet right ) => left.Value > right.Value;
+	public static Boolean operator >( Feet left, Feet right ) => left.Value > right.Value;
 
-		public Int32 CompareTo( Feet? other ) {
-			if ( ReferenceEquals( this, other ) ) {
-				return SortOrder.Same;
-			}
-
-			if ( other is null ) {
-				return SortOrder.After;
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( Feet? other ) {
+		if ( ReferenceEquals( this, other ) ) {
+			return SortOrder.Same;
 		}
+
+		if ( other is null ) {
+			return SortOrder.After;
+		}
+
+		return this.Value.CompareTo( other.Value );
 	}
 }

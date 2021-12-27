@@ -25,31 +25,29 @@
 // 
 // File "DriveTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using System.Diagnostics;
-	using Librainian.ComputerSystem.Devices;
-	using Librainian.Parsing;
-	using NUnit.Framework;
+using System;
+using System.Diagnostics;
+using Librainian.ComputerSystem.Devices;
+using Librainian.Parsing;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class DriveTests {
+[TestFixture]
+public static class DriveTests {
 
-		[Test]
-		public static void TestAllDrives() {
-			const String alphabet = ParsingConstants.English.Alphabet.Uppercase;
-			Debug.WriteLine( alphabet );
+	[Test]
+	public static void TestAllDrives() {
+		const String alphabet = ParsingConstants.English.Alphabet.Uppercase;
+		Debug.WriteLine( alphabet );
 
-			foreach ( var letter in alphabet ) {
-				var drive = new Disk( letter );
+		foreach ( var letter in alphabet ) {
+			var drive = new Disk( letter );
 
-				if ( drive.FreeSpace() > 0 ) {
-					Debug.WriteLine( $"{drive} {drive.FreeSpace()} " );
-				}
+			if ( drive.FreeSpace() > 0 ) {
+				Debug.WriteLine( $"{drive} {drive.FreeSpace()} " );
 			}
 		}
-
 	}
 
 }

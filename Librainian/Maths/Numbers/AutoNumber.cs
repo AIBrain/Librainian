@@ -22,41 +22,40 @@
 //
 // File "AutoNumber.cs" last formatted on 2020-08-14 at 8:35 PM.
 
-namespace Librainian.Maths.Numbers {
+namespace Librainian.Maths.Numbers;
 
-	using System;
-	using System.Threading;
-	using Newtonsoft.Json;
+using System;
+using System.Threading;
+using Newtonsoft.Json;
 
-	/// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )</summary>
-	[JsonObject]
-	public sealed class AutoNumber {
+/// <summary>An automatically incrementing Identity class. ( <see cref="Identity" /> is <see cref="UInt64" /> )</summary>
+[JsonObject]
+public sealed class AutoNumber {
 
-		[JsonProperty]
-		private Int64 _identity;
+	[JsonProperty]
+	private Int64 _identity;
 
-		/// <summary>The current value of the AutoNumber</summary>
-		public UInt64 Identity => ( UInt64 )Interlocked.Read( ref this._identity );
+	/// <summary>The current value of the AutoNumber</summary>
+	public UInt64 Identity => ( UInt64 )Interlocked.Read( ref this._identity );
 
-		/// <summary>Initialize the Identity with the specified seed value.</summary>
-		/// <param name="seed"></param>
-		public AutoNumber( UInt64 seed = UInt64.MinValue ) => this.Reseed( seed );
+	/// <summary>Initialize the Identity with the specified seed value.</summary>
+	/// <param name="seed"></param>
+	public AutoNumber( UInt64 seed = UInt64.MinValue ) => this.Reseed( seed );
 
-		public void Ensure( UInt64 atLeast ) {
-			if ( this.Identity < atLeast ) {
+	public void Ensure( UInt64 atLeast ) {
+		if ( this.Identity < atLeast ) {
 
-				//TODO make this an atomic operation
-				this.Reseed( atLeast );
-			}
+			//TODO make this an atomic operation
+			this.Reseed( atLeast );
 		}
-
-		/// <summary>Returns the incremented Identity</summary>
-		public UInt64 Next() => ( UInt64 )Interlocked.Increment( ref this._identity );
-
-		/// <summary>Resets the Identity to the specified seed value</summary>
-		/// <param name="newIdentity"></param>
-		public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 )newIdentity );
-
-		public override String ToString() => $"{this.Identity}";
 	}
+
+	/// <summary>Returns the incremented Identity</summary>
+	public UInt64 Next() => ( UInt64 )Interlocked.Increment( ref this._identity );
+
+	/// <summary>Resets the Identity to the specified seed value</summary>
+	/// <param name="newIdentity"></param>
+	public void Reseed( UInt64 newIdentity ) => Interlocked.Exchange( ref this._identity, ( Int64 )newIdentity );
+
+	public override String ToString() => $"{this.Identity}";
 }

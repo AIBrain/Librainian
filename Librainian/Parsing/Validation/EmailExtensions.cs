@@ -24,38 +24,37 @@
 
 #nullable enable
 
-namespace Librainian.Parsing.Validation {
+namespace Librainian.Parsing.Validation;
 
-	using System;
-	using System.Net.Mail;
-	using Newtonsoft.Json;
+using System;
+using System.Net.Mail;
+using Newtonsoft.Json;
 
-	public static class EmailExtensions {
+public static class EmailExtensions {
 
-		public static Boolean IsValidEmailAddress( this String email ) {
-			try {
-				if ( !String.IsNullOrEmpty( email = email.Trim() ) ) {
-					var _ = new MailAddress( email );
+	public static Boolean IsValidEmailAddress( this String email ) {
+		try {
+			if ( !String.IsNullOrEmpty( email = email.Trim() ) ) {
+				var _ = new MailAddress( email );
 
-					return true;
-				}
+				return true;
 			}
-			catch ( FormatException ) { }
-
-			return false;
 		}
+		catch ( FormatException ) { }
+
+		return false;
 	}
+}
 
-	[Serializable]
-	[JsonObject]
-	public class Email : ValidatedString {
+[Serializable]
+[JsonObject]
+public class Email : ValidatedString {
 
-		protected Email( String value ) : base( value, s => s.IsValidEmailAddress() ) { }
+	protected Email( String value ) : base( value, s => s.IsValidEmailAddress() ) { }
 
-		public static implicit operator Email( String str ) => new( str );
+	public static implicit operator Email( String str ) => new( str );
 
-		public static implicit operator MailAddress( Email email ) => new( email );
+	public static implicit operator MailAddress( Email email ) => new( email );
 
-		public static implicit operator String( Email email ) => email.Value;
-	}
+	public static implicit operator String( Email email ) => email.Value;
 }

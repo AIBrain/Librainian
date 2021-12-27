@@ -25,20 +25,19 @@
 //
 // File "LoggingMessageWriter.cs" last touched on 2021-05-04 at 3:51 PM by Protiguous.
 
-namespace Librainian.Logging {
+namespace Librainian.Logging;
 
-	using System;
-	using Microsoft.Extensions.Logging;
-	using Utilities;
+using System;
+using Microsoft.Extensions.Logging;
+using Utilities;
 
-	public class LoggingMessageWriter : IMessageWriter {
+public class LoggingMessageWriter : IMessageWriter {
 
-		private readonly ILogger<LoggingMessageWriter> _logger;
+	private readonly ILogger<LoggingMessageWriter> _logger;
 
-		public LoggingMessageWriter( ILogger<LoggingMessageWriter> logger ) => this._logger = logger;
+	public LoggingMessageWriter( ILogger<LoggingMessageWriter> logger ) => this._logger = logger;
 
-		public void Write( String message ) => this._logger.LogInformation( message );
+	public void Write( String message ) => this._logger.LogInformation( message );
 
-		public void WriteLine( String message, params Object[] args ) => this._logger.LogInformation( message, args );
-	}
+	public void WriteLine( String message, params Object[] args ) => this._logger.LogInformation( message, args );
 }

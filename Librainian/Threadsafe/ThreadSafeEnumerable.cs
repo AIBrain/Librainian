@@ -24,57 +24,56 @@
 
 #nullable enable
 
-namespace Librainian.Threadsafe {
+namespace Librainian.Threadsafe;
 
-	using System;
-	using System.Collections;
-	using System.Collections.Generic;
-	using System.Threading;
-	using Exceptions;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using Exceptions;
 
-	public class ThreadSafeEnumerable<T> : IEnumerable<T> {
+public class ThreadSafeEnumerable<T> : IEnumerable<T> {
 
-		private IEnumerable<T> Original { get; }
+	private IEnumerable<T> Original { get; }
 
-		public ThreadSafeEnumerable( IEnumerable<T> original ) => this.Original = original ?? throw new ArgumentEmptyException( nameof( original ) );
+	public ThreadSafeEnumerable( IEnumerable<T> original ) => this.Original = original ?? throw new ArgumentEmptyException( nameof( original ) );
 
-		public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this.Original.GetEnumerator() );
+	public IEnumerator<T> GetEnumerator() => new ThreadSafeEnumerator( this.Original.GetEnumerator() );
 
-		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-		private sealed class ThreadSafeEnumerator : IEnumerator<T> {
+	private sealed class ThreadSafeEnumerator : IEnumerator<T> {
 
-			private ThreadLocal<T?> current { get; } = new();
+		private ThreadLocal<T?> current { get; } = new();
 
-			private IEnumerator<T> original { get; }
+		private IEnumerator<T> original { get; }
 
-			private Object padlock { get; } = new();
+		private Object padlock { get; } = new();
 
-			public T? Current => this.current.Value;
+		public T? Current => this.current.Value;
 
-			Object? IEnumerator.Current => this.Current;
+		Object? IEnumerator.Current => this.Current;
 
-			internal ThreadSafeEnumerator( IEnumerator<T> original ) => this.original = original ?? throw new ArgumentEmptyException( nameof( original ) );
+		internal ThreadSafeEnumerator( IEnumerator<T> original ) => this.original = original ?? throw new ArgumentEmptyException( nameof( original ) );
 
-			public void Dispose() {
-				using ( this.original ) { }
+		public void Dispose() {
+			using ( this.original ) { }
 
-				using ( this.current ) { }
-			}
-
-			public Boolean MoveNext() {
-				lock ( this.padlock ) {
-					var next = this.original.MoveNext();
-
-					if ( next ) {
-						this.current.Value = this.original.Current;
-					}
-
-					return next;
-				}
-			}
-
-			public void Reset() => throw new NotSupportedException();
+			using ( this.current ) { }
 		}
+
+		public Boolean MoveNext() {
+			lock ( this.padlock ) {
+				var next = this.original.MoveNext();
+
+				if ( next ) {
+					this.current.Value = this.original.Current;
+				}
+
+				return next;
+			}
+		}
+
+		public void Reset() => throw new NotSupportedException();
 	}
 }

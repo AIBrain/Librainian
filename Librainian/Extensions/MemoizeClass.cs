@@ -22,55 +22,54 @@
 //
 // File "MemoizeClass.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.Collections.Concurrent;
+using System;
+using System.Collections.Concurrent;
 
-	public static class MemoizeClass {
+public static class MemoizeClass {
 
-		private static Func<T, TR>? CastByExample<T, TR>( Func<T, TR>? f, T? _ ) => f;
+	private static Func<T, TR>? CastByExample<T, TR>( Func<T, TR>? f, T? _ ) => f;
 
-		//static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
-		//    return f.Tuplify().Memoize().Detuplify();
-		//}
+	//static Func<A, B, R> Memoize( this Func<A, B, R> f ) {
+	//    return f.Tuplify().Memoize().Detuplify();
+	//}
 
-		public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( this Func<Tuple<TA, TB>, TR>? func ) => ( a, b ) => func( Tuple.Create( a, b ) );
+	public static Func<TA, TB, TR> Detuplify<TA, TB, TR>( this Func<Tuple<TA, TB>, TR>? func ) => ( a, b ) => func( Tuple.Create( a, b ) );
 
-		public static Func<TA, TB, TR> Memoize<TA, TB, TR>( this Func<TA, TB, TR>? f ) {
-			var example = new {
-				A = default( TA ),
-				B = default( TB )
-			};
+	public static Func<TA, TB, TR> Memoize<TA, TB, TR>( this Func<TA, TB, TR>? f ) {
+		var example = new {
+			A = default( TA ),
+			B = default( TB )
+		};
 
-			var tuplified = CastByExample( t => f( t.A, t.B ), example );
-			var memoized = tuplified.Memoize();
+		var tuplified = CastByExample( t => f( t.A, t.B ), example );
+		var memoized = tuplified.Memoize();
 
-			return ( a, b ) => memoized( new {
-				A = a,
-				B = b
-			} );
-		}
-
-		public static Func<TKey, TResult> Memoize<TKey, TResult>( this Func<TKey, TResult> func ) where TKey : notnull {
-			var d = new ConcurrentDictionary<TKey, TResult>();
-
-			return a => {
-				if ( !d.TryGetValue( a, out var value ) ) {
-					value = func( a );
-					d.TryAdd( a, value );
-				}
-
-				return value;
-			};
-		}
-
-		//public static Func<Tuple<TA, TB>, TR> Memoize(this Func<Tuple<TA, TB>, TR> func) {
-		//    Func<Tuple<TA, TB>, TR> tuplified = t => func( t.Item1, t.Item2 );
-		//    Func<Tuple<TA, TB>, TR> memoized = tuplified.Memoize();
-		//    return (a, b) => memoized( Tuple.Create( a, b ) );
-		//}
-
-		public static Func<Tuple<TA, TB>, TR> Tuplify<TA, TB, TR>( this Func<TA, TB, TR>? func ) => t => func( t.Item1, t.Item2 );
+		return ( a, b ) => memoized( new {
+			A = a,
+			B = b
+		} );
 	}
+
+	public static Func<TKey, TResult> Memoize<TKey, TResult>( this Func<TKey, TResult> func ) where TKey : notnull {
+		var d = new ConcurrentDictionary<TKey, TResult>();
+
+		return a => {
+			if ( !d.TryGetValue( a, out var value ) ) {
+				value = func( a );
+				d.TryAdd( a, value );
+			}
+
+			return value;
+		};
+	}
+
+	//public static Func<Tuple<TA, TB>, TR> Memoize(this Func<Tuple<TA, TB>, TR> func) {
+	//    Func<Tuple<TA, TB>, TR> tuplified = t => func( t.Item1, t.Item2 );
+	//    Func<Tuple<TA, TB>, TR> memoized = tuplified.Memoize();
+	//    return (a, b) => memoized( Tuple.Create( a, b ) );
+	//}
+
+	public static Func<Tuple<TA, TB>, TR> Tuplify<TA, TB, TR>( this Func<TA, TB, TR>? func ) => t => func( t.Item1, t.Item2 );
 }

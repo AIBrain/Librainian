@@ -22,16 +22,15 @@
 //
 // File "Five.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Currency.BankNotes {
+namespace Librainian.Financial.Currency.BankNotes;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	public sealed class Five : IBankNote {
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+public sealed class Five : IBankNote {
 
-		public Decimal FaceValue => 5.00M;
+	public Decimal FaceValue => 5.00M;
 
-		public override String ToString() => $"{this.FaceValue:C}";
-	}
+	public override String ToString() => $"{this.FaceValue:C}";
 }

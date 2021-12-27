@@ -24,106 +24,105 @@
 
 #nullable enable
 
-namespace Librainian.Persistence.InIFiles {
+namespace Librainian.Persistence.InIFiles;
 
-	using System;
-	using Newtonsoft.Json;
-	using Parsing;
+using System;
+using Newtonsoft.Json;
+using Parsing;
+
+/// <summary>
+///     <para>
+///         <example>
+///             <code>var comment=new IniLine(";Comment");</code>
+///         </example>
+///     </para>
+///     <para>
+///         <example>
+///             <code>var commentwithvalue=new IniLine(";Comment","something");</code>
+///         </example>
+///     </para>
+///     <para>
+///         <example>
+///             <code>var kvp=new IniLine("Key","value");</code>
+///         </example>
+///     </para>
+///     <para>
+///         <example>
+///             <code>var empty=new IniLine("");</code>
+///         </example>
+///     </para>
+///     <para>
+///         <example>
+///             <code>var empty=new IniLine();</code>
+///         </example>
+///     </para>
+/// </summary>
+[JsonObject]
+public class IniLine {
+
+	public const String PairSeparator = "=";
+
+	public static readonly String[] CommentHeaders = {
+		"#", ";", ":", "rem", "REM"
+	};
+
+	[JsonProperty]
+	public String? Key { get; }
 
 	/// <summary>
-	///     <para>
-	///         <example>
-	///             <code>var comment=new IniLine(";Comment");</code>
-	///         </example>
-	///     </para>
-	///     <para>
-	///         <example>
-	///             <code>var commentwithvalue=new IniLine(";Comment","something");</code>
-	///         </example>
-	///     </para>
-	///     <para>
-	///         <example>
-	///             <code>var kvp=new IniLine("Key","value");</code>
-	///         </example>
-	///     </para>
-	///     <para>
-	///         <example>
-	///             <code>var empty=new IniLine("");</code>
-	///         </example>
-	///     </para>
-	///     <para>
-	///         <example>
-	///             <code>var empty=new IniLine();</code>
-	///         </example>
-	///     </para>
+	///     The prefix for lines.
 	/// </summary>
-	[JsonObject]
-	public class IniLine {
+	[JsonProperty]
+	public String? LineHeader { get; set; }
 
-		public const String PairSeparator = "=";
+	[JsonProperty]
+	public LineTypes LineType { get; }
 
-		public static readonly String[] CommentHeaders = {
-			"#", ";", ":", "rem", "REM"
-		};
+	[JsonProperty]
+	public String? Value { get; set; }
 
-		[JsonProperty]
-		public String? Key { get; }
+	public IniLine( String? key, String? value = default ) {
+		key = key.Trimmed() ?? String.Empty;
 
-		/// <summary>
-		///     The prefix for lines.
-		/// </summary>
-		[JsonProperty]
-		public String? LineHeader { get; set; }
+		var test = key.StartsWith( CommentHeaders, StringComparison.Ordinal );
 
-		[JsonProperty]
-		public LineTypes LineType { get; }
-
-		[JsonProperty]
-		public String? Value { get; set; }
-
-		public IniLine( String? key, String? value = default ) {
-			key = key.Trimmed() ?? String.Empty;
-
-			var test = key.StartsWith( CommentHeaders, StringComparison.Ordinal );
-
-			if ( test.status.IsGood() ) {
-				this.Key = key;
-				this.Value = value;
-				this.LineType = LineTypes.Comment;
-				this.LineHeader = test.start;
-
-				return;
-			}
-
+		if ( test.status.IsGood() ) {
 			this.Key = key;
 			this.Value = value;
+			this.LineType = LineTypes.Comment;
+			this.LineHeader = test.start;
 
-			if ( String.IsNullOrEmpty( key ) || String.IsNullOrEmpty( value ) ) {
-				this.LineType = LineTypes.Empty;
-				this.Value = default( String? );
-			}
-			else {
-				this.LineType = LineTypes.Text;
-			}
+			return;
 		}
 
-		public enum LineTypes {
+		this.Key = key;
+		this.Value = value;
 
-			Empty,
-
-			Text,
-
-			Comment
+		if ( String.IsNullOrEmpty( key ) || String.IsNullOrEmpty( value ) ) {
+			this.LineType = LineTypes.Empty;
+			this.Value = default( String? );
 		}
-
-		/// <summary>Returns a string that represents the current object.</summary>
-		/// <returns>A string that represents the current object.</returns>
-		public override String ToString() =>
-			this.LineType switch {
-				LineTypes.Text => $"{this.Key}{PairSeparator}{this.Value}",
-				LineTypes.Comment => $"{this.LineHeader} {this.Key}",
-				LineTypes.Empty => $"{String.Empty}",
-				var _ => throw new ArgumentOutOfRangeException()
-			};
+		else {
+			this.LineType = LineTypes.Text;
+		}
 	}
+
+	public enum LineTypes {
+
+		Empty,
+
+		Text,
+
+		Comment
+	}
+
+	/// <summary>Returns a string that represents the current object.</summary>
+	/// <returns>A string that represents the current object.</returns>
+	public override String ToString() =>
+		this.LineType switch {
+			LineTypes.Text => $"{this.Key}{PairSeparator}{this.Value}",
+			LineTypes.Comment => $"{this.LineHeader} {this.Key}",
+			LineTypes.Empty => $"{String.Empty}",
+			var _ => throw new ArgumentOutOfRangeException()
+		};
 }

@@ -25,24 +25,23 @@
 //
 // File "DummyXMLResolver.cs" last touched on 2021-06-08 at 7:06 PM by Protiguous.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
-	using System.IO;
-	using System.Net;
-	using System.Xml;
+using System;
+using System.IO;
+using System.Net;
+using System.Xml;
 
-	public class DummyXMLResolver : XmlUrlResolver {
+public class DummyXMLResolver : XmlUrlResolver {
 
-		public override ICredentials? Credentials {
-			set {
+	public override ICredentials? Credentials {
+		set {
 
-				// Do nothing.
-			}
+			// Do nothing.
 		}
-
-		public override Object GetEntity( Uri? absoluteUri, String? role, Type? ofObjectToReturn ) => new MemoryStream();
-
-		public override Uri ResolveUri( Uri? baseUri, String? relativeUri ) => new( String.Empty );
 	}
+
+	public override Object GetEntity( Uri? absoluteUri, String? role, Type? ofObjectToReturn ) => new MemoryStream();
+
+	public override Uri ResolveUri( Uri? baseUri, String? relativeUri ) => new( String.Empty );
 }

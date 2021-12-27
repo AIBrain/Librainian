@@ -22,26 +22,25 @@
 //
 // File "LargeSizeFormatProviderExtensions.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Extensions {
+namespace Librainian.Extensions;
 
-	using System;
+using System;
 
-	public static class LargeSizeFormatProviderExtensions {
+public static class LargeSizeFormatProviderExtensions {
 
-		//TODO Needs to account for singular amount.
+	//TODO Needs to account for singular amount.
 
-		private static LargeSizeFormatProvider FormatProvider { get; } = new();
+	private static LargeSizeFormatProvider FormatProvider { get; } = new();
 
-		/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-		public static String ToLargeSize( this Decimal bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
+	/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
+	public static String ToLargeSize( this Decimal bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
-		/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-		public static String ToLargeSize( this UInt64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
+	/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
+	public static String ToLargeSize( this UInt64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
-		/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-		public static String ToLargeSize( this Int64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
+	/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
+	public static String ToLargeSize( this Int64 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 
-		/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
-		public static String ToLargeSize( this Int32 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
-	}
+	/// <summary>Return the number supplied into its "TB, GB, MB, KB, or Bytes" String.</summary>
+	public static String ToLargeSize( this Int32 bytes ) => String.Format( FormatProvider, "{0:fs}", bytes );
 }

@@ -25,84 +25,83 @@
 
 #nullable enable
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence;
 
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Linq;
-	using Exceptions;
-	using Microsoft.Data.SqlClient;
-	using Parsing;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Exceptions;
+using Microsoft.Data.SqlClient;
+using Parsing;
 
-	public static class CacheKeyBuilder {
+public static class CacheKeyBuilder {
 
-		/// <summary>
-		///     Build a key from combining 1 or more <see cref="T" /> (converted to Strings).
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="things"></param>
-		[DebuggerStepThrough]
-		public static String BuildKey<T>( params T[] things ) {
-			if ( things is null ) {
-				throw new ArgumentEmptyException( nameof( things ) );
-			}
-
-			if ( !things.Any() ) {
-				throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
-			}
-
-			var parts = things.Select( o => {
-				if ( o is IEnumerable<SqlParameter> parameters ) {
-					var kvp = parameters.Select( parameter => new {
-						parameter.ParameterName,
-						parameter.Value
-					} );
-
-					return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
-				}
-
-				var s = o.Trimmed().NullIfEmpty();
-
-				if ( s != null ) {
-					return s;
-				}
-
-				return $"{Symbols.VerticalEllipsis}null{Symbols.VerticalEllipsis}";
-			} );
-
-			return parts.ToStrings( Symbols.TwoPipes ).Trim();
+	/// <summary>
+	///     Build a key from combining 1 or more <see cref="T" /> (converted to Strings).
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="things"></param>
+	[DebuggerStepThrough]
+	public static String BuildKey<T>( params T[] things ) {
+		if ( things is null ) {
+			throw new ArgumentEmptyException( nameof( things ) );
 		}
 
-		/// <summary>
-		///     Build a key from combining 1 or more Objects.
-		/// </summary>
-		/// <param name="things"></param>
-		[DebuggerStepThrough]
-		public static String BuildKey( params Object[] things ) {
-			if ( things is null ) {
-				throw new ArgumentEmptyException( nameof( things ) );
-			}
-
-			if ( !things.Any() ) {
-				throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
-			}
-
-			var parts = things.Select( o => {
-				if ( o is IEnumerable<SqlParameter> collection ) {
-					var kvp = collection.Select( parameter => new {
-						parameter.ParameterName,
-						parameter.Value,
-						parameter
-					} );
-
-					return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
-				}
-
-				return o.ToString();
-			} );
-
-			return parts.ToStrings( Symbols.TwoPipes ).Trim();
+		if ( !things.Any() ) {
+			throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
 		}
+
+		var parts = things.Select( o => {
+			if ( o is IEnumerable<SqlParameter> parameters ) {
+				var kvp = parameters.Select( parameter => new {
+					parameter.ParameterName,
+					parameter.Value
+				} );
+
+				return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
+			}
+
+			var s = o.Trimmed().NullIfEmpty();
+
+			if ( s != null ) {
+				return s;
+			}
+
+			return $"{Symbols.VerticalEllipsis}null{Symbols.VerticalEllipsis}";
+		} );
+
+		return parts.ToStrings( Symbols.TwoPipes ).Trim();
+	}
+
+	/// <summary>
+	///     Build a key from combining 1 or more Objects.
+	/// </summary>
+	/// <param name="things"></param>
+	[DebuggerStepThrough]
+	public static String BuildKey( params Object[] things ) {
+		if ( things is null ) {
+			throw new ArgumentEmptyException( nameof( things ) );
+		}
+
+		if ( !things.Any() ) {
+			throw new ArgumentException( "Value cannot be an empty collection.", nameof( things ) );
+		}
+
+		var parts = things.Select( o => {
+			if ( o is IEnumerable<SqlParameter> collection ) {
+				var kvp = collection.Select( parameter => new {
+					parameter.ParameterName,
+					parameter.Value,
+					parameter
+				} );
+
+				return $"{kvp.ToStrings( Symbols.TwoPipes )}".Trim();
+			}
+
+			return o.ToString();
+		} );
+
+		return parts.ToStrings( Symbols.TwoPipes ).Trim();
 	}
 }

@@ -25,48 +25,46 @@
 //
 // File "FolderBagTests.cs" last touched on 2021-04-30 at 11:34 AM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using Librainian.ComputerSystem.Devices;
-	using Librainian.FileSystem;
-	using Librainian.Measurement.Time;
-	using NUnit.Framework;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Librainian.ComputerSystem.Devices;
+using Librainian.FileSystem;
+using Librainian.Measurement.Time;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class FolderBagTests {
+[TestFixture]
+public static class FolderBagTests {
 
-		[Test]
-		public static async Task TestStorageAndRetrieval() {
-			var counter = 0L;
-			var watch = Stopwatch.StartNew();
-			var pathTree = new FolderBag();
+	[Test]
+	public static async Task TestStorageAndRetrieval() {
+		var counter = 0L;
+		var watch = Stopwatch.StartNew();
+		var pathTree = new FolderBag();
 
-			await foreach ( var drive in Disk.GetDrives( CancellationToken.None ).Take( 2 ) ) {
-				var root = new Folder( $"{drive.DriveLetter}:{Path.DirectorySeparatorChar}" );
-				Debug.WriteLine( root );
+		await foreach ( var drive in Disk.GetDrives( CancellationToken.None ).Take( 2 ) ) {
+			var root = new Folder( $"{drive.DriveLetter}:{Path.DirectorySeparatorChar}" );
+			Debug.WriteLine( root );
 
-				await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CancellationToken.None ).Take( 2 ) ) {
-					pathTree.FoundAnotherFolder( folder );
-					counter++;
-				}
+			await foreach ( var folder in root.EnumerateFolders( "*.*", SearchOption.TopDirectoryOnly, CancellationToken.None ).Take( 2 ) ) {
+				pathTree.FoundAnotherFolder( folder );
+				counter++;
 			}
-
-			var allPaths = pathTree.ToList();
-			watch.Stop();
-
-			Assert.True( counter == allPaths.Count );
-			Debug.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
-
-			var temp = Document.GetTempDocument().ContainingingFolder();
-
-			await File.WriteAllLinesAsync( $@"{temp}\allLines.txt", allPaths.Select( folder => folder.FullPath ) ).ConfigureAwait( false );
 		}
 
+		var allPaths = pathTree.ToList();
+		watch.Stop();
+
+		Assert.True( counter == allPaths.Count );
+		Debug.WriteLine( $"Found & stored {counter} folders in {watch.Elapsed.Simpler()}." );
+
+		var temp = Document.GetTempDocument().ContainingingFolder();
+
+		await File.WriteAllLinesAsync( $@"{temp}\allLines.txt", allPaths.Select( folder => folder.FullPath ) ).ConfigureAwait( false );
 	}
 
 }

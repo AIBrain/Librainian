@@ -22,27 +22,26 @@
 //
 // File "Crypto.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
-	using System.IO;
+using System;
+using System.IO;
 
-	public static class Crypto {
+public static class Crypto {
 
-		public static Byte[] ReadByteArray( this Stream s ) {
-			var rawLength = new Byte[sizeof( Int32 )];
+	public static Byte[] ReadByteArray( this Stream s ) {
+		var rawLength = new Byte[sizeof( Int32 )];
 
-			if ( s.Read( rawLength, 0, rawLength.Length ) != rawLength.Length ) {
-				throw new InvalidOperationException( "Stream did not contain properly formatted byte array" );
-			}
-
-			var buffer = new Byte[BitConverter.ToInt32( rawLength, 0 )];
-
-			if ( s.Read( buffer, 0, buffer.Length ) != buffer.Length ) {
-				throw new InvalidOperationException( "Did not read byte array properly" );
-			}
-
-			return buffer;
+		if ( s.Read( rawLength, 0, rawLength.Length ) != rawLength.Length ) {
+			throw new InvalidOperationException( "Stream did not contain properly formatted byte array" );
 		}
+
+		var buffer = new Byte[BitConverter.ToInt32( rawLength, 0 )];
+
+		if ( s.Read( buffer, 0, buffer.Length ) != buffer.Length ) {
+			throw new InvalidOperationException( "Did not read byte array properly" );
+		}
+
+		return buffer;
 	}
 }

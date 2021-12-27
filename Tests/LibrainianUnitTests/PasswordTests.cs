@@ -25,24 +25,22 @@
 // 
 // File "PasswordTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests {
+namespace LibrainianUnitTests;
 
-	using System;
-	using Librainian.Maths;
-	using Librainian.Security;
-	using NUnit.Framework;
+using System;
+using Librainian.Maths;
+using Librainian.Security;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class PasswordTests {
+[TestFixture]
+public static class PasswordTests {
 
-		[Test]
-		public static void TestAFew() {
-			foreach ( var _ in 1.To( 26 ) ) {
-				var test = PronounceablePasswordCreator.Generate( 3.Next( 15 ) );
-				Console.WriteLine( test );
-			}
+	[Test]
+	public static void TestAFew() {
+		foreach ( var _ in 1.To( 26 ) ) {
+			var test = PronounceablePasswordCreator.Generate( 3.Next( 15 ) );
+			Console.WriteLine( test );
 		}
-
 	}
 
 }

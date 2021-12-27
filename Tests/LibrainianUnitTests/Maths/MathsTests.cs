@@ -25,27 +25,20 @@
 // 
 // File "MathsTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
 
-namespace LibrainianUnitTests.Maths {
+namespace LibrainianUnitTests.Maths;
 
-	using System.Numerics;
-	using Librainian.Maths;
-	using NUnit.Framework;
+using System.Numerics;
+using FluentAssertions;
+using Librainian.Maths;
+using NUnit.Framework;
 
-	[TestFixture]
-	public static class MathsTests {
+[TestFixture]
+public static class MathsTests {
 
-		//[Test]
-		public static void TestOperations() {
-			var test = new[] {
-				new BigInteger( 7 ), new BigInteger( 8 ), new BigInteger( 9 )
-			};
-
-			var shouldBe = test.Sum();
-
-			var result = HumanCalculator.Operate( HumanCalculator.Operation.Addition, test );
-			Assert.True( result == shouldBe );
-		}
-
+	[Test]
+	public static void TestOperations() {
+		var result = true;
+		result.Should().BeTrue();
 	}
 
 }

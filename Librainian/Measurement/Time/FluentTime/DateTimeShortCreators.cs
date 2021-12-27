@@ -22,33 +22,32 @@
 //
 // File "DateTimeShortCreators.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Time.FluentTime {
+namespace Librainian.Measurement.Time.FluentTime;
 
-	using System;
+using System;
 
-	public static class Last {
+public static class Last {
 
-		private static DateTime GetLastOfDay( DayOfWeek dayOfWeek ) {
-			var today = AdjustableCurrentTime.Today;
-			var delta = dayOfWeek - today.DayOfWeek;
+	private static DateTime GetLastOfDay( DayOfWeek dayOfWeek ) {
+		var today = AdjustableCurrentTime.Today;
+		var delta = dayOfWeek - today.DayOfWeek;
 
-			var result = today.AddDays( delta >= 0 ? delta - 7 : delta );
+		var result = today.AddDays( delta >= 0 ? delta - 7 : delta );
 
-			return result;
-		}
-
-		public static DateTime Friday() => GetLastOfDay( DayOfWeek.Friday );
-
-		public static DateTime Monday() => GetLastOfDay( DayOfWeek.Monday );
-
-		public static DateTime Saturday() => GetLastOfDay( DayOfWeek.Saturday );
-
-		public static DateTime Sunday() => GetLastOfDay( DayOfWeek.Sunday );
-
-		public static DateTime Thursday() => GetLastOfDay( DayOfWeek.Thursday );
-
-		public static DateTime Tuesday() => GetLastOfDay( DayOfWeek.Tuesday );
-
-		public static DateTime Wednesday() => GetLastOfDay( DayOfWeek.Wednesday );
+		return result;
 	}
+
+	public static DateTime Friday() => GetLastOfDay( DayOfWeek.Friday );
+
+	public static DateTime Monday() => GetLastOfDay( DayOfWeek.Monday );
+
+	public static DateTime Saturday() => GetLastOfDay( DayOfWeek.Saturday );
+
+	public static DateTime Sunday() => GetLastOfDay( DayOfWeek.Sunday );
+
+	public static DateTime Thursday() => GetLastOfDay( DayOfWeek.Thursday );
+
+	public static DateTime Tuesday() => GetLastOfDay( DayOfWeek.Tuesday );
+
+	public static DateTime Wednesday() => GetLastOfDay( DayOfWeek.Wednesday );
 }

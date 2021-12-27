@@ -22,20 +22,19 @@
 //
 // File "Epochs.cs" last formatted on 2020-08-14 at 8:38 PM.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
+using System;
 
-	public static class Epochs {
+public static class Epochs {
 
 		
-		/// <see cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
-		public static readonly WhenRange Before1PlanckTime = new( UniversalDateTime.TheBeginning, UniversalDateTime.One );
+	/// <see cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
+	public static readonly WhenRange Before1PlanckTime = new( UniversalDateTime.TheBeginning, UniversalDateTime.One );
 
-		/// <summary>1927</summary>
-		public static readonly DateTime BigBangModelFormulated = new( 1927, 1, 1, 0, 0, 0, DateTimeKind.Utc );
+	/// <summary>1927</summary>
+	public static readonly DateTime BigBangModelFormulated = new( 1927, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 
-		/// <summary>January 1st, 1970, zero seconds.</summary>
-		public static readonly DateTime Unix = new( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
-	}
+	/// <summary>January 1st, 1970, zero seconds.</summary>
+	public static readonly DateTime Unix = new( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 }

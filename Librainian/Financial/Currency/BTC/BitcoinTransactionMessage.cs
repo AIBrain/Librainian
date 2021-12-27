@@ -22,31 +22,30 @@
 //
 // File "BitcoinTransactionMessage.cs" last formatted on 2020-08-14 at 8:36 PM.
 
-namespace Librainian.Financial.Currency.BTC {
+namespace Librainian.Financial.Currency.BTC;
 
-	using System;
-	using Financial;
-	using Newtonsoft.Json;
+using System;
+using Financial;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	public struct BitcoinTransactionMessage {
+[JsonObject]
+public struct BitcoinTransactionMessage {
 
-		[JsonProperty]
-		public ICoin Coin { get; set; }
+	[JsonProperty]
+	public ICoin Coin { get; set; }
 
-		[JsonProperty]
-		public DateTime Date { get; set; }
+	[JsonProperty]
+	public DateTime Date { get; set; }
 
-		[JsonProperty]
-		public Guid ID { get; set; }
+	[JsonProperty]
+	public Guid ID { get; set; }
 
-		[JsonProperty]
-		public UInt64 Quantity { get; set; }
+	[JsonProperty]
+	public UInt64 Quantity { get; set; }
 
-		[JsonProperty]
-		public String ReferenceID { get; set; }
+	[JsonProperty]
+	public String ReferenceID { get; set; }
 
-		[JsonProperty]
-		public TransactionType TransactionType { get; set; }
-	}
+	[JsonProperty]
+	public TransactionType TransactionType { get; set; }
 }

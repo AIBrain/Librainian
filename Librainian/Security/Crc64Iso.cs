@@ -22,31 +22,30 @@
 //
 // File "Crc64Iso.cs" last formatted on 2020-08-14 at 8:44 PM.
 
-namespace Librainian.Security {
+namespace Librainian.Security;
 
-	using System;
+using System;
 
-	/// <summary>
-	///     <see cref="CRC64" />
-	/// </summary>
-	/// <copyright>Damien Guard. All rights reserved.</copyright>
-	/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
-	public class Crc64Iso : CRC64 {
+/// <summary>
+///     <see cref="CRC64" />
+/// </summary>
+/// <copyright>Damien Guard. All rights reserved.</copyright>
+/// <see cref="http://github.com/damieng/DamienGKit/blob/master/CSharp/DamienG.Library/Security/Cryptography/Crc64.cs" />
+public class Crc64Iso : CRC64 {
 
-		internal static UInt64[]? Table;
+	internal static UInt64[]? Table;
 
-		public const UInt64 Iso3309Polynomial = 0xD800000000000000;
+	public const UInt64 Iso3309Polynomial = 0xD800000000000000;
 
-		public Crc64Iso() : base( Iso3309Polynomial ) { }
+	public Crc64Iso() : base( Iso3309Polynomial ) { }
 
-		public Crc64Iso( UInt64 seed ) : base( Iso3309Polynomial, seed ) { }
+	public Crc64Iso( UInt64 seed ) : base( Iso3309Polynomial, seed ) { }
 
-		public static UInt64 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
+	public static UInt64 Compute( Byte[] buffer ) => Compute( DefaultSeed, buffer );
 
-		public static UInt64 Compute( UInt64 seed, Byte[] buffer ) {
-			Table ??= CreateTable( Iso3309Polynomial );
+	public static UInt64 Compute( UInt64 seed, Byte[] buffer ) {
+		Table ??= CreateTable( Iso3309Polynomial );
 
-			return CalculateHash( seed, Table, buffer, 0, buffer.Length );
-		}
+		return CalculateHash( seed, Table, buffer, 0, buffer.Length );
 	}
 }

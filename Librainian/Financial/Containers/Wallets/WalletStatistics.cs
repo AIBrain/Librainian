@@ -22,92 +22,91 @@
 //
 // File "WalletStatistics.cs" last formatted on 2020-08-14 at 8:33 PM.
 
-namespace Librainian.Financial.Containers.Wallets {
+namespace Librainian.Financial.Containers.Wallets;
 
-	using System;
-	using System.Threading;
-	using Measurement.Time;
-	using Newtonsoft.Json;
-	using Utilities.Disposables;
+using System;
+using System.Threading;
+using Measurement.Time;
+using Newtonsoft.Json;
+using Utilities.Disposables;
 
-	[JsonObject]
-	public class WalletStatistics : ABetterClassDispose {
+[JsonObject]
+public class WalletStatistics : ABetterClassDispose {
 
-		private readonly ReaderWriterLockSlim _depositLock = new( LockRecursionPolicy.SupportsRecursion );
+	private readonly ReaderWriterLockSlim _depositLock = new( LockRecursionPolicy.SupportsRecursion );
 
-		private readonly ReaderWriterLockSlim _withwrawLock = new( LockRecursionPolicy.SupportsRecursion );
+	private readonly ReaderWriterLockSlim _withwrawLock = new( LockRecursionPolicy.SupportsRecursion );
 
-		[JsonProperty]
-		private Decimal _allTimeDeposited;
+	[JsonProperty]
+	private Decimal _allTimeDeposited;
 
-		[JsonProperty]
-		private Decimal _allTimeWithdrawn;
+	[JsonProperty]
+	private Decimal _allTimeWithdrawn;
 
-		public Decimal AllTimeDeposited {
-			get {
-				if ( this._depositLock.TryEnterReadLock( Seconds.Ten ) ) {
-					try {
-						return this._allTimeDeposited;
-					}
-					finally {
-						this._depositLock.ExitReadLock();
-					}
-				}
-
-				return default( Decimal );
-			}
-
-			set {
+	public Decimal AllTimeDeposited {
+		get {
+			if ( this._depositLock.TryEnterReadLock( Seconds.Ten ) ) {
 				try {
-					this._depositLock.EnterWriteLock();
-					this._allTimeDeposited = value;
+					return this._allTimeDeposited;
 				}
 				finally {
-					this._depositLock.ExitWriteLock();
-				}
-			}
-		}
-
-		[JsonProperty]
-		public Decimal AllTimeWithdrawn {
-			get {
-				try {
-					this._withwrawLock.EnterReadLock();
-
-					return this._allTimeWithdrawn;
-				}
-				finally {
-					this._withwrawLock.ExitReadLock();
+					this._depositLock.ExitReadLock();
 				}
 			}
 
-			set {
-				try {
-					this._withwrawLock.EnterWriteLock();
-					this._allTimeWithdrawn = value;
-				}
-				finally {
-					this._withwrawLock.ExitWriteLock();
-				}
+			return default( Decimal );
+		}
+
+		set {
+			try {
+				this._depositLock.EnterWriteLock();
+				this._allTimeDeposited = value;
+			}
+			finally {
+				this._depositLock.ExitWriteLock();
+			}
+		}
+	}
+
+	[JsonProperty]
+	public Decimal AllTimeWithdrawn {
+		get {
+			try {
+				this._withwrawLock.EnterReadLock();
+
+				return this._allTimeWithdrawn;
+			}
+			finally {
+				this._withwrawLock.ExitReadLock();
 			}
 		}
 
-		[JsonProperty]
-		public DateTime InstanceCreationTime { get; private set; }
-
-		public WalletStatistics() : base( nameof( WalletStatistics ) ) => this.Reset();
-
-		/// <summary>Dispose any disposable members.</summary>
-		public override void DisposeManaged() {
-			using ( this._depositLock ) { }
-
-			using ( this._withwrawLock ) { }
+		set {
+			try {
+				this._withwrawLock.EnterWriteLock();
+				this._allTimeWithdrawn = value;
+			}
+			finally {
+				this._withwrawLock.ExitWriteLock();
+			}
 		}
+	}
 
-		public void Reset() {
-			this.InstanceCreationTime = DateTime.UtcNow;
-			this.AllTimeDeposited = Decimal.Zero;
-			this.AllTimeWithdrawn = Decimal.Zero;
-		}
+	[JsonProperty]
+	public DateTime InstanceCreationTime { get; private set; }
+
+	public WalletStatistics() : base( nameof( WalletStatistics ) ) => this.Reset();
+
+	/// <summary>Dispose any disposable members.</summary>
+	public override void DisposeManaged() {
+		using ( this._depositLock ) { }
+
+		using ( this._withwrawLock ) { }
+	}
+
+	public void Reset() {
+		this.InstanceCreationTime = DateTime.UtcNow;
+		this.AllTimeDeposited = Decimal.Zero;
+		this.AllTimeWithdrawn = Decimal.Zero;
 	}
 }

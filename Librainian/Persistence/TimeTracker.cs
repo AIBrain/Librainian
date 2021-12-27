@@ -25,16 +25,15 @@
 //
 // File "TimeTracker.cs" last formatted on 2021-03-05 at 1:08 PM.
 
-namespace Librainian.Persistence {
+namespace Librainian.Persistence;
 
-	using System;
+using System;
 
-	public record TimeTracker {
+public record TimeTracker {
 
-		/// <summary>Null? Hasn't finished yet.</summary>
-		public DateTime? Finished { get; set; }
+	/// <summary>Null? Hasn't finished yet.</summary>
+	public DateTime? Finished { get; set; }
 
-		/// <summary>Null? Hasn't been started yet.</summary>
-		public DateTime? Started { get; set; }
-	}
+	/// <summary>Null? Hasn't been started yet.</summary>
+	public DateTime? Started { get; set; }
 }

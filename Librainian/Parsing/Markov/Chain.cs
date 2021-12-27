@@ -23,10 +23,9 @@
 //
 // File "Chain.cs" last formatted on 2021-02-03 at 4:42 PM.
 
-namespace Librainian.Parsing.Markov {
+namespace Librainian.Parsing.Markov;
 
-	using System;
-	using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-	public record Chain( String Word, List<Chain> WordChain );
-}
+public record Chain( String Word, List<Chain> WordChain );

@@ -25,12 +25,11 @@
 //
 // File "QueryTiming.cs" last touched on 2021-08-26 at 2:03 PM by Protiguous.
 
-namespace Librainian.Databases {
+namespace Librainian.Databases; 
 
-	public enum QueryTiming {
+public enum QueryTiming {
 
-		ReportTiming = 0,
+	ReportTiming = 0,
 
-		DontReportTiming
-	}
+	DontReportTiming
 }

@@ -22,16 +22,15 @@
 //
 // File "LTC.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Financial.Currency.LTC {
+namespace Librainian.Financial.Currency.LTC;
 
-	using System;
-	using System.Diagnostics;
+using System;
+using System.Diagnostics;
 
-	[DebuggerDisplay( "{" + nameof( ToString ) + ",nq}" )]
-	public struct Ltc : ICoin {
+[DebuggerDisplay( "{" + nameof( ToString ) + ",nq}" )]
+public struct Ltc : ICoin {
 
-		public Decimal FaceValue => 1.00M;
+	public Decimal FaceValue => 1.00M;
 
-		public override String ToString() => $"Ł{this.FaceValue:f8}";
-	}
+	public override String ToString() => $"Ł{this.FaceValue:f8}";
 }

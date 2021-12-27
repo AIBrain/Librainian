@@ -25,24 +25,23 @@
 //
 // File "SecretRevealer.cs" last touched on 2021-08-27 at 11:34 AM by Protiguous.
 
-namespace Librainian.Configuration {
+namespace Librainian.Configuration;
 
-	using System;
-	using Exceptions;
-	using Microsoft.Extensions.Options;
+using System;
+using Exceptions;
+using Microsoft.Extensions.Options;
 
-	public class SecretRevealer : ISecretRevealer {
+public class SecretRevealer : ISecretRevealer {
 
-		private readonly SecretStuff _secretStuff;
+	private readonly SecretStuff _secretStuff;
 
-		/// <summary>
-		///     DI for user secrets file
-		/// </summary>
-		/// <param name="secrets"></param>
-		public SecretRevealer( IOptions<SecretStuff> secrets ) => this._secretStuff = secrets.Value ?? throw new NullException( nameof( secrets ) );
+	/// <summary>
+	///     DI for user secrets file
+	/// </summary>
+	/// <param name="secrets"></param>
+	public SecretRevealer( IOptions<SecretStuff> secrets ) => this._secretStuff = secrets.Value ?? throw new NullException( nameof( secrets ) );
 
-		public String? GetBackupDatabaseConnectionString() => this._secretStuff.BackupDatabaseConnectionString;
+	public String? GetBackupDatabaseConnectionString() => this._secretStuff.BackupDatabaseConnectionString;
 
-		public String? GetDatabaseConnectionString() => this._secretStuff.DatabaseConnectionString;
-	}
+	public String? GetDatabaseConnectionString() => this._secretStuff.DatabaseConnectionString;
 }

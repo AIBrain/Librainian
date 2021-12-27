@@ -25,156 +25,154 @@
 // 
 // File "Minutes.cs" last touched on 2021-10-02 at 6:30 AM by Protiguous.
 
-namespace Librainian.Measurement.Time {
+namespace Librainian.Measurement.Time;
 
-	using System;
-	using System.Diagnostics;
-	using System.Numerics;
-	using Exceptions;
-	using ExtendedNumerics;
-	using Extensions;
-	using JetBrains.Annotations;
-	using Newtonsoft.Json;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using Exceptions;
+using ExtendedNumerics;
+using Extensions;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 
-	[JsonObject]
-	[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-	[Immutable]
-	public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes> {
+[JsonObject]
+[DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
+[Immutable]
+public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes> {
 
-		/// <summary>
-		///     60
-		/// </summary>
-		public const Byte InOneHour = 60;
+	/// <summary>
+	///     60
+	/// </summary>
+	public const Byte InOneHour = 60;
 
-		public Minutes( Byte value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Byte value ) : this( ( BigDecimal )value ) { }
 
-		public Minutes( Int16 value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Int16 value ) : this( ( BigDecimal )value ) { }
 
-		public Minutes( UInt16 value ) : this( ( BigDecimal )value ) { }
+	public Minutes( UInt16 value ) : this( ( BigDecimal )value ) { }
 
-		public Minutes( Int32 value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Int32 value ) : this( ( BigDecimal )value ) { }
 
-		public Minutes( UInt32 value ) : this( ( Decimal )value ) { }
+	public Minutes( UInt32 value ) : this( ( Decimal )value ) { }
 
-		public Minutes( Int64 value ) : this( ( Decimal )value ) { }
+	public Minutes( Int64 value ) : this( ( Decimal )value ) { }
 
-		public Minutes( UInt64 value ) : this( ( Decimal )value ) { }
+	public Minutes( UInt64 value ) : this( ( Decimal )value ) { }
 
-		public Minutes( Single value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Single value ) : this( ( BigDecimal )value ) { }
 
-		public Minutes( Double value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Double value ) : this( ( BigDecimal )value ) { }
 
-		/// <summary>
-		///     15
-		/// </summary>
-		public static Minutes Fifteen { get; } = new(15);
+	/// <summary>
+	///     15
+	/// </summary>
+	public static Minutes Fifteen { get; } = new(15);
 
-		/// <summary>
-		///     One <see cref="Minutes" /> .
-		/// </summary>
-		public static Minutes One { get; } = new(1);
+	/// <summary>
+	///     One <see cref="Minutes" /> .
+	/// </summary>
+	public static Minutes One { get; } = new(1);
 
-		/// <summary>
-		///     10
-		/// </summary>
-		public static Minutes Ten { get; } = new(10);
+	/// <summary>
+	///     10
+	/// </summary>
+	public static Minutes Ten { get; } = new(10);
 
-		/// <summary>
-		///     30
-		/// </summary>
-		public static Minutes Thirty { get; } = new(30);
+	/// <summary>
+	///     30
+	/// </summary>
+	public static Minutes Thirty { get; } = new(30);
 
-		/// <summary>
-		/// </summary>
-		public static Minutes Thousand { get; } = new(1000);
+	/// <summary>
+	/// </summary>
+	public static Minutes Thousand { get; } = new(1000);
 
-		/// <summary>
-		///     Zero <see cref="Minutes" />
-		/// </summary>
-		public static Minutes Zero { get; } = new(0);
+	/// <summary>
+	///     Zero <see cref="Minutes" />
+	/// </summary>
+	public static Minutes Zero { get; } = new(0);
 
-		public Int32 CompareTo( Minutes? other ) {
-			if ( other == null ) {
-				throw new ArgumentEmptyException( nameof( other ) );
-			}
-
-			return this.Value.CompareTo( other.Value );
+	public Int32 CompareTo( Minutes? other ) {
+		if ( other == null ) {
+			throw new ArgumentEmptyException( nameof( other ) );
 		}
 
-		public IQuantityOfTime ToFinerGranularity() => this.ToSeconds();
-
-		public PlanckTimes ToPlanckTimes() => new(PlanckTimes.InOneMinute);
-
-		[Pure]
-		public Seconds ToSeconds() => new(this.Value * Seconds.InOneMinute);
-
-		public IQuantityOfTime ToCoarserGranularity() => this.ToHours();
-
-		public TimeSpan ToTimeSpan() => this.ToSeconds();
-
-		public TimeSpan AsTimeSpan() => this.ToSeconds();
-
-		public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
-
-		public static Minutes Combine( Minutes left, BigDecimal minutes ) => new(left.Value + minutes);
-
-		public static Minutes Combine( Minutes left, BigInteger minutes ) => new(left.Value + minutes);
-
-		/// <summary>
-		///     <para>static equality test</para>
-		/// </summary>
-		/// <param name="left"> </param>
-		/// <param name="right"></param>
-		public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
-
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.
-		/// </summary>
-		/// <param name="minutes"></param>
-		public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
-
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.
-		/// </summary>
-		/// <param name="minutes"></param>
-		public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
-
-		/// <summary>
-		///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.
-		/// </summary>
-		/// <param name="minutes"></param>
-		public static implicit operator SpanOfTime( Minutes minutes ) => new(minutes);
-
-		public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
-
-		public static Minutes operator -( Minutes minutes ) => new(minutes.Value * -1);
-
-		public static Minutes operator -( Minutes left, Minutes right ) => Combine( left, -right );
-
-		public static Minutes operator -( Minutes left, BigDecimal minutes ) => Combine( left, -minutes );
-
-		public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
-
-		public static Minutes operator +( Minutes left, BigDecimal minutes ) => Combine( left, minutes );
-
-		public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
-
-		public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
-
-		public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
-
-		public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
-
-		public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
-
-		public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
-
-		public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
-
-		public Hours ToHours() => new(this.Value / InOneHour);
-
-		public override String ToString() => $"{this.Value} minutes";
-
+		return this.Value.CompareTo( other.Value );
 	}
+
+	public IQuantityOfTime ToFinerGranularity() => this.ToSeconds();
+
+	public PlanckTimes ToPlanckTimes() => new(PlanckTimes.InOneMinute);
+
+	[Pure]
+	public Seconds ToSeconds() => new(this.Value * Seconds.InOneMinute);
+
+	public IQuantityOfTime ToCoarserGranularity() => this.ToHours();
+
+	public TimeSpan ToTimeSpan() => this.ToSeconds();
+
+	public TimeSpan AsTimeSpan() => this.ToSeconds();
+
+	public static Minutes Combine( Minutes left, Minutes right ) => Combine( left, right.Value );
+
+	public static Minutes Combine( Minutes left, BigDecimal minutes ) => new(left.Value + minutes);
+
+	public static Minutes Combine( Minutes left, BigInteger minutes ) => new(left.Value + minutes);
+
+	/// <summary>
+	///     <para>static equality test</para>
+	/// </summary>
+	/// <param name="left"> </param>
+	/// <param name="right"></param>
+	public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
+
+	/// <summary>
+	///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Hours" />.
+	/// </summary>
+	/// <param name="minutes"></param>
+	public static implicit operator Hours( Minutes minutes ) => minutes.ToHours();
+
+	/// <summary>
+	///     Implicitly convert the number of <paramref name="minutes" /> to <see cref="Seconds" />.
+	/// </summary>
+	/// <param name="minutes"></param>
+	public static implicit operator Seconds( Minutes minutes ) => minutes.ToSeconds();
+
+	/// <summary>
+	///     Implicitly convert the number of <paramref name="minutes" /> to a <see cref="SpanOfTime" />.
+	/// </summary>
+	/// <param name="minutes"></param>
+	public static implicit operator SpanOfTime( Minutes minutes ) => new(minutes);
+
+	public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
+
+	public static Minutes operator -( Minutes minutes ) => new(minutes.Value * -1);
+
+	public static Minutes operator -( Minutes left, Minutes right ) => Combine( left, -right );
+
+	public static Minutes operator -( Minutes left, BigDecimal minutes ) => Combine( left, -minutes );
+
+	public static Minutes operator +( Minutes left, Minutes right ) => Combine( left, right );
+
+	public static Minutes operator +( Minutes left, BigDecimal minutes ) => Combine( left, minutes );
+
+	public static Minutes operator +( Minutes left, BigInteger minutes ) => Combine( left, minutes );
+
+	public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
+
+	public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
+
+	public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
+
+	public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
+
+	public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
+
+	public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
+
+	public Hours ToHours() => new(this.Value / InOneHour);
+
+	public override String ToString() => $"{this.Value} minutes";
 
 }

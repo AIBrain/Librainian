@@ -22,86 +22,85 @@
 //
 // File "Compass.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Spatial {
+namespace Librainian.Measurement.Spatial;
 
-	using System;
-	using System.Runtime.Serialization;
-	using Maths;
+using System;
+using System.Runtime.Serialization;
+using Maths;
 
-	/// <summary>small number, constrained to between 0 and 360, with wrapping</summary>
-	[DataContract( IsReference = false )]
-	public class Compass {
+/// <summary>small number, constrained to between 0 and 360, with wrapping</summary>
+[DataContract( IsReference = false )]
+public class Compass {
 
-		private volatile Single _degrees;
+	private volatile Single _degrees;
 
-		public const Single Maximum = 360;
+	public const Single Maximum = 360;
 
-		public const Single Minimum = 0;
+	public const Single Minimum = 0;
 
-		public Single Degrees {
-			get => this._degrees;
+	public Single Degrees {
+		get => this._degrees;
 
-			set {
-				if ( Single.IsNaN( value ) ) {
-					throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
-				}
-
-				if ( Single.IsInfinity( value ) ) {
-					throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
-				}
-
-				while ( value < Minimum ) {
-					value += Maximum; //TODO replace with math
-				}
-
-				while ( value > Maximum ) {
-					value -= Maximum; //TODO replace with math
-				}
-
-				//value.Should().BeGreaterOrEqualTo( Minimum );
-				//value.Should().BeLessOrEqualTo( Maximum );
-
-				this._degrees = value;
+		set {
+			if ( Single.IsNaN( value ) ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
 			}
+
+			if ( Single.IsInfinity( value ) ) {
+				throw new ArgumentOutOfRangeException( nameof( value ), "Value is out of range 0 to 360" );
+			}
+
+			while ( value < Minimum ) {
+				value += Maximum; //TODO replace with math
+			}
+
+			while ( value > Maximum ) {
+				value -= Maximum; //TODO replace with math
+			}
+
+			//value.Should().BeGreaterOrEqualTo( Minimum );
+			//value.Should().BeLessOrEqualTo( Maximum );
+
+			this._degrees = value;
+		}
+	}
+
+	/// <summary>Init with a random direction</summary>
+	public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
+
+	/// <summary>ctor with <paramref name="degrees" />.</summary>
+	/// <param name="degrees"></param>
+	public Compass( Single degrees ) => this.Degrees = degrees;
+
+	public Boolean RotateLeft( Single byAmount ) {
+		if ( Single.IsNaN( byAmount ) ) {
+			return false;
 		}
 
-		/// <summary>Init with a random direction</summary>
-		public Compass() : this( Randem.NextSingle( Minimum, Maximum ) ) { }
-
-		/// <summary>ctor with <paramref name="degrees" />.</summary>
-		/// <param name="degrees"></param>
-		public Compass( Single degrees ) => this.Degrees = degrees;
-
-		public Boolean RotateLeft( Single byAmount ) {
-			if ( Single.IsNaN( byAmount ) ) {
-				return false;
-			}
-
-			if ( Single.IsInfinity( byAmount ) ) {
-				return false;
-			}
-
-			//TODO would a Lerp here make turning smoother?
-			this.Degrees -= byAmount;
-
-			return true;
+		if ( Single.IsInfinity( byAmount ) ) {
+			return false;
 		}
 
-		/// <summary>Clockwise from a top-down view.</summary>
-		/// <param name="byAmount"></param>
-		public Boolean RotateRight( Single byAmount ) {
-			if ( Single.IsNaN( byAmount ) ) {
-				return false;
-			}
+		//TODO would a Lerp here make turning smoother?
+		this.Degrees -= byAmount;
 
-			if ( Single.IsInfinity( byAmount ) ) {
-				return false;
-			}
+		return true;
+	}
 
-			//TODO would a Lerp here make turning smoother?
-			this.Degrees += byAmount;
-
-			return true;
+	/// <summary>Clockwise from a top-down view.</summary>
+	/// <param name="byAmount"></param>
+	public Boolean RotateRight( Single byAmount ) {
+		if ( Single.IsNaN( byAmount ) ) {
+			return false;
 		}
+
+		if ( Single.IsInfinity( byAmount ) ) {
+			return false;
+		}
+
+		//TODO would a Lerp here make turning smoother?
+		this.Degrees += byAmount;
+
+		return true;
 	}
 }

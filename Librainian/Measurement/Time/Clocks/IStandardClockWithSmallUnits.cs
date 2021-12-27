@@ -22,26 +22,25 @@
 //
 // File "IStandardClockWithSmallUnits.cs" last formatted on 2020-08-14 at 8:37 PM.
 
-namespace Librainian.Measurement.Time.Clocks {
+namespace Librainian.Measurement.Time.Clocks;
 
-	using System;
+using System;
 
-	public interface IStandardClockWithSmallUnits {
+public interface IStandardClockWithSmallUnits {
 
-		ClockHour Hour { get; }
+	ClockHour Hour { get; }
 
-		ClockMicrosecond Microsecond { get; }
+	ClockMicrosecond Microsecond { get; }
 
-		ClockMillisecond Millisecond { get; }
+	ClockMillisecond Millisecond { get; }
 
-		ClockMinute Minute { get; }
+	ClockMinute Minute { get; }
 
-		ClockSecond Second { get; }
+	ClockSecond Second { get; }
 
-		TimeClock GetTime();
+	TimeClock GetTime();
 
-		Boolean IsAm();
+	Boolean IsAm();
 
-		Boolean IsPm();
-	}
+	Boolean IsPm();
 }

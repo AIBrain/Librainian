@@ -22,89 +22,88 @@
 //
 // File "ExternDll.cs" last formatted on 2020-08-14 at 8:40 PM.
 
-namespace Librainian.OperatingSystem {
+namespace Librainian.OperatingSystem;
 
-	using System;
+using System;
 
-	/// <summary>Pulled from Microsoft.NET sources.</summary>
-	public static class ExternDll {
+/// <summary>Pulled from Microsoft.NET sources.</summary>
+public static class ExternDll {
 
-		public const String Activeds = "activeds.dll";
+	public const String Activeds = "activeds.dll";
 
-		public const String Advapi32 = "advapi32.dll";
+	public const String Advapi32 = "advapi32.dll";
 
-		public const String Clr = "clr.dll";
+	public const String Clr = "clr.dll";
 
-		public const String Comctl32 = "comctl32.dll";
+	public const String Comctl32 = "comctl32.dll";
 
-		public const String Comdlg32 = "comdlg32.dll";
+	public const String Comdlg32 = "comdlg32.dll";
 
-		public const String Crypt32 = "crypt32.dll";
+	public const String Crypt32 = "crypt32.dll";
 
-		public const String Fxassert = "Fxassert.dll";
+	public const String Fxassert = "Fxassert.dll";
 
-		public const String Gdi32 = "gdi32.dll";
+	public const String Gdi32 = "gdi32.dll";
 
-		public const String Gdiplus = "gdiplus.dll";
+	public const String Gdiplus = "gdiplus.dll";
 
-		public const String Hhctrl = "hhctrl.ocx";
+	public const String Hhctrl = "hhctrl.ocx";
 
-		public const String Imm32 = "imm32.dll";
+	public const String Imm32 = "imm32.dll";
 
-		public const String Kernel32 = "kernel32.dll";
+	public const String Kernel32 = "kernel32.dll";
 
-		public const String Loadperf = "Loadperf.dll";
+	public const String Loadperf = "Loadperf.dll";
 
-		public const String Mqrt = "mqrt.dll";
+	public const String Mqrt = "mqrt.dll";
 
-		public const String Mscoree = "mscoree.dll";
+	public const String Mscoree = "mscoree.dll";
 
-		public const String Msi = "msi.dll";
+	public const String Msi = "msi.dll";
 
-		public const String Ntdll = "ntdll.dll";
+	public const String Ntdll = "ntdll.dll";
 
-		public const String OciDll = "oci.dll";
+	public const String OciDll = "oci.dll";
 
-		public const String Odbc32 = "odbc32.dll";
+	public const String Odbc32 = "odbc32.dll";
 
-		public const String Ole32 = "ole32.dll";
+	public const String Ole32 = "ole32.dll";
 
-		public const String Oleacc = "oleacc.dll";
+	public const String Oleacc = "oleacc.dll";
 
-		public const String Oleaut32 = "oleaut32.dll";
+	public const String Oleaut32 = "oleaut32.dll";
 
-		public const String Olepro32 = "olepro32.dll";
+	public const String Olepro32 = "olepro32.dll";
 
-		public const String OraMtsDll = "oramts.dll";
+	public const String OraMtsDll = "oramts.dll";
 
-		public const String PerfCounter = "perfcounter.dll";
+	public const String PerfCounter = "perfcounter.dll";
 
-		public const String Powrprof = "Powrprof.dll";
+	public const String Powrprof = "Powrprof.dll";
 
-		public const String Psapi = "psapi.dll";
+	public const String Psapi = "psapi.dll";
 
-		public const String ShCore = "SHCore.dll";
+	public const String ShCore = "SHCore.dll";
 
-		public const String Shell32 = "shell32.dll";
+	public const String Shell32 = "shell32.dll";
 
-		public const String Shlwapi = "shlwapi.dll";
+	public const String Shlwapi = "shlwapi.dll";
 
-		public const String SNI = "System.Data.dll";
+	public const String SNI = "System.Data.dll";
 
-		public const String User32 = "user32.dll";
+	public const String User32 = "user32.dll";
 
-		public const String Uxtheme = "uxtheme.dll";
+	public const String Uxtheme = "uxtheme.dll";
 
-		public const String Version = "version.dll";
+	public const String Version = "version.dll";
 
-		public const String Vsassert = "vsassert.dll";
+	public const String Vsassert = "vsassert.dll";
 
-		public const String WinMM = "winmm.dll";
+	public const String WinMM = "winmm.dll";
 
-		public const String Winspool = "winspool.drv";
+	public const String Winspool = "winspool.drv";
 
-		public const String Wldp = "wldp.dll";
+	public const String Wldp = "wldp.dll";
 
-		public const String Wtsapi32 = "wtsapi32.dll";
-	}
+	public const String Wtsapi32 = "wtsapi32.dll";
 }

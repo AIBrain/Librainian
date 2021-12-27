@@ -25,102 +25,101 @@
 //
 // File "ConsoleCursorExtensions.cs" last formatted on 2021-03-05 at 5:05 AM.
 
-namespace Librainian.Controls {
+namespace Librainian.Controls;
 
-	using System;
-	using System.Drawing;
-	using System.Threading.Tasks;
-	using System.Windows.Forms;
-	using Exceptions;
-	using Maths;
-	using Measurement.Frequency;
+using System;
+using System.Drawing;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Exceptions;
+using Maths;
+using Measurement.Frequency;
 
-	public enum Speed {
+public enum Speed {
 
-		Slow,
+	Slow,
 
-		Regular,
+	Regular,
 
-		Fast
-	}
+	Fast
+}
 
-	public static class ConsoleCursorExtensions {
+public static class ConsoleCursorExtensions {
 
-		public const Int32 MF_DISABLED = 0x00000002; // ReSharper disable InconsistentNaming
+	public const Int32 MF_DISABLED = 0x00000002; // ReSharper disable InconsistentNaming
 
-		public const Int32 MF_ENABLED = 0x00000000;
+	public const Int32 MF_ENABLED = 0x00000000;
 
-		public const Int32 MF_GRAYED = 0x1;
+	public const Int32 MF_GRAYED = 0x1;
 
-		public const Int32 SC_CLOSE = 0xF060;
+	public const Int32 SC_CLOSE = 0xF060;
 
-		public const Int32 SC_MAXIMIZE = 0xF030;
+	public const Int32 SC_MAXIMIZE = 0xF030;
 
-		//disabled button status
-		public const Int32 SC_MINIMIZE = 0xF020;
+	//disabled button status
+	public const Int32 SC_MINIMIZE = 0xF020;
 
-		public static Task MoveCursor( this Form form, Int32 x, Int32 y, TimeSpan speed ) {
-			if ( form is null ) {
-				throw new ArgumentEmptyException( nameof( form ) );
-			}
+	public static Task MoveCursor( this Form form, Int32 x, Int32 y, TimeSpan speed ) {
+		if ( form is null ) {
+			throw new ArgumentEmptyException( nameof( form ) );
+		}
 
-			return Task.Run( async () => {
+		return Task.Run( async () => {
 
-				// Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
-				var cx = Cursor.Position.X;
-				var cy = Cursor.Position.Y;
+			// Set the Current cursor, move the cursor's Position, and set its clipping rectangle to the form.
+			var cx = Cursor.Position.X;
+			var cy = Cursor.Position.Y;
 
-				while ( true ) {
-					if ( Cursor.Position.X == x && Cursor.Position.Y == y ) {
-						break;
-					}
+			while ( true ) {
+				if ( Cursor.Position.X == x && Cursor.Position.Y == y ) {
+					break;
+				}
 
-					if ( Randem.NextBoolean() ) {
-						if ( cx < x ) {
-							var step = ( x - cx ) / 10.0f;
+				if ( Randem.NextBoolean() ) {
+					if ( cx < x ) {
+						var step = ( x - cx ) / 10.0f;
 
-							if ( step < 1 ) {
-								step = 1;
-							}
-
-							cx -= ( Int32 )step;
+						if ( step < 1 ) {
+							step = 1;
 						}
-						else {
-							var step = ( cx - x ) / 10.0f;
 
-							if ( step < 1 ) {
-								step = 1;
-							}
-
-							cx += ( Int32 )step;
-						}
+						cx -= ( Int32 )step;
 					}
 					else {
-						if ( cy < y ) {
-							var step = ( y - cy ) / 10.0f;
+						var step = ( cx - x ) / 10.0f;
 
-							if ( step < 1 ) {
-								step = 1;
-							}
-
-							cy -= ( Int32 )step;
+						if ( step < 1 ) {
+							step = 1;
 						}
-						else {
-							var step = ( cy - y ) / 10.0f;
 
-							if ( step < 1 ) {
-								step = 1;
-							}
-
-							cy += ( Int32 )step;
-						}
+						cx += ( Int32 )step;
 					}
-
-					Cursor.Position = new Point( cx, cy );
-
-					await Task.Delay( Hertz.Sixty ).ConfigureAwait( false );
 				}
-			} );
-		}
+				else {
+					if ( cy < y ) {
+						var step = ( y - cy ) / 10.0f;
+
+						if ( step < 1 ) {
+							step = 1;
+						}
+
+						cy -= ( Int32 )step;
+					}
+					else {
+						var step = ( cy - y ) / 10.0f;
+
+						if ( step < 1 ) {
+							step = 1;
+						}
+
+						cy += ( Int32 )step;
+					}
+				}
+
+				Cursor.Position = new Point( cx, cy );
+
+				await Task.Delay( Hertz.Sixty ).ConfigureAwait( false );
+			}
+		} );
 	}
 }
