@@ -23,39 +23,47 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "WritableFieldException.cs" last touched on 2022-01-01 at 5:34 AM by Protiguous.
+// File "MutableFieldException.cs" last touched on 2022-01-01 at 5:42 AM by Protiguous.
 
 namespace Librainian.Exceptions;
 
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
+[JsonObject]
 [Serializable]
-public class WritableFieldException : ImmutableFailureException {
+internal class MutableFieldException : ImmutableFailureException {
 
-	public WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
+	protected MutableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
 		if ( serializationInfo is null ) {
 			throw new ArgumentEmptyException( nameof( serializationInfo ) );
 		}
 	}
 
-	public WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
+	internal MutableFieldException( FieldInfo fieldInfo, Exception? inner ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ), inner ) {
 		if ( fieldInfo is null ) {
 			throw new ArgumentEmptyException( nameof( fieldInfo ) );
 		}
 	}
 
-	public WritableFieldException() { }
+	public MutableFieldException() { }
 
-	public WritableFieldException( String? message ) : base( message ) { }
+	public MutableFieldException( String? message ) : base( message ) { }
 
-	public WritableFieldException( String? message, Exception? innerException ) : base( message, innerException ) { }
+	public MutableFieldException( String? message, Exception? innerException ) : base( message, innerException ) { }
 
-	public WritableFieldException( Type? type, String? message, Exception? inner ) : base( type, message, inner ) { }
+	public MutableFieldException( Type? type, String? message, Exception? inner ) : base( type, message, inner ) { }
 
-	public WritableFieldException( Type? type, String? message ) : base( type, message ) { }
+	public MutableFieldException( Type? type, String? message ) : base( type, message ) { }
 
-	internal static String FormatMessage( FieldInfo fieldInfo ) => $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'get'.";
+	private static String FormatMessage( FieldInfo fieldInfo ) {
+		if ( fieldInfo is null ) {
+			throw new ArgumentEmptyException( nameof( fieldInfo ) );
+		}
+
+		return $"'{fieldInfo.DeclaringType}' is mutable because '{fieldInfo.Name}' of type '{fieldInfo.FieldType}' is mutable.";
+	}
 
 }

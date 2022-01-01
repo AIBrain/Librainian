@@ -1,4 +1,4 @@
-// Copyright � Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,39 +23,40 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "WritableFieldException.cs" last touched on 2022-01-01 at 5:34 AM by Protiguous.
+// File "NoAccessException.cs" last touched on 2021-12-28 at 1:43 PM by Protiguous.
 
 namespace Librainian.Exceptions;
 
 using System;
-using System.Reflection;
-using System.Runtime.Serialization;
+using System.Security;
+using Logging;
 
-[Serializable]
-public class WritableFieldException : ImmutableFailureException {
+/// <summary>Base class for <see cref="NoReadAccessException" /> and <see cref="NoWriteAccessException" />.</summary>
+public abstract class NoAccessException : SecurityException {
 
-	public WritableFieldException( SerializationInfo serializationInfo, StreamingContext streamingContext ) : base( serializationInfo, streamingContext ) {
-		if ( serializationInfo is null ) {
-			throw new ArgumentEmptyException( nameof( serializationInfo ) );
-		}
+	protected NoAccessException( String message ) {
+		message.DebugLine();
+		this.Log( BreakOrDontBreak.Break );
 	}
 
-	public WritableFieldException( FieldInfo fieldInfo ) : base( fieldInfo.DeclaringType, FormatMessage( fieldInfo ) ) {
-		if ( fieldInfo is null ) {
-			throw new ArgumentEmptyException( nameof( fieldInfo ) );
-		}
-	}
+}
 
-	public WritableFieldException() { }
+/// <summary>
+///     Throw when read access was not allowed, usually within a timeout.
+///     <para><see cref="Logging.Log{T}" /> gets called.</para>
+/// </summary>
+public class NoReadAccessException : NoAccessException {
 
-	public WritableFieldException( String? message ) : base( message ) { }
+	public NoReadAccessException( String message ) : base( message ) { }
 
-	public WritableFieldException( String? message, Exception? innerException ) : base( message, innerException ) { }
+}
 
-	public WritableFieldException( Type? type, String? message, Exception? inner ) : base( type, message, inner ) { }
+/// <summary>
+///     Throw when write access was not allowed, usually within a timeout.
+///     <para><see cref="Logging.Log{T}" /> gets called.</para>
+/// </summary>
+public class NoWriteAccessException : NoAccessException {
 
-	public WritableFieldException( Type? type, String? message ) : base( type, message ) { }
-
-	internal static String FormatMessage( FieldInfo fieldInfo ) => $"'{fieldInfo.DeclaringType}' is mutable because field '{fieldInfo.Name}' is not marked 'get'.";
+	public NoWriteAccessException( String message ) : base( message ) { }
 
 }
