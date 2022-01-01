@@ -37,7 +37,7 @@ using Extensions;
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 /// <see cref="http://wikipedia.org/wiki/Giga-" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Immutable]
+[Extensions.Immutable]
 public record TeraElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
 	IComparable<TeraElectronVolts> {
 

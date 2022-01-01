@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ClockMicrosecond.cs" last touched on 2021-09-28 at 6:34 AM by Protiguous.
+// File "ClockMicrosecond.cs" last touched on 2022-01-01 at 5:06 AM by Protiguous.
 
 namespace Librainian.Measurement.Time.Clocks;
 
@@ -74,7 +74,7 @@ public record ClockMicrosecond : IClockPart {
 
 		ticked = false;
 
-		return ( UInt16 )next;
+		return ( UInt16 ) next;
 	}
 
 	/// <summary>Provide the previous <see cref="ClockMicrosecond" />.</summary>
@@ -89,7 +89,7 @@ public record ClockMicrosecond : IClockPart {
 
 		ticked = false;
 
-		return ( UInt16 )next;
+		return ( UInt16 ) next;
 	}
 
 }

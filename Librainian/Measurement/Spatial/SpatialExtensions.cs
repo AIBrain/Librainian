@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,27 +17,25 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "SpatialExtensions.cs" last formatted on 2020-08-14 at 8:37 PM.
+// 
+// File "SpatialExtensions.cs" last touched on 2021-12-27 at 8:18 AM by Protiguous.
 
 namespace Librainian.Measurement.Spatial;
 
 using System;
 using System.Drawing;
 using System.Numerics;
-using JetBrains.Annotations;
 
 public static class SpatialExtensions {
 
-	public const Single TwoPi = ( Single )( Math.PI * 2 );
+	public const Single TwoPi = ( Single ) ( Math.PI * 2 );
 
 	/// <summary>Returns the angle expressed in radians between -Pi and Pi.</summary>
-	[UsedImplicitly]
 	private static Single WrapAngle( Single radians ) {
 		while ( radians < -Math.PI ) {
 			radians += TwoPi;
@@ -48,7 +49,8 @@ public static class SpatialExtensions {
 	}
 
 	public static T? Clamp<T>( this T val, T? min, T? max ) where T : IComparable<T> =>
-		val.CompareTo( min ) < 0 ? min : val.CompareTo( max ) > 0 ? max : val;
+		val.CompareTo( min ) < 0 ? min :
+		val.CompareTo( max ) > 0 ? max : val;
 
 	public static Single Clamp01( this Single value ) => Clamp( value, 0.0f, 1.0f );
 
@@ -58,11 +60,12 @@ public static class SpatialExtensions {
 	/// <param name="portion"></param>
 	/// <remarks>
 	///     When you gradually want to steer towards a target heading, you need a Lerp function. But to slide from 350 degrees
-	///     to 10 degrees should work like 350, 351, 352, ....359,
-	///     0, 1, 2, 3....10. And not the other way around going 350, 349, 348.....200...1000, 12, 11, 10.
+	///     to
+	///     10 degrees should work like 350, 351, 352, ....359, 0, 1, 2, 3....10. And not the other way around going 350, 349,
+	///     348.....200...1000, 12, 11, 10.
 	/// </remarks>
 	public static Single CompassAngleLerp( this Single from, Single to, Single portion ) {
-		var dif = To180Angle( to - from );
+		var dif = ( to - from ).To180Angle();
 		dif *= Clamp01( portion );
 
 		return To360Angle( from + dif );
@@ -96,8 +99,7 @@ public static class SpatialExtensions {
 
 		var endLatRads = Math.Asin( startLatSin * distRatioCosine + startLatCos * distRatioSine * Math.Cos( initialBearingRadians ) );
 
-		var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos,
-			distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
+		var endLonRads = startLonRad + Math.Atan2( Math.Sin( initialBearingRadians ) * distRatioSine * startLatCos, distRatioCosine - startLatSin * Math.Sin( endLatRads ) );
 
 		return new GeoLocation {
 			Latitude = RadiansToDegrees( endLatRads ),
@@ -107,8 +109,8 @@ public static class SpatialExtensions {
 
 	/// <summary>
 	///     Compass angles are slightly different from mathematical angles, because they start at the top (north and go
-	///     clockwise, whereas mathematical angles start at the x-axis
-	///     (east) and go counter-clockwise.
+	///     clockwise,
+	///     whereas mathematical angles start at the x-axis (east) and go counter-clockwise.
 	/// </summary>
 	/// <param name="angle"></param>
 	public static Double MathAngleToCompassAngle( Double angle ) {
@@ -124,7 +126,7 @@ public static class SpatialExtensions {
 	/// <param name="byAmount"></param>
 	public static Degrees RotateLeft( this Degrees degrees, Single byAmount = 1 ) {
 		if ( Single.IsNaN( byAmount ) ) {
-			return degrees;
+			return new Degrees( Single.Epsilon );
 		}
 
 		if ( Single.IsInfinity( byAmount ) ) {
@@ -166,9 +168,9 @@ public static class SpatialExtensions {
 	/// <summary>And for a Vector with 3 angles</summary>
 	/// <param name="angles"></param>
 	public static Vector3 To180Angle( Vector3 angles ) {
-		angles.X = To180Angle( angles.X );
-		angles.Y = To180Angle( angles.Y );
-		angles.Z = To180Angle( angles.Z );
+		angles.X = angles.X.To180Angle();
+		angles.Y = angles.Y.To180Angle();
+		angles.Z = angles.Z.To180Angle();
 
 		return angles;
 	}
@@ -211,7 +213,8 @@ public static class SpatialExtensions {
 		return angles;
 	}
 
-	public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new( degrees.Value += DegreesToRadians( angle ) );
+	public static Degrees TurnLeft( this Degrees degrees, Single angle ) => new(degrees.Value += DegreesToRadians( angle ));
 
-	public static Degrees TurnRight( this Degrees degrees, Single angle ) => new( degrees.Value -= DegreesToRadians( angle ) );
+	public static Degrees TurnRight( this Degrees degrees, Single angle ) => new(degrees.Value -= DegreesToRadians( angle ));
+
 }

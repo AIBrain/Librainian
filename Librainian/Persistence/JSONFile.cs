@@ -35,12 +35,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
 using FileSystem;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Measurement.Time;
 using Newtonsoft.Json;
-
+using Utilities;
 using DataType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>;
 using ReadOnlyDataType = System.Collections.Generic.IReadOnlyDictionary<System.String, System.String?>;
 using SectionType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>>;
@@ -66,7 +65,7 @@ public class JSONFile {
 
 	public ReadOnlyDataType? this[String? section] {
 		[DebuggerStepThrough]
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( String.IsNullOrEmpty( section ) ) {
 				return default( ReadOnlyDataType );
@@ -87,7 +86,7 @@ public class JSONFile {
 	/// <param name="key"></param>
 	public String? this[String? section, String? key] {
 		[DebuggerStepThrough]
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( String.IsNullOrEmpty( section ) ) {
 				return default( String? );

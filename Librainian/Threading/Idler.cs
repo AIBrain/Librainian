@@ -128,7 +128,7 @@ public class Idler : ABetterClassDispose, IIdler {
 			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( name ) );
 		}
 
-		Error.Trap( () => this.Jobs.TryAdd( name, action ) );
+		ErrorTrapper.Trap( () => this.Jobs.TryAdd( name, action ) );
 	}
 
 	public Boolean Any() => this.Jobs.Any();

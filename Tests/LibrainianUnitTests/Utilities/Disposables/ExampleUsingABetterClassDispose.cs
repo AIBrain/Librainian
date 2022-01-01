@@ -32,13 +32,17 @@ namespace LibrainianUnitTests.Utilities.Disposables;
 using System;
 using System.Diagnostics;
 using System.IO;
+using Librainian.Maths;
 using Librainian.Utilities.Disposables;
+using Microsoft.IO;
 using NUnit.Framework;
 
 [TestFixture]
 public class ExampleUsingABetterClassDispose : ABetterClassDispose {
 
-	private MemoryStream? _memoryStream = new();
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte );
+
+	private RecyclableMemoryStream? _memoryStream = new(MemoryStreamManager);
 
 	private SysComObject? _sysComObject = new();
 

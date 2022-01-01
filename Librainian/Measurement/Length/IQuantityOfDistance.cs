@@ -26,11 +26,11 @@ namespace Librainian.Measurement.Length;
 
 using System;
 using ExtendedNumerics;
-using JetBrains.Annotations;
+using Utilities;
 
 public interface IQuantityOfDistance {
 
-	[Pure]
+	[NeedsTesting]
 	BigDecimal ToMeters();
 
 	String ToString();

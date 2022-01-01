@@ -29,17 +29,17 @@ using System.Threading;
 
 public sealed class FasterSemaphore {
 
-	private Object locker { get; } = new();
+	private Object Locker { get; } = new();
 
 	public void Release() {
-		lock ( this.locker ) {
-			Monitor.Pulse( this.locker );
+		lock ( this.Locker ) {
+			Monitor.Pulse( this.Locker );
 		}
 	}
 
 	public void Wait() {
-		lock ( this.locker ) {
-			Monitor.Wait( this.locker );
+		lock ( this.Locker ) {
+			Monitor.Wait( this.Locker );
 		}
 	}
 }

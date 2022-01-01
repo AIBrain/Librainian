@@ -1,29 +1,29 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-//
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
+// No warranties are expressed, implied, or given.
+// We are NOT responsible for Anything You Do With Our Code.
+// We are NOT responsible for Anything You Do With Our Executables.
+// We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
-//
-// Our software can be found at "https://Protiguous.com/Software"
+// Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
+// 
+// File "Extensions.cs" last touched on 2021-12-28 at 1:38 PM by Protiguous.
 
 #nullable enable
 
@@ -45,7 +45,7 @@ public static class Extensions {
 
 	/// <summary>All possible bitcoin denominations.</summary>
 	// ReSharper disable once CollectionNeverUpdated.Global ReSharper disable once ReturnTypeCanBeEnumerable.Global
-	public static HashSet<ICoin> PossibleCoins { get; } = new( typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<ICoin>() );
+	public static HashSet<ICoin> PossibleCoins { get; } = new(typeof( ICoin ).GetTypesDerivedFrom().Select( Activator.CreateInstance ).OfType<ICoin>());
 
 	/// <summary>Deposit <paramref name="coins" /> into this wallet.</summary>
 	/// <param name="coinWallet"></param>
@@ -77,8 +77,8 @@ public static class Extensions {
 	}
 
 	/// <summary>
-	///     Adds the optimal amount of <see cref="ICoin" />. Returns any unused portion of the money (fractions of the
-	///     smallest <see cref="ICoin" />).
+	///     Adds the optimal amount of <see cref="ICoin" />. Returns any unused portion of the money (fractions of the smallest
+	///     <see cref="ICoin" />).
 	/// </summary>
 	/// <param name="coinWallet"></param>
 	/// <param name="amount"></param>
@@ -96,8 +96,7 @@ public static class Extensions {
 
 	/// <summary>
 	///     Given the <paramref name="amount" />, return the optimal amount of <see cref="ICoin" /> (
-	///     <see cref="CoinWallet.Total" />) it would take to
-	///     <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
+	///     <see cref="CoinWallet.Total" />) it would take to <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
 	/// </summary>
 	/// <param name="amount"></param>
 	/// <param name="leftOverAmount">Fractions of Pennies not accounted for.</param>
@@ -110,10 +109,10 @@ public static class Extensions {
 		while ( leftOverAmount > Decimal.Zero && left.Any() ) {
 			var coin = left.OrderByDescending( denomination => denomination.FaceValue ).First();
 
-			var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
+			var chunks = ( UInt64 ) ( leftOverAmount / coin.FaceValue );
 
 			if ( chunks > Decimal.Zero ) {
-				result[coin] += chunks;
+				result[ coin ] += chunks;
 				leftOverAmount -= chunks * coin.FaceValue;
 			}
 
@@ -137,7 +136,7 @@ public static class Extensions {
 			throw new ArgumentEmptyException( nameof( wallet ) );
 		}
 
-		return wallet.Balance.SimplerBTC();
+		return wallet.Balance.GetValueOrDefault( Decimal.Zero ).SimplerBTC();
 	}
 
 	/// <summary>
@@ -159,8 +158,10 @@ public static class Extensions {
 		btc = btc.Sanitize();
 
 		var list = new List<String> {
-			new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ), $"{$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' )} m{coinSuffix}",
-			$"{$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' )} μ{coinSuffix}", $"{btc.ToSatoshi():N0} satoshi"
+			new SimpleBitcoinWallet( btc ).ToString().TrimEnd( '0' ).TrimEnd( '.' ),
+			$"{$"{btc.TomBTC():N6}".TrimEnd( '0' ).TrimEnd( '.' )} m{coinSuffix}",
+			$"{$"{btc.ToμBtc():N4}".TrimEnd( '0' ).TrimEnd( '.' )} μ{coinSuffix}",
+			$"{btc.ToSatoshi():N0} satoshi"
 		};
 
 		//as btc
@@ -201,19 +202,19 @@ public static class Extensions {
 	public static Task<ConcurrentDictionary<ICoin, UInt64>> StartTransfer( this CoinWallet source, CoinWallet target ) =>
 		Task.Run( () => new ConcurrentDictionary<ICoin, UInt64>( Transfer( source, target ) ) );
 
-	public static Decimal ToBTC( this Int16 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+	public static Decimal ToBTC( this Int16 satoshi ) => satoshi / ( Decimal ) SimpleBitcoinWallet.SatoshiInOneBtc;
 
-	public static Decimal ToBTC( this Int32 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+	public static Decimal ToBTC( this Int32 satoshi ) => satoshi / ( Decimal ) SimpleBitcoinWallet.SatoshiInOneBtc;
 
-	public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( Decimal )SimpleBitcoinWallet.SatoshiInOneBtc;
+	public static Decimal ToBTC( this Int64 satoshi ) => satoshi / ( Decimal ) SimpleBitcoinWallet.SatoshiInOneBtc;
 
 	public static Decimal TomBTC( this Decimal btc ) => btc * SimpleBitcoinWallet.mBTCInOneBTC;
 
-	public static Int64 ToSatoshi( this Decimal btc ) => ( Int64 )( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
+	public static Int64 ToSatoshi( this Decimal btc ) => ( Int64 ) ( btc * SimpleBitcoinWallet.SatoshiInOneBtc );
 
 	/// <summary>Return the <paramref name="wallet" /> in Satoshi.</summary>
 	/// <param name="wallet"></param>
-	public static Int64 ToSatoshi( this SimpleBitcoinWallet wallet ) => wallet.Balance.ToSatoshi();
+	public static Int64 ToSatoshi( this SimpleBitcoinWallet wallet ) => wallet.Balance.GetValueOrDefault( Decimal.Zero ).ToSatoshi();
 
 	public static Decimal ToμBtc( this Decimal btc ) => btc * SimpleBitcoinWallet.ΜBtcInOneBtc;
 
@@ -250,30 +251,32 @@ public static class Extensions {
 			throw new ArgumentEmptyException( nameof( target ) );
 		}
 
-		return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) &&
-		       target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0;
+		return source.TryWithdraw( denominationAndAmount.Key, denominationAndAmount.Value ) && target.Deposit( denominationAndAmount.Key, denominationAndAmount.Value ) > 0;
 	}
 
 	/// <summary>Create a TPL dataflow task for depositing large volumes of money into this wallet.</summary>
 	/// <param name="coinWallet"></param>
 	/// <param name="sourceAmounts"></param>
-	public static Task Transfer( CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>>? sourceAmounts ) {
+	public static async Task Transfer( CoinWallet coinWallet, IEnumerable<KeyValuePair<ICoin, UInt64>>? sourceAmounts ) {
 		if ( coinWallet is null ) {
 			throw new ArgumentEmptyException( nameof( coinWallet ) );
 		}
 
+		//TODO Incomplete. sourceAmounts
 		var actionBlock = new ActionBlock<KeyValuePair<ICoin, UInt64>>( pair => coinWallet.Deposit( pair.Key, pair.Value ),
 			Blocks.ManyProducers.ConsumeSensible( default( CancellationToken? ) ) );
+		//BUG Incomplete. sourceAmounts
 
 		actionBlock.Complete();
 
-		return actionBlock.Completion;
+		await actionBlock.Completion.ConfigureAwait( false );
 	}
 
 	/// <summary>
 	///     Given the <paramref name="amount" />, return the unoptimal amount of <see cref="ICoin" /> (
-	///     <see cref="CoinWallet.Total" />) it would take to
-	///     <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
+	///     <see
+	///         cref="CoinWallet.Total" />
+	///     ) it would take to <see cref="CoinWallet.Total" /> the <paramref name="amount" />.
 	/// </summary>
 	/// <param name="amount"></param>
 	/// <param name="leftOverAmount">Fractions of coin not accounted for.</param>
@@ -286,10 +289,10 @@ public static class Extensions {
 		while ( leftOverAmount > Decimal.Zero && left.Any() ) {
 			var coin = left.OrderBy( denomination => denomination.FaceValue ).First();
 
-			var chunks = ( UInt64 )( leftOverAmount / coin.FaceValue );
+			var chunks = ( UInt64 ) ( leftOverAmount / coin.FaceValue );
 
 			if ( chunks > Decimal.Zero ) {
-				result[coin] += chunks;
+				result[ coin ] += chunks;
 				leftOverAmount -= chunks * coin.FaceValue;
 			}
 
@@ -298,4 +301,5 @@ public static class Extensions {
 
 		return result;
 	}
+
 }

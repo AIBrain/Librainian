@@ -29,18 +29,18 @@ namespace Librainian.Financial.Currency.BTC;
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using Utilities;
 
 public interface ICoinWallet {
 
 	/// <summary>Return each <see cref="ICoin" /> in this <see cref="CoinWallet" />.</summary>
 	IEnumerable<ICoin> Coins {
-		[NotNull]
+		[NeedsTesting]
 		get;
 	}
 
 	IEnumerable<KeyValuePair<ICoin, UInt64>> CoinsGrouped {
-		[NotNull]
+		[NeedsTesting]
 		get;
 	}
 

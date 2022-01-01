@@ -28,8 +28,8 @@ namespace Librainian;
 using System;
 using System.Runtime.CompilerServices;
 using Extensions;
-using JetBrains.Annotations;
 using Parsing;
+using Utilities;
 
 public static class StatusExtensions {
 
@@ -51,30 +51,30 @@ public static class StatusExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Failed( this Status status ) => status <= Status.Failure;
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsBad( this Status status ) => status.Failed();
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsGood( this Status status ) => status.Succeeded();
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsUnknown( this Status status ) => status == Status.Unknown || !status.IsBad() && !status.IsGood();
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Succeeded( this Status status ) => status >= Status.Success;
 
-	[Pure]
+	[NeedsTesting]
 	public static String Symbol( this Status status ) => status.GetDescription() ?? Symbols.Null;
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Status ToStatus( this Boolean status ) => status ? Status.Success : Status.Failure;
 }

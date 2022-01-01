@@ -31,6 +31,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Utilities;
 
 /// <summary>
 ///     Provides lazy initialization routines.
@@ -48,7 +49,7 @@ public static class Easier {
 	/// <param name="target">The variable that need to be initialized</param>
 	/// <returns>The initialized variable</returns>
 	private static T EnsureInitializedCore<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicParameterlessConstructor )]
-		T>( [NotNull] ref T? target ) where T : class {
+		T>( [NeedsTesting] ref T? target ) where T : class {
 		Interlocked.CompareExchange( ref target, Activator.CreateInstance<T>(), null );
 
 		return target;
@@ -61,7 +62,7 @@ public static class Easier {
 	/// <param name="target">The variable that need to be initialized</param>
 	/// <param name="valueFactory">The delegate that will be executed to initialize the target</param>
 	/// <returns>The initialized variable</returns>
-	private static T EnsureInitializedCore<T>( [NotNull] ref T? target, Func<T> valueFactory ) where T : class {
+	private static T EnsureInitializedCore<T>( [NeedsTesting] ref T? target, Func<T> valueFactory ) where T : class {
 		var value = valueFactory();
 		if ( value == null ) {
 			throw new InvalidOperationException();
@@ -84,7 +85,7 @@ public static class Easier {
 	/// </param>
 	/// <returns>The initialized object.</returns>
 	private static T? EnsureInitializedCore<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicParameterlessConstructor )]
-		T>( ref T? target, ref Boolean initialized, [NotNull] ref Object? syncLock ) {
+		T>( ref T? target, ref Boolean initialized, [NeedsTesting] ref Object? syncLock ) {
 
 		// Lazily initialize the lock if necessary and then double check if initialization is still required.
 		lock ( EnsureLockInitialized( ref syncLock ) ) {
@@ -118,7 +119,7 @@ public static class Easier {
 	///     The <see cref="System.Func{T}" /> to invoke in order to produce the lazily-initialized value.
 	/// </param>
 	/// <returns>The initialized object.</returns>
-	private static T? EnsureInitializedCore<T>( [AllowNull] ref T target, ref Boolean initialized, [NotNull] ref Object? syncLock, Func<T> valueFactory ) {
+	private static T? EnsureInitializedCore<T>( [AllowNull] ref T target, ref Boolean initialized, [NeedsTesting] ref Object? syncLock, Func<T> valueFactory ) {
 
 		// Lazily initialize the lock if necessary and then double check if initialization is still required.
 		lock ( EnsureLockInitialized( ref syncLock ) ) {
@@ -146,7 +147,7 @@ public static class Easier {
 	///     The <see cref="System.Func{T}" /> to invoke in order to produce the lazily-initialized value.
 	/// </param>
 	/// <returns>The initialized object.</returns>
-	private static T EnsureInitializedCore<T>( [NotNull] ref T? target, [NotNull] ref Object? syncLock, Func<T> valueFactory ) where T : class {
+	private static T EnsureInitializedCore<T>( [NeedsTesting] ref T? target, [NeedsTesting] ref Object? syncLock, Func<T> valueFactory ) where T : class {
 
 		// Lazily initialize the lock if necessary and then double check if initialization is still required.
 		lock ( EnsureLockInitialized( ref syncLock ) ) {
@@ -170,7 +171,7 @@ public static class Easier {
 	///     a new object will be instantiated.
 	/// </param>
 	/// <returns>Initialized lock object.</returns>
-	private static Object EnsureLockInitialized( [NotNull] ref Object? syncLock ) =>
+	private static Object EnsureLockInitialized( [NeedsTesting] ref Object? syncLock ) =>
 		syncLock ?? Interlocked.CompareExchange( ref syncLock, new Object(), null ) ?? syncLock;
 
 	/// <summary>
@@ -206,7 +207,7 @@ public static class Easier {
 	///     </para>
 	/// </remarks>
 	public static T EnsureInitialized<[DynamicallyAccessedMembers( DynamicallyAccessedMemberTypes.PublicParameterlessConstructor )]
-		T>( [NotNull] ref T? target ) where T : class {
+		T>( [NeedsTesting] ref T? target ) where T : class {
 		if ( target is null ) {
 			return EnsureInitializedCore( ref target );
 		}
@@ -252,7 +253,7 @@ public static class Easier {
 	///         if an object was not used and to then dispose of the object appropriately.
 	///     </para>
 	/// </remarks>
-	public static T EnsureInitialized<T>( [NotNull] ref T? target, Func<T> valueFactory ) where T : class {
+	public static T EnsureInitialized<T>( [NeedsTesting] ref T? target, Func<T> valueFactory ) where T : class {
 		if ( target is null ) {
 			return EnsureInitializedCore( ref target, valueFactory );
 		}
@@ -343,7 +344,7 @@ public static class Easier {
 	/// </param>
 	/// <param name="valueFactory">The <see cref="System.Func{T}" /> invoked to initialize the reference.</param>
 	/// <returns>The initialized value of type <typeparamref name="T" />.</returns>
-	public static T EnsureInitialized<T>( [NotNull] ref T? target, [NotNullIfNotNull( "syncLock" )] ref Object? syncLock, Func<T> valueFactory ) where T : class {
+	public static T EnsureInitialized<T>( [NeedsTesting] ref T? target, [NotNullIfNotNull( "syncLock" )] ref Object? syncLock, Func<T> valueFactory ) where T : class {
 		var read = Volatile.Read( ref target );
 		if ( read is null ) {
 			return EnsureInitializedCore( ref target, ref syncLock, valueFactory );

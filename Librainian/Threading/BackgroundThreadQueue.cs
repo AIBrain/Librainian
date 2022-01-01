@@ -44,7 +44,7 @@ public class BackgroundThreadQueue<T> : ABetterClassDispose {
 
 	private VolatileBoolean _quit;
 
-	private Thread? thread;
+	private Thread? _thread;
 
 	public BackgroundThreadQueue() : base( nameof( BackgroundThreadQueue<T> ) ) { }
 
@@ -109,11 +109,11 @@ public class BackgroundThreadQueue<T> : ABetterClassDispose {
 
 		this.Token = cancellationToken;
 
-		this.thread = new Thread( () => this.ProcessQueue( each ) ) {
+		this._thread = new Thread( () => this.ProcessQueue( each ) ) {
 			IsBackground = true
 		};
 
-		this.thread.Start();
+		this._thread.Start();
 	}
 
 }

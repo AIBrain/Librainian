@@ -1,12 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -14,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "AESThenHMAC.cs" last formatted on 2020-08-14 at 8:44 PM.
+// 
+// File "AESThenHMAC.cs" last touched on 2021-12-28 at 2:00 PM by Protiguous.
 
 namespace Librainian.Security;
 
@@ -29,6 +32,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Maths;
+using Microsoft.IO;
 
 /// <summary>
 ///     This work (Modern Encryption of a String C#, by James Tuley), identified by James Tuley, is free of known copyright
@@ -51,9 +55,11 @@ public static class AESThenHmac {
 
 	public const Int32 SaltBitSize = 64;
 
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new(MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte);
+
 	/// <summary>Helper that generates a random key on each call.</summary>
 	public static Byte[] NewKey() {
-		var key = new Byte[KeyBitSize / 8];
+		var key = new Byte[ KeyBitSize / 8 ];
 		Randem.RNG.Value.GetBytes( key );
 
 		return key;
@@ -66,7 +72,6 @@ public static class AESThenHmac {
 	/// <param name="nonSecretPayloadLength">Length of the non secret payload.</param>
 	/// <returns>Decrypted Message</returns>
 	public static Byte[]? SimpleDecrypt( Byte[] encryptedMessage, Byte[] cryptKey, Byte[] authKey, Int32 nonSecretPayloadLength = 0 ) {
-
 		//Basic Usage Error Checks
 		if ( cryptKey.Length != KeyBitSize / 8 ) {
 			throw new ArgumentException( $"CryptKey needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
@@ -82,7 +87,7 @@ public static class AESThenHmac {
 
 		using var hmac = new HMACSHA256( authKey );
 
-		var sentTag = new Byte[hmac.HashSize / 8];
+		var sentTag = new Byte[ hmac.HashSize / 8 ];
 
 		//Calculate Tag
 		var calcTag = hmac.ComputeHash( encryptedMessage, 0, encryptedMessage.Length - sentTag.Length );
@@ -100,7 +105,7 @@ public static class AESThenHmac {
 		var compare = 0;
 
 		for ( var i = 0; i < sentTag.Length; i++ ) {
-			compare |= sentTag[i] ^ calcTag[i];
+			compare |= sentTag[ i ] ^ calcTag[ i ];
 		}
 
 		//if message doesn't authenticate return null
@@ -116,12 +121,12 @@ public static class AESThenHmac {
 		};
 
 		//Grab IV from message
-		var iv = new Byte[ivLength];
+		var iv = new Byte[ ivLength ];
 		Array.Copy( encryptedMessage, nonSecretPayloadLength, iv, 0, iv.Length );
 
 		using var decrypter = aes.CreateDecryptor( cryptKey, iv );
 
-		using var plainTextStream = new MemoryStream();
+		using var plainTextStream = MemoryStreamManager.GetStream();
 
 		using var decrypterStream = new CryptoStream( plainTextStream, decrypter, CryptoStreamMode.Write );
 
@@ -192,7 +197,6 @@ public static class AESThenHmac {
 	/// <exception cref="ArgumentException">Must have a password of minimum length;password</exception>
 	/// <remarks>Significantly less secure than using random binary keys.</remarks>
 	public static Byte[]? SimpleDecryptWithPassword( Byte[] encryptedMessage, String password, Int32 nonSecretPayloadLength = 0 ) {
-
 		//User Error Checks
 		if ( String.IsNullOrWhiteSpace( password ) || password.Length < MinPasswordLength ) {
 			throw new ArgumentException( $"Must have a password of at least {MinPasswordLength} characters!", nameof( password ) );
@@ -202,8 +206,8 @@ public static class AESThenHmac {
 			throw new ArgumentException( "Encrypted Message Required!", nameof( encryptedMessage ) );
 		}
 
-		var cryptSalt = new Byte[SaltBitSize / 8];
-		var authSalt = new Byte[SaltBitSize / 8];
+		var cryptSalt = new Byte[ SaltBitSize / 8 ];
+		var authSalt = new Byte[ SaltBitSize / 8 ];
 
 		//Grab Salt from Non-Secret Payload
 		Array.Copy( encryptedMessage, nonSecretPayloadLength, cryptSalt, 0, cryptSalt.Length );
@@ -232,9 +236,10 @@ public static class AESThenHmac {
 	/// <param name="authKey">The auth key.</param>
 	/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
 	/// <returns>Encrypted Message</returns>
-	/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
+	/// <remarks>
+	///     Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64
+	/// </remarks>
 	public static Byte[] SimpleEncrypt( this Byte[] secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
-
 		//User Error Checks
 		if ( cryptKey.Length != KeyBitSize / 8 ) {
 			throw new ArgumentException( $"Key needs to be {KeyBitSize} bit!", nameof( cryptKey ) );
@@ -263,40 +268,36 @@ public static class AESThenHmac {
 		aes.GenerateIV();
 
 		using ( var encrypter = aes.CreateEncryptor( cryptKey, aes.IV ) ) {
-			using ( var cipherStream = new MemoryStream() ) {
-				using ( var binaryWriter = new BinaryWriter( new CryptoStream( cipherStream, encrypter, CryptoStreamMode.Write ) ) ) {
-					binaryWriter.Write( secretMessage );
-				}
-
-				cipherText = cipherStream.ToArray();
+			using var cipherStream = MemoryStreamManager.GetStream();
+			using ( var binaryWriter = new BinaryWriter( new CryptoStream( cipherStream, encrypter, CryptoStreamMode.Write ) ) ) {
+				binaryWriter.Write( secretMessage );
 			}
+
+			cipherText = cipherStream.GetBuffer();
 		}
 
 		//Assemble encrypted message and add authentication
-		using ( var hmac = new HMACSHA256( authKey ) ) {
-			using ( var encryptedStream = new MemoryStream() ) {
-				using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
+		using var hmac = new HMACSHA256( authKey );
+		using var encryptedStream = MemoryStreamManager.GetStream();
+		using ( var binaryWriter = new BinaryWriter( encryptedStream ) ) {
+			//Prepend non-secret payload if any
+			binaryWriter.Write( nonSecretPayload );
 
-					//Prepend non-secret payload if any
-					binaryWriter.Write( nonSecretPayload );
+			//Prepend IV
+			binaryWriter.Write( aes.IV );
 
-					//Prepend IV
-					binaryWriter.Write( aes.IV );
+			//Write Ciphertext
+			binaryWriter.Write( cipherText );
+			binaryWriter.Flush(); //why?
 
-					//Write Ciphertext
-					binaryWriter.Write( cipherText );
-					binaryWriter.Flush(); //why?
+			//Authenticate all data
+			var tag = hmac.ComputeHash( encryptedStream.GetBuffer() );
 
-					//Authenticate all data
-					var tag = hmac.ComputeHash( encryptedStream.ToArray() );
-
-					//Postpend tag
-					binaryWriter.Write( tag );
-				}
-
-				return encryptedStream.ToArray();
-			}
+			//Postpend tag
+			binaryWriter.Write( tag );
 		}
+
+		return encryptedStream.GetBuffer();
 	}
 
 	/// <summary>Simple Encryption (AES) then Authentication (HMAC) for a UTF8 Message.</summary>
@@ -306,7 +307,9 @@ public static class AESThenHmac {
 	/// <param name="nonSecretPayload">(Optional) Non-Secret Payload.</param>
 	/// <returns>Encrypted Message</returns>
 	/// <exception cref="ArgumentException">Secret Message Required!;secretMessage</exception>
-	/// <remarks>Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64</remarks>
+	/// <remarks>
+	///     Adds overhead of (Optional-Payload + BlockSize(16) + Message-Padded-To-Blocksize + HMac-Tag(32)) * 1.33 Base64
+	/// </remarks>
 	public static String SimpleEncrypt( String secretMessage, Byte[] cryptKey, Byte[] authKey, Byte[]? nonSecretPayload = null ) {
 		if ( String.IsNullOrEmpty( secretMessage ) ) {
 			throw new ArgumentException( "Secret Message Required!", nameof( secretMessage ) );
@@ -319,8 +322,7 @@ public static class AESThenHmac {
 	}
 
 	/// <summary>
-	///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password
-	///     (PBKDF2).
+	///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password (PBKDF2).
 	/// </summary>
 	/// <param name="secretMessage">The secret message.</param>
 	/// <param name="password">The password.</param>
@@ -343,8 +345,7 @@ public static class AESThenHmac {
 	}
 
 	/// <summary>
-	///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password
-	///     (PBKDF2)
+	///     Simple Encryption (AES) then Authentication (HMAC) of a UTF8 message using Keys derived from a Password (PBKDF2)
 	/// </summary>
 	/// <param name="secretMessage">The secret message.</param>
 	/// <param name="password">The password.</param>
@@ -370,7 +371,7 @@ public static class AESThenHmac {
 		const Int32 saltsize = SaltBitSize / 8;
 		const Int32 saltier = saltsize * 2;
 
-		var payload = new Byte[saltier + nonSecretPayload.Length];
+		var payload = new Byte[ saltier + nonSecretPayload.Length ];
 
 		Buffer.BlockCopy( nonSecretPayload, 0, payload, 0, nonSecretPayload.Length );
 
@@ -412,4 +413,5 @@ public static class AESThenHmac {
 
 		return secretMessage.SimpleEncrypt( cryptKey, authKey, payload );
 	}
+
 }

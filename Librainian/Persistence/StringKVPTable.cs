@@ -34,7 +34,6 @@ using System.Linq;
 using System.Threading;
 using Exceptions;
 using FileSystem;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Measurement.Time;
@@ -44,6 +43,7 @@ using Newtonsoft.Json;
 using OperatingSystem.Compression;
 using Parsing;
 using PooledAwait;
+using Utilities;
 using Utilities.Disposables;
 
 /// <summary>
@@ -90,7 +90,7 @@ public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, St
 	public Boolean IsReadOnly => this.Dictionary.IsReadOnly;
 
 	public String? this[params String[] keys] {
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( keys is null ) {
 				throw new ArgumentEmptyException( nameof( keys ) );
@@ -126,7 +126,7 @@ public sealed class StringKVPTable : ABetterClassDispose, IDictionary<String, St
 	/// </summary>
 	/// <param name="key"></param>
 	public String? this[String key] {
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( key is null ) {
 				throw new ArgumentEmptyException( nameof( key ) );

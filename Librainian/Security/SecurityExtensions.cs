@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "SecurityExtensions.cs" last touched on 2021-12-12 at 3:52 AM by Protiguous.
+// File "SecurityExtensions.cs" last touched on 2021-12-28 at 2:05 PM by Protiguous.
 
 #nullable enable
 
@@ -45,6 +45,7 @@ using Exceptions;
 using FileSystem;
 using Logging;
 using Maths;
+using Microsoft.IO;
 using Utilities;
 
 public static class SecurityExtensions {
@@ -58,6 +59,8 @@ public static class SecurityExtensions {
 	public const String EntropyPhrase2 = "KSOPFJyNMPgchzs7OH12MFHnGOMftm9RZwrwA1vwb66q3nqC9HtKuMzAY4fhtN8F";
 
 	public const String EntropyPhrase3 = "XtXowrE3jz6UESvqb63bqw36nxtxTo0VYH5YJLbsxE4TR20c5nN9ocVxyabim2SX";
+
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new(MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte);
 
 	public static Byte[] Entropy { get; } = Encoding.Unicode.GetBytes( $"{EntropyPhrase1} {EntropyPhrase2} {EntropyPhrase3}" );
 
@@ -106,7 +109,7 @@ public static class SecurityExtensions {
 			var _keybyte = encoding.GetBytes( key?[ ..8 ] ?? Key[ ..8 ] );
 			var inputbyteArray = Convert.FromBase64String( value.Replace( " ", "+" ) );
 
-			using var ms = new MemoryStream();
+			using var ms = MemoryStreamManager.GetStream();
 			using var des = DES.Create();
 			using var cs = new CryptoStream( ms, des.CreateDecryptor( _keybyte, _ivByte ), CryptoStreamMode.Write );
 
@@ -130,7 +133,7 @@ public static class SecurityExtensions {
 			throw new NullException( nameof( textToDecrypt ) );
 		}
 
-		using var ms = new MemoryStream();
+		using var ms = MemoryStreamManager.GetStream();
 
 		using var tripleDes = TripleDES.Create();
 
@@ -240,7 +243,7 @@ public static class SecurityExtensions {
 
 			using var des = DES.Create();
 
-			using var ms = new MemoryStream();
+			using var ms = MemoryStreamManager.GetStream();
 
 			using var cs = new CryptoStream( ms, des.CreateEncryptor( _keybyte, _ivByte ), CryptoStreamMode.Write );
 
@@ -264,7 +267,7 @@ public static class SecurityExtensions {
 			throw new NullException( nameof( textToEncrypt ) );
 		}
 
-		using var ms = new MemoryStream();
+		using var ms = MemoryStreamManager.GetStream();
 
 		using var tripleDes = TripleDES.Create();
 

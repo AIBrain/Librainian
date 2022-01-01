@@ -31,8 +31,8 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Exceptions;
 using Extensions;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>
 ///     <para>
@@ -125,7 +125,7 @@ public struct Pixel : IEquatable<Pixel> {
 
 	/// <summary>Returns the hash code for this instance.</summary>
 	/// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
-	[Pure]
+	[NeedsTesting]
 	public override Int32 GetHashCode() => this.Checksum + this.Alpha + this.Red + this.Green + this.Blue;
 
 	public override String ToString() => $"{this.Checksum}({this.Alpha},{this.Red},{this.Green},{this.Blue})@{this.X},{this.Y}";

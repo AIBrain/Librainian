@@ -47,10 +47,10 @@ using System.Windows.Forms;
 using Collections.Extensions;
 using Converters;
 using Exceptions;
-using JetBrains.Annotations;
 using Logging;
 using Microsoft.Win32;
 using Parsing;
+using Utilities;
 
 public static class AppRegistry {
 
@@ -169,7 +169,7 @@ public static class AppRegistry {
 	/// </summary>
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean? GetBoolean( String folder, String key ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -200,7 +200,7 @@ public static class AppRegistry {
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
 	/// <param name="subkey"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean? GetBoolean( String folder, String key, String subkey ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -239,7 +239,7 @@ public static class AppRegistry {
 	/// </summary>
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
-	[Pure]
+	[NeedsTesting]
 	public static Byte? GetByte( String folder, String key ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -270,7 +270,7 @@ public static class AppRegistry {
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
 	/// <param name="subkey"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Byte? GetByte( String folder, String key, String subkey ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -309,7 +309,7 @@ public static class AppRegistry {
 	/// </summary>
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
-	[Pure]
+	[NeedsTesting]
 	public static Int32? GetInt32( String folder, String key ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -340,7 +340,7 @@ public static class AppRegistry {
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
 	/// <param name="subkey"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Int32? GetInt32( String folder, String key, String subkey ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -373,7 +373,7 @@ public static class AppRegistry {
 	/// </summary>
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
-	[Pure]
+	[NeedsTesting]
 	public static Int64? GetInt64( String folder, String key ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -407,7 +407,7 @@ public static class AppRegistry {
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
 	/// <param name="subkey"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Int64? GetInt64( String folder, String key, String subkey ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );
@@ -450,7 +450,7 @@ public static class AppRegistry {
 	/// </summary>
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	public static String? GetString( String folder, String key ) {
 		if ( folder.IsEmpty() ) {
@@ -482,7 +482,7 @@ public static class AppRegistry {
 	/// <param name="folder"></param>
 	/// <param name="key">   </param>
 	/// <param name="subkey"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? GetString( String folder, String key, String subkey ) {
 		if ( folder.IsEmpty() ) {
 			throw new ArgumentEmptyException( nameof( folder ) );

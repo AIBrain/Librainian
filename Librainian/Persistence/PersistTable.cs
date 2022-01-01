@@ -39,7 +39,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
 using FileSystem;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Measurement.Time;
@@ -48,6 +47,7 @@ using Microsoft.Isam.Esent.Collections.Generic;
 using Newtonsoft.Json;
 using OperatingSystem.Compression;
 using Parsing;
+using Utilities;
 using Utilities.Disposables;
 
 /// <summary>
@@ -87,7 +87,7 @@ public class PersistTable<TKey, TValue> : ABetterClassDispose, IDictionary<TKey,
 		
 	/// <param name="key"></param>
 	public TValue? this[TKey? key] {
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( key is null ) {
 				return default( TValue? ); //intended. null key returns default

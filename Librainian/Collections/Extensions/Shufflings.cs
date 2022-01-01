@@ -217,11 +217,11 @@ public static class Shufflings {
 	}
 
 	/* ignore this. just some late-night think stuff
-    [NotNull]
+    [NeedsTesting]
     private static readonly Type[] EmptyTypeArray = new Type[0];
 
-    [NotNull]
-    [Pure]
+    [NeedsTesting]
+    [NeedsTesting]
     public static Func<X> InstanceCreator<X>() {
         var type = typeof( X );
         var constructor = type.GetConstructor( EmptyTypeArray );

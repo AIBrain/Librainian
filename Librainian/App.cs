@@ -93,7 +93,7 @@ public static class App {
 	///     <para>Performs a garbage cleanup.</para>
 	///     <para>And then runs the <see cref="Action" /><paramref name="runMe" />.</para>
 	/// </summary>
-	public static Status Run<TOpts>( [NotNull] Action<TOpts> runMe, params String[] arguments ) where TOpts : IOptions {
+	public static Status Run<TOpts>( [NeedsTesting] Action<TOpts> runMe, params String[] arguments ) where TOpts : IOptions {
 		if ( runMe is null ) {
 			throw new ArgumentEmptyException( nameof( runMe ) );
 		}

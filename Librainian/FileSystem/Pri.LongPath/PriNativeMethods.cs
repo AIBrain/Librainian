@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "PriNativeMethods.cs" last formatted on 2021-01-01 at 9:38 AM.
+// 
+// File "PriNativeMethods.cs" last touched on 2021-12-30 at 1:06 AM by Protiguous.
 
 namespace Librainian.FileSystem.Pri.LongPath;
 
@@ -38,41 +38,6 @@ using DWORD = System.UInt32;
 
 [SuppressMessage( "ReSharper", "InconsistentNaming" )]
 public static class PriNativeMethods {
-
-	private static readonly Version ThreadErrorModeMinOsVersion = new( 6, 1, 7600 );
-
-	public const Int32 FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
-
-	//success starts with ERROR? lol
-	public const Int32 FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
-
-	public const Int32 FILE_WRITE_ATTRIBUTES = 0x0100;
-
-	public const Int32 FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
-
-	public const Int32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
-
-	public const Int32 FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
-
-	public const Int32 INVALID_FILE_ATTRIBUTES = -1;
-
-	public const Int32 MAX_ALTERNATE = 14;
-
-	/// <summary>
-	///     While Windows allows larger paths up to a maximum of 32767 characters, because this is only an approximation and
-	///     can vary across systems and OS versions, we choose a limit well under so that we can give a consistent behavior.
-	/// </summary>
-	public const Int32 MAX_LONG_PATH = 32000;
-
-	public const Int32 MAX_PATH = 260;
-
-	public const Int32 REPLACEFILE_IGNORE_MERGE_ERRORS = 0x2;
-
-	public const Int32 REPLACEFILE_WRITE_THROUGH = 0x1;
-
-	public const DWORD SE_PRIVILEGE_DISABLED = 0x00000000;
-
-	public const DWORD SE_PRIVILEGE_ENABLED = 0x00000002;
 
 	public delegate CopyProgressResult CopyProgressRoutine(
 		Int64 TotalFileSize,
@@ -91,6 +56,7 @@ public static class PriNativeMethods {
 		CALLBACK_CHUNK_FINISHED = 0x00000000,
 
 		CALLBACK_STREAM_SWITCH = 0x00000001
+
 	}
 
 	public enum CopyProgressResult : DWORD {
@@ -102,6 +68,7 @@ public static class PriNativeMethods {
 		PROGRESS_STOP = 2,
 
 		PROGRESS_QUIET = 3
+
 	}
 
 	[Flags]
@@ -114,9 +81,10 @@ public static class PriNativeMethods {
 		GenericExecute = 0x20000000,
 
 		GenericAll = 0x10000000
+
 	}
 
-	public enum ERROR {
+	public enum FilesAndFoldersErrors {
 
 		ERROR_SUCCESS = 0,
 
@@ -176,6 +144,7 @@ public static class PriNativeMethods {
 		ERROR_PRIVILEGE_NOT_HELD = 0x522,
 
 		ERROR_SHARING_VIOLATION = 0x20
+
 	}
 
 	[Flags]
@@ -192,6 +161,7 @@ public static class PriNativeMethods {
 		MOVE_FILE_CREATE_HARDLINK = 0x00000010,
 
 		MOVE_FILE_FAIL_IF_NOT_TRACKABLE = 0x00000020
+
 	}
 
 	public enum SecurityImpersonationLevel {
@@ -203,6 +173,7 @@ public static class PriNativeMethods {
 		Impersonation = 2,
 
 		Delegation = 3
+
 	}
 
 	public enum TokenType {
@@ -210,7 +181,44 @@ public static class PriNativeMethods {
 		Primary = 1,
 
 		Impersonation = 2
+
 	}
+
+	public const Int32 FILE_ATTRIBUTE_DIRECTORY = 0x00000010;
+
+	//success starts with ERROR? lol
+	public const Int32 FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+
+	public const Int32 FILE_WRITE_ATTRIBUTES = 0x0100;
+
+	public const Int32 FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
+
+	public const Int32 FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
+	public const Int32 FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
+
+	public const Int32 INVALID_FILE_ATTRIBUTES = -1;
+
+	public const Int32 MAX_ALTERNATE = 14;
+
+	/// <summary>
+	///     While Windows allows larger paths up to a maximum of 32767 characters, because this is only an approximation and
+	///     can
+	///     vary across systems and OS versions, we choose a limit well under so that we can give a consistent behavior.
+	/// </summary>
+	public const Int32 MAX_LONG_PATH = 32000;
+
+	public const Int32 MAX_PATH = 260;
+
+	public const Int32 REPLACEFILE_IGNORE_MERGE_ERRORS = 0x2;
+
+	public const Int32 REPLACEFILE_WRITE_THROUGH = 0x1;
+
+	public const DWORD SE_PRIVILEGE_DISABLED = 0x00000000;
+
+	public const DWORD SE_PRIVILEGE_ENABLED = 0x00000002;
+
+	private static readonly Version ThreadErrorModeMinOsVersion = new(6, 1, 7600);
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, CharSet = CharSet.None, EntryPoint = "SetErrorMode", ExactSpelling = true )]
 	private static extern Int32 SetErrorMode_VistaAndOlder( Int32 newMode );
@@ -224,8 +232,8 @@ public static class PriNativeMethods {
 		[In] Boolean DisableAllPrivileges,
 		[In] ref TOKEN_PRIVILEGE NewState,
 		[In] DWORD BufferLength,
-		[In][Out] ref TOKEN_PRIVILEGE PreviousState,
-		[In][Out] ref DWORD ReturnLength
+		[In] [Out] ref TOKEN_PRIVILEGE PreviousState,
+		[In] [Out] ref DWORD ReturnLength
 	);
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true )]
@@ -233,11 +241,7 @@ public static class PriNativeMethods {
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 	[return: MarshalAs( UnmanagedType.Bool )]
-	public static extern Boolean CopyFile(
-		String src,
-		String dst,
-		[MarshalAs( UnmanagedType.Bool )] Boolean failIfExists
-	);
+	public static extern Boolean CopyFile( String src, String dst, [MarshalAs( UnmanagedType.Bool )] Boolean failIfExists );
 
 	[DllImport( DLL.coredll, BestFitMapping = false, SetLastError = true )]
 	[return: MarshalAs( UnmanagedType.Bool )]
@@ -357,17 +361,13 @@ public static class PriNativeMethods {
 
 	/*
 
-	
 	/// <param name="lpFileName"></param>
 	/// <param name="nBufferLength"></param>
 	/// <param name="lpBuffer"></param>
 	/// <param name="lpFilePart">
-	///     <para>
-	///         A pointer to a buffer that receives the address (within lpBuffer) of the final file name component in the
-	///         path.
-	///     </para>
-	///     <para>This parameter can be NULL.</para>
-	///     <para>If lpBuffer refers to a directory and not a file, lpFilePart receives zero.</para>
+	/// <para>A pointer to a buffer that receives the address (within lpBuffer) of the final file name component in the path.</para>
+	/// <para>This parameter can be NULL.</para>
+	/// <para>If lpBuffer refers to a directory and not a file, lpFilePart receives zero.</para>
 	/// <para>uses the current drive and directory. Not really useful!!</para>
 	/// </param>
 	/// <returns></returns>
@@ -380,14 +380,14 @@ public static class PriNativeMethods {
 	);
 	*/
 
-	public static String GetMessage( ERROR errorCode ) {
+	public static String GetMessage( FilesAndFoldersErrors filesAndFoldersErrorsCode ) {
 		var sb = new StringBuilder( 1024 );
 
 		// result is the # of characters copied to the StringBuilder.
-		var result = FormatMessage( FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY, IntPtr.Zero, ( Int32 )errorCode, 0, sb,
-			sb.Capacity, IntPtr.Zero );
+		var result = FormatMessage( FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ARGUMENT_ARRAY, IntPtr.Zero,
+			( Int32 ) filesAndFoldersErrorsCode, 0, sb, sb.Capacity, IntPtr.Zero );
 
-		return result == 0 ? $"Unknown error: {errorCode}" : sb.ToString();
+		return result == 0 ? $"Unknown error: {filesAndFoldersErrorsCode}" : sb.ToString();
 	}
 
 	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "GetSecurityDescriptorLength", CallingConvention = CallingConvention.Winapi, SetLastError = true,
@@ -411,9 +411,9 @@ public static class PriNativeMethods {
 	public static extern IntPtr LocalFree( IntPtr handle );
 
 	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "LookupPrivilegeValueW", CharSet = CharSet.Auto, SetLastError = true )]
-	public static extern Boolean LookupPrivilegeValue( [In] String lpSystemName, [In] String lpName, [In][Out] ref LUID Luid );
+	public static extern Boolean LookupPrivilegeValue( [In] String lpSystemName, [In] String lpName, [In] [Out] ref LUID Luid );
 
-	public static Int32 MakeHRFromErrorCode( ERROR errorCode ) => unchecked(( Int32 )0x80070000 | ( Int32 )errorCode);
+	public static Int32 MakeHRFromErrorCode( FilesAndFoldersErrors filesAndFoldersErrorsCode ) => unchecked( ( Int32 ) 0x80070000 | ( Int32 ) filesAndFoldersErrorsCode );
 
 	[DllImport( DLL.Kernel32, BestFitMapping = false, SetLastError = true, CharSet = CharSet.Unicode )]
 	[return: MarshalAs( UnmanagedType.Bool )]
@@ -514,44 +514,22 @@ public static class PriNativeMethods {
 	[return: MarshalAs( UnmanagedType.Bool )]
 	public static extern Boolean SetFileTime( IntPtr hFile, Int64 creationTime, Int64 lastAccessTime, Int64 lastWriteTime );
 
-	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "SetSecurityInfo", CallingConvention = CallingConvention.Winapi, SetLastError = true,
-		ExactSpelling = true, CharSet = CharSet.Unicode )]
-	public static extern DWORD SetSecurityInfoByHandle(
-		SafeHandle handle,
-		DWORD objectType,
-		DWORD securityInformation,
-		Byte[] owner,
-		Byte[] group,
-		Byte[] dacl,
-		Byte[] sacl
-	);
+	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "SetSecurityInfo", CallingConvention = CallingConvention.Winapi, SetLastError = true, ExactSpelling = true,
+		CharSet = CharSet.Unicode )]
+	public static extern DWORD SetSecurityInfoByHandle( SafeHandle handle, DWORD objectType, DWORD securityInformation, Byte[] owner, Byte[] group, Byte[] dacl, Byte[] sacl );
 
 	[DllImport( DLL.advapi32, BestFitMapping = false, EntryPoint = "SetNamedSecurityInfoW", CallingConvention = CallingConvention.Winapi, SetLastError = true,
 		ExactSpelling = true, CharSet = CharSet.Unicode )]
-	public static extern DWORD SetSecurityInfoByName(
-		String name,
-		DWORD objectType,
-		DWORD securityInformation,
-		Byte[] owner,
-		Byte[] group,
-		Byte[] dacl,
-		Byte[] sacl
-	);
+	public static extern DWORD SetSecurityInfoByName( String name, DWORD objectType, DWORD securityInformation, Byte[] owner, Byte[] group, Byte[] dacl, Byte[] sacl );
 
 	[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean SetThreadToken( [In] IntPtr Thread, [In] SafeTokenHandle Token );
 
-		
 	/// <param name="oldFile"></param>
 	/// <param name="newFile"></param>
 	/// <param name="progress"></param>
 	/// <param name="isCancelled">I believe this becomes 1 if the file copy was cancelled, and 0 otherwise.</param>
-	public static void XCopy(
-		this String oldFile,
-		String newFile,
-		CopyProgressRoutine? progress,
-		ref Int32 isCancelled
-	) {
+	public static void XCopy( this String oldFile, String newFile, CopyProgressRoutine? progress, ref Int32 isCancelled ) {
 		if ( String.IsNullOrWhiteSpace( oldFile ) ) {
 			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( oldFile ) );
 		}
@@ -565,4 +543,5 @@ public static class PriNativeMethods {
 		CopyFileEx( oldFile, newFile, progress, IntPtr.Zero, ref isCancelled,
 			MoveFileFlags.MOVE_FILE_REPLACE_EXISTSING | MoveFileFlags.MOVE_FILE_WRITE_THROUGH | MoveFileFlags.MOVE_FILE_COPY_ALLOWED );
 	}
+
 }

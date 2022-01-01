@@ -43,7 +43,7 @@ public interface ICitation {
 	public Lazy<HashSet<Int32>>? PagesOrIndexes { get; set; }
 
 	/*
-	public Boolean Add( [NotNull] Uri location ) {
+	public Boolean Add( [NeedsTesting] Uri location ) {
 		this.Location = location ?? throw new ArgumentEmptyException( nameof( location ) );
 
 		return true;

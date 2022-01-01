@@ -64,7 +64,7 @@ public record ValidatedConnectionString : IValidatedConnectionString {
 		var key = Common.ToKey( nameof( PullFromSecrectsAndRunThroughBuilder ), nameof( DatabaseServer ), nameof( ValidatedConnectionString ) );
 		this.Value = this.Cache.GetOrAdd( key, PullFromSecrectsAndRunThroughBuilder ) ?? throw new NullException( nameof( this.Cache ) );
 
-		return;
+		return;	
 
 		String PullFromSecrectsAndRunThroughBuilder() {
 			//This is ran when the Value is currently not cached

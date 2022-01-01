@@ -27,7 +27,6 @@ namespace Librainian.Financial.Currency.USD;
 using System;
 using System.Diagnostics;
 using System.Threading;
-using JetBrains.Annotations;
 using Utilities.Disposables;
 
 /// <summary>A simple, thread-safe,  Decimal-based wallet.</summary>
@@ -67,7 +66,7 @@ public class SimpleWallet : ABetterClassDispose, ISimpleWallet {
 		}
 	}
 
-	[UsedImplicitly]
+	
 	public String Formatted => this.ToString();
 
 	public Action<Decimal>? OnAfterDeposit { get; set; }

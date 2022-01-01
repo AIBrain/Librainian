@@ -30,8 +30,8 @@ namespace Librainian.Graphics.Imaging;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Utilities;
 
 [JsonObject]
 public class Frame : IEquatable<Frame> {
@@ -62,7 +62,7 @@ public class Frame : IEquatable<Frame> {
 	/// <summary>static comparision</summary>
 	/// <param name="left"></param>
 	/// <param name="right"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Equals( Frame? left, Frame? right ) {
 		if ( ReferenceEquals( left, right ) ) {
 			return true;

@@ -37,7 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Exceptions;
-using JetBrains.Annotations;
+using Utilities;
 
 public static class Path {
 
@@ -311,17 +311,17 @@ public static class Path {
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	public static Boolean HasIllegalCharacters( this String path ) {
+	public static Boolean HasIllegalCharacters( this String? path ) {
 		PriCommon.ThrowIfBlank( ref path );
 		return path?.Any( InvalidPathChars.Contains ) == true;
 	}
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
 	public static Boolean IsDirectorySeparator( this Char c ) => c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
 	public static Boolean IsPathRooted( this String path ) => System.IO.Path.IsPathRooted( path.ThrowIfBlank() );
@@ -381,7 +381,7 @@ public static class Path {
 		
 	/// <param name="path"></param>
 	/// <exception cref="ArgumentEmptyException">Thrown if any invalid chars found in path.</exception>
-	[Pure]
+	[NeedsTesting]
 	public static String ThrowIfInvalidPathChars( this String path ) {
 		path = path.ThrowIfBlank();
 

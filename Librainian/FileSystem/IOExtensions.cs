@@ -44,13 +44,14 @@ using System.Threading.Tasks;
 using Collections.Extensions;
 using Collections.Sets;
 using Exceptions;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Measurement.Time;
+using Microsoft.IO;
 using OperatingSystem;
 using Parsing;
 using Pri.LongPath;
+using Utilities;
 using Path = System.IO.Path;
 
 public static class IOExtensions {
@@ -850,9 +851,9 @@ public static class IOExtensions {
 	/// <param name="progressFolders">       </param>
 	/// <param name="progressDocuments">     </param>
 	/// <returns></returns>
-	public static Boolean GrabEntireTree( [NotNull] this IFolder startingFolder, [CanBeNull] IEnumerable<String>? documentSearchPatterns,
-		[NotNull] Action<Document> onEachDocumentFound, [CanBeNull] IProgress<Int64>? progressFolders, [CanBeNull] IProgress<Int64>? progressDocuments,
-		[NotNull] CancellationTokenSource cancellation ) {
+	public static Boolean GrabEntireTree( [NeedsTesting] this IFolder startingFolder, [NeedsTesting] IEnumerable<String>? documentSearchPatterns,
+		[NeedsTesting] Action<Document> onEachDocumentFound, [NeedsTesting] IProgress<Int64>? progressFolders, [NeedsTesting] IProgress<Int64>? progressDocuments,
+		[NeedsTesting] CancellationTokenSource cancellation ) {
 		if ( startingFolder is null ) {
 			throw new ArgumentEmptyException( nameof( startingFolder ) );
 		}
@@ -907,46 +908,46 @@ public static class IOExtensions {
 	}
 	*/
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsDirectory( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsDirectory( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.Directory );
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsExtended( this String path ) =>
 		path.Length >= 4 && path[0] == PathInternal.Constants.Backslash && ( path[1] == PathInternal.Constants.Backslash || path[1] == '?' ) && path[2] == '?' &&
 		path[3] == PathInternal.Constants.Backslash;
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsFile( this NativeMethods.Win32FindData data ) => !IsDirectory( data );
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsFile( this WIN32_FIND_DATA data ) => !IsDirectory( data );
 
 	/// <summary>Hard coded folders to skip.</summary>
 	/// <param name="data"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsIgnoreFolder( this NativeMethods.Win32FindData data ) =>
 		data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
 
 	/// <summary>Hard coded folders to skip.</summary>
 	/// <param name="data"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsIgnoreFolder( this WIN32_FIND_DATA data ) =>
 		data.cFileName.Like( "$RECYCLE.BIN" ) /*|| data.cFileName.Like( "TEMP" ) || data.cFileName.Like( "TMP" )*/ || data.cFileName.Like( "System Volume Information" );
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsParentOrCurrent( this NativeMethods.Win32FindData data ) => data.cFileName is "." or "..";
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsParentOrCurrent( this WIN32_FIND_DATA data ) => data.cFileName is "." or "..";
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsReparsePoint( this NativeMethods.Win32FindData data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsReparsePoint( this WIN32_FIND_DATA data ) => data.dwFileAttributes.HasFlag( FileAttributes.ReparsePoint );
 
 	/// <summary>Open with Explorer.exe</summary>
@@ -1376,6 +1377,8 @@ public static class IOExtensions {
 		return directoryInfo.ToString().Split( Path.DirectorySeparatorChar );
 	}
 
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new( MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte );
+
 	public static MemoryStream TryCopyStream(
 		String filePath,
 		Boolean bePatient = true,
@@ -1389,7 +1392,7 @@ public static class IOExtensions {
 
 		//TODO
 		TryAgain:
-		var memoryStream = new MemoryStream();
+		var memoryStream = MemoryStreamManager.GetStream();
 
 		try {
 			if ( File.Exists( filePath ) ) {

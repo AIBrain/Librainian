@@ -27,10 +27,9 @@ namespace Librainian.Extensions;
 using System;
 using System.Diagnostics;
 using Exceptions;
-using JetBrains.Annotations;
 using Logging;
 
-public static class Error {
+public static class ErrorTrapper {
 
 	/// <summary>
 	///     Wrap an action with a try/catch.
@@ -40,7 +39,7 @@ public static class Error {
 	/// <param name="final"> </param>
 	/// <returns>Returns true if successful.</returns>
 	[DebuggerStepThrough]
-	public static Boolean Trap( [InstantHandle] this Action action, [InstantHandle] Action? final = default( Action? ) ) {
+	public static Boolean Trap(  this Action action,  Action? final = default( Action? ) ) {
 		try {
 			action();
 
@@ -65,7 +64,7 @@ public static class Error {
 	/// <param name="actions"></param>
 	/// <returns>Returns true if successful.</returns>
 	[DebuggerStepThrough]
-	public static Boolean Trap( [InstantHandle] params Action[]? actions ) {
+	public static Boolean Trap(  params Action[]? actions ) {
 		try {
 			if ( actions is null ) {
 				if ( Debugger.IsAttached ) {
@@ -92,7 +91,7 @@ public static class Error {
 	/// <param name="func"> </param>
 	/// <param name="final"></param>
 	[DebuggerStepThrough]
-	public static T? Trap<T>( /*[InstantHandle]*/ this Func<T>? func, /*[InstantHandle]*/ Action? final = default( Action? ) ) {
+	public static T? Trap<T>( /**/ this Func<T>? func, /**/ Action? final = default( Action? ) ) {
 		if ( func is null ) {
 			if ( Debugger.IsAttached ) {
 				throw new ArgumentEmptyException( nameof( func ) );
@@ -127,10 +126,10 @@ public static class Error {
 	/// <param name="actions"></param>
 	[DebuggerStepThrough]
 	public static R? Trap<T, R>(
-		[InstantHandle] this Func<T?, R>? func,
+		 this Func<T?, R>? func,
 		T? argument,
 		out Exception? exception,
-		[InstantHandle] Action? final = default( Action? ),
+		 Action? final = default( Action? ),
 		params Action[]? actions
 	) {
 		if ( func is null ) {

@@ -27,9 +27,9 @@ namespace Librainian.Internet;
 using System;
 using System.Diagnostics;
 using Exceptions;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Parsing;
+using Utilities;
 
 /// <summary>Simple container for a <see cref="Username" /> and <see cref="Password" />.</summary>
 [JsonObject]
@@ -42,7 +42,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Username" />.</summary>
 	[JsonIgnore]
 	public String? Name {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Username;
 
 		set => this.Username = value;
@@ -51,7 +51,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Password" />.</summary>
 	[JsonIgnore]
 	public String? Pass {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Password;
 
 		set => this.Password = value;
@@ -60,7 +60,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Password" />.</summary>
 	[JsonIgnore]
 	public String? Passcode {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Password;
 
 		set => this.Password = value;
@@ -69,7 +69,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Password" />.</summary>
 	[JsonIgnore]
 	public String? PassCode {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Password;
 
 		set => this.Password = value;
@@ -84,7 +84,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Password" />.</summary>
 	[JsonIgnore]
 	public String? PassWord {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Password;
 
 		set => this.Password = value;
@@ -93,7 +93,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Username" />.</summary>
 	[JsonIgnore]
 	public String? User {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Username;
 
 		set => this.Username = value;
@@ -102,7 +102,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Username" />.</summary>
 	[JsonIgnore]
 	public String? Userid {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Username;
 
 		set => this.Username = value;
@@ -111,7 +111,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Username" />.</summary>
 	[JsonIgnore]
 	public String? UserId {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Username;
 
 		set => this.Username = value;
@@ -120,7 +120,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Username" />.</summary>
 	[JsonIgnore]
 	public String? UserID {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Username;
 
 		set => this.Username = value;
@@ -135,7 +135,7 @@ public class Credentials {
 	/// <summary>Alias for <see cref="Username" />.</summary>
 	[JsonIgnore]
 	public String? UserName {
-		[CanBeNull]
+		[NeedsTesting]
 		get => this.Username;
 
 		set => this.Username = value;

@@ -174,7 +174,7 @@ public abstract class ABetterClassDisposeReactive : ReactiveObject, IABetterClas
 	/*
 
     /// <summary>Set via <see cref="SetDisposeHint" /> to help find if an object has not been disposed of properly.</summary>
-    [CanBeNull]
+    [NeedsTesting]
     private String? DisposeHint { get; set; }
     */
 
@@ -183,7 +183,7 @@ public abstract class ABetterClassDisposeReactive : ReactiveObject, IABetterClas
     /// <summary>Call at any time to set a debugging hint as to the creator of this disposable.</summary>
     /// <param name="hint"></param>
     [Conditional( "DEBUG" )]
-    public void SetDisposeHint( [CanBeNull] String? hint ) => this.DisposeHint = hint;
+    public void SetDisposeHint( [NeedsTesting] String? hint ) => this.DisposeHint = hint;
     */
 
 }

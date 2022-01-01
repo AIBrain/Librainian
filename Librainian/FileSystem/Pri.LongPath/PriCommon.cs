@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using Exceptions;
-using JetBrains.Annotations;
+using Utilities;
 
 public static class PriCommon {
 
@@ -52,55 +52,53 @@ public static class PriCommon {
 
 	public const Int32 SUCCESS = 0;
 
-	private static String GetMessageFromErrorCode( PriNativeMethods.ERROR errorCode ) {
+	private static String GetMessageFromErrorCode( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode ) {
 		var buffer = new StringBuilder( 1024 );
 
 		var _ = PriNativeMethods.FormatMessage( PriNativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS | PriNativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | PriNativeMethods.FORMAT_MESSAGE_ARGUMENT_ARRAY,
-			IntPtr.Zero, ( Int32 )errorCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
+			IntPtr.Zero, ( Int32 )filesAndFoldersErrorsCode, 0, buffer, buffer.Capacity, IntPtr.Zero );
 
 		return buffer.ToString();
 	}
-
-	public static Boolean EndsWith( this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[^1] == value;
 
 	public static FileAttributes GetAttributes( this String path ) {
 		var normalizedPath = path.NormalizeLongPath();
 
 		var errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
 
-		if ( errorCode != ( Int32 )PriNativeMethods.ERROR.ERROR_SUCCESS ) {
+		if ( errorCode != ( Int32 )PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
 			throw GetExceptionFromWin32Error( errorCode );
 		}
 
 		return fileAttributes;
 	}
 
-	public static FileAttributes GetAttributes( this String path, out PriNativeMethods.ERROR errorCode ) {
+	public static FileAttributes GetAttributes( this String path, out PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode ) {
 		var normalizedPath = path.NormalizeLongPath();
 
-		errorCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
+		filesAndFoldersErrorsCode = normalizedPath.TryGetDirectoryAttributes( out var fileAttributes );
 
 		return fileAttributes;
 	}
 
 	public static Exception GetExceptionFromLastWin32Error() => GetExceptionFromLastWin32Error( "path" );
 
-	public static Exception GetExceptionFromLastWin32Error( String parameterName ) => GetExceptionFromWin32Error( ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error(), parameterName );
+	public static Exception GetExceptionFromLastWin32Error( String parameterName ) => GetExceptionFromWin32Error( ( PriNativeMethods.FilesAndFoldersErrors )Marshal.GetLastWin32Error(), parameterName );
 
-	public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode ) => GetExceptionFromWin32Error( errorCode, "path" );
+	public static Exception GetExceptionFromWin32Error( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode ) => GetExceptionFromWin32Error( filesAndFoldersErrorsCode, "path" );
 
-	public static Exception GetExceptionFromWin32Error( PriNativeMethods.ERROR errorCode, String parameterName ) {
-		var message = GetMessageFromErrorCode( errorCode );
+	public static Exception GetExceptionFromWin32Error( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode, String parameterName ) {
+		var message = GetMessageFromErrorCode( filesAndFoldersErrorsCode );
 
-		return errorCode switch {
-			PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND => new FileNotFoundException( message ),
-			PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND => new DirectoryNotFoundException( message ),
-			PriNativeMethods.ERROR.ERROR_ACCESS_DENIED => new UnauthorizedAccessException( message ),
-			PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE => new PathTooLongException( message ),
-			PriNativeMethods.ERROR.ERROR_INVALID_DRIVE => new DriveNotFoundException( message ),
-			PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED => new OperationCanceledException( message ),
-			PriNativeMethods.ERROR.ERROR_INVALID_NAME => new ArgumentException( message, parameterName ),
-			var _ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( errorCode ) )
+		return filesAndFoldersErrorsCode switch {
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_FILE_NOT_FOUND => new FileNotFoundException( message ),
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_PATH_NOT_FOUND => new DirectoryNotFoundException( message ),
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_ACCESS_DENIED => new UnauthorizedAccessException( message ),
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_FILENAME_EXCED_RANGE => new PathTooLongException( message ),
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_DRIVE => new DriveNotFoundException( message ),
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_OPERATION_ABORTED => new OperationCanceledException( message ),
+			PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_NAME => new ArgumentException( message, parameterName ),
+			var _ => new IOException( message, PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) )
 		};
 	}
 
@@ -109,7 +107,7 @@ public static class PriCommon {
 
 		var errorCode = TryGetFileAttributes( normalizedPath, out var fileAttributes );
 
-		if ( errorCode != ( Int32 )PriNativeMethods.ERROR.ERROR_SUCCESS ) {
+		if ( errorCode != ( Int32 )PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
 			throw GetExceptionFromWin32Error( errorCode );
 		}
 
@@ -162,12 +160,12 @@ public static class PriCommon {
 	/*
 	public static Int32 SetSecurityInfo(
 		ResourceType type,
-		[NotNull] String name,
+		[NeedsTesting] String name,
 		SecurityInfos securityInformation,
-		[CanBeNull] SecurityIdentifier owner,
-		[CanBeNull] SecurityIdentifier group,
-		[CanBeNull] GenericAcl sacl,
-		[CanBeNull] GenericAcl dacl
+		[NeedsTesting] SecurityIdentifier owner,
+		[NeedsTesting] SecurityIdentifier group,
+		[NeedsTesting] GenericAcl sacl,
+		[NeedsTesting] GenericAcl dacl
 	) {
 		name = name.ThrowIfBlank();
 
@@ -279,7 +277,7 @@ public static class PriCommon {
 	/// <param name="path"></param>
 	/// <exception cref="ArgumentEmptyException">Gets thrown if the <paramref name="path" /> is null, whitespace, or empty.</exception>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	public static String ThrowIfBlank( this String? path ) {
 		if ( String.IsNullOrEmpty( path = path?.Trim() ) ) {
@@ -292,13 +290,13 @@ public static class PriCommon {
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
 	public static void ThrowIfBlank( ref String? path ) {
-		if ( String.IsNullOrEmpty( path?.Trim() ) ) {
+		if ( String.IsNullOrEmpty( path = path?.Trim() ) ) {
 			throw new ArgumentEmptyException( nameof( path ) );
 		}
 	}
 
-	public static void ThrowIfError( PriNativeMethods.ERROR errorCode, IntPtr byteArray ) {
-		if ( errorCode == PriNativeMethods.ERROR.ERROR_SUCCESS ) {
+	public static void ThrowIfError( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode, IntPtr byteArray ) {
+		if ( filesAndFoldersErrorsCode == PriNativeMethods.FilesAndFoldersErrors.ERROR_SUCCESS ) {
 			if ( IntPtr.Zero.Equals( byteArray ) ) {
 
 				//
@@ -309,41 +307,41 @@ public static class PriCommon {
 			}
 		}
 		else {
-			switch ( errorCode ) {
-				case PriNativeMethods.ERROR.ERROR_NOT_ALL_ASSIGNED:
-				case PriNativeMethods.ERROR.ERROR_PRIVILEGE_NOT_HELD:
+			switch ( filesAndFoldersErrorsCode ) {
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_NOT_ALL_ASSIGNED:
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_PRIVILEGE_NOT_HELD:
 					throw new SecurityException( "PrivilegeNotHeldException.SeSecurityPrivilege" );
 
-				case PriNativeMethods.ERROR.ERROR_ACCESS_DENIED:
-				case PriNativeMethods.ERROR.ERROR_CANT_OPEN_ANONYMOUS:
-				case PriNativeMethods.ERROR.ERROR_LOGON_FAILURE:
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_ACCESS_DENIED:
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_CANT_OPEN_ANONYMOUS:
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_LOGON_FAILURE:
 					throw new UnauthorizedAccessException();
 
-				case PriNativeMethods.ERROR.ERROR_BAD_NETPATH:
-					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
-				case PriNativeMethods.ERROR.ERROR_NETNAME_DELETED:
-					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_BAD_NETPATH:
+					throw new IOException( PriNativeMethods.GetMessage( filesAndFoldersErrorsCode ), PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_NETNAME_DELETED:
+					throw new IOException( PriNativeMethods.GetMessage( filesAndFoldersErrorsCode ), PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 
-				case PriNativeMethods.ERROR.ERROR_NOT_ENOUGH_MEMORY:
+				case PriNativeMethods.FilesAndFoldersErrors.ERROR_NOT_ENOUGH_MEMORY:
 					throw new OutOfMemoryException();
 
 				default:
-					throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+					throw new IOException( PriNativeMethods.GetMessage( filesAndFoldersErrorsCode ), PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 			}
 		}
 	}
 
-	public static void ThrowIOError( PriNativeMethods.ERROR errorCode, String maybeFullPath ) {
+	public static void ThrowIOError( PriNativeMethods.FilesAndFoldersErrors filesAndFoldersErrorsCode, String maybeFullPath ) {
 		if ( String.IsNullOrWhiteSpace( maybeFullPath ) ) {
 			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( maybeFullPath ) );
 		}
 
 		// This doesn't have to be perfect, but is a perf optimization.
-		var isInvalidPath = errorCode is PriNativeMethods.ERROR.ERROR_INVALID_NAME or PriNativeMethods.ERROR.ERROR_BAD_PATHNAME;
+		var isInvalidPath = filesAndFoldersErrorsCode is PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_NAME or PriNativeMethods.FilesAndFoldersErrors.ERROR_BAD_PATHNAME;
 		var str = isInvalidPath ? maybeFullPath.GetFileName() : maybeFullPath;
 
-		switch ( errorCode ) {
-			case PriNativeMethods.ERROR.ERROR_FILE_NOT_FOUND:
+		switch ( filesAndFoldersErrorsCode ) {
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_FILE_NOT_FOUND:
 
 				if ( str.Length == 0 ) {
 					throw new FileNotFoundException( "Empty filename" );
@@ -352,7 +350,7 @@ public static class PriCommon {
 					throw new FileNotFoundException( $"File {str} not found", str );
 				}
 
-			case PriNativeMethods.ERROR.ERROR_PATH_NOT_FOUND:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_PATH_NOT_FOUND:
 
 				if ( str.Length == 0 ) {
 					throw new DirectoryNotFoundException( "Empty directory" );
@@ -361,7 +359,7 @@ public static class PriCommon {
 					throw new DirectoryNotFoundException( $"Directory {str} not found" );
 				}
 
-			case PriNativeMethods.ERROR.ERROR_ACCESS_DENIED:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_ACCESS_DENIED:
 
 				if ( str.Length == 0 ) {
 					throw new UnauthorizedAccessException( "Empty path" );
@@ -370,45 +368,45 @@ public static class PriCommon {
 					throw new UnauthorizedAccessException( $"Access denied accessing {str}" );
 				}
 
-			case PriNativeMethods.ERROR.ERROR_ALREADY_EXISTS:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_ALREADY_EXISTS:
 
 				if ( str.Length == 0 ) {
 					goto default;
 				}
 
-				throw new IOException( $"File {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				throw new IOException( $"File {str}", PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 
-			case PriNativeMethods.ERROR.ERROR_FILENAME_EXCED_RANGE:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_FILENAME_EXCED_RANGE:
 				throw new PathTooLongException( "Path too long" );
 
-			case PriNativeMethods.ERROR.ERROR_INVALID_DRIVE:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_DRIVE:
 				throw new DriveNotFoundException( $"Drive {str} not found" );
 
-			case PriNativeMethods.ERROR.ERROR_INVALID_PARAMETER:
-				throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_INVALID_PARAMETER:
+				throw new IOException( PriNativeMethods.GetMessage( filesAndFoldersErrorsCode ), PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 
-			case PriNativeMethods.ERROR.ERROR_SHARING_VIOLATION:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_SHARING_VIOLATION:
 
 				if ( str.Length == 0 ) {
-					throw new IOException( "Sharing violation with empty filename", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+					throw new IOException( "Sharing violation with empty filename", PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 				}
 				else {
-					throw new IOException( $"Sharing violation: {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+					throw new IOException( $"Sharing violation: {str}", PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 				}
 
-			case PriNativeMethods.ERROR.ERROR_FILE_EXISTS:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_FILE_EXISTS:
 
 				if ( str.Length == 0 ) {
 					goto default;
 				}
 
-				throw new IOException( $"File exists {str}", PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				throw new IOException( $"File exists {str}", PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 
-			case PriNativeMethods.ERROR.ERROR_OPERATION_ABORTED:
+			case PriNativeMethods.FilesAndFoldersErrors.ERROR_OPERATION_ABORTED:
 				throw new OperationCanceledException();
 
 			default:
-				throw new IOException( PriNativeMethods.GetMessage( errorCode ), PriNativeMethods.MakeHRFromErrorCode( errorCode ) );
+				throw new IOException( PriNativeMethods.GetMessage( filesAndFoldersErrorsCode ), PriNativeMethods.MakeHRFromErrorCode( filesAndFoldersErrorsCode ) );
 		}
 	}
 
@@ -436,10 +434,10 @@ public static class PriCommon {
 	}
 	*/
 
-	public static PriNativeMethods.ERROR TryGetDirectoryAttributes( this String normalizedPath, out FileAttributes attributes ) =>
+	public static PriNativeMethods.FilesAndFoldersErrors TryGetDirectoryAttributes( this String normalizedPath, out FileAttributes attributes ) =>
 		TryGetFileAttributes( normalizedPath.ThrowIfBlank(), out attributes );
 
-	public static PriNativeMethods.ERROR TryGetFileAttributes( String normalizedPath, out FileAttributes attributes ) {
+	public static PriNativeMethods.FilesAndFoldersErrors TryGetFileAttributes( String normalizedPath, out FileAttributes attributes ) {
 		var data = new WIN32_FILE_ATTRIBUTE_DATA();
 
 		var errorMode = PriNativeMethods.SetErrorMode( 1 );
@@ -457,6 +455,6 @@ public static class PriCommon {
 
 		attributes = ( FileAttributes )PriNativeMethods.INVALID_FILE_ATTRIBUTES;
 
-		return ( PriNativeMethods.ERROR )Marshal.GetLastWin32Error();
+		return ( PriNativeMethods.FilesAndFoldersErrors )Marshal.GetLastWin32Error();
 	}
 }

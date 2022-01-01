@@ -33,6 +33,7 @@ using Exceptions;
 using FileSystem;
 using Logging;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>
 ///     <para>Computes the various hashes of the given <see cref="AbsolutePath" />.</para>
@@ -179,6 +180,7 @@ public class DocumentInfo : IEquatable<DocumentInfo> {
 	/// </summary>
 	/// <param name="document"></param>
 	/// <param name="cancellationToken">   </param>
+	[NeedsTesting]
 	public async Task GetHashesAsync( Document document, CancellationToken cancellationToken ) {
 		if ( document is null ) {
 			throw new ArgumentEmptyException( nameof( document ) );
@@ -187,17 +189,17 @@ public class DocumentInfo : IEquatable<DocumentInfo> {
 		var watch = Stopwatch.StartNew();
 		$"[{Environment.CurrentManagedThreadId}] Started hashings on {this.AbsolutePath}...".Verbose();
 
-		var addHash = document.HarkerHash32( cancellationToken ).AsValueTask().AsTask();
-		var crc32 = document.CRC32( cancellationToken ).AsValueTask().AsTask();
-		var crc64 = document.CRC64( cancellationToken ).AsValueTask().AsTask();
+		var addHash = document.HarkerHash32( cancellationToken );
+		var crc32 = document.CRC32( cancellationToken );
+		var crc64 = document.CRC64( cancellationToken );
 
 		await Task.WhenAll( addHash, crc32, crc64 ).ConfigureAwait( false );
 
-		this.AddHash = addHash.Result;
+		this.AddHash = addHash.GetAwaiter().GetResult();
 
-		this.CRC32 = crc32.Result;
+		this.CRC32 = crc32.GetAwaiter().GetResult();
 
-		this.CRC64 = crc64.Result;
+		this.CRC64 = crc64.GetAwaiter().GetResult();
 
 		watch.Stop();
 

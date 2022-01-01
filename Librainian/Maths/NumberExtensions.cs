@@ -34,10 +34,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Exceptions;
-using JetBrains.Annotations;
 using Measurement.Time;
 using Numbers;
 using Rationals;
+using Utilities;
 
 public static class NumberExtensions {
 
@@ -77,84 +77,84 @@ public static class NumberExtensions {
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this SByte number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Byte number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Int16 number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Int32 number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Int64 number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this UInt16 number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this UInt32 number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this UInt64 number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this UInt64? number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Int64? number ) => number > 0;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Decimal number ) => number > Decimal.Zero;
 
 	/// <summary>Returns true if <paramref name="number" /> is greater than 0.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Any( this Double number ) => number > 0;
@@ -162,7 +162,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this Int64 value ) {
 		Int32 i;
 
@@ -176,7 +176,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this UInt64 value ) {
 		Int32 i;
 
@@ -190,7 +190,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this Int32 value ) {
 		Int32 i;
 
@@ -204,7 +204,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this UInt32 value ) {
 		Int32 i;
 
@@ -218,7 +218,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this Int16 value ) {
 		Int32 i;
 
@@ -232,7 +232,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this UInt16 value ) {
 		Int32 i;
 
@@ -246,7 +246,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this Byte value ) {
 		Int32 i;
 
@@ -260,7 +260,7 @@ public static class NumberExtensions {
 	/// <summary>Counts the number of set (bit = 1) bits in a given value.</summary>
 	/// <param name="value">Value to check.</param>
 	/// <returns>Number of set (1) bits.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 BitsOn( this SByte value ) {
 		Int32 i;
 
@@ -297,7 +297,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this Int64 value ) {
 		Int64 i;
 
@@ -312,7 +312,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this UInt64 value ) {
 		UInt64 i;
 
@@ -327,7 +327,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this Int32 value ) {
 		Int32 i;
 
@@ -342,7 +342,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this UInt32 value ) {
 		UInt32 i;
 
@@ -357,7 +357,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this Int16 value ) {
 		Int32 i;
 
@@ -372,7 +372,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this UInt16 value ) {
 		Int32 i;
 
@@ -387,7 +387,7 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this SByte value ) {
 		Int32 i;
 
@@ -402,14 +402,14 @@ public static class NumberExtensions {
 	/// <param name="value">Value to check.</param>
 	/// <returns>True for even, False for odd.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Parity( this Byte value ) => ( ( ( ( UInt64 )( value * 0x0101010101010101 ) & 0x8040201008040201 ) % 0x1FF ) & 1 ) != 0;
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
 	/// <param name="source">Source value to reverse</param>
 	/// <returns>Input value with reversed bits</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Byte ReverseBits( this Byte source ) => ( Byte )( ( ( ( ( source * 0x0802 ) & 0x22110 ) | ( ( source * 0x8020 ) & 0x88440 ) ) * 0x10101 ) >> 16 );
 
 	/// <summary>Reverses the bit order of a variable (ie: 0100 1000 becomes 0001 0010)</summary>
@@ -449,7 +449,7 @@ public static class NumberExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String SizeSuffix( this Int64 value, Int32 decimalPlaces = 1 ) {
 		if ( value < 0 ) {
 			return "-" + SizeSuffix( -value );
@@ -557,7 +557,7 @@ public static class NumberExtensions {
 	/// <param name="begin">inclusive</param>
 	/// <param name="end">  inclusive</param>
 	/// <param name="step"> </param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Int32> To( this Int32 begin, Int32 end, Int32 step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -584,7 +584,7 @@ public static class NumberExtensions {
 	/// <param name="from"></param>
 	/// <param name="end"> </param>
 	/// <param name="step"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<UInt64> To( this UInt64 from, UInt64 end, UInt64 step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -614,7 +614,7 @@ public static class NumberExtensions {
 	/// <param name="begin"></param>
 	/// <param name="end"> </param>
 	/// <param name="step"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Int64> To( this Int64 begin, Int64 end, Int64 step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -644,7 +644,7 @@ public static class NumberExtensions {
 	/// <param name="from"></param>
 	/// <param name="end">  </param>
 	/// <param name="step"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<BigInteger> To( this BigInteger from, BigInteger end, UInt64 step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -666,7 +666,7 @@ public static class NumberExtensions {
 	/// <param name="begin"></param>
 	/// <param name="end">  </param>
 	/// <param name="step"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<BigInteger> To( this Int64 begin, BigInteger end, UInt64 step = 1 ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -690,7 +690,7 @@ public static class NumberExtensions {
 	/// <param name="begin"></param>
 	/// <param name="end">   </param>
 	/// <param name="step"> </param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Rational> To( this Int32 begin, Rational end, Rational step ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -723,7 +723,7 @@ public static class NumberExtensions {
 	///     ); foreach ( var dateTime in minutes ) {
 	///     Console.WriteLine( dateTime ); }
 	/// </example>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<DateTime> To( this DateTime from, DateTime to, TimeSpan? step = null ) {
 		step ??= from.GetStep( to );
 
@@ -743,7 +743,7 @@ public static class NumberExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Single> To( this Single start, Single end, Single step ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -756,7 +756,7 @@ public static class NumberExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Double> To( this Double start, Double end, Single step ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -774,7 +774,7 @@ public static class NumberExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Decimal> To( this Decimal start, Decimal end, Decimal step ) {
 		if ( step == 0 ) {
 			throw new ArgumentOutOfRangeException( nameof( step ), $"{nameof( step )} must not equal zero." );
@@ -792,7 +792,7 @@ public static class NumberExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String ToHex( this IEnumerable<Byte> input ) {
 		if ( input is null ) {
 			throw new ArgumentEmptyException( nameof( input ) );

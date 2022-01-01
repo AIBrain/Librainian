@@ -1,4 +1,4 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,12 +23,55 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NeedsTestingAttribute.cs" last touched on 2022-01-01 at 5:04 AM by Protiguous.
+// File "ConcurrentNoBlockStackL.cs" last touched on 2021-12-29 at 5:04 AM by Protiguous.
 
-namespace Librainian.Utilities;
+namespace Librainian.Collections.Stacks;
 
 using System;
+using System.Threading;
 
-/// <summary>Mark that this class needs testing and unit testing to confirm it works as expected.</summary>
-[AttributeUsage( AttributeTargets.All )]
-public class NeedsTestingAttribute : Attribute { }
+public class ConcurrentNoBlockStackL<T> {
+
+	private volatile Node? _head;
+
+	public ConcurrentNoBlockStackL() => this._head = new Node( default( T ), this._head );
+
+	public T? Pop() {
+		Node? ret;
+
+		do {
+			ret = this._head;
+
+			if ( ret?.Next is null ) {
+				throw new IndexOutOfRangeException( "Stack is empty" );
+			}
+		} while ( Interlocked.CompareExchange( ref this._head, ret.Next, ret ) != ret );
+
+		return ret.Item;
+	}
+
+	public void Push( T? item ) {
+		var nodeNew = new Node( item );
+
+		Node? tmp;
+
+		do {
+			tmp = this._head;
+			nodeNew.Next = tmp;
+		} while ( Interlocked.CompareExchange( ref this._head, nodeNew, tmp ) != tmp );
+	}
+
+	internal sealed class Node {
+
+		internal readonly T? Item;
+
+		internal Node? Next;
+
+		public Node( T? item, Node? next = null ) {
+			this.Item = item;
+			this.Next = next;
+		}
+
+	}
+
+}

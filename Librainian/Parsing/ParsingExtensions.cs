@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ParsingExtensions.cs" last touched on 2021-12-16 at 6:47 AM by Protiguous.
+// File "ParsingExtensions.cs" last touched on 2021-12-31 at 2:43 AM by Protiguous.
 
 #nullable enable
 
@@ -43,13 +43,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Exceptions;
-using JetBrains.Annotations;
+using ExtendedNumerics;
+using LazyCache;
 using Linguistics;
 using Logging;
 using Maths;
 using Maths.Numbers;
+using Microsoft.IO;
+using Pluralize.NET;
 using Rationals;
 using Threading;
+using Utilities;
 
 public static class ParsingExtensions {
 
@@ -68,58 +72,70 @@ public static class ParsingExtensions {
 
 	}
 
-	public static readonly Lazy<Regex> RegexJustNumbers = new(() => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ));
+	public static readonly Lazy<Regex> RegexJustNumbers = new( () => new Regex( "[0-9]", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 	private static Lazy<ParallelQuery<Char>> AllPossibleLetters { get; } =
-		new(() => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char ) i ).Where( Char.IsLetter ));
+		new( () => ParallelEnumerable.Range( UInt16.MinValue, UInt16.MaxValue ).Select( i => ( Char )i ).Where( Char.IsLetter ) );
 
-	private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new(() => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ));
+	private static Lazy<Regex> ForEnglishOnlyMethod { get; } = new( () => new Regex( @"(\w+)|(\$\d+\.\d+)", RegexOptions.Compiled ) );
 
-	private static Lazy<Regex> LowerUnderscore { get; } = new(() => new Regex( @"([a-z\d])([A-Z])", RegexOptions.Compiled ));
+	internal static IAppCache? LazyCache { get; set; }
 
-	private static Lazy<Regex> NoIdeaToUnderscore { get; } = new(() => new Regex( @"[-\s]", RegexOptions.Compiled ));
+	private static Lazy<Regex> LowerUnderscore { get; } = new( () => new Regex( @"([a-z\d])([A-Z])", RegexOptions.Compiled ) );
+
+	private static Lazy<Regex> NoIdeaToUnderscore { get; } = new( () => new Regex( @"[-\s]", RegexOptions.Compiled ) );
 
 	private static String[] OrdinalSuffixes { get; } = {
 		"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"
 	};
 
-	private static Lazy<Regex> SoundExPart1 { get; } = new(() => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true);
+	private static Lazy<Regex> SoundExPart1 { get; } = new( () => new Regex( @"(\d)\1*D?\1+", RegexOptions.Compiled ), true );
 
-	private static Lazy<Regex> SoundExPart2 { get; } = new(() => new Regex( "^D+", RegexOptions.Compiled ), true);
+	private static Lazy<Regex> SoundExPart2 { get; } = new( () => new Regex( "^D+", RegexOptions.Compiled ), true );
 
-	private static Lazy<Regex> SoundExPart3 { get; } = new(() => new Regex( "[D0]", RegexOptions.Compiled ), true);
+	private static Lazy<Regex> SoundExPart3 { get; } = new( () => new Regex( "[D0]", RegexOptions.Compiled ), true );
 
-	private static Lazy<Regex> UpperToUnderscore { get; } = new(() => new Regex( @"([A-Z]+)([A-Z][a-z])", RegexOptions.Compiled ));
+	private static Lazy<Regex> UpperToUnderscore { get; } = new( () => new Regex( @"([A-Z]+)([A-Z][a-z])", RegexOptions.Compiled ) );
 
-	/// <summary>WHY?? For fun?</summary>
-	public static Lazy<String> AllLowercaseLetters { get; } = new(() => new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ));
+	private static Lazy<Pluralizer> WordPluralizer { get; } = new( () => new Pluralizer() );
 
-	/// <summary>WHY?? For fun?</summary>
-	public static Lazy<String> AllUppercaseLetters { get; } = new(() => new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ));
+	/// <summary>
+	///     WHY?? For fun?
+	/// </summary>
+	public static Lazy<String> AllLowercaseLetters { get; } = new( () => new String( AllLetters().Where( Char.IsLower ).Distinct().OrderBy( c => c ).ToArray() ) );
 
-	/// <summary>this doesn't handle apostrophe well</summary>
+	/// <summary>
+	///     WHY?? For fun?
+	/// </summary>
+	public static Lazy<String> AllUppercaseLetters { get; } = new( () => new String( AllLetters().Where( Char.IsUpper ).Distinct().OrderBy( c => c ).ToArray() ) );
+
+	/// <summary>
+	///     this doesn't handle apostrophe well
+	/// </summary>
 	public static Lazy<Regex> RegexBySentenceNotworking { get; } =
-		new(() => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ));
+		new( () => new Regex( @"(?<=['""A-Za-z0-9][\.\!\?])\s+(?=[A-Z])", RegexOptions.Compiled | RegexOptions.Multiline ) );
 
-	public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new(() => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
-		RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ));
+	public static Lazy<Regex> RegexBySentenceStackoverflow { get; } = new( () => new Regex( "(?<Sentence>\\S.+?(?<Terminator>[.!?]|\\Z))(?=\\s+|\\Z)",
+		 RegexOptions.CultureInvariant | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled | RegexOptions.Multiline ) );
 
-	public static Lazy<Regex> RegexByWordBreak { get; } = new(() => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ));
+	public static Lazy<Regex> RegexByWordBreak { get; } = new( () => new Regex( @"(?=\S*(?<=\w))\b", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
-	public static Lazy<Regex> RegexJustDigits { get; } = new(() => new Regex( @"\D+", RegexOptions.Compiled | RegexOptions.Singleline ));
+	public static Lazy<Regex> RegexJustDigits { get; } = new( () => new Regex( @"\D+", RegexOptions.Compiled | RegexOptions.Singleline ) );
 
 	public static Char[] SplitBySpace { get; } = {
 		ParsingConstants.Strings.Singlespace[ 0 ]
 	};
 
-	/// <summary>Add dashes to a pascal-cased String</summary>
+	/// <summary>
+	///     Add dashes to a pascal-cased String
+	/// </summary>
 	/// <param name="value">String to convert</param>
 	/// <returns>String</returns>
-	[Pure]
+	[NeedsTesting]
 	public static String AddDashes( this String value ) =>
 		Regex.Replace( Regex.Replace( Regex.Replace( value, @"([A-Z]+)([A-Z][a-z])", "$1-$2" ), @"([a-z\d])([A-Z])", "$1-$2" ), @"[\s]", "-" );
 
-	[Pure]
+	[NeedsTesting]
 	public static String AddSpacesBeforeUppercase( this String word ) {
 		var l = word.Length * 2;
 
@@ -136,7 +152,7 @@ public static class ParsingExtensions {
 		return sb.ToString().Trim();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String AddUnderscores( this String self ) =>
 		NoIdeaToUnderscore.Value.Replace( LowerUnderscore.Value.Replace( UpperToUnderscore.Value.Replace( self, "$1_$2" ), "$1_$2" ), Symbols.Underscore );
 
@@ -152,7 +168,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <param name="splitter"></param>
 	/// <param name="comparison"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? After( this String? self, String? splitter, StringComparison comparison = StringComparison.Ordinal ) {
 		if ( self is null ) {
 			return default( String? );
@@ -169,16 +185,20 @@ public static class ParsingExtensions {
 		return self[ ( self.IndexOf( splitter, comparison ) + splitter.Length ).. ];
 	}
 
-	/// <summary>Return list of all <see cref="Char" /> that are <see cref="Char.IsLetter(Char)" /></summary>
-	[Pure]
+	/// <summary>
+	///     Return list of all <see cref="Char" /> that are <see cref="Char.IsLetter(Char)" />
+	/// </summary>
+	[NeedsTesting]
 	public static IEnumerable<Char> AllLetters() => AllPossibleLetters.Value;
 
-	[Pure]
+	[NeedsTesting]
 	public static String Append( this String? self, String? appendThis ) => $"{self ?? String.Empty}{appendThis ?? String.Empty}";
 
-	/// <summary>Return an integer formatted as 1st, 2nd, 3rd, etc...</summary>
+	/// <summary>
+	///     Return an integer formatted as 1st, 2nd, 3rd, etc...
+	/// </summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String AsOrdinal( this Int32 number ) =>
 		( number % 100 ) switch {
 			13 => $"{number}th",
@@ -204,7 +224,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <param name="splitter"></param>
 	/// <param name="comparison"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? Before( this String? self, String? splitter, StringComparison comparison = StringComparison.Ordinal ) {
 		if ( self is null ) {
 			return default( String? );
@@ -222,7 +242,7 @@ public static class ParsingExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String Between( this String source, String left, String right ) {
 		if ( source is null ) {
 			throw new ArgumentEmptyException( nameof( source ) );
@@ -245,7 +265,7 @@ public static class ParsingExtensions {
 	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String Bracket( this String? self ) {
 		self = self.Trimmed();
 
@@ -253,7 +273,33 @@ public static class ParsingExtensions {
 			$"{( self.StartsWith( ParsingConstants.Brackets.LeftBracket ) ? String.Empty : ParsingConstants.Brackets.LeftBracket )}{self}{( self.EndsWith( ParsingConstants.Brackets.RightBracket ) ? String.Empty : ParsingConstants.Brackets.RightBracket )}";
 	}
 
-	/// <summary>Modifies the <paramref name="memory" /> and capitalizes the first letter.</summary>
+	/// <summary>
+	///     captalize the return word if the parameter is capitalized if word is "Table", then return "Tables"
+	/// </summary>
+	/// <param name="word"></param>
+	/// <param name="action"></param>
+	public static String Capitalize( this String word, Func<String, String> action ) {
+		var result = action( word );
+
+		if ( word.IsCapitalized() ) {
+			if ( !result.Any() ) {
+				return result;
+			}
+
+			var sb = new StringBuilder( result.Length );
+
+			sb.Append( Char.ToUpperInvariant( result[ 0 ] ) );
+			sb.Append( result[ 1.. ] );
+
+			return sb.ToString();
+		}
+
+		return result;
+	}
+
+	/// <summary>
+	///     Modifies the <paramref name="memory" /> and capitalizes the first letter.
+	/// </summary>
 	/// <param name="memory"></param>
 	/// <param name="cultureInfo"></param>
 	[DebuggerStepThrough]
@@ -266,10 +312,12 @@ public static class ParsingExtensions {
 		first = Char.ToUpper( first, cultureInfo ?? CultureInfo.CurrentCulture );
 	}
 
-	/// <summary>Returns the <paramref name="text" /> with the first letter capitalized.</summary>
+	/// <summary>
+	///     Returns the <paramref name="text" /> with the first letter capitalized.
+	/// </summary>
 	/// <param name="text"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? Capitialize( this String? text ) {
 		if ( String.IsNullOrEmpty( text ) ) {
 			return default( String? );
@@ -282,7 +330,9 @@ public static class ParsingExtensions {
 		return Char.ToUpper( text[ 0 ], CultureInfo.CurrentCulture ) + text[ 1.. ];
 	}
 
-	/// <summary>Replaces all CR, LF, and tabs with spaces. And then replaces all double spaces with a single space.</summary>
+	/// <summary>
+	///     Replaces all CR, LF, and tabs with spaces. And then replaces all double spaces with a single space.
+	/// </summary>
 	/// <param name="s"></param>
 	/// <param name="comparison"></param>
 	public static String Cleanup( this String? s, StringComparison comparison = StringComparison.OrdinalIgnoreCase ) {
@@ -309,11 +359,13 @@ public static class ParsingExtensions {
 		return s;
 	}
 
-	/// <summary>Appends <paramref name="element" /> after <paramref name="sequence" />.</summary>
+	/// <summary>
+	///     Appends <paramref name="element" /> after <paramref name="sequence" />.
+	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="sequence"></param>
 	/// <param name="element"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<T?> Concat<T>( this IEnumerable<T> sequence, T? element ) {
 		foreach ( var item in sequence ) {
 			yield return item;
@@ -326,9 +378,11 @@ public static class ParsingExtensions {
 
 	public static Boolean Contains( this String value, String find, StringComparison comparisonType = StringComparison.Ordinal ) => value.Contains( find, comparisonType );
 
-	/// <summary>Returns the count of each letter in <paramref name="text" />.</summary>
+	/// <summary>
+	///     Returns the count of each letter in <paramref name="text" />.
+	/// </summary>
 	/// <param name="text"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IDictionary<Char, UInt64> Count( this String text ) {
 		var dict = new ConcurrentDictionary<Char, UInt64>();
 		text.AsParallel().WithMergeOptions( ParallelMergeOptions.AutoBuffered ).ForAll( c => dict.AddOrUpdate( c, 1, ( _, arg ) => arg + 1 ) );
@@ -336,11 +390,13 @@ public static class ParsingExtensions {
 		return dict;
 	}
 
-	/// <summary>Returns the count of char <paramref name="character" /> in <paramref name="text" />.</summary>
+	/// <summary>
+	///     Returns the count of char <paramref name="character" /> in <paramref name="text" />.
+	/// </summary>
 	/// <param name="text"></param>
 	/// <param name="character"></param>
-	[Pure]
-	public static UInt32 Count( this String text, Char character ) => ( UInt32 ) text.Count( c => c == character );
+	[NeedsTesting]
+	public static UInt32 Count( this String text, Char character ) => ( UInt32 )text.Count( c => c == character );
 
 	/// <summary>
 	///     Computes the Damerau-Levenshtein Distance between two strings, represented as arrays of integers, where each
@@ -352,7 +408,7 @@ public static class ParsingExtensions {
 	/// <param name="target">An array of the code points of the second String</param>
 	/// <param name="threshold">Maximum allowable distance</param>
 	/// <returns>Int.MaxValue if threshhold exceeded; otherwise the Damerau-Leveshteim distance between the strings</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 DamerauLevenshteinDistance( this String source, String target, Int32 threshold ) {
 		if ( source is null ) {
 			throw new ArgumentEmptyException( nameof( source ) );
@@ -439,11 +495,13 @@ public static class ParsingExtensions {
 		return result > threshold ? Int32.MaxValue : result;
 	}
 
-	/// <summary>Returns a double quoted (") prefix and suffix (if the <paramref name="self" /> is not already double quoted).</summary>
+	/// <summary>
+	///     Returns a double quoted (") prefix and suffix (if the <paramref name="self" /> is not already double quoted).
+	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String DoubleQuote<T>( this T? self ) {
 		var value = self.Trimmed();
 		if ( value?.StartsWith( ParsingConstants.Strings.DoubleQuote ) == true && value.EndsWith( ParsingConstants.Strings.DoubleQuote ) ) {
@@ -453,7 +511,7 @@ public static class ParsingExtensions {
 		return $"{ParsingConstants.Chars.DoubleQuote}{value}{ParsingConstants.Chars.DoubleQuote}";
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Int32 EditDistanceParallel( this String s1, String s2 ) {
 		var dist = new Int32[ s1.Length + 1, s2.Length + 1 ];
 
@@ -487,18 +545,20 @@ public static class ParsingExtensions {
 	/// </summary>
 	/// <param name="source"></param>
 	/// <param name="compare"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean EndsLike( this String source, String compare ) => source.EndsWith( compare, StringComparison.OrdinalIgnoreCase );
 
 	public static (Status status, String? end) EndsWith( this String value, IEnumerable<String> ofThese, StringComparison comparison = StringComparison.CurrentCulture ) {
 		foreach ( var end in ofThese.Where( s => value.EndsWith( s, comparison ) ) ) {
-			return ( true.ToStatus(), end );
+			return (true.ToStatus(), end);
 		}
 
-		return ( false.ToStatus(), default( String? ) );
+		return (false.ToStatus(), default( String? ));
 	}
 
-	[Pure]
+	public static Boolean EndsWith( this String? text, Char value ) => !String.IsNullOrEmpty( text ) && text[ ^1 ] == value;
+
+	[NeedsTesting]
 	public static IEnumerable<Char>? EnglishOnly( this String input ) {
 		try {
 			var sb = new StringBuilder();
@@ -537,7 +597,7 @@ public static class ParsingExtensions {
 	///         every host actually having this configuration element present.
 	///     </para>
 	/// </remarks>
-	[Pure]
+	[NeedsTesting]
 	public static Uri EscapeUriDataStringRfc3986( this String value ) {
 		// Start with RFC 2396 escaping by calling the .NET method to do the work. This MAY sometimes exhibit RFC 3986 behavior
 		// (according to the documentation). If it does, the escaping we do that follows it will be a no-op since the
@@ -554,7 +614,7 @@ public static class ParsingExtensions {
 		return new Uri( escaped.ToString() );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean ExactMatch( this String source, String compare ) {
 		if ( source is null ) {
 			throw new ArgumentEmptyException( nameof( source ) );
@@ -575,7 +635,7 @@ public static class ParsingExtensions {
 		return source.SequenceEqual( compare );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Sentence? FirstSentence( this String? text ) {
 		if ( String.IsNullOrWhiteSpace( text ) ) {
 			return Sentence.Empty;
@@ -584,14 +644,14 @@ public static class ParsingExtensions {
 		return text.ToSentences().FirstOrDefault();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Word? FirstWord( this String? sentence ) => sentence.ToWords().FirstOrDefault();
 
 	/// <param name="rational"></param>
 	/// <param name="numberOfDigits"></param>
 	/// <seealso
 	///     cref="http://kashfarooq.wordpress.com/2011/08/01/calculating-pi-in-c-part-3-using-the-net-4-bigrational-class/" />
-	[Pure]
+	[NeedsTesting]
 	public static String Format( this Rational rational, Int32 numberOfDigits ) {
 		var numeratorShiftedToEnoughDigits = rational.Numerator * BigInteger.Pow( new BigInteger( 10 ), numberOfDigits );
 		var bigInteger = numeratorShiftedToEnoughDigits / rational.Denominator;
@@ -605,20 +665,24 @@ public static class ParsingExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String FormattedNice( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToShortTimeString().Replace( ':', ';' )}";
 
-	/// <summary>YearMonthDay HH;MM;ss</summary>
+	/// <summary>
+	///     YearMonthDay HH;MM;ss
+	/// </summary>
 	/// <param name="now"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String FormattedNiceLong( this DateTime now ) => $"{now.Year}{now.Month:00}{now.Day:00}  {now.ToLongTimeString().Replace( ':', ';' )}";
 
-	/// <summary>Returns the decoded string, or <paramref name="text" /> if unable to convert.</summary>
+	/// <summary>
+	///     Returns the decoded string, or <paramref name="text" /> if unable to convert.
+	/// </summary>
 	/// <param name="text"></param>
 	/// <param name="encoding">Defaults to <see cref="Encoding.Unicode" /> and then <see cref="Encoding.UTF8" /></param>
 	/// <seealso cref="ToBase64" />
-	[Pure]
+	[NeedsTesting]
 	public static String FromBase64( this String text, Encoding? encoding = null ) {
 		Byte[] from64;
 
@@ -644,9 +708,11 @@ public static class ParsingExtensions {
 		}
 	}
 
-	/// <summary>Where did this function come from?</summary>
+	/// <summary>
+	///     Where did this function come from?
+	/// </summary>
 	/// <param name="s"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String FullSoundex( this String s ) {
 		// the encoding information
 		//const String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -684,11 +750,13 @@ public static class ParsingExtensions {
 		return $"{s[ 0 ]}{result}";
 	}
 
-	/// <summary>Return possible variants of a name for name matching.</summary>
+	/// <summary>
+	///     Return possible variants of a name for name matching.
+	/// </summary>
 	/// <param name="input">String to convert</param>
 	/// <param name="culture">The culture to use for conversion</param>
 	/// <returns>IEnumerable&lt;String&gt;</returns>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<String?> GetNameVariants( this String? input, CultureInfo? culture = null ) {
 		culture ??= CultureInfo.CurrentCulture;
 
@@ -724,11 +792,26 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
+	///     separate one combine word in to two parts, prefix word and the last word(suffix word)
+	/// </summary>
+	/// <param name="word"></param>
+	/// <param name="prefixWord"></param>
+	public static String GetSuffixWord( this String word, out String prefixWord ) {
+		var lastSpaceIndex = word.LastIndexOf( ' ' );
+		prefixWord = word[ ..( lastSpaceIndex + 1 ) ];
+
+		return word[ ( lastSpaceIndex + 1 ).. ];
+	}
+
+	public static Boolean HasSomeWhiteSpace( this String? text ) =>
+		text is not null && ( from c in text select c.ToString() ).Any( s => !String.IsNullOrEmpty( s ) && String.IsNullOrWhiteSpace( s ) );
+
+	/// <summary>
 	///     Add a space Before Each Capital Letter. then lowercase the whole string.
 	///     <para>See also: <see cref="AddSpacesBeforeUppercase" /></para>
 	/// </summary>
 	/// <param name="word"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String Humanize( this String word ) {
 		if ( word is null ) {
 			throw new ArgumentEmptyException( nameof( word ) );
@@ -737,33 +820,41 @@ public static class ParsingExtensions {
 		return word.AddSpacesBeforeUppercase().ToLower( CultureInfo.CurrentUICulture );
 	}
 
-	/// <summary>Case sensitive ( <see cref="StringComparison.Ordinal" />) string comparison.</summary>
+	/// <summary>
+	///     Case sensitive ( <see cref="StringComparison.Ordinal" />) string comparison.
+	/// </summary>
 	/// <param name="left"></param>
 	/// <param name="right"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Is( this String? left, String? right ) => ( left ?? String.Empty ).Equals( right ?? String.Empty, StringComparison.Ordinal );
 
+	public static Boolean IsAllWhiteSpace( this String? text ) => !String.IsNullOrEmpty( text ) && String.IsNullOrWhiteSpace( text );
+
+	public static Boolean IsCapitalized( this String word ) => !String.IsNullOrEmpty( word ) && Char.IsUpper( word, 0 );
+
 	/// <summary>
-	///     .NET Char class already provides an static IsDigit method however it behaves differently depending on if char is a
+	///     .NET Char struct already provides an static IsDigit method however it behaves differently depending on if char is a
 	///     Latin or not.
 	/// </summary>
 	/// <param name="c"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsDigit( this Char c ) => c is '0' or '1' or '2' or '3' or '4' or '5' or '6' or '7' or '8' or '9';
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsJustNumbers( this String? text ) =>
 		text is not null && ( text.All( Char.IsNumber ) || Decimal.TryParse( text, out var _ ) || Double.TryParse( text, out var _ ) );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsNullOrEmpty( this String? value ) => String.IsNullOrEmpty( value );
 
-	/// <summary>Checks to see if a String is all uppper case</summary>
+	/// <summary>
+	///     Checks to see if a String is all uppper case
+	/// </summary>
 	/// <param name="inputString">String to check</param>
 	/// <returns>Boolean</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsUpperCase( this String inputString ) => ParsingConstants.UpperCaseRegeEx.IsMatch( inputString );
 
 	/// <summary>
@@ -780,18 +871,20 @@ public static class ParsingExtensions {
 	/// </summary>
 	/// <param name="sentence"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<String> JustDigits( this String sentence ) => RegexJustDigits.Value.Split( sentence );
 
-	/// <summary>Example: String s = "123-123-1234".JustNumbers();</summary>
+	/// <summary>
+	///     Example: String s = "123-123-1234".JustNumbers();
+	/// </summary>
 	/// <param name="s"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? JustNumbers( this String? s ) {
 		if ( s is null ) {
 			return default( String? );
 		}
 
-		var sb = new StringBuilder( s.Length );
+		var sb = new StringBuilder( s.Length, s.Length );
 
 		foreach ( Match m in RegexJustNumbers.Value.Matches( s ) ) {
 			if ( m != null ) {
@@ -813,8 +906,8 @@ public static class ParsingExtensions {
 	/// <remarks>
 	///     <seealso cref="LimitLength" />
 	/// </remarks>
-	[Pure]
-	public static String? Left( this String? self, UInt32 count ) => self?[ ..( Int32 ) Math.Min( count, ( UInt32 ) self.Length ) ];
+	[NeedsTesting]
+	public static String? Left( this String? self, UInt32 count ) => self?[ ..( Int32 )Math.Min( count, ( UInt32 )self.Length ) ];
 
 	/// <summary>
 	///     <para>Case insensitive string comparison.</para>
@@ -827,7 +920,7 @@ public static class ParsingExtensions {
 	/// <param name="right"></param>
 	/// <param name="compareOptions"></param>
 	/// <param name="comparison"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Like(
 		this String? left,
 		String? right,
@@ -864,11 +957,13 @@ public static class ParsingExtensions {
 		return String.Equals( left, right, comparison );
 	}
 
-	/// <summary>Return <paramref name="self" />, up the <paramref name="maxlength" />.</summary>
+	/// <summary>
+	///     Return <paramref name="self" />, up the <paramref name="maxlength" />.
+	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="maxlength"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? LimitAndTrim( this String? self, Int32 maxlength ) => self?[ ..Math.Min( maxlength, self.Length ) ]?.TrimEnd();
 
 	/// <summary>
@@ -877,7 +972,7 @@ public static class ParsingExtensions {
 	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="maxlength"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? LimitAndTrimAlternate( this String? self, Int32 maxlength ) {
 		if ( self is null ) {
 			return default( String? );
@@ -885,8 +980,8 @@ public static class ParsingExtensions {
 
 		var length = Math.Min( maxlength, self.Length );
 		return new StringBuilder( self, length ) {
-				Length = length
-			}.ToString()
+			Length = length
+		}.ToString()
 			 .TrimEnd();
 	}
 
@@ -899,14 +994,16 @@ public static class ParsingExtensions {
 	/// </remarks>
 	/// <param name="self"></param>
 	/// <param name="maxlength"></param>
-	[Pure]
-	public static String? LimitLength( this String? self, UInt32 maxlength ) => self?[ ..( Int32 ) Math.Min( maxlength, ( UInt32 ) self.Length ) ];
+	[NeedsTesting]
+	public static String? LimitLength( this String? self, UInt32 maxlength ) => self?[ ..( Int32 )Math.Min( maxlength, ( UInt32 )self.Length ) ];
 
-	/// <summary>Convert the first letter of a String to lower case</summary>
+	/// <summary>
+	///     Convert the first letter of a String to lower case
+	/// </summary>
 	/// <param name="word">String to convert</param>
 	/// <param name="cultureInfo"></param>
 	/// <returns>String</returns>
-	[Pure]
+	[NeedsTesting]
 	public static String MakeInitialLowerCase( this String word, CultureInfo? cultureInfo = null ) =>
 		word.Length switch {
 			0 => String.Empty,
@@ -914,22 +1011,28 @@ public static class ParsingExtensions {
 			var _ => String.Concat( Char.ToLower( word[ 0 ], cultureInfo ?? CultureInfo.CurrentCulture ).ToString(), word[ 1.. ] )
 		};
 
-	/// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.</summary>
+	/// <summary>
+	///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.
+	/// </summary>
 	/// <param name="self"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? NullIfBlank( this String? self ) {
 		self = self?.Trim();
 
 		return String.IsNullOrEmpty( self ) ? default( String? ) : self;
 	}
 
-	/// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrEmpty" />.</summary>
+	/// <summary>
+	///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrEmpty" />.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? NullIfEmpty( this String? self ) => String.IsNullOrEmpty( self ) ? null : self;
 
-	/// <summary>Set <paramref name="self" /> to null if <see cref="String.IsNullOrEmpty" />.</summary>
+	/// <summary>
+	///     Set <paramref name="self" /> to null if <see cref="String.IsNullOrEmpty" />.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
 	public static void NullIfEmpty( ref String? self ) {
@@ -938,7 +1041,9 @@ public static class ParsingExtensions {
 		}
 	}
 
-	/// <summary>Set <paramref name="self" /> to null if <see cref="String.IsNullOrWhiteSpace" />.</summary>
+	/// <summary>
+	///     Set <paramref name="self" /> to null if <see cref="String.IsNullOrWhiteSpace" />.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
 	public static void NullIfEmptyOrWhiteSpace( ref String? self ) {
@@ -947,18 +1052,20 @@ public static class ParsingExtensions {
 		}
 	}
 
-	/// <summary>Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.</summary>
+	/// <summary>
+	///     Returns null if <paramref name="self" /> is <see cref="String.IsNullOrWhiteSpace" />.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? NullIfEmptyOrWhiteSpace( this String? self ) => String.IsNullOrWhiteSpace( self ) ? default( String? ) : self;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? NullIfJustNumbers( this String? self ) => self.IsJustNumbers() ? default( String? ) : self;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 NumberOfDigits( this BigInteger number ) => number.ToString().Length;
 
 	public static String? OnlyDigits( this String? input ) => input == default( String? ) ? default( String? ) : String.Concat( input.Where( Char.IsDigit ) );
@@ -995,7 +1102,7 @@ public static class ParsingExtensions {
 	/// <param name="middlePadding"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String PadMiddle( this String left, String? right, Char middlePadding, Int32 count = 1 ) {
 		if ( left is null ) {
 			throw new ArgumentEmptyException( nameof( left ) );
@@ -1009,58 +1116,98 @@ public static class ParsingExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
-	public static String? PluralOf( this BigInteger number, String? singular ) {
-		if ( String.IsNullOrEmpty( singular ) ) {
+	[NeedsTesting]
+	public static String? PluralOf( this BigInteger number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == BigInteger.One ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
+
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this Decimal number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == Decimal.One ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
+
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this Rational number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
+
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this Byte number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
+
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this Int32 number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
+
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this BigDecimal number, String word ) {
+		if ( String.IsNullOrEmpty( word ) ) {
 			return default( String? );
 		}
 
-		if ( number == BigInteger.One ) {
-			return singular;
+		String key;
+
+		if ( number == 1 ) {
+			if ( LazyCache is null ) {
+				return WordPluralizer.Value.Singularize( word );
+			}
+
+			key = Common.ToKey( nameof( PluralOf ), word, nameof( WordPluralizer.Value.Singularize ) );
+			return LazyCache.GetOrAdd( key, () => WordPluralizer.Value.Singularize( word ) );
+
 		}
 
-		return singular + "s"; //TODO find .NET Core/Standard plural nuget
+		if ( LazyCache is null ) {
+			return WordPluralizer.Value.Pluralize( word );
+		}
+
+		key = Common.ToKey( nameof( PluralOf ), word, nameof( WordPluralizer.Value.Pluralize ) );
+		return LazyCache.GetOrAdd( key, () => WordPluralizer.Value.Pluralize( word ) );
+
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
-	public static String? PluralOf( this Decimal number, String? singular ) {
-		if ( String.IsNullOrEmpty( singular ) ) {
-			return default( String? );
-		}
-
-		if ( number == 1 ) {
-			return singular;
-		}
-
-		return singular + "s"; //TODO find .NET Core plural nuget
-	}
+	[NeedsTesting]
+	public static String? PluralOf( this Int64 number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
 
 	[DebuggerStepThrough]
-	[Pure]
-	public static String? PluralOf( this Rational number, String? singular ) {
-		if ( String.IsNullOrEmpty( singular ) ) {
-			return default( String? );
-		}
+	[NeedsTesting]
+	public static String? PluralOf( this UInt32 number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
 
-		if ( number == 1 ) {
-			return singular;
-		}
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this UInt64 number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
 
-		return singular + "s"; //TODO find .NET Core plural nuget
-	}
+	[DebuggerStepThrough]
+	[NeedsTesting]
+	public static String? PluralOf( this UInt256 number, String word ) =>
+		String.IsNullOrEmpty( word ) ? default( String? ) :
+		number == 1 ? WordPluralizer.Value.Singularize( word ) : WordPluralizer.Value.Pluralize( word );
 
-	[Pure]
+	[NeedsTesting]
 	public static String PrefixWithUnderscore( this String? self ) => $"{Symbols.Underscore}{self}";
 
-	[Pure]
+	[NeedsTesting]
 	public static String Prepend( this String? self, String? prependThis ) => $"{prependThis}{self}";
 
-	[Pure]
+	[NeedsTesting]
 	public static String Quoted( this String? self ) => $"\"{self}\"";
 
-	[Pure]
-	public static String ReadToEnd( this MemoryStream ms ) {
+	[NeedsTesting]
+	public static String ReadToEnd( this RecyclableMemoryStream ms ) {
 		if ( ms is null ) {
 			throw new ArgumentEmptyException( nameof( ms ) );
 		}
@@ -1088,13 +1235,15 @@ public static class ParsingExtensions {
 		return self[ ..^1 ];
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String? RemoveNullChars( this String text ) => text.ReplaceAll( "\0", String.Empty );
 
-	/// <summary>Remove leading and trailing " from a string.</summary>
+	/// <summary>
+	///     Remove leading and trailing " from a string.
+	/// </summary>
 	/// <param name="input">String to parse</param>
 	/// <returns>String</returns>
-	[Pure]
+	[NeedsTesting]
 	public static String RemoveSurroundingQuotes( this String input ) {
 		if ( input.StartsWith( "\"", StringComparison.Ordinal ) && input.EndsWith( "\"", StringComparison.Ordinal ) ) {
 			// remove leading/trailing quotes
@@ -1104,27 +1253,32 @@ public static class ParsingExtensions {
 		return input;
 	}
 
-	/// <summary>Repeats <paramref name="c" /><paramref name="count" /> times.</summary>
+	/// <summary>
+	///     Repeats <paramref name="c" /><paramref name="count" /> times.
+	/// </summary>
 	/// <param name="c"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static String Repeat( this Char c, Int32 count ) => new(c, count);
+	public static String Repeat( this Char c, Int32 count ) => new( c, count );
 
-	/// <summary>Repeats the first char of the string <paramref name="self" /><paramref name="count" /> times.</summary>
+	/// <summary>
+	///     Repeats the first char of the string <paramref name="self" /><paramref name="count" /> times.
+	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String Repeat( this String? self, Int32 count ) => Enumerable.Repeat( self, count ).ToStrings( null );
 
-	/// <summary></summary>
+	/// <summary>
+	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="count"></param>
 	/// <param name="index"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String RepeatAt( this String self, Int32 count, Int32 index = 0 ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -1138,8 +1292,7 @@ public static class ParsingExtensions {
 	}
 
 	/// <summary>
-	///     Repeats the supplied string the specified number of times, putting the separator string between each
-	///     repetition.
+	///     Repeats the supplied string the specified number of times, putting the separator string between each repetition.
 	/// </summary>
 	/// <param name="self">The extended string.</param>
 	/// <param name="repetitions">The number of repetitions of the string to make. Must not be negative.</param>
@@ -1149,7 +1302,7 @@ public static class ParsingExtensions {
 	///     If n
 	///     is 0, this method will return String.Empty.
 	/// </returns>
-	[Pure]
+	[NeedsTesting]
 	public static String RepeatString( this String self, Int32 repetitions, String separator = "" ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -1192,7 +1345,7 @@ public static class ParsingExtensions {
 	/// <param name="needle"></param>
 	/// <param name="replacement"></param>
 	/// <param name="comparison"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? ReplaceAll( this String? haystack, String? needle, String? replacement, StringComparison comparison = StringComparison.Ordinal ) {
 		if ( String.IsNullOrEmpty( haystack ) || String.IsNullOrEmpty( needle ) || String.IsNullOrEmpty( replacement ) ) {
 			return haystack;
@@ -1215,19 +1368,35 @@ public static class ParsingExtensions {
 		return haystack;
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String ReplaceFirst( this String haystack, String needle, String? replacement, StringComparison comparison = StringComparison.Ordinal ) {
 		var indexOf = haystack.IndexOf( needle, comparison );
 
 		return indexOf < 0 ? haystack : $"{haystack[ ..indexOf ]}{replacement}{haystack[ ( indexOf + needle.Length ).. ]}";
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String ReplaceHTML( this String s, String withwhat ) => Regex.Replace( s, @"<(.|\n)*?>", withwhat );
 
-	/// <summary>Reverse a String</summary>
+	/// <summary>
+	///     Given a string, "a1s2d3f4g5hj6j7", return the string "1234567".
+	/// </summary>
+	/// <param name="text"></param>
+	/// <returns></returns>
+	public static String ReturnOnlyDigits( this String text ) {
+		var sb = new StringBuilder( text.Length, text.Length );
+		foreach ( var c in text.Where( c => c.IsDigit() ) ) {
+			sb.Append( c );
+		}
+
+		return sb.ToString();
+	}
+
+	/// <summary>
+	///     Reverse a String
+	/// </summary>
 	/// <param name="s"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String Reverse( this String s ) {
 		var charArray = s.ToCharArray();
 		Array.Reverse( charArray );
@@ -1237,7 +1406,7 @@ public static class ParsingExtensions {
 
 	/// <param name="myString"></param>
 	/// <see cref="http://codereview.stackexchange.com/questions/78065/reverse-a-sentence-quickly-without-pointers" />
-	[Pure]
+	[NeedsTesting]
 	public static String ReverseWords( this String myString ) {
 		var length = myString.Length;
 		var tokens = new Char[ length ];
@@ -1284,7 +1453,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String Right( this String? self, Int32 count ) {
 		Debug.Assert( count >= 0 );
 
@@ -1311,7 +1480,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <param name="count"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static ReadOnlySpan<Char> Right( this ReadOnlySpan<Char> self, Int32 count ) {
 		if ( count <= 0 || self.IsEmpty ) {
@@ -1338,7 +1507,7 @@ public static class ParsingExtensions {
 	/// <param name="right"></param>
 	/// <param name="compareOptions"></param>
 	/// <param name="comparison"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Same(
 		this String? left,
 		String? right,
@@ -1347,14 +1516,16 @@ public static class ParsingExtensions {
 	) =>
 		left.Like( right, compareOptions, comparison );
 
-	/// <summary>Compute a Similarity between two strings. <br /> 1. 0 is a full, bit for bit match. <br /></summary>
+	/// <summary>
+	///     Compute a Similarity between two strings. <br /> 1. 0 is a full, bit for bit match. <br />
+	/// </summary>
 	/// <param name="source"></param>
 	/// <param name="compare"></param>
 	/// <param name="timeout"></param>
 	/// <param name="cancellationToken"></param>
 	/// <param name="matchReasons">preferably an empty queue</param>
 	/// <remarks>The score is normalized such that 0 equates to no similarity and 1 is an exact match.</remarks>
-	[Pure]
+	[NeedsTesting]
 	public static Double Similarity( this String? source, String? compare, TimeSpan timeout, CancellationToken cancellationToken, out ConcurrentQueue<String> matchReasons ) {
 		var similarity = new PotentialF( 0 );
 		matchReasons = new ConcurrentQueue<String>();
@@ -1481,7 +1652,7 @@ public static class ParsingExtensions {
 
 		votes.ForB( compare.Length );
 
-		if ( ( tempcounter = ( Int32 ) votes.ForA( compare.Count( c => Contains( source, c, StringComparison.Ordinal ) ) ) ).Any() ) {
+		if ( ( tempcounter = ( Int32 )votes.ForA( compare.Count( c => Contains( source, c, StringComparison.Ordinal ) ) ) ).Any() ) {
 			matchReasons.Enqueue( $"{tempcounter} characters found in compare from source" );
 		}
 
@@ -1510,7 +1681,7 @@ public static class ParsingExtensions {
 		}
 
 		Single threshold = Math.Max( source.Length, compare.Length );
-		var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 ) threshold );
+		var actualDamerauLevenshteinDistance = DamerauLevenshteinDistance( source, compare, ( Int32 )threshold );
 
 		//TODO votes.ForB ???
 		similarity.Add( threshold - actualDamerauLevenshteinDistance / threshold );
@@ -1524,10 +1695,12 @@ public static class ParsingExtensions {
 		return similarity;
 	}
 
-	/// <summary>Add a single quote around <paramref name="self" />.</summary>
+	/// <summary>
+	///     Add a single quote around <paramref name="self" />.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String SingleQuote( this String? self ) => $"{ParsingConstants.Strings.SingleQuote}{self.Trimmed()}{ParsingConstants.Strings.SingleQuote}";
 
 	/// <summary>
@@ -1537,7 +1710,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <exception cref="NullException"></exception>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String SmartBrackets( this String? self ) {
 		self = self.Trimmed();
 
@@ -1556,7 +1729,7 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	/// <exception cref="ArgumentEmptyException"></exception>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String SmartQuote<T>( this T? self ) {
 		var trimmed = self?.ToString().Trimmed();
 
@@ -1584,7 +1757,7 @@ public static class ParsingExtensions {
 		return $"{ParsingConstants.Chars.LeftDoubleQuote}{trimmed}{ParsingConstants.Chars.RightDoubleQuote}";
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String Soundex( this String s, Int32 length = 4 ) {
 		if ( s is null ) {
 			throw new ArgumentEmptyException( nameof( s ) );
@@ -1593,19 +1766,19 @@ public static class ParsingExtensions {
 		return FullSoundex( s ).PadRight( length, '0' )[ ..length ]; // and no longer than length
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<String> SplitToChunks( this String s, Int32 chunks ) {
 		if ( s is null ) {
 			throw new ArgumentEmptyException( nameof( s ) );
 		}
 
 		var res = Enumerable.Range( 0, s.Length )
-		                    .Select( index => new {
-			                    index,
-			                    ch = s[ index ]
-		                    } )
-		                    .GroupBy( f => f.index / chunks )
-		                    .Select( g => String.Join( "", g.Select( z => z.ch ) ) );
+							.Select( index => new {
+								index,
+								ch = s[ index ]
+							} )
+							.GroupBy( f => f.index / chunks )
+							.Select( g => String.Join( "", g.Select( z => z.ch ) ) );
 
 		return res;
 	}
@@ -1618,13 +1791,13 @@ public static class ParsingExtensions {
 	/// <param name="comparison"></param>
 	public static (Status status, String? start) StartsWith( this String value, IEnumerable<String> ofThese, StringComparison comparison = StringComparison.CurrentCulture ) {
 		foreach ( var start in ofThese.Where( s => value.StartsWith( s, comparison ) ) ) {
-			return ( true.ToStatus(), start );
+			return (true.ToStatus(), start);
 		}
 
-		return ( false.ToStatus(), default( String? ) );
+		return (false.ToStatus(), default( String? ));
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String StringFromResponse( this WebResponse response ) {
 		using var restream = response.GetResponseStream();
 
@@ -1633,23 +1806,45 @@ public static class ParsingExtensions {
 		return reader.ReadToEnd();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Byte[] StringToUtf32ByteArray( this String pXmlString ) => new UTF32Encoding().GetBytes( pXmlString );
 
-	/// <summary>Converts the String to UTF8 Byte array and is used in De serialization</summary>
+	/// <summary>
+	///     Converts the String to UTF8 Byte array and is used in De serialization
+	/// </summary>
 	/// <param name="pXmlString"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Byte[] StringToUtf8ByteArray( this String pXmlString ) => new UTF8Encoding().GetBytes( pXmlString );
 
-	/// <summary>Strips ALL whitespace from <paramref name="value" />, returning <see cref="String.Empty" /> if needed.</summary>
+	/// <summary>
+	///     Given a string, "a1s2d3f4g5hj6j7", return the string "asdfghjj".
+	/// </summary>
+	/// <param name="text"></param>
+	/// <returns></returns>
+	public static String StripAllDigits( this String text ) {
+		if ( text is null ) {
+			throw new ArgumentEmptyException( nameof( text ) );
+		}
+
+		var sb = new StringBuilder( text.Length, text.Length );
+		foreach ( var c in text.Where( c => !c.IsDigit() ) ) {
+			sb.Append( c );
+		}
+
+		return sb.ToString();
+	}
+
+	/// <summary>
+	///     Strips ALL whitespace from <paramref name="value" />, returning <see cref="String.Empty" /> if needed.
+	/// </summary>
 	/// <param name="value"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String StripAllWhitespace( this String? value ) {
 		if ( value is null ) {
 			return String.Empty;
 		}
 
-		StringBuilder sb = new(value.Length, value.Length);
+		StringBuilder sb = new( value.Length, value.Length );
 		foreach ( var c in value.Where( c => !Char.IsWhiteSpace( c ) ) ) {
 			sb.Append( c );
 		}
@@ -1657,10 +1852,10 @@ public static class ParsingExtensions {
 		return sb.ToString();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String StripHTML( this String s ) => Regex.Replace( s, @"<(.|\n)*?>", String.Empty ).Replace( "&nbsp;", " " );
 
-	[Pure]
+	[NeedsTesting]
 	public static String StripTags( this String input, String[] allowedTags ) {
 		if ( allowedTags is null ) {
 			throw new ArgumentEmptyException( nameof( allowedTags ) );
@@ -1708,7 +1903,7 @@ public static class ParsingExtensions {
 		return output;
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String? StripTagsAndAttributes( this String input, String[] allowedTags ) {
 		if ( allowedTags == null ) {
 			throw new ArgumentEmptyException( nameof( allowedTags ) );
@@ -1739,10 +1934,12 @@ public static class ParsingExtensions {
 		return output;
 	}
 
-	/// <summary>Just <see cref="String.Substring(Int32)" /> with a minimum length check.</summary>
+	/// <summary>
+	///     Just <see cref="String.Substring(Int32)" /> with a minimum length check.
+	/// </summary>
 	/// <param name="s"></param>
 	/// <param name="count"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String Sub( this String s, Int32 count ) => s[ ..Math.Min( count, s.Length ) ];
 
 	/// <summary>
@@ -1756,7 +1953,7 @@ public static class ParsingExtensions {
 	/// <exception cref="ArgumentOutOfRangeException">
 	///     Thrown if endIndex is greater than the length of the string (or negative).
 	/// </exception>
-	[Pure]
+	[NeedsTesting]
 	public static String SubstringFromEnd( this String self, Int32 endIndex ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -1783,7 +1980,7 @@ public static class ParsingExtensions {
 	/// <exception cref="ArgumentOutOfRangeException">
 	///     Thrown if endIndex is greater than the length of the string (or negative).
 	/// </exception>
-	[Pure]
+	[NeedsTesting]
 	public static String SubstringFromEnd( this String self, Int32 endIndex, Int32 length ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -1796,30 +1993,38 @@ public static class ParsingExtensions {
 		return self.Substring( self.Length - endIndex - length, self.Length - endIndex );
 	}
 
-	/// <summary>Returns <paramref name="text" /> converted to a base-64 string.</summary>
+	/// <summary>
+	///     Returns <paramref name="text" /> converted to a base-64 string.
+	/// </summary>
 	/// <param name="text"></param>
 	/// <param name="encoding"></param>
 	/// <seealso cref="FromBase64" />
-	[Pure]
+	[NeedsTesting]
 	public static String ToBase64( this String? text, Encoding? encoding = null ) =>
 		Convert.ToBase64String( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ?? String.Empty ) );
 
-	/// <summary>Converts a String to camel case</summary>
+	/// <summary>
+	///     Converts a String to camel case
+	/// </summary>
 	/// <param name="lowercaseAndUnderscoredWord">String to convert</param>
 	/// <param name="cultureInfo"></param>
 	/// <returns>String</returns>
-	[Pure]
+	[NeedsTesting]
 	public static String ToCamelCase( this String? lowercaseAndUnderscoredWord, CultureInfo? cultureInfo = null ) =>
 		MakeInitialLowerCase( ToPascalCase( lowercaseAndUnderscoredWord, true, cultureInfo )!, cultureInfo ?? CultureInfo.CurrentCulture );
 
-	/// <summary>Date plus Time</summary>
+	/// <summary>
+	///     Date plus Time
+	/// </summary>
 	/// <param name="when"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String ToLongDateTime( this DateTime when ) => when.ToLongDateString() + ParsingConstants.Strings.Singlespace + when.ToLongTimeString();
 
-	/// <summary>Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.</summary>
+	/// <summary>
+	///     Same as <see cref="AsOrdinal" />, but might be slightly faster performance-wise.
+	/// </summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String ToOrdinal( this Int32 number ) {
 		var n = Math.Abs( number );
 		var lt = n % 100;
@@ -1827,11 +2032,13 @@ public static class ParsingExtensions {
 		return number + OrdinalSuffixes[ lt is >= 11 and <= 13 ? 0 : n % 10 ];
 	}
 
-	/// <summary>Converts a String to pascal case with the option to remove underscores</summary>
+	/// <summary>
+	///     Converts a String to pascal case with the option to remove underscores
+	/// </summary>
 	/// <param name="text">String to convert</param>
 	/// <param name="removeUnderscores">Option to remove underscores</param>
 	/// <param name="cultureInfo"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? ToPascalCase( this String? text, Boolean removeUnderscores = true, CultureInfo? cultureInfo = null ) {
 		if ( String.IsNullOrEmpty( text ) ) {
 			return default( String? );
@@ -1863,7 +2070,7 @@ public static class ParsingExtensions {
 		return sb.ToString();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Sentence> ToSentences( this String? paragraph ) {
 		if ( paragraph is null ) {
 			foreach ( var _ in Enumerable.Empty<Sentence>() ) {
@@ -1892,13 +2099,13 @@ public static class ParsingExtensions {
 		*/
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<String> ToSplit( this String? sentence ) =>
 		RegexByWordBreak.Value.Split( $"{ParsingConstants.Strings.Singlespace}{sentence}{ParsingConstants.Strings.Singlespace}" )
-		                .ToStrings( ParsingConstants.Strings.Singlespace )
-		                .Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
+						.ToStrings( ParsingConstants.Strings.Singlespace )
+						.Split( SplitBySpace, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
-	[Pure]
+	[NeedsTesting]
 	public static String ToStrings( this IEnumerable<Object?> list, Char separator, String? atTheEnd = null, Boolean? trimEnd = true ) {
 		if ( list is null ) {
 			throw new ArgumentEmptyException( nameof( list ) );
@@ -1913,7 +2120,7 @@ public static class ParsingExtensions {
 		return String.IsNullOrEmpty( atTheEnd ) ? joined : $"{joined}{separator}{atTheEnd}";
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static String ToStrings( this IEnumerable<Object?> list, String separator, String? atTheEnd = null, Boolean? trimEnd = true ) {
 		if ( list is null ) {
 			throw new ArgumentEmptyException( nameof( list ) );
@@ -1939,7 +2146,7 @@ public static class ParsingExtensions {
 	/// <param name="atTheEnd"></param>
 	/// <param name="trimEnd"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String ToStrings<T>( this IEnumerable<T> list, String? separator = ", ", String? atTheEnd = null, Boolean? trimEnd = true ) {
 		if ( list is null ) {
 			throw new ArgumentEmptyException( nameof( list ) );
@@ -1954,10 +2161,12 @@ public static class ParsingExtensions {
 		return String.IsNullOrEmpty( atTheEnd ) ? joined : $"{joined}{separator}{atTheEnd}";
 	}
 
-	/// <summary>Returns the wording of a number.</summary>
+	/// <summary>
+	///     Returns the wording of a number.
+	/// </summary>
 	/// <param name="number"></param>
 	/// <see cref="http://stackoverflow.com/a/2730393/956364" />
-	[Pure]
+	[NeedsTesting]
 	public static String ToVerbalWord( this Int64 number ) {
 		if ( number == 0 ) {
 			return "zero";
@@ -2028,7 +2237,7 @@ public static class ParsingExtensions {
 
 	/// <param name="number"></param>
 	/// <see cref="http://stackoverflow.com/a/7829529/956364" />
-	[Pure]
+	[NeedsTesting]
 	public static String ToVerbalWord( this Decimal number ) {
 		switch ( number ) {
 			case Decimal.Zero:
@@ -2040,26 +2249,28 @@ public static class ParsingExtensions {
 				return "minus " + ToVerbalWord( Math.Abs( number ) );
 		}
 
-		var intPortion = ( Int32 ) number;
+		var intPortion = ( Int32 )number;
 		var fraction = ( number - intPortion ) * 100;
-		var decPortion = ( Int32 ) fraction; //TODO eh?
+		var decPortion = ( Int32 )fraction; //TODO eh?
 
-		var words = ( ( Decimal ) intPortion ).ToVerbalWord();
+		var words = ( ( Decimal )intPortion ).ToVerbalWord();
 
 		if ( decPortion <= 0 ) {
 			return words.Trim();
 		}
 
 		words += " and ";
-		words += ( ( Decimal ) decPortion ).ToVerbalWord();
+		words += ( ( Decimal )decPortion ).ToVerbalWord();
 
 		return words.Trim();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Word> ToWords( this String? sentence ) => sentence.ToSplit().Select( s => new Word( s ) );
 
-	/// <summary>//TODO This function needs unit tests.</summary>
+	/// <summary>
+	///     //TODO This function needs unit tests.
+	/// </summary>
 	/// <remarks>
 	///     <code>const String test = "   Hello, World! ";</code>
 	///     <code>Console.WriteLine( ParsingExtensionsToo.Trim( test.ToCharArray() ).ToArray() );</code>
@@ -2090,7 +2301,8 @@ public static class ParsingExtensions {
 		return source.Slice( start, 1 + ( end - start ) );
 	}
 
-	/// <summary></summary>
+	/// <summary>
+	/// </summary>
 	/// <param name="self"></param>
 	/// <param name="startingChar"></param>
 	/// <param name="comparison"></param>
@@ -2112,10 +2324,12 @@ public static class ParsingExtensions {
 	/// <param name="self"></param>
 	public static String? TrimLeftAndRightChar( this String self ) => self[ 1..^1 ].Trimmed();
 
-	/// <summary>Trim the ToString() of the object; returning null if null, empty, or whitespace.</summary>
+	/// <summary>
+	///     Trim the ToString() of the object; returning null if null, empty, or whitespace.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? Trimmed<T>( this T? self ) =>
 		self switch {
 			null => default( String? ),
@@ -2123,10 +2337,12 @@ public static class ParsingExtensions {
 			var _ => self.ToString()?.Trim().NullIfEmpty()
 		};
 
-	/// <summary>Trim the ToString() of the object; returning null if null, empty, or whitespace.</summary>
+	/// <summary>
+	///     Trim the ToString() of the object; returning null if null, empty, or whitespace.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? TrimmedAlt<T>( this T? self ) =>
 		self switch {
 			String s => s.Trim().NullIfEmpty(),
@@ -2134,7 +2350,9 @@ public static class ParsingExtensions {
 			var _ => self.ToString()?.Trim().NullIfEmpty()
 		};
 
-	/// <summary>Set <paramref name="self" /> to null if null, empty, or whitespace.</summary>
+	/// <summary>
+	///     Set <paramref name="self" /> to null if null, empty, or whitespace.
+	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
 	public static void TrimString( ref String? self ) {
@@ -2168,34 +2386,40 @@ public static class ParsingExtensions {
 		return value.Slice( start, end - start + 1 );
 	}
 
-	/// <summary>Needs unit tests.</summary>
+	/// <summary>
+	///     Needs unit tests.
+	/// </summary>
 	/// <param name="s"></param>
 	/// <param name="maximumLength"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String? Truncate( this String? s, UInt32 maximumLength ) {
 		if ( String.IsNullOrEmpty( s ) ) {
 			return s;
 		}
 
-		return ( UInt32 ) s.Length <= maximumLength ? s : s.AsMemory()[ ..( Int32 ) maximumLength ].ToString();
+		return ( UInt32 )s.Length <= maximumLength ? s : s.AsMemory()[ ..( Int32 )maximumLength ].ToString();
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean TryGetDecimal( this String? text, out Decimal result ) => Decimal.TryParse( text, out result );
 
-	/// <summary>To convert a Byte Array of Unicode values (UTF-8 encoded) to a complete String.</summary>
+	/// <summary>
+	///     To convert a Byte Array of Unicode values (UTF-8 encoded) to a complete String.
+	/// </summary>
 	/// <param name="characters">Unicode Byte Array to be converted to String</param>
 	/// <returns>String converted from Unicode Byte Array</returns>
-	[Pure]
+	[NeedsTesting]
 	public static String Utf8ByteArrayToString( this Byte[] characters ) => new UTF8Encoding().GetString( characters );
 
-	/// <summary>Returns <paramref name="self" /> but culled to a maximum length of <paramref name="maxLength" /> characters.</summary>
+	/// <summary>
+	///     Returns <paramref name="self" /> but culled to a maximum length of <paramref name="maxLength" /> characters.
+	/// </summary>
 	/// <param name="self">The extended string.</param>
 	/// <param name="maxLength">The maximum desired length of the string.</param>
 	/// <returns>A string containing the first <c>Min(this.Length, maxLength)</c> characters from the extended string.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static String WithMaxLength( this String self, Int32 maxLength ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -2204,9 +2428,12 @@ public static class ParsingExtensions {
 		return self[ ..Math.Min( self.Length, maxLength ) ] ?? throw new NullException( nameof( self ) );
 	}
 
-	/// <summary>Uses a <see cref="Regex" /> to count the number of words.</summary>
+	/// <summary>
+	///     Uses a <see cref="Regex" /> to count the number of words.
+	///     <para>Returns -1 upon any exception.</para>
+	/// </summary>
 	/// <param name="input"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 WordCount( this String input ) {
 		if ( input is null ) {
 			throw new ArgumentEmptyException( nameof( input ) );

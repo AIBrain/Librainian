@@ -23,21 +23,23 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "CompressExtensions.cs" last touched on 2021-08-23 at 8:25 AM by Protiguous.
+// File "CompressExtensions.cs" last touched on 2021-12-28 at 1:58 PM by Protiguous.
 
 #nullable enable
 
 namespace Librainian.OperatingSystem.Compression;
 
 using System;
-using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading.Tasks;
 using Exceptions;
+using Maths;
+using Microsoft.IO;
 
-	
 public static class CompressExtensions {
+
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new(MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte);
 
 	/// <summary>Compresses the data by using <see cref="GZipStream" />.</summary>
 	/// <param name="data"></param>
@@ -47,7 +49,7 @@ public static class CompressExtensions {
 			throw new ArgumentEmptyException( nameof( data ) );
 		}
 
-		using var output = new MemoryStream();
+		using var output = MemoryStreamManager.GetStream();
 
 		using var compress = new GZipStream( output, compressionLevel );
 
@@ -70,9 +72,9 @@ public static class CompressExtensions {
 	public static async Task<String> CompressAsync( this String text, Encoding? encoding = null ) {
 		var buffer = ( encoding ?? Common.DefaultEncoding ).GetBytes( text );
 
-		await using var streamIn = new MemoryStream( buffer );
+		await using var streamIn = MemoryStreamManager.GetStream( buffer );
 
-		await using var streamOut = new MemoryStream();
+		await using var streamOut = MemoryStreamManager.GetStream();
 
 		await using var zipStream = new GZipStream( streamOut, CompressionMode.Compress );
 		var task = streamIn.CopyToAsync( zipStream );
@@ -87,11 +89,11 @@ public static class CompressExtensions {
 			throw new ArgumentEmptyException( nameof( data ) );
 		}
 
-		using var memoryStream = new MemoryStream( data );
+		using var memoryStream = MemoryStreamManager.GetStream( data );
 
 		using var decompress = new GZipStream( memoryStream, CompressionMode.Decompress );
 
-		using var output = new MemoryStream();
+		using var output = MemoryStreamManager.GetStream();
 
 		decompress.CopyTo( output );
 
@@ -104,8 +106,8 @@ public static class CompressExtensions {
 	public static async Task<String> DecompressAsync( this String text, Encoding? encoding = null ) {
 		var buffer = Convert.FromBase64String( text );
 
-		await using var streamIn = new MemoryStream( buffer );
-		await using var streamOut = new MemoryStream();
+		await using var streamIn = MemoryStreamManager.GetStream( buffer );
+		await using var streamOut = MemoryStreamManager.GetStream();
 
 		await using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
 		await gs.CopyToAsync( streamOut ).ConfigureAwait( false );
@@ -131,11 +133,11 @@ public static class CompressExtensions {
 
 		var buffer = Convert.FromBase64String( text );
 
-		using var streamIn = new MemoryStream( buffer );
+		using var streamIn = MemoryStreamManager.GetStream( buffer );
 
 		using var gs = new GZipStream( streamIn, CompressionMode.Decompress );
 
-		using var streamOut = new MemoryStream();
+		using var streamOut = MemoryStreamManager.GetStream();
 
 		gs.CopyTo( streamOut );
 
@@ -146,9 +148,9 @@ public static class CompressExtensions {
 	/// <param name="text"></param>
 	/// <param name="encoding"></param>
 	public static String ToCompressedBase64( this String text, Encoding? encoding = null ) {
-		using var incoming = new MemoryStream( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ), false );
+		using var incoming = MemoryStreamManager.GetStream( ( encoding ?? Common.DefaultEncoding ).GetBytes( text ) );
 
-		using var streamOut = new MemoryStream();
+		using var streamOut = MemoryStreamManager.GetStream();
 
 		using var destination = new GZipStream( streamOut, CompressionLevel.Fastest );
 

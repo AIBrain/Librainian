@@ -26,21 +26,21 @@ namespace Librainian.Measurement;
 
 using System;
 using System.Numerics;
-using JetBrains.Annotations;
 using Rationals;
+using Utilities;
 
 public static class Constants {
 
 	/// <summary>
 	///     <para>This value is too high. like really high.</para>
 	/// </summary>
-	[NotNull]
+	[NeedsTesting]
 	public const String ValueIsTooHigh = "this value is too high. like really high.";
 
 	/// <summary>
 	///     <para>This value is too low. like really low.</para>
 	/// </summary>
-	[NotNull]
+	[NeedsTesting]
 	public const String ValueIsTooLow = "this value is too low. like really low.";
 
 	/// <summary><see cref="BigInteger" /> copy of System.Decimal.MaxValue (79228162514264337593543950335M)</summary>

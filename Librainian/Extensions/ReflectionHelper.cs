@@ -78,4 +78,5 @@ public static class ReflectionHelper {
 
 		return Attribute.IsDefined( type, typeof( TAttribute ) );
 	}
+
 }

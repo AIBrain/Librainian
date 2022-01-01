@@ -30,7 +30,7 @@ namespace Librainian.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
+using Utilities;
 
 public static class LinguisticExtensions {
 
@@ -40,7 +40,7 @@ public static class LinguisticExtensions {
 	/// </summary>
 	/// <example>Example: "My cat cat likes likes to to to eat food." Should become "My cat likes to eat food."</example>
 	/// <param name="s"></param>
-	[Pure]
+	[NeedsTesting]
 	public static String RemoveDoubleWords( this String? s ) {
 		if ( String.IsNullOrEmpty( s ) ) {
 			return String.Empty;

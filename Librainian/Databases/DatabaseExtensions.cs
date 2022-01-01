@@ -127,8 +127,8 @@ public static class DatabaseExtensions {
     /// <typeparam name="T">Generic object</typeparam>
     /// <param name="table">DataTable</param>
     /// <returns>List with generic objects</returns>
-    [NotNull]
-    public static List<T> DataTableToList<T>( [NotNull] this DataTable table ) where T : class, new() {
+    [NeedsTesting]
+    public static List<T> DataTableToList<T>( [NeedsTesting] this DataTable table ) where T : class, new() {
         if ( table is null ) {
             throw new ArgumentEmptyException( nameof( table ) );
         }
@@ -705,8 +705,8 @@ public static class DatabaseExtensions {
     */
 
 	/*
-	[NotNull]
-	public static IEnumerable<T> ToList<T>( [NotNull] this DataTable table ) {
+	[NeedsTesting]
+	public static IEnumerable<T> ToList<T>( [NeedsTesting] this DataTable table ) {
 		if ( table is null ) {
 			throw new ArgumentEmptyException( nameof( table ) );
 		}

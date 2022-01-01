@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Minutes.cs" last touched on 2021-10-02 at 6:30 AM by Protiguous.
+// File "Minutes.cs" last touched on 2021-12-31 at 2:11 AM by Protiguous.
 
 namespace Librainian.Measurement.Time;
 
@@ -33,12 +33,13 @@ using System.Numerics;
 using Exceptions;
 using ExtendedNumerics;
 using Extensions;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Parsing;
+using Utilities;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Immutable]
+[Extensions.Immutable]
 public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes> {
 
 	/// <summary>
@@ -46,23 +47,23 @@ public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes
 	/// </summary>
 	public const Byte InOneHour = 60;
 
-	public Minutes( Byte value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Byte value ) : this( ( BigDecimal ) value ) { }
 
-	public Minutes( Int16 value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Int16 value ) : this( ( BigDecimal ) value ) { }
 
-	public Minutes( UInt16 value ) : this( ( BigDecimal )value ) { }
+	public Minutes( UInt16 value ) : this( ( BigDecimal ) value ) { }
 
-	public Minutes( Int32 value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Int32 value ) : this( ( BigDecimal ) value ) { }
 
-	public Minutes( UInt32 value ) : this( ( Decimal )value ) { }
+	public Minutes( UInt32 value ) : this( ( Decimal ) value ) { }
 
-	public Minutes( Int64 value ) : this( ( Decimal )value ) { }
+	public Minutes( Int64 value ) : this( ( Decimal ) value ) { }
 
-	public Minutes( UInt64 value ) : this( ( Decimal )value ) { }
+	public Minutes( UInt64 value ) : this( ( Decimal ) value ) { }
 
-	public Minutes( Single value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Single value ) : this( ( BigDecimal ) value ) { }
 
-	public Minutes( Double value ) : this( ( BigDecimal )value ) { }
+	public Minutes( Double value ) : this( ( BigDecimal ) value ) { }
 
 	/// <summary>
 	///     15
@@ -105,7 +106,7 @@ public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes
 
 	public PlanckTimes ToPlanckTimes() => new(PlanckTimes.InOneMinute);
 
-	[Pure]
+	[NeedsTesting]
 	public Seconds ToSeconds() => new(this.Value * Seconds.InOneMinute);
 
 	public IQuantityOfTime ToCoarserGranularity() => this.ToHours();
@@ -123,7 +124,7 @@ public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes
 	/// <summary>
 	///     <para>static equality test</para>
 	/// </summary>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="right"></param>
 	public static Boolean Equals( Minutes left, Minutes right ) => left.Value == right.Value;
 
@@ -145,7 +146,7 @@ public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes
 	/// <param name="minutes"></param>
 	public static implicit operator SpanOfTime( Minutes minutes ) => new(minutes);
 
-	public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double )minutes.Value );
+	public static implicit operator TimeSpan( Minutes minutes ) => TimeSpan.FromMinutes( ( Double ) minutes.Value );
 
 	public static Minutes operator -( Minutes minutes ) => new(minutes.Value * -1);
 
@@ -161,18 +162,22 @@ public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes
 
 	public static Boolean operator <( Minutes left, Minutes right ) => left.Value < right.Value;
 
-	public static Boolean operator <( Minutes left, Hours right ) => ( Hours )left < right;
+	public static Boolean operator <( Minutes left, Hours right ) => ( Hours ) left < right;
 
-	public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes )right;
+	public static Boolean operator <( Minutes left, Seconds right ) => left < ( Minutes ) right;
 
-	public static Boolean operator >( Minutes left, Hours right ) => ( Hours )left > right;
+	public static Boolean operator >( Minutes left, Hours right ) => ( Hours ) left > right;
 
 	public static Boolean operator >( Minutes left, Minutes right ) => left.Value > right.Value;
 
-	public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes )right;
+	public static Boolean operator >( Minutes left, Seconds right ) => left > ( Minutes ) right;
 
 	public Hours ToHours() => new(this.Value / InOneHour);
 
-	public override String ToString() => $"{this.Value} minutes";
+	public override String ToString() => $"{this.Value} {this.Value.PluralOf( "minute" )}";
+
+	public static Boolean operator <=( Minutes left, Minutes right ) => left.CompareTo( right ) <= 0;
+
+	public static Boolean operator >=( Minutes left, Minutes right ) => left.CompareTo( right ) >= 0;
 
 }

@@ -34,8 +34,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Exceptions;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>
 ///     Threadsafe set. Does not allow nulls inside the set.
@@ -57,7 +57,7 @@ public class ConcurrentHashset<T> : IEnumerable<T> where T : notnull {
 	/// <param name="index"></param>
 	/// <exception cref="IndexOutOfRangeException"></exception>
 	public T this[Int32 index] {
-		[NotNull]
+		[NeedsTesting]
 		get {
 			if ( index < 0 ) {
 				throw new IndexOutOfRangeException( $"The index {index} is less than 0." );

@@ -52,8 +52,8 @@ public static class FolderExtensions {
 	*/
 
 	/*
-	[NotNull]
-	public static String CleanupForFolder([NotNull] this String foldername) {
+	[NeedsTesting]
+	public static String CleanupForFolder([NeedsTesting] this String foldername) {
 		if (String.IsNullOrWhiteSpace(foldername)) {
 			throw new ArgumentException("Value cannot be null or whitespace.", nameof(foldername));
 		}

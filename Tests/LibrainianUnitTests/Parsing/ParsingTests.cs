@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ParsingTests.cs" last touched on 2021-12-25 at 8:21 PM by Protiguous.
+// File "ParsingTests.cs" last touched on 2021-12-29 at 6:01 AM by Protiguous.
 
 namespace LibrainianUnitTests.Parsing;
 
@@ -93,10 +93,59 @@ public class ParsingTests {
 	}
 
 	[Test]
+	public void TestHasSomeWhiteSpaceFalse1() {
+		const String test = "a1s2d3f4g5hj6j7";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeFalse();
+	}
+
+	[Test]
+	public void TestHasSomeWhiteSpaceTrue1() {
+		const String test = " a1s2d3f4g5hj6j7 ";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeTrue();
+	}
+
+	[Test]
+	public void TestHasSomeWhiteSpaceTrue2a() {
+		const String test = "";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeFalse();
+	}
+
+	[Test]
+	public void TestHasSomeWhiteSpaceTrue2b() {
+		const String test = " a1s2d3f4g5hj6j7 ";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeTrue();
+	}
+
+	[Test]
+	public void TestHasSomeWhiteSpaceTrue3() {
+		const String test = " 1 ";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeTrue();
+	}
+
+	[Test]
+	public void TestHasSomeWhiteSpaceTrue4() {
+		const String test = " 	";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeTrue();
+	}
+
+	[Test]
+	public void TestHasSomeWhiteSpaceTrue5() {
+		const String test = "		";
+		var result = test.HasSomeWhiteSpace();
+		result.Should().BeTrue();
+	}
+
+	[Test]
 	public void TestUnDoubleWording() {
 		var test = "My cat cat likes likes to to to eat food.";
 		var result = test.RemoveDoubleWords();
-		result.Should().Be( "My cat likes to eat food." );
+		result.Should().Be( "My cat likes to eat food ." );
 	}
 
 }

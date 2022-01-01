@@ -41,7 +41,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
-using JetBrains.Annotations;
 using JM.LinqFaster.SIMD;
 using Maths;
 using PooledAwait;
@@ -75,7 +74,7 @@ public static class CollectionExtensions {
 	///     than the size of the source sequence, or less than <paramref name="minInstances" /> elements are found to match the
 	///     <paramref name="predicate" />, it will return false.
 	/// </returns>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean AtLeast<T>( this IEnumerable<T> self, UInt64 minInstances, Func<T, Boolean> predicate ) {
 		if ( minInstances == 0 ) {
 			return true;
@@ -101,7 +100,7 @@ public static class CollectionExtensions {
 	///     <paramref name="predicate" />,
 	///     it will return true.
 	/// </returns>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean AtMost<T>( this IEnumerable<T> self, UInt64 maxInstances, Func<T, Boolean> predicate ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -165,7 +164,7 @@ public static class CollectionExtensions {
 	/// <summary>Side effects of <paramref name="items" /> other than a byte[] (array) are unknown!</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="items"></param>
-	[Pure]
+	[NeedsTesting]
 	public static T[] Clone<T>( this T[] items ) {
 		if ( items is Byte[] bytes ) {
 			var bytesLength = bytes.Length;
@@ -193,7 +192,7 @@ public static class CollectionExtensions {
 	/// <param name="bytes"></param>
 	/// <param name="offset"></param>
 	/// <param name="length"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Byte[] Clone( this Byte[] bytes, Int32 offset, Int32 length ) {
 		if ( bytes is null ) {
 			throw new ArgumentEmptyException( nameof( bytes ) );
@@ -215,7 +214,7 @@ public static class CollectionExtensions {
 
 	/// <summary>Concat multiple byte arrays into one new larger array.</summary>
 	/// <param name="arrays"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Byte[] Concat<T>( params T[][] arrays ) {
 		var totalLength = arrays.Select( bytes => ( UInt64 ) bytes.Length ).Aggregate<UInt64, UInt64>( 0, ( current, i ) => current + i );
 
@@ -244,10 +243,10 @@ public static class CollectionExtensions {
 	/// <param name="a">The first collection.</param>
 	/// <param name="b">The second collection.</param>
 	/// <returns>True if both IEnumerables contain the same items, and same number of items; otherwise, false.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean ContainSameElements<T>( this IEnumerable<T> a, IEnumerable<T> b ) => a.OrderBy( arg => arg ).SequenceEqual( b.OrderBy( arg => arg ) );
 
-	[Pure]
+	[NeedsTesting]
 	public static BigInteger CountBig<TType>( this IEnumerable<TType> items ) => items.LongCount();
 
 	/// <summary>
@@ -259,7 +258,7 @@ public static class CollectionExtensions {
 	/// </summary>
 	/// <param name="values">The extended IEnumerable{T}.</param>
 	/// <returns>A dictionary of elements mapped to the number of times they appeared in <paramref name="values" />.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static IDictionary<T, Int32> CountInstances<T>( this IEnumerable<T> values ) where T : notnull {
 		if ( values is null ) {
 			throw new ArgumentEmptyException( nameof( values ) );
@@ -288,11 +287,11 @@ public static class CollectionExtensions {
 	/// <param name="self">The extended IEnumerable{T}.</param>
 	/// <param name="relationship">The function that determines whether the given relationship exists between two elements.</param>
 	/// <returns>The number of pairs found.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 CountRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationship ) => Relationships( self, relationship ).Count();
 
 	/// <summary>Returns duplicate items found in the <see cref="enumerable" /> .</summary>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<T> Duplicates<T>( this IEnumerable<T> enumerable ) {
 		var set = new HashSet<T>();
 
@@ -302,7 +301,7 @@ public static class CollectionExtensions {
 	/// <summary>Return an empty set of type of <paramref name="self" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<T> Empty<T>( this T self ) {
 		yield break;
 	}
@@ -310,7 +309,7 @@ public static class CollectionExtensions {
 	/// <summary>Return an empty set of type of <paramref name="self" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
-	[Pure]
+	[NeedsTesting]
 	public static async IAsyncEnumerable<T> EmptyAsync<T>( [DisallowNull] this T self ) {
 #pragma warning restore 1998
 		yield break;
@@ -326,7 +325,7 @@ public static class CollectionExtensions {
 	/// <returns>
 	///     A tuple of the first two elements that match the given relationship, or <c>null</c> if no such relationship exists.
 	/// </returns>
-	[Pure]
+	[NeedsTesting]
 	public static (T a, T b)? FirstRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationship ) {
 		var index = 0;
 
@@ -341,7 +340,7 @@ public static class CollectionExtensions {
 		return default( (T a, T b)? );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<T?> ForEach<T>( this IEnumerable<T> items, Action<T> action ) {
 		foreach ( var item in items ) {
 			action( item );
@@ -357,7 +356,7 @@ public static class CollectionExtensions {
 	/// <param name="key"></param>
 	/// <param name="function"></param>
 	/// <param name="added"></param>
-	[Pure]
+	[NeedsTesting]
 	public static TValue GetOrAdd<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> function, out Boolean added )
 		where TKey : notnull {
 		if ( dictionary == null ) {
@@ -379,7 +378,7 @@ public static class CollectionExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean HasDuplicates<T>( this IEnumerable<T> sequence ) {
 		if ( sequence is null ) {
 			throw new ArgumentEmptyException( nameof( sequence ) );
@@ -392,11 +391,11 @@ public static class CollectionExtensions {
 		return sequence.Duplicates().Any();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean In<T>( [DisallowNull] this T value, params T[] items ) => items.Contains( value );
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Int32 IndexOf<T>( this T[] self, T? item ) => Array.IndexOf( self, item );
 
@@ -404,7 +403,7 @@ public static class CollectionExtensions {
 	/// <param name="source"></param>
 	/// <param name="sequence"></param>
 	/// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence ) => source.IndexOfSequence( sequence, EqualityComparer<T>.Default );
 
 	/// <typeparam name="T"></typeparam>
@@ -412,7 +411,7 @@ public static class CollectionExtensions {
 	/// <param name="sequence"></param>
 	/// <param name="comparer"></param>
 	/// <remarks>http://stackoverflow.com/a/3562370/956364</remarks>
-	[Pure]
+	[NeedsTesting]
 	public static Int32 IndexOfSequence<T>( this IEnumerable<T> source, IEnumerable<T> sequence, IEqualityComparer<T> comparer ) {
 		if ( source is null ) {
 			throw new ArgumentEmptyException( nameof( source ) );
@@ -478,7 +477,7 @@ public static class CollectionExtensions {
 	///     <para>An infinite list.</para>
 	/// </summary>
 	/// <param name="value">todo: describe value parameter on Infinitely</param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<Boolean> Infinitely( this Boolean value ) {
 		do {
 			yield return value;
@@ -492,27 +491,27 @@ public static class CollectionExtensions {
 	/// <param name="source">The IEnumerable to check if empty.</param>
 	/// <returns>True if the <paramref name="source" /> is null or empty; otherwise false.</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsEmpty<T>( this IEnumerable<T> source ) => source.Any() != true;
 
 	public static Boolean IsNullOrEmpty<T>( this IEnumerable<T>? enumerable ) => enumerable?.Any() != true;
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 LongSum( this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 LongSum( this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 LongSum( this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 LongSum( this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static LinkedListNode<TType>? NextOrFirst<TType>( this LinkedListNode<TType> current ) => current.Next ?? current.List?.First;
 
-	[Pure]
+	
 	[NeedsTesting]
 	public static IEnumerable<T> OrderBy<T>( this IEnumerable<T> list, IEnumerable<T> guide ) {
 		var toBeSorted = new HashSet<T>( list );
@@ -520,7 +519,7 @@ public static class CollectionExtensions {
 		return guide.Where( member => toBeSorted.Contains( member ) );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<IEnumerable<T>> Partition<T>( this IEnumerable<T> source, Int32 size ) {
 		if ( source is null ) {
 			throw new ArgumentEmptyException( nameof( source ) );
@@ -558,7 +557,7 @@ public static class CollectionExtensions {
 	/// <typeparam name="TValue"></typeparam>
 	/// <param name="self"></param>
 	/// <param name="key"></param>
-	[Pure]
+	[NeedsTesting]
 	public static TValue? Pop<TKey, TValue>( this IDictionary<TKey, TValue> self, [DisallowNull] TKey key ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -581,7 +580,7 @@ public static class CollectionExtensions {
 	/// <summary>untested</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
-	[Pure]
+	[NeedsTesting]
 	public static T PopFirst<T>( this ICollection<T> self ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -597,7 +596,7 @@ public static class CollectionExtensions {
 	/// <summary>untested</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
-	[Pure]
+	[NeedsTesting]
 	public static T PopLast<T>( this ICollection<T> self ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
@@ -613,10 +612,10 @@ public static class CollectionExtensions {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="current"></param>
 	/// <remarks>Basically if the previous node is null, then wrap back around to the last item.</remarks>
-	[Pure]
+	[NeedsTesting]
 	public static LinkedListNode<T>? PreviousOrLast<T>( this LinkedListNode<T> current ) => current.Previous ?? current.List?.Last;
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<TU?> Rank<T, TKey, TU>( this IEnumerable<T> source, Func<T, TKey> keySelector, Func<T, Int32, TU> selector ) {
 		//if ( !source.Any() ) {
 		//    yield break;
@@ -661,17 +660,17 @@ public static class CollectionExtensions {
 	/// <param name="self">The extended IEnumerable{T}.</param>
 	/// <param name="relationship">The function that determines whether the given relationship exists between two elements.</param>
 	/// <returns>The number of pairs found.</returns>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<T> Relationships<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationship ) {
 		var enumerable = self as T[] ?? self.ToArray();
 
 		return enumerable.Select( ( a, aIndex ) => enumerable.Skip( aIndex + 1 ).Where( b => relationship( a, b ) || relationship( b, a ) ) ).SelectMany( b => b );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static T? Remove<T>( this IProducerConsumerCollection<T> collection ) => collection.TryTake( out var result ) ? result : default( T? );
 
-	[Pure]
+	[NeedsTesting]
 	public static T Remove<T>( this Enum type, T value ) where T : struct => ( T ) ( ( ( Int32 ) ( ValueType ) type & ~( Int32 ) ( value as ValueType ) ) as ValueType );
 
 	/// <summary>
@@ -683,7 +682,7 @@ public static class CollectionExtensions {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="collection"></param>
 	/// <param name="specificItem"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Object? Remove<T>( this IProducerConsumerCollection<T> collection, [DisallowNull] T specificItem ) {
 		if ( collection is null ) {
 			throw new ArgumentEmptyException( nameof( collection ) );
@@ -748,7 +747,7 @@ public static class CollectionExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<IEnumerable<T>> Split<T>( this IEnumerable<T> list, Int32 parts ) {
 		if ( list is null ) {
 			throw new ArgumentEmptyException( nameof( list ) );
@@ -759,16 +758,16 @@ public static class CollectionExtensions {
 		return list.GroupBy( _ => ++i % parts ).Select( part => part );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 SumLong( this IEnumerable<Byte> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 SumLong( this IEnumerable<Int16> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 SumLong( this IEnumerable<Int32> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 SumLong( this IEnumerable<Int64> collection ) => collection.Aggregate( 0L, ( current, u ) => current + u );
 
 	/// <summary>
@@ -867,7 +866,7 @@ public static class CollectionExtensions {
 	/// <summary>Optimally create a list from the <paramref name="source" />.</summary>
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="source"></param>
-	[Pure]
+	[NeedsTesting]
 	public static List<TSource> ToListTrimExcess<TSource>( this IEnumerable<TSource> source ) {
 		var list = new List<TSource>( source );
 		list.TrimExcess();
@@ -879,7 +878,7 @@ public static class CollectionExtensions {
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="source"></param>
 	/// <param name="x">The percent of <paramref name="source" /> to get.</param>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<TSource> Top<TSource>( this IEnumerable<TSource> source, Double x ) {
 		if ( source is null ) {
 			throw new ArgumentEmptyException( nameof( source ) );
@@ -890,7 +889,7 @@ public static class CollectionExtensions {
 		return sources.Take( ( Int32 ) ( x * sources.Count ) );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static List<T> ToSortedList<T>( this IEnumerable<T> values ) {
 		var list = new List<T>( values );
 		list.Sort();
@@ -904,7 +903,7 @@ public static class CollectionExtensions {
 	/// <param name="dictionary"></param>
 	/// <param name="key"></param>
 	/// <param name="value"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean TryRemove<TKey, TValue>( this ConcurrentDictionary<TKey, TValue> dictionary, [DisallowNull] TKey key, [DisallowNull] TValue value )
 		where TKey : notnull {
 		if ( dictionary is null ) {
@@ -918,29 +917,29 @@ public static class CollectionExtensions {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="queue"></param>
 	/// <param name="item"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean TryTake<T>( this ConcurrentQueue<T> queue, out T? item ) => queue.TryDequeue( out item! );
 
 	/// <summary>Wrapper for <see cref="ConcurrentStack{T}.TryPop" /></summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="stack"></param>
 	/// <param name="item"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean TryTake<T>( this ConcurrentStack<T> stack, out T? item ) => stack.TryPop( out item! );
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ULongSum( this IEnumerable<SByte> collection ) => ( UInt64 ) ( ( SByte[] ) collection ).SumS();
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ULongSum( this IEnumerable<Byte> collection ) => ( ( Byte[] ) collection ).SumS();
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ULongSum( this IEnumerable<Int16> collection ) => ( UInt64 ) ( ( Int16[] ) collection ).SumS();
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ULongSum( this IEnumerable<Int32> collection ) => ( UInt64 ) ( ( Int32[] ) collection ).SumS();
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ULongSum( this IEnumerable<Int64> collection ) => ( UInt64 ) ( ( Int64[] ) collection ).SumS();
 
 	/// <summary>why?</summary>
@@ -967,7 +966,7 @@ public static class CollectionExtensions {
 	///     An enumeration of all combinations of items that satisfy the <paramref name="relationshipFunc" />. Each combination
 	///     will only be returned once (e.g. <c>[a, b]</c> but not <c>[b, a]</c>).
 	/// </returns>
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<KeyValuePair<T, T>> WhereRelationship<T>( this IEnumerable<T> self, Func<T, T, Boolean> relationshipFunc ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );

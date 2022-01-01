@@ -33,10 +33,10 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using Extensions;
-using JetBrains.Annotations;
 using Maths;
 using Maths.Ranges;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>A 3D point, with <see cref="X" /> , <see cref="Y" /> , and <see cref="Z" /> .</summary>
 /// <remarks>Coded towards speed.</remarks>
@@ -130,7 +130,7 @@ public record CoordinateU64 {
 	///     <paramref name="other" /> .
 	/// </returns>
 	/// <param name="other">An object to compare with this object.</param>
-	[Pure]
+	[NeedsTesting]
 	public Int32 CompareTo( CoordinateU64 other ) => this.SquareLength.CompareTo( other.SquareLength );
 
 	/// <summary>Calculates the distance between this <see cref="CoordinateU64" /> and another <see cref="CoordinateU64" />.</summary>

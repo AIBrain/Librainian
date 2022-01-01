@@ -30,6 +30,7 @@
 namespace LibrainianUnitTests.Maths;
 
 using System;
+using System.Diagnostics;
 using ExtendedNumerics;
 using FluentAssertions;
 using Librainian.Measurement.Frequency;
@@ -169,7 +170,9 @@ public static class TimeTests {
 		PlanckTimes.Zero.Should().BeLessThan( PlanckTimes.One );
 		PlanckTimes.One.Should().BeGreaterThan( PlanckTimes.Zero );
 		PlanckTimes.One.Should().BeLessThan( Yoctoseconds.One );
-		Assert.Less( PlanckTimes.InOneSecond, PlanckTimes.InOneMinute );
+
+		
+		Debug.Assert( PlanckTimes.InOneSecond < PlanckTimes.InOneMinute );
 		Assert.Less( PlanckTimes.InOneMinute, PlanckTimes.InOneHour );
 		Assert.Less( PlanckTimes.InOneHour, PlanckTimes.InOneDay );
 		Assert.Less( PlanckTimes.InOneDay, PlanckTimes.InOneWeek );

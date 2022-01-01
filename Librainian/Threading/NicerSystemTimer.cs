@@ -37,7 +37,7 @@ using Timer = System.Timers.Timer;
 /// </summary>
 public class NicerSystemTimer : ABetterClassDispose {
 
-	private ReaderWriterLockSlim? access { get; set; }
+	private ReaderWriterLockSlim? Access { get; set; }
 
 	private Timer? Timer { get; set; }
 
@@ -52,7 +52,7 @@ public class NicerSystemTimer : ABetterClassDispose {
 			throw new ArgumentEmptyException( nameof( action ) );
 		}
 
-		this.access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
+		this.Access = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 
 		this.Timer = new Timer {
 			AutoReset = false,
@@ -61,7 +61,7 @@ public class NicerSystemTimer : ABetterClassDispose {
 
 		this.Timer.Elapsed += ( _, _ ) => {
 			try {
-				if ( this.access.TryEnterReadLock( 0 ) ) {
+				if ( this.Access.TryEnterReadLock( 0 ) ) {
 					this.Timer.Stop();
 					action.Invoke();
 				}
@@ -84,8 +84,8 @@ public class NicerSystemTimer : ABetterClassDispose {
 			this.Timer = null;
 		}
 
-		using ( this.access ) {
-			this.access = null;
+		using ( this.Access ) {
+			this.Access = null;
 		}
 
 		base.DisposeManaged();

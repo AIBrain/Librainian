@@ -40,7 +40,7 @@ using Extensions;
 /// <see cref="http://wikipedia.org/wiki/Milli-" />
 /// <see cref="http://wikipedia.org/wiki/Electronvolt" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Immutable]
+[Extensions.Immutable]
 public record MilliElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
 	IComparable<GigaElectronVolts> {
 

@@ -40,12 +40,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
 using FileSystem;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Newtonsoft.Json;
 using Parsing;
 using PooledAwait;
+using Utilities;
 
 /// <summary>
 ///     A human readable/editable text <see cref="Document" /> with <see cref="KeyValuePair{TKey,TValue}" /> under common
@@ -111,7 +111,7 @@ public class IniFile {
 
 	public IniSection? this[ String? section ] {
 		[DebuggerStepThrough]
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( String.IsNullOrEmpty( section ) ) {
 				return default( IniSection? );
@@ -146,7 +146,7 @@ public class IniFile {
 
 	public String? this[ String? section, String? key ] {
 		[DebuggerStepThrough]
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( String.IsNullOrEmpty( section ) ) {
 				return default( String? );
@@ -163,7 +163,7 @@ public class IniFile {
 			return this.Data[ section ]?.FirstOrDefault( line => line.Key.Like( key ) )?.Value ?? default( String? );
 		}
 
-		[CanBeNull]
+		[NeedsTesting]
 		[DebuggerStepThrough]
 		set {
 			if ( String.IsNullOrEmpty( section ) ) {
@@ -344,7 +344,7 @@ public class IniFile {
 	}
 
 	/*
-	private static Boolean FoundSection( [CanBeNull] String? line, [CanBeNull] out String? section ) {
+	private static Boolean FoundSection( [NeedsTesting] String? line, [NeedsTesting] out String? section ) {
 		section = default;
 
 		line = line.Trimmed();

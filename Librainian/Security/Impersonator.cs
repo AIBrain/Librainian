@@ -36,17 +36,17 @@ using Utilities;
 
 
 public class Impersonator : ABetterClassDispose {
-    [CanBeNull]
+    [NeedsTesting]
     private WindowsImpersonationContext _impersonationContext;
 
     private const Int32 Logon32LogonInteractive = 2;
 
     private const Int32 Logon32ProviderDefault = 0;
 
-    public Impersonator( [CanBeNull] String? userName, [CanBeNull] String? domainName, [CanBeNull] String? password ) =>
+    public Impersonator( [NeedsTesting] String? userName, [NeedsTesting] String? domainName, [NeedsTesting] String? password ) =>
         this.ImpersonateValidUser( userName, domainName, password );
 
-    private void ImpersonateValidUser( [CanBeNull] String? userName, [CanBeNull] String? domain, [CanBeNull] String? password ) {
+    private void ImpersonateValidUser( [NeedsTesting] String? userName, [NeedsTesting] String? domain, [NeedsTesting] String? password ) {
         var token = IntPtr.Zero;
         var tokenDuplicate = IntPtr.Zero;
 

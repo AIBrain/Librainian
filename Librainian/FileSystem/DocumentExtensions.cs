@@ -31,9 +31,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Maths;
 using Measurement.Time;
+using Utilities;
 
 public static class DocumentExtensions {
 
@@ -59,7 +59,7 @@ public static class DocumentExtensions {
 		}
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Boolean BadlyNamedFile( this Document document, out BadlyNamedReason badlyNamedReason ) {
 
 		//TODO This actually needs fleshed out with a whole host of options to decide what constitutes a "bad" file name
@@ -93,7 +93,7 @@ public static class DocumentExtensions {
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
-    [NotNull]
+    [NeedsTesting]
     public static String CleanupForFileName(this String filename) {
         filename = filename ?? String.Empty;
 
@@ -117,7 +117,7 @@ public static class DocumentExtensions {
     /// <param name="progress">            </param>
     /// <param name="eta">                 </param>
     /// <returns></returns>
-    public static async Task<ResultCode> CloneAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
+    public static async Task<ResultCode> CloneAsync( [NeedsTesting] this Document source, [NeedsTesting] Document destination, Boolean overwriteDestination, Boolean deleteSource, IProgress<Single> progress = null,
         IProgress<TimeSpan> eta = null ) {
         if ( source is null ) { throw new ArgumentEmptyException( nameof( source ) ); }
 
@@ -199,7 +199,7 @@ public static class DocumentExtensions {
     */
 
 	/*
-    public static async Task<ResultCode> MoveAsync( [NotNull] this Document source, [NotNull] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
+    public static async Task<ResultCode> MoveAsync( [NeedsTesting] this Document source, [NeedsTesting] Document destination, Boolean overwriteDestination, IProgress<Single> progress = null, IProgress<TimeSpan> eta = null ) =>
         await source.CloneAsync( destination, overwriteDestination, true, progress, eta ).NoUI();
     */
 }

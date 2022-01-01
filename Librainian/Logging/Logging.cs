@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Logging.cs" last touched on 2021-12-16 at 6:02 AM by Protiguous.
+// File "Logging.cs" last touched on 2021-12-28 at 1:45 PM by Protiguous.
 
 #nullable enable
 
@@ -33,8 +33,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using Microsoft.Extensions.Logging;
-//using Microsoft.Extensions.Logging.Console;
 using Parsing;
+//using Microsoft.Extensions.Logging.Console;
 
 public static class Logging {
 
@@ -253,6 +253,17 @@ public static class Logging {
 
 	[Conditional( "VERBOSE" )]
 	[DebuggerStepThrough]
-	public static void Verbose( this String message ) => System.Diagnostics.Trace.WriteLine( message );
+	public static void Verbose( this String? message ) {
+		if ( message is null ) {
+			return;
+		}
+
+		if ( Debugger.IsAttached ) {
+			System.Diagnostics.Trace.WriteLine( message );
+		}
+		else {
+			System.Diagnostics.Trace.WriteLine( message );
+		}
+	}
 
 }

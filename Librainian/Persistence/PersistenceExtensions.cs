@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "PersistenceExtensions.cs" last touched on 2021-03-07 at 5:23 PM by Protiguous.
+// 
+// File "PersistenceExtensions.cs" last touched on 2021-12-28 at 2:05 PM by Protiguous.
 
 #nullable enable
 
@@ -48,7 +48,9 @@ using Converters;
 using Exceptions;
 using FileSystem;
 using Logging;
+using Maths;
 using Measurement.Time;
+using Microsoft.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -60,7 +62,7 @@ public static class PersistenceExtensions {
 	///         <see cref="Environment.SpecialFolder.LocalApplicationData" />
 	///     </para>
 	/// </summary>
-	public static readonly Lazy<Folder> LocalDataFolder = new( () => {
+	public static readonly Lazy<Folder> LocalDataFolder = new(() => {
 		var folder = new Folder( Environment.SpecialFolder.LocalApplicationData );
 
 		if ( !folder.Info.Exists ) {
@@ -68,17 +70,18 @@ public static class PersistenceExtensions {
 		}
 
 		return folder;
-	} );
+	});
 
-	public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new( () => new JsonSerializer {
+	public static readonly ThreadLocal<JsonSerializer> LocalJsonSerializers = new(() => new JsonSerializer {
 		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 		PreserveReferencesHandling = PreserveReferencesHandling.All
-	}, true );
+	}, true);
 
-	public static readonly ThreadLocal<StreamingContext> StreamingContexts = new( () => new StreamingContext( StreamingContextStates.All ), true );
+	public static readonly ThreadLocal<StreamingContext> StreamingContexts = new(() => new StreamingContext( StreamingContextStates.All ), true);
 
-	public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new( () => new JsonSerializerSettings {
+	private static RecyclableMemoryStreamManager MemoryStreamManager { get; } = new(MathConstants.Sizes.OneMegaByte, MathConstants.Sizes.OneGigaByte);
 
+	public static ThreadLocal<JsonSerializerSettings> Jss { get; } = new(() => new JsonSerializerSettings {
 		//TODO ContractResolver needs testing
 		ContractResolver = new MyContractResolver(),
 		TypeNameHandling = TypeNameHandling.Auto,
@@ -86,9 +89,9 @@ public static class PersistenceExtensions {
 		DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
 		ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
 		PreserveReferencesHandling = PreserveReferencesHandling.All
-	}, true );
+	}, true);
 
-	/// <summary>Bascially just calls <see cref="FromJSON{T}"/>.</summary>
+	/// <summary>Bascially just calls <see cref="FromJSON{T}" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="storedAsString"></param>
 	/// <exception cref="ArgumentEmptyException"></exception>
@@ -118,7 +121,6 @@ public static class PersistenceExtensions {
 		}
 
 		try {
-
 			//Report.Enter();
 			var stopwatch = Stopwatch.StartNew();
 
@@ -152,9 +154,9 @@ public static class PersistenceExtensions {
 								return;
 							}
 
-							(var key, var value) = line.Deserialize<(TKey, TValue)>();
+							( var key, var value ) = line.Deserialize<(TKey, TValue)>();
 
-							toDictionary[key] = value;
+							toDictionary[ key ] = value;
 						}
 						catch ( Exception lineexception ) {
 							lineexception.Log();
@@ -188,15 +190,15 @@ public static class PersistenceExtensions {
 	/// <param name="bytes"></param>
 	[Obsolete]
 	public static T Deserializer<T>( this Byte[] bytes ) {
-		using var memoryStream = new MemoryStream( bytes );
+		using var memoryStream = MemoryStreamManager.GetStream( bytes );
 
 		var binaryFormatter = new BinaryFormatter();
 
-		return ( T )binaryFormatter.Deserialize( memoryStream );
+		return ( T ) binaryFormatter.Deserialize( memoryStream );
 	}
 
 	/// <summary>Can the file be read from at this moment in time ?</summary>
-	/// <param name="isf">     </param>
+	/// <param name="isf"></param>
 	/// <param name="document"></param>
 	public static Boolean FileCanBeRead( this IsolatedStorageFile isf, Document document ) {
 		if ( isf is null ) {
@@ -262,14 +264,13 @@ public static class PersistenceExtensions {
 		return JsonConvert.DeserializeObject<T>( data, Jss.Value );
 	}
 
-	/// <summary>Basically just calls <see cref="ToJSON{T}"/>.</summary>
+	/// <summary>Basically just calls <see cref="ToJSON{T}" />.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
 	/// <exception cref="ArgumentEmptyException"></exception>
 	/// <exception cref="InvalidDataContractException">
 	///     the type being serialized does not conform to data contract rules. For example, the
-	///     <see cref="DataContractAttribute" /> attribute
-	///     has not been applied to the type.
+	///     <see cref="DataContractAttribute" /> attribute has not been applied to the type.
 	/// </exception>
 	/// <exception cref="SerializationException">there is a problem with the instance being serialized.</exception>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
@@ -297,15 +298,16 @@ public static class PersistenceExtensions {
 	/// <typeparam name="TKey"></typeparam>
 	/// <typeparam name="TValue"></typeparam>
 	/// <param name="dictionary"></param>
-	/// <param name="folder">    </param>
+	/// <param name="folder"></param>
 	/// <param name="calledWhat"></param>
 	/// <param name="cancellationToken"></param>
-	/// <param name="progress">  </param>
-	/// <param name="extension"> </param>
+	/// <param name="progress"></param>
+	/// <param name="extension"></param>
 	public static async Task<Boolean> SerializeDictionary<TKey, TValue>(
 		this IDictionary<TKey, TValue> dictionary,
 		Folder folder,
-		String? calledWhat, CancellationToken cancellationToken,
+		String? calledWhat,
+		CancellationToken cancellationToken,
 		IProgress<Single>? progress = null,
 		String? extension = ".xml"
 	) where TKey : IComparable<TKey> {
@@ -314,7 +316,6 @@ public static class PersistenceExtensions {
 		}
 
 		try {
-
 			//Report.Enter();
 			var stopwatch = Stopwatch.StartNew();
 
@@ -322,7 +323,7 @@ public static class PersistenceExtensions {
 				throw new DirectoryNotFoundException( folder.FullPath );
 			}
 
-			var itemCount = ( UInt64 )dictionary.Count;
+			var itemCount = ( UInt64 ) dictionary.Count;
 
 			String.Format( "Serializing {1} {2} to {0} ...", folder.FullPath, itemCount, calledWhat ).Info();
 
@@ -341,7 +342,7 @@ public static class PersistenceExtensions {
 			foreach ( var pair in dictionary ) {
 				currentLine++;
 
-				var data = (pair.Key, pair.Value).Serialize();
+				var data = ( pair.Key, pair.Value ).Serialize();
 
 				var hereNow = DateTime.UtcNow.ToGuid();
 
@@ -386,14 +387,14 @@ public static class PersistenceExtensions {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="self"></param>
 	/// <returns></returns>
-	[CanBeNull]
-	public static Byte[]? Serializer<T>( [NotNull] this T self ) {
+	[NeedsTesting]
+	public static Byte[]? Serializer<T>( [NeedsTesting] this T self ) {
 		if ( self is null ) {
 			throw new ArgumentEmptyException( nameof( self ) );
 		}
 
 		try {
-			using var memoryStream = new MemoryStream();
+			using var memoryStream = MemoryStreamManager.GetStream();
 
 			var binaryFormatter = new BinaryFormatter();
 			binaryFormatter.Serialize( memoryStream, self );
@@ -411,16 +412,16 @@ public static class PersistenceExtensions {
 	/*
 
 	/// <summary>
-	///     Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use
-	///     <see cref="TryLoad{TSource}" /> to load an object.
+	/// Attempts to serialize this object to an NTFS alternate stream with the index of <paramref name="attribute" />. Use <see
+	/// cref="TryLoad{TSource}" /> to load an object.
 	/// </summary>
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="objectToSerialize"></param>
-	/// <param name="attribute">        </param>
+	/// <param name="attribute"></param>
 	/// <param name="destination"></param>
 	/// <param name="compression"></param>
 	/// <returns></returns>
-	public static Boolean Save<TSource>(this TSource objectToSerialize, [NotNull] String attribute, Document destination, CompressionLevel compression = CompressionLevel.Fastest)
+	public static Boolean Save<TSource>(this TSource objectToSerialize, [NeedsTesting] String attribute, Document destination, CompressionLevel compression = CompressionLevel.Fastest)
 	{
 		if (attribute.IsNullOrWhiteSpace()) { throw new ArgumentEmptyException(nameof(attribute)); }
 
@@ -447,7 +448,7 @@ public static class PersistenceExtensions {
 
 	/// <summary>Return this object as a JSON string or null.</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="self">       </param>
+	/// <param name="self"></param>
 	/// <param name="formatting"></param>
 	public static String? ToJSON<T>( this T? self, Formatting formatting = Formatting.None ) =>
 		self is null ? default( String? ) : JsonConvert.SerializeObject( self, formatting, Jss.Value );
@@ -455,18 +456,18 @@ public static class PersistenceExtensions {
 	/*
 
 	/// <summary>
-	///     <para>
-	///         Attempts to deserialize an NTFS alternate stream with the <paramref name="attribute" /> to the file
-	///         <paramref name="location" />.
-	///     </para>
+	/// <para>
+	/// Attempts to deserialize an NTFS alternate stream with the <paramref name="attribute" /> to the file <paramref
+	/// name="location" />.
+	/// </para>
 	/// </summary>
 	/// <typeparam name="TSource"></typeparam>
 	/// <param name="attribute"></param>
-	/// <param name="value">    </param>
-	/// <param name="location"> </param>
+	/// <param name="value"></param>
+	/// <param name="location"></param>
 	/// <see cref="TrySave{TKey}" />
 	/// <returns></returns>
-	public static Boolean TryLoad<TSource>([NotNull] this String attribute, out TSource value, String location = null) {
+	public static Boolean TryLoad<TSource>([NeedsTesting] this String attribute, out TSource value, String location = null) {
 		if (attribute is null) { throw new ArgumentEmptyException(nameof(attribute)); }
 
 		value = default;
@@ -498,12 +499,12 @@ public static class PersistenceExtensions {
 
 	/// <summary>Persist the <paramref name="self" /> to a JSON text file.</summary>
 	/// <typeparam name="TKey"></typeparam>
-	/// <param name="self">    </param>
-	/// <param name="document">  </param>
-	/// <param name="overwrite"> </param>
+	/// <param name="self"></param>
+	/// <param name="document"></param>
+	/// <param name="overwrite"></param>
 	/// <param name="formatting"></param>
 	/// <returns></returns>
-	public static Boolean TrySave<TKey>( [CanBeNull] this TKey self, [NotNull] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
+	public static Boolean TrySave<TKey>( [NeedsTesting] this TKey self, [NeedsTesting] IDocument document, Boolean overwrite = true, Formatting formatting = Formatting.None ) {
 		if ( document is null ) {
 			throw new ArgumentEmptyException( nameof( document ) );
 		}
@@ -546,5 +547,7 @@ public static class PersistenceExtensions {
 
 			return list;
 		}
+
 	}
+
 }

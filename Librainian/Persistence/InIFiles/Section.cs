@@ -35,11 +35,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
-using JetBrains.Annotations;
 using Logging;
 using Newtonsoft.Json;
 using Parsing;
-
+using Utilities;
 using DataType = System.Collections.Concurrent.ConcurrentDictionary<System.String, System.String?>;
 
 /// <summary>
@@ -68,7 +67,7 @@ public class Section : IEquatable<Section> {
 
 	[JsonIgnore]
 	public String? this[String? key] {
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( key is null ) {
 				return default( String );

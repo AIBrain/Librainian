@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -639,7 +638,7 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 	}
 
 	/// <summary>Create a sql server database connection via async.</summary>
-	[Pure]
+	[NeedsTesting]
 	private async PooledValueTask<Status> OpenConnectionAsync(
 		CancellationToken cancellationToken,
 		Int32 retriesLeft = 10,

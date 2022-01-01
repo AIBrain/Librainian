@@ -33,7 +33,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Exceptions;
-using JetBrains.Annotations;
+using Utilities;
 
 public interface IQuantityOfTime {
 
@@ -50,26 +50,26 @@ public interface IQuantityOfTime {
 	///     Example: Seconds to Minutes.
 	/// </summary>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	IQuantityOfTime ToCoarserGranularity();
 
 	/// <summary>
 	///     Example: Hours to Minutes.
 	/// </summary>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	IQuantityOfTime ToFinerGranularity();
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	PlanckTimes ToPlanckTimes();
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	Seconds ToSeconds();
 
 	[DebuggerStepThrough]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[Pure]
+	[NeedsTesting]
 	TimeSpan ToTimeSpan();
 }

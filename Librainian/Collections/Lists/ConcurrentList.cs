@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "ConcurrentList.cs" last touched on 2021-12-29 at 5:28 AM by Protiguous.
 
 #nullable enable
 
@@ -59,29 +59,28 @@ using Utilities.Disposables;
 ///     <para>Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
 ///     <para>Call <see cref="CatchUp" /> to add any pending items.</para>
 /// </remarks>
-/// <copyright>Protiguous@Protiguous.com</copyright>
+/// <copyright>
+///     Protiguous@Protiguous.com
+/// </copyright>
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [NeedsTesting]
-public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumerable<T>>*/ {
-
-	public enum ThrowSetting {
-
-		DontThrowExceptions,
-
-		Throw
-	}
+public class ConcurrentList<T> : ABetterClassDispose, IList<T?> /*, IEquatable<IEnumerable<T>>*/ {
 
 	private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
+
+	private const String CouldNotObtainWriteLock = "Could not obtain write-lock.";
+
+	private const String ListDoesNotAllowModification = "List does not allow modifications.";
 
 	private Int64 _isReadOnly;
 
 	/// <summary>Threadsafe item counter (so we don't have to enter and exit the readerwriter).</summary>
 	[JsonIgnore]
-	private Int64 ItemCount;
+	private Int64 _itemCount;
 
 	/// <summary>Create an empty list with different timeout values.</summary>
-	/// <param name="enumerable">  Fill the list with the given enumerable.</param>
+	/// <param name="enumerable">Fill the list with the given enumerable.</param>
 	/// <param name="readTimeout">Defaults to 60 seconds.</param>
 	/// <param name="writeTimeout">Defaults to 60 seconds.</param>
 	public ConcurrentList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) : base( nameof( ConcurrentList<T> ) ) {
@@ -107,9 +106,6 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	[JsonProperty]
 	private List<T?> TheList { get; } = new();
 
-	///// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
-	//public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
-
 	[JsonProperty]
 	public TimeSpan TimeoutForReads { get; set; }
 
@@ -120,7 +116,7 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	///     <para>Count of items currently in this <see cref="ConcurrentList{TType}" />.</para>
 	/// </summary>
 	[JsonIgnore]
-	public Int32 Count => ( Int32 )Interlocked.Read( ref this.ItemCount );
+	public Int32 Count => ( Int32 ) Interlocked.Read( ref this._itemCount );
 
 	/// <summary>Get or set if the list is read-only. (Readonly will prevent modifications to list.)</summary>
 	public Boolean IsReadOnly {
@@ -137,22 +133,22 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	/// <returns>The element at the specified index.</returns>
 	/// <param name="index">The zero-based index of the element to get or set.</param>
 	/// <exception cref="ArgumentOutOfRangeException">
-	///     <paramref name="index" /> is not a valid index in the
-	///     <see cref="IList" />.
+	///     <paramref name="index" /> is not a valid index in the <see cref="IList" />.
 	/// </exception>
 	/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
-	public T this[Int32 index] {
+	public T? this[ Int32 index ] {
 		get {
-			if ( index < 0 || index > this.TheList.Count ) {
-				this.ThrowWhenOutOfRange( index );
+			var count = this.Count;
+
+			if ( index < 0 || index > count ) {
+				ThrowWhenOutOfRange( index, count );
 			}
 
-			//TODO How to fix this potential bug? A null being returned by Read().
-			return this.Read( () => this.TheList[index] );
+			return this.Read( () => this.TheList[ index ] );
 		}
 
 		set {
-			if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+			if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 				return;
 			}
 
@@ -162,12 +158,12 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 				}
 
 				try {
-					this.TheList[index] = value;
+					this.TheList[ index ] = value;
 
 					return true;
 				}
 				catch ( ArgumentOutOfRangeException ) {
-					this.ThrowWhenOutOfRange( index );
+					ThrowWhenOutOfRange( index, this.Count );
 				}
 
 				return false;
@@ -176,18 +172,17 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	}
 
 	/// <summary>
-	///     <para>
-	///         Add the
+	///     <para>Add the
 	///         <typeparam name="T">item</typeparam>
 	///         to the end of this <see cref="ConcurrentList{TType}" />.
 	///     </para>
 	/// </summary>
 	/// <param name="item"></param>
-	public void Add( T item ) => this.Add( item, null );
+	public void Add( T? item ) => this.Add( item, null );
 
 	/// <summary>Mark this <see cref="ConcurrentList{TType}" /> to be cleared.</summary>
 	public void Clear() {
-		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return;
 		}
 
@@ -201,19 +196,19 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 
 	/// <summary>
 	///     <para>
-	///         Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this
-	///         moment in time.
+	///         Determines whether the <paramref name="item" /> is in this <see cref="ConcurrentList{TType}" /> at this moment
+	///         in time.
 	///     </para>
 	/// </summary>
-	public Boolean Contains( T item ) => this.Read( () => this.TheList.Contains( item ) );
+	public Boolean Contains( T? item ) => this.Read( () => this.TheList.Contains( item ) );
 
 	/// <summary>
-	///     Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the
-	///     specified index in the target array.
+	///     Copies the entire <see cref="ConcurrentList{TType}" /> to the <paramref name="array" />, starting at the specified
+	///     index in the target array.
 	/// </summary>
-	/// <param name="array">     </param>
+	/// <param name="array"></param>
 	/// <param name="arrayIndex"></param>
-	public void CopyTo( T[] array, Int32 arrayIndex ) {
+	public void CopyTo( T?[] array, Int32 arrayIndex ) {
 		if ( array is null ) {
 			throw new ArgumentEmptyException( nameof( array ) );
 		}
@@ -227,32 +222,37 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 
 	/// <summary>
 	///     <para>
-	///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
-	///         <see cref="ConcurrentList{TType}" /> .
+	///         Returns an enumerator that iterates through a <see cref="Clone" /> of this <see cref="ConcurrentList{TType}" />
+	///         .
 	///     </para>
 	/// </summary>
 	public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
 
+	/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
+	IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator();
+
 	/// <summary>
 	///     <para>
-	///         Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the
-	///         zero-based index, or -1 if not found.
+	///         Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the zero-based
+	///         index,
+	///         or -1 if not found.
 	///     </para>
 	/// </summary>
 	/// <param name="item">The object to locate in this <see cref="ConcurrentList{TType}" />.</param>
-	public Int32 IndexOf( T item ) => this.Read( () => this.TheList.IndexOf( item ) );
+	public Int32 IndexOf( T? item ) => this.Read( () => this.TheList.IndexOf( item ) );
 
 	//is this the proper way?
 	/// <summary>
 	///     <para>
 	///         Requests an insert of the <paramref name="item" /> into this <see cref="ConcurrentList{TType}" /> at the
-	///         specified <paramref name="index" />.
+	///         specified
+	///         <paramref name="index" />.
 	///     </para>
 	/// </summary>
 	/// <param name="index"></param>
-	/// <param name="item"> </param>
-	public void Insert( Int32 index, T item ) {
-		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+	/// <param name="item"></param>
+	public void Insert( Int32 index, T? item ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return;
 		}
 
@@ -264,7 +264,7 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 				return true;
 			}
 			catch ( ArgumentOutOfRangeException ) {
-				this.ThrowWhenOutOfRange( index );
+				ThrowWhenOutOfRange( index, this.Count );
 
 				return false;
 			}
@@ -275,22 +275,22 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
 	/// </summary>
 	/// <param name="item"></param>
-	public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
+	public Boolean Remove( T? item ) => this.Remove( item, default( Action? ) );
 
 	public void RemoveAt( Int32 index ) {
-		if ( index < 0 ) {
-			this.ThrowWhenOutOfRange( index );
-
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return;
 		}
 
-		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+		if ( index < 0 ) {
+			ThrowWhenOutOfRange( index, this.Count );
+
 			return;
 		}
 
 		this.Write( () => {
 			try {
-				if ( index <= this.TheList.Count ) {
+				if ( index <= this.Count ) {
 					this.TheList.RemoveAt( index );
 					this.AnItemHasBeenRemoved();
 
@@ -298,28 +298,27 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 				}
 			}
 			catch ( ArgumentOutOfRangeException ) {
-				this.ThrowWhenOutOfRange( index );
+				ThrowWhenOutOfRange( index, this.Count );
 			}
 
 			return false;
 		} );
 	}
 
-	/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
-	IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
+	[DoesNotReturn]
+	private static void ThrowWhenOutOfRange( Int32 index, Int32 count ) {
+		throw new ArgumentOutOfRangeException( nameof( index ), index, $"The value {index} is out of range. (It must be between 0 and {count})." ).Log();
+	}
 
-	private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
+	private void AnItemHasBeenAdded() => Interlocked.Increment( ref this._itemCount );
 
 	private void AnItemHasBeenRemoved( Action? action = null ) {
-		Interlocked.Decrement( ref this.ItemCount );
+		Interlocked.Decrement( ref this._itemCount );
 		action?.Execute();
 	}
 
-	/// <summary>
-	///     TODO These need to be tested!!
-	/// </summary>
-	/// <param name="_"></param>
 	[OnDeserialized]
+	[NeedsTesting]
 	private void OnDeserialized( StreamingContext _ ) => this.ResetCount( this.TheList.Count );
 
 	/// <summary>
@@ -330,21 +329,17 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	/// <exception cref="ArgumentEmptyException"></exception>
 	/// <exception cref="ObjectDisposedException"></exception>
 	private TFuncResult? Read<TFuncResult>( Func<TFuncResult?> func ) {
-		if ( func == null ) {
+		if ( func is null ) {
 			throw new ArgumentEmptyException( nameof( func ) );
 		}
 
 		if ( this.ThrowWhenDisposed( this.IsDisposed ) ) {
-			return default( TFuncResult );
+			return default( TFuncResult? );
 		}
 
-		/*
-
-		 //TODO is this logic a good or bad shortcut?
-		if ( this.IsReadOnly ) {
-			return func(); //list has been marked to not allow any more modifications, go ahead and perform the read function.
+		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+			return default( TFuncResult? );
 		}
-		*/
 
 		this.CatchUp();
 
@@ -357,77 +352,23 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 			}
 		}
 
-		//if ( this.ThrowExceptions == ThrowSetting.Throw ) {
 		throw new TimeoutException( CouldNotObtainReadLock );
-		//}
-
-		//return default( TFuncResult? );
 	}
 
-	private void ResetCount( Int32 toCount = default ) => Interlocked.Add( ref this.ItemCount, -Interlocked.Read( ref this.ItemCount ) + toCount );
+	private void ResetCount( Int32 toCount = 0 ) => Interlocked.Add( ref this._itemCount, toCount - Interlocked.Read( ref this._itemCount ) );
 
 	private Int32 ResizeCapacity( Int32 capacity ) => this.Write( () => this.TheList.Capacity = capacity );
 
-	[DoesNotReturn]
-	private void ThrowWhenDisallowedModifications() {
-		//if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-		throw new InvalidOperationException( "List does not allow modifications." );
-		//}
-	}
-
-	/// <summary>
-	///     <para>
-	///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-	///         <exception cref="ObjectDisposedException" /> will be thrown.
-	///     </para>
-	///     <para>Otherwise, true is returned when this object has been disposed.</para>
-	/// </summary>
-	/// <exception cref="ObjectDisposedException"></exception>
 	private Boolean ThrowWhenDisposed( [DoesNotReturnIf( true )] Boolean isDisposed ) {
-		//var isDisposed = this.IsDisposed;
-
-		if ( isDisposed /*&& this.ThrowExceptions == ThrowSetting.Throw*/ ) {
+		if ( isDisposed ) {
 			throw new ObjectDisposedException( $"This {nameof( ConcurrentList<T> )} has been disposed." );
 		}
 
 		return isDisposed;
 	}
 
-	[DoesNotReturn]
-	private void ThrowWhenNoReadLock() {
-		//if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-		throw new TimeoutException( CouldNotObtainReadLock );
-		//}
-	}
-
-	[DoesNotReturn]
-	private void ThrowWhenNoWriteLock() {
-		//if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-		throw new TimeoutException( "Could not obtain write-lock." );
-		//}
-	}
-
-	/// <summary>
-	///     <para>
-	///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-	///         <exception cref="ArgumentOutOfRangeException" /> will be thrown.
-	///     </para>
-	/// </summary>
-	/// <param name="index"></param>
-	private void ThrowWhenOutOfRange( Int32 index ) {
-		var message = $"The value {index} is out of range. (It must be between 0 and {this.Count}).";
-
-		//if ( this.ThrowExceptions == ThrowSetting.Throw ) {
-		throw new ArgumentOutOfRangeException( nameof( index ), index, message ).Log();
-		//}
-
-		//return default( T? );
-	}
-
 	private Boolean ThrowWhenReadOnly( [DoesNotReturnIf( true )] Boolean isReadOnly ) {
-		//var isReadOnly = this.IsReadOnly;
-
-		if ( isReadOnly /*&& this.ThrowExceptions == ThrowSetting.Throw*/ ) {
+		if ( isReadOnly ) {
 			throw new InvalidOperationException( $"This {nameof( ConcurrentList<T> )} is set to read-only." );
 		}
 
@@ -438,7 +379,7 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	///     <para>Filter write requests through the <see cref="ReaderWriter" />.</para>
 	/// </summary>
 	/// <typeparam name="TResult"></typeparam>
-	/// <param name="func">                         </param>
+	/// <param name="func"></param>
 	/// <see cref="CatchUp" />
 	/// <exception cref="ArgumentEmptyException"></exception>
 	/// <exception cref="ObjectDisposedException"></exception>
@@ -463,26 +404,19 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 			}
 		}
 
-		this.ThrowWhenNoWriteLock();
-
-		return default( TResult? );
+		throw new TimeoutException( CouldNotObtainWriteLock );
 	}
 
 	/// <summary>
-	///     <para>
-	///         Add the
+	///     <para>Add the
 	///         <typeparam name="T">item</typeparam>
 	///         to the end of this <see cref="ConcurrentList{TType}" />.
 	///     </para>
 	/// </summary>
-	/// <param name="item">    </param>
+	/// <param name="item"></param>
 	/// <param name="afterAdd"></param>
 	public Boolean Add( T? item, Action? afterAdd ) {
-		if ( this.ThrowWhenDisposed( this.IsDisposed ) ) {
-			return false;
-		}
-
-		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return false;
 		}
 
@@ -508,20 +442,15 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	public Task<Boolean> AddAsync( T? item, Action? afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
 
 	/// <summary>Add a collection of items.</summary>
-	/// <param name="items">          </param>
+	/// <param name="items"></param>
 	/// <param name="useParallelism">
-	///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order
-	///     of items.
+	///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order of items.
 	/// </param>
-	/// <param name="afterEachAdd">   <see cref="Action" /> to perform after each add.</param>
+	/// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
 	/// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
 	/// <exception cref="ArgumentEmptyException"></exception>
 	public void AddRange( IEnumerable<T?> items, Byte useParallelism = 0, Action? afterEachAdd = null, Action? afterRangeAdded = null ) {
-		if ( this.ThrowWhenDisposed( this.IsDisposed ) ) {
-			return;
-		}
-
-		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return;
 		}
 
@@ -565,17 +494,13 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 			}
 		}, cancellationToken );
 
-	/// <summary>
-	///     Returns true if any items have not been added to the list yet.
-	/// </summary>
+	/// <summary>Returns true if any items have not been added to the list yet.</summary>
 	/// <see cref="CatchUp" />
 	public Boolean AnyWritesPending() => this.InputBuffer.Any();
 
-	/// <summary>
-	///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.
-	/// </summary>
+	/// <summary>Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.</summary>
 	public void CatchUp() {
-		if ( this.IsReadOnly || !this.AnyWritesPending() || this.ThrowWhenDisposed( this.IsDisposed ) ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) || !this.AnyWritesPending() ) {
 			return;
 		}
 
@@ -586,7 +511,7 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 				}
 
 				while ( this.InputBuffer.TryDequeue( out var item ) ) {
-					if ( this.IsReadOnly || this.ThrowWhenDisposed( this.IsDisposed ) ) {
+					if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 						return;
 					}
 
@@ -603,7 +528,10 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 			}
 		}
 
-		this.ThrowWhenNoWriteLock();
+		//if ( this.ThrowExceptions == ThrowSetting.Throw ) {
+		throw new TimeoutException( CouldNotObtainWriteLock );
+
+		//}
 	}
 
 	/// <summary>
@@ -631,21 +559,17 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	}
 
 	public override void DisposeManaged() {
-
 		//nothing to do.. yet.
 	}
 
+	//is this the proper way?
 	/// <summary>
 	///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
 	/// </summary>
-	/// <param name="item">        </param>
+	/// <param name="item"></param>
 	/// <param name="afterRemoval"></param>
 	public Boolean Remove( T? item, Action? afterRemoval ) {
-		if ( this.ThrowWhenDisposed( this.IsDisposed ) ) {
-			return false;
-		}
-
-		if ( this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return false;
 		}
 
@@ -674,12 +598,10 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 
 	public Boolean TryAdd( T? item, Action? afterAdd = null ) => this.Add( item, afterAdd );
 
-	/// <summary>
-	///     Returns true if there are no more incoming items.
-	/// </summary>
+	/// <summary>Returns true if there are no more incoming items.</summary>
 	/// <param name="timeout"></param>
 	public Boolean TryCatchup( TimeSpan? timeout = default ) {
-		if ( this.IsReadOnly || this.IsDisposed ) {
+		if ( this.ThrowWhenDisposed( this.IsDisposed ) || this.ThrowWhenReadOnly( this.IsReadOnly ) ) {
 			return true;
 		}
 
@@ -702,7 +624,7 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 	///     <para>Try to get an item in this <see cref="ConcurrentList{TType}" /> by index.</para>
 	///     <para>Returns true if the request was posted to the internal dataflow.</para>
 	/// </summary>
-	/// <param name="index">   </param>
+	/// <param name="index"></param>
 	/// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
 	public Boolean TryGet( Int32 index, Action<T?>? afterGet ) {
 		if ( index < 0 ) {
@@ -711,15 +633,16 @@ public class ConcurrentList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IE
 
 		return this.Read( () => {
 			if ( index >= this.TheList.Count ) {
-				this.ThrowWhenOutOfRange( index );
+				ThrowWhenOutOfRange( index, this.Count );
 
 				return false;
 			}
 
-			var result = this.TheList[index];
+			var result = this.TheList[ index ];
 			afterGet?.Invoke( result );
 
 			return true;
 		} );
 	}
+
 }

@@ -36,7 +36,6 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Logging;
 using Utilities.Disposables;
 
@@ -56,7 +55,6 @@ using Utilities.Disposables;
 ///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }
 /// </code>
 /// </example>
-[UsedImplicitly]
 public class WebServer : ABetterClassDispose {
 
 		

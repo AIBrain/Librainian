@@ -95,7 +95,7 @@ public static class Utility {
 	/// Copy from one stream to another.
 	/// Example:
 	/// using(var stream = response.GetResponseStream())
-	/// using(var ms = new MemoryStream())
+	/// using(var ms = new RecyclableMemoryStream())
 	/// {
 	///     stream.CopyTo(ms);
 	///      // Do something with copied data

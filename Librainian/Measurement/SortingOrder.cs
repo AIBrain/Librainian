@@ -1,4 +1,4 @@
-﻿// Copyright © Protiguous. All Rights Reserved.
+// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,12 +23,42 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "NeedsTestingAttribute.cs" last touched on 2022-01-01 at 5:04 AM by Protiguous.
+// File "SortOrder.cs" last touched on 2021-10-02 at 7:38 AM by Protiguous.
 
-namespace Librainian.Utilities;
+namespace Librainian.Measurement;
 
 using System;
 
-/// <summary>Mark that this class needs testing and unit testing to confirm it works as expected.</summary>
-[AttributeUsage( AttributeTargets.All )]
-public class NeedsTestingAttribute : Attribute { }
+public static class SortingOrder {
+
+	/// <summary>
+	///     1
+	/// </summary>
+	public const SByte After = 1;
+
+	/// <summary>
+	///     -1
+	/// </summary>
+	public const SByte Before = -1;
+
+	/// <summary>
+	///     Default to <see cref="NullsFirst" /> in a sort operation.
+	/// </summary>
+	public const SByte NullsDefault = NullsFirst;
+
+	/// <summary>
+	///     Return nulls first in a sort operation.
+	/// </summary>
+	public const SByte NullsFirst = Before;
+
+	/// <summary>
+	///     Return nulls last in a sort operation.
+	/// </summary>
+	public const SByte NullsLast = After;
+
+	/// <summary>
+	///     0
+	/// </summary>
+	public const SByte Same = 0;
+
+}

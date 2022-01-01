@@ -40,6 +40,7 @@ using Extensions;
 using Maths;
 using Newtonsoft.Json;
 using Parsing;
+using SortingOrder = SortingOrder;
 
 /// <summary>
 ///     <para>
@@ -50,7 +51,7 @@ using Parsing;
 /// <see cref="http://wikipedia.org/wiki/Units_of_time" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
-[Immutable]
+[Extensions.Immutable]
 public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
 	/// <summary>Calc it once.</summary>
@@ -425,7 +426,7 @@ public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 	/// <param name="right"></param>
 	public static Int32 CompareTo( SpanOfTime? left, SpanOfTime? right ) {
 		if ( left is null || right is null ) {
-			return SortOrder.Before;
+			return SortingOrder.Before;
 		}
 
 		var leftPlancks = left.CalcTotalPlanckTimes();

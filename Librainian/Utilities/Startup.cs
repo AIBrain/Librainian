@@ -1,4 +1,4 @@
-// Copyright © Protiguous. All Rights Reserved.
+﻿// Copyright © Protiguous. All Rights Reserved.
 // 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
 // 
@@ -23,42 +23,16 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "SortOrder.cs" last touched on 2021-10-02 at 7:38 AM by Protiguous.
+// File "Startup.cs" last touched on 2021-12-31 at 2:48 AM by Protiguous.
 
-namespace Librainian.Measurement;
+namespace Librainian.Utilities;
 
 using System;
+using LazyCache;
+using Parsing;
 
-public static class SortOrder {
+internal class Startup {
 
-	/// <summary>
-	///     1
-	/// </summary>
-	public const SByte After = 1;
-
-	/// <summary>
-	///     -1
-	/// </summary>
-	public const SByte Before = -1;
-
-	/// <summary>
-	///     Default to <see cref="NullsFirst" /> in a sort operation.
-	/// </summary>
-	public const SByte NullsDefault = NullsFirst;
-
-	/// <summary>
-	///     Return nulls first in a sort operation.
-	/// </summary>
-	public const SByte NullsFirst = Before;
-
-	/// <summary>
-	///     Return nulls last in a sort operation.
-	/// </summary>
-	public const SByte NullsLast = After;
-
-	/// <summary>
-	///     0
-	/// </summary>
-	public const SByte Same = 0;
+	public Startup( IAppCache cache ) => ParsingExtensions.LazyCache = cache ?? throw new ArgumentNullException( nameof( cache ) );
 
 }

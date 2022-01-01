@@ -31,7 +31,7 @@ using System.Globalization;
 using System.Net;
 using System.Numerics;
 using Exceptions;
-using JetBrains.Annotations;
+using Utilities;
 
 /// <summary>
 ///     <para>Pulled from the BitcoinSharp project.</para>
@@ -271,7 +271,7 @@ public struct UInt256 : IComparable<UInt256> {
 		return false;
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public override Int32 GetHashCode() => this._hashCode;
 
 	public BigInteger ToBigInteger() => new( this.ToByteArray().Concat( 0 ) );

@@ -37,27 +37,27 @@ using Measurement.Time;
 using Threadsafe;
 
 /// <summary>
-///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="signal" /> is Set (
+///     Accepts an <see cref="Action" /> to perform (in a loop) when the <see cref="Signal" /> is Set (
 ///     <see cref="Proceed" />).
 /// </summary>
 public class BackgroundThread : BackgroundWorker {
 
-	private VolatileBoolean RunningAction = new(false);
+	private VolatileBoolean _runningAction = new(false);
 
 		
-	/// <param name="actionToPerform">Action to perform on each <see cref="signal" />.</param>
+	/// <param name="actionToPerform">Action to perform on each <see cref="Signal" />.</param>
 	/// <param name="cancellationToken"></param>
 	public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {
 		this.ActionToPerform = actionToPerform ?? throw new ArgumentEmptyException( nameof( actionToPerform ) );
-		this.cancellationToken = cancellationToken;
-		this.signal = new(false);
+		this.CancellationToken = cancellationToken;
+		this.Signal = new(false);
 	}
 
 	private Task ActionToPerform { get; }
 
-	private CancellationToken cancellationToken { get; }
+	private CancellationToken CancellationToken { get; }
 
-	private ManualResetEventSlim signal { get; }
+	private ManualResetEventSlim Signal { get; }
 
 	/// <summary>
 	///     <para>Every second wake up and see if we can get the semaphore.</para>
@@ -66,13 +66,13 @@ public class BackgroundThread : BackgroundWorker {
 	/// <param name="e"></param>
 	protected override async void OnDoWork( DoWorkEventArgs e ) {
 
-		while ( !this.cancellationToken.IsCancellationRequested ) {
-			if ( !this.signal.Wait( Seconds.One, this.cancellationToken ) ) {
+		while ( !this.CancellationToken.IsCancellationRequested ) {
+			if ( !this.Signal.Wait( Seconds.One, this.CancellationToken ) ) {
 				continue;
 			}
 
 			try {
-				this.RunningAction.Value = true;
+				this._runningAction.Value = true;
 
 				await this.ActionToPerform.ConfigureAwait( false );
 			}
@@ -80,15 +80,15 @@ public class BackgroundThread : BackgroundWorker {
 				exception.Log( BreakOrDontBreak.Break );
 			}
 			finally {
-				this.RunningAction.Value = false;
+				this._runningAction.Value = false;
 			}
 		}
 	}
 
-	public Boolean IsRunningAction() => this.RunningAction;
+	public Boolean IsRunningAction() => this._runningAction;
 
 	/// <summary>Set the signal.</summary>
 	[Obsolete]
-	public void Proceed() => this.signal.Set();
+	public void Proceed() => this.Signal.Set();
 
 }

@@ -38,42 +38,42 @@ public class AsyncReaderWriterLock {
 
 	private Int32 _status;
 
-	private Task<Releaser> _readerReleaser { get; }
+	private Task<Releaser> ReaderReleaser { get; }
 
-	private TaskCompletionSource<Releaser> _waitingReader { get; set; } = new( TaskCreationOptions.RunContinuationsAsynchronously );
+	private TaskCompletionSource<Releaser> WaitingReader { get; set; } = new( TaskCreationOptions.RunContinuationsAsynchronously );
 
-	private Queue<TaskCompletionSource<Releaser>> _waitingWriters { get; } = new();
+	private Queue<TaskCompletionSource<Releaser>> WaitingWriters { get; } = new();
 
-	private Task<Releaser> _writerReleaser { get; }
+	private Task<Releaser> WriterReleaser { get; }
 
 	public AsyncReaderWriterLock() {
-		this._readerReleaser = Task.FromResult( new Releaser( this, false ) );
-		this._writerReleaser = Task.FromResult( new Releaser( this, true ) );
+		this.ReaderReleaser = Task.FromResult( new Releaser( this, false ) );
+		this.WriterReleaser = Task.FromResult( new Releaser( this, true ) );
 	}
 
 	public Task<Releaser> ReaderLockAsync() {
-		lock ( this._waitingWriters ) {
-			if ( this._status >= 0 && !this._waitingWriters.Any() ) {
+		lock ( this.WaitingWriters ) {
+			if ( this._status >= 0 && !this.WaitingWriters.Any() ) {
 				++this._status;
 
-				return this._readerReleaser;
+				return this.ReaderReleaser;
 			}
 
 			++this._readersWaiting;
 
-			return this._waitingReader.Task.ContinueWith( t => t.Result );
+			return this.WaitingReader.Task.ContinueWith( t => t.Result );
 		}
 	}
 
 	public void ReaderRelease() {
 		TaskCompletionSource<Releaser>? toWake = null;
 
-		lock ( this._waitingWriters ) {
+		lock ( this.WaitingWriters ) {
 			--this._status;
 
-			if ( this._status == 0 && this._waitingWriters.Count > 0 ) {
+			if ( this._status == 0 && this.WaitingWriters.Count > 0 ) {
 				this._status = -1;
-				toWake = this._waitingWriters.Dequeue();
+				toWake = this.WaitingWriters.Dequeue();
 			}
 		}
 
@@ -81,15 +81,15 @@ public class AsyncReaderWriterLock {
 	}
 
 	public Task<Releaser> WriterLockAsync() {
-		lock ( this._waitingWriters ) {
+		lock ( this.WaitingWriters ) {
 			if ( this._status == 0 ) {
 				this._status = -1;
 
-				return this._writerReleaser;
+				return this.WriterReleaser;
 			}
 
 			var waiter = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
-			this._waitingWriters.Enqueue( waiter );
+			this.WaitingWriters.Enqueue( waiter );
 
 			return waiter.Task;
 		}
@@ -99,16 +99,16 @@ public class AsyncReaderWriterLock {
 		TaskCompletionSource<Releaser>? toWake = null;
 		var toWakeIsWriter = false;
 
-		lock ( this._waitingWriters ) {
-			if ( this._waitingWriters.Count > 0 ) {
-				toWake = this._waitingWriters.Dequeue();
+		lock ( this.WaitingWriters ) {
+			if ( this.WaitingWriters.Count > 0 ) {
+				toWake = this.WaitingWriters.Dequeue();
 				toWakeIsWriter = true;
 			}
 			else if ( this._readersWaiting > 0 ) {
-				toWake = this._waitingReader;
+				toWake = this.WaitingReader;
 				this._status = this._readersWaiting;
 				this._readersWaiting = 0;
-				this._waitingReader = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
+				this.WaitingReader = new TaskCompletionSource<Releaser>( TaskCreationOptions.RunContinuationsAsynchronously );
 			}
 			else {
 				this._status = 0;

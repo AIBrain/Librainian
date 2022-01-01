@@ -29,8 +29,8 @@ namespace Librainian.Maths.Ranges;
 
 using System;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>Represents a Decimal range with minimum and maximum values</summary>
 /// <remarks>Modified from the AForge Library Copyright © Andrew Kirillov, 2006, andrew.kirillov@gmail.com</remarks>
@@ -70,21 +70,21 @@ public record DecimalRange {
 	/// <summary>Check if the specified value is inside this range</summary>
 	/// <param name="x">Value to check</param>
 	/// <returns><b>True</b> if the specified value is inside this range or <b>false</b> otherwise.</returns>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public Boolean IsInside( Decimal x ) => x.Between( this.Minimum, this.Maximum );
 
 	/// <summary>Check if the specified range is inside this range</summary>
 	/// <param name="range">Range to check</param>
 	/// <returns><b>True</b> if the specified range is inside this range or <b>false</b> otherwise.</returns>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public Boolean IsInside( DecimalRange range ) => this.IsInside( range.Minimum ) && this.IsInside( range.Maximum );
 
 	/// <summary>Check if the specified range overlaps with this range</summary>
 	/// <param name="range">Range to check for overlapping</param>
 	/// <returns><b>True</b> if the specified range overlaps with this range or <b>false</b> otherwise.</returns>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public Boolean IsOverlapping( DecimalRange range ) => this.IsInside( range.Minimum ) || this.IsInside( range.Maximum );
 }

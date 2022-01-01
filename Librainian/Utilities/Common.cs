@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Common.cs" last touched on 2021-06-11 at 7:36 AM by Protiguous.
+// File "Common.cs" last touched on 2021-12-31 at 2:33 AM by Protiguous.
 
 #nullable enable
 
@@ -34,8 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -44,39 +44,38 @@ using Exceptions;
 using Measurement;
 using Newtonsoft.Json;
 using Parsing;
-using SortOrder = Measurement.SortOrder;
+using Utilities;
 
 public static class Common {
 
 	public static Encoding DefaultEncoding { get; } = Encoding.Unicode;
 
-	/// <summary>
-	/// Convert any number of strings into a Key (keys to use for caching)
-	/// Using the reasoning that a string lookup will match sooner by having the most selective "key" first.
-	/// </summary>
-	/// <param name="keys"></param>
-	/// <returns></returns>
-	public static String ToKey( params String[] keys) => keys.ToStrings( Symbols.TripleTilde );
+	private static void YieldFor( TimeSpan timeSpan ) {
+		var stopwatch = Stopwatch.StartNew();
+		while ( stopwatch.Elapsed < timeSpan ) {
+			Thread.Yield();
+		}
+	}
 
 	/// <summary>
 	///     Return true if an <see cref="IComparable" /> value is <see cref="Between{T}" /> two inclusive values.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="target">        </param>
+	/// <param name="target"></param>
 	/// <param name="startInclusive"></param>
-	/// <param name="endInclusive">  </param>
+	/// <param name="endInclusive"></param>
 	/// <example>5.Between(1, 10)</example>
 	/// <example>5.Between(10, 1)</example>
 	/// <example>5.Between(10, 6) == false</example>
 	/// <example>5.Between(5, 5))</example>
-	[Pure]
-	public static Boolean Between<T>( this T target, T startInclusive, T endInclusive ) where T : IComparable {
-		if ( startInclusive.CompareTo( endInclusive ) is SortOrder.After ) {
-			return target.CompareTo( startInclusive ) <= SortOrder.Same && target.CompareTo( endInclusive ) >= SortOrder.Same;
+	[NeedsTesting]
+	public static Boolean Between<T>( this T target, T startInclusive, T endInclusive ) where T : IComparable<T> {
+		if ( startInclusive.CompareTo( endInclusive ) is SortingOrder.After ) {
+			return target.CompareTo( startInclusive ) <= SortingOrder.Same && target.CompareTo( endInclusive ) >= SortingOrder.Same;
 		}
 
-		if ( target.CompareTo( startInclusive ) >= SortOrder.Same ) {
-			return target.CompareTo( endInclusive ) <= SortOrder.Same;
+		if ( target.CompareTo( startInclusive ) >= SortingOrder.Same ) {
+			return target.CompareTo( endInclusive ) <= SortingOrder.Same;
 		}
 
 		return false;
@@ -85,68 +84,70 @@ public static class Common {
 	/// <summary>
 	///     Return true if a value is <see cref="Between{T}" /> two inclusive values.
 	/// </summary>
-	/// <param name="target">        </param>
+	/// <param name="target"></param>
 	/// <param name="startInclusive"></param>
-	/// <param name="endInclusive">  </param>
+	/// <param name="endInclusive"></param>
 	/// <example>5.Between(1, 10)</example>
 	/// <example>5.Between(10, 1)</example>
 	/// <example>5.Between(10, 6) == false</example>
 	/// <example>5.Between(5, 5))</example>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Between( this Byte target, Byte startInclusive, Byte endInclusive ) => target >= startInclusive && target <= endInclusive;
 
 	/// <summary>
 	///     Return true if a value is <see cref="Between{T}" /> two inclusive values.
 	/// </summary>
-	/// <param name="target">        </param>
+	/// <param name="target"></param>
 	/// <param name="startInclusive"></param>
-	/// <param name="endInclusive">  </param>
+	/// <param name="endInclusive"></param>
 	/// <example>5.Between(1, 10)</example>
 	/// <example>5.Between(10, 1)</example>
 	/// <example>5.Between(10, 6) == false</example>
 	/// <example>5.Between(5, 5))</example>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Between( this Int32 target, Int32 startInclusive, Int32 endInclusive ) => target >= startInclusive && target <= endInclusive;
 
 	/// <summary>
 	///     Return true if a value is <see cref="Between{T}" /> two inclusive values.
 	/// </summary>
-	/// <param name="target">        </param>
+	/// <param name="target"></param>
 	/// <param name="startInclusive"></param>
-	/// <param name="endInclusive">  </param>
+	/// <param name="endInclusive"></param>
 	/// <example>5.Between(1, 10)</example>
 	/// <example>5.Between(10, 1)</example>
 	/// <example>5.Between(10, 6) == false</example>
 	/// <example>5.Between(5, 5))</example>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Between( this Int64 target, Int64 startInclusive, Int64 endInclusive ) => target >= startInclusive && target <= endInclusive;
 
 	/// <summary>
 	///     Return true if a value is <see cref="Between{T}" /> two inclusive values.
 	/// </summary>
-	/// <param name="target">        </param>
+	/// <param name="target"></param>
 	/// <param name="startInclusive"></param>
-	/// <param name="endInclusive">  </param>
+	/// <param name="endInclusive"></param>
 	/// <example>5.Between(1, 10)</example>
 	/// <example>5.Between(10, 1)</example>
 	/// <example>5.Between(10, 6) == false</example>
 	/// <example>5.Between(5, 5))</example>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean Between( this UInt64 target, UInt64 startInclusive, UInt64 endInclusive ) => target >= startInclusive && target <= endInclusive;
 
 	/// <summary>
 	///     Returns a new <typeparamref name="T" /> that is the value of <paramref name="self" />, constrained between
-	///     <paramref name="min" /> and <paramref name="max" />.
+	///     <paramref
+	///         name="min" />
+	///     and <paramref name="max" />.
 	/// </summary>
 	/// <param name="self">The extended T.</param>
-	/// <param name="min"> The minimum value of the <typeparamref name="T" /> that can be returned.</param>
-	/// <param name="max"> The maximum value of the <typeparamref name="T" /> that can be returned.</param>
+	/// <param name="min">The minimum value of the <typeparamref name="T" /> that can be returned.</param>
+	/// <param name="max">The maximum value of the <typeparamref name="T" /> that can be returned.</param>
 	/// <returns>The equivalent to: <c>this &lt; min ? min : this &gt; max ? max : this</c>.</returns>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static T Clamp<T>( this T self, T min, T max ) where T : IComparable<T> =>
 		self.CompareTo( min ) < 0 ? min :
@@ -178,6 +179,9 @@ public static class Common {
 		}
 	}
 
+	public static String GetApplicationName( String defaultOtherwise ) =>
+		Application.ProductName.Trimmed() ?? defaultOtherwise.Trimmed() ?? throw new NullException( nameof( GetApplicationName ) );
+
 	public static Boolean IsDevelopmentEnviroment() {
 		var devEnvironmentVariable = Environment.GetEnvironmentVariable( "NETCORE_ENVIRONMENT" );
 
@@ -185,15 +189,17 @@ public static class Common {
 		return isDevelopment;
 	}
 
-	[Pure]
-	public static UInt64 LengthReal( this String? s ) => s is null ? 0 : ( UInt64 )new StringInfo( s ).LengthInTextElements;
+	[NeedsTesting]
+	public static UInt64 LengthReal( this String? s ) => s is null ? 0 : ( UInt64 ) new StringInfo( s ).LengthInTextElements;
 
 	/// <summary>
 	///     Gets a <b>horribly</b> ROUGH guesstimate of the memory consumed by an object by using
-	///     <see cref="Newtonsoft.Json.JsonConvert" /> .
+	///     <see
+	///         cref="Newtonsoft.Json.JsonConvert" />
+	///     .
 	/// </summary>
 	/// <param name="bob"></param>
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 MemoryUsed<T>( [DisallowNull] this T bob ) => JsonConvert.SerializeObject( bob, Formatting.None ).LengthReal();
 
 	/// <summary>
@@ -215,74 +221,42 @@ public static class Common {
 	///     <para>Works like the SQL "nullif" function.</para>
 	///     <para>
 	///         If <paramref name="left" /> is equal to <paramref name="right" /> then return null for classes or the default
-	///         value for value types.
+	///         value for
+	///         value types.
 	///     </para>
 	///     <para>Otherwise return <paramref name="left" />.</para>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="right"></param>
 	[DebuggerStepThrough]
 	public static T? NullIf<T>( this T? left, T? right ) where T : class => Comparer<T>.Default.Compare( left, right ) == 0 ? null : left;
 
-	/// <summary>
-	///     Swap <paramref name="left" /> with <paramref name="right" />.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="left"> </param>
-	/// <param name="right"></param>
-	[DebuggerStepThrough]
-	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static void SwapNullable<T>( ref T? left, ref T? right ) => ( left, right ) = ( right, left );
 	public static void Swap<T>( ref T left, ref T right ) => ( left, right ) = ( right, left );
 
 	/// <summary>
 	///     Given (T left, T right), Return (T right, T left).
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="left"> </param>
+	/// <param name="left"></param>
 	/// <param name="right"></param>
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static (T? right, T? left) Swap<T>( this T? left, T? right ) => ( right, left );
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static (T? right, T? left) Swap<T>( (T? left, T? right) tuple ) => ( tuple.right, tuple.left );
 
 	/// <summary>
-	///     Create only 1 instance of <see cref="T" /> per thread. (Only unique when using this method!)
+	///     Swap the two indexes
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public static class Cache<T> where T : notnull, new() {
-
-		private static ThreadLocal<T> LocalCache { get; } = new(() => new T(), false);
-
-		public static T? Instance { get; } = LocalCache.Value;
-
-	}
-
-	/// <summary>
-	///     Only create 1 instance of <see cref="T" /> per all threads. (only unique when using this method!)
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public static class CacheGlobal<T> where T : notnull, new() {
-
-		public static T Instance { get; } = new();
-
-	}
-
-	/// <summary>Swap the two indexes</summary>
-	/// <typeparam name="T"></typeparam>
-	/// <param name="array"> </param>
+	/// <param name="array"></param>
 	/// <param name="index1"></param>
 	/// <param name="index2"></param>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	public static void Swap<T>(
-		this T[] array,
-		Int32 index1,
-		Int32 index2
-	) {
+	public static void Swap<T>( this T[] array, Int32 index1, Int32 index2 ) {
 		if ( array is null ) {
 			throw new ArgumentEmptyException( nameof( array ) );
 		}
@@ -305,16 +279,51 @@ public static class Common {
 			throw new OutOfRangeException( $"{nameof( index2 )} cannot be higher than {length - 1}." );
 		}
 
-		(array[ index1 ], array[ index2 ]) = (array[ index2 ], array[ index1 ]);
+		( array[ index1 ], array[ index2 ] ) = ( array[ index2 ], array[ index1 ] );
 	}
 
-	private static void YieldFor( TimeSpan timeSpan ) {
-		var stopwatch = Stopwatch.StartNew();
-		while ( stopwatch.Elapsed < timeSpan ) {
-			Thread.Yield();
-		} 
+	/// <summary>
+	///     Swap <paramref name="left" /> with <paramref name="right" />.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="left"></param>
+	/// <param name="right"></param>
+	[DebuggerStepThrough]
+	[MethodImpl( MethodImplOptions.AggressiveInlining )]
+	public static void SwapNullable<T>( ref T? left, ref T? right ) => ( left, right ) = ( right, left );
+
+	/// <summary>
+	///     Convert any number of strings into a Key (keys to use for caching) Using the reasoning that a string lookup will
+	///     match
+	///     sooner by having the most selective "key" first.
+	/// </summary>
+	/// <param name="keys"></param>
+	/// <returns></returns>
+	public static String ToKey( params String[] keys ) {
+		Debug.Assert( !keys.Select( s => s.Contains( Symbols.TripleTilde ) ).Any() );
+		return keys.ToStrings( Symbols.TripleTilde );
 	}
 
-	public static String GetApplicationName( String defaultOtherwise ) => Application.ProductName.Trimmed() ?? defaultOtherwise.Trimmed() ?? throw new NullException(nameof( GetApplicationName));
+	/// <summary>
+	///     Create only 1 instance of <see cref="T" /> per thread. (Only unique when using this method!)
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public static class Cache<T> where T : notnull, new() {
+
+		private static ThreadLocal<T> LocalCache { get; } = new(() => new T(), false);
+
+		public static T? Instance { get; } = LocalCache.Value;
+
+	}
+
+	/// <summary>
+	///     Only create 1 instance of <see cref="T" /> per all threads. (only unique when using this method!)
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public static class CacheGlobal<T> where T : notnull, new() {
+
+		public static T Instance { get; } = new();
+
+	}
 
 }

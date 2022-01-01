@@ -30,7 +30,7 @@
 namespace Librainian.Parsing;
 
 using System;
-using JetBrains.Annotations;
+using Utilities;
 
 public static partial class ParsingConstants {
 
@@ -55,7 +55,7 @@ public static partial class ParsingConstants {
 		/// <summary>
 		///     Two spaces as a <see cref="String" />.
 		/// </summary>
-		[NotNull]
+		[NeedsTesting]
 		public const String Doublespace = Singlespace + Singlespace;
 
 		/// <summary>
@@ -74,7 +74,7 @@ public static partial class ParsingConstants {
 		public const String Singlespace = " ";
 
 		/// <summary> ~`!@#$%^&*()-_=+?:,./\[]{}|' </summary>
-		[NotNull]
+		[NeedsTesting]
 		public const String Symbols = @"~`!@#$%^&*()-_=+<>?:,./\[]{}|'";
 
 		/// <summary>

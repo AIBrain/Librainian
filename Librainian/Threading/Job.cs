@@ -49,12 +49,12 @@ using Utilities.Disposables;
 [NeedsTesting]
 public class Job<T> : ABetterClassDispose {
 
-	private Stopwatch _stopwatch { get; }
+	private Stopwatch Stopwatch { get; }
 
 	/// <summary>Set to cancel this job with the <see cref="MaxRunningTime" />.</summary>
 	public CancellationTokenSource CTS { get; }
 
-	/// <summary>Query the <see cref="ETR" />.</summary>
+	/// <summary>Query the <see cref="Etr" />.</summary>
 	public TimeSpan EstimatedTimeRemaining() => this.MaxRunningTime - this.Elapsed();
 
 	public TimeSpan MaxRunningTime { get; private set; }
@@ -74,7 +74,7 @@ public class Job<T> : ABetterClassDispose {
 		this.MaxRunningTime = maxRuntime;
 		this.Progress = progress;
 		this.CTS = new CancellationTokenSource( this.MaxRunningTime );
-		this._stopwatch = Stopwatch.StartNew();
+		this.Stopwatch = Stopwatch.StartNew();
 		this.Timer = FluentTimer.Create( Fps.Sixty ).AutoReset().AndStart();
 	}
 
@@ -101,7 +101,7 @@ public class Job<T> : ABetterClassDispose {
 	}
 
 	private void Done( T? result ) {
-		this._stopwatch.Stop();
+		this.Stopwatch.Stop();
 		$"Job (Task.Id={this.TheTask.Id}) is done.".Verbose();
 
 		this.Result = result;
@@ -120,7 +120,7 @@ public class Job<T> : ABetterClassDispose {
 	///     effect if the task is <see cref="IsDone" />.
 	/// </summary>
 	/// <param name="timeSpan"></param>
-	public void AdjustETR( TimeSpan timeSpan ) {
+	public void AdjustEtr( TimeSpan timeSpan ) {
 		if ( !this.IsDone() ) {
 			this.MaxRunningTime = ( this.Elapsed() + timeSpan ).Half();
 		}
@@ -153,10 +153,10 @@ public class Job<T> : ABetterClassDispose {
 	/// <summary>
 	///     How long the <see cref="Job{T}" /> has been running.
 	/// </summary>
-	public TimeSpan Elapsed() => this._stopwatch.Elapsed;
+	public TimeSpan Elapsed() => this.Stopwatch.Elapsed;
 
 	/// <summary>Query the <see cref="EstimatedTimeRemaining" />.</summary>
-	public TimeSpan ETR() => this.EstimatedTimeRemaining();
+	public TimeSpan Etr() => this.EstimatedTimeRemaining();
 
 	public Boolean IsDone() => this.TheTask.IsDone();
 

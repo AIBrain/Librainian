@@ -37,7 +37,7 @@ using Extensions;
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 /// <see cref="http://wikipedia.org/wiki/Giga-" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Immutable]
+[Extensions.Immutable]
 public record GigaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
 	IComparable<GigaElectronVolts> {
 	public const Decimal InOneElectronVolt = 1E-9m;
@@ -99,4 +99,9 @@ public record GigaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronV
 	public override String ToString() => $"{this.Value} GeV";
 
 	public TeraElectronVolts ToTeraElectronVolts() => new( this.Value * InOneTeraElectronVolt );
+
+	public static Boolean operator <=( GigaElectronVolts left, GigaElectronVolts right ) => left.CompareTo( right ) <= 0;
+
+	public static Boolean operator >=( GigaElectronVolts left, GigaElectronVolts right ) => left.CompareTo( right ) >= 0;
+
 }

@@ -37,7 +37,7 @@ using Maths;
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Immutable]
+[Extensions.Immutable]
 public record ElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
 	/// <summary>About 79228162514264337593543950335.</summary>

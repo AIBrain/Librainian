@@ -33,14 +33,14 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using JetBrains.Annotations;
+using Utilities;
 
 public static class PathInternal {
 
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true, BestFitMapping = false )]
 	private static extern UInt32 GetLongPathNameW( this String lpszShortPath, StringBuilder lpszLongPath, UInt32 cchBuffer );
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static String EnsureExtendedPrefix( this String path ) {
 		path = path.TrimAndThrowIfBlank();
@@ -65,7 +65,7 @@ public static class PathInternal {
 		return stringBuffer.ToString();
 	}
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsDevice( this String path ) {
 		path = path.TrimAndThrowIfBlank();
@@ -81,11 +81,11 @@ public static class PathInternal {
 		return false;
 	}
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsDirectorySeparator( this Char c ) => c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
 
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsPartiallyQualified( this String path ) {
 		TrimAndThrowIfBlank( ref path );
@@ -114,7 +114,7 @@ public static class PathInternal {
 	public static Boolean IsPathTooLong( this String fullPath ) => fullPath.TrimAndThrowIfBlank().Length >= Constants.MaxPathLength;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	public static Boolean IsValidDriveChar( this Char value ) => value is >= 'A' and <= 'Z' or >= 'a' and <= 'z';
 

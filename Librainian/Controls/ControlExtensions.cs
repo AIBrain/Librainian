@@ -362,12 +362,8 @@ public static class ControlExtensions {
 	/// <param name="redraw"></param>
 	/// <seealso />
 	[DebuggerStepThrough]
-	public static void InvokeAction( this Control control, Action action, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
-		if ( control is null ) {
-			throw new ArgumentNullException( nameof( control ) );
-		}
-
-		if ( control.IsDisposed ) {
+	public static void InvokeAction( this Control? control, Action action, RefreshOrInvalidate redraw = RefreshOrInvalidate.Refresh ) {
+		if ( control?.IsDisposed != false ) {
 			return;
 		}
 
@@ -431,7 +427,7 @@ public static class ControlExtensions {
 	/// <param name="action"> </param>
 	/// <param name="thing">  </param>
 	/// <seealso />
-	public static void InvokeAction<T>( [NotNull] this Control control, [NotNull] Action<T> action, [CanBeNull] T thing ) {
+	public static void InvokeAction<T>( [NeedsTesting] this Control control, [NeedsTesting] Action<T> action, [NeedsTesting] T thing ) {
 		if ( control.InvokeRequired ) {
 			if ( !control.IsDisposed ) {
 				if ( thing is null ) {

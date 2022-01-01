@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "IDocument.cs" last touched on 2021-12-29 at 6:15 AM by Protiguous.
 
 #nullable enable
 
@@ -41,18 +41,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
-using JetBrains.Annotations;
 using Maths;
 using Maths.Numbers;
 using PooledAwait;
+using Utilities;
 
 public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
-
-	/// <summary>
-	///     Largest amount of memory that will be allocated for file reads.
-	/// <para>1 gibibyte</para>
-	/// </summary>
-	public const Int32 MaximumBufferSize = 1024 * 1024 * 1024;
 
 	public Byte[]? Buffer { get; set; }
 
@@ -149,8 +143,8 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	///     <para>this will OVERWRITE any <see cref="destination" /> file.</para>
 	/// </summary>
 	/// <param name="destination"></param>
-	/// <param name="progress">   </param>
-	/// <param name="eta">        </param>
+	/// <param name="progress"></param>
+	/// <param name="eta"></param>
 	/// <param name="cancellationToken"></param>
 	public PooledValueTask<(Status success, TimeSpan timeElapsed)> CloneDocument(
 		IDocument destination,
@@ -163,15 +157,15 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
 	Task<FileCopyData> Copy( FileCopyData fileCopyData, CancellationToken cancellationToken );
 
-	public PooledValueTask<Int32?> CRC32( CancellationToken cancellationToken );
+	public Task<Int32?> CRC32( CancellationToken cancellationToken );
 
 	/// <summary>Returns a lowercase hex-string of the hash.</summary>
-	public PooledValueTask<String?> CRC32Hex( CancellationToken cancellationToken );
+	public Task<String?> CRC32Hex( CancellationToken cancellationToken );
 
-	public PooledValueTask<Int64?> CRC64( CancellationToken cancellationToken );
+	public Task<Int64?> CRC64( CancellationToken cancellationToken );
 
 	/// <summary>Returns a lowercase hex-string of the hash.</summary>
-	public PooledValueTask<String?> CRC64Hex( CancellationToken cancellationToken );
+	public Task<String?> CRC64Hex( CancellationToken cancellationToken );
 
 	/// <summary>Deletes the file.</summary>
 	public PooledValueTask Delete( CancellationToken cancellationToken );
@@ -195,7 +189,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	public Boolean Equals( Object other );
 
 	/// <summary>Returns whether the file exists.</summary>
-	[Pure]
+	[NeedsTesting]
 	public PooledValueTask<Boolean> Exists( CancellationToken cancellationToken );
 
 	/// <summary>
@@ -207,9 +201,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <returns>A <see cref="IEnumerator" /> that can be used to iterate through the collection.</returns>
 	IAsyncEnumerator<Byte> GetEnumerator();
 
-	/// <summary>
-	///     Synchronous version.
-	/// </summary>
+	/// <summary>Synchronous version.</summary>
 	Boolean GetExists();
 
 	/// <summary>Create and returns a new <see cref="FileInfo" /> object for <see cref="Document.FullPath" />.</summary>
@@ -220,29 +212,25 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <summary>(file name, not contents)</summary>
 	public Int32 GetHashCode();
 
-	/// <summary>
-	///     Synchronous version.
-	/// </summary>
+	/// <summary>Synchronous version.</summary>
 	/// <returns></returns>
 	UInt64? GetLength();
 
 	void GetObjectData( SerializationInfo info, StreamingContext context );
 
 	/// <summary>
-	///     <para>
-	///         Can we allocate a full 2GB buffer?
-	///     </para>
+	///     <para>Can we allocate a full 2GB buffer?</para>
 	///     <para>See the file "App.config" for setting gcAllowVeryLargeObjects to true.</para>
 	/// </summary>
 	public PooledValueTask<Int32?> GetOptimalBufferSize( CancellationToken cancellationToken );
 
 	/// <summary>HarkerHash (hash-by-addition)</summary>
-	PooledValueTask<Int32> HarkerHash32( CancellationToken cancellationToken );
+	Task<Int32> HarkerHash32( CancellationToken cancellationToken );
 
-	PooledValueTask<Int64> HarkerHash64( CancellationToken cancellationToken );
+	Task<Int64> HarkerHash64( CancellationToken cancellationToken );
 
 	/// <summary>"poor mans Decimal hash"</summary>
-	PooledValueTask<Decimal> HarkerHashDecimal( CancellationToken cancellationToken );
+	Task<Decimal> HarkerHashDecimal( CancellationToken cancellationToken );
 
 	PooledValueTask<Boolean> IsAll( Byte number, CancellationToken cancellationToken );
 
@@ -251,7 +239,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
 	/// <summary>Attempt to start the process.</summary>
 	/// <param name="arguments"></param>
-	/// <param name="verb">     "runas" is elevated</param>
+	/// <param name="verb">"runas" is elevated</param>
 	/// <param name="useShell"></param>
 	public PooledValueTask<Process?> Launch( String? arguments = null, String verb = "runas", Boolean useShell = false );
 
@@ -262,19 +250,17 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
     /// <summary>Returns the <see cref="WebClient" /> if a file copy was started.</summary>
     /// <param name="destination"></param>
-    /// <param name="onProgress"> </param>
+    /// <param name="onProgress"></param>
     /// <param name="onCompleted"></param>
     /// <returns></returns>
-    (PooledValueTask? task, Exception? exception, Status Exception) Copy( [NotNull] IDocument destination,
-        [NotNull] Action<(IDocument, UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress, [NotNull] Action onCompleted );
+    (PooledValueTask? task, Exception? exception, Status Exception) Copy( [NeedsTesting] IDocument destination,
+        [NeedsTesting] Action<(IDocument, UInt64 bytesReceived, UInt64 totalBytesToReceive)> onProgress, [NeedsTesting] Action onCompleted );
     */
 
 	/// <summary>Attempt to load the entire file into memory. If it throws, it throws..</summary>
 	PooledValueTask<Status> LoadDocumentIntoBuffer( CancellationToken cancellationToken );
 
-	/// <summary>
-	///     Attempt to return an object Deserialized from a JSON text file.
-	/// </summary>
+	/// <summary>Attempt to return an object Deserialized from a JSON text file.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="progress"></param>
 	/// <param name="cancellationToken"></param>
@@ -291,9 +277,7 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 
 	public PooledValueTask<String> ReadStringAsync();
 
-	/// <summary>
-	///     Releases the <see cref="FileStream" /> opened by <see cref="OpenWriter" />.
-	/// </summary>
+	/// <summary>Releases the <see cref="FileStream" /> opened by <see cref="OpenWriter" />.</summary>
 	public void ReleaseWriter();
 
 	/// <summary>
@@ -360,4 +344,5 @@ public interface IDocument : IEquatable<IDocument>, IAsyncEnumerable<Byte> {
 	/// <summary>Uploads this <see cref="IDocument" /> to the given <paramref name="destination" />.</summary>
 	/// <param name="destination"></param>
 	PooledValueTask<(Exception? exception, WebHeaderCollection? responseHeaders)> UploadFile( Uri destination );
+
 }

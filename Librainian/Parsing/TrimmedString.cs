@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TrimmedString.cs" last touched on 2021-12-12 at 3:17 AM by Protiguous.
+// File "TrimmedString.cs" last touched on 2021-12-30 at 1:06 AM by Protiguous.
 
 #nullable enable
 
@@ -36,9 +36,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Exceptions;
 using Extensions;
-using JetBrains.Annotations;
 using Maths;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>This <see cref="string" /> will always be <see cref="Empty" /> or trimmed, but *never* null. I hope.</summary>
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
@@ -174,7 +174,7 @@ public record TrimmedString : IConvertible, IComparable<TrimmedString>, ICompara
 	/// <param name="left"></param>
 	/// <param name="right"></param>
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Equals( TrimmedString? left, TrimmedString? right ) => String.Equals( left?.Value, right?.Value, StringComparison.Ordinal );
 
 	public static implicit operator String( TrimmedString value ) => value.Value;
@@ -212,6 +212,14 @@ public record TrimmedString : IConvertible, IComparable<TrimmedString>, ICompara
 
 	[DebuggerStepThrough]
 	public TrimmedString ToUpper( CultureInfo? cultureInfo = null ) => this.Value.ToUpper( cultureInfo );
+
+	public static Boolean operator <( TrimmedString left, TrimmedString right ) => left.CompareTo( right ) < 0;
+
+	public static Boolean operator <=( TrimmedString left, TrimmedString right ) => left.CompareTo( right ) <= 0;
+
+	public static Boolean operator >( TrimmedString left, TrimmedString right ) => left.CompareTo( right ) > 0;
+
+	public static Boolean operator >=( TrimmedString left, TrimmedString right ) => left.CompareTo( right ) >= 0;
 
 	/// <summary>Strings to be replaced with <see cref="Replacements" />,</summary>
 	internal static class Patterns {

@@ -58,7 +58,7 @@ public class Message : ABetterClassDispose, IMessage {
 	/// <summary>Guid assigned on message creation.</summary>
 	public Guid ID { get; }
 
-	//[CanBeNull]
+	//[NeedsTesting]
 	//public String? Key { get; set; }
 
 	public Boolean Processed { get; set; }

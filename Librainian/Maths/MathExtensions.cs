@@ -41,8 +41,8 @@ using System.Text;
 using Collections.Extensions;
 using Exceptions;
 using ExtendedNumerics;
-using JetBrains.Annotations;
 using Numbers;
+using Utilities;
 
 public static class MathExtensions {
 
@@ -94,7 +94,7 @@ public static class MathExtensions {
 	/// </summary>
 	/// <param name="number"></param>
 	/// <param name="tax"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Decimal AddTax( this Decimal number, Decimal tax ) => number * ( 1.0m + tax );
 
 	/// <summary>
@@ -105,7 +105,7 @@ public static class MathExtensions {
 	/// </summary>
 	/// <param name="number"></param>
 	/// <param name="percentTax"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Decimal AddTaxPercent( this Decimal number, Decimal percentTax ) => number * ( 1.0m + percentTax / 100.0m );
 
 	public static BigDecimal BigEpsilon( this BigDecimal _ ) => EpsilonBigDecimal;
@@ -113,7 +113,7 @@ public static class MathExtensions {
 	/// <summary>Combine two <see cref="UInt32" /> values into one <see cref="UInt64" /> value. Use Split() for the reverse.</summary>
 	/// <param name="high"></param>
 	/// <param name="low"></param>
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 Combine( this UInt32 high, UInt32 low ) => ( ( UInt64 ) high << 32 ) | low;
 
 	/// <summary>Combine two bytes into one <see cref="UInt16" />.</summary>
@@ -130,14 +130,14 @@ public static class MathExtensions {
 	/// <param name="low"></param>
 	/// <param name="high"></param>
 	/// <see cref="CombineTwoBytesLittleEndianess" />
-	[Pure]
+	[NeedsTesting]
 	public static UInt16 CombineTwoBytesHighEndianess( this Byte low, Byte high ) => ( UInt16 ) ( high + ( low << 8 ) );
 
 	/// <summary>Combine two bytes into one <see cref="UInt16" /> with little endianess.</summary>
 	/// <param name="low"></param>
 	/// <param name="high"></param>
 	/// <see cref="CombineTwoBytesHighEndianess" />
-	[Pure]
+	[NeedsTesting]
 	public static UInt16 CombineTwoBytesLittleEndianess( this Byte low, Byte high ) => ( UInt16 ) ( low + ( high << 8 ) );
 
 	/// <summary>
@@ -204,27 +204,27 @@ public static class MathExtensions {
 
 	/// <summary>Remove everything after the decimal point.</summary>
 	/// <param name="x"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Double Crop( this Double x ) => Math.Truncate( x * 100.0D ) / 100.0D;
 
 	/// <summary>Remove everything after the decimal point.</summary>
 	/// <param name="x"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Single Crop( this Single x ) => ( Single ) ( Math.Truncate( x * 100.0f ) / 100.0f );
 
 	/// <summary>Return the cube (^3) of the number.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Single Cubed( this Single number ) => number * number * number;
 
 	/// <summary>Return the cube (^3) of the number.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Double Cubed( this Double number ) => number * number * number;
 
 	/// <summary>Return the cube (^3) of the number.</summary>
 	/// <param name="number"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Cubed( this Decimal number ) => number * number * number;
 
 	/// <summary>Needs tested.</summary>
@@ -266,10 +266,10 @@ public static class MathExtensions {
 	///     <para>1E-28</para>
 	/// </summary>
 	/// <param name="_"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Epsilon( this Decimal _ ) => EpsilonDecimal;
 
-	[Pure]
+	[NeedsTesting]
 	public static Double Erf( this Double x ) {
 		// constants
 		const Double a1 = 0.254829592;
@@ -313,7 +313,7 @@ public static class MathExtensions {
 	public static UInt32 FibonacciSequence( this UInt32 n ) => FibonacciLookup[ n ];
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double FiftyPercentOf( this Double x ) {
 		var result = x * 0.5;
 
@@ -321,7 +321,7 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 FiftyPercentOf( this Int32 x ) {
 		var result = x * 0.5;
 
@@ -337,59 +337,59 @@ public static class MathExtensions {
 	public static Byte FlipBit( this Byte value, Byte bitToFlip ) => ( Byte ) ( value ^ bitToFlip );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Byte ForceBounds( this Byte value, Byte minLimit, Byte maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static SByte ForceBounds( this SByte value, SByte minLimit, SByte maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int16 ForceBounds( this Int16 value, Int16 minLimit, Int16 maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt16 ForceBounds( this UInt16 value, UInt16 minLimit, UInt16 maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 ForceBounds( this Int32 value, Int32 minLimit, Int32 maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt32 ForceBounds( this UInt32 value, UInt32 minLimit, UInt32 maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single ForceBounds( this Single value, Single minLimit, Single maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double ForceBounds( this Double value, Double minLimit, Double maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int64 ForceBounds( this Int64 value, Int64 minLimit, Int64 maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ForceBounds( this UInt64 value, UInt64 minLimit, UInt64 maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static BigInteger ForceBounds( this BigInteger value, BigInteger minLimit, BigInteger maxLimit ) => BigInteger.Max( BigInteger.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal ForceBounds( this Decimal value, Decimal minLimit, Decimal maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static nint ForceBounds( this nint value, nint minLimit, nint maxLimit ) => Math.Max( Math.Min( value, maxLimit ), minLimit );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 FractionOf( this Int32 x, Double top, Double bottom ) {
 		var result = top * x / bottom;
 
@@ -397,15 +397,15 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double FractionOf( this Double x, Double top, Double bottom ) => top * x / bottom;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single FractionOf( this Single x, Single top, Single bottom ) => top * x / bottom;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 FractionOf( this UInt64 x, UInt64 top, UInt64 bottom ) => top * x / bottom;
 
 	/// <summary>Greatest Common Divisor for int</summary>
@@ -529,56 +529,56 @@ public static class MathExtensions {
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single Half( this Single number ) => number / 2.0f;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double Half( this Double number ) => number / 2.0d;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Byte Half( this Byte number ) => ( Byte ) ( number / 2 );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static TimeSpan Half( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Half() );
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 Half( this Int32 number ) => number / 2;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int16 Half( this Int16 number ) => ( Int16 ) ( number / 2 );
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt16 Half( this UInt16 number ) => ( UInt16 ) ( number / 2 );
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt32 Half( this UInt32 number ) => number / 2;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 Half( this UInt64 number ) => number / 2;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int64 Half( this Int64 number ) => number / 2;
 
 	[MethodImpl( MethodImplOptions.AggressiveInlining )]
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Half( this Decimal number ) => number / 2.0m;
 
 	/// <summary>
@@ -590,7 +590,7 @@ public static class MathExtensions {
 	/// </summary>
 	/// <param name="number"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal IfLessThanZeroThenZero( this Decimal number ) => number < Decimal.Zero ? Decimal.Zero : number;
 
 	/// <summary>
@@ -602,7 +602,7 @@ public static class MathExtensions {
 	/// </summary>
 	/// <param name="number"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static BigInteger IfLessThanZeroThenZero( this BigInteger number ) => number < BigInteger.Zero ? BigInteger.Zero : number;
 
 	/*
@@ -615,7 +615,7 @@ public static class MathExtensions {
 	/// </summary>
 	/// <param name="number"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static BigDecimal IfLessThanZeroThenZero( this BigDecimal number ) => number <= BigDecimal.Zero ? BigDecimal.Zero : number;
 	*/
 
@@ -628,33 +628,41 @@ public static class MathExtensions {
 	/// </summary>
 	/// <param name="number"></param>
 	[DebuggerStepThrough]
-	[Pure]
-	public static BigDecimal IfLessThanZeroThenZero( this BigDecimal? number ) =>
-		number is null ? BigDecimal.Zero :
-		number <= BigDecimal.Zero ? BigDecimal.Zero : number;
+	[NeedsTesting]
+	public static BigDecimal IfLessThanZeroThenZero( this BigDecimal? number ) {
+		if ( number is null ) {
+			return BigDecimal.Zero;
+		}
+
+		if ( number <= BigDecimal.Zero ) {
+			return BigDecimal.Zero;
+		}
+
+		return number.Value;
+	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsEven( this Int32 value ) => value % 2 == 0;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsEven( this Decimal value ) => value % 2 == 0;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsEven( this Int64 value ) => value % 2 == 0;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsNegative( this Single value ) => value < 0.0f;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsNumber( this Single value ) => !Single.IsNaN( value ) && !Single.IsInfinity( value );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsNumber( this Double value ) {
 		if ( Double.IsNaN( value ) ) {
 			return false;
@@ -664,23 +672,23 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsOdd( this Int32 value ) => value % 2 != 0;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsOdd( this Int64 value ) => value % 2 != 0;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsOdd( this Decimal value ) => value % 2 != 0;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsPositive( this Single value ) => value > 0.0f;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean IsPowerOfTwo( this Int32 number ) => ( number & -number ) == number;
 
 	[DebuggerStepThrough]
@@ -697,7 +705,7 @@ public static class MathExtensions {
 	/// <param name="target">Target value.</param>
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single Lerp( this Single source, Single target, Single amount ) => source + ( target - source ) * amount;
 
 	/// <summary>Linearly interpolates between two values.</summary>
@@ -705,7 +713,7 @@ public static class MathExtensions {
 	/// <param name="target">Target value.</param>
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double Lerp( this Double source, Double target, Single amount ) => source + ( target - source ) * amount;
 
 	/// <summary>Linearly interpolates between two values.</summary>
@@ -713,7 +721,7 @@ public static class MathExtensions {
 	/// <param name="target">Target value.</param>
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Lerp( this Decimal source, Decimal target, Decimal amount ) => source + ( target - source ) * amount;
 
 	/// <summary>Linearly interpolates between two values.</summary>
@@ -721,7 +729,7 @@ public static class MathExtensions {
 	/// <param name="target">Target value.</param>
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 Lerp( this UInt64 source, UInt64 target, Single amount ) => ( UInt64 ) ( source + ( target - source ) * amount );
 
 	/// <summary>Linearly interpolates between two values.</summary>
@@ -729,11 +737,11 @@ public static class MathExtensions {
 	/// <param name="target">Target value.</param>
 	/// <param name="amount">Value between 0 and 1 indicating the weight of value2.</param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt32 Lerp( this UInt32 source, UInt32 target, Single amount ) => ( UInt32 ) ( source + ( target - source ) * amount );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double LogFactorial( this Int32 n ) {
 		switch ( n ) {
 			case < 0: {
@@ -753,7 +761,7 @@ public static class MathExtensions {
 	/// <summary>compute log(1+x) without losing precision for small values of x</summary>
 	/// <param name="x"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double LogOnePlusX( this Double x ) {
 		if ( x <= -1.0 ) {
 			throw new ArgumentOutOfRangeException( nameof( x ), $"Invalid input argument: {x}" );
@@ -770,27 +778,27 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this Double number, Double target ) => Math.Abs( number - target ) <= Double.Epsilon;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this Int32 number, Int32 target ) => Math.Abs( number - target ) <= Double.Epsilon;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this Single number, Single target ) => Math.Abs( number - target ) <= Single.Epsilon;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this Point here, Point there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this Decimal number, Decimal target ) => Math.Abs( number - target ) <= EpsilonDecimal;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this BigDecimal number, BigDecimal target ) {
 		var difference = number - target;
 
@@ -804,7 +812,7 @@ public static class MathExtensions {
 	public static Boolean Near( this PointF here, PointF there ) => here.X.Near( there.X ) && here.Y.Near( there.Y );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this BigInteger number, BigInteger target ) {
 		var difference = number - target;
 
@@ -812,37 +820,37 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this UInt64 number, UInt64 target ) => number - target <= UInt64.MinValue;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this Int64 number, Int64 target ) => number - target <= Int64.MinValue;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean Near( this UBigInteger number, UBigInteger target ) => number - target <= UBigInteger.Epsilon;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double Nested( this Double x ) => Math.Sqrt( x * 100.0 ) / 100.0d;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single Nested( this Single x ) => ( Single ) ( Math.Sqrt( x * 100.0 ) / 100.0f );
 
 	/// <summary>Remove all the trailing zeros from the decimal</summary>
 	/// <param name="value"></param>
 	[DebuggerStepThrough]
-	[Pure]
-	public static Decimal Normalize( this Decimal value ) => value / 1.000000000000000000000000000000000m;
+	[NeedsTesting]
+	public static Decimal Normalize( this Decimal value ) => value / 1.00000000000000000000000000000000000000000000000000000000000000000000000000000000m;
 
 	/// <summary></summary>
 	/// <param name="baseValue"></param>
 	/// <param name="n"></param>
 	/// <see cref="http://stackoverflow.com/a/18363540/956364" />
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal NthRoot( this Decimal baseValue, Int32 n ) {
 		if ( n == 1 ) {
 			return baseValue;
@@ -860,28 +868,32 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 OneHundreth( this UInt64 x ) => x / 100;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 OneQuarter( this UInt64 x ) => x / 4;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single OneQuarter( this Single x ) => x / 4.0f;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 OneTenth( this UInt64 x ) => x / 10;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single OneThird( this Single x ) => x / 3.0f;
 
 	public static UInt32 PackBitFields( UInt16[] values, Byte[] bitFields ) {
+		if ( values is null ) {
+			throw new NullException( nameof( values ) );
+		}
+
 		if ( bitFields is null ) {
-			throw new ArgumentEmptyException( nameof( bitFields ) );
+			throw new NullException( nameof( bitFields ) );
 		}
 
 		UInt32 retVal = values[ 0 ]; //we set the first value right away
@@ -895,7 +907,7 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double Phi( this Double x ) {
 		// constants
 		const Double a1 = 0.254829592;
@@ -916,17 +928,17 @@ public static class MathExtensions {
 		return 0.5 * ( 1.0 + sign * y );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 Positive( this Int16 value ) => value < 0 ? 0 : Convert.ToUInt64( value );
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 Positive( this Int32 value ) => value < 0 ? 0 : Convert.ToUInt64( value );
 
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 Positive( this Int64 value ) => value < 0 ? 0 : Convert.ToUInt64( value );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Pow( this Decimal baseValue, Int32 n ) {
 		for ( var i = 0; i < n - 1; i++ ) {
 			baseValue *= baseValue;
@@ -940,7 +952,7 @@ public static class MathExtensions {
 	/// <param name="n"></param>
 	/// <see cref="http://stackoverflow.com/questions/429165/raising-a-Decimal-to-a-power-of-Decimal" />
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Pow( this Decimal x, UInt32 n ) {
 		var a = 1m;
 		var e = new BitArray( BitConverter.GetBytes( n ) );
@@ -959,7 +971,7 @@ public static class MathExtensions {
 	public static IEnumerable<Int32> Primes( this Int32 max ) {
 		yield return 2;
 
-		var found = new List<Int32> {
+		var found = new List<Int32>( 10000 ) {
 			3
 		};
 
@@ -969,7 +981,20 @@ public static class MathExtensions {
 			var candidate1 = candidate;
 			var candidate2 = candidate;
 
-			if ( found.TakeWhile( prime => prime * prime <= candidate1 ).All( prime => candidate2 % prime != 0 ) ) {
+			var all = true;
+
+			foreach ( var prime in found ) {
+				if ( prime * prime > candidate1 ) {
+					break;
+				}
+
+				if ( candidate2 % prime == 0 ) {
+					all = false;
+					break;
+				}
+			}
+
+			if ( all ) {
 				found.Add( candidate );
 
 				yield return candidate;
@@ -980,7 +1005,7 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Quarter( this Decimal number ) => number / 4.0m;
 
 	[DebuggerStepThrough]
@@ -1038,20 +1063,20 @@ public static class MathExtensions {
 	/// <summary>Smooths a value to between 0 and 1.</summary>
 	/// <param name="x"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double Sigmoid0To1( this Double x ) => 1.0D / ( 1.0D + Math.Exp( -x ) );
 
 	/// <summary>Smooths a value to between 0 and 1.</summary>
 	/// <param name="x"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Sigmoid0To1( this Decimal x ) => 1.0M / ( 1.0M + ( Decimal ) Math.Exp( ( Double ) ( -x ) ) );
 
 	/// <summary>Smooths a value to between -1 and 1.</summary>
 	/// <param name="x"></param>
 	/// <see cref="http://www.wolframalpha.com/input/?i=1+-+%28+2+%2F+%281+%2B+Exp%28+v+%29+%29+%29%2C+v+from+-10+to+10" />
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double SigmoidNeg1To1( this Double x ) => 1.0D - 2.0D / ( 1.0D + Math.Exp( x ) );
 
 	/// <summary>Return the integer part and the fraction parts of a <see cref="Decimal" />.</summary>
@@ -1084,15 +1109,15 @@ public static class MathExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single Squared( this Single number ) => number * number;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double Squared( this Double number ) => number * number;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Squared( this Decimal number ) => number * number;
 
 	public static Double SquareRootOfProducts( this IEnumerable<Double> data ) {
@@ -1163,35 +1188,35 @@ public static class MathExtensions {
 	public static BigInteger Sum( this IEnumerable<BigInteger> bigIntegers ) => bigIntegers.Aggregate( BigInteger.Zero, ( current, bigInteger ) => current + bigInteger );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double TendTo( this Double number, Double goal ) => ( number + goal ).Half();
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static TimeSpan TendTo( this TimeSpan time, TimeSpan goal ) => ( time + goal ).Half();
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 ThreeFourths( this Int32 x ) => ( Int32 ) ( 3.0 * x / 4.0 );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UInt64 ThreeQuarters( this UInt64 x ) => 3 * x / 4;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Single ThreeQuarters( this Single x ) => 3.0f * x / 4.0f;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Double ThreeQuarters( this Double x ) => 3.0d * x / 4.0d;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static TimeSpan Thrice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Thrice() );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int64 Thrice( this Int64 number ) => number * 3L;
 
 	/// <summary>
@@ -1256,7 +1281,7 @@ public static class MathExtensions {
 	/// <param name="numberString"></param>
 	/// <param name="result"></param>
 	/// <returns></returns>
-	public static Boolean TryParse( [CanBeNull] this String? numberString, out BigDecimal result ) {
+	public static Boolean TryParse( [NeedsTesting] this String? numberString, out BigDecimal result ) {
 		result = BigDecimal.Zero;
 
 		if ( null == numberString ) {
@@ -1337,19 +1362,19 @@ public static class MathExtensions {
 
 	public static Byte TurnBitsOn( this Byte value, Byte bitToTurnOn ) => ( Byte ) ( value | bitToTurnOn );
 
-	[Pure]
+	[NeedsTesting]
 	public static TimeSpan Twice( this TimeSpan timeSpan ) => TimeSpan.FromTicks( timeSpan.Ticks.Twice() );
 
-	[Pure]
+	[NeedsTesting]
 	public static Single Twice( this Single x ) => x * 2.0f;
 
-	[Pure]
+	[NeedsTesting]
 	public static Double Twice( this Double number ) => number * 2d;
 
-	[Pure]
+	[NeedsTesting]
 	public static Decimal Twice( this Decimal number ) => number * 2m;
 
-	[Pure]
+	[NeedsTesting]
 	public static Int64 Twice( this Int64 number ) => number * 2L;
 
 }

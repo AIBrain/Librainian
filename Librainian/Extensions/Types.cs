@@ -38,7 +38,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using Exceptions;
-using JetBrains.Annotations;
 using Logging;
 
 public static class Types {
@@ -380,7 +379,7 @@ public static class Types {
 		return false;
 	}
 
-	public static Boolean MergeDictionaries<TSource>( [ItemCanBeNull] this IDictionary sourceValue, FieldInfo field, TSource? destination ) {
+	public static Boolean MergeDictionaries<TSource>(  this IDictionary sourceValue, FieldInfo field, TSource? destination ) {
 		if ( field.GetValue( destination ) is not IDictionary destAsDictionary ) {
 			return false;
 		}
@@ -493,7 +492,7 @@ public static class Types {
 	}
 
 	/*
-            public static String GetName<T>( [CanBeNull] this Expression<Func<T>> propertyExpression ) {
+            public static String GetName<T>( [NeedsTesting] this Expression<Func<T>> propertyExpression ) {
                 if ( null == propertyExpression ) {
                     return String.Empty;
                 }

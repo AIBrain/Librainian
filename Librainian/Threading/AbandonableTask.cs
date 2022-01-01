@@ -40,27 +40,27 @@ using Utilities;
 public sealed class AbandonableTask {
 
 	private AbandonableTask( Action? beginWork, Action blockingWork, Action<Task>? afterComplete, CancellationToken cancellationToken ) {
-		this._beginWork = beginWork;
-		this._blockingWork = blockingWork ?? throw new ArgumentEmptyException( nameof( blockingWork ) );
+		this.BeginWork = beginWork;
+		this.BlockingWork = blockingWork ?? throw new ArgumentEmptyException( nameof( blockingWork ) );
 		this.AfterComplete = afterComplete;
-		this._cancellationToken = cancellationToken;
+		this.CancellationToken = cancellationToken;
 	}
 
-	private Action? _beginWork { get; }
+	private Action? BeginWork { get; }
 
-	private Action? _blockingWork { get; }
+	private Action? BlockingWork { get; }
 
-	private CancellationToken _cancellationToken { get; }
+	private CancellationToken CancellationToken { get; }
 
 	public Action<Task>? AfterComplete { get; }
 
 	private void RunTask() {
-		this._beginWork?.Invoke();
+		this.BeginWork?.Invoke();
 
-		var innerTask = new Task( this._blockingWork, this._cancellationToken, TaskCreationOptions.LongRunning );
+		var innerTask = new Task( this.BlockingWork, this.CancellationToken, TaskCreationOptions.LongRunning );
 		innerTask.Start();
 
-		innerTask.Wait( this._cancellationToken );
+		innerTask.Wait( this.CancellationToken );
 
 		if ( innerTask.IsCompleted ) {
 			this.AfterComplete?.Invoke( innerTask );

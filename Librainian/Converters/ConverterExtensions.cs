@@ -42,13 +42,13 @@ using Collections.Extensions;
 using Exceptions;
 using Extensions;
 using FileSystem;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Maths.Numbers;
 using Microsoft.Data.SqlClient;
 using Parsing;
 using Security;
+using Utilities;
 
 public static class ConverterExtensions {
 
@@ -95,7 +95,7 @@ public static class ConverterExtensions {
 	/// </summary>
 	/// <param name="value"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal MoneyToDecimal<T>( this T? value ) {
 		if ( value is null ) {
 			return Decimal.Zero;
@@ -139,11 +139,11 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String StripLetters( this String s ) => Regex.Replace( s, "[a-zA-Z]", String.Empty );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static BigInteger ToBigInteger( this Guid self ) => new( self.ToByteArray() );
 
 	/// <summary>
@@ -152,7 +152,7 @@ public static class ConverterExtensions {
 	///     <para>A null will return false.</para>
 	/// </summary>
 	/// <param name="value"></param>
-	[Pure]
+	[NeedsTesting]
 	public static Boolean ToBoolean<T>( this T? value ) {
 		switch ( value ) {
 			case null:
@@ -211,7 +211,7 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Boolean? ToBooleanOrNull<T>( this T? value ) {
 		switch ( value ) {
 			case null:
@@ -275,7 +275,7 @@ public static class ConverterExtensions {
 		value.ToBooleanOrNull() ?? throw new FormatException( $"Unable to convert {nameof( value ).SmartQuote()} [{value}] to a boolean value." );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Byte? ToByteOrNull<T>( this T? value ) {
 		try {
 			if ( value is null ) {
@@ -305,12 +305,12 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Byte ToByteOrThrow<T>( this T? value ) =>
 		value.ToByteOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a byte." );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Byte ToByteOrZero<T>( this T? value ) => value.ToByteOrNull() ?? 0;
 
 	/// <summary>
@@ -322,7 +322,7 @@ public static class ConverterExtensions {
 	/// <param name="self"></param>
 	/// <see cref="ToGuid(DateTime)" />
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static DateTime ToDateTime( this Guid self ) {
 		var bytes = self.ToByteArray();
 
@@ -333,7 +333,7 @@ public static class ConverterExtensions {
 			( DateTimeKind )bytes[15] );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	public static DateTime? ToDateTimeOrNull<T>( this T? value ) {
 		try {
@@ -349,7 +349,7 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal ToDecimal( this Guid self ) {
 		TranslateDecimalGuid converter;
 		converter.Decimal = Decimal.Zero;
@@ -361,7 +361,7 @@ public static class ConverterExtensions {
 	/// <summary>Tries to convert <paramref name="value" /> to a <see cref="Decimal" />.</summary>
 	/// <param name="value"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal? ToDecimalOrNull<T>( this T? value ) {
 		if ( value is null ) {
 			return default( Decimal? );
@@ -394,20 +394,20 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal ToDecimalOrThrow<T>( this T? value ) =>
 		value.ToDecimalOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a decimal." );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal ToDecimalOrZero<T>( this T? value ) => value.ToDecimalOrNull() ?? Decimal.Zero;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Folder ToFolder( this Guid guid, Boolean reversed = false ) => new( guid.ToPath( reversed ) );
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Guid ToGuid( this Decimal number ) {
 		TranslateDecimalGuid converter;
 		converter.Guid = Guid.Empty;
@@ -419,7 +419,7 @@ public static class ConverterExtensions {
 	/// <summary>Convert the first 16 bytes of the SHA256 hash of the <paramref name="word" /> into a <see cref="Guid" />.</summary>
 	/// <param name="word"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Guid ToGuid( this String word ) {
 		var hashedBytes = word.Sha256();
 		Array.Resize( ref hashedBytes, 16 );
@@ -431,7 +431,7 @@ public static class ConverterExtensions {
 	/// <param name="dateTime"></param>
 	/// <see cref="ToDateTime" />
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Guid ToGuid( this DateTime dateTime ) {
 		try {
 			unchecked {
@@ -465,17 +465,17 @@ public static class ConverterExtensions {
 	/// <param name="high">    </param>
 	/// <param name="low">   </param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Guid ToGuid( this UInt64 high, UInt64 low ) => new TranslateGuidUInt64( high, low ).guid;
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Guid ToGuid( this (UInt64 high, UInt64 low) values ) => new TranslateGuidUInt64( values.high, values.low ).guid;
 
 	/// <summary>Returns the value converted to an <see cref="Int32" /> or null.</summary>
 	/// <param name="value"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32? ToIntOrNull<T>( this T? value ) {
 		if ( value is null ) {
 			return default( Int32? );
@@ -518,7 +518,7 @@ public static class ConverterExtensions {
 	/// <exception cref="ArgumentEmptyException"></exception>
 	/// <exception cref="FormatException"></exception>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 ToIntOrThrow<T>( this T? value ) {
 		if ( value is null ) {
 			throw new ArgumentEmptyException( nameof( value ) );
@@ -528,14 +528,14 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Int32 ToIntOrZero<T>( this T? value ) => value.ToIntOrNull() ?? 0;
 
 	/// <summary>Convert string to Guid</summary>
 	/// <param name="value">the string value</param>
 	/// <returns>the Guid value</returns>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Guid ToMD5HashedGUID( this String? value ) {
 		value ??= String.Empty;
 
@@ -549,7 +549,7 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static Decimal? ToMoneyOrNull( this SqlDataReader bob, String columnName ) {
 		if ( bob == null ) {
 			throw new ArgumentEmptyException( nameof( bob ) );
@@ -589,7 +589,7 @@ public static class ConverterExtensions {
 	/// <param name="reversed">Return the reversed order of the <see cref="Guid" />.</param>
 	/// <see cref="GuidExtensions.FromPath" />
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String ToPath( this Guid guid, Boolean reversed = false ) {
 		var a = guid.ToByteArray();
 
@@ -605,7 +605,7 @@ public static class ConverterExtensions {
 	}
 
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static IEnumerable<String> ToPaths( this DirectoryInfo directoryInfo ) {
 		if ( directoryInfo is null ) {
 			throw new ArgumentEmptyException( nameof( directoryInfo ) );
@@ -623,7 +623,7 @@ public static class ConverterExtensions {
 	/// </summary>
 	/// <param name="self"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String? ToStringOrNull<T>( this T? self ) =>
 		self switch {
 			null => default( String? ),
@@ -636,19 +636,19 @@ public static class ConverterExtensions {
 	/// <typeparam name="T"></typeparam>
 	/// <param name="value"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static String ToStringOrThrow<T>( this T? value ) =>
 		value.ToStringOrNull() ?? throw new FormatException( $"Unable to convert value '{nameof( value )}' to a string." );
 
 	/// <summary>Untested.</summary>
 	/// <param name="guid"></param>
 	[DebuggerStepThrough]
-	[Pure]
+	[NeedsTesting]
 	public static UBigInteger ToUBigInteger( this Guid guid ) => new( guid.ToByteArray() );
 
 	/// <summary>Returns a 'Y' for true, or an 'N' for false.</summary>
 	/// <param name="value"></param>
-	[Pure]
+	[NeedsTesting]
 	[DebuggerStepThrough]
 	public static Char ToYN( this Boolean value ) => value ? 'Y' : 'N';
 }

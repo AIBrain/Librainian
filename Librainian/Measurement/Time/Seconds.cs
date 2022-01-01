@@ -33,8 +33,8 @@ using System.Numerics;
 using Exceptions;
 using ExtendedNumerics;
 using Extensions;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Utilities;
 
 /// <summary>
 ///     <para>
@@ -45,7 +45,7 @@ using Newtonsoft.Json;
 /// </summary>
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Immutable]
+[Extensions.Immutable]
 public record Seconds( BigDecimal Value ) : IQuantityOfTime {
 
 	/// <summary>31536000</summary>
@@ -128,7 +128,7 @@ public record Seconds( BigDecimal Value ) : IQuantityOfTime {
 		return this.ToPlanckTimes().Value.CompareTo( other.ToPlanckTimes().Value );
 	}
 
-	[Pure]
+	[NeedsTesting]
 	public static Seconds Combine( Seconds left, Seconds right ) => Combine( left, right.Value );
 
 	public static Seconds Combine( Seconds left, BigDecimal seconds ) => new( left.Value + seconds );

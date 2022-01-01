@@ -38,7 +38,6 @@ using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Exceptions;
-using JetBrains.Annotations;
 using Logging;
 using Maths;
 using Measurement.Time;
@@ -143,7 +142,7 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	/// </exception>
 	/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
 	public T? this[Int32 index] {
-		[CanBeNull]
+		[NeedsTesting]
 		get {
 			if ( index < 0 || index > this.TheList.Count ) {
 				this.ThrowWhenOutOfRange( index );
