@@ -33,5 +33,5 @@ public class SecretStuff : ISecretStuff {
 
 	public String? BackupDatabaseConnectionString { get; set; }
 
-	public String? DatabaseConnectionString { get; set; }
+	public String? NeuralDatabaseConnectionString { get; set; }
 }

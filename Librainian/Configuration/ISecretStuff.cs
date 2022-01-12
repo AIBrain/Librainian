@@ -33,5 +33,5 @@ public interface ISecretStuff {
 
 	String? BackupDatabaseConnectionString { get; set; }
 
-	String? DatabaseConnectionString { get; set; }
+	String? NeuralDatabaseConnectionString { get; set; }
 }

@@ -37,7 +37,7 @@ using System.Text;
 [DebuggerDisplay( "{" + nameof( ToString ) + "()}" )]
 public class Binary : IEnumerable<Boolean> {
 
-	public List<Boolean> Booleans { get; }
+	private List<Boolean> Booleans { get; }
 
 	public Int32 Length => this.Booleans.Count;
 
@@ -47,6 +47,8 @@ public class Binary : IEnumerable<Boolean> {
 		set => this.Booleans[index] = value;
 	}
 
+	public IReadOnlyCollection<Boolean> GetBooleans() => this.Booleans;
+
 	public Binary( IReadOnlyCollection<Boolean> booleans ) {
 		this.Booleans = booleans.ToList();
 		this.Booleans.Capacity = this.Booleans.Count;
@@ -54,9 +56,9 @@ public class Binary : IEnumerable<Boolean> {
 
 	public Binary( IEnumerable<Boolean> binary ) : this( ( IReadOnlyCollection<Boolean> )binary ) { }
 
-	public Binary( Int32 value ) : this( ConvertToBinary( value ) ) { }
+	public Binary( Int32 value ) : this( ConvertToBoolean( value ) ) { }
 
-	public Binary( Int32 value, Int32 minSize ) : this( ConvertToBinary( value, minSize ) ) { }
+	public Binary( Int32 value, Int32 minSize ) : this( ConvertToBoolean( value, minSize ) ) { }
 
 	public static Binary Concatenate( Binary a, Binary b ) {
 		var result = new Binary( new Boolean[a.Length + b.Length] );
@@ -75,18 +77,18 @@ public class Binary : IEnumerable<Boolean> {
 		return result;
 	}
 
-	public static IEnumerable<Boolean> ConvertToBinary( Int32 value ) {
-		var binaryString = Convert.ToString( value, 2 );
-
-		return binaryString.Select( c => c == '1' );
+	public static IEnumerable<Boolean> ConvertToBoolean( Int32 value ) {
+		return Convert.ToString( value, 2 ).Select( c => c == '1' );
 	}
 
-	public static IEnumerable<Boolean> ConvertToBinary( Int32 value, Int32 minSize ) {
-		var toBinary = new List<Boolean>( ConvertToBinary( value ) );
+	public static IEnumerable<Boolean> ConvertToBoolean( Int32 value, Int32 minSize ) {
+		var toBinary = new List<Boolean>( ConvertToBoolean( value ) );
 
 		while ( toBinary.Count != minSize ) {
 			toBinary.Insert( 0, false );
 		}
+
+		toBinary.TrimExcess();
 
 		return toBinary;
 	}
@@ -99,7 +101,7 @@ public class Binary : IEnumerable<Boolean> {
 		var result = new Boolean[a.Length];
 
 		for ( var i = 0; i < a.Length; i++ ) {
-			result[i] = a[i] & b[i];
+			result[i] = a[i] && b[i];
 		}
 
 		return new Binary( result );

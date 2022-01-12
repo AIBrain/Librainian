@@ -33,18 +33,18 @@ using BenchmarkDotNet.Attributes;
 [MemoryDiagnoser]
 public class CompareSubstringVersusSlice {
 
-	private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
+	private const String DefaultTestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
 
-	[Benchmark]
+	[Benchmark( Baseline = true )]
 	public String GetCity() {
-		var cityAndPostalCode = Default_TestAddress.Substring( 37, 15 );
+		var cityAndPostalCode = DefaultTestAddress.Substring( 37, 15 );
 		var city = cityAndPostalCode.Substring( 7, 8 );
 		return city;
 	}
 
 	[Benchmark]
 	public String GetCity2() {
-		ReadOnlySpan<Char> addressAsSpan = Default_TestAddress;
+		ReadOnlySpan<Char> addressAsSpan = DefaultTestAddress;
 		var cityAndPostalCode = addressAsSpan.Slice( 37, 15 );
 		var city = cityAndPostalCode.Slice( 7, 8 );
 		return city.ToString();

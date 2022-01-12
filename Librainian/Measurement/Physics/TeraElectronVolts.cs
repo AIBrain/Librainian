@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "TeraElectronVolts.cs" last touched on 2021-12-16 at 4:59 AM by Protiguous.
+// File "TeraElectronVolts.cs" last touched on 2022-01-11 at 11:54 AM by Protiguous.
 
 namespace Librainian.Measurement.Physics;
 
@@ -32,12 +32,14 @@ using System.Diagnostics;
 using ExtendedNumerics;
 using Extensions;
 
-/// <summary>Units of mass and energy in <see cref="TeraElectronVolts" />.</summary>
+/// <summary>
+///     Units of mass and energy in <see cref="TeraElectronVolts" />.
+/// </summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 /// <see cref="http://wikipedia.org/wiki/Giga-" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record TeraElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
 	IComparable<TeraElectronVolts> {
 
@@ -67,13 +69,13 @@ public record TeraElectronVolts( BigDecimal Value ) : IComparable<MilliElectronV
 
 	public TeraElectronVolts( KiloElectronVolts kiloElectronVolts ) : this( kiloElectronVolts.ToTeraElectronVolts() ) { }
 
-	public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.ToTeraElectronVolts().Value );
+	public Int32 CompareTo( ElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToTeraElectronVolts().Value );
 
-	public Int32 CompareTo( MegaElectronVolts? other ) => this.Value.CompareTo( other?.ToTeraElectronVolts().Value );
+	public Int32 CompareTo( MegaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToTeraElectronVolts().Value );
 
-	public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToTeraElectronVolts().Value );
+	public Int32 CompareTo( MilliElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToTeraElectronVolts().Value );
 
-	public Int32 CompareTo( TeraElectronVolts? other ) => this.Value.CompareTo( other?.Value );
+	public Int32 CompareTo( TeraElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
 
 	public static TeraElectronVolts operator *( TeraElectronVolts left, BigDecimal right ) => new(left.Value * right);
 

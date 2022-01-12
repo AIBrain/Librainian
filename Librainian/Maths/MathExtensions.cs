@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MathExtensions.cs" last touched on 2021-12-25 at 4:37 PM by Protiguous.
+// File "MathExtensions.cs" last touched on 2022-01-07 at 4:16 AM by Protiguous.
 
 #nullable enable
 
@@ -242,17 +242,17 @@ public static class MathExtensions {
 		}
 
 		output[ 0 ] = input[ 0 ];
-		output[ 1 ] = input[ 7 ] | ( input[ 11 ] & input[ 3 ] ) | false;
-		output[ 2 ] = input[ 11 ] | ( input[ 7 ] & input[ 3 ] ) | false;
-		output[ 3 ] = input[ 11 ] | input[ 7 ] | input[ 3 ];
+		output[ 1 ] = input[ 7 ] || ( input[ 11 ] && input[ 3 ] );
+		output[ 2 ] = input[ 11 ] || ( input[ 7 ] && input[ 3 ] );
+		output[ 3 ] = input[ 11 ] || input[ 7 ] || input[ 3 ];
 		output[ 4 ] = input[ 4 ];
-		output[ 5 ] = input[ 5 ] | false | ( input[ 11 ] & input[ 3 ] );
-		output[ 6 ] = false | ( input[ 7 ] & input[ 3 ] );
+		output[ 5 ] = input[ 5 ] || ( input[ 11 ] && input[ 3 ] );
+		output[ 6 ] = input[ 7 ] && input[ 3 ];
 		output[ 7 ] = input[ 8 ];
-		output[ 8 ] = input[ 9 ] | ( input[ 11 ] & input[ 1 ] ) | false;
-		output[ 9 ] = input[ 10 ] | ( input[ 11 ] & input[ 2 ] ) | false;
+		output[ 8 ] = input[ 9 ] || ( input[ 11 ] && input[ 1 ] );
+		output[ 9 ] = input[ 10 ] || ( input[ 11 ] && input[ 2 ] );
 
-		var sb = new StringBuilder();
+		var sb = new StringBuilder( 10 );	
 
 		for ( var i = 9; i >= 0; i-- ) {
 			sb.Append( output[ i ] ? '1' : '0' );
@@ -1219,6 +1219,63 @@ public static class MathExtensions {
 	[NeedsTesting]
 	public static Int64 Thrice( this Int64 number ) => number * 3L;
 
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this Byte value ) => Convert.ToString( value, 2 );
+
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this SByte value ) => Convert.ToString( value, 2 );
+
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this Int16 value ) => Convert.ToString( value, 2 );
+
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this UInt16 value ) => Convert.ToString( value, 2 );
+
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this Int32 value ) => Convert.ToString( value, 2 );
+
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this UInt32 value ) => Convert.ToString( value, 2 );
+
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this Int64 value ) => Convert.ToString( value, 2 );
+
+	/*
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this Decimal value ) => Convert.ToString( value, 2 );
+	*/
+
+	/*
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this UInt64 value ) => Convert.ToString( value, 2 );
+	*/
+
+	/*
+	/// <summary>Return the <paramref name="value" /> as a string of 0s and 1s.</summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static String ToBinaryString( this Int256 value ) => Convert.ToString( value, 2 );
+	*/
+
+
 	/// <summary>
 	///     <see
 	///         cref="http://stackoverflow.com/questions/17575375/how-do-i-convert-an-int-to-a-String-in-c-sharp-without-using-tostring" />
@@ -1251,7 +1308,7 @@ public static class MathExtensions {
 		var n = ( UInt32 ) number;
 		var b = ( UInt32 ) @base;
 
-		while ( ( n > 0 ) | ( minDigits-- > 0 ) ) {
+		while ( ( n > 0 ) || ( minDigits-- > 0 ) ) {
 			s = MathConstants.NumberBaseChars[ ( Int32 ) ( n % b ) ] + s;
 			n /= b;
 		}

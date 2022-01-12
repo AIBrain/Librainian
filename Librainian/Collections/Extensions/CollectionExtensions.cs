@@ -298,22 +298,19 @@ public static class CollectionExtensions {
 		return enumerable.Where( item => !set.Add( item ) );
 	}
 
-	/// <summary>Return an empty set of type of <paramref name="self" />.</summary>
+	/// <summary>Return an empty set of type of <paramref name="_" />.</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="self"></param>
+	/// <param name="_"></param>
 	[NeedsTesting]
-	public static IEnumerable<T> Empty<T>( this T self ) {
+	public static IEnumerable<T> Empty<T>( this T _ ) where T : notnull {
 		yield break;
 	}
 
-	/// <summary>Return an empty set of type of <paramref name="self" />.</summary>
+	/// <summary>Return an empty set of type of <paramref name="_" />.</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="self"></param>
+	/// <param name="_"></param>
 	[NeedsTesting]
-	public static async IAsyncEnumerable<T> EmptyAsync<T>( [DisallowNull] this T self ) {
-#pragma warning restore 1998
-		yield break;
-	}
+	public static IAsyncEnumerable<T> EmptyAsync<T>( this T _ ) where T : notnull => Enumerable.Empty<T>().ToAsyncEnumerable();
 
 	/// <summary>
 	///     Returns the first two items to in the source collection that satisfy the given <paramref name="relationship" /> ,

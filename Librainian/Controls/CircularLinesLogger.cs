@@ -150,7 +150,7 @@ public class CircularLinesLogger {
 			var sb = new StringBuilder();
 
 			var uniqueColors = this.BuildRichTextColorTable();
-			sb.AppendLine( $@"{{\rtf1{{\colortbl;{String.Join( "", uniqueColors.Select( d => d.Value.RichColor ) )}}}" );
+			sb.AppendLine( $@"{{\rtf1{{\colortbl;{String.Concat( uniqueColors.Select( d => d.Value.RichColor ) )}}}" );
 
 			foreach ( var entry in this._lines ) {
 				if ( includeEntryNumbers ) {

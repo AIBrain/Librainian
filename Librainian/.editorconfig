@@ -362,6 +362,12 @@ dotnet_diagnostic.CA1805.severity=error
 dotnet_diagnostic.IDE0161.severity=error
 dotnet_diagnostic.IDE0120.severity=error
 
+# RCS1031: Remove unnecessary braces.
+dotnet_diagnostic.RCS1031.severity = none
+
+# RCS1233: Use short-circuiting operator.
+dotnet_diagnostic.RCS1233.severity = error
+
 [*.{appxmanifest,axml,build,config,cs,csproj,dbml,discomap,dtd,jsproj,lsproj,njsproj,nuspec,proj,props,proto,resw,resx,StyleCop,targets,tasks,vbproj,xml,xsd}]
 indent_style = tab
 indent_size = tab
@@ -402,7 +408,7 @@ dotnet_style_qualification_for_method=true:error
 dotnet_style_qualification_for_event=true:error
 dotnet_diagnostic.CA1036.severity=error
 dotnet_diagnostic.CA1700.severity=none
-dotnet_diagnostic.CA1716.severity=warning
+dotnet_diagnostic.CA1716.severity=silent
 dotnet_diagnostic.CA1839.severity=warning
 dotnet_diagnostic.CA1846.severity=error
 dotnet_diagnostic.CA1847.severity=error

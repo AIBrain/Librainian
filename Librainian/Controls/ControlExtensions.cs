@@ -301,8 +301,8 @@ public static class ControlExtensions {
 	/// </summary>
 	/// <param name="control"></param>
 	[DebuggerStepThrough]
-	public static void Fokus( this Control control ) =>
-		control.InvokeAction( () => {
+	public static void Fokus( this Control? control ) =>
+		control?.InvokeAction( () => {
 			if ( !control.IsDisposed && control.CanFocus ) {
 				_ = control.Focus();
 			}

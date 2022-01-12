@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "ElectronVolts.cs" last touched on 2021-12-16 at 4:59 AM by Protiguous.
+// File "ElectronVolts.cs" last touched on 2022-01-11 at 11:55 AM by Protiguous.
 
 namespace Librainian.Measurement.Physics;
 
@@ -33,24 +33,32 @@ using ExtendedNumerics;
 using Extensions;
 using Maths;
 
-/// <summary>Units of mass and energy in ElectronVolts.</summary>
+/// <summary>
+///     Units of mass and energy in ElectronVolts.
+/// </summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record ElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
-	/// <summary>About 79228162514264337593543950335.</summary>
+	/// <summary>
+	///     About 79228162514264337593543950335.
+	/// </summary>
 	public static readonly ElectronVolts MaxValue = new(Decimal.MaxValue);
 
-	/// <summary>About -79228162514264337593543950335.</summary>
+	/// <summary>
+	///     About -79228162514264337593543950335.
+	/// </summary>
 	public static readonly ElectronVolts MinValue = new(Decimal.MinValue);
 
 	public static readonly ElectronVolts NegativeOne = new(-1m);
 
 	public static readonly ElectronVolts NegativeZero = new(-Decimal.Zero);
 
-	/// <summary>More than nothing (unknown but not massless).</summary>
+	/// <summary>
+	///     More than nothing (unknown but not massless).
+	/// </summary>
 	public static readonly ElectronVolts NonZero = new(MathExtensions.EpsilonDecimal);
 
 	public static readonly ElectronVolts One = new(1m);
@@ -65,13 +73,13 @@ public record ElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts
 
 	public ElectronVolts( GigaElectronVolts gigaElectronVolts ) : this( gigaElectronVolts.ToElectronVolts() ) { }
 
-	public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.Value );
+	public Int32 CompareTo( ElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( GigaElectronVolts? other ) => this.ToGigaElectronVolts().Value.CompareTo( other?.Value );
+	public Int32 CompareTo( GigaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToGigaElectronVolts().Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( MegaElectronVolts? other ) => this.ToMegaElectronVolts().Value.CompareTo( other?.Value );
+	public Int32 CompareTo( MegaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToMegaElectronVolts().Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToElectronVolts().Value );
+	public Int32 CompareTo( MilliElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToElectronVolts().Value );
 
 	public static implicit operator ElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToElectronVolts();
 
@@ -79,13 +87,13 @@ public record ElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts
 
 	public static implicit operator ElectronVolts( TeraElectronVolts teraElectronVolts ) => teraElectronVolts.ToElectronVolts();
 
-	public static ElectronVolts operator -( ElectronVolts? electronVolts ) => new(-electronVolts.Value);
+	public static ElectronVolts operator -( ElectronVolts electronVolts ) => new(-electronVolts.Value);
 
 	public static ElectronVolts operator *( ElectronVolts left, ElectronVolts right ) => new(left.Value * right.Value);
 
-	public static ElectronVolts operator *( ElectronVolts? left, Decimal right ) => new(left.Value * right);
+	public static ElectronVolts operator *( ElectronVolts left, Decimal right ) => new(left.Value * right);
 
-	public static ElectronVolts operator *( Decimal left, ElectronVolts? right ) => new(left * right.Value);
+	public static ElectronVolts operator *( Decimal left, ElectronVolts right ) => new(left * right.Value);
 
 	public static ElectronVolts operator *( BigDecimal left, ElectronVolts right ) => new(left * right.Value);
 
@@ -97,7 +105,7 @@ public record ElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts
 
 	public static GigaElectronVolts operator +( ElectronVolts left, GigaElectronVolts right ) => left.ToGigaElectronVolts() + right;
 
-	public static ElectronVolts operator +( ElectronVolts left, ElectronVolts? right ) => new(left.Value + right.Value);
+	public static ElectronVolts operator +( ElectronVolts left, ElectronVolts right ) => new(left.Value + right.Value);
 
 	public static Boolean operator <( ElectronVolts left, ElectronVolts right ) => left.Value < right.Value;
 
@@ -117,7 +125,9 @@ public record ElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts
 
 	public MilliElectronVolts ToMilliElectronVolts() => new(this.Value * InOne.MilliElectronVolt);
 
-	/// <summary>Returns the fully qualified type name of this instance.</summary>
+	/// <summary>
+	///     Returns the fully qualified type name of this instance.
+	/// </summary>
 	/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
 	public override String ToString() => $"{this.Value} eV";
 

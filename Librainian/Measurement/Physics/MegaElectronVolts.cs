@@ -31,6 +31,7 @@ using System;
 using System.Diagnostics;
 using ExtendedNumerics;
 using Extensions;
+using SortingOrder = Measurement.SortingOrder;
 
 /// <summary>Units of mass and energy in ElectronVolts.</summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
@@ -65,13 +66,13 @@ public record MegaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronV
 
 	public static MegaElectronVolts Zero => new(Decimal.Zero);
 
-	public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.ToMegaElectronVolts().Value );
+	public Int32 CompareTo( ElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToMegaElectronVolts().Value );
 
-	public Int32 CompareTo( GigaElectronVolts? other ) => this.ToMegaElectronVolts().Value.CompareTo( other?.Value );
+	public Int32 CompareTo( GigaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToMegaElectronVolts().Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( MegaElectronVolts? other ) => this.Value.CompareTo( other?.Value );
+	public Int32 CompareTo( MegaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToMegaElectronVolts().Value );
+	public Int32 CompareTo( MilliElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToMegaElectronVolts().Value );
 
 	public static MegaElectronVolts operator +( MegaElectronVolts left, MegaElectronVolts right ) => new(left.Value + right.Value);
 

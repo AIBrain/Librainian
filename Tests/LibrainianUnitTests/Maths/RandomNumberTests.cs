@@ -27,12 +27,14 @@
 
 namespace LibrainianUnitTests.Maths;
 
+/*
+using Librainian.Maths;
 using NUnit.Framework;
 
 [TestFixture]
 public class RandomNumberTests {
 
-	/*
+	
 	[Test]
 	public void AddBitsMethod() {
 		var size = Randem.NextUInt64();
@@ -40,6 +42,5 @@ public class RandomNumberTests {
 		Assert.AreEqual( 2, size.Bytes );
 		Assert.AreEqual( 16, size.Bits );
 	}
-	*/
-
 }
+*/

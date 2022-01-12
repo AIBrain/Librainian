@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "KiloElectronVolts.cs" last touched on 2021-12-29 at 6:26 AM by Protiguous.
+// File "KiloElectronVolts.cs" last touched on 2022-01-11 at 11:55 AM by Protiguous.
 
 namespace Librainian.Measurement.Physics;
 
@@ -33,11 +33,13 @@ using System.Numerics;
 using ExtendedNumerics;
 using Extensions;
 
-/// <summary>Units of mass and energy in ElectronVolts.</summary>
+/// <summary>
+///     Units of mass and energy in ElectronVolts.
+/// </summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record KiloElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<KiloElectronVolts>,
 	IComparable<MegaElectronVolts>, IComparable<GigaElectronVolts> {
 
@@ -53,20 +55,6 @@ public record KiloElectronVolts( BigDecimal Value ) : IComparable<MilliElectronV
 
 	public const Decimal InOneTeraElectronVolt = 1E9m;
 
-	/// <summary>About 79228162514264337593543950335.</summary>
-	public static readonly KiloElectronVolts MaxValue = new(Decimal.MaxValue);
-
-	/// <summary>About -79228162514264337593543950335.</summary>
-	public static readonly KiloElectronVolts MinValue = new(Decimal.MinValue);
-
-	public static readonly KiloElectronVolts NegativeOne = new(-1m);
-
-	public static readonly KiloElectronVolts NegativeZero = new(-Decimal.Zero);
-
-	public static readonly KiloElectronVolts One = new(1m);
-
-	public static readonly KiloElectronVolts Zero = new(0m);
-
 	public KiloElectronVolts( Decimal value ) : this( ( BigDecimal ) value ) { }
 
 	public KiloElectronVolts( MegaElectronVolts megaElectronVolts ) : this( megaElectronVolts.ToKiloElectronVolts() ) { }
@@ -75,15 +63,33 @@ public record KiloElectronVolts( BigDecimal Value ) : IComparable<MilliElectronV
 
 	public KiloElectronVolts( ElectronVolts electronVolts ) : this( electronVolts.ToKiloElectronVolts() ) { }
 
-	public Int32 CompareTo( ElectronVolts? other ) => this.Value.CompareTo( other?.ToKiloElectronVolts().Value );
+	/// <summary>
+	///     About 79228162514264337593543950335.
+	/// </summary>
+	public static KiloElectronVolts MaxValue { get; } = new(Decimal.MaxValue);
 
-	public Int32 CompareTo( GigaElectronVolts? other ) => this.ToGigaElectronVolts().Value.CompareTo( other?.Value );
+	/// <summary>
+	///     About -79228162514264337593543950335.
+	/// </summary>
+	public static KiloElectronVolts MinValue { get; } = new(Decimal.MinValue);
 
-	public Int32 CompareTo( KiloElectronVolts? other ) => this.Value.CompareTo( other?.Value );
+	public static KiloElectronVolts NegativeOne { get; } = new(-1m);
 
-	public Int32 CompareTo( MegaElectronVolts? other ) => this.ToMegaElectronVolts().Value.CompareTo( other?.Value );
+	public static KiloElectronVolts NegativeZero { get; } = new(-Decimal.Zero);
 
-	public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.ToKiloElectronVolts().Value );
+	public static KiloElectronVolts One { get; } = new(1m);
+
+	public static KiloElectronVolts Zero { get; } = new(0m);
+
+	public Int32 CompareTo( ElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToKiloElectronVolts().Value );
+
+	public Int32 CompareTo( GigaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToGigaElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( KiloElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( MegaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToMegaElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( MilliElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.ToKiloElectronVolts().Value );
 
 	public static implicit operator KiloElectronVolts( MegaElectronVolts megaElectronVolts ) => megaElectronVolts.ToKiloElectronVolts();
 
@@ -125,7 +131,9 @@ public record KiloElectronVolts( BigDecimal Value ) : IComparable<MilliElectronV
 
 	public MilliElectronVolts ToMilliElectronVolts() => new(this.Value * InOneMilliElectronVolt);
 
-	/// <summary>Returns the fully qualified type name of this instance.</summary>
+	/// <summary>
+	///     Returns the fully qualified type name of this instance.
+	/// </summary>
 	/// <returns>A <see cref="String" /> containing a fully qualified type name.</returns>
 	public override String ToString() => $"{this.Value} eV";
 

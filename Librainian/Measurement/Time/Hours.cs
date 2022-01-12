@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Hours.cs" last touched on 2021-12-31 at 2:11 AM by Protiguous.
+// File "Hours.cs" last touched on 2022-01-11 at 12:15 PM by Protiguous.
 
 #nullable enable
 
@@ -39,7 +39,7 @@ using Parsing;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record Hours( BigDecimal Value ) : IQuantityOfTime, IComparable<Hours> {
 
 	/// <summary>
@@ -66,7 +66,7 @@ public record Hours( BigDecimal Value ) : IQuantityOfTime, IComparable<Hours> {
 	/// </summary>
 	public static Hours Zero { get; } = new(0);
 
-	public Int32 CompareTo( Hours? other ) => this.Value.CompareTo( other?.Value );
+	public Int32 CompareTo( Hours? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
 
 	public IQuantityOfTime ToFinerGranularity() => this.ToMinutes();
 

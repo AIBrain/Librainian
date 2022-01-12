@@ -1,15 +1,15 @@
 // Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "TimeTests.cs" last touched on 2022-01-11 at 12:20 PM by Protiguous.
 
 // ReSharper disable EqualExpressionComparison
 
@@ -85,6 +85,19 @@ public static class TimeTests {
 		//TimeSpan timeSpan;
 		//String failReason;
 		//DurationParser.TryParse( example, out timeSpan, out failReason ); //TODO
+	}
+
+	[Test]
+	public static void TestEstimateTimeRemaining() {
+		var timetakenSoFar = ( TimeSpan ) Minutes.Fifteen;
+		const Decimal progress = 0.25m;
+
+		var estimateTimeRemaining = timetakenSoFar.EstimateTimeRemaining( progress );
+		TestContext.WriteLine( estimateTimeRemaining.Simpler() );
+
+		var expected = new Minutes( 45 ).AsTimeSpan();
+
+		Assert.AreEqual( estimateTimeRemaining, expected );
 	}
 
 	[Test]
@@ -171,13 +184,12 @@ public static class TimeTests {
 		PlanckTimes.One.Should().BeGreaterThan( PlanckTimes.Zero );
 		PlanckTimes.One.Should().BeLessThan( Yoctoseconds.One );
 
-		
 		Debug.Assert( PlanckTimes.InOneSecond < PlanckTimes.InOneMinute );
-		Assert.Less( PlanckTimes.InOneMinute, PlanckTimes.InOneHour );
-		Assert.Less( PlanckTimes.InOneHour, PlanckTimes.InOneDay );
-		Assert.Less( PlanckTimes.InOneDay, PlanckTimes.InOneWeek );
-		Assert.Less( PlanckTimes.InOneWeek, PlanckTimes.InOneMonth );
-		Assert.Less( PlanckTimes.InOneMonth, PlanckTimes.InOneYear );
+		Assert.True( PlanckTimes.InOneMinute < PlanckTimes.InOneHour );
+		Assert.True( PlanckTimes.InOneHour < PlanckTimes.InOneDay );
+		Assert.True( PlanckTimes.InOneDay < PlanckTimes.InOneWeek );
+		Assert.True( PlanckTimes.InOneWeek < PlanckTimes.InOneMonth );
+		Assert.True( PlanckTimes.InOneMonth < PlanckTimes.InOneYear );
 	}
 
 	[Test]
@@ -190,22 +202,16 @@ public static class TimeTests {
 	}
 
 	[Test]
-	public static void TestSpanIdentityYoctoseconds() => SpanOfTime.Identity.Yoctoseconds.Value.Should()?.Be( BigDecimal.One );
+	public static void TestSpanIdentityAttoseconds() => SpanOfTime.Identity.Attoseconds.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
-	public static void TestSpanIdentityZeptoseconds() => SpanOfTime.Identity.Zeptoseconds.Value.Should()?.Be( BigDecimal.One );
+	public static void TestSpanIdentityDays() => SpanOfTime.Identity.Days.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
 	public static void TestSpanIdentityFemtoseconds() => SpanOfTime.Identity.Femtoseconds.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
-	public static void TestSpanIdentityAttoseconds() => SpanOfTime.Identity.Attoseconds.Value.Should()?.Be( BigDecimal.One );
-
-	[Test]
-	public static void TestSpanIdentityPicoseconds() => SpanOfTime.Identity.Picoseconds.Value.Should()?.Be( BigDecimal.One );
-
-	[Test]
-	public static void TestSpanIdentityNanoseconds() => SpanOfTime.Identity.Nanoseconds.Value.Should()?.Be( BigDecimal.One );
+	public static void TestSpanIdentityHours() => SpanOfTime.Identity.Hours.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
 	public static void TestSpanIdentityMicroseconds() => SpanOfTime.Identity.Microseconds.Value.Should()?.Be( BigDecimal.One );
@@ -214,25 +220,31 @@ public static class TimeTests {
 	public static void TestSpanIdentityMilliseconds() => SpanOfTime.Identity.Milliseconds.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
-	public static void TestSpanIdentitySeconds() => SpanOfTime.Identity.Seconds.Value.Should()?.Be( BigDecimal.One );
-
-	[Test]
 	public static void TestSpanIdentityMinutes() => SpanOfTime.Identity.Minutes.Value.Should()?.Be( BigDecimal.One );
-
-	[Test]
-	public static void TestSpanIdentityHours() => SpanOfTime.Identity.Hours.Value.Should()?.Be( BigDecimal.One );
-
-	[Test]
-	public static void TestSpanIdentityDays() => SpanOfTime.Identity.Days.Value.Should()?.Be( BigDecimal.One );
-
-	[Test]
-	public static void TestSpanIdentityWeeks() => SpanOfTime.Identity.Weeks.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
 	public static void TestSpanIdentityMonths() => SpanOfTime.Identity.Months.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
+	public static void TestSpanIdentityNanoseconds() => SpanOfTime.Identity.Nanoseconds.Value.Should()?.Be( BigDecimal.One );
+
+	[Test]
+	public static void TestSpanIdentityPicoseconds() => SpanOfTime.Identity.Picoseconds.Value.Should()?.Be( BigDecimal.One );
+
+	[Test]
+	public static void TestSpanIdentitySeconds() => SpanOfTime.Identity.Seconds.Value.Should()?.Be( BigDecimal.One );
+
+	[Test]
+	public static void TestSpanIdentityWeeks() => SpanOfTime.Identity.Weeks.Value.Should()?.Be( BigDecimal.One );
+
+	[Test]
 	public static void TestSpanIdentityYears() => SpanOfTime.Identity.Years.Value.Should()?.Be( BigDecimal.One );
+
+	[Test]
+	public static void TestSpanIdentityYoctoseconds() => SpanOfTime.Identity.Yoctoseconds.Value.Should()?.Be( BigDecimal.One );
+
+	[Test]
+	public static void TestSpanIdentityZeptoseconds() => SpanOfTime.Identity.Zeptoseconds.Value.Should()?.Be( BigDecimal.One );
 
 	[Test]
 	public static void TestTimes() {
@@ -240,19 +252,6 @@ public static class TimeTests {
 		var unix = UniversalDateTime.Unix;
 
 		now.Should()!.BeGreaterThan( unix );
-	}
-
-	[Test]
-	public static void TestEstimateTimeRemaining() {
-		var timetakenSoFar = ( TimeSpan )Minutes.Fifteen;
-		const Decimal progress = 0.25m;
-
-		var estimateTimeRemaining = timetakenSoFar.EstimateTimeRemaining( progress );
-		TestContext.WriteLine( estimateTimeRemaining.Simpler() );
-
-		var expected = new Minutes( 45 ).AsTimeSpan();
-
-		Assert.AreEqual( estimateTimeRemaining, expected );
 	}
 
 	[Test]

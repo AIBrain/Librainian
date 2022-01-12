@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,13 +17,13 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// 
+// File "DatabaseExtensions.cs" last touched on 2022-01-05 at 12:00 PM by Protiguous.
 
 #nullable enable
 
@@ -57,9 +57,7 @@ public static class DatabaseExtensions {
 
 	private static Dictionary<Type, IList<PropertyInfo>> TypeDictionary { get; } = new();
 
-	/// <summary>
-	///     Return a dictionary of fields and their index.
-	/// </summary>
+	/// <summary>Return a dictionary of fields and their index.</summary>
 	/// <param name="reader"></param>
 	private static FieldDictionary GetFieldNames( this IDataReader reader ) {
 		var dictionary = new FieldDictionary( reader.FieldCount, StringComparer.OrdinalIgnoreCase );
@@ -121,9 +119,7 @@ public static class DatabaseExtensions {
 
 	/*
 
-    /// <summary>
-    /// Converts a DataTable to a list with generic objects
-    /// </summary>
+    /// <summary>Converts a DataTable to a list with generic objects</summary>
     /// <typeparam name="T">Generic object</typeparam>
     /// <param name="table">DataTable</param>
     /// <returns>List with generic objects</returns>
@@ -191,10 +187,9 @@ public static class DatabaseExtensions {
 			}
 		}
 
-		if ( exception.Message.Contains( "deadlocked", StringComparison.OrdinalIgnoreCase ) ) {
-			if ( exception.Message.Contains( "Rerun the transaction", StringComparison.OrdinalIgnoreCase ) ) {
-				return true;
-			}
+		if ( exception.Message.Contains( "deadlocked", StringComparison.OrdinalIgnoreCase ) &&
+		     exception.Message.Contains( "Rerun the transaction", StringComparison.OrdinalIgnoreCase ) ) {
+			return true;
 		}
 
 		return exception.Message.Contains( "server was not found", StringComparison.OrdinalIgnoreCase ) ||
@@ -203,9 +198,7 @@ public static class DatabaseExtensions {
 		       exception.Message.Contains( "requires an open and available Connection", StringComparison.OrdinalIgnoreCase ) || exception.HResult == -2146233079;
 	}
 
-	/// <summary>
-	///     Enumerates all SQL Server instances on the machine.
-	/// </summary>
+	/// <summary>Enumerates all SQL Server instances on the machine.</summary>
 	public static IEnumerable<SqlServerInstance> EnumerateSqlInstances() {
 		const String query = @"select * from SqlServiceAdvancedProperty where SQLServiceType = 1 and PropertyName = 'instanceID'";
 
@@ -221,7 +214,7 @@ public static class DatabaseExtensions {
 				yield break;
 			}
 
-			foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine["ServiceName"]?.ToString() ) ) {
+			foreach ( var serviceName in getSqlEngine.Get().Cast<ManagementObject>().Select( sqlEngine => sqlEngine[ "ServiceName" ]?.ToString() ) ) {
 				if ( !String.IsNullOrWhiteSpace( serviceName ) ) {
 					var instance = new SqlServerInstance {
 						ServiceName = serviceName,
@@ -245,9 +238,9 @@ public static class DatabaseExtensions {
 	///     <paramref name="key" />.
 	///     <para>Returns the key.</para>
 	/// </summary>
-	/// <param name="file">            </param>
+	/// <param name="file"></param>
 	/// <param name="connectionString"></param>
-	/// <param name="key">             </param>
+	/// <param name="key"></param>
 	public static async Task<String> FileSet( this ConcurrentDictionaryFile<String, String> file, String connectionString, String key = Words.PrimeConnectionString ) {
 		if ( file is null ) {
 			throw new ArgumentEmptyException( nameof( file ) );
@@ -261,19 +254,15 @@ public static class DatabaseExtensions {
 			throw new NullException( nameof( connectionString ) );
 		}
 
-		file[key] = connectionString;
+		file[ key ] = connectionString;
 		await file.Flush( CancellationToken.None ).ConfigureAwait( false );
 
-		Debug.Assert( file[key].Like( connectionString ) );
+		Debug.Assert( file[ key ].Like( connectionString ) );
 
 		return key;
 	}
 
-	public static async Task<Boolean> FileSet(
-		this ConcurrentDictionaryFile<String, String> file,
-		SqlServerInfo sqlServerInfo,
-		String key = Words.PrimeConnectionString
-	) {
+	public static async Task<Boolean> FileSet( this ConcurrentDictionaryFile<String, String> file, SqlServerInfo sqlServerInfo, String key = Words.PrimeConnectionString ) {
 		if ( file is null ) {
 			throw new ArgumentEmptyException( nameof( file ) );
 		}
@@ -321,9 +310,7 @@ public static class DatabaseExtensions {
 		return default( String? );
 	}
 
-	/// <summary>
-	///     Method returns the correct SQL namespace to use to detect SQL Server instances.
-	/// </summary>
+	/// <summary>Method returns the correct SQL namespace to use to detect SQL Server instances.</summary>
 	/// <returns>namespace to use to detect SQL Server instances</returns>
 	public static IEnumerable<String> GetCorrectWmiNameSpaces() {
 		const String root = "root\\Microsoft\\sqlserver";
@@ -331,7 +318,6 @@ public static class DatabaseExtensions {
 		var namespaces = new List<String>();
 
 		try {
-
 			// Enumerate all WMI instances of __namespace WMI class.
 			var objectGetOptions = new ObjectGetOptions {
 				Timeout = Seconds.Ten
@@ -339,7 +325,7 @@ public static class DatabaseExtensions {
 
 			using var nsClass = new ManagementClass( new ManagementScope( root ), new ManagementPath( "__namespace" ), objectGetOptions );
 
-			var items = nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns["Name"]?.ToString() );
+			var items = nsClass.GetInstances().OfType<ManagementObject>().Select( ns => ns[ "Name" ]?.ToString() );
 
 			foreach ( var item in items ) {
 				if ( !String.IsNullOrWhiteSpace( item ) ) {
@@ -357,7 +343,6 @@ public static class DatabaseExtensions {
 	}
 
 	public static dynamic? GetDataSources() {
-
 		//var services = ServiceController.GetServices().Where( service => service.ServiceName.StartsWith( "MSSQL$" ) );
 		//return services;
 
@@ -366,9 +351,7 @@ public static class DatabaseExtensions {
 		return availableSqlServers;
 	}
 
-	/// <summary>
-	///     method extracts the instance name from the service name
-	/// </summary>
+	/// <summary>method extracts the instance name from the service name</summary>
 	/// <param name="serviceName"></param>
 	public static String GetInstanceNameFromServiceName( String? serviceName ) {
 		if ( String.IsNullOrEmpty( serviceName ) ) {
@@ -390,13 +373,11 @@ public static class DatabaseExtensions {
 			TypeDictionary.Add( type, type.GetProperties() );
 		}
 
-		return TypeDictionary[type];
+		return TypeDictionary[ type ];
 	}
 
-	/// <summary>
-	///     Returns the WMI property value for a given property name for a particular SQL Server service Name
-	/// </summary>
-	/// <param name="serviceName"> The service name for the SQL Server engine serivce to query for</param>
+	/// <summary>Returns the WMI property value for a given property name for a particular SQL Server service Name</summary>
+	/// <param name="serviceName">The service name for the SQL Server engine serivce to query for</param>
 	/// <param name="wmiNamespace">The wmi namespace to connect to</param>
 	/// <param name="propertyName">The property name whose value is required</param>
 	public static String GetWmiPropertyValueForEngineService( String serviceName, String wmiNamespace, String propertyName ) {
@@ -417,7 +398,7 @@ public static class DatabaseExtensions {
 
 		foreach ( var o in propertySearcher.Get() ) {
 			if ( o is ManagementObject managementObject ) {
-				var value = managementObject["PropertyStrValue"]?.ToString();
+				var value = managementObject[ "PropertyStrValue" ]?.ToString();
 				if ( !String.IsNullOrWhiteSpace( value ) ) {
 					return value;
 				}
@@ -467,11 +448,9 @@ public static class DatabaseExtensions {
 	}
 	*/
 
-	/// <summary>
-	///     Convert our IList to a DataSet
-	/// </summary>
+	/// <summary>Convert our IList to a DataSet</summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="list">      </param>
+	/// <param name="list"></param>
 	/// <param name="exampleSet"></param>
 	/// <returns>DataSet</returns>
 	/// <copyright>
@@ -528,7 +507,7 @@ public static class DatabaseExtensions {
 		var i = 0;
 
 		foreach ( DataViewSetting dataViewSetting in exampleSet.DefaultViewManager.DataViewSettings ) {
-			dataSet.DefaultViewManager.DataViewSettings[i++] = dataViewSetting;
+			dataSet.DefaultViewManager.DataViewSettings[ i++ ] = dataViewSetting;
 		}
 
 		return dataSet;
@@ -550,7 +529,7 @@ public static class DatabaseExtensions {
 
 			var row = table.NewRow();
 			foreach ( PropertyDescriptor prop in properties ) {
-				row[prop.Name] = prop.GetValue( item ) ?? DBNull.Value;
+				row[ prop.Name ] = prop.GetValue( item ) ?? DBNull.Value;
 			}
 
 			table.Rows.Add( row );
@@ -576,7 +555,7 @@ public static class DatabaseExtensions {
 
 			var row = table.NewRow();
 			foreach ( PropertyDescriptor prop in properties ) {
-				row[prop.Name] = prop.GetValue( item ) ?? DBNull.Value;
+				row[ prop.Name ] = prop.GetValue( item ) ?? DBNull.Value;
 			}
 
 			table.Rows.Add( row );
@@ -585,9 +564,7 @@ public static class DatabaseExtensions {
 		return table;
 	}
 
-	/// <summary>
-	///     To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.
-	/// </summary>
+	/// <summary>To allow disconnecting the <see cref="SqlDataReader" /> as soon as possible.</summary>
 	/// <param name="dataReader"></param>
 	public static DataTable ToDataTable( this SqlDataReader dataReader ) {
 		using var table = new DataTable();
@@ -598,9 +575,7 @@ public static class DatabaseExtensions {
 		return table;
 	}
 
-	/// <summary>
-	///     Warning: Untested.
-	/// </summary>
+	/// <summary>Warning: Untested.</summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="list"></param>
 	public static DataTable ToDataTable3<T>( this IEnumerable<T> list ) {
@@ -613,7 +588,7 @@ public static class DatabaseExtensions {
 			var icolType = getProperty.PropertyType;
 
 			if ( icolType.IsGenericType && icolType.GetGenericTypeDefinition() == typeof( Nullable<> ) ) {
-				icolType = icolType.GetGenericArguments()[0];
+				icolType = icolType.GetGenericArguments()[ 0 ];
 			}
 
 			table.Columns.Add( new DataColumn( getProperty.Name, icolType ) );
@@ -623,7 +598,7 @@ public static class DatabaseExtensions {
 			var dr = table.NewRow();
 
 			foreach ( var p in columns ) {
-				dr[p.Name] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
+				dr[ p.Name ] = p.GetValue( record, default( Object?[]? ) ) ?? DBNull.Value;
 			}
 
 			table.Rows.Add( dr );
@@ -661,7 +636,7 @@ public static class DatabaseExtensions {
 			var newRow = table.NewRow();
 
 			foreach ( var propInfo in properties ) {
-				newRow[propInfo.Name] = item; //BUG This does not look right??
+				newRow[ propInfo.Name ] = item; //BUG This does not look right??
 			}
 
 			table.Rows.Add( newRow );
@@ -740,7 +715,7 @@ public static class DatabaseExtensions {
 			throw new NullException( nameof( parameterName ) );
 		}
 
-		return new( parameterName, sqlDbType, size );
+		return new(parameterName, sqlDbType, size);
 	}
 
 	/*
@@ -767,7 +742,7 @@ public static class DatabaseExtensions {
             /// </summary>
             /// <typeparam name="T1"></typeparam>
             /// <typeparam name="T2"></typeparam>
-            /// <param name="obj">  </param>
+            /// <param name="obj"></param>
             /// <param name="items"></param>
             /// <returns></returns>
             /// <copyright>
@@ -811,9 +786,7 @@ public static class DatabaseExtensions {
 
 	/*
 
-            /// <summary>
-            /// Returns the total time taken for a simple query. (connect + execute + fetch...)
-            /// </summary>
+            /// <summary>Returns the total time taken for a simple query. (connect + execute + fetch...)</summary>
             /// <returns></returns>
             [Obsolete( "No access to a local Server atm." )]
             public static TimeSpan EasyPing( SQLQuery db ) {
@@ -848,10 +821,10 @@ public static class DatabaseExtensions {
 	/*
 
 	/// <summary>
-	///     Performs two adhoc selects on the database.
-	///     <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
+	/// Performs two adhoc selects on the database.
+	/// <code>select @@VERSION;" and "select SYSUTCDATETIME();</code>
 	/// </summary>
-	/// <param name="test">             </param>
+	/// <param name="test"></param>
 	/// <param name="applicationName"></param>
 	/// <param name="cancellationToken"></param>
 	public static async PooledValueTask<SqlServerInfo?> TryGetResponse(
@@ -926,9 +899,7 @@ public static class DatabaseExtensions {
 
 	/*
 
-            /// <summary>
-            /// Returns the total time taken for a simple query. (connect + execute + fetch...)
-            /// </summary>
+            /// <summary>Returns the total time taken for a simple query. (connect + execute + fetch...)</summary>
             /// <returns></returns>
             [Obsolete( "No access to a local Server atm." )]
             public static TimeSpan Ping() {
@@ -958,4 +929,5 @@ public static class DatabaseExtensions {
                 return stopwatch.Elapsed;
             }
     */
+
 }

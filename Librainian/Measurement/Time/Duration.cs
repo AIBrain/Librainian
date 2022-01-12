@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Duration.cs" last touched on 2021-12-31 at 2:10 AM by Protiguous.
+// File "Duration.cs" last touched on 2022-01-11 at 12:13 PM by Protiguous.
 
 namespace Librainian.Measurement.Time;
 
@@ -39,12 +39,9 @@ using Utilities;
 ///     <para>Expands <see cref="TimeSpan" /> to include microseconds, weeks (7 days), and years (365 days).</para>
 ///     <para>Internally stores the value as the total microseconds ( <see cref="Microseconds" />).</para>
 /// </summary>
-/// <see cref="SpanOfTime" />
-/// TODO This class is
-/// <b>likely</b>
-/// full of math-time bugs and rounding errors.
+/// <remarks><see cref="SpanOfTime" /> TODO This class is <b>likely</b> full of math-time bugs and rounding errors.</remarks>
 [JsonObject]
-[Extensions.Immutable]
+[Immutable]
 [NeedsTesting]
 public record Duration( BigDecimal Microseconds ) : IComparable<Duration>, IComparable<TimeSpan> {
 
@@ -83,7 +80,9 @@ public record Duration( BigDecimal Microseconds ) : IComparable<Duration>, IComp
 	/// <summary>
 	/// </summary>
 	/// <param name="ticks"></param>
-	public Duration( Int64 ticks ) : this( ticks / 10.0m ) { } //TODO Is /10 correct for ticks to microseconds?
+	public Duration( Int64 ticks ) : this( ticks / 10.0m ) {
+		//TODO Is /10 correct for ticks to microseconds? needs a constant, not a magic number.
+	}
 
 	public Duration( TimeSpan time ) : this( time.Ticks ) { }
 
@@ -93,7 +92,7 @@ public record Duration( BigDecimal Microseconds ) : IComparable<Duration>, IComp
 	///     <para>Compares <see cref="Microseconds" /></para>
 	/// </summary>
 	/// <param name="other"></param>
-	public Int32 CompareTo( Duration? other ) => this.Microseconds.CompareTo( other?.Microseconds );
+	public Int32 CompareTo( Duration? other ) => other is null ? SortingOrder.NullsDefault : this.Microseconds.CompareTo( other.Microseconds );
 
 	/// <summary>
 	///     <para>Compares <see cref="TotalMilliseconds" /></para>
@@ -172,7 +171,7 @@ public record Duration( BigDecimal Microseconds ) : IComparable<Duration>, IComp
 	public BigDecimal Weeks() => ( BigInteger ) this.TotalDays() % Time.Days.InOneWeek;
 
 	[NeedsTesting]
-	public BigDecimal Years() => ( BigInteger ) ( (( Decimal? )this.TotalDays()).Value % Time.Days.InOneCommonYear );
+	public BigDecimal Years() => ( BigInteger ) ( ( ( Decimal? ) this.TotalDays() ).Value % Time.Days.InOneCommonYear );
 
 	public static Boolean operator <( Duration left, Duration right ) => left.CompareTo( right ) < 0;
 

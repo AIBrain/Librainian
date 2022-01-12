@@ -300,7 +300,7 @@ public static class Common {
 	/// <param name="keys"></param>
 	/// <returns></returns>
 	public static String ToKey( params String[] keys ) {
-		Debug.Assert( !keys.Select( s => s.Contains( Symbols.TripleTilde ) ).Any() );
+		Debug.Assert( !keys.Any( s => s.Contains( Symbols.TripleTilde ) ) );
 		return keys.ToStrings( Symbols.TripleTilde );
 	}
 

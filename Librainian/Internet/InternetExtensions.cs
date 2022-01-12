@@ -147,7 +147,7 @@ public static class InternetExtensions {
 
 		var ips = ip.Split( '.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries );
 
-		return ips.Length is 4 && Int32.Parse( ips[0] ) < 256 && ( Int32.Parse( ips[1] ) < 256 ) & ( Int32.Parse( ips[2] ) < 256 ) & ( Int32.Parse( ips[3] ) < 256 );
+		return ips.Length is 4 && Int32.Parse( ips[0] ) < 256 && ( Int32.Parse( ips[1] ) < 256 ) && ( Int32.Parse( ips[2] ) < 256 ) && ( Int32.Parse( ips[3] ) < 256 );
 	}
 
 	public static Boolean IsValidUrl( this String text ) => ValidateURLRegex.IsMatch( text );

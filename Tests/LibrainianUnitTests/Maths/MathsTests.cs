@@ -27,6 +27,7 @@
 
 namespace LibrainianUnitTests.Maths;
 
+using System;
 using System.Numerics;
 using FluentAssertions;
 using Librainian.Maths;
@@ -39,6 +40,28 @@ public static class MathsTests {
 	public static void TestOperations() {
 		var result = true;
 		result.Should().BeTrue();
+	}
+
+	[Test]
+	public static void TestMathConstantsEpsilon1() {
+		var lowestDecimal = new Decimal( 1, 0, 0, false, 28 );
+		Assert.AreEqual( lowestDecimal, MathConstants.SmallestNonZeroDec );
+
+	}
+
+	[Test]
+	public static void TestMathConstantsEpsilon2() {
+		var lowestDecimal = Decimal.Zero.Epsilon();
+		Assert.AreEqual( lowestDecimal, MathConstants.SmallestNonZeroDec );
+
+	}
+
+	[Test]
+	public static void TestMathConstantsEpsilon3() {
+		var left = Decimal.Zero.Epsilon();
+		var right = Decimal.One.Epsilon();
+		Assert.AreEqual( left, right );
+
 	}
 
 }

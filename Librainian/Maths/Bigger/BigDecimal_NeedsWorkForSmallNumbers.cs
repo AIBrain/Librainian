@@ -177,7 +177,7 @@ public readonly struct BigDecimal_NeedsWorkForSmallNumbers : IComparable, ICompa
 	}
 
 	private static String ToString( BigInteger mantissa, Int32 exponent, IFormatProvider provider ) {
-		if ( provider == null ) {
+		if ( provider is null ) {
 			throw new ArgumentEmptyException( nameof( provider ) );
 		}
 
@@ -192,7 +192,7 @@ public readonly struct BigDecimal_NeedsWorkForSmallNumbers : IComparable, ICompa
 		if ( negativeExponent ) {
 			if ( absExp > result.Length ) {
 				var zerosToAdd = Math.Abs( absExp - result.Length );
-				var zeroString = String.Join( String.Empty, Enumerable.Repeat( formatProvider.NativeDigits[0], zerosToAdd ) );
+				var zeroString = String.Concat( Enumerable.Repeat( formatProvider.NativeDigits[0], zerosToAdd ) );
 				result = zeroString + result;
 				result = result.Insert( 0, formatProvider.NumberDecimalSeparator );
 				result = result.Insert( 0, formatProvider.NativeDigits[0] ?? throw new InvalidOperationException() );
@@ -211,7 +211,7 @@ public readonly struct BigDecimal_NeedsWorkForSmallNumbers : IComparable, ICompa
 			}
 		}
 		else {
-			var zeroString = String.Join( String.Empty, Enumerable.Repeat( formatProvider.NativeDigits[0], absExp ) );
+			var zeroString = String.Concat( Enumerable.Repeat( formatProvider.NativeDigits[0], absExp ) );
 			result += zeroString;
 		}
 

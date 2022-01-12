@@ -33,7 +33,7 @@ using Librainian.Exceptions;
 using Librainian.Parsing;
 
 [MemoryDiagnoser]
-public class CompareRight_SubstringRangeSlice {
+public class CompareRightSubstringRangeSlice {
 
 	private const String Default_TestAddress = "al. Księcia Józefa Poniatowskiego 1, 03-901 Warszawa";
 

@@ -1,15 +1,15 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-//
+// 
 // This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-//
+// 
 // All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-//
+// 
 // Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
 // If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
-//
+// 
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
-//
+// 
 // ====================================================================
 // Disclaimer:  Usage of the source code or binaries is AS-IS.
 // No warranties are expressed, implied, or given.
@@ -17,33 +17,32 @@
 // We are NOT responsible for Anything You Do With Our Executables.
 // We are NOT responsible for Anything You Do With Your Computer.
 // ====================================================================
-//
+// 
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
 // For business inquiries, please contact me at Protiguous@Protiguous.com.
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
-//
-// File "DateSpan.cs" last touched on 2021-06-07 at 12:13 PM by Protiguous.
+// 
+// File "DateSpan.cs" last touched on 2022-01-01 at 12:39 PM by Protiguous.
 
 namespace Librainian.Measurement.Time;
 
 using System;
 using Extensions;
-using Newtonsoft.Json;
 
 /// <summary>
 ///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates, but does so in a way
-///     that respects the number of actual days in the elapsed
-///     years and months.
+///     that
+///     respects the number of actual days in the elapsed years and months.
 /// </summary>
 /// <remarks>
 ///     Adapted from <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates/DateSpan.cs" />
 /// </remarks>
 [Immutable]
-[JsonObject]
 [Serializable]
 public record DateSpan {
 
+	/// <summary></summary>
 	/// <param name="start">The start date</param>
 	/// <param name="end">The end date</param>
 	/// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
@@ -52,33 +51,32 @@ public record DateSpan {
 		end = end.ToUniversalTime();
 
 		if ( start > end ) {
-			(start, end) = (end, start);
+			( start, end ) = ( end, start );
 		}
 
 		this.Years = end.Year - start.Year;
 
 		if ( this.Years > 0 ) {
 			if ( end.Month < start.Month ) {
-				this.Years--;
+				--this.Years;
 			}
 			else if ( end.Month == start.Month ) {
 				if ( end.Day < start.Day ) {
-					this.Years--;
+					--this.Years;
 				}
 				else {
 					if ( end.Day == start.Day ) {
 						if ( end.Hour < start.Hour ) {
-							this.Years--;
+							--this.Years;
 						}
 						else if ( end.Hour == start.Hour ) {
 							if ( end.Minute >= start.Minute ) {
-								if ( end.Minute != start.Minute || end.Second >= start.Second ) { }
-								else {
-									this.Years--;
+								if ( end.Minute == start.Minute && end.Second < start.Second ) {
+									--this.Years;
 								}
 							}
 							else {
-								this.Years--;
+								--this.Years;
 							}
 						}
 					}
@@ -94,20 +92,20 @@ public record DateSpan {
 
 		if ( this.Months > 0 ) {
 			if ( end.Day < start.Day ) {
-				this.Months--;
+				--this.Months;
 			}
 			else if ( end.Day == start.Day ) {
 				if ( end.Hour < start.Hour ) {
-					this.Months--;
+					--this.Months;
 				}
 				else if ( end.Hour == start.Hour ) {
 					if ( end.Minute >= start.Minute ) {
 						if ( end.Minute == start.Minute && end.Second < start.Second ) {
-							this.Months--;
+							--this.Months;
 						}
 					}
 					else {
-						this.Months--;
+						--this.Months;
 					}
 				}
 			}
@@ -121,16 +119,16 @@ public record DateSpan {
 
 		if ( this.Days > 0 ) {
 			if ( end.Hour < start.Hour ) {
-				this.Days--;
+				--this.Days;
 			}
 			else if ( end.Hour == start.Hour ) {
 				if ( end.Minute >= start.Minute ) {
 					if ( end.Minute == start.Minute && end.Second < start.Second ) {
-						this.Days--;
+						--this.Days;
 					}
 				}
 				else {
-					this.Days--;
+					--this.Days;
 				}
 			}
 
@@ -152,11 +150,11 @@ public record DateSpan {
 		if ( this.Hours > 0 ) {
 			if ( end.Minute >= start.Minute ) {
 				if ( end.Minute == start.Minute && end.Second < start.Second ) {
-					this.Hours--;
+					--this.Hours;
 				}
 			}
 			else {
-				this.Hours--;
+				--this.Hours;
 			}
 		}
 
@@ -168,7 +166,7 @@ public record DateSpan {
 
 		if ( this.Minutes <= 0 || end.Second >= start.Second ) { }
 		else {
-			this.Minutes--;
+			--this.Minutes;
 		}
 
 		this.Seconds = end.Second - start.Second;
@@ -178,6 +176,7 @@ public record DateSpan {
 		}
 	}
 
+	/// <summary></summary>
 	/// <param name="start">The start date</param>
 	/// <param name="end">The end date</param>
 	/// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
@@ -308,4 +307,5 @@ public record DateSpan {
 
 		return sum;
 	}
+
 }

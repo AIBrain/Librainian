@@ -32,6 +32,9 @@ using System.Security.Permissions;
 using Newtonsoft.Json;
 
 	
+/// <summary>
+/// 
+/// </summary>
 /// <see cref="http://stackoverflow.com/a/4857322/956364" />
 [JsonObject]
 [Serializable]
@@ -43,23 +46,26 @@ public class DynamicContext : DynamicObject, ISerializable {
 
 		// TODO: validate inputs before deserializing. See http://msdn.microsoft.com/en-us/Library/ty01x675(VS.80).aspx
 		foreach ( var entry in info ) {
-			this.Context.Add( entry.Name, entry.Value );
+			if ( entry.Value != null ) {
+				this.Context.Add( entry.Name, entry.Value );
+			}
 		}
 	}
 
 	public DynamicContext() { }
 
-	[SecurityPermission( SecurityAction.Demand, SerializationFormatter = true )]
 	public virtual void GetObjectData( SerializationInfo? info, StreamingContext context ) {
 		foreach ( var kvp in this.Context ) {
-			info.AddValue( kvp.Key, kvp.Value );
+			info?.AddValue( kvp.Key, kvp.Value );
 		}
 	}
 
 	public override Boolean TryGetMember( GetMemberBinder binder, out Object? result ) => this.Context.TryGetValue( binder.Name, out result );
 
 	public override Boolean TrySetMember( SetMemberBinder binder, Object? value ) {
-		this.Context.Add( binder.Name, value );
+		if ( value != null ) {
+			this.Context.Add( binder.Name, value );
+		}
 
 		return true;
 	}

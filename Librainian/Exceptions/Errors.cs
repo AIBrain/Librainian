@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Errors.cs" last touched on 2021-12-28 at 5:58 AM by Protiguous.
+// File "Errors.cs" last touched on 2022-01-05 at 11:26 AM by Protiguous.
 
 namespace Librainian.Exceptions;
 
@@ -38,7 +38,7 @@ public static class Errors {
 
 	public static String SomethingNullHappened => "Something null happened: ";
 
-	public static String CannotBeNull( this String name ) {
+	public static String FormattedCannotBeNull( this String name ) {
 		if ( String.IsNullOrEmpty( name ) ) {
 			name = ParsingConstants.Chars.NullChar.ToString();
 		}

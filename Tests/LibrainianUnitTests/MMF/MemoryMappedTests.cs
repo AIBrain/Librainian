@@ -32,7 +32,7 @@ using System.IO.MemoryMappedFiles;
 using System.Text;
 using NUnit.Framework;
 
-[TestFixture]
+//[TestFixture]
 public class MemoryMappedTests {
 
 	//TODO any tests?

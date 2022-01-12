@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "MilliElectronVolts.cs" last touched on 2021-12-16 at 4:59 AM by Protiguous.
+// File "MilliElectronVolts.cs" last touched on 2022-01-11 at 12:11 PM by Protiguous.
 
 namespace Librainian.Measurement.Physics;
 
@@ -34,13 +34,15 @@ using System.Linq;
 using ExtendedNumerics;
 using Extensions;
 
-/// <summary>Units of mass and energy in Thousandths of <see cref="ElectronVolts" />.</summary>
+/// <summary>
+///     Units of mass and energy in Thousandths of <see cref="ElectronVolts" />.
+/// </summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 /// <see cref="http://wikipedia.org/wiki/Milli-" />
 /// <see cref="http://wikipedia.org/wiki/Electronvolt" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record MilliElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
 	IComparable<GigaElectronVolts> {
 
@@ -56,17 +58,17 @@ public record MilliElectronVolts( BigDecimal Value ) : IComparable<MilliElectron
 
 	public const Decimal InOneTeraElectronVolt = 1E15m;
 
-	public static readonly MilliElectronVolts Zero = new(0);
-
 	public MilliElectronVolts( Decimal units ) : this( ( BigDecimal ) units ) { }
 
-	public Int32 CompareTo( ElectronVolts? other ) => this.ToElectronVolts().Value.CompareTo( other?.Value );
+	public static MilliElectronVolts Zero { get; } = new(0);
 
-	public Int32 CompareTo( GigaElectronVolts? other ) => this.ToGigaElectronVolts().Value.CompareTo( other?.Value );
+	public Int32 CompareTo( ElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToElectronVolts().Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( MegaElectronVolts? other ) => this.ToMegaElectronVolts().Value.CompareTo( other?.Value );
+	public Int32 CompareTo( GigaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToGigaElectronVolts().Value.CompareTo( other.Value );
 
-	public Int32 CompareTo( MilliElectronVolts? other ) => this.Value.CompareTo( other?.Value );
+	public Int32 CompareTo( MegaElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToMegaElectronVolts().Value.CompareTo( other.Value );
+
+	public Int32 CompareTo( MilliElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
 
 	public static implicit operator ElectronVolts( MilliElectronVolts milliElectronVolts ) => milliElectronVolts.ToElectronVolts();
 

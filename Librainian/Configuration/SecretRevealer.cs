@@ -43,5 +43,5 @@ public class SecretRevealer : ISecretRevealer {
 
 	public String? GetBackupDatabaseConnectionString() => this._secretStuff.BackupDatabaseConnectionString;
 
-	public String? GetDatabaseConnectionString() => this._secretStuff.DatabaseConnectionString;
+	public String? GetDatabaseConnectionString() => this._secretStuff.NeuralDatabaseConnectionString;
 }

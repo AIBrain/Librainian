@@ -43,26 +43,26 @@ public static class BenchmarkTests {
 
 	[Test]
 	public static void TestBenchmarking_MethodA() {
-		static void a() => Thread.Sleep( Jitter / 2 );
-		static void b() => Thread.Sleep( Jitter * 2 );
+		static void A() => Thread.Sleep( Jitter / 2 );
+		static void B() => Thread.Sleep( Jitter * 2 );
 
-		var result = Benchmark.WhichIsFaster( a, b );
+		var result = Benchmark.WhichIsFaster( A, B );
 		var _ = result.Should()!.Be( Benchmark.AorB.MethodA );
 	}
 
 	[Test]
 	public static void TestBenchmarking_MethodB() {
-		static void a() => Thread.Sleep( Jitter * 2 );
-		static void b() => Thread.Sleep( Jitter / 2 );
-		var result = Benchmark.WhichIsFaster( a, b );
+		static void A() => Thread.Sleep( Jitter * 2 );
+		static void B() => Thread.Sleep( Jitter / 2 );
+		var result = Benchmark.WhichIsFaster( A, B );
 		var _ = result.Should()!.Be( Benchmark.AorB.MethodB );
 	}
 
 	[Test]
 	public static void TestBenchmarking_Same() {
-		static void a() => Thread.Sleep( Jitter );
-		static void b() => Thread.Sleep( Jitter );
-		var result = Benchmark.WhichIsFaster( a, b );
+		static void A() => Thread.Sleep( Jitter );
+		static void B() => Thread.Sleep( Jitter );
+		var result = Benchmark.WhichIsFaster( A, B );
 		var _ = result.Should()!.BeOneOf( Benchmark.AorB.Same, Benchmark.AorB.MethodA, Benchmark.AorB.MethodB );
 	}
 

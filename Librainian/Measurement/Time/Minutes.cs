@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Minutes.cs" last touched on 2021-12-31 at 2:11 AM by Protiguous.
+// File "Minutes.cs" last touched on 2022-01-12 at 12:02 AM by Protiguous.
 
 namespace Librainian.Measurement.Time;
 
@@ -39,7 +39,7 @@ using Utilities;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record Minutes( BigDecimal Value ) : IQuantityOfTime, IComparable<Minutes> {
 
 	/// <summary>

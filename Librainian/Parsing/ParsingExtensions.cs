@@ -701,7 +701,9 @@ public static class ParsingExtensions {
 				try {
 					return Encoding.UTF8.GetString( Convert.FromBase64String( text ) );
 				}
-				catch ( Exception ) { }
+				catch ( Exception exception) {
+					exception.Log( BreakOrDontBreak.DontBreak );
+				}
 			}
 
 			return text; //couldn't convert
@@ -2446,5 +2448,6 @@ public static class ParsingExtensions {
 			return -1;
 		}
 	}
+
 
 }

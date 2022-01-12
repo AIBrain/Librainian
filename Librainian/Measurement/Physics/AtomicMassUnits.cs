@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "AtomicMassUnits.cs" last touched on 2021-12-29 at 6:24 AM by Protiguous.
+// File "AtomicMassUnits.cs" last touched on 2022-01-11 at 11:48 AM by Protiguous.
 
 namespace Librainian.Measurement.Physics;
 
@@ -31,14 +31,17 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using ExtendedNumerics;
+using Extensions;
 using Utilities;
 
-/// <summary>Units of mass and energy in ElectronVolts.</summary>
+/// <summary>
+///     Units of mass and energy in ElectronVolts.
+/// </summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 /// <see cref="http://www.wolframalpha.com/input/?i=1+unified+atomic+mass+units+convert+to+electronvolts" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record AtomicMassUnits( BigDecimal Value ) : IComparable<ElectronVolts>, IComparable<AtomicMassUnits> {
 
 	public const Decimal InOneElectronVolt = 0.000000001073544m;
@@ -53,48 +56,40 @@ public record AtomicMassUnits( BigDecimal Value ) : IComparable<ElectronVolts>, 
 
 	public const Decimal InOneTeraElectronVolt = 1073.544m;
 
-	/// <summary>About 79228162514264337593543950335.</summary>
-	public static readonly AtomicMassUnits MaxValue = new(Decimal.MaxValue);
-
-	/// <summary>About -79228162514264337593543950335.</summary>
-	public static readonly AtomicMassUnits MinValue = new(Decimal.MinValue);
-
-	public static readonly AtomicMassUnits NegativeOne = new(-1m);
-
-	public static readonly AtomicMassUnits NegativeZero = new(-Decimal.Zero);
-
-	public static readonly AtomicMassUnits One = new(1m);
-
-	public static readonly ElectronVolts OneAtomicUnitEqualsElectronVolt = new MegaElectronVolts( 931.494095m );
-
-	public static readonly AtomicMassUnits OneElectronVoltEqualsAtomicMassUnits = new(InOneElectronVolt);
-
-	public static readonly AtomicMassUnits Zero = new(0m);
-
 	public AtomicMassUnits( Decimal value ) : this( ( BigDecimal ) value ) { }
 
-	[NeedsTesting]
-	public Int32 CompareTo( AtomicMassUnits? other ) => this.Value.CompareTo( other?.Value );
+	/// <summary>
+	///     About 79228162514264337593543950335.
+	/// </summary>
+	public static AtomicMassUnits MaxValue { get; } = new(Decimal.MaxValue);
+
+	/// <summary>
+	///     About -79228162514264337593543950335.
+	/// </summary>
+	public static AtomicMassUnits MinValue { get; } = new(Decimal.MinValue);
+
+	public static AtomicMassUnits NegativeOne { get; } = new(-1m);
+
+	public static AtomicMassUnits NegativeZero { get; } = new(-Decimal.Zero);
+
+	public static AtomicMassUnits One { get; } = new(1m);
+
+	public static ElectronVolts OneAtomicUnitEqualsElectronVolt { get; } = new MegaElectronVolts( 931.494095m );
+
+	public static AtomicMassUnits OneElectronVoltEqualsAtomicMassUnits { get; } = new(InOneElectronVolt);
+
+	public static AtomicMassUnits Zero { get; } = new(0m);
 
 	[NeedsTesting]
-	public Int32 CompareTo( ElectronVolts? other ) => this.ToElectronVolts().Value.CompareTo( other?.Value );
+	public Int32 CompareTo( AtomicMassUnits? other ) => other is null ? SortingOrder.NullsDefault : this.Value.CompareTo( other.Value );
+
+	[NeedsTesting]
+	public Int32 CompareTo( ElectronVolts? other ) => other is null ? SortingOrder.NullsDefault : this.ToElectronVolts().Value.CompareTo( other.Value );
 
 	public static AtomicMassUnits operator -( AtomicMassUnits electronVolts ) => new(-electronVolts.Value);
 
-	//public static implicit operator AtomicMassUnits( GigaElectronVolts gigaElectronVolts ) {
-	//    return gigaElectronVolts.ToElectronVolts();
-	//}
-
-	/// <param name="left"></param>
-	/// <param name="right"></param>
 	public static AtomicMassUnits operator *( AtomicMassUnits left, AtomicMassUnits right ) => new(left.Value * right.Value);
 
-	//public static implicit operator AtomicMassUnits( MegaElectronVolts megaElectronVolts ) {
-	//    return megaElectronVolts.ToElectronVolts();
-	//}
-
-	/// <param name="left"></param>
-	/// <param name="right"></param>
 	public static AtomicMassUnits operator *( AtomicMassUnits left, Decimal right ) => new(left.Value * right);
 
 	public static AtomicMassUnits operator *( Decimal left, AtomicMassUnits right ) => new(left * right.Value);

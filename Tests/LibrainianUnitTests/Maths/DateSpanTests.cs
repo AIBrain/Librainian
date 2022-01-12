@@ -23,14 +23,13 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "DateSpanTests.cs" last touched on 2021-03-07 at 3:20 PM by Protiguous.
+// File "DateSpanTests.cs" last touched on 2022-01-01 at 6:50 AM by Protiguous.
 
 namespace LibrainianUnitTests.Maths;
 
 using System;
 using Librainian.Measurement.Time;
 using NUnit.Framework;
-
 
 /// <summary>
 ///     From <see cref="http://github.com/danielcrenna/vault/blob/master/dates/src/Dates.Tests/DateSpanTests.cs" />
