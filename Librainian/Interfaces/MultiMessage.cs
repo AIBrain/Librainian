@@ -19,34 +19,57 @@
 // Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
 // contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
 //
-// File "UniqueExtensions.cs" last touched on 2022-01-18 at 3:06 PM by Protiguous.
+// File "MultiMessage.cs" last touched on 2022-01-17 at 3:51 PM by Protiguous.
 
-namespace Librainian.FileSystem;
+namespace Librainian.Interfaces;
 
 using System;
-using Exceptions;
+using System.Drawing;
 using Parsing;
+using Utilities.Disposables;
 
-public static class UniqueExtensions {
+public class MultiMessage : ABetterClassDispose, IMultiMessage {
 
-	public static Unique? ToUnique( this String location ) {
-		if ( String.IsNullOrWhiteSpace( location ) ) {
-			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( location ) );
-		}
-
-		return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
+	public MultiMessage( SourceRecord source, String data ) {
+		this.ID = Guid.NewGuid();
+		this.Date = DateTime.UtcNow;
+		this.Source = source;
+		this.Data = data;
 	}
 
-	/// <summary>Convert a <see cref="TrimmedString" /> to a <see cref="Unique" /> location.</summary>
-	/// <param name="location"></param>
-	public static Unique? ToUnique( this TrimmedString location ) =>
-		Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
+	/// <summary>Optional color to be used.</summary>
+	public Color? BackgroundColor { get; set; }
 
-	public static Unique? ToUnique( this Uri location ) {
-		if ( location is null ) {
-			throw new ArgumentEmptyException( nameof( location ) );
-		}
+	/// <summary>The data for this message. Usually a string.</summary>
+	public String Data { get; init; }
 
-		return Unique.TryCreate( location, out var unique ) ? unique : throw new InvalidOperationException( $"Invalid location '{location}' given." );
-	}
+	/// <summary>The UTC when this message was created.</summary>
+	public DateTime Date { get; }
+
+	/// <summary>The message's source id.. (like the user's name)</summary>
+	public String? Description { get; set; }
+
+	/// <summary>Optional color to be used.</summary>
+	public Color? ForegroundColor { get; set; }
+
+	/// <summary>Guid assigned on message creation.</summary>
+	public Guid ID { get; }
+
+	public Boolean Processed { get; set; }
+
+	//[NeedsTesting]
+	//public String? Key { get; set; }
+	public DateTime? ProcessingEnded { get; set; }
+
+	public DateTime? ProcessingStarted { get; set; }
+
+	/// <summary>This message is in reference to.</summary>
+	public Guid ReferenceMessageID { get; set; }
+
+	public SourceRecord Source { get; set; }
+
+	public TimeSpan? ProcessingTime() => this.ProcessingEnded - this.ProcessingStarted;
+
+	public override String ToString() =>
+		$"{nameof( MultiMessage )} {this.ID:D} from {this.Source:G} ({this.Description}){Environment.NewLine}{Symbols.VerticalEllipsis}{this.Data}";
 }

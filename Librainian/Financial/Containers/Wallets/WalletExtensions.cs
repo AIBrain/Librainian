@@ -73,6 +73,9 @@ public static class WalletExtensions {
 	}
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="wallet"></param>
 	/// <param name="message"></param>
 	public static Boolean Deposit( this Wallet wallet, TransactionMessage message ) {

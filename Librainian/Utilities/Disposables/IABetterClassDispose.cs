@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "IABetterClassDispose.cs" last touched on 2021-12-11 at 7:58 AM by Protiguous.
+// File "IABetterClassDispose.cs" last touched on 2022-01-18 at 2:34 PM by Protiguous.
 
 namespace Librainian.Utilities.Disposables;
 

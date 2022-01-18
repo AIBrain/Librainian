@@ -37,6 +37,9 @@ using Exceptions;
 using Newtonsoft.Json;
 
 	
+/// <summary>
+/// 
+/// </summary>
 /// <typeparam name="T"></typeparam>
 /// <remarks>http://stackoverflow.com/questions/4306936/how-to-implement-concurrenthashset-in-net</remarks>
 [JsonObject]

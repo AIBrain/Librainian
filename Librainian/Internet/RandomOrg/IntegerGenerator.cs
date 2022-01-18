@@ -30,6 +30,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Utilities;
 
 public static class RandomDotOrg {
 
@@ -54,7 +55,7 @@ public static class RandomDotOrg {
 			throw new ArgumentException( "Value of max must be between -1e9 and 1e9", nameof( maxValue ) );
 		}
 
-		var url = new Uri( "https" + "://random.org/sequences/?min=" + minValue + "&max=" + maxValue + "&col=1&base=10&format=plain&rnd=new", UriKind.Absolute );
+		var url = new Uri( $"https://random.org/sequences/?min={minValue}&max={maxValue}&col=1&base=10&format=plain&rnd=new", UriKind.Absolute );
 
 		var responseFromServer = await url.GetWebPageAsync( cancellationToken ).ConfigureAwait( false );
 
@@ -66,6 +67,9 @@ public static class RandomDotOrg {
 	}
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <see cref="http://github.com/OrigamiTech/Random.org/blob/master/Random.org/IntegerGenerator.cs" />
 	public class IntegerGenerator {
 

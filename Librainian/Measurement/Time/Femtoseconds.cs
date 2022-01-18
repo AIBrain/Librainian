@@ -35,10 +35,13 @@ using ExtendedNumerics;
 using Extensions;
 using Newtonsoft.Json;
 
+/// <summary>
+/// 
+/// </summary>
 /// <see cref="http://wikipedia.org/wiki/Femtosecond" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
-[Extensions.Immutable]
+[Immutable]
 public record Femtoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Femtoseconds> {
 
 	/// <summary>1000</summary>

@@ -584,7 +584,7 @@ public static class NativeMethods {
 	public static extern Int32 CM_Request_Device_Eject_NoUi(
 		UInt32 dnDevInst,
 		IntPtr pVetoType,
-		[MarshalAs( UnmanagedType.LPWStr )] StringBuilder pszVetoName,
+		[MarshalAs( UnmanagedType.LPWStr )] StringBuilder? pszVetoName,
 		Int32 ulNameLength,
 		Int32 ulFlags
 	);
@@ -1069,6 +1069,9 @@ public static class NativeMethods {
 	[DllImport( "kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean SetFileTime( SafeFileHandle hFile, ref Int64 lpCreationTime, ref Int64 lpLastAccessTime, ref Int64 lpLastWriteTime );
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="hThread">             </param>
 	/// <param name="dwThreadAffinityMask"></param>
 	/// <example>SetThreadAffinityMask( GetCurrentThread(), new IntPtr( 1 &lt;&lt; processor ) );</example>

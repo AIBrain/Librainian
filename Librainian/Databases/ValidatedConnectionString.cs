@@ -35,6 +35,7 @@ using LazyCache;
 using Logging;
 using Microsoft.Data.SqlClient;
 using Parsing;
+using Utilities;
 
 public record ValidatedConnectionString : IValidatedConnectionString {
 

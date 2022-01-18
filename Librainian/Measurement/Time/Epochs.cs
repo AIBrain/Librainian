@@ -29,6 +29,9 @@ using System;
 public static class Epochs {
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <see cref="http://wikipedia.org/wiki/Timeline_of_the_Big_Bang" />
 	public static readonly WhenRange Before1PlanckTime = new( UniversalDateTime.TheBeginning, UniversalDateTime.One );
 

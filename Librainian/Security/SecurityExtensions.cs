@@ -402,6 +402,9 @@ public static class SecurityExtensions {
 		return s;
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="s"></param>
 	/// <param name="encoding"></param>
 	public static String GetMD5Hash( this String s, Encoding? encoding = null ) {

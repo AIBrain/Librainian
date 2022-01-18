@@ -38,7 +38,7 @@ using Maths;
 ///     A circular buffer style logging class which stores N items for display in a Rich Text Box.
 /// </summary>
 /// <see cref="http://stackoverflow.com/a/55540909/956364" />
-public class CircularLinesLogger {
+public class CircularLinesLogger : ICircularLinesLogger {
 
 	private readonly Color _defaultColor = Color.White;
 
@@ -53,7 +53,7 @@ public class CircularLinesLogger {
 	/// <summary>
 	///     Create an instance of the Logger class which stores <paramref name="maximumEntries" /> log entries.
 	/// </summary>
-	public CircularLinesLogger( UInt32 maximumEntries ) {
+	public CircularLinesLogger( UInt32 maximumEntries = 128 ) {
 		this._lines = new Queue<LogEntry>();
 		this._maxEntries = maximumEntries;
 	}
@@ -178,4 +178,7 @@ public class CircularLinesLogger {
 	}
 
 	private record ColorTableItem( UInt32 Index, String RichColor );
+}
+
+public interface ICircularLinesLogger {
 }

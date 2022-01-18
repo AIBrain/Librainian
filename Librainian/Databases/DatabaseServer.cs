@@ -690,6 +690,8 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 				var counter = Interlocked.Increment( ref _connectionCounter );
 				$"{counter} active database connections.".Verbose();
 
+				this.Command.Connection = this.Connection;
+
 				return Status.Continue;
 			}
 			catch ( InvalidOperationException exception ) {
@@ -887,7 +889,6 @@ public class DatabaseServer : ABetterClassDisposeAsync, IDatabaseServer {
 		//$"Setting command value for query {this.Query.DoubleQuote()}..".Verbose();
 		this.Command.CommandType = commandType;
 		this.Command.CommandText = this.Query;
-		this.Command.Connection = this.Connection;
 		this.Command.CommandTimeout = ( Int32 ) this.CommandTimeout.TotalSeconds;
 
 		var commandParameters = this.Command.Parameters;

@@ -41,7 +41,7 @@ using Utilities;
 
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
-[Extensions.Immutable]
+[Immutable]
 public record Milliseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Milliseconds> {
 
 	/// <summary>

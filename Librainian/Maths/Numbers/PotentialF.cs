@@ -38,6 +38,9 @@ using Newtonsoft.Json;
 public class PotentialF {
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <remarks>ONLY used in the getter and setter.</remarks>
 	[JsonProperty]
 	private Single _value = MinValue;

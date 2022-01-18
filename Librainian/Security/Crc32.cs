@@ -114,6 +114,9 @@ public sealed class CRC32 : HashAlgorithm {
 	}
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="table"> </param>
 	/// <param name="seed">  </param>
 	/// <param name="buffer"></param>

@@ -82,6 +82,9 @@ public class JSONFile {
 	}
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="section"></param>
 	/// <param name="key"></param>
 	public String? this[String? section, String? key] {
@@ -118,6 +121,9 @@ public class JSONFile {
 	}
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="document"></param>
 	/// <param name="cancellationToken"></param>
 	public JSONFile( Document? document, CancellationToken cancellationToken ) : this() {

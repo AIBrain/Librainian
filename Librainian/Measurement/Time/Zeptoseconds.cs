@@ -40,7 +40,7 @@ using SortingOrder = SortingOrder;
 /// <see cref="http://wikipedia.org/wiki/Zeptosecond" />
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record Zeptoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Zeptoseconds> {
 
 	/// <summary>

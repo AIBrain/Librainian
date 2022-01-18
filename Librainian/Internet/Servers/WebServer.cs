@@ -1,27 +1,23 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
+// derived) from our binaries, libraries, projects, solutions, or applications.
 //
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
+// avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
+// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you
+// want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
+// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
 //
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
+// contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
 //
 // File "SimpleWebServer.cs" last touched on 2021-04-25 at 6:08 PM by Protiguous.
 
@@ -39,40 +35,34 @@ using System.Threading.Tasks;
 using Logging;
 using Utilities.Disposables;
 
-	
+/// <summary></summary>
 /// <remarks>Based upon the version by "David" @ "https://codehosting.net/blog/BlogEngine/post/Simple-C-Web-Server.aspx"</remarks>
 /// <example>
 /// <code>
-///     WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/");
-///		ws.Run();
-///		Console.WriteLine("A simple webserver. Press a key to quit.");
-///		Console.ReadKey();
-///     ws.Stop();
+///WebServer ws = new WebServer(SendResponse, "http://localhost:8080/test/");
+///ws.Run();
+///Console.WriteLine("A simple webserver. Press a key to quit.");
+///Console.ReadKey();
+///ws.Stop();
 /// </code>
 /// </example>
 /// <example>
 /// <code>
-///     public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }
+///public static string SendResponse(HttpListenerRequest request) { return string.Format("My web page", DateTime.Now); }
 /// </code>
 /// </example>
 public class WebServer : ABetterClassDispose {
 
-		
 	private readonly HttpListener _httpListener = new();
 
-		
 	private readonly Func<HttpListenerRequest, String>? _responderResponderMethod;
 
-	public Boolean IsReadyForRequests { get; private set; }
-
-	public String? NotReadyBecause { get; private set; }
-
-		
+	/// <summary></summary>
 	/// <param name="prefixes"></param>
-	/// <param name="responderMethod">  </param>
+	/// <param name="responderMethod"></param>
 	/// <exception cref="HttpListenerException"></exception>
 	/// <exception cref="ObjectDisposedException"></exception>
-	public WebServer( ICollection<String>? prefixes, Func<HttpListenerRequest, String>? responderMethod ) : base( nameof( WebServer ) ) {
+	public WebServer( ICollection<String>? prefixes, Func<HttpListenerRequest, String>? responderMethod ) {
 		this.ImNotReady( String.Empty );
 
 		if ( !HttpListener.IsSupported ) {
@@ -108,7 +98,12 @@ public class WebServer : ABetterClassDispose {
 		}
 	}
 
-	public WebServer( Func<HttpListenerRequest, String>? method, params String[]? prefixes ) : this( prefixes, method ) { }
+	public WebServer( Func<HttpListenerRequest, String>? method, params String[]? prefixes ) : this( prefixes, method ) {
+	}
+
+	public Boolean IsReadyForRequests { get; private set; }
+
+	public String? NotReadyBecause { get; private set; }
 
 	private void ImNotReady( String? because ) {
 		this.IsReadyForRequests = false;
@@ -142,8 +137,8 @@ public class WebServer : ABetterClassDispose {
 					listenerContext.Response.ContentLength64 = buffer.Length;
 					await listenerContext.Response.OutputStream.WriteAsync( buffer, cancellationToken ).ConfigureAwait( false );
 				}
-				catch(Exception exception) {
-					exception.Log(BreakOrDontBreak.DontBreak);
+				catch ( Exception exception ) {
+					exception.Log( BreakOrDontBreak.DontBreak );
 				}
 				finally {
 					listenerContext.Response.OutputStream.Close();

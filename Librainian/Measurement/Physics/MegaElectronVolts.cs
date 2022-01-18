@@ -31,14 +31,14 @@ using System;
 using System.Diagnostics;
 using ExtendedNumerics;
 using Extensions;
-using SortingOrder = Measurement.SortingOrder;
+using SortingOrder = SortingOrder;
 
 /// <summary>Units of mass and energy in ElectronVolts.</summary>
 /// <see cref="http://wikipedia.org/wiki/Electronvolt#As_a_unit_of_mass" />
 /// <see cref="http://wikipedia.org/wiki/SI_prefix" />
 /// <see cref="http://wikipedia.org/wiki/Mega-" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record MegaElectronVolts( BigDecimal Value ) : IComparable<MilliElectronVolts>, IComparable<ElectronVolts>, IComparable<MegaElectronVolts>,
 	IComparable<GigaElectronVolts> {
 

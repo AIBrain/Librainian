@@ -647,6 +647,9 @@ public static class ParsingExtensions {
 	[NeedsTesting]
 	public static Word? FirstWord( this String? sentence ) => sentence.ToWords().FirstOrDefault();
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="rational"></param>
 	/// <param name="numberOfDigits"></param>
 	/// <seealso
@@ -1406,6 +1409,9 @@ public static class ParsingExtensions {
 		return new String( charArray );
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="myString"></param>
 	/// <see cref="http://codereview.stackexchange.com/questions/78065/reverse-a-sentence-quickly-without-pointers" />
 	[NeedsTesting]
@@ -2237,6 +2243,9 @@ public static class ParsingExtensions {
 		return words.Trim();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="number"></param>
 	/// <see cref="http://stackoverflow.com/a/7829529/956364" />
 	[NeedsTesting]

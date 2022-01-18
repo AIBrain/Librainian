@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 /// <see cref="http://wikipedia.org/wiki/Yoctosecond" />
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record Yoctoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Yoctoseconds> {
 
 	/// <summary>1000</summary>
@@ -94,7 +94,7 @@ public record Yoctoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Yo
 
 	public IQuantityOfTime ToFinerGranularity() => this.ToPlanckTimes();
 
-	public PlanckTimes ToPlanckTimes() => new(( BigInteger ) ( this.Value * PlanckTimes.InOneYoctosecond ));
+	public PlanckTimes ToPlanckTimes() => new(  this.Value * PlanckTimes.InOneYoctosecond );
 
 	public Seconds ToSeconds() => new(this.Value * InOneSecond);
 

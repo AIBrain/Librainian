@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Weeks.cs" last touched on 2022-01-01 at 5:06 AM by Protiguous.
+// File "Weeks.cs" last touched on 2022-01-14 at 6:40 AM by Protiguous.
 
 #nullable enable
 
@@ -36,28 +36,38 @@ using Exceptions;
 using ExtendedNumerics;
 using Newtonsoft.Json;
 using Parsing;
-using SortingOrder = Measurement.SortingOrder;
+using SortingOrder = SortingOrder;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 public record Weeks( BigDecimal Value ) : IQuantityOfTime, IComparable<Weeks>, IComparable<IQuantityOfTime> {
 
-	/// <summary>52</summary>
+	/// <summary>
+	///     52
+	/// </summary>
 	public const Byte InOneCommonYear = 52;
 
-	/// <summary>4.345</summary>
+	/// <summary>
+	///     4.345
+	/// </summary>
 	public const Decimal InOneMonth = 4.345m;
 
-	/// <summary>One <see cref="Weeks" />.</summary>
+	/// <summary>
+	///     One <see cref="Weeks" />.
+	/// </summary>
 	public static Weeks One { get; } = new(1);
 
-	/// <summary></summary>
+	/// <summary>
+	/// </summary>
 	public static Weeks Ten { get; } = new(10);
 
-	/// <summary></summary>
+	/// <summary>
+	/// </summary>
 	public static Weeks Thousand { get; } = new(1000);
 
-	/// <summary>Zero <see cref="Weeks" />.</summary>
+	/// <summary>
+	///     Zero <see cref="Weeks" />.
+	/// </summary>
 	public static Weeks Zero { get; } = new(0);
 
 	public Int32 CompareTo( Weeks? other ) {
@@ -86,7 +96,9 @@ public record Weeks( BigDecimal Value ) : IQuantityOfTime, IComparable<Weeks>, I
 
 	public Seconds ToSeconds() => new(this.Value * Seconds.InOneWeek);
 
-	/// <summary>Return this value in <see cref="Months" />.</summary>
+	/// <summary>
+	///     Return this value in <see cref="Months" />.
+	/// </summary>
 	public IQuantityOfTime ToCoarserGranularity() => this.ToMonths();
 
 	TimeSpan IQuantityOfTime.ToTimeSpan() => this.ToSeconds();

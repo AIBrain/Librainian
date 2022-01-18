@@ -28,6 +28,9 @@ using System;
 using Maths;
 
 	
+/// <summary>
+/// 
+/// </summary>
 /// <see cref="http://stackoverflow.com/a/8696503/956364" />
 public class Matrix3X3 : ICloneable {
 

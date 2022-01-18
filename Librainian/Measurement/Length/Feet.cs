@@ -32,7 +32,7 @@ using System.Diagnostics;
 using System.Numerics;
 using ExtendedNumerics;
 using Newtonsoft.Json;
-using SortingOrder = Measurement.SortingOrder;
+using SortingOrder = SortingOrder;
 
 /// <summary>
 ///     <para>A foot (plural: feet) is a unit of length.</para>

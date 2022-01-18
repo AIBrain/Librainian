@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record Months( BigDecimal Value ) : IQuantityOfTime, IComparable<Months> {
 
 	/// <summary>12</summary>

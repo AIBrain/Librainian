@@ -1,29 +1,26 @@
 // Copyright © Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
+// derived) from our binaries, libraries, projects, solutions, or applications.
 //
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
+// avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
+// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
 //
 // If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-//     No warranties are expressed, implied, or given.
-//     We are NOT responsible for Anything You Do With Our Code.
-//     We are NOT responsible for Anything You Do With Our Executables.
-//     We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
+// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
 //
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
+// contact me at Protiguous@Protiguous.com.
 //
-// Our software can be found at "https://Protiguous.com/Software"
-// Our GitHub address is "https://github.com/Protiguous".
+// Our software can be found at "https://Protiguous.com/Software" Our GitHub address is "https://github.com/Protiguous".
 
 #nullable enable
 
@@ -44,9 +41,8 @@ using Newtonsoft.Json;
 using Utilities.Disposables;
 
 /// <summary>
-///     My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for
-///     production.. Use at your own risk. Any tips or ideas? Any dos or
-///     don'ts? Email me!
+/// My go at a thread-safe Wallet class for US dollars and coins. It's more pseudocode for learning than for production.. Use at your own risk. Any tips or
+/// ideas? Any dos or don'ts? Email me!
 /// </summary>
 /// <remarks>A database with proper locking would be better than this, although not as fun to create.</remarks>
 /// <see cref="SimpleWallet" />
@@ -54,6 +50,8 @@ using Utilities.Disposables;
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> {
+
+	public Wallet( Guid id ) => this.ID = id;
 
 	/// <summary>Count of each <see cref="IBankNote" />.</summary>
 	[JsonProperty]
@@ -69,20 +67,18 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 	[JsonProperty]
 	public WalletStatistics Statistics { get; } = new();
 
-	public Wallet( Guid id ) : base( nameof( Wallet ) ) => this.ID = id;
-
 	private UInt64 Deposit( IBankNote bankNote, UInt64 quantity ) {
 		try {
 			lock ( this.BankNotes ) {
 				if ( this.BankNotes.ContainsKey( bankNote ) ) {
-					this.BankNotes[bankNote] += quantity;
+					this.BankNotes[ bankNote ] += quantity;
 				}
 				else {
 					if ( this.BankNotes.TryAdd( bankNote, quantity ) ) { }
 				}
 			}
 
-			return this.BankNotes[bankNote]; //outside of lock... is this okay?
+			return this.BankNotes[ bankNote ]; //outside of lock... is this okay?
 		}
 		finally {
 			this.Statistics.AllTimeDeposited += bankNote.FaceValue * quantity;
@@ -156,8 +152,8 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 
 	/// <summary>Deposit one or more <paramref name="denomination" /> into this <see cref="Wallet" />.</summary>
 	/// <param name="denomination"></param>
-	/// <param name="quantity">    </param>
-	/// <param name="id">          </param>
+	/// <param name="quantity"></param>
+	/// <param name="id"></param>
 	/// <remarks>Locks the wallet.</remarks>
 	public Boolean Deposit( IDenomination denomination, UInt64 quantity, Guid? id = null ) {
 		if ( denomination is null ) {
@@ -181,15 +177,15 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		return true;
 	}
 
-		
-	/// <param name="coin">    </param>
+	/// <summary></summary>
+	/// <param name="coin"></param>
 	/// <param name="quantity"></param>
 	/// <exception cref="WalletException"></exception>
 	public UInt64 Deposit( ICoin coin, UInt64 quantity ) {
 		try {
 			lock ( this.Coins ) {
 				if ( this.Coins.ContainsKey( coin ) ) {
-					this.Coins[coin] += quantity;
+					this.Coins[ coin ] += quantity;
 				}
 				else {
 					if ( !this.Coins.TryAdd( coin, quantity ) ) {
@@ -199,7 +195,7 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 			}
 
 			lock ( this.Coins ) {
-				return this.Coins[coin];
+				return this.Coins[ coin ];
 			}
 		}
 		finally {
@@ -207,7 +203,7 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		}
 	}
 
-		
+	/// <summary></summary>
 	/// <param name="message"></param>
 	/// <exception cref="WalletException"></exception>
 	public void Deposit( TransactionMessage message ) {
@@ -241,6 +237,8 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 
 	public IEnumerator<(IDenomination, UInt64)> GetEnumerator() => this.GetGroups().GetEnumerator();
 
+	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
 	/// <summary>Return the count of each type of <see cref="BankNotes" /> and <see cref="Coins" />.</summary>
 	public IEnumerable<(IDenomination, UInt64)> GetGroups() {
 		foreach ( (var key, var value) in this.BankNotes ) {
@@ -255,10 +253,7 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 	/// <summary>Return each <see cref="IBankNote" /> in this <see cref="Wallet" />.</summary>
 	public IEnumerable<IBankNote> GetNotes() => this.BankNotes.SelectMany( pair => 1.To( pair.Value ), ( pair, valuePair ) => pair.Key );
 
-	/// <summary>
-	///     Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" />
-	///     .
-	/// </summary>
+	/// <summary>Return an expanded list of the <see cref="BankNotes" /> and <see cref="Coins" /> in this <see cref="Wallet" /> .</summary>
 	public IEnumerable<IDenomination> GetNotesAndCoins() => this.GetCoins().Concat<IDenomination>( this.GetNotes() );
 
 	public IEnumerable<KeyValuePair<IBankNote, UInt64>> GetNotesGrouped() => this.BankNotes;
@@ -290,10 +285,7 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		return total;
 	}
 
-	/// <summary>
-	///     Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this
-	///     <see cref="Wallet" />.
-	/// </summary>
+	/// <summary>Attempt to <see cref="TryWithdraw(IBankNote,UInt64)" /> one or more <see cref="IBankNote" /> from this <see cref="Wallet" />.</summary>
 	/// <param name="bankNote"></param>
 	/// <param name="quantity"></param>
 	/// <remarks>Locks the wallet.</remarks>
@@ -307,8 +299,8 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		}
 
 		lock ( this.BankNotes ) {
-			if ( this.BankNotes.ContainsKey( bankNote ) && this.BankNotes[bankNote] >= quantity ) {
-				this.BankNotes[bankNote] -= quantity;
+			if ( this.BankNotes.ContainsKey( bankNote ) && this.BankNotes[ bankNote ] >= quantity ) {
+				this.BankNotes[ bankNote ] -= quantity;
 
 				return true;
 			}
@@ -317,11 +309,8 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		}
 	}
 
-	/// <summary>
-	///     Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this
-	///     <see cref="Wallet" /> .
-	/// </summary>
-	/// <param name="coin">    </param>
+	/// <summary>Attempt to <see cref="TryWithdraw(ICoin,UInt64)" /> one or more <see cref="ICoin" /> from this <see cref="Wallet" /> .</summary>
+	/// <param name="coin"></param>
 	/// <param name="quantity"></param>
 	/// <remarks>Locks the wallet.</remarks>
 	public Boolean TryWithdraw( ICoin coin, UInt64 quantity ) {
@@ -334,8 +323,8 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		}
 
 		lock ( this.Coins ) {
-			if ( this.Coins.ContainsKey( coin ) && this.Coins[coin] >= quantity ) {
-				this.Coins[coin] -= quantity;
+			if ( this.Coins.ContainsKey( coin ) && this.Coins[ coin ] >= quantity ) {
+				this.Coins[ coin ] -= quantity;
 
 				return true;
 			}
@@ -344,9 +333,9 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		}
 	}
 
-		
+	/// <summary></summary>
 	/// <param name="denomination"></param>
-	/// <param name="quantity">    </param>
+	/// <param name="quantity"></param>
 	/// <exception cref="WalletException"></exception>
 	public Boolean TryWithdraw( IDenomination denomination, UInt64 quantity ) {
 		return denomination switch {
@@ -356,7 +345,7 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 		};
 	}
 
-		
+	/// <summary></summary>
 	/// <param name="message"></param>
 	/// <exception cref="WalletException"></exception>
 	public Boolean TryWithdraw( TransactionMessage message ) {
@@ -366,6 +355,4 @@ public class Wallet : ABetterClassDispose, IEnumerable<(IDenomination, UInt64)> 
 			var _ => throw new WalletException( $"Unknown denomination {message.Denomination}" )
 		};
 	}
-
-	IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 }

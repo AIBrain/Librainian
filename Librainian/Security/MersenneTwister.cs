@@ -138,6 +138,9 @@ internal class MersenneTwister : Random {
 	}
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="buffer"></param>
 	/// <exception cref="ArgumentEmptyException"></exception>
 	public override void NextBytes( Byte[] buffer ) {

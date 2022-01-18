@@ -47,7 +47,7 @@ using Utilities;
 public static class MathExtensions {
 
 	/// <summary>Fake!</summary>
-	public const Decimal EpsilonBigDecimal = 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
+	public static BigDecimal EpsilonBigDecimal => 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001m;
 
 	/// <summary>
 	///     <para>Return the smallest possible value above <see cref="Decimal.Zero" /> for a <see cref="Decimal" />.</para>
@@ -1123,7 +1123,7 @@ public static class MathExtensions {
 	public static Double SquareRootOfProducts( this IEnumerable<Double> data ) {
 		var sorted = new List<Double>( data.Where( d => Math.Abs( d ) >= Double.Epsilon ).OrderBy( d => d ) );
 
-		var aggregate = BigDecimal.One;
+		var aggregate = 1.0;
 
 		while ( sorted.Any() ) {
 			sorted.TakeFirst( out var smallest );
@@ -1141,7 +1141,7 @@ public static class MathExtensions {
 		}
 
 		//foreach ( Double d in data ) {aggregate = aggregate * d;}
-		return Math.Sqrt( ( Double ) aggregate );
+		return Math.Sqrt( aggregate );
 	}
 
 	public static Decimal SquareRootOfProducts( this IEnumerable<Decimal> data ) {

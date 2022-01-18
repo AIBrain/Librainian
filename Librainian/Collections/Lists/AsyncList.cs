@@ -1,29 +1,25 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
+// derived) from our binaries, libraries, projects, solutions, or applications.
 //
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
+// avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
+// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you
+// want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
+// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
 //
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
+// contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
 //
-// File "$FILENAME$" last touched on $CURRENT_YEAR$-$CURRENT_MONTH$-$CURRENT_DAY$ at $CURRENT_TIME$ by Protiguous.
+// File "AsyncList.cs" last touched on 2022-01-18 at 3:06 PM by Protiguous.
 
 namespace Librainian.Collections.Lists;
 
@@ -48,29 +44,23 @@ using Utilities;
 using Utilities.Disposables;
 
 /// <summary>
-///     TODO Work in progress. I want to make ConcurrentList more async-friendly.
-///     <para>A thread safe generic list.</para>
-///     <para>Use at your own risk.</para>
+/// TODO Work in progress. I want to make ConcurrentList more async-friendly.
+/// <para>A thread safe generic list.</para>
+/// <para>Use at your own risk.</para>
 /// </summary>
 /// <typeparam name="T"></typeparam>
 /// <remarks>
-///     <para>This class was created on a spur of the moment idea, and is <b>THOROUGHLY UNTESTED™</b>.</para>
-///     <para>Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
-///     <para>Call <see cref="CatchUp" /> to quickly add any pending items.</para>
+/// <para>This class was created on a spur of the moment idea, and is <b>THOROUGHLY UNTESTED™</b>.</para>
+/// <para>Uses a <see cref="ConcurrentQueue{T}" /> to buffer adds.</para>
+/// <para>Call <see cref="CatchUp" /> to quickly add any pending items.</para>
 /// </remarks>
-/// <copyright>Protiguous@Protiguous.com</copyright>
+/// <copyright>
+///     Protiguous@Protiguous.com
+/// </copyright>
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [NeedsTesting]
 public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumerable<T>>*/ {
-
-	public enum ThrowSetting {
-
-		DontThrowExceptions,
-
-		Throw
-
-	}
 
 	private const String CouldNotObtainReadLock = "Unable to obtain read-lock.";
 
@@ -81,10 +71,10 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	private Int64 ItemCount;
 
 	/// <summary>Create an empty list with different timeout values.</summary>
-	/// <param name="enumerable">  Fill the list with the given enumerable.</param>
+	/// <param name="enumerable">Fill the list with the given enumerable.</param>
 	/// <param name="readTimeout">Defaults to 60 seconds.</param>
 	/// <param name="writeTimeout">Defaults to 60 seconds.</param>
-	public AsyncList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) : base( nameof( AsyncList<T> ) ) {
+	public AsyncList( IEnumerable<T?>? enumerable = null, TimeSpan? readTimeout = null, TimeSpan? writeTimeout = null ) {
 		this.ReaderWriter = new ReaderWriterLockSlim( LockRecursionPolicy.SupportsRecursion );
 		this.TimeoutForReads = readTimeout ?? Minutes.One;
 		this.TimeoutForWrites = writeTimeout ?? Minutes.One;
@@ -96,28 +86,26 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 
 	public AsyncList( Int32 capacity ) : this() => this.ResizeCapacity( capacity );
 
+	public enum ThrowSetting {
+
+		DontThrowExceptions,
+
+		Throw
+	}
+
 	private ConcurrentQueue<T> InputBuffer { get; } = new();
 
 	[JsonIgnore]
 	private ReaderWriterLockSlim ReaderWriter { get; }
 
 	/// <summary>
-	///     <para>The internal list actually used.</para>
+	/// <para>The internal list actually used.</para>
 	/// </summary>
 	[JsonProperty]
 	private List<T?> TheList { get; } = new();
 
-	/// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
-	public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
-
-	[JsonProperty]
-	public TimeSpan TimeoutForReads { get; set; }
-
-	[JsonProperty]
-	public TimeSpan TimeoutForWrites { get; set; }
-
 	/// <summary>
-	///     <para>Count of items currently in this <see cref="AsyncList{T}" />.</para>
+	/// <para>Count of items currently in this <see cref="AsyncList{T}" />.</para>
 	/// </summary>
 	[JsonIgnore]
 	public Int32 Count => ( Int32 )Interlocked.Read( ref this.ItemCount );
@@ -133,22 +121,28 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 		set => Interlocked.Exchange( ref this._isReadOnly, value ? 1 : 0 );
 	}
 
+	/// <summary>If set to DontThrowExceptions, anything that would normally cause an <see cref="Exception" /> is ignored.</summary>
+	public ThrowSetting ThrowExceptions { get; set; } = ThrowSetting.Throw;
+
+	[JsonProperty]
+	public TimeSpan TimeoutForReads { get; set; }
+
+	[JsonProperty]
+	public TimeSpan TimeoutForWrites { get; set; }
+
 	/// <summary>Gets or sets the element at the specified index.</summary>
 	/// <returns>The element at the specified index.</returns>
 	/// <param name="index">The zero-based index of the element to get or set.</param>
-	/// <exception cref="ArgumentOutOfRangeException">
-	///     <paramref name="index" /> is not a valid index in the
-	///     <see cref="IList" />.
-	/// </exception>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="index" /> is not a valid index in the <see cref="IList" />.</exception>
 	/// <exception cref="NotSupportedException">The property is set and the <see cref="IList" /> is read-only.</exception>
-	public T? this[Int32 index] {
+	public T? this[ Int32 index ] {
 		[NeedsTesting]
 		get {
 			if ( index < 0 || index > this.TheList.Count ) {
 				this.ThrowWhenOutOfRange( index );
 			}
 
-			return this.Read( () => this.TheList[index] );
+			return this.Read( () => this.TheList[ index ] );
 		}
 
 		set {
@@ -166,7 +160,7 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 				}
 
 				try {
-					this.TheList[index] = value;
+					this.TheList[ index ] = value;
 
 					return true;
 				}
@@ -179,145 +173,6 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 		}
 	}
 
-	/// <summary>
-	///     <para>
-	///         Add the
-	///         <typeparam name="T">item</typeparam>
-	///         to the end of this <see cref="AsyncList{T}" />.
-	///     </para>
-	/// </summary>
-	/// <param name="item"></param>
-	public void Add( T item ) => this.Add( item, null );
-
-	/// <summary>Mark this <see cref="AsyncList{T}" /> to be cleared.</summary>
-	public void Clear() {
-		if ( this.IsReadOnly ) {
-			this.ThrowWhenDisallowedModifications();
-
-			return;
-		}
-
-		this.Write( () => {
-			this.TheList.Clear();
-			this.ResetCount();
-
-			return true;
-		} );
-	}
-
-	/// <summary>
-	///     <para>
-	///         Determines whether the <paramref name="item" /> is in this <see cref="AsyncList{T}" /> at this
-	///         moment in time.
-	///     </para>
-	/// </summary>
-	public Boolean Contains( T item ) => this.Read( () => this.TheList.Contains( item ) );
-
-	/// <summary>
-	///     Copies the entire <see cref="AsyncList{T}" /> to the <paramref name="array" />, starting at the
-	///     specified index in the target array.
-	/// </summary>
-	/// <param name="array">     </param>
-	/// <param name="arrayIndex"></param>
-	public void CopyTo( T[] array, Int32 arrayIndex ) {
-		if ( array is null ) {
-			throw new ArgumentEmptyException( nameof( array ) );
-		}
-
-		this.Read( () => {
-			this.TheList.CopyTo( array, arrayIndex );
-
-			return true;
-		} );
-	}
-
-	/// <summary>
-	///     <para>
-	///         Returns an enumerator that iterates through a <see cref="Clone" /> of this
-	///         <see cref="AsyncList{T}" /> .
-	///     </para>
-	/// </summary>
-	public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
-
-	/// <summary>
-	///     <para>
-	///         Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the
-	///         zero-based index, or -1 if not found.
-	///     </para>
-	/// </summary>
-	/// <param name="item">The object to locate in this <see cref="AsyncList{T}" />.</param>
-	public Int32 IndexOf( T item ) => this.Read( () => this.TheList.IndexOf( item ) );
-
-	//is this the proper way?
-	/// <summary>
-	///     <para>
-	///         Requests an insert of the <paramref name="item" /> into this <see cref="AsyncList{T}" /> at the
-	///         specified <paramref name="index" />.
-	///     </para>
-	/// </summary>
-	/// <param name="index"></param>
-	/// <param name="item"> </param>
-	public void Insert( Int32 index, T item ) {
-		if ( this.IsReadOnly ) {
-			this.ThrowWhenDisallowedModifications();
-
-			return;
-		}
-
-		this.Write( () => {
-			try {
-				this.TheList.Insert( index, item );
-				this.AnItemHasBeenAdded();
-
-				return true;
-			}
-			catch ( ArgumentOutOfRangeException ) {
-				this.ThrowWhenOutOfRange( index );
-
-				return false;
-			}
-		} );
-	}
-
-	/// <summary>
-	///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
-	/// </summary>
-	/// <param name="item"></param>
-	public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
-
-	public void RemoveAt( Int32 index ) {
-		if ( index < 0 ) {
-			this.ThrowWhenOutOfRange( index );
-
-			return;
-		}
-
-		if ( this.IsReadOnly ) {
-			this.ThrowWhenDisallowedModifications();
-
-			return;
-		}
-
-		this.Write( () => {
-			try {
-				if ( index <= this.TheList.Count ) {
-					this.TheList.RemoveAt( index );
-					this.AnItemHasBeenRemoved();
-
-					return true;
-				}
-			}
-			catch ( ArgumentOutOfRangeException ) {
-				this.ThrowWhenOutOfRange( index );
-			}
-
-			return false;
-		} );
-	}
-
-	/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
-	IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator(); //is this the proper way?
-
 	private void AnItemHasBeenAdded() => Interlocked.Increment( ref this.ItemCount );
 
 	private void AnItemHasBeenRemoved( Action? action = null ) {
@@ -325,16 +180,14 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 		action?.Execute();
 	}
 
-	/// <summary>
-	///     TODO These need to be tested!!
-	/// </summary>
+	/// <summary>TODO These need to be tested!!</summary>
 	/// <param name="_"></param>
 	[OnDeserialized]
 	[NeedsTesting]
 	private void OnDeserialized( StreamingContext _ ) => this.ResetCount( this.TheList.Count );
 
 	/// <summary>
-	///     <para>Filter read requests through a <see cref="ReaderWriterLockSlim" />.</para>
+	/// <para>Filter read requests through a <see cref="ReaderWriterLockSlim" />.</para>
 	/// </summary>
 	/// <typeparam name="TFuncResult"></typeparam>
 	/// <param name="func"></param>
@@ -386,11 +239,8 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     <para>
-	///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-	///         <exception cref="ObjectDisposedException" /> will be thrown.
-	///     </para>
-	///     <para>Otherwise, true is returned when this object has been disposed.</para>
+	/// <para>If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then <exception cref="ObjectDisposedException" /> will be thrown.</para>
+	/// <para>Otherwise, true is returned when this object has been disposed.</para>
 	/// </summary>
 	/// <exception cref="ObjectDisposedException"></exception>
 	private Boolean ThrowWhenDisposed() {
@@ -416,10 +266,9 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     <para>
-	///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-	///         <exception cref="ArgumentOutOfRangeException" /> will be thrown.
-	///     </para>
+	/// <para>
+	/// If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then <exception cref="ArgumentOutOfRangeException" /> will be thrown.
+	/// </para>
 	/// </summary>
 	/// <param name="index"></param>
 	private void ThrowWhenOutOfRange( Int32 index ) {
@@ -429,11 +278,8 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     <para>
-	///         If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then
-	///         <exception cref="ObjectDisposedException" /> will be thrown.
-	///     </para>
-	///     <para>Otherwise, true is returned when this object has been disposed.</para>
+	/// <para>If <see cref="ThrowExceptions" /> is set to <see cref="ThrowSetting.Throw" />, then <exception cref="ObjectDisposedException" /> will be thrown.</para>
+	/// <para>Otherwise, true is returned when this object has been disposed.</para>
 	/// </summary>
 	/// <exception cref="ObjectDisposedException"></exception>
 	private Boolean ThrowWhenReadOnly() {
@@ -447,10 +293,10 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     <para>Filter write requests through the <see cref="ReaderWriter" />.</para>
+	/// <para>Filter write requests through the <see cref="ReaderWriter" />.</para>
 	/// </summary>
 	/// <typeparam name="TResult"></typeparam>
-	/// <param name="func">                         </param>
+	/// <param name="func"></param>
 	/// <see cref="CatchUp" />
 	/// <exception cref="ArgumentEmptyException"></exception>
 	/// <exception cref="ObjectDisposedException"></exception>
@@ -481,13 +327,15 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     <para>
-	///         Add the
-	///         <typeparam name="T">item</typeparam>
-	///         to the end of this <see cref="AsyncList{T}" />.
-	///     </para>
+	/// <para>Add the <typeparam name="T">item</typeparam> to the end of this <see cref="AsyncList{T}" />.</para>
 	/// </summary>
-	/// <param name="item">    </param>
+	/// <param name="item"></param>
+	public void Add( T item ) => this.Add( item, null );
+
+	/// <summary>
+	/// <para>Add the <typeparam name="T">item</typeparam> to the end of this <see cref="AsyncList{T}" />.</para>
+	/// </summary>
+	/// <param name="item"></param>
 	/// <param name="afterAdd"></param>
 	public Boolean Add( T? item, Action? afterAdd ) {
 		if ( this.ThrowWhenDisposed() ) {
@@ -522,12 +370,9 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	public Task<Boolean> AddAsync( T? item, Action? afterAdd = null ) => Task.Run( () => this.TryAdd( item, afterAdd ) );
 
 	/// <summary>Add a collection of items.</summary>
-	/// <param name="items">          </param>
-	/// <param name="useParallelism">
-	///     Enables parallelization of the <paramref name="items" /> No guarantee of the final order
-	///     of items.
-	/// </param>
-	/// <param name="afterEachAdd">   <see cref="Action" /> to perform after each add.</param>
+	/// <param name="items"></param>
+	/// <param name="useParallelism">Enables parallelization of the <paramref name="items" /> No guarantee of the final order of items.</param>
+	/// <param name="afterEachAdd"><see cref="Action" /> to perform after each add.</param>
 	/// <param name="afterRangeAdded"><see cref="Action" /> to perform after range added.</param>
 	/// <exception cref="ArgumentEmptyException"></exception>
 	public void AddRange( IEnumerable<T?> items, Byte useParallelism = 0, Action? afterEachAdd = null, Action? afterRangeAdded = null ) {
@@ -581,15 +426,11 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 			}
 		}, cancellationToken );
 
-	/// <summary>
-	///     Returns true if any items have not been added to the list yet.
-	/// </summary>
+	/// <summary>Returns true if any items have not been added to the list yet.</summary>
 	/// <see cref="CatchUp" />
 	public Boolean AnyWritesPending() => this.InputBuffer.Any();
 
-	/// <summary>
-	///     Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.
-	/// </summary>
+	/// <summary>Blocks, transfers items from <see cref="InputBuffer" />, and then releases write lock.</summary>
 	public void CatchUp() {
 		if ( this.IsReadOnly || !this.AnyWritesPending() || this.ThrowWhenDisposed() ) {
 			return;
@@ -622,8 +463,24 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 		this.ThrowWhenNoWriteLock();
 	}
 
+	/// <summary>Mark this <see cref="AsyncList{T}" /> to be cleared.</summary>
+	public void Clear() {
+		if ( this.IsReadOnly ) {
+			this.ThrowWhenDisallowedModifications();
+
+			return;
+		}
+
+		this.Write( () => {
+			this.TheList.Clear();
+			this.ResetCount();
+
+			return true;
+		} );
+	}
+
 	/// <summary>
-	///     <para>Returns a copy of this <see cref="AsyncList{T}" /> (at this moment).</para>
+	/// <para>Returns a copy of this <see cref="AsyncList{T}" /> (at this moment).</para>
 	/// </summary>
 	public AsyncList<T> Clone() {
 		this.CatchUp();
@@ -632,8 +489,8 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     Signal that this <see cref="AsyncList{T}" /> will not be modified any more.
-	///     <para>Blocking.</para>
+	/// Signal that this <see cref="AsyncList{T}" /> will not be modified any more.
+	/// <para>Blocking.</para>
 	/// </summary>
 	/// <see cref="IsReadOnly" />
 	public void Complete() {
@@ -646,14 +503,84 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 		}
 	}
 
+	/// <summary>
+	/// <para>Determines whether the <paramref name="item" /> is in this <see cref="AsyncList{T}" /> at this moment in time.</para>
+	/// </summary>
+	public Boolean Contains( T item ) => this.Read( () => this.TheList.Contains( item ) );
+
+	/// <summary>Copies the entire <see cref="AsyncList{T}" /> to the <paramref name="array" />, starting at the specified index in the target array.</summary>
+	/// <param name="array"></param>
+	/// <param name="arrayIndex"></param>
+	public void CopyTo( T[] array, Int32 arrayIndex ) {
+		if ( array is null ) {
+			throw new ArgumentEmptyException( nameof( array ) );
+		}
+
+		this.Read( () => {
+			this.TheList.CopyTo( array, arrayIndex );
+
+			return true;
+		} );
+	}
+
 	public override void DisposeManaged() {
+
 		//nothing to do.. yet.
 	}
 
 	/// <summary>
-	///     <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
+	/// <para>Returns an enumerator that iterates through a <see cref="Clone" /> of this <see cref="AsyncList{T}" /> .</para>
 	/// </summary>
-	/// <param name="item">        </param>
+	public IEnumerator<T> GetEnumerator() => this.Clone().GetEnumerator();
+
+	/// <summary>Returns the enumerator of this list's <see cref="Clone" />.</summary>
+	IEnumerator IEnumerable.GetEnumerator() => this.Clone().GetEnumerator();
+
+	/// <summary>
+	/// <para>Searches at this moment in time for the first occurrence of <paramref name="item" /> and returns the zero-based index, or -1 if not found.</para>
+	/// </summary>
+	/// <param name="item">The object to locate in this <see cref="AsyncList{T}" />.</param>
+	public Int32 IndexOf( T item ) => this.Read( () => this.TheList.IndexOf( item ) );
+
+	//is this the proper way?
+	/// <summary>
+	/// <para>Requests an insert of the <paramref name="item" /> into this <see cref="AsyncList{T}" /> at the specified <paramref name="index" />.</para>
+	/// </summary>
+	/// <param name="index"></param>
+	/// <param name="item"></param>
+	public void Insert( Int32 index, T item ) {
+		if ( this.IsReadOnly ) {
+			this.ThrowWhenDisallowedModifications();
+
+			return;
+		}
+
+		this.Write( () => {
+			try {
+				this.TheList.Insert( index, item );
+				this.AnItemHasBeenAdded();
+
+				return true;
+			}
+			catch ( ArgumentOutOfRangeException ) {
+				this.ThrowWhenOutOfRange( index );
+
+				return false;
+			}
+		} );
+	}
+
+	/// <summary>
+	/// <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
+	/// </summary>
+	/// <param name="item"></param>
+	public Boolean Remove( T item ) => this.Remove( item, default( Action? ) );
+
+	//is this the proper way?
+	/// <summary>
+	/// <para>Returns true if the request to remove <paramref name="item" /> was posted.</para>
+	/// </summary>
+	/// <param name="item"></param>
 	/// <param name="afterRemoval"></param>
 	public Boolean Remove( T? item, Action? afterRemoval ) {
 		if ( this.ThrowWhenDisposed() ) {
@@ -677,6 +604,36 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 		} );
 	}
 
+	public void RemoveAt( Int32 index ) {
+		if ( index < 0 ) {
+			this.ThrowWhenOutOfRange( index );
+
+			return;
+		}
+
+		if ( this.IsReadOnly ) {
+			this.ThrowWhenDisallowedModifications();
+
+			return;
+		}
+
+		this.Write( () => {
+			try {
+				if ( index <= this.TheList.Count ) {
+					this.TheList.RemoveAt( index );
+					this.AnItemHasBeenRemoved();
+
+					return true;
+				}
+			}
+			catch ( ArgumentOutOfRangeException ) {
+				this.ThrowWhenOutOfRange( index );
+			}
+
+			return false;
+		} );
+	}
+
 	/// <summary>Returns a string that represents the current object.</summary>
 	/// <returns>A string that represents the current object.</returns>
 	public override String ToString() => $"{this.Take( 30 ).ToStrings( this.Count > 30 ? "..." : String.Empty )}";
@@ -691,9 +648,7 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 
 	public Boolean TryAdd( T? item, Action? afterAdd = null ) => this.Add( item, afterAdd );
 
-	/// <summary>
-	///     Returns true if there are no more incoming items.
-	/// </summary>
+	/// <summary>Returns true if there are no more incoming items.</summary>
 	/// <param name="timeout"></param>
 	public Boolean TryCatchup( TimeSpan? timeout = default ) {
 		if ( this.IsReadOnly || this.IsDisposed ) {
@@ -716,10 +671,10 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 	}
 
 	/// <summary>
-	///     <para>Try to get an item in this <see cref="AsyncList{T}" /> by index.</para>
-	///     <para>Returns true if the request was posted to the internal dataflow.</para>
+	/// <para>Try to get an item in this <see cref="AsyncList{T}" /> by index.</para>
+	/// <para>Returns true if the request was posted to the internal dataflow.</para>
 	/// </summary>
-	/// <param name="index">   </param>
+	/// <param name="index"></param>
 	/// <param name="afterGet">Action to be ran after the item at the <paramref name="index" /> is got.</param>
 	public Boolean TryGet( Int32 index, Action<T?>? afterGet ) {
 		if ( index < 0 ) {
@@ -733,11 +688,10 @@ public class AsyncList<T> : ABetterClassDispose, IList<T> /*, IEquatable<IEnumer
 				return false;
 			}
 
-			var result = this.TheList[index];
+			var result = this.TheList[ index ];
 			afterGet?.Invoke( result );
 
 			return true;
 		} );
 	}
-
 }

@@ -45,6 +45,9 @@ public class BackgroundThread : BackgroundWorker {
 	private VolatileBoolean _runningAction = new(false);
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="actionToPerform">Action to perform on each <see cref="Signal" />.</param>
 	/// <param name="cancellationToken"></param>
 	public BackgroundThread( Task actionToPerform, CancellationToken cancellationToken ) {

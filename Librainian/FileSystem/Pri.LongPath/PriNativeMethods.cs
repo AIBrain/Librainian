@@ -525,6 +525,9 @@ public static class PriNativeMethods {
 	[DllImport( DLL.advapi32, BestFitMapping = false, CharSet = CharSet.Unicode, SetLastError = true )]
 	public static extern Boolean SetThreadToken( [In] IntPtr Thread, [In] SafeTokenHandle Token );
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="oldFile"></param>
 	/// <param name="newFile"></param>
 	/// <param name="progress"></param>

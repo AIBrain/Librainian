@@ -66,6 +66,9 @@ public record CoordinateU64 {
 	public CoordinateU64( UInt64Range x, UInt64Range y, UInt64Range z ) : this( x.Minimum.Next( x.Maximum ), y.Minimum.Next( y.Maximum ), z.Minimum.Next( z.Maximum ) ) { }
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="x"></param>
 	/// <param name="y"></param>
 	/// <param name="z"></param>

@@ -37,7 +37,7 @@ using Newtonsoft.Json;
 
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
-[Extensions.Immutable]
+[Immutable]
 public record Nanoseconds( BigDecimal Value ) : IQuantityOfTime, IComparable<Nanoseconds> {
 
 	/// <summary>1000</summary>

@@ -23,55 +23,43 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Message.cs" last touched on 2021-09-08 at 1:53 PM by Protiguous.
+// File "IMultiMessage.cs" last touched on 2022-01-17 at 3:51 PM by Protiguous.
 
 namespace Librainian.Interfaces;
 
 using System;
-using System.Drawing;
-using Utilities.Disposables;
 
-public class Message : ABetterClassDispose, IMessage {
-
-	public Message( SourceRecord source, String data ) : base( nameof( Message ) ) {
-		this.ID = Guid.NewGuid();
-		this.Date = DateTime.UtcNow;
-		this.Source = source;
-		this.Data = data;
-	}
-
-	/// <summary>Optional color to be used.</summary>
-	public Color? BackgroundColor { get; set; }
+public interface IMultiMessage : IColored, IDisposable {
 
 	/// <summary>The data for this message. Usually a string.</summary>
-	public String Data { get; init; }
+	String Data { get; init; }
 
 	/// <summary>The UTC when this message was created.</summary>
-	public DateTime Date { get; }
+	DateTime Date { get; }
 
-	/// <summary>The message's source id.. (like the user's name)</summary>
-	public String? Description { get; set; }
-
-	/// <summary>Optional color to be used.</summary>
-	public Color? ForegroundColor { get; set; }
+	/// <summary>The message's source identifier.. (like the user's name)</summary>
+	String? Description { get; set; }
 
 	/// <summary>Guid assigned on message creation.</summary>
-	public Guid ID { get; }
+	Guid ID { get; }
 
-	//[NeedsTesting]
-	//public String? Key { get; set; }
+	Boolean Processed { get; set; }
 
-	public Boolean Processed { get; set; }
+	DateTime? ProcessingEnded { get; set; }
 
-	public DateTime? ProcessingEnded { get; set; }
-
-	public DateTime? ProcessingStarted { get; set; }
+	DateTime? ProcessingStarted { get; set; }
 
 	/// <summary>This message is in reference to.</summary>
-	public Guid ReferenceMessageID { get; set; }
+	Guid ReferenceMessageID { get; set; }
 
-	public SourceRecord Source { get; set; }
+	SourceRecord Source { get; set; }
 
-	public TimeSpan? ProcessingTime() => this.ProcessingEnded - this.ProcessingStarted;
+	TimeSpan? ProcessingTime() {
+		if ( this.ProcessingStarted is null || this.ProcessingEnded is null ) {
+			return default( TimeSpan? );
+		}
+
+		return this.ProcessingEnded.Value - this.ProcessingStarted.Value;
+	}
 
 }

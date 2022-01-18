@@ -30,6 +30,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Exceptions;
 
+/// <summary>
+/// 
+/// </summary>
 /// <typeparam name="T"></typeparam>
 /// <example>
 ///     <code>var cat = Instantiator&lt;ReaderWriterLockSlim&gt;.New("furry", isCute: true);</code>

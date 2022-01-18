@@ -92,6 +92,9 @@ public class Folder : IFolder {
 	public String Name => this.Info.Name;
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="fullPath"></param>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
@@ -113,18 +116,27 @@ public class Folder : IFolder {
 		this.Info = directoryInfo ?? throw new InvalidOperationException( $"Unable to parse a valid path from `{fullPath}`" );
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public Folder( Environment.SpecialFolder specialFolder ) : this( Environment.GetFolderPath( specialFolder ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>
 	/// <exception cref="FileNotFoundException"></exception>
 	public Folder( Environment.SpecialFolder specialFolder, String subFolder ) : this( Environment.GetFolderPath( specialFolder ).CombinePaths( subFolder ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>
@@ -155,6 +167,9 @@ public class Folder : IFolder {
 		                                                                                                        .Select( fullpath => CleanPath( fullpath ) )
 		                                                                                                        .ToStrings( FolderSeparatorChar ) ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>
@@ -162,6 +177,9 @@ public class Folder : IFolder {
 	[DebuggerStepThrough]
 	public Folder( String fullPath, String subFolder ) : this( fullPath.CombinePaths( subFolder ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>
@@ -169,6 +187,9 @@ public class Folder : IFolder {
 	[DebuggerStepThrough]
 	public Folder( IFolder folder, String subFolder ) : this( folder.FullPath.CombinePaths( subFolder ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>
@@ -176,6 +197,9 @@ public class Folder : IFolder {
 	[DebuggerStepThrough]
 	public Folder( IDocument document, String subFolder ) : this( document.ContainingingFolder().FullPath.CombinePaths( subFolder ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	/// <exception cref="PathTooLongException"></exception>
 	/// <exception cref="DirectoryNotFoundException"></exception>

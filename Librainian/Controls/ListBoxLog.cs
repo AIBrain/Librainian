@@ -1,27 +1,23 @@
 // Copyright © Protiguous. All Rights Reserved.
 //
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
+// derived) from our binaries, libraries, projects, solutions, or applications.
 //
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
+// avoid it from happening, but it does accidentally happen.)
 //
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
+// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you
+// want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
+// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
 //
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
+// contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
 //
 // File "ListBoxLog.cs" last touched on 2021-07-17 at 3:09 PM by Protiguous.
 
@@ -36,10 +32,10 @@ using Exceptions;
 using Logging;
 using Maths;
 using Microsoft.Extensions.Logging;
+using Utilities;
 using Utilities.Disposables;
 
-/// <summary>Pulled from http://stackoverflow.com/a/6587172/956364
-/// </summary>
+/// <summary>Pulled from http://stackoverflow.com/a/6587172/956364</summary>
 public class ListBoxLog : ABetterClassDispose {
 
 	private const Int32 DefaultLongLinesInListbox = 512;
@@ -48,26 +44,9 @@ public class ListBoxLog : ABetterClassDispose {
 
 	/*
 
-	/// <summary>
-	///     Used in <see cref="FormatALogEventMessage" />.
-	/// </summary>
+	/// <summary>Used in <see cref="FormatALogEventMessage" />.</summary>
 	private const String DefaultMessageFormat = "{4}>{8}";
 	*/
-
-	private static (SolidBrush fore, SolidBrush back) InformationBrushes { get; } = (new SolidBrush( InformationColors.fore ), new SolidBrush( InformationColors.back ));
-
-	private static (Color fore, Color back) InformationColors { get; } = LogLevel.Information.Colors();
-
-	private ListBox Box { get; }
-
-	private Boolean CanAdd { get; set; }
-
-	/// <summary>
-	///     Used during every <see cref="DrawItemHandler" />.
-	/// </summary>
-	private Font HackFont { get; } = new( "Hack", 8.25f, FontStyle.Regular );
-
-	private Int32 MaxEntriesInListBox { get; }
 
 	public ListBoxLog( ListBox listBox, String messageFormat ) : this( listBox, DefaultMaxLinesInListbox ) {
 		if ( listBox is null ) {
@@ -79,7 +58,7 @@ public class ListBoxLog : ABetterClassDispose {
 		}
 	}
 
-	public ListBoxLog( ListBox listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) :base(nameof( ListBoxLog ) ){
+	public ListBoxLog( ListBox listBox, Int32 maxLinesInListbox = DefaultMaxLinesInListbox ) {
 		/*
 		if ( String.IsNullOrWhiteSpace( messageFormat ) ) {
 			throw new ArgumentException( "Value cannot be null or whitespace.", nameof( messageFormat ) );
@@ -98,7 +77,7 @@ public class ListBoxLog : ABetterClassDispose {
 
 		this.Box.ContextMenuStrip = new ContextMenuStrip(
 
-			//new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) } //TODO
+		//new[] { new MenuItem( "Copy", this.CopyMenuOnClickHandler ) } //TODO
 		) {
 			AutoClose = true,
 			AutoSize = true
@@ -114,6 +93,19 @@ public class ListBoxLog : ABetterClassDispose {
 
 		this.CanAdd = listBox.IsHandleCreated;
 	}
+
+	private static (SolidBrush fore, SolidBrush back) InformationBrushes { get; } = (new SolidBrush( InformationColors.fore ), new SolidBrush( InformationColors.back ));
+
+	private static (Color fore, Color back) InformationColors { get; } = LogLevel.Information.Colors();
+
+	private ListBox Box { get; }
+
+	private Boolean CanAdd { get; set; }
+
+	/// <summary>Used during every <see cref="DrawItemHandler" />.</summary>
+	private Font HackFont { get; } = new( "Hack", 8.25f, FontStyle.Regular );
+
+	private Int32 MaxEntriesInListBox { get; }
 
 	//private String MessageFormat { get; }
 	/*
@@ -154,11 +146,11 @@ public class ListBoxLog : ABetterClassDispose {
 		const Byte margin = 1;
 
 		if ( sender is ListBox listBox ) {
-			e.ItemHeight = margin + listBox.Items[e.Index] switch {
+			e.ItemHeight = margin + listBox.Items[ e.Index ] switch {
 				String s => ( Int32 )e.Graphics.MeasureString( s, listBox.Font, listBox.Width ).Height,
 
 				//LogEvent logEvent => ( Int32 )e.Graphics.MeasureString( logEvent.Message, listBox.Font, listBox.Width ).Height,
-				var _ => ( Int32 )e.Graphics.MeasureString( listBox.Items[e.Index].ToString(), listBox.Font, listBox.Width ).Height
+				var _ => ( Int32 )e.Graphics.MeasureString( listBox.Items[ e.Index ].ToString(), listBox.Font, listBox.Width ).Height
 			};
 		}
 	}
@@ -166,7 +158,7 @@ public class ListBoxLog : ABetterClassDispose {
 	private void CopyMenuPopupHandler( Object? sender, EventArgs? e ) {
 		if ( sender is ContextMenuStrip menu ) {
 			if ( menu.Items.Count > 0 ) {
-				menu.Items[0].Enabled = this.Box.SelectedItems.Count > 0;
+				menu.Items[ 0 ].Enabled = this.Box.SelectedItems.Count > 0;
 			}
 		}
 	}
@@ -181,7 +173,7 @@ public class ListBoxLog : ABetterClassDispose {
 		//e.DrawBackground();
 		//e.DrawFocusRectangle(); //TODO needed? what does it look like without this?
 
-		var listboxItem = listbox.Items[e.Index];
+		var listboxItem = listbox.Items[ e.Index ];
 
 		if ( listboxItem is String s ) {
 			e.Graphics.FillRectangle( InformationBrushes.back, e.Bounds );
@@ -226,9 +218,7 @@ public class ListBoxLog : ABetterClassDispose {
 
 	private void OnHandleDestroyed( Object? sender, EventArgs? e ) => this.CanAdd = false;
 
-	/// <summary>
-	///     Append <paramref name="message" /> onto the most recent line.
-	/// </summary>
+	/// <summary>Append <paramref name="message" /> onto the most recent line.</summary>
 	/// <param name="message"></param>
 	public void Append( String message ) {
 		if ( this.CanAdd is false ) {
@@ -249,7 +239,7 @@ public class ListBoxLog : ABetterClassDispose {
 
 			--index;
 
-			var item = $"{this.Box.Items[index]} {message}".Trim();
+			var item = $"{this.Box.Items[ index ]} {message}".Trim();
 
 			if ( item.Length > DefaultLongLinesInListbox ) {
 				this.WriteLine( message );
@@ -259,7 +249,7 @@ public class ListBoxLog : ABetterClassDispose {
 			//item.Length.DebugLine();
 
 			this.Box.BeginUpdate();
-			this.Box.Items[index] = item;
+			this.Box.Items[ index ] = item;
 			this.Box.EndUpdate();
 		}, RefreshOrInvalidate.Neither );
 	}
@@ -290,9 +280,7 @@ public class ListBoxLog : ABetterClassDispose {
 		}
 	}
 
-	/// <summary>
-	///     Write the <paramref name="message" /> onto a new line in the listbox.
-	/// </summary>
+	/// <summary>Write the <paramref name="message" /> onto a new line in the listbox.</summary>
 	/// <param name="message"></param>
 	public void WriteLine( String message ) {
 		if ( message is null ) {
@@ -358,9 +346,7 @@ public class ListBoxLog : ABetterClassDispose {
 
 	/*
 
-	/// <summary>
-	///     ABetterRecordDispose is just fluff. (just want to see it in "action"..)
-	/// </summary>
+	/// <summary>ABetterRecordDispose is just fluff. (just want to see it in "action"..)</summary>
 	private record LogEvent( LogLevel LogLevel, String? Message ) : ABetterRecordDispose {
 		public DateTime EventTime { get; } = DateTime.Now;
 	}

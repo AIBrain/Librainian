@@ -23,7 +23,7 @@
 // Our software can be found at "https://Protiguous.Software/"
 // Our GitHub address is "https://github.com/Protiguous".
 // 
-// File "Years.cs" last touched on 2021-12-31 at 3:19 AM by Protiguous.
+// File "Years.cs" last touched on 2022-01-18 at 6:31 AM by Protiguous.
 
 #nullable enable
 
@@ -36,28 +36,23 @@ using Exceptions;
 using ExtendedNumerics;
 using Extensions;
 using Newtonsoft.Json;
+using Parsing;
 
 [JsonObject]
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
-[Extensions.Immutable]
+[Immutable]
 public record Years( BigDecimal Value ) : IQuantityOfTime, IComparable<Years>, IComparable<IQuantityOfTime> {
 
-	/// <summary>
-	///     One <see cref="Years" /> .
-	/// </summary>
+	/// <summary>One <see cref="Years" /> .</summary>
 	public static Years One { get; } = new(1);
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	public static Years Ten { get; } = new(10);
 
-	/// <summary>
-	/// </summary>
+	/// <summary></summary>
 	public static Years Thousand { get; } = new(1000);
 
-	/// <summary>
-	///     Zero <see cref="Years" />
-	/// </summary>
+	/// <summary>Zero <see cref="Years" /></summary>
 	public static Years Zero { get; } = new(0);
 
 	public Int32 CompareTo( Years? other ) {
@@ -120,7 +115,7 @@ public record Years( BigDecimal Value ) : IQuantityOfTime, IComparable<Years>, I
 
 	public Months ToMonths() => new(this.Value * Months.InOneCommonYear);
 
-	public override String ToString() => this.Value == 1 ? $"{this.Value} year" : $"{this.Value} years";
+	public override String ToString() => $"{this.Value} {this.Value.PluralOf( "year" )}";
 
 	public Weeks ToWeeks() => new(this.Value * Weeks.InOneCommonYear);
 

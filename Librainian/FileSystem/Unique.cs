@@ -1,31 +1,31 @@
 ﻿// Copyright © Protiguous. All Rights Reserved.
-// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or derived) from our binaries, libraries, projects, solutions, or applications.
-// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to avoid it from happening, but it does accidentally happen.)
-// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors.
-// If you find your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s).
-// If you want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
+//
+// This entire copyright notice and license must be retained and must be kept visible in any binaries, libraries, repositories, or source code (directly or
+// derived) from our binaries, libraries, projects, solutions, or applications.
+//
+// All source code belongs to Protiguous@Protiguous.com unless otherwise specified or the original license has been overwritten by formatting. (We try to
+// avoid it from happening, but it does accidentally happen.)
+//
+// Any unmodified portions of source code gleaned from other sources still retain their original license and our thanks goes to those Authors. If you find
+// your code unattributed in this source code, please let us know so we can properly attribute you and include the proper license and/or copyright(s). If you
+// want to use any of our code in a commercial project, you must contact Protiguous@Protiguous.com for permission, license, and a quote.
 //
 // Donations, payments, and royalties are accepted via bitcoin: 1Mad8TxTqxKnMiHuZxArFvX8BuFEB9nqX2 and PayPal: Protiguous@Protiguous.com
 //
 // ====================================================================
-// Disclaimer:  Usage of the source code or binaries is AS-IS.
-// No warranties are expressed, implied, or given.
-// We are NOT responsible for Anything You Do With Our Code.
-// We are NOT responsible for Anything You Do With Our Executables.
-// We are NOT responsible for Anything You Do With Your Computer.
-// ====================================================================
+// Disclaimer:  Usage of the source code or binaries is AS-IS. No warranties are expressed, implied, or given. We are NOT responsible for Anything You Do
+// With Our Code. We are NOT responsible for Anything You Do With Our Executables. We are NOT responsible for Anything You Do With Your Computer. ====================================================================
 //
-// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s).
-// For business inquiries, please contact me at Protiguous@Protiguous.com.
-// Our software can be found at "https://Protiguous.Software/"
-// Our GitHub address is "https://github.com/Protiguous".
+// Contact us by email if you have any questions, helpful criticism, or if you would like to use our code in your project(s). For business inquiries, please
+// contact me at Protiguous@Protiguous.com. Our software can be found at "https://Protiguous.Software/" Our GitHub address is "https://github.com/Protiguous".
 //
-// File "Unique.cs" last formatted on 2020-08-14 at 8:40 PM.
+// File "Unique.cs" last touched on 2022-01-18 at 2:57 PM by Protiguous.
 
 namespace Librainian.FileSystem;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -35,58 +35,51 @@ using Internet;
 using Logging;
 using Newtonsoft.Json;
 using Parsing;
+using Utilities.Disposables;
 
 /// <summary>
-///     <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
-///     <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>
-///     <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
-///     <para>Locations should be case-sensitive (<see cref="Equals(Object)" />).</para>
-///     <para>It's...<see cref="Unique" />!</para>
-/// <see cref="Location"/>
+/// <para>A custom class for the location of a file, directory, network location, or internet address/location.</para>
+/// <para>The idea centers around a <see cref="Uri" />, which points to a single location.</para>
+/// <para>A string is stored instead of the Uri itself, a tradeoff of memory vs computational time.</para>
+/// <para>Locations should be case-sensitive ( <see cref="Equals(Object)" />).</para>
+/// <para>It's... <see cref="Unique" />!</para>
+/// <see cref="Location" />
 /// </summary>
 [Serializable]
-public class Unique : IEquatable<Unique> {
+public class Unique : ABetterClassDispose, IEquatable<Unique> {
 
 	private const Int32 EOFMarker = -1;
 
 	[JsonProperty]
-	private readonly Uri? u;
+	private readonly Uri? _u;
 
-	/// <summary>A <see cref="Unique" /> that points to nowhere.</summary>
-	public static readonly Unique Empty = new();
+	/// <summary></summary>
+	/// <param name="address"></param>
+	/// <exception cref="ArgumentEmptyException">When <paramref name="address" /> was parsed down to nothing.</exception>
+	/// <exception cref="UriFormatException">When <paramref name="address" /> could not be parsed.</exception>
+	protected Unique( TrimmedString address ) : this( address.ToString( CultureInfo.InvariantCulture ) ) { }
 
-	//TODO What needs to happen if a uri cannot be parsed? throw exception? Maybe.
+	/// <summary>What effect will this have down the road?</summary>
+	/// <exception cref="UriFormatException">When <paramref name="address" /> could not be parsed.</exception>
+	public Unique( String address ) {
+		var parsed = Uri.TryCreate( address, UriKind.RelativeOrAbsolute, out this._u );
+		if ( !parsed ) {
+			throw new UriFormatException( nameof( address ) );
+		}
+	}
 
-	/// <summary>
-	///     The location/directory/path/file/name/whatever.ext
-	///     <para>Has been filtered through Uri.AbsoluteUri already.</para>
-	/// </summary>
-	[JsonIgnore]
-	public Uri? U => this.u;
+	public Unique( Uri address ) => this._u = address ?? throw new ArgumentNullException( nameof( address ) );
 
 	/// <summary>Just an easier to use mnemonic.</summary>
 	[JsonIgnore]
-	public String? AbsolutePath => this.U?.AbsolutePath;
+	public String AbsolutePath => this.U.AbsolutePath;
 
-	/// <summary>What effect will this have down the road?</summary>
-	private Unique() => Uri.TryCreate( String.Empty, UriKind.RelativeOrAbsolute, out this.u );
-
-		
-	/// <param name="location"></param>
-	/// <exception cref="ArgumentEmptyException">When <paramref name="location" /> was parsed down to nothing.</exception>
-	/// <exception cref="UriFormatException">When <paramref name="location" /> could not be parsed.</exception>
-	protected Unique( TrimmedString location ) {
-		if ( location.IsEmpty() ) {
-			throw new ArgumentEmptyException( "Location cannot be null or whitespace." );
-		}
-
-		if ( Uri.TryCreate( location, UriKind.Absolute, out var uri ) ) {
-			this.u = uri;
-		}
-		else {
-			throw new UriFormatException( $"Unable to parse the String `{location}` into a Uri" );
-		}
-	}
+	/// <summary>
+	/// The location/directory/path/file/name/whatever.ext
+	/// <para>Has been filtered through Uri.AbsoluteUri already.</para>
+	/// </summary>
+	[JsonIgnore]
+	public Uri U => this._u ?? throw new NullException( nameof( Uri ) );
 
 	/// <summary>Static (Ordinal) comparison.</summary>
 	/// <param name="left"></param>
@@ -107,7 +100,7 @@ public class Unique : IEquatable<Unique> {
 
 	public static Boolean operator ==( Unique? left, Unique? right ) => Equals( left, right );
 
-	public static Boolean TryCreate( TrimmedString location, out Unique unique ) {
+	public static Boolean TryCreate( TrimmedString location, out Unique? unique ) {
 		if ( !location.IsEmpty() ) {
 			try {
 				unique = new Unique( location );
@@ -118,7 +111,7 @@ public class Unique : IEquatable<Unique> {
 			catch ( UriFormatException ) { }
 		}
 
-		unique = Empty;
+		unique = null;
 
 		return false;
 	}
@@ -126,11 +119,9 @@ public class Unique : IEquatable<Unique> {
 	/// <summary>If the <paramref name="uri" /> is parsed, then <paramref name="unique" /> will never be null.</summary>
 	/// <param name="uri"></param>
 	/// <param name="unique"></param>
-	public static Boolean TryCreate( Uri? uri, out Unique unique ) {
+	public static Boolean TryCreate( Uri uri, out Unique? unique ) {
 		if ( uri is null ) {
-			unique = Empty;
-
-			return false;
+			throw new NullException( nameof( uri ) );
 		}
 
 		if ( uri.IsAbsoluteUri ) {
@@ -139,7 +130,7 @@ public class Unique : IEquatable<Unique> {
 			return true;
 		}
 
-		unique = Empty;
+		unique = null;
 
 		return false;
 	}
@@ -178,14 +169,14 @@ public class Unique : IEquatable<Unique> {
 
 			if ( b == EOFMarker ) {
 				yield return BitConverter.ToInt16( new[] {
-					( Byte )a
+					( Byte ) a
 				}, 0 );
 
 				yield break;
 			}
 
 			yield return BitConverter.ToInt16( new[] {
-				( Byte )a, ( Byte )b
+				( Byte ) a, ( Byte ) b
 			}, 0 );
 		}
 	}
@@ -211,7 +202,7 @@ public class Unique : IEquatable<Unique> {
 
 			if ( b == EOFMarker ) {
 				yield return BitConverter.ToInt32( new[] {
-					( Byte )a
+					( Byte ) a
 				}, 0 );
 
 				yield break;
@@ -221,7 +212,7 @@ public class Unique : IEquatable<Unique> {
 
 			if ( c == EOFMarker ) {
 				yield return BitConverter.ToInt32( new[] {
-					( Byte )a, ( Byte )b
+					( Byte ) a, ( Byte ) b
 				}, 0 );
 
 				yield break;
@@ -231,14 +222,14 @@ public class Unique : IEquatable<Unique> {
 
 			if ( d == EOFMarker ) {
 				yield return BitConverter.ToInt32( new[] {
-					( Byte )a, ( Byte )b, ( Byte )c
+					( Byte ) a, ( Byte ) b, ( Byte ) c
 				}, 0 );
 
 				yield break;
 			}
 
 			yield return BitConverter.ToInt32( new[] {
-				( Byte )a, ( Byte )b, ( Byte )c, ( Byte )d
+				( Byte ) a, ( Byte ) b, ( Byte ) c, ( Byte ) d
 			}, 0 );
 		}
 	}
@@ -258,8 +249,8 @@ public class Unique : IEquatable<Unique> {
 	public Boolean IsFolder() => this.IsDirectory();
 
 	/// <summary>
-	///     <para>Gets the size in bytes of the location.</para>
-	///     <para>A value of -1 indicates an error, timeout, or exception.</para>
+	/// <para>Gets the size in bytes of the location.</para>
+	/// <para>A value of -1 indicates an error, timeout, or exception.</para>
 	/// </summary>
 	/// <param name="timeout"></param>
 	/// <param name="cancellationToken"></param>
@@ -270,7 +261,7 @@ public class Unique : IEquatable<Unique> {
 			try {
 				await client.OpenReadTaskAsync( this.U ).ConfigureAwait( false );
 
-				var header = client.ResponseHeaders["Content-Length"];
+				var header = client.ResponseHeaders[ "Content-Length" ];
 
 				if ( Int64.TryParse( header, out var result ) ) {
 					return result;

@@ -38,6 +38,9 @@ using Newtonsoft.Json;
 [Immutable]
 public record TimeClock(ClockHour Hour, ClockMinute Minute, ClockSecond Second, ClockMillisecond Millisecond, ClockMicrosecond Microsecond) : IStandardClock {
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="dateTime"></param>
 	public TimeClock( DateTime dateTime ) : this( new ClockHour( ( Byte )dateTime.Hour ), new ClockMinute( ( Byte )dateTime.Minute ),
 		new ClockSecond( ( Byte )dateTime.Second ), new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0 ) { }
@@ -52,6 +55,9 @@ public record TimeClock(ClockHour Hour, ClockMinute Minute, ClockSecond Second, 
 			new ClockMillisecond( ( UInt16 )dateTime.Millisecond ), 0);
 
 		
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="date"></param>
 	public static implicit operator DateTime( TimeClock date ) =>
 		new(DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, date.Hour.Value, date.Minute.Value, date.Second.Value, date.Millisecond.Value);

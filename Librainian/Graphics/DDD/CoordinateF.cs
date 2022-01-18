@@ -54,6 +54,9 @@ public record CoordinateF : IComparable<CoordinateF> {
 	public CoordinateF( SingleRange x, SingleRange y, SingleRange z ) : this( Randem.NextFloat( x.Min, x.Max ), Randem.NextFloat( y.Min, y.Max ),
 		Randem.NextFloat( z.Min, z.Max ) ) { }
 
+	/// <summary>
+	/// 
+	/// </summary>
 	/// <param name="x"></param>
 	/// <param name="y"></param>
 	/// <param name="z"></param>

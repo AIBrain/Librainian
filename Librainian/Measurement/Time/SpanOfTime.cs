@@ -51,7 +51,7 @@ using SortingOrder = SortingOrder;
 /// <see cref="http://wikipedia.org/wiki/Units_of_time" />
 [DebuggerDisplay( "{" + nameof( ToString ) + "(),nq}" )]
 [JsonObject]
-[Extensions.Immutable]
+[Immutable]
 public record SpanOfTime : IComparable<SpanOfTime>, IComparable<TimeSpan> {
 
 	/// <summary>Calc it once.</summary>

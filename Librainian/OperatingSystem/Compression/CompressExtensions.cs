@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using Exceptions;
 using Maths;
 using Microsoft.IO;
+using Utilities;
 
 public static class CompressExtensions {
 

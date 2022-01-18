@@ -90,7 +90,7 @@ public class Device /*: IComparable<Device>*/ {
 	public String? Eject( Boolean allowUI ) {
 		foreach ( var device in this.GetRemovableDevices() ) {
 			if ( allowUI ) {
-				NativeMethods.CM_Request_Device_Eject_NoUi( device.GetInstanceHandle(), IntPtr.Zero, null, 0, 0 );
+				_ = NativeMethods.CM_Request_Device_Eject_NoUi( device.GetInstanceHandle(), IntPtr.Zero, null, 0, 0 );
 
 				// don't handle errors, there should be a UI for this
 			}

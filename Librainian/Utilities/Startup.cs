@@ -27,12 +27,22 @@
 
 namespace Librainian.Utilities;
 
-using System;
-using LazyCache;
-using Parsing;
+using Exceptions;
+using Microsoft.Extensions.DependencyInjection;
 
-internal class Startup {
+public static class Startup {
 
-	public Startup( IAppCache cache ) => ParsingExtensions.LazyCache = cache ?? throw new ArgumentNullException( nameof( cache ) );
+	public static IServiceCollection InjectLibrainianServices( this IServiceCollection services ) {
+		if ( services is null ) {
+			throw new NullException( nameof( services ) );
+		}
+
+		services.AddMemoryCache();
+		services.AddLazyCache();
+
+		return services;
+	}
+
+	//public Startup( IAppCache cache ) => ParsingExtensions.LazyCache = cache ?? throw new ArgumentNullException( nameof( cache ) );
 
 }
